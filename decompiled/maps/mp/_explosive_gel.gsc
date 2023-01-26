@@ -1,0 +1,359 @@
+// S1 GSC SOURCE
+// Decompiled by https://github.com/xensik/gsc-tool
+
+_id_A211()
+{
+    self endon( "spawned_player" );
+    self endon( "disconnect" );
+    self endon( "death" );
+    self endon( "faux_spawn" );
+
+    for (;;)
+    {
+        self waittill( "grenade_fire", var_0, var_1 );
+
+        if ( var_1 == "explosive_gel_mp" )
+        {
+            if ( !isalive( self ) )
+            {
+                var_0 delete();
+                return;
+            }
+
+            thread _id_98A8( var_0 );
+        }
+    }
+}
+
+init()
+{
+    precachemodel( "weapon_c4" );
+    precachemodel( "weapon_c4_bombsquad" );
+    level._id_3578 = spawnstruct();
+    level._id_3578._id_8F67 = "weapon_c4";
+    level._id_3578._id_3C80 = "weapon_c4_bombsquad";
+    level._id_3578._id_3C81 = loadfx( "vfx/explosion/frag_grenade_default" );
+    level._id_3578._id_135E["enemy"] = loadfx( "vfx/lights/light_c4_blink" );
+    level._id_3578._id_135E["friendly"] = loadfx( "vfx/lights/light_mine_blink_friendly" );
+}
+
+_id_98A8( var_0 )
+{
+    thread _id_562D( var_0 );
+    return 1;
+}
+
+_id_562D( var_0 )
+{
+    thread _id_A210( var_0 );
+    var_1 = _id_8E28( var_0 );
+}
+
+_id_A210( var_0 )
+{
+    self endon( "death" );
+    self endon( "disconnect" );
+    level endon( "game_ended" );
+    self endon( "change_owner" );
+    var_0 endon( "missile_stuck" );
+    var_0 endon( "death" );
+    var_1 = 0;
+
+    for (;;)
+    {
+        if ( self usebuttonpressed() )
+        {
+            var_1 = 0;
+
+            while ( self usebuttonpressed() )
+            {
+                var_1 += 0.05;
+                wait 0.05;
+            }
+
+            if ( var_1 >= 0.5 )
+                continue;
+
+            var_1 = 0;
+
+            while ( !self usebuttonpressed() && var_1 < 0.5 )
+            {
+                var_1 += 0.05;
+                wait 0.05;
+            }
+
+            if ( var_1 >= 0.5 )
+                continue;
+
+            thread _id_3006( var_0 );
+        }
+
+        wait 0.05;
+    }
+}
+
+_id_8E28( var_0 )
+{
+    self endon( "earlyNotify" );
+    var_0 waittill( "missile_stuck" );
+    var_1 = bullettrace( var_0.origin, var_0.origin - ( 0.0, 0.0, 4.0 ), 0, var_0 );
+    var_2 = bullettrace( var_0.origin, var_0.origin + ( 0.0, 0.0, 4.0 ), 0, var_0 );
+    var_3 = anglestoforward( var_0.angles );
+    var_4 = bullettrace( var_0.origin + ( 0.0, 0.0, 4.0 ), var_0.origin + var_3 * 4, 0, var_0 );
+    var_5 = undefined;
+    var_6 = 0;
+    var_7 = 0;
+
+    if ( var_4["surfacetype"] != "none" )
+    {
+        var_5 = var_4;
+        var_7 = 1;
+    }
+    else if ( var_2["surfacetype"] != "none" )
+    {
+        var_5 = var_2;
+        var_6 = 1;
+    }
+    else if ( var_1["surfacetype"] != "none" )
+        var_5 = var_1;
+    else
+        var_5 = var_1;
+
+    var_8 = var_5["position"];
+
+    if ( var_8 == var_2["position"] )
+        var_8 += ( 0.0, 0.0, -5.0 );
+
+    var_9 = spawn( "script_model", var_8 );
+    var_9._id_51DC = var_6;
+    var_9._id_510A = var_7;
+    var_10 = vectornormalize( var_5["normal"] );
+    var_11 = vectortoangles( var_10 );
+    var_11 += ( 90.0, 0.0, 0.0 );
+    var_9.angles = var_11;
+    var_9 setmodel( level._id_3578._id_8F67 );
+    var_9.owner = self;
+    var_9 setotherent( self );
+    var_9.killcamoffset = ( 0.0, 0.0, 55.0 );
+    var_9.killcament = spawn( "script_model", var_9.origin + var_9.killcamoffset );
+    var_9.stunned = 0;
+    var_9.weaponname = "explosive_gel_mp";
+    var_0 delete();
+    level.mines[level.mines.size] = var_9;
+    var_9 thread createbombsquadmodel( level._id_3578._id_3C80, "tag_origin", self );
+    var_9 thread minebeacon();
+    var_9 thread _id_7F64( self.team );
+    var_9 thread minedamagemonitor();
+    var_9 thread _id_3577( self );
+    return var_9;
+}
+
+createbombsquadmodel( var_0, var_1, var_2 )
+{
+    var_3 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
+    var_3 hide();
+    wait 0.05;
+    var_3 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( var_2 );
+    var_3 setmodel( var_0 );
+    var_3 linkto( self, var_1, ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+    var_3 setcontents( 0 );
+    self waittill( "death" );
+
+    if ( isdefined( self.trigger ) )
+        self.trigger delete();
+
+    var_3 delete();
+}
+
+minebeacon()
+{
+    var_0["friendly"] = spawnfx( level._id_3578._id_135E["friendly"], self gettagorigin( "tag_fx" ) );
+    var_0["enemy"] = spawnfx( level._id_3578._id_135E["enemy"], self gettagorigin( "tag_fx" ) );
+    thread minebeaconteamupdater( var_0 );
+    self waittill( "death" );
+    var_0["friendly"] delete();
+    var_0["enemy"] delete();
+}
+
+minebeaconteamupdater( var_0, var_1 )
+{
+    self endon( "death" );
+    var_2 = self.owner.team;
+    wait 0.05;
+    triggerfx( var_0["friendly"] );
+    triggerfx( var_0["enemy"] );
+
+    for (;;)
+    {
+        var_0["friendly"] hide();
+        var_0["enemy"] hide();
+
+        foreach ( var_4 in level.players )
+        {
+            if ( level.teambased )
+            {
+                if ( var_4.team == var_2 )
+                    var_0["friendly"] showtoplayer( var_4 );
+                else
+                    var_0["enemy"] showtoplayer( var_4 );
+
+                continue;
+            }
+
+            if ( var_4 == self.owner )
+            {
+                var_0["friendly"] showtoplayer( var_4 );
+                continue;
+            }
+
+            var_0["enemy"] showtoplayer( var_4 );
+        }
+
+        level common_scripts\utility::waittill_either( "joined_team", "player_spawned" );
+    }
+}
+
+_id_7F64( var_0 )
+{
+    self endon( "death" );
+    wait 0.05;
+
+    if ( level.teambased )
+    {
+        if ( self._id_51DC == 1 || self._id_510A == 1 )
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ), undefined, 1 );
+        else
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ) );
+    }
+    else if ( isdefined( self.owner ) )
+    {
+        if ( self._id_51DC == 1 )
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 28.0, 0.0, 28.0 ) );
+        else
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0.0, 0.0, 28.0 ) );
+    }
+}
+
+minedamagemonitor()
+{
+    self endon( "mine_triggered" );
+    self endon( "mine_selfdestruct" );
+    self endon( "death" );
+    self setcandamage( 1 );
+    self.maxhealth = 100000;
+    self.health = self.maxhealth;
+    var_0 = undefined;
+
+    for (;;)
+    {
+        self waittill( "damage", var_1, var_0, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
+
+        if ( !isplayer( var_0 ) )
+            continue;
+
+        if ( !maps\mp\gametypes\_weapons::friendlyfirecheck( self.owner, var_0 ) )
+            continue;
+
+        if ( isdefined( var_9 ) )
+        {
+            var_10 = maps\mp\_utility::strip_suffix( var_9, "_lefthand" );
+
+            switch ( var_10 )
+            {
+                case "smoke_grenade_mp":
+                case "smoke_grenade_var_mp":
+                    continue;
+            }
+        }
+
+        break;
+    }
+
+    self notify( "mine_destroyed" );
+
+    if ( isdefined( var_4 ) && ( issubstr( var_4, "MOD_GRENADE" ) || issubstr( var_4, "MOD_EXPLOSIVE" ) ) )
+        self.waschained = 1;
+
+    if ( isdefined( var_8 ) && var_8 & level.idflags_penetration )
+        self.wasdamagedfrombulletpenetration = 1;
+
+    self.wasdamaged = 1;
+
+    if ( isplayer( var_0 ) )
+        var_0 maps\mp\gametypes\_damagefeedback::updatedamagefeedback( "bouncing_betty" );
+
+    if ( level.teambased )
+    {
+        if ( isdefined( var_0 ) && isdefined( var_0.pers["team"] ) && isdefined( self.owner ) && isdefined( self.owner.pers["team"] ) )
+        {
+            if ( var_0.pers["team"] != self.owner.pers["team"] )
+                var_0 notify( "destroyed_explosive" );
+        }
+    }
+    else if ( isdefined( self.owner ) && isdefined( var_0 ) && var_0 != self.owner )
+        var_0 notify( "destroyed_explosive" );
+
+    thread mineexplode( var_0 );
+}
+
+mineexplode( var_0 )
+{
+    if ( !isdefined( self ) || !isdefined( self.owner ) )
+        return;
+
+    if ( !isdefined( var_0 ) )
+        var_0 = self.owner;
+
+    self playsound( "null" );
+    var_1 = self gettagorigin( "tag_fx" );
+    playfx( level._id_3578._id_3C81, var_1 );
+    wait 0.05;
+
+    if ( !isdefined( self ) || !isdefined( self.owner ) )
+        return;
+
+    self hide();
+    self entityradiusdamage( self.origin, 192, 100, 100, var_0, "MOD_EXPLOSIVE" );
+
+    if ( isdefined( self.owner ) && isdefined( level.leaderdialogonplayer_func ) )
+        self.owner thread [[ level.leaderdialogonplayer_func ]]( "mine_destroyed", undefined, undefined, self.origin );
+
+    wait 0.2;
+
+    if ( !isdefined( self ) || !isdefined( self.owner ) )
+        return;
+
+    thread _id_0C9D();
+    self notify( "death" );
+
+    if ( isdefined( self._id_6816 ) )
+        self._id_6816 delete();
+
+    self hide();
+}
+
+_id_3006( var_0 )
+{
+    self notify( "earlyNotify" );
+    var_1 = var_0 gettagorigin( "tag_fx" );
+    playfx( level._id_3578._id_3C81, var_1 );
+    var_0 detonate();
+}
+
+_id_0C9D()
+{
+    wait 3;
+    self.killcament delete();
+    self delete();
+    level.mines = common_scripts\utility::array_removeundefined( level.mines );
+}
+
+_id_3577( var_0 )
+{
+    self endon( "mine_destroyed" );
+    self endon( "mine_selfdestruct" );
+    self endon( "death" );
+    wait 3;
+    self notify( "mine_triggered" );
+    thread mineexplode();
+}
