@@ -1,115 +1,183 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    _id_A770::main();
-    _id_A6DA::main();
-    _id_A76F::main();
+    maps\mp\mp_prison_precache::main();
+    maps\createart\mp_prison_art::main();
+    maps\mp\mp_prison_fx::main();
     maps\mp\mp_prison_lighting::main();
     maps\mp\_load::main();
-    maps\mp\_compass::_id_831E( "compass_map_mp_prison" );
+    maps\mp\_compass::setupminimap( "compass_map_mp_prison" );
     setdvar( "r_lightGridEnableTweaks", 1 );
     setdvar( "r_lightGridIntensity", 1.33 );
     game["attackers"] = "allies";
     game["defenders"] = "axis";
-    level._id_5985 = ::_id_6FC6;
-    level._id_6573 = ::_id_6FC9;
+    level.mapcustomkillstreakfunc = ::prisoncustomkillstreakfunc;
+    level.orbitalsupportoverridefunc = ::prisonpaladinoverrides;
     thread goliathvolumes();
-    level._id_2F3B = "mp_instinct_osp";
-    level._id_2F12 = "mp_prison_drone";
-    thread _id_0B4C();
+    level.dronevisionset = "mp_instinct_osp";
+    level.dronelightset = "mp_prison_drone";
+    thread ambientanimation();
+    thread patchportalblockers();
+    thread patchclip();
+}
+
+patchclip()
+{
+    thread cliptower01();
+    thread clipvents();
+    thread parkinglotroofledge();
+    thread entrancecornerledge();
+}
+
+parkinglotroofledge()
+{
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3643, 1173, 1065 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3643, 1160, 1065 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3630, 1160, 1065 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1161 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1289 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1417 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1545 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1673 ), ( 0, 0, 0 ) );
+}
+
+entrancecornerledge()
+{
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 715.5 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 843.5 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 917.5 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 1099.5 ), ( 0, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 715.5 ), ( 0, 315, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 843.5 ), ( 0, 315, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 917.5 ), ( 0, 315, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 1099.5 ), ( 0, 315, 0 ) );
+}
+
+clipvents()
+{
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -3063, 1546, 718 ), ( 90, 0, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -953, 530, 712 ), ( 90, 0, 0 ) );
+}
+
+cliptower01()
+{
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1134 ), ( 0, 300, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1390 ), ( 0, 300, 0 ) );
+    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1646 ), ( 0, 300, 0 ) );
+}
+
+patchportalblockers()
+{
+    thread spawnportalblocker( ( -1117, 1493, 678 ), ( 0, 120, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -964, 1102, 698 ), ( 0, 90, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -968, 1228, 834 ), ( 0, 0, 90 ), "blastdoor_floortrack" );
+    thread spawnportalblocker( ( -1123, 1505.5, 579 ), ( 0, 300, 0 ), "blastdoor_door_prison" );
+    thread spawnportalblocker( ( -1067, 1410, 579 ), ( 0, 120, 0 ), "blastdoor_door_prison" );
+    thread spawnportalblocker( ( -2889, -179.5, 530 ), ( 0, 270, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -2889, -287.5, 530 ), ( 0, 90, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -3572, -57.5, 522.5 ), ( 0, 0, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -3460.5, -57, 522.5 ), ( 0, 180, 0 ), "blastdoor_door_short" );
+    thread spawnportalblocker( ( -1175, 1593.5, 694.5 ), ( 0, 300, 0 ), "blastdoor_door_short" );
+}
+
+spawnportalblocker( var_0, var_1, var_2 )
+{
+    var_3 = spawn( "script_model", var_0 );
+    var_3.angles = var_1;
+    var_3 _meth_80B1( var_2 );
 }
 
 goliathvolumes()
 {
-    level.goliath_bad_landing_volumes = getentarray( "goliath_bad_landing_volume", "targetname" );
+
 }
 
-_id_6FC6()
+prisoncustomkillstreakfunc()
 {
-    level thread _id_A7D6::init();
+    level thread maps\mp\killstreaks\streak_mp_prison::init();
 }
 
-_id_7E66()
+set_lighting_values()
 {
     if ( _func_235() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 setclientdvars( "r_tonemap", "1", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
+            var_0 _meth_82FD( "r_tonemap", "1", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
         }
     }
 }
 
-_id_6FC9()
+prisonpaladinoverrides()
 {
-    level._id_6574._id_89DC = 7500;
-    level._id_6574._id_8A00 = 4500;
-    level._id_6574._id_0252 = 40;
-    level._id_6574._id_0380 = 40;
-    level._id_6574._id_04BD = -38;
-    level._id_6574._id_0089 = 78;
+    level.orbitalsupportoverrides.spawnheight = 7500;
+    level.orbitalsupportoverrides.spawnradius = 4500;
+    level.orbitalsupportoverrides.leftarc = 40;
+    level.orbitalsupportoverrides.rightarc = 40;
+    level.orbitalsupportoverrides.toparc = -38;
+    level.orbitalsupportoverrides.bottomarc = 78;
 }
 
-_id_0B4C()
+ambientanimation()
 {
     var_0 = getentarray( "guard_tower_radar", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 thread _id_7601();
+        var_2 thread rotateradar();
 }
 
-_id_7601()
+rotateradar()
 {
-    if ( !isdefined( level._id_7604 ) )
-        level._id_7604 = 20;
+    if ( !isdefined( level.rotatetime ) )
+        level.rotatetime = 20;
 
     for (;;)
     {
-        self rotatevelocity( ( 0.0, -100.0, 0.0 ), level._id_7604 );
-        wait(level._id_7604);
+        self _meth_82BD( ( 0, -100, 0 ), level.rotatetime );
+        wait(level.rotatetime);
     }
 }
 
-_id_8330()
+setupriotsuppresionsystem()
 {
     precachelocationselector( "map_artillery_selector" );
     precachestring( &"KILLSTREAKS_MP_PRISON" );
     precacheitem( "mp_prison_gas" );
-    level._id_3C1A = "mp_prison_gas";
-    level._id_3C14 = "mp_prison_gas_on_siren";
-    level._id_3C48 = "gate_sparks";
-    level._effect[level._id_3C48] = loadfx( "vfx/sparks/electrical_sparks_oneshot" );
+    level.gasedvisionset = "mp_prison_gas";
+    level.gas_alarm_sfx_alias = "mp_prison_gas_on_siren";
+    level.gate_spark_fx = "gate_sparks";
+    level._effect[level.gate_spark_fx] = loadfx( "vfx/sparks/electrical_sparks_oneshot" );
     var_0 = getentarray( "gas_trigger", "targetname" );
-    thread _id_3C1C();
+    thread gasfieldsoff();
 
     if ( var_0.size > 0 )
     {
         precacheshellshock( "mp_prison_gas" );
 
         foreach ( var_2 in var_0 )
-            var_2 thread common_scripts\_dynamic_world::triggertouchthink( ::_id_6C99, ::_id_6CDB );
+            var_2 thread common_scripts\_dynamic_world::triggertouchthink( ::playerenterarea, ::playerleavearea );
 
         thread onplayerconnect();
     }
 
-    thread _id_3C2F();
-    thread _id_8314();
-    thread _id_5EB5();
+    thread gasvisualssetup();
+    thread setupgates();
+    thread monitorriotsuppressionsystem();
 }
 
-_id_5EB5()
+monitorriotsuppressionsystem()
 {
     level endon( "debug_mp_prison_gas" );
-    level._id_2FE9 = 3;
+    level.dynamiceventcount = 3;
     var_0 = 2;
     var_1 = maps\mp\_utility::gettimelimit();
     var_2 = gettime() + var_0 * 1000;
-    var_3 = var_1 / level._id_2FE9 * 60 * 1000;
+    var_3 = var_1 / level.dynamiceventcount * 60 * 1000;
 
-    for ( var_4 = 1; var_4 < level._id_2FE9; var_4++ )
+    for ( var_4 = 1; var_4 < level.dynamiceventcount; var_4++ )
     {
         if ( var_1 > 0 )
             var_2 = gettime() + var_3;
@@ -119,176 +187,176 @@ _id_5EB5()
         while ( gettime() < var_2 )
             wait 1;
 
-        _id_8D35();
+        startriotsuppressionsystem();
     }
 }
 
-_id_8D35()
+startriotsuppressionsystem()
 {
     var_0 = 20;
-    thread _id_3C31();
-    thread _id_5F4F();
-    thread _id_75FA();
-    thread _id_75FB();
-    thread _id_3C13();
+    thread gasvisualswarningstart();
+    thread movegates();
+    thread rotategates();
+    thread rotategatesconstant();
+    thread gas_alarm_on_vo();
     wait 5;
-    thread _id_3C30();
-    thread _id_0F2C();
-    _id_3C1D();
+    thread gasvisualsstart();
+    thread aud_gas_sfx();
+    gasfieldson();
     wait(var_0);
     level notify( "stop_gas_sfx" );
-    thread _id_7447();
-    thread _id_7457();
-    thread _id_7456();
-    thread _id_3C12();
-    _id_3C1C();
+    thread resetgates();
+    thread resetrotategates();
+    thread resetrotategateconstant();
+    thread gas_alarm_off_vo();
+    gasfieldsoff();
 }
 
-_id_0F2C()
+aud_gas_sfx()
 {
-    var_0 = ( -2666.0, 1305.0, 828.0 );
-    var_1 = ( -2282.0, 1305.0, 840.0 );
-    var_2 = ( -2026.0, 1305.0, 840.0 );
-    var_3 = ( -1557.0, 1305.0, 840.0 );
-    var_4 = ( -1512.0, 903.0, 840.0 );
-    var_5 = ( -2024.0, 903.0, 840.0 );
-    var_6 = ( -2411.0, 903.0, 840.0 );
-    var_7 = ( -2666.0, 903.0, 840.0 );
+    var_0 = ( -2666, 1305, 828 );
+    var_1 = ( -2282, 1305, 840 );
+    var_2 = ( -2026, 1305, 840 );
+    var_3 = ( -1557, 1305, 840 );
+    var_4 = ( -1512, 903, 840 );
+    var_5 = ( -2024, 903, 840 );
+    var_6 = ( -2411, 903, 840 );
+    var_7 = ( -2666, 903, 840 );
     var_8 = [ var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 ];
 
     foreach ( var_10 in var_8 )
     {
-        thread maps\mp\_audio::_id_8730( "mp_prison_gas_valve_start", var_10 );
-        thread maps\mp\_audio::_id_873B( "mp_prison_gas_lp", var_10, "stop_gas_sfx", 2.2 );
+        thread maps\mp\_audio::snd_play_in_space( "mp_prison_gas_valve_start", var_10 );
+        thread maps\mp\_audio::snd_play_loop_in_space( "mp_prison_gas_lp", var_10, "stop_gas_sfx", 2.2 );
     }
 }
 
-_id_3C13()
+gas_alarm_on_vo()
 {
-    var_0 = spawn( "script_origin", ( -2143.0, 1108.0, 946.0 ) );
+    var_0 = spawn( "script_origin", ( -2143, 1108, 946 ) );
     var_0 playsound( "mp_prison_gas_on" );
 }
 
-_id_3C12()
+gas_alarm_off_vo()
 {
-    var_0 = spawn( "script_origin", ( -2143.0, 1108.0, 946.0 ) );
+    var_0 = spawn( "script_origin", ( -2143, 1108, 946 ) );
     var_0 playsound( "mp_prison_gas_off_02" );
 }
 
-_id_3C2F()
+gasvisualssetup()
 {
-    if ( !isdefined( level._id_5FC4 ) )
-        level._id_5FC4 = spawnstruct();
+    if ( !isdefined( level.mp_prison_killstreak ) )
+        level.mp_prison_killstreak = spawnstruct();
 
-    if ( !isdefined( level._id_5FC4._id_3C17 ) )
+    if ( !isdefined( level.mp_prison_killstreak.gas_tags ) )
     {
         var_0 = common_scripts\utility::getstructarray( "gas_org", "targetname" );
-        level._id_5FC4._id_3C17 = [];
+        level.mp_prison_killstreak.gas_tags = [];
 
         foreach ( var_2 in var_0 )
         {
             var_3 = var_2 common_scripts\utility::spawn_tag_origin();
             var_3 show();
-            level._id_5FC4._id_3C17[level._id_5FC4._id_3C17.size] = var_3;
+            level.mp_prison_killstreak.gas_tags[level.mp_prison_killstreak.gas_tags.size] = var_3;
         }
     }
 
-    if ( !isdefined( level._id_5FC4._id_3C18 ) )
+    if ( !isdefined( level.mp_prison_killstreak.gas_warning_light_tags ) )
     {
         var_0 = common_scripts\utility::getstructarray( "flashing_red_light", "targetname" );
-        level._id_5FC4._id_3C18 = [];
+        level.mp_prison_killstreak.gas_warning_light_tags = [];
 
         foreach ( var_2 in var_0 )
         {
             var_3 = var_2 common_scripts\utility::spawn_tag_origin();
             var_3 show();
-            level._id_5FC4._id_3C18[level._id_5FC4._id_3C18.size] = var_3;
+            level.mp_prison_killstreak.gas_warning_light_tags[level.mp_prison_killstreak.gas_warning_light_tags.size] = var_3;
         }
     }
 }
 
-_id_3C31()
+gasvisualswarningstart()
 {
-    foreach ( var_1 in level._id_5FC4._id_3C18 )
-        var_1 thread _id_6DC1();
+    foreach ( var_1 in level.mp_prison_killstreak.gas_warning_light_tags )
+        var_1 thread playloopingsoundonorigin();
 
     _func_222( 10 );
 }
 
-_id_8314()
+setupgates()
 {
     var_0 = getentarray( "moving_gate", "targetname" );
-    level._id_5FC4._id_3C5A = [];
+    level.mp_prison_killstreak.gates = [];
 
     foreach ( var_2 in var_0 )
     {
         var_3 = spawnstruct();
-        var_2._id_65A1 = var_2.origin;
-        var_3._id_3C32 = var_2;
+        var_2.originalpos = var_2.origin;
+        var_3.gate = var_2;
         var_4 = common_scripts\utility::getstruct( var_2.target, "targetname" );
-        var_3._id_28BA = var_4;
+        var_3.dest = var_4;
         var_5 = getent( var_4.target, "targetname" );
-        var_5._id_65A1 = var_5.origin;
-        var_3._id_202E = var_5;
+        var_5.originalpos = var_5.origin;
+        var_3.collision = var_5;
         var_6 = common_scripts\utility::getstruct( var_5.target, "targetname" );
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 linkto( var_2 );
+        var_7 _meth_804D( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 linkto( var_2 );
-        var_3._id_88B5 = [ var_7, var_9 ];
-        level._id_5FC4._id_3C5A[level._id_5FC4._id_3C5A.size] = var_3;
+        var_9 _meth_804D( var_2 );
+        var_3.sparks = [ var_7, var_9 ];
+        level.mp_prison_killstreak.gates[level.mp_prison_killstreak.gates.size] = var_3;
     }
 
     var_0 = getentarray( "rotating_gate", "targetname" );
-    level._id_5FC4._id_7608 = [];
+    level.mp_prison_killstreak.rotating_gates = [];
 
     foreach ( var_2 in var_0 )
     {
         var_3 = spawnstruct();
-        var_2._id_65A1 = var_2.origin;
-        var_2._id_65A2 = var_2.angles;
-        var_3._id_3C32 = var_2;
+        var_2.originalpos = var_2.origin;
+        var_2.originalrot = var_2.angles;
+        var_3.gate = var_2;
         var_4 = common_scripts\utility::getstruct( var_2.target, "targetname" );
-        var_3._id_28BA = var_4;
+        var_3.dest = var_4;
         var_5 = getent( var_4.target, "targetname" );
-        var_5._id_65A1 = var_5.origin;
-        var_5.angles = var_2.angles + ( 0.0, -90.0, 0.0 );
-        var_5._id_65A2 = var_5.angles;
-        var_3._id_202E = var_5;
+        var_5.originalpos = var_5.origin;
+        var_5.angles = var_2.angles + ( 0, -90, 0 );
+        var_5.originalrot = var_5.angles;
+        var_3.collision = var_5;
         var_6 = common_scripts\utility::getstruct( var_5.target, "targetname" );
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 linkto( var_2 );
+        var_7 _meth_804D( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 linkto( var_2 );
-        var_3._id_88B5 = [ var_7, var_9 ];
+        var_9 _meth_804D( var_2 );
+        var_3.sparks = [ var_7, var_9 ];
 
         if ( isdefined( var_8.target ) )
         {
             var_12 = getent( var_8.target, "targetname" );
-            var_3._id_533E = var_12;
-            var_3._id_533E common_scripts\utility::trigger_off_proc();
+            var_3.kill_vol = var_12;
+            var_3.kill_vol common_scripts\utility::trigger_off_proc();
         }
 
-        level._id_5FC4._id_7608[level._id_5FC4._id_7608.size] = var_3;
+        level.mp_prison_killstreak.rotating_gates[level.mp_prison_killstreak.rotating_gates.size] = var_3;
     }
 
     var_0 = getentarray( "rotating_gate_constant", "targetname" );
-    level._id_5FC4._id_7607 = [];
+    level.mp_prison_killstreak.rotating_gate_constant = [];
 
     foreach ( var_2 in var_0 )
     {
         var_3 = spawnstruct();
-        var_2._id_65A1 = var_2.origin;
-        var_2._id_65A2 = var_2.angles;
-        var_3._id_3C32 = var_2;
+        var_2.originalpos = var_2.origin;
+        var_2.originalrot = var_2.angles;
+        var_3.gate = var_2;
         var_4 = common_scripts\utility::getstruct( var_2.target, "targetname" );
-        var_3._id_28BA = var_4;
+        var_3.dest = var_4;
         var_6 = common_scripts\utility::getstruct( var_4.target, "targetname" );
 
         if ( !isdefined( var_6 ) )
@@ -296,7 +364,7 @@ _id_8314()
 
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 linkto( var_2 );
+        var_7 _meth_804D( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
 
         if ( !isdefined( var_8 ) )
@@ -307,197 +375,197 @@ _id_8314()
 
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 linkto( var_2 );
-        var_3._id_88B5 = [ var_7, var_9 ];
-        level._id_5FC4._id_7607[level._id_5FC4._id_7607.size] = var_3;
+        var_9 _meth_804D( var_2 );
+        var_3.sparks = [ var_7, var_9 ];
+        level.mp_prison_killstreak.rotating_gate_constant[level.mp_prison_killstreak.rotating_gate_constant.size] = var_3;
     }
 }
 
-_id_5F4F()
+movegates()
 {
     var_0 = 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_3C5A )
+    foreach ( var_2 in level.mp_prison_killstreak.gates )
     {
-        var_2._id_3C32 moveto( var_2._id_28BA.origin, var_0, 0.1, 0.2 );
-        var_2._id_202E moveto( var_2._id_28BA.origin, var_0, 0.1, 0.2 );
-        var_2 thread _id_1753( var_0 );
+        var_2.gate _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.collision _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2 thread bouncegate( var_0 );
     }
 }
 
-_id_75FA()
+rotategates()
 {
     var_0 = 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_7608 )
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gates )
     {
-        var_2 thread _id_3C56();
-        var_2._id_3C32 moveto( var_2._id_28BA.origin, var_0, 0.1, 0.2 );
-        var_2._id_3C32 _meth_82B5( var_2._id_28BA.angles, var_0, 0.1, 0.2 );
-        var_2._id_202E _meth_82B5( var_2._id_28BA.angles - ( 0.0, 90.0, 0.0 ), var_0, 0.1, 0.2 );
-        var_2._id_202E moveto( var_2._id_28BA.origin, var_0, 0.1, 0.2 );
+        var_2 thread gatefxon();
+        var_2.gate _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.gate _meth_82B5( var_2.dest.angles, var_0, 0.1, 0.2 );
+        var_2.collision _meth_82B5( var_2.dest.angles - ( 0, 90, 0 ), var_0, 0.1, 0.2 );
+        var_2.collision _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
 
-    foreach ( var_2 in level._id_5FC4._id_7608 )
-        var_2 thread _id_3C55();
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gates )
+        var_2 thread gatefxoff();
 }
 
-_id_75FB()
+rotategatesconstant()
 {
-    foreach ( var_1 in level._id_5FC4._id_7607 )
-        var_1 thread _id_75F9();
+    foreach ( var_1 in level.mp_prison_killstreak.rotating_gate_constant )
+        var_1 thread rotategatebounce();
 }
 
-_id_75F9()
+rotategatebounce()
 {
     self endon( "stop_bounce" );
 
     for (;;)
     {
         var_0 = randomfloatrange( 0.1, 0.5 );
-        thread _id_3C56();
-        self._id_3C32 moveto( self._id_28BA.origin, var_0, 0.05, 0.05 );
-        self._id_3C32 _meth_82B5( self._id_28BA.angles, var_0, 0.05, 0.05 );
+        thread gatefxon();
+        self.gate _meth_82AE( self.dest.origin, var_0, 0.05, 0.05 );
+        self.gate _meth_82B5( self.dest.angles, var_0, 0.05, 0.05 );
         wait(var_0);
-        self._id_3C32 moveto( self._id_3C32._id_65A1, var_0, 0.05, 0.05 );
-        self._id_3C32 _meth_82B5( self._id_3C32._id_65A2, var_0, 0.05, 0.05 );
-        thread _id_3C55();
+        self.gate _meth_82AE( self.gate.originalpos, var_0, 0.05, 0.05 );
+        self.gate _meth_82B5( self.gate.originalrot, var_0, 0.05, 0.05 );
+        thread gatefxoff();
         wait(randomfloatrange( 0.1, 1 ));
     }
 }
 
-_id_7456()
+resetrotategateconstant()
 {
     var_0 = 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_7607 )
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gate_constant )
         var_2 notify( "stop_bounce" );
 
     wait 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_7607 )
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gate_constant )
     {
-        var_2 thread _id_3C56();
-        var_2._id_3C32 moveto( var_2._id_3C32._id_65A1, var_0, 0.05, 0.05 );
-        var_2._id_3C32 _meth_82B5( var_2._id_3C32._id_65A2, var_0, 0.05, 0.05 );
+        var_2 thread gatefxon();
+        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.05, 0.05 );
+        var_2.gate _meth_82B5( var_2.gate.originalrot, var_0, 0.05, 0.05 );
     }
 
     wait(var_0);
 
-    foreach ( var_2 in level._id_5FC4._id_7607 )
-        var_2 thread _id_3C55();
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gate_constant )
+        var_2 thread gatefxoff();
 }
 
-_id_7457()
+resetrotategates()
 {
     var_0 = 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_7608 )
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gates )
     {
-        var_2 thread _id_3C56();
+        var_2 thread gatefxon();
 
-        if ( isdefined( var_2._id_533E ) )
-            var_2._id_533E common_scripts\utility::trigger_on_proc();
+        if ( isdefined( var_2.kill_vol ) )
+            var_2.kill_vol common_scripts\utility::trigger_on_proc();
 
-        var_2._id_3C32 moveto( var_2._id_3C32._id_65A1, var_0, 0.1, 0.2 );
-        var_2._id_3C32 _meth_82B5( var_2._id_3C32._id_65A2, var_0, 0.1, 0.2 );
-        var_2._id_202E _meth_82B5( var_2._id_202E._id_65A2, var_0, 0.1, 0.2 );
-        var_2._id_202E moveto( var_2._id_202E._id_65A1, var_0, 0.1, 0.2 );
+        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.1, 0.2 );
+        var_2.gate _meth_82B5( var_2.gate.originalrot, var_0, 0.1, 0.2 );
+        var_2.collision _meth_82B5( var_2.collision.originalrot, var_0, 0.1, 0.2 );
+        var_2.collision _meth_82AE( var_2.collision.originalpos, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
 
-    foreach ( var_2 in level._id_5FC4._id_7608 )
+    foreach ( var_2 in level.mp_prison_killstreak.rotating_gates )
     {
-        if ( isdefined( var_2._id_533E ) )
-            var_2._id_533E common_scripts\utility::trigger_off_proc();
+        if ( isdefined( var_2.kill_vol ) )
+            var_2.kill_vol common_scripts\utility::trigger_off_proc();
 
-        var_2 thread _id_3C55();
+        var_2 thread gatefxoff();
     }
 }
 
-_id_7447()
+resetgates()
 {
     var_0 = 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_3C5A )
+    foreach ( var_2 in level.mp_prison_killstreak.gates )
         var_2 notify( "stop_bounce" );
 
     wait 0.5;
 
-    foreach ( var_2 in level._id_5FC4._id_3C5A )
+    foreach ( var_2 in level.mp_prison_killstreak.gates )
     {
-        var_2 thread _id_3C56();
-        var_2._id_3C32 moveto( var_2._id_3C32._id_65A1, var_0, 0.1, 0.2 );
-        var_2._id_202E moveto( var_2._id_202E._id_65A1, var_0, 0.1, 0.2 );
+        var_2 thread gatefxon();
+        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.1, 0.2 );
+        var_2.collision _meth_82AE( var_2.collision.originalpos, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
 
-    foreach ( var_2 in level._id_5FC4._id_3C5A )
-        var_2 thread _id_3C55();
+    foreach ( var_2 in level.mp_prison_killstreak.gates )
+        var_2 thread gatefxoff();
 }
 
-_id_1753( var_0 )
+bouncegate( var_0 )
 {
     self endon( "stop_bounce" );
-    thread _id_3C56();
+    thread gatefxon();
     wait(var_0);
-    thread _id_3C55();
-    var_1 = anglestoforward( vectortoangles( self._id_28BA.origin - self._id_3C32._id_65A1 ) );
+    thread gatefxoff();
+    var_1 = anglestoforward( vectortoangles( self.dest.origin - self.gate.originalpos ) );
     var_2 = var_1 * 2;
 
     for (;;)
     {
         var_3 = randomfloatrange( 0.1, 0.5 );
         var_4 = randomfloatrange( 0.1, 0.5 );
-        thread _id_3C56();
-        self._id_3C32 moveto( self._id_3C32.origin + var_2, var_3, 0.05, 0.05 );
+        thread gatefxon();
+        self.gate _meth_82AE( self.gate.origin + var_2, var_3, 0.05, 0.05 );
         wait(var_3);
-        self._id_3C32 moveto( self._id_28BA.origin, var_4, 0.05, 0.05 );
+        self.gate _meth_82AE( self.dest.origin, var_4, 0.05, 0.05 );
         wait(var_4);
-        thread _id_3C55();
+        thread gatefxoff();
         wait(randomfloat( 2 ));
     }
 }
 
-_id_3C56()
+gatefxon()
 {
     self endon( "stop_sparks" );
 
     for (;;)
     {
-        foreach ( var_1 in self._id_88B5 )
-            playfxontag( common_scripts\utility::getfx( level._id_3C48 ), var_1, "tag_origin" );
+        foreach ( var_1 in self.sparks )
+            playfxontag( common_scripts\utility::getfx( level.gate_spark_fx ), var_1, "tag_origin" );
 
         wait(randomfloatrange( 0.5, 1.0 ));
     }
 }
 
-_id_3C55()
+gatefxoff()
 {
     self notify( "stop_sparks" );
 
-    foreach ( var_1 in self._id_88B5 )
-        stopfxontag( common_scripts\utility::getfx( level._id_3C48 ), var_1, "tag_origin" );
+    foreach ( var_1 in self.sparks )
+        stopfxontag( common_scripts\utility::getfx( level.gate_spark_fx ), var_1, "tag_origin" );
 }
 
-_id_3C30()
+gasvisualsstart()
 {
     _func_222( 20 );
 }
 
-_id_3C2E()
+gasvisualsend()
 {
 
 }
 
-_id_6DC1()
+playloopingsoundonorigin()
 {
     wait 3.5;
-    thread maps\mp\_utility::playsoundinspace( level._id_3C14, self.origin );
+    thread maps\mp\_utility::playsoundinspace( level.gas_alarm_sfx_alias, self.origin );
 }
 
 onplayerconnect()
@@ -505,33 +573,33 @@ onplayerconnect()
     for (;;)
     {
         level waittill( "connected", var_0 );
-        var_0._id_628C = 0;
+        var_0.numareas = 0;
     }
 }
 
-_id_6C99( var_0 )
+playerenterarea( var_0 )
 {
-    self._id_628C++;
+    self.numareas++;
 
-    if ( self._id_628C == 1 )
-        _id_3C1B();
+    if ( self.numareas == 1 )
+        gaseffect();
 }
 
-_id_6CDB( var_0 )
+playerleavearea( var_0 )
 {
-    self._id_628C--;
+    self.numareas--;
 
-    if ( self._id_628C != 0 )
+    if ( self.numareas != 0 )
         return;
 
     self.poison = 0;
     self notify( "leftTrigger" );
 
-    if ( isdefined( self._id_3C29 ) )
-        self._id_3C29 _id_35F4( 0.1, 0 );
+    if ( isdefined( self.gasoverlay ) )
+        self.gasoverlay fadeoutblackout( 0.1, 0 );
 }
 
-_id_3C1D()
+gasfieldson()
 {
     var_0 = getentarray( "gas_trigger", "targetname" );
 
@@ -539,7 +607,7 @@ _id_3C1D()
         var_2 common_scripts\utility::trigger_on();
 }
 
-_id_3C1C()
+gasfieldsoff()
 {
     var_0 = getentarray( "gas_trigger", "targetname" );
 
@@ -547,20 +615,20 @@ _id_3C1C()
         var_2 common_scripts\utility::trigger_off();
 }
 
-_id_88AB( var_0 )
+soundwatcher( var_0 )
 {
     common_scripts\utility::waittill_any( "death", "leftTrigger" );
-    self stoploopsound();
+    self _meth_80AB();
 }
 
-_id_3C1B()
+gaseffect()
 {
     self endon( "disconnect" );
     self endon( "game_ended" );
     self endon( "death" );
     self endon( "leftTrigger" );
     self.poison = 0;
-    thread _id_88AB( self );
+    thread soundwatcher( self );
 
     for (;;)
     {
@@ -574,23 +642,23 @@ _id_3C1B()
             case 3:
                 self shellshock( "mp_prison_gas", 4 );
                 self _meth_81AF( 3, self.origin );
-                _id_2CBF( 25 );
+                dogasdamage( 25 );
                 break;
             case 4:
                 self shellshock( "mp_prison_gas", 5 );
                 self _meth_81AF( 15, self.origin );
-                thread _id_148C();
-                _id_2CBF( 45 );
+                thread blackout();
+                dogasdamage( 45 );
                 break;
             case 6:
                 self shellshock( "mp_prison_gas", 5 );
                 self _meth_81AF( 75, self.origin );
-                _id_2CBF( 80 );
+                dogasdamage( 80 );
                 break;
             case 8:
                 self shellshock( "mp_prison_gas", 5 );
                 self _meth_81AF( 127, self.origin );
-                _id_2CBF( 175 );
+                dogasdamage( 175 );
                 break;
         }
 
@@ -600,24 +668,24 @@ _id_3C1B()
     wait 5;
 }
 
-_id_148C()
+blackout()
 {
     self endon( "disconnect" );
     self endon( "game_ended" );
     self endon( "death" );
     self endon( "leftTrigger" );
 
-    if ( !isdefined( self._id_3C29 ) )
+    if ( !isdefined( self.gasoverlay ) )
     {
-        self._id_3C29 = newclienthudelem( self );
-        self._id_3C29.x = 0;
-        self._id_3C29.y = 0;
-        self._id_3C29 setshader( "black", 640, 480 );
-        self._id_3C29.alignx = "left";
-        self._id_3C29.aligny = "top";
-        self._id_3C29.horzalign = "fullscreen";
-        self._id_3C29.vertalign = "fullscreen";
-        self._id_3C29.alpha = 0;
+        self.gasoverlay = newclienthudelem( self );
+        self.gasoverlay.x = 0;
+        self.gasoverlay.y = 0;
+        self.gasoverlay _meth_80CC( "black", 640, 480 );
+        self.gasoverlay.alignx = "left";
+        self.gasoverlay.aligny = "top";
+        self.gasoverlay.horzalign = "fullscreen";
+        self.gasoverlay.vertalign = "fullscreen";
+        self.gasoverlay.alpha = 0;
     }
 
     var_0 = 1;
@@ -650,36 +718,36 @@ _id_148C()
                 break;
 
             var_13 = var_9 / 2;
-            self._id_3C29 _id_35EF( var_13, var_11 );
-            self._id_3C29 _id_35F4( var_13, var_12 );
+            self.gasoverlay fadeinblackout( var_13, var_11 );
+            self.gasoverlay fadeoutblackout( var_13, var_12 );
             wait(var_6 * 0.5);
         }
 
         if ( var_6 == 1 )
             break;
 
-        if ( self._id_3C29.alpha != 0 )
-            self._id_3C29 _id_35F4( 1, 0 );
+        if ( self.gasoverlay.alpha != 0 )
+            self.gasoverlay fadeoutblackout( 1, 0 );
 
         wait 0.05;
     }
 
-    self._id_3C29 _id_35EF( 2, 0 );
+    self.gasoverlay fadeinblackout( 2, 0 );
 }
 
-_id_2CBF( var_0 )
+dogasdamage( var_0 )
 {
-    self thread [[ level.callbackplayerdamage ]]( self, self, var_0, 0, "MOD_SUICIDE", "mp_prison_gas", self.origin, ( 0.0, 0.0, 0.0 ) - self.origin, "none", 0 );
+    self thread [[ level.callbackplayerdamage ]]( self, self, var_0, 0, "MOD_SUICIDE", "mp_prison_gas", self.origin, ( 0, 0, 0 ) - self.origin, "none", 0 );
 }
 
-_id_35EF( var_0, var_1 )
+fadeinblackout( var_0, var_1 )
 {
     self fadeovertime( var_0 );
     self.alpha = var_1;
     wait(var_0);
 }
 
-_id_35F4( var_0, var_1 )
+fadeoutblackout( var_0, var_1 )
 {
     self fadeovertime( var_0 );
     self.alpha = var_1;

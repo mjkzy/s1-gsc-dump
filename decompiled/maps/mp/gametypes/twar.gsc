@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -212,14 +212,14 @@ ontimelimit()
 spawn_flag_projector( var_0 )
 {
     var_1 = spawn( "script_model", var_0 );
-    var_1 setmodel( "flag_holo_base_ground" );
+    var_1 _meth_80B1( "flag_holo_base_ground" );
     return var_1;
 }
 
 create_active_zone()
 {
-    var_0[0] = spawn_flag_projector( ( 0.0, 0.0, 0.0 ) );
-    var_1 = spawn( "trigger_radius", ( 0.0, 0.0, 0.0 ), 0, level.zone_radius, level.zone_height );
+    var_0[0] = spawn_flag_projector( ( 0, 0, 0 ) );
+    var_1 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, level.zone_radius, level.zone_height );
     var_1.radius = level.zone_radius;
     var_2 = getdvarfloat( "scr_twar_capture_time", 20.0 );
     var_3 = maps\mp\gametypes\_gameobjects::createuseobject( "neutral", var_1, var_0 );
@@ -342,7 +342,7 @@ update_flag_outline()
         var_1 = getdvarint( "scr_twar_flag_outline_color_enemy", -1 );
         var_2 = getdvarint( "scr_twar_flag_outline_color_neutral", -1 );
         var_3 = getdvarint( "scr_twar_flag_outline_depth", 0 );
-        self hudoutlinedisableforclients( level.players );
+        self _meth_8423( level.players );
         var_4 = level.twar_use_obj maps\mp\gametypes\_gameobjects::getclaimteam();
         var_5 = [];
         var_6 = [];
@@ -364,13 +364,13 @@ update_flag_outline()
         }
 
         if ( var_5.size && var_0 >= 0 )
-            self hudoutlineenableforclients( var_5, var_0, var_3 );
+            self _meth_8422( var_5, var_0, var_3 );
 
         if ( var_6.size && var_1 >= 0 )
-            self hudoutlineenableforclients( var_6, var_1, var_3 );
+            self _meth_8422( var_6, var_1, var_3 );
 
         if ( var_7.size && var_2 >= 0 )
-            self hudoutlineenableforclients( var_7, var_2, var_3 );
+            self _meth_8422( var_7, var_2, var_3 );
     }
 }
 
@@ -570,7 +570,7 @@ set_contested_zone( var_0 )
 {
     var_0.owner = "none";
     level.twar_use_obj.zone = var_0;
-    level.twar_use_obj maps\mp\gametypes\_gameobjects::move_use_object( var_0.origin, ( 0.0, 0.0, 100.0 ) );
+    level.twar_use_obj maps\mp\gametypes\_gameobjects::move_use_object( var_0.origin, ( 0, 0, 100 ) );
 
     foreach ( var_2 in level.twar_zones )
     {
@@ -848,8 +848,8 @@ init_overtime_momentum( var_0 )
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     level.start_spawn_prefix = "mp_twar_spawn_";
     level.start_spawn_allies = "mp_twar_spawn_allies_start";
     level.start_spawn_axis = "mp_twar_spawn_axis_start";
@@ -965,7 +965,7 @@ get_start_spawn_centers( var_0 )
 
     foreach ( var_5 in var_2 )
     {
-        var_8 = ( 0.0, 0.0, 0.0 );
+        var_8 = ( 0, 0, 0 );
 
         foreach ( var_10 in var_3[var_5] )
             var_8 += var_10.origin;
@@ -1097,24 +1097,24 @@ twarzoneangleoverride( var_0 )
     {
         case "mp_detroit":
             if ( var_3 == 5 )
-                var_2 = ( 0.0, 215.0, 0.0 );
+                var_2 = ( 0, 215, 0 );
 
             if ( var_3 == 1 )
-                var_2 = ( 0.0, 245.0, 0.0 );
+                var_2 = ( 0, 245, 0 );
 
             break;
         case "mp_instinct":
             if ( var_3 == 1 )
-                var_2 = ( 0.0, 190.0, 0.0 );
+                var_2 = ( 0, 190, 0 );
 
             if ( var_3 == 2 )
-                var_2 = ( 0.0, 285.0, 0.0 );
+                var_2 = ( 0, 285, 0 );
 
             if ( var_3 == 4 )
-                var_2 = ( 0.0, 340.0, 0.0 );
+                var_2 = ( 0, 340, 0 );
 
             if ( var_3 == 5 )
-                var_2 = ( 0.0, 350.0, 0.0 );
+                var_2 = ( 0, 350, 0 );
 
             break;
         default:
@@ -1209,14 +1209,14 @@ color_from_index( var_0 )
 twar_zone( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawnstruct();
-    var_5 = var_1 + ( 0.0, 0.0, 32.0 );
-    var_6 = var_1 + ( 0.0, 0.0, -64.0 );
+    var_5 = var_1 + ( 0, 0, 32 );
+    var_6 = var_1 + ( 0, 0, -64 );
     var_7 = bullettrace( var_5, var_6, 0, undefined );
     var_4.origin = var_7["position"];
     var_4.owner = "none";
     var_4.index = var_0;
     var_4.angles = var_2;
-    var_4._id_2683 = var_3;
+    var_4.debug_color = var_3;
     var_4.projector = spawn_flag_projector( var_4.origin );
     return var_4;
 }
@@ -1551,7 +1551,7 @@ updateminions()
     while ( !level.gameended )
     {
         if ( isdefined( var_4 ) )
-            var_4 settimer( var_2 );
+            var_4 _meth_80CF( var_2 );
 
         wait(var_2);
         maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
@@ -1578,7 +1578,7 @@ updateminions()
 
                 if ( isdefined( var_23 ) )
                 {
-                    var_23 takeallweapons();
+                    var_23 _meth_8310();
                     var_24 = getdvarint( "scr_twar_minionweapon", 0 );
                     var_25 = "";
 
@@ -1596,8 +1596,8 @@ updateminions()
                             break;
                     }
 
-                    var_23 giveweapon( var_25 );
-                    var_23 switchtoweaponimmediate( var_25 );
+                    var_23 _meth_830E( var_25 );
+                    var_23 _meth_8316( var_25 );
                     var_23 maps\mp\_utility::giveperk( "specialty_minion", 0 );
                     var_23.movespeedscaler = getdvarfloat( "scr_twar_minionmovespeedscale", 0.85 );
                     var_23.damage_scale = getdvarfloat( "scr_twar_miniondamagescale", 0.5 );
@@ -1606,9 +1606,9 @@ updateminions()
                     var_23 thread minion_ai();
                     update_minion_hud_outlines();
                     var_23 detachall();
-                    var_23 setmodel( "kva_hazmat_body_infected_mp" );
+                    var_23 _meth_80B1( "kva_hazmat_body_infected_mp" );
                     var_23 attach( "kva_hazmat_head_infected" );
-                    var_23 setclothtype( "cloth" );
+                    var_23 _meth_83DB( "cloth" );
                     var_26 = getdvarfloat( "scr_twar_minionhealthscale", 0.75 );
                     var_23 maps\mp\agents\_agent_common::set_agent_health( int( var_23.health * var_26 ) );
                     var_15[var_17]++;
@@ -1620,7 +1620,7 @@ updateminions()
                 foreach ( var_10, var_31 in var_29 )
                 {
                     var_31 hud_set_visible();
-                    var_31 setvalue( var_15[var_10] );
+                    var_31 _meth_80D7( var_15[var_10] );
                     var_31 maps\mp\_utility::delaythread( 3.0, ::hud_set_invisible );
                 }
             }
@@ -1638,7 +1638,7 @@ updateminions()
 
 is_minion()
 {
-    return self hasperk( "specialty_minion", 1 );
+    return self _meth_82A7( "specialty_minion", 1 );
 }
 
 hud_set_visible()
@@ -1656,7 +1656,7 @@ minion_max_hud()
     var_0 = maps\mp\gametypes\_hud_util::createserverfontstring( "hudbig", 1.0 );
     var_0 maps\mp\gametypes\_hud_util::setpoint( "BOTTOM", undefined, 0, -20 );
     var_0.label = &"MP_DOMAI_MINIONS_SPAWNED_MAX";
-    var_0.color = ( 1.0, 0.0, 0.0 );
+    var_0.color = ( 1, 0, 0 );
     var_0.archived = 1;
     var_0.showinkillcam = 1;
     var_0.alpha = 0.0;
@@ -1680,7 +1680,7 @@ minion_spawn_timer_hud()
     var_0 = maps\mp\gametypes\_hud_util::createservertimer( "hudbig", 1.0 );
     var_0 maps\mp\gametypes\_hud_util::setpoint( "BOTTOM", undefined, 0, -60 );
     var_0.label = &"MP_DOMAI_MINIONS_SPAWN_TIMER";
-    var_0.color = ( 1.0, 1.0, 1.0 );
+    var_0.color = ( 1, 1, 1 );
     var_0.archived = 1;
     var_0.showinkillcam = 1;
     return var_0;
@@ -1708,15 +1708,15 @@ update_minion_hud_outlines()
         if ( var_7 is_minion() )
         {
             if ( level.players.size > 0 )
-                var_7 hudoutlinedisableforclients( level.players );
+                var_7 _meth_8423( level.players );
 
             if ( var_2 )
             {
                 if ( var_0.size > 0 )
-                    var_7 hudoutlineenableforclients( var_0, common_scripts\utility::ter_op( var_7.team == "allies", 2, 3 ), 1 );
+                    var_7 _meth_8422( var_0, common_scripts\utility::ter_op( var_7.team == "allies", 2, 3 ), 1 );
 
                 if ( var_1.size > 0 )
-                    var_7 hudoutlineenableforclients( var_1, common_scripts\utility::ter_op( var_7.team == "axis", 2, 3 ), 1 );
+                    var_7 _meth_8422( var_1, common_scripts\utility::ter_op( var_7.team == "axis", 2, 3 ), 1 );
             }
         }
     }
@@ -1731,7 +1731,7 @@ minion_ai()
         if ( isdefined( level.twar_use_obj ) )
         {
             var_0 = level.twar_use_obj.trigger.origin;
-            self botsetscriptgoal( var_0, level.zone_radius * 0.9, "objective" );
+            self _meth_8354( var_0, level.zone_radius * 0.9, "objective" );
         }
 
         wait 0.1;

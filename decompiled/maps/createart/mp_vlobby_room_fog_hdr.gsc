@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -17,7 +17,7 @@ main()
     var_0.sungreen = 0;
     var_0.sunblue = 0;
     var_0.hdrsuncolorintensity = 1;
-    var_0.sundir = ( 1.0, 0.0, 0.0 );
+    var_0.sundir = ( 1, 0, 0 );
     var_0.sunbeginfadeangle = 0;
     var_0.sunendfadeangle = 180;
     var_0.normalfogscale = 1;
@@ -25,23 +25,23 @@ main()
     var_0.skyfogminangle = 0;
     var_0.skyfogmaxangle = 90;
     var_0.atmosfogenabled = 0;
-    var_0._id_0DC4 = ( 0.523438, 0.523438, 0.523438 );
-    var_0._id_0DB7 = ( 0.523438, 0.523438, 0.523438 );
-    var_0._id_0DB9 = 0.5;
-    var_0._id_0DB8 = 0.164063;
-    var_0._id_0DB5 = 1;
-    var_0._id_0DBD = 13.5;
-    var_0._id_0DB6 = 1257.86;
-    var_0._id_0DC2 = 886.364;
-    var_0._id_0DB3 = 1.5;
-    var_0._id_0DBF = 17622;
-    var_0._id_0DBE = 1;
-    var_0._id_0DC1 = -33;
-    var_0._id_0DC0 = 200;
-    var_0._id_0DC3 = ( 0.412467, -0.716527, 0.562548 );
-    var_0._id_0DBB = 0;
-    var_0._id_0DBA = 0;
-    var_0._id_0DBC = 168;
+    var_0.atmosfogsunfogcolor = ( 0.523438, 0.523438, 0.523438 );
+    var_0.atmosfoghazecolor = ( 0.523438, 0.523438, 0.523438 );
+    var_0.atmosfoghazestrength = 0.5;
+    var_0.atmosfoghazespread = 0.164063;
+    var_0.atmosfogextinctionstrength = 1;
+    var_0.atmosfoginscatterstrength = 13.5;
+    var_0.atmosfoghalfplanedistance = 1257.86;
+    var_0.atmosfogstartdistance = 886.364;
+    var_0.atmosfogdistancescale = 1.5;
+    var_0.atmosfogskydistance = 17622;
+    var_0.atmosfogskyangularfalloffenabled = 1;
+    var_0.atmosfogskyfalloffstartangle = -33;
+    var_0.atmosfogskyfalloffanglerange = 200;
+    var_0.atmosfogsundirection = ( 0.412467, -0.716527, 0.562548 );
+    var_0.atmosfogheightfogenabled = 0;
+    var_0.atmosfogheightfogbaseheight = 0;
+    var_0.atmosfogheightfoghalfplanedistance = 168;
     var_0 = maps\mp\_art::create_vision_set_fog( "mp_virtual_lobby_fr" );
     var_0.startdist = 91.14;
     var_0.halfwaydist = 2489.07;
@@ -56,7 +56,7 @@ main()
     var_0.sungreen = 0;
     var_0.sunblue = 0;
     var_0.hdrsuncolorintensity = 1;
-    var_0.sundir = ( 1.0, 0.0, 0.0 );
+    var_0.sundir = ( 1, 0, 0 );
     var_0.sunbeginfadeangle = 0;
     var_0.sunendfadeangle = 180;
     var_0.normalfogscale = 1;
@@ -77,7 +77,7 @@ main()
     var_0.sungreen = 0;
     var_0.sunblue = 0;
     var_0.hdrsuncolorintensity = 1;
-    var_0.sundir = ( 1.0, 0.0, 0.0 );
+    var_0.sundir = ( 1, 0, 0 );
     var_0.sunbeginfadeangle = 0;
     var_0.sunendfadeangle = 180;
     var_0.normalfogscale = 1;
@@ -98,7 +98,7 @@ main()
     var_0.sungreen = 0;
     var_0.sunblue = 0;
     var_0.hdrsuncolorintensity = 1;
-    var_0.sundir = ( 1.0, 0.0, 0.0 );
+    var_0.sundir = ( 1, 0, 0 );
     var_0.sunbeginfadeangle = 0;
     var_0.sunendfadeangle = 180;
     var_0.normalfogscale = 1;
@@ -119,7 +119,7 @@ main()
     var_0.sungreen = 0;
     var_0.sunblue = 0;
     var_0.hdrsuncolorintensity = 1;
-    var_0.sundir = ( 1.0, 0.0, 0.0 );
+    var_0.sundir = ( 1, 0, 0 );
     var_0.sunbeginfadeangle = 0;
     var_0.sunendfadeangle = 180;
     var_0.normalfogscale = 1;
@@ -127,26 +127,26 @@ main()
     var_0.skyfogminangle = 0;
     var_0.skyfogmaxangle = 0;
     var_0.atmosfogenabled = 0;
-    var_0._id_0DC4 = ( 0.369932, 0.477196, 0.546875 );
-    var_0._id_0DB7 = ( 0.5, 0.5, 0.5 );
-    var_0._id_0DB9 = 0.5;
-    var_0._id_0DB8 = 0.25;
-    var_0._id_0DB5 = 1;
-    var_0._id_0DBD = 19;
-    var_0._id_0DB6 = 20926.6;
-    var_0._id_0DC2 = -0.62921;
-    var_0._id_0DB3 = 1.0045;
-    var_0._id_0DBF = 100000;
-    var_0._id_0DBE = 0;
-    var_0._id_0DC1 = 0;
-    var_0._id_0DC0 = 90;
-    var_0._id_0DC3 = ( 0.0, 0.0, 1.0 );
-    var_0._id_0DBB = 0;
-    var_0._id_0DBA = 0;
-    var_0._id_0DBC = 1000;
+    var_0.atmosfogsunfogcolor = ( 0.369932, 0.477196, 0.546875 );
+    var_0.atmosfoghazecolor = ( 0.5, 0.5, 0.5 );
+    var_0.atmosfoghazestrength = 0.5;
+    var_0.atmosfoghazespread = 0.25;
+    var_0.atmosfogextinctionstrength = 1;
+    var_0.atmosfoginscatterstrength = 19;
+    var_0.atmosfoghalfplanedistance = 20926.6;
+    var_0.atmosfogstartdistance = -0.62921;
+    var_0.atmosfogdistancescale = 1.0045;
+    var_0.atmosfogskydistance = 100000;
+    var_0.atmosfogskyangularfalloffenabled = 0;
+    var_0.atmosfogskyfalloffstartangle = 0;
+    var_0.atmosfogskyfalloffanglerange = 90;
+    var_0.atmosfogsundirection = ( 0, 0, 1 );
+    var_0.atmosfogheightfogenabled = 0;
+    var_0.atmosfogheightfogbaseheight = 0;
+    var_0.atmosfogheightfoghalfplanedistance = 1000;
 }
 
-_id_8311()
+setupfog()
 {
 
 }

@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -14,7 +14,7 @@ main()
     var_0.sunfogenabled = 0;
 }
 
-_id_8311()
+setupfog()
 {
 
 }

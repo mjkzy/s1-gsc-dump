@@ -1,42 +1,42 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    level._id_1B8F = spawnstruct();
-    level._id_1B8F.health = 999999;
-    level._id_1B8F.maxhealth = 200;
-    level._id_1B8F._id_3BA9 = loadfx( "vfx/explosion/tracking_drone_explosion" );
-    level._id_1B8F._id_8898 = "veh_tracking_drone_explode";
-    level._id_1B8F._id_730D = &"KILLSTREAKS_DRONE_CAREPACKAGE_RELEASE";
-    level._id_1B99 = [];
+    level.carepackagedrone = spawnstruct();
+    level.carepackagedrone.health = 999999;
+    level.carepackagedrone.maxhealth = 200;
+    level.carepackagedrone.fxid_explode = loadfx( "vfx/explosion/tracking_drone_explosion" );
+    level.carepackagedrone.sound_explode = "veh_tracking_drone_explode";
+    level.carepackagedrone.releasestring = &"KILLSTREAKS_DRONE_CAREPACKAGE_RELEASE";
+    level.carepackagedrones = [];
 }
 
-_id_82FC( var_0, var_1 )
+setupcarepackagedrone( var_0, var_1 )
 {
     var_0 common_scripts\utility::make_entity_sentient_mp( self.team );
     var_0 _meth_83F3( 1 );
-    var_0 _id_0847();
-    var_0 thread _id_73A3();
-    var_0.health = level._id_1B8F.health;
-    var_0.maxhealth = level._id_1B8F.maxhealth;
+    var_0 addtocarepackagedronelist();
+    var_0 thread removefromcarepackagedronelistondeath();
+    var_0.health = level.carepackagedrone.health;
+    var_0.maxhealth = level.carepackagedrone.maxhealth;
     var_0.damagetaken = 0;
-    var_0._id_03E3 = 15;
-    var_0._id_3978 = 15;
+    var_0.speed = 15;
+    var_0.followspeed = 15;
     var_0.owner = self;
     var_0.team = self.team;
-    var_0 _meth_8283( var_0._id_03E3, 10, 10 );
+    var_0 _meth_8283( var_0.speed, 10, 10 );
     var_0 _meth_8292( 120, 90 );
     var_0 _meth_825A( 64 );
     var_0 _meth_8253( 4, 5, 5 );
-    var_0._id_3B88 = "tag_body";
+    var_0.fx_tag0 = "tag_body";
 
     if ( var_1 )
     {
-        var_0._id_9BC7 = spawn( "script_model", var_0.origin + ( 0.0, 0.0, 1.0 ) );
-        var_0._id_9BC7 setmodel( "tag_origin" );
-        var_0._id_9BC7.owner = self;
-        var_0._id_9BC7 maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", level._id_1B8F._id_730D, self );
+        var_0.usableent = spawn( "script_model", var_0.origin + ( 0, 0, 1 ) );
+        var_0.usableent _meth_80B1( "tag_origin" );
+        var_0.usableent.owner = self;
+        var_0.usableent maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", level.carepackagedrone.releasestring, self );
     }
 
     var_2 = 45;
@@ -44,22 +44,22 @@ _id_82FC( var_0, var_1 )
     var_0 _meth_8294( var_2, var_3 );
     var_4 = 10000;
     var_5 = 150;
-    var_0._id_0E54 = missile_createattractorent( var_0, var_4, var_5 );
+    var_0.attractor = missile_createattractorent( var_0, var_4, var_5 );
     var_0.stunned = 0;
-    var_0 thread _id_1B95();
-    var_0 thread _id_1B96();
-    var_0 thread _id_1B97();
+    var_0 thread carepackagedrone_watchdeath();
+    var_0 thread carepackagedrone_watchownerloss();
+    var_0 thread carepackagedrone_watchroundend();
 }
 
-_id_1B91()
+carepackagedrone_deleteonactivate()
 {
     self endon( "death" );
     var_0 = self.owner;
-    self._id_9BC7 waittill( "trigger" );
-    _id_1B90();
+    self.usableent waittill( "trigger" );
+    carepackagedrone_delete();
 }
 
-_id_1B95()
+carepackagedrone_watchdeath()
 {
     level endon( "game_ended" );
     self endon( "gone" );
@@ -68,20 +68,20 @@ _id_1B95()
     if ( !isdefined( self ) )
         return;
 
-    _id_1B93();
+    carepackagedrone_leave();
 }
 
-_id_1B96()
+carepackagedrone_watchownerloss()
 {
     level endon( "game_ended" );
     self endon( "death" );
     self endon( "leaving" );
     self.owner common_scripts\utility::waittill_any( "disconnect", "joined_team", "joined_spectators" );
     self notify( "owner_gone" );
-    thread _id_1B93();
+    thread carepackagedrone_leave();
 }
 
-_id_1B97()
+carepackagedrone_watchroundend()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -89,60 +89,60 @@ _id_1B97()
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
     level common_scripts\utility::waittill_any( "round_end_finished", "game_ended" );
-    thread _id_1B93();
+    thread carepackagedrone_leave();
 }
 
-_id_1B93()
+carepackagedrone_leave()
 {
     self endon( "death" );
     self notify( "leaving" );
-    _id_1B92();
+    carepackagedrone_explode();
 }
 
-_id_1B92()
+carepackagedrone_explode()
 {
-    if ( isdefined( level._id_1B8F._id_3BA9 ) )
-        playfx( level._id_1B8F._id_3BA9, self.origin );
+    if ( isdefined( level.carepackagedrone.fxid_explode ) )
+        playfx( level.carepackagedrone.fxid_explode, self.origin );
 
-    if ( isdefined( level._id_1B8F._id_8898 ) )
-        self playsound( level._id_1B8F._id_8898 );
+    if ( isdefined( level.carepackagedrone.sound_explode ) )
+        self playsound( level.carepackagedrone.sound_explode );
 
-    if ( isdefined( self._id_9BC7 ) )
+    if ( isdefined( self.usableent ) )
     {
-        self._id_9BC7 maps\mp\_utility::makegloballyunusablebytype();
-        self._id_9BC7 delete();
+        self.usableent maps\mp\_utility::makegloballyunusablebytype();
+        self.usableent delete();
     }
 
     self notify( "explode" );
-    _id_1B94();
+    carepackagedrone_remove();
 }
 
-_id_1B90()
+carepackagedrone_delete()
 {
-    if ( isdefined( self._id_9BC7 ) )
+    if ( isdefined( self.usableent ) )
     {
-        self._id_9BC7 maps\mp\_utility::makegloballyunusablebytype();
-        self._id_9BC7 delete();
+        self.usableent maps\mp\_utility::makegloballyunusablebytype();
+        self.usableent delete();
     }
 
     self notify( "explode" );
-    _id_1B94();
+    carepackagedrone_remove();
 }
 
-_id_1B94()
+carepackagedrone_remove()
 {
     maps\mp\_utility::decrementfauxvehiclecount();
     self delete();
 }
 
-_id_0847()
+addtocarepackagedronelist()
 {
-    level._id_1B99[level._id_1B99.size] = self;
+    level.carepackagedrones[level.carepackagedrones.size] = self;
 }
 
-_id_73A3()
+removefromcarepackagedronelistondeath()
 {
-    var_0 = self getentitynumber();
+    var_0 = self _meth_81B1();
     self waittill( "death" );
-    level._id_1B99 = common_scripts\utility::array_remove( level._id_1B99, self );
+    level.carepackagedrones = common_scripts\utility::array_remove( level.carepackagedrones, self );
 }

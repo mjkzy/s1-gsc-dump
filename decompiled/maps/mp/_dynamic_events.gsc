@@ -1,7 +1,7 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_2FE6( var_0, var_1, var_2 )
+dynamicevent( var_0, var_1, var_2 )
 {
     if ( getdvarint( "r_reflectionProbeGenerate" ) )
         return;
@@ -32,18 +32,18 @@ _id_2FE6( var_0, var_1, var_2 )
         return;
     }
 
-    if ( !isdefined( level._id_2FE6 ) )
-        level._id_2FE6 = [];
+    if ( !isdefined( level.dynamicevent ) )
+        level.dynamicevent = [];
 
     if ( level.gametype == "sd" || level.gametype == "sr" )
-        level thread _id_4603( var_0, var_2 );
+        level thread handle_sd_dynamicevent( var_0, var_2 );
     else
-        level thread _id_4569( var_0, var_1, 0 );
+        level thread handle_dynamicevent( var_0, var_1, 0 );
 
-    level thread _id_5820();
+    level thread logdynamiceventstarttime();
 }
 
-_id_5820()
+logdynamiceventstarttime()
 {
     level endon( "game_ended" );
     level waittill( "dynamic_event_starting" );
@@ -51,7 +51,7 @@ _id_5820()
     setmatchdata( "dynamicEventTimeDeciSecondsFromMatchStart", maps\mp\_utility::clamptoshort( var_0 ) );
 }
 
-_id_4603( var_0, var_1 )
+handle_sd_dynamicevent( var_0, var_1 )
 {
     game["dynamicEvent_switchedsides"] = game["switchedsides"];
 
@@ -103,17 +103,17 @@ check_do_event( var_0, var_1, var_2 )
     }
 }
 
-_id_4569( var_0, var_1, var_2 )
+handle_dynamicevent( var_0, var_1, var_2 )
 {
-    var_3 = _id_3F76();
-    var_4 = _id_3F75();
+    var_3 = getdynamiceventtimelimit();
+    var_4 = getdynamiceventstarttime();
     var_5 = undefined;
     var_6 = maps\mp\_utility::getscorelimit();
 
     if ( !isdefined( var_2 ) )
         var_2 = 1;
 
-    while ( var_3 > var_4 && ( !var_2 || !isdefined( var_5 ) || var_5 <= var_6 * level._id_2FE6["start_percent"] ) )
+    while ( var_3 > var_4 && ( !var_2 || !isdefined( var_5 ) || var_5 <= var_6 * level.dynamicevent["start_percent"] ) )
     {
         if ( isdefined( level.ishorde ) && level.ishorde )
         {
@@ -124,7 +124,7 @@ _id_4569( var_0, var_1, var_2 )
         wait 1;
         maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
         var_3 -= 1;
-        var_5 = _id_3F74();
+        var_5 = getdynamiceventhighestscore();
     }
 
     level notify( "dynamic_event_starting" );
@@ -133,7 +133,7 @@ _id_4569( var_0, var_1, var_2 )
         level [[ var_0 ]]();
 }
 
-_id_7F59( var_0 )
+setdynamiceventstartpercent( var_0 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
@@ -143,20 +143,20 @@ _id_7F59( var_0 )
 
     }
 
-    level._id_2FE6["start_percent"] = var_0;
+    level.dynamicevent["start_percent"] = var_0;
 }
 
-_id_3F75()
+getdynamiceventstarttime()
 {
-    if ( !isdefined( level._id_2FE6["start_percent"] ) )
-        _id_7F59();
+    if ( !isdefined( level.dynamicevent["start_percent"] ) )
+        setdynamiceventstartpercent();
 
-    var_0 = _id_3F76();
-    var_1 = var_0 - var_0 * level._id_2FE6["start_percent"];
+    var_0 = getdynamiceventtimelimit();
+    var_1 = var_0 - var_0 * level.dynamicevent["start_percent"];
     return var_1;
 }
 
-_id_3F74()
+getdynamiceventhighestscore()
 {
     var_0 = undefined;
 
@@ -182,7 +182,7 @@ _id_3F74()
     return var_0;
 }
 
-_id_3F76()
+getdynamiceventtimelimit()
 {
     var_0 = maps\mp\_utility::gettimelimit();
 

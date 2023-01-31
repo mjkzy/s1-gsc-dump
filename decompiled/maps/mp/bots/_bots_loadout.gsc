@@ -1,23 +1,23 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    _id_4D65();
-    _id_4CC2();
-    _id_4CBA();
-    _id_4CBD();
-    _id_4CBC();
-    _id_4CBB();
-    level._id_16A3 = [];
-    level._id_1695 = 1;
+    init_template_table();
+    init_class_table();
+    init_bot_attachmenttable();
+    init_bot_weap_statstable();
+    init_bot_reticletable();
+    init_bot_camotable();
+    level.bot_min_rank_for_item = [];
+    level.bot_loadouts_initialized = 1;
 }
 
-_id_4CC2()
+init_class_table()
 {
     var_0 = "mp/botClassTable.csv";
-    level._id_1741 = [];
-    var_1 = _id_168C();
+    level.botloadoutsets = [];
+    var_1 = bot_loadout_fields();
     var_2 = 0;
 
     for (;;)
@@ -44,20 +44,20 @@ _id_4CC2()
         {
             foreach ( var_14 in var_10 )
             {
-                var_15 = _id_1691( var_12, var_14, 1 );
+                var_15 = bot_loadout_set( var_12, var_14, 1 );
                 var_16 = spawnstruct();
-                var_16._id_57E4 = var_5;
+                var_16.loadoutvalues = var_5;
                 var_15.loadouts[var_15.loadouts.size] = var_16;
             }
         }
     }
 }
 
-_id_4D65()
+init_template_table()
 {
     var_0 = "mp/botTemplateTable.csv";
-    level._id_1742 = [];
-    var_1 = _id_168C();
+    level.botloadouttemplates = [];
+    var_1 = bot_loadout_fields();
     var_2 = 0;
 
     for (;;)
@@ -69,19 +69,19 @@ _id_4D65()
             break;
 
         var_4 = "template_" + var_3;
-        level._id_1742[var_4] = [];
+        level.botloadouttemplates[var_4] = [];
 
         foreach ( var_6 in var_1 )
         {
             var_7 = tablelookup( var_0, 0, var_6, var_2 );
 
             if ( isdefined( var_7 ) && var_7 != "" )
-                level._id_1742[var_4][var_6] = var_7;
+                level.botloadouttemplates[var_4][var_6] = var_7;
         }
     }
 }
 
-_id_15E8()
+bot_custom_classes_allowed()
 {
     if ( isusingmatchrulesdata() && !getmatchrulesdata( "commonOption", "allowCustomClasses" ) )
         return 0;
@@ -89,12 +89,12 @@ _id_15E8()
     return 1;
 }
 
-_id_168E( var_0, var_1, var_2 )
+bot_loadout_item_allowed( var_0, var_1, var_2 )
 {
     if ( !isusingmatchrulesdata() )
         return 1;
 
-    if ( !_id_15E8() )
+    if ( !bot_custom_classes_allowed() )
         return 0;
 
     if ( var_1 == "specialty_null" )
@@ -143,7 +143,7 @@ _id_168E( var_0, var_1, var_2 )
     return 1;
 }
 
-_id_1682( var_0 )
+bot_loadout_choose_fallback_primary( var_0 )
 {
     var_1 = "none";
     var_2 = [ "veteran", "hardened", "regular", "recruit" ];
@@ -151,25 +151,25 @@ _id_1682( var_0 )
 
     foreach ( var_4 in var_2 )
     {
-        var_1 = _id_1689( "weap_statstable", var_0, "loadoutPrimary", self._id_67DC, var_4 );
+        var_1 = bot_loadout_choose_from_statstable( "weap_statstable", var_0, "loadoutPrimary", self.personality, var_4 );
 
         if ( var_1 != "none" )
             return var_1;
     }
 
-    if ( isdefined( level._id_16B1 ) )
+    if ( isdefined( level.bot_personality_list ) )
     {
-        var_6 = common_scripts\utility::array_randomize( level._id_16B1 );
+        var_6 = common_scripts\utility::array_randomize( level.bot_personality_list );
 
         foreach ( var_8 in var_6 )
         {
             foreach ( var_4 in var_2 )
             {
-                var_1 = _id_1689( "weap_statstable", var_0, "loadoutPrimary", var_8, var_4 );
+                var_1 = bot_loadout_choose_from_statstable( "weap_statstable", var_0, "loadoutPrimary", var_8, var_4 );
 
                 if ( var_1 != "none" )
                 {
-                    self._id_1609 = var_8;
+                    self.bot_fallback_personality = var_8;
                     return var_1;
                 }
             }
@@ -183,9 +183,9 @@ _id_1682( var_0 )
 
         for ( var_14 = "none"; var_13 < 6; var_13++ )
         {
-            if ( getmatchrulesdata( "defaultClasses", _id_1693(), var_13, "class", "inUse" ) )
+            if ( getmatchrulesdata( "defaultClasses", bot_loadout_team(), var_13, "class", "inUse" ) )
             {
-                var_1 = _id_1685( var_13, "loadoutPrimary" );
+                var_1 = bot_loadout_choose_from_custom_default_class( var_13, "loadoutPrimary" );
 
                 if ( var_1 != "none" )
                 {
@@ -199,24 +199,24 @@ _id_1682( var_0 )
 
         if ( var_14 != "none" )
         {
-            self._id_1609 = "weapon";
+            self.bot_fallback_personality = "weapon";
             return var_14;
         }
     }
 
-    self._id_1609 = "weapon";
-    return level._id_160A;
+    self.bot_fallback_personality = "weapon";
+    return level.bot_fallback_weapon;
 }
 
-_id_1693()
+bot_loadout_team()
 {
     if ( !isdefined( level.teambased ) || !level.teambased )
         return "allies";
 
-    return maps\mp\bots\_bots::_id_163A();
+    return maps\mp\bots\_bots::bot_get_player_team();
 }
 
-_id_15EA()
+bot_default_class_random()
 {
     var_0 = [ "class1", "class2", "class3", "class4", "class5" ];
 
@@ -224,7 +224,7 @@ _id_15EA()
     {
         for ( var_1 = 0; var_1 < var_0.size; var_1++ )
         {
-            if ( getmatchrulesdata( "defaultClasses", _id_1693(), var_1, "class", "inUse" ) )
+            if ( getmatchrulesdata( "defaultClasses", bot_loadout_team(), var_1, "class", "inUse" ) )
                 var_0[var_1] = var_1;
         }
     }
@@ -232,37 +232,37 @@ _id_15EA()
     var_2 = common_scripts\utility::random( var_0 );
     var_3 = [];
 
-    foreach ( var_5 in level._id_168C )
+    foreach ( var_5 in level.bot_loadout_fields )
     {
         if ( isstring( var_2 ) )
         {
-            var_3[var_5] = _id_1686( var_2, var_5 );
+            var_3[var_5] = bot_loadout_choose_from_default_class( var_2, var_5 );
             continue;
         }
 
-        var_3[var_5] = _id_1685( var_2, var_5 );
+        var_3[var_5] = bot_loadout_choose_from_custom_default_class( var_2, var_5 );
     }
 
     return var_3;
 }
 
-_id_16B5( var_0 )
+bot_pick_personality_from_weapon( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        var_1 = level._id_1738[var_0];
+        var_1 = level.bot_weap_personality[var_0];
 
         if ( isdefined( var_1 ) )
         {
             var_2 = strtok( var_1, "| " );
 
             if ( var_2.size > 0 )
-                maps\mp\bots\_bots_util::_id_16ED( common_scripts\utility::random( var_2 ) );
+                maps\mp\bots\_bots_util::bot_set_personality( common_scripts\utility::random( var_2 ) );
         }
     }
 }
 
-_id_1692( var_0, var_1 )
+bot_loadout_set_has_wildcard( var_0, var_1 )
 {
     if ( var_0["loadoutWildcard1"] == var_1 )
         return 1;
@@ -276,16 +276,16 @@ _id_1692( var_0, var_1 )
     return 0;
 }
 
-_id_168C()
+bot_loadout_fields()
 {
     var_0 = "mp/botClassTable.csv";
 
-    if ( !isdefined( level._id_168C ) )
+    if ( !isdefined( level.bot_loadout_fields ) )
     {
-        level._id_168C = [];
-        level._id_168C[0] = "loadoutWildcard1";
-        level._id_168C[1] = "loadoutWildcard2";
-        level._id_168C[2] = "loadoutWildcard3";
+        level.bot_loadout_fields = [];
+        level.bot_loadout_fields[0] = "loadoutWildcard1";
+        level.bot_loadout_fields[1] = "loadoutWildcard2";
+        level.bot_loadout_fields[2] = "loadoutWildcard3";
         var_1 = 2;
 
         for (;;)
@@ -296,51 +296,51 @@ _id_168C()
                 break;
 
             if ( !issubstr( var_2, "Wildcard" ) )
-                level._id_168C[level._id_168C.size] = var_2;
+                level.bot_loadout_fields[level.bot_loadout_fields.size] = var_2;
 
             var_1++;
         }
     }
 
-    return level._id_168C;
+    return level.bot_loadout_fields;
 }
 
-_id_1691( var_0, var_1, var_2 )
+bot_loadout_set( var_0, var_1, var_2 )
 {
     var_3 = var_1 + "_" + var_0;
 
-    if ( !isdefined( level._id_1741 ) )
-        level._id_1741 = [];
+    if ( !isdefined( level.botloadoutsets ) )
+        level.botloadoutsets = [];
 
-    if ( !isdefined( level._id_1741[var_3] ) && var_2 )
+    if ( !isdefined( level.botloadoutsets[var_3] ) && var_2 )
     {
-        level._id_1741[var_3] = spawnstruct();
-        level._id_1741[var_3].loadouts = [];
+        level.botloadoutsets[var_3] = spawnstruct();
+        level.botloadoutsets[var_3].loadouts = [];
     }
 
-    if ( isdefined( level._id_1741[var_3] ) )
-        return level._id_1741[var_3];
+    if ( isdefined( level.botloadoutsets[var_3] ) )
+        return level.botloadoutsets[var_3];
 }
 
-_id_1690( var_0, var_1 )
+bot_loadout_pick( var_0, var_1 )
 {
-    var_2 = _id_1691( var_0, var_1, 0 );
+    var_2 = bot_loadout_set( var_0, var_1, 0 );
 
     if ( isdefined( var_2 ) && isdefined( var_2.loadouts ) && var_2.loadouts.size > 0 )
     {
         var_3 = randomint( var_2.loadouts.size );
-        return var_2.loadouts[var_3]._id_57E4;
+        return var_2.loadouts[var_3].loadoutvalues;
     }
 }
 
-_id_1728( var_0, var_1, var_2, var_3 )
+bot_validate_weapon( var_0, var_1, var_2, var_3 )
 {
     var_4 = [];
     var_5 = 0;
 
-    if ( isdefined( level._id_1737[var_0] ) && level._id_1737[var_0] != "none" )
+    if ( isdefined( level.bot_weap_built_in_attachments[var_0] ) && level.bot_weap_built_in_attachments[var_0] != "none" )
     {
-        var_4[var_4.size] = level._id_1737[var_0];
+        var_4[var_4.size] = level.bot_weap_built_in_attachments[var_0];
         var_5++;
     }
 
@@ -362,7 +362,7 @@ _id_1728( var_0, var_1, var_2, var_3 )
         if ( var_8 != var_4[var_7] )
             return 0;
 
-        if ( !_id_168E( "attachment", var_4[var_7], undefined ) )
+        if ( !bot_loadout_item_allowed( "attachment", var_4[var_7], undefined ) )
             return 0;
 
         if ( !common_scripts\utility::array_contains( var_6, var_4[var_7] ) )
@@ -378,15 +378,15 @@ _id_1728( var_0, var_1, var_2, var_3 )
 
                 if ( var_9 == 1 )
                 {
-                    if ( !isdefined( level._id_0A9F[var_4[var_7]] ) )
+                    if ( !isdefined( level.allowable_double_attachments[var_4[var_7]] ) )
                         return 0;
                 }
                 else if ( var_9 > 1 )
                     return 0;
             }
-            else if ( isdefined( level._id_1658[var_4[var_7]] ) )
+            else if ( isdefined( level.bot_invalid_attachment_combos[var_4[var_7]] ) )
             {
-                if ( isdefined( level._id_1658[var_4[var_7]][var_4[var_10]] ) )
+                if ( isdefined( level.bot_invalid_attachment_combos[var_4[var_7]][var_4[var_10]] ) )
                     return 0;
             }
         }
@@ -395,7 +395,7 @@ _id_1728( var_0, var_1, var_2, var_3 )
     return 1;
 }
 
-_id_1727( var_0, var_1, var_2 )
+bot_validate_reticle( var_0, var_1, var_2 )
 {
     if ( !maps\mp\gametypes\_class::isvalidreticle( var_2, 1 ) )
         return 0;
@@ -407,24 +407,24 @@ _id_1727( var_0, var_1, var_2 )
         var_6 = var_0 + var_5;
         var_7 = var_1[var_6];
 
-        if ( isdefined( var_7 ) && isdefined( level._id_15AE[var_7] ) )
+        if ( isdefined( var_7 ) && isdefined( level.bot_attachment_reticle[var_7] ) )
             return 1;
     }
 
     return 0;
 }
 
-_id_4CBD()
+init_bot_weap_statstable()
 {
     var_0 = "mp/statstable.csv";
     var_1 = 4;
     var_2 = 57;
     var_3 = 58;
     var_4 = 40;
-    level._id_1739 = [];
-    level._id_1738 = [];
-    level._id_1737 = [];
-    level._id_1738["iw5_combatknife"] = "cqb";
+    level.bot_weap_statstable = [];
+    level.bot_weap_personality = [];
+    level.bot_weap_built_in_attachments = [];
+    level.bot_weap_personality["iw5_combatknife"] = "cqb";
     var_5 = 1;
 
     for (;;)
@@ -439,7 +439,7 @@ _id_4CBD()
         var_9 = tablelookupbyrow( var_0, var_5, var_2 );
 
         if ( var_7 != "" && var_9 != "" )
-            level._id_1738[var_7] = var_9;
+            level.bot_weap_personality[var_7] = var_9;
 
         if ( var_8 != "" && var_7 != "" && var_9 != "" )
         {
@@ -458,38 +458,38 @@ _id_4CBD()
                 continue;
             }
 
-            if ( !isdefined( level._id_1739[var_11] ) )
-                level._id_1739[var_11] = [];
+            if ( !isdefined( level.bot_weap_statstable[var_11] ) )
+                level.bot_weap_statstable[var_11] = [];
 
             var_17 = strtok( var_9, "| " );
             var_18 = strtok( var_8, "| " );
 
             foreach ( var_20 in var_17 )
             {
-                if ( !isdefined( level._id_1739[var_11][var_20] ) )
-                    level._id_1739[var_11][var_20] = [];
+                if ( !isdefined( level.bot_weap_statstable[var_11][var_20] ) )
+                    level.bot_weap_statstable[var_11][var_20] = [];
 
                 foreach ( var_22 in var_18 )
                 {
-                    if ( !isdefined( level._id_1739[var_11][var_20][var_22] ) )
-                        level._id_1739[var_11][var_20][var_22] = [];
+                    if ( !isdefined( level.bot_weap_statstable[var_11][var_20][var_22] ) )
+                        level.bot_weap_statstable[var_11][var_20][var_22] = [];
 
-                    var_23 = level._id_1739[var_11][var_20][var_22].size;
-                    level._id_1739[var_11][var_20][var_22][var_23] = var_7;
+                    var_23 = level.bot_weap_statstable[var_11][var_20][var_22].size;
+                    level.bot_weap_statstable[var_11][var_20][var_22][var_23] = var_7;
                 }
             }
 
             var_26 = tablelookupbyrow( var_0, var_5, var_4 );
 
             if ( var_26 != "" )
-                level._id_1737[var_7] = var_26;
+                level.bot_weap_built_in_attachments[var_7] = var_26;
         }
 
         var_5++;
     }
 }
 
-_id_1689( var_0, var_1, var_2, var_3, var_4 )
+bot_loadout_choose_from_statstable( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "none";
 
@@ -498,7 +498,7 @@ _id_1689( var_0, var_1, var_2, var_3, var_4 )
 
     var_6 = var_2;
 
-    if ( var_6 == "loadoutSecondary" && _id_1692( var_1, "specialty_wildcard_dualprimaries" ) )
+    if ( var_6 == "loadoutSecondary" && bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_dualprimaries" ) )
     {
         var_6 = "loadoutPrimary";
 
@@ -508,23 +508,23 @@ _id_1689( var_0, var_1, var_2, var_3, var_4 )
             var_3 = "run_and_gun";
     }
 
-    if ( !isdefined( level._id_1739 ) )
+    if ( !isdefined( level.bot_weap_statstable ) )
         return var_5;
 
-    if ( !isdefined( level._id_1739[var_6] ) )
+    if ( !isdefined( level.bot_weap_statstable[var_6] ) )
         return var_5;
 
-    if ( !isdefined( level._id_1739[var_6][var_3] ) )
+    if ( !isdefined( level.bot_weap_statstable[var_6][var_3] ) )
         return var_5;
 
-    if ( !isdefined( level._id_1739[var_6][var_3][var_4] ) )
+    if ( !isdefined( level.bot_weap_statstable[var_6][var_3][var_4] ) )
         return var_5;
 
-    var_5 = _id_1688( level._id_1739[var_6][var_3][var_4], var_0, var_1, var_2 );
+    var_5 = bot_loadout_choose_from_set( level.bot_weap_statstable[var_6][var_3][var_4], var_0, var_1, var_2 );
     return var_5;
 }
 
-_id_1726( var_0, var_1, var_2 )
+bot_validate_perk( var_0, var_1, var_2 )
 {
     var_3 = "Perk_Slot1";
 
@@ -533,7 +533,7 @@ _id_1726( var_0, var_1, var_2 )
     else if ( var_1 == "loadoutPerk5" || var_1 == "loadoutPerk6" )
         var_3 = "Perk_Slot3";
 
-    if ( !_id_168E( "perk", var_0, var_3 ) )
+    if ( !bot_loadout_item_allowed( "perk", var_0, var_3 ) )
         return 0;
 
     var_4 = int( getsubstr( var_1, 11 ) );
@@ -548,7 +548,7 @@ _id_1726( var_0, var_1, var_2 )
 
     if ( var_5 != "" )
     {
-        if ( !_id_1692( var_2, var_5 ) )
+        if ( !bot_loadout_set_has_wildcard( var_2, var_5 ) )
             return 0;
     }
 
@@ -566,7 +566,7 @@ _id_1726( var_0, var_1, var_2 )
     return 1;
 }
 
-_id_1686( var_0, var_1 )
+bot_loadout_choose_from_default_class( var_0, var_1 )
 {
     var_2 = int( getsubstr( var_0, 5, 6 ) ) - 1;
 
@@ -639,12 +639,12 @@ _id_1686( var_0, var_1 )
             return maps\mp\gametypes\_class::table_getkillstreakmodule( level.classtablename, var_2, 3, 1 );
         case "loadoutStreakModule4c":
             return maps\mp\gametypes\_class::table_getkillstreakmodule( level.classtablename, var_2, 3, 2 );
-        case "loadoutPerk3":
-        case "loadoutPerk4":
-        case "loadoutPerk5":
-        case "loadoutPerk6":
-        case "loadoutPerk1":
         case "loadoutPerk2":
+        case "loadoutPerk1":
+        case "loadoutPerk6":
+        case "loadoutPerk5":
+        case "loadoutPerk4":
+        case "loadoutPerk3":
             var_3 = int( getsubstr( var_1, 11 ) ) - 1;
             var_4 = maps\mp\gametypes\_class::table_getperk( level.classtablename, var_2, var_3 );
 
@@ -663,9 +663,9 @@ _id_1686( var_0, var_1 )
     return var_0;
 }
 
-_id_1685( var_0, var_1 )
+bot_loadout_choose_from_custom_default_class( var_0, var_1 )
 {
-    var_2 = _id_1693();
+    var_2 = bot_loadout_team();
 
     switch ( var_1 )
     {
@@ -760,14 +760,14 @@ _id_1685( var_0, var_1 )
     return "none";
 }
 
-_id_4CBA()
+init_bot_attachmenttable()
 {
     var_0 = "mp/attachmenttable.csv";
     var_1 = 3;
     var_2 = 15;
     var_3 = 7;
-    level._id_15AF = [];
-    level._id_15AE = [];
+    level.bot_attachmenttable = [];
+    level.bot_attachment_reticle = [];
     var_4 = 1;
 
     for (;;)
@@ -784,19 +784,19 @@ _id_4CBA()
             var_7 = tablelookupbyrow( var_0, var_4, var_3 );
 
             if ( var_7 == "TRUE" )
-                level._id_15AE[var_5] = 1;
+                level.bot_attachment_reticle[var_5] = 1;
 
             var_8 = strtok( var_6, "| " );
 
             foreach ( var_10 in var_8 )
             {
-                if ( !isdefined( level._id_15AF[var_10] ) )
-                    level._id_15AF[var_10] = [];
+                if ( !isdefined( level.bot_attachmenttable[var_10] ) )
+                    level.bot_attachmenttable[var_10] = [];
 
-                if ( !common_scripts\utility::array_contains( level._id_15AF[var_10], var_5 ) )
+                if ( !common_scripts\utility::array_contains( level.bot_attachmenttable[var_10], var_5 ) )
                 {
-                    var_11 = level._id_15AF[var_10].size;
-                    level._id_15AF[var_10][var_11] = var_5;
+                    var_11 = level.bot_attachmenttable[var_10].size;
+                    level.bot_attachmenttable[var_10][var_11] = var_5;
                 }
             }
         }
@@ -804,8 +804,8 @@ _id_4CBA()
         var_4++;
     }
 
-    level._id_1658 = [];
-    level._id_0A9F = [];
+    level.bot_invalid_attachment_combos = [];
+    level.allowable_double_attachments = [];
     var_13 = "mp/attachmentcombos.csv";
     var_14 = 0;
 
@@ -830,37 +830,37 @@ _id_4CBA()
             if ( var_16 == var_15 )
             {
                 if ( tablelookupbyrow( var_13, var_4, var_14 ) != "no" )
-                    level._id_0A9F[var_16] = 1;
+                    level.allowable_double_attachments[var_16] = 1;
 
                 continue;
             }
 
             if ( tablelookupbyrow( var_13, var_4, var_14 ) == "no" )
-                level._id_1658[var_15][var_16] = 1;
+                level.bot_invalid_attachment_combos[var_15][var_16] = 1;
         }
     }
 }
 
-_id_1683( var_0, var_1, var_2, var_3, var_4 )
+bot_loadout_choose_from_attachmenttable( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "none";
 
-    if ( !isdefined( level._id_15AF ) )
+    if ( !isdefined( level.bot_attachmenttable ) )
         return var_5;
 
-    if ( !isdefined( level._id_15AF[var_4] ) )
+    if ( !isdefined( level.bot_attachmenttable[var_4] ) )
         return var_5;
 
-    var_5 = _id_1688( level._id_15AF[var_4], var_0, var_1, var_2 );
+    var_5 = bot_loadout_choose_from_set( level.bot_attachmenttable[var_4], var_0, var_1, var_2 );
     return var_5;
 }
 
-_id_4CBC()
+init_bot_reticletable()
 {
     var_0 = "mp/reticletable.csv";
     var_1 = 1;
     var_2 = 8;
-    level._id_16D1 = [];
+    level.bot_reticletable = [];
     var_3 = 0;
 
     for (;;)
@@ -873,35 +873,35 @@ _id_4CBC()
         var_5 = tablelookupbyrow( var_0, var_3, var_2 );
 
         if ( isdefined( var_5 ) && int( var_5 ) )
-            level._id_16D1[level._id_16D1.size] = var_4;
+            level.bot_reticletable[level.bot_reticletable.size] = var_4;
 
         var_3++;
     }
 }
 
-_id_1687( var_0, var_1, var_2, var_3, var_4 )
+bot_loadout_choose_from_reticletable( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "none";
 
-    if ( !isdefined( level._id_16D1 ) )
+    if ( !isdefined( level.bot_reticletable ) )
         return var_5;
 
     var_6 = randomint( 100 ) > 50;
 
     if ( var_6 )
-        var_5 = _id_1688( level._id_16D1, var_0, var_1, var_2 );
+        var_5 = bot_loadout_choose_from_set( level.bot_reticletable, var_0, var_1, var_2 );
 
     return var_5;
 }
 
-_id_4CBB()
+init_bot_camotable()
 {
     var_0 = "mp/camotable.csv";
     var_1 = 1;
     var_2 = 8;
     var_3 = 9;
     var_4 = 11;
-    level._id_15C2 = [];
+    level.bot_camotable = [];
     var_5 = 0;
 
     for (;;)
@@ -919,63 +919,63 @@ _id_4CBB()
             var_9 = tablelookupbyrow( var_0, var_5, var_3 );
 
             if ( isdefined( var_9 ) && int( var_9 ) )
-                level._id_15C2[level._id_15C2.size] = var_6;
+                level.bot_camotable[level.bot_camotable.size] = var_6;
         }
 
         var_5++;
     }
 }
 
-_id_1684( var_0, var_1, var_2, var_3, var_4 )
+bot_loadout_choose_from_camotable( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "none";
 
-    if ( !isdefined( level._id_15C2 ) )
+    if ( !isdefined( level.bot_camotable ) )
         return var_5;
 
     var_6 = randomint( 100 ) > 50;
 
     if ( var_6 )
-        var_5 = _id_1688( level._id_15C2, var_0, var_1, var_2 );
+        var_5 = bot_loadout_choose_from_set( level.bot_camotable, var_0, var_1, var_2 );
 
     return var_5;
 }
 
-_id_168F( var_0, var_1, var_2 )
+bot_loadout_item_valid_for_rank( var_0, var_1, var_2 )
 {
     if ( !isplayer( self ) )
         return 1;
 
-    if ( !isdefined( level._id_16A3[var_1] ) )
+    if ( !isdefined( level.bot_min_rank_for_item[var_1] ) )
     {
         var_3 = "mp/unlockTable.csv";
         var_4 = tablelookuprownum( var_3, 0, var_1 );
-        level._id_16A3[var_1] = int( tablelookupbyrow( var_3, var_4, 2 ) );
+        level.bot_min_rank_for_item[var_1] = int( tablelookupbyrow( var_3, var_4, 2 ) );
     }
 
     if ( var_0 == "classtable_any" && var_2 == "recruit" )
         return 1;
 
-    if ( !isdefined( self._id_7133 ) )
+    if ( !isdefined( self.rank_for_items ) )
     {
         if ( var_2 == "recruit" )
-            self._id_7133 = 3;
+            self.rank_for_items = 3;
         else
         {
-            self._id_7133 = self.pers["rank"];
+            self.rank_for_items = self.pers["rank"];
 
-            if ( !isdefined( self._id_7133 ) )
-                self._id_7133 = level._id_16D3[var_2][0];
+            if ( !isdefined( self.rank_for_items ) )
+                self.rank_for_items = level.bot_rnd_rank[var_2][0];
         }
     }
 
-    if ( level._id_16A3[var_1] <= self._id_7133 )
+    if ( level.bot_min_rank_for_item[var_1] <= self.rank_for_items )
         return 1;
 
     return 0;
 }
 
-_id_1694( var_0, var_1, var_2, var_3 )
+bot_loadout_valid_choice( var_0, var_1, var_2, var_3 )
 {
     var_4 = 1;
 
@@ -987,39 +987,39 @@ _id_1694( var_0, var_1, var_2, var_3 )
             if ( maps\mp\_utility::islootweapon( var_5 ) )
                 var_5 = maps\mp\gametypes\_class::getbasefromlootversion( var_5 );
 
-            var_4 = _id_168E( "weapon", var_5, undefined );
+            var_4 = bot_loadout_item_allowed( "weapon", var_5, undefined );
             var_4 = var_4 && maps\mp\gametypes\_class::isvalidprimary( var_3 );
             break;
         case "loadoutEquipment":
-            var_4 = _id_168E( "perk", var_3, "Lethal" );
-            var_4 = var_4 && maps\mp\gametypes\_class::isvalidequipment( var_3, _id_1692( var_1, "specialty_wildcard_dualtacticals" ) );
-            var_4 = var_4 && _id_168F( var_0, var_3, self _meth_836B() );
+            var_4 = bot_loadout_item_allowed( "perk", var_3, "Lethal" );
+            var_4 = var_4 && maps\mp\gametypes\_class::isvalidequipment( var_3, bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_dualtacticals" ) );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
             break;
         case "loadoutEquipment2":
             var_4 = var_3 == "specialty_null" || var_3 == var_1["loadoutEquipment"];
             break;
         case "loadoutOffhand":
-            var_4 = _id_168E( "perk", var_3, "Tactical" );
-            var_4 = var_4 && maps\mp\gametypes\_class::isvalidoffhand( var_3, _id_1692( var_1, "specialty_wildcard_duallethals" ) );
-            var_4 = var_4 && _id_168F( var_0, var_3, self _meth_836B() );
+            var_4 = bot_loadout_item_allowed( "perk", var_3, "Tactical" );
+            var_4 = var_4 && maps\mp\gametypes\_class::isvalidoffhand( var_3, bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_duallethals" ) );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
             break;
         case "loadoutOffhand2":
             var_4 = var_3 == "specialty_null";
             break;
         case "loadoutPrimaryAttachment":
-            var_4 = _id_1728( var_1["loadoutPrimary"], var_3 );
+            var_4 = bot_validate_weapon( var_1["loadoutPrimary"], var_3 );
             break;
         case "loadoutPrimaryAttachment2":
-            var_4 = _id_1728( var_1["loadoutPrimary"], var_1["loadoutPrimaryAttachment"], var_3 );
+            var_4 = bot_validate_weapon( var_1["loadoutPrimary"], var_1["loadoutPrimaryAttachment"], var_3 );
             break;
         case "loadoutPrimaryAttachment3":
-            var_4 = _id_1728( var_1["loadoutPrimary"], var_1["loadoutPrimaryAttachment"], var_1["loadoutPrimaryAttachment2"], var_3 );
+            var_4 = bot_validate_weapon( var_1["loadoutPrimary"], var_1["loadoutPrimaryAttachment"], var_1["loadoutPrimaryAttachment2"], var_3 );
             break;
         case "loadoutPrimaryReticle":
-            var_4 = _id_1727( "loadoutPrimary", var_1, var_3 );
+            var_4 = bot_validate_reticle( "loadoutPrimary", var_1, var_3 );
             break;
         case "loadoutPrimaryCamo":
-            var_4 = !isdefined( self._id_173F ) || var_3 == self._id_173F;
+            var_4 = !isdefined( self.botloadoutfavoritecamoprimary ) || var_3 == self.botloadoutfavoritecamoprimary;
             var_4 = var_4 && maps\mp\gametypes\_class::isvalidcamo( var_3 );
             break;
         case "loadoutSecondary":
@@ -1029,58 +1029,58 @@ _id_1694( var_0, var_1, var_2, var_3 )
             if ( maps\mp\_utility::islootweapon( var_5 ) )
                 var_5 = maps\mp\gametypes\_class::getbasefromlootversion( var_5 );
 
-            var_4 = var_4 && _id_168E( "weapon", var_5, undefined );
-            var_4 = var_4 && maps\mp\gametypes\_class::isvalidsecondary( var_3, _id_1692( var_1, "specialty_wildcard_dualprimaries" ) );
+            var_4 = var_4 && bot_loadout_item_allowed( "weapon", var_5, undefined );
+            var_4 = var_4 && maps\mp\gametypes\_class::isvalidsecondary( var_3, bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_dualprimaries" ) );
             break;
         case "loadoutSecondaryAttachment":
-            var_4 = _id_1728( var_1["loadoutSecondary"], var_3, "none" );
+            var_4 = bot_validate_weapon( var_1["loadoutSecondary"], var_3, "none" );
             break;
         case "loadoutSecondaryAttachment2":
-            var_4 = _id_1728( var_1["loadoutSecondary"], var_1["loadoutSecondaryAttachment"], var_3 );
+            var_4 = bot_validate_weapon( var_1["loadoutSecondary"], var_1["loadoutSecondaryAttachment"], var_3 );
             break;
         case "loadoutSecondaryAttachment3":
-            var_4 = _id_1728( var_1["loadoutSecondary"], var_1["loadoutSecondaryAttachment"], var_1["loadoutSecondaryAttachment2"], var_3 );
+            var_4 = bot_validate_weapon( var_1["loadoutSecondary"], var_1["loadoutSecondaryAttachment"], var_1["loadoutSecondaryAttachment2"], var_3 );
             break;
         case "loadoutSecondaryReticle":
-            var_4 = _id_1727( "loadoutSecondary", var_1, var_3 );
+            var_4 = bot_validate_reticle( "loadoutSecondary", var_1, var_3 );
             break;
         case "loadoutSecondaryCamo":
-            var_4 = !isdefined( self._id_1740 ) || var_3 == self._id_1740;
+            var_4 = !isdefined( self.botloadoutfavoritecamosecondary ) || var_3 == self.botloadoutfavoritecamosecondary;
             var_4 = var_4 && maps\mp\gametypes\_class::isvalidcamo( var_3 );
             break;
-        case "loadoutStreak1":
-        case "loadoutStreak2":
-        case "loadoutStreak3":
         case "loadoutStreak4":
-            var_4 = maps\mp\bots\_bots_ks::_id_1675( var_3, "bots", undefined );
-            var_4 = var_4 && _id_168E( "killstreak", var_3, undefined );
+        case "loadoutStreak3":
+        case "loadoutStreak2":
+        case "loadoutStreak1":
+            var_4 = maps\mp\bots\_bots_ks::bot_killstreak_is_valid_internal( var_3, "bots", undefined );
+            var_4 = var_4 && bot_loadout_item_allowed( "killstreak", var_3, undefined );
             break;
-        case "loadoutStreakModule1a":
-        case "loadoutStreakModule1b":
-        case "loadoutStreakModule1c":
-        case "loadoutStreakModule2a":
-        case "loadoutStreakModule2b":
-        case "loadoutStreakModule2c":
-        case "loadoutStreakModule3a":
-        case "loadoutStreakModule3b":
-        case "loadoutStreakModule3c":
-        case "loadoutStreakModule4a":
-        case "loadoutStreakModule4b":
         case "loadoutStreakModule4c":
-            var_4 = _id_168E( "module", var_3, undefined );
+        case "loadoutStreakModule4b":
+        case "loadoutStreakModule4a":
+        case "loadoutStreakModule3c":
+        case "loadoutStreakModule3b":
+        case "loadoutStreakModule3a":
+        case "loadoutStreakModule2c":
+        case "loadoutStreakModule2b":
+        case "loadoutStreakModule2a":
+        case "loadoutStreakModule1c":
+        case "loadoutStreakModule1b":
+        case "loadoutStreakModule1a":
+            var_4 = bot_loadout_item_allowed( "module", var_3, undefined );
             break;
-        case "loadoutPerk3":
-        case "loadoutPerk4":
-        case "loadoutPerk5":
-        case "loadoutPerk6":
-        case "loadoutPerk1":
         case "loadoutPerk2":
-            var_4 = var_3 == "specialty_null" || _id_1726( var_3, var_2, var_1 );
-            var_4 = var_4 && _id_168F( var_0, var_3, self _meth_836B() );
+        case "loadoutPerk1":
+        case "loadoutPerk6":
+        case "loadoutPerk5":
+        case "loadoutPerk4":
+        case "loadoutPerk3":
+            var_4 = var_3 == "specialty_null" || bot_validate_perk( var_3, var_2, var_1 );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
             break;
-        case "loadoutWildcard1":
-        case "loadoutWildcard2":
         case "loadoutWildcard3":
+        case "loadoutWildcard2":
+        case "loadoutWildcard1":
             var_4 = 1;
             break;
         default:
@@ -1090,7 +1090,7 @@ _id_1694( var_0, var_1, var_2, var_3 )
     return var_4;
 }
 
-_id_1688( var_0, var_1, var_2, var_3, var_4 )
+bot_loadout_choose_from_set( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "none";
     var_6 = undefined;
@@ -1103,10 +1103,10 @@ _id_1688( var_0, var_1, var_2, var_3, var_4 )
 
     if ( var_1 == "classtable_any" )
     {
-        if ( !isdefined( self._id_2778 ) )
-            self._id_2778 = common_scripts\utility::random( [ "class1", "class2", "class3", "class4", "class5" ] );
+        if ( !isdefined( self.default_class_chosen ) )
+            self.default_class_chosen = common_scripts\utility::random( [ "class1", "class2", "class3", "class4", "class5" ] );
 
-        var_0 = [ self._id_2778 ];
+        var_0 = [ self.default_class_chosen ];
     }
 
     foreach ( var_9 in var_0 )
@@ -1116,27 +1116,27 @@ _id_1688( var_0, var_1, var_2, var_3, var_4 )
         if ( getsubstr( var_9, 0, 9 ) == "template_" )
         {
             var_10 = var_9;
-            var_11 = level._id_1742[var_9][var_3];
-            var_9 = _id_1688( strtok( var_11, "| " ), var_1, var_2, var_3, 1 );
+            var_11 = level.botloadouttemplates[var_9][var_3];
+            var_9 = bot_loadout_choose_from_set( strtok( var_11, "| " ), var_1, var_2, var_3, 1 );
 
-            if ( isdefined( var_10 ) && isdefined( self._id_1D63[var_10] ) )
+            if ( isdefined( var_10 ) && isdefined( self.chosentemplates[var_10] ) )
                 return var_9;
         }
 
         if ( var_9 == "attachmenttable" )
-            return _id_1683( var_1, var_2, var_3, self._id_67DC, self._id_2A5E );
+            return bot_loadout_choose_from_attachmenttable( var_1, var_2, var_3, self.personality, self.difficulty );
 
         if ( var_9 == "weap_statstable" )
-            return _id_1689( var_1, var_2, var_3, self._id_67DC, self._id_2A5E );
+            return bot_loadout_choose_from_statstable( var_1, var_2, var_3, self.personality, self.difficulty );
 
         if ( var_9 == "reticletable" )
-            return _id_1687( var_1, var_2, var_3, self._id_67DC, self._id_2A5E );
+            return bot_loadout_choose_from_reticletable( var_1, var_2, var_3, self.personality, self.difficulty );
 
         if ( var_9 == "camotable" )
-            return _id_1684( var_1, var_2, var_3, self._id_67DC, self._id_2A5E );
+            return bot_loadout_choose_from_camotable( var_1, var_2, var_3, self.personality, self.difficulty );
 
         if ( getsubstr( var_9, 0, 5 ) == "class" && int( getsubstr( var_9, 5, 6 ) ) > 0 )
-            var_9 = _id_1686( var_9, var_3 );
+            var_9 = bot_loadout_choose_from_default_class( var_9, var_3 );
 
         if ( issubstr( var_3, "loadoutStreakModule" ) )
         {
@@ -1166,7 +1166,7 @@ _id_1688( var_0, var_1, var_2, var_3, var_4 )
             }
         }
 
-        if ( _id_1694( var_1, var_2, var_3, var_9 ) )
+        if ( bot_loadout_valid_choice( var_1, var_2, var_3, var_9 ) )
         {
             var_7 += 1.0;
 
@@ -1179,46 +1179,46 @@ _id_1688( var_0, var_1, var_2, var_3, var_4 )
     }
 
     if ( isdefined( var_6 ) )
-        self._id_1D63[var_6] = 1;
+        self.chosentemplates[var_6] = 1;
 
     return var_5;
 }
 
-_id_168A( var_0 )
+bot_loadout_choose_values( var_0 )
 {
-    self._id_1D63 = [];
+    self.chosentemplates = [];
 
     foreach ( var_6, var_2 in var_0 )
     {
         var_3 = strtok( var_2, "| " );
-        var_4 = _id_1688( var_3, var_2, var_0, var_6 );
+        var_4 = bot_loadout_choose_from_set( var_3, var_2, var_0, var_6 );
         var_0[var_6] = var_4;
     }
 
     if ( self _meth_836B() != "recruit" )
     {
-        var_7 = _id_1639( var_0 );
+        var_7 = bot_get_pick_13_count( var_0 );
 
         for ( var_8 = 0; var_7 < level.customclasspickcount && var_8 < 5; var_8++ )
         {
             if ( var_7 == level.customclasspickcount - 1 )
-                var_0 = _id_160D( var_0 );
+                var_0 = bot_find_1_loadout_option( var_0 );
             else if ( var_7 <= level.customclasspickcount - 2 )
-                var_0 = _id_160E( var_0 );
+                var_0 = bot_find_2_loadout_options( var_0 );
 
-            var_7 = _id_1639( var_0 );
+            var_7 = bot_get_pick_13_count( var_0 );
         }
     }
 
     return var_0;
 }
 
-_id_160D( var_0 )
+bot_find_1_loadout_option( var_0 )
 {
     if ( var_0["loadoutSecondaryAttachment2"] == "none" )
-        var_0["loadoutSecondaryAttachment2"] = _id_1688( [ "attachmenttable" ], "attachmenttable", var_0, "loadoutSecondaryAttachment2" );
+        var_0["loadoutSecondaryAttachment2"] = bot_loadout_choose_from_set( [ "attachmenttable" ], "attachmenttable", var_0, "loadoutSecondaryAttachment2" );
 
-    if ( _id_1639( var_0 ) == level.customclasspickcount )
+    if ( bot_get_pick_13_count( var_0 ) == level.customclasspickcount )
         return var_0;
 
     var_2 = "add";
@@ -1233,7 +1233,7 @@ _id_160D( var_0 )
         {
             var_0["loadoutEquipment"] = "specialty_null";
 
-            if ( _id_1639( var_0 ) == level.customclasspickcount - 2 )
+            if ( bot_get_pick_13_count( var_0 ) == level.customclasspickcount - 2 )
                 return var_0;
         }
     }
@@ -1243,7 +1243,7 @@ _id_160D( var_0 )
         {
             var_0["loadoutEquipment2"] = var_0["loadoutEquipment"];
 
-            if ( _id_1639( var_0 ) == level.customclasspickcount )
+            if ( bot_get_pick_13_count( var_0 ) == level.customclasspickcount )
                 return var_0;
         }
     }
@@ -1258,7 +1258,7 @@ _id_160D( var_0 )
             {
                 var_0[var_6] = "none";
 
-                if ( _id_1639( var_0 ) == level.customclasspickcount - 2 )
+                if ( bot_get_pick_13_count( var_0 ) == level.customclasspickcount - 2 )
                     return var_0;
             }
         }
@@ -1267,7 +1267,7 @@ _id_160D( var_0 )
     return var_0;
 }
 
-_id_160E( var_0 )
+bot_find_2_loadout_options( var_0 )
 {
     var_1 = [ "loadoutWildcard1", "loadoutWildcard2", "loadoutWildcard3" ];
     var_2 = common_scripts\utility::array_randomize( [ "loadoutPerk2", "loadoutPerk4", "loadoutPerk6" ] );
@@ -1295,7 +1295,7 @@ _id_160E( var_0 )
                 {
                     var_11 = int( getsubstr( var_4, 11, 12 ) );
                     var_0[var_5] = "specialty_wildcard_perkslot" + var_11 / 2;
-                    var_0[var_4] = _id_1688( [ "template_any" ], "template_any", var_0, var_4 );
+                    var_0[var_4] = bot_loadout_choose_from_set( [ "template_any" ], "template_any", var_0, var_4 );
 
                     if ( var_0[var_4] == "specialty_null" )
                     {
@@ -1303,7 +1303,7 @@ _id_160E( var_0 )
                         continue;
                     }
 
-                    if ( _id_1639( var_0 ) > level.customclasspickcount - 2 )
+                    if ( bot_get_pick_13_count( var_0 ) > level.customclasspickcount - 2 )
                         return var_0;
                 }
             }
@@ -1314,10 +1314,10 @@ _id_160E( var_0 )
     {
         var_13 = "template_any_noncamper";
 
-        if ( level._id_16B2[self._id_67DC] == "stationary" )
+        if ( level.bot_personality_type[self.personality] == "stationary" )
             var_13 = "template_any_camper";
 
-        var_0["loadoutEquipment"] = _id_1688( [ var_13 ], var_13, var_0, "loadoutEquipment" );
+        var_0["loadoutEquipment"] = bot_loadout_choose_from_set( [ var_13 ], var_13, var_0, "loadoutEquipment" );
     }
 
     if ( var_0["loadoutEquipment"] != "specialty_null" && var_0["loadoutEquipment2"] == "specialty_null" )
@@ -1326,7 +1326,7 @@ _id_160E( var_0 )
     return var_0;
 }
 
-_id_1639( var_0 )
+bot_get_pick_13_count( var_0 )
 {
     var_1 = tablelookup( "mp/statstable.csv", 4, var_0["loadoutPrimary"], 40 );
     var_2 = tablelookup( "mp/statstable.csv", 4, var_0["loadoutSecondary"], 40 );
@@ -1389,25 +1389,25 @@ _id_1639( var_0 )
     return var_3;
 }
 
-_id_168D()
+bot_loadout_get_difficulty()
 {
     var_0 = self _meth_836B();
 
     if ( var_0 == "default" )
     {
-        maps\mp\bots\_bots_util::_id_16EB( "default" );
+        maps\mp\bots\_bots_util::bot_set_difficulty( "default" );
         var_0 = self _meth_836B();
     }
 
     return var_0;
 }
 
-_id_168B( var_0 )
+bot_loadout_class_callback( var_0 )
 {
-    while ( !isdefined( level._id_1695 ) )
+    while ( !isdefined( level.bot_loadouts_initialized ) )
         wait 0.05;
 
-    while ( !isdefined( self._id_67DC ) )
+    while ( !isdefined( self.personality ) )
         wait 0.05;
 
     var_1 = 0;
@@ -1415,15 +1415,15 @@ _id_168B( var_0 )
 
     if ( isdefined( var_0 ) && var_0 )
         var_2 = 1;
-    else if ( isdefined( self._id_16B4 ) && self._id_16B4 )
+    else if ( isdefined( self.bot_pick_new_loadout_next_spawn ) && self.bot_pick_new_loadout_next_spawn )
     {
         var_1 = 1;
-        self._id_16B4 = undefined;
+        self.bot_pick_new_loadout_next_spawn = undefined;
     }
 
     var_3 = [];
-    var_4 = _id_168D();
-    self._id_2A5E = var_4;
+    var_4 = bot_loadout_get_difficulty();
+    self.difficulty = var_4;
     var_5 = self _meth_8366();
 
     if ( !isdefined( self.bot_last_loadout_num ) )
@@ -1431,32 +1431,32 @@ _id_168B( var_0 )
 
     self.bot_last_loadout_num = self.bot_cur_loadout_num;
 
-    if ( isdefined( self._id_173C ) && !var_1 )
+    if ( isdefined( self.botlastloadout ) && !var_1 )
     {
         if ( var_2 )
-            return self._id_173C;
+            return self.botlastloadout;
 
-        var_6 = self._id_173D == var_4;
-        var_7 = self._id_173E == var_5;
+        var_6 = self.botlastloadoutdifficulty == var_4;
+        var_7 = self.botlastloadoutpersonality == var_5;
 
-        if ( var_6 && var_7 && ( !isdefined( self._id_4723 ) || self._id_4723 ) && !isdefined( self._id_7474 ) )
+        if ( var_6 && var_7 && ( !isdefined( self.hasdied ) || self.hasdied ) && !isdefined( self.respawn_with_launcher ) )
         {
             var_8 = randomfloat( 1.0 ) > 0.1;
 
             if ( var_8 )
-                return self._id_173C;
+                return self.botlastloadout;
         }
     }
 
-    if ( !_id_15E8() )
+    if ( !bot_custom_classes_allowed() )
     {
-        var_3 = _id_15EA();
-        _id_16B5( var_3["loadoutPrimary"] );
+        var_3 = bot_default_class_random();
+        bot_pick_personality_from_weapon( var_3["loadoutPrimary"] );
     }
     else
     {
-        var_3 = _id_1690( var_5, var_4 );
-        var_3 = _id_168A( var_3 );
+        var_3 = bot_loadout_pick( var_5, var_4 );
+        var_3 = bot_loadout_choose_values( var_3 );
 
         if ( isdefined( level.bot_funcs["gametype_loadout_modify"] ) )
             var_3 = self [[ level.bot_funcs["gametype_loadout_modify"] ]]( var_3 );
@@ -1464,67 +1464,67 @@ _id_168B( var_0 )
 
     if ( var_3["loadoutPrimary"] == "none" )
     {
-        self._id_1609 = undefined;
-        var_3["loadoutPrimary"] = _id_1682( var_3 );
+        self.bot_fallback_personality = undefined;
+        var_3["loadoutPrimary"] = bot_loadout_choose_fallback_primary( var_3 );
         var_3["loadoutPrimaryCamo"] = "none";
         var_3["loadoutPrimaryAttachment"] = "none";
         var_3["loadoutPrimaryAttachment2"] = "none";
         var_3["loadoutPrimaryAttachment3"] = "none";
         var_3["loadoutPrimaryReticle"] = "none";
 
-        if ( isdefined( self._id_1609 ) )
+        if ( isdefined( self.bot_fallback_personality ) )
         {
-            if ( self._id_1609 == "weapon" )
-                _id_16B5( var_3["loadoutPrimary"] );
+            if ( self.bot_fallback_personality == "weapon" )
+                bot_pick_personality_from_weapon( var_3["loadoutPrimary"] );
             else
-                maps\mp\bots\_bots_util::_id_16ED( self._id_1609 );
+                maps\mp\bots\_bots_util::bot_set_personality( self.bot_fallback_personality );
 
-            var_5 = self._id_67DC;
-            self._id_1609 = undefined;
+            var_5 = self.personality;
+            self.bot_fallback_personality = undefined;
         }
     }
 
-    if ( isdefined( var_3["loadoutPrimaryCamo"] ) && var_3["loadoutPrimaryCamo"] != "none" && !isdefined( self._id_173F ) )
-        self._id_173F = var_3["loadoutPrimaryCamo"];
+    if ( isdefined( var_3["loadoutPrimaryCamo"] ) && var_3["loadoutPrimaryCamo"] != "none" && !isdefined( self.botloadoutfavoritecamoprimary ) )
+        self.botloadoutfavoritecamoprimary = var_3["loadoutPrimaryCamo"];
 
-    if ( isdefined( var_3["loadoutSecondaryCamo"] ) && var_3["loadoutSecondaryCamo"] != "none" && !isdefined( self._id_1740 ) )
-        self._id_1740 = var_3["loadoutSecondaryCamo"];
+    if ( isdefined( var_3["loadoutSecondaryCamo"] ) && var_3["loadoutSecondaryCamo"] != "none" && !isdefined( self.botloadoutfavoritecamosecondary ) )
+        self.botloadoutfavoritecamosecondary = var_3["loadoutSecondaryCamo"];
 
-    if ( isdefined( self._id_7474 ) )
+    if ( isdefined( self.respawn_with_launcher ) )
     {
-        var_12 = level._id_16CF[self _meth_836B()];
+        var_12 = level.bot_respawn_launcher_name[self _meth_836B()];
 
-        if ( _id_168E( "weapon", var_12, undefined ) )
+        if ( bot_loadout_item_allowed( "weapon", var_12, undefined ) )
         {
             var_3["loadoutSecondary"] = var_12;
             var_3["loadoutSecondaryAttachment"] = "none";
             var_3["loadoutSecondaryAttachment2"] = "none";
             var_3["loadoutSecondaryAttachment3"] = "none";
-            self._id_16B4 = 1;
+            self.bot_pick_new_loadout_next_spawn = 1;
         }
 
-        self._id_7474 = undefined;
+        self.respawn_with_launcher = undefined;
     }
 
     maps\mp\gametypes\_class::isvalidkillstreak( var_3["loadoutStreak1"] );
     maps\mp\gametypes\_class::isvalidkillstreak( var_3["loadoutStreak2"] );
     maps\mp\gametypes\_class::isvalidkillstreak( var_3["loadoutStreak3"] );
     self.bot_cur_loadout_num++;
-    self._id_173C = var_3;
-    self._id_173D = var_4;
-    self._id_173E = var_5;
+    self.botlastloadout = var_3;
+    self.botlastloadoutdifficulty = var_4;
+    self.botlastloadoutpersonality = var_5;
     return var_3;
 }
 
-_id_16F4()
+bot_setup_loadout_callback()
 {
     var_0 = self _meth_8366();
-    var_1 = _id_168D();
-    var_2 = _id_1691( var_0, var_1, 0 );
+    var_1 = bot_loadout_get_difficulty();
+    var_2 = bot_loadout_set( var_0, var_1, 0 );
 
     if ( isdefined( var_2 ) && isdefined( var_2.loadouts ) && var_2.loadouts.size > 0 )
     {
-        self.classcallback = ::_id_168B;
+        self.classcallback = ::bot_loadout_class_callback;
         return 1;
     }
 

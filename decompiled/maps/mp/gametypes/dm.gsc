@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -76,8 +76,8 @@ onstartgametype()
 
     maps\mp\_utility::setobjectivehinttext( "allies", &"OBJECTIVES_DM_HINT" );
     maps\mp\_utility::setobjectivehinttext( "axis", &"OBJECTIVES_DM_HINT" );
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     level.spawn_name = "mp_dm_spawn";
     maps\mp\gametypes\_spawnlogic::addspawnpoints( "allies", level.spawn_name );
     maps\mp\gametypes\_spawnlogic::addspawnpoints( "axis", level.spawn_name );
@@ -159,18 +159,18 @@ issoringevent( var_0 )
 {
     switch ( var_0 )
     {
-        case "kill":
-        case "vulcan_kill":
-        case "warbird_kill":
-        case "paladin_kill":
-        case "missile_strike_kill":
-        case "sentry_gun_kill":
-        case "strafing_run_kill":
-        case "assault_drone_kill":
-        case "goliath_kill":
-        case "airdrop_trap_kill":
-        case "airdrop_kill":
         case "map_killstreak_kill":
+        case "airdrop_kill":
+        case "airdrop_trap_kill":
+        case "goliath_kill":
+        case "assault_drone_kill":
+        case "strafing_run_kill":
+        case "sentry_gun_kill":
+        case "missile_strike_kill":
+        case "paladin_kill":
+        case "warbird_kill":
+        case "vulcan_kill":
+        case "kill":
             return 1;
     }
 

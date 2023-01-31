@@ -1,9 +1,9 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_831E( var_0 )
+setupminimap( var_0 )
 {
-    var_1 = level._id_7409;
+    var_1 = level.requiredmapaspectratio;
     var_2 = getentarray( "minimap_corner", "targetname" );
 
     if ( var_2.size != 2 )
@@ -24,14 +24,14 @@ _id_831E( var_0 )
         }
         else
         {
-            var_10 = _id_9C66( var_6, vectordot( var_5, var_6 ) );
+            var_10 = vecscale( var_6, vectordot( var_5, var_6 ) );
             var_8 = var_4 - var_10;
             var_9 = var_3 + var_10;
         }
     }
     else if ( vectordot( var_5, var_6 ) > 0 )
     {
-        var_10 = _id_9C66( var_6, vectordot( var_5, var_6 ) );
+        var_10 = vecscale( var_6, vectordot( var_5, var_6 ) );
         var_8 = var_3 + var_10;
         var_9 = var_4 - var_10;
     }
@@ -50,23 +50,23 @@ _id_831E( var_0 )
         if ( var_13 < var_1 )
         {
             var_14 = var_1 / var_13;
-            var_15 = _id_9C66( var_7, var_12 * ( var_14 - 1 ) * 0.5 );
+            var_15 = vecscale( var_7, var_12 * ( var_14 - 1 ) * 0.5 );
         }
         else
         {
             var_14 = var_13 / var_1;
-            var_15 = _id_9C66( var_6, var_11 * ( var_14 - 1 ) * 0.5 );
+            var_15 = vecscale( var_6, var_11 * ( var_14 - 1 ) * 0.5 );
         }
 
         var_8 += var_15;
         var_9 -= var_15;
     }
 
-    level._id_598D = vectordot( var_8 - var_9, var_6 );
+    level.mapsize = vectordot( var_8 - var_9, var_6 );
     setminimap( var_0, var_8[0], var_8[1], var_9[0], var_9[1] );
 }
 
-_id_9C66( var_0, var_1 )
+vecscale( var_0, var_1 )
 {
     return ( var_0[0] * var_1, var_0[1] * var_1, var_0[2] * var_1 );
 }

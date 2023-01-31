@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -23,9 +23,9 @@ updatedamagefeedback( var_0, var_1 )
         case "hitspecialarmor":
             setdamagefeedbackclientomnvar( "hitspecialarmor" );
             break;
-        case "hitblastshield":
-        case "hitlightarmor":
         case "hitjuggernaut":
+        case "hitlightarmor":
+        case "hitblastshield":
             self playlocalsound( "mp_hit_armor" );
             setdamagefeedbackclientomnvar( var_0 );
             break;
@@ -87,9 +87,9 @@ setdamagefeedbackclientomnvar( var_0 )
     else
         var_2 = 0;
 
-    if ( var_1 - var_2 < 300 && self getclientomnvar( "damage_feedback" ) == var_0 )
+    if ( var_1 - var_2 < 300 && self _meth_8447( "damage_feedback" ) == var_0 )
         return;
 
     self.damagefeedbacktime = var_1;
-    self setclientomnvar( "damage_feedback", var_0 );
+    self _meth_82FB( "damage_feedback", var_0 );
 }

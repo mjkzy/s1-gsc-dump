@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 update_exo_battery_hud( var_0 )
 {
@@ -15,7 +15,7 @@ update_exo_battery_hud( var_0 )
 
     while ( get_exo_ability_hud_omnvar_value( var_0, "ui_exo_battery_toggle" ) == 1 )
     {
-        var_1 = self batterygetcharge( var_0 );
+        var_1 = self _meth_84A2( var_0 );
         set_exo_ability_hud_omnvar( var_0, "ui_exo_battery_level", var_1 );
         wait 0.05;
     }
@@ -23,41 +23,41 @@ update_exo_battery_hud( var_0 )
 
 set_exo_ability_hud_omnvar( var_0, var_1, var_2 )
 {
-    if ( self gettacticalweapon() == var_0 )
+    if ( self _meth_831A() == var_0 )
     {
-        self setclientomnvar( var_1 + "0", var_2 );
+        self _meth_82FB( var_1 + "0", var_2 );
 
         if ( var_1 == "ui_exo_battery_toggle" )
         {
             if ( var_2 == 1 )
-                self setclientomnvar( "ui_exo_battery_iconA", var_0 );
+                self _meth_82FB( "ui_exo_battery_iconA", var_0 );
         }
     }
-    else if ( self getlethalweapon() == var_0 )
+    else if ( self _meth_8345() == var_0 )
     {
-        self setclientomnvar( var_1 + "1", var_2 );
+        self _meth_82FB( var_1 + "1", var_2 );
 
         if ( var_1 == "ui_exo_battery_toggle" )
         {
             if ( var_2 == 1 )
-                self setclientomnvar( "ui_exo_battery_iconB", var_0 );
+                self _meth_82FB( "ui_exo_battery_iconB", var_0 );
         }
     }
     else
     {
-        self setclientomnvar( "ui_exo_battery_iconA", "reset" );
-        self setclientomnvar( "ui_exo_battery_iconB", "reset" );
-        self setclientomnvar( "ui_exo_battery_toggle0", 0 );
-        self setclientomnvar( "ui_exo_battery_toggle1", 0 );
+        self _meth_82FB( "ui_exo_battery_iconA", "reset" );
+        self _meth_82FB( "ui_exo_battery_iconB", "reset" );
+        self _meth_82FB( "ui_exo_battery_toggle0", 0 );
+        self _meth_82FB( "ui_exo_battery_toggle1", 0 );
     }
 }
 
 get_exo_ability_hud_omnvar_value( var_0, var_1 )
 {
-    if ( self gettacticalweapon() == var_0 )
-        return self getclientomnvar( var_1 + "0" );
-    else if ( self getlethalweapon() == var_0 )
-        return self getclientomnvar( var_1 + "1" );
+    if ( self _meth_831A() == var_0 )
+        return self _meth_8447( var_1 + "0" );
+    else if ( self _meth_8345() == var_0 )
+        return self _meth_8447( var_1 + "1" );
 
     return -1;
 }
@@ -70,18 +70,18 @@ play_insufficient_tactical_energy_sfx()
     self endon( "faux_spawn" );
     self endon( "joined_team" );
     self endon( "kill_battery" );
-    self notifyonplayercommandremove( "tried_left_exo_ability", "+smoke" );
+    self _meth_849C( "tried_left_exo_ability", "+smoke" );
     wait 0.05;
-    self notifyonplayercommand( "tried_left_exo_ability", "+smoke" );
+    self _meth_82DD( "tried_left_exo_ability", "+smoke" );
 
     for (;;)
     {
         self waittill( "tried_left_exo_ability" );
-        var_0 = self gettacticalweapon();
+        var_0 = self _meth_831A();
 
         if ( maps\mp\_utility::is_exo_ability_weapon( var_0 ) )
         {
-            if ( self batterygetcharge( var_0 ) < batteryusepershot( var_0 ) )
+            if ( self _meth_84A2( var_0 ) < _func_298( var_0 ) )
                 self playlocalsound( "mp_exo_bat_empty" );
         }
     }
@@ -95,18 +95,18 @@ play_insufficient_lethal_energy_sfx()
     self endon( "faux_spawn" );
     self endon( "joined_team" );
     self endon( "kill_battery" );
-    self notifyonplayercommandremove( "tried_right_exo_ability", "+frag" );
+    self _meth_849C( "tried_right_exo_ability", "+frag" );
     wait 0.05;
-    self notifyonplayercommand( "tried_right_exo_ability", "+frag" );
+    self _meth_82DD( "tried_right_exo_ability", "+frag" );
 
     for (;;)
     {
         self waittill( "tried_right_exo_ability" );
-        var_0 = self getlethalweapon();
+        var_0 = self _meth_8345();
 
         if ( maps\mp\_utility::is_exo_ability_weapon( var_0 ) )
         {
-            if ( self batterygetcharge( var_0 ) < batteryusepershot( var_0 ) )
+            if ( self _meth_84A2( var_0 ) < _func_298( var_0 ) )
                 self playlocalsound( "mp_exo_bat_empty" );
         }
     }

@@ -1,13 +1,13 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_A258()
+watchtridroneusage()
 {
     self endon( "spawned_player" );
     self endon( "disconnect" );
     self endon( "death" );
     self endon( "faux_spawn" );
-    _id_974A();
+    tridroneammoinit();
 
     for (;;)
     {
@@ -21,7 +21,7 @@ _id_A258()
                 return;
             }
 
-            thread _id_98CB( var_0 );
+            thread tryusetridrone( var_0 );
         }
     }
 }
@@ -31,62 +31,62 @@ init()
     precacheshellshock( "flashbang_mp" );
     precachemodel( "projectile_bouncing_betty_grenade_small" );
     precachemodel( "projectile_bouncing_betty_grenade_small_bombsquad" );
-    level._id_974C = spawnstruct();
-    level._id_974C._id_5C4C = 1;
-    level._id_974C._id_1495 = 132;
-    level._id_974C._id_2EF8 = 128;
-    level._id_974C._id_2F13 = "projectile_bouncing_betty_grenade_small";
-    level._id_974C._id_2EF7 = "projectile_bouncing_betty_grenade_small_bombsquad";
-    level._id_974C._id_2F06 = loadfx( "vfx/explosion/frag_grenade_default" );
-    level._id_974C._id_135E["enemy"] = loadfx( "vfx/lights/light_c4_blink" );
-    level._id_974C._id_135E["friendly"] = loadfx( "vfx/lights/light_mine_blink_friendly" );
-    level._id_974C._id_2CF1 = loadfx( "vfx/unique/orbital_dome_ground_friendly" );
+    level.tridronesettings = spawnstruct();
+    level.tridronesettings.minecountdown = 1;
+    level.tridronesettings.blastradius = 132;
+    level.tridronesettings.dronebounceheight = 128;
+    level.tridronesettings.dronemesh = "projectile_bouncing_betty_grenade_small";
+    level.tridronesettings.dronebombsquadmesh = "projectile_bouncing_betty_grenade_small_bombsquad";
+    level.tridronesettings.droneexplosionfx = loadfx( "vfx/explosion/frag_grenade_default" );
+    level.tridronesettings.beacon["enemy"] = loadfx( "vfx/lights/light_c4_blink" );
+    level.tridronesettings.beacon["friendly"] = loadfx( "vfx/lights/light_mine_blink_friendly" );
+    level.tridronesettings.dome = loadfx( "vfx/unique/orbital_dome_ground_friendly" );
 }
 
-_id_974A()
+tridroneammoinit()
 {
-    if ( !isdefined( self._id_9749 ) )
+    if ( !isdefined( self.tridroneammo ) )
     {
-        self._id_9749 = 0;
-        thread _id_84F7();
+        self.tridroneammo = 0;
+        thread showammocount();
     }
 
-    self._id_9749 = 0;
-    self._id_9749 += 3;
+    self.tridroneammo = 0;
+    self.tridroneammo += 3;
 
-    if ( !isdefined( self._id_974B ) )
-        self._id_974B = [];
+    if ( !isdefined( self.tridronedeployed ) )
+        self.tridronedeployed = [];
 }
 
-_id_98CB( var_0 )
+tryusetridrone( var_0 )
 {
-    if ( self._id_9749 <= 0 )
-        _id_974A();
+    if ( self.tridroneammo <= 0 )
+        tridroneammoinit();
 
-    if ( self._id_9749 > 0 )
+    if ( self.tridroneammo > 0 )
     {
-        thread _id_562F( var_0 );
-        self._id_9749--;
+        thread launchtridrone( var_0 );
+        self.tridroneammo--;
 
-        if ( self._id_9749 >= 1 )
-            self giveweapon( "tri_drone_mp" );
+        if ( self.tridroneammo >= 1 )
+            self _meth_830E( "tri_drone_mp" );
     }
 
     return 1;
 }
 
-_id_562F( var_0 )
+launchtridrone( var_0 )
 {
     var_1 = spawnmine( var_0 );
-    self._id_974B = common_scripts\utility::array_add( self._id_974B, var_1 );
+    self.tridronedeployed = common_scripts\utility::array_add( self.tridronedeployed, var_1 );
     thread monitorplayerdeath( var_1 );
 }
 
-_id_070C( var_0 )
+activategroupedtridrones( var_0 )
 {
     self endon( "death" );
 
-    foreach ( var_2 in var_0._id_974B )
+    foreach ( var_2 in var_0.tridronedeployed )
     {
         if ( isdefined( var_2 ) )
         {
@@ -99,19 +99,19 @@ _id_070C( var_0 )
     }
 }
 
-_id_73B1()
+removegroupedtridrone()
 {
-    self.owner._id_974B = common_scripts\utility::array_remove( self.owner._id_974B, self );
+    self.owner.tridronedeployed = common_scripts\utility::array_remove( self.owner.tridronedeployed, self );
 }
 
 monitorplayerdeath( var_0 )
 {
     var_0 endon( "death" );
     self waittill( "death" );
-    self._id_9749 = 0;
+    self.tridroneammo = 0;
 
-    if ( isdefined( var_0._id_6816 ) )
-        var_0._id_6816 delete();
+    if ( isdefined( var_0.pickuptrigger ) )
+        var_0.pickuptrigger delete();
 
     var_0 delete();
 }
@@ -119,10 +119,10 @@ monitorplayerdeath( var_0 )
 spawnmine( var_0 )
 {
     var_0 waittill( "missile_stuck" );
-    var_1 = bullettrace( var_0.origin, var_0.origin - ( 0.0, 0.0, 4.0 ), 0, var_0 );
-    var_2 = bullettrace( var_0.origin, var_0.origin + ( 0.0, 0.0, 4.0 ), 0, var_0 );
+    var_1 = bullettrace( var_0.origin, var_0.origin - ( 0, 0, 4 ), 0, var_0 );
+    var_2 = bullettrace( var_0.origin, var_0.origin + ( 0, 0, 4 ), 0, var_0 );
     var_3 = anglestoforward( var_0.angles );
-    var_4 = bullettrace( var_0.origin + ( 0.0, 0.0, 4.0 ), var_0.origin + var_3 * 4, 0, var_0 );
+    var_4 = bullettrace( var_0.origin + ( 0, 0, 4 ), var_0.origin + var_3 * 4, 0, var_0 );
     var_5 = undefined;
     var_6 = 0;
     var_7 = 0;
@@ -145,51 +145,51 @@ spawnmine( var_0 )
     var_8 = var_5["position"];
 
     if ( var_8 == var_2["position"] )
-        var_8 += ( 0.0, 0.0, -5.0 );
+        var_8 += ( 0, 0, -5 );
 
     var_9 = spawn( "script_model", var_8 );
-    var_9._id_51DC = var_6;
-    var_9._id_510A = var_7;
+    var_9.isup = var_6;
+    var_9.isforward = var_7;
     var_10 = vectornormalize( var_5["normal"] );
     var_11 = vectortoangles( var_10 );
-    var_11 += ( 90.0, 0.0, 0.0 );
+    var_11 += ( 90, 0, 0 );
     var_9.angles = var_11;
-    var_9 setmodel( level._id_974C._id_2F13 );
+    var_9 _meth_80B1( level.tridronesettings.dronemesh );
     var_9.owner = self;
-    var_9 setotherent( self );
-    var_9.killcamoffset = ( 0.0, 0.0, 55.0 );
+    var_9 _meth_8383( self );
+    var_9.killcamoffset = ( 0, 0, 55 );
     var_9.killcament = spawn( "script_model", var_9.origin + var_9.killcamoffset );
     var_9.stunned = 0;
     var_9.weaponname = "tri_drone_mp";
     var_0 delete();
     level.mines[level.mines.size] = var_9;
-    var_9 thread createbombsquadmodel( level._id_974C._id_2EF7, "tag_origin", self );
+    var_9 thread createbombsquadmodel( level.tridronesettings.dronebombsquadmesh, "tag_origin", self );
     var_9 thread minebeacon();
-    var_9 thread _id_8030( self.team );
+    var_9 thread settridroneteamheadicon( self.team );
     var_9 thread minedamagemonitor();
     var_9 thread mineproximitytrigger( self );
     var_9 thread mineselfdestruct();
-    var_9 thread _id_2856( self );
-    var_9 thread _id_4659( self, "apm_mine" );
+    var_9 thread deletemineonteamswitch( self );
+    var_9 thread handleemp( self, "apm_mine" );
     return var_9;
 }
 
-_id_84FF()
+showdebugradius()
 {
-    var_0["dome"] = spawnfx( level._id_974C._id_2CF1, self gettagorigin( "tag_fx" ) );
+    var_0["dome"] = spawnfx( level.tridronesettings.dome, self gettagorigin( "tag_fx" ) );
     triggerfx( var_0["dome"] );
     self waittill( "death" );
     var_0["dome"] delete();
 }
 
-_id_84F7()
+showammocount()
 {
     self endon( "disconnect" );
 
     for (;;)
     {
-        if ( "tri_drone_mp" == self getlethalweapon() )
-            self setclientomnvar( "ui_tri_drone_count", self._id_9749 );
+        if ( "tri_drone_mp" == self _meth_8345() )
+            self _meth_82FB( "ui_tri_drone_count", self.tridroneammo );
 
         waitframe();
     }
@@ -197,12 +197,12 @@ _id_84F7()
 
 createbombsquadmodel( var_0, var_1, var_2 )
 {
-    var_3 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
+    var_3 = spawn( "script_model", ( 0, 0, 0 ) );
     var_3 hide();
     wait 0.05;
     var_3 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( var_2 );
-    var_3 setmodel( var_0 );
-    var_3 linkto( self, var_1, ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+    var_3 _meth_80B1( var_0 );
+    var_3 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 setcontents( 0 );
     self waittill( "death" );
 
@@ -214,8 +214,8 @@ createbombsquadmodel( var_0, var_1, var_2 )
 
 minebeacon()
 {
-    var_0["friendly"] = spawnfx( level._id_974C._id_135E["friendly"], self gettagorigin( "tag_fx" ) );
-    var_0["enemy"] = spawnfx( level._id_974C._id_135E["enemy"], self gettagorigin( "tag_fx" ) );
+    var_0["friendly"] = spawnfx( level.tridronesettings.beacon["friendly"], self gettagorigin( "tag_fx" ) );
+    var_0["enemy"] = spawnfx( level.tridronesettings.beacon["enemy"], self gettagorigin( "tag_fx" ) );
     thread minebeaconteamupdater( var_0 );
     self waittill( "death" );
     var_0["friendly"] delete();
@@ -260,24 +260,24 @@ minebeaconteamupdater( var_0, var_1 )
     }
 }
 
-_id_8030( var_0 )
+settridroneteamheadicon( var_0 )
 {
     self endon( "death" );
     wait 0.05;
 
     if ( level.teambased )
     {
-        if ( self._id_51DC == 1 || self._id_510A == 1 )
-            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ), undefined, 1 );
+        if ( self.isup == 1 || self.isforward == 1 )
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0, 0, 28 ), undefined, 1 );
         else
-            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ) );
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0, 0, 28 ) );
     }
     else if ( isdefined( self.owner ) )
     {
-        if ( self._id_51DC == 1 )
-            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 28.0, 0.0, 28.0 ) );
+        if ( self.isup == 1 )
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 28, 0, 28 ) );
         else
-            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0.0, 0.0, 28.0 ) );
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0, 0, 28 ) );
     }
 }
 
@@ -286,7 +286,7 @@ minedamagemonitor()
     self endon( "mine_triggered" );
     self endon( "mine_selfdestruct" );
     self endon( "death" );
-    self setcandamage( 1 );
+    self _meth_82C0( 1 );
     self.maxhealth = 100000;
     self.health = self.maxhealth;
     var_0 = undefined;
@@ -307,8 +307,8 @@ minedamagemonitor()
 
             switch ( var_10 )
             {
-                case "smoke_grenade_mp":
                 case "smoke_grenade_var_mp":
+                case "smoke_grenade_mp":
                     continue;
             }
         }
@@ -317,7 +317,7 @@ minedamagemonitor()
     }
 
     self notify( "mine_destroyed" );
-    _id_73B1();
+    removegroupedtridrone();
 
     if ( isdefined( var_4 ) && ( issubstr( var_4, "MOD_GRENADE" ) || issubstr( var_4, "MOD_EXPLOSIVE" ) ) )
         self.waschained = 1;
@@ -354,7 +354,7 @@ mineexplode( var_0 )
 
     self playsound( "null" );
     var_1 = self gettagorigin( "tag_fx" );
-    playfx( level._id_974C._id_2F06, var_1 );
+    playfx( level.tridronesettings.droneexplosionfx, var_1 );
     wait 0.05;
 
     if ( !isdefined( self ) || !isdefined( self.owner ) )
@@ -379,16 +379,16 @@ mineexplode( var_0 )
     if ( !isdefined( self ) || !isdefined( self.owner ) )
         return;
 
-    thread _id_0C9D();
+    thread apm_mine_deletekillcament();
     self notify( "death" );
 
-    if ( isdefined( self._id_6816 ) )
-        self._id_6816 delete();
+    if ( isdefined( self.pickuptrigger ) )
+        self.pickuptrigger delete();
 
     self hide();
 }
 
-_id_0C9D()
+apm_mine_deletekillcament()
 {
     wait 3;
     self.killcament delete();
@@ -401,21 +401,21 @@ equipmentwatchuse()
     self endon( "spawned_player" );
     self endon( "disconnect" );
     self endon( "change_owner" );
-    self._id_6816 setcursorhint( "HINT_NOICON" );
-    var_0 = self._id_6816.owner;
+    self.pickuptrigger _meth_80DA( "HINT_NOICON" );
+    var_0 = self.pickuptrigger.owner;
     equipmentenableuse( var_0 );
 
     for (;;)
     {
-        self._id_6816 waittill( "trigger", var_0 );
+        self.pickuptrigger waittill( "trigger", var_0 );
         var_0 playlocalsound( "scavenger_pack_pickup" );
-        var_0._id_9749++;
+        var_0.tridroneammo++;
 
-        if ( var_0._id_9749 == 1 )
-            var_0 giveweapon( "tri_drone_mp" );
+        if ( var_0.tridroneammo == 1 )
+            var_0 _meth_830E( "tri_drone_mp" );
 
-        if ( isdefined( self._id_6816 ) )
-            self._id_6816 delete();
+        if ( isdefined( self.pickuptrigger ) )
+            self.pickuptrigger delete();
 
         self.killcament delete();
         self delete();
@@ -430,14 +430,14 @@ equipmentenableuse( var_0 )
     self endon( "disconnect" );
     self endon( "equipmentWatchUse" );
     self endon( "change_owner" );
-    self._id_6816 setcursorhint( "HINT_NOICON" );
-    self._id_6816 sethintstring( &"MP_PICKUP_TRI_DRONE" );
-    self._id_6816 maps\mp\_utility::setselfusable( var_0 );
+    self.pickuptrigger _meth_80DA( "HINT_NOICON" );
+    self.pickuptrigger _meth_80DB( &"MP_PICKUP_TRI_DRONE" );
+    self.pickuptrigger maps\mp\_utility::setselfusable( var_0 );
 }
 
 equipmentdisableuse( var_0 )
 {
-    self.trigger sethintstring( "" );
+    self.trigger _meth_80DB( "" );
     self.trigger maps\mp\_utility::setselfunusuable();
 }
 
@@ -447,10 +447,10 @@ mineproximitytrigger( var_0 )
     self endon( "mine_selfdestruct" );
     self endon( "death" );
     wait 2;
-    self._id_6816 = spawn( "script_origin", self.origin );
-    self._id_6816.owner = var_0;
+    self.pickuptrigger = spawn( "script_origin", self.origin );
+    self.pickuptrigger.owner = var_0;
     thread equipmentwatchuse();
-    var_1 = spawn( "trigger_radius", self.origin + ( 0.0, 0.0, -96.0 ), 0, 192, 192 );
+    var_1 = spawn( "trigger_radius", self.origin + ( 0, 0, -96 ), 0, 192, 192 );
     var_1.owner = self;
     self.trigger = var_1;
     thread minedeletetrigger( var_1 );
@@ -478,23 +478,23 @@ mineproximitytrigger( var_0 )
                 continue;
         }
 
-        if ( lengthsquared( var_2 getentityvelocity() ) < 10 )
+        if ( lengthsquared( var_2 _meth_81B2() ) < 10 )
             continue;
 
-        if ( var_2 damageconetrace( self.origin, self ) > 0 )
+        if ( var_2 _meth_81D7( self.origin, self ) > 0 )
             break;
     }
 
-    _id_73B1();
+    removegroupedtridrone();
     self notify( "mine_triggered" );
     self playsound( "claymore_activated" );
     self playsound( "mine_betty_spin" );
     playfx( level.mine_launch, self.origin );
     var_3 = anglestoup( self.angles );
     var_4 = self.origin + var_3 * 64;
-    self moveto( var_4, 0.75, 0, 0.25 );
-    self.killcament moveto( var_4 + self.killcamoffset, 0.75, 0, 0.25 );
-    self rotatevelocity( ( 0.0, 750.0, 32.0 ), 0.7, 0, 0.65 );
+    self _meth_82AE( var_4, 0.75, 0, 0.25 );
+    self.killcament _meth_82AE( var_4 + self.killcamoffset, 0.75, 0, 0.25 );
+    self _meth_82BD( ( 0, 750, 32 ), 0.7, 0, 0.65 );
     thread playspinnerfx();
 
     if ( isplayer( var_2 ) && var_2 maps\mp\_utility::_hasperk( "specialty_class_engineer" ) )
@@ -545,7 +545,7 @@ mineselfdestruct()
     self delete();
 }
 
-_id_2856( var_0 )
+deletemineonteamswitch( var_0 )
 {
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
@@ -555,7 +555,7 @@ _id_2856( var_0 )
     self notify( "death" );
 }
 
-_id_4659( var_0, var_1 )
+handleemp( var_0, var_1 )
 {
     self endon( "death" );
 

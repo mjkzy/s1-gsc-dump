@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 getspawnpoint_nearteam( var_0 )
 {
@@ -308,7 +308,7 @@ findbuddyspawn()
 getbuddyspawnangles( var_0, var_1 )
 {
     var_2 = ( 0, var_0.angles[1], 0 );
-    var_3 = nodeexposedtosky( var_1 );
+    var_3 = _func_20D( var_1 );
 
     if ( isdefined( var_3 ) && var_3.size > 0 )
         var_2 = vectortoangles( var_3[0].origin - var_1 );
@@ -345,10 +345,10 @@ getteammatesoutofcombat( var_0 )
 
 isplayerincombat( var_0 )
 {
-    if ( var_0 issighted() )
+    if ( var_0 _meth_82EA() )
         return 1;
 
-    if ( !var_0 isonground() )
+    if ( !var_0 _meth_8341() )
         return 1;
 
     if ( var_0 isonladder() )
@@ -414,7 +414,7 @@ findbuddypathnode( var_0, var_1, var_2 )
 
 issafetospawnon( var_0, var_1, var_2 )
 {
-    if ( var_0 issighted() )
+    if ( var_0 _meth_82EA() )
         return 0;
 
     foreach ( var_4 in level.players )
@@ -436,7 +436,7 @@ issafetospawnon( var_0, var_1, var_2 )
 
         var_2.currenttracecount++;
         var_5 = maps\mp\gametypes\_spawnlogic::getplayertraceheight( var_4 );
-        var_6 = var_4 geteye();
+        var_6 = var_4 _meth_80A8();
         var_6 = ( var_6[0], var_6[1], var_4.origin[2] + var_5 );
         var_7 = spawnsighttrace( var_2, var_1 + ( 0, 0, var_5 ), var_6, 0 );
 

@@ -1,22 +1,22 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
     precacheshellshock( "flashbang_mp" );
 }
 
-_id_8D25()
+startmonitoringflash()
 {
     thread monitorflash();
 }
 
-_id_8EF4( var_0 )
+stopmonitoringflash( var_0 )
 {
     self notify( "stop_monitoring_flash" );
 }
 
-_id_38C3( var_0 )
+flashrumbleloop( var_0 )
 {
     self endon( "stop_monitoring_flash" );
     self endon( "flash_rumble_loop" );
@@ -25,7 +25,7 @@ _id_38C3( var_0 )
 
     while ( gettime() < var_1 )
     {
-        self playrumbleonentity( "damage_heavy" );
+        self _meth_80AD( "damage_heavy" );
         wait 0.05;
     }
 }
@@ -112,7 +112,7 @@ monitorflash()
                 var_4 thread maps\mp\gametypes\_damagefeedback::updatedamagefeedback( "flash" );
                 var_11 = self;
 
-                if ( isplayer( var_4 ) && var_4 isitemunlocked( "specialty_paint" ) && var_4 maps\mp\_utility::_hasperk( "specialty_paint" ) )
+                if ( isplayer( var_4 ) && var_4 _meth_8221( "specialty_paint" ) && var_4 maps\mp\_utility::_hasperk( "specialty_paint" ) )
                 {
                     if ( !var_11 maps\mp\perks\_perkfunctions::ispainted() )
                         var_4 maps\mp\gametypes\_missions::processchallenge( "ch_paint_pro" );
@@ -129,26 +129,26 @@ monitorflash()
 
 applyflash( var_0, var_1 )
 {
-    if ( !isdefined( self._id_38AC ) || var_0 > self._id_38AC )
-        self._id_38AC = var_0;
+    if ( !isdefined( self.flashduration ) || var_0 > self.flashduration )
+        self.flashduration = var_0;
 
-    if ( !isdefined( self._id_38C2 ) || var_1 > self._id_38C2 )
-        self._id_38C2 = var_1;
+    if ( !isdefined( self.flashrumbleduration ) || var_1 > self.flashrumbleduration )
+        self.flashrumbleduration = var_1;
 
     wait 0.05;
 
-    if ( isdefined( self._id_38AC ) )
+    if ( isdefined( self.flashduration ) )
     {
-        self shellshock( "flashbang_mp", self._id_38AC );
-        self.flashendtime = gettime() + self._id_38AC * 1000;
-        thread maps\mp\_utility::light_set_override_for_player( "flashed", 0.1, 0.1, self._id_38AC - 0.1 );
+        self shellshock( "flashbang_mp", self.flashduration );
+        self.flashendtime = gettime() + self.flashduration * 1000;
+        thread maps\mp\_utility::light_set_override_for_player( "flashed", 0.1, 0.1, self.flashduration - 0.1 );
     }
 
-    if ( isdefined( self._id_38C2 ) )
-        thread _id_38C3( self._id_38C2 );
+    if ( isdefined( self.flashrumbleduration ) )
+        thread flashrumbleloop( self.flashrumbleduration );
 
-    self._id_38AC = undefined;
-    self._id_38C2 = undefined;
+    self.flashduration = undefined;
+    self.flashrumbleduration = undefined;
 }
 
 isflashbanged()

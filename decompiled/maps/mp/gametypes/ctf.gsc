@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -162,8 +162,8 @@ onstartgametype()
 
 initspawn()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_ctf_spawn_allies_start" );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_ctf_spawn_axis_start" );
     level.spawn_name = "mp_ctf_spawn";
@@ -283,13 +283,13 @@ onpickupflaghudstatus( var_0 )
     {
         var_0.objective = 1;
         level.axisflagstatus = 2;
-        level.axisflagcarrierclientnum = var_0 getentitynumber();
+        level.axisflagcarrierclientnum = var_0 _meth_81B1();
     }
     else
     {
         var_0.objective = 2;
         level.alliesflagstatus = 2;
-        level.alliesflagcarrierclientnum = var_0 getentitynumber();
+        level.alliesflagcarrierclientnum = var_0 _meth_81B1();
     }
 
     level notify( "update_flag_status" );
@@ -338,11 +338,11 @@ playerupdateflagstatus()
     else
         return;
 
-    self setclientomnvar( "ui_ctf_friendly_status", var_0 );
-    self setclientomnvar( "ui_ctf_friendly_carrier_clientnum", var_1 );
-    self setclientomnvar( "ui_ctf_enemy_status", var_2 );
-    self setclientomnvar( "ui_ctf_enemy_carrier_clientnum", var_3 );
-    self setclientomnvar( "ui_ctf_status_changed", 1 );
+    self _meth_82FB( "ui_ctf_friendly_status", var_0 );
+    self _meth_82FB( "ui_ctf_friendly_carrier_clientnum", var_1 );
+    self _meth_82FB( "ui_ctf_enemy_status", var_2 );
+    self _meth_82FB( "ui_ctf_enemy_carrier_clientnum", var_3 );
+    self _meth_82FB( "ui_ctf_status_changed", 1 );
 }
 
 playerupdateflagstatusonjointeam()
@@ -423,13 +423,13 @@ createteamflag( var_0, var_1 )
 
         var_6 = spawn( "trigger_radius", var_2.origin, 0, 96, var_2.height );
         var_2 = var_6;
-        var_4[0] setmodel( level.flagmodel[var_0] );
+        var_4[0] _meth_80B1( level.flagmodel[var_0] );
         var_4[0].oldcontents = var_4[0] setcontents( 0 );
-        var_7 = var_4[0].origin + ( 0.0, 0.0, 32.0 );
-        var_8 = var_4[0].origin + ( 0.0, 0.0, -32.0 );
+        var_7 = var_4[0].origin + ( 0, 0, 32 );
+        var_8 = var_4[0].origin + ( 0, 0, -32 );
         var_9 = bullettrace( var_7, var_8, 0, undefined );
         var_4[0].origin = var_9["position"];
-        var_10 = maps\mp\gametypes\_gameobjects::createcarryobject( var_0, var_2, var_4, ( 0.0, 0.0, 85.0 ) );
+        var_10 = maps\mp\gametypes\_gameobjects::createcarryobject( var_0, var_2, var_4, ( 0, 0, 85 ) );
         var_11 = getdvarfloat( "scr_ctf_flag_pick_up_time_friendly", 0.0 );
 
         if ( var_11 > 0 )
@@ -499,7 +499,7 @@ createcapzone( var_0, var_1 )
         var_2 = var_3;
 
     var_4 = [];
-    var_5 = maps\mp\gametypes\_gameobjects::createuseobject( var_0, var_2, var_4, ( 0.0, 0.0, 85.0 ) );
+    var_5 = maps\mp\gametypes\_gameobjects::createuseobject( var_0, var_2, var_4, ( 0, 0, 85 ) );
     var_5 maps\mp\gametypes\_gameobjects::allowuse( "friendly" );
     var_5 maps\mp\gametypes\_gameobjects::setvisibleteam( "any" );
     var_5 maps\mp\gametypes\_gameobjects::set2dicon( "friendly", level.icondefendflag2d );
@@ -510,8 +510,8 @@ createcapzone( var_0, var_1 )
     var_5 maps\mp\gametypes\_gameobjects::setkeyobject( level.teamflags[maps\mp\_utility::getotherteam( var_0 )] );
     var_5.onuse = ::onuse;
     var_5.oncantuse = ::oncantuse;
-    var_6 = var_2.origin + ( 0.0, 0.0, 32.0 );
-    var_7 = var_2.origin + ( 0.0, 0.0, -32.0 );
+    var_6 = var_2.origin + ( 0, 0, 32 );
+    var_7 = var_2.origin + ( 0, 0, -32 );
     var_8 = bullettrace( var_6, var_7, 0, undefined );
     var_5.baseeffectpos = var_8["position"];
     var_5.baseeffectforward = var_8["normal"];
@@ -596,7 +596,7 @@ onpickup( var_0 )
             level.capzones[var_2] maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconmissingblue );
             maps\mp\gametypes\_gameobjects::set2dicon( "mlg", level.iconawayblue );
             maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconawayblue );
-            setomnvar( "ui_mlg_game_mode_status_1", var_0 getentitynumber() );
+            setomnvar( "ui_mlg_game_mode_status_1", var_0 _meth_81B1() );
         }
         else
         {
@@ -604,7 +604,7 @@ onpickup( var_0 )
             level.capzones[var_2] maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconmissingred );
             maps\mp\gametypes\_gameobjects::set2dicon( "mlg", level.iconawayred );
             maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconawayred );
-            setomnvar( "ui_mlg_game_mode_status_2", var_0 getentitynumber() );
+            setomnvar( "ui_mlg_game_mode_status_2", var_0 _meth_81B1() );
         }
 
         var_0 thread maps\mp\_events::flagpickupevent();
@@ -927,10 +927,10 @@ applyflagcarrierclass( var_0 )
 
 refillbattery()
 {
-    var_0 = self getweaponslistoffhands();
+    var_0 = self _meth_82CE();
 
     foreach ( var_2 in var_0 )
-        self batteryfullrecharge( var_2 );
+        self _meth_84A4( var_2 );
 }
 
 waitattachflag( var_0 )
@@ -1276,8 +1276,8 @@ capturezone_reset_base_effects()
     {
         if ( var_1.visuals.size )
         {
-            var_2 = var_1.visuals[0].origin + ( 0.0, 0.0, 32.0 );
-            var_3 = var_1.visuals[0].origin + ( 0.0, 0.0, -32.0 );
+            var_2 = var_1.visuals[0].origin + ( 0, 0, 32 );
+            var_3 = var_1.visuals[0].origin + ( 0, 0, -32 );
             var_4 = bullettrace( var_2, var_3, 0, undefined );
             var_5 = vectortoangles( var_4["normal"] );
             var_1.baseeffectforward = anglestoforward( var_5 );

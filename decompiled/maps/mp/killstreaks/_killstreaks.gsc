@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 onplayerconnect()
 {
@@ -68,7 +68,7 @@ onplayerspawned()
 
                     var_3 = maps\mp\_utility::getkillstreakindex( self.pers["killstreaks"][var_0].streakname );
                     var_4 = "ks_icon" + common_scripts\utility::tostring( var_0 );
-                    self setclientomnvar( var_4, var_3 );
+                    self _meth_82FB( var_4, var_3 );
                 }
             }
 
@@ -89,10 +89,10 @@ updatestreakicons( var_0 )
             continue;
 
         var_2 = "ks_icon" + common_scripts\utility::tostring( var_1 );
-        self setclientomnvar( var_2, 0 );
-        var_3 = self getclientomnvar( "ks_hasStreak" );
+        self _meth_82FB( var_2, 0 );
+        var_3 = self _meth_8447( "ks_hasStreak" );
         var_4 = var_3 & ~( 1 << var_1 ) & ~( 1 << var_1 + level.killstreak_stacking_start_slot );
-        self setclientomnvar( "ks_hasStreak", var_4 );
+        self _meth_82FB( "ks_hasStreak", var_4 );
     }
 
     var_5 = 1;
@@ -105,8 +105,8 @@ updatestreakicons( var_0 )
             var_8.streakname = var_7;
             var_9 = var_8.streakname;
             var_2 = "ks_icon" + common_scripts\utility::tostring( var_5 );
-            self setclientomnvar( var_2, maps\mp\_utility::getkillstreakindex( var_9 ) );
-            var_3 = self getclientomnvar( "ks_hasStreak" );
+            self _meth_82FB( var_2, maps\mp\_utility::getkillstreakindex( var_9 ) );
+            var_3 = self _meth_8447( "ks_hasStreak" );
             var_4 = var_3 & ~( 1 << var_5 );
 
             if ( issupportstreak( self, var_7 ) )
@@ -114,7 +114,7 @@ updatestreakicons( var_0 )
             else
                 var_4 &= ~( 1 << var_5 + level.killstreak_stacking_start_slot );
 
-            self setclientomnvar( "ks_hasStreak", var_4 );
+            self _meth_82FB( "ks_hasStreak", var_4 );
             var_5++;
         }
     }
@@ -149,10 +149,10 @@ initplayerkillstreaks()
     }
 
     updatestreakicons( 1 );
-    self setclientomnvar( "ks_selectedIndex", -1 );
-    var_3 = self getclientomnvar( "ks_hasStreak" );
+    self _meth_82FB( "ks_selectedIndex", -1 );
+    var_3 = self _meth_8447( "ks_hasStreak" );
     var_4 = var_3 & ~( 1 << level.killstreak_stacking_start_slot );
-    self setclientomnvar( "ks_hasStreak", var_4 );
+    self _meth_82FB( "ks_hasStreak", var_4 );
 }
 
 issupportstreak( var_0, var_1 )
@@ -165,7 +165,7 @@ issupportstreak( var_0, var_1 )
 
         if ( var_5 == var_1 )
         {
-            var_6 = tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_4, level._id_53D8 );
+            var_6 = tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_4, level.ks_module_support_column );
 
             if ( isdefined( var_6 ) && var_6 != "" && var_6 != "0" )
                 return 1;
@@ -180,9 +180,9 @@ updatestreakcount()
     if ( !isdefined( self.pers["killstreaks"] ) )
     {
         for ( var_0 = level.killstreak_slot_1; var_0 < level.killstreak_stacking_start_slot; var_0++ )
-            self setclientomnvar( "ks_count" + common_scripts\utility::tostring( var_0 ), 0 );
+            self _meth_82FB( "ks_count" + common_scripts\utility::tostring( var_0 ), 0 );
 
-        self setclientomnvar( "ks_count_updated", 1 );
+        self _meth_82FB( "ks_count_updated", 1 );
         return;
     }
 
@@ -194,7 +194,7 @@ updatestreakcount()
 
         if ( !isdefined( var_1 ) )
         {
-            self setclientomnvar( var_2, 0 );
+            self _meth_82FB( var_2, 0 );
             continue;
         }
 
@@ -217,11 +217,11 @@ updatestreakcount()
             var_6 = var_4;
         }
 
-        self setclientomnvar( var_3, var_6 );
-        self setclientomnvar( var_2, var_5 );
+        self _meth_82FB( var_3, var_6 );
+        self _meth_82FB( var_2, var_5 );
     }
 
-    self setclientomnvar( "ks_count_updated", 1 );
+    self _meth_82FB( "ks_count_updated", 1 );
 }
 
 getmaxstreakcost( var_0 )
@@ -259,14 +259,14 @@ updatestreakslots()
     {
         if ( isdefined( var_0[var_2] ) && isdefined( var_0[var_2].streakname ) )
         {
-            var_3 = self getclientomnvar( "ks_hasStreak" );
+            var_3 = self _meth_8447( "ks_hasStreak" );
 
             if ( var_0[var_2].available == 1 )
                 var_4 = var_3 | 1 << var_2;
             else
                 var_4 = var_3 & ~( 1 << var_2 );
 
-            self setclientomnvar( "ks_hasStreak", var_4 );
+            self _meth_82FB( "ks_hasStreak", var_4 );
 
             if ( var_0[var_2].available == 1 )
                 var_1++;
@@ -274,9 +274,9 @@ updatestreakslots()
     }
 
     if ( isdefined( self.killstreakindexweapon ) )
-        self setclientomnvar( "ks_selectedIndex", self.killstreakindexweapon );
+        self _meth_82FB( "ks_selectedIndex", self.killstreakindexweapon );
     else
-        self setclientomnvar( "ks_selectedIndex", -1 );
+        self _meth_82FB( "ks_selectedIndex", -1 );
 }
 
 waitforchangeteam()
@@ -423,7 +423,7 @@ updatekillstreaks( var_0, var_1 )
 
                 var_6 = maps\mp\_utility::getkillstreakindex( var_2 );
                 var_7 = "ks_icon" + common_scripts\utility::tostring( level.killstreak_gimme_slot );
-                self setclientomnvar( var_7, var_6 );
+                self _meth_82FB( var_7, var_6 );
 
                 if ( !level.console && !common_scripts\utility::is_player_gamepad_enabled() )
                 {
@@ -434,7 +434,7 @@ updatekillstreaks( var_0, var_1 )
             else
             {
                 var_7 = "ks_icon" + common_scripts\utility::tostring( level.killstreak_gimme_slot );
-                self setclientomnvar( var_7, 0 );
+                self _meth_82FB( var_7, 0 );
             }
         }
     }
@@ -469,7 +469,7 @@ updatekillstreaks( var_0, var_1 )
                 if ( isdefined( var_10 ) && isdefined( var_10.streakname ) && var_10.available )
                 {
                     var_8 = maps\mp\_utility::getkillstreakweapon( var_10.streakname, var_10.modules );
-                    var_11 = self getweaponslistitems();
+                    var_11 = self _meth_82CF();
                     var_12 = 0;
 
                     for ( var_13 = 0; var_13 < var_11.size; var_13++ )
@@ -484,7 +484,7 @@ updatekillstreaks( var_0, var_1 )
                     if ( !var_12 )
                         maps\mp\_utility::_giveweapon( var_8 );
                     else if ( issubstr( var_8, "airdrop_" ) )
-                        self setweaponammoclip( var_8, 1 );
+                        self _meth_82F6( var_8, 1 );
 
                     maps\mp\_utility::_setactionslot( var_5 + 4, "weapon", var_8 );
                 }
@@ -502,7 +502,7 @@ updatekillstreaks( var_0, var_1 )
         updatestreakslots();
     }
 
-    self setclientomnvar( "ks_used", 1 );
+    self _meth_82FB( "ks_used", 1 );
 }
 
 clearkillstreaks( var_0 )
@@ -526,7 +526,7 @@ clearkillstreaks( var_0 )
 
 getfirstprimaryweapon()
 {
-    var_0 = self getweaponslistprimaries();
+    var_0 = self _meth_830C();
     return var_0[0];
 }
 
@@ -559,7 +559,7 @@ waitforkillstreakweaponchange()
         return var_1;
 
     var_2 = maps\mp\_utility::getkillstreakweapon( self.pers["killstreaks"][self.killstreakindexweapon].streakname, self.pers["killstreaks"][self.killstreakindexweapon].modules );
-    self switchtoweapon( var_2 );
+    self _meth_8315( var_2 );
     self waittill( "weapon_switch_started", var_3 );
 
     if ( var_3 != var_2 )
@@ -586,7 +586,7 @@ aerialkillstreakmarker()
     for (;;)
     {
         common_scripts\utility::waittill_any( "weapon_change", "updateKillStreakMarker" );
-        var_1 = self getcurrentweapon();
+        var_1 = self _meth_8311();
         var_2 = weaponclass( var_1 );
 
         if ( var_2 != "rocketlauncher" )
@@ -633,7 +633,7 @@ getaerialkillstreakarray( var_0 )
             var_1[var_1.size] = var_7;
     }
 
-    if ( level.orbitalsupportinuse && isdefined( level.orbitalsupport_planemodel ) && isdefined( level.orbitalsupport_planemodel.owner ) && isdefined( level.orbitalsupport_planemodel._id_852D ) && level.orbitalsupport_planemodel._id_852D )
+    if ( level.orbitalsupportinuse && isdefined( level.orbitalsupport_planemodel ) && isdefined( level.orbitalsupport_planemodel.owner ) && isdefined( level.orbitalsupport_planemodel.showthreatmarker ) && level.orbitalsupport_planemodel.showthreatmarker )
     {
         if ( level.teambased && level.orbitalsupport_planemodel.owner.team == var_0 )
             var_1[var_1.size] = level.orbitalsupport_planemodel;
@@ -664,14 +664,14 @@ createthreaticon( var_0, var_1 )
         return;
 
     var_0.waypoint[var_2] = newhudelem();
-    var_0.waypoint[var_2] setshader( "waypoint_threat_hostile", 1, 1 );
+    var_0.waypoint[var_2] _meth_80CC( "waypoint_threat_hostile", 1, 1 );
     var_0.waypoint[var_2].alpha = 0.75;
-    var_0.waypoint[var_2].color = ( 1.0, 1.0, 1.0 );
+    var_0.waypoint[var_2].color = ( 1, 1, 1 );
     var_0.waypoint[var_2].x = var_0.origin[0];
     var_0.waypoint[var_2].y = var_0.origin[1];
     var_0.waypoint[var_2].z = var_0.origin[2];
-    var_0.waypoint[var_2] setwaypoint( 1, 1, 1 );
-    var_0.waypoint[var_2] settargetent( var_0 );
+    var_0.waypoint[var_2] _meth_80D8( 1, 1, 1 );
+    var_0.waypoint[var_2] _meth_80CD( var_0 );
     var_0.waypoint[var_2].showinkillcam = 0;
     var_0.waypoint[var_2].archived = 0;
     level thread removethreaticon( self, var_0, var_0.waypoint[var_2] );
@@ -733,7 +733,7 @@ killstreakusewaiter()
             if ( !level.console )
             {
                 if ( isdefined( self.lastdroppableweapon ) && var_0 == "killstreak_predator_missile_mp" )
-                    self switchtoweapon( self.lastdroppableweapon );
+                    self _meth_8315( self.lastdroppableweapon );
             }
 
             continue;
@@ -773,12 +773,12 @@ killstreakusewaiter()
         if ( var_0 != var_2 )
         {
             if ( issubstr( var_0, "turrethead" ) )
-                self switchtoweapon( self.lastdroppableweapon );
+                self _meth_8315( self.lastdroppableweapon );
 
             if ( maps\mp\_utility::isstrstart( var_0, "airdrop_" ) )
             {
-                self takeweapon( var_0 );
-                self switchtoweapon( self.lastdroppableweapon );
+                self _meth_830F( var_0 );
+                self _meth_8315( self.lastdroppableweapon );
             }
 
             continue;
@@ -804,7 +804,7 @@ killstreakusewaiter()
         var_10 = gettime();
         var_11 = ( var_10 - var_8 ) / 1000;
 
-        if ( !var_9 && !isalive( self ) && !self hasweapon( common_scripts\utility::getlastweapon() ) )
+        if ( !var_9 && !isalive( self ) && !self _meth_8314( common_scripts\utility::getlastweapon() ) )
         {
             var_6 = playergetkillstreaklastweapon( var_9 );
             maps\mp\_utility::_giveweapon( var_6 );
@@ -833,9 +833,9 @@ killstreakusewaiter()
                 self.water_last_weapon = var_6;
         }
 
-        if ( self getcurrentweapon() == "none" )
+        if ( self _meth_8311() == "none" )
         {
-            while ( self getcurrentweapon() == "none" )
+            while ( self _meth_8311() == "none" )
                 wait 0.05;
 
             waittillframeend;
@@ -862,9 +862,9 @@ switchweaponafterraiseanimation( var_0, var_1 )
 
 playergetkillstreaklastweapon( var_0 )
 {
-    if ( ( !isdefined( var_0 ) || isdefined( var_0 ) && !var_0 ) && !isalive( self ) && !self hasweapon( common_scripts\utility::getlastweapon() ) )
+    if ( ( !isdefined( var_0 ) || isdefined( var_0 ) && !var_0 ) && !isalive( self ) && !self _meth_8314( common_scripts\utility::getlastweapon() ) )
         return common_scripts\utility::getlastweapon();
-    else if ( !self hasweapon( common_scripts\utility::getlastweapon() ) )
+    else if ( !self _meth_8314( common_scripts\utility::getlastweapon() ) )
         return getfirstprimaryweapon();
     else
         return common_scripts\utility::getlastweapon();
@@ -879,9 +879,9 @@ waittakekillstreakweapon( var_0 )
     self endon( "faux_spawn" );
     self notify( "waitTakeKillstreakWeapon" );
     self endon( "waitTakeKillstreakWeapon" );
-    var_1 = self getcurrentweapon() == "none";
+    var_1 = self _meth_8311() == "none";
     self waittill( "weapon_change", var_2 );
-    var_3 = self getweaponslistprimaries();
+    var_3 = self _meth_830C();
 
     if ( common_scripts\utility::array_contains( var_3, var_2 ) )
     {
@@ -892,7 +892,7 @@ waittakekillstreakweapon( var_0 )
     }
     else if ( var_2 != var_0 )
         thread waittakekillstreakweapon( var_0 );
-    else if ( var_1 && self getcurrentweapon() == var_0 )
+    else if ( var_1 && self _meth_8311() == var_0 )
         thread waittakekillstreakweapon( var_0 );
 }
 
@@ -918,22 +918,22 @@ takekillstreakweaponifnodupe( var_0 )
         if ( level.console || common_scripts\utility::is_player_gamepad_enabled() )
         {
             if ( isdefined( self.killstreakindexweapon ) && var_0 != maps\mp\_utility::getkillstreakweapon( var_2[self.killstreakindexweapon].streakname, var_2[self.killstreakindexweapon].modules ) )
-                self takeweapon( var_0 );
+                self _meth_830F( var_0 );
             else if ( isdefined( self.killstreakindexweapon ) && var_0 == maps\mp\_utility::getkillstreakweapon( var_2[self.killstreakindexweapon].streakname, var_2[self.killstreakindexweapon].modules ) )
             {
-                self takeweapon( var_0 );
+                self _meth_830F( var_0 );
                 maps\mp\_utility::_giveweapon( var_0, 0 );
                 maps\mp\_utility::_setactionslot( 4, "weapon", var_0 );
             }
         }
         else
         {
-            self takeweapon( var_0 );
+            self _meth_830F( var_0 );
             maps\mp\_utility::_giveweapon( var_0, 0 );
         }
     }
     else
-        self takeweapon( var_0 );
+        self _meth_830F( var_0 );
 }
 
 shouldswitchweaponpostkillstreak( var_0, var_1, var_2, var_3 )
@@ -948,8 +948,8 @@ shouldswitchweaponpostkillstreak( var_0, var_1, var_2, var_3 )
     {
         case "warbird":
             return common_scripts\utility::array_contains( var_3, "warbird_ai_attack" ) || common_scripts\utility::array_contains( var_3, "warbird_ai_follow" );
-        case "assault_ugv":
         case "zm_ugv":
+        case "assault_ugv":
             return common_scripts\utility::array_contains( var_3, "assault_ugv_ai" );
     }
 
@@ -1022,9 +1022,9 @@ killstreakearned( var_0 )
 
         if ( issubstr( self.class, "custom" ) )
         {
-            if ( self getcacplayerdata( var_1, "assaultStreaks", 0, "streak" ) == var_0 )
+            if ( self _meth_8248( var_1, "assaultStreaks", 0, "streak" ) == var_0 )
                 self.firstkillstreakearned = gettime();
-            else if ( self getcacplayerdata( var_1, "assaultStreaks", 2, "streak" ) == var_0 && isdefined( self.firstkillstreakearned ) )
+            else if ( self _meth_8248( var_1, "assaultStreaks", 2, "streak" ) == var_0 && isdefined( self.firstkillstreakearned ) )
             {
                 if ( gettime() - self.firstkillstreakearned < 20000 )
                     thread maps\mp\gametypes\_missions::genericchallenge( "wargasm" );
@@ -1110,7 +1110,7 @@ givehordekillstreak( var_0, var_1, var_2, var_3, var_4 )
     self.pers["killstreaks"][var_5].streakname = var_0;
     var_8 = maps\mp\_utility::getkillstreakindex( var_0 );
     var_9 = "ks_icon" + common_scripts\utility::tostring( var_5 );
-    self setclientomnvar( var_9, var_8 );
+    self _meth_82FB( var_9, var_8 );
 
     if ( !var_4 )
     {
@@ -1119,7 +1119,7 @@ givehordekillstreak( var_0, var_1, var_2, var_3, var_4 )
         if ( isdefined( level.killstreaksetupfuncs[var_0] ) )
             self [[ level.killstreaksetupfuncs[var_0] ]]();
 
-        self setclientomnvar( "ks_acquired", 1 );
+        self _meth_82FB( "ks_acquired", 1 );
         return;
     }
 
@@ -1147,7 +1147,7 @@ givehordekillstreak( var_0, var_1, var_2, var_3, var_4 )
         {
             var_0 = self.pers["killstreaks"][self.killstreakindexweapon].streakname;
             var_12 = maps\mp\_utility::getkillstreakweapon( var_0, var_2 );
-            var_13 = self getcurrentweapon();
+            var_13 = self _meth_8311();
 
             if ( var_13 != var_12 && !issubstr( var_13, "turrethead" ) )
                 self.killstreakindexweapon = var_5;
@@ -1161,7 +1161,7 @@ givehordekillstreak( var_0, var_1, var_2, var_3, var_4 )
         {
             var_14 = self.pers["killstreaks"][level.killstreak_gimme_slot].nextslot - 1;
             var_15 = maps\mp\_utility::getkillstreakweapon( self.pers["killstreaks"][var_14].streakname, self.pers["killstreaks"][var_14].modules );
-            self takeweapon( var_15 );
+            self _meth_830F( var_15 );
         }
 
         var_12 = maps\mp\_utility::getkillstreakweapon( var_0, var_2 );
@@ -1174,7 +1174,7 @@ givehordekillstreak( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( level.killstreaksetupfuncs[var_0] ) )
         self [[ level.killstreaksetupfuncs[var_0] ]]();
 
-    self setclientomnvar( "ks_acquired", 1 );
+    self _meth_82FB( "ks_acquired", 1 );
 }
 
 getnextkillstreakslotindex( var_0, var_1, var_2 )
@@ -1247,7 +1247,7 @@ givekillstreak( var_0, var_1, var_2, var_3, var_4, var_5 )
         self.pers["killstreaks"][var_6].streakname = var_0;
         var_9 = maps\mp\_utility::getkillstreakindex( var_0 );
         var_10 = "ks_icon" + common_scripts\utility::tostring( var_6 );
-        self setclientomnvar( var_10, var_9 );
+        self _meth_82FB( var_10, var_9 );
     }
     else
     {
@@ -1285,7 +1285,7 @@ givekillstreak( var_0, var_1, var_2, var_3, var_4, var_5 )
         {
             var_0 = self.pers["killstreaks"][self.killstreakindexweapon].streakname;
             var_16 = maps\mp\_utility::getkillstreakweapon( var_0, var_4 );
-            var_17 = self getcurrentweapon();
+            var_17 = self _meth_8311();
 
             if ( var_17 != var_16 && !issubstr( var_17, "turrethead" ) )
                 self.killstreakindexweapon = var_6;
@@ -1299,7 +1299,7 @@ givekillstreak( var_0, var_1, var_2, var_3, var_4, var_5 )
         {
             var_18 = self.pers["killstreaks"][level.killstreak_gimme_slot].nextslot - 1;
             var_19 = maps\mp\_utility::getkillstreakweapon( self.pers["killstreaks"][var_18].streakname, self.pers["killstreaks"][var_18].modules );
-            self takeweapon( var_19 );
+            self _meth_830F( var_19 );
         }
 
         var_16 = maps\mp\_utility::getkillstreakweapon( var_0, var_4 );
@@ -1315,7 +1315,7 @@ givekillstreak( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( var_1 ) && var_1 && isdefined( var_2 ) && var_2 )
         self notify( "received_earned_killstreak" );
 
-    self setclientomnvar( "ks_acquired", 1 );
+    self _meth_82FB( "ks_acquired", 1 );
 }
 
 givekillstreakweapon( var_0 )
@@ -1325,20 +1325,20 @@ givekillstreakweapon( var_0 )
     if ( !level.console && !common_scripts\utility::is_player_gamepad_enabled() )
         return;
 
-    var_1 = self getweaponslistitems();
+    var_1 = self _meth_82CF();
 
     foreach ( var_3 in var_1 )
     {
         if ( !maps\mp\_utility::isstrstart( var_3, "killstreak_" ) && !maps\mp\_utility::isstrstart( var_3, "airdrop_" ) && !maps\mp\_utility::isstrstart( var_3, "deployable_" ) )
             continue;
 
-        if ( self getcurrentweapon() == var_3 )
+        if ( self _meth_8311() == var_3 )
             continue;
 
         while ( maps\mp\_utility::ischangingweapon() )
             wait 0.05;
 
-        self takeweapon( var_3 );
+        self _meth_830F( var_3 );
     }
 
     if ( isdefined( self.killstreakindexweapon ) )
@@ -1347,7 +1347,7 @@ givekillstreakweapon( var_0 )
         var_6 = self.pers["killstreaks"][self.killstreakindexweapon].modules;
         var_7 = maps\mp\_utility::getkillstreakweapon( var_5, var_6 );
 
-        if ( self getcurrentweapon() != var_7 )
+        if ( self _meth_8311() != var_7 )
         {
             maps\mp\_utility::_giveweapon( var_0, 0 );
             maps\mp\_utility::_setactionslot( 4, "weapon", var_0 );
@@ -1363,12 +1363,12 @@ givekillstreakweapon( var_0 )
 
 getstreakmodulecost( var_0 )
 {
-    return int( tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_0, level._id_53D4 ) );
+    return int( tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_0, level.ks_module_added_points_column ) );
 }
 
 getstreakmodulebasekillstreak( var_0 )
 {
-    return tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_0, level._id_53D5 );
+    return tablelookup( level.ks_modules_table, level.ks_module_ref_column, var_0, level.ks_module_killstreak_ref_column );
 }
 
 getallstreakmodulescost( var_0 )
@@ -1486,7 +1486,7 @@ giveownedkillstreakitem( var_0 )
             if ( isdefined( var_1[var_4] ) && isdefined( var_1[var_4].streakname ) && var_1[var_4].available )
             {
                 var_8 = maps\mp\_utility::getkillstreakweapon( var_1[var_4].streakname, var_1[var_4].modules );
-                var_9 = self getweaponslistitems();
+                var_9 = self _meth_82CF();
                 var_10 = 0;
 
                 for ( var_11 = 0; var_11 < var_9.size; var_11++ )
@@ -1501,7 +1501,7 @@ giveownedkillstreakitem( var_0 )
                 if ( !var_10 )
                     maps\mp\_utility::_giveweapon( var_8 );
                 else if ( issubstr( var_8, "airdrop_" ) )
-                    self setweaponammoclip( var_8, 1 );
+                    self _meth_82F6( var_8, 1 );
 
                 maps\mp\_utility::_setactionslot( var_4 + 4, "weapon", var_8 );
 
@@ -1597,7 +1597,7 @@ initridekillstreak_internal( var_0, var_1, var_2, var_3 )
     if ( !isdefined( self ) || !isalive( self ) )
         return "fail";
 
-    if ( !self isonground() && !self islinked() )
+    if ( !self _meth_8341() && !self _meth_8068() )
         return "fail";
 
     if ( isdefined( self.underwater ) && self.underwater )
@@ -1622,8 +1622,8 @@ initridekillstreak_internal( var_0, var_1, var_2, var_3 )
         if ( !isdefined( var_2 ) )
             var_2 = 0.8;
 
-        self setclientomnvar( "ui_killstreak_blackout", 1 );
-        self setclientomnvar( "ui_killstreak_blackout_fade_end", gettime() + int( var_2 * 1000 ) );
+        self _meth_82FB( "ui_killstreak_blackout", 1 );
+        self _meth_82FB( "ui_killstreak_blackout_fade_end", gettime() + int( var_2 * 1000 ) );
         thread clearrideintroonteamchange();
         thread clearrideintroonroundtransition();
     }
@@ -1647,7 +1647,7 @@ initridekillstreak_internal( var_0, var_1, var_2, var_3 )
     if ( !isdefined( self ) || !isalive( self ) )
         return "fail";
 
-    if ( !self isonground() && !self islinked() )
+    if ( !self _meth_8341() && !self _meth_8068() )
         return "fail";
 
     if ( isdefined( self.underwater ) && self.underwater )
@@ -1672,8 +1672,8 @@ clearrideintro( var_0 )
         maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_0 );
 
     var_1 = 0.5;
-    self setclientomnvar( "ui_killstreak_blackout", 0 );
-    self setclientomnvar( "ui_killstreak_blackout_fade_end", gettime() + int( var_1 * 1000 ) );
+    self _meth_82FB( "ui_killstreak_blackout", 0 );
+    self _meth_82FB( "ui_killstreak_blackout_fade_end", gettime() + int( var_1 * 1000 ) );
     wait(var_1);
 
     if ( !isdefined( self ) )
@@ -1702,8 +1702,8 @@ clearrideintroonteamchange()
     self endon( "rideKillstreakComplete" );
     self endon( "rideKillstreakFailed" );
     self waittill( "joined_team" );
-    self setclientomnvar( "ui_killstreak_blackout", 0 );
-    self setclientomnvar( "ui_killstreak_blackout_fade_end", 0 );
+    self _meth_82FB( "ui_killstreak_blackout", 0 );
+    self _meth_82FB( "ui_killstreak_blackout_fade_end", 0 );
     maps\mp\_utility::playerremotekillstreakshowhud();
     self notify( "rideKillstreakComplete" );
 }
@@ -1713,17 +1713,17 @@ clearrideintroonroundtransition()
     self endon( "rideKillstreakComplete" );
     self endon( "rideKillstreakFailed" );
     level waittill( "game_ended" );
-    self setclientomnvar( "ui_killstreak_blackout", 0 );
-    self setclientomnvar( "ui_killstreak_blackout_fade_end", 0 );
+    self _meth_82FB( "ui_killstreak_blackout", 0 );
+    self _meth_82FB( "ui_killstreak_blackout_fade_end", 0 );
     maps\mp\_utility::playerremotekillstreakshowhud();
     self notify( "rideKillstreakComplete" );
 }
 
 playerdestroyglassbelow()
 {
-    if ( self isonground() )
+    if ( self _meth_8341() )
     {
-        var_0 = bullettrace( self.origin + ( 0.0, 0.0, 5.0 ), self.origin + ( 0.0, 0.0, -5.0 ), 0 );
+        var_0 = bullettrace( self.origin + ( 0, 0, 5 ), self.origin + ( 0, 0, -5 ), 0 );
 
         if ( isdefined( var_0["glass"] ) )
             destroyglass( var_0["glass"] );
@@ -1845,7 +1845,7 @@ canshufflekillstreaks()
 
 canshufflewithkillstreakweapon()
 {
-    var_0 = self getcurrentweapon();
+    var_0 = self _meth_8311();
     return !maps\mp\_utility::iskillstreakweapon( var_0 ) || maps\mp\_utility::iskillstreakweapon( var_0 ) && maps\mp\_utility::isjuggernaut();
 }
 
@@ -1860,16 +1860,16 @@ streaknotifytracker()
         return;
 
     maps\mp\_utility::gameflagwait( "prematch_done" );
-    self notifyonplayercommand( "toggled_up", "+actionslot 1" );
-    self notifyonplayercommand( "toggled_down", "+actionslot 2" );
+    self _meth_82DD( "toggled_up", "+actionslot 1" );
+    self _meth_82DD( "toggled_down", "+actionslot 2" );
 
     if ( !level.console )
     {
-        self notifyonplayercommand( "streakUsed1", "+actionslot 4" );
-        self notifyonplayercommand( "streakUsed2", "+actionslot 5" );
-        self notifyonplayercommand( "streakUsed3", "+actionslot 6" );
-        self notifyonplayercommand( "streakUsed4", "+actionslot 7" );
-        self notifyonplayercommand( "streakUsed5", "+actionslot 8" );
+        self _meth_82DD( "streakUsed1", "+actionslot 4" );
+        self _meth_82DD( "streakUsed2", "+actionslot 5" );
+        self _meth_82DD( "streakUsed3", "+actionslot 6" );
+        self _meth_82DD( "streakUsed4", "+actionslot 7" );
+        self _meth_82DD( "streakUsed5", "+actionslot 8" );
     }
 }
 

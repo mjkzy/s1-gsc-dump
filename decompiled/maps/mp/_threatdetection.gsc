@@ -1,59 +1,59 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
     level._threatdetection = spawnstruct();
-    level._threatdetection._id_278C = "stencil_outline";
-    level._threatdetection._id_0723 = getdvar( "threat_detection_highlight_style", level._threatdetection._id_278C );
+    level._threatdetection.default_style = "stencil_outline";
+    level._threatdetection.activestyle = getdvar( "threat_detection_highlight_style", level._threatdetection.default_style );
     level thread onplayerconnect();
-    level thread _id_A1F3();
+    level thread watchagentspawn();
 }
 
-_id_1C84( var_0 )
+changethreatstyle( var_0 )
 {
-    if ( var_0 == level._threatdetection._id_0723 )
+    if ( var_0 == level._threatdetection.activestyle )
         return;
 
     foreach ( var_2 in level.players )
     {
-        if ( isdefined( var_2._threatdetection._id_5996 ) )
-            var_2._threatdetection._id_5996 delete();
+        if ( isdefined( var_2._threatdetection.mark_enemy_model ) )
+            var_2._threatdetection.mark_enemy_model delete();
 
-        if ( isdefined( var_2._threatdetection._id_5997 ) )
-            var_2._threatdetection._id_5997 delete();
+        if ( isdefined( var_2._threatdetection.mark_friendly_model ) )
+            var_2._threatdetection.mark_friendly_model delete();
 
-        if ( isdefined( var_2._id_5998 ) && isdefined( var_2._id_5998._id_3B32 ) )
+        if ( isdefined( var_2.mark_fx ) && isdefined( var_2.mark_fx.fx_ent ) )
         {
-            foreach ( var_5, var_4 in var_2._id_5998._id_3B32 )
+            foreach ( var_5, var_4 in var_2.mark_fx.fx_ent )
             {
-                if ( isdefined( var_4._id_32B3 ) )
-                    var_4._id_32B3 delete();
+                if ( isdefined( var_4.enemymarker ) )
+                    var_4.enemymarker delete();
 
-                if ( isdefined( var_4._id_3AB5 ) )
-                    var_4._id_3AB5 delete();
+                if ( isdefined( var_4.friendlymarker ) )
+                    var_4.friendlymarker delete();
 
-                if ( isdefined( var_4._id_32B2 ) )
-                    var_4._id_32B2 delete();
+                if ( isdefined( var_4.enemylosmarker ) )
+                    var_4.enemylosmarker delete();
 
-                if ( isdefined( var_4._id_3AB4 ) )
-                    var_4._id_3AB4 delete();
+                if ( isdefined( var_4.friendlylosmarker ) )
+                    var_4.friendlylosmarker delete();
             }
         }
     }
 
     foreach ( var_2 in level.players )
-        var_2 _id_9317( var_0 );
+        var_2 threat_init( var_0 );
 
-    level._threatdetection._id_0723 = var_0;
+    level._threatdetection.activestyle = var_0;
 }
 
-_id_4124()
+getthreatstyle()
 {
-    var_0 = getdvar( "threat_detection_highlight_style", level._threatdetection._id_278C );
+    var_0 = getdvar( "threat_detection_highlight_style", level._threatdetection.default_style );
 
-    if ( var_0 != level._threatdetection._id_0723 )
-        _id_1C84( var_0 );
+    if ( var_0 != level._threatdetection.activestyle )
+        changethreatstyle( var_0 );
 
     return var_0;
 }
@@ -67,22 +67,22 @@ onplayerconnect()
     }
 }
 
-_id_A1F3()
+watchagentspawn()
 {
     for (;;)
     {
         level waittill( "spawned_agent", var_0 );
         var_0._threatdetection = spawnstruct();
         var_0._threatdetection.showlist = [];
-        var_0 thread _id_6449();
+        var_0 thread onagentspawned();
     }
 }
 
-_id_6449()
+onagentspawned()
 {
     self endon( "death" );
-    childthread _id_5ED2();
-    childthread _id_1E8D();
+    childthread monitorthreathighlight();
+    childthread cleanupondeath();
 }
 
 onplayerspawned()
@@ -91,21 +91,21 @@ onplayerspawned()
     self._threatdetection = spawnstruct();
     self._threatdetection.showlist = [];
     self waittill( "spawned_player" );
-    childthread _id_5ED2();
-    childthread _id_1E8D();
-    childthread _id_5ED3();
+    childthread monitorthreathighlight();
+    childthread cleanupondeath();
+    childthread monitorthreathighlightnotification();
 
     for (;;)
     {
         self waittill( "spawned_player" );
-        var_0 = _id_4124();
+        var_0 = getthreatstyle();
 
         if ( var_0 == "attached_glow" )
-            _id_9E76( ::_id_9E7B, ::_id_3FCC, undefined );
+            visitfxent( ::visitorrelink, ::gethostilemarker, undefined );
     }
 }
 
-_id_5ED3()
+monitorthreathighlightnotification()
 {
     var_0 = newclienthudelem( self );
     var_0.x = 0;
@@ -114,9 +114,9 @@ _id_5ED3()
     var_0.aligny = "top";
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
-    var_0 setshader( "paint_overlay", 640, 480 );
+    var_0 _meth_80CC( "paint_overlay", 640, 480 );
     var_0.alpha = 0.0;
-    var_0.color = ( 0.0, 0.0, 0.0 );
+    var_0.color = ( 0, 0, 0 );
     var_0.sort = -3;
     var_0.hidden = 1;
     var_1 = 0.5;
@@ -129,7 +129,7 @@ _id_5ED3()
             if ( var_0.hidden )
             {
                 var_0.hidden = 0;
-                var_0 childthread _id_9329( var_1, var_2 );
+                var_0 childthread threatnotificationoverlayflash( var_1, var_2 );
             }
         }
         else if ( !var_0.hidden )
@@ -140,7 +140,7 @@ _id_5ED3()
             if ( var_0.alpha > 0.0 )
             {
                 var_0 fadeovertime( var_2 );
-                var_0.color = ( 0.0, 0.0, 0.0 );
+                var_0.color = ( 0, 0, 0 );
                 var_0.alpha = 0.0;
                 wait(var_2);
             }
@@ -150,40 +150,40 @@ _id_5ED3()
     }
 }
 
-_id_9329( var_0, var_1 )
+threatnotificationoverlayflash( var_0, var_1 )
 {
     self endon( "stop_overlay_flash" );
     self fadeovertime( var_0 );
-    self.color = ( 1.0, 1.0, 1.0 );
+    self.color = ( 1, 1, 1 );
     self.alpha = 1.0;
 }
 
-_id_2725()
+debughelper()
 {
     for (;;)
     {
         var_0 = distance( self.origin, level.players[0].origin );
         thread common_scripts\utility::draw_line_for_time( level.players[0].origin, self.origin, 1, 1, 1, 0.3 );
 
-        if ( isdefined( self._threatdetection._id_5996 ) )
-            thread common_scripts\utility::draw_line_for_time( level.players[0].origin, self._threatdetection._id_5996.origin, 1, 1, 1, 0.3 );
+        if ( isdefined( self._threatdetection.mark_enemy_model ) )
+            thread common_scripts\utility::draw_line_for_time( level.players[0].origin, self._threatdetection.mark_enemy_model.origin, 1, 1, 1, 0.3 );
 
         wait 0.3;
     }
 }
 
-_id_1E8D()
+cleanupondeath()
 {
     self endon( "disconnect" );
 
     for (;;)
     {
         self waittill( "death" );
-        _id_73DE();
+        removethreatevents();
     }
 }
 
-_id_73DE()
+removethreatevents()
 {
     foreach ( var_1 in level.players )
     {
@@ -194,10 +194,10 @@ _id_73DE()
         }
     }
 
-    var_6 = _id_4124();
+    var_6 = getthreatstyle();
 
     if ( var_6 == "attached_glow" )
-        _id_9E76( ::_id_9E7A, ::_id_3FCC, undefined );
+        visitfxent( ::visitorhideall, ::gethostilemarker, undefined );
 }
 
 detection_highlight_hud_effect_on( var_0, var_1, var_2 )
@@ -207,7 +207,7 @@ detection_highlight_hud_effect_on( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) && var_2 )
         var_3.color = ( 0.1, 0.0015, 0.0015 );
     else
-        var_3.color = ( 1.0, 0.015, 0.015 );
+        var_3.color = ( 1, 0.015, 0.015 );
 
     var_3.alpha = 1.0;
     var_3 _meth_83A4( var_1 );
@@ -248,7 +248,7 @@ detection_grenade_hud_effect( var_0, var_1, var_2, var_3 )
         var_4 destroy();
 }
 
-_id_34B1( var_0, var_1, var_2, var_3, var_4 )
+exo_ping_hud_effect( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = undefined;
 
@@ -283,7 +283,7 @@ addthreatevent( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = gettime();
     var_7 = var_6 + var_1 * 1000;
     var_8 = var_7 - 9 * ( var_1 * 1000 ) / 10;
-    var_9 = _id_4124();
+    var_9 = getthreatstyle();
 
     if ( var_7 - var_8 < 250 )
         var_8 = 250 + var_6;
@@ -308,7 +308,7 @@ addthreatevent( var_0, var_1, var_2, var_3, var_4, var_5 )
                 if ( var_7 > var_14.endtime )
                 {
                     var_14.endtime = var_7;
-                    var_14._id_5894 = var_8;
+                    var_14.losendtime = var_8;
                     var_14.eventtype = var_2;
                 }
 
@@ -323,7 +323,7 @@ addthreatevent( var_0, var_1, var_2, var_3, var_4, var_5 )
             self._threatdetection.showlist[var_16] = spawnstruct();
             self._threatdetection.showlist[var_16].player = var_11;
             self._threatdetection.showlist[var_16].endtime = var_7;
-            self._threatdetection.showlist[var_16]._id_5894 = var_8;
+            self._threatdetection.showlist[var_16].losendtime = var_8;
             self._threatdetection.showlist[var_16].eventtype = var_2;
 
             if ( isplayer( self ) )
@@ -337,14 +337,14 @@ addthreatevent( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isplayer( self ) )
     {
         if ( var_4 )
-            _id_9E76( ::_id_9E7F, ::_id_3FA2, undefined );
+            visitfxent( ::visitorupdatemarkerpos, ::getfriendlymarker, undefined );
 
         if ( var_3 )
-            _id_9E76( ::_id_9E7F, ::_id_3FCC, undefined );
+            visitfxent( ::visitorupdatemarkerpos, ::gethostilemarker, undefined );
     }
 }
 
-_id_8EFF( var_0 )
+stopthreateventtype( var_0 )
 {
     foreach ( var_2 in self._threatdetection.showlist )
     {
@@ -352,20 +352,20 @@ _id_8EFF( var_0 )
             var_2.endtime = 0;
     }
 
-    var_4 = _id_4124();
+    var_4 = getthreatstyle();
 
     if ( var_4 == "attached_glow" )
-        _id_9E76( ::_id_9E7A, ::_id_3FCC, undefined );
+        visitfxent( ::visitorhideall, ::gethostilemarker, undefined );
 }
 
-_id_9E76( var_0, var_1, var_2 )
+visitfxent( var_0, var_1, var_2 )
 {
-    var_3 = _id_4124();
+    var_3 = getthreatstyle();
 
     if ( var_3 == "glow" )
     {
-        foreach ( var_6, var_5 in self._id_5998._id_3B32 )
-            [[ var_0 ]]( [[ var_1 ]]( var_5 ), var_2, level._threatdetection._id_3B2C[var_6][0] );
+        foreach ( var_6, var_5 in self.mark_fx.fx_ent )
+            [[ var_0 ]]( [[ var_1 ]]( var_5 ), var_2, level._threatdetection.fx_data[var_6][0] );
     }
     else if ( var_3 == "model" )
         [[ var_0 ]]( [[ var_1 ]]( self._threatdetection ), var_2, "tag_origin" );
@@ -373,8 +373,8 @@ _id_9E76( var_0, var_1, var_2 )
         [[ var_0 ]]( [[ var_1 ]]( self._threatdetection ), var_2, "tag_origin" );
     else if ( var_3 == "attached_glow" )
     {
-        foreach ( var_6, var_5 in self._id_5998._id_3B32 )
-            [[ var_0 ]]( [[ var_1 ]]( var_5 ), var_2, level._threatdetection._id_3B2C[var_6][0] );
+        foreach ( var_6, var_5 in self.mark_fx.fx_ent )
+            [[ var_0 ]]( [[ var_1 ]]( var_5 ), var_2, level._threatdetection.fx_data[var_6][0] );
     }
     else if ( var_3 == "stencil_outline" )
         [[ var_0 ]]( self, var_2, "tag_origin" );
@@ -384,27 +384,27 @@ _id_9E76( var_0, var_1, var_2 )
     }
 }
 
-_id_9E7B( var_0, var_1, var_2 )
+visitorrelink( var_0, var_1, var_2 )
 {
-    var_0 unlink();
+    var_0 _meth_804F();
     var_0.origin = self gettagorigin( var_2 );
     var_0.angles = self gettagangles( var_2 );
-    var_0 linkto( self, var_2 );
+    var_0 _meth_804D( self, var_2 );
     wait 0.05;
-    playfxontag( var_0._id_3B21, var_0, "tag_origin" );
+    playfxontag( var_0.fx, var_0, "tag_origin" );
 }
 
-_id_9E7A( var_0, var_1, var_2 )
+visitorhideall( var_0, var_1, var_2 )
 {
-    var_3 = _id_4124();
+    var_3 = getthreatstyle();
 
     if ( var_3 == "attached_glow" )
-        stopfxontag( var_0._id_3B21, var_0, "tag_origin" );
+        stopfxontag( var_0.fx, var_0, "tag_origin" );
 }
 
-_id_9E7F( var_0, var_1, var_2 )
+visitorupdatemarkerpos( var_0, var_1, var_2 )
 {
-    var_3 = _id_4124();
+    var_3 = getthreatstyle();
     var_0.origin = self gettagorigin( var_2 );
     var_0.angles = self gettagangles( var_2 );
 
@@ -412,8 +412,8 @@ _id_9E7F( var_0, var_1, var_2 )
         triggerfx( var_0 );
     else if ( var_3 == "model" )
     {
-        var_4 = "mp_hud_" + self getstance() + "_char";
-        var_5 = var_0 != self._threatdetection._id_5997;
+        var_4 = "mp_hud_" + self _meth_817C() + "_char";
+        var_5 = var_0 != self._threatdetection.mark_friendly_model;
 
         if ( var_5 )
             var_4 += "_hostile";
@@ -422,13 +422,13 @@ _id_9E7F( var_0, var_1, var_2 )
 
         if ( var_4 != var_6 )
         {
-            var_0 setmodel( var_4 );
+            var_0 _meth_80B1( var_4 );
             return;
         }
     }
     else if ( var_3 == "vfx_model" )
     {
-        switch ( self getstance() )
+        switch ( self _meth_817C() )
         {
             case "prone":
                 var_4 = "threat_detect_model_prone";
@@ -442,13 +442,13 @@ _id_9E7F( var_0, var_1, var_2 )
                 break;
         }
 
-        var_5 = var_0 != self._threatdetection._id_5997;
-        var_6 = self._threatdetection._id_3A77;
+        var_5 = var_0 != self._threatdetection.mark_friendly_model;
+        var_6 = self._threatdetection.friendly_pose;
 
         if ( var_5 )
         {
             var_4 += "_hostile";
-            var_6 = self._threatdetection._id_4A30;
+            var_6 = self._threatdetection.hostile_pose;
         }
 
         if ( var_6 != var_4 )
@@ -458,27 +458,27 @@ _id_9E7F( var_0, var_1, var_2 )
 
             if ( var_5 )
             {
-                self._threatdetection._id_5996 delete();
-                self._threatdetection._id_5996 = spawnfx( common_scripts\utility::getfx( var_4 ), self.origin, var_7, var_8 );
-                self._threatdetection._id_5996 hide();
-                self._threatdetection._id_4A30 = var_4;
+                self._threatdetection.mark_enemy_model delete();
+                self._threatdetection.mark_enemy_model = spawnfx( common_scripts\utility::getfx( var_4 ), self.origin, var_7, var_8 );
+                self._threatdetection.mark_enemy_model hide();
+                self._threatdetection.hostile_pose = var_4;
             }
             else
             {
-                self._threatdetection._id_5997 delete();
-                self._threatdetection._id_5997 = spawnfx( common_scripts\utility::getfx( var_4 ), self.origin, var_7, var_8 );
-                self._threatdetection._id_5997 hide();
-                self._threatdetection._id_3A77 = var_4;
+                self._threatdetection.mark_friendly_model delete();
+                self._threatdetection.mark_friendly_model = spawnfx( common_scripts\utility::getfx( var_4 ), self.origin, var_7, var_8 );
+                self._threatdetection.mark_friendly_model hide();
+                self._threatdetection.friendly_pose = var_4;
             }
         }
 
         if ( var_5 )
         {
-            triggerfx( self._threatdetection._id_5996 );
+            triggerfx( self._threatdetection.mark_enemy_model );
             return;
         }
 
-        triggerfx( self._threatdetection._id_5997 );
+        triggerfx( self._threatdetection.mark_friendly_model );
         return;
     }
     else
@@ -494,16 +494,16 @@ _id_9E7F( var_0, var_1, var_2 )
     }
 }
 
-_id_3FCC( var_0 )
+gethostilemarker( var_0 )
 {
-    var_1 = _id_4124();
+    var_1 = getthreatstyle();
 
     if ( var_1 == "glow" )
-        return var_0._id_32B3;
+        return var_0.enemymarker;
     else if ( var_1 == "model" )
-        return var_0._id_5996;
+        return var_0.mark_enemy_model;
     else if ( var_1 == "vfx_model" )
-        return var_0._id_5996;
+        return var_0.mark_enemy_model;
     else if ( var_1 == "attached_glow" )
         return var_0;
     else if ( var_1 == "stencil_outline" )
@@ -514,48 +514,48 @@ _id_3FCC( var_0 )
     }
 }
 
-_id_3FA2( var_0 )
+getfriendlymarker( var_0 )
 {
-    var_1 = _id_4124();
+    var_1 = getthreatstyle();
 
     if ( var_1 == "glow" )
-        return var_0._id_3AB5;
+        return var_0.friendlymarker;
     else if ( var_1 == "model" )
-        return var_0._id_5997;
+        return var_0.mark_friendly_model;
     else if ( var_1 == "vfx_model" )
-        return var_0._id_5997;
+        return var_0.mark_friendly_model;
     else
     {
 
     }
 }
 
-_id_3FA1( var_0 )
+getfriendlylosmarker( var_0 )
 {
-    var_1 = _id_4124();
+    var_1 = getthreatstyle();
 
     if ( var_1 == "glow" )
-        return var_0._id_3AB4;
+        return var_0.friendlylosmarker;
     else if ( var_1 == "model" )
-        return var_0._id_5997;
+        return var_0.mark_friendly_model;
     else if ( var_1 == "vfx_model" )
-        return var_0._id_5997;
+        return var_0.mark_friendly_model;
     else
     {
 
     }
 }
 
-_id_3FCB( var_0 )
+gethostilelosmarker( var_0 )
 {
-    var_1 = _id_4124();
+    var_1 = getthreatstyle();
 
     if ( var_1 == "glow" )
-        return var_0._id_32B2;
+        return var_0.enemylosmarker;
     else if ( var_1 == "model" )
-        return var_0._id_5996;
+        return var_0.mark_enemy_model;
     else if ( var_1 == "vfx_model" )
-        return var_0._id_5996;
+        return var_0.mark_enemy_model;
     else if ( var_1 == "attached_glow" )
         return var_0;
     else if ( var_1 == "stencil_outline" )
@@ -566,26 +566,26 @@ _id_3FCB( var_0 )
     }
 }
 
-_id_9E77( var_0, var_1, var_2 )
+visithideallmarkers( var_0, var_1, var_2 )
 {
     foreach ( var_4 in var_0 )
         var_4 hide();
 }
 
-_id_06D7( var_0 )
+accessallmarkers( var_0 )
 {
-    return [ var_0._id_3AB5, var_0._id_32B3, var_0._id_3AB4, var_0._id_32B2 ];
+    return [ var_0.friendlymarker, var_0.enemymarker, var_0.friendlylosmarker, var_0.enemylosmarker ];
 }
 
-_id_4051( var_0 )
+getnormaldirectionvec( var_0 )
 {
     return vectornormalize( common_scripts\utility::flat_origin( var_0 ) );
 }
 
-_id_5ED2()
+monitorthreathighlight()
 {
-    _id_9317( _id_4124() );
-    var_0 = ( 0.0, 0.0, 32.0 );
+    threat_init( getthreatstyle() );
+    var_0 = ( 0, 0, 32 );
     var_1 = 0;
 
     for (;;)
@@ -604,19 +604,19 @@ _id_5ED2()
                     continue;
                 }
 
-                var_5._id_5893 = 0;
-                var_6 = _id_4051( anglestoforward( var_5.player.angles ) );
-                var_7 = _id_4051( self.origin - var_5.player.origin );
+                var_5.los = 0;
+                var_6 = getnormaldirectionvec( anglestoforward( var_5.player.angles ) );
+                var_7 = getnormaldirectionvec( self.origin - var_5.player.origin );
                 var_8 = vectordot( var_7, var_6 );
 
                 if ( var_8 < 0 )
                     continue;
 
-                if ( _id_1CD3( var_5 ) )
+                if ( check_los( var_5 ) )
                 {
-                    var_5._id_5893 = 1;
+                    var_5.los = 1;
 
-                    if ( var_5._id_5894 <= var_2 )
+                    if ( var_5.losendtime <= var_2 )
                     {
                         self._threatdetection.showlist = common_scripts\utility::array_remove( self._threatdetection.showlist, var_5 );
                         continue;
@@ -630,7 +630,7 @@ _id_5ED2()
             self._threatdetection.showlist = common_scripts\utility::array_remove( self._threatdetection.showlist, var_5 );
         }
 
-        var_10 = _id_4124();
+        var_10 = getthreatstyle();
 
         if ( !var_1 )
         {
@@ -638,29 +638,29 @@ _id_5ED2()
 
             if ( var_10 == "glow" )
             {
-                foreach ( var_13, var_12 in self._id_5998._id_3B32 )
+                foreach ( var_13, var_12 in self.mark_fx.fx_ent )
                 {
-                    var_12._id_32B3 hide();
-                    var_12._id_3AB5 hide();
-                    var_12._id_32B2 hide();
-                    var_12._id_3AB4 hide();
+                    var_12.enemymarker hide();
+                    var_12.friendlymarker hide();
+                    var_12.enemylosmarker hide();
+                    var_12.friendlylosmarker hide();
                 }
             }
             else if ( var_10 == "model" )
             {
-                self._threatdetection._id_5997 hide();
-                self._threatdetection._id_5996 hide();
+                self._threatdetection.mark_friendly_model hide();
+                self._threatdetection.mark_enemy_model hide();
             }
             else if ( var_10 == "vfx_model" )
             {
-                self._threatdetection._id_5997 hide();
-                self._threatdetection._id_5996 hide();
+                self._threatdetection.mark_friendly_model hide();
+                self._threatdetection.mark_enemy_model hide();
             }
             else if ( var_10 == "attached_glow" )
             {
-                foreach ( var_13, var_5 in self._id_5998._id_3B32 )
+                foreach ( var_13, var_5 in self.mark_fx.fx_ent )
                 {
-                    stopfxontag( var_5._id_3B21, var_5, "tag_origin" );
+                    stopfxontag( var_5.fx, var_5, "tag_origin" );
                     var_5 hide();
                 }
             }
@@ -677,10 +677,10 @@ _id_5ED2()
 
         foreach ( var_16 in self._threatdetection.showlist )
         {
-            if ( var_16._id_5893 )
+            if ( var_16.los )
             {
-                _id_852B( var_16.player, ::_id_3FA1, ::_id_3FCB, ::_id_9E7E );
-                _id_6F13( var_1, var_10, var_16.player );
+                showthreat( var_16.player, ::getfriendlylosmarker, ::gethostilelosmarker, ::visitorupdatelosmarker );
+                prepare_show_threat( var_1, var_10, var_16.player );
                 var_1 = 0;
                 continue;
             }
@@ -689,103 +689,103 @@ _id_5ED2()
 
             if ( var_17["fraction"] < 1 && !isplayer( var_17["entity"] ) )
             {
-                _id_852B( var_16.player, ::_id_3FA2, ::_id_3FCC, ::_id_9E7D );
-                _id_6F13( var_1, var_10, var_16.player );
+                showthreat( var_16.player, ::getfriendlymarker, ::gethostilemarker, ::visitorshowtoplayer );
+                prepare_show_threat( var_1, var_10, var_16.player );
                 var_1 = 0;
             }
         }
     }
 }
 
-_id_6F13( var_0, var_1, var_2 )
+prepare_show_threat( var_0, var_1, var_2 )
 {
     if ( var_0 )
     {
         if ( var_1 == "attached_glow" )
-            _id_852B( var_2, ::_id_3FA1, ::_id_3FCB, ::_id_9E7C );
+            showthreat( var_2, ::getfriendlylosmarker, ::gethostilelosmarker, ::visitorretriggerfx );
     }
 }
 
-_id_9E7C( var_0, var_1, var_2 )
+visitorretriggerfx( var_0, var_1, var_2 )
 {
-    playfxontag( var_0._id_3B21, var_0, "tag_origin" );
+    playfxontag( var_0.fx, var_0, "tag_origin" );
 }
 
-_id_1CD3( var_0 )
+check_los( var_0 )
 {
-    if ( bullettracepassed( var_0.player geteye(), self geteye(), 0, var_0.player ) )
+    if ( bullettracepassed( var_0.player _meth_80A8(), self _meth_80A8(), 0, var_0.player ) )
         return 1;
 
     return 0;
 }
 
-_id_9317( var_0 )
+threat_init( var_0 )
 {
     var_1 = spawnstruct();
-    var_1._id_3B32 = [];
+    var_1.fx_ent = [];
 
     if ( var_0 == "glow" )
     {
-        foreach ( var_5, var_3 in level._threatdetection._id_3B2C )
+        foreach ( var_5, var_3 in level._threatdetection.fx_data )
         {
             var_4 = spawnstruct();
             var_4.origin = self gettagorigin( var_3[0] );
             var_4.angles = self gettagangles( var_3[0] );
-            var_4._id_32B3 = spawnfx( var_3[1], var_4.origin );
-            triggerfx( var_4._id_32B3 );
-            var_4._id_32B3 hide();
-            var_4._id_32B2 = spawnfx( var_3[3], var_4.origin );
-            triggerfx( var_4._id_32B2 );
-            var_4._id_32B2 hide();
-            var_4._id_3AB5 = spawnfx( var_3[2], var_4.origin );
-            triggerfx( var_4._id_3AB5 );
-            var_4._id_3AB5 hide();
-            var_4._id_3AB4 = spawnfx( var_3[4], var_4.origin );
-            triggerfx( var_4._id_3AB4 );
-            var_4._id_3AB4 hide();
-            var_1._id_3B32[var_5] = var_4;
+            var_4.enemymarker = spawnfx( var_3[1], var_4.origin );
+            triggerfx( var_4.enemymarker );
+            var_4.enemymarker hide();
+            var_4.enemylosmarker = spawnfx( var_3[3], var_4.origin );
+            triggerfx( var_4.enemylosmarker );
+            var_4.enemylosmarker hide();
+            var_4.friendlymarker = spawnfx( var_3[2], var_4.origin );
+            triggerfx( var_4.friendlymarker );
+            var_4.friendlymarker hide();
+            var_4.friendlylosmarker = spawnfx( var_3[4], var_4.origin );
+            triggerfx( var_4.friendlylosmarker );
+            var_4.friendlylosmarker hide();
+            var_1.fx_ent[var_5] = var_4;
         }
 
-        self._id_5998 = var_1;
+        self.mark_fx = var_1;
     }
     else if ( var_0 == "model" )
     {
         var_6 = spawn( "script_model", self.origin );
         var_6.origin = self.origin;
         var_6.angles = self.angles;
-        var_6 setmodel( level._threatdetection._id_3AB6 );
+        var_6 _meth_80B1( level._threatdetection.friendlymodel );
         var_6 setcontents( 0 );
-        self._threatdetection._id_5997 = var_6;
+        self._threatdetection.mark_friendly_model = var_6;
         var_6 = spawn( "script_model", self.origin );
         var_6.origin = self.origin;
         var_6.angles = self.angles;
-        var_6 setmodel( level._threatdetection._id_4A31 );
+        var_6 _meth_80B1( level._threatdetection.hostilemodel );
         var_6 setcontents( 0 );
-        self._threatdetection._id_5996 = var_6;
+        self._threatdetection.mark_enemy_model = var_6;
     }
     else if ( var_0 == "vfx_model" )
     {
-        self._threatdetection._id_5997 = spawnstruct();
-        self._threatdetection._id_5997 = spawnfx( common_scripts\utility::getfx( "threat_detect_model_stand" ), self.origin, anglestoforward( self.angles ), anglestoup( self.angles ) );
-        self._threatdetection._id_3A77 = "threat_detect_model_stand";
-        self._threatdetection._id_5996 = spawnstruct();
-        self._threatdetection._id_5996 = spawnfx( common_scripts\utility::getfx( "threat_detect_model_stand_hostile" ), self.origin, anglestoforward( self.angles ), anglestoup( self.angles ) );
-        self._threatdetection._id_4A30 = "threat_detect_model_stand_hostile";
+        self._threatdetection.mark_friendly_model = spawnstruct();
+        self._threatdetection.mark_friendly_model = spawnfx( common_scripts\utility::getfx( "threat_detect_model_stand" ), self.origin, anglestoforward( self.angles ), anglestoup( self.angles ) );
+        self._threatdetection.friendly_pose = "threat_detect_model_stand";
+        self._threatdetection.mark_enemy_model = spawnstruct();
+        self._threatdetection.mark_enemy_model = spawnfx( common_scripts\utility::getfx( "threat_detect_model_stand_hostile" ), self.origin, anglestoforward( self.angles ), anglestoup( self.angles ) );
+        self._threatdetection.hostile_pose = "threat_detect_model_stand_hostile";
     }
     else if ( var_0 == "attached_glow" )
     {
-        foreach ( var_5, var_3 in level._threatdetection._id_3B2C )
+        foreach ( var_5, var_3 in level._threatdetection.fx_data )
         {
             var_8 = common_scripts\utility::spawn_tag_origin();
             var_8 show();
             var_8.origin = self gettagorigin( var_3[0] );
             var_8.angles = self gettagangles( var_3[0] );
-            var_8 linkto( self, var_3[0] );
-            var_8._id_3B21 = var_3[1];
-            var_1._id_3B32[var_5] = var_8;
+            var_8 _meth_804D( self, var_3[0] );
+            var_8.fx = var_3[1];
+            var_1.fx_ent[var_5] = var_8;
         }
 
-        self._id_5998 = var_1;
+        self.mark_fx = var_1;
     }
     else
     {
@@ -796,15 +796,15 @@ _id_9317( var_0 )
     }
 }
 
-_id_9E7E( var_0, var_1, var_2 )
+visitorupdatelosmarker( var_0, var_1, var_2 )
 {
-    _id_9E7F( var_0, var_1, var_2 );
-    _id_9E7D( var_0, var_1, var_2 );
+    visitorupdatemarkerpos( var_0, var_1, var_2 );
+    visitorshowtoplayer( var_0, var_1, var_2 );
 }
 
-_id_9E7D( var_0, var_1, var_2 )
+visitorshowtoplayer( var_0, var_1, var_2 )
 {
-    var_3 = _id_4124();
+    var_3 = getthreatstyle();
 
     if ( var_3 == "stencil_outline" )
         var_0 threatdetectedtoplayer( var_1 );
@@ -812,7 +812,7 @@ _id_9E7D( var_0, var_1, var_2 )
         var_0 showtoplayer( var_1 );
 }
 
-_id_852B( var_0, var_1, var_2, var_3 )
+showthreat( var_0, var_1, var_2, var_3 )
 {
     if ( var_0 == self )
         return;
@@ -824,5 +824,5 @@ _id_852B( var_0, var_1, var_2, var_3 )
     else if ( var_0 == self )
         var_4 = var_1;
 
-    _id_9E76( var_3, var_4, var_0 );
+    visitfxent( var_3, var_4, var_0 );
 }

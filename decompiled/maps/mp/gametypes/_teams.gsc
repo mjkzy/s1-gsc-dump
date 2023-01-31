@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -379,7 +379,7 @@ playercostume()
     if ( isagent( self ) && !getdvarint( "virtualLobbyActive", 0 ) )
         return 1;
 
-    self setcostumemodels( self.costume );
+    self _meth_84BA( self.costume );
 
     if ( isdefined( self.perks ) && !getdvarint( "virtualLobbyActive", 0 ) )
     {
@@ -402,7 +402,7 @@ playercostume()
     }
 
     self.voice = "american";
-    self setclothtype( "vestlight" );
+    self _meth_83DB( "vestlight" );
     return 1;
 }
 
@@ -424,7 +424,7 @@ validcostume( var_0 )
 
 getdefaultcostume()
 {
-    var_0 = validatecostume();
+    var_0 = _func_29F();
     return var_0;
 }
 
@@ -432,7 +432,7 @@ getpracticeroundcostume()
 {
     if ( !isdefined( level.practice_round_costume ) )
     {
-        level.practice_round_max_costumes = tablegetrowcount( level.practiceroundcostumetablename ) - 1;
+        level.practice_round_max_costumes = _func_296( level.practiceroundcostumetablename ) - 1;
         level.practice_round_costume = randomint( level.practice_round_max_costumes );
     }
 
@@ -448,7 +448,7 @@ getpracticeroundcostume()
     }
 
     var_2 = ( level.practice_round_costume + var_0 ) % level.practice_round_max_costumes;
-    var_3 = getcodanywherecurrentplatform( level.practiceroundcostumetablename, var_2 + 1 );
+    var_3 = _func_2CF( level.practiceroundcostumetablename, var_2 + 1 );
     return var_3;
 }
 
@@ -459,7 +459,7 @@ gethardcorecostume()
     if ( self.pers["team"] == "axis" )
         var_0 = 1;
 
-    var_1 = getcodanywherecurrentplatform( level.hardcorecostumetablename, var_0 );
+    var_1 = _func_2CF( level.hardcorecostumetablename, var_0 );
     return var_1;
 }
 

@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -14,11 +14,11 @@ init()
     if ( var_0.size )
         var_1 = maps\mp\gametypes\_spawnlogic::findboxcenter( var_0[0].origin, var_0[1].origin );
     else
-        var_1 = ( 0.0, 0.0, 0.0 );
+        var_1 = ( 0, 0, 0 );
 
     level.uavrig = spawn( "script_model", var_1 );
-    level.uavrig setmodel( "c130_zoomrig" );
-    level.uavrig.angles = ( 0.0, 115.0, 0.0 );
+    level.uavrig _meth_80B1( "c130_zoomrig" );
+    level.uavrig.angles = ( 0, 115, 0 );
     level.uavrig hide();
     level.uavrig.targetname = "uavrig_script_model";
     level.uavrig thread rotateuavrig();
@@ -79,7 +79,7 @@ rotateuavrig()
 {
     for (;;)
     {
-        self rotateyaw( -360, 60 );
+        self _meth_82B7( -360, 60 );
         wait 60;
     }
 }
@@ -108,7 +108,7 @@ launchuav( var_0, var_1, var_2, var_3 )
     else
         var_5 = 0;
 
-    var_4 setmodel( "uav_drone_static" );
+    var_4 _meth_80B1( "uav_drone_static" );
     var_4 thread playtrailfx();
     var_4 thread maps\mp\gametypes\_damage::setentitydamagecallback( 1000, undefined, ::uavondeath, undefined, 1 );
     var_4.team = var_1;
@@ -158,9 +158,9 @@ launchuav( var_0, var_1, var_2, var_3 )
 
     if ( var_4.damagetaken < var_4.maxhealth )
     {
-        var_4 unlink();
+        var_4 _meth_804F();
         var_10 = var_4.origin + anglestoforward( var_4.angles ) * 20000;
-        var_4 moveto( var_10, 60 );
+        var_4 _meth_82AE( var_10, 60 );
         playfxontag( common_scripts\utility::getfx( "uav_exit" ), var_4, "tag_origin" );
         var_4 waittill_notify_or_timeout_hostmigration_pause( "death", 3 );
 
@@ -168,7 +168,7 @@ launchuav( var_0, var_1, var_2, var_3 )
         {
             var_4 notify( "leaving" );
             var_4.isleaving = 1;
-            var_4 moveto( var_10, 4, 4, 0.0 );
+            var_4 _meth_82AE( var_10, 4, 4, 0.0 );
         }
 
         var_4 waittill_notify_or_timeout_hostmigration_pause( "death", 4 + var_4.timetoadd );
@@ -221,16 +221,16 @@ flyin( var_0 )
     var_13 = sin( var_10 ) * var_11;
     var_14 = vectornormalize( ( var_12, var_13, var_1 ) );
     var_14 *= randomintrange( 6000, 7000 );
-    var_0 linkto( level.uavrig, "tag_origin", var_14, ( 0, var_10 - 90, 135 ) );
+    var_0 _meth_804D( level.uavrig, "tag_origin", var_14, ( 0, var_10 - 90, 135 ) );
     waitframe();
     var_15 = var_0.origin;
-    var_0 unlink();
+    var_0 _meth_804F();
     var_0.origin = var_15 + anglestoforward( var_0.angles ) * -20000;
-    var_0 moveto( var_15, 4, 0, 2 );
+    var_0 _meth_82AE( var_15, 4, 0, 2 );
     wait 4;
 
     if ( isdefined( var_0 ) )
-        var_0 linkto( level.uavrig, "tag_origin" );
+        var_0 _meth_804D( level.uavrig, "tag_origin" );
 }
 
 waittill_notify_or_timeout_hostmigration_pause( var_0, var_1 )
@@ -391,7 +391,7 @@ updateteamuavstatus( var_0 )
     var_1 = _getradarstrength( var_0 );
     var_2 = _getteampaintoutline( var_0 );
     updateteampaintoutline( var_0, var_2 );
-    getteamradar( var_0, var_1 );
+    _func_177( var_0, var_1 );
 
     if ( var_1 >= getuavstrengthlevelneutral() )
     {
@@ -523,7 +523,7 @@ playersetupuavpaintoutline( var_0 )
         if ( !isdefined( self.uav_paint_effect ) )
             self.uav_paint_effect = maps\mp\_threatdetection::detection_highlight_hud_effect_on( self, -1 );
 
-        self setperk( "specialty_uav_paint", 1, 0 );
+        self _meth_82A6( "specialty_uav_paint", 1, 0 );
     }
     else
     {
@@ -533,7 +533,7 @@ playersetupuavpaintoutline( var_0 )
             self.uav_paint_effect = undefined;
         }
 
-        self unsetperk( "specialty_uav_paint", 1 );
+        self _meth_82A9( "specialty_uav_paint", 1 );
     }
 }
 
@@ -549,12 +549,12 @@ updateteamradarblocked( var_0, var_1 )
 updateplayerradarblocked( var_0, var_1 )
 {
     if ( !var_1 || !var_0 maps\mp\_utility::_hasperk( "specialty_class_hardwired" ) )
-        var_0 setclientomnvar( "ui_uav_scrambler_on", var_1 );
+        var_0 _meth_82FB( "ui_uav_scrambler_on", var_1 );
 }
 
 setteamradarwrapper( var_0, var_1 )
 {
-    endparty( var_0, var_1 );
+    _func_175( var_0, var_1 );
     level notify( "radar_status_change", var_0 );
 }
 
@@ -583,15 +583,15 @@ handleincomingstinger()
 stingerproximitydetonate( var_0, var_1 )
 {
     self endon( "death" );
-    var_2 = distance( self.origin, var_0 getpointinbounds( 0, 0, 0 ) );
-    var_3 = var_0 getpointinbounds( 0, 0, 0 );
+    var_2 = distance( self.origin, var_0 _meth_8216( 0, 0, 0 ) );
+    var_3 = var_0 _meth_8216( 0, 0, 0 );
 
     for (;;)
     {
         if ( !isdefined( var_0 ) )
             var_4 = var_3;
         else
-            var_4 = var_0 getpointinbounds( 0, 0, 0 );
+            var_4 = var_0 _meth_8216( 0, 0, 0 );
 
         var_3 = var_4;
         var_5 = distance( self.origin, var_4 );

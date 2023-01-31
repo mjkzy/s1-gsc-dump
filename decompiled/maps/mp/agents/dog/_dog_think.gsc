@@ -1,85 +1,85 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    _id_830A();
-    thread _id_9305();
-    thread _id_A23A();
-    thread _id_A23B();
-    thread _id_A23D();
-    thread _id_A008();
-    thread _id_A01E();
+    setupdogstate();
+    thread think();
+    thread watchownerdamage();
+    thread watchownerdeath();
+    thread watchownerteamchange();
+    thread waitforbadpath();
+    thread waitforpathset();
 }
 
-_id_830A()
+setupdogstate()
 {
-    self._id_14B3 = 0;
-    self._id_6634 = 20736;
-    self._id_5B8B = 16384;
-    self._id_0E47 = 25 + self.radius;
-    self._id_0E49 = 202500;
-    self._id_A1AB = 302500;
-    self._id_A1AC = 96.0;
-    self._id_0E4E = 54;
-    self._id_0E4F = -64;
-    self._id_6630 = 2250000;
-    self._id_2CC3 = 2250000;
-    self._id_52DF = 1000000;
-    self._id_6EF1 = 76;
-    self._id_5C7F = 50;
-    self._id_39AA = 0;
-    self._id_01FD = 1;
-    self._id_02A6 = "run";
-    self._id_310E = 1;
-    self._id_0E4A = "idle";
-    self._id_5F7B = "idle";
-    self._id_1432 = 0;
-    self._id_9361 = 0;
-    self._id_0030 = 1;
+    self.blockgoalpos = 0;
+    self.ownerradiussq = 20736;
+    self.meleeradiussq = 16384;
+    self.attackoffset = 25 + self.radius;
+    self.attackradiussq = 202500;
+    self.warningradiussq = 302500;
+    self.warningzheight = 96.0;
+    self.attackzheight = 54;
+    self.attackzheightdown = -64;
+    self.ownerdamagedradiussq = 2250000;
+    self.dogdamagedradiussq = 2250000;
+    self.keeppursuingtargetradiussq = 1000000;
+    self.preferredoffsetfromowner = 76;
+    self.minoffsetfromowner = 50;
+    self.forceattack = 0;
+    self.ignoreclosefoliage = 1;
+    self.movemode = "run";
+    self.enableextendedkill = 1;
+    self.attackstate = "idle";
+    self.movestate = "idle";
+    self.bhasbadpath = 0;
+    self.timeoflastdamage = 0;
+    self.allowcrouch = 1;
     self _meth_8394( 24 );
 }
 
 init()
 {
-    self._id_0C69 = spawnstruct();
-    self._id_0C69._id_648C = [];
-    self._id_0C69._id_648C["idle"] = maps\mp\agents\dog\_dog_idle::main;
-    self._id_0C69._id_648C["move"] = maps\mp\agents\dog\_dog_move::main;
-    self._id_0C69._id_648C["traverse"] = maps\mp\agents\dog\_dog_traverse::main;
-    self._id_0C69._id_648C["melee"] = maps\mp\agents\dog\_dog_melee::main;
-    self._id_0C69._id_64A2 = [];
-    self._id_0C69._id_64A2["idle"] = maps\mp\agents\dog\_dog_idle::_id_0140;
-    self._id_0C69._id_64A2["move"] = maps\mp\agents\dog\_dog_move::_id_0140;
-    self._id_0C69._id_64A2["melee"] = maps\mp\agents\dog\_dog_melee::_id_0140;
-    self._id_0C69._id_64A2["traverse"] = maps\mp\agents\dog\_dog_traverse::_id_0140;
-    self._id_A1F7 = ::_id_A1F6;
-    self._id_09A3 = "idle";
-    self._id_02A6 = "fastwalk";
+    self.animcbs = spawnstruct();
+    self.animcbs.onenter = [];
+    self.animcbs.onenter["idle"] = maps\mp\agents\dog\_dog_idle::main;
+    self.animcbs.onenter["move"] = maps\mp\agents\dog\_dog_move::main;
+    self.animcbs.onenter["traverse"] = maps\mp\agents\dog\_dog_traverse::main;
+    self.animcbs.onenter["melee"] = maps\mp\agents\dog\_dog_melee::main;
+    self.animcbs.onexit = [];
+    self.animcbs.onexit["idle"] = maps\mp\agents\dog\_dog_idle::end_script;
+    self.animcbs.onexit["move"] = maps\mp\agents\dog\_dog_move::end_script;
+    self.animcbs.onexit["melee"] = maps\mp\agents\dog\_dog_melee::end_script;
+    self.animcbs.onexit["traverse"] = maps\mp\agents\dog\_dog_traverse::end_script;
+    self.watchattackstatefunc = ::watchattackstate;
+    self.aistate = "idle";
+    self.movemode = "fastwalk";
     self.radius = 15;
     self.height = 40;
 }
 
-_id_648D( var_0, var_1 )
+onenteranimstate( var_0, var_1 )
 {
     self notify( "killanimscript" );
 
-    if ( !isdefined( self._id_0C69._id_648C[var_1] ) )
+    if ( !isdefined( self.animcbs.onenter[var_1] ) )
         return;
 
     if ( var_0 == var_1 && var_1 != "traverse" )
         return;
 
-    if ( isdefined( self._id_0C69._id_64A2[var_0] ) )
-        self [[ self._id_0C69._id_64A2[var_0] ]]();
+    if ( isdefined( self.animcbs.onexit[var_0] ) )
+        self [[ self.animcbs.onexit[var_0] ]]();
 
-    _id_343E( self._id_09A3 );
-    self._id_09A3 = var_1;
-    _id_3304( var_1 );
-    self [[ self._id_0C69._id_648C[var_1] ]]();
+    exitaistate( self.aistate );
+    self.aistate = var_1;
+    enteraistate( var_1 );
+    self [[ self.animcbs.onenter[var_1] ]]();
 }
 
-_id_9305()
+think()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -87,27 +87,27 @@ _id_9305()
     if ( isdefined( self.owner ) )
     {
         self endon( "owner_disconnect" );
-        thread _id_28EF( self.owner );
+        thread destroyonownerdisconnect( self.owner );
     }
 
-    self thread [[ self._id_A1F7 ]]();
+    self thread [[ self.watchattackstatefunc ]]();
     thread monitorflash();
 
     for (;;)
     {
-        if ( self._id_09A3 != "melee" && !self._id_03FC && _id_71E3() && !_id_2A49() )
-            self _meth_839C( self._id_24C6 );
+        if ( self.aistate != "melee" && !self.statelocked && readytomeleetarget() && !didpastmeleefail() )
+            self _meth_839C( self.curmeleetarget );
 
-        switch ( self._id_09A3 )
+        switch ( self.aistate )
         {
             case "idle":
-                _id_9B22();
+                updateidle();
                 break;
             case "move":
-                _id_9B32();
+                updatemove();
                 break;
             case "melee":
-                _id_9B2D();
+                updatemelee();
                 break;
         }
 
@@ -115,50 +115,50 @@ _id_9305()
     }
 }
 
-_id_2A4A( var_0 )
+didpastpursuitfail( var_0 )
 {
-    if ( isdefined( self._id_24C6 ) && var_0 != self._id_24C6 )
+    if ( isdefined( self.curmeleetarget ) && var_0 != self.curmeleetarget )
         return 0;
 
-    if ( !isdefined( self._id_55CC ) || !isdefined( self._id_55CB ) )
+    if ( !isdefined( self.lastpursuitfailedpos ) || !isdefined( self.lastpursuitfailedmypos ) )
         return 0;
 
-    if ( _func_220( var_0.origin, self._id_55CC ) > 4 )
+    if ( _func_220( var_0.origin, self.lastpursuitfailedpos ) > 4 )
         return 0;
 
-    if ( self._id_1494 )
+    if ( self.blastpursuitfailedposbad )
         return 1;
 
-    if ( distancesquared( self.origin, self._id_55CB ) > 4096 && gettime() - self._id_55CD > 2000 )
+    if ( distancesquared( self.origin, self.lastpursuitfailedmypos ) > 4096 && gettime() - self.lastpursuitfailedtime > 2000 )
         return 0;
 
     return 1;
 }
 
-_id_2A49()
+didpastmeleefail()
 {
-    if ( isdefined( self._id_55BB ) && isdefined( self._id_55BA ) && _func_220( self._id_24C6.origin, self._id_55BB ) < 4 && distancesquared( self.origin, self._id_55BA ) < 2500 )
+    if ( isdefined( self.lastmeleefailedpos ) && isdefined( self.lastmeleefailedmypos ) && _func_220( self.curmeleetarget.origin, self.lastmeleefailedpos ) < 4 && distancesquared( self.origin, self.lastmeleefailedmypos ) < 2500 )
         return 1;
 
-    if ( _id_A14D( 0 ) )
+    if ( wanttoattacktargetbutcant( 0 ) )
         return 1;
 
     return 0;
 }
 
-_id_3304( var_0 )
+enteraistate( var_0 )
 {
-    _id_343E( self._id_09A3 );
-    self._id_09A3 = var_0;
+    exitaistate( self.aistate );
+    self.aistate = var_0;
 
     switch ( var_0 )
     {
         case "idle":
-            self._id_5F7B = "idle";
-            self._id_1432 = 0;
+            self.movestate = "idle";
+            self.bhasbadpath = 0;
             break;
         case "move":
-            self._id_5F7B = "follow";
+            self.movestate = "follow";
             break;
         case "melee":
             break;
@@ -167,89 +167,89 @@ _id_3304( var_0 )
     }
 }
 
-_id_343E( var_0 )
+exitaistate( var_0 )
 {
     switch ( var_0 )
     {
         case "move":
-            self._id_6633 = undefined;
+            self.ownerprevpos = undefined;
             break;
         default:
             break;
     }
 }
 
-_id_9B22()
+updateidle()
 {
-    _id_9B36();
+    updatemovestate();
 }
 
-_id_9B32()
+updatemove()
 {
-    _id_9B36();
+    updatemovestate();
 }
 
-_id_9B2D()
+updatemelee()
 {
     self _meth_8390( self.origin );
 }
 
-_id_9B36()
+updatemovestate()
 {
-    if ( self._id_14B3 )
+    if ( self.blockgoalpos )
         return;
 
-    self._id_6F6D = self._id_5F7B;
+    self.prevmovestate = self.movestate;
     var_0 = undefined;
     var_1 = 0;
     var_2 = 0;
     var_3 = 500;
 
-    if ( self._id_1432 && gettime() - self._id_5579 < var_3 )
+    if ( self.bhasbadpath && gettime() - self.lastbadpathtime < var_3 )
     {
-        self._id_5F7B = "follow";
+        self.movestate = "follow";
         var_1 = 1;
     }
     else
-        self._id_5F7B = _id_402D();
+        self.movestate = getmovestate();
 
-    if ( self._id_5F7B == "pursuit" )
+    if ( self.movestate == "pursuit" )
     {
-        var_0 = _id_3F0A( self._id_0143 );
+        var_0 = getattackpoint( self.enemy );
         var_4 = 0;
 
-        if ( isdefined( self._id_5579 ) && gettime() - self._id_5579 < 3000 )
+        if ( isdefined( self.lastbadpathtime ) && gettime() - self.lastbadpathtime < 3000 )
         {
-            if ( _func_220( var_0, self._id_5577 ) < 16 )
+            if ( _func_220( var_0, self.lastbadpathgoal ) < 16 )
                 var_4 = 1;
-            else if ( isdefined( self._id_5578 ) && self._id_5578 == "pursuit" && _func_220( self._id_557A, self._id_0143.origin ) < 16 )
+            else if ( isdefined( self.lastbadpathmovestate ) && self.lastbadpathmovestate == "pursuit" && _func_220( self.lastbadpathultimategoal, self.enemy.origin ) < 16 )
                 var_4 = 1;
         }
 
         if ( var_4 )
         {
-            self._id_5F7B = "follow";
+            self.movestate = "follow";
             var_2 = 1;
         }
-        else if ( _id_A14D( 1 ) )
+        else if ( wanttoattacktargetbutcant( 1 ) )
         {
-            self._id_5F7B = "follow";
+            self.movestate = "follow";
             var_2 = 1;
         }
-        else if ( _id_2A4A( self._id_0143 ) )
+        else if ( didpastpursuitfail( self.enemy ) )
         {
-            self._id_5F7B = "follow";
+            self.movestate = "follow";
             var_2 = 1;
         }
     }
 
-    _id_7FD7( var_2 );
+    setpastpursuitfailed( var_2 );
 
-    if ( self._id_5F7B == "follow" )
+    if ( self.movestate == "follow" )
     {
-        self._id_24C6 = undefined;
-        self._id_02A6 = _id_3F9D( self._id_02A6 );
-        self._id_12EE = 1;
+        self.curmeleetarget = undefined;
+        self.movemode = getfollowmovemode( self.movemode );
+        self.barrivalsenabled = 1;
         var_5 = self _meth_83E1();
 
         if ( !isdefined( var_5 ) )
@@ -258,50 +258,50 @@ _id_9B36()
         if ( self.owner.sessionstate == "spectator" )
             return;
 
-        if ( gettime() - self._id_9361 < 5000 )
+        if ( gettime() - self.timeoflastdamage < 5000 )
             var_1 = 1;
 
-        var_6 = self.owner getstance();
+        var_6 = self.owner _meth_817C();
 
-        if ( !isdefined( self.owner._id_6F74 ) && isdefined( self.owner ) )
-            self.owner._id_6F74 = var_6;
+        if ( !isdefined( self.owner.prevstance ) && isdefined( self.owner ) )
+            self.owner.prevstance = var_6;
 
-        var_7 = !isdefined( self._id_6633 ) || _func_220( self._id_6633, self.owner.origin ) > 100;
+        var_7 = !isdefined( self.ownerprevpos ) || _func_220( self.ownerprevpos, self.owner.origin ) > 100;
 
         if ( var_7 )
-            self._id_6633 = self.owner.origin;
+            self.ownerprevpos = self.owner.origin;
 
         var_8 = _func_220( var_5, self.owner.origin );
 
-        if ( var_1 || var_8 > self._id_6634 && var_7 || self.owner._id_6F74 != var_6 || self._id_6F6D != "idle" && self._id_6F6D != self._id_5F7B )
+        if ( var_1 || var_8 > self.ownerradiussq && var_7 || self.owner.prevstance != var_6 || self.prevmovestate != "idle" && self.prevmovestate != self.movestate )
         {
-            self _meth_8390( _id_3783() );
-            self.owner._id_6F74 = var_6;
+            self _meth_8390( findpointnearowner() );
+            self.owner.prevstance = var_6;
             return;
         }
     }
-    else if ( self._id_5F7B == "pursuit" )
+    else if ( self.movestate == "pursuit" )
     {
-        self._id_24C6 = self._id_0143;
-        self._id_02A6 = "sprint";
-        self._id_12EE = 0;
+        self.curmeleetarget = self.enemy;
+        self.movemode = "sprint";
+        self.barrivalsenabled = 0;
         self _meth_8390( var_0 );
     }
 }
 
-_id_402D( var_0 )
+getmovestate( var_0 )
 {
-    if ( isdefined( self._id_0143 ) )
+    if ( isdefined( self.enemy ) )
     {
-        if ( isdefined( self._id_017C ) && self._id_0143 == self._id_017C )
+        if ( isdefined( self.favoriteenemy ) && self.enemy == self.favoriteenemy )
             return "pursuit";
 
-        if ( abs( self.origin[2] - self._id_0143.origin[2] ) < self._id_A1AC && _func_220( self._id_0143.origin, self.origin ) < self._id_0E49 )
+        if ( abs( self.origin[2] - self.enemy.origin[2] ) < self.warningzheight && _func_220( self.enemy.origin, self.origin ) < self.attackradiussq )
             return "pursuit";
 
-        if ( isdefined( self._id_24C6 ) && self._id_24C6 == self._id_0143 )
+        if ( isdefined( self.curmeleetarget ) && self.curmeleetarget == self.enemy )
         {
-            if ( _func_220( self._id_24C6.origin, self.origin ) < self._id_52DF )
+            if ( _func_220( self.curmeleetarget.origin, self.origin ) < self.keeppursuingtargetradiussq )
                 return "pursuit";
         }
     }
@@ -309,29 +309,29 @@ _id_402D( var_0 )
     return "follow";
 }
 
-_id_7FD7( var_0 )
+setpastpursuitfailed( var_0 )
 {
     if ( var_0 )
     {
-        if ( !isdefined( self._id_55CC ) )
+        if ( !isdefined( self.lastpursuitfailedpos ) )
         {
-            self._id_55CC = self._id_0143.origin;
-            self._id_55CB = self.origin;
-            var_1 = maps\mp\agents\_scriptedagents::_id_2F8E( self._id_0143.origin );
-            self._id_1494 = !isdefined( var_1 );
-            self._id_55CD = gettime();
+            self.lastpursuitfailedpos = self.enemy.origin;
+            self.lastpursuitfailedmypos = self.origin;
+            var_1 = maps\mp\agents\_scriptedagents::droppostoground( self.enemy.origin );
+            self.blastpursuitfailedposbad = !isdefined( var_1 );
+            self.lastpursuitfailedtime = gettime();
         }
     }
     else
     {
-        self._id_55CC = undefined;
-        self._id_55CB = undefined;
-        self._id_1494 = undefined;
-        self._id_55CD = undefined;
+        self.lastpursuitfailedpos = undefined;
+        self.lastpursuitfailedmypos = undefined;
+        self.blastpursuitfailedposbad = undefined;
+        self.lastpursuitfailedtime = undefined;
     }
 }
 
-_id_A008()
+waitforbadpath()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -339,23 +339,23 @@ _id_A008()
     for (;;)
     {
         self waittill( "bad_path", var_0 );
-        self._id_1432 = 1;
-        self._id_5579 = gettime();
-        self._id_5577 = var_0;
-        self._id_5578 = self._id_5F7B;
+        self.bhasbadpath = 1;
+        self.lastbadpathtime = gettime();
+        self.lastbadpathgoal = var_0;
+        self.lastbadpathmovestate = self.movestate;
 
-        if ( self._id_5F7B == "follow" && isdefined( self.owner ) )
+        if ( self.movestate == "follow" && isdefined( self.owner ) )
         {
-            self._id_557A = self.owner.origin;
+            self.lastbadpathultimategoal = self.owner.origin;
             continue;
         }
 
-        if ( self._id_5F7B == "pursuit" && isdefined( self._id_0143 ) )
-            self._id_557A = self._id_0143.origin;
+        if ( self.movestate == "pursuit" && isdefined( self.enemy ) )
+            self.lastbadpathultimategoal = self.enemy.origin;
     }
 }
 
-_id_A01E()
+waitforpathset()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -363,11 +363,11 @@ _id_A01E()
     for (;;)
     {
         self waittill( "path_set" );
-        self._id_1432 = 0;
+        self.bhasbadpath = 0;
     }
 }
 
-_id_3F9D( var_0 )
+getfollowmovemode( var_0 )
 {
     var_1 = 40000;
     var_2 = 65536;
@@ -394,96 +394,96 @@ _id_3F9D( var_0 )
     return var_0;
 }
 
-_id_5208( var_0 )
+iswithinattackheight( var_0 )
 {
     var_1 = var_0[2] - self.origin[2];
-    return var_1 <= self._id_0E4E && var_1 >= self._id_0E4F;
+    return var_1 <= self.attackzheight && var_1 >= self.attackzheightdown;
 }
 
-_id_A14D( var_0 )
+wanttoattacktargetbutcant( var_0 )
 {
-    if ( !isdefined( self._id_24C6 ) )
+    if ( !isdefined( self.curmeleetarget ) )
         return 0;
 
-    return !_id_5208( self._id_24C6.origin ) && _func_220( self.origin, self._id_24C6.origin ) < self._id_5B8B * 0.75 * 0.75 && ( !var_0 || self _meth_838E( self._id_24C6 ) );
+    return !iswithinattackheight( self.curmeleetarget.origin ) && _func_220( self.origin, self.curmeleetarget.origin ) < self.meleeradiussq * 0.75 * 0.75 && ( !var_0 || self _meth_838E( self.curmeleetarget ) );
 }
 
-_id_71E3()
+readytomeleetarget()
 {
-    if ( !isdefined( self._id_24C6 ) )
+    if ( !isdefined( self.curmeleetarget ) )
         return 0;
 
-    if ( !maps\mp\_utility::isreallyalive( self._id_24C6 ) )
+    if ( !maps\mp\_utility::isreallyalive( self.curmeleetarget ) )
         return 0;
 
-    if ( self._id_09A3 == "traverse" )
+    if ( self.aistate == "traverse" )
         return 0;
 
-    if ( _func_220( self.origin, self._id_24C6.origin ) > self._id_5B8B )
+    if ( _func_220( self.origin, self.curmeleetarget.origin ) > self.meleeradiussq )
         return 0;
 
-    if ( !_id_5208( self._id_24C6.origin ) )
+    if ( !iswithinattackheight( self.curmeleetarget.origin ) )
         return 0;
 
     return 1;
 }
 
-_id_A14C()
+wantstogrowlattarget()
 {
-    if ( !isdefined( self._id_0143 ) )
+    if ( !isdefined( self.enemy ) )
         return 0;
 
-    if ( abs( self.origin[2] - self._id_0143.origin[2] ) <= self._id_A1AC || self _meth_838E( self._id_0143 ) )
+    if ( abs( self.origin[2] - self.enemy.origin[2] ) <= self.warningzheight || self _meth_838E( self.enemy ) )
     {
-        var_0 = _func_220( self.origin, self._id_0143.origin );
+        var_0 = _func_220( self.origin, self.enemy.origin );
 
-        if ( var_0 < self._id_A1AB )
+        if ( var_0 < self.warningradiussq )
             return 1;
     }
 
     return 0;
 }
 
-_id_3F0A( var_0 )
+getattackpoint( var_0 )
 {
     var_1 = var_0.origin - self.origin;
     var_1 = vectornormalize( var_1 );
     var_2 = self _meth_83E1();
-    var_3 = self._id_0E47 + 4;
+    var_3 = self.attackoffset + 4;
 
-    if ( isdefined( var_2 ) && _func_220( var_2, var_0.origin ) < var_3 * var_3 && maps\mp\agents\_scriptedagents::_id_1AD2( var_0.origin, var_2 ) )
+    if ( isdefined( var_2 ) && _func_220( var_2, var_0.origin ) < var_3 * var_3 && maps\mp\agents\_scriptedagents::canmovepointtopoint( var_0.origin, var_2 ) )
         return var_2;
 
-    var_4 = var_0.origin - var_1 * self._id_0E47;
-    var_4 = maps\mp\agents\_scriptedagents::_id_2F8E( var_4 );
+    var_4 = var_0.origin - var_1 * self.attackoffset;
+    var_4 = maps\mp\agents\_scriptedagents::droppostoground( var_4 );
 
     if ( !isdefined( var_4 ) )
         return var_0.origin;
 
-    if ( !maps\mp\agents\_scriptedagents::_id_1AD2( var_0.origin, var_4 ) )
+    if ( !maps\mp\agents\_scriptedagents::canmovepointtopoint( var_0.origin, var_4 ) )
     {
         var_5 = anglestoforward( var_0.angles );
-        var_4 = var_0.origin + var_5 * self._id_0E47;
+        var_4 = var_0.origin + var_5 * self.attackoffset;
 
-        if ( !maps\mp\agents\_scriptedagents::_id_1AD2( var_0.origin, var_4 ) )
+        if ( !maps\mp\agents\_scriptedagents::canmovepointtopoint( var_0.origin, var_4 ) )
             return var_0.origin;
     }
 
     return var_4;
 }
 
-_id_2478( var_0, var_1 )
+cross2d( var_0, var_1 )
 {
     return var_0[0] * var_1[1] - var_1[0] * var_0[1];
 }
 
-_id_3783()
+findpointnearowner()
 {
     var_0 = vectornormalize( self.origin - self.owner.origin );
     var_1 = anglestoforward( self.owner.angles );
     var_1 = ( var_1[0], var_1[1], 0 );
     var_1 = vectornormalize( var_1 );
-    var_2 = _id_2478( var_0, var_1 );
+    var_2 = cross2d( var_0, var_1 );
     var_3 = getclosestnodeinsight( self.owner.origin );
 
     if ( !isdefined( var_3 ) )
@@ -494,7 +494,7 @@ _id_3783()
     var_6 = 10;
     var_7 = 15;
     var_8 = -15;
-    var_9 = gettime() - self._id_9361 < 5000;
+    var_9 = gettime() - self.timeoflastdamage < 5000;
     var_10 = 0;
     var_11 = 0;
     var_4[var_4.size] = var_3;
@@ -505,22 +505,22 @@ _id_3783()
         var_15 = var_13.origin - self.owner.origin;
         var_16 = length( var_15 );
 
-        if ( var_16 >= self._id_6EF1 )
+        if ( var_16 >= self.preferredoffsetfromowner )
             var_14 += var_5;
-        else if ( var_16 < self._id_5C7F )
+        else if ( var_16 < self.minoffsetfromowner )
         {
-            var_17 = 1 - ( self._id_5C7F - var_16 ) / self._id_5C7F;
+            var_17 = 1 - ( self.minoffsetfromowner - var_16 ) / self.minoffsetfromowner;
             var_14 += var_5 * var_17 * var_17;
         }
         else
-            var_14 += var_5 * var_16 / self._id_6EF1;
+            var_14 += var_5 * var_16 / self.preferredoffsetfromowner;
 
         if ( var_16 == 0 )
             var_16 = 1;
 
         var_15 /= var_16;
         var_18 = vectordot( var_1, var_15 );
-        var_19 = self.owner getstance();
+        var_19 = self.owner _meth_817C();
 
         switch ( var_19 )
         {
@@ -541,14 +541,14 @@ _id_3783()
                 break;
         }
 
-        var_20 = _id_2478( var_15, var_1 );
+        var_20 = cross2d( var_15, var_1 );
 
         if ( var_20 * var_2 > 0 )
             var_14 += var_7;
 
         if ( var_9 )
         {
-            var_21 = vectordot( self._id_2598, var_15 );
+            var_21 = vectordot( self.damagedownertome, var_15 );
             var_14 += var_21 * var_8;
         }
 
@@ -565,7 +565,7 @@ _id_3783()
     var_23 = var_11.origin - self.owner.origin;
     var_24 = length( var_23 );
 
-    if ( var_24 > self._id_6EF1 )
+    if ( var_24 > self.preferredoffsetfromowner )
     {
         var_25 = var_3.origin - self.owner.origin;
 
@@ -574,24 +574,24 @@ _id_3783()
         else
         {
             var_27 = vectornormalize( var_11.origin - var_3.origin );
-            var_26 = var_3.origin + var_27 * self._id_6EF1;
+            var_26 = var_3.origin + var_27 * self.preferredoffsetfromowner;
         }
     }
     else
         var_26 = var_11.origin;
 
-    var_26 = maps\mp\agents\_scriptedagents::_id_2F8E( var_26 );
+    var_26 = maps\mp\agents\_scriptedagents::droppostoground( var_26 );
 
     if ( !isdefined( var_26 ) )
         return self.origin;
 
-    if ( self._id_1432 && _func_220( var_26, self._id_5577 ) < 4 )
+    if ( self.bhasbadpath && _func_220( var_26, self.lastbadpathgoal ) < 4 )
         return self.origin;
 
     return var_26;
 }
 
-_id_28EF( var_0 )
+destroyonownerdisconnect( var_0 )
 {
     self endon( "death" );
     var_0 common_scripts\utility::waittill_any( "disconnect", "joined_team" );
@@ -602,78 +602,78 @@ _id_28EF( var_0 )
 
     self notify( "killanimscript" );
 
-    if ( isdefined( self._id_0C69._id_64A2[self._id_09A3] ) )
-        self [[ self._id_0C69._id_64A2[self._id_09A3] ]]();
+    if ( isdefined( self.animcbs.onexit[self.aistate] ) )
+        self [[ self.animcbs.onexit[self.aistate] ]]();
 
-    self suicide();
+    self _meth_826B();
 }
 
-_id_A1F6()
+watchattackstate()
 {
     self endon( "death" );
     level endon( "game_ended" );
 
     for (;;)
     {
-        if ( self._id_09A3 == "melee" )
+        if ( self.aistate == "melee" )
         {
-            if ( self._id_0E4A != "melee" )
+            if ( self.attackstate != "melee" )
             {
-                self._id_0E4A = "melee";
-                _id_800E( undefined );
+                self.attackstate = "melee";
+                setsoundstate( undefined );
             }
         }
-        else if ( self._id_5F7B == "pursuit" )
+        else if ( self.movestate == "pursuit" )
         {
-            if ( self._id_0E4A != "attacking" )
+            if ( self.attackstate != "attacking" )
             {
-                self._id_0E4A = "attacking";
-                _id_800E( "bark", "attacking" );
+                self.attackstate = "attacking";
+                setsoundstate( "bark", "attacking" );
             }
         }
-        else if ( self._id_0E4A != "warning" )
+        else if ( self.attackstate != "warning" )
         {
-            if ( _id_A14C() )
+            if ( wantstogrowlattarget() )
             {
-                self._id_0E4A = "warning";
-                _id_800E( "growl", "warning" );
+                self.attackstate = "warning";
+                setsoundstate( "growl", "warning" );
             }
             else
             {
-                self._id_0E4A = self._id_09A3;
-                _id_800E( "pant" );
+                self.attackstate = self.aistate;
+                setsoundstate( "pant" );
             }
         }
-        else if ( !_id_A14C() )
+        else if ( !wantstogrowlattarget() )
         {
-            self._id_0E4A = self._id_09A3;
-            _id_800E( "pant" );
+            self.attackstate = self.aistate;
+            setsoundstate( "pant" );
         }
 
         wait 0.05;
     }
 }
 
-_id_800E( var_0, var_1 )
+setsoundstate( var_0, var_1 )
 {
     if ( !isdefined( var_0 ) )
     {
         self notify( "end_dog_sound" );
-        self._id_88A9 = undefined;
+        self.soundstate = undefined;
         return;
     }
 
-    if ( !isdefined( self._id_88A9 ) || self._id_88A9 != var_0 )
+    if ( !isdefined( self.soundstate ) || self.soundstate != var_0 )
     {
         self notify( "end_dog_sound" );
-        self._id_88A9 = var_0;
+        self.soundstate = var_0;
 
         if ( var_0 == "bark" )
-            thread _id_6A2A( var_1 );
+            thread playbark( var_1 );
         else if ( var_0 == "growl" )
-            thread _id_6DA5( var_1 );
+            thread playgrowl( var_1 );
         else if ( var_0 == "pant" )
-            thread _id_6DCC();
+            thread playpanting();
         else
         {
 
@@ -681,69 +681,69 @@ _id_800E( var_0, var_1 )
     }
 }
 
-_id_6A2A( var_0 )
+playbark( var_0 )
 {
     self endon( "death" );
     level endon( "game_ended" );
     self endon( "end_dog_sound" );
 
-    if ( !isdefined( self._id_12E0 ) )
+    if ( !isdefined( self.barking_sound ) )
     {
-        self._id_12E0 = 1;
-        thread _id_A1F9();
+        self.barking_sound = 1;
+        thread watchbarking();
     }
 }
 
-_id_A1F9()
+watchbarking()
 {
     self endon( "death" );
     level endon( "game_ended" );
     self endon( "end_dog_sound" );
     wait(randomintrange( 5, 10 ));
-    self._id_12E0 = undefined;
+    self.barking_sound = undefined;
 }
 
-_id_6DA5( var_0 )
+playgrowl( var_0 )
 {
     self endon( "death" );
     level endon( "game_ended" );
     self endon( "end_dog_sound" );
 
-    if ( isdefined( self._id_55A5 ) && gettime() - self._id_55A5 < 3000 )
+    if ( isdefined( self.lastgrowlplayedtime ) && gettime() - self.lastgrowlplayedtime < 3000 )
         wait 3;
 
     for (;;)
     {
-        self._id_55A5 = gettime();
+        self.lastgrowlplayedtime = gettime();
         wait(randomintrange( 3, 6 ));
     }
 }
 
-_id_6DCC( var_0 )
+playpanting( var_0 )
 {
     self endon( "death" );
     level endon( "game_ended" );
     self endon( "end_dog_sound" );
 
-    if ( isdefined( self._id_55C5 ) && gettime() - self._id_55C5 < 3000 )
+    if ( isdefined( self.lastpantplayedtime ) && gettime() - self.lastpantplayedtime < 3000 )
         wait 3;
 
-    self._id_55C5 = gettime();
+    self.lastpantplayedtime = gettime();
 
     for (;;)
     {
-        if ( self._id_09A3 == "idle" )
+        if ( self.aistate == "idle" )
         {
             wait 3;
             continue;
         }
 
-        self._id_55C5 = gettime();
+        self.lastpantplayedtime = gettime();
         wait(randomintrange( 6, 8 ));
     }
 }
 
-_id_A23A()
+watchownerdamage()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -757,23 +757,23 @@ _id_A23A()
 
         if ( isplayer( var_1 ) && var_1 != self.owner )
         {
-            if ( self._id_0E4A == "attacking" )
+            if ( self.attackstate == "attacking" )
                 continue;
 
-            if ( distancesquared( self.owner.origin, self.origin ) > self._id_6630 )
+            if ( distancesquared( self.owner.origin, self.origin ) > self.ownerdamagedradiussq )
                 continue;
 
-            if ( distancesquared( self.owner.origin, var_1.origin ) > self._id_6630 )
+            if ( distancesquared( self.owner.origin, var_1.origin ) > self.ownerdamagedradiussq )
                 continue;
 
-            self._id_017C = var_1;
-            self._id_39AA = 1;
-            thread _id_A214();
+            self.favoriteenemy = var_1;
+            self.forceattack = 1;
+            thread watchfavoriteenemydeath();
         }
     }
 }
 
-_id_A23B()
+watchownerdeath()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -788,20 +788,20 @@ _id_A23B()
         switch ( level.gametype )
         {
             case "sd":
-                maps\mp\agents\_agent_utility::_id_5357();
-                continue;
+                maps\mp\agents\_agent_utility::killdog();
+                break;
             case "sr":
                 var_0 = level common_scripts\utility::waittill_any_return( "sr_player_eliminated", "sr_player_respawned" );
 
                 if ( isdefined( var_0 ) && var_0 == "sr_player_eliminated" )
-                    maps\mp\agents\_agent_utility::_id_5357();
+                    maps\mp\agents\_agent_utility::killdog();
 
-                continue;
+                break;
         }
     }
 }
 
-_id_A23D()
+watchownerteamchange()
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -814,36 +814,36 @@ _id_A23D()
         var_0 = self.owner common_scripts\utility::waittill_any_return_no_endon_death( "joined_team", "joined_spectators" );
 
         if ( isdefined( var_0 ) && ( var_0 == "joined_team" || var_0 == "joined_spectators" ) )
-            maps\mp\agents\_agent_utility::_id_5357();
+            maps\mp\agents\_agent_utility::killdog();
     }
 }
 
-_id_A214()
+watchfavoriteenemydeath()
 {
     self notify( "watchFavoriteEnemyDeath" );
     self endon( "watchFavoriteEnemyDeath" );
     self endon( "death" );
-    self._id_017C common_scripts\utility::waittill_any_timeout( 5.0, "death", "disconnect" );
-    self._id_017C = undefined;
-    self._id_39AA = 0;
+    self.favoriteenemy common_scripts\utility::waittill_any_timeout( 5.0, "death", "disconnect" );
+    self.favoriteenemy = undefined;
+    self.forceattack = 0;
 }
 
-_id_6461( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
+ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
-    self._id_9361 = gettime();
+    self.timeoflastdamage = gettime();
 
     if ( isdefined( self.owner ) )
-        self._id_2598 = vectornormalize( self.origin - self.owner.origin );
+        self.damagedownertome = vectornormalize( self.origin - self.owner.origin );
 
     if ( _id_849C( var_2, var_5, var_4 ) )
     {
-        switch ( self._id_09A3 )
+        switch ( self.aistate )
         {
             case "idle":
-                thread maps\mp\agents\dog\_dog_idle::_id_6461( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
+                thread maps\mp\agents\dog\_dog_idle::ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
                 break;
             case "move":
-                thread maps\mp\agents\dog\_dog_move::_id_6461( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
+                thread maps\mp\agents\dog\_dog_move::ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
                 break;
         }
     }
@@ -877,14 +877,14 @@ monitorflash()
         if ( isdefined( var_3 ) && var_3 == self.owner )
             continue;
 
-        switch ( self._id_09A3 )
+        switch ( self.aistate )
         {
             case "idle":
-                maps\mp\agents\dog\_dog_idle::_id_64AA();
-                continue;
+                maps\mp\agents\dog\_dog_idle::onflashbanged();
+                break;
             case "move":
-                maps\mp\agents\dog\_dog_move::_id_64AA();
-                continue;
+                maps\mp\agents\dog\_dog_move::onflashbanged();
+                break;
         }
     }
 }

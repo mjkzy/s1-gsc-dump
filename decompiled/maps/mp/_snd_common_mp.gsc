@@ -1,16 +1,16 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    _id_8707();
-    _id_72D7();
-    thread _id_870C();
+    snd_message_init();
+    register_common_mp_snd_messages();
+    thread snd_mp_mix_init();
 }
 
-_id_870C()
+snd_mp_mix_init()
 {
-    level._id_065D._id_2FDE = 0;
+    level._snd.dynamic_event_happened = 0;
 
     if ( isdefined( level.players ) && level.players.size > 0 )
     {
@@ -24,9 +24,9 @@ _id_870C()
     }
 }
 
-_id_870D()
+snd_mp_mix_post_event()
 {
-    level._id_065D._id_2FDE = 1;
+    level._snd.dynamic_event_happened = 1;
 
     if ( isdefined( level.players ) && level.players.size > 0 )
     {
@@ -44,7 +44,7 @@ snd_mp_player_join()
 {
     self _meth_84D7( "mp_init_mix" );
 
-    if ( !isdefined( level._id_065D._id_2FDE ) || !level._id_065D._id_2FDE )
+    if ( !isdefined( level._snd.dynamic_event_happened ) || !level._snd.dynamic_event_happened )
         self _meth_84D7( "mp_pre_event_mix" );
     else
     {
@@ -53,21 +53,21 @@ snd_mp_player_join()
     }
 }
 
-_id_8707()
+snd_message_init()
 {
-    if ( !isdefined( level._id_065D ) )
-        level._id_065D = spawnstruct();
+    if ( !isdefined( level._snd ) )
+        level._snd = spawnstruct();
 
-    if ( !isdefined( level._id_065D._id_5BB6 ) )
-        level._id_065D._id_5BB6 = [];
+    if ( !isdefined( level._snd.messages ) )
+        level._snd.messages = [];
 }
 
-_id_8747( var_0, var_1 )
+snd_register_message( var_0, var_1 )
 {
-    level._id_065D._id_5BB6[var_0] = var_1;
+    level._snd.messages[var_0] = var_1;
 }
 
-_id_8710( var_0, var_1, var_2 )
+snd_music_message( var_0, var_1, var_2 )
 {
     level notify( "stop_other_music" );
     level endon( "stop_other_music" );
@@ -82,65 +82,65 @@ _id_8710( var_0, var_1, var_2 )
 
 snd_message( var_0, var_1, var_2, var_3 )
 {
-    if ( isdefined( level._id_065D._id_5BB6[var_0] ) )
+    if ( isdefined( level._snd.messages[var_0] ) )
     {
         if ( isdefined( var_3 ) )
-            thread [[ level._id_065D._id_5BB6[var_0] ]]( var_1, var_2, var_3 );
+            thread [[ level._snd.messages[var_0] ]]( var_1, var_2, var_3 );
         else if ( isdefined( var_2 ) )
-            thread [[ level._id_065D._id_5BB6[var_0] ]]( var_1, var_2 );
+            thread [[ level._snd.messages[var_0] ]]( var_1, var_2 );
         else if ( isdefined( var_1 ) )
-            thread [[ level._id_065D._id_5BB6[var_0] ]]( var_1 );
+            thread [[ level._snd.messages[var_0] ]]( var_1 );
         else
-            thread [[ level._id_065D._id_5BB6[var_0] ]]();
+            thread [[ level._snd.messages[var_0] ]]();
     }
 }
 
-_id_72D7()
+register_common_mp_snd_messages()
 {
-    _id_8747( "mp_exo_cloak_activate", ::_id_5FAC );
-    _id_8747( "mp_exo_cloak_deactivate", ::_id_5FAD );
-    _id_8747( "mp_exo_health_activate", ::_id_5FAE );
-    _id_8747( "mp_exo_health_deactivate", ::_id_5FAF );
-    _id_8747( "mp_regular_exo_hover", ::_id_5FCC );
-    _id_8747( "mp_suppressed_exo_hover", ::_id_5FCE );
-    _id_8747( "mp_exo_mute_activate", ::_id_5FB0 );
-    _id_8747( "mp_exo_mute_deactivate", ::_id_5FB1 );
-    _id_8747( "mp_exo_overclock_activate", ::_id_5FB2 );
-    _id_8747( "mp_exo_overclock_deactivate", ::_id_5FB3 );
-    _id_8747( "mp_exo_ping_activate", ::_id_5FB4 );
-    _id_8747( "mp_exo_ping_deactivate", ::_id_5FB5 );
-    _id_8747( "mp_exo_repulsor_activate", ::_id_5FB6 );
-    _id_8747( "mp_exo_repulsor_deactivate", ::_id_5FB7 );
-    _id_8747( "mp_exo_repulsor_repel", ::_id_5FB8 );
-    _id_8747( "mp_exo_shield_activate", ::_id_5FB9 );
-    _id_8747( "mp_exo_shield_deactivate", ::_id_5FBA );
-    _id_8747( "goliath_pod_burst", ::_id_5FBF );
-    _id_8747( "goliath_death_explosion", ::_id_5FBE );
-    _id_8747( "goliath_self_destruct", ::_id_5FC0 );
-    _id_8747( "exo_knife_player_impact", ::_id_5FD2 );
+    snd_register_message( "mp_exo_cloak_activate", ::mp_exo_cloak_activate );
+    snd_register_message( "mp_exo_cloak_deactivate", ::mp_exo_cloak_deactivate );
+    snd_register_message( "mp_exo_health_activate", ::mp_exo_health_activate );
+    snd_register_message( "mp_exo_health_deactivate", ::mp_exo_health_deactivate );
+    snd_register_message( "mp_regular_exo_hover", ::mp_regular_exo_hover );
+    snd_register_message( "mp_suppressed_exo_hover", ::mp_suppressed_exo_hover );
+    snd_register_message( "mp_exo_mute_activate", ::mp_exo_mute_activate );
+    snd_register_message( "mp_exo_mute_deactivate", ::mp_exo_mute_deactivate );
+    snd_register_message( "mp_exo_overclock_activate", ::mp_exo_overclock_activate );
+    snd_register_message( "mp_exo_overclock_deactivate", ::mp_exo_overclock_deactivate );
+    snd_register_message( "mp_exo_ping_activate", ::mp_exo_ping_activate );
+    snd_register_message( "mp_exo_ping_deactivate", ::mp_exo_ping_deactivate );
+    snd_register_message( "mp_exo_repulsor_activate", ::mp_exo_repulsor_activate );
+    snd_register_message( "mp_exo_repulsor_deactivate", ::mp_exo_repulsor_deactivate );
+    snd_register_message( "mp_exo_repulsor_repel", ::mp_exo_repulsor_repel );
+    snd_register_message( "mp_exo_shield_activate", ::mp_exo_shield_activate );
+    snd_register_message( "mp_exo_shield_deactivate", ::mp_exo_shield_deactivate );
+    snd_register_message( "goliath_pod_burst", ::mp_ks_goliath_pod_burst );
+    snd_register_message( "goliath_death_explosion", ::mp_ks_goliath_death_explosion );
+    snd_register_message( "goliath_self_destruct", ::mp_ks_goliath_self_destruct );
+    snd_register_message( "exo_knife_player_impact", ::mp_wpn_exo_knife_player_impact );
 }
 
-_id_5FAC()
+mp_exo_cloak_activate()
 {
     self playsound( "mp_exo_cloak_activate" );
 }
 
-_id_5FAD()
+mp_exo_cloak_deactivate()
 {
     self playsound( "mp_exo_cloak_deactivate" );
 }
 
-_id_5FAE()
+mp_exo_health_activate()
 {
     self playsound( "mp_exo_stim_activate" );
 }
 
-_id_5FAF()
+mp_exo_health_deactivate()
 {
     self playsound( "mp_exo_stim_deactivate" );
 }
 
-_id_5FCC()
+mp_regular_exo_hover()
 {
     self playlocalsound( "mp_exo_hover_activate" );
     self playlocalsound( "mp_exo_hover_fuel" );
@@ -149,7 +149,7 @@ _id_5FCC()
     self stoplocalsound( "mp_exo_hover_sup_fuel" );
 }
 
-_id_5FCE()
+mp_suppressed_exo_hover()
 {
     self playlocalsound( "mp_exo_hover_sup_activate" );
     self playlocalsound( "mp_exo_hover_sup_fuel" );
@@ -158,77 +158,77 @@ _id_5FCE()
     self stoplocalsound( "mp_exo_hover_sup_fuel" );
 }
 
-_id_5FB0()
+mp_exo_mute_activate()
 {
     self playlocalsound( "mp_exo_mute_activate" );
 }
 
-_id_5FB1()
+mp_exo_mute_deactivate()
 {
     self playlocalsound( "mp_exo_mute_deactivate" );
 }
 
-_id_5FB2()
+mp_exo_overclock_activate()
 {
     self playsound( "mp_exo_overclock_activate" );
 }
 
-_id_5FB3()
+mp_exo_overclock_deactivate()
 {
     self playsound( "mp_exo_overclock_deactivate" );
 }
 
-_id_5FB4()
+mp_exo_ping_activate()
 {
     self playlocalsound( "mp_exo_ping_activate" );
 }
 
-_id_5FB5()
+mp_exo_ping_deactivate()
 {
     self playsound( "mp_exo_ping_deactivate" );
 }
 
-_id_5FB6()
+mp_exo_repulsor_activate()
 {
     self playsound( "mp_exo_trophy_activate" );
 }
 
-_id_5FB7()
+mp_exo_repulsor_deactivate()
 {
     self playsound( "mp_exo_trophy_deactivate" );
 }
 
-_id_5FB8()
+mp_exo_repulsor_repel()
 {
     playsoundatpos( self.origin, "mp_exo_trophy_intercept" );
 }
 
-_id_5FB9()
+mp_exo_shield_activate()
 {
     self playsound( "mp_exo_shield_activate" );
 }
 
-_id_5FBA()
+mp_exo_shield_deactivate()
 {
     self playsound( "mp_exo_shield_deactivate" );
 }
 
-_id_5FD2()
+mp_wpn_exo_knife_player_impact()
 {
     playsoundatpos( self.origin, "wpn_combatknife_stab_npc" );
 }
 
-_id_5FBF()
+mp_ks_goliath_pod_burst()
 {
     self playlocalsound( "goliath_suit_up_pod_burst" );
 }
 
-_id_5FBE()
+mp_ks_goliath_death_explosion()
 {
     self playsound( "goliath_death_destruct" );
 }
 
-_id_5FC0()
+mp_ks_goliath_self_destruct()
 {
     self playsound( "goliath_death_destruct" );
 }

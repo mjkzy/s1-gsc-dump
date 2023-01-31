@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -121,16 +121,16 @@ watchforclasschange()
         if ( var_0 != "class_select" )
             continue;
 
-        if ( maps\mp\_utility::ismlgsplitscreen() && self ismlgspectator() && !maps\mp\_utility::invirtuallobby() )
+        if ( maps\mp\_utility::ismlgsplitscreen() && self _meth_8432() && !maps\mp\_utility::invirtuallobby() )
         {
-            self setclientomnvar( "ui_options_menu", 0 );
+            self _meth_82FB( "ui_options_menu", 0 );
             continue;
         }
 
         if ( !istestclient( self ) && !isai( self ) )
         {
             if ( "" + var_1 != "callback" )
-                self setclientomnvar( "ui_loadout_selected", var_1 );
+                self _meth_82FB( "ui_loadout_selected", var_1 );
         }
 
         if ( isdefined( self.waitingtoselectclass ) && self.waitingtoselectclass )
@@ -139,7 +139,7 @@ watchforclasschange()
         if ( !maps\mp\_utility::allowclasschoice() )
             continue;
 
-        self setclientomnvar( "ui_options_menu", 0 );
+        self _meth_82FB( "ui_options_menu", 0 );
 
         if ( "" + var_1 != "callback" )
         {
@@ -206,31 +206,31 @@ watchforteamchange()
 
         if ( var_1 == 3 )
         {
-            self setclientomnvar( "ui_options_menu", 0 );
-            self setclientomnvar( "ui_spectator_selected", 1 );
-            self setclientomnvar( "ui_loadout_selected", -1 );
+            self _meth_82FB( "ui_options_menu", 0 );
+            self _meth_82FB( "ui_spectator_selected", 1 );
+            self _meth_82FB( "ui_loadout_selected", -1 );
             self.spectating_actively = 1;
 
             if ( maps\mp\_utility::ismlgsplitscreen() )
             {
-                self setmlgspectator( 1 );
-                self setclientomnvar( "ui_use_mlg_hud", 1 );
+                self _meth_8506( 1 );
+                self _meth_82FB( "ui_use_mlg_hud", 1 );
                 thread maps\mp\gametypes\_spectating::setspectatepermissions();
             }
         }
         else
         {
-            self setclientomnvar( "ui_spectator_selected", -1 );
+            self _meth_82FB( "ui_spectator_selected", -1 );
             self.spectating_actively = 0;
 
             if ( maps\mp\_utility::ismlgsplitscreen() )
             {
-                self setmlgspectator( 0 );
-                self setclientomnvar( "ui_use_mlg_hud", 0 );
+                self _meth_8506( 0 );
+                self _meth_82FB( "ui_use_mlg_hud", 0 );
             }
         }
 
-        self setclientomnvar( "ui_team_selected", var_1 );
+        self _meth_82FB( "ui_team_selected", var_1 );
 
         if ( var_1 == 0 )
             var_1 = "axis";
@@ -247,7 +247,7 @@ watchforteamchange()
             continue;
         }
 
-        self setclientomnvar( "ui_loadout_selected", -1 );
+        self _meth_82FB( "ui_loadout_selected", -1 );
 
         if ( var_1 == "axis" )
         {
@@ -277,7 +277,7 @@ showloadoutmenu()
     self endon( "disconnect" );
     level endon( "game_ended" );
     common_scripts\utility::waittill_any( "joined_team", "selected_same_team" );
-    self setclientomnvar( "ui_options_menu", 2 );
+    self _meth_82FB( "ui_options_menu", 2 );
 }
 
 autoassign()
@@ -289,7 +289,7 @@ autoassign()
     }
     else if ( !isdefined( self.team ) )
     {
-        if ( self ismlgspectator() && !maps\mp\_utility::invirtuallobby() )
+        if ( self _meth_8432() && !maps\mp\_utility::invirtuallobby() )
             thread setspectator();
         else if ( level.teamcount["axis"] < level.teamcount["allies"] )
             thread setteam( "axis" );
@@ -300,7 +300,7 @@ autoassign()
         else
             thread setteam( "allies" );
     }
-    else if ( self ismlgspectator() && !maps\mp\_utility::invirtuallobby() )
+    else if ( self _meth_8432() && !maps\mp\_utility::invirtuallobby() )
         thread setspectator();
     else
     {
@@ -346,7 +346,7 @@ setteam( var_0 )
     addtoteam( var_0 );
 
     if ( self.sessionstate == "playing" )
-        self suicide();
+        self _meth_826B();
 
     waitforclassselect();
     endrespawnnotify();
@@ -378,7 +378,7 @@ setspectator()
         self.switching_teams = 1;
         self.joining_team = "spectator";
         self.leaving_team = self.pers["team"];
-        self suicide();
+        self _meth_826B();
     }
 
     self notify( "becameSpectator" );
@@ -462,7 +462,7 @@ beginclasschoice( var_0 )
     {
         thread maps\mp\gametypes\_playerlogic::setuioptionsmenu( 2 );
 
-        if ( !self ismlgspectator() || maps\mp\_utility::invirtuallobby() )
+        if ( !self _meth_8432() || maps\mp\_utility::invirtuallobby() )
             waitforclassselect();
 
         endrespawnnotify();
@@ -507,7 +507,7 @@ beginteamchoice()
 showmainmenuforteam()
 {
     var_0 = self.pers["team"];
-    self openpopupmenu( game["menu_class_" + var_0] );
+    self _meth_8323( game["menu_class_" + var_0] );
 }
 
 menuspectator()
@@ -520,7 +520,7 @@ menuspectator()
         self.switching_teams = 1;
         self.joining_team = "spectator";
         self.leaving_team = self.pers["team"];
-        self suicide();
+        self _meth_826B();
     }
 
     addtoteam( "spectator" );
@@ -562,7 +562,7 @@ menugiveclass()
             self iclientprintlnbold( game["strings"]["change_class_wait"] );
             self waittill( "streamClassWeaponsComplete" );
             self iclientprintlnbold( "" );
-            self onlystreamactiveweapon( 0 );
+            self _meth_8538( 0 );
         }
 
         maps\mp\gametypes\_class::setclass( self.pers["class"] );

@@ -1,39 +1,39 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    level._id_A195 = [];
-    level._id_A195["Warbird"] = spawnstruct();
-    level._id_A195["Warbird"].vehicle = "warbird_player_mp";
-    level._id_A195["Warbird"]._id_5D3A = "vehicle_xh9_warbird_low_cloaked_in_out_mp_cloak";
-    level._id_A195["Warbird"].helitype = "warbird";
-    level._id_A195["Warbird"].maxhealth = level._id_47D1;
-    level.killstreakfuncs["warbird"] = ::_id_98CD;
+    level.warbirdsetting = [];
+    level.warbirdsetting["Warbird"] = spawnstruct();
+    level.warbirdsetting["Warbird"].vehicle = "warbird_player_mp";
+    level.warbirdsetting["Warbird"].modelbase = "vehicle_xh9_warbird_low_cloaked_in_out_mp_cloak";
+    level.warbirdsetting["Warbird"].helitype = "warbird";
+    level.warbirdsetting["Warbird"].maxhealth = level.heli_maxhealth;
+    level.killstreakfuncs["warbird"] = ::tryusewarbird;
     level.killstreakwieldweapons["warbird_remote_turret_mp"] = "warbird";
     level.killstreakwieldweapons["warbird_player_turret_mp"] = "warbird";
     level.killstreakwieldweapons["warbird_missile_mp"] = "warbird";
     level.killstreakwieldweapons["paint_missile_killstreak_mp"] = "warbird";
 
-    if ( !isdefined( level._id_89A1 ) )
-        level._id_89A1 = [];
+    if ( !isdefined( level.spawnedwarbirds ) )
+        level.spawnedwarbirds = [];
 
-    if ( !isdefined( level._id_A189 ) )
-        level._id_A189 = 0;
+    if ( !isdefined( level.warbirdinuse ) )
+        level.warbirdinuse = 0;
 
     level.chopper_fx["light"]["warbird"] = loadfx( "vfx/lights/air_light_wingtip_red" );
     level.chopper_fx["engine"]["warbird"] = loadfx( "vfx/distortion/distortion_warbird_mp" );
-    maps\mp\killstreaks\_aerial_utility::_id_5941( "warbird", "vfx/explosion/vehicle_warbird_explosion_midair", ::_id_A18B );
-    maps\mp\killstreaks\_aerial_utility::_id_07C7( "warbird", "vfx/explosion/vehicle_warbird_explosion_midair" );
+    maps\mp\killstreaks\_aerial_utility::makehelitype( "warbird", "vfx/explosion/vehicle_warbird_explosion_midair", ::warbirdlightfx );
+    maps\mp\killstreaks\_aerial_utility::addairexplosion( "warbird", "vfx/explosion/vehicle_warbird_explosion_midair" );
     game["dialog"]["assist_mp_warbird"] = "ks_warbird_joinreq";
     game["dialog"]["pilot_sup_mp_warbird"] = "pilot_sup_mp_warbird";
     game["dialog"]["pilot_aslt_mp_warbird"] = "pilot_aslt_mp_warbird";
     game["dialog"]["ks_warbird_destroyed"] = "ks_warbird_destroyed";
 }
 
-_id_98CD( var_0, var_1 )
+tryusewarbird( var_0, var_1 )
 {
-    if ( !_id_1AFD() )
+    if ( !canusewarbird() )
     {
         self iclientprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
         return 0;
@@ -45,25 +45,25 @@ _id_98CD( var_0, var_1 )
     }
 
     maps\mp\_utility::incrementfauxvehiclecount();
-    level._id_A189 = 1;
+    level.warbirdinuse = 1;
     var_2 = common_scripts\utility::array_contains( var_1, "warbird_ai_attack" ) || common_scripts\utility::array_contains( var_1, "warbird_ai_follow" );
 
     if ( !var_2 )
     {
-        thread _id_6C74();
+        thread playerclearwarbirdonteamchange();
         var_3 = maps\mp\killstreaks\_killstreaks::initridekillstreak( "warbird" );
 
         if ( var_3 != "success" )
         {
             maps\mp\_utility::decrementfauxvehiclecount();
-            level._id_A189 = 0;
+            level.warbirdinuse = 0;
             return 0;
         }
 
         maps\mp\_utility::setusingremote( "warbird" );
     }
 
-    var_3 = _id_8340( var_0, var_1 );
+    var_3 = setupwarbirdkillstreak( var_0, var_1 );
 
     if ( var_3 )
         maps\mp\_matchdata::logkillstreakevent( "warbird", self.origin );
@@ -71,193 +71,193 @@ _id_98CD( var_0, var_1 )
     return var_3;
 }
 
-_id_6C74()
+playerclearwarbirdonteamchange()
 {
     self endon( "rideKillstreakBlack" );
     self endon( "rideKillstreakFailed" );
     self waittill( "joined_team" );
-    level._id_A189 = 0;
+    level.warbirdinuse = 0;
     maps\mp\_utility::decrementfauxvehiclecount();
 }
 
-_id_1AFD()
+canusewarbird()
 {
-    return !level._id_A189;
+    return !level.warbirdinuse;
 }
 
-_id_50E4()
+iscontrollingwarbird()
 {
-    return isdefined( self._id_219A ) && self._id_219A;
+    return isdefined( self.controllingwarbird ) && self.controllingwarbird;
 }
 
-_id_A18E()
+warbirdmakevehiclesolidcapsule()
 {
     self endon( "death" );
     waitframe();
     self _meth_8202( 300, -9, 160 );
 }
 
-_id_8324( var_0 )
+setupplayercommands( var_0 )
 {
     if ( isbot( self ) )
         return;
 
-    self notifyonplayercommand( "SwitchVisionMode", "+actionslot 1" );
-    self notifyonplayercommand( "SwitchWeapon", "weapnext" );
-    self notifyonplayercommand( "ToggleControlState", "+activate" );
-    self notifyonplayercommand( "ToggleControlCancel", "-activate" );
-    self notifyonplayercommand( "ToggleControlState", "+usereload" );
-    self notifyonplayercommand( "ToggleControlCancel", "-usereload" );
-    self notifyonplayercommand( "StartFire", "+attack" );
-    self notifyonplayercommand( "StartFire", "+attack_akimbo_accessible" );
+    self _meth_82DD( "SwitchVisionMode", "+actionslot 1" );
+    self _meth_82DD( "SwitchWeapon", "weapnext" );
+    self _meth_82DD( "ToggleControlState", "+activate" );
+    self _meth_82DD( "ToggleControlCancel", "-activate" );
+    self _meth_82DD( "ToggleControlState", "+usereload" );
+    self _meth_82DD( "ToggleControlCancel", "-usereload" );
+    self _meth_82DD( "StartFire", "+attack" );
+    self _meth_82DD( "StartFire", "+attack_akimbo_accessible" );
 
     if ( isdefined( var_0 ) && common_scripts\utility::array_contains( var_0, "warbird_cloak" ) )
-        self notifyonplayercommand( "Cloak", "+smoke" );
+        self _meth_82DD( "Cloak", "+smoke" );
 }
 
-_id_2B20( var_0 )
+disableplayercommands( var_0 )
 {
     if ( isbot( self ) )
         return;
 
-    self notifyonplayercommandremove( "SwitchVisionMode", "+actionslot 1" );
-    self notifyonplayercommandremove( "SwitchWeapon", "weapnext" );
-    self notifyonplayercommandremove( "ToggleControlState", "+activate" );
-    self notifyonplayercommandremove( "ToggleControlCancel", "-activate" );
-    self notifyonplayercommandremove( "ToggleControlState", "+usereload" );
-    self notifyonplayercommandremove( "ToggleControlCancel", "-usereload" );
-    self notifyonplayercommandremove( "StartFire", "+attack" );
-    self notifyonplayercommandremove( "StartFire", "+attack_akimbo_accessible" );
+    self _meth_849C( "SwitchVisionMode", "+actionslot 1" );
+    self _meth_849C( "SwitchWeapon", "weapnext" );
+    self _meth_849C( "ToggleControlState", "+activate" );
+    self _meth_849C( "ToggleControlCancel", "-activate" );
+    self _meth_849C( "ToggleControlState", "+usereload" );
+    self _meth_849C( "ToggleControlCancel", "-usereload" );
+    self _meth_849C( "StartFire", "+attack" );
+    self _meth_849C( "StartFire", "+attack_akimbo_accessible" );
 
-    if ( isdefined( var_0 ) && var_0._id_1AC1 )
-        self notifyonplayercommandremove( "Cloak", "+smoke" );
+    if ( isdefined( var_0 ) && var_0.cancloak )
+        self _meth_849C( "Cloak", "+smoke" );
 }
 
-_id_8340( var_0, var_1 )
+setupwarbirdkillstreak( var_0, var_1 )
 {
     self endon( "warbirdStreakComplete" );
-    _id_8324( var_1 );
-    self._id_6E61 = 0;
-    self._id_219A = 0;
-    self._id_A188 = 1;
-    var_2 = _id_188A();
-    var_3 = _id_3776( var_2 );
-    var_3 = _id_75FC( var_3 );
-    var_4 = spawnhelicopter( self, var_3.origin, var_3.angles, level._id_A195["Warbird"].vehicle, level._id_A195["Warbird"]._id_5D3A );
-    var_4._id_251D = var_3;
+    setupplayercommands( var_1 );
+    self.possesswarbird = 0;
+    self.controllingwarbird = 0;
+    self.warbirdinit = 1;
+    var_2 = buildvalidflightpaths();
+    var_3 = findbestspawnlocation( var_2 );
+    var_3 = rotatehelispawn( var_3 );
+    var_4 = spawnhelicopter( self, var_3.origin, var_3.angles, level.warbirdsetting["Warbird"].vehicle, level.warbirdsetting["Warbird"].modelbase );
+    var_4.currentnode = var_3;
 
     if ( !isdefined( var_4 ) )
         return 0;
 
-    var_4 thread _id_A151();
+    var_4 thread warbird_audio();
     var_4 hide();
-    var_4 thread _id_A18E();
-    var_4._id_91C2 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+    var_4 thread warbirdmakevehiclesolidcapsule();
+    var_4.targetent = spawn( "script_origin", ( 0, 0, 0 ) );
     var_4.vehicletype = "Warbird";
-    var_4._id_47FC = level._id_A195["Warbird"].helitype;
-    var_4.helitype = level._id_A195["Warbird"].helitype;
-    var_4._id_0E54 = missile_createattractorent( var_4, level._id_47A4, level._id_47A3 );
+    var_4.heli_type = level.warbirdsetting["Warbird"].helitype;
+    var_4.helitype = level.warbirdsetting["Warbird"].helitype;
+    var_4.attractor = missile_createattractorent( var_4, level.heli_attract_strength, level.heli_attract_range );
     var_4.lifeid = var_0;
     var_4.team = self.pers["team"];
     var_4.pers["team"] = self.pers["team"];
     var_4.owner = self;
-    var_4.maxhealth = level._id_A195["Warbird"].maxhealth;
-    var_4._id_A3C2 = ( 0.0, 0.0, 0.0 );
-    var_4._id_91C5 = level._id_47F7;
-    var_4._id_6F89 = undefined;
-    var_4._id_7BF6 = undefined;
+    var_4.maxhealth = level.warbirdsetting["Warbird"].maxhealth;
+    var_4.zoffset = ( 0, 0, 0 );
+    var_4.targeting_delay = level.heli_targeting_delay;
+    var_4.primarytarget = undefined;
+    var_4.secondarytarget = undefined;
     var_4.attacker = undefined;
-    var_4._id_2525 = "ok";
-    var_4._id_680A = 1;
-    var_4._id_576F = 0;
-    var_4._id_65F2 = 6;
-    var_4._id_37EB = 0;
-    var_4._id_A2D0 = 0;
-    var_4._id_5154 = 1;
-    var_4._id_1FBB = 0;
+    var_4.currentstate = "ok";
+    var_4.picknewtarget = 1;
+    var_4.lineofsight = 0;
+    var_4.overheattime = 6;
+    var_4.firetime = 0;
+    var_4.weaponfire = 0;
+    var_4.ismoving = 1;
+    var_4.cloakcooldown = 0;
     var_4.iscrashing = 0;
-    var_4._id_517E = 0;
+    var_4.ispossessed = 0;
     var_4.modules = var_1;
-    var_4._id_0947 = common_scripts\utility::array_contains( var_4.modules, "warbird_ai_attack" );
-    var_4._id_0953 = common_scripts\utility::array_contains( var_4.modules, "warbird_ai_follow" );
-    var_4._id_4712 = var_4._id_0947 || var_4._id_0953;
-    var_4._id_1AC1 = common_scripts\utility::array_contains( var_4.modules, "warbird_cloak" );
-    var_4._id_473F = common_scripts\utility::array_contains( var_4.modules, "warbird_rockets" );
-    var_4._id_21C9 = common_scripts\utility::array_contains( var_4.modules, "warbird_coop_offensive" );
-    var_4._id_35AA = common_scripts\utility::array_contains( var_4.modules, "warbird_flares" );
+    var_4.aiattack = common_scripts\utility::array_contains( var_4.modules, "warbird_ai_attack" );
+    var_4.aifollow = common_scripts\utility::array_contains( var_4.modules, "warbird_ai_follow" );
+    var_4.hasai = var_4.aiattack || var_4.aifollow;
+    var_4.cancloak = common_scripts\utility::array_contains( var_4.modules, "warbird_cloak" );
+    var_4.hasrockets = common_scripts\utility::array_contains( var_4.modules, "warbird_rockets" );
+    var_4.coopoffensive = common_scripts\utility::array_contains( var_4.modules, "warbird_coop_offensive" );
+    var_4.extraflare = common_scripts\utility::array_contains( var_4.modules, "warbird_flares" );
 
-    if ( var_4._id_35AA )
-        var_4._id_629C = 1;
+    if ( var_4.extraflare )
+        var_4.numextraflares = 1;
     else
-        var_4._id_629C = 0;
+        var_4.numextraflares = 0;
 
-    if ( var_4._id_473F )
-        var_4._id_758B = 3;
+    if ( var_4.hasrockets )
+        var_4.rocketclip = 3;
     else
-        var_4._id_758B = 0;
+        var_4.rocketclip = 0;
 
-    var_4._id_731C = var_4._id_758B;
+    var_4.remainingrocketshots = var_4.rocketclip;
 
-    if ( var_4._id_4712 )
+    if ( var_4.hasai )
     {
-        var_4._id_9BC7 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
-        var_4._id_9BC7 linkto( var_4 );
-        var_4._id_9BC7 maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", &"MP_WARBIRD_PLAYER_PROMPT", self );
+        var_4.usableent = spawn( "script_origin", ( 0, 0, 0 ) );
+        var_4.usableent _meth_804D( var_4 );
+        var_4.usableent maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", &"MP_WARBIRD_PLAYER_PROMPT", self );
     }
 
-    var_4 thread [[ level._id_5715["warbird"] ]]();
+    var_4 thread [[ level.lightfxfunc["warbird"] ]]();
     var_4 common_scripts\utility::make_entity_sentient_mp( var_4.team );
 
-    if ( !isdefined( level._id_89A1 ) )
-        level._id_89A1 = [];
+    if ( !isdefined( level.spawnedwarbirds ) )
+        level.spawnedwarbirds = [];
 
-    level._id_89A1 = common_scripts\utility::array_add( level._id_89A1, var_4 );
-    var_4 maps\mp\killstreaks\_aerial_utility::_id_084B();
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47BC( var_4._id_629C );
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47CD( self );
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47CC( self );
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47CE( self );
+    level.spawnedwarbirds = common_scripts\utility::array_add( level.spawnedwarbirds, var_4 );
+    var_4 maps\mp\killstreaks\_aerial_utility::addtohelilist();
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_flares_monitor( var_4.numextraflares );
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_leave_on_disconnect( self );
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_leave_on_changeteams( self );
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_leave_on_gameended( self );
     var_5 = 30;
 
     if ( common_scripts\utility::array_contains( var_4.modules, "warbird_time" ) )
         var_5 = 45;
 
-    if ( maps\mp\_utility::_hasperk( "specialty_blackbox" ) && isdefined( self._id_8A32 ) )
-        var_5 *= self._id_8A32;
+    if ( maps\mp\_utility::_hasperk( "specialty_blackbox" ) && isdefined( self.specialty_blackbox_bonus ) )
+        var_5 *= self.specialty_blackbox_bonus;
 
     var_4.endtime = gettime() + var_5 * 1000;
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47CF( var_5 );
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47D4();
-    var_4 thread maps\mp\gametypes\_damage::setentitydamagecallback( var_4.maxhealth, undefined, ::_id_A190, maps\mp\killstreaks\_aerial_utility::_id_47D3, 1 );
-    var_4 thread _id_A16D();
-    var_4 thread maps\mp\killstreaks\_aerial_utility::_id_47B7();
-    thread _id_5E22( var_4 );
-    thread _id_5E9A( var_4 );
-    var_4._id_A196 = var_4 _id_897D( "warbird_remote_turret_mp", "vehicle_xh9_warbird_turret_cloaked_inout_killstreak_mp_cloak", "tag_player_mp", 0 );
-    var_4._id_A196 hide();
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_leave_on_timeout( var_5 );
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_monitoremp();
+    var_4 thread maps\mp\gametypes\_damage::setentitydamagecallback( var_4.maxhealth, undefined, ::warbirdondeath, maps\mp\killstreaks\_aerial_utility::heli_modifydamage, 1 );
+    var_4 thread warbird_health();
+    var_4 thread maps\mp\killstreaks\_aerial_utility::heli_existance();
+    thread monitoraiwarbirddeathortimeout( var_4 );
+    thread monitorplayerdisconnect( var_4 );
+    var_4.warbirdturret = var_4 spawn_warbird_turret( "warbird_remote_turret_mp", "vehicle_xh9_warbird_turret_cloaked_inout_killstreak_mp_cloak", "tag_player_mp", 0 );
+    var_4.warbirdturret hide();
 
-    if ( !var_4._id_0947 && !var_4._id_0953 )
-        var_4._id_A196 showtoplayer( self );
+    if ( !var_4.aiattack && !var_4.aifollow )
+        var_4.warbirdturret showtoplayer( self );
 
     var_6 = "orbitalsupport_big_turret_mp";
 
-    if ( var_4._id_21C9 )
+    if ( var_4.coopoffensive )
         var_6 = "warbird_remote_turret_mp";
 
-    var_4._id_A184 = var_4 _id_897D( var_6, "vehicle_xh9_warbird_turret_cloaked_inout_killstreak_mp_cloak", "tag_playerbuddy_mp", 1 );
-    var_4._id_A184 hide();
-    thread _id_82FD( var_4 );
-    thread _id_A191( var_4, var_4._id_A196 );
+    var_4.warbirdbuddyturret = var_4 spawn_warbird_turret( var_6, "vehicle_xh9_warbird_turret_cloaked_inout_killstreak_mp_cloak", "tag_playerbuddy_mp", 1 );
+    var_4.warbirdbuddyturret hide();
+    thread setupcloaking( var_4 );
+    thread warbirdoverheatbarcolormonitor( var_4, var_4.warbirdturret );
 
-    if ( var_4._id_0947 || var_4._id_0953 )
-        thread _id_6D18( var_4 );
+    if ( var_4.aiattack || var_4.aifollow )
+        thread playermonitorwarbirdpossession( var_4 );
     else
-        thread _id_6C7D( var_4 );
+        thread playercontrolwarbirdsetup( var_4 );
 
     if ( isdefined( var_4 ) )
     {
         if ( level.teambased )
-            level thread _id_464F( var_4, self );
+            level thread handlecoopjoining( var_4, self );
 
         return 1;
     }
@@ -265,7 +265,7 @@ _id_8340( var_0, var_1 )
         return 0;
 }
 
-_id_6D18( var_0 )
+playermonitorwarbirdpossession( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     var_0 waittill( "cloaked" );
@@ -273,54 +273,54 @@ _id_6D18( var_0 )
 
     for (;;)
     {
-        _id_5E23( var_0 );
-        var_0._id_9BC7 waittill( "trigger" );
-        thread _id_5979();
-        _id_6C7D( var_0 );
+        monitoraiwarbirdswitch( var_0 );
+        var_0.usableent waittill( "trigger" );
+        thread manuallyjoinwarbird();
+        playercontrolwarbirdsetup( var_0 );
     }
 }
 
-_id_5979()
+manuallyjoinwarbird()
 {
     self.manuallyjoiningkillstreak = 1;
     common_scripts\utility::waittill_any( "death", "initRideKillstreak_complete", "warbirdStreakComplete" );
     self.manuallyjoiningkillstreak = 0;
 }
 
-_id_A190( var_0, var_1, var_2, var_3 )
+warbirdondeath( var_0, var_1, var_2, var_3 )
 {
     maps\mp\gametypes\_damage::onkillstreakkilled( var_0, var_1, var_2, var_3, "warbird_destroyed", "ks_warbird_destroyed", "callout_destroyed_warbird", 1 );
 }
 
-_id_82FD( var_0 )
+setupcloaking( var_0 )
 {
-    var_0._id_1FC7 = 0;
-    _id_1FC5( var_0, 1, 1 );
+    var_0.cloakstate = 0;
+    cloakingtransition( var_0, 1, 1 );
 }
 
-_id_A193( var_0 )
+warbirdrockethudupdate( var_0 )
 {
-    if ( !var_0._id_473F )
+    if ( !var_0.hasrockets )
         return;
 
-    switch ( var_0._id_731C )
+    switch ( var_0.remainingrocketshots )
     {
         case 0:
-            self setclientomnvar( "ui_warbird_missile", 0 );
+            self _meth_82FB( "ui_warbird_missile", 0 );
             break;
         case 1:
-            self setclientomnvar( "ui_warbird_missile", 1 );
+            self _meth_82FB( "ui_warbird_missile", 1 );
             break;
         case 2:
-            self setclientomnvar( "ui_warbird_missile", 2 );
+            self _meth_82FB( "ui_warbird_missile", 2 );
             break;
         case 3:
-            self setclientomnvar( "ui_warbird_missile", 3 );
+            self _meth_82FB( "ui_warbird_missile", 3 );
             break;
     }
 }
 
-_id_833F( var_0, var_1, var_2 )
+setupwarbirdhud( var_0, var_1, var_2 )
 {
     self endon( "warbirdStreakComplete" );
     var_0 endon( "death" );
@@ -330,71 +330,71 @@ _id_833F( var_0, var_1, var_2 )
         var_1 = 0;
 
     self _meth_8532();
-    maps\mp\killstreaks\_aerial_utility::_id_6C89();
+    maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
     wait 0.05;
 
     if ( var_1 )
-        self setclientomnvar( "ui_warbird_toggle", 2 );
+        self _meth_82FB( "ui_warbird_toggle", 2 );
     else
-        self setclientomnvar( "ui_warbird_toggle", 1 );
+        self _meth_82FB( "ui_warbird_toggle", 1 );
 
-    maps\mp\killstreaks\_aerial_utility::_id_6C96();
-    self setclientomnvar( "ui_warbird_cloak", 0 );
-    self setclientomnvar( "ui_warbird_countdown", var_0.endtime );
+    maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
+    self _meth_82FB( "ui_warbird_cloak", 0 );
+    self _meth_82FB( "ui_warbird_countdown", var_0.endtime );
 
     if ( !var_1 )
-        _id_A193( var_0 );
+        warbirdrockethudupdate( var_0 );
 
-    if ( var_1 && !var_0._id_21C9 )
-        self setclientomnvar( "ui_warbird_weapon", 3 );
-    else if ( var_1 && var_0._id_21C9 )
-        self setclientomnvar( "ui_warbird_weapon", 0 );
-    else if ( var_0._id_473F )
-        self setclientomnvar( "ui_warbird_weapon", 1 );
+    if ( var_1 && !var_0.coopoffensive )
+        self _meth_82FB( "ui_warbird_weapon", 3 );
+    else if ( var_1 && var_0.coopoffensive )
+        self _meth_82FB( "ui_warbird_weapon", 0 );
+    else if ( var_0.hasrockets )
+        self _meth_82FB( "ui_warbird_weapon", 1 );
     else
-        self setclientomnvar( "ui_warbird_weapon", 0 );
+        self _meth_82FB( "ui_warbird_weapon", 0 );
 
     if ( var_1 )
     {
-        var_3 = var_2 getentitynumber();
-        self setclientomnvar( "ui_coop_primary_num", var_3 );
+        var_3 = var_2 _meth_81B1();
+        self _meth_82FB( "ui_coop_primary_num", var_3 );
     }
 
-    if ( var_0._id_1AC1 && !var_1 )
-        self setclientomnvar( "ui_warbird_cloaktext", 1 );
+    if ( var_0.cancloak && !var_1 )
+        self _meth_82FB( "ui_warbird_cloaktext", 1 );
     else
-        self setclientomnvar( "ui_warbird_cloaktext", 0 );
+        self _meth_82FB( "ui_warbird_cloaktext", 0 );
 
-    self setclientomnvar( "ui_killstreak_optic", 0 );
+    self _meth_82FB( "ui_killstreak_optic", 0 );
 }
 
-_id_A191( var_0, var_1 )
+warbirdoverheatbarcolormonitor( var_0, var_1 )
 {
     self endon( "warbirdStreakComplete" );
     var_0 endon( "death" );
 
     for (;;)
     {
-        var_1._id_4793 = var_1 _meth_844E();
-        self setclientomnvar( "ui_warbird_heat", var_1._id_4793 );
+        var_1.heat_level = var_1 _meth_844E();
+        self _meth_82FB( "ui_warbird_heat", var_1.heat_level );
         var_2 = 0;
 
         if ( isdefined( var_1 ) )
             var_2 = var_1 _meth_844F();
 
         if ( var_2 )
-            self setclientomnvar( "ui_warbird_fire", 1 );
-        else if ( var_1._id_4793 > 0.7 )
-            self setclientomnvar( "ui_warbird_fire", 2 );
+            self _meth_82FB( "ui_warbird_fire", 1 );
+        else if ( var_1.heat_level > 0.7 )
+            self _meth_82FB( "ui_warbird_fire", 2 );
         else
-            self setclientomnvar( "ui_warbird_fire", 0 );
+            self _meth_82FB( "ui_warbird_fire", 0 );
 
         while ( var_2 )
         {
             wait 0.05;
             var_2 = var_1 _meth_844F();
-            var_1._id_4793 = var_1 _meth_844E();
-            self setclientomnvar( "ui_warbird_heat", var_1._id_4793 );
+            var_1.heat_level = var_1 _meth_844E();
+            self _meth_82FB( "ui_warbird_heat", var_1.heat_level );
         }
 
         self notify( "overheatFinished" );
@@ -402,21 +402,21 @@ _id_A191( var_0, var_1 )
     }
 }
 
-_id_897D( var_0, var_1, var_2, var_3 )
+spawn_warbird_turret( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawnturret( "misc_turret", self gettagorigin( var_2 ), var_0, 0 );
     var_4.angles = self gettagangles( var_2 );
-    var_4 setmodel( var_1 );
+    var_4 _meth_80B1( var_1 );
     var_4 _meth_815A( 45.0 );
-    var_4 linkto( self, var_2, ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+    var_4 _meth_804D( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4.owner = self.owner;
     var_4.health = 99999;
     var_4.maxhealth = 1000;
     var_4.damagetaken = 0;
     var_4.stunned = 0;
-    var_4._id_8F70 = 0.0;
-    var_4 setcandamage( 0 );
-    var_4 setcanradiusdamage( 0 );
+    var_4.stunnedtime = 0.0;
+    var_4 _meth_82C0( 0 );
+    var_4 _meth_82C1( 0 );
     var_4.team = self.team;
     var_4.pers["team"] = self.team;
 
@@ -430,37 +430,37 @@ _id_897D( var_0, var_1, var_2, var_3 )
 
     if ( var_3 )
     {
-        var_4._id_37E6 = spawn( "script_model", self gettagorigin( var_2 ) );
-        var_4._id_37E6 setmodel( "tag_origin" );
-        var_4._id_37E6 linktosynchronizedparent( self, var_2, ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+        var_4.firesoundent = spawn( "script_model", self gettagorigin( var_2 ) );
+        var_4.firesoundent _meth_80B1( "tag_origin" );
+        var_4.firesoundent _meth_8446( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     return var_4;
 }
 
-_id_9129( var_0 )
+takeover_warbird_turret_buddy( var_0 )
 {
     if ( getdvarint( "camera_thirdPerson" ) )
         maps\mp\_utility::setthirdpersondof( 0 );
 
-    var_0._id_A184.owner = self;
-    var_0._id_A184 _meth_8065( "sentry_manual" );
-    var_0._id_A184 _meth_8103( self );
-    self _meth_807E( var_0._id_A184, "tag_player", 0, 180, 180, -20, 180, 0 );
+    var_0.warbirdbuddyturret.owner = self;
+    var_0.warbirdbuddyturret _meth_8065( "sentry_manual" );
+    var_0.warbirdbuddyturret _meth_8103( self );
+    self _meth_807E( var_0.warbirdbuddyturret, "tag_player", 0, 180, 180, -20, 180, 0 );
     self _meth_80A0( 0 );
     self _meth_80A1( 1 );
-    self _meth_80E8( var_0._id_A184, 45, var_0.angles[1] );
+    self _meth_80E8( var_0.warbirdbuddyturret, 45, var_0.angles[1] );
 }
 
-_id_3776( var_0 )
+findbestspawnlocation( var_0 )
 {
     var_1 = common_scripts\utility::get_array_of_closest( self.origin, var_0 );
     return var_1[0];
 }
 
-_id_75FC( var_0 )
+rotatehelispawn( var_0 )
 {
-    var_1 = maps\mp\killstreaks\_aerial_utility::_id_3FC1();
+    var_1 = maps\mp\killstreaks\_aerial_utility::gethelianchor();
     var_2 = anglestoforward( var_0.angles );
     var_3 = var_1.origin - var_0.origin;
     var_4 = vectortoangles( var_3 );
@@ -468,43 +468,43 @@ _id_75FC( var_0 )
     return var_0;
 }
 
-_id_188A()
+buildvalidflightpaths()
 {
     self endon( "warbirdStreakComplete" );
 
-    if ( !isdefined( level._id_A187 ) )
-        level._id_A187 = [];
+    if ( !isdefined( level.warbirdflightpathnodes ) )
+        level.warbirdflightpathnodes = [];
     else
-        return level._id_A187;
+        return level.warbirdflightpathnodes;
 
-    var_0 = maps\mp\killstreaks\_aerial_utility::_id_3F84( "heli_loop_start", "targetname" );
+    var_0 = maps\mp\killstreaks\_aerial_utility::getentorstruct( "heli_loop_start", "targetname" );
     var_1 = var_0;
-    var_2 = maps\mp\killstreaks\_aerial_utility::_id_3FC1();
+    var_2 = maps\mp\killstreaks\_aerial_utility::gethelianchor();
     var_3 = var_2.origin[2];
 
     for (;;)
     {
-        var_4 = maps\mp\killstreaks\_aerial_utility::_id_3F84( var_1.target, "targetname" );
-        var_1._id_60B4 = var_4;
-        var_4._id_6F30 = var_1;
+        var_4 = maps\mp\killstreaks\_aerial_utility::getentorstruct( var_1.target, "targetname" );
+        var_1.next = var_4;
+        var_4.prev = var_1;
         var_4.origin = ( var_4.origin[0], var_4.origin[1], var_3 );
 
-        if ( _id_511D( level._id_A187, var_4 ) )
+        if ( isinarray( level.warbirdflightpathnodes, var_4 ) )
             break;
 
-        level._id_A187 = common_scripts\utility::array_add( level._id_A187, var_4 );
+        level.warbirdflightpathnodes = common_scripts\utility::array_add( level.warbirdflightpathnodes, var_4 );
         var_1 = var_4;
     }
 
-    foreach ( var_6 in level._id_A187 )
+    foreach ( var_6 in level.warbirdflightpathnodes )
     {
 
     }
 
-    return level._id_A187;
+    return level.warbirdflightpathnodes;
 }
 
-_id_511D( var_0, var_1 )
+isinarray( var_0, var_1 )
 {
     if ( isdefined( var_0 ) )
     {
@@ -518,24 +518,24 @@ _id_511D( var_0, var_1 )
     return 0;
 }
 
-_id_5EDC( var_0 )
+monitorwarbirdsafearea( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ResumeWarbirdAI" );
-    thread maps\mp\killstreaks\_aerial_utility::_id_6CB4( var_0, "warbirdStreakComplete", "ResumeWarbirdAI" );
+    thread maps\mp\killstreaks\_aerial_utility::playerhandleboundarystatic( var_0, "warbirdStreakComplete", "ResumeWarbirdAI" );
     var_0 waittill( "outOfBounds" );
     wait 2;
-    var_0 thread maps\mp\killstreaks\_aerial_utility::_id_47CA();
+    var_0 thread maps\mp\killstreaks\_aerial_utility::heli_leave();
 }
 
-_id_A182( var_0 )
+warbirdaiattack( var_0 )
 {
-    thread _id_A186( var_0 );
-    thread _id_A18D( var_0 );
-    thread _id_A18F( var_0 );
+    thread warbirdfire( var_0 );
+    thread warbirdlookatenemy( var_0 );
+    thread warbirdmovetoattackpoint( var_0 );
 }
 
-_id_A18F( var_0 )
+warbirdmovetoattackpoint( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
@@ -549,32 +549,32 @@ _id_A18F( var_0 )
     var_1 = level.warbirdaiattackbasespeed;
     var_0 _meth_8283( var_1, var_1 / 4, var_1 / 4 );
     var_0 _meth_825A( level.warbirdaiattackneargoal );
-    var_2 = var_0._id_251D;
+    var_2 = var_0.currentnode;
 
     if ( !isdefined( var_2 ) )
     {
-        var_3 = common_scripts\utility::get_array_of_closest( var_0.origin, _id_188A() );
+        var_3 = common_scripts\utility::get_array_of_closest( var_0.origin, buildvalidflightpaths() );
         var_4 = var_0.origin;
 
         for ( var_5 = 0; var_5 < var_3.size; var_5++ )
         {
             var_6 = var_3[var_5].origin;
 
-            if ( maps\mp\killstreaks\_aerial_utility::_id_3931( var_4, var_6, var_0 ) )
+            if ( maps\mp\killstreaks\_aerial_utility::flynodeorgtracepassed( var_4, var_6, var_0 ) )
             {
                 var_7 = var_6 - var_4;
                 var_8 = distance( var_4, var_6 );
-                var_9 = rotatevector( var_7, ( 0.0, 90.0, 0.0 ) );
+                var_9 = rotatevector( var_7, ( 0, 90, 0 ) );
                 var_10 = var_4 + var_9 * 100;
                 var_11 = var_10 + var_7 * var_8;
 
-                if ( maps\mp\killstreaks\_aerial_utility::_id_3931( var_10, var_11, var_0 ) )
+                if ( maps\mp\killstreaks\_aerial_utility::flynodeorgtracepassed( var_10, var_11, var_0 ) )
                 {
-                    var_12 = rotatevector( var_7, ( 0.0, -90.0, 0.0 ) );
+                    var_12 = rotatevector( var_7, ( 0, -90, 0 ) );
                     var_10 = var_4 + var_12 * 100;
                     var_11 = var_10 + var_7 * var_8;
 
-                    if ( maps\mp\killstreaks\_aerial_utility::_id_3931( var_10, var_11, var_0 ) )
+                    if ( maps\mp\killstreaks\_aerial_utility::flynodeorgtracepassed( var_10, var_11, var_0 ) )
                     {
                         var_2 = var_3[var_5];
                         break;
@@ -586,7 +586,7 @@ _id_A18F( var_0 )
         }
     }
     else
-        var_2 = var_2._id_60B4;
+        var_2 = var_2.next;
 
     if ( !isdefined( var_2 ) )
         return;
@@ -595,26 +595,26 @@ _id_A18F( var_0 )
     {
         var_13 = 0;
 
-        if ( var_0._id_0953 )
+        if ( var_0.aifollow )
             var_13 = 1;
 
         var_0 _meth_825B( var_2.origin, var_13 );
-        var_0._id_5154 = 1;
+        var_0.ismoving = 1;
         var_0 waittill( "near_goal" );
-        var_0._id_251D = var_2;
-        var_0._id_5154 = 0;
-        var_2 = _id_A0F6( var_0 );
-        var_0._id_251D = undefined;
+        var_0.currentnode = var_2;
+        var_0.ismoving = 0;
+        var_2 = waituntilmovereturnnode( var_0 );
+        var_0.currentnode = undefined;
     }
 }
 
-_id_A0F6( var_0 )
+waituntilmovereturnnode( var_0 )
 {
-    if ( var_0._id_0953 && isdefined( var_0.owner ) )
+    if ( var_0.aifollow && isdefined( var_0.owner ) )
     {
-        var_1 = var_0._id_251D;
-        var_2 = var_1._id_60B4;
-        var_3 = var_1._id_6F30;
+        var_1 = var_0.currentnode;
+        var_2 = var_1.next;
+        var_3 = var_1.prev;
 
         while ( isdefined( var_0.owner ) )
         {
@@ -631,47 +631,47 @@ _id_A0F6( var_0 )
         }
     }
     else
-        return var_0._id_251D._id_60B4;
+        return var_0.currentnode.next;
 }
 
-_id_A18D( var_0 )
+warbirdlookatenemy( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
 
     for (;;)
     {
-        if ( isdefined( var_0._id_3286 ) )
+        if ( isdefined( var_0.enemy_target ) )
         {
-            _id_5E7A( var_0 );
-            var_0._id_A196 _meth_8108();
+            monitorlookatent( var_0 );
+            var_0.warbirdturret _meth_8108();
         }
 
         waitframe();
     }
 }
 
-_id_5E7A( var_0 )
+monitorlookatent( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
     var_0 endon( "pickNewTarget" );
-    var_0 _meth_8265( var_0._id_3286 );
-    var_0._id_A196 _meth_8106( var_0._id_3286 );
-    var_0._id_3286 common_scripts\utility::waittill_either( "death", "disconnect" );
-    var_0._id_680A = 1;
-    var_0._id_576F = 0;
+    var_0 _meth_8265( var_0.enemy_target );
+    var_0.warbirdturret _meth_8106( var_0.enemy_target );
+    var_0.enemy_target common_scripts\utility::waittill_either( "death", "disconnect" );
+    var_0.picknewtarget = 1;
+    var_0.lineofsight = 0;
 }
 
-_id_A186( var_0 )
+warbirdfire( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
-    thread _id_37C8( var_0 );
+    thread fireai( var_0 );
 
     for (;;)
     {
-        if ( var_0._id_680A )
+        if ( var_0.picknewtarget )
         {
             var_1 = level.participants;
             var_2 = [];
@@ -682,7 +682,7 @@ _id_A186( var_0 )
                     var_2 = common_scripts\utility::array_add( var_2, var_4 );
             }
 
-            if ( var_0._id_0947 )
+            if ( var_0.aiattack )
                 var_2 = sortbydistance( var_2, var_0.origin );
             else
                 var_2 = sortbydistance( var_2, self.origin );
@@ -704,8 +704,8 @@ _id_A186( var_0 )
                     continue;
 
                 var_6 = var_4;
-                var_0._id_3286 = var_6;
-                _id_1D26( var_0 );
+                var_0.enemy_target = var_6;
+                checkwarbirdtargetlos( var_0 );
                 break;
             }
         }
@@ -715,118 +715,118 @@ _id_A186( var_0 )
     }
 }
 
-_id_37C8( var_0 )
+fireai( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
-    var_0._id_731C = var_0._id_758B;
+    var_0.remainingrocketshots = var_0.rocketclip;
 
     for (;;)
     {
         waitframe();
 
-        if ( !isdefined( var_0._id_3286 ) || !isalive( var_0._id_3286 ) || !var_0._id_576F )
+        if ( !isdefined( var_0.enemy_target ) || !isalive( var_0.enemy_target ) || !var_0.lineofsight )
             continue;
 
-        if ( var_0._id_473F && var_0._id_731C )
-            _id_37C9( var_0 );
+        if ( var_0.hasrockets && var_0.remainingrocketshots )
+            fireairocket( var_0 );
 
-        var_0._id_A196 _meth_80EA();
+        var_0.warbirdturret _meth_80EA();
     }
 }
 
-_id_37C9( var_0 )
+fireairocket( var_0 )
 {
     var_1 = var_0 gettagorigin( "tag_missile_right" );
     var_2 = vectornormalize( anglestoforward( var_0.angles ) );
     var_3 = var_0 _meth_8287();
-    var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self geteye() + var_3 + var_2 * 1000, self );
+    var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self _meth_80A8() + var_3 + var_2 * 1000, self );
     var_4.killcament = var_0;
     playfxontag( level.chopper_fx["rocketlaunch"]["warbird"], var_0, "tag_missile_right" );
-    var_4 missile_settargetent( var_0._id_3286 );
-    var_4 missile_setflightmodedirect();
-    var_0._id_731C--;
+    var_4 _meth_81D9( var_0.enemy_target );
+    var_4 _meth_81DC();
+    var_0.remainingrocketshots--;
 
-    if ( var_0._id_731C <= 0 )
-        thread _id_A183( var_0 );
+    if ( var_0.remainingrocketshots <= 0 )
+        thread warbirdairocketreload( var_0 );
 
-    _id_A0E9( var_0, var_4 );
+    waittillrocketdeath( var_0, var_4 );
 }
 
-_id_A183( var_0 )
+warbirdairocketreload( var_0 )
 {
     var_0 endon( "warbirdStreakComplete" );
     wait 6;
-    var_0._id_731C = var_0._id_758B;
+    var_0.remainingrocketshots = var_0.rocketclip;
 }
 
-_id_A0E9( var_0, var_1 )
+waittillrocketdeath( var_0, var_1 )
 {
-    var_0._id_3286 endon( "death" );
-    var_0._id_3286 endon( "disconnect" );
+    var_0.enemy_target endon( "death" );
+    var_0.enemy_target endon( "disconnect" );
     var_1 waittill( "death" );
 }
 
-_id_1D26( var_0 )
+checkwarbirdtargetlos( var_0 )
 {
     self endon( "warbirdPlayerControlled" );
     self endon( "warbirdStreakComplete" );
-    var_0._id_3286 endon( "death" );
-    var_0._id_3286 endon( "disconnect" );
+    var_0.enemy_target endon( "death" );
+    var_0.enemy_target endon( "disconnect" );
 
     for (;;)
     {
         var_1 = var_0 gettagorigin( "TAG_FLASH1" );
-        var_2 = var_0._id_3286 geteye();
+        var_2 = var_0.enemy_target _meth_80A8();
         var_3 = vectornormalize( var_2 - var_1 );
         var_4 = var_1 + var_3 * 20;
         var_5 = bullettrace( var_4, var_2, 0, var_0, 0, 0, 0, 0, 0 );
 
-        if ( !_id_1D1E( var_0 ) && var_5["fraction"] < 1 )
+        if ( !checktargetisinvision( var_0 ) && var_5["fraction"] < 1 )
         {
-            var_0._id_576F = 0;
-            var_0._id_680A = 1;
-            var_0._id_3286 = undefined;
+            var_0.lineofsight = 0;
+            var_0.picknewtarget = 1;
+            var_0.enemy_target = undefined;
             var_0 notify( "pickNewTarget" );
             return;
         }
 
-        var_0._id_576F = 1;
+        var_0.lineofsight = 1;
         wait 0.25;
     }
 }
 
-_id_1D1E( var_0 )
+checktargetisinvision( var_0 )
 {
     var_1 = anglestoforward( var_0.angles );
-    var_2 = var_0._id_3286.origin - var_0.origin;
+    var_2 = var_0.enemy_target.origin - var_0.origin;
     var_3 = vectordot( var_1, var_2 );
     return var_3 < 0;
 }
 
-_id_6C7D( var_0 )
+playercontrolwarbirdsetup( var_0 )
 {
     self endon( "warbirdStreakComplete" );
-    self._id_6E61 = 1;
-    self._id_219A = 1;
+    self.possesswarbird = 1;
+    self.controllingwarbird = 1;
     var_0.player = self;
-    var_0._id_251D = undefined;
+    var_0.currentnode = undefined;
     maps\mp\_utility::playersaveangles();
     waitframe();
     self notify( "warbirdPlayerControlled" );
-    var_0._id_517E = 1;
+    var_0.ispossessed = 1;
     var_0.killcamstarttime = undefined;
-    var_0._id_A196.killcament = undefined;
+    var_0.warbirdturret.killcament = undefined;
 
-    if ( self._id_A188 != 1 )
+    if ( self.warbirdinit != 1 )
     {
         maps\mp\_utility::_giveweapon( "killstreak_predator_missile_mp" );
-        self switchtoweapon( "killstreak_predator_missile_mp" );
+        self _meth_8315( "killstreak_predator_missile_mp" );
 
-        while ( self getcurrentweapon() != "killstreak_predator_missile_mp" )
+        while ( self _meth_8311() != "killstreak_predator_missile_mp" )
             waitframe();
 
-        thread _id_6C91( var_0, 0 );
+        thread playerdoridekillstreak( var_0, 0 );
         self waittill( "initRideKillstreak_complete", var_1 );
 
         if ( !var_1 )
@@ -835,57 +835,57 @@ _id_6C7D( var_0 )
         maps\mp\_utility::setusingremote( "Warbird" );
     }
 
-    thread _id_833F( var_0 );
-    thread _id_5EDC( var_0 );
-    thread _id_A051( 0.5 );
-    thread _id_834F( 0.5 );
+    thread setupwarbirdhud( var_0 );
+    thread monitorwarbirdsafearea( var_0 );
+    thread waitsetthermal( 0.5 );
+    thread setwarbirdvisionsetpermap( 0.5 );
     self _meth_80FE( 0.3, 0.3 );
-    _id_6725( var_0 );
-    var_0._id_6C65 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-    var_0._id_6C65 setmodel( "tag_player" );
-    var_0._id_6C65 hide();
+    pausewarbirdenginefxforplayer( var_0 );
+    var_0.playerattachpoint = spawn( "script_model", ( 0, 0, 0 ) );
+    var_0.playerattachpoint _meth_80B1( "tag_player" );
+    var_0.playerattachpoint hide();
     var_2 = var_0 gettagorigin( "tag_origin" );
     var_3 = var_0 gettagangles( "tag_origin" );
     var_4 = anglestoforward( var_3 );
     var_2 += var_4 * 165;
-    var_2 += ( 0.0, 0.0, -10.0 );
-    var_0._id_6C65.origin = var_2;
-    var_0._id_6C65.angles = var_3;
-    var_0._id_6C65 linkto( var_0, "tag_player_mp" );
-    self unlink();
+    var_2 += ( 0, 0, -10 );
+    var_0.playerattachpoint.origin = var_2;
+    var_0.playerattachpoint.angles = var_3;
+    var_0.playerattachpoint _meth_804D( var_0, "tag_player_mp" );
+    self _meth_804F();
     var_0 _meth_8444( var_0 );
-    thread _id_A192( var_0 );
+    thread warbirdrocketdamageindicator( var_0 );
     self _meth_8206( var_0 );
-    thread _id_A2DF( var_0 );
-    thread _id_6C77( var_0 );
-    var_0._id_A196 _meth_8065( "sentry_manual" );
-    self _meth_80E8( var_0._id_A196, 45 );
+    thread weaponsetup( var_0 );
+    thread playercloakready( var_0 );
+    var_0.warbirdturret _meth_8065( "sentry_manual" );
+    self _meth_80E8( var_0.warbirdturret, 45 );
 
-    while ( self._id_6E61 )
-        _id_344D( var_0 );
+    while ( self.possesswarbird )
+        exitwarbirdcontrolstate( var_0 );
 
     maps\mp\_utility::playerrestoreangles();
 
-    if ( !var_0._id_0947 && !var_0._id_0953 )
-        var_0 thread maps\mp\killstreaks\_aerial_utility::_id_47CA();
+    if ( !var_0.aiattack && !var_0.aifollow )
+        var_0 thread maps\mp\killstreaks\_aerial_utility::heli_leave();
 }
 
-_id_834F( var_0 )
+setwarbirdvisionsetpermap( var_0 )
 {
     self endon( "disconnect" );
     self endon( "warbirdStreakComplete" );
     wait(var_0);
 
-    if ( isdefined( level._id_A197 ) )
-        self setclienttriggervisionset( level._id_A197, 0 );
+    if ( isdefined( level.warbirdvisionset ) )
+        self _meth_847A( level.warbirdvisionset, 0 );
 }
 
-_id_73E8( var_0 )
+removewarbirdvisionsetpermap( var_0 )
 {
-    self setclienttriggervisionset( "", var_0 );
+    self _meth_847A( "", var_0 );
 }
 
-_id_6C91( var_0, var_1 )
+playerdoridekillstreak( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
         var_1 = 0;
@@ -897,12 +897,12 @@ _id_6C91( var_0, var_1 )
 
     var_3 = maps\mp\killstreaks\_killstreaks::initridekillstreak( var_2 );
 
-    if ( var_3 != "success" || var_1 && !level._id_A189 || !isdefined( var_0 ) || isdefined( var_0.isleaving ) && var_0.isleaving )
+    if ( var_3 != "success" || var_1 && !level.warbirdinuse || !isdefined( var_0 ) || isdefined( var_0.isleaving ) && var_0.isleaving )
     {
         if ( var_1 )
-            _id_73E6( var_0, var_3 == "disconnect" );
+            removewarbirdbuddy( var_0, var_3 == "disconnect" );
         else if ( var_3 != "disconnect" )
-            _id_6D2E( var_0 );
+            playerreset( var_0 );
 
         self notify( "initRideKillstreak_complete", 0 );
         return;
@@ -911,25 +911,25 @@ _id_6C91( var_0, var_1 )
     self notify( "initRideKillstreak_complete", 1 );
 }
 
-_id_344D( var_0 )
+exitwarbirdcontrolstate( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self waittill( "ToggleControlState" );
-    thread _id_1AB2();
-    self._id_6E61 = 0;
+    thread cancelexitbuttonpressmonitor();
+    self.possesswarbird = 0;
     wait 0.5;
     self notify( "ExitHoldTimeComplete" );
 }
 
-_id_1AB2()
+cancelexitbuttonpressmonitor()
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ExitHoldTimeComplete" );
     self waittill( "ToggleControlCancel" );
-    self._id_6E61 = 1;
+    self.possesswarbird = 1;
 }
 
-_id_A051( var_0 )
+waitsetthermal( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ResumeWarbirdAI" );
@@ -942,7 +942,7 @@ _id_A051( var_0 )
     var_4 = 0;
     var_5 = 12;
     var_6 = 5;
-    maps\mp\killstreaks\_aerial_utility::_id_92FD( "warbirdThermalOff", var_1, var_2, var_3, var_4, var_5, var_6 );
+    maps\mp\killstreaks\_aerial_utility::thermalvision( "warbirdThermalOff", var_1, var_2, var_3, var_4, var_5, var_6 );
 }
 
 waitsetthermalbuddy( var_0 )
@@ -958,120 +958,120 @@ waitsetthermalbuddy( var_0 )
     var_4 = 0;
     var_5 = 12;
     var_6 = 5;
-    maps\mp\killstreaks\_aerial_utility::_id_92FD( "warbirdThermalOff", var_1, var_2, var_3, var_4, var_5, var_6 );
+    maps\mp\killstreaks\_aerial_utility::thermalvision( "warbirdThermalOff", var_1, var_2, var_3, var_4, var_5, var_6 );
 }
 
-_id_6C77( var_0, var_1 )
+playercloakready( var_0, var_1 )
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ResumeWarbirdAI" );
 
-    if ( isdefined( self._id_A188 ) && self._id_A188 == 1 )
+    if ( isdefined( self.warbirdinit ) && self.warbirdinit == 1 )
     {
         var_0 waittill( "cloaked" );
         common_scripts\utility::waittill_any_return_no_endon_death( "ForceUncloak", "Cloak", "ResumeWarbirdAI" );
-        _id_907C( var_0 );
-        var_0._id_6C65 _id_69C1( "warbird_cloak_deactivate" );
+        switchtovisible( var_0 );
+        var_0.playerattachpoint play_sound_on_entity( "warbird_cloak_deactivate" );
     }
 
     for (;;)
     {
-        thread _id_6C75( var_0 );
-        thread _id_6C76( var_0 );
+        thread playercloakactivated( var_0 );
+        thread playercloakcooldown( var_0 );
 
-        if ( var_0._id_1FBB != 0 )
+        if ( var_0.cloakcooldown != 0 )
         {
-            self setclientomnvar( "ui_warbird_cloaktext", 3 );
-            wait(var_0._id_1FBB);
+            self _meth_82FB( "ui_warbird_cloaktext", 3 );
+            wait(var_0.cloakcooldown);
         }
 
-        thread _id_1FC6();
+        thread cloakreadydialog();
 
-        if ( var_0._id_1AC1 )
-            self setclientomnvar( "ui_warbird_cloaktext", 1 );
+        if ( var_0.cancloak )
+            self _meth_82FB( "ui_warbird_cloaktext", 1 );
 
         self waittill( "Cloak" );
         self notify( "ActivateCloak" );
-        var_0 _id_69C1( "warbird_cloak_activate" );
+        var_0 play_sound_on_entity( "warbird_cloak_activate" );
         self waittill( "CloakCharged" );
     }
 }
 
-_id_6C75( var_0 )
+playercloakactivated( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ResumeWarbirdAI" );
     self waittill( "ActivateCloak" );
     var_1 = 10000;
-    self setclientomnvar( "ui_warbird_cloaktime", var_1 + gettime() );
-    _id_9079( var_0 );
-    thread _id_1FBA( var_0 );
-    self setclientomnvar( "ui_warbird_cloaktext", 2 );
-    var_0._id_1FBB = 5;
-    thread _id_1FBB( var_0 );
-    thread _id_6C78( var_0 );
+    self _meth_82FB( "ui_warbird_cloaktime", var_1 + gettime() );
+    switchtocloaked( var_0 );
+    thread cloakactivateddialog( var_0 );
+    self _meth_82FB( "ui_warbird_cloaktext", 2 );
+    var_0.cloakcooldown = 5;
+    thread cloakcooldown( var_0 );
+    thread playercloakwaitforexit( var_0 );
 }
 
-_id_6C76( var_0 )
+playercloakcooldown( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self waittill( "UnCloak" );
-    thread _id_6A34( var_0 );
-    _id_907C( var_0 );
-    self setclientomnvar( "ui_warbird_cloaktext", 3 );
-    thread _id_1FBC( var_0 );
+    thread playcloakoverheatdialog( var_0 );
+    switchtovisible( var_0 );
+    self _meth_82FB( "ui_warbird_cloaktext", 3 );
+    thread cloakdeactivateddialog( var_0 );
 }
 
-_id_1FBB( var_0 )
+cloakcooldown( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self waittill( "UnCloak" );
 
-    while ( var_0._id_1FBB > 0 )
+    while ( var_0.cloakcooldown > 0 )
     {
-        var_0._id_1FBB -= 0.5;
+        var_0.cloakcooldown -= 0.5;
         wait 0.5;
     }
 
-    var_0._id_1FBB = 0;
+    var_0.cloakcooldown = 0;
     self notify( "CloakCharged" );
 }
 
-_id_6C78( var_0 )
+playercloakwaitforexit( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     var_1 = gettime();
     common_scripts\utility::waittill_any_timeout_no_endon_death( 10, "ForceUncloak", "Cloak", "ResumeWarbirdAI" );
     var_2 = gettime();
     var_3 = max( var_2 - var_1, 5000 );
-    var_0._id_1FBB = var_3 / 1000;
+    var_0.cloakcooldown = var_3 / 1000;
     var_4 = gettime() + var_3;
-    self setclientomnvar( "ui_warbird_cloakdur", var_4 );
+    self _meth_82FB( "ui_warbird_cloakdur", var_4 );
     self notify( "UnCloak" );
 }
 
-_id_9079( var_0 )
+switchtocloaked( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        thread _id_1FC5( var_0, 1 );
-        missile_deleteattractor( var_0._id_0E54 );
-        self setclientomnvar( "ui_warbird_cloak", 1 );
-        thread _id_5E3D( var_0 );
+        thread cloakingtransition( var_0, 1 );
+        missile_deleteattractor( var_0.attractor );
+        self _meth_82FB( "ui_warbird_cloak", 1 );
+        thread monitordamagewhilecloaking( var_0 );
     }
 }
 
-_id_907C( var_0 )
+switchtovisible( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        thread _id_1FC5( var_0, 0 );
-        var_0._id_0E54 = missile_createattractorent( var_0, level._id_47A4, level._id_47A3 );
-        self setclientomnvar( "ui_warbird_cloak", 0 );
+        thread cloakingtransition( var_0, 0 );
+        var_0.attractor = missile_createattractorent( var_0, level.heli_attract_strength, level.heli_attract_range );
+        self _meth_82FB( "ui_warbird_cloak", 0 );
     }
 }
 
-_id_1FC5( var_0, var_1, var_2 )
+cloakingtransition( var_0, var_1, var_2 )
 {
     var_0 notify( "cloaking_transition" );
     var_0 endon( "cloaking_transition" );
@@ -1079,15 +1079,15 @@ _id_1FC5( var_0, var_1, var_2 )
 
     if ( var_1 )
     {
-        if ( var_0._id_1FC7 == -2 )
+        if ( var_0.cloakstate == -2 )
             return;
 
-        var_0._id_1FC7 = -1;
-        var_0 cloakingenable();
-        var_0._id_A196 cloakingenable();
+        var_0.cloakstate = -1;
+        var_0 _meth_844B();
+        var_0.warbirdturret _meth_844B();
 
-        if ( var_0._id_21C9 )
-            var_0._id_A184 cloakingenable();
+        if ( var_0.coopoffensive )
+            var_0.warbirdbuddyturret _meth_844B();
 
         var_0 _meth_848F( 0 );
 
@@ -1097,35 +1097,35 @@ _id_1FC5( var_0, var_1, var_2 )
             wait 1.5;
 
         var_0 show();
-        var_0._id_A196 show();
+        var_0.warbirdturret show();
 
-        if ( var_0._id_21C9 )
-            var_0._id_A184 show();
+        if ( var_0.coopoffensive )
+            var_0.warbirdbuddyturret show();
 
-        var_0._id_1FC7 = -2;
+        var_0.cloakstate = -2;
         var_0 notify( "cloaked" );
-        var_0 _id_8F04();
+        var_0 stopwarbirdenginefx();
     }
     else
     {
-        if ( var_0._id_1FC7 == 2 )
+        if ( var_0.cloakstate == 2 )
             return;
 
-        var_0._id_1FC7 = 1;
-        var_0 cloakingdisable();
+        var_0.cloakstate = 1;
+        var_0 _meth_844C();
         var_0 _meth_848F( 1 );
-        var_0._id_A196 cloakingdisable();
+        var_0.warbirdturret _meth_844C();
 
-        if ( var_0._id_21C9 )
-            var_0._id_A184 cloakingdisable();
+        if ( var_0.coopoffensive )
+            var_0.warbirdbuddyturret _meth_844C();
 
         wait 2.2;
-        var_0._id_1FC7 = 2;
-        var_0 _id_6DE8();
+        var_0.cloakstate = 2;
+        var_0 playwarbirdenginefx();
     }
 }
 
-_id_1FBC( var_0 )
+cloakdeactivateddialog( var_0 )
 {
     self endon( "CloakCharged" );
     self endon( "warbirdStreakComplete" );
@@ -1134,39 +1134,39 @@ _id_1FBC( var_0 )
     for (;;)
     {
         self waittill( "Cloak" );
-        var_0._id_6C65 _id_69C1( "warbird_cloak_notready" );
+        var_0.playerattachpoint play_sound_on_entity( "warbird_cloak_notready" );
         wait 1;
     }
 }
 
-_id_1FC6()
+cloakreadydialog()
 {
 
 }
 
-_id_1FBA( var_0 )
+cloakactivateddialog( var_0 )
 {
 
 }
 
-_id_6A34( var_0 )
+playcloakoverheatdialog( var_0 )
 {
-    var_0._id_6C65 _id_69C1( "warbird_cloak_deactivate" );
+    var_0.playerattachpoint play_sound_on_entity( "warbird_cloak_deactivate" );
 }
 
-_id_1FC8( var_0, var_1 )
+cloakwarbirdexit( var_0, var_1 )
 {
     if ( isdefined( var_0 ) && var_0.iscrashing == 0 )
     {
         if ( isdefined( var_1 ) )
             var_1 notify( "ActivateCloak" );
 
-        thread _id_1FC5( var_0, 1 );
-        missile_deleteattractor( var_0._id_0E54 );
+        thread cloakingtransition( var_0, 1 );
+        missile_deleteattractor( var_0.attractor );
     }
 }
 
-_id_5E3D( var_0 )
+monitordamagewhilecloaking( var_0 )
 {
     self endon( "UnCloak" );
     self endon( "warbirdStreakComplete" );
@@ -1176,7 +1176,7 @@ _id_5E3D( var_0 )
     self notify( "ForceUncloak" );
 }
 
-_id_A192( var_0 )
+warbirdrocketdamageindicator( var_0 )
 {
     self endon( "ResumeWarbirdAI" );
     self endon( "warbirdStreakComplete" );
@@ -1193,7 +1193,7 @@ _id_A192( var_0 )
     }
 }
 
-_id_9B62( var_0 )
+updateshootinglocation( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     level endon( "ResumeWarbirdAI" );
@@ -1201,80 +1201,80 @@ _id_9B62( var_0 )
     for (;;)
     {
         var_1 = self getangles();
-        var_2 = var_0._id_6C65.origin;
+        var_2 = var_0.playerattachpoint.origin;
         var_3 = anglestoforward( var_1 );
         var_4 = var_2 + var_3 * 4000;
-        var_0._id_91C2.origin = var_4;
+        var_0.targetent.origin = var_4;
         wait 0.05;
     }
 }
 
-_id_5EDD( var_0 )
+monitorweaponselection( var_0 )
 {
     self endon( "warbirdStreakComplete" );
     self endon( "ResumeWarbirdAI" );
-    self._id_2503 = "turret";
-    var_0._id_A196 _meth_8179();
+    self.current_warbird_weapon = "turret";
+    var_0.warbirdturret _meth_8179();
 
-    if ( !var_0._id_473F )
+    if ( !var_0.hasrockets )
         return;
 
     for (;;)
     {
         self waittill( "SwitchWeapon" );
 
-        if ( self._id_2503 == "turret" )
+        if ( self.current_warbird_weapon == "turret" )
         {
-            self._id_2503 = "missiles";
-            var_0._id_A196 _meth_815C();
-            self setclientomnvar( "ui_warbird_weapon", 2 );
+            self.current_warbird_weapon = "missiles";
+            var_0.warbirdturret _meth_815C();
+            self _meth_82FB( "ui_warbird_weapon", 2 );
         }
-        else if ( self._id_2503 == "missiles" )
+        else if ( self.current_warbird_weapon == "missiles" )
         {
-            self._id_2503 = "turret";
-            var_0._id_A196 _meth_8179();
-            self setclientomnvar( "ui_warbird_weapon", 1 );
+            self.current_warbird_weapon = "turret";
+            var_0.warbirdturret _meth_8179();
+            self _meth_82FB( "ui_warbird_weapon", 1 );
         }
 
         self playlocalsound( "warbird_weapon_cycle_plr" );
     }
 }
 
-_id_A2DF( var_0 )
+weaponsetup( var_0 )
 {
-    if ( var_0._id_473F )
-        thread _id_37EF( var_0 );
+    if ( var_0.hasrockets )
+        thread firewarbirdrockets( var_0 );
 
-    thread _id_5EDD( var_0 );
-    thread _id_9B62( var_0 );
-    thread _id_39A7( var_0 );
+    thread monitorweaponselection( var_0 );
+    thread updateshootinglocation( var_0 );
+    thread force_uncloak_on_fire( var_0 );
 }
 
-_id_A0EE( var_0 )
+waittillturretfired( var_0 )
 {
     var_0 endon( "warbirdStreakComplete" );
-    var_0._id_A196 endon( "turret_fire" );
+    var_0.warbirdturret endon( "turret_fire" );
 
-    if ( var_0._id_21C9 )
-        var_0._id_A184 endon( "turret_fire" );
+    if ( var_0.coopoffensive )
+        var_0.warbirdbuddyturret endon( "turret_fire" );
 
     level waittill( "forever" );
 }
 
-_id_39A7( var_0 )
+force_uncloak_on_fire( var_0 )
 {
     level endon( "game_ended" );
     self endon( "warbirdStreakComplete" );
 
     for (;;)
     {
-        _id_A0EE( var_0 );
+        waittillturretfired( var_0 );
         self notify( "ForceUncloak" );
         wait 0.05;
     }
 }
 
-_id_37F0( var_0 )
+firewarbirdthreatgrenades( var_0 )
 {
     var_0 endon( "warbirdStreakComplete" );
     self endon( "warbirdStreakComplete" );
@@ -1283,17 +1283,17 @@ _id_37F0( var_0 )
     for (;;)
     {
         self waittill( "StartFire" );
-        maps\mp\killstreaks\_aerial_utility::_id_6C9D( var_0._id_A184._id_37E6 );
+        maps\mp\killstreaks\_aerial_utility::playerfakeshootpaintmissile( var_0.warbirdbuddyturret.firesoundent );
         playfxontag( level.chopper_fx["rocketlaunch"]["warbird"], var_0, "tag_origin" );
         wait 2;
     }
 }
 
-_id_37EF( var_0 )
+firewarbirdrockets( var_0 )
 {
     self endon( "ResumeWarbirdAI" );
     self endon( "warbirdStreakComplete" );
-    var_0._id_731C = var_0._id_758B;
+    var_0.remainingrocketshots = var_0.rocketclip;
 
     for (;;)
     {
@@ -1302,28 +1302,28 @@ _id_37EF( var_0 )
         else
             self waittill( "StartFire" );
 
-        if ( self._id_2503 == "missiles" || self.guid == "bot0" || self.guid == "bot1" || self.guid == "bot2" || self.guid == "bot3" )
+        if ( self.current_warbird_weapon == "missiles" || self.guid == "bot0" || self.guid == "bot1" || self.guid == "bot2" || self.guid == "bot3" )
         {
             earthquake( 0.4, 1, var_0.origin, 1000 );
-            self playrumbleonentity( "ac130_105mm_fire" );
+            self _meth_80AD( "ac130_105mm_fire" );
             var_1 = var_0 gettagorigin( "tag_missile_right" );
             var_2 = vectornormalize( anglestoforward( self getangles() ) );
-            var_3 = var_0 getentityvelocity();
-            var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self geteye() + var_3 + var_2 * 1000, self );
+            var_3 = var_0 _meth_81B2();
+            var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self _meth_80A8() + var_3 + var_2 * 1000, self );
             playfxontag( level.chopper_fx["rocketlaunch"]["warbird"], var_0, "tag_missile_right" );
-            var_4 missile_settargetent( var_0._id_91C2 );
-            var_4 missile_setflightmodedirect();
-            var_0._id_731C--;
+            var_4 _meth_81D9( var_0.targetent );
+            var_4 _meth_81DC();
+            var_0.remainingrocketshots--;
             self notify( "ForceUncloak" );
-            _id_A193( var_0 );
+            warbirdrockethudupdate( var_0 );
 
-            if ( var_0._id_731C == 0 )
+            if ( var_0.remainingrocketshots == 0 )
             {
-                thread _id_A194( var_0, 6 );
+                thread warbirdrocketreloadsound( var_0, 6 );
                 wait 6;
-                var_0._id_731C = var_0._id_758B;
+                var_0.remainingrocketshots = var_0.rocketclip;
                 self notify( "rocketReloadComplete" );
-                _id_A193( var_0 );
+                warbirdrockethudupdate( var_0 );
             }
             else
                 wait 0.05;
@@ -1331,7 +1331,7 @@ _id_37EF( var_0 )
     }
 }
 
-_id_A194( var_0, var_1 )
+warbirdrocketreloadsound( var_0, var_1 )
 {
     self endon( "rocketReloadComplete" );
     self endon( "ResumeWarbirdAI" );
@@ -1347,14 +1347,14 @@ _id_A194( var_0, var_1 )
     }
 }
 
-_id_464F( var_0, var_1 )
+handlecoopjoining( var_0, var_1 )
 {
     var_2 = "warbird_coop_defensive";
     var_3 = &"MP_JOIN_WARBIRD_DEF";
     var_4 = "pilot_sup_mp_warbird";
     var_5 = "copilot_sup_mp_paladin";
 
-    if ( var_0._id_21C9 )
+    if ( var_0.coopoffensive )
     {
         var_2 = "warbird_coop_offensive";
         var_3 = &"MP_JOIN_WARBIRD_OFF";
@@ -1364,45 +1364,45 @@ _id_464F( var_0, var_1 )
 
     for (;;)
     {
-        var_6 = maps\mp\killstreaks\_coop_util::_id_7017( var_1.team, var_3, var_2, "assist_mp_warbird", var_4, var_1, var_5 );
-        level thread _id_A21B( var_6, var_0, var_1 );
-        var_7 = _id_A0E3( var_0, "buddyJoinedStreak" );
-        maps\mp\killstreaks\_coop_util::_id_8EF9( var_6 );
+        var_6 = maps\mp\killstreaks\_coop_util::promptforstreaksupport( var_1.team, var_3, var_2, "assist_mp_warbird", var_4, var_1, var_5 );
+        level thread watchforjoin( var_6, var_0, var_1 );
+        var_7 = waittillpromptcomplete( var_0, "buddyJoinedStreak" );
+        maps\mp\killstreaks\_coop_util::stoppromptforstreaksupport( var_6 );
 
         if ( !isdefined( var_7 ) )
             return;
 
-        var_7 = _id_A0E3( var_0, "buddyLeftWarbird" );
+        var_7 = waittillpromptcomplete( var_0, "buddyLeftWarbird" );
 
         if ( !isdefined( var_7 ) )
             return;
     }
 }
 
-_id_A0E3( var_0, var_1 )
+waittillpromptcomplete( var_0, var_1 )
 {
     var_0 endon( "warbirdStreakComplete" );
     var_0 waittill( var_1 );
     return 1;
 }
 
-_id_A21B( var_0, var_1, var_2 )
+watchforjoin( var_0, var_1, var_2 )
 {
     var_1 endon( "warbirdStreakComplete" );
-    var_3 = maps\mp\killstreaks\_coop_util::_id_A0C9( var_0 );
+    var_3 = maps\mp\killstreaks\_coop_util::waittillbuddyjoinedstreak( var_0 );
     var_1 notify( "buddyJoinedStreak" );
-    var_3 thread _id_1835( var_1, var_2 );
+    var_3 thread buddyjoinwarbirdsetup( var_1, var_2 );
 }
 
-_id_1835( var_0, var_1 )
+buddyjoinwarbirdsetup( var_0, var_1 )
 {
     var_0 endon( "warbirdStreakComplete" );
     self endon( "warbirdStreakComplete" );
     self endon( "warbird_player_removed" );
-    thread _id_A191( var_0, var_0._id_A184 );
-    var_0._id_1833 = self;
-    self._id_219A = 1;
-    thread _id_6C91( var_0, 1 );
+    thread warbirdoverheatbarcolormonitor( var_0, var_0.warbirdbuddyturret );
+    var_0.buddy = self;
+    self.controllingwarbird = 1;
+    thread playerdoridekillstreak( var_0, 1 );
     self waittill( "initRideKillstreak_complete", var_2 );
 
     if ( !var_2 )
@@ -1410,46 +1410,46 @@ _id_1835( var_0, var_1 )
 
     maps\mp\_utility::setusingremote( "Warbird" );
     maps\mp\_utility::playersaveangles();
-    thread _id_833F( var_0, 1, var_1 );
-    thread _id_5E32( var_0 );
-    thread _id_5E31( var_0 );
+    thread setupwarbirdhud( var_0, 1, var_1 );
+    thread monitorbuddywarbirddeathortimeout( var_0 );
+    thread monitorbuddydisconnect( var_0 );
     thread waitsetthermalbuddy( 0.5 );
-    thread _id_834F( 0.5 );
-    _id_6725( var_0 );
-    thread _id_A192( var_0 );
-    _id_9129( var_0 );
-    _id_8324();
+    thread setwarbirdvisionsetpermap( 0.5 );
+    pausewarbirdenginefxforplayer( var_0 );
+    thread warbirdrocketdamageindicator( var_0 );
+    takeover_warbird_turret_buddy( var_0 );
+    setupplayercommands();
 
-    if ( !var_0._id_21C9 )
-        thread _id_37F0( var_0 );
+    if ( !var_0.coopoffensive )
+        thread firewarbirdthreatgrenades( var_0 );
 
     if ( !isbot( self ) )
-        thread _id_73E7( var_0 );
+        thread removewarbirdbuddyoncommand( var_0 );
 }
 
-_id_73E6( var_0, var_1 )
+removewarbirdbuddy( var_0, var_1 )
 {
     self notify( "warbird_player_removed" );
 
     if ( !var_1 )
     {
-        _id_6D34();
+        playerresetwarbirdomnvars();
         self setblurforplayer( 0, 0 );
         self notify( "warbirdThermalOff" );
-        maps\mp\killstreaks\_aerial_utility::_id_2B1E( self );
-        thread _id_73E8( 1.5 );
+        maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( self );
+        thread removewarbirdvisionsetpermap( 1.5 );
         self thermalvisionfofoverlayoff();
 
-        if ( isdefined( var_0._id_A184 ) && _id_50E4() )
-            self _meth_80E9( var_0._id_A184 );
+        if ( isdefined( var_0.warbirdbuddyturret ) && iscontrollingwarbird() )
+            self _meth_80E9( var_0.warbirdbuddyturret );
 
-        self._id_219A = undefined;
-        self enableweapons();
-        self unlink();
-        maps\mp\killstreaks\_coop_util::_id_6D2F();
+        self.controllingwarbird = undefined;
+        self _meth_831E();
+        self _meth_804F();
+        maps\mp\killstreaks\_coop_util::playerresetaftercoopstreak();
         self _meth_80FF();
-        _id_2B20( var_0 );
-        _id_748E( var_0 );
+        disableplayercommands( var_0 );
+        restartwarbirdenginefxforplayer( var_0 );
 
         if ( maps\mp\_utility::isusingremote() )
             maps\mp\_utility::clearusingremote();
@@ -1459,10 +1459,10 @@ _id_73E6( var_0, var_1 )
     }
 
     var_0 notify( "buddyLeftWarbird" );
-    var_0._id_1833 = undefined;
+    var_0.buddy = undefined;
 }
 
-_id_5E32( var_0 )
+monitorbuddywarbirddeathortimeout( var_0 )
 {
     self endon( "disconnect" );
     var_0 common_scripts\utility::waittill_any( "leaving", "death", "crashing" );
@@ -1470,94 +1470,94 @@ _id_5E32( var_0 )
     self notify( "StopWaitForDisconnect" );
     waittillframeend;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
-    thread _id_73E6( var_0, 0 );
+    thread removewarbirdbuddy( var_0, 0 );
 }
 
-_id_5E31( var_0 )
+monitorbuddydisconnect( var_0 )
 {
     self endon( "StopWaitForDisconnect" );
     self waittill( "disconnect" );
-    thread _id_73E6( var_0, 1 );
+    thread removewarbirdbuddy( var_0, 1 );
 }
 
-_id_73E7( var_0 )
+removewarbirdbuddyoncommand( var_0 )
 {
     self endon( "warbird_player_removed" );
 
     for (;;)
     {
         self waittill( "ToggleControlState" );
-        thread _id_8D42( var_0 );
-        thread _id_1ABF();
+        thread startwarbirdbuddyexitcommand( var_0 );
+        thread cancelwarbirdbuddyexitcommand();
     }
 }
 
-_id_8D42( var_0 )
+startwarbirdbuddyexitcommand( var_0 )
 {
     self endon( "warbird_player_removed" );
     self endon( "ToggleControlCancel" );
-    self._id_A153 = 1;
+    self.warbird_buddy_exit = 1;
     wait 0.5;
 
-    if ( self._id_A153 == 1 )
-        thread _id_73E6( var_0, 0 );
+    if ( self.warbird_buddy_exit == 1 )
+        thread removewarbirdbuddy( var_0, 0 );
 }
 
-_id_1ABF()
+cancelwarbirdbuddyexitcommand()
 {
     self endon( "warbird_player_removed" );
     self waittill( "ToggleControlCancel" );
-    self._id_A153 = 0;
+    self.warbird_buddy_exit = 0;
 }
 
-_id_5E23( var_0, var_1 )
+monitoraiwarbirdswitch( var_0, var_1 )
 {
     self endon( "warbirdStreakComplete" );
-    self._id_A188 = 0;
+    self.warbirdinit = 0;
     self notify( "ResumeWarbirdAI" );
     self notify( "warbirdThermalOff" );
-    var_0._id_517E = 0;
-    thread _id_1FC5( var_0, 0 );
-    var_0._id_A196 _meth_8065( "auto_nonai" );
-    _id_6D34();
+    var_0.ispossessed = 0;
+    thread cloakingtransition( var_0, 0 );
+    var_0.warbirdturret _meth_8065( "auto_nonai" );
+    playerresetwarbirdomnvars();
     waittillframeend;
-    thread _id_A182( var_0 );
+    thread warbirdaiattack( var_0 );
     var_0.killcamstarttime = gettime();
-    var_0._id_A196.killcament = var_0;
+    var_0.warbirdturret.killcament = var_0;
     var_0.player = undefined;
 
     if ( maps\mp\_utility::isusingremote() )
-        _id_6D2E( var_0 );
+        playerreset( var_0 );
 
     waitframe();
 }
 
-_id_5E22( var_0 )
+monitoraiwarbirddeathortimeout( var_0 )
 {
     self endon( "disconnect" );
-    thread _id_1D01( var_0 );
+    thread checkforcrashing( var_0 );
     var_1 = var_0 common_scripts\utility::waittill_any_return( "leaving", "death", "crashing" );
-    _id_6D31( var_0 );
-    level thread _id_A185( var_0, self, var_1 != "death" );
+    playerresetafterwarbird( var_0 );
+    level thread warbirdcleanup( var_0, self, var_1 != "death" );
 }
 
-_id_A185( var_0, var_1, var_2 )
+warbirdcleanup( var_0, var_1, var_2 )
 {
-    level._id_89A1 = common_scripts\utility::array_remove( level._id_89A1, var_0 );
-    level._id_A189 = 0;
+    level.spawnedwarbirds = common_scripts\utility::array_remove( level.spawnedwarbirds, var_0 );
+    level.warbirdinuse = 0;
 
-    if ( isdefined( var_0._id_9BC7 ) )
-        var_0._id_9BC7 maps\mp\_utility::makegloballyunusablebytype();
+    if ( isdefined( var_0.usableent ) )
+        var_0.usableent maps\mp\_utility::makegloballyunusablebytype();
 
-    thread _id_1FC8( var_0, var_1 );
+    thread cloakwarbirdexit( var_0, var_1 );
 
-    if ( isdefined( var_0._id_0E54 ) )
-        missile_deleteattractor( var_0._id_0E54 );
+    if ( isdefined( var_0.attractor ) )
+        missile_deleteattractor( var_0.attractor );
 
-    if ( isdefined( var_0._id_6C65 ) )
-        var_0._id_6C65 delete();
+    if ( isdefined( var_0.playerattachpoint ) )
+        var_0.playerattachpoint delete();
 
-    var_0._id_3286 = undefined;
+    var_0.enemy_target = undefined;
 
     if ( var_2 )
         var_0 waittill( "death" );
@@ -1569,80 +1569,80 @@ _id_A185( var_0, var_1, var_2 )
     if ( var_3 != 0 )
         waitframe();
 
-    var_0._id_A196 delete();
+    var_0.warbirdturret delete();
 
-    if ( isdefined( var_0._id_A184 ) )
+    if ( isdefined( var_0.warbirdbuddyturret ) )
     {
-        if ( isdefined( var_0._id_A184._id_37E6 ) )
-            var_0._id_A184._id_37E6 delete();
+        if ( isdefined( var_0.warbirdbuddyturret.firesoundent ) )
+            var_0.warbirdbuddyturret.firesoundent delete();
 
-        var_0._id_A184 delete();
+        var_0.warbirdbuddyturret delete();
     }
 
-    if ( isdefined( var_0._id_9BC7 ) )
-        var_0._id_9BC7 delete();
+    if ( isdefined( var_0.usableent ) )
+        var_0.usableent delete();
 }
 
-_id_6D31( var_0 )
+playerresetafterwarbird( var_0 )
 {
     self notify( "warbirdStreakComplete" );
     var_0 notify( "warbirdStreakComplete" );
     waittillframeend;
-    _id_6D34();
+    playerresetwarbirdomnvars();
 
-    if ( var_0._id_517E && !maps\mp\_utility::isinremotetransition() )
+    if ( var_0.ispossessed && !maps\mp\_utility::isinremotetransition() )
     {
-        _id_6D2E( var_0 );
-        var_0._id_517E = 0;
+        playerreset( var_0 );
+        var_0.ispossessed = 0;
     }
 
-    _id_2B20( var_0 );
+    disableplayercommands( var_0 );
     self notify( "StopWaitForDisconnect" );
 }
 
-_id_6D2E( var_0 )
+playerreset( var_0 )
 {
     self setblurforplayer( 0, 0 );
-    maps\mp\killstreaks\_aerial_utility::_id_2B1E( self );
+    maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( self );
     self thermalvisionfofoverlayoff();
-    thread _id_73E8( 1.5 );
+    thread removewarbirdvisionsetpermap( 1.5 );
     self _meth_8207();
 
-    if ( isdefined( var_0._id_A196 ) && _id_50E4() )
-        self _meth_80E9( var_0._id_A196 );
+    if ( isdefined( var_0.warbirdturret ) && iscontrollingwarbird() )
+        self _meth_80E9( var_0.warbirdturret );
 
-    self._id_219A = undefined;
-    self._id_6E61 = undefined;
-    self enableweapons();
-    self unlink();
+    self.controllingwarbird = undefined;
+    self.possesswarbird = undefined;
+    self _meth_831E();
+    self _meth_804F();
 
     if ( maps\mp\_utility::isusingremote() )
         maps\mp\_utility::clearusingremote();
     else
     {
-        var_1 = self getcurrentweapon();
+        var_1 = self _meth_8311();
 
         if ( var_1 == "none" || maps\mp\_utility::iskillstreakweapon( var_1 ) )
-            self switchtoweapon( common_scripts\utility::getlastweapon() );
+            self _meth_8315( common_scripts\utility::getlastweapon() );
 
         maps\mp\_utility::playerremotekillstreakshowhud();
     }
 
-    thread _id_6C81();
+    thread playerdelaycontrol();
 
-    if ( var_0._id_4712 )
+    if ( var_0.hasai )
         maps\mp\killstreaks\_killstreaks::takekillstreakweaponifnodupe( "killstreak_predator_missile_mp" );
 
-    self enableweaponswitch();
+    self _meth_8322();
     self _meth_80FF();
 
     if ( !isdefined( var_0.isleaving ) || !var_0.isleaving )
-        _id_748E( var_0 );
+        restartwarbirdenginefxforplayer( var_0 );
 
     maps\mp\_utility::playerrestoreangles();
 }
 
-_id_6C81()
+playerdelaycontrol()
 {
     self endon( "disconnect" );
     maps\mp\_utility::freezecontrolswrapper( 1 );
@@ -1650,35 +1650,35 @@ _id_6C81()
     maps\mp\_utility::freezecontrolswrapper( 0 );
 }
 
-_id_1D01( var_0 )
+checkforcrashing( var_0 )
 {
     var_0 common_scripts\utility::waittill_any( "crashing", "death" );
     var_0.iscrashing = 1;
 }
 
-_id_5E9A( var_0 )
+monitorplayerdisconnect( var_0 )
 {
     self endon( "StopWaitForDisconnect" );
     self waittill( "disconnect" );
     var_0 notify( "warbirdStreakComplete" );
     self notify( "warbirdStreakComplete" );
     self notify( "warbirdThermalOff" );
-    var_0 thread maps\mp\killstreaks\_aerial_utility::_id_47CA();
-    level thread _id_A185( var_0, self, 1 );
+    var_0 thread maps\mp\killstreaks\_aerial_utility::heli_leave();
+    level thread warbirdcleanup( var_0, self, 1 );
 }
 
-_id_69C1( var_0 )
+play_sound_on_entity( var_0 )
 {
     self playsound( var_0 );
 }
 
-_id_A16D()
+warbird_health()
 {
     self endon( "death" );
     self endon( "leaving" );
     self endon( "crashing" );
-    self._id_2525 = "ok";
-    self._id_55F6 = "ok";
+    self.currentstate = "ok";
+    self.laststate = "ok";
     self heli_setdamagestage( 3 );
     var_0 = 3;
     self heli_setdamagestage( var_0 );
@@ -1689,14 +1689,14 @@ _id_A16D()
         {
             var_0 = 2;
             self heli_setdamagestage( var_0 );
-            self._id_2525 = "light smoke";
+            self.currentstate = "light smoke";
             playfxontag( level.chopper_fx["damage"]["light_smoke"], self, "tag_static_main_rotor_l" );
         }
         else if ( self.damagetaken >= self.maxhealth * 0.66 && var_0 == 2 )
         {
             var_0 = 1;
             self heli_setdamagestage( var_0 );
-            self._id_2525 = "heavy smoke";
+            self.currentstate = "heavy smoke";
             stopfxontag( level.chopper_fx["damage"]["light_smoke"], self, "tag_static_main_rotor_l" );
             playfxontag( level.chopper_fx["damage"]["heavy_smoke"], self, "tag_static_main_rotor_l" );
         }
@@ -1706,11 +1706,11 @@ _id_A16D()
             self heli_setdamagestage( var_0 );
 
             if ( isdefined( self.largeprojectiledamage ) && self.largeprojectiledamage )
-                thread maps\mp\killstreaks\_aerial_utility::_id_47B8( 1 );
+                thread maps\mp\killstreaks\_aerial_utility::heli_explode( 1 );
             else
             {
                 playfxontag( level.chopper_fx["damage"]["on_fire"], self, "TAG_TAIL_FX" );
-                thread maps\mp\killstreaks\_aerial_utility::_id_47A8();
+                thread maps\mp\killstreaks\_aerial_utility::heli_crash();
             }
         }
 
@@ -1718,43 +1718,43 @@ _id_A16D()
     }
 }
 
-_id_6D34()
+playerresetwarbirdomnvars()
 {
-    self setclientomnvar( "ui_warbird_heat", 0 );
-    self setclientomnvar( "ui_warbird_flares", 0 );
-    self setclientomnvar( "ui_warbird_fire", 0 );
-    self setclientomnvar( "ui_warbird_cloak", 0 );
-    self setclientomnvar( "ui_warbird_cloaktime", 0 );
-    self setclientomnvar( "ui_warbird_cloakdur", 0 );
-    self setclientomnvar( "ui_warbird_countdown", 0 );
-    self setclientomnvar( "ui_warbird_missile", -1 );
-    self setclientomnvar( "ui_warbird_weapon", 0 );
-    self setclientomnvar( "ui_warbird_cloaktext", 0 );
-    self setclientomnvar( "ui_warbird_toggle", 0 );
-    self setclientomnvar( "ui_coop_primary_num", 0 );
-    maps\mp\killstreaks\_aerial_utility::_id_6C89();
-    self disableforcefirstpersonwhenfollowed();
+    self _meth_82FB( "ui_warbird_heat", 0 );
+    self _meth_82FB( "ui_warbird_flares", 0 );
+    self _meth_82FB( "ui_warbird_fire", 0 );
+    self _meth_82FB( "ui_warbird_cloak", 0 );
+    self _meth_82FB( "ui_warbird_cloaktime", 0 );
+    self _meth_82FB( "ui_warbird_cloakdur", 0 );
+    self _meth_82FB( "ui_warbird_countdown", 0 );
+    self _meth_82FB( "ui_warbird_missile", -1 );
+    self _meth_82FB( "ui_warbird_weapon", 0 );
+    self _meth_82FB( "ui_warbird_cloaktext", 0 );
+    self _meth_82FB( "ui_warbird_toggle", 0 );
+    self _meth_82FB( "ui_coop_primary_num", 0 );
+    maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
+    self _meth_8533();
 }
 
-_id_6DE8()
+playwarbirdenginefx()
 {
     playfxontag( level.chopper_fx["engine"]["warbird"], self, "tag_static_main_rotor_r" );
     playfxontag( level.chopper_fx["engine"]["warbird"], self, "tag_static_main_rotor_l" );
 
     if ( isdefined( self.player ) )
-        self.player _id_6725( self );
+        self.player pausewarbirdenginefxforplayer( self );
 
-    if ( isdefined( self._id_1833 ) )
-        self._id_1833 _id_6725( self );
+    if ( isdefined( self.buddy ) )
+        self.buddy pausewarbirdenginefxforplayer( self );
 }
 
-_id_8F04()
+stopwarbirdenginefx()
 {
     stopfxontag( level.chopper_fx["engine"]["warbird"], self, "tag_static_main_rotor_r" );
     stopfxontag( level.chopper_fx["engine"]["warbird"], self, "tag_static_main_rotor_l" );
 }
 
-_id_6725( var_0 )
+pausewarbirdenginefxforplayer( var_0 )
 {
     if ( !isdefined( var_0 ) )
         return;
@@ -1763,25 +1763,25 @@ _id_6725( var_0 )
     _func_2AC( level.chopper_fx["engine"]["warbird"], var_0, "tag_static_main_rotor_l", self );
 }
 
-_id_748E( var_0 )
+restartwarbirdenginefxforplayer( var_0 )
 {
     if ( !isdefined( var_0 ) )
         return;
 
-    if ( maps\mp\killstreaks\_aerial_utility::_id_9D6F() )
+    if ( maps\mp\killstreaks\_aerial_utility::vehicleiscloaked() )
         return;
 
     playfxontagforclients( level.chopper_fx["engine"]["warbird"], var_0, "tag_static_main_rotor_r", self );
     playfxontagforclients( level.chopper_fx["engine"]["warbird"], var_0, "tag_static_main_rotor_l", self );
 }
 
-_id_A151()
+warbird_audio()
 {
     if ( isdefined( self ) )
         return;
 }
 
-_id_A18B()
+warbirdlightfx()
 {
     self endon( "death" );
 

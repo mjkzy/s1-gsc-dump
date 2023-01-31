@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -130,8 +130,8 @@ onstartgametype()
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_sd_spawn_attacker" );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_sd_spawn_defender" );
     level.mapcenter = maps\mp\gametypes\_spawnlogic::findboxcenter( level.spawnmins, level.spawnmaxs );
@@ -170,9 +170,9 @@ onspawnplayer()
     if ( isplayer( self ) && !var_0 )
     {
         if ( level.multibomb && self.pers["team"] == game["attackers"] )
-            self setclientomnvar( "ui_carrying_bomb", 1 );
+            self _meth_82FB( "ui_carrying_bomb", 1 );
         else
-            self setclientomnvar( "ui_carrying_bomb", 0 );
+            self _meth_82FB( "ui_carrying_bomb", 0 );
     }
 
     maps\mp\_utility::setextrascore0( 0 );
@@ -192,7 +192,7 @@ onspawnplayer()
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
     if ( isplayer( self ) )
-        self setclientomnvar( "ui_carrying_bomb", 0 );
+        self _meth_82FB( "ui_carrying_bomb", 0 );
 
     thread maps\mp\gametypes\common_sd_sr::checkallowspectating();
 }

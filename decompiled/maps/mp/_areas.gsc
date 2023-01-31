@@ -1,14 +1,14 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    level._id_885A = getentarray( "trigger_multiple_softlanding", "classname" );
+    level.softlandingtriggers = getentarray( "trigger_multiple_softlanding", "classname" );
     var_0 = getentarray( "destructible_vehicle", "targetname" );
 
-    foreach ( var_2 in level._id_885A )
+    foreach ( var_2 in level.softlandingtriggers )
     {
-        if ( var_2._id_7AFF != "car" )
+        if ( var_2.script_type != "car" )
             continue;
 
         foreach ( var_4 in var_0 )
@@ -16,7 +16,7 @@ init()
             if ( distance( var_2.origin, var_4.origin ) > 64.0 )
                 continue;
 
-            var_2._id_28F8 = var_4;
+            var_2.destructible = var_4;
         }
     }
 
@@ -28,22 +28,22 @@ onplayerconnect()
     for (;;)
     {
         level waittill( "connected", var_0 );
-        var_0._id_8859 = undefined;
-        var_0 thread _id_885B();
+        var_0.softlanding = undefined;
+        var_0 thread softlandingwaiter();
     }
 }
 
-_id_6C9A( var_0 )
+playerentersoftlanding( var_0 )
 {
-    self._id_8859 = var_0;
+    self.softlanding = var_0;
 }
 
-_id_6CDC( var_0 )
+playerleavesoftlanding( var_0 )
 {
-    self._id_8859 = undefined;
+    self.softlanding = undefined;
 }
 
-_id_885B()
+softlandingwaiter()
 {
     self endon( "disconnect" );
 
@@ -51,7 +51,7 @@ _id_885B()
     {
         self waittill( "soft_landing", var_0, var_1 );
 
-        if ( !isdefined( var_0._id_28F8 ) )
+        if ( !isdefined( var_0.destructible ) )
             continue;
     }
 }

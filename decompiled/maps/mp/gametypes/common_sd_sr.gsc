@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 onprecachegametype()
 {
@@ -88,7 +88,7 @@ onpickup( var_0 )
     if ( isplayer( var_0 ) )
     {
         var_0 thread maps\mp\_matchdata::loggameevent( "pickup", var_0.origin );
-        var_0 setclientomnvar( "ui_carrying_bomb", 1 );
+        var_0 _meth_82FB( "ui_carrying_bomb", 1 );
     }
 
     maps\mp\gametypes\_gameobjects::set2dicon( "friendly", "waypoint_escort" );
@@ -131,11 +131,11 @@ bombs()
         return;
     }
 
-    var_1[0] setmodel( "npc_search_dstry_bomb" );
+    var_1[0] _meth_80B1( "npc_search_dstry_bomb" );
 
     if ( !level.multibomb )
     {
-        level.sdbomb = maps\mp\gametypes\_gameobjects::createcarryobject( game["attackers"], var_0, var_1, ( 0.0, 0.0, 32.0 ) );
+        level.sdbomb = maps\mp\gametypes\_gameobjects::createcarryobject( game["attackers"], var_0, var_1, ( 0, 0, 32 ) );
         level.sdbomb maps\mp\gametypes\_gameobjects::allowcarry( "friendly" );
         level.sdbomb maps\mp\gametypes\_gameobjects::set2dicon( "friendly", "waypoint_bomb" );
         level.sdbomb maps\mp\gametypes\_gameobjects::set3dicon( "friendly", "waypoint_bomb" );
@@ -192,7 +192,7 @@ bombs()
         var_1 = getentarray( var_2[var_7].target, "targetname" );
         playfxontag( common_scripts\utility::getfx( "bomb_light_blinking" ), var_1[0], "tag_fx_1" );
         playfxontag( common_scripts\utility::getfx( "bomb_light_blinking" ), var_1[0], "tag_fx_2" );
-        var_8 = maps\mp\gametypes\_gameobjects::createuseobject( game["defenders"], var_0, var_1, ( 0.0, 0.0, 64.0 ) );
+        var_8 = maps\mp\gametypes\_gameobjects::createuseobject( game["defenders"], var_0, var_1, ( 0, 0, 64 ) );
         var_8 maps\mp\gametypes\_gameobjects::allowuse( "enemy" );
         var_8 maps\mp\gametypes\_gameobjects::setusetime( level.planttime );
         var_8 maps\mp\gametypes\_gameobjects::setusehinttext( &"PLATFORM_HOLD_TO_PLANT_EXPLOSIVES" );
@@ -228,9 +228,9 @@ bombs()
 
         level.bombzones[level.bombzones.size] = var_8;
         var_8.bombdefusetrig = getent( var_1[0].target, "targetname" );
-        var_8.bombdefusetrig.origin += ( 0.0, 0.0, -10000.0 );
+        var_8.bombdefusetrig.origin += ( 0, 0, -10000 );
         var_8.bombdefusetrig.label = var_9;
-        var_8.bombdefusetrig usetriggertouchcheckstance( 1 );
+        var_8.bombdefusetrig _meth_8537( 1 );
     }
 
     for ( var_7 = 0; var_7 < level.bombzones.size; var_7++ )
@@ -342,20 +342,20 @@ setupkillcament( var_0 )
 {
     var_1 = spawn( "script_origin", self.origin );
     var_1.angles = self.angles;
-    var_1 rotateyaw( -45, 0.05 );
+    var_1 _meth_82B7( -45, 0.05 );
     wait 0.05;
-    var_2 = self.origin + ( 0.0, 0.0, 5.0 );
-    var_3 = self.origin + anglestoforward( var_1.angles ) * 100 + ( 0.0, 0.0, 128.0 );
+    var_2 = self.origin + ( 0, 0, 5 );
+    var_3 = self.origin + anglestoforward( var_1.angles ) * 100 + ( 0, 0, 128 );
     var_4 = bullettrace( var_2, var_3, 0, self );
     self.killcament = spawn( "script_model", var_4["position"] );
-    self.killcament setscriptmoverkillcam( "explosive" );
-    var_0.killcamentnum = self.killcament getentitynumber();
+    self.killcament _meth_834D( "explosive" );
+    var_0.killcamentnum = self.killcament _meth_81B1();
     var_1 delete();
 }
 
 onbeginuse( var_0 )
 {
-    var_0 allowmelee( 0 );
+    var_0 _meth_8130( 0 );
 
     if ( maps\mp\gametypes\_gameobjects::isfriendlyteam( var_0.pers["team"] ) )
     {
@@ -407,7 +407,7 @@ onenduse( var_0, var_1, var_2 )
     if ( !isdefined( var_1 ) )
         return;
 
-    var_1 allowmelee( 1 );
+    var_1 _meth_8130( 1 );
 
     if ( isalive( var_1 ) )
     {
@@ -439,13 +439,13 @@ bombplantedanim( var_0 )
 {
     var_0 endon( "death" );
     var_0 endon( "disconnect" );
-    var_0 playerlinkto( level.sdbombmodel );
-    var_0 playerlinkedoffsetenable();
+    var_0 _meth_807C( level.sdbombmodel );
+    var_0 _meth_8081();
 
-    while ( var_0 getcurrentweapon() == self.useweapon )
+    while ( var_0 _meth_8311() == self.useweapon )
         waitframe();
 
-    var_0 unlink();
+    var_0 _meth_804F();
 }
 
 bombplanted( var_0, var_1 )
@@ -456,7 +456,7 @@ bombplanted( var_0, var_1 )
     var_1.objective = 0;
 
     if ( isplayer( var_1 ) )
-        var_1 setclientomnvar( "ui_carrying_bomb", 0 );
+        var_1 _meth_82FB( "ui_carrying_bomb", 0 );
 
     var_0.visuals[0] thread maps\mp\gametypes\_gamelogic::playtickingsound();
     level.tickingobject = var_0.visuals[0];
@@ -477,7 +477,7 @@ bombplanted( var_0, var_1 )
     {
         level.sdbombmodel = spawn( "script_model", var_1.origin );
         level.sdbombmodel.angles = var_1.angles;
-        level.sdbombmodel setmodel( "npc_search_dstry_bomb" );
+        level.sdbombmodel _meth_80B1( "npc_search_dstry_bomb" );
     }
 
     level.sdbombmodel thread invalidatecarepackageandgoliathdrop();
@@ -489,7 +489,7 @@ bombplanted( var_0, var_1 )
     var_3 = var_0.bombdefusetrig;
     var_3.origin = level.sdbombmodel.origin;
     var_4 = [];
-    var_5 = maps\mp\gametypes\_gameobjects::createuseobject( game["defenders"], var_3, var_4, ( 0.0, 0.0, 32.0 ) );
+    var_5 = maps\mp\gametypes\_gameobjects::createuseobject( game["defenders"], var_3, var_4, ( 0, 0, 32 ) );
     var_5 maps\mp\gametypes\_gameobjects::allowuse( "friendly" );
     var_5 maps\mp\gametypes\_gameobjects::setusetime( level.defusetime );
     var_5 maps\mp\gametypes\_gameobjects::setusehinttext( &"PLATFORM_HOLD_TO_DEFUSE_EXPLOSIVES" );
@@ -511,7 +511,7 @@ bombplanted( var_0, var_1 )
     else if ( var_2 == "_b" || var_2 == "_B" )
         setomnvar( "ui_mlg_game_mode_status_1", 2 );
 
-    maps\mp\_utility::playsoundinspace( "mp_snd_bomb_planted", level.sdbombmodel.origin + ( 0.0, 0.0, 1.0 ) );
+    maps\mp\_utility::playsoundinspace( "mp_snd_bomb_planted", level.sdbombmodel.origin + ( 0, 0, 1 ) );
     bombtimerwait();
     setomnvar( "ui_bomb_timer", 0 );
     var_0.visuals[0] maps\mp\gametypes\_gamelogic::stoptickingsound();
@@ -527,7 +527,7 @@ bombplanted( var_0, var_1 )
     else
     {
         var_6 = level.sdbombmodel.origin;
-        var_6 += ( 0.0, 0.0, 10.0 );
+        var_6 += ( 0, 0, 10 );
         level.sdbombmodel hide();
         stopfxontag( common_scripts\utility::getfx( "bomb_light_planted" ), level.sdbombmodel, "tag_flash" );
 
@@ -545,8 +545,8 @@ bombplanted( var_0, var_1 )
             var_7 = var_0.trigger.effect;
 
         var_8 = randomfloat( 360 );
-        var_9 = var_6 + ( 0.0, 0.0, 50.0 );
-        var_10 = spawnfx( level._effect[var_7], var_9 + ( 0.0, 0.0, 50.0 ), ( 0.0, 0.0, 1.0 ), ( cos( var_8 ), sin( var_8 ), 0 ) );
+        var_9 = var_6 + ( 0, 0, 50 );
+        var_10 = spawnfx( level._effect[var_7], var_9 + ( 0, 0, 50 ), ( 0, 0, 1 ), ( cos( var_8 ), sin( var_8 ), 0 ) );
         triggerfx( var_10 );
         physicsexplosionsphere( var_9, 200, 100, 3 );
         playrumbleonposition( "grenade_rumble", var_6 );
@@ -571,7 +571,7 @@ invalidatecarepackageandgoliathdrop()
     var_0 = self;
     var_1 = 64;
     var_2 = 64;
-    var_3 = var_0.origin + ( 0.0, 0.0, -4.0 );
+    var_3 = var_0.origin + ( 0, 0, -4 );
     var_4 = spawn( "trigger_radius", var_3, 0, var_1, var_2 );
     var_4.targetname = "orbital_node_covered";
     var_4.script_noteworthy = "dont_move_me";
@@ -697,7 +697,7 @@ goliathdropbomb()
     if ( isdefined( self.carryobject ) )
     {
         self.isbombcarrier = 0;
-        self setclientomnvar( "ui_carrying_bomb", 0 );
+        self _meth_82FB( "ui_carrying_bomb", 0 );
         self.carryobject thread maps\mp\gametypes\_gameobjects::setdropped();
     }
 }
@@ -872,7 +872,7 @@ applybombcarrierclass()
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self isonground() )
+    while ( !self _meth_8341() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )
@@ -899,10 +899,10 @@ applybombcarrierclass()
 
 refillbattery()
 {
-    var_0 = self getweaponslistoffhands();
+    var_0 = self _meth_82CE();
 
     foreach ( var_2 in var_0 )
-        self batteryfullrecharge( var_2 );
+        self _meth_84A4( var_2 );
 }
 
 removebombcarrierclass()
@@ -920,7 +920,7 @@ removebombcarrierclass()
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self isonground() )
+    while ( !self _meth_8341() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )

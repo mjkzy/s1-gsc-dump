@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -65,10 +65,10 @@ init()
         level.bcinfo["last_say_time"][var_5]["moving"] = -99999;
         level.bcinfo["last_say_time"][var_5]["callout_generic"] = -99999;
         level.bcinfo["last_say_time"][var_5]["callout_location"] = -99999;
-        level.bcinfo["last_say_pos"][var_5]["suppressing_fire"] = ( 0.0, 0.0, -9000.0 );
-        level.bcinfo["last_say_pos"][var_5]["moving"] = ( 0.0, 0.0, -9000.0 );
-        level.bcinfo["last_say_pos"][var_5]["callout_generic"] = ( 0.0, 0.0, -9000.0 );
-        level.bcinfo["last_say_pos"][var_5]["callout_location"] = ( 0.0, 0.0, -9000.0 );
+        level.bcinfo["last_say_pos"][var_5]["suppressing_fire"] = ( 0, 0, -9000 );
+        level.bcinfo["last_say_pos"][var_5]["moving"] = ( 0, 0, -9000 );
+        level.bcinfo["last_say_pos"][var_5]["callout_generic"] = ( 0, 0, -9000 );
+        level.bcinfo["last_say_pos"][var_5]["callout_location"] = ( 0, 0, -9000 );
         level.voice_count[var_5][""] = 0;
         level.voice_count[var_5]["w"] = 0;
     }
@@ -119,7 +119,7 @@ onplayerspawned()
 
         var_3 = "";
 
-        if ( !isagent( self ) && self hasfemalecustomizationmodel() )
+        if ( !isagent( self ) && self _meth_843A() )
             var_3 = "w";
 
         self.pers["voiceNum"] = level.voice_count[self.team][var_3];
@@ -200,7 +200,7 @@ grenadeproximitytracking()
                         continue;
                 }
 
-                if ( objective_current( var_6.weaponname ) != "offhand" && weaponclass( var_6.weaponname ) == "grenade" )
+                if ( _func_1DF( var_6.weaponname ) != "offhand" && weaponclass( var_6.weaponname ) == "grenade" )
                     continue;
             }
 
@@ -227,12 +227,12 @@ grenadeproximitytracking()
                             case "semtex_mp":
                                 var_9 = "semtex_incoming";
                                 break;
-                            case "stun_grenade_mp":
                             case "stun_grenade_var_mp":
+                            case "stun_grenade_mp":
                                 var_9 = "stun_incoming";
                                 break;
-                            case "emp_grenade_mp":
                             case "emp_grenade_var_mp":
+                            case "emp_grenade_mp":
                                 var_9 = "emp_incoming";
                         }
                     }
@@ -486,7 +486,7 @@ threatcallouttracking()
         if ( !cansay( "callout_location" ) && !cansay( "callout_generic" ) )
             continue;
 
-        var_0 = self getsightedplayers();
+        var_0 = self _meth_82EB();
 
         if ( !isdefined( var_0 ) )
             continue;
@@ -494,7 +494,7 @@ threatcallouttracking()
         var_1 = undefined;
         var_2 = 4000000;
 
-        if ( self playerads() > 0.7 )
+        if ( self _meth_8340() > 0.7 )
             var_2 = 6250000;
 
         foreach ( var_4 in var_0 )
@@ -518,8 +518,8 @@ threatcallouttracking()
 
         if ( isdefined( var_1 ) && cansay( "callout_generic" ) )
         {
-            var_7 = var_1 getcurrentprimaryweapon();
-            var_8 = var_1 iscloaked();
+            var_7 = var_1 _meth_8312();
+            var_8 = var_1 _meth_84F8();
             var_9 = isdefined( var_1.exo_hover_on ) && var_1.exo_hover_on;
             var_10 = isdefined( var_1.overclock_on ) && var_1.overclock_on;
             var_11 = isdefined( var_1.exo_shield_on ) && var_1.exo_shield_on;
@@ -577,11 +577,11 @@ saylocalsound( var_0, var_1, var_2, var_3 )
 
             switch ( var_1 )
             {
-                case "callout_sniper":
-                case "callout_hover":
-                case "callout_shield":
-                case "callout_cloak":
                 case "callout_overclock":
+                case "callout_cloak":
+                case "callout_shield":
+                case "callout_hover":
+                case "callout_sniper":
                     var_1 = "callout_generic";
                     break;
             }
@@ -606,7 +606,7 @@ dosound( var_0, var_1, var_2 )
 
     var_3 = self.pers["team"];
     level addspeaker( self, var_3 );
-    var_4 = !level.istactical || !maps\mp\_utility::_hasperk( "specialty_coldblooded" ) && ( isagent( self ) || self issighted() );
+    var_4 = !level.istactical || !maps\mp\_utility::_hasperk( "specialty_coldblooded" ) && ( isagent( self ) || self _meth_82EA() );
 
     if ( var_2 && var_4 )
     {
@@ -651,7 +651,7 @@ dothreatcalloutresponse( var_0, var_1 )
         var_3 = self.team;
 
         if ( !isagent( self ) )
-            var_4 = self hasfemalecustomizationmodel();
+            var_4 = self _meth_843A();
         else
             var_4 = 0;
 
@@ -674,7 +674,7 @@ dothreatcalloutresponse( var_0, var_1 )
                 continue;
 
             if ( !isagent( var_8 ) )
-                var_9 = var_8 hasfemalecustomizationmodel();
+                var_9 = var_8 _meth_843A();
             else
                 var_9 = 0;
 
@@ -842,7 +842,7 @@ getvalidlocation( var_0 )
 get_all_my_locations()
 {
     var_0 = anim.bcs_locations;
-    var_1 = self getistouchingentities( var_0 );
+    var_1 = self _meth_80AA( var_0 );
     var_2 = [];
 
     foreach ( var_4 in var_1 )

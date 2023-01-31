@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -12,15 +12,15 @@ init()
     level.killstreak_stacking_start_slot = 5;
     level.ks_modules_table = "mp/killstreakModules.csv";
     level.ks_module_ref_column = 1;
-    level._id_53D5 = 4;
-    level._id_53D4 = 5;
-    level._id_53D7 = 6;
-    level._id_53D8 = 7;
+    level.ks_module_killstreak_ref_column = 4;
+    level.ks_module_added_points_column = 5;
+    level.ks_module_slot_column = 6;
+    level.ks_module_support_column = 7;
     level.killstreakrounddelay = maps\mp\_utility::getintproperty( "scr_game_killstreakdelay", 10 );
     level.killstreakfuncs = [];
     level.killstreaksetupfuncs = [];
     level.killstreakwieldweapons = [];
-    _id_4DE7();
+    initkillstreakdata();
     level thread maps\mp\killstreaks\_killstreaks::onplayerconnect();
 
     if ( isdefined( level.iszombiegame ) && level.iszombiegame )
@@ -29,8 +29,8 @@ init()
     level thread maps\mp\killstreaks\_aerial_utility::init();
     level thread maps\mp\killstreaks\_coop_util::init();
 
-    if ( isdefined( level._id_5985 ) )
-        [[ level._id_5985 ]]();
+    if ( isdefined( level.mapcustomkillstreakfunc ) )
+        [[ level.mapcustomkillstreakfunc ]]();
 
     level thread maps\mp\killstreaks\_uav::init();
     level thread maps\mp\killstreaks\_airdrop::init();
@@ -48,10 +48,10 @@ init()
     level thread maps\mp\killstreaks\_orbitalsupport::init();
     level thread maps\mp\killstreaks\_airstrike::init();
     level thread maps\mp\killstreaks\_drone_carepackage::init();
-    level thread maps\mp\killstreaks\_orbital_util::_id_4E24();
+    level thread maps\mp\killstreaks\_orbital_util::initstart();
 }
 
-_id_4DE7()
+initkillstreakdata()
 {
     var_0 = 0;
 
@@ -84,10 +84,10 @@ _id_4DE7()
         var_0++;
     }
 
-    _id_07EF();
+    additionalvo();
 }
 
-_id_07EF()
+additionalvo()
 {
     var_0 = "allies_friendly_emp_inbound";
     var_1 = "allies_enemy_emp_inbound";

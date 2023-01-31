@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -203,11 +203,11 @@ validateperk( var_0, var_1 )
     {
         switch ( var_1 )
         {
-            case "specialty_class_lowprofile":
-            case "specialty_class_lightweight":
-            case "specialty_class_dangerclose":
-            case "specialty_extended_battery":
             case "specialty_class_flakjacket":
+            case "specialty_extended_battery":
+            case "specialty_class_dangerclose":
+            case "specialty_class_lightweight":
+            case "specialty_class_lowprofile":
                 return var_1;
             default:
                 return "specialty_null";
@@ -217,11 +217,11 @@ validateperk( var_0, var_1 )
     {
         switch ( var_1 )
         {
-            case "specialty_class_blindeye":
-            case "specialty_class_coldblooded":
-            case "specialty_class_peripherals":
-            case "specialty_class_fasthands":
             case "specialty_class_dexterity":
+            case "specialty_class_fasthands":
+            case "specialty_class_peripherals":
+            case "specialty_class_coldblooded":
+            case "specialty_class_blindeye":
                 return var_1;
             default:
                 return "specialty_null";
@@ -231,11 +231,11 @@ validateperk( var_0, var_1 )
     {
         switch ( var_1 )
         {
-            case "specialty_class_hardwired":
-            case "specialty_class_scavenger":
-            case "specialty_class_hardline":
-            case "specialty_class_toughness":
             case "specialty_exo_blastsuppressor":
+            case "specialty_class_toughness":
+            case "specialty_class_hardline":
+            case "specialty_class_scavenger":
+            case "specialty_class_hardwired":
                 return var_1;
             default:
                 return "specialty_null";
@@ -317,7 +317,7 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     }
     else if ( isexplosivedamagemod( var_3 ) )
     {
-        if ( isplayer( var_1 ) && var_1 != var_0 && ( var_1 isitemunlocked( "specialty_paint" ) && var_1 maps\mp\_utility::_hasperk( "specialty_paint" ) ) && !maps\mp\_utility::iskillstreakweapon( var_4 ) )
+        if ( isplayer( var_1 ) && var_1 != var_0 && ( var_1 _meth_8221( "specialty_paint" ) && var_1 maps\mp\_utility::_hasperk( "specialty_paint" ) ) && !maps\mp\_utility::iskillstreakweapon( var_4 ) )
         {
             if ( !var_0 maps\mp\perks\_perkfunctions::ispainted() )
                 var_1 maps\mp\gametypes\_missions::processchallenge( "ch_paint_pro" );
@@ -342,9 +342,9 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
                 case "ac130_25mm_mp":
                     var_2 *= level.juggernautmod;
                     break;
-                case "remotemissile_projectile_mp":
-                case "remotemissile_projectile_cluster_parent_mp":
                 case "remotemissile_projectile_gas_mp":
+                case "remotemissile_projectile_cluster_parent_mp":
+                case "remotemissile_projectile_mp":
                     if ( var_2 < 350 )
                     {
                         if ( var_2 > 1 )
@@ -368,7 +368,7 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     }
     else if ( var_3 == "MOD_FALLING" )
     {
-        if ( var_0 isitemunlocked( "specialty_falldamage" ) && var_0 maps\mp\_utility::_hasperk( "specialty_falldamage" ) )
+        if ( var_0 _meth_8221( "specialty_falldamage" ) && var_0 maps\mp\_utility::_hasperk( "specialty_falldamage" ) )
         {
             var_9 = 0;
             var_2 = 0;
@@ -396,15 +396,15 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
         {
             switch ( var_10 )
             {
-                case "frag_grenade_mp":
-                case "stun_grenade_horde_mp":
-                case "semtex_mp":
-                case "flash_grenade_mp":
-                case "concussion_grenade_mp":
-                case "stun_grenade_mp":
-                case "smoke_grenade_mp":
-                case "stun_grenade_var_mp":
                 case "smoke_grenade_var_mp":
+                case "stun_grenade_var_mp":
+                case "smoke_grenade_mp":
+                case "stun_grenade_mp":
+                case "concussion_grenade_mp":
+                case "flash_grenade_mp":
+                case "semtex_mp":
+                case "stun_grenade_horde_mp":
+                case "frag_grenade_mp":
                     var_2 = 5;
                     break;
                 default:
@@ -424,13 +424,13 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     {
         switch ( var_12 )
         {
-            case "exoknife_jug_mp":
             case "exoknife_mp":
+            case "exoknife_jug_mp":
                 var_2 = var_0.health;
                 var_9 = 0;
                 break;
-            case "semtexproj_mp":
             case "semtex_mp":
+            case "semtexproj_mp":
                 if ( isdefined( var_8 ) && isdefined( var_8.stuckenemyentity ) && var_8.stuckenemyentity == var_0 )
                 {
                     var_2 = var_0.health;
@@ -502,7 +502,7 @@ giveblindeyeafterspawn()
 
 applyperks()
 {
-    self setviewkickscale( 0.5 );
+    self _meth_8309( 0.5 );
 
     if ( maps\mp\_utility::_hasperk( "specialty_extended_battery" ) )
         maps\mp\_utility::giveperk( "specialty_exo_slamboots", 0 );
@@ -567,7 +567,7 @@ applyperks()
     }
 
     if ( maps\mp\_utility::_hasperk( "specialty_class_toughness" ) )
-        self setviewkickscale( 0.2 );
+        self _meth_8309( 0.2 );
 
     if ( maps\mp\_utility::_hasperk( "specialty_class_scavenger" ) )
     {

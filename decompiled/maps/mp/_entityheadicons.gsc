@@ -1,12 +1,12 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    if ( isdefined( level._id_4DB3 ) )
+    if ( isdefined( level.initedentityheadicons ) )
         return;
 
-    level._id_4DB3 = 1;
+    level.initedentityheadicons = 1;
 
     if ( level.multiteambased )
     {
@@ -124,42 +124,42 @@ setheadicon( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_
 
         var_13.archived = var_5;
         var_13.alpha = 0.85;
-        var_13 setshader( var_1, var_3, var_4 );
-        var_13 setwaypoint( var_7, var_8, var_9, var_10 );
+        var_13 _meth_80CC( var_1, var_3, var_4 );
+        var_13 _meth_80D8( var_7, var_8, var_9, var_10 );
 
         if ( var_11 == "" )
         {
             var_13.x = self.origin[0] + var_2[0];
             var_13.y = self.origin[1] + var_2[1];
             var_13.z = self.origin[2] + var_2[2];
-            var_13 thread _id_52DD( self, var_2, var_6 );
+            var_13 thread keeppositioned( self, var_2, var_6 );
         }
         else
         {
             var_13.x = var_2[0];
             var_13.y = var_2[1];
             var_13.z = var_2[2];
-            var_13 settargetent( self, var_11 );
+            var_13 _meth_80CD( self, var_11 );
         }
 
-        thread _id_28ED();
+        thread destroyiconsondeath();
 
         if ( isplayer( var_0 ) )
-            var_13 thread _id_28EF( var_0 );
+            var_13 thread destroyonownerdisconnect( var_0 );
 
         if ( isplayer( self ) )
-            var_13 thread _id_28EF( self );
+            var_13 thread destroyonownerdisconnect( self );
     }
 }
 
-_id_28EF( var_0 )
+destroyonownerdisconnect( var_0 )
 {
     self endon( "death" );
     var_0 waittill( "disconnect" );
     self destroy();
 }
 
-_id_28ED()
+destroyiconsondeath()
 {
     self notify( "destroyIconsOnDeath" );
     self endon( "destroyIconsOnDeath" );
@@ -174,7 +174,7 @@ _id_28ED()
     }
 }
 
-_id_52DD( var_0, var_1, var_2 )
+keeppositioned( var_0, var_1, var_2 )
 {
     self endon( "death" );
     var_0 endon( "death" );
@@ -213,9 +213,9 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_2 ) )
         var_2 = "";
 
-    if ( !isdefined( self._id_331A ) )
+    if ( !isdefined( self.entityheadiconteam ) )
     {
-        self._id_331A = "none";
+        self.entityheadiconteam = "none";
         self.entityheadicon = undefined;
     }
 
@@ -223,12 +223,12 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
         var_4 = undefined;
 
     var_5 = game["entity_headicon_" + var_0];
-    self._id_331A = var_0;
+    self.entityheadiconteam = var_0;
 
     if ( isdefined( var_1 ) )
-        self._id_3317 = var_1;
+        self.entityheadiconoffset = var_1;
     else
-        self._id_3317 = ( 0.0, 0.0, 0.0 );
+        self.entityheadiconoffset = ( 0, 0, 0 );
 
     self notify( "kill_entity_headicon_thread" );
 
@@ -243,25 +243,25 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
     var_6 = newteamhudelem( var_0 );
     var_6.archived = 1;
     var_6.alpha = 0.8;
-    var_6 setshader( var_5, 10, 10 );
-    var_6 setwaypoint( 0, 0, 0, 1 );
+    var_6 _meth_80CC( var_5, 10, 10 );
+    var_6 _meth_80D8( 0, 0, 0, 1 );
     self.entityheadicon = var_6;
 
     if ( !isdefined( var_3 ) )
     {
         if ( var_2 == "" )
         {
-            var_6.x = self.origin[0] + self._id_3317[0];
-            var_6.y = self.origin[1] + self._id_3317[1];
-            var_6.z = self.origin[2] + self._id_3317[2];
-            thread _id_52DB();
+            var_6.x = self.origin[0] + self.entityheadiconoffset[0];
+            var_6.y = self.origin[1] + self.entityheadiconoffset[1];
+            var_6.z = self.origin[2] + self.entityheadiconoffset[2];
+            thread keepiconpositioned();
         }
         else
         {
-            var_6.x = self._id_3317[0];
-            var_6.y = self._id_3317[1];
-            var_6.z = self._id_3317[2];
-            var_6 settargetent( self, var_2 );
+            var_6.x = self.entityheadiconoffset[0];
+            var_6.y = self.entityheadiconoffset[1];
+            var_6.z = self.entityheadiconoffset[2];
+            var_6 _meth_80CD( self, var_2 );
         }
     }
     else
@@ -274,18 +274,18 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
             var_6.x = var_8[0];
             var_6.y = var_8[1];
             var_6.z = var_8[2];
-            thread _id_52DB( var_3 );
+            thread keepiconpositioned( var_3 );
         }
         else
         {
             var_6.x = var_8[0];
             var_6.y = var_8[1];
             var_6.z = var_8[2];
-            var_6 settargetent( self, var_2 );
+            var_6 _meth_80CD( self, var_2 );
         }
     }
 
-    thread _id_28EB();
+    thread destroyheadiconsondeath();
 }
 
 setplayerheadicon( var_0, var_1, var_2 )
@@ -296,9 +296,9 @@ setplayerheadicon( var_0, var_1, var_2 )
     if ( !isdefined( var_2 ) )
         var_2 = "";
 
-    if ( !isdefined( self._id_331A ) )
+    if ( !isdefined( self.entityheadiconteam ) )
     {
-        self._id_331A = "none";
+        self.entityheadiconteam = "none";
         self.entityheadicon = undefined;
     }
 
@@ -313,40 +313,40 @@ setplayerheadicon( var_0, var_1, var_2 )
     }
 
     var_3 = var_0.team;
-    self._id_331A = var_3;
+    self.entityheadiconteam = var_3;
 
     if ( isdefined( var_1 ) )
-        self._id_3317 = var_1;
+        self.entityheadiconoffset = var_1;
     else
-        self._id_3317 = ( 0.0, 0.0, 0.0 );
+        self.entityheadiconoffset = ( 0, 0, 0 );
 
     var_4 = game["entity_headicon_" + var_3];
     var_5 = newclienthudelem( var_0 );
     var_5.archived = 1;
     var_5.alpha = 0.8;
-    var_5 setshader( var_4, 10, 10 );
-    var_5 setwaypoint( 0, 0, 0, 1 );
+    var_5 _meth_80CC( var_4, 10, 10 );
+    var_5 _meth_80D8( 0, 0, 0, 1 );
     self.entityheadicon = var_5;
 
     if ( var_2 == "" )
     {
-        var_5.x = self.origin[0] + self._id_3317[0];
-        var_5.y = self.origin[1] + self._id_3317[1];
-        var_5.z = self.origin[2] + self._id_3317[2];
-        thread _id_52DB();
+        var_5.x = self.origin[0] + self.entityheadiconoffset[0];
+        var_5.y = self.origin[1] + self.entityheadiconoffset[1];
+        var_5.z = self.origin[2] + self.entityheadiconoffset[2];
+        thread keepiconpositioned();
     }
     else
     {
-        var_5.x = self._id_3317[0];
-        var_5.y = self._id_3317[1];
-        var_5.z = self._id_3317[2];
-        var_5 settargetent( self, var_2 );
+        var_5.x = self.entityheadiconoffset[0];
+        var_5.y = self.entityheadiconoffset[1];
+        var_5.z = self.entityheadiconoffset[2];
+        var_5 _meth_80CD( self, var_2 );
     }
 
-    thread _id_28EB();
+    thread destroyheadiconsondeath();
 }
 
-_id_52DB( var_0 )
+keepiconpositioned( var_0 )
 {
     self endon( "kill_entity_headicon_thread" );
     self endon( "death" );
@@ -356,7 +356,7 @@ _id_52DB( var_0 )
     {
         if ( var_1 != self.origin )
         {
-            _id_9B1C( var_0 );
+            updateheadiconorigin( var_0 );
             var_1 = self.origin;
         }
 
@@ -364,7 +364,7 @@ _id_52DB( var_0 )
     }
 }
 
-_id_28EB()
+destroyheadiconsondeath()
 {
     self endon( "kill_entity_headicon_thread" );
     self waittill( "death" );
@@ -375,13 +375,13 @@ _id_28EB()
     self.entityheadicon destroy();
 }
 
-_id_9B1C( var_0 )
+updateheadiconorigin( var_0 )
 {
     if ( !isdefined( var_0 ) )
     {
-        self.entityheadicon.x = self.origin[0] + self._id_3317[0];
-        self.entityheadicon.y = self.origin[1] + self._id_3317[1];
-        self.entityheadicon.z = self.origin[2] + self._id_3317[2];
+        self.entityheadicon.x = self.origin[0] + self.entityheadiconoffset[0];
+        self.entityheadicon.y = self.origin[1] + self.entityheadiconoffset[1];
+        self.entityheadicon.z = self.origin[2] + self.entityheadiconoffset[2];
     }
     else
     {

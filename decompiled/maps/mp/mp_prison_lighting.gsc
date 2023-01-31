@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -17,7 +17,7 @@ main()
     maps\mp\_mp_lights::init();
 }
 
-_id_37B1()
+fire_flicker()
 {
-    maps\mp\_mp_lights::_id_6948( "fire", "fire_flicker", 3000 );
+    maps\mp\_mp_lights::play_flickerlight_preset( "fire", "fire_flicker", 3000 );
 }

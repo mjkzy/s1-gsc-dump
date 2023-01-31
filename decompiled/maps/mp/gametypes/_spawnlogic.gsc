@@ -1,13 +1,13 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
     level.killstreakspawnshield = 5000;
     level.forcebuddyspawn = 0;
     level.supportbuddyspawn = 0;
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     level.clienttracespawnclass = undefined;
     level.disableclientspawntraces = 0;
     level.numplayerswaitingtospawn = 0;
@@ -64,7 +64,7 @@ startclientspawnpointtraces( var_0 )
         return;
 
     wait 0.05;
-    var_0 setclientspawnsighttraces( level.clienttracespawnclass );
+    var_0 _meth_82FE( level.clienttracespawnclass );
 }
 
 canperformclienttraces( var_0 )
@@ -78,7 +78,7 @@ canperformclienttraces( var_0 )
     if ( isai( var_0 ) || istestclient( var_0 ) )
         return 0;
 
-    if ( var_0 ishost() )
+    if ( var_0 _meth_829C() )
     {
         if ( getdvarint( "enableS1TUSpawnSightTraces" ) > 0 )
             return 1;
@@ -163,7 +163,7 @@ spawnpointinit()
     level.spawnmins = expandmins( level.spawnmins, var_0.origin );
     level.spawnmaxs = expandmaxs( level.spawnmaxs, var_0.origin );
     var_0.forward = anglestoforward( var_0.angles );
-    var_0.sighttracepoint = var_0.origin + ( 0.0, 0.0, 50.0 );
+    var_0.sighttracepoint = var_0.origin + ( 0, 0, 50 );
     var_0.lastspawntime = gettime();
     var_0.outside = 1;
     var_0.inited = 1;
@@ -186,7 +186,7 @@ spawnpointinit()
 
 addalternatespawnpoint( var_0, var_1 )
 {
-    var_2 = playerphysicstrace( var_0.origin, var_0.origin + ( 0.0, 0.0, 18.0 ) );
+    var_2 = playerphysicstrace( var_0.origin, var_0.origin + ( 0, 0, 18 ) );
     var_3 = var_2[2] - var_0.origin[2];
     var_4 = ( var_1[0], var_1[1], var_1[2] + var_3 );
     var_5 = playerphysicstrace( var_2, var_4 );
@@ -420,7 +420,7 @@ getactiveplayerlist()
             if ( !( var_5 == "orbitalsupport" || var_5 == "Warbird" ) )
             {
                 var_6 = getplayertraceheight( var_4 );
-                var_7 = var_4 geteye();
+                var_7 = var_4 _meth_80A8();
                 var_7 = ( var_7[0], var_7[1], var_4.origin[2] + var_6 );
                 var_4.spawnlogictraceheight = var_6;
                 var_4.spawntracelocation = var_7;
@@ -472,11 +472,11 @@ spawnpointsightupdate()
 
                 if ( var_10.canperformclienttraces )
                 {
-                    var_10 setclientspawnsighttraces( level.clienttracespawnclass );
+                    var_10 _meth_82FE( level.clienttracespawnclass );
                     continue;
                 }
 
-                var_10 setclientspawnsighttraces();
+                var_10 _meth_82FE();
             }
 
             var_5 = var_8;
@@ -504,13 +504,13 @@ spawnpointsightupdate()
                     continue;
 
                 if ( var_10.canperformclienttraces )
-                    var_18 = var_10 clientspawnsighttracepassed( var_15.index );
+                    var_18 = var_10 _meth_82FF( var_15.index );
                 else
                 {
                     if ( var_8 )
                     {
                         if ( var_3 % 3 == 1 )
-                            var_19 = ( 0.0, 0.0, 0.0 );
+                            var_19 = ( 0, 0, 0 );
                         else
                             var_19 = ( randomfloatrange( -16, 16 ), randomfloatrange( -16, 16 ), 0 );
 
@@ -530,7 +530,7 @@ spawnpointsightupdate()
 
                 if ( var_8 )
                 {
-                    var_22 = var_10 getentitynumber();
+                    var_22 = var_10 _meth_81B1();
 
                     if ( !isdefined( var_15.fullsightdelay ) || !isdefined( var_15.fullsightdelay[var_22] ) )
                         var_15.fullsightdelay[var_22] = 0;
@@ -745,7 +745,7 @@ getplayertraceheight( var_0, var_1 )
     if ( isdefined( var_1 ) && var_1 )
         return 64;
 
-    var_2 = var_0 getstance();
+    var_2 = var_0 _meth_817C();
 
     if ( var_2 == "stand" )
         return 64;
@@ -768,7 +768,7 @@ additionalsighttraceentities( var_0, var_1 )
         if ( var_0.fullsights[var_4] )
             continue;
 
-        var_5 = spawnsighttrace( var_0, var_0.sighttracepoint, var_3.origin + ( 0.0, 0.0, 50.0 ), var_0.index );
+        var_5 = spawnsighttrace( var_0, var_0.sighttracepoint, var_3.origin + ( 0, 0, 50 ), var_0.index );
 
         if ( !var_5 )
             continue;
@@ -833,7 +833,7 @@ expandmaxs( var_0, var_1 )
 
 findboxcenter( var_0, var_1 )
 {
-    var_2 = ( 0.0, 0.0, 0.0 );
+    var_2 = ( 0, 0, 0 );
     var_2 = var_1 - var_0;
     var_2 = ( var_2[0] / 2, var_2[1] / 2, var_2[2] / 2 ) + var_0;
     return var_2;
@@ -841,8 +841,8 @@ findboxcenter( var_0, var_1 )
 
 setmapcenterfordev()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     expandspawnpointbounds( "mp_tdm_spawn_allies_start" );
     expandspawnpointbounds( "mp_tdm_spawn_axis_start" );
     level.mapcenter = findboxcenter( level.spawnmins, level.spawnmaxs );

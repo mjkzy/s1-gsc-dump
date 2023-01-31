@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 exo_hover_think()
 {
@@ -10,14 +10,14 @@ exo_hover_think()
     self endon( "faux_spawn" );
     self endon( "exo_hover_taken" );
 
-    if ( !self hasweapon( level.hoverweapon ) )
+    if ( !self _meth_8314( level.hoverweapon ) )
         return;
 
     exo_hover_init();
 
     for (;;)
     {
-        if ( self batteryisinuse( level.hoverweapon ) == 0 )
+        if ( self _meth_84A8( level.hoverweapon ) == 0 )
             self waittillmatch( "battery_discharge_begin", level.hoverweapon );
 
         self.exo_hover_on = 1;
@@ -35,7 +35,7 @@ exo_hover_think()
 
         thread end_exo_hover_on_notifies();
 
-        if ( self batteryisinuse( level.hoverweapon ) == 1 )
+        if ( self _meth_84A8( level.hoverweapon ) == 1 )
             self waittillmatch( "battery_discharge_end", level.hoverweapon );
 
         maps\mp\_exo_battery::set_exo_ability_hud_omnvar( level.hoverweapon, "ui_exo_battery_toggle", 0 );
@@ -46,20 +46,20 @@ exo_hover_think()
 
 exo_hover_init()
 {
-    self batterysetdischargescale( level.hoverweapon, 1.0 );
-    var_0 = self batterygetsize( level.hoverweapon );
+    self _meth_84A6( level.hoverweapon, 1.0 );
+    var_0 = self _meth_84A5( level.hoverweapon );
 
-    if ( self gettacticalweapon() == level.hoverweapon )
+    if ( self _meth_831A() == level.hoverweapon )
     {
-        self setclientomnvar( "exo_ability_nrg_req0", 0 );
-        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
-        self setclientomnvar( "ui_exo_battery_level0", var_0 );
+        self _meth_82FB( "exo_ability_nrg_req0", 0 );
+        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
+        self _meth_82FB( "ui_exo_battery_level0", var_0 );
     }
-    else if ( self getlethalweapon() == level.hoverweapon )
+    else if ( self _meth_8345() == level.hoverweapon )
     {
-        self setclientomnvar( "exo_ability_nrg_req1", 0 );
-        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
-        self setclientomnvar( "ui_exo_battery_level1", var_0 );
+        self _meth_82FB( "exo_ability_nrg_req1", 0 );
+        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
+        self _meth_82FB( "ui_exo_battery_level1", var_0 );
     }
 
     if ( !isdefined( level.regular_exo_hover_vfx ) )
@@ -92,7 +92,7 @@ take_exo_hover()
 
     self notify( "kill_battery" );
     self notify( "exo_hover_taken" );
-    self takeweapon( level.hoverweapon );
+    self _meth_830F( level.hoverweapon );
 }
 
 give_exo_hover()
@@ -102,7 +102,7 @@ give_exo_hover()
     if ( isdefined( level.ishorde ) )
         level.hoverweapon = "exohoverhorde_equipment_mp";
 
-    self giveweapon( level.hoverweapon );
+    self _meth_830E( level.hoverweapon );
     thread exo_hover_think();
 }
 
@@ -115,12 +115,12 @@ exo_hover_update()
     self endon( "faux_spawn" );
     self endon( "exo_hover_taken" );
     self endon( "stop_exo_hover_effects" );
-    var_0 = self batterygetdischargerate( level.hoverweapon );
-    var_1 = self batterygetsize( level.hoverweapon );
+    var_0 = self _meth_84A7( level.hoverweapon );
+    var_1 = self _meth_84A5( level.hoverweapon );
 
     for (;;)
     {
-        self playrumbleonentity( "damage_heavy" );
+        self _meth_80AD( "damage_heavy" );
         var_2 = self getvelocity();
         var_3 = length2d( var_2 );
         var_4 = 1.0;
@@ -131,7 +131,7 @@ exo_hover_update()
                 var_4 = 1.0 + self.hordeexobattery * -0.1;
         }
 
-        self batterysetdischargescale( level.hoverweapon, max( var_4, var_1 * var_3 / getdvarint( "hover_max_travel_distance", 350 ) * var_0 ) );
+        self _meth_84A6( level.hoverweapon, max( var_4, var_1 * var_3 / getdvarint( "hover_max_travel_distance", 350 ) * var_0 ) );
         wait 0.1;
     }
 }

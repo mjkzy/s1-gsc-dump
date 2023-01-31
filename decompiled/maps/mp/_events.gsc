@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -106,7 +106,7 @@ killedplayer( var_0, var_1, var_2, var_3, var_4 )
                 self.modifiers["cooking"] = 1;
         }
 
-        if ( objective_current( var_2 ) == "primary" )
+        if ( _func_1DF( var_2 ) == "primary" )
         {
             self.segments["killDistanceTotal"] += distance2d( self.origin, var_1.origin );
             self.segments["killDistanceCount"]++;
@@ -254,8 +254,8 @@ pointblankevent( var_0, var_1, var_2 )
         {
             switch ( var_3 )
             {
-                case "iw5_dlcgun3":
                 case "iw5_dlcgun4":
+                case "iw5_dlcgun3":
                     maps\mp\gametypes\_missions::processchallenge( "ch_tier1_1_" + var_3 );
                     break;
                 case "iw5_dlcgun8loot1":
@@ -283,23 +283,23 @@ killedplayerevent( var_0, var_1, var_2 )
 
     switch ( var_1 )
     {
-        case "orbital_laser_fov_mp":
         case "killstreak_orbital_laser_mp":
+        case "orbital_laser_fov_mp":
             var_3 = "vulcan_kill";
             break;
-        case "warbird_missile_mp":
-        case "warbird_remote_turret_mp":
-        case "warbird_player_turret_mp":
         case "paint_missile_killstreak_mp":
+        case "warbird_player_turret_mp":
+        case "warbird_remote_turret_mp":
+        case "warbird_missile_mp":
             var_3 = "warbird_kill";
             break;
-        case "orbitalsupport_105mm_mp":
-        case "orbitalsupport_missile_mp":
-        case "orbitalsupport_40mm_mp":
-        case "orbitalsupport_40mmbuddy_mp":
-        case "orbitalsupport_big_turret_mp":
-        case "orbitalsupport_medium_turret_mp":
         case "orbitalsupport_small_turret_mp":
+        case "orbitalsupport_medium_turret_mp":
+        case "orbitalsupport_big_turret_mp":
+        case "orbitalsupport_40mmbuddy_mp":
+        case "orbitalsupport_40mm_mp":
+        case "orbitalsupport_missile_mp":
+        case "orbitalsupport_105mm_mp":
             var_3 = "paladin_kill";
             break;
         case "airdrop_trap_explosive_mp":
@@ -308,55 +308,55 @@ killedplayerevent( var_0, var_1, var_2 )
         case "orbital_carepackage_pod_mp":
             var_3 = "airdrop_kill";
             break;
-        case "remotemissile_projectile_mp":
-        case "remotemissile_projectile_cluster_parent_mp":
-        case "remotemissile_projectile_gas_mp":
-        case "remotemissile_projectile_cluster_child_mp":
-        case "killstreak_strike_missile_gas_mp":
-        case "remotemissile_projectile_cluster_child_hellfire_mp":
         case "remotemissile_projectile_secondary_mp":
+        case "remotemissile_projectile_cluster_child_hellfire_mp":
+        case "killstreak_strike_missile_gas_mp":
+        case "remotemissile_projectile_cluster_child_mp":
+        case "remotemissile_projectile_gas_mp":
+        case "remotemissile_projectile_cluster_parent_mp":
+        case "remotemissile_projectile_mp":
             var_3 = "missile_strike_kill";
             break;
-        case "turretheadenergy_mp":
-        case "turretheadrocket_mp":
-        case "turretheadmg_mp":
-        case "sentry_minigun_mp":
-        case "remote_energy_turret_mp":
-        case "killstreakmahem_mp":
-        case "remote_turret_mp":
         case "iw5_dlcgun12loot3_mp":
+        case "remote_turret_mp":
+        case "killstreakmahem_mp":
+        case "remote_energy_turret_mp":
+        case "sentry_minigun_mp":
+        case "turretheadmg_mp":
+        case "turretheadrocket_mp":
+        case "turretheadenergy_mp":
             var_3 = "sentry_gun_kill";
             break;
-        case "stealth_bomb_mp":
-        case "orbital_carepackage_pod_plane_mp":
         case "airstrike_missile_mp":
+        case "orbital_carepackage_pod_plane_mp":
+        case "stealth_bomb_mp":
             var_3 = "strafing_run_kill";
             break;
-        case "ugv_missile_mp":
-        case "drone_assault_remote_turret_mp":
         case "assaultdrone_c4_mp":
+        case "drone_assault_remote_turret_mp":
+        case "ugv_missile_mp":
             var_3 = "assault_drone_kill";
             break;
-        case "iw5_juggtitan45_mp":
-        case "orbital_carepackage_droppod_mp":
-        case "killstreak_goliathsd_mp":
-        case "juggernaut_sentry_mg_mp":
-        case "iw5_juggernautrockets_mp":
-        case "iw5_exoxmgjugg_mp_akimbo":
-        case "iw5_exominigun_mp":
-        case "iw5_mechpunch_mp":
         case "playermech_rocket_mp":
+        case "iw5_mechpunch_mp":
+        case "iw5_exominigun_mp":
+        case "iw5_exoxmgjugg_mp_akimbo":
+        case "iw5_juggernautrockets_mp":
+        case "juggernaut_sentry_mg_mp":
+        case "killstreak_goliathsd_mp":
+        case "orbital_carepackage_droppod_mp":
+        case "iw5_juggtitan45_mp":
             var_3 = "goliath_kill";
             break;
-        case "killstreak_solar_mp":
-        case "refraction_turret_mp":
-        case "dam_turret_mp":
-        case "detroit_tram_turret_mp":
-        case "killstreak_terrace_mp":
-        case "killstreak_comeback_mp":
-        case "mp_laser2_core":
-        case "iw5_dlcgun12loot5_mp":
         case "iw5_dlcgun12loot2_mp":
+        case "iw5_dlcgun12loot5_mp":
+        case "mp_laser2_core":
+        case "killstreak_comeback_mp":
+        case "killstreak_terrace_mp":
+        case "detroit_tram_turret_mp":
+        case "dam_turret_mp":
+        case "refraction_turret_mp":
+        case "killstreak_solar_mp":
             var_3 = "map_killstreak_kill";
             break;
     }
@@ -395,7 +395,7 @@ practiceroundkillevent( var_0, var_1, var_2, var_3 )
     var_4 = 0.5;
 
     if ( !isdefined( self.best_pr_kills ) )
-        self.best_pr_kills = self getcommonplayerdata( "bests", "kills" );
+        self.best_pr_kills = self _meth_8226( "bests", "kills" );
 
     if ( self.best_pr_kills > 0 && self.kills > self.best_pr_kills )
     {
@@ -453,16 +453,16 @@ isthinkfastweapon( var_0 )
 {
     switch ( var_0 )
     {
-        case "frag_grenade_mp":
-        case "semtex_mp":
-        case "paint_grenade_mp":
-        case "emp_grenade_mp":
-        case "smoke_grenade_mp":
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
-        case "smoke_grenade_var_mp":
         case "stun_grenade__mp":
+        case "smoke_grenade_var_mp":
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
+        case "smoke_grenade_mp":
+        case "emp_grenade_mp":
+        case "paint_grenade_mp":
+        case "semtex_mp":
+        case "frag_grenade_mp":
             return 1;
         default:
             return 0;
@@ -529,12 +529,12 @@ checkhighjumpevents( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_4 ) && isdefined( var_4.ch_crossbow_player_jumping ) )
         var_5 = var_4.ch_crossbow_player_jumping;
     else
-        var_5 = self ishighjumping();
+        var_5 = self _meth_83B4();
 
     if ( isdefined( var_4 ) && isdefined( var_4.ch_crossbow_victim_jumping ) )
         var_6 = var_4.ch_crossbow_victim_jumping;
     else
-        var_6 = var_0 ishighjumping();
+        var_6 = var_0 _meth_83B4();
 
     if ( var_5 && var_6 )
         airtoairevent( var_1, var_2, var_3 );
@@ -657,8 +657,8 @@ airtogroundevent( var_0, var_1, var_2 )
     {
         switch ( var_3 )
         {
-            case "iw5_dlcgun2":
             case "iw5_dlcgun1":
+            case "iw5_dlcgun2":
                 maps\mp\gametypes\_missions::processchallenge( "ch_tier2_1_" + var_3 );
                 break;
             case "iw5_dlcgun6":
@@ -753,8 +753,8 @@ islongshot( var_0, var_1, var_2, var_3 )
             case "weapon_smg":
                 var_6 = 1200;
                 break;
-            case "weapon_assault":
             case "weapon_heavy":
+            case "weapon_assault":
                 var_6 = 1500;
                 break;
             case "weapon_sniper":
@@ -1543,7 +1543,7 @@ updaterecentkills( var_0, var_1 )
     self.recentkillcount++;
     var_2 = 0;
 
-    if ( self playerads() >= 0.2 )
+    if ( self _meth_8340() >= 0.2 )
         var_2 = 1;
 
     wait 2.0;
@@ -1794,8 +1794,8 @@ killafterdodgeevent( var_0 )
         {
             switch ( var_1 )
             {
-                case "iw5_dlcgun1":
                 case "iw5_dlcgun3":
+                case "iw5_dlcgun1":
                     maps\mp\gametypes\_missions::processchallenge( "ch_tier2_3_" + var_1 );
                     break;
                 case "iw5_dlcgun6":
@@ -1835,10 +1835,10 @@ camosprintslidekillevent( var_0, var_1 )
 
     switch ( var_3 )
     {
-        case "weapon_smg":
-        case "weapon_shotgun":
-        case "weapon_special":
         case "weapon_pistol":
+        case "weapon_special":
+        case "weapon_shotgun":
+        case "weapon_smg":
             switch ( var_2 )
             {
                 case "iw5_dlcgun3":

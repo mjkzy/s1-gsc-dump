@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -31,7 +31,7 @@ high_jump_on_player_spawn()
         var_0 maps\mp\_utility::playerallowpowerslide( 1 );
         var_0 maps\mp\_utility::playerallowdodge( 1 );
         var_0 thread exo_dodge_think();
-        var_0 setclientomnvar( "ui_border_warning_toggle", 0 );
+        var_0 _meth_82FB( "ui_border_warning_toggle", 0 );
     }
 }
 
@@ -62,7 +62,7 @@ map_border_hud_updater()
 
             foreach ( var_2 in level.map_border_trig_array )
             {
-                var_3 = self istouching( var_2 );
+                var_3 = self _meth_80A9( var_2 );
 
                 if ( var_3 )
                 {
@@ -74,9 +74,9 @@ map_border_hud_updater()
             if ( !isdefined( self.touching_border ) || self.touching_border != var_0 )
             {
                 if ( var_0 )
-                    self setclientomnvar( "ui_border_warning_toggle", 1 );
+                    self _meth_82FB( "ui_border_warning_toggle", 1 );
                 else
-                    self setclientomnvar( "ui_border_warning_toggle", 0 );
+                    self _meth_82FB( "ui_border_warning_toggle", 0 );
 
                 self.touching_border = var_0;
             }

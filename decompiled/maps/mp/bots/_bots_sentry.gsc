@@ -1,7 +1,7 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_1679( var_0, var_1, var_2, var_3 )
+bot_killstreak_sentry( var_0, var_1, var_2, var_3 )
 {
     self endon( "bot_sentry_exited" );
     self endon( "death" );
@@ -9,31 +9,31 @@ _id_1679( var_0, var_1, var_2, var_3 )
     level endon( "game_ended" );
     wait(randomintrange( 3, 5 ));
 
-    while ( isdefined( self._id_7CB5 ) && gettime() < self._id_7CB5 )
+    while ( isdefined( self.sentry_place_delay ) && gettime() < self.sentry_place_delay )
         wait 1;
 
-    if ( isdefined( self._id_0143 ) && self._id_0143.health > 0 && self _meth_836F( self._id_0143 ) )
+    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
         return 1;
 
     var_4 = self.origin;
 
     if ( var_3 != "hide_nonlethal" )
     {
-        var_4 = _id_16E2( var_3 );
+        var_4 = bot_sentry_choose_target( var_3 );
 
         if ( !isdefined( var_4 ) )
             return 1;
     }
 
-    _id_16DD( var_0, var_4, var_3, var_1 );
+    bot_sentry_add_goal( var_0, var_4, var_3, var_1 );
 
-    while ( maps\mp\bots\_bots_strategy::_id_1649( "sentry_placement" ) )
+    while ( maps\mp\bots\_bots_strategy::bot_has_tactical_goal( "sentry_placement" ) )
         wait 0.5;
 
     return 1;
 }
 
-_id_15CC( var_0 )
+bot_can_use_sentry_only_ai_version( var_0 )
 {
     foreach ( var_2 in var_0.modules )
     {
@@ -44,40 +44,40 @@ _id_15CC( var_0 )
     return 0;
 }
 
-_id_16DD( var_0, var_1, var_2, var_3 )
+bot_sentry_add_goal( var_0, var_1, var_2, var_3 )
 {
-    var_4 = _id_16E1( var_0, var_1, var_2, var_3 );
+    var_4 = bot_sentry_choose_placement( var_0, var_1, var_2, var_3 );
 
     if ( isdefined( var_4 ) )
     {
-        maps\mp\bots\_bots_strategy::_id_15A1( "sentry_placement" );
+        maps\mp\bots\_bots_strategy::bot_abort_tactical_goal( "sentry_placement" );
         var_5 = spawnstruct();
-        var_5._id_62DE = var_4;
-        var_5._id_79FB = var_4._id_A3AB;
-        var_5._id_79F9 = 10;
-        var_5._id_8CBD = ::_id_16E5;
-        var_5._id_3150 = ::_id_16DE;
-        var_5._id_8447 = ::_id_16E7;
-        var_5._id_06ED = ::_id_16DC;
-        self._id_6867 = var_0.streakname;
-        maps\mp\bots\_bots_strategy::_id_16A9( "sentry_placement", var_4._id_02BF.origin, 0, var_5 );
+        var_5.object = var_4;
+        var_5.script_goal_yaw = var_4.yaw;
+        var_5.script_goal_radius = 10;
+        var_5.start_thread = ::bot_sentry_path_start;
+        var_5.end_thread = ::bot_sentry_cancel;
+        var_5.should_abort = ::bot_sentry_should_abort;
+        var_5.action_thread = ::bot_sentry_activate;
+        self.placingitemstreakname = var_0.streakname;
+        maps\mp\bots\_bots_strategy::bot_new_tactical_goal( "sentry_placement", var_4.node.origin, 0, var_5 );
     }
 }
 
-_id_16E7( var_0 )
+bot_sentry_should_abort( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
 
-    if ( isdefined( self._id_0143 ) && self._id_0143.health > 0 && self _meth_836F( self._id_0143 ) )
+    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
         return 1;
 
-    self._id_7CB5 = gettime() + 1000;
+    self.sentry_place_delay = gettime() + 1000;
     return 0;
 }
 
-_id_16DF()
+bot_sentry_cancel_failsafe()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -87,19 +87,19 @@ _id_16DF()
 
     for (;;)
     {
-        if ( isdefined( self._id_0143 ) && self._id_0143.health > 0 && self _meth_836F( self._id_0143 ) )
-            thread _id_16DE();
+        if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
+            thread bot_sentry_cancel();
 
         wait 0.05;
     }
 }
 
-_id_16E5( var_0 )
+bot_sentry_path_start( var_0 )
 {
-    thread _id_16E6( var_0 );
+    thread bot_sentry_path_thread( var_0 );
 }
 
-_id_16E6( var_0 )
+bot_sentry_path_thread( var_0 )
 {
     self endon( "stop_tactical_goal" );
     self endon( "stop_goal_aborted_watch" );
@@ -109,13 +109,13 @@ _id_16E6( var_0 )
     self endon( "disconnect" );
     level endon( "game_ended" );
 
-    while ( isdefined( var_0._id_62DE ) && isdefined( var_0._id_62DE.weapon ) )
+    while ( isdefined( var_0.object ) && isdefined( var_0.object.weapon ) )
     {
-        if ( distance2d( self.origin, var_0._id_62DE._id_02BF.origin ) < 400 )
+        if ( distance2d( self.origin, var_0.object.node.origin ) < 400 )
         {
-            thread maps\mp\bots\_bots_util::_id_161A( "stand", 5.0 );
-            thread _id_16DF();
-            maps\mp\bots\_bots_ks::_id_1708( var_0._id_62DE._id_5385, var_0._id_62DE._id_53A1, var_0._id_62DE.weapon );
+            thread maps\mp\bots\_bots_util::bot_force_stance_for_time( "stand", 5.0 );
+            thread bot_sentry_cancel_failsafe();
+            maps\mp\bots\_bots_ks::bot_switch_to_killstreak_weapon( var_0.object.killstreak_info, var_0.object.killstreaks_array, var_0.object.weapon );
             return;
         }
 
@@ -123,15 +123,15 @@ _id_16E6( var_0 )
     }
 }
 
-_id_16E2( var_0 )
+bot_sentry_choose_target( var_0 )
 {
-    var_1 = maps\mp\bots\_bots_util::_id_27A7();
+    var_1 = maps\mp\bots\_bots_util::defend_valid_center();
 
     if ( isdefined( var_1 ) )
         return var_1;
 
-    if ( isdefined( self._id_611E ) )
-        return self._id_611E.origin;
+    if ( isdefined( self.node_ambushing_from ) )
+        return self.node_ambushing_from.origin;
 
     var_2 = getnodesinradius( self.origin, 1000, 0, 512 );
     var_3 = 5;
@@ -153,7 +153,7 @@ _id_16E2( var_0 )
         return var_4.origin;
 }
 
-_id_16E1( var_0, var_1, var_2, var_3 )
+bot_sentry_choose_placement( var_0, var_1, var_2, var_3 )
 {
     var_4 = undefined;
     var_5 = getnodesinradius( var_1, 1000, 0, 512 );
@@ -179,50 +179,50 @@ _id_16E1( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_7 ) )
     {
         var_4 = spawnstruct();
-        var_4._id_02BF = var_7;
+        var_4.node = var_7;
 
         if ( var_1 != var_7.origin && var_2 != "hide_nonlethal" )
-            var_4._id_A3AB = vectortoyaw( var_1 - var_7.origin );
+            var_4.yaw = vectortoyaw( var_1 - var_7.origin );
         else
-            var_4._id_A3AB = undefined;
+            var_4.yaw = undefined;
 
         var_4.weapon = var_0.weapon;
-        var_4._id_5385 = var_0;
-        var_4._id_53A1 = var_3;
+        var_4.killstreak_info = var_0;
+        var_4.killstreaks_array = var_3;
     }
 
     return var_4;
 }
 
-_id_16E0()
+bot_sentry_carried_obj()
 {
-    if ( isdefined( self._id_1BAD ) )
-        return self._id_1BAD;
+    if ( isdefined( self.carriedsentry ) )
+        return self.carriedsentry;
 
-    if ( isdefined( self._id_1BAE ) )
-        return self._id_1BAE;
+    if ( isdefined( self.carriedturret ) )
+        return self.carriedturret;
 
-    if ( isdefined( self._id_1BAB ) )
-        return self._id_1BAB;
+    if ( isdefined( self.carrieditem ) )
+        return self.carrieditem;
 }
 
-_id_16DC( var_0 )
+bot_sentry_activate( var_0 )
 {
     var_1 = 0;
-    var_2 = _id_16E0();
+    var_2 = bot_sentry_carried_obj();
 
     if ( isdefined( var_2 ) )
     {
         var_3 = 0;
 
-        if ( !var_2._id_1AAE )
+        if ( !var_2.canbeplaced )
         {
             var_4 = 0.75;
             var_5 = gettime();
             var_6 = self.angles[1];
 
-            if ( isdefined( var_0._id_62DE._id_A3AB ) )
-                var_6 = var_0._id_62DE._id_A3AB;
+            if ( isdefined( var_0.object.yaw ) )
+                var_6 = var_0.object.yaw;
 
             var_7 = [];
             var_7[0] = var_6 + 180;
@@ -232,68 +232,68 @@ _id_16DC( var_0 )
 
             foreach ( var_10 in var_7 )
             {
-                var_11 = playerphysicstrace( var_0._id_62DE._id_02BF.origin, var_0._id_62DE._id_02BF.origin + anglestoforward( ( 0, var_10 + 180, 0 ) ) * 100 );
-                var_12 = distance2d( var_11, var_0._id_62DE._id_02BF.origin );
+                var_11 = playerphysicstrace( var_0.object.node.origin, var_0.object.node.origin + anglestoforward( ( 0, var_10 + 180, 0 ) ) * 100 );
+                var_12 = distance2d( var_11, var_0.object.node.origin );
 
                 if ( var_12 < var_8 )
                 {
                     var_8 = var_12;
                     self _meth_8353( var_10, var_4 );
-                    self _meth_836D( var_0._id_62DE._id_02BF.origin, var_4, "script_forced" );
+                    self _meth_836D( var_0.object.node.origin, var_4, "script_forced" );
                 }
             }
 
-            while ( !var_3 && isdefined( var_2 ) && !var_2._id_1AAE )
+            while ( !var_3 && isdefined( var_2 ) && !var_2.canbeplaced )
             {
                 var_14 = float( gettime() - var_5 ) / 1000.0;
 
-                if ( !var_2._id_1AAE && var_14 > var_4 )
+                if ( !var_2.canbeplaced && var_14 > var_4 )
                 {
                     var_3 = 1;
-                    self._id_7CB5 = gettime() + 30000;
+                    self.sentry_place_delay = gettime() + 30000;
                 }
 
                 wait 0.05;
             }
         }
 
-        if ( isdefined( var_2 ) && var_2._id_1AAE )
+        if ( isdefined( var_2 ) && var_2.canbeplaced )
         {
-            _id_16DB();
+            bot_send_place_notify();
             var_1 = 1;
         }
     }
 
     wait 0.25;
-    _id_16E3();
+    bot_sentry_ensure_exit();
     return var_1;
 }
 
-_id_16DB()
+bot_send_place_notify()
 {
     self notify( "place_sentry" );
     self notify( "place_turret" );
     self notify( "placePlaceable" );
 }
 
-_id_16DA()
+bot_send_cancel_notify()
 {
-    self switchtoweapon( "none" );
-    self enableweapons();
-    self enableweaponswitch();
+    self _meth_8315( "none" );
+    self _meth_831E();
+    self _meth_8322();
     self notify( "cancel_sentry" );
     self notify( "cancel_turret" );
     self notify( "cancelPlaceable" );
 }
 
-_id_16DE( var_0 )
+bot_sentry_cancel( var_0 )
 {
     self notify( "bot_sentry_canceled" );
-    _id_16DA();
-    _id_16E3();
+    bot_send_cancel_notify();
+    bot_sentry_ensure_exit();
 }
 
-_id_16E3()
+bot_sentry_ensure_exit()
 {
     self notify( "bot_sentry_abort_goal_think" );
     self notify( "bot_sentry_ensure_exit" );
@@ -301,42 +301,42 @@ _id_16E3()
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
-    self switchtoweapon( "none" );
+    self _meth_8315( "none" );
     self _meth_8356();
     self _meth_8352( "none" );
-    self enableweapons();
-    self enableweaponswitch();
+    self _meth_831E();
+    self _meth_8322();
     wait 0.25;
     var_0 = 0;
 
-    while ( isdefined( _id_16E0() ) )
+    while ( isdefined( bot_sentry_carried_obj() ) )
     {
         var_0++;
-        _id_16DA();
+        bot_send_cancel_notify();
         wait 0.25;
 
         if ( var_0 > 2 )
-            _id_16E4();
+            bot_sentry_force_cancel();
     }
 
     self notify( "bot_sentry_exited" );
 }
 
-_id_16E4()
+bot_sentry_force_cancel()
 {
-    if ( isdefined( self._id_1BAD ) )
-        self._id_1BAD maps\mp\killstreaks\_autosentry::_id_7CB7();
+    if ( isdefined( self.carriedsentry ) )
+        self.carriedsentry maps\mp\killstreaks\_autosentry::sentry_setcancelled();
 
-    if ( isdefined( self._id_1BAE ) )
-        self._id_1BAE maps\mp\killstreaks\_remoteturret::_id_997F();
+    if ( isdefined( self.carriedturret ) )
+        self.carriedturret maps\mp\killstreaks\_remoteturret::turret_setcancelled();
 
-    if ( isdefined( self._id_1BAB ) )
-        self._id_1BAB maps\mp\killstreaks\_placeable::_id_6454( self._id_6867, 0 );
+    if ( isdefined( self.carrieditem ) )
+        self.carrieditem maps\mp\killstreaks\_placeable::oncancel( self.placingitemstreakname, 0 );
 
-    self._id_1BAD = undefined;
-    self._id_1BAE = undefined;
-    self._id_1BAB = undefined;
-    self switchtoweapon( "none" );
-    self enableweapons();
-    self enableweaponswitch();
+    self.carriedsentry = undefined;
+    self.carriedturret = undefined;
+    self.carrieditem = undefined;
+    self _meth_8315( "none" );
+    self _meth_831E();
+    self _meth_8322();
 }

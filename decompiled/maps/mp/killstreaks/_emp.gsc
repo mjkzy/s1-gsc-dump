@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -18,13 +18,13 @@ init()
 
     level.empowner = undefined;
     level.empplayer = undefined;
-    level._id_308F = 0;
+    level.empstreaksdisabled = 0;
     level.empequipmentdisabled = 0;
     level.empassistpoints = 0;
-    level._id_3083 = 0;
+    level.empexodisabled = 0;
     level.emptimeremaining = 0;
-    level thread _id_3073();
-    level.killstreakfuncs["emp"] = ::_id_3076;
+    level thread emp_playertracker();
+    level.killstreakfuncs["emp"] = ::emp_use;
     level thread onplayerconnect();
 }
 
@@ -75,26 +75,26 @@ onplayerspawned()
     {
         self waittill( "spawned_player" );
 
-        if ( _id_51C3() && !maps\mp\_utility::_hasperk( "specialty_empimmune" ) )
-            _id_0CAB();
+        if ( issystemhacked() && !maps\mp\_utility::_hasperk( "specialty_empimmune" ) )
+            applyemp();
 
         self waittill( "death" );
 
-        if ( self.team == "spectator" || _id_51C3() )
-            _id_739D();
+        if ( self.team == "spectator" || issystemhacked() )
+            removeemp();
     }
 }
 
-_id_51C3()
+issystemhacked()
 {
     return level.teambased && level.teamemped[self.team] || !level.teambased && isdefined( level.empplayer ) && level.empplayer != self;
 }
 
-_id_0CAB( var_0 )
+applyemp( var_0 )
 {
     var_1 = 2;
 
-    if ( level._id_3083 )
+    if ( level.empexodisabled )
     {
         var_1 = 1;
 
@@ -108,21 +108,21 @@ _id_0CAB( var_0 )
         }
     }
 
-    self._id_308E = maps\mp\gametypes\_scrambler::playersethudempscrambled( level.empendtime, var_1, "emp" );
+    self.empscrambleid = maps\mp\gametypes\_scrambler::playersethudempscrambled( level.empendtime, var_1, "emp" );
     self _meth_84BE( "digital_distort_mp" );
     self _meth_8064( 1.0, 1.0 );
-    self._id_3089 = 1;
+    self.empon = 1;
     self notify( "applyEMPkillstreak" );
     self setempjammed( 1, level.empequipmentdisabled );
 
     if ( isdefined( var_0 ) && var_0 == "emp_update" )
         self playsoundtoplayer( "emp_system_hacked", self );
 
-    thread _id_2FE5();
-    thread _id_6C83();
+    thread dynamicdistortion();
+    thread playerdelaystartsparkseffect();
 }
 
-_id_6C83()
+playerdelaystartsparkseffect()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -131,15 +131,15 @@ _id_6C83()
     if ( !isdefined( self.costume ) )
         self waittill( "player_model_set" );
 
-    if ( !isdefined( self._id_3085 ) )
+    if ( !isdefined( self.empfx ) )
     {
-        self._id_3085 = _func_2C1( common_scripts\utility::getfx( "emp_third_person_sparks" ), self, "j_shoulder_ri" );
-        triggerfx( self._id_3085 );
-        setwinningteam( self._id_3085, 1 );
+        self.empfx = _func_2C1( common_scripts\utility::getfx( "emp_third_person_sparks" ), self, "j_shoulder_ri" );
+        triggerfx( self.empfx );
+        setwinningteam( self.empfx, 1 );
     }
 }
 
-_id_2FE5()
+dynamicdistortion()
 {
     self notify( "dynamicDistortion" );
     self endon( "death" );
@@ -155,7 +155,7 @@ _id_2FE5()
 
     while ( var_0 < var_5 )
     {
-        if ( isdefined( self._id_3089 ) && !self._id_3089 )
+        if ( isdefined( self.empon ) && !self.empon )
             break;
 
         var_6 = ( var_5 - var_0 ) / var_5;
@@ -167,7 +167,7 @@ _id_2FE5()
     self _meth_8064( 0.0, 0.0 );
 }
 
-_id_739D( var_0 )
+removeemp( var_0 )
 {
     if ( maps\mp\_utility::isaugmentedgamemode() )
     {
@@ -178,47 +178,47 @@ _id_739D( var_0 )
         maps\mp\_utility::playerallowdodge( 1, "emp" );
     }
 
-    if ( isdefined( self._id_308E ) )
+    if ( isdefined( self.empscrambleid ) )
     {
-        maps\mp\gametypes\_scrambler::playersethudempscrambledoff( self._id_308E );
-        self._id_308E = undefined;
+        maps\mp\gametypes\_scrambler::playersethudempscrambledoff( self.empscrambleid );
+        self.empscrambleid = undefined;
     }
     else if ( self.team == "spectator" )
     {
-        self setclientomnvar( "ui_exo_reboot_end_time", 0 );
-        self setclientomnvar( "ui_exo_reboot_type", 0 );
+        self _meth_82FB( "ui_exo_reboot_end_time", 0 );
+        self _meth_82FB( "ui_exo_reboot_type", 0 );
     }
 
     self _meth_8064( 0.0, 0.0 );
-    self._id_3089 = undefined;
+    self.empon = undefined;
     self notify( "removeEMPkillstreak" );
     self setempjammed( 0 );
 
     if ( isdefined( var_0 ) && var_0 == "emp_update" )
         self playsoundtoplayer( "emp_system_reboot", self );
 
-    if ( isdefined( self._id_3085 ) )
-        self._id_3085 delete();
+    if ( isdefined( self.empfx ) )
+        self.empfx delete();
 }
 
-_id_3076( var_0, var_1 )
+emp_use( var_0, var_1 )
 {
     var_2 = self.pers["team"];
 
     if ( level.teambased )
     {
         var_3 = level.otherteam[var_2];
-        thread _id_3070( var_3, var_1 );
+        thread emp_jamteam( var_3, var_1 );
     }
     else
-        thread _id_306F( self, var_1 );
+        thread emp_jamplayers( self, var_1 );
 
     maps\mp\_matchdata::logkillstreakevent( "emp", self.origin );
     maps\mp\gametypes\_missions::processchallenge( "ch_streak_emp", 1 );
     return 1;
 }
 
-_id_306A( var_0 )
+emp_gettimeoutfrommodules( var_0 )
 {
     var_1 = 20.0;
 
@@ -233,7 +233,7 @@ _id_306A( var_0 )
     return var_1;
 }
 
-_id_3066( var_0 )
+emp_artifacts( var_0 )
 {
     self endon( "disconnect" );
     self notify( "EMP_Artifacts" );
@@ -242,12 +242,12 @@ _id_3066( var_0 )
     if ( isdefined( level.ishorde ) && level.ishorde )
         wait 0.1;
 
-    self setclientomnvar( "ui_hud_static", 2 );
+    self _meth_82FB( "ui_hud_static", 2 );
     wait(var_0);
-    self setclientomnvar( "ui_hud_static", 0 );
+    self _meth_82FB( "ui_hud_static", 0 );
 }
 
-_id_3070( var_0, var_1 )
+emp_jamteam( var_0, var_1 )
 {
     level endon( "game_ended" );
 
@@ -257,7 +257,7 @@ _id_3070( var_0, var_1 )
     level notify( "EMP_JamTeam" + var_0 );
     level endon( "EMP_JamTeam" + var_0 );
     level.empowner = self;
-    var_2 = _id_306A( var_1 );
+    var_2 = emp_gettimeoutfrommodules( var_1 );
 
     foreach ( var_4 in level.players )
     {
@@ -270,9 +270,9 @@ _id_3070( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 setmotiontrackervisible( 1 );
+            var_4 _meth_8212( 1 );
 
-        var_4 thread _id_3066( var_2 );
+        var_4 thread emp_artifacts( var_2 );
     }
 
     visionsetnaked( "coup_sunblind", 0.1 );
@@ -300,20 +300,20 @@ _id_3070( var_0, var_1 )
         visionsetnaked( "", 3.0 );
 
     level.teamemped[var_0] = 1;
-    level._id_308F = common_scripts\utility::array_contains( var_1, "emp_streak_kill" );
+    level.empstreaksdisabled = common_scripts\utility::array_contains( var_1, "emp_streak_kill" );
     level.empequipmentdisabled = common_scripts\utility::array_contains( var_1, "emp_equipment_kill" );
     level.empassistpoints = common_scripts\utility::array_contains( var_1, "emp_assist" );
-    level._id_3083 = common_scripts\utility::array_contains( var_1, "emp_exo_kill" );
+    level.empexodisabled = common_scripts\utility::array_contains( var_1, "emp_exo_kill" );
     level notify( "emp_update" );
     level.empendtime = gettime() + int( var_2 * 1000 );
 
-    if ( level._id_308F )
-        level _id_28DC( self, var_0 );
+    if ( level.empstreaksdisabled )
+        level destroyactivestreakvehicles( self, var_0 );
 
     if ( level.empequipmentdisabled )
-        level _id_28D7( self, var_0 );
+        level destroyactiveequipmentvehicles( self, var_0 );
 
-    level thread _id_52DA( var_2 );
+    level thread keepemptimeremaining( var_2 );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_2 );
     level.teamemped[var_0] = 0;
 
@@ -323,23 +323,23 @@ _id_3070( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 setmotiontrackervisible( 0 );
+            var_4 _meth_8212( 0 );
     }
 
     level.empowner = undefined;
-    level._id_308F = 0;
+    level.empstreaksdisabled = 0;
     level.empequipmentdisabled = 0;
     level.empassistpoints = 0;
-    level._id_3083 = 0;
+    level.empexodisabled = 0;
     level notify( "emp_update" );
 }
 
-_id_306F( var_0, var_1 )
+emp_jamplayers( var_0, var_1 )
 {
     level notify( "EMP_JamPlayers" );
     level endon( "EMP_JamPlayers" );
     level.empowner = var_0;
-    var_2 = _id_306A( var_1 );
+    var_2 = emp_gettimeoutfrommodules( var_1 );
 
     foreach ( var_4 in level.players )
     {
@@ -349,9 +349,9 @@ _id_306F( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 setmotiontrackervisible( 1 );
+            var_4 _meth_8212( 1 );
 
-        var_4 thread _id_3066( var_2 );
+        var_4 thread emp_artifacts( var_2 );
     }
 
     visionsetnaked( "coup_sunblind", 0.1 );
@@ -377,21 +377,21 @@ _id_306F( var_0, var_1 )
 
     level notify( "emp_update" );
     level.empplayer = var_0;
-    level.empplayer thread _id_308C();
-    level._id_308F = common_scripts\utility::array_contains( var_1, "emp_streak_kill" );
+    level.empplayer thread empplayerffadisconnect();
+    level.empstreaksdisabled = common_scripts\utility::array_contains( var_1, "emp_streak_kill" );
     level.empequipmentdisabled = common_scripts\utility::array_contains( var_1, "emp_equipment_kill" );
     level.empassistpoints = common_scripts\utility::array_contains( var_1, "emp_assist" );
-    level._id_3083 = common_scripts\utility::array_contains( var_1, "emp_exo_kill" );
+    level.empexodisabled = common_scripts\utility::array_contains( var_1, "emp_exo_kill" );
     level.empendtime = gettime() + int( var_2 * 1000 );
 
-    if ( level._id_308F )
-        level _id_28DC( var_0 );
+    if ( level.empstreaksdisabled )
+        level destroyactivestreakvehicles( var_0 );
 
     if ( level.empequipmentdisabled )
-        level _id_28D7( var_0 );
+        level destroyactiveequipmentvehicles( var_0 );
 
     level notify( "emp_update" );
-    level thread _id_52DA( var_2 );
+    level thread keepemptimeremaining( var_2 );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_2 );
 
     foreach ( var_4 in level.players )
@@ -400,20 +400,20 @@ _id_306F( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 setmotiontrackervisible( 0 );
+            var_4 _meth_8212( 0 );
     }
 
     level.empplayer = undefined;
     level.empowner = undefined;
-    level._id_308F = 0;
+    level.empstreaksdisabled = 0;
     level.empequipmentdisabled = 0;
     level.empassistpoints = 0;
-    level._id_3083 = 0;
+    level.empexodisabled = 0;
     level notify( "emp_update" );
     level notify( "emp_ended" );
 }
 
-_id_52DA( var_0 )
+keepemptimeremaining( var_0 )
 {
     level notify( "keepEMPTimeRemaining" );
     level endon( "keepEMPTimeRemaining" );
@@ -423,7 +423,7 @@ _id_52DA( var_0 )
         wait 1.0;
 }
 
-_id_308C()
+empplayerffadisconnect()
 {
     level endon( "EMP_JamPlayers" );
     level endon( "emp_ended" );
@@ -431,7 +431,7 @@ _id_308C()
     level notify( "emp_update" );
 }
 
-_id_3073()
+emp_playertracker()
 {
     for (;;)
     {
@@ -441,10 +441,10 @@ _id_3073()
         {
             if ( var_2.team == "spectator" )
             {
-                var_3 = var_2 getspectatingplayer();
+                var_3 = var_2 _meth_829D();
 
-                if ( !isdefined( var_3 ) || !var_3 _id_51C3() )
-                    var_2 _id_739D( var_0 );
+                if ( !isdefined( var_3 ) || !var_3 issystemhacked() )
+                    var_2 removeemp( var_0 );
 
                 continue;
             }
@@ -452,13 +452,13 @@ _id_3073()
             if ( var_2 maps\mp\_utility::_hasperk( "specialty_empimmune" ) )
                 continue;
 
-            if ( maps\mp\_utility::isreallyalive( var_2 ) && var_2 _id_51C3() && !level.gameended )
+            if ( maps\mp\_utility::isreallyalive( var_2 ) && var_2 issystemhacked() && !level.gameended )
             {
-                var_2 _id_0CAB( var_0 );
+                var_2 applyemp( var_0 );
                 continue;
             }
 
-            var_2 _id_739D( var_0 );
+            var_2 removeemp( var_0 );
         }
 
         if ( level.gameended )
@@ -468,40 +468,40 @@ _id_3073()
 
 destroyactivevehicles( var_0, var_1 )
 {
-    thread _id_28DC( var_0, var_1 );
-    thread _id_28D7( var_0, var_1 );
+    thread destroyactivestreakvehicles( var_0, var_1 );
+    thread destroyactiveequipmentvehicles( var_0, var_1 );
 }
 
-_id_28DC( var_0, var_1 )
+destroyactivestreakvehicles( var_0, var_1 )
 {
-    thread _id_28D8( var_0, var_1 );
-    thread _id_28D9( var_0, var_1 );
-    thread _id_28DD( var_0, var_1 );
-    thread _id_28DB( var_0, var_1 );
-    thread _id_28DE( var_0, var_1 );
-    thread _id_28DF( var_0, var_1 );
-    thread _id_28DA( var_0, var_1 );
+    thread destroyactivehelis( var_0, var_1 );
+    thread destroyactivelittlebirds( var_0, var_1 );
+    thread destroyactiveturrets( var_0, var_1 );
+    thread destroyactiverockets( var_0, var_1 );
+    thread destroyactiveuavs( var_0, var_1 );
+    thread destroyactiveugvs( var_0, var_1 );
+    thread destroyactiveorbitallasers( var_0, var_1 );
     thread destroyactivegoliaths( var_0, var_1 );
 }
 
-_id_28D7( var_0, var_1 )
+destroyactiveequipmentvehicles( var_0, var_1 )
 {
-    thread _id_28D6( var_0, var_1 );
+    thread destroyactivedrones( var_0, var_1 );
 }
 
-_id_28E9( var_0, var_1, var_2, var_3 )
+destroyempobjectsinradius( var_0, var_1, var_2, var_3 )
 {
-    thread _id_28D8( var_0, var_1, var_2, var_3 );
-    thread _id_28D9( var_0, var_1, var_2, var_3 );
-    thread _id_28DD( var_0, var_1, var_2, var_3 );
-    thread _id_28DB( var_0, var_1, var_2, var_3 );
-    thread _id_28DE( var_0, var_1, var_2, var_3 );
-    thread _id_28DF( var_0, var_1, var_2, var_3 );
-    thread _id_28DA( var_0, var_1, var_2, var_3 );
-    thread _id_28D6( var_0, var_1, var_2, var_3 );
+    thread destroyactivehelis( var_0, var_1, var_2, var_3 );
+    thread destroyactivelittlebirds( var_0, var_1, var_2, var_3 );
+    thread destroyactiveturrets( var_0, var_1, var_2, var_3 );
+    thread destroyactiverockets( var_0, var_1, var_2, var_3 );
+    thread destroyactiveuavs( var_0, var_1, var_2, var_3 );
+    thread destroyactiveugvs( var_0, var_1, var_2, var_3 );
+    thread destroyactiveorbitallasers( var_0, var_1, var_2, var_3 );
+    thread destroyactivedrones( var_0, var_1, var_2, var_3 );
 }
 
-_id_28D8( var_0, var_1, var_2, var_3 )
+destroyactivehelis( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -530,22 +530,22 @@ _id_28D8( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
 
-_id_28D9( var_0, var_1, var_2, var_3 )
+destroyactivelittlebirds( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
     var_6 = 5000;
     var_7 = common_scripts\utility::array_combine( level.planes, level.littlebirds );
 
-    foreach ( var_9 in level._id_1B99 )
+    foreach ( var_9 in level.carepackagedrones )
     {
-        if ( isdefined( var_9._id_2361 ) )
-            var_7[var_7.size] = var_9._id_2361;
+        if ( isdefined( var_9.crate ) )
+            var_7[var_7.size] = var_9.crate;
     }
 
     foreach ( var_12 in var_7 )
@@ -568,15 +568,15 @@ _id_28D9( var_0, var_1, var_2, var_3 )
 
         var_6 = var_12.maxhealth + 1;
 
-        if ( isdefined( var_12._id_2383 ) )
-            var_12 = var_12._id_32B4;
+        if ( isdefined( var_12.cratetype ) )
+            var_12 = var_12.enemymodel;
 
-        var_12 dodamage( var_6, var_12.origin, var_0, var_0, var_4, var_5 );
+        var_12 _meth_8051( var_6, var_12.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
 
-_id_28DD( var_0, var_1, var_2, var_3 )
+destroyactiveturrets( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -601,7 +601,7 @@ _id_28DD( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_8.maxhealth + 1;
-        var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+        var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
     }
 
     if ( isdefined( level.ishorde ) && level.ishorde )
@@ -614,7 +614,7 @@ _id_28DD( var_0, var_1, var_2, var_3 )
     }
 }
 
-_id_28DB( var_0, var_1, var_2, var_3 )
+destroyactiverockets( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -622,7 +622,7 @@ _id_28DB( var_0, var_1, var_2, var_3 )
 
     foreach ( var_8 in level.rockets )
     {
-        if ( isdefined( var_8.weaponname ) && _id_85BB( var_8.weaponname ) )
+        if ( isdefined( var_8.weaponname ) && skiprocketemp( var_8.weaponname ) )
             continue;
 
         if ( level.teambased && isdefined( var_1 ) )
@@ -641,14 +641,14 @@ _id_28DB( var_0, var_1, var_2, var_3 )
                 continue;
         }
 
-        if ( _id_8486( var_8 ) )
+        if ( shoulddamagerocket( var_8 ) )
         {
             var_6 = var_8.maxhealth + 1;
-            var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+            var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
         }
         else
         {
-            playfx( level._id_7323["explode"], var_8.origin );
+            playfx( level.remotemissile_fx["explode"], var_8.origin );
             var_8 delete();
         }
 
@@ -656,17 +656,17 @@ _id_28DB( var_0, var_1, var_2, var_3 )
     }
 }
 
-_id_8486( var_0 )
+shoulddamagerocket( var_0 )
 {
     return isdefined( var_0.damagecallback );
 }
 
-_id_85BB( var_0 )
+skiprocketemp( var_0 )
 {
     return var_0 == "orbital_carepackage_pod_mp";
 }
 
-_id_28DE( var_0, var_1, var_2, var_3 )
+destroyactiveuavs( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -694,12 +694,12 @@ _id_28DE( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
 
-_id_28DF( var_0, var_1, var_2, var_3 )
+destroyactiveugvs( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -724,12 +724,12 @@ _id_28DF( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_8.maxhealth + 1;
-        var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+        var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
 
-_id_28D6( var_0, var_1, var_2, var_3 )
+destroyactivedrones( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
@@ -755,7 +755,7 @@ _id_28D6( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
     }
 
     foreach ( var_13 in level.grenades )
@@ -783,19 +783,19 @@ _id_28D6( var_0, var_1, var_2, var_3 )
     }
 }
 
-_id_28DA( var_0, var_1, var_2, var_3 )
+destroyactiveorbitallasers( var_0, var_1, var_2, var_3 )
 {
     var_4 = "MOD_EXPLOSIVE";
     var_5 = "killstreak_emp_mp";
     var_6 = 5000;
-    var_7 = ( 0.0, 0.0, 0.0 );
-    var_8 = ( 0.0, 0.0, 0.0 );
+    var_7 = ( 0, 0, 0 );
+    var_8 = ( 0, 0, 0 );
     var_9 = "";
     var_10 = "";
     var_11 = "";
     var_12 = undefined;
 
-    foreach ( var_14 in level._id_654F )
+    foreach ( var_14 in level.orbital_lasers )
     {
         if ( level.teambased && isdefined( var_1 ) )
         {
@@ -830,7 +830,7 @@ destroyactivegoliaths( var_0, var_1 )
                 continue;
             }
 
-            var_3 thread maps\mp\killstreaks\_juggernaut::_id_6CD6( var_3.origin, var_0, "MOD_EXPLOSIVE", "killstreak_goliathsd_mp" );
+            var_3 thread maps\mp\killstreaks\_juggernaut::playerkillheavyexo( var_3.origin, var_0, "MOD_EXPLOSIVE", "killstreak_goliathsd_mp" );
         }
     }
 }

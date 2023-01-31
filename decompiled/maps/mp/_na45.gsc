@@ -1,12 +1,12 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
     level._effect["primer_light"] = loadfx( "vfx/lights/light_beacon_m990_spike" );
     level._effect["na45_explosion"] = loadfx( "vfx/explosion/frag_grenade_default" );
     level._effect["na45_explosion_body"] = loadfx( "vfx/explosion/frag_grenade_default_nodecal" );
-    thread _id_5DCA();
+    thread monitor_na45_use();
 }
 
 is_na45( var_0 )
@@ -17,19 +17,19 @@ is_na45( var_0 )
     return 0;
 }
 
-_id_5DCA()
+monitor_na45_use()
 {
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "faux_spawn" );
-    childthread _id_7433();
+    childthread reset_shot_on_reload();
 
     for (;;)
     {
-        var_0 = self getcurrentweapon();
+        var_0 = self _meth_8311();
 
         if ( is_na45( var_0 ) )
-            self.bullethitcallback = ::_id_58C0;
+            self.bullethitcallback = ::m990_hit;
         else
             self.bullethitcallback = undefined;
 
@@ -37,7 +37,7 @@ _id_5DCA()
     }
 }
 
-_id_96E7( var_0, var_1 )
+transfer_primer_to_corpse( var_0, var_1 )
 {
     self endon( "primer_deleted" );
     var_0 waittill( "death" );
@@ -46,44 +46,44 @@ _id_96E7( var_0, var_1 )
     if ( isdefined( var_2 ) )
     {
         if ( isdefined( var_1 ) )
-            self._id_6F8F linkto( var_2, var_1 );
+            self.primer _meth_804D( var_2, var_1 );
         else
-            self._id_6F8F linkto( var_2 );
+            self.primer _meth_804D( var_2 );
 
-        self._id_6F8F thread _id_84E4( self );
+        self.primer thread show_primer_fx( self );
     }
 }
 
-_id_58C0( var_0, var_1, var_2, var_3, var_4, var_5 )
+m990_hit( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     if ( !is_na45( var_0 ) )
         return;
 
-    if ( self getcurrentweapon() != var_0 )
+    if ( self _meth_8311() != var_0 )
         return;
 
-    var_6 = _id_3D1E();
+    var_6 = get_current_shot();
 
     if ( var_6 == "primer" )
     {
-        if ( isdefined( self._id_6F8F ) )
-            _id_282F();
+        if ( isdefined( self.primer ) )
+            delete_primer();
 
-        self._id_6F8F = common_scripts\utility::spawn_tag_origin();
+        self.primer = common_scripts\utility::spawn_tag_origin();
 
         if ( isdefined( var_3 ) && ( isplayer( var_3 ) || isagent( var_3 ) ) )
         {
-            self._id_6F8F.origin = var_1 + var_4;
-            self._id_6F8F.angles = vectortoangles( var_4 * -1 );
+            self.primer.origin = var_1 + var_4;
+            self.primer.angles = vectortoangles( var_4 * -1 );
         }
         else
         {
-            self._id_6F8F.origin = var_1;
-            self._id_6F8F.angles = vectortoangles( var_2 );
+            self.primer.origin = var_1;
+            self.primer.angles = vectortoangles( var_2 );
         }
 
-        self._id_6F8F show();
-        self._id_6F8F thread _id_84E4( self );
+        self.primer show();
+        self.primer thread show_primer_fx( self );
 
         if ( isdefined( var_3 ) )
         {
@@ -92,7 +92,7 @@ _id_58C0( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( isplayer( var_3 ) || isagent( var_3 ) )
             {
                 if ( isalive( var_3 ) )
-                    thread _id_96E7( var_3, var_5 );
+                    thread transfer_primer_to_corpse( var_3, var_5 );
                 else
                 {
                     var_8 = var_3 _meth_842C();
@@ -101,28 +101,28 @@ _id_58C0( var_0, var_1, var_2, var_3, var_4, var_5 )
                         var_7 = var_8;
                 }
 
-                self._id_6F8F._id_6453 = 1;
+                self.primer.onbody = 1;
             }
 
             if ( isdefined( var_5 ) )
-                self._id_6F8F linkto( var_7, var_5 );
+                self.primer _meth_804D( var_7, var_5 );
             else
-                self._id_6F8F linkto( var_7 );
+                self.primer _meth_804D( var_7 );
         }
 
-        thread _id_1E7B();
+        thread cleanup_primer();
     }
-    else if ( isdefined( self._id_6F8F ) )
+    else if ( isdefined( self.primer ) )
     {
-        if ( distance( var_1, self._id_6F8F.origin ) <= 64 )
+        if ( distance( var_1, self.primer.origin ) <= 64 )
         {
-            if ( isdefined( self._id_6F8F._id_6453 ) )
-                playfx( common_scripts\utility::getfx( "na45_explosion_body" ), self._id_6F8F.origin, anglestoforward( self._id_6F8F.angles ) );
+            if ( isdefined( self.primer.onbody ) )
+                playfx( common_scripts\utility::getfx( "na45_explosion_body" ), self.primer.origin, anglestoforward( self.primer.angles ) );
             else
-                playfx( common_scripts\utility::getfx( "na45_explosion" ), self._id_6F8F.origin, anglestoforward( self._id_6F8F.angles ) );
+                playfx( common_scripts\utility::getfx( "na45_explosion" ), self.primer.origin, anglestoforward( self.primer.angles ) );
 
             playsoundatpos( self.origin, "wpn_na45_exp" );
-            var_0 = self getcurrentweapon();
+            var_0 = self _meth_8311();
             var_9 = 256;
             var_10 = 130;
             var_11 = 15;
@@ -146,20 +146,20 @@ _id_58C0( var_0, var_1, var_2, var_3, var_4, var_5 )
                 var_9 = 300;
             }
 
-            physicsexplosionsphere( self._id_6F8F.origin, 256, 32, 1.0 );
-            radiusdamage( self._id_6F8F.origin, var_9, var_10, var_11, self, "MOD_EXPLOSIVE", var_0 );
+            physicsexplosionsphere( self.primer.origin, 256, 32, 1.0 );
+            radiusdamage( self.primer.origin, var_9, var_10, var_11, self, "MOD_EXPLOSIVE", var_0 );
         }
 
-        _id_282F();
+        delete_primer();
     }
 }
 
-_id_7433()
+reset_shot_on_reload()
 {
     for (;;)
     {
         self waittill( "reload_start" );
-        var_0 = self getcurrentweapon();
+        var_0 = self _meth_8311();
 
         if ( !is_na45( var_0 ) )
         {
@@ -167,28 +167,28 @@ _id_7433()
             continue;
         }
 
-        _id_1E7C();
+        cleanup_primer_reload();
     }
 }
 
-_id_1E7B()
+cleanup_primer()
 {
     self endon( "primer_deleted" );
     common_scripts\utility::waittill_any( "death", "disconnect", "faux_spawn" );
 
-    if ( isdefined( self ) && isdefined( self._id_6F8F ) )
-        thread _id_282F();
+    if ( isdefined( self ) && isdefined( self.primer ) )
+        thread delete_primer();
 }
 
-_id_1E7C()
+cleanup_primer_reload()
 {
     self endon( "primer_deleted" );
 
-    if ( isdefined( self ) && isdefined( self._id_6F8F ) )
-        thread _id_282F();
+    if ( isdefined( self ) && isdefined( self.primer ) )
+        thread delete_primer();
 }
 
-_id_3D1E()
+get_current_shot()
 {
     var_0 = self _meth_82F0();
 
@@ -198,25 +198,25 @@ _id_3D1E()
         return "catalyst";
 }
 
-_id_84E4( var_0 )
+show_primer_fx( var_0 )
 {
     self endon( "death" );
     wait 0.1;
     playfxontagforclients( common_scripts\utility::getfx( "primer_light" ), self, "TAG_ORIGIN", var_0 );
 }
 
-_id_282F()
+delete_primer()
 {
     self notify( "primer_deleted" );
-    stopfxontag( common_scripts\utility::getfx( "primer_light" ), self._id_6F8F, "TAG_ORIGIN" );
-    self._id_6F8F delete();
-    self._id_6F8F = undefined;
+    stopfxontag( common_scripts\utility::getfx( "primer_light" ), self.primer, "TAG_ORIGIN" );
+    self.primer delete();
+    self.primer = undefined;
 }
 
-_id_2DAF( var_0, var_1, var_2, var_3 )
+draw_distance_line( var_0, var_1, var_2, var_3 )
 {
     if ( !isdefined( var_3 ) )
-        var_3 = ( 1.0, 0.0, 0.0 );
+        var_3 = ( 1, 0, 0 );
 
     while ( var_2 > 0 )
     {

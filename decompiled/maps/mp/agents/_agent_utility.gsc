@@ -1,43 +1,43 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 agentfunc( var_0 )
 {
-    return level._id_0897[self.agent_type][var_0];
+    return level.agent_funcs[self.agent_type][var_0];
 }
 
-_id_7DAB( var_0, var_1 )
+set_agent_team( var_0, var_1 )
 {
     self.team = var_0;
-    self._id_001D = var_0;
+    self.agentteam = var_0;
     self.pers["team"] = var_0;
     self.owner = var_1;
-    self setotherent( var_1 );
-    self setentityowner( var_1 );
+    self _meth_8383( var_1 );
+    self _meth_8385( var_1 );
 }
 
-_id_4D7C()
+initagentscriptvariables()
 {
     self.agent_type = "player";
     self.pers = [];
-    self._id_4723 = 0;
+    self.hasdied = 0;
     self.isactive = 0;
-    self._id_50A8 = 1;
+    self.isagent = 1;
     self.wasti = 0;
     self.issniper = 0;
     self.spawntime = 0;
-    self.entity_number = self getentitynumber();
+    self.entity_number = self _meth_81B1();
     self.agent_teamparticipant = 0;
     self.agent_gameparticipant = 0;
     self.canperformclienttraces = 0;
     self.agentname = undefined;
-    self._id_01FC = 0;
+    self.ignoreall = 0;
     self.ignoreme = 0;
     self detachall();
-    _id_4DFC( 0 );
+    initplayerscriptvariables( 0 );
 }
 
-_id_4DFC( var_0 )
+initplayerscriptvariables( var_0 )
 {
     if ( !var_0 )
     {
@@ -95,7 +95,7 @@ _id_4DFC( var_0 )
     self.disabledusability = 1;
 }
 
-_id_3FA0( var_0 )
+getfreeagent( var_0 )
 {
     var_1 = undefined;
 
@@ -103,16 +103,16 @@ _id_3FA0( var_0 )
     {
         foreach ( var_3 in level.agentarray )
         {
-            if ( ( !isdefined( var_3.isactive ) || !var_3.isactive ) && ( !isdefined( var_3._id_518A ) || !var_3._id_518A ) )
+            if ( ( !isdefined( var_3.isactive ) || !var_3.isactive ) && ( !isdefined( var_3.isreserved ) || !var_3.isreserved ) )
             {
-                if ( isdefined( var_3._id_A041 ) && var_3._id_A041 )
+                if ( isdefined( var_3.waitingtodeactivate ) && var_3.waitingtodeactivate )
                     continue;
 
                 if ( isdefined( level.despawning_agents ) && common_scripts\utility::array_contains( level.despawning_agents, var_3 ) )
                     continue;
 
                 var_1 = var_3;
-                var_1 _id_4D7C();
+                var_1 initagentscriptvariables();
 
                 if ( isdefined( var_0 ) )
                     var_1.agent_type = var_0;
@@ -125,17 +125,17 @@ _id_3FA0( var_0 )
     return var_1;
 }
 
-_id_070B()
+activateagent()
 {
     self.isactive = 1;
 }
 
-_id_2630()
+deactivateagent()
 {
-    thread _id_2631();
+    thread deactivateagentdelayed();
 }
 
-_id_2631()
+deactivateagentdelayed()
 {
     self notify( "deactivateAgentDelayed" );
     self endon( "deactivateAgentDelayed" );
@@ -152,10 +152,10 @@ _id_2631()
     maps\mp\gametypes\_spawnlogic::removefromcharactersarray();
     wait 0.05;
     self.isactive = 0;
-    self._id_4723 = 0;
+    self.hasdied = 0;
     self.owner = undefined;
     self.connecttime = undefined;
-    self._id_A041 = undefined;
+    self.waitingtodeactivate = undefined;
 
     foreach ( var_1 in level.characters )
     {
@@ -176,16 +176,16 @@ _id_2631()
     level.despawning_agents = common_scripts\utility::array_remove( level.despawning_agents, self );
 }
 
-_id_4052( var_0 )
+getnumactiveagents( var_0 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = "all";
 
-    var_1 = _id_3ED7( var_0 );
+    var_1 = getactiveagentsoftype( var_0 );
     return var_1.size;
 }
 
-_id_3ED7( var_0 )
+getactiveagentsoftype( var_0 )
 {
     var_1 = [];
 
@@ -204,12 +204,12 @@ _id_3ED7( var_0 )
     return var_1;
 }
 
-_id_4054( var_0 )
+getnumownedactiveagents( var_0 )
 {
-    return _id_4055( var_0, "all" );
+    return getnumownedactiveagentsbytype( var_0, "all" );
 }
 
-_id_4055( var_0, var_1 )
+getnumownedactiveagentsbytype( var_0, var_1 )
 {
     var_2 = 0;
 
@@ -231,21 +231,21 @@ _id_4055( var_0, var_1 )
     return var_2;
 }
 
-_id_414A( var_0, var_1 )
+getvalidspawnpathnodenearplayer( var_0, var_1 )
 {
     var_2 = getnodesinradius( self.origin, 350, 64, 128, "Path" );
 
     if ( !isdefined( var_2 ) || var_2.size == 0 )
         return undefined;
 
-    if ( isdefined( level._id_A28E ) && isdefined( level._id_981A ) )
+    if ( isdefined( level.waterdeletez ) && isdefined( level.trigunderwater ) )
     {
         var_3 = var_2;
         var_2 = [];
 
         foreach ( var_5 in var_3 )
         {
-            if ( var_5.origin[2] > level._id_A28E || !_func_22A( var_5.origin, level._id_981A ) )
+            if ( var_5.origin[2] > level.waterdeletez || !_func_22A( var_5.origin, level.trigunderwater ) )
                 var_2[var_2.size] = var_5;
         }
     }
@@ -331,12 +331,12 @@ _id_414A( var_0, var_1 )
         return var_11[0];
 }
 
-_id_5346( var_0 )
+killagent( var_0 )
 {
-    var_0 dodamage( var_0.health + 500000, var_0.origin );
+    var_0 _meth_8051( var_0.health + 500000, var_0.origin );
 }
 
-_id_5357()
+killdog()
 {
-    self [[ agentfunc( "on_damaged" ) ]]( level, undefined, self.health + 1, 0, "MOD_CRUSH", "none", ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ), "none", 0 );
+    self [[ agentfunc( "on_damaged" ) ]]( level, undefined, self.health + 1, 0, "MOD_CRUSH", "none", ( 0, 0, 0 ), ( 0, 0, 0 ), "none", 0 );
 }

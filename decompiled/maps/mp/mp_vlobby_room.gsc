@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -9,34 +9,34 @@ main()
     precachemodel( "training_target_civ1" );
     precacheshader( "ac130_overlay_pip_vignette_vlobby" );
     precacheshader( "ac130_overlay_pip_vignette_vlobby_cao" );
-    _id_A77E::main();
+    maps\mp\mp_vlobby_room_precache::main();
     maps\createart\mp_vlobby_room_art::main();
-    _id_A77D::main();
+    maps\mp\mp_vlobby_room_fx::main();
     maps\mp\_load::main();
     maps\mp\mp_vlobby_room_lighting::main();
     maps\mp\mp_vlobby_room_aud::main();
     game["attackers"] = "allies";
     game["defenders"] = "axis";
-    level._id_9E98 = ::_id_9E98;
-    level._id_9E9C = ::_id_9E9C;
-    level._id_9E9E = ::_id_9E9E;
-    thread _id_9E9B();
-    _id_A75B::_id_9E9D();
-    level._id_2C75 = spawnstruct();
-    level._id_2C75._id_3ADB = 0.25;
-    level._id_2C75._id_7830 = -0.3;
-    level._id_2C75._id_3ADA = 3;
-    thread _id_35D8();
+    level.vl_dof_based_on_focus = ::vl_dof_based_on_focus;
+    level.vl_handle_mode_change = ::vl_handle_mode_change;
+    level.vl_lighting_setup = ::vl_lighting_setup;
+    thread vl_ground_setup();
+    maps\mp\_vl_base::vl_init();
+    level.dof_tuner = spawnstruct();
+    level.dof_tuner.fstopperunit = 0.25;
+    level.dof_tuner.scaler = -0.3;
+    level.dof_tuner.fstopbase = 3;
+    thread fade_from_black();
 }
 
-_id_35D8()
+fade_from_black()
 {
     level waittill( "connected", var_0 );
     var_0 waittill( "fade_in" );
     var_0 _meth_84D7( "mp_no_foley", 1 );
 }
 
-_id_9E9B()
+vl_ground_setup()
 {
     var_0 = getent( "teleport_from", "targetname" );
     var_1 = getent( "teleport_to", "targetname" );
@@ -51,26 +51,26 @@ _id_9E9B()
         var_8 hide();
 }
 
-_id_9E9E()
+vl_lighting_setup()
 {
     var_0 = self;
     var_0 _meth_84A9();
 
     if ( level.nextgen )
-        var_0 _meth_84AB( 0.613159, 89.8318, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 * 2 );
+        var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time * 2 );
     else
-        var_0 _meth_84AB( 4.01284, 95.2875, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 * 2 );
+        var_0 _meth_84AB( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time * 2 );
 }
 
-_id_9E98( var_0 )
+vl_dof_based_on_focus( var_0 )
 {
-    var_1 = level._id_1A3E._id_2C73;
+    var_1 = level.camparams.dof_time;
     var_2 = self;
     var_3 = var_0;
     var_2 = self;
-    var_4 = level._id_2C75._id_3ADB;
-    var_5 = level._id_2C75._id_7830;
-    var_6 = level._id_2C75._id_3ADA;
+    var_4 = level.dof_tuner.fstopperunit;
+    var_5 = level.dof_tuner.scaler;
+    var_6 = level.dof_tuner.fstopbase;
 
     if ( level.currentgen )
         var_6 += 2;
@@ -87,12 +87,12 @@ _id_9E98( var_0 )
     var_2 _meth_84AB( var_9, var_3, var_1, var_1 * 2 );
 }
 
-_id_9E9C( var_0, var_1, var_2 )
+vl_handle_mode_change( var_0, var_1, var_2 )
 {
     var_3 = self;
 
     if ( var_0 == "cac" )
-        var_3 _id_7F47();
+        var_3 setdefaultpostfx();
     else if ( var_0 == "cao" )
     {
 
@@ -100,25 +100,25 @@ _id_9E9C( var_0, var_1, var_2 )
 
     if ( var_1 == "cac" )
     {
-        var_3 visionsetnakedforplayer( "mp_vlobby_room_cac", 0 );
-        var_3 lightsetforplayer( "mp_vl_create_a_class" );
+        var_3 _meth_82D4( "mp_vlobby_room_cac", 0 );
+        var_3 _meth_83C0( "mp_vl_create_a_class" );
     }
     else if ( var_1 == "cao" )
     {
         if ( level.nextgen )
-            var_3 _meth_84AB( 1.223, 156.419, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 );
+            var_3 _meth_84AB( 1.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
         else
-            var_3 _meth_84AB( 3.223, 156.419, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 );
+            var_3 _meth_84AB( 3.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
     }
     else if ( var_1 == "clanprofile" )
     {
-        var_3 _id_7F47();
-        var_3 maps\mp\_vl_camera::_id_7DD5();
+        var_3 setdefaultpostfx();
+        var_3 maps\mp\_vl_camera::set_avatar_dof();
     }
     else if ( var_1 == "prelobby" )
     {
-        var_3 _id_7F44();
-        var_3 _id_7F47();
+        var_3 setdefaultdof();
+        var_3 setdefaultpostfx();
     }
     else
     {
@@ -133,8 +133,8 @@ _id_9E9C( var_0, var_1, var_2 )
 
         if ( var_1 == "game_lobby" )
         {
-            var_3 _id_7F47();
-            var_3 maps\mp\_vl_camera::_id_7DD5();
+            var_3 setdefaultpostfx();
+            var_3 maps\mp\_vl_camera::set_avatar_dof();
         }
         else
         {
@@ -146,8 +146,8 @@ _id_9E9C( var_0, var_1, var_2 )
 
             if ( var_1 == "clanprofile" )
             {
-                var_3 _id_7F44();
-                var_3 _id_7F47();
+                var_3 setdefaultdof();
+                var_3 setdefaultpostfx();
             }
             else
             {
@@ -160,19 +160,19 @@ _id_9E9C( var_0, var_1, var_2 )
     }
 }
 
-_id_7F47()
+setdefaultpostfx()
 {
     var_0 = self;
-    var_0 visionsetnakedforplayer( "mp_vlobby_room", 0 );
-    var_0 lightsetforplayer( "mp_vlobby_room" );
+    var_0 _meth_82D4( "mp_vlobby_room", 0 );
+    var_0 _meth_83C0( "mp_vlobby_room" );
 }
 
-_id_7F44()
+setdefaultdof()
 {
     var_0 = self;
 
     if ( level.nextgen )
-        var_0 _meth_84AB( 0.613159, 89.8318, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 );
+        var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
     else
-        var_0 _meth_84AB( 4.01284, 95.2875, level._id_1A3E._id_2C73, level._id_1A3E._id_2C73 );
+        var_0 _meth_84AB( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time );
 }

@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -139,8 +139,8 @@ onstartgametype()
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_sd_spawn_attacker" );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_sd_spawn_defender" );
     maps\mp\gametypes\_spawnlogic::addspawnpoints( "attacker", "mp_tdm_spawn" );
@@ -186,9 +186,9 @@ onspawnplayer()
     if ( isplayer( self ) && !var_0 )
     {
         if ( level.multibomb && self.pers["team"] == game["attackers"] )
-            self setclientomnvar( "ui_carrying_bomb", 1 );
+            self _meth_82FB( "ui_carrying_bomb", 1 );
         else
-            self setclientomnvar( "ui_carrying_bomb", 0 );
+            self _meth_82FB( "ui_carrying_bomb", 0 );
     }
 
     self.isrespawningwithbombcarrierclass = undefined;
@@ -237,7 +237,7 @@ shouldspawntags( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
     if ( isplayer( self ) )
-        self setclientomnvar( "ui_carrying_bomb", 0 );
+        self _meth_82FB( "ui_carrying_bomb", 0 );
 
     if ( !maps\mp\_utility::gameflag( "prematch_done" ) )
         maps\mp\gametypes\_playerlogic::mayspawn();
@@ -266,7 +266,7 @@ spawndogtags( var_0, var_1 )
     if ( isagent( var_1 ) )
         var_1 = var_1.owner;
 
-    var_2 = var_0.origin + ( 0.0, 0.0, 14.0 );
+    var_2 = var_0.origin + ( 0, 0, 14 );
 
     if ( isdefined( level.dogtags[var_0.guid] ) )
     {
@@ -275,16 +275,16 @@ spawndogtags( var_0, var_1 )
     }
     else
     {
-        var_3[0] = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-        var_3[0] setclientowner( var_0 );
-        var_3[0] setmodel( "prop_dogtags_future_enemy_animated" );
+        var_3[0] = spawn( "script_model", ( 0, 0, 0 ) );
+        var_3[0] _meth_8382( var_0 );
+        var_3[0] _meth_80B1( "prop_dogtags_future_enemy_animated" );
         var_3[0] _meth_856C( 1 );
-        var_3[1] = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-        var_3[1] setclientowner( var_0 );
-        var_3[1] setmodel( "prop_dogtags_future_friend_animated" );
+        var_3[1] = spawn( "script_model", ( 0, 0, 0 ) );
+        var_3[1] _meth_8382( var_0 );
+        var_3[1] _meth_80B1( "prop_dogtags_future_friend_animated" );
         var_3[1] _meth_856C( 1 );
-        var_4 = spawn( "trigger_radius", ( 0.0, 0.0, 0.0 ), 0, 32, 32 );
-        level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0.0, 0.0, 16.0 ) );
+        var_4 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
+        level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0, 0, 16 ) );
         maps\mp\gametypes\_objpoints::deleteobjpoint( level.dogtags[var_0.guid].objpoints["allies"] );
         maps\mp\gametypes\_objpoints::deleteobjpoint( level.dogtags[var_0.guid].objpoints["axis"] );
         maps\mp\gametypes\_objpoints::deleteobjpoint( level.dogtags[var_0.guid].objpoints["mlg"] );
@@ -329,8 +329,8 @@ spawndogtags( var_0, var_1 )
     level notify( "sr_player_killed", var_0 );
     var_0.tagavailable = 1;
     var_0.objective = 3;
-    level.dogtags[var_0.guid].visuals[0] scriptmodelplayanim( "mp_dogtag_spin" );
-    level.dogtags[var_0.guid].visuals[1] scriptmodelplayanim( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[0] _meth_8279( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[1] _meth_8279( "mp_dogtag_spin" );
 }
 
 showtoteam( var_0, var_1 )
@@ -453,10 +453,10 @@ resettags()
     self notify( "reset" );
     self.visuals[0] hide();
     self.visuals[1] hide();
-    self.curorigin = ( 0.0, 0.0, 1000.0 );
-    self.trigger.origin = ( 0.0, 0.0, 1000.0 );
-    self.visuals[0].origin = ( 0.0, 0.0, 1000.0 );
-    self.visuals[1].origin = ( 0.0, 0.0, 1000.0 );
+    self.curorigin = ( 0, 0, 1000 );
+    self.trigger.origin = ( 0, 0, 1000 );
+    self.visuals[0].origin = ( 0, 0, 1000 );
+    self.visuals[1].origin = ( 0, 0, 1000 );
     maps\mp\gametypes\_gameobjects::allowuse( "none" );
     objective_state( self.objidallies, "invisible" );
     objective_state( self.objidaxis, "invisible" );

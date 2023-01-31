@@ -1,26 +1,26 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_96C4()
+trams()
 {
-    level._id_96C4 = getentarray( "ambient_tram", "targetname" );
-    common_scripts\utility::array_thread( level._id_96C4, ::_id_96AA );
+    level.trams = getentarray( "ambient_tram", "targetname" );
+    common_scripts\utility::array_thread( level.trams, ::tram_init );
     var_0 = [ "mp_detroit_train_01", "mp_detroit_train_02" ];
 
     foreach ( var_2 in var_0 )
         map_restart( var_2 );
 
-    foreach ( var_5 in level._id_96C4 )
-        var_5 playloopsound( "mp_detroit_tram_close" );
+    foreach ( var_5 in level.trams )
+        var_5 _meth_8075( "mp_detroit_tram_close" );
 
     for (;;)
     {
-        foreach ( var_5 in level._id_96C4 )
+        foreach ( var_5 in level.trams )
         {
-            if ( !var_5._id_0014 )
+            if ( !var_5.active )
             {
                 var_8 = common_scripts\utility::random( var_0 );
-                var_5 thread _id_96A8( var_8 );
+                var_5 thread tram_animate( var_8 );
                 break;
             }
         }
@@ -29,59 +29,59 @@ _id_96C4()
     }
 }
 
-_id_62E0()
+object_init_reset()
 {
-    self._id_7430 = self.origin;
-    self._id_741E = self.angles;
+    self.reset_origin = self.origin;
+    self.reset_angles = self.angles;
 }
 
-_id_62E1()
+object_reset()
 {
-    self dontinterpolate();
-    self.origin = self._id_7430;
-    self.angles = self._id_741E;
+    self _meth_8092();
+    self.origin = self.reset_origin;
+    self.angles = self.reset_angles;
 }
 
-_id_96AA()
+tram_init()
 {
     if ( isdefined( self.target ) )
     {
         var_0 = getentarray( self.target, "targetname" );
 
         foreach ( var_2 in var_0 )
-            var_2 linkto( self );
+            var_2 _meth_804D( self );
     }
 
-    self._id_0014 = 0;
-    _id_62E0();
+    self.active = 0;
+    object_init_reset();
 }
 
-_id_96B3()
+tram_reset()
 {
-    _id_62E1();
+    object_reset();
 }
 
-_id_96B7()
+tram_spline_debug()
 {
     for (;;)
     {
-        while ( self._id_0014 || !getdvarint( "detroit_tram_spline_debug", 0 ) )
+        while ( self.active || !getdvarint( "detroit_tram_spline_debug", 0 ) )
             waitframe();
 
-        _id_96B3();
-        self._id_0014 = 1;
-        var_0 = _id_96BB();
+        tram_reset();
+        self.active = 1;
+        var_0 = tram_spline_vehicle_spawn();
         var_0 waittill( "playSpaceStart" );
-        var_0 thread _id_96BA();
+        var_0 thread tram_spline_stay_in_playspace();
 
         while ( getdvarint( "detroit_tram_spline_debug", 0 ) )
             waitframe();
 
-        thread _id_96B8( var_0, 40 );
+        thread tram_spline_leave( var_0, 40 );
     }
 }
 
-_id_96BB()
+tram_spline_vehicle_spawn()
 {
     var_0 = spawnvehicle( "tag_origin", "detroit_tram", "detroit_tram_mp", self.origin, self.angles );
     var_0.owner = self.owner;
@@ -107,56 +107,56 @@ _id_96BB()
             var_4 = var_5;
     }
 
-    thread _id_96B2( var_0, var_2, "playSpaceStart" );
-    thread _id_96B2( var_0, var_3, "playSpaceEnd" );
-    thread _id_96B2( var_0, var_4, "trackEnd" );
+    thread tram_node_notify( var_0, var_2, "playSpaceStart" );
+    thread tram_node_notify( var_0, var_3, "playSpaceEnd" );
+    thread tram_node_notify( var_0, var_4, "trackEnd" );
     var_0 _meth_827D( var_1 );
     var_0 _meth_827F( var_1 );
-    var_0._id_8A6C = 25;
-    var_0._id_8A69 = 15;
-    var_0._id_8A6A = 20;
-    var_0._id_8A6B = var_0._id_8A6A * 2;
-    self linkto( var_0 );
+    var_0.spline_speed = 25;
+    var_0.spline_accel = 15;
+    var_0.spline_decel = 20;
+    var_0.spline_fast_decel = var_0.spline_decel * 2;
+    self _meth_804D( var_0 );
     return var_0;
 }
 
-_id_96B9( var_0 )
+tram_spline_move( var_0 )
 {
-    self._id_0014 = 1;
-    var_1 = _id_96BB();
+    self.active = 1;
+    var_1 = tram_spline_vehicle_spawn();
     self.endtime = gettime() + var_0 * 1000;
-    self.owner setclientomnvar( "ui_warbird_countdown", self.endtime );
+    self.owner _meth_82FB( "ui_warbird_countdown", self.endtime );
     waitframe();
     var_2 = 40;
-    var_1 _id_96B4();
-    var_1 _meth_8284( var_2, var_1._id_8A69, var_1._id_8A6A );
-    var_1 _id_96BE();
+    var_1 tram_set_forward();
+    var_1 _meth_8284( var_2, var_1.spline_accel, var_1.spline_decel );
+    var_1 tram_stop_player_control();
     var_3 = common_scripts\utility::waittill_any_return( "playSpaceStart", "player_exit" );
 
     if ( var_3 != "player_exit" )
     {
-        var_1 _id_96BC();
-        var_1 thread _id_96BA( ::_id_96BC, ::_id_96BE );
+        var_1 tram_start_player_control();
+        var_1 thread tram_spline_stay_in_playspace( ::tram_start_player_control, ::tram_stop_player_control );
         common_scripts\utility::waittill_notify_or_timeout( "player_exit", ( self.endtime - gettime() ) / 1000 );
     }
 
-    var_1 _id_96BE();
-    thread _id_96B8( var_1, var_2 );
+    var_1 tram_stop_player_control();
+    thread tram_spline_leave( var_1, var_2 );
 }
 
-_id_96B8( var_0, var_1 )
+tram_spline_leave( var_0, var_1 )
 {
     var_0 notify( "stop_stay_in_playspace" );
-    var_0 _id_96B4();
-    var_0 _meth_8283( var_1, var_0._id_8A69, var_0._id_8A6A );
+    var_0 tram_set_forward();
+    var_0 _meth_8283( var_1, var_0.spline_accel, var_0.spline_decel );
     var_0 waittill( "trackEnd" );
-    self unlink();
+    self _meth_804F();
     var_0 delete();
     maps\mp\_utility::decrementfauxvehiclecount();
-    self._id_0014 = 0;
+    self.active = 0;
 }
 
-_id_96BA( var_0, var_1 )
+tram_spline_stay_in_playspace( var_0, var_1 )
 {
     self endon( "stop_stay_in_playspace" );
 
@@ -167,17 +167,17 @@ _id_96BA( var_0, var_1 )
         if ( isdefined( var_1 ) )
             self [[ var_1 ]]();
 
-        self _meth_8283( 0, self._id_8A69, self._id_8A6B );
+        self _meth_8283( 0, self.spline_accel, self.spline_fast_decel );
 
-        while ( self._id_04F8 != 0 )
+        while ( self.veh_speed != 0 )
             waitframe();
 
         if ( var_2 == "playSpaceStart" )
-            _id_96B4();
+            tram_set_forward();
         else
-            _id_96B5();
+            tram_set_reverse();
 
-        self _meth_8283( self._id_8A6C, self._id_8A69, self._id_8A6A );
+        self _meth_8283( self.spline_speed, self.spline_accel, self.spline_decel );
         self waittill( var_2 );
 
         if ( isdefined( var_0 ) )
@@ -185,7 +185,7 @@ _id_96BA( var_0, var_1 )
     }
 }
 
-_id_96B2( var_0, var_1, var_2 )
+tram_node_notify( var_0, var_1, var_2 )
 {
     var_0 endon( "death" );
 
@@ -201,43 +201,43 @@ _id_96B2( var_0, var_1, var_2 )
     }
 }
 
-_id_96B4()
+tram_set_forward()
 {
-    self._id_24DD = "forward";
-    self._id_04FB = self._id_24DD;
-    self._id_04F4 = self._id_24DD;
+    self.current_dir = "forward";
+    self.veh_transmission = self.current_dir;
+    self.veh_pathdir = self.current_dir;
 }
 
-_id_96B5()
+tram_set_reverse()
 {
-    self._id_24DD = "reverse";
-    self._id_04FB = self._id_24DD;
-    self._id_04F4 = self._id_24DD;
+    self.current_dir = "reverse";
+    self.veh_transmission = self.current_dir;
+    self.veh_pathdir = self.current_dir;
 }
 
-_id_96BC()
+tram_start_player_control()
 {
-    thread _id_96BF();
+    thread tram_update_player_spline_control();
 }
 
-_id_96BE()
+tram_stop_player_control()
 {
     self notify( "stop_player_control" );
 }
 
-_id_96BF()
+tram_update_player_spline_control()
 {
     self endon( "death" );
     self endon( "player_exit" );
     self endon( "stop_player_control" );
     var_0 = self.owner;
     var_0 endon( "disconnect" );
-    self _meth_828F( self._id_8A69 );
-    self _meth_8290( self._id_8A6A );
+    self _meth_828F( self.spline_accel );
+    self _meth_8290( self.spline_decel );
 
     for (;;)
     {
-        [ var_2, var_3 ] = var_0 _meth_82F3();
+        [var_2, var_3] = var_0 _meth_82F3();
         var_4 = var_0 _meth_82F3();
         var_5 = length( var_4 );
 
@@ -255,39 +255,39 @@ _id_96BF()
 
             if ( var_9 > 0 )
             {
-                if ( self._id_24DD != "forward" && self._id_04F8 != 0 )
-                    self _meth_8283( 0, self._id_8A69, self._id_8A6B );
-                else if ( self._id_24DD != "forward" )
-                    _id_96B4();
+                if ( self.current_dir != "forward" && self.veh_speed != 0 )
+                    self _meth_8283( 0, self.spline_accel, self.spline_fast_decel );
+                else if ( self.current_dir != "forward" )
+                    tram_set_forward();
                 else
-                    self _meth_8283( self._id_8A6C, self._id_8A69, self._id_8A6A );
+                    self _meth_8283( self.spline_speed, self.spline_accel, self.spline_decel );
             }
-            else if ( self._id_24DD != "reverse" && self._id_04F8 != 0 )
-                self _meth_8283( 0, self._id_8A69, self._id_8A6B );
-            else if ( self._id_24DD != "reverse" )
-                _id_96B5();
+            else if ( self.current_dir != "reverse" && self.veh_speed != 0 )
+                self _meth_8283( 0, self.spline_accel, self.spline_fast_decel );
+            else if ( self.current_dir != "reverse" )
+                tram_set_reverse();
             else
-                self _meth_8283( self._id_8A6C, self._id_8A69, self._id_8A6A );
+                self _meth_8283( self.spline_speed, self.spline_accel, self.spline_decel );
         }
 
         waitframe();
     }
 }
 
-_id_96A8( var_0 )
+tram_animate( var_0 )
 {
     var_1 = common_scripts\utility::getstruct( "tram_node", "targetname" );
 
     if ( !isdefined( var_1 ) )
         return;
 
-    self._id_0014 = 1;
+    self.active = 1;
     self _meth_848B( var_0, var_1.origin, var_1.angles, "tram_anim" );
     self waittillmatch( "tram_anim", "end" );
-    self._id_0014 = 0;
+    self.active = 0;
 }
 
-_id_96B1( var_0, var_1 )
+tram_move( var_0, var_1 )
 {
     self endon( "dropped" );
     var_2 = 3.14159;
@@ -295,7 +295,7 @@ _id_96B1( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = var_0;
 
-    self._id_0014 = 1;
+    self.active = 1;
 
     for ( var_3 = self; isdefined( var_3.target ); var_3 = var_4 )
     {
@@ -332,23 +332,23 @@ _id_96B1( var_0, var_1 )
         if ( isdefined( var_6 ) )
         {
             var_7 = spawn( "script_origin", var_4.origin );
-            self linktosynchronizedparent( var_7 );
+            self _meth_8446( var_7 );
             var_8 = distance( var_7.origin, self.origin );
             var_9 = var_8 * 2 * var_2;
             var_10 = var_9 * abs( var_6 ) / 360;
             var_11 = var_10 / var_5;
-            var_7 rotateyaw( var_6, var_11 );
+            var_7 _meth_82B7( var_6, var_11 );
             var_7 waittill( "rotatedone" );
-            self unlink();
+            self _meth_804F();
             var_7 delete();
             continue;
         }
 
         var_10 = distance( self.origin, var_4.origin );
         var_11 = var_10 / var_5;
-        self moveto( var_4.origin, var_11 );
+        self _meth_82AE( var_4.origin, var_11 );
         self waittill( "movedone" );
     }
 
-    self._id_0014 = 0;
+    self.active = 0;
 }

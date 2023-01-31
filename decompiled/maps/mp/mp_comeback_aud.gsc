@@ -1,12 +1,12 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    level thread _id_804D();
+    level thread setup_audio();
 }
 
-_id_804D()
+setup_audio()
 {
 
 }

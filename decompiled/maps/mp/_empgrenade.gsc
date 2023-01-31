@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -24,11 +24,11 @@ onplayerspawned()
     for (;;)
     {
         self waittill( "spawned_player" );
-        thread _id_5E4F();
+        thread monitorempgrenade();
     }
 }
 
-_id_5E4F()
+monitorempgrenade()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -80,26 +80,26 @@ _id_5E4F()
         }
 
         if ( var_1 && isdefined( self ) )
-            thread _id_0CAB();
+            thread applyemp();
 
         if ( var_2 && isdefined( var_0 ) )
-            var_0 thread _id_0CAB();
+            var_0 thread applyemp();
     }
 }
 
-_id_306D( var_0 )
+emp_hide_hud( var_0 )
 {
     maps\mp\gametypes\_scrambler::playersethudempscrambledoff( var_0 );
 }
 
-_id_0CAB()
+applyemp()
 {
     self notify( "applyEmp" );
     self endon( "applyEmp" );
     self endon( "death" );
     self endon( "disconnect" );
     wait 0.05;
-    self._id_307C = 3;
+    self.empduration = 3;
     var_0 = 2;
 
     if ( maps\mp\_utility::isaugmentedgamemode() )
@@ -113,18 +113,18 @@ _id_0CAB()
     }
 
     self.empgrenaded = 1;
-    self.empendtime = gettime() + self._id_307C * 1000;
+    self.empendtime = gettime() + self.empduration * 1000;
     var_1 = maps\mp\gametypes\_scrambler::playersethudempscrambled( self.empendtime, var_0, "emp" );
-    thread _id_2A63( self._id_307C, var_1 );
-    thread _id_308D( 0.75 );
+    thread digitaldistort( self.empduration, var_1 );
+    thread emprumbleloop( 0.75 );
     self setempjammed( 1 );
-    thread _id_3087( var_1 );
-    wait(self._id_307C);
+    thread empgrenadedeathwaiter( var_1 );
+    wait(self.empduration);
     self notify( "empGrenadeTimedOut" );
-    _id_1D21( var_1 );
+    checktoturnoffemp( var_1 );
 }
 
-_id_2A63( var_0, var_1 )
+digitaldistort( var_0, var_1 )
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -132,7 +132,7 @@ _id_2A63( var_0, var_1 )
     self endon( "joined_team" );
     self _meth_84BE( "digital_distort_mp" );
     self _meth_8064( 1.0, 1.0 );
-    thread _id_A209( var_1 );
+    thread watchdistortdisconnectdeath( var_1 );
     wait 0.1;
     var_2 = var_0;
     var_3 = 0.95;
@@ -152,27 +152,27 @@ _id_2A63( var_0, var_1 )
     self _meth_8064( 0.0, 0.0 );
 }
 
-_id_A209( var_0 )
+watchdistortdisconnectdeath( var_0 )
 {
     common_scripts\utility::waittill_any( "death", "disconnect", "faux_spawn", "joined_team" );
 
     if ( isdefined( self ) )
     {
         self _meth_8064( 0.0, 0.0 );
-        _id_306D( var_0 );
+        emp_hide_hud( var_0 );
     }
 }
 
-_id_3087( var_0 )
+empgrenadedeathwaiter( var_0 )
 {
     self notify( "empGrenadeDeathWaiter" );
     self endon( "empGrenadeDeathWaiter" );
     self endon( "empGrenadeTimedOut" );
     self waittill( "death" );
-    _id_1D21( var_0 );
+    checktoturnoffemp( var_0 );
 }
 
-_id_1D21( var_0 )
+checktoturnoffemp( var_0 )
 {
     self.empgrenaded = 0;
     self setempjammed( 0 );
@@ -187,10 +187,10 @@ _id_1D21( var_0 )
     }
 
     self _meth_8064( 0.0, 0.0 );
-    _id_306D( var_0 );
+    emp_hide_hud( var_0 );
 }
 
-_id_308D( var_0 )
+emprumbleloop( var_0 )
 {
     self endon( "emp_rumble_loop" );
     self notify( "emp_rumble_loop" );
@@ -198,12 +198,12 @@ _id_308D( var_0 )
 
     while ( gettime() < var_1 )
     {
-        self playrumbleonentity( "damage_heavy" );
+        self _meth_80AD( "damage_heavy" );
         wait 0.05;
     }
 }
 
-_id_50F8()
+isempgrenaded()
 {
     return isdefined( self.empendtime ) && gettime() < self.empendtime;
 }

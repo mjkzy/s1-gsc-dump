@@ -1,7 +1,7 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_A211()
+watchexplosivegelusage()
 {
     self endon( "spawned_player" );
     self endon( "disconnect" );
@@ -20,7 +20,7 @@ _id_A211()
                 return;
             }
 
-            thread _id_98A8( var_0 );
+            thread tryuseexplosivegel( var_0 );
         }
     }
 }
@@ -29,27 +29,27 @@ init()
 {
     precachemodel( "weapon_c4" );
     precachemodel( "weapon_c4_bombsquad" );
-    level._id_3578 = spawnstruct();
-    level._id_3578._id_8F67 = "weapon_c4";
-    level._id_3578._id_3C80 = "weapon_c4_bombsquad";
-    level._id_3578._id_3C81 = loadfx( "vfx/explosion/frag_grenade_default" );
-    level._id_3578._id_135E["enemy"] = loadfx( "vfx/lights/light_c4_blink" );
-    level._id_3578._id_135E["friendly"] = loadfx( "vfx/lights/light_mine_blink_friendly" );
+    level.explosivegelsettings = spawnstruct();
+    level.explosivegelsettings.stuckmesh = "weapon_c4";
+    level.explosivegelsettings.gelbombsquadmesh = "weapon_c4_bombsquad";
+    level.explosivegelsettings.gelexplosionfx = loadfx( "vfx/explosion/frag_grenade_default" );
+    level.explosivegelsettings.beacon["enemy"] = loadfx( "vfx/lights/light_c4_blink" );
+    level.explosivegelsettings.beacon["friendly"] = loadfx( "vfx/lights/light_mine_blink_friendly" );
 }
 
-_id_98A8( var_0 )
+tryuseexplosivegel( var_0 )
 {
-    thread _id_562D( var_0 );
+    thread launchexplosivegel( var_0 );
     return 1;
 }
 
-_id_562D( var_0 )
+launchexplosivegel( var_0 )
 {
-    thread _id_A210( var_0 );
-    var_1 = _id_8E28( var_0 );
+    thread watchexplosivegelaltdetonate( var_0 );
+    var_1 = stickexplosivegel( var_0 );
 }
 
-_id_A210( var_0 )
+watchexplosivegelaltdetonate( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -85,21 +85,21 @@ _id_A210( var_0 )
             if ( var_1 >= 0.5 )
                 continue;
 
-            thread _id_3006( var_0 );
+            thread earlydetonate( var_0 );
         }
 
         wait 0.05;
     }
 }
 
-_id_8E28( var_0 )
+stickexplosivegel( var_0 )
 {
     self endon( "earlyNotify" );
     var_0 waittill( "missile_stuck" );
-    var_1 = bullettrace( var_0.origin, var_0.origin - ( 0.0, 0.0, 4.0 ), 0, var_0 );
-    var_2 = bullettrace( var_0.origin, var_0.origin + ( 0.0, 0.0, 4.0 ), 0, var_0 );
+    var_1 = bullettrace( var_0.origin, var_0.origin - ( 0, 0, 4 ), 0, var_0 );
+    var_2 = bullettrace( var_0.origin, var_0.origin + ( 0, 0, 4 ), 0, var_0 );
     var_3 = anglestoforward( var_0.angles );
-    var_4 = bullettrace( var_0.origin + ( 0.0, 0.0, 4.0 ), var_0.origin + var_3 * 4, 0, var_0 );
+    var_4 = bullettrace( var_0.origin + ( 0, 0, 4 ), var_0.origin + var_3 * 4, 0, var_0 );
     var_5 = undefined;
     var_6 = 0;
     var_7 = 0;
@@ -122,40 +122,40 @@ _id_8E28( var_0 )
     var_8 = var_5["position"];
 
     if ( var_8 == var_2["position"] )
-        var_8 += ( 0.0, 0.0, -5.0 );
+        var_8 += ( 0, 0, -5 );
 
     var_9 = spawn( "script_model", var_8 );
-    var_9._id_51DC = var_6;
-    var_9._id_510A = var_7;
+    var_9.isup = var_6;
+    var_9.isforward = var_7;
     var_10 = vectornormalize( var_5["normal"] );
     var_11 = vectortoangles( var_10 );
-    var_11 += ( 90.0, 0.0, 0.0 );
+    var_11 += ( 90, 0, 0 );
     var_9.angles = var_11;
-    var_9 setmodel( level._id_3578._id_8F67 );
+    var_9 _meth_80B1( level.explosivegelsettings.stuckmesh );
     var_9.owner = self;
-    var_9 setotherent( self );
-    var_9.killcamoffset = ( 0.0, 0.0, 55.0 );
+    var_9 _meth_8383( self );
+    var_9.killcamoffset = ( 0, 0, 55 );
     var_9.killcament = spawn( "script_model", var_9.origin + var_9.killcamoffset );
     var_9.stunned = 0;
     var_9.weaponname = "explosive_gel_mp";
     var_0 delete();
     level.mines[level.mines.size] = var_9;
-    var_9 thread createbombsquadmodel( level._id_3578._id_3C80, "tag_origin", self );
+    var_9 thread createbombsquadmodel( level.explosivegelsettings.gelbombsquadmesh, "tag_origin", self );
     var_9 thread minebeacon();
-    var_9 thread _id_7F64( self.team );
+    var_9 thread setexplosivegelteamheadicon( self.team );
     var_9 thread minedamagemonitor();
-    var_9 thread _id_3577( self );
+    var_9 thread explosivegelcountdowndetonation( self );
     return var_9;
 }
 
 createbombsquadmodel( var_0, var_1, var_2 )
 {
-    var_3 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
+    var_3 = spawn( "script_model", ( 0, 0, 0 ) );
     var_3 hide();
     wait 0.05;
     var_3 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( var_2 );
-    var_3 setmodel( var_0 );
-    var_3 linkto( self, var_1, ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+    var_3 _meth_80B1( var_0 );
+    var_3 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 setcontents( 0 );
     self waittill( "death" );
 
@@ -167,8 +167,8 @@ createbombsquadmodel( var_0, var_1, var_2 )
 
 minebeacon()
 {
-    var_0["friendly"] = spawnfx( level._id_3578._id_135E["friendly"], self gettagorigin( "tag_fx" ) );
-    var_0["enemy"] = spawnfx( level._id_3578._id_135E["enemy"], self gettagorigin( "tag_fx" ) );
+    var_0["friendly"] = spawnfx( level.explosivegelsettings.beacon["friendly"], self gettagorigin( "tag_fx" ) );
+    var_0["enemy"] = spawnfx( level.explosivegelsettings.beacon["enemy"], self gettagorigin( "tag_fx" ) );
     thread minebeaconteamupdater( var_0 );
     self waittill( "death" );
     var_0["friendly"] delete();
@@ -213,24 +213,24 @@ minebeaconteamupdater( var_0, var_1 )
     }
 }
 
-_id_7F64( var_0 )
+setexplosivegelteamheadicon( var_0 )
 {
     self endon( "death" );
     wait 0.05;
 
     if ( level.teambased )
     {
-        if ( self._id_51DC == 1 || self._id_510A == 1 )
-            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ), undefined, 1 );
+        if ( self.isup == 1 || self.isforward == 1 )
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0, 0, 28 ), undefined, 1 );
         else
-            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0.0, 0.0, 28.0 ) );
+            maps\mp\_entityheadicons::setteamheadicon( var_0, ( 0, 0, 28 ) );
     }
     else if ( isdefined( self.owner ) )
     {
-        if ( self._id_51DC == 1 )
-            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 28.0, 0.0, 28.0 ) );
+        if ( self.isup == 1 )
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 28, 0, 28 ) );
         else
-            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0.0, 0.0, 28.0 ) );
+            maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0, 0, 28 ) );
     }
 }
 
@@ -239,7 +239,7 @@ minedamagemonitor()
     self endon( "mine_triggered" );
     self endon( "mine_selfdestruct" );
     self endon( "death" );
-    self setcandamage( 1 );
+    self _meth_82C0( 1 );
     self.maxhealth = 100000;
     self.health = self.maxhealth;
     var_0 = undefined;
@@ -260,8 +260,8 @@ minedamagemonitor()
 
             switch ( var_10 )
             {
-                case "smoke_grenade_mp":
                 case "smoke_grenade_var_mp":
+                case "smoke_grenade_mp":
                     continue;
             }
         }
@@ -306,7 +306,7 @@ mineexplode( var_0 )
 
     self playsound( "null" );
     var_1 = self gettagorigin( "tag_fx" );
-    playfx( level._id_3578._id_3C81, var_1 );
+    playfx( level.explosivegelsettings.gelexplosionfx, var_1 );
     wait 0.05;
 
     if ( !isdefined( self ) || !isdefined( self.owner ) )
@@ -323,24 +323,24 @@ mineexplode( var_0 )
     if ( !isdefined( self ) || !isdefined( self.owner ) )
         return;
 
-    thread _id_0C9D();
+    thread apm_mine_deletekillcament();
     self notify( "death" );
 
-    if ( isdefined( self._id_6816 ) )
-        self._id_6816 delete();
+    if ( isdefined( self.pickuptrigger ) )
+        self.pickuptrigger delete();
 
     self hide();
 }
 
-_id_3006( var_0 )
+earlydetonate( var_0 )
 {
     self notify( "earlyNotify" );
     var_1 = var_0 gettagorigin( "tag_fx" );
-    playfx( level._id_3578._id_3C81, var_1 );
+    playfx( level.explosivegelsettings.gelexplosionfx, var_1 );
     var_0 detonate();
 }
 
-_id_0C9D()
+apm_mine_deletekillcament()
 {
     wait 3;
     self.killcament delete();
@@ -348,7 +348,7 @@ _id_0C9D()
     level.mines = common_scripts\utility::array_removeundefined( level.mines );
 }
 
-_id_3577( var_0 )
+explosivegelcountdowndetonation( var_0 )
 {
     self endon( "mine_destroyed" );
     self endon( "mine_selfdestruct" );

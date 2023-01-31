@@ -1,59 +1,59 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_88A8()
+soundonly()
 {
     return getdvar( "scr_createfx_type", "0" ) == "2";
 }
 
-_id_3BB3()
+fxonly()
 {
     return getdvar( "scr_createfx_type", "0" ) == "1";
 }
 
-_id_9502( var_0 )
+tracknoneditfx( var_0 )
 {
-    if ( isdefined( level._id_94B3 ) )
+    if ( isdefined( level.tracked_ent ) )
     {
-        if ( !isdefined( level._id_94B4 ) )
-            level._id_94B4 = [];
+        if ( !isdefined( level.tracked_ents ) )
+            level.tracked_ents = [];
 
-        level._id_94B4[level._id_94B4.size] = level._id_94B3.v;
+        level.tracked_ents[level.tracked_ents.size] = level.tracked_ent.v;
     }
 
-    level._id_94B3 = var_0;
+    level.tracked_ent = var_0;
 }
 
 createeffect( var_0, var_1 )
 {
     var_2 = spawnstruct();
 
-    if ( _id_88A8() )
-        _id_9502( var_2 );
+    if ( soundonly() )
+        tracknoneditfx( var_2 );
     else
     {
-        if ( !isdefined( level._id_2417 ) )
-            level._id_2417 = [];
+        if ( !isdefined( level.createfxent ) )
+            level.createfxent = [];
 
-        level._id_2417[level._id_2417.size] = var_2;
+        level.createfxent[level.createfxent.size] = var_2;
     }
 
     var_2.v = [];
     var_2.v["type"] = var_0;
     var_2.v["fxid"] = var_1;
-    var_2.v["angles"] = ( 0.0, 0.0, 0.0 );
-    var_2.v["origin"] = ( 0.0, 0.0, 0.0 );
-    var_2._id_2DDA = 1;
+    var_2.v["angles"] = ( 0, 0, 0 );
+    var_2.v["origin"] = ( 0, 0, 0 );
+    var_2.drawn = 1;
 
-    if ( isdefined( var_1 ) && isdefined( level._id_2415 ) )
+    if ( isdefined( var_1 ) && isdefined( level.createfxbyfxid ) )
     {
-        var_3 = level._id_2415[var_1];
+        var_3 = level.createfxbyfxid[var_1];
 
         if ( !isdefined( var_3 ) )
             var_3 = [];
 
         var_3[var_3.size] = var_2;
-        level._id_2415[var_1] = var_3;
+        level.createfxbyfxid[var_1] = var_3;
     }
 
     return var_2;
@@ -74,70 +74,70 @@ getexploderdelaydefault()
     return 0;
 }
 
-_id_3FD8()
+getintervalsounddelaymindefault()
 {
     return 0.75;
 }
 
-_id_3FD7()
+getintervalsounddelaymaxdefault()
 {
     return 2;
 }
 
-_id_2429()
+createloopsound()
 {
     var_0 = spawnstruct();
 
-    if ( _id_3BB3() )
-        _id_9502( var_0 );
+    if ( fxonly() )
+        tracknoneditfx( var_0 );
     else
     {
-        if ( !isdefined( level._id_2417 ) )
-            level._id_2417 = [];
+        if ( !isdefined( level.createfxent ) )
+            level.createfxent = [];
 
-        level._id_2417[level._id_2417.size] = var_0;
+        level.createfxent[level.createfxent.size] = var_0;
     }
 
     var_0.v = [];
     var_0.v["type"] = "soundfx";
     var_0.v["fxid"] = "No FX";
     var_0.v["soundalias"] = "nil";
-    var_0.v["angles"] = ( 0.0, 0.0, 0.0 );
-    var_0.v["origin"] = ( 0.0, 0.0, 0.0 );
+    var_0.v["angles"] = ( 0, 0, 0 );
+    var_0.v["origin"] = ( 0, 0, 0 );
     var_0.v["server_culled"] = 1;
 
     if ( getdvar( "serverCulledSounds" ) != "1" )
         var_0.v["server_culled"] = 0;
 
-    var_0._id_2DDA = 1;
+    var_0.drawn = 1;
     return var_0;
 }
 
-_id_2422()
+createintervalsound()
 {
-    var_0 = _id_2429();
+    var_0 = createloopsound();
     var_0.v["type"] = "soundfx_interval";
-    var_0.v["delay_min"] = _id_3FD8();
-    var_0.v["delay_max"] = _id_3FD7();
+    var_0.v["delay_min"] = getintervalsounddelaymindefault();
+    var_0.v["delay_max"] = getintervalsounddelaymaxdefault();
     return var_0;
 }
 
-_id_23F9()
+createdynamicambience()
 {
     var_0 = spawnstruct();
 
-    if ( _id_3BB3() )
-        _id_9502( var_0 );
+    if ( fxonly() )
+        tracknoneditfx( var_0 );
     else
     {
-        if ( !isdefined( level._id_2417 ) )
-            level._id_2417 = [];
+        if ( !isdefined( level.createfxent ) )
+            level.createfxent = [];
 
-        level._id_2417[level._id_2417.size] = var_0;
+        level.createfxent[level.createfxent.size] = var_0;
     }
 
     var_0.v = [];
-    var_0.v["origin"] = ( 0.0, 0.0, 0.0 );
+    var_0.v["origin"] = ( 0, 0, 0 );
     var_0.v["dynamic_distance"] = 1000;
     var_0.v["fxid"] = "No FX";
     var_0.v["type"] = "soundfx_dynamic";
@@ -145,18 +145,18 @@ _id_23F9()
     return var_0;
 }
 
-_id_242D()
+createnewexploder()
 {
     var_0 = spawnstruct();
 
-    if ( _id_3BB3() )
-        _id_9502( var_0 );
+    if ( fxonly() )
+        tracknoneditfx( var_0 );
     else
     {
-        if ( !isdefined( level._id_2417 ) )
-            level._id_2417 = [];
+        if ( !isdefined( level.createfxent ) )
+            level.createfxent = [];
 
-        level._id_2417[level._id_2417.size] = var_0;
+        level.createfxent[level.createfxent.size] = var_0;
     }
 
     var_0.v = [];
@@ -164,38 +164,38 @@ _id_242D()
     var_0.v["fxid"] = "No FX";
     var_0.v["soundalias"] = "nil";
     var_0.v["loopsound"] = "nil";
-    var_0.v["angles"] = ( 0.0, 0.0, 0.0 );
-    var_0.v["origin"] = ( 0.0, 0.0, 0.0 );
+    var_0.v["angles"] = ( 0, 0, 0 );
+    var_0.v["origin"] = ( 0, 0, 0 );
     var_0.v["exploder"] = 1;
     var_0.v["flag"] = "nil";
     var_0.v["exploder_type"] = "normal";
-    var_0._id_2DDA = 1;
+    var_0.drawn = 1;
     return var_0;
 }
 
-_id_23FF( var_0, var_1 )
+createexploderex( var_0, var_1 )
 {
     var_2 = common_scripts\utility::createexploder( var_0 );
     var_2.v["exploder"] = var_1;
     return var_2;
 }
 
-_id_2438()
+createreactiveent()
 {
     var_0 = spawnstruct();
 
-    if ( _id_88A8() )
-        _id_9502( var_0 );
+    if ( soundonly() )
+        tracknoneditfx( var_0 );
     else
     {
-        if ( !isdefined( level._id_2417 ) )
-            level._id_2417 = [];
+        if ( !isdefined( level.createfxent ) )
+            level.createfxent = [];
 
-        level._id_2417[level._id_2417.size] = var_0;
+        level.createfxent[level.createfxent.size] = var_0;
     }
 
     var_0.v = [];
-    var_0.v["origin"] = ( 0.0, 0.0, 0.0 );
+    var_0.v["origin"] = ( 0, 0, 0 );
     var_0.v["reactive_radius"] = 200;
     var_0.v["fxid"] = "No FX";
     var_0.v["type"] = "reactive_fx";
@@ -203,30 +203,30 @@ _id_2438()
     return var_0;
 }
 
-_id_7E89( var_0, var_1 )
+set_origin_and_angles( var_0, var_1 )
 {
-    if ( isdefined( level._id_2411 ) )
-        var_0 += level._id_2411;
+    if ( isdefined( level.createfx_offset ) )
+        var_0 += level.createfx_offset;
 
     self.v["origin"] = var_0;
     self.v["angles"] = var_1;
 }
 
-_id_7E3A()
+set_forward_and_up_vectors()
 {
     self.v["up"] = anglestoup( self.v["angles"] );
     self.v["forward"] = anglestoforward( self.v["angles"] );
 }
 
-_id_21A8()
+convertoneshotfx()
 {
     setdvarifuninitialized( "curr_exp_num", 1 );
     var_0 = getdvarint( "curr_exp_num" );
 
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
-        var_2 = level._id_0575._id_7C60[var_1];
-        setwinningteam( var_2._id_5878, 1 );
+        var_2 = level._createfx.selected_fx_ents[var_1];
+        setwinningteam( var_2.looper, 1 );
         waitframe();
         var_2 common_scripts\utility::pauseeffect();
         var_2.v["type"] = "exploder";
@@ -235,96 +235,96 @@ _id_21A8()
         var_2 common_scripts\utility::activate_individual_exploder();
     }
 
-    level._id_0575._id_52C9 = 1;
+    level._createfx.justconvertedoneshot = 1;
 }
 
-_id_2407()
+createfx_common()
 {
     precacheshader( "black" );
-    level._id_0575 = spawnstruct();
-    level._id_0575._id_01CD = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
-    level._id_0575._id_01CD._id_3B21 = loadfx( "vfx/explosion/frag_grenade_default" );
-    level._id_0575._id_01CD.sound = "null";
-    level._id_0575._id_01CD.radius = 256;
+    level._createfx = spawnstruct();
+    level._createfx.grenade = spawn( "script_origin", ( 0, 0, 0 ) );
+    level._createfx.grenade.fx = loadfx( "vfx/explosion/frag_grenade_default" );
+    level._createfx.grenade.sound = "null";
+    level._createfx.grenade.radius = 256;
 
-    if ( level._id_5FA9 )
-        _id_44E5( "painter_mp" );
+    if ( level.mp_createfx )
+        hack_start( "painter_mp" );
     else
-        _id_44E5( "painter" );
+        hack_start( "painter" );
 
     common_scripts\utility::flag_init( "createfx_saving" );
     common_scripts\utility::flag_init( "createfx_started" );
 
-    if ( !isdefined( level._id_2402 ) )
-        level._id_2402 = [];
+    if ( !isdefined( level.createfx ) )
+        level.createfx = [];
 
-    level._id_240F = 0;
+    level.createfx_loopcounter = 0;
     setdvar( "ui_hidehud", "1" );
     level notify( "createfx_common_done" );
 }
 
-_id_4D04()
+init_level_variables()
 {
-    level._id_0575._id_7C65 = 0;
-    level._id_0575._id_7C63 = 0;
-    level._id_0575._id_7C64 = 0;
-    level._id_0575._id_7C66 = 0;
-    level._id_0575._id_7C67 = 0;
-    level._id_0575._id_7C68 = 0;
-    level._id_0575._id_7C5F = [];
-    level._id_0575._id_7C60 = [];
-    level._id_0575._id_52C9 = 0;
-    level._id_0575._id_0358 = 1;
-    level._id_0575._id_86B7 = 0;
-    level._id_0575._id_86B8 = 0;
-    level._id_0575._id_57ED = 0;
-    level._id_0575._id_121A = 0;
-    level._id_0575._id_7C54 = 0;
-    level._id_0575._id_6C16 = getdvarfloat( "g_speed" );
-    _id_7E96();
+    level._createfx.selectedmove_up = 0;
+    level._createfx.selectedmove_forward = 0;
+    level._createfx.selectedmove_right = 0;
+    level._createfx.selectedrotate_pitch = 0;
+    level._createfx.selectedrotate_roll = 0;
+    level._createfx.selectedrotate_yaw = 0;
+    level._createfx.selected_fx = [];
+    level._createfx.selected_fx_ents = [];
+    level._createfx.justconvertedoneshot = 0;
+    level._createfx.rate = 1;
+    level._createfx.snap2normal = 0;
+    level._createfx.snap90deg = 0;
+    level._createfx.localrot = 0;
+    level._createfx.axismode = 0;
+    level._createfx.select_by_name = 0;
+    level._createfx.player_speed = getdvarfloat( "g_speed" );
+    set_player_speed_hud();
 }
 
-_id_4D0F()
+init_locked_list()
 {
-    level._id_0575._id_580B = [];
-    level._id_0575._id_580B["escape"] = 1;
-    level._id_0575._id_580B["BUTTON_LSHLDR"] = 1;
-    level._id_0575._id_580B["BUTTON_RSHLDR"] = 1;
-    level._id_0575._id_580B["mouse1"] = 1;
-    level._id_0575._id_580B["ctrl"] = 1;
+    level._createfx.lockedlist = [];
+    level._createfx.lockedlist["escape"] = 1;
+    level._createfx.lockedlist["BUTTON_LSHLDR"] = 1;
+    level._createfx.lockedlist["BUTTON_RSHLDR"] = 1;
+    level._createfx.lockedlist["mouse1"] = 1;
+    level._createfx.lockedlist["ctrl"] = 1;
 }
 
-_id_4CC8()
+init_colors()
 {
     var_0 = [];
-    var_0["loopfx"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["loopfx"]["highlighted"] = ( 0.4, 0.95, 1.0 );
-    var_0["loopfx"]["default"] = ( 0.3, 0.8, 1.0 );
-    var_0["oneshotfx"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["oneshotfx"]["highlighted"] = ( 0.3, 0.6, 1.0 );
-    var_0["oneshotfx"]["default"] = ( 0.1, 0.2, 1.0 );
-    var_0["exploder"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["exploder"]["highlighted"] = ( 1.0, 0.2, 0.2 );
-    var_0["exploder"]["default"] = ( 1.0, 0.1, 0.1 );
-    var_0["rainfx"]["selected"] = ( 1.0, 1.0, 0.2 );
+    var_0["loopfx"]["selected"] = ( 1, 1, 0.2 );
+    var_0["loopfx"]["highlighted"] = ( 0.4, 0.95, 1 );
+    var_0["loopfx"]["default"] = ( 0.3, 0.8, 1 );
+    var_0["oneshotfx"]["selected"] = ( 1, 1, 0.2 );
+    var_0["oneshotfx"]["highlighted"] = ( 0.3, 0.6, 1 );
+    var_0["oneshotfx"]["default"] = ( 0.1, 0.2, 1 );
+    var_0["exploder"]["selected"] = ( 1, 1, 0.2 );
+    var_0["exploder"]["highlighted"] = ( 1, 0.2, 0.2 );
+    var_0["exploder"]["default"] = ( 1, 0.1, 0.1 );
+    var_0["rainfx"]["selected"] = ( 1, 1, 0.2 );
     var_0["rainfx"]["highlighted"] = ( 0.95, 0.4, 0.95 );
-    var_0["rainfx"]["default"] = ( 0.78, 0.0, 0.73 );
-    var_0["soundfx"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["soundfx"]["highlighted"] = ( 0.2, 1.0, 0.2 );
-    var_0["soundfx"]["default"] = ( 0.1, 1.0, 0.1 );
-    var_0["soundfx_interval"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["soundfx_interval"]["highlighted"] = ( 0.3, 1.0, 0.3 );
-    var_0["soundfx_interval"]["default"] = ( 0.1, 1.0, 0.1 );
-    var_0["reactive_fx"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["reactive_fx"]["highlighted"] = ( 0.5, 1.0, 0.75 );
+    var_0["rainfx"]["default"] = ( 0.78, 0, 0.73 );
+    var_0["soundfx"]["selected"] = ( 1, 1, 0.2 );
+    var_0["soundfx"]["highlighted"] = ( 0.2, 1, 0.2 );
+    var_0["soundfx"]["default"] = ( 0.1, 1, 0.1 );
+    var_0["soundfx_interval"]["selected"] = ( 1, 1, 0.2 );
+    var_0["soundfx_interval"]["highlighted"] = ( 0.3, 1, 0.3 );
+    var_0["soundfx_interval"]["default"] = ( 0.1, 1, 0.1 );
+    var_0["reactive_fx"]["selected"] = ( 1, 1, 0.2 );
+    var_0["reactive_fx"]["highlighted"] = ( 0.5, 1, 0.75 );
     var_0["reactive_fx"]["default"] = ( 0.2, 0.9, 0.2 );
-    var_0["soundfx_dynamic"]["selected"] = ( 1.0, 1.0, 0.2 );
-    var_0["soundfx_dynamic"]["highlighted"] = ( 0.3, 1.0, 0.3 );
-    var_0["soundfx_dynamic"]["default"] = ( 0.1, 1.0, 0.1 );
-    level._id_0575._id_2058 = var_0;
+    var_0["soundfx_dynamic"]["selected"] = ( 1, 1, 0.2 );
+    var_0["soundfx_dynamic"]["highlighted"] = ( 0.3, 1, 0.3 );
+    var_0["soundfx_dynamic"]["default"] = ( 0.1, 1, 0.1 );
+    level._createfx.colors = var_0;
 }
 
-_id_241B()
+createfxlogic()
 {
     waittillframeend;
     wait 0.05;
@@ -337,16 +337,16 @@ _id_241B()
 
     }
     else if ( getdvar( "createfx_map" ) == common_scripts\utility::get_template_level() )
-        [[ level._id_3AEC ]]();
+        [[ level.func_position_player ]]();
 
-    _id_4CCB();
-    common_scripts\_createfxmenu::_id_4D13();
-    _id_4CFB();
-    _id_4D68();
-    _id_4CCB();
-    _id_4D04();
-    _id_4D0F();
-    _id_4CC8();
+    init_crosshair();
+    common_scripts\_createfxmenu::init_menu();
+    init_huds();
+    init_tool_hud();
+    init_crosshair();
+    init_level_variables();
+    init_locked_list();
+    init_colors();
 
     if ( getdvar( "createfx_use_f4" ) == "" )
     {
@@ -358,36 +358,36 @@ _id_241B()
 
     }
 
-    level._id_2408 = 1;
-    level._id_5516 = undefined;
-    level._id_195A = [];
-    var_0 = ( 0.0, 0.0, 0.0 );
+    level.createfx_draw_enabled = 1;
+    level.last_displayed_ent = undefined;
+    level.buttonisheld = [];
+    var_0 = ( 0, 0, 0 );
     common_scripts\utility::flag_set( "createfx_started" );
 
-    if ( !level._id_5FA9 )
+    if ( !level.mp_createfx )
         var_0 = level.player.origin;
 
     var_1 = undefined;
-    level._id_3B81 = 0;
-    common_scripts\_createfxmenu::_id_7FA4( "none" );
-    level._id_2414 = 0;
+    level.fx_rotating = 0;
+    common_scripts\_createfxmenu::setmenu( "none" );
+    level.createfx_selecting = 0;
     var_2 = newhudelem();
     var_2.x = -120;
     var_2.y = 200;
     var_2.foreground = 0;
-    var_2 setshader( "black", 250, 160 );
+    var_2 _meth_80CC( "black", 250, 160 );
     var_2.alpha = 0;
-    level._id_240D = 0;
+    level.createfx_inputlocked = 0;
 
-    foreach ( var_4 in level._id_2417 )
-        var_4 _id_6E6A();
+    foreach ( var_4 in level.createfxent )
+        var_4 post_entity_creation_function();
 
-    thread _id_2DAE();
+    thread draw_distance();
     var_6 = undefined;
-    thread _id_2404();
-    level._id_240E = 0;
-    thread _id_780B();
-    thread _id_8164();
+    thread createfx_autosave();
+    level.createfx_last_movement_timer = 0;
+    thread save_undo_buffer();
+    thread setup_last_movement_timer();
 
     for (;;)
     {
@@ -397,98 +397,98 @@ _id_241B()
         var_10 = anglestoup( level.player getangles() );
         var_11 = 0.85;
         var_12 = var_9 * 750;
-        level._id_2416 = bullettrace( level.player geteye(), level.player geteye() + var_12, 0, undefined );
+        level.createfxcursor = bullettrace( level.player _meth_80A8(), level.player _meth_80A8() + var_12, 0, undefined );
         var_13 = undefined;
-        level._id_1958 = [];
-        level._id_194E = [];
-        _id_6FDD();
-        var_14 = _id_194D( "ctrl", "BUTTON_LSHLDR" );
-        var_15 = _id_194C( "mouse1", "BUTTON_A" );
-        var_16 = _id_194D( "mouse1", "BUTTON_A" );
-        var_17 = _id_194D( "shift" );
-        common_scripts\_createfxmenu::_id_23B9();
+        level.buttonclick = [];
+        level.button_is_kb = [];
+        process_button_held_and_clicked();
+        var_14 = button_is_held( "ctrl", "BUTTON_LSHLDR" );
+        var_15 = button_is_clicked( "mouse1", "BUTTON_A" );
+        var_16 = button_is_held( "mouse1", "BUTTON_A" );
+        var_17 = button_is_held( "shift" );
+        common_scripts\_createfxmenu::create_fx_menu();
         var_18 = "F5";
 
         if ( getdvarint( "createfx_use_f4" ) )
             var_18 = "F4";
 
-        if ( _id_194C( var_18 ) )
+        if ( button_is_clicked( var_18 ) )
         {
 
         }
 
         if ( getdvarint( "scr_createfx_dump" ) )
-            _id_3C82();
+            generate_fx_log();
 
-        if ( _id_194C( "F2" ) )
-            _id_93C2();
+        if ( button_is_clicked( "F2" ) )
+            toggle_createfx_drawing();
 
-        if ( _id_194C( "ins" ) )
-            _id_4E80();
+        if ( button_is_clicked( "ins" ) )
+            insert_effect();
 
-        if ( _id_194C( "del" ) )
-            _id_282E();
+        if ( button_is_clicked( "del" ) )
+            delete_pressed();
 
-        if ( _id_194C( "escape" ) )
-            _id_1ED6();
+        if ( button_is_clicked( "escape" ) )
+            clear_settable_fx();
 
-        if ( _id_194C( "rightarrow", "space" ) && !level._id_2410 )
-            _id_7E83();
+        if ( button_is_clicked( "rightarrow", "space" ) && !level.createfx_menu_list_active )
+            set_off_exploders();
 
-        if ( _id_194C( "leftarrow" ) && !level._id_2410 )
-            _id_9905();
+        if ( button_is_clicked( "leftarrow" ) && !level.createfx_menu_list_active )
+            turn_off_exploders();
 
-        if ( _id_194C( "f" ) )
-            _id_3A0B();
+        if ( button_is_clicked( "f" ) )
+            frame_selected();
 
-        if ( _id_194C( "u" ) )
-            _id_7C55();
+        if ( button_is_clicked( "u" ) )
+            select_by_name_list();
 
-        if ( _id_194C( "c" ) )
-            _id_21A8();
+        if ( button_is_clicked( "c" ) )
+            convertoneshotfx();
 
-        _id_5D4A();
+        modify_player_speed();
 
-        if ( !var_14 && _id_194C( "g" ) )
+        if ( !var_14 && button_is_clicked( "g" ) )
         {
-            _id_7C53( "exploder" );
-            _id_7C53( "flag" );
+            select_all_exploders_of_currently_selected( "exploder" );
+            select_all_exploders_of_currently_selected( "flag" );
         }
 
-        if ( _id_194C( "h", "F1" ) )
-            _id_84D1();
+        if ( button_is_clicked( "h", "F1" ) )
+            show_help();
 
-        if ( _id_194C( "BUTTON_LSTICK" ) )
-            _id_21D6();
+        if ( button_is_clicked( "BUTTON_LSTICK" ) )
+            copy_ents();
 
-        if ( _id_194C( "BUTTON_RSTICK" ) )
-            _id_66B9();
+        if ( button_is_clicked( "BUTTON_RSTICK" ) )
+            paste_ents();
 
-        if ( _id_194C( "z" ) )
-            _id_9A1B();
+        if ( button_is_clicked( "z" ) )
+            undo();
 
-        if ( _id_194C( "z" ) && var_17 )
-            _id_729F();
+        if ( button_is_clicked( "z" ) && var_17 )
+            redo();
 
         if ( var_14 )
         {
-            if ( _id_194C( "c" ) )
-                _id_21D6();
+            if ( button_is_clicked( "c" ) )
+                copy_ents();
 
-            if ( _id_194C( "v" ) )
-                _id_66B9();
+            if ( button_is_clicked( "v" ) )
+                paste_ents();
 
-            if ( _id_194C( "g" ) )
-                _id_88FE();
+            if ( button_is_clicked( "g" ) )
+                spawn_grenade();
         }
 
-        if ( isdefined( level._id_0575._id_7C61 ) )
-            common_scripts\_createfxmenu::_id_5BAB();
+        if ( isdefined( level._createfx.selected_fx_option_index ) )
+            common_scripts\_createfxmenu::menu_fx_option_set();
 
-        for ( var_19 = 0; var_19 < level._id_2417.size; var_19++ )
+        for ( var_19 = 0; var_19 < level.createfxent.size; var_19++ )
         {
-            var_4 = level._id_2417[var_19];
-            var_20 = vectornormalize( var_4.v["origin"] - level.player.origin + ( 0.0, 0.0, 55.0 ) );
+            var_4 = level.createfxent[var_19];
+            var_20 = vectornormalize( var_4.v["origin"] - level.player.origin + ( 0, 0, 55 ) );
             var_21 = vectordot( var_9, var_20 );
 
             if ( var_21 < var_11 )
@@ -498,7 +498,7 @@ _id_241B()
             var_13 = var_4;
         }
 
-        level._id_3B55 = var_13;
+        level.fx_highlightedent = var_13;
 
         if ( isdefined( var_13 ) )
         {
@@ -506,39 +506,39 @@ _id_241B()
             {
                 if ( var_1 != var_13 )
                 {
-                    if ( !_id_32E7( var_1 ) )
-                        var_1 thread _id_3310();
+                    if ( !ent_is_selected( var_1 ) )
+                        var_1 thread entity_highlight_disable();
 
-                    if ( !_id_32E7( var_13 ) )
-                        var_13 thread _id_3311();
+                    if ( !ent_is_selected( var_13 ) )
+                        var_13 thread entity_highlight_enable();
                 }
             }
-            else if ( !_id_32E7( var_13 ) )
-                var_13 thread _id_3311();
+            else if ( !ent_is_selected( var_13 ) )
+                var_13 thread entity_highlight_enable();
         }
 
-        _id_596A( var_13, var_15, var_16, var_14, var_8 );
-        var_7 = _id_4606( var_7 );
+        manipulate_createfx_ents( var_13, var_15, var_16, var_14, var_8 );
+        var_7 = handle_selected_ents( var_7 );
         wait 0.05;
 
         if ( var_7 )
-            _id_9AD4();
+            update_selected_entities();
 
-        if ( !level._id_5FA9 )
-            var_0 = [[ level._id_3AED ]]( var_0 );
+        if ( !level.mp_createfx )
+            var_0 = [[ level.func_position_player_get ]]( var_0 );
 
         var_1 = var_13;
 
-        if ( _id_5552( var_6 ) )
+        if ( last_selected_entity_has_changed( var_6 ) )
         {
-            level._id_3019 = 0;
-            _id_1ED6();
-            common_scripts\_createfxmenu::_id_7FA4( "none" );
+            level.effect_list_offset = 0;
+            clear_settable_fx();
+            common_scripts\_createfxmenu::setmenu( "none" );
         }
 
-        if ( level._id_0575._id_7C60.size )
+        if ( level._createfx.selected_fx_ents.size )
         {
-            var_6 = level._id_0575._id_7C60[level._id_0575._id_7C60.size - 1];
+            var_6 = level._createfx.selected_fx_ents[level._createfx.selected_fx_ents.size - 1];
             continue;
         }
 
@@ -546,51 +546,51 @@ _id_241B()
     }
 }
 
-_id_5D4A()
+modify_player_speed()
 {
     var_0 = 0;
-    var_1 = _id_194D( "ctrl" );
+    var_1 = button_is_held( "ctrl" );
 
-    if ( _id_194D( "." ) )
+    if ( button_is_held( "." ) )
     {
         if ( var_1 )
         {
-            if ( level._id_0575._id_6C16 < 190 )
-                level._id_0575._id_6C16 = 190;
+            if ( level._createfx.player_speed < 190 )
+                level._createfx.player_speed = 190;
             else
-                level._id_0575._id_6C16 += 10;
+                level._createfx.player_speed += 10;
         }
         else
-            level._id_0575._id_6C16 += 5;
+            level._createfx.player_speed += 5;
 
         var_0 = 1;
     }
-    else if ( _id_194D( "," ) )
+    else if ( button_is_held( "," ) )
     {
         if ( var_1 )
         {
-            if ( level._id_0575._id_6C16 > 190 )
-                level._id_0575._id_6C16 = 190;
+            if ( level._createfx.player_speed > 190 )
+                level._createfx.player_speed = 190;
             else
-                level._id_0575._id_6C16 -= 10;
+                level._createfx.player_speed -= 10;
         }
         else
-            level._id_0575._id_6C16 -= 5;
+            level._createfx.player_speed -= 5;
 
         var_0 = 1;
     }
 
     if ( var_0 )
     {
-        level._id_0575._id_6C16 = clamp( level._id_0575._id_6C16, 5, 500 );
-        [[ level._id_3AEB ]]();
-        _id_7E96();
+        level._createfx.player_speed = clamp( level._createfx.player_speed, 5, 500 );
+        [[ level.func_player_speed ]]();
+        set_player_speed_hud();
     }
 }
 
-_id_7E96()
+set_player_speed_hud()
 {
-    if ( !isdefined( level._id_0575._id_6C1B ) )
+    if ( !isdefined( level._createfx.player_speed_hud ) )
     {
         var_0 = newhudelem();
         var_0.alignx = "right";
@@ -606,88 +606,88 @@ _id_7E96()
         var_1.alpha = 1.0;
         var_1.x = 120;
         var_1.y = 420;
-        var_0._id_4AD7 = var_1;
-        level._id_0575._id_6C1B = var_0;
+        var_0.hud_value = var_1;
+        level._createfx.player_speed_hud = var_0;
     }
 
-    level._id_0575._id_6C1B._id_4AD7 setvalue( level._id_0575._id_6C16 );
+    level._createfx.player_speed_hud.hud_value _meth_80D7( level._createfx.player_speed );
 }
 
-_id_93C2()
+toggle_createfx_drawing()
 {
-    level._id_2408 = !level._id_2408;
+    level.createfx_draw_enabled = !level.createfx_draw_enabled;
 }
 
-_id_4E80()
+insert_effect()
 {
-    common_scripts\_createfxmenu::_id_7FA4( "creation" );
-    level._id_3019 = 0;
-    _id_1EB9();
-    _id_7E3C( "Pick effect type to create:" );
-    _id_7E3C( "1. One Shot FX" );
-    _id_7E3C( "2. Looping FX" );
-    _id_7E3C( "3. Looping sound" );
-    _id_7E3C( "4. Exploder" );
-    _id_7E3C( "5. One Shot Sound" );
-    _id_7E3C( "6. Reactive Sound" );
-    _id_7E3C( "7. Dynamic Ambience" );
-    _id_7E3C( "(c) Cancel >" );
-    _id_7E3C( "(x) Exit >" );
+    common_scripts\_createfxmenu::setmenu( "creation" );
+    level.effect_list_offset = 0;
+    clear_fx_hudelements();
+    set_fx_hudelement( "Pick effect type to create:" );
+    set_fx_hudelement( "1. One Shot FX" );
+    set_fx_hudelement( "2. Looping FX" );
+    set_fx_hudelement( "3. Looping sound" );
+    set_fx_hudelement( "4. Exploder" );
+    set_fx_hudelement( "5. One Shot Sound" );
+    set_fx_hudelement( "6. Reactive Sound" );
+    set_fx_hudelement( "7. Dynamic Ambience" );
+    set_fx_hudelement( "(c) Cancel >" );
+    set_fx_hudelement( "(x) Exit >" );
 }
 
-_id_596A( var_0, var_1, var_2, var_3, var_4 )
+manipulate_createfx_ents( var_0, var_1, var_2, var_3, var_4 )
 {
-    if ( !level._id_2408 )
+    if ( !level.createfx_draw_enabled )
         return;
 
-    if ( level._id_0575._id_7C54 )
+    if ( level._createfx.select_by_name )
     {
-        level._id_0575._id_7C54 = 0;
+        level._createfx.select_by_name = 0;
         var_0 = undefined;
     }
-    else if ( _id_7C56() )
+    else if ( select_by_substring() )
         var_0 = undefined;
 
-    for ( var_5 = 0; var_5 < level._id_2417.size; var_5++ )
+    for ( var_5 = 0; var_5 < level.createfxent.size; var_5++ )
     {
-        var_6 = level._id_2417[var_5];
+        var_6 = level.createfxent[var_5];
 
-        if ( !var_6._id_2DDA )
+        if ( !var_6.drawn )
             continue;
 
         var_7 = getdvarfloat( "createfx_scaleid" );
 
         if ( isdefined( var_0 ) && var_6 == var_0 )
         {
-            if ( !common_scripts\_createfxmenu::_id_330D() )
-                common_scripts\_createfxmenu::_id_2B48( var_6 );
+            if ( !common_scripts\_createfxmenu::entities_are_selected() )
+                common_scripts\_createfxmenu::display_fx_info( var_6 );
 
             if ( var_1 )
             {
-                var_8 = _id_4C3F( var_5 );
-                level._id_240B = 0;
-                level._id_2414 = !var_8;
+                var_8 = index_is_selected( var_5 );
+                level.createfx_help_active = 0;
+                level.createfx_selecting = !var_8;
 
                 if ( !var_3 )
                 {
-                    var_9 = level._id_0575._id_7C60.size;
-                    _id_1EB5();
+                    var_9 = level._createfx.selected_fx_ents.size;
+                    clear_entity_selection();
 
                     if ( var_8 && var_9 == 1 )
-                        _id_7C57( var_5, var_6 );
+                        select_entity( var_5, var_6 );
                 }
 
-                _id_93C3( var_5, var_6 );
+                toggle_entity_selection( var_5, var_6 );
             }
             else if ( var_2 )
             {
                 if ( var_3 )
                 {
-                    if ( level._id_2414 )
-                        _id_7C57( var_5, var_6 );
+                    if ( level.createfx_selecting )
+                        select_entity( var_5, var_6 );
 
-                    if ( !level._id_2414 )
-                        _id_28B2( var_5, var_6 );
+                    if ( !level.createfx_selecting )
+                        deselect_entity( var_5, var_6 );
                 }
             }
 
@@ -696,14 +696,14 @@ _id_596A( var_0, var_1, var_2, var_3, var_4 )
         else
             var_10 = "default";
 
-        if ( _id_4C3F( var_5 ) )
+        if ( index_is_selected( var_5 ) )
             var_10 = "selected";
 
-        var_6 _id_2413( var_10, var_7, var_4 );
+        var_6 createfx_print3d( var_10, var_7, var_4 );
     }
 }
 
-_id_2413( var_0, var_1, var_2 )
+createfx_print3d( var_0, var_1, var_2 )
 {
     if ( getdvarint( "fx_showLightGridSampleOffset" ) != 0 )
     {
@@ -711,14 +711,14 @@ _id_2413( var_0, var_1, var_2 )
         var_4 = anglestoforward( self.v["angles"] ) * var_3;
     }
 
-    if ( self._id_92B4 > 0 )
+    if ( self.textalpha > 0 )
     {
-        var_5 = _id_3E3A();
+        var_5 = get_print3d_text();
         var_6 = var_2 * ( var_5.size * -2.93 );
-        var_7 = level._id_0575._id_2058[self.v["type"]][var_0];
+        var_7 = level._createfx.colors[self.v["type"]][var_0];
 
-        if ( isdefined( self._id_5069 ) )
-            var_7 = ( 1.0, 0.5, 0.0 );
+        if ( isdefined( self.is_playing ) )
+            var_7 = ( 1, 0.5, 0 );
 
         if ( isdefined( self.v["reactive_radius"] ) )
             return;
@@ -730,7 +730,7 @@ _id_2413( var_0, var_1, var_2 )
     }
 }
 
-_id_3E3A()
+get_print3d_text()
 {
     switch ( self.v["type"] )
     {
@@ -762,30 +762,30 @@ _id_3E3A()
     }
 }
 
-_id_7C55()
+select_by_name_list()
 {
-    level._id_3019 = 0;
-    _id_1EB9();
-    common_scripts\_createfxmenu::_id_7FA4( "select_by_name" );
-    common_scripts\_createfxmenu::_id_2DB2();
+    level.effect_list_offset = 0;
+    clear_fx_hudelements();
+    common_scripts\_createfxmenu::setmenu( "select_by_name" );
+    common_scripts\_createfxmenu::draw_effects_list();
 }
 
-_id_4606( var_0 )
+handle_selected_ents( var_0 )
 {
-    if ( level._id_0575._id_7C60.size > 0 && level._id_240B == 0 )
+    if ( level._createfx.selected_fx_ents.size > 0 && level.createfx_help_active == 0 )
     {
-        var_0 = _id_7C5E( var_0 );
+        var_0 = selected_ent_buttons( var_0 );
 
-        if ( !_id_24F0( "selected_ents" ) )
+        if ( !current_mode_hud( "selected_ents" ) )
         {
-            _id_60A6( "selected_ents" );
-            _id_7ED5( "Mode:", "move" );
-            _id_7ED5( "Move Rate( -/+ ):", level._id_0575._id_0358 );
+            new_tool_hud( "selected_ents" );
+            set_tool_hudelem( "Mode:", "move" );
+            set_tool_hudelem( "Move Rate( -/+ ):", level._createfx.rate );
 
-            if ( level._id_0575._id_86B7 )
+            if ( level._createfx.snap2normal )
             {
                 var_1 = "on";
-                var_2 = ( 0.0, 1.0, 0.0 );
+                var_2 = ( 0, 1, 0 );
             }
             else
             {
@@ -793,12 +793,12 @@ _id_4606( var_0 )
                 var_2 = ( 0.5, 0.5, 0.5 );
             }
 
-            _id_7ED5( "Snap2Normal( S ):", var_1, var_2 );
+            set_tool_hudelem( "Snap2Normal( S ):", var_1, var_2 );
 
-            if ( level._id_0575._id_86B8 )
+            if ( level._createfx.snap90deg )
             {
                 var_3 = "on";
-                var_4 = ( 0.0, 1.0, 0.0 );
+                var_4 = ( 0, 1, 0 );
             }
             else
             {
@@ -806,12 +806,12 @@ _id_4606( var_0 )
                 var_4 = ( 0.5, 0.5, 0.5 );
             }
 
-            _id_7ED5( "90deg Snap( L ):", var_3, var_4 );
+            set_tool_hudelem( "90deg Snap( L ):", var_3, var_4 );
 
-            if ( level._id_0575._id_57ED )
+            if ( level._createfx.localrot )
             {
                 var_5 = "on";
-                var_6 = ( 0.0, 1.0, 0.0 );
+                var_6 = ( 0, 1, 0 );
             }
             else
             {
@@ -819,141 +819,141 @@ _id_4606( var_0 )
                 var_6 = ( 0.5, 0.5, 0.5 );
             }
 
-            _id_7ED5( "Local Rotation( R ):", var_5, var_6 );
+            set_tool_hudelem( "Local Rotation( R ):", var_5, var_6 );
         }
 
-        if ( level._id_0575._id_121A && level._id_0575._id_7C60.size > 0 )
+        if ( level._createfx.axismode && level._createfx.selected_fx_ents.size > 0 )
         {
-            _id_7ED5( "Mode:", "rotate" );
-            thread [[ level._id_3AEE ]]();
+            set_tool_hudelem( "Mode:", "rotate" );
+            thread [[ level.func_process_fx_rotater ]]();
 
-            if ( _id_194C( "p" ) )
-                _id_7420();
+            if ( button_is_clicked( "p" ) )
+                reset_axis_of_selected_ents();
 
-            if ( _id_194C( "o" ) )
-                _id_0968();
+            if ( button_is_clicked( "o" ) )
+                aim_axis_of_selected_ents();
 
-            if ( _id_194C( "v" ) )
-                _id_21D0();
+            if ( button_is_clicked( "v" ) )
+                copy_angles_of_selected_ents();
 
-            for ( var_7 = 0; var_7 < level._id_0575._id_7C60.size; var_7++ )
-                level._id_0575._id_7C60[var_7] _id_2DA0();
+            for ( var_7 = 0; var_7 < level._createfx.selected_fx_ents.size; var_7++ )
+                level._createfx.selected_fx_ents[var_7] draw_axis();
 
-            if ( level._id_7C66 != 0 || level._id_7C68 != 0 || level._id_7C67 != 0 )
+            if ( level.selectedrotate_pitch != 0 || level.selectedrotate_yaw != 0 || level.selectedrotate_roll != 0 )
                 var_0 = 1;
         }
         else
         {
-            _id_7ED5( "Mode:", "move" );
-            var_8 = _id_3E5A();
+            set_tool_hudelem( "Mode:", "move" );
+            var_8 = get_selected_move_vector();
 
-            for ( var_7 = 0; var_7 < level._id_0575._id_7C60.size; var_7++ )
+            for ( var_7 = 0; var_7 < level._createfx.selected_fx_ents.size; var_7++ )
             {
-                var_9 = level._id_0575._id_7C60[var_7];
+                var_9 = level._createfx.selected_fx_ents[var_7];
 
                 if ( isdefined( var_9.model ) )
                     continue;
 
-                var_9 _id_2DAA();
+                var_9 draw_cross();
                 var_9.v["origin"] += var_8;
             }
 
-            if ( distance( ( 0.0, 0.0, 0.0 ), var_8 ) > 0 )
+            if ( distance( ( 0, 0, 0 ), var_8 ) > 0 )
             {
-                thread _id_780B();
-                level._id_240E = 0;
+                thread save_undo_buffer();
+                level.createfx_last_movement_timer = 0;
                 var_0 = 1;
             }
         }
     }
     else
-        _id_1EDB();
+        clear_tool_hud();
 
     return var_0;
 }
 
-_id_7C5E( var_0 )
+selected_ent_buttons( var_0 )
 {
-    if ( _id_194C( "BUTTON_X" ) )
-        _id_93BD();
+    if ( button_is_clicked( "BUTTON_X" ) )
+        toggle_axismode();
 
-    _id_5D4B();
+    modify_rate();
 
-    if ( _id_194C( "s" ) )
-        _id_93D5();
+    if ( button_is_clicked( "s" ) )
+        toggle_snap2normal();
 
-    if ( _id_194C( "l" ) )
-        _id_93D6();
+    if ( button_is_clicked( "l" ) )
+        toggle_snap90deg();
 
-    if ( _id_194C( "r" ) )
-        _id_93CD();
+    if ( button_is_clicked( "r" ) )
+        toggle_localrot();
 
-    if ( _id_194C( "end" ) )
+    if ( button_is_clicked( "end" ) )
     {
-        _id_2F65();
+        drop_selection_to_ground();
         var_0 = 1;
     }
 
-    if ( _id_194C( "tab", "BUTTON_RSHLDR" ) )
+    if ( button_is_clicked( "tab", "BUTTON_RSHLDR" ) )
     {
-        _id_5F23();
+        move_selection_to_cursor();
         var_0 = 1;
     }
 
     return var_0;
 }
 
-_id_5D4B()
+modify_rate()
 {
-    var_0 = _id_194D( "shift" );
-    var_1 = _id_194D( "ctrl" );
+    var_0 = button_is_held( "shift" );
+    var_1 = button_is_held( "ctrl" );
 
-    if ( _id_194C( "=" ) )
+    if ( button_is_clicked( "=" ) )
     {
         if ( var_0 )
-            level._id_0575._id_0358 += 0.025;
+            level._createfx.rate += 0.025;
         else if ( var_1 )
         {
-            if ( level._id_0575._id_0358 < 1 )
-                level._id_0575._id_0358 = 1;
+            if ( level._createfx.rate < 1 )
+                level._createfx.rate = 1;
             else
-                level._id_0575._id_0358 += 10;
+                level._createfx.rate += 10;
         }
         else
-            level._id_0575._id_0358 += 0.1;
+            level._createfx.rate += 0.1;
     }
-    else if ( _id_194C( "-" ) )
+    else if ( button_is_clicked( "-" ) )
     {
         if ( var_0 )
-            level._id_0575._id_0358 -= 0.025;
+            level._createfx.rate -= 0.025;
         else if ( var_1 )
         {
-            if ( level._id_0575._id_0358 > 1 )
-                level._id_0575._id_0358 = 1;
+            if ( level._createfx.rate > 1 )
+                level._createfx.rate = 1;
             else
-                level._id_0575._id_0358 = 0.1;
+                level._createfx.rate = 0.1;
         }
         else
-            level._id_0575._id_0358 -= 0.1;
+            level._createfx.rate -= 0.1;
     }
 
-    level._id_0575._id_0358 = clamp( level._id_0575._id_0358, 0.025, 100 );
-    _id_7ED5( "Move Rate( -/+ ):", level._id_0575._id_0358 );
+    level._createfx.rate = clamp( level._createfx.rate, 0.025, 100 );
+    set_tool_hudelem( "Move Rate( -/+ ):", level._createfx.rate );
 }
 
-_id_93BD()
+toggle_axismode()
 {
-    level._id_0575._id_121A = !level._id_0575._id_121A;
+    level._createfx.axismode = !level._createfx.axismode;
 }
 
-_id_93D5()
+toggle_snap2normal()
 {
-    level._id_0575._id_86B7 = !level._id_0575._id_86B7;
+    level._createfx.snap2normal = !level._createfx.snap2normal;
 
-    if ( level._id_0575._id_86B7 )
+    if ( level._createfx.snap2normal )
     {
         var_0 = "on";
-        var_1 = ( 0.0, 1.0, 0.0 );
+        var_1 = ( 0, 1, 0 );
     }
     else
     {
@@ -961,17 +961,17 @@ _id_93D5()
         var_1 = ( 0.5, 0.5, 0.5 );
     }
 
-    _id_7ED5( "Snap2Normal( S ):", var_0, var_1 );
+    set_tool_hudelem( "Snap2Normal( S ):", var_0, var_1 );
 }
 
-_id_93D6()
+toggle_snap90deg()
 {
-    level._id_0575._id_86B8 = !level._id_0575._id_86B8;
+    level._createfx.snap90deg = !level._createfx.snap90deg;
 
-    if ( level._id_0575._id_86B8 )
+    if ( level._createfx.snap90deg )
     {
         var_0 = "on";
-        var_1 = ( 0.0, 1.0, 0.0 );
+        var_1 = ( 0, 1, 0 );
     }
     else
     {
@@ -979,17 +979,17 @@ _id_93D6()
         var_1 = ( 0.5, 0.5, 0.5 );
     }
 
-    _id_7ED5( "90deg Snap( L ):", var_0, var_1 );
+    set_tool_hudelem( "90deg Snap( L ):", var_0, var_1 );
 }
 
-_id_93CD()
+toggle_localrot()
 {
-    level._id_0575._id_57ED = !level._id_0575._id_57ED;
+    level._createfx.localrot = !level._createfx.localrot;
 
-    if ( level._id_0575._id_57ED )
+    if ( level._createfx.localrot )
     {
         var_0 = "on";
-        var_1 = ( 0.0, 1.0, 0.0 );
+        var_1 = ( 0, 1, 0 );
     }
     else
     {
@@ -997,94 +997,94 @@ _id_93CD()
         var_1 = ( 0.5, 0.5, 0.5 );
     }
 
-    _id_7ED5( "Local Rotation( R ):", var_0, var_1 );
+    set_tool_hudelem( "Local Rotation( R ):", var_0, var_1 );
 }
 
-_id_21D0()
+copy_angles_of_selected_ents()
 {
-    thread _id_780B();
+    thread save_undo_buffer();
     level notify( "new_ent_selection" );
 
-    for ( var_0 = 0; var_0 < level._id_0575._id_7C60.size; var_0++ )
+    for ( var_0 = 0; var_0 < level._createfx.selected_fx_ents.size; var_0++ )
     {
-        var_1 = level._id_0575._id_7C60[var_0];
-        var_1.v["angles"] = level._id_0575._id_7C60[level._id_0575._id_7C60.size - 1].v["angles"];
-        var_1 _id_7E3A();
+        var_1 = level._createfx.selected_fx_ents[var_0];
+        var_1.v["angles"] = level._createfx.selected_fx_ents[level._createfx.selected_fx_ents.size - 1].v["angles"];
+        var_1 set_forward_and_up_vectors();
     }
 
-    _id_9AD4();
-    level._id_240E = 0;
+    update_selected_entities();
+    level.createfx_last_movement_timer = 0;
 }
 
-_id_0968()
+aim_axis_of_selected_ents()
 {
-    thread _id_780B();
+    thread save_undo_buffer();
     level notify( "new_ent_selection" );
-    var_0 = level._id_0575._id_7C60[level._id_0575._id_7C60.size - 1];
+    var_0 = level._createfx.selected_fx_ents[level._createfx.selected_fx_ents.size - 1];
 
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size - 1; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size - 1; var_1++ )
     {
-        var_2 = level._id_0575._id_7C60[var_1];
+        var_2 = level._createfx.selected_fx_ents[var_1];
         var_3 = vectortoangles( var_0.v["origin"] - var_2.v["origin"] );
         var_2.v["angles"] = var_3;
-        var_2 _id_7E3A();
+        var_2 set_forward_and_up_vectors();
     }
 
-    _id_9AD4();
-    level._id_240E = 0;
+    update_selected_entities();
+    level.createfx_last_movement_timer = 0;
 }
 
-_id_7420()
+reset_axis_of_selected_ents()
 {
     level notify( "new_ent_selection" );
-    thread _id_780B();
+    thread save_undo_buffer();
 
-    for ( var_0 = 0; var_0 < level._id_0575._id_7C60.size; var_0++ )
+    for ( var_0 = 0; var_0 < level._createfx.selected_fx_ents.size; var_0++ )
     {
-        var_1 = level._id_0575._id_7C60[var_0];
-        var_1.v["angles"] = ( 0.0, 0.0, 0.0 );
-        var_1 _id_7E3A();
+        var_1 = level._createfx.selected_fx_ents[var_0];
+        var_1.v["angles"] = ( 0, 0, 0 );
+        var_1 set_forward_and_up_vectors();
     }
 
-    _id_9AD4();
-    level._id_240E = 0;
+    update_selected_entities();
+    level.createfx_last_movement_timer = 0;
 }
 
-_id_5552( var_0 )
+last_selected_entity_has_changed( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        if ( !common_scripts\_createfxmenu::_id_330D() )
+        if ( !common_scripts\_createfxmenu::entities_are_selected() )
             return 1;
     }
     else
-        return common_scripts\_createfxmenu::_id_330D();
+        return common_scripts\_createfxmenu::entities_are_selected();
 
-    return var_0 != level._id_0575._id_7C60[level._id_0575._id_7C60.size - 1];
+    return var_0 != level._createfx.selected_fx_ents[level._createfx.selected_fx_ents.size - 1];
 }
 
-_id_2F65()
+drop_selection_to_ground()
 {
-    thread _id_780B();
+    thread save_undo_buffer();
 
-    for ( var_0 = 0; var_0 < level._id_0575._id_7C60.size; var_0++ )
+    for ( var_0 = 0; var_0 < level._createfx.selected_fx_ents.size; var_0++ )
     {
-        var_1 = level._id_0575._id_7C60[var_0];
-        var_2 = bullettrace( var_1.v["origin"], var_1.v["origin"] + ( 0.0, 0.0, -2048.0 ), 0, undefined );
+        var_1 = level._createfx.selected_fx_ents[var_0];
+        var_2 = bullettrace( var_1.v["origin"], var_1.v["origin"] + ( 0, 0, -2048 ), 0, undefined );
         var_1.v["origin"] = var_2["position"];
     }
 
-    level._id_240E = 0;
+    level.createfx_last_movement_timer = 0;
 }
 
-_id_7E83()
+set_off_exploders()
 {
     level notify( "createfx_exploder_reset" );
     var_0 = [];
 
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
-        var_2 = level._id_0575._id_7C60[var_1];
+        var_2 = level._createfx.selected_fx_ents[var_1];
 
         if ( isdefined( var_2.v["exploder"] ) )
             var_0[var_2.v["exploder"]] = 1;
@@ -1096,14 +1096,14 @@ _id_7E83()
         common_scripts\_exploder::exploder( var_3[var_1] );
 }
 
-_id_9905()
+turn_off_exploders()
 {
     level notify( "createfx_exploder_reset" );
     var_0 = [];
 
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
-        var_2 = level._id_0575._id_7C60[var_1];
+        var_2 = level._createfx.selected_fx_ents[var_1];
 
         if ( isdefined( var_2.v["exploder"] ) )
             var_0[var_2.v["exploder"]] = 1;
@@ -1112,10 +1112,10 @@ _id_9905()
     var_3 = getarraykeys( var_0 );
 
     for ( var_1 = 0; var_1 < var_3.size; var_1++ )
-        common_scripts\_exploder::_id_5306( var_3[var_1] );
+        common_scripts\_exploder::kill_exploder( var_3[var_1] );
 }
 
-_id_2DAE()
+draw_distance()
 {
     var_0 = 0;
 
@@ -1129,10 +1129,10 @@ _id_2DAE()
         var_1 = getdvarint( "createfx_drawdist" );
         var_1 *= var_1;
 
-        for ( var_2 = 0; var_2 < level._id_2417.size; var_2++ )
+        for ( var_2 = 0; var_2 < level.createfxent.size; var_2++ )
         {
-            var_3 = level._id_2417[var_2];
-            var_3._id_2DDA = distancesquared( level.player.origin, var_3.v["origin"] ) <= var_1;
+            var_3 = level.createfxent[var_2];
+            var_3.drawn = distancesquared( level.player.origin, var_3.v["origin"] ) <= var_1;
             var_0++;
 
             if ( var_0 > 100 )
@@ -1142,12 +1142,12 @@ _id_2DAE()
             }
         }
 
-        if ( level._id_2417.size == 0 )
+        if ( level.createfxent.size == 0 )
             wait 0.05;
     }
 }
 
-_id_2404()
+createfx_autosave()
 {
     setdvarifuninitialized( "createfx_autosave_time", "300" );
 
@@ -1159,30 +1159,30 @@ _id_2404()
         if ( getdvarint( "createfx_no_autosave" ) )
             continue;
 
-        _id_3C82( 1 );
+        generate_fx_log( 1 );
     }
 }
 
-_id_75EF( var_0, var_1 )
+rotate_over_time( var_0, var_1 )
 {
     level endon( "new_ent_selection" );
     var_2 = 0.1;
 
     for ( var_3 = 0; var_3 < var_2 * 20; var_3++ )
     {
-        if ( level._id_7C66 != 0 )
-            var_0 _meth_82B9( level._id_7C66 );
-        else if ( level._id_7C67 != 0 )
-            var_0 _meth_82BA( level._id_7C67 );
+        if ( level.selectedrotate_pitch != 0 )
+            var_0 _meth_82B9( level.selectedrotate_pitch );
+        else if ( level.selectedrotate_roll != 0 )
+            var_0 _meth_82BA( level.selectedrotate_roll );
         else
-            var_0 _meth_82BB( level._id_7C68 );
+            var_0 _meth_82BB( level.selectedrotate_yaw );
 
         wait 0.05;
-        var_0 _id_2DA0();
+        var_0 draw_axis();
 
-        for ( var_4 = 0; var_4 < level._id_0575._id_7C60.size; var_4++ )
+        for ( var_4 = 0; var_4 < level._createfx.selected_fx_ents.size; var_4++ )
         {
-            var_5 = level._id_0575._id_7C60[var_4];
+            var_5 = level._createfx.selected_fx_ents[var_4];
 
             if ( isdefined( var_5.model ) )
                 continue;
@@ -1193,56 +1193,56 @@ _id_75EF( var_0, var_1 )
     }
 }
 
-_id_282E()
+delete_pressed()
 {
-    if ( level._id_240D )
+    if ( level.createfx_inputlocked )
     {
-        _id_737B();
+        remove_selected_option();
         return;
     }
 
-    _id_2832();
+    delete_selection();
 }
 
-_id_737B()
+remove_selected_option()
 {
-    if ( !isdefined( level._id_0575._id_7C61 ) )
+    if ( !isdefined( level._createfx.selected_fx_option_index ) )
         return;
 
-    var_0 = level._id_0575._id_6549[level._id_0575._id_7C61]["name"];
+    var_0 = level._createfx.options[level._createfx.selected_fx_option_index]["name"];
 
-    for ( var_1 = 0; var_1 < level._id_2417.size; var_1++ )
+    for ( var_1 = 0; var_1 < level.createfxent.size; var_1++ )
     {
-        var_2 = level._id_2417[var_1];
+        var_2 = level.createfxent[var_1];
 
-        if ( !_id_32E7( var_2 ) )
+        if ( !ent_is_selected( var_2 ) )
             continue;
 
-        var_2 _id_7372( var_0 );
+        var_2 remove_option( var_0 );
     }
 
-    _id_9AD4();
-    _id_1ED6();
+    update_selected_entities();
+    clear_settable_fx();
 }
 
-_id_7372( var_0 )
+remove_option( var_0 )
 {
     self.v[var_0] = undefined;
 }
 
-_id_2832()
+delete_selection()
 {
-    _id_780B();
+    save_undo_buffer();
     var_0 = [];
 
-    for ( var_1 = 0; var_1 < level._id_2417.size; var_1++ )
+    for ( var_1 = 0; var_1 < level.createfxent.size; var_1++ )
     {
-        var_2 = level._id_2417[var_1];
+        var_2 = level.createfxent[var_1];
 
-        if ( _id_32E7( var_2 ) )
+        if ( ent_is_selected( var_2 ) )
         {
-            if ( isdefined( var_2._id_5878 ) )
-                var_2._id_5878 delete();
+            if ( isdefined( var_2.looper ) )
+                var_2.looper delete();
 
             var_2 notify( "stop_loop" );
             continue;
@@ -1251,67 +1251,67 @@ _id_2832()
         var_0[var_0.size] = var_2;
     }
 
-    level._id_2417 = var_0;
-    level._id_0575._id_7C5F = [];
-    level._id_0575._id_7C60 = [];
-    _id_1EB9();
-    _id_7809();
+    level.createfxent = var_0;
+    level._createfx.selected_fx = [];
+    level._createfx.selected_fx_ents = [];
+    clear_fx_hudelements();
+    save_redo_buffer();
 }
 
-_id_5F23()
+move_selection_to_cursor()
 {
-    thread _id_780B();
-    var_0 = level._id_2416["position"];
+    thread save_undo_buffer();
+    var_0 = level.createfxcursor["position"];
 
-    if ( level._id_0575._id_7C60.size <= 0 )
+    if ( level._createfx.selected_fx_ents.size <= 0 )
         return;
 
-    var_1 = _id_3CE5( level._id_0575._id_7C60 );
+    var_1 = get_center_of_array( level._createfx.selected_fx_ents );
     var_2 = var_1 - var_0;
 
-    for ( var_3 = 0; var_3 < level._id_0575._id_7C60.size; var_3++ )
+    for ( var_3 = 0; var_3 < level._createfx.selected_fx_ents.size; var_3++ )
     {
-        var_4 = level._id_0575._id_7C60[var_3];
+        var_4 = level._createfx.selected_fx_ents[var_3];
 
         if ( isdefined( var_4.model ) )
             continue;
 
         var_4.v["origin"] -= var_2;
 
-        if ( level._id_0575._id_86B7 )
+        if ( level._createfx.snap2normal )
         {
-            if ( isdefined( level._id_2416["normal"] ) )
-                var_4.v["angles"] = vectortoangles( level._id_2416["normal"] );
+            if ( isdefined( level.createfxcursor["normal"] ) )
+                var_4.v["angles"] = vectortoangles( level.createfxcursor["normal"] );
         }
     }
 
-    level._id_240E = 0;
+    level.createfx_last_movement_timer = 0;
 }
 
-_id_7C59()
+select_last_entity()
 {
-    _id_7C57( level._id_2417.size - 1, level._id_2417[level._id_2417.size - 1] );
+    select_entity( level.createfxent.size - 1, level.createfxent[level.createfxent.size - 1] );
 }
 
-_id_741A()
+reselect_entitites()
 {
     var_0 = [];
 
-    for ( var_1 = 0; var_1 < level._id_2417.size; var_1++ )
+    for ( var_1 = 0; var_1 < level.createfxent.size; var_1++ )
     {
-        if ( _id_4C3F( var_1 ) )
+        if ( index_is_selected( var_1 ) )
             var_0[var_0.size] = var_1;
     }
 
-    _id_1EB5();
-    _id_7C58( var_0 );
+    clear_entity_selection();
+    select_index_array( var_0 );
 }
 
-_id_7C53( var_0 )
+select_all_exploders_of_currently_selected( var_0 )
 {
     var_1 = [];
 
-    foreach ( var_3 in level._id_0575._id_7C60 )
+    foreach ( var_3 in level._createfx.selected_fx_ents )
     {
         if ( !isdefined( var_3.v[var_0] ) )
             continue;
@@ -1322,9 +1322,9 @@ _id_7C53( var_0 )
 
     foreach ( var_4, var_7 in var_1 )
     {
-        foreach ( var_9, var_3 in level._id_2417 )
+        foreach ( var_9, var_3 in level.createfxent )
         {
-            if ( _id_4C3F( var_9 ) )
+            if ( index_is_selected( var_9 ) )
                 continue;
 
             if ( !isdefined( var_3.v[var_0] ) )
@@ -1333,63 +1333,63 @@ _id_7C53( var_0 )
             if ( var_3.v[var_0] != var_4 )
                 continue;
 
-            _id_7C57( var_9, var_3 );
+            select_entity( var_9, var_3 );
         }
     }
 
-    _id_9AD4();
+    update_selected_entities();
 }
 
-_id_21D6()
+copy_ents()
 {
-    if ( level._id_0575._id_7C60.size <= 0 )
+    if ( level._createfx.selected_fx_ents.size <= 0 )
         return;
 
     var_0 = [];
 
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
-        var_2 = level._id_0575._id_7C60[var_1];
+        var_2 = level._createfx.selected_fx_ents[var_1];
         var_3 = spawnstruct();
         var_3.v = var_2.v;
-        var_3 _id_6E6A();
+        var_3 post_entity_creation_function();
         var_0[var_0.size] = var_3;
     }
 
-    level._id_8F0E = var_0;
+    level.stored_ents = var_0;
 }
 
-_id_6E6A()
+post_entity_creation_function()
 {
-    self._id_92B4 = 0;
-    self._id_2DDA = 1;
+    self.textalpha = 0;
+    self.drawn = 1;
 }
 
-_id_66B9()
+paste_ents()
 {
-    if ( !isdefined( level._id_8F0E ) )
+    if ( !isdefined( level.stored_ents ) )
         return;
 
-    _id_1EB5();
+    clear_entity_selection();
 
-    for ( var_0 = 0; var_0 < level._id_8F0E.size; var_0++ )
-        _id_0731( level._id_8F0E[var_0] );
+    for ( var_0 = 0; var_0 < level.stored_ents.size; var_0++ )
+        add_and_select_entity( level.stored_ents[var_0] );
 
-    _id_5F23();
-    _id_9AD4();
-    level._id_8F0E = [];
-    _id_21D6();
+    move_selection_to_cursor();
+    update_selected_entities();
+    level.stored_ents = [];
+    copy_ents();
 }
 
-_id_0731( var_0 )
+add_and_select_entity( var_0 )
 {
-    level._id_2417[level._id_2417.size] = var_0;
-    _id_7C59();
+    level.createfxent[level.createfxent.size] = var_0;
+    select_last_entity();
 }
 
-_id_3CE5( var_0 )
+get_center_of_array( var_0 )
 {
-    var_1 = ( 0.0, 0.0, 0.0 );
+    var_1 = ( 0, 0, 0 );
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
         var_1 = ( var_1[0] + var_0[var_2].v["origin"][0], var_1[1] + var_0[var_2].v["origin"][1], var_1[2] + var_0[var_2].v["origin"][2] );
@@ -1397,7 +1397,7 @@ _id_3CE5( var_0 )
     return ( var_1[0] / var_0.size, var_1[1] / var_0.size, var_1[2] / var_0.size );
 }
 
-_id_3E3F( var_0 )
+get_radius_of_array( var_0 )
 {
     var_1 = var_0[0].v["origin"];
     var_2 = var_0[0].v["origin"];
@@ -1437,33 +1437,33 @@ _id_3E3F( var_0 )
     return var_11;
 }
 
-_id_32D6()
+ent_draw_axis()
 {
     self endon( "death" );
 
     for (;;)
     {
-        _id_2DA0();
+        draw_axis();
         wait 0.05;
     }
 }
 
-_id_760A()
+rotation_is_occuring()
 {
-    if ( level._id_7C67 != 0 )
+    if ( level.selectedrotate_roll != 0 )
         return 1;
 
-    if ( level._id_7C66 != 0 )
+    if ( level.selectedrotate_pitch != 0 )
         return 1;
 
-    return level._id_7C68 != 0;
+    return level.selectedrotate_yaw != 0;
 }
 
-_id_6F95( var_0, var_1, var_2 )
+print_fx_options( var_0, var_1, var_2 )
 {
-    for ( var_3 = 0; var_3 < level._id_0575._id_6549.size; var_3++ )
+    for ( var_3 = 0; var_3 < level._createfx.options.size; var_3++ )
     {
-        var_4 = level._id_0575._id_6549[var_3];
+        var_4 = level._createfx.options[var_3];
 
         if ( isdefined( var_4["nowrite"] ) && var_4["nowrite"] )
             continue;
@@ -1473,12 +1473,12 @@ _id_6F95( var_0, var_1, var_2 )
         if ( !isdefined( var_0.v[var_5] ) )
             continue;
 
-        if ( !common_scripts\_createfxmenu::_id_59CF( var_4["mask"], var_0.v["type"] ) )
+        if ( !common_scripts\_createfxmenu::mask( var_4["mask"], var_0.v["type"] ) )
             continue;
 
-        if ( !level._id_5FA9 )
+        if ( !level.mp_createfx )
         {
-            if ( common_scripts\_createfxmenu::_id_59CF( "fx", var_0.v["type"] ) && var_5 == "fxid" )
+            if ( common_scripts\_createfxmenu::mask( "fx", var_0.v["type"] ) && var_5 == "fxid" )
                 continue;
 
             if ( var_0.v["type"] == "exploder" && var_5 == "exploder" )
@@ -1486,7 +1486,7 @@ _id_6F95( var_0, var_1, var_2 )
 
             var_6 = var_0.v["type"] + "/" + var_5;
 
-            if ( isdefined( level._id_0575._id_279B[var_6] ) && level._id_0575._id_279B[var_6] == var_0.v[var_5] )
+            if ( isdefined( level._createfx.defaults[var_6] ) && level._createfx.defaults[var_6] == var_0.v[var_5] )
                 continue;
         }
 
@@ -1500,161 +1500,161 @@ _id_6F95( var_0, var_1, var_2 )
             if ( var_5 == "platform" && var_7 == "all" )
                 continue;
 
-            _id_1C19( var_1 + "ent.v[ \"" + var_5 + "\" ] = \"" + var_0.v[var_5] + "\";" );
+            cfxprintln( var_1 + "ent.v[ \"" + var_5 + "\" ] = \"" + var_0.v[var_5] + "\";" );
             continue;
         }
 
-        _id_1C19( var_1 + "ent.v[ \"" + var_5 + "\" ] = " + var_0.v[var_5] + ";" );
+        cfxprintln( var_1 + "ent.v[ \"" + var_5 + "\" ] = " + var_0.v[var_5] + ";" );
     }
 }
 
-_id_3310()
+entity_highlight_disable()
 {
     self notify( "highlight change" );
     self endon( "highlight change" );
 
     for (;;)
     {
-        self._id_92B4 *= 0.85;
-        self._id_92B4 -= 0.05;
+        self.textalpha *= 0.85;
+        self.textalpha -= 0.05;
 
-        if ( self._id_92B4 < 0 )
+        if ( self.textalpha < 0 )
             break;
 
         wait 0.05;
     }
 
-    self._id_92B4 = 0;
+    self.textalpha = 0;
 }
 
-_id_3311()
+entity_highlight_enable()
 {
     self notify( "highlight change" );
     self endon( "highlight change" );
 
     for (;;)
     {
-        self._id_92B4 += 0.05;
-        self._id_92B4 *= 1.25;
+        self.textalpha += 0.05;
+        self.textalpha *= 1.25;
 
-        if ( self._id_92B4 > 1 )
+        if ( self.textalpha > 1 )
             break;
 
         wait 0.05;
     }
 
-    self._id_92B4 = 1;
+    self.textalpha = 1;
 }
 
-_id_1ED6()
+clear_settable_fx()
 {
-    level._id_240D = 0;
-    level._id_0575._id_7C61 = undefined;
-    _id_742A();
+    level.createfx_inputlocked = 0;
+    level._createfx.selected_fx_option_index = undefined;
+    reset_fx_hud_colors();
 }
 
-_id_742A()
+reset_fx_hud_colors()
 {
-    for ( var_0 = 0; var_0 < level._id_0575._id_4ADE; var_0++ )
-        level._id_0575._id_4AE6[var_0][0].color = ( 1.0, 1.0, 1.0 );
+    for ( var_0 = 0; var_0 < level._createfx.hudelem_count; var_0++ )
+        level._createfx.hudelems[var_0][0].color = ( 1, 1, 1 );
 }
 
-_id_93C3( var_0, var_1 )
+toggle_entity_selection( var_0, var_1 )
 {
-    if ( isdefined( level._id_0575._id_7C5F[var_0] ) )
-        _id_28B2( var_0, var_1 );
+    if ( isdefined( level._createfx.selected_fx[var_0] ) )
+        deselect_entity( var_0, var_1 );
     else
-        _id_7C57( var_0, var_1 );
+        select_entity( var_0, var_1 );
 }
 
-_id_7C57( var_0, var_1 )
+select_entity( var_0, var_1 )
 {
-    if ( isdefined( level._id_0575._id_7C5F[var_0] ) )
+    if ( isdefined( level._createfx.selected_fx[var_0] ) )
         return;
 
-    _id_1ED6();
+    clear_settable_fx();
     level notify( "new_ent_selection" );
-    var_1 thread _id_3311();
-    level._id_0575._id_7C5F[var_0] = 1;
-    level._id_0575._id_7C60[level._id_0575._id_7C60.size] = var_1;
-    level._id_2410 = 0;
+    var_1 thread entity_highlight_enable();
+    level._createfx.selected_fx[var_0] = 1;
+    level._createfx.selected_fx_ents[level._createfx.selected_fx_ents.size] = var_1;
+    level.createfx_menu_list_active = 0;
 }
 
-_id_32E6( var_0 )
+ent_is_highlighted( var_0 )
 {
-    if ( !isdefined( level._id_3B55 ) )
+    if ( !isdefined( level.fx_highlightedent ) )
         return 0;
 
-    return var_0 == level._id_3B55;
+    return var_0 == level.fx_highlightedent;
 }
 
-_id_28B2( var_0, var_1 )
+deselect_entity( var_0, var_1 )
 {
-    if ( !isdefined( level._id_0575._id_7C5F[var_0] ) )
+    if ( !isdefined( level._createfx.selected_fx[var_0] ) )
         return;
 
-    _id_1ED6();
+    clear_settable_fx();
     level notify( "new_ent_selection" );
-    level._id_0575._id_7C5F[var_0] = undefined;
+    level._createfx.selected_fx[var_0] = undefined;
 
-    if ( !_id_32E6( var_1 ) )
-        var_1 thread _id_3310();
+    if ( !ent_is_highlighted( var_1 ) )
+        var_1 thread entity_highlight_disable();
 
     var_2 = [];
 
-    for ( var_3 = 0; var_3 < level._id_0575._id_7C60.size; var_3++ )
+    for ( var_3 = 0; var_3 < level._createfx.selected_fx_ents.size; var_3++ )
     {
-        if ( level._id_0575._id_7C60[var_3] != var_1 )
-            var_2[var_2.size] = level._id_0575._id_7C60[var_3];
+        if ( level._createfx.selected_fx_ents[var_3] != var_1 )
+            var_2[var_2.size] = level._createfx.selected_fx_ents[var_3];
     }
 
-    level._id_0575._id_7C60 = var_2;
+    level._createfx.selected_fx_ents = var_2;
 }
 
-_id_4C3F( var_0 )
+index_is_selected( var_0 )
 {
-    return isdefined( level._id_0575._id_7C5F[var_0] );
+    return isdefined( level._createfx.selected_fx[var_0] );
 }
 
-_id_32E7( var_0 )
+ent_is_selected( var_0 )
 {
-    for ( var_1 = 0; var_1 < level._id_0575._id_7C60.size; var_1++ )
+    for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
-        if ( level._id_0575._id_7C60[var_1] == var_0 )
+        if ( level._createfx.selected_fx_ents[var_1] == var_0 )
             return 1;
     }
 
     return 0;
 }
 
-_id_1EB5()
+clear_entity_selection()
 {
-    for ( var_0 = 0; var_0 < level._id_0575._id_7C60.size; var_0++ )
+    for ( var_0 = 0; var_0 < level._createfx.selected_fx_ents.size; var_0++ )
     {
-        if ( !_id_32E6( level._id_0575._id_7C60[var_0] ) )
-            level._id_0575._id_7C60[var_0] thread _id_3310();
+        if ( !ent_is_highlighted( level._createfx.selected_fx_ents[var_0] ) )
+            level._createfx.selected_fx_ents[var_0] thread entity_highlight_disable();
     }
 
-    level._id_0575._id_7C5F = [];
-    level._id_0575._id_7C60 = [];
+    level._createfx.selected_fx = [];
+    level._createfx.selected_fx_ents = [];
 }
 
-_id_2DA0()
+draw_axis()
 {
 
 }
 
-_id_2DAA()
+draw_cross()
 {
 
 }
 
-_id_2405( var_0 )
+createfx_centerprint( var_0 )
 {
-    thread _id_2406( var_0 );
+    thread createfx_centerprint_thread( var_0 );
 }
 
-_id_2406( var_0 )
+createfx_centerprint_thread( var_0 )
 {
     level notify( "new_createfx_centerprint" );
     level endon( "new_createfx_centerprint" );
@@ -1672,7 +1672,7 @@ _id_2406( var_0 )
     }
 }
 
-_id_3E5A()
+get_selected_move_vector()
 {
     var_0 = level.player getangles()[1];
     var_1 = ( 0, var_0, 0 );
@@ -1680,142 +1680,142 @@ _id_3E5A()
     var_3 = anglestoforward( var_1 );
     var_4 = anglestoup( var_1 );
     var_5 = 0;
-    var_6 = level._id_0575._id_0358;
+    var_6 = level._createfx.rate;
 
-    if ( _id_1959( "DPAD_UP" ) )
+    if ( buttondown( "DPAD_UP" ) )
     {
-        if ( level._id_7C63 < 0 )
-            level._id_7C63 = 0;
+        if ( level.selectedmove_forward < 0 )
+            level.selectedmove_forward = 0;
 
-        level._id_7C63 += var_6;
+        level.selectedmove_forward += var_6;
     }
-    else if ( _id_1959( "DPAD_DOWN" ) )
+    else if ( buttondown( "DPAD_DOWN" ) )
     {
-        if ( level._id_7C63 > 0 )
-            level._id_7C63 = 0;
+        if ( level.selectedmove_forward > 0 )
+            level.selectedmove_forward = 0;
 
-        level._id_7C63 -= var_6;
-    }
-    else
-        level._id_7C63 = 0;
-
-    if ( _id_1959( "DPAD_RIGHT" ) )
-    {
-        if ( level._id_7C64 < 0 )
-            level._id_7C64 = 0;
-
-        level._id_7C64 += var_6;
-    }
-    else if ( _id_1959( "DPAD_LEFT" ) )
-    {
-        if ( level._id_7C64 > 0 )
-            level._id_7C64 = 0;
-
-        level._id_7C64 -= var_6;
+        level.selectedmove_forward -= var_6;
     }
     else
-        level._id_7C64 = 0;
+        level.selectedmove_forward = 0;
 
-    if ( _id_1959( "BUTTON_Y" ) )
+    if ( buttondown( "DPAD_RIGHT" ) )
     {
-        if ( level._id_7C65 < 0 )
-            level._id_7C65 = 0;
+        if ( level.selectedmove_right < 0 )
+            level.selectedmove_right = 0;
 
-        level._id_7C65 += var_6;
+        level.selectedmove_right += var_6;
     }
-    else if ( _id_1959( "BUTTON_B" ) )
+    else if ( buttondown( "DPAD_LEFT" ) )
     {
-        if ( level._id_7C65 > 0 )
-            level._id_7C65 = 0;
+        if ( level.selectedmove_right > 0 )
+            level.selectedmove_right = 0;
 
-        level._id_7C65 -= var_6;
+        level.selectedmove_right -= var_6;
     }
     else
-        level._id_7C65 = 0;
+        level.selectedmove_right = 0;
 
-    var_7 = ( 0.0, 0.0, 0.0 );
-    var_7 += var_3 * level._id_7C63;
-    var_7 += var_2 * level._id_7C64;
-    var_7 += var_4 * level._id_7C65;
+    if ( buttondown( "BUTTON_Y" ) )
+    {
+        if ( level.selectedmove_up < 0 )
+            level.selectedmove_up = 0;
+
+        level.selectedmove_up += var_6;
+    }
+    else if ( buttondown( "BUTTON_B" ) )
+    {
+        if ( level.selectedmove_up > 0 )
+            level.selectedmove_up = 0;
+
+        level.selectedmove_up -= var_6;
+    }
+    else
+        level.selectedmove_up = 0;
+
+    var_7 = ( 0, 0, 0 );
+    var_7 += var_3 * level.selectedmove_forward;
+    var_7 += var_2 * level.selectedmove_right;
+    var_7 += var_4 * level.selectedmove_up;
     return var_7;
 }
 
-_id_7DB5()
+set_anglemod_move_vector()
 {
-    if ( !level._id_0575._id_86B8 )
-        var_0 = level._id_0575._id_0358;
+    if ( !level._createfx.snap90deg )
+        var_0 = level._createfx.rate;
     else
         var_0 = 90;
 
-    if ( _id_1959( "kp_uparrow", "DPAD_UP" ) )
+    if ( buttondown( "kp_uparrow", "DPAD_UP" ) )
     {
-        if ( level._id_7C66 < 0 )
-            level._id_7C66 = 0;
+        if ( level.selectedrotate_pitch < 0 )
+            level.selectedrotate_pitch = 0;
 
-        level._id_7C66 += var_0;
+        level.selectedrotate_pitch += var_0;
     }
-    else if ( _id_1959( "kp_downarrow", "DPAD_DOWN" ) )
+    else if ( buttondown( "kp_downarrow", "DPAD_DOWN" ) )
     {
-        if ( level._id_7C66 > 0 )
-            level._id_7C66 = 0;
+        if ( level.selectedrotate_pitch > 0 )
+            level.selectedrotate_pitch = 0;
 
-        level._id_7C66 -= var_0;
-    }
-    else
-        level._id_7C66 = 0;
-
-    if ( _id_1959( "DPAD_LEFT" ) )
-    {
-        if ( level._id_7C68 < 0 )
-            level._id_7C68 = 0;
-
-        level._id_7C68 += var_0;
-    }
-    else if ( _id_1959( "DPAD_RIGHT" ) )
-    {
-        if ( level._id_7C68 > 0 )
-            level._id_7C68 = 0;
-
-        level._id_7C68 -= var_0;
+        level.selectedrotate_pitch -= var_0;
     }
     else
-        level._id_7C68 = 0;
+        level.selectedrotate_pitch = 0;
 
-    if ( _id_1959( "BUTTON_Y" ) )
+    if ( buttondown( "DPAD_LEFT" ) )
     {
-        if ( level._id_7C67 < 0 )
-            level._id_7C67 = 0;
+        if ( level.selectedrotate_yaw < 0 )
+            level.selectedrotate_yaw = 0;
 
-        level._id_7C67 += var_0;
+        level.selectedrotate_yaw += var_0;
     }
-    else if ( _id_1959( "BUTTON_B" ) )
+    else if ( buttondown( "DPAD_RIGHT" ) )
     {
-        if ( level._id_7C67 > 0 )
-            level._id_7C67 = 0;
+        if ( level.selectedrotate_yaw > 0 )
+            level.selectedrotate_yaw = 0;
 
-        level._id_7C67 -= var_0;
+        level.selectedrotate_yaw -= var_0;
     }
     else
-        level._id_7C67 = 0;
+        level.selectedrotate_yaw = 0;
+
+    if ( buttondown( "BUTTON_Y" ) )
+    {
+        if ( level.selectedrotate_roll < 0 )
+            level.selectedrotate_roll = 0;
+
+        level.selectedrotate_roll += var_0;
+    }
+    else if ( buttondown( "BUTTON_B" ) )
+    {
+        if ( level.selectedrotate_roll > 0 )
+            level.selectedrotate_roll = 0;
+
+        level.selectedrotate_roll -= var_0;
+    }
+    else
+        level.selectedrotate_roll = 0;
 }
 
-_id_9AD4()
+update_selected_entities()
 {
     var_0 = 0;
 
-    foreach ( var_2 in level._id_0575._id_7C60 )
+    foreach ( var_2 in level._createfx.selected_fx_ents )
     {
         if ( var_2.v["type"] == "reactive_fx" )
             var_0 = 1;
 
-        var_2 [[ level._id_3AEF ]]();
+        var_2 [[ level.func_updatefx ]]();
     }
 
     if ( var_0 )
-        _id_72BE();
+        refresh_reactive_fx_ents();
 }
 
-_id_44E5( var_0 )
+hack_start( var_0 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = "painter_mp";
@@ -1826,129 +1826,129 @@ _id_44E5( var_0 )
     if ( var_0 == "painter_mp" )
         return;
 
-    level.player openpopupmenu( var_0 );
-    level.player closepopupmenu( var_0 );
+    level.player _meth_8323( var_0 );
+    level.player _meth_8325( var_0 );
 }
 
 stop_fx_looper()
 {
-    if ( isdefined( self._id_5878 ) )
-        self._id_5878 delete();
+    if ( isdefined( self.looper ) )
+        self.looper delete();
 
-    _id_8E9D();
+    stop_loopsound();
 }
 
-_id_8E9D()
+stop_loopsound()
 {
     self notify( "stop_loop" );
 }
 
-_id_3AE6()
+func_get_level_fx()
 {
-    if ( !isdefined( level._id_0590 ) )
+    if ( !isdefined( level._effect_keys ) )
         var_0 = getarraykeys( level._effect );
     else
     {
         var_0 = getarraykeys( level._effect );
 
-        if ( var_0.size == level._id_0590.size )
-            return level._id_0590;
+        if ( var_0.size == level._effect_keys.size )
+            return level._effect_keys;
     }
 
     var_0 = common_scripts\utility::alphabetize( var_0 );
-    level._id_0590 = var_0;
+    level._effect_keys = var_0;
     return var_0;
 }
 
-_id_7487()
+restart_fx_looper()
 {
     stop_fx_looper();
-    _id_7E3A();
+    set_forward_and_up_vectors();
 
     switch ( self.v["type"] )
     {
         case "loopfx":
-            _id_A4EE::_id_23C9();
+            common_scripts\_fx::create_looper();
             break;
         case "oneshotfx":
-            _id_A4EE::_id_23DD();
+            common_scripts\_fx::create_triggerfx();
             break;
         case "soundfx":
-            _id_A4EE::_id_23CA();
+            common_scripts\_fx::create_loopsound();
             break;
         case "soundfx_interval":
-            _id_A4EE::_id_23C3();
+            common_scripts\_fx::create_interval_sound();
             break;
         case "soundfx_dynamic":
-            _id_A4EE::_id_23AF();
+            common_scripts\_fx::create_dynamicambience();
             break;
     }
 }
 
-_id_72BE()
+refresh_reactive_fx_ents()
 {
-    level._id_05B2._id_718A = undefined;
+    level._fx.reactive_fx_ents = undefined;
 
-    foreach ( var_1 in level._id_2417 )
+    foreach ( var_1 in level.createfxent )
     {
         if ( var_1.v["type"] == "reactive_fx" )
         {
-            var_1 _id_7E3A();
-            var_1 _id_A4EE::_id_078A();
+            var_1 set_forward_and_up_vectors();
+            var_1 common_scripts\_fx::add_reactive_fx();
         }
     }
 }
 
-_id_6FE9()
+process_fx_rotater()
 {
-    if ( level._id_3B81 )
+    if ( level.fx_rotating )
     {
-        thread _id_780B();
-        level._id_240E = 0;
+        thread save_undo_buffer();
+        level.createfx_last_movement_timer = 0;
         return;
     }
 
-    _id_7DB5();
+    set_anglemod_move_vector();
 
-    if ( !_id_760A() )
+    if ( !rotation_is_occuring() )
         return;
 
-    level._id_3B81 = 1;
+    level.fx_rotating = 1;
 
-    if ( level._id_0575._id_7C60.size > 1 && !level._id_0575._id_57ED )
+    if ( level._createfx.selected_fx_ents.size > 1 && !level._createfx.localrot )
     {
-        var_0 = _id_3CE5( level._id_0575._id_7C60 );
+        var_0 = get_center_of_array( level._createfx.selected_fx_ents );
         var_1 = spawn( "script_origin", var_0 );
-        var_1.v["angles"] = level._id_0575._id_7C60[0].v["angles"];
+        var_1.v["angles"] = level._createfx.selected_fx_ents[0].v["angles"];
         var_1.v["origin"] = var_0;
         var_2 = [];
 
-        for ( var_3 = 0; var_3 < level._id_0575._id_7C60.size; var_3++ )
+        for ( var_3 = 0; var_3 < level._createfx.selected_fx_ents.size; var_3++ )
         {
-            var_2[var_3] = spawn( "script_origin", level._id_0575._id_7C60[var_3].v["origin"] );
-            var_2[var_3].angles = level._id_0575._id_7C60[var_3].v["angles"];
-            var_2[var_3] linktosynchronizedparent( var_1 );
+            var_2[var_3] = spawn( "script_origin", level._createfx.selected_fx_ents[var_3].v["origin"] );
+            var_2[var_3].angles = level._createfx.selected_fx_ents[var_3].v["angles"];
+            var_2[var_3] _meth_8446( var_1 );
         }
 
-        _id_75EF( var_1, var_2 );
+        rotate_over_time( var_1, var_2 );
         var_1 delete();
 
         for ( var_3 = 0; var_3 < var_2.size; var_3++ )
             var_2[var_3] delete();
     }
-    else if ( level._id_0575._id_7C60.size > 0 )
+    else if ( level._createfx.selected_fx_ents.size > 0 )
     {
-        foreach ( var_5 in level._id_0575._id_7C60 )
+        foreach ( var_5 in level._createfx.selected_fx_ents )
         {
-            var_2 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+            var_2 = spawn( "script_origin", ( 0, 0, 0 ) );
             var_2.angles = var_5.v["angles"];
 
-            if ( level._id_7C66 != 0 )
-                var_2 _meth_82B9( level._id_7C66 );
-            else if ( level._id_7C68 != 0 )
-                var_2 _meth_82BA( level._id_7C68 );
+            if ( level.selectedrotate_pitch != 0 )
+                var_2 _meth_82B9( level.selectedrotate_pitch );
+            else if ( level.selectedrotate_yaw != 0 )
+                var_2 _meth_82BA( level.selectedrotate_yaw );
             else
-                var_2 _meth_82BB( level._id_7C67 );
+                var_2 _meth_82BB( level.selectedrotate_roll );
 
             var_5.v["angles"] = var_2.angles;
             var_2 delete();
@@ -1957,44 +1957,44 @@ _id_6FE9()
         wait 0.05;
     }
 
-    level._id_3B81 = 0;
+    level.fx_rotating = 0;
 }
 
-_id_88FE()
+spawn_grenade()
 {
-    playfx( level._id_0575._id_01CD._id_3B21, level._id_2416["position"] );
-    level._id_0575._id_01CD playsound( level._id_0575._id_01CD.sound );
-    radiusdamage( level._id_2416["position"], level._id_0575._id_01CD.radius, 50, 5, undefined, "MOD_EXPLOSIVE" );
-    level notify( "code_damageradius", undefined, level._id_0575._id_01CD.radius, level._id_2416["position"] );
+    playfx( level._createfx.grenade.fx, level.createfxcursor["position"] );
+    level._createfx.grenade playsound( level._createfx.grenade.sound );
+    radiusdamage( level.createfxcursor["position"], level._createfx.grenade.radius, 50, 5, undefined, "MOD_EXPLOSIVE" );
+    level notify( "code_damageradius", undefined, level._createfx.grenade.radius, level.createfxcursor["position"] );
 }
 
-_id_84D1()
+show_help()
 {
-    if ( level._id_240B == 1 )
+    if ( level.createfx_help_active == 1 )
     {
-        _id_1EB9();
-        level._id_240B = 0;
-        level._id_2410 = 0;
-        _id_741A();
+        clear_fx_hudelements();
+        level.createfx_help_active = 0;
+        level.createfx_menu_list_active = 0;
+        reselect_entitites();
     }
     else
     {
-        level._id_240B = 1;
-        level._id_2410 = 1;
-        common_scripts\_createfxmenu::_id_2DB5();
-        thread common_scripts\_createfxmenu::_id_4836();
-        _id_1EDB();
+        level.createfx_help_active = 1;
+        level.createfx_menu_list_active = 1;
+        common_scripts\_createfxmenu::draw_help_list();
+        thread common_scripts\_createfxmenu::help_navigation_buttons();
+        clear_tool_hud();
     }
 
     wait 0.2;
 }
 
-_id_3C82( var_0 )
+generate_fx_log( var_0 )
 {
 
 }
 
-_id_A355( var_0, var_1 )
+write_entity( var_0, var_1 )
 {
     var_2 = "\\t";
 
@@ -2007,92 +2007,92 @@ _id_A355( var_0, var_1 )
         return;
 
     if ( var_0.v["type"] == "loopfx" )
-        _id_1C19( var_2 + "ent = createLoopEffect( \"" + var_0.v["fxid"] + "\" );" );
+        cfxprintln( var_2 + "ent = createLoopEffect( \"" + var_0.v["fxid"] + "\" );" );
 
     if ( var_0.v["type"] == "oneshotfx" )
-        _id_1C19( var_2 + "ent = createOneshotEffect( \"" + var_0.v["fxid"] + "\" );" );
+        cfxprintln( var_2 + "ent = createOneshotEffect( \"" + var_0.v["fxid"] + "\" );" );
 
     if ( var_0.v["type"] == "exploder" )
     {
-        if ( isdefined( var_0.v["exploder"] ) && !level._id_5FA9 )
-            _id_1C19( var_2 + "ent = createExploderEx( \"" + var_0.v["fxid"] + "\", \"" + var_0.v["exploder"] + "\" );" );
+        if ( isdefined( var_0.v["exploder"] ) && !level.mp_createfx )
+            cfxprintln( var_2 + "ent = createExploderEx( \"" + var_0.v["fxid"] + "\", \"" + var_0.v["exploder"] + "\" );" );
         else
-            _id_1C19( var_2 + "ent = createExploder( \"" + var_0.v["fxid"] + "\" );" );
+            cfxprintln( var_2 + "ent = createExploder( \"" + var_0.v["fxid"] + "\" );" );
     }
 
     if ( var_0.v["type"] == "soundfx" )
-        _id_1C19( var_2 + "ent = createLoopSound();" );
+        cfxprintln( var_2 + "ent = createLoopSound();" );
 
     if ( var_0.v["type"] == "soundfx_interval" )
-        _id_1C19( var_2 + "ent = createIntervalSound();" );
+        cfxprintln( var_2 + "ent = createIntervalSound();" );
 
     if ( var_0.v["type"] == "reactive_fx" )
-        _id_1C19( var_2 + "ent = createReactiveEnt();" );
+        cfxprintln( var_2 + "ent = createReactiveEnt();" );
 
     if ( var_0.v["type"] == "soundfx_dynamic" )
-        _id_1C19( var_2 + "ent = createDynamicAmbience();" );
+        cfxprintln( var_2 + "ent = createDynamicAmbience();" );
 
-    _id_1C19( var_2 + "ent set_origin_and_angles( " + var_0.v["origin"] + ", " + var_0.v["angles"] + " );" );
-    _id_6F95( var_0, var_2, var_1 );
-    _id_1C19( "" );
+    cfxprintln( var_2 + "ent set_origin_and_angles( " + var_0.v["origin"] + ", " + var_0.v["angles"] + " );" );
+    print_fx_options( var_0, var_2, var_1 );
+    cfxprintln( "" );
 }
 
-_id_A356( var_0, var_1, var_2, var_3, var_4 )
+write_log( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = "\\t";
-    _id_1C1B();
-    _id_1C19( "//_createfx generated. Do not touch!!" );
-    _id_1C19( "#include common_scripts\\utility;" );
-    _id_1C19( "#include common_scripts\\_createfx;\\n" );
-    _id_1C19( "" );
-    _id_1C19( "main()" );
-    _id_1C19( "{" );
+    cfxprintlnstart();
+    cfxprintln( "//_createfx generated. Do not touch!!" );
+    cfxprintln( "#include common_scripts\\utility;" );
+    cfxprintln( "#include common_scripts\\_createfx;\\n" );
+    cfxprintln( "" );
+    cfxprintln( "main()" );
+    cfxprintln( "{" );
     var_6 = var_0.size;
 
     if ( isdefined( var_4 ) )
         var_6 += var_4.size;
 
-    _id_1C19( var_5 + "// CreateFX " + var_1 + " entities placed: " + var_6 );
+    cfxprintln( var_5 + "// CreateFX " + var_1 + " entities placed: " + var_6 );
 
     foreach ( var_8 in var_0 )
     {
-        if ( level._id_240F > 16 )
+        if ( level.createfx_loopcounter > 16 )
         {
-            level._id_240F = 0;
+            level.createfx_loopcounter = 0;
             wait 0.1;
         }
 
-        level._id_240F++;
-        _id_A355( var_8, var_2 );
+        level.createfx_loopcounter++;
+        write_entity( var_8, var_2 );
     }
 
     if ( isdefined( var_4 ) )
     {
         foreach ( var_11 in var_4 )
         {
-            if ( level._id_240F > 16 )
+            if ( level.createfx_loopcounter > 16 )
             {
-                level._id_240F = 0;
+                level.createfx_loopcounter = 0;
                 wait 0.1;
             }
 
-            level._id_240F++;
+            level.createfx_loopcounter++;
             var_8 = spawnstruct();
             var_8.v = var_11;
-            _id_A355( var_8, var_2 );
+            write_entity( var_8, var_2 );
         }
     }
 
-    _id_1C19( "}" );
-    _id_1C19( " " );
-    _id_1C1A( var_2, var_3, var_1 );
+    cfxprintln( "}" );
+    cfxprintln( " " );
+    cfxprintlnend( var_2, var_3, var_1 );
 }
 
-_id_2403()
+createfx_adjust_array()
 {
     var_0 = 0.1;
 
-    foreach ( var_2 in level._id_2417 )
+    foreach ( var_2 in level.createfxent )
     {
         var_3 = [];
         var_4 = [];
@@ -2114,15 +2114,15 @@ _id_2403()
     }
 }
 
-_id_3D1A( var_0 )
+get_createfx_array( var_0 )
 {
-    var_1 = _id_3D1B( var_0 );
+    var_1 = get_createfx_types( var_0 );
     var_2 = [];
 
     foreach ( var_5, var_4 in var_1 )
         var_2[var_5] = [];
 
-    foreach ( var_7 in level._id_2417 )
+    foreach ( var_7 in level.createfxent )
     {
         var_8 = 0;
 
@@ -2148,7 +2148,7 @@ _id_3D1A( var_0 )
     return var_11;
 }
 
-_id_3D1B( var_0 )
+get_createfx_types( var_0 )
 {
     var_1 = [];
 
@@ -2169,9 +2169,9 @@ _id_3D1B( var_0 )
     return var_1;
 }
 
-_id_500C( var_0, var_1 )
+is_createfx_type( var_0, var_1 )
 {
-    var_2 = _id_3D1B( var_1 );
+    var_2 = get_createfx_types( var_1 );
 
     foreach ( var_4 in var_2 )
     {
@@ -2182,7 +2182,7 @@ _id_500C( var_0, var_1 )
     return 0;
 }
 
-_id_240A()
+createfx_filter_types()
 {
     var_0 = [];
     var_0[0] = "soundfx";
@@ -2197,7 +2197,7 @@ _id_240A()
     foreach ( var_4, var_3 in var_0 )
         var_1[var_4] = [];
 
-    foreach ( var_6 in level._id_2417 )
+    foreach ( var_6 in level.createfxent )
     {
         var_7 = 0;
 
@@ -2220,20 +2220,20 @@ _id_240A()
             var_11[var_11.size] = var_6;
     }
 
-    level._id_2417 = var_11;
+    level.createfxent = var_11;
 }
 
-_id_1C1B()
+cfxprintlnstart()
 {
     common_scripts\utility::fileprint_launcher_start_file();
 }
 
-_id_1C19( var_0 )
+cfxprintln( var_0 )
 {
     common_scripts\utility::fileprint_launcher( var_0 );
 }
 
-_id_1C1A( var_0, var_1, var_2 )
+cfxprintlnend( var_0, var_1, var_2 )
 {
     var_3 = 1;
 
@@ -2258,153 +2258,153 @@ _id_1C1A( var_0, var_1, var_2 )
     common_scripts\utility::fileprint_launcher_end_file( "/share/raw/maps/createfx/" + var_4, var_3 );
 }
 
-_id_6FDD()
+process_button_held_and_clicked()
 {
-    _id_073A( "mouse1" );
-    _id_073A( "BUTTON_RSHLDR" );
-    _id_073A( "BUTTON_LSHLDR" );
-    _id_073A( "BUTTON_RSTICK" );
-    _id_073A( "BUTTON_LSTICK" );
-    _id_073A( "BUTTON_A" );
-    _id_073A( "BUTTON_B" );
-    _id_073A( "BUTTON_X" );
-    _id_073A( "BUTTON_Y" );
-    _id_073A( "DPAD_UP" );
-    _id_073A( "DPAD_LEFT" );
-    _id_073A( "DPAD_RIGHT" );
-    _id_073A( "DPAD_DOWN" );
-    _id_076B( "shift" );
-    _id_076B( "ctrl" );
-    _id_076B( "escape" );
-    _id_076B( "F1" );
-    _id_076B( "F5" );
-    _id_076B( "F4" );
-    _id_076B( "F2" );
-    _id_076B( "a" );
-    _id_076B( "g" );
-    _id_076B( "c" );
-    _id_076B( "h" );
-    _id_076B( "i" );
-    _id_076B( "f" );
-    _id_076B( "k" );
-    _id_076B( "l" );
-    _id_076B( "m" );
-    _id_076B( "o" );
-    _id_076B( "p" );
-    _id_076B( "r" );
-    _id_076B( "s" );
-    _id_076B( "u" );
-    _id_076B( "v" );
-    _id_076B( "x" );
-    _id_076B( "y" );
-    _id_076B( "z" );
-    _id_076B( "del" );
-    _id_076B( "end" );
-    _id_076B( "tab" );
-    _id_076B( "ins" );
-    _id_076B( "add" );
-    _id_076B( "space" );
-    _id_076B( "enter" );
-    _id_076B( "1" );
-    _id_076B( "2" );
-    _id_076B( "3" );
-    _id_076B( "4" );
-    _id_076B( "5" );
-    _id_076B( "6" );
-    _id_076B( "7" );
-    _id_076B( "8" );
-    _id_076B( "9" );
-    _id_076B( "0" );
-    _id_076B( "-" );
-    _id_076B( "=" );
-    _id_076B( "," );
-    _id_076B( "." );
-    _id_076B( "[" );
-    _id_076B( "]" );
-    _id_076B( "leftarrow" );
-    _id_076B( "rightarrow" );
-    _id_076B( "uparrow" );
-    _id_076B( "downarrow" );
+    add_button( "mouse1" );
+    add_button( "BUTTON_RSHLDR" );
+    add_button( "BUTTON_LSHLDR" );
+    add_button( "BUTTON_RSTICK" );
+    add_button( "BUTTON_LSTICK" );
+    add_button( "BUTTON_A" );
+    add_button( "BUTTON_B" );
+    add_button( "BUTTON_X" );
+    add_button( "BUTTON_Y" );
+    add_button( "DPAD_UP" );
+    add_button( "DPAD_LEFT" );
+    add_button( "DPAD_RIGHT" );
+    add_button( "DPAD_DOWN" );
+    add_kb_button( "shift" );
+    add_kb_button( "ctrl" );
+    add_kb_button( "escape" );
+    add_kb_button( "F1" );
+    add_kb_button( "F5" );
+    add_kb_button( "F4" );
+    add_kb_button( "F2" );
+    add_kb_button( "a" );
+    add_kb_button( "g" );
+    add_kb_button( "c" );
+    add_kb_button( "h" );
+    add_kb_button( "i" );
+    add_kb_button( "f" );
+    add_kb_button( "k" );
+    add_kb_button( "l" );
+    add_kb_button( "m" );
+    add_kb_button( "o" );
+    add_kb_button( "p" );
+    add_kb_button( "r" );
+    add_kb_button( "s" );
+    add_kb_button( "u" );
+    add_kb_button( "v" );
+    add_kb_button( "x" );
+    add_kb_button( "y" );
+    add_kb_button( "z" );
+    add_kb_button( "del" );
+    add_kb_button( "end" );
+    add_kb_button( "tab" );
+    add_kb_button( "ins" );
+    add_kb_button( "add" );
+    add_kb_button( "space" );
+    add_kb_button( "enter" );
+    add_kb_button( "1" );
+    add_kb_button( "2" );
+    add_kb_button( "3" );
+    add_kb_button( "4" );
+    add_kb_button( "5" );
+    add_kb_button( "6" );
+    add_kb_button( "7" );
+    add_kb_button( "8" );
+    add_kb_button( "9" );
+    add_kb_button( "0" );
+    add_kb_button( "-" );
+    add_kb_button( "=" );
+    add_kb_button( "," );
+    add_kb_button( "." );
+    add_kb_button( "[" );
+    add_kb_button( "]" );
+    add_kb_button( "leftarrow" );
+    add_kb_button( "rightarrow" );
+    add_kb_button( "uparrow" );
+    add_kb_button( "downarrow" );
 }
 
-_id_5806( var_0 )
+locked( var_0 )
 {
-    if ( isdefined( level._id_0575._id_580B[var_0] ) )
+    if ( isdefined( level._createfx.lockedlist[var_0] ) )
         return 0;
 
-    return _id_52D0( var_0 );
+    return kb_locked( var_0 );
 }
 
-_id_52D0( var_0 )
+kb_locked( var_0 )
 {
-    return level._id_240D && isdefined( level._id_194E[var_0] );
+    return level.createfx_inputlocked && isdefined( level.button_is_kb[var_0] );
 }
 
-_id_073A( var_0 )
+add_button( var_0 )
 {
-    if ( _id_5806( var_0 ) )
+    if ( locked( var_0 ) )
         return;
 
-    if ( !isdefined( level._id_195A[var_0] ) )
+    if ( !isdefined( level.buttonisheld[var_0] ) )
     {
-        if ( level.player buttonpressed( var_0 ) )
+        if ( level.player _meth_824C( var_0 ) )
         {
-            level._id_195A[var_0] = 1;
-            level._id_1958[var_0] = 1;
+            level.buttonisheld[var_0] = 1;
+            level.buttonclick[var_0] = 1;
         }
     }
-    else if ( !level.player buttonpressed( var_0 ) )
-        level._id_195A[var_0] = undefined;
+    else if ( !level.player _meth_824C( var_0 ) )
+        level.buttonisheld[var_0] = undefined;
 }
 
-_id_076B( var_0 )
+add_kb_button( var_0 )
 {
-    level._id_194E[var_0] = 1;
-    _id_073A( var_0 );
+    level.button_is_kb[var_0] = 1;
+    add_button( var_0 );
 }
 
-_id_1959( var_0, var_1 )
+buttondown( var_0, var_1 )
 {
-    return _id_1962( var_0 ) || _id_1962( var_1 );
+    return buttonpressed_internal( var_0 ) || buttonpressed_internal( var_1 );
 }
 
-_id_1962( var_0 )
+buttonpressed_internal( var_0 )
 {
     if ( !isdefined( var_0 ) )
         return 0;
 
-    if ( _id_52D0( var_0 ) )
+    if ( kb_locked( var_0 ) )
         return 0;
 
-    return level.player buttonpressed( var_0 );
+    return level.player _meth_824C( var_0 );
 }
 
-_id_194D( var_0, var_1 )
+button_is_held( var_0, var_1 )
 {
     if ( isdefined( var_1 ) )
     {
-        if ( isdefined( level._id_195A[var_1] ) )
+        if ( isdefined( level.buttonisheld[var_1] ) )
             return 1;
     }
 
-    return isdefined( level._id_195A[var_0] );
+    return isdefined( level.buttonisheld[var_0] );
 }
 
-_id_194C( var_0, var_1 )
+button_is_clicked( var_0, var_1 )
 {
     if ( isdefined( var_1 ) )
     {
-        if ( isdefined( level._id_1958[var_1] ) )
+        if ( isdefined( level.buttonclick[var_1] ) )
             return 1;
     }
 
-    return isdefined( level._id_1958[var_0] );
+    return isdefined( level.buttonclick[var_0] );
 }
 
-_id_4CFB()
+init_huds()
 {
-    level._id_0575._id_4AE6 = [];
-    level._id_0575._id_4ADE = 30;
+    level._createfx.hudelems = [];
+    level._createfx.hudelem_count = 30;
     var_0 = [];
     var_1 = [];
     var_0[0] = 0;
@@ -2417,10 +2417,10 @@ _id_4CFB()
     var_1[3] = -1;
     var_0[4] = -2;
     var_1[4] = -1;
-    level._id_1F0A = newhudelem();
-    level._id_1F0A.alpha = 0;
+    level.cleartextmarker = newhudelem();
+    level.cleartextmarker.alpha = 0;
 
-    for ( var_2 = 0; var_2 < level._id_0575._id_4ADE; var_2++ )
+    for ( var_2 = 0; var_2 < level._createfx.hudelem_count; var_2++ )
     {
         var_3 = [];
 
@@ -2437,12 +2437,12 @@ _id_4CFB()
             var_5.y = 60 + var_1[var_4] + var_2 * 15;
 
             if ( var_4 > 0 )
-                var_5.color = ( 0.0, 0.0, 0.0 );
+                var_5.color = ( 0, 0, 0 );
 
             var_3[var_3.size] = var_5;
         }
 
-        level._id_0575._id_4AE6[var_2] = var_3;
+        level._createfx.hudelems[var_2] = var_3;
     }
 
     var_3 = [];
@@ -2460,15 +2460,15 @@ _id_4CFB()
         var_5.y = 80 + var_1[var_4];
 
         if ( var_4 > 0 )
-            var_5.color = ( 0.0, 0.0, 0.0 );
+            var_5.color = ( 0, 0, 0 );
 
         var_3[var_3.size] = var_5;
     }
 
-    level._id_2405 = var_3;
+    level.createfx_centerprint = var_3;
 }
 
-_id_4CCB()
+init_crosshair()
 {
     var_0 = newhudelem();
     var_0.location = 0;
@@ -2482,11 +2482,11 @@ _id_4CCB()
     var_0.y = 233;
 }
 
-_id_1EB9()
+clear_fx_hudelements()
 {
-    level._id_1F0A clearalltextafterhudelem();
+    level.cleartextmarker _meth_80CB();
 
-    for ( var_0 = 0; var_0 < level._id_0575._id_4ADE; var_0++ )
+    for ( var_0 = 0; var_0 < level._createfx.hudelem_count; var_0++ )
     {
         for ( var_1 = 0; var_1 < 1; var_1++ )
         {
@@ -2494,56 +2494,56 @@ _id_1EB9()
         }
     }
 
-    level._id_3BA5 = 0;
+    level.fxhudelements = 0;
 }
 
-_id_7E3C( var_0 )
+set_fx_hudelement( var_0 )
 {
     for ( var_1 = 0; var_1 < 1; var_1++ )
     {
 
     }
 
-    level._id_3BA5++;
+    level.fxhudelements++;
 }
 
-_id_4D68()
+init_tool_hud()
 {
-    if ( !isdefined( level._id_0575._id_93E4 ) )
-        level._id_0575._id_93E4 = [];
+    if ( !isdefined( level._createfx.tool_hudelems ) )
+        level._createfx.tool_hudelems = [];
 
-    if ( !isdefined( level._id_0575._id_93E3 ) )
-        level._id_0575._id_93E3 = 1;
+    if ( !isdefined( level._createfx.tool_hud_visible ) )
+        level._createfx.tool_hud_visible = 1;
 
-    if ( !isdefined( level._id_0575._id_93E2 ) )
-        level._id_0575._id_93E2 = "";
+    if ( !isdefined( level._createfx.tool_hud ) )
+        level._createfx.tool_hud = "";
 }
 
-_id_60A6( var_0 )
+new_tool_hud( var_0 )
 {
-    foreach ( var_3, var_2 in level._id_0575._id_93E4 )
+    foreach ( var_3, var_2 in level._createfx.tool_hudelems )
     {
-        if ( isdefined( var_2._id_9C4C ) )
-            var_2._id_9C4C destroy();
+        if ( isdefined( var_2.value_hudelem ) )
+            var_2.value_hudelem destroy();
 
         var_2 destroy();
-        level._id_0575._id_93E4[var_3] = undefined;
+        level._createfx.tool_hudelems[var_3] = undefined;
     }
 
-    level._id_0575._id_93E2 = var_0;
+    level._createfx.tool_hud = var_0;
 }
 
-_id_24F0( var_0 )
+current_mode_hud( var_0 )
 {
-    return level._id_0575._id_93E2 == var_0;
+    return level._createfx.tool_hud == var_0;
 }
 
-_id_1EDB()
+clear_tool_hud()
 {
-    _id_60A6( "" );
+    new_tool_hud( "" );
 }
 
-_id_60A7( var_0 )
+new_tool_hudelem( var_0 )
 {
     var_1 = newhudelem();
     var_1.alignx = "left";
@@ -2556,35 +2556,35 @@ _id_60A7( var_0 )
     return var_1;
 }
 
-_id_3E97( var_0 )
+get_tool_hudelem( var_0 )
 {
-    if ( isdefined( level._id_0575._id_93E4[var_0] ) )
-        return level._id_0575._id_93E4[var_0];
+    if ( isdefined( level._createfx.tool_hudelems[var_0] ) )
+        return level._createfx.tool_hudelems[var_0];
 
     return undefined;
 }
 
-_id_7ED5( var_0, var_1, var_2 )
+set_tool_hudelem( var_0, var_1, var_2 )
 {
-    var_3 = _id_3E97( var_0 );
+    var_3 = get_tool_hudelem( var_0 );
 
     if ( !isdefined( var_3 ) )
     {
-        var_3 = _id_60A7( level._id_0575._id_93E4.size );
-        level._id_0575._id_93E4[var_0] = var_3;
+        var_3 = new_tool_hudelem( level._createfx.tool_hudelems.size );
+        level._createfx.tool_hudelems[var_0] = var_3;
         var_3.text = var_0;
     }
 
     if ( isdefined( var_1 ) )
     {
-        if ( isdefined( var_3._id_9C4C ) )
-            var_4 = var_3._id_9C4C;
+        if ( isdefined( var_3.value_hudelem ) )
+            var_4 = var_3.value_hudelem;
         else
         {
-            var_4 = _id_60A7( level._id_0575._id_93E4.size );
+            var_4 = new_tool_hudelem( level._createfx.tool_hudelems.size );
             var_4.x += 110;
             var_4.y = var_3.y;
-            var_3._id_9C4C = var_4;
+            var_3.value_hudelem = var_4;
         }
 
         if ( isdefined( var_4.text ) && var_4.text == var_1 )
@@ -2593,13 +2593,13 @@ _id_7ED5( var_0, var_1, var_2 )
         var_4.text = var_1;
 
         if ( !isdefined( var_2 ) )
-            var_2 = ( 1.0, 1.0, 1.0 );
+            var_2 = ( 1, 1, 1 );
 
         var_4.color = var_2;
     }
 }
 
-_id_7C56()
+select_by_substring()
 {
     var_0 = getdvar( "select_by_substring" );
 
@@ -2609,7 +2609,7 @@ _id_7C56()
     setdvar( "select_by_substring", "" );
     var_1 = [];
 
-    foreach ( var_4, var_3 in level._id_2417 )
+    foreach ( var_4, var_3 in level.createfxent )
     {
         if ( issubstr( var_3.v["fxid"], var_0 ) )
             var_1[var_1.size] = var_4;
@@ -2618,156 +2618,156 @@ _id_7C56()
     if ( var_1.size == 0 )
         return 0;
 
-    _id_28B1();
-    _id_7C58( var_1 );
+    deselect_all_ents();
+    select_index_array( var_1 );
 
     foreach ( var_6 in var_1 )
     {
-        var_3 = level._id_2417[var_6];
-        _id_7C57( var_6, var_3 );
+        var_3 = level.createfxent[var_6];
+        select_entity( var_6, var_3 );
     }
 
     return 1;
 }
 
-_id_7C58( var_0 )
+select_index_array( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        var_3 = level._id_2417[var_2];
-        _id_7C57( var_2, var_3 );
+        var_3 = level.createfxent[var_2];
+        select_entity( var_2, var_3 );
     }
 }
 
-_id_28B1()
+deselect_all_ents()
 {
-    foreach ( var_2, var_1 in level._id_0575._id_7C60 )
-        _id_28B2( var_2, var_1 );
+    foreach ( var_2, var_1 in level._createfx.selected_fx_ents )
+        deselect_entity( var_2, var_1 );
 }
 
-_id_8164()
+setup_last_movement_timer()
 {
     wait 0.5;
 
     for (;;)
     {
-        level._id_240E += 0.05;
+        level.createfx_last_movement_timer += 0.05;
 
-        if ( level._id_240E == 0.15 )
+        if ( level.createfx_last_movement_timer == 0.15 )
         {
-            foreach ( var_1 in level._id_0575._id_7C60 )
+            foreach ( var_1 in level._createfx.selected_fx_ents )
             {
                 if ( var_1.v["type"] == "exploder" )
                     var_1 common_scripts\utility::activate_individual_exploder();
             }
 
-            common_scripts\_createfxmenu::_id_2B45();
-            _id_7809();
+            common_scripts\_createfxmenu::display_current_translation();
+            save_redo_buffer();
         }
 
-        if ( level._id_240E == 0.05 )
+        if ( level.createfx_last_movement_timer == 0.05 )
         {
-            var_1 = common_scripts\_createfxmenu::_id_3DB1();
-            common_scripts\_createfxmenu::_id_2B45();
+            var_1 = common_scripts\_createfxmenu::get_last_selected_ent();
+            common_scripts\_createfxmenu::display_current_translation();
         }
 
         wait 0.05;
     }
 }
 
-_id_3A0B()
+frame_selected()
 {
-    if ( level._id_0575._id_7C60.size < 1 )
+    if ( level._createfx.selected_fx_ents.size < 1 )
         return;
 
-    if ( level._id_0575._id_7C60.size > 1 )
+    if ( level._createfx.selected_fx_ents.size > 1 )
     {
-        var_0 = _id_3CE5( level._id_0575._id_7C60 );
-        var_1 = _id_3E3F( level._id_0575._id_7C60 ) + 200;
+        var_0 = get_center_of_array( level._createfx.selected_fx_ents );
+        var_1 = get_radius_of_array( level._createfx.selected_fx_ents ) + 200;
     }
     else
     {
-        var_0 = level._id_0575._id_7C60[0].v["origin"];
+        var_0 = level._createfx.selected_fx_ents[0].v["origin"];
         var_1 = 200;
     }
 
     var_2 = anglestoforward( level.player getangles() );
     var_3 = var_2 * ( -1 * var_1 );
-    var_4 = level.player geteye();
+    var_4 = level.player _meth_80A8();
     var_5 = var_4 - level.player.origin;
     level.player setorigin( var_0 + var_3 - var_5 );
 }
 
-_id_1E96()
+clear_all_loopers()
 {
-    foreach ( var_1 in level._id_2417 )
+    foreach ( var_1 in level.createfxent )
     {
-        if ( isdefined( var_1._id_5878 ) )
-            var_1._id_5878 delete();
+        if ( isdefined( var_1.looper ) )
+            var_1.looper delete();
 
-        var_1 _id_8E9D();
+        var_1 stop_loopsound();
     }
 }
 
-_id_7488()
+restart_oneshots()
 {
-    foreach ( var_1 in level._id_2417 )
+    foreach ( var_1 in level.createfxent )
     {
         if ( var_1.v["type"] == "oneshotfx" )
-            var_1 _id_7487();
+            var_1 restart_fx_looper();
     }
 }
 
-_id_7489()
+restart_selected_exploders()
 {
-    foreach ( var_1 in level._id_0575._id_7C60 )
+    foreach ( var_1 in level._createfx.selected_fx_ents )
     {
         if ( isdefined( var_1 ) && var_1.v["type"] == "exploder" )
             var_1 common_scripts\utility::activate_individual_exploder();
     }
 }
 
-_id_780B()
+save_undo_buffer()
 {
-    if ( isdefined( level._id_2417 ) && level._id_240E > 0.15 )
-        level._id_2419 = _id_21DA( level._id_2417 );
+    if ( isdefined( level.createfxent ) && level.createfx_last_movement_timer > 0.15 )
+        level.createfxent_undo = copystructarrayvalues( level.createfxent );
 }
 
-_id_7809()
+save_redo_buffer()
 {
-    if ( isdefined( level._id_2417 ) )
-        level._id_2418 = _id_21DA( level._id_2417 );
+    if ( isdefined( level.createfxent ) )
+        level.createfxent_redo = copystructarrayvalues( level.createfxent );
 }
 
-_id_9A1B()
+undo()
 {
-    if ( isdefined( level._id_2419 ) )
+    if ( isdefined( level.createfxent_undo ) )
     {
-        _id_1E96();
-        level._id_2417 = [];
-        level._id_2417 = _id_21DA( level._id_2419 );
-        _id_1EB9();
-        _id_741A();
-        _id_7488();
-        _id_7489();
+        clear_all_loopers();
+        level.createfxent = [];
+        level.createfxent = copystructarrayvalues( level.createfxent_undo );
+        clear_fx_hudelements();
+        reselect_entitites();
+        restart_oneshots();
+        restart_selected_exploders();
     }
 }
 
-_id_729F()
+redo()
 {
-    if ( isdefined( level._id_2418 ) )
+    if ( isdefined( level.createfxent_redo ) )
     {
-        _id_1E96();
-        level._id_2417 = [];
-        level._id_2417 = _id_21DA( level._id_2418 );
-        _id_1EB9();
-        _id_741A();
-        _id_7488();
-        _id_7489();
+        clear_all_loopers();
+        level.createfxent = [];
+        level.createfxent = copystructarrayvalues( level.createfxent_redo );
+        clear_fx_hudelements();
+        reselect_entitites();
+        restart_oneshots();
+        restart_selected_exploders();
     }
 }
 
-_id_21DA( var_0 )
+copystructarrayvalues( var_0 )
 {
     var_1 = [];
 
@@ -2799,8 +2799,8 @@ _id_21DA( var_0 )
                 var_1[var_2] = var_3;
             }
 
-            var_1[var_2]._id_2DDA = var_0[var_2]._id_2DDA;
-            var_1[var_2]._id_92B4 = var_0[var_2]._id_92B4;
+            var_1[var_2].drawn = var_0[var_2].drawn;
+            var_1[var_2].textalpha = var_0[var_2].textalpha;
         }
     }
 
@@ -2811,7 +2811,7 @@ removefxentwithentity( var_0 )
 {
     var_1 = [];
 
-    foreach ( var_4, var_3 in level._id_2417 )
+    foreach ( var_4, var_3 in level.createfxent )
     {
         if ( isdefined( var_3.model ) && var_3.model == var_0 )
             continue;
@@ -2819,5 +2819,5 @@ removefxentwithentity( var_0 )
         var_1[var_1.size] = var_3;
     }
 
-    level._id_2417 = var_1;
+    level.createfxent = var_1;
 }

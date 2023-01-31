@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -248,10 +248,10 @@ logclasschoice( var_0, var_1, var_2, var_3 )
     if ( var_0 == self.lastclass )
         return;
 
-    self logstring( "choseclass: " + var_0 + " weapon: " + var_1 + " special: " + var_2 );
+    self _meth_8026( "choseclass: " + var_0 + " weapon: " + var_1 + " special: " + var_2 );
 
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
-        self logstring( "perk" + var_4 + ": " + var_3[var_4] );
+        self _meth_8026( "perk" + var_4 + ": " + var_3[var_4] );
 
     self.lastclass = var_0;
 }
@@ -259,97 +259,97 @@ logclasschoice( var_0, var_1, var_2, var_3 )
 cac_getweapon( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "weapon" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "weapon" );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "weapon" );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "weapon" );
 }
 
 cac_getweaponattachment( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 0 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 0 );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 0 );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 0 );
 }
 
 cac_getweaponattachmenttwo( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 1 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 1 );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 1 );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 1 );
 }
 
 cac_getweaponattachmentthree( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 2 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 2 );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 2 );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 2 );
 }
 
 cac_getweaponcamo( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "camo" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "camo" );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "camo" );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "camo" );
 }
 
 cac_getweaponreticle( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "reticle" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "reticle" );
     else
-        return self getcacplayerdata( var_0, "weaponSetups", var_1, "reticle" );
+        return self _meth_8248( var_0, "weaponSetups", var_1, "reticle" );
 }
 
 cac_getperk( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "perkSlots", var_1 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "perkSlots", var_1 );
     else
-        return self getcacplayerdata( var_0, "perkSlots", var_1 );
+        return self _meth_8248( var_0, "perkSlots", var_1 );
 }
 
 cac_getwildcard( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "wildcardSlots", var_1 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "wildcardSlots", var_1 );
     else
-        return self getcacplayerdata( var_0, "wildcardSlots", var_1 );
+        return self _meth_8248( var_0, "wildcardSlots", var_1 );
 }
 
 cac_getkillstreak( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "streak" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "streak" );
     else
-        return self getcacplayerdata( var_0, "assaultStreaks", var_1, "streak" );
+        return self _meth_8248( var_0, "assaultStreaks", var_1, "streak" );
 }
 
 cac_getkillstreakmodule( var_0, var_1, var_2 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "modules", var_2 );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "modules", var_2 );
     else
-        return self getcacplayerdata( var_0, "assaultStreaks", var_1, "modules", var_2 );
+        return self _meth_8248( var_0, "assaultStreaks", var_1, "modules", var_2 );
 }
 
 cac_getequipment( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "equipment" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "equipment" );
     else
-        return self getcacplayerdata( var_0, "equipmentSetups", var_1, "equipment" );
+        return self _meth_8248( var_0, "equipmentSetups", var_1, "equipment" );
 }
 
 cac_getequipmentextra( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "extra" );
+        return self _meth_844A( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "extra" );
     else
-        return self getcacplayerdata( var_0, "equipmentSetups", var_1, "extra" );
+        return self _meth_8248( var_0, "equipmentSetups", var_1, "extra" );
 }
 
 cac_getoffhand( var_0 )
@@ -364,27 +364,27 @@ cao_isglobalcostumecategory( var_0 )
 
 cao_getglobalcostumecategory( var_0 )
 {
-    return self getcommonplayerdata( "globalCostume", var_0 );
+    return self _meth_8226( "globalCostume", var_0 );
 }
 
 cao_getpercostumecategory( var_0, var_1 )
 {
-    return self getcommonplayerdata( "costumes", var_1, var_0 );
+    return self _meth_8226( "costumes", var_1, var_0 );
 }
 
 cao_setglobalcostumecategory( var_0, var_1 )
 {
-    return self setcommonplayerdata( "globalCostume", var_0, var_1 );
+    return self _meth_8247( "globalCostume", var_0, var_1 );
 }
 
 cao_setpercostumecategory( var_0, var_1, var_2 )
 {
-    return self setcommonplayerdata( "costumes", var_2, var_0, var_1 );
+    return self _meth_8247( "costumes", var_2, var_0, var_1 );
 }
 
 cao_getactivecostumeindex()
 {
-    return self getcommonplayerdata( "activeCostume" );
+    return self _meth_8226( "activeCostume" );
 }
 
 cao_getcostumebyindex( var_0 )
@@ -1414,10 +1414,10 @@ getloadout( var_0, var_1, var_2, var_3 )
 
         if ( var_13 )
         {
-            var_6 = self getcacplayerdata( self.class_num, var_11, 0, "streak" );
-            var_7 = self getcacplayerdata( self.class_num, var_11, 1, "streak" );
-            var_8 = self getcacplayerdata( self.class_num, var_11, 2, "streak" );
-            var_9 = self getcacplayerdata( self.class_num, var_11, 3, "streak" );
+            var_6 = self _meth_8248( self.class_num, var_11, 0, "streak" );
+            var_7 = self _meth_8248( self.class_num, var_11, 1, "streak" );
+            var_8 = self _meth_8248( self.class_num, var_11, 2, "streak" );
+            var_9 = self _meth_8248( self.class_num, var_11, 3, "streak" );
         }
 
         if ( issubstr( var_1, "juggernaut" ) || var_20 )
@@ -1467,16 +1467,16 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isdefined( var_9 ) || var_9 == "" )
             var_9 = "none";
 
-        if ( !isvalidkillstreak( var_6 ) || var_52 && !self isitemunlocked( var_6 ) )
+        if ( !isvalidkillstreak( var_6 ) || var_52 && !self _meth_8221( var_6 ) )
             var_6 = table_getkillstreak( level.classtablename, 0, 0 );
 
-        if ( !isvalidkillstreak( var_7 ) || var_52 && !self isitemunlocked( var_7 ) )
+        if ( !isvalidkillstreak( var_7 ) || var_52 && !self _meth_8221( var_7 ) )
             var_7 = table_getkillstreak( level.classtablename, 0, 1 );
 
-        if ( !isvalidkillstreak( var_8 ) || var_52 && !self isitemunlocked( var_8 ) )
+        if ( !isvalidkillstreak( var_8 ) || var_52 && !self _meth_8221( var_8 ) )
             var_8 = table_getkillstreak( level.classtablename, 0, 2 );
 
-        if ( !isvalidkillstreak( var_9 ) || var_52 && !self isitemunlocked( var_9 ) )
+        if ( !isvalidkillstreak( var_9 ) || var_52 && !self _meth_8221( var_9 ) )
             var_9 = table_getkillstreak( level.classtablename, 0, 3 );
     }
     else if ( !level.killstreakrewards )
@@ -1827,7 +1827,7 @@ getloadout( var_0, var_1, var_2, var_3 )
 
     if ( !var_20 && !var_53 && !( isdefined( self.pers["copyCatLoadout"] ) && self.pers["copyCatLoadout"]["inUse"] && var_2 ) )
     {
-        if ( !isvalidprimary( var_23 ) || level.rankedmatch && var_52 && !self isitemunlocked( var_23 ) && !var_54 )
+        if ( !isvalidprimary( var_23 ) || level.rankedmatch && var_52 && !self _meth_8221( var_23 ) && !var_54 )
         {
             var_23 = table_getweapon( level.classtablename, 10, 0 );
             var_24 = "none";
@@ -1887,7 +1887,7 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isvalidreticle( var_28 ) )
             var_28 = table_getweaponreticle( level.classtablenum, 10, 0 );
 
-        if ( !isvalidsecondary( var_29, var_65["specialty_wildcard_dualprimaries"] ) || level.rankedmatch && var_52 && !self isitemunlocked( var_29 ) && !var_54 )
+        if ( !isvalidsecondary( var_29, var_65["specialty_wildcard_dualprimaries"] ) || level.rankedmatch && var_52 && !self _meth_8221( var_29 ) && !var_54 )
         {
             var_29 = table_getweapon( level.classtablename, 10, 1 );
             var_30 = "none";
@@ -1919,7 +1919,7 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isvalidreticle( var_34 ) )
             var_34 = table_getweaponreticle( level.classtablename, 10, 1 );
 
-        if ( !isvalidequipment( var_35, var_65["specialty_wildcard_dualtacticals"] ) || level.rankedmatch && var_52 && !self isitemunlocked( var_35 ) && !var_54 )
+        if ( !isvalidequipment( var_35, var_65["specialty_wildcard_dualtacticals"] ) || level.rankedmatch && var_52 && !self _meth_8221( var_35 ) && !var_54 )
             var_35 = table_getequipment( level.classtablename, 10 );
 
         if ( var_35 == var_37 )
@@ -2003,7 +2003,7 @@ applyloadout()
 
     self.loadout = undefined;
     self.spectatorviewloadout = var_0;
-    self takeallweapons();
+    self _meth_8310();
     maps\mp\_utility::_clearperks();
     _detachall();
     self.changingweapon = undefined;
@@ -2064,12 +2064,12 @@ applyloadout()
     loadoutallperks( var_0.equipment, var_0.perks );
     maps\mp\perks\_perks::applyperks();
     givedefaultperks();
-    self setlethalweapon( var_0.equipment );
+    self _meth_8344( var_0.equipment );
 
-    if ( var_0.equipment != "specialty_null" && self hasweapon( var_0.equipment ) )
+    if ( var_0.equipment != "specialty_null" && self _meth_8314( var_0.equipment ) )
     {
-        var_2 = self getweaponammoclip( var_0.equipment );
-        self setweaponammoclip( var_0.equipment, var_2 + 1 );
+        var_2 = self _meth_82F8( var_0.equipment );
+        self _meth_82F6( var_0.equipment, var_2 + 1 );
     }
     else
         giveoffhand( var_0.equipment );
@@ -2077,32 +2077,32 @@ applyloadout()
     if ( isdefined( var_0.equipmentextra ) && var_0.equipmentextra )
     {
         maps\mp\_utility::giveperk( "specialty_extralethal", 0 );
-        var_2 = self getweaponammoclip( var_0.equipment );
-        self setweaponammoclip( var_0.equipment, var_2 + 1 );
+        var_2 = self _meth_82F8( var_0.equipment );
+        self _meth_82F6( var_0.equipment, var_2 + 1 );
     }
 
     var_3 = var_0.primaryname;
     maps\mp\_utility::_giveweapon( var_3 );
 
     if ( !isai( self ) )
-        self switchtoweapon( var_3 );
+        self _meth_8315( var_3 );
 
     if ( var_3 == "riotshield_mp" && level.ingraceperiod )
         self notify( "weapon_change", "riotshield_mp" );
 
     if ( var_0.setprimaryspawnweapon )
-        self setspawnweapon( maps\mp\_utility::get_spawn_weapon_name( var_0 ) );
+        self _meth_824F( maps\mp\_utility::get_spawn_weapon_name( var_0 ) );
 
     self.pers["primaryWeapon"] = maps\mp\_utility::getbaseweaponname( var_3 );
     self.loadoutoffhand = var_0.offhand;
-    self settacticalweapon( var_0.offhand );
+    self _meth_8319( var_0.offhand );
     giveoffhand( var_0.offhand );
 
     if ( isdefined( var_0.offhandextra ) && var_0.offhandextra )
     {
         maps\mp\_utility::giveperk( "specialty_extratactical", 0 );
-        var_2 = self getweaponammoclip( var_0.offhand );
-        self setweaponammoclip( var_0.offhand, var_2 + 1 );
+        var_2 = self _meth_82F8( var_0.offhand );
+        self _meth_82F6( var_0.offhand, var_2 + 1 );
     }
 
     thread loadouttrackvariablegrenades( var_0.class, var_0.equipment, var_0.offhand );
@@ -2112,8 +2112,8 @@ applyloadout()
 
     if ( var_0.clearammo )
     {
-        self setweaponammoclip( self.primaryweapon, 0 );
-        self setweaponammostock( self.primaryweapon, 0 );
+        self _meth_82F6( self.primaryweapon, 0 );
+        self _meth_82F7( self.primaryweapon, 0 );
     }
 
     self.issniper = weaponclass( self.primaryweapon ) == "sniper";
@@ -2131,13 +2131,13 @@ applyloadout()
 
     if ( maps\mp\_utility::_hasperk( "specialty_extraammo" ) )
     {
-        var_5 = self getweaponammostock( var_3 );
-        self setweaponammostock( var_3, var_5 * 2 );
+        var_5 = self _meth_82F9( var_3 );
+        self _meth_82F7( var_3, var_5 * 2 );
 
         if ( var_1 != "none" && maps\mp\_utility::getweaponclass( var_1 ) != "weapon_projectile" )
         {
-            var_5 = self getweaponammostock( var_1 );
-            self setweaponammostock( var_1, var_5 * 2 );
+            var_5 = self _meth_82F9( var_1 );
+            self _meth_82F7( var_1, var_5 * 2 );
         }
     }
 
@@ -2342,40 +2342,40 @@ giveoffhand( var_0 )
 
     switch ( var_1 )
     {
-        case "none":
         case "specialty_null":
+        case "none":
             break;
-        case "claymore_mp":
-        case "frag_grenade_mp":
-        case "exoknife_jug_mp":
-        case "trophy_mp":
-        case "semtex_mp":
-        case "bouncingbetty_mp":
-        case "c4_mp":
-        case "tri_drone_mp":
-        case "throwingknife_mp":
-        case "exoknife_mp":
         case "explosive_gel_mp":
+        case "exoknife_mp":
+        case "throwingknife_mp":
+        case "tri_drone_mp":
+        case "c4_mp":
+        case "bouncingbetty_mp":
+        case "semtex_mp":
+        case "trophy_mp":
+        case "exoknife_jug_mp":
+        case "frag_grenade_mp":
+        case "claymore_mp":
             maps\mp\_utility::giveperk( var_0, 0 );
             break;
-        case "portable_radar_mp":
-        case "s1_tactical_insertion_device_mp":
-        case "scrambler_mp":
-        case "flash_grenade_mp":
-        case "concussion_grenade_mp":
-        case "stun_grenade_mp":
-        case "paint_grenade_mp":
-        case "emp_grenade_mp":
-        case "smoke_grenade_mp":
-        case "tracking_drone_mp":
-        case "explosive_drone_mp":
-        case "fast_heal_mp":
-        case "mute_bomb_mp":
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
         case "smoke_grenade_var_mp":
-            self giveweapon( var_0 );
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
+        case "mute_bomb_mp":
+        case "fast_heal_mp":
+        case "explosive_drone_mp":
+        case "tracking_drone_mp":
+        case "smoke_grenade_mp":
+        case "emp_grenade_mp":
+        case "paint_grenade_mp":
+        case "stun_grenade_mp":
+        case "concussion_grenade_mp":
+        case "flash_grenade_mp":
+        case "scrambler_mp":
+        case "s1_tactical_insertion_device_mp":
+        case "portable_radar_mp":
+            self _meth_830E( var_0 );
             break;
         case "exoshield_equipment_mp":
             maps\mp\_exo_shield::give_exo_shield();
@@ -2414,40 +2414,40 @@ takeoffhand( var_0 )
 
     switch ( var_1 )
     {
-        case "none":
         case "specialty_null":
+        case "none":
             break;
-        case "claymore_mp":
-        case "frag_grenade_mp":
-        case "exoknife_jug_mp":
-        case "trophy_mp":
-        case "semtex_mp":
-        case "bouncingbetty_mp":
-        case "c4_mp":
-        case "tri_drone_mp":
-        case "throwingknife_mp":
-        case "exoknife_mp":
-        case "explosive_gel_mp":
         case "s1_tactical_insertion_device_mp":
+        case "explosive_gel_mp":
+        case "exoknife_mp":
+        case "throwingknife_mp":
+        case "tri_drone_mp":
+        case "c4_mp":
+        case "bouncingbetty_mp":
+        case "semtex_mp":
+        case "trophy_mp":
+        case "exoknife_jug_mp":
+        case "frag_grenade_mp":
+        case "claymore_mp":
             maps\mp\_utility::_unsetperk( var_0 );
             break;
-        case "portable_radar_mp":
-        case "scrambler_mp":
-        case "flash_grenade_mp":
-        case "concussion_grenade_mp":
-        case "stun_grenade_mp":
-        case "paint_grenade_mp":
-        case "emp_grenade_mp":
-        case "smoke_grenade_mp":
-        case "tracking_drone_mp":
-        case "explosive_drone_mp":
-        case "fast_heal_mp":
-        case "mute_bomb_mp":
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
         case "smoke_grenade_var_mp":
-            self takeweapon( var_0 );
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
+        case "mute_bomb_mp":
+        case "fast_heal_mp":
+        case "explosive_drone_mp":
+        case "tracking_drone_mp":
+        case "smoke_grenade_mp":
+        case "emp_grenade_mp":
+        case "paint_grenade_mp":
+        case "stun_grenade_mp":
+        case "concussion_grenade_mp":
+        case "flash_grenade_mp":
+        case "scrambler_mp":
+        case "portable_radar_mp":
+            self _meth_830F( var_0 );
             break;
         case "exoshield_equipment_mp":
             maps\mp\_exo_shield::take_exo_shield();
@@ -2505,19 +2505,19 @@ loadouttrackvariablegrenades( var_0, var_1, var_2 )
 
     switch ( var_1 )
     {
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
-        case "smoke_grenade_var_mp":
-        case "frag_grenade_var_mp":
-        case "semtex_grenade_var_mp":
         case "contact_grenade_var_mp":
+        case "semtex_grenade_var_mp":
+        case "frag_grenade_var_mp":
+        case "smoke_grenade_var_mp":
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
             if ( isdefined( self.prevlethalvarclass ) && self.prevlethalvarclass == var_0 && isdefined( self.prevlethalvartype ) && self.prevlethalvartype != var_1 )
             {
                 var_3 = self.prevlethalvartype;
-                self takeweapon( var_1 );
+                self _meth_830F( var_1 );
                 self.loadoutequipment = var_3;
-                self setlethalweapon( var_3 );
+                self _meth_8344( var_3 );
                 maps\mp\_utility::giveperk( var_3, 0 );
                 var_1 = var_3;
             }
@@ -2535,19 +2535,19 @@ loadouttrackvariablegrenades( var_0, var_1, var_2 )
 
     switch ( var_4 )
     {
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
-        case "smoke_grenade_var_mp":
-        case "frag_grenade_var_mp":
-        case "semtex_grenade_var_mp":
         case "contact_grenade_var_mp":
+        case "semtex_grenade_var_mp":
+        case "frag_grenade_var_mp":
+        case "smoke_grenade_var_mp":
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
             if ( isdefined( self.prevtacticalvarclass ) && self.prevtacticalvarclass == var_0 && isdefined( self.prevtacticalvartype ) && self.prevtacticalvartype != var_2 )
             {
                 var_5 = self.prevtacticalvartype;
-                self takeweapon( var_2 );
+                self _meth_830F( var_2 );
                 self.loadoutoffhand = var_5;
-                self settacticalweapon( var_5 );
+                self _meth_8319( var_5 );
                 maps\mp\_utility::giveperk( var_5, 0 );
                 var_2 = var_5;
             }
@@ -2953,7 +2953,7 @@ setkillstreaks( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, v
             {
                 for ( var_16 = 0; var_16 < var_15; var_16++ )
                 {
-                    var_17 = self getcacplayerdata( self.class_num, "assaultStreaks", var_12, "modules", var_16 );
+                    var_17 = self _meth_8248( self.class_num, "assaultStreaks", var_12, "modules", var_16 );
 
                     if ( isdefined( var_17 ) && var_17 != "none" )
                     {
@@ -3050,23 +3050,23 @@ replenishloadout()
 {
     var_0 = self.pers["team"];
     var_1 = self.pers["class"];
-    var_2 = self getweaponslistall();
+    var_2 = self _meth_830B();
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
         var_4 = var_2[var_3];
-        self givemaxammo( var_4 );
-        self setweaponammoclip( var_4, 9999 );
+        self _meth_8332( var_4 );
+        self _meth_82F6( var_4, 9999 );
 
         if ( var_4 == "claymore_mp" || var_4 == "claymore_detonator_mp" )
-            self setweaponammostock( var_4, 2 );
+            self _meth_82F7( var_4, 2 );
     }
 
     if ( self getammocount( level.classgrenades[var_1]["primary"]["type"] ) < level.classgrenades[var_1]["primary"]["count"] )
-        self setweaponammoclip( level.classgrenades[var_1]["primary"]["type"], level.classgrenades[var_1]["primary"]["count"] );
+        self _meth_82F6( level.classgrenades[var_1]["primary"]["type"], level.classgrenades[var_1]["primary"]["count"] );
 
     if ( self getammocount( level.classgrenades[var_1]["secondary"]["type"] ) < level.classgrenades[var_1]["secondary"]["count"] )
-        self setweaponammoclip( level.classgrenades[var_1]["secondary"]["type"], level.classgrenades[var_1]["secondary"]["count"] );
+        self _meth_82F6( level.classgrenades[var_1]["secondary"]["type"], level.classgrenades[var_1]["secondary"]["count"] );
 }
 
 onplayerconnecting()
@@ -3107,7 +3107,7 @@ assignpracticeroundclasses()
     {
         level.practiceroundclasses = [];
         level.practiceroundclassorder = [];
-        var_0 = tablegetrowcount( level.practiceroundclasstablename );
+        var_0 = _func_296( level.practiceroundclasstablename );
 
         for ( var_1 = 1; var_1 < var_0; var_1++ )
         {
@@ -3145,7 +3145,7 @@ assignpracticeroundclasses()
             var_7 = var_5[var_8];
 
         self.pers["practiceRoundClasses"][var_6] = var_7;
-        self setrankedplayerdata( "practiceRoundClassMap", var_6, self.pers["practiceRoundClasses"][var_6] );
+        self _meth_8244( "practiceRoundClassMap", var_6, self.pers["practiceRoundClasses"][var_6] );
     }
 }
 
@@ -3237,66 +3237,66 @@ isvalidprimary( var_0 )
 {
     switch ( var_0 )
     {
-        case "iw5_dlcgun6":
-        case "iw5_dlcgun6loot5":
-        case "iw5_dlcgun7loot0":
-        case "iw5_dlcgun7loot6":
-        case "iw5_dlcgun8loot1":
-        case "iw5_dlcgun9loot0":
-        case "iw5_dlcgun10":
-        case "iw5_dlcgun10loot0":
-        case "iw5_dlcgun10loot1":
-        case "iw5_dlcgun10loot5":
-        case "iw5_dlcgun10loot3":
-        case "iw5_dlcgun6loot6":
-        case "iw5_dlcgun6loot7":
-        case "iw5_dlcgun6loot8":
-        case "iw5_dlcgun6loot9":
-        case "iw5_dlcgun7":
-        case "iw5_dlcgun5loot0":
-        case "iw5_dlcgun5loot1":
-        case "iw5_dlcgun5loot2":
-        case "iw5_dlcgun5loot3":
-        case "iw5_dlcgun5loot4":
-        case "iw5_dlcgun5loot5":
-        case "iw5_dlcgun5loot6":
-        case "iw5_dlcgun8loot2":
-        case "iw5_dlcgun8loot3":
-        case "iw5_dlcgun8loot4":
-        case "iw5_dlcgun8loot5":
-        case "iw5_dlcgun8loot6":
-        case "iw5_dlcgun8loot7":
-        case "iw5_dlcgun8loot8":
-        case "iw5_dlcgun8loot9":
-        case "iw5_dlcgun9":
-        case "iw5_dlcgun9loot1":
-        case "iw5_dlcgun9loot2":
-        case "iw5_dlcgun9loot3":
-        case "iw5_dlcgun9loot4":
-        case "iw5_dlcgun9loot5":
-        case "iw5_dlcgun9loot6":
-        case "iw5_dlcgun9loot7":
-        case "iw5_dlcgun9loot8":
-        case "iw5_dlcgun9loot9":
-        case "iw5_dlcgun10loot2":
-        case "iw5_dlcgun10loot4":
-        case "iw5_dlcgun10loot6":
-        case "iw5_dlcgun11loot1":
-        case "iw5_dlcgun6loot0":
-        case "iw5_dlcgun6loot1":
-        case "iw5_dlcgun6loot2":
-        case "iw5_dlcgun6loot3":
-        case "iw5_dlcgun6loot4":
-        case "iw5_dlcgun7loot1":
-        case "iw5_dlcgun7loot2":
-        case "iw5_dlcgun7loot3":
-        case "iw5_dlcgun7loot4":
-        case "iw5_dlcgun7loot5":
-        case "iw5_dlcgun7loot7":
-        case "iw5_dlcgun7loot8":
-        case "iw5_dlcgun7loot9":
-        case "iw5_dlcgun8":
         case "iw5_dlcgun8loot0":
+        case "iw5_dlcgun8":
+        case "iw5_dlcgun7loot9":
+        case "iw5_dlcgun7loot8":
+        case "iw5_dlcgun7loot7":
+        case "iw5_dlcgun7loot5":
+        case "iw5_dlcgun7loot4":
+        case "iw5_dlcgun7loot3":
+        case "iw5_dlcgun7loot2":
+        case "iw5_dlcgun7loot1":
+        case "iw5_dlcgun6loot4":
+        case "iw5_dlcgun6loot3":
+        case "iw5_dlcgun6loot2":
+        case "iw5_dlcgun6loot1":
+        case "iw5_dlcgun6loot0":
+        case "iw5_dlcgun11loot1":
+        case "iw5_dlcgun10loot6":
+        case "iw5_dlcgun10loot4":
+        case "iw5_dlcgun10loot2":
+        case "iw5_dlcgun9loot9":
+        case "iw5_dlcgun9loot8":
+        case "iw5_dlcgun9loot7":
+        case "iw5_dlcgun9loot6":
+        case "iw5_dlcgun9loot5":
+        case "iw5_dlcgun9loot4":
+        case "iw5_dlcgun9loot3":
+        case "iw5_dlcgun9loot2":
+        case "iw5_dlcgun9loot1":
+        case "iw5_dlcgun9":
+        case "iw5_dlcgun8loot9":
+        case "iw5_dlcgun8loot8":
+        case "iw5_dlcgun8loot7":
+        case "iw5_dlcgun8loot6":
+        case "iw5_dlcgun8loot5":
+        case "iw5_dlcgun8loot4":
+        case "iw5_dlcgun8loot3":
+        case "iw5_dlcgun8loot2":
+        case "iw5_dlcgun5loot6":
+        case "iw5_dlcgun5loot5":
+        case "iw5_dlcgun5loot4":
+        case "iw5_dlcgun5loot3":
+        case "iw5_dlcgun5loot2":
+        case "iw5_dlcgun5loot1":
+        case "iw5_dlcgun5loot0":
+        case "iw5_dlcgun7":
+        case "iw5_dlcgun6loot9":
+        case "iw5_dlcgun6loot8":
+        case "iw5_dlcgun6loot7":
+        case "iw5_dlcgun6loot6":
+        case "iw5_dlcgun10loot3":
+        case "iw5_dlcgun10loot5":
+        case "iw5_dlcgun10loot1":
+        case "iw5_dlcgun10loot0":
+        case "iw5_dlcgun10":
+        case "iw5_dlcgun9loot0":
+        case "iw5_dlcgun8loot1":
+        case "iw5_dlcgun7loot6":
+        case "iw5_dlcgun7loot0":
+        case "iw5_dlcgun6loot5":
+        case "iw5_dlcgun6":
             return 1;
         default:
             break;
@@ -3307,88 +3307,88 @@ isvalidprimary( var_0 )
 
     switch ( var_0 )
     {
-        case "iw5_combatknife":
-        case "iw5_mechpunch":
-        case "iw5_exominigun":
-        case "iw5_dlcgun2":
-        case "iw5_mors":
-        case "iw5_gm6":
-        case "iw5_m990":
-        case "iw5_thor":
-        case "iw5_exoxmg":
-        case "riotshield":
-        case "iw5_mp5":
-        case "iw5_pp90m1":
-        case "iw5_barrett":
-        case "iw5_msr":
-        case "iw5_spas12":
-        case "iw5_riotshieldt6":
-        case "iw5_riotshieldjugg":
-        case "iw5_exoshield":
-        case "iw5_ak12":
-        case "iw5_ak12ghosts":
-        case "iw5_bal27":
-        case "iw5_bal27atlas":
-        case "iw5_hbra3":
-        case "iw5_lsat":
-        case "iw5_himar":
-        case "iw5_arx160":
-        case "iw5_m182spr":
-        case "iw5_asaw":
-        case "iw5_mp11":
-        case "iw5_sn6":
-        case "iw5_hmr9":
-        case "iw5_sac3":
-        case "iw5_asm1":
-        case "iw5_kf5":
-        case "iw5_maul":
-        case "iw5_rhino":
-        case "iw5_uts19":
-        case "iw5_em1":
-        case "iw5_em1gold":
-        case "iw5_em1atlas":
-        case "iw5_epm3":
-        case "iw5_microdronelauncher":
-        case "iw5_juggtitan45":
-        case "iw5_exoxmgjugg":
-        case "iw5_dlcgun1":
-        case "iw5_dlcgun3":
-        case "iw5_dlcgun4":
-        case "iw5_dlcgun18":
-        case "iw5_dlcgun19":
-        case "iw5_dlcgun20":
-        case "iw5_dlcgun21":
-        case "iw5_dlcgun22":
-        case "iw5_dlcgun23":
-        case "iw5_dlcgun24":
-        case "iw5_dlcgun25":
-        case "iw5_dlcgun26":
-        case "iw5_dlcgun27":
-        case "iw5_dlcgun28":
-        case "iw5_dlcgun29":
-        case "iw5_dlcgun30":
-        case "iw5_dlcgun31":
-        case "iw5_dlcgun32":
-        case "iw5_dlcgun33":
-        case "iw5_dlcgun34":
-        case "iw5_dlcgun35":
-        case "iw5_dlcgun36":
-        case "iw5_dlcgun37":
-        case "iw5_dlcgun38":
-        case "iw5_dlcgun39":
-        case "iw5_dlcgun40":
-        case "iw5_dlcgun41":
-        case "iw5_dlcgun42":
-        case "iw5_dlcgun43":
-        case "iw5_dlcgun44":
-        case "iw5_dlcgun45":
-        case "iw5_dlcgun46":
-        case "iw5_dlcgun47":
-        case "iw5_dlcgun48":
-        case "iw5_dlcgun49":
-        case "iw5_dlcgun50":
-        case "iw5_dlcgun51":
         case "iw5_dlcgun52":
+        case "iw5_dlcgun51":
+        case "iw5_dlcgun50":
+        case "iw5_dlcgun49":
+        case "iw5_dlcgun48":
+        case "iw5_dlcgun47":
+        case "iw5_dlcgun46":
+        case "iw5_dlcgun45":
+        case "iw5_dlcgun44":
+        case "iw5_dlcgun43":
+        case "iw5_dlcgun42":
+        case "iw5_dlcgun41":
+        case "iw5_dlcgun40":
+        case "iw5_dlcgun39":
+        case "iw5_dlcgun38":
+        case "iw5_dlcgun37":
+        case "iw5_dlcgun36":
+        case "iw5_dlcgun35":
+        case "iw5_dlcgun34":
+        case "iw5_dlcgun33":
+        case "iw5_dlcgun32":
+        case "iw5_dlcgun31":
+        case "iw5_dlcgun30":
+        case "iw5_dlcgun29":
+        case "iw5_dlcgun28":
+        case "iw5_dlcgun27":
+        case "iw5_dlcgun26":
+        case "iw5_dlcgun25":
+        case "iw5_dlcgun24":
+        case "iw5_dlcgun23":
+        case "iw5_dlcgun22":
+        case "iw5_dlcgun21":
+        case "iw5_dlcgun20":
+        case "iw5_dlcgun19":
+        case "iw5_dlcgun18":
+        case "iw5_dlcgun4":
+        case "iw5_dlcgun3":
+        case "iw5_dlcgun1":
+        case "iw5_exoxmgjugg":
+        case "iw5_juggtitan45":
+        case "iw5_microdronelauncher":
+        case "iw5_epm3":
+        case "iw5_em1atlas":
+        case "iw5_em1gold":
+        case "iw5_em1":
+        case "iw5_uts19":
+        case "iw5_rhino":
+        case "iw5_maul":
+        case "iw5_kf5":
+        case "iw5_asm1":
+        case "iw5_sac3":
+        case "iw5_hmr9":
+        case "iw5_sn6":
+        case "iw5_mp11":
+        case "iw5_asaw":
+        case "iw5_m182spr":
+        case "iw5_arx160":
+        case "iw5_himar":
+        case "iw5_lsat":
+        case "iw5_hbra3":
+        case "iw5_bal27atlas":
+        case "iw5_bal27":
+        case "iw5_ak12ghosts":
+        case "iw5_ak12":
+        case "iw5_exoshield":
+        case "iw5_riotshieldjugg":
+        case "iw5_riotshieldt6":
+        case "iw5_spas12":
+        case "iw5_msr":
+        case "iw5_barrett":
+        case "iw5_pp90m1":
+        case "iw5_mp5":
+        case "riotshield":
+        case "iw5_exoxmg":
+        case "iw5_thor":
+        case "iw5_m990":
+        case "iw5_gm6":
+        case "iw5_mors":
+        case "iw5_dlcgun2":
+        case "iw5_exominigun":
+        case "iw5_mechpunch":
+        case "iw5_combatknife":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3403,19 +3403,19 @@ isvalidsecondary( var_0, var_1 )
 
     switch ( var_0 )
     {
-        case "iw5_dlcgun11loot2":
-        case "iw5_dlcgun11loot3":
-        case "iw5_dlcgun11loot4":
-        case "iw5_dlcgun10loot7":
-        case "iw5_dlcgun10loot8":
-        case "iw5_dlcgun10loot9":
-        case "iw5_dlcgun11":
-        case "iw5_dlcgun11loot0":
-        case "iw5_dlcgun13":
-        case "iw5_dlcgun14":
-        case "iw5_dlcgun15":
-        case "iw5_dlcgun16":
         case "iw5_dlcgun17":
+        case "iw5_dlcgun16":
+        case "iw5_dlcgun15":
+        case "iw5_dlcgun14":
+        case "iw5_dlcgun13":
+        case "iw5_dlcgun11loot0":
+        case "iw5_dlcgun11":
+        case "iw5_dlcgun10loot9":
+        case "iw5_dlcgun10loot8":
+        case "iw5_dlcgun10loot7":
+        case "iw5_dlcgun11loot4":
+        case "iw5_dlcgun11loot3":
+        case "iw5_dlcgun11loot2":
             return 1;
         default:
             break;
@@ -3426,37 +3426,37 @@ isvalidsecondary( var_0, var_1 )
 
     switch ( var_0 )
     {
-        case "none":
-        case "m320":
-        case "iw5_combatknife":
-        case "iw5_usp45":
-        case "iw5_mechpunch":
-        case "iw5_stingerm7":
-        case "iw5_maaws":
-        case "iw5_mahem":
-        case "iw5_spas12":
-        case "rpg":
-        case "stinger":
-        case "iw5_usp45jugg":
-        case "iw5_mp412jugg":
-        case "iw5_vbr":
-        case "iw5_pbw":
-        case "iw5_rw1":
-        case "iw5_titan45":
-        case "iw5_titan45loot0":
-        case "iw5_titan45loot1":
-        case "iw5_titan45loot2":
-        case "iw5_titan45loot3":
-        case "iw5_titan45loot4":
-        case "iw5_titan45loot5":
-        case "iw5_titan45loot6":
-        case "iw5_titan45loot7":
-        case "iw5_titan45loot8":
-        case "iw5_titan45loot9":
-        case "iw5_titan45atlas":
-        case "iw5_exocrossbow":
-        case "iw5_exocrossbowblops2":
         case "iw5_juggtitan45_mp":
+        case "iw5_exocrossbowblops2":
+        case "iw5_exocrossbow":
+        case "iw5_titan45atlas":
+        case "iw5_titan45loot9":
+        case "iw5_titan45loot8":
+        case "iw5_titan45loot7":
+        case "iw5_titan45loot6":
+        case "iw5_titan45loot5":
+        case "iw5_titan45loot4":
+        case "iw5_titan45loot3":
+        case "iw5_titan45loot2":
+        case "iw5_titan45loot1":
+        case "iw5_titan45loot0":
+        case "iw5_titan45":
+        case "iw5_rw1":
+        case "iw5_pbw":
+        case "iw5_vbr":
+        case "iw5_mp412jugg":
+        case "iw5_usp45jugg":
+        case "stinger":
+        case "rpg":
+        case "iw5_spas12":
+        case "iw5_mahem":
+        case "iw5_maaws":
+        case "iw5_stingerm7":
+        case "iw5_mechpunch":
+        case "iw5_usp45":
+        case "iw5_combatknife":
+        case "m320":
+        case "none":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3473,76 +3473,76 @@ isvalidattachment( var_0, var_1, var_2 )
 
     switch ( var_0 )
     {
-        case "none":
-        case "gl":
-        case "gp25":
-        case "m320":
-        case "shotgun":
-        case "tactical":
-        case "akimbo":
-        case "zoomscope":
-        case "ironsights":
-        case "akimboxmg":
-        case "akimbosac3":
-        case "mahemscopebase":
-        case "sensorheartbeat":
-        case "scopevz":
-        case "acog":
-        case "acogsmg":
-        case "reflex":
-        case "reflexsmg":
-        case "reflexlmg":
-        case "silencer":
-        case "silencer02":
-        case "silencer03":
-        case "grip":
-        case "thermal":
-        case "thermalsmg":
-        case "heartbeat":
-        case "fmj":
-        case "rof":
-        case "xmags":
-        case "dualmag":
-        case "eotech":
-        case "eotechsmg":
-        case "eotechlmg":
-        case "hamrhybrid":
-        case "hybrid":
-        case "parabolicmicrophone":
-        case "opticsreddot":
-        case "opticsacog2":
-        case "opticseotech":
-        case "opticsthermal":
-        case "silencer01":
-        case "foregrip":
-        case "variablereddot":
-        case "directhack":
-        case "opticstargetenhancer":
-        case "firerate":
-        case "longrange":
-        case "quickdraw":
-        case "stock":
-        case "lasersight":
-        case "morsscopevz":
-        case "gm6scopevz":
-        case "thorscopevz":
-        case "m990scopevz":
-        case "trackrounds":
-        case "stabilizer":
-        case "heatsink":
-        case "shieldfastmelee":
-        case "shieldfastplant":
-        case "shieldshockplant":
-        case "rw1scopebase":
-        case "morsstabilizer":
-        case "gm6stabilizer":
-        case "m990stabilizer":
-        case "thorstabilizer":
-        case "crossbowscopebase":
-        case "silencerpistol":
-        case "silencersniper":
-        case "dragunovdlcscopevz":
         case "dragunovedlcstabilizer":
+        case "dragunovdlcscopevz":
+        case "silencersniper":
+        case "silencerpistol":
+        case "crossbowscopebase":
+        case "thorstabilizer":
+        case "m990stabilizer":
+        case "gm6stabilizer":
+        case "morsstabilizer":
+        case "rw1scopebase":
+        case "shieldshockplant":
+        case "shieldfastplant":
+        case "shieldfastmelee":
+        case "heatsink":
+        case "stabilizer":
+        case "trackrounds":
+        case "m990scopevz":
+        case "thorscopevz":
+        case "gm6scopevz":
+        case "morsscopevz":
+        case "lasersight":
+        case "stock":
+        case "quickdraw":
+        case "longrange":
+        case "firerate":
+        case "opticstargetenhancer":
+        case "directhack":
+        case "variablereddot":
+        case "foregrip":
+        case "silencer01":
+        case "opticsthermal":
+        case "opticseotech":
+        case "opticsacog2":
+        case "opticsreddot":
+        case "parabolicmicrophone":
+        case "hybrid":
+        case "hamrhybrid":
+        case "eotechlmg":
+        case "eotechsmg":
+        case "eotech":
+        case "dualmag":
+        case "xmags":
+        case "rof":
+        case "fmj":
+        case "heartbeat":
+        case "thermalsmg":
+        case "thermal":
+        case "grip":
+        case "silencer03":
+        case "silencer02":
+        case "silencer":
+        case "reflexlmg":
+        case "reflexsmg":
+        case "reflex":
+        case "acogsmg":
+        case "acog":
+        case "scopevz":
+        case "sensorheartbeat":
+        case "mahemscopebase":
+        case "akimbosac3":
+        case "akimboxmg":
+        case "ironsights":
+        case "zoomscope":
+        case "akimbo":
+        case "tactical":
+        case "shotgun":
+        case "m320":
+        case "gp25":
+        case "gl":
+        case "none":
             var_3 = 1;
             break;
         default:
@@ -3574,7 +3574,7 @@ isattachmentunlocked( var_0, var_1 )
 
     var_3 = var_2 + " " + var_1;
 
-    if ( !self isitemunlocked( var_3 ) )
+    if ( !self _meth_8221( var_3 ) )
         return 0;
 
     return 1;
@@ -3584,40 +3584,40 @@ isvalidcamo( var_0, var_1 )
 {
     switch ( var_0 )
     {
-        case "none":
-        case "gold":
-        case "multicame":
-        case "multicamd":
-        case "urban":
-        case "stranden":
-        case "wooldand":
-        case "raid":
-        case "digital3":
-        case "highlander":
-        case "yeti":
-        case "digital1":
-        case "concrete":
-        case "urbanjet":
-        case "neptune":
-        case "tiger":
-        case "carbon":
-        case "diamond":
         case "sentinel":
+        case "diamond":
+        case "carbon":
+        case "tiger":
+        case "neptune":
+        case "urbanjet":
+        case "concrete":
+        case "digital1":
+        case "yeti":
+        case "highlander":
+        case "digital3":
+        case "raid":
+        case "wooldand":
+        case "stranden":
+        case "urban":
+        case "multicamd":
+        case "multicame":
+        case "gold":
+        case "none":
             return 1;
-        case "camo01":
-        case "camo02":
-        case "camo03":
-        case "camo04":
-        case "camo05":
-        case "camo06":
-        case "camo07":
-        case "camo08":
-        case "camo09":
-        case "camo10":
-        case "camo11":
-        case "camo12":
-        case "camo13":
         case "camo14":
+        case "camo13":
+        case "camo12":
+        case "camo11":
+        case "camo10":
+        case "camo09":
+        case "camo08":
+        case "camo07":
+        case "camo06":
+        case "camo05":
+        case "camo04":
+        case "camo03":
+        case "camo02":
+        case "camo01":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3635,58 +3635,58 @@ isvalidreticle( var_0, var_1 )
 {
     switch ( var_0 )
     {
-        case "none":
-        case "ret1":
-        case "ret2":
-        case "ret3":
-        case "ret4":
-        case "ret5":
-        case "ret6":
-        case "ret7":
-        case "ret8":
-        case "ret9":
-        case "retdlc01":
-        case "retdlc02":
-        case "retdlc03":
-        case "retdlc04":
-        case "retdlc05":
-        case "retdlc06":
-        case "retdlc07":
-        case "retdlc08":
-        case "retdlc09":
-        case "retdlc10":
-        case "retdlc11":
-        case "retdlc12":
-        case "retdlc13":
-        case "retdlc14":
-        case "retdlc15":
-        case "retdlc16":
-        case "retdlc17":
-        case "retdlc18":
-        case "retdlc19":
-        case "retdlc20":
-        case "retdlc21":
-        case "retdlc22":
-        case "retdlc23":
-        case "retdlc24":
-        case "retdlc25":
-        case "retdlc26":
-        case "retdlc27":
-        case "retdlc28":
-        case "retdlc29":
-        case "retdlc30":
-        case "retdlc31":
-        case "retdlc32":
-        case "retdlc33":
-        case "retdlc34":
-        case "retdlc35":
-        case "retdlc36":
-        case "retdlc37":
-        case "retdlc38":
-        case "retdlc39":
-        case "retdlc40":
-        case "retdlc41":
         case "retdlc42":
+        case "retdlc41":
+        case "retdlc40":
+        case "retdlc39":
+        case "retdlc38":
+        case "retdlc37":
+        case "retdlc36":
+        case "retdlc35":
+        case "retdlc34":
+        case "retdlc33":
+        case "retdlc32":
+        case "retdlc31":
+        case "retdlc30":
+        case "retdlc29":
+        case "retdlc28":
+        case "retdlc27":
+        case "retdlc26":
+        case "retdlc25":
+        case "retdlc24":
+        case "retdlc23":
+        case "retdlc22":
+        case "retdlc21":
+        case "retdlc20":
+        case "retdlc19":
+        case "retdlc18":
+        case "retdlc17":
+        case "retdlc16":
+        case "retdlc15":
+        case "retdlc14":
+        case "retdlc13":
+        case "retdlc12":
+        case "retdlc11":
+        case "retdlc10":
+        case "retdlc09":
+        case "retdlc08":
+        case "retdlc07":
+        case "retdlc06":
+        case "retdlc05":
+        case "retdlc04":
+        case "retdlc03":
+        case "retdlc02":
+        case "retdlc01":
+        case "ret9":
+        case "ret8":
+        case "ret7":
+        case "ret6":
+        case "ret5":
+        case "ret4":
+        case "ret3":
+        case "ret2":
+        case "ret1":
+        case "none":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3712,7 +3712,7 @@ iscamounlocked( var_0, var_1 )
 
     var_3 = var_2 + " " + var_1;
 
-    if ( !self isitemunlocked( var_3 ) )
+    if ( !self _meth_8221( var_3 ) )
         return 0;
 
     return 1;
@@ -3727,37 +3727,37 @@ isvalidequipment( var_0, var_1 )
 
     switch ( var_0 )
     {
-        case "claymore_mp":
-        case "frag_grenade_mp":
-        case "specialty_null":
-        case "exoknife_jug_mp":
-        case "trophy_mp":
-        case "semtex_mp":
-        case "bouncingbetty_mp":
-        case "c4_mp":
-        case "tri_drone_mp":
-        case "throwingknife_mp":
-        case "exoknife_mp":
-        case "explosive_gel_mp":
-        case "portable_radar_mp":
-        case "s1_tactical_insertion_device_mp":
-        case "scrambler_mp":
-        case "flash_grenade_mp":
-        case "concussion_grenade_mp":
-        case "stun_grenade_mp":
-        case "paint_grenade_mp":
-        case "emp_grenade_mp":
-        case "smoke_grenade_mp":
-        case "tracking_drone_mp":
-        case "explosive_drone_mp":
-        case "mute_bomb_mp":
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
-        case "paint_grenade_var_mp":
-        case "smoke_grenade_var_mp":
-        case "frag_grenade_var_mp":
-        case "semtex_grenade_var_mp":
         case "contact_grenade_var_mp":
+        case "semtex_grenade_var_mp":
+        case "frag_grenade_var_mp":
+        case "smoke_grenade_var_mp":
+        case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
+        case "mute_bomb_mp":
+        case "explosive_drone_mp":
+        case "tracking_drone_mp":
+        case "smoke_grenade_mp":
+        case "emp_grenade_mp":
+        case "paint_grenade_mp":
+        case "stun_grenade_mp":
+        case "concussion_grenade_mp":
+        case "flash_grenade_mp":
+        case "scrambler_mp":
+        case "s1_tactical_insertion_device_mp":
+        case "portable_radar_mp":
+        case "explosive_gel_mp":
+        case "exoknife_mp":
+        case "throwingknife_mp":
+        case "tri_drone_mp":
+        case "c4_mp":
+        case "bouncingbetty_mp":
+        case "semtex_mp":
+        case "trophy_mp":
+        case "exoknife_jug_mp":
+        case "specialty_null":
+        case "frag_grenade_mp":
+        case "claymore_mp":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3774,20 +3774,20 @@ isvalidoffhand( var_0, var_1 )
 
     switch ( var_0 )
     {
-        case "none":
-        case "specialty_null":
-        case "adrenaline_mp":
-        case "extra_health_mp":
-        case "exocloak_equipment_mp":
-        case "exohover_equipment_mp":
-        case "exoping_equipment_mp":
-        case "exorepulsor_equipment_mp":
-        case "exoshield_equipment_mp":
-        case "exomute_equipment_mp":
-        case "fast_heal_mp":
-        case "exoboost_equipment_mp":
-        case "exododge_equipment_mp":
         case "exoslide_equipment_mp":
+        case "exododge_equipment_mp":
+        case "exoboost_equipment_mp":
+        case "fast_heal_mp":
+        case "exomute_equipment_mp":
+        case "exoshield_equipment_mp":
+        case "exorepulsor_equipment_mp":
+        case "exoping_equipment_mp":
+        case "exohover_equipment_mp":
+        case "exocloak_equipment_mp":
+        case "extra_health_mp":
+        case "adrenaline_mp":
+        case "specialty_null":
+        case "none":
             return 1;
         default:
             recordvalidationinfraction();
@@ -3816,62 +3816,62 @@ isvalidkillstreak( var_0 )
 {
     switch ( var_0 )
     {
-        case "none":
-        case "mp_refraction":
-        case "mp_prison":
-        case "mp_dam":
-        case "mp_greenband":
-        case "mp_instinct":
-        case "mp_levity":
-        case "mp_recovery":
-        case "mp_solar":
-        case "mp_terrace":
-        case "mp_torqued":
-        case "mp_comeback":
-        case "emp":
-        case "sentry":
-        case "mp_lost":
-        case "missile_strike":
-        case "orbital_strike":
-        case "orbital_strike_laser":
-        case "orbital_strike_chem":
-        case "orbital_strike_laser_chem":
-        case "orbital_strike_cluster":
-        case "orbital_strike_drone":
-        case "orbitalsupport":
-        case "mp_recreation":
-        case "recon_ugv":
-        case "warbird":
-        case "assault_ugv":
-        case "mp_bigben2":
-        case "mp_seoul2":
-        case "remote_mg_sentry_turret":
-        case "strafing_run_airstrike":
-        case "airdrop_sentry_minigun":
-        case "airdrop_assault":
-        case "uav":
-        case "orbital_carepackage":
-        case "airdrop_trap":
-        case "airdrop_reinforcement_common":
-        case "airdrop_reinforcement_uncommon":
-        case "airdrop_reinforcement_rare":
-        case "airdrop_reinforcement_practice":
-        case "directional_uav":
-        case "remote_mg_turret":
-        case "map_killstreak":
-        case "mp_lab2":
-        case "mp_laser2":
-        case "mp_odium":
-        case "mp_blackbox":
-        case "mp_spark":
-        case "heavy_exosuit":
-        case "drone_carepackage":
-        case "next_gen_exo":
-        case "zm_camouflage":
-        case "zm_squadmate":
-        case "zm_sentry":
-        case "zm_ugv":
         case "zm_ripped_turret":
+        case "zm_ugv":
+        case "zm_sentry":
+        case "zm_squadmate":
+        case "zm_camouflage":
+        case "next_gen_exo":
+        case "drone_carepackage":
+        case "heavy_exosuit":
+        case "mp_spark":
+        case "mp_blackbox":
+        case "mp_odium":
+        case "mp_laser2":
+        case "mp_lab2":
+        case "map_killstreak":
+        case "remote_mg_turret":
+        case "directional_uav":
+        case "airdrop_reinforcement_practice":
+        case "airdrop_reinforcement_rare":
+        case "airdrop_reinforcement_uncommon":
+        case "airdrop_reinforcement_common":
+        case "airdrop_trap":
+        case "orbital_carepackage":
+        case "uav":
+        case "airdrop_assault":
+        case "airdrop_sentry_minigun":
+        case "strafing_run_airstrike":
+        case "remote_mg_sentry_turret":
+        case "mp_seoul2":
+        case "mp_bigben2":
+        case "assault_ugv":
+        case "warbird":
+        case "recon_ugv":
+        case "mp_recreation":
+        case "orbitalsupport":
+        case "orbital_strike_drone":
+        case "orbital_strike_cluster":
+        case "orbital_strike_laser_chem":
+        case "orbital_strike_chem":
+        case "orbital_strike_laser":
+        case "orbital_strike":
+        case "missile_strike":
+        case "mp_lost":
+        case "sentry":
+        case "emp":
+        case "mp_comeback":
+        case "mp_torqued":
+        case "mp_terrace":
+        case "mp_solar":
+        case "mp_recovery":
+        case "mp_levity":
+        case "mp_instinct":
+        case "mp_greenband":
+        case "mp_dam":
+        case "mp_prison":
+        case "mp_refraction":
+        case "none":
             return 1;
         default:
             recordvalidationinfraction();

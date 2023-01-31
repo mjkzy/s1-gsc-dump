@@ -1,18 +1,18 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_4E24()
+initstart()
 {
-    level._id_6557 = 0;
-    level._id_6556 = 5;
-    level._id_6553 = 0;
-    level._id_6552 = 5;
-    level._id_6555 = 0;
-    level thread _id_2854();
+    level.orbital_util_remote_traces_frame = 0;
+    level.orbital_util_remote_traces = 5;
+    level.orbital_util_capsule_traces_frame = 0;
+    level.orbital_util_capsule_traces = 5;
+    level.orbital_util_last_trace = 0;
+    level thread deletemapremotemissileclip();
     level.orbital_util_covered_volumes = getentarray( "orbital_node_covered", "targetname" );
 }
 
-_id_2854()
+deletemapremotemissileclip()
 {
     var_0 = getentarray( "carepackage_clip", "targetname" );
 
@@ -20,64 +20,64 @@ _id_2854()
         var_2 delete();
 }
 
-_id_6CAA( var_0 )
+playergetoutsidenode( var_0 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = "goliath";
 
-    var_1 = _id_6CA8( var_0 );
+    var_1 = playergetnodelookingat( var_0 );
 
     if ( !isdefined( var_1 ) )
         return;
 
-    self._id_55C1 = undefined;
+    self.lastnodelookingattrace = undefined;
     return var_1;
 }
 
-_id_6CA9( var_0, var_1 )
+playergetorbitalstartpos( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
         var_1 = "goliath";
 
-    var_2 = maps\mp\killstreaks\_aerial_utility::_id_3F85( "remoteMissileSpawn", "targetname" );
-    var_3 = _id_6131( var_0, var_2, var_1 );
+    var_2 = maps\mp\killstreaks\_aerial_utility::getentorstructarray( "remoteMissileSpawn", "targetname" );
+    var_3 = nodegetremotemissileorigin( var_0, var_2, var_1 );
 
     if ( isdefined( var_3 ) )
         return var_3;
     else
-        return _id_6130( var_0 );
+        return nodegetremotemissileorgfromabove( var_0 );
 }
 
-_id_40EA( var_0 )
+getstartpositionabove( var_0 )
 {
-    return var_0.origin + ( 0.0, 0.0, 24000.0 );
+    return var_0.origin + ( 0, 0, 24000 );
 }
 
-_id_07DF( var_0, var_1 )
+adddropmarker( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
         var_1 = "goliath";
 
-    var_0._id_6576 = var_1;
-    level._id_655A[level._id_655A.size] = var_0;
-    thread _id_0546( var_0 );
+    var_0.orbitaltype = var_1;
+    level.orbitaldropmarkers[level.orbitaldropmarkers.size] = var_0;
+    thread _adddropmarkerinternal( var_0 );
 }
 
-_id_6D22( var_0 )
+playerplayinvalidpositioneffect( var_0 )
 {
-    var_1 = self._id_55C1;
-    var_2 = self._id_55C0;
+    var_1 = self.lastnodelookingattrace;
+    var_2 = self.lastnearestnode;
 
     if ( !isdefined( var_1 ) )
     {
         var_3 = anglestoforward( self getangles() );
-        var_4 = self geteye();
+        var_4 = self _meth_80A8();
         var_5 = var_4 + var_3 * 500;
         var_1 = bullettrace( var_4, var_5, 0, self, 1, 0, 0, 0, 0 );
     }
 
-    self._id_55C1 = undefined;
-    self._id_55C0 = undefined;
+    self.lastnodelookingattrace = undefined;
+    self.lastnearestnode = undefined;
     var_6 = var_1["position"];
 
     if ( isdefined( var_2 ) )
@@ -89,9 +89,9 @@ _id_6D22( var_0 )
             var_6 = var_2.origin;
     }
 
-    var_9 = spawn( "script_model", var_6 + ( 0.0, 0.0, 5.0 ) );
-    var_9.angles = ( -90.0, 0.0, 0.0 );
-    var_9 setmodel( "tag_origin" );
+    var_9 = spawn( "script_model", var_6 + ( 0, 0, 5 ) );
+    var_9.angles = ( -90, 0, 0 );
+    var_9 _meth_80B1( "tag_origin" );
     var_9 hide();
     var_9 showtoplayer( self );
     playfxontag( var_0, var_9, "tag_origin" );
@@ -99,55 +99,55 @@ _id_6D22( var_0 )
     var_9 delete();
 }
 
-_id_6CA8( var_0 )
+playergetnodelookingat( var_0 )
 {
     var_1 = anglestoforward( self getangles() );
-    var_2 = self geteye();
+    var_2 = self _meth_80A8();
     var_3 = var_2 + var_1 * 500;
     var_4 = bullettrace( var_2, var_3, 0, self, 1, 0, 0, 0, 0 );
-    self._id_55C1 = var_4;
+    self.lastnodelookingattrace = var_4;
     var_5 = var_4["fraction"] == 1;
 
     if ( var_5 )
-        return _id_6CA7( undefined, var_0 );
+        return playergetnearestnode( undefined, var_0 );
 
     var_6 = var_4["position"];
     var_7 = getnodesinradius( var_6, 128, 0, 60 );
     var_8 = var_7.size == 0;
 
     if ( var_8 )
-        return _id_6CA7( undefined, var_0 );
+        return playergetnearestnode( undefined, var_0 );
 
     var_9 = var_4["normal"];
     var_10 = var_9[2] > 0.8;
 
     if ( !var_10 )
-        return _id_6CA7( var_6, var_0 );
+        return playergetnearestnode( var_6, var_0 );
 
     if ( orbitalbadlandingcheck( var_6 ) )
-        return _id_6CA7( var_6, var_0 );
+        return playergetnearestnode( var_6, var_0 );
 
     if ( var_0 == "goliath" )
     {
-        if ( _id_426C( var_6 ) )
-            return _id_6CA7( var_6, var_0 );
+        if ( goliathbadlandingcheck( var_6 ) )
+            return playergetnearestnode( var_6, var_0 );
     }
 
-    var_11 = _id_1B9F( var_6, self, var_0 );
+    var_11 = carepackagetrace( var_6, self, var_0 );
 
     if ( !var_11 )
-        return _id_6CA7( var_6, var_0 );
+        return playergetnearestnode( var_6, var_0 );
 
     if ( groundpositionoffedge( var_6, var_0 ) )
-        return _id_6CA7( var_6, var_0 );
+        return playergetnearestnode( var_6, var_0 );
 
     var_13 = spawnstruct();
     var_13.origin = var_6;
-    var_14 = maps\mp\killstreaks\_aerial_utility::_id_3F85( "remoteMissileSpawn", "targetname" );
-    var_15 = _id_6131( var_13, var_14, var_0 );
+    var_14 = maps\mp\killstreaks\_aerial_utility::getentorstructarray( "remoteMissileSpawn", "targetname" );
+    var_15 = nodegetremotemissileorigin( var_13, var_14, var_0 );
 
     if ( !isdefined( var_15 ) )
-        return _id_6CA7( var_6, var_0 );
+        return playergetnearestnode( var_6, var_0 );
 
     return var_13;
 }
@@ -163,7 +163,7 @@ groundpositionoffedge( var_0, var_1 )
     var_4 = -1 * var_3;
     var_5 = ( 0, var_2, 0 );
     var_6 = -1 * var_5;
-    var_7 = ( 0.0, 0.0, -10.0 );
+    var_7 = ( 0, 0, -10 );
     var_8 = [ var_3, var_4, var_5, var_6 ];
 
     foreach ( var_10 in var_8 )
@@ -181,71 +181,71 @@ groundpositionoffedge( var_0, var_1 )
 
 _nodefindnewremotemissileorg( var_0, var_1, var_2 )
 {
-    var_3 = _id_612F( var_0, var_1, var_2 );
+    var_3 = nodefindremotemissleent( var_0, var_1, var_2 );
 
     if ( isdefined( var_3 ) )
-        return _id_6132( var_0, var_1 );
+        return nodegetremotemissleentorg( var_0, var_1 );
 
-    var_4 = _id_613A( var_0, var_2 );
+    var_4 = nodetestfirefromabove( var_0, var_2 );
 
     if ( isdefined( var_4 ) )
-        return _id_6130( var_0 );
+        return nodegetremotemissileorgfromabove( var_0 );
     else
     {
 
     }
 }
 
-_id_6131( var_0, var_1, var_2 )
+nodegetremotemissileorigin( var_0, var_1, var_2 )
 {
-    if ( _id_6133( var_0 ) )
+    if ( nodehasremotemissiledataset( var_0 ) )
     {
-        if ( !_id_6135( var_0 ) )
-            return _id_6132( var_0, var_1 );
+        if ( !nodeisremotemissilefromabove( var_0 ) )
+            return nodegetremotemissleentorg( var_0, var_1 );
         else
-            return _id_6130( var_0 );
+            return nodegetremotemissileorgfromabove( var_0 );
     }
     else
         return _nodefindnewremotemissileorg( var_0, var_1, var_2 );
 }
 
-_id_6134( var_0 )
+nodeispathnode( var_0 )
 {
     return isdefined( var_0.type );
 }
 
-_id_6135( var_0 )
+nodeisremotemissilefromabove( var_0 )
 {
-    return _id_6134( var_0 ) && getchallengeid( var_0 ) && _func_2C9( var_0 ) == "up" || isdefined( var_0._id_13B1 );
+    return nodeispathnode( var_0 ) && _func_2C8( var_0 ) && _func_2C9( var_0 ) == "up" || isdefined( var_0.bestmissilespawnabove );
 }
 
-_id_6133( var_0 )
+nodehasremotemissiledataset( var_0 )
 {
-    return _id_6134( var_0 ) && getchallengeid( var_0 ) || isdefined( var_0._id_13B1 ) || isdefined( var_0._id_13B0 );
+    return nodeispathnode( var_0 ) && _func_2C8( var_0 ) || isdefined( var_0.bestmissilespawnabove ) || isdefined( var_0.bestmissilespawn );
 }
 
-_id_6130( var_0 )
+nodegetremotemissileorgfromabove( var_0 )
 {
-    return _id_40EA( var_0 );
+    return getstartpositionabove( var_0 );
 }
 
-_id_613A( var_0, var_1 )
+nodetestfirefromabove( var_0, var_1 )
 {
-    var_2 = _id_40EA( var_0 );
-    var_3 = _id_7324( var_2, var_0.origin, var_1 );
+    var_2 = getstartpositionabove( var_0 );
+    var_3 = remotemissileenttracetooriginpassedwrapper( var_2, var_0.origin, var_1 );
 
     if ( var_3 )
     {
-        var_0._id_13B1 = var_2;
+        var_0.bestmissilespawnabove = var_2;
         return var_2;
     }
 }
 
-_id_6132( var_0, var_1 )
+nodegetremotemissleentorg( var_0, var_1 )
 {
     var_2 = undefined;
 
-    if ( _id_6134( var_0 ) && getchallengeid( var_0 ) )
+    if ( nodeispathnode( var_0 ) && _func_2C8( var_0 ) )
     {
         var_3 = _func_2C9( var_0 );
 
@@ -255,24 +255,24 @@ _id_6132( var_0, var_1 )
                 var_2 = var_5;
         }
     }
-    else if ( isdefined( var_0._id_13B0 ) )
-        var_2 = var_0._id_13B0;
+    else if ( isdefined( var_0.bestmissilespawn ) )
+        var_2 = var_0.bestmissilespawn;
 
     var_7 = vectornormalize( var_2.origin - var_0.origin );
     return var_0.origin + var_7 * 24000;
 }
 
-_id_612F( var_0, var_1, var_2 )
+nodefindremotemissleent( var_0, var_1, var_2 )
 {
     var_1 = sortbydistance( var_1, var_0.origin );
 
     foreach ( var_4 in var_1 )
     {
-        var_5 = _id_7324( var_4.origin, var_0.origin, var_2 );
+        var_5 = remotemissileenttracetooriginpassedwrapper( var_4.origin, var_0.origin, var_2 );
 
         if ( var_5 )
         {
-            var_0._id_13B0 = var_4;
+            var_0.bestmissilespawn = var_4;
             return var_4;
         }
 
@@ -280,26 +280,26 @@ _id_612F( var_0, var_1, var_2 )
     }
 }
 
-_id_7324( var_0, var_1, var_2 )
+remotemissileenttracetooriginpassedwrapper( var_0, var_1, var_2 )
 {
-    if ( level._id_6557 != gettime() )
+    if ( level.orbital_util_remote_traces_frame != gettime() )
     {
-        level._id_6557 = gettime();
-        level._id_6556 = 5;
+        level.orbital_util_remote_traces_frame = gettime();
+        level.orbital_util_remote_traces = 5;
     }
 
-    if ( level._id_6556 <= 0 )
+    if ( level.orbital_util_remote_traces <= 0 )
     {
-        if ( level._id_6555 != gettime() )
+        if ( level.orbital_util_last_trace != gettime() )
         {
             waitframe();
-            level._id_6555 = gettime();
+            level.orbital_util_last_trace = gettime();
         }
 
-        level._id_6556 = 5;
+        level.orbital_util_remote_traces = 5;
     }
 
-    level._id_6556--;
+    level.orbital_util_remote_traces--;
     var_3 = 26;
 
     if ( var_2 == "goliath" )
@@ -308,24 +308,24 @@ _id_7324( var_0, var_1, var_2 )
     return _func_2CA( var_0, var_1, var_3, 1 );
 }
 
-_id_612D( var_0, var_1 )
+nodecanhitground( var_0, var_1 )
 {
     if ( orbitalbadlandingcheck( var_0.origin ) )
         return 0;
 
     if ( isdefined( var_1 ) && var_1 == "goliath" )
     {
-        if ( _id_426C( var_0.origin ) )
+        if ( goliathbadlandingcheck( var_0.origin ) )
             return 0;
     }
 
-    if ( getchallengeid( var_0 ) )
+    if ( _func_2C8( var_0 ) )
         return _func_2C9( var_0 ) != "none";
     else
         return _func_20C( var_0, 1 );
 }
 
-_id_1B9F( var_0, var_1, var_2 )
+carepackagetrace( var_0, var_1, var_2 )
 {
     var_3 = 100;
 
@@ -334,11 +334,11 @@ _id_1B9F( var_0, var_1, var_2 )
     else
         var_4 = 26;
 
-    foreach ( var_6 in level._id_655A )
+    foreach ( var_6 in level.orbitaldropmarkers )
     {
         var_7 = var_4;
 
-        if ( var_6._id_6576 == "goliath" )
+        if ( var_6.orbitaltype == "goliath" )
             var_7 += 41;
         else
             var_7 += 26;
@@ -350,33 +350,33 @@ _id_1B9F( var_0, var_1, var_2 )
             return 0;
     }
 
-    if ( level._id_6553 != gettime() )
+    if ( level.orbital_util_capsule_traces_frame != gettime() )
     {
-        level._id_6553 = gettime();
-        level._id_6552 = 5;
+        level.orbital_util_capsule_traces_frame = gettime();
+        level.orbital_util_capsule_traces = 5;
     }
 
-    if ( level._id_6552 <= 0 )
+    if ( level.orbital_util_capsule_traces <= 0 )
     {
-        if ( level._id_6555 != gettime() )
+        if ( level.orbital_util_last_trace != gettime() )
         {
             waitframe();
-            level._id_6555 = gettime();
+            level.orbital_util_last_trace = gettime();
         }
 
-        level._id_6552 = 5;
+        level.orbital_util_capsule_traces = 5;
     }
 
-    level._id_6552--;
-    return _func_2AB( var_0 + ( 0.0, 0.0, 6.0 ), var_4, var_4 * 2, var_1, 0 );
+    level.orbital_util_capsule_traces--;
+    return _func_2AB( var_0 + ( 0, 0, 6 ), var_4, var_4 * 2, var_1, 0 );
 }
 
-_id_6CA7( var_0, var_1 )
+playergetnearestnode( var_0, var_1 )
 {
     if ( !isdefined( var_0 ) )
     {
         var_2 = 300;
-        var_3 = self geteye();
+        var_3 = self _meth_80A8();
         var_4 = anglestoforward( self.angles );
         var_5 = var_3 + var_4 * var_2;
         var_6 = bullettrace( var_3, var_5, 0, self );
@@ -390,36 +390,36 @@ _id_6CA7( var_0, var_1 )
     var_8 = isdefined( var_7 );
 
     if ( var_8 )
-        var_8 = _id_612D( var_7, var_1 ) && _id_1B9F( var_7.origin, self, var_1 );
+        var_8 = nodecanhitground( var_7, var_1 ) && carepackagetrace( var_7.origin, self, var_1 );
 
     if ( var_8 )
         return var_7;
 
     var_9 = spawnstruct();
-    var_9._id_5A53 = 5;
-    var_9._id_5A41 = 20;
-    var_9._id_62AD = 5;
-    _id_6C9F( var_0, var_1, var_9 );
-    var_10 = var_9._id_6072;
+    var_9.maxtracesperframe = 5;
+    var_9.maxnodes = 20;
+    var_9.numtraces = 5;
+    playerfindnodeinfront( var_0, var_1, var_9 );
+    var_10 = var_9.nearestnode;
 
     if ( isdefined( var_10 ) )
         return var_10;
 
     if ( !isdefined( var_7 ) )
     {
-        var_7 = _id_6CA4( 500, 100, self.origin, 0, 1, var_1 );
+        var_7 = playergetclosestnode( 500, 100, self.origin, 0, 1, var_1 );
 
         if ( !isdefined( var_7 ) )
-            var_7 = _id_6CA4( 500, 0, self.origin, 0, 0, var_1 );
+            var_7 = playergetclosestnode( 500, 0, self.origin, 0, 0, var_1 );
 
         if ( !isdefined( var_7 ) )
             var_7 = self _meth_8387();
     }
 
-    self._id_55C0 = var_7;
+    self.lastnearestnode = var_7;
 
     if ( isdefined( var_7 ) )
-        return _id_6C9E( var_7, var_1 );
+        return playerfindaltnode( var_7, var_1 );
 }
 
 orbitalbadlandingcheck( var_0 )
@@ -440,7 +440,7 @@ orbitalbadlandingcheck( var_0 )
     return 0;
 }
 
-_id_426C( var_0 )
+goliathbadlandingcheck( var_0 )
 {
     if ( isdefined( level.goliath_bad_landing_volumes ) )
     {
@@ -454,41 +454,41 @@ _id_426C( var_0 )
     return 0;
 }
 
-_id_6C9F( var_0, var_1, var_2 )
+playerfindnodeinfront( var_0, var_1, var_2 )
 {
     var_3 = 500;
     var_4 = 100;
-    var_5 = _id_6CA0( var_0, var_4, var_3, var_1, var_2 );
+    var_5 = playerfindnodeinfrontinternal( var_0, var_4, var_3, var_1, var_2 );
 
-    if ( !isdefined( var_5 ) && var_2._id_5A41 > 0 )
+    if ( !isdefined( var_5 ) && var_2.maxnodes > 0 )
     {
         var_4 = 0;
-        var_5 = _id_6CA0( var_0, var_4, var_3, var_1, var_2 );
+        var_5 = playerfindnodeinfrontinternal( var_0, var_4, var_3, var_1, var_2 );
     }
 
-    var_2._id_6072 = var_5;
+    var_2.nearestnode = var_5;
 }
 
-_id_6CA0( var_0, var_1, var_2, var_3, var_4 )
+playerfindnodeinfrontinternal( var_0, var_1, var_2, var_3, var_4 )
 {
-    while ( var_1 < var_2 && var_4._id_5A41 > 0 )
+    while ( var_1 < var_2 && var_4.maxnodes > 0 )
     {
-        var_5 = _id_6CA4( var_2, var_1, var_0, 1, 1, var_3 );
+        var_5 = playergetclosestnode( var_2, var_1, var_0, 1, 1, var_3 );
 
-        if ( var_4._id_62AD <= 0 && !_id_9490() )
+        if ( var_4.numtraces <= 0 && !tracedonerecently() )
         {
             waitframe();
-            var_4._id_62AD = var_4._id_5A53;
+            var_4.numtraces = var_4.maxtracesperframe;
         }
 
         if ( isdefined( var_5 ) )
         {
-            var_4._id_62AD--;
-            var_4._id_5A41--;
-            var_6 = self geteye();
-            var_7 = var_5.origin + ( 0.0, 0.0, 6.0 );
+            var_4.numtraces--;
+            var_4.maxnodes--;
+            var_6 = self _meth_80A8();
+            var_7 = var_5.origin + ( 0, 0, 6 );
             var_8 = bullettrace( var_6, var_7, 0, self );
-            var_9 = var_8["fraction"] == 1 && _id_1B9F( var_5.origin, self, var_3 );
+            var_9 = var_8["fraction"] == 1 && carepackagetrace( var_5.origin, self, var_3 );
 
             if ( var_9 )
                 return var_5;
@@ -501,9 +501,9 @@ _id_6CA0( var_0, var_1, var_2, var_3, var_4 )
     }
 }
 
-_id_6C9E( var_0, var_1 )
+playerfindaltnode( var_0, var_1 )
 {
-    var_2 = _id_1D13( var_0, self, var_1 );
+    var_2 = checknodestart( var_0, self, var_1 );
 
     if ( isdefined( var_2 ) )
     {
@@ -512,7 +512,7 @@ _id_6C9E( var_0, var_1 )
 
         if ( var_1 == "goliath" )
         {
-            if ( _id_426C( var_2.origin ) )
+            if ( goliathbadlandingcheck( var_2.origin ) )
                 return undefined;
         }
 
@@ -520,61 +520,61 @@ _id_6C9E( var_0, var_1 )
     }
 }
 
-_id_9490()
+tracedonerecently()
 {
-    return level._id_6555 == gettime();
+    return level.orbital_util_last_trace == gettime();
 }
 
-_id_1D13( var_0, var_1, var_2 )
+checknodestart( var_0, var_1, var_2 )
 {
     var_3 = 250000;
     var_4 = 20;
-    var_0._id_5782 = 0;
-    var_0._id_612E = 1;
+    var_0.linkdistance = 0;
+    var_0.nodechecked = 1;
     var_5 = spawnstruct();
-    var_5._id_6139 = [];
-    var_5._id_6138 = [];
-    var_5._id_6138["" + var_0 _meth_8381()] = var_0;
-    var_5._id_60D5 = getlinkednodes( var_0, 1 );
-    _id_0804( var_5, 1, var_0, var_3, var_1, var_2 );
+    var_5.nodestocheck = [];
+    var_5.nodeschecked = [];
+    var_5.nodeschecked["" + var_0 _meth_8381()] = var_0;
+    var_5.nextnodes = getlinkednodes( var_0, 1 );
+    addnodestobechecked( var_5, 1, var_0, var_3, var_1, var_2 );
     var_6 = 0;
 
     for (;;)
     {
-        var_7 = _id_403E( var_5 );
+        var_7 = getnextnode( var_5 );
 
         if ( isdefined( var_7 ) )
         {
             var_6++;
 
-            if ( !_id_1B9F( var_7.origin, var_1, var_2 ) )
+            if ( !carepackagetrace( var_7.origin, var_1, var_2 ) )
             {
-                var_7._id_612E = 1;
-                var_5._id_6139["" + var_7 _meth_8381()] = undefined;
-                var_5._id_6138["" + var_7 _meth_8381()] = var_7;
-                var_8 = var_7._id_5782 + 1;
+                var_7.nodechecked = 1;
+                var_5.nodestocheck["" + var_7 _meth_8381()] = undefined;
+                var_5.nodeschecked["" + var_7 _meth_8381()] = var_7;
+                var_8 = var_7.linkdistance + 1;
 
                 if ( var_8 <= 6 )
                 {
-                    var_5._id_60D5 = getlinkednodes( var_7, 1 );
-                    _id_0804( var_5, var_8, var_7, var_3, var_1, var_2 );
+                    var_5.nextnodes = getlinkednodes( var_7, 1 );
+                    addnodestobechecked( var_5, var_8, var_7, var_3, var_1, var_2 );
                 }
             }
             else
             {
-                _id_1E8C( var_5 );
+                cleanupnodefields( var_5 );
                 return var_7;
             }
         }
         else
         {
-            _id_1E8C( var_5 );
+            cleanupnodefields( var_5 );
             return;
         }
 
         if ( var_6 >= var_4 )
         {
-            if ( !_id_9490() )
+            if ( !tracedonerecently() )
                 waitframe();
 
             var_6 = 0;
@@ -582,53 +582,53 @@ _id_1D13( var_0, var_1, var_2 )
     }
 }
 
-_id_1E8C( var_0 )
+cleanupnodefields( var_0 )
 {
-    foreach ( var_2 in var_0._id_6139 )
+    foreach ( var_2 in var_0.nodestocheck )
     {
-        var_2._id_5782 = undefined;
-        var_2._id_612E = undefined;
+        var_2.linkdistance = undefined;
+        var_2.nodechecked = undefined;
     }
 
-    foreach ( var_2 in var_0._id_6138 )
+    foreach ( var_2 in var_0.nodeschecked )
     {
-        var_2._id_5782 = undefined;
-        var_2._id_612E = undefined;
+        var_2.linkdistance = undefined;
+        var_2.nodechecked = undefined;
     }
 }
 
-_id_403E( var_0 )
+getnextnode( var_0 )
 {
-    if ( var_0._id_6139.size == 0 )
+    if ( var_0.nodestocheck.size == 0 )
         return;
 
     var_1 = undefined;
     var_2 = undefined;
-    var_3 = getarraykeys( var_0._id_6139 );
+    var_3 = getarraykeys( var_0.nodestocheck );
 
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
     {
-        var_5 = var_0._id_6139[var_3[var_4]];
+        var_5 = var_0.nodestocheck[var_3[var_4]];
 
-        if ( !isdefined( var_1 ) || var_5._id_5782 < var_2 )
+        if ( !isdefined( var_1 ) || var_5.linkdistance < var_2 )
         {
             var_1 = var_5;
-            var_2 = var_5._id_5782;
+            var_2 = var_5.linkdistance;
         }
     }
 
     return var_1;
 }
 
-_id_0804( var_0, var_1, var_2, var_3, var_4, var_5 )
+addnodestobechecked( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    for ( var_6 = 0; var_6 < var_0._id_60D5.size; var_6++ )
+    for ( var_6 = 0; var_6 < var_0.nextnodes.size; var_6++ )
     {
-        var_7 = var_0._id_60D5[var_6];
+        var_7 = var_0.nextnodes[var_6];
 
-        if ( !isdefined( var_7._id_612E ) )
+        if ( !isdefined( var_7.nodechecked ) )
         {
-            var_8 = _id_612D( var_7, var_5 );
+            var_8 = nodecanhitground( var_7, var_5 );
 
             if ( var_8 )
             {
@@ -638,21 +638,21 @@ _id_0804( var_0, var_1, var_2, var_3, var_4, var_5 )
 
             if ( !var_8 )
             {
-                var_7._id_612E = 1;
-                var_0._id_6138["" + var_7 _meth_8381()] = var_7;
+                var_7.nodechecked = 1;
+                var_0.nodeschecked["" + var_7 _meth_8381()] = var_7;
             }
-            else if ( !isdefined( var_7._id_5782 ) )
+            else if ( !isdefined( var_7.linkdistance ) )
             {
-                var_7._id_5782 = var_1;
-                var_0._id_6139["" + var_7 _meth_8381()] = var_7;
+                var_7.linkdistance = var_1;
+                var_0.nodestocheck["" + var_7 _meth_8381()] = var_7;
             }
-            else if ( var_7._id_5782 > var_1 )
-                var_7._id_5782 = var_1;
+            else if ( var_7.linkdistance > var_1 )
+                var_7.linkdistance = var_1;
         }
     }
 }
 
-_id_6CA4( var_0, var_1, var_2, var_3, var_4, var_5 )
+playergetclosestnode( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = 1500;
@@ -672,7 +672,7 @@ _id_6CA4( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     while ( var_8 <= var_0 && var_7 < var_0 )
     {
-        var_9 = _id_6CA5( var_8, var_7, var_2, var_3, var_4, var_5 );
+        var_9 = playergetclosestnodeinternal( var_8, var_7, var_2, var_3, var_4, var_5 );
 
         if ( isdefined( var_9 ) )
             return var_9;
@@ -685,7 +685,7 @@ _id_6CA4( var_0, var_1, var_2, var_3, var_4, var_5 )
     }
 }
 
-_id_6CA5( var_0, var_1, var_2, var_3, var_4, var_5 )
+playergetclosestnodeinternal( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     var_6 = 1;
     var_7 = getnodesinradiussorted( var_2, var_0, var_1, 120, "path" );
@@ -693,17 +693,17 @@ _id_6CA5( var_0, var_1, var_2, var_3, var_4, var_5 )
     for ( var_8 = 0; var_8 < var_7.size; var_8++ )
     {
         if ( var_3 )
-            var_6 &= _id_612D( var_7[var_8], var_5 );
+            var_6 &= nodecanhitground( var_7[var_8], var_5 );
 
         if ( var_4 )
-            var_6 &= _id_6D92( var_7[var_8].origin );
+            var_6 &= playerwithinfov2d( var_7[var_8].origin );
 
         if ( var_6 )
             return var_7[var_8];
     }
 }
 
-_id_6D92( var_0 )
+playerwithinfov2d( var_0 )
 {
     var_1 = cos( 60 );
     var_2 = vectornormalize( ( var_0[0], var_0[1], 0 ) - ( self.origin[0], self.origin[1], 0 ) );
@@ -711,10 +711,10 @@ _id_6D92( var_0 )
     return vectordot( var_3, var_2 ) >= var_1;
 }
 
-_id_0546( var_0 )
+_adddropmarkerinternal( var_0 )
 {
     var_0 waittill( "death" );
-    level._id_655A = common_scripts\utility::array_remove( level._id_655A, var_0 );
+    level.orbitaldropmarkers = common_scripts\utility::array_remove( level.orbitaldropmarkers, var_0 );
 }
 
 nodesetremotemissilenamewrapper( var_0, var_1 )

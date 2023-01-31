@@ -1,18 +1,18 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    thread _id_7E62();
+    thread set_level_lighting_values();
 }
 
-_id_7E62()
+set_level_lighting_values()
 {
     if ( _func_235() )
-        thread _id_816A();
+        thread setup_lighting();
 }
 
-_id_816A()
+setup_lighting()
 {
     setdvar( "r_lightGridEnableTweaks", 1 );
     setdvar( "r_lightGridIntensity", 1.33 );

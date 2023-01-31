@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -8,19 +8,19 @@ init()
 
 setcinematiccamerastyle( var_0, var_1, var_2, var_3, var_4 )
 {
-    self setclientomnvar( "cam_scene_name", var_0 );
-    self setclientomnvar( "cam_scene_lead", var_1 );
-    self setclientomnvar( "cam_scene_support", var_2 );
+    self _meth_82FB( "cam_scene_name", var_0 );
+    self _meth_82FB( "cam_scene_lead", var_1 );
+    self _meth_82FB( "cam_scene_support", var_2 );
 
     if ( isdefined( var_3 ) )
-        self setclientomnvar( "cam_scene_lead_alt", var_3 );
+        self _meth_82FB( "cam_scene_lead_alt", var_3 );
     else
-        self setclientomnvar( "cam_scene_lead_alt", var_1 );
+        self _meth_82FB( "cam_scene_lead_alt", var_1 );
 
     if ( isdefined( var_4 ) )
-        self setclientomnvar( "cam_scene_support_alt", var_4 );
+        self _meth_82FB( "cam_scene_support_alt", var_4 );
     else
-        self setclientomnvar( "cam_scene_support_alt", var_2 );
+        self _meth_82FB( "cam_scene_support_alt", var_2 );
 }
 
 setkillcamerastyle( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -28,18 +28,18 @@ setkillcamerastyle( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( var_0 ) && isdefined( var_0.agent_type ) )
     {
         if ( var_0.agent_type == "dog" )
-            setcinematiccamerastyle( "killcam_dog", var_0 getentitynumber(), self getentitynumber() );
+            setcinematiccamerastyle( "killcam_dog", var_0 _meth_81B1(), self _meth_81B1() );
         else
-            setcinematiccamerastyle( "killcam_agent", var_0 getentitynumber(), self getentitynumber() );
+            setcinematiccamerastyle( "killcam_agent", var_0 _meth_81B1(), self _meth_81B1() );
     }
     else if ( isdefined( var_4 ) && isdefined( var_3 ) && var_3 == "orbital_laser_fov_mp" && var_5 == 5 )
     {
         var_6 = -1;
 
         if ( isdefined( var_4.body ) )
-            var_6 = var_4.body getentitynumber();
+            var_6 = var_4.body _meth_81B1();
 
-        thread setcinematiccamerastyle( "orbital_laser_killcam", var_1, var_4 getentitynumber(), var_1, var_6 );
+        thread setcinematiccamerastyle( "orbital_laser_killcam", var_1, var_4 _meth_81B1(), var_1, var_6 );
     }
     else if ( var_2 >= 0 )
     {
@@ -47,7 +47,7 @@ setkillcamerastyle( var_0, var_1, var_2, var_3, var_4, var_5 )
         return 0;
     }
     else if ( level.showingfinalkillcam )
-        setcinematiccamerastyle( "unknown", var_1, self getentitynumber() );
+        setcinematiccamerastyle( "unknown", var_1, self _meth_81B1() );
     else
         setcinematiccamerastyle( "unknown", var_1, -1 );
 
@@ -56,7 +56,7 @@ setkillcamerastyle( var_0, var_1, var_2, var_3, var_4, var_5 )
 
 isworldkillcam( var_0, var_1 )
 {
-    if ( isdefined( var_0 ) && var_0 getentitynumber() == positionwouldtelefrag() && isdefined( var_1 ) && isdefined( var_1.killcament ) )
+    if ( isdefined( var_0 ) && var_0 _meth_81B1() == positionwouldtelefrag() && isdefined( var_1 ) && isdefined( var_1.killcament ) )
         return 1;
 
     return 0;
@@ -73,8 +73,8 @@ prekillcamnotify( var_0, var_1, var_2, var_3 )
         if ( isplayer( self ) && isdefined( var_1 ) && isplayer( var_1 ) )
         {
             var_5 = ( gettime() - var_5 ) / 1000;
-            self.streamweapons = self loadcustomizationplayerview( var_1, var_2 + var_5, var_3, var_4 );
-            self precachekillcamiconforweapon( var_3 );
+            self.streamweapons = self _meth_841C( var_1, var_2 + var_5, var_3, var_4 );
+            self _meth_8539( var_3 );
         }
     }
 }
@@ -178,25 +178,25 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
         var_19 = var_17 + var_18;
     }
 
-    self setclientomnvar( "ui_killcam_end_milliseconds", 0 );
+    self _meth_82FB( "ui_killcam_end_milliseconds", 0 );
 
     if ( isagent( var_9 ) && !isdefined( var_9.isactive ) )
         return;
 
     if ( isplayer( var_9 ) )
-        self setclientomnvar( "ui_killcam_killedby_id", var_9 getentitynumber() );
+        self _meth_82FB( "ui_killcam_killedby_id", var_9 _meth_81B1() );
     else if ( isagent( var_9 ) )
-        self setclientomnvar( "ui_killcam_killedby_id", -1 );
+        self _meth_82FB( "ui_killcam_killedby_id", -1 );
 
     if ( maps\mp\_utility::iskillstreakweapon( var_4 ) )
     {
         var_20 = maps\mp\_utility::getkillstreakrownum( level.killstreakwieldweapons[var_4] );
-        self setclientomnvar( "ui_killcam_killedby_killstreak", var_20 );
-        self setclientomnvar( "ui_killcam_killedby_weapon", -1 );
-        self setclientomnvar( "ui_killcam_killedby_attachment1", -1 );
-        self setclientomnvar( "ui_killcam_killedby_attachment2", -1 );
-        self setclientomnvar( "ui_killcam_killedby_attachment3", -1 );
-        self setclientomnvar( "ui_killcam_copycat", 0 );
+        self _meth_82FB( "ui_killcam_killedby_killstreak", var_20 );
+        self _meth_82FB( "ui_killcam_killedby_weapon", -1 );
+        self _meth_82FB( "ui_killcam_killedby_attachment1", -1 );
+        self _meth_82FB( "ui_killcam_killedby_attachment2", -1 );
+        self _meth_82FB( "ui_killcam_killedby_attachment3", -1 );
+        self _meth_82FB( "ui_killcam_copycat", 0 );
     }
     else
     {
@@ -214,25 +214,25 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
             }
 
             var_23 = tablelookuprownum( "mp/statsTable.csv", 4, var_22 );
-            self setclientomnvar( "ui_killcam_killedby_weapon", var_23 );
-            self setclientomnvar( "ui_killcam_killedby_killstreak", -1 );
+            self _meth_82FB( "ui_killcam_killedby_weapon", var_23 );
+            self _meth_82FB( "ui_killcam_killedby_killstreak", -1 );
 
             if ( var_22 != "iw5_combatknife" )
                 var_21 = getweaponattachments( var_4 );
 
             if ( !level.showingfinalkillcam && maps\mp\_utility::practiceroundgame() && isplayer( var_9 ) && !isbot( self ) && !isagent( self ) && maps\mp\gametypes\_class::loadoutvalidforcopycat( var_9 ) )
             {
-                self setclientomnvar( "ui_killcam_copycat", 1 );
+                self _meth_82FB( "ui_killcam_copycat", 1 );
                 thread waitcopycatkillcambutton( var_9 );
             }
             else
-                self setclientomnvar( "ui_killcam_copycat", 0 );
+                self _meth_82FB( "ui_killcam_copycat", 0 );
         }
         else
         {
-            self setclientomnvar( "ui_killcam_killedby_weapon", -1 );
-            self setclientomnvar( "ui_killcam_killedby_killstreak", -1 );
-            self setclientomnvar( "ui_killcam_copycat", 0 );
+            self _meth_82FB( "ui_killcam_killedby_weapon", -1 );
+            self _meth_82FB( "ui_killcam_killedby_killstreak", -1 );
+            self _meth_82FB( "ui_killcam_copycat", 0 );
         }
 
         for ( var_24 = 0; var_24 < 3; var_24++ )
@@ -240,29 +240,29 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
             if ( isdefined( var_21[var_24] ) )
             {
                 var_25 = tablelookuprownum( "mp/attachmentTable.csv", 3, maps\mp\_utility::attachmentmap_tobase( var_21[var_24] ) );
-                self setclientomnvar( "ui_killcam_killedby_attachment" + ( var_24 + 1 ), var_25 );
+                self _meth_82FB( "ui_killcam_killedby_attachment" + ( var_24 + 1 ), var_25 );
                 continue;
             }
 
-            self setclientomnvar( "ui_killcam_killedby_attachment" + ( var_24 + 1 ), -1 );
+            self _meth_82FB( "ui_killcam_killedby_attachment" + ( var_24 + 1 ), -1 );
         }
     }
 
     if ( var_7 && !level.gameended || isdefined( self ) && isdefined( self.battlebuddy ) && !level.gameended )
-        self setclientomnvar( "ui_killcam_text", "skip" );
+        self _meth_82FB( "ui_killcam_text", "skip" );
     else if ( !level.gameended )
-        self setclientomnvar( "ui_killcam_text", "respawn" );
+        self _meth_82FB( "ui_killcam_text", "respawn" );
     else
-        self setclientomnvar( "ui_killcam_text", "none" );
+        self _meth_82FB( "ui_killcam_text", "none" );
 
     switch ( var_12 )
     {
         case "score":
-            self setclientomnvar( "ui_killcam_type", 1 );
+            self _meth_82FB( "ui_killcam_type", 1 );
             break;
         case "normal":
         default:
-            self setclientomnvar( "ui_killcam_type", 0 );
+            self _meth_82FB( "ui_killcam_type", 0 );
             break;
     }
 
@@ -271,18 +271,18 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
     self notify( "begin_killcam", var_27 );
 
     if ( !var_15 && !isagent( var_9 ) && isdefined( var_9 ) && isplayer( var_10 ) )
-        var_9 visionsyncwithplayer( var_10 );
+        var_9 _meth_82A4( var_10 );
 
     maps\mp\_utility::updatesessionstate( "spectator" );
     self.spectatekillcam = 1;
 
     if ( isagent( var_9 ) )
-        var_1 = var_10 getentitynumber();
+        var_1 = var_10 _meth_81B1();
 
-    self onlystreamactiveweapon( 0 );
+    self _meth_8538( 0 );
 
     if ( var_15 )
-        self.forcespectatorclient = var_10 getentitynumber();
+        self.forcespectatorclient = var_10 _meth_81B1();
     else
         self.forcespectatorclient = var_1;
 
@@ -303,19 +303,19 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
     self.archivetime = var_26;
     self.killcamlength = var_19;
     self.psoffsettime = var_6;
-    self allowspectateteam( "allies", 1 );
-    self allowspectateteam( "axis", 1 );
-    self allowspectateteam( "freelook", 1 );
-    self allowspectateteam( "none", 1 );
+    self _meth_8273( "allies", 1 );
+    self _meth_8273( "axis", 1 );
+    self _meth_8273( "freelook", 1 );
+    self _meth_8273( "none", 1 );
 
     if ( level.multiteambased )
     {
         foreach ( var_30 in level.teamnamelist )
-            self allowspectateteam( var_30, 1 );
+            self _meth_8273( var_30, 1 );
     }
 
     foreach ( var_30 in level.teamnamelist )
-        self allowspectateteam( var_30, 1 );
+        self _meth_8273( var_30, 1 );
 
     thread endedkillcamcleanup();
     wait 0.05;
@@ -340,7 +340,7 @@ killcam( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
         return;
     }
 
-    self setclientomnvar( "ui_killcam_end_milliseconds", int( var_19 * 1000 ) + gettime() );
+    self _meth_82FB( "ui_killcam_end_milliseconds", int( var_19 * 1000 ) + gettime() );
 
     if ( level.showingfinalkillcam )
         thread dofinalkillcamfx( var_17, var_2 );
@@ -445,9 +445,9 @@ waitcopycatkillcambutton( var_0 )
 {
     self endon( "disconnect" );
     self endon( "killcam_ended" );
-    self notifyonplayercommand( "KillCamCopyCat", "weapnext" );
+    self _meth_82DD( "KillCamCopyCat", "weapnext" );
     self waittill( "KillCamCopyCat" );
-    self setclientomnvar( "ui_killcam_copycat", 0 );
+    self _meth_82FB( "ui_killcam_copycat", 0 );
     self playsound( "copycat_steal_class" );
     maps\mp\gametypes\_class::setcopycatloadout( var_0 );
 }
@@ -486,7 +486,7 @@ endedkillcamcleanup()
 
 killcamcleanup( var_0 )
 {
-    self setclientomnvar( "ui_killcam_end_milliseconds", 0 );
+    self _meth_82FB( "ui_killcam_end_milliseconds", 0 );
     setcinematiccamerastyle( "unknown", -1, -1 );
     self.killcam = undefined;
 
@@ -522,7 +522,7 @@ cancelkillcamusebutton()
 
 cancelkillcamsafespawnbutton()
 {
-    return self fragbuttonpressed();
+    return self _meth_82EE();
 }
 
 cancelkillcamcallback()

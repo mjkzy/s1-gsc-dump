@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -13,11 +13,11 @@ main()
 
     if ( level.currentgen )
     {
-        level._id_65AB = "mp_levity_osp";
-        level._id_65A9 = "mp_levity_osp";
-        level._id_A197 = "mp_levity_warbird";
-        level._id_A18C = "mp_levity_warbird";
-        level._id_2F3B = "mp_levity_drone";
-        level._id_2F12 = "mp_levity_drone";
+        level.ospvisionset = "mp_levity_osp";
+        level.osplightset = "mp_levity_osp";
+        level.warbirdvisionset = "mp_levity_warbird";
+        level.warbirdlightset = "mp_levity_warbird";
+        level.dronevisionset = "mp_levity_drone";
+        level.dronelightset = "mp_levity_drone";
     }
 }

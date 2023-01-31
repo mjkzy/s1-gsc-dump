@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 isswitchingteams()
 {
@@ -114,7 +114,7 @@ delayedsuicidekick()
     self endon( "disconnect" );
     level endon( "game_ended" );
     wait(randomintrange( 1, 60 ));
-    kick( self getentitynumber() );
+    kick( self _meth_81B1() );
 }
 
 handlefriendlyfiredeath( var_0 )
@@ -152,14 +152,14 @@ handlefriendlyfiredeath( var_0 )
 friendlyfirekick( var_0 )
 {
     waittillframeend;
-    kick( var_0 getentitynumber(), "EXE_PLAYERKICKED_TEAMKILL" );
+    kick( var_0 _meth_81B1(), "EXE_PLAYERKICKED_TEAMKILL" );
     level thread maps\mp\gametypes\_gamelogic::updategameevents();
 }
 
 handlenormaldeath( var_0, var_1, var_2, var_3, var_4 )
 {
     var_1 thread maps\mp\_events::killedplayer( var_0, self, var_3, var_4, var_2 );
-    var_1 killnotification();
+    var_1 _meth_83C6();
 
     if ( var_4 == "MOD_HEAD_SHOT" )
     {
@@ -303,7 +303,7 @@ isplayerweapon( var_0 )
     if ( weaponclass( var_0 ) == "turret" )
         return 0;
 
-    if ( objective_current( var_0 ) == "primary" || objective_current( var_0 ) == "altmode" )
+    if ( _func_1DF( var_0 ) == "primary" || _func_1DF( var_0 ) == "altmode" )
         return 1;
 
     return 0;
@@ -326,7 +326,7 @@ callback_playergrenadesuicide( var_0, var_1, var_2, var_3, var_4, var_5, var_6, 
             var_8 = 1;
 
         if ( var_8 )
-            var_0 startlaststand();
+            var_0 _meth_82C8();
 
         [[ level.callbackplayerlaststand ]]( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 0 );
     }
@@ -339,7 +339,7 @@ callback_entityoutofworld()
 
 launchshield( var_0, var_1 )
 {
-    self refreshshieldmodels();
+    self _meth_84C6();
     maps\mp\_riotshield::riotshield_clear();
 }
 
@@ -424,8 +424,8 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
 
     if ( !isplayer( var_0 ) && isdefined( var_0.primaryweapon ) )
         var_13 = var_0.primaryweapon;
-    else if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 getcurrentprimaryweapon() != "none" )
-        var_13 = var_1 getcurrentprimaryweapon();
+    else if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_8312() != "none" )
+        var_13 = var_1 _meth_8312();
     else if ( issubstr( var_5, "alt_" ) )
         var_13 = getsubstr( var_5, 4, var_5.size );
     else
@@ -535,7 +535,7 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
         if ( isdefined( var_19 ) )
         {
             if ( maps\mp\_utility::isaigameparticipant( var_2 ) )
-                var_2 botmemoryevent( "death", var_5, var_19.origin, var_2.origin, var_19 );
+                var_2 _meth_8362( "death", var_5, var_19.origin, var_2.origin, var_19 );
 
             if ( maps\mp\_utility::isaigameparticipant( var_1 ) )
             {
@@ -545,12 +545,12 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
                     var_20 = 0;
 
                 if ( var_20 )
-                    var_1 botmemoryevent( "kill", var_5, var_19.origin, var_2.origin, var_2 );
+                    var_1 _meth_8362( "kill", var_5, var_19.origin, var_2.origin, var_2 );
             }
         }
     }
 
-    var_21 = var_2 getcurrentweapon();
+    var_21 = var_2 _meth_8311();
     var_2 thread maps\mp\gametypes\_weapons::dropscavengerfordeath( var_1 );
 
     if ( !isdefined( var_2.agentbody ) )
@@ -613,7 +613,7 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
     else
     {
         if ( var_4 == "MOD_GRENADE" && var_0 == var_1 || var_4 == "MOD_IMPACT" || var_4 == "MOD_GRENADE_SPLASH" || var_4 == "MOD_EXPLOSIVE" )
-            addattacker( var_2, var_1, var_0, var_5, var_3, ( 0.0, 0.0, 0.0 ), var_6, var_7, var_8, var_4 );
+            addattacker( var_2, var_1, var_0, var_5, var_3, ( 0, 0, 0 ), var_6, var_7, var_8, var_4 );
 
         var_24 = 1;
 
@@ -700,13 +700,13 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
         }
         else if ( !isdefined( var_2.agentbody ) )
         {
-            var_2.body = var_2 cloneplayer( var_9 );
+            var_2.body = var_2 _meth_8271( var_9 );
 
             if ( var_10 )
                 var_2 playerhide();
 
-            if ( var_2 isonladder() || var_2 ismantling() || !var_2 isonground() || isdefined( var_2.nuked ) )
-                var_2.body startragdoll();
+            if ( var_2 isonladder() || var_2 ismantling() || !var_2 _meth_8341() || isdefined( var_2.nuked ) )
+                var_2.body _meth_8023();
 
             if ( !isdefined( var_2.switching_teams ) )
                 thread maps\mp\gametypes\_deathicons::adddeathicon( var_2.body, var_2, var_2.team, 5.0, var_1 );
@@ -723,7 +723,7 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
         var_2 thread [[ level.bot_funcs["on_killed"] ]]( var_0, var_1, var_3, var_4, var_5, var_6, var_7, var_8, var_9, self.lifeid );
 
     if ( maps\mp\_utility::isgameparticipant( var_1 ) )
-        var_30 = var_1 getentitynumber();
+        var_30 = var_1 _meth_81B1();
     else
         var_30 = -1;
 
@@ -739,7 +739,7 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
 
     if ( isdefined( var_29 ) )
     {
-        var_31 = var_29 getentitynumber();
+        var_31 = var_29 _meth_81B1();
         var_32 = var_29.birthtime;
 
         if ( isdefined( var_29.killcamstarttime ) )
@@ -793,7 +793,7 @@ playerkilled_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
 
         if ( isdefined( self.streamweapons ) && self.streamweapons.size > 0 )
         {
-            while ( maps\mp\gametypes\_killcam::killcamvalid( var_2, var_24 ) && isplayer( self ) && isplayer( var_1 ) && !self hasloadedcustomizationplayerview( var_1, self.streamweapons ) && gettime() < var_39 )
+            while ( maps\mp\gametypes\_killcam::killcamvalid( var_2, var_24 ) && isplayer( self ) && isplayer( var_1 ) && !self _meth_8425( var_1, self.streamweapons ) && gettime() < var_39 )
                 waitframe();
         }
 
@@ -1179,7 +1179,7 @@ streamfinalkillcam()
     var_11 = var_10 + var_9;
     var_12 = maps\mp\gametypes\_killcam::killcamtime( var_5, var_6, var_11, 0, getkillcambuffertime(), var_7, 1 );
     var_13 = var_12 + var_11 + var_8 / 1000;
-    self onlystreamactiveweapon( 1 );
+    self _meth_8538( 1 );
     thread maps\mp\gametypes\_killcam::prekillcamnotify( level.finalkillcam_attacker[var_0], level.finalkillcam_attacker[var_0], var_13, "none" );
 }
 
@@ -1194,7 +1194,7 @@ streamcheck( var_0 )
 
         if ( isdefined( var_2.streamweapons ) && var_2.streamweapons.size > 0 )
         {
-            while ( isplayer( var_2 ) && isplayer( var_0 ) && !var_2 hasloadedcustomizationplayerview( var_0, var_2.streamweapons[0] ) )
+            while ( isplayer( var_2 ) && isplayer( var_0 ) && !var_2 _meth_8425( var_0, var_2.streamweapons[0] ) )
                 waitframe();
         }
     }
@@ -1207,7 +1207,7 @@ resetonlystreamactive()
     foreach ( var_1 in level.players )
     {
         if ( !isai( var_1 ) )
-            var_1 onlystreamactiveweapon( 0 );
+            var_1 _meth_8538( 0 );
     }
 }
 
@@ -1313,9 +1313,9 @@ dofinalkillcam()
                 case "sentry_minigun_mp":
                     var_3 maps\mp\gametypes\_missions::processchallenge( "ch_absentee" );
                     break;
-                case "ac130_25mm_mp":
-                case "ac130_105mm_mp":
                 case "ac130_40mm_mp":
+                case "ac130_105mm_mp":
+                case "ac130_25mm_mp":
                     var_3 maps\mp\gametypes\_missions::processchallenge( "ch_deathfromabove" );
                     break;
                 case "remotemissile_projectile_mp":
@@ -1334,7 +1334,7 @@ dofinalkillcam()
     {
         var_17 maps\mp\_utility::revertvisionsetforplayer( 0 );
         var_17 setblurforplayer( 0, 0 );
-        var_17.killcamentitylookat = var_2 getentitynumber();
+        var_17.killcamentitylookat = var_2 _meth_81B1();
 
         if ( isdefined( var_3 ) && isdefined( var_3.lastspawntime ) )
             var_18 = ( gettime() - var_3.lastspawntime ) / 1000.0;
@@ -1387,32 +1387,32 @@ getkillcamentity( var_0, var_1, var_2 )
     {
         case "boost_slam_mp":
             return var_1;
-        case "bomb_site_mp":
-        case "bouncingbetty_mp":
-        case "explosive_drone_mp":
-        case "orbital_carepackage_pod_mp":
-        case "orbital_carepackage_droppod_mp":
-        case "artillery_mp":
-        case "stealth_bomb_mp":
-        case "agent_mp":
-        case "refraction_turret_mp":
-        case "orbital_carepackage_pod_plane_mp":
-        case "remotemissile_projectile_cluster_child_mp":
         case "iw5_dlcgun12loot6_mp":
+        case "remotemissile_projectile_cluster_child_mp":
+        case "orbital_carepackage_pod_plane_mp":
+        case "refraction_turret_mp":
+        case "agent_mp":
+        case "stealth_bomb_mp":
+        case "artillery_mp":
+        case "orbital_carepackage_droppod_mp":
+        case "orbital_carepackage_pod_mp":
+        case "explosive_drone_mp":
+        case "bouncingbetty_mp":
+        case "bomb_site_mp":
             return var_1.killcament;
         case "killstreak_laser2_mp":
             if ( isdefined( var_1.samturret ) && isdefined( var_1.samturret.killcament ) )
                 return var_1.samturret.killcament;
 
             break;
-        case "ball_drone_gun_mp":
         case "ball_drone_projectile_mp":
+        case "ball_drone_gun_mp":
             if ( isplayer( var_0 ) && isdefined( var_0.balldrone ) && isdefined( var_0.balldrone.turret ) && isdefined( var_0.balldrone.turret.killcament ) )
                 return var_0.balldrone.turret.killcament;
 
             break;
-        case "ugv_missile_mp":
         case "drone_assault_remote_turret_mp":
+        case "ugv_missile_mp":
             if ( isdefined( var_1.killcament ) )
                 return var_1.killcament;
             else
@@ -1422,9 +1422,9 @@ getkillcamentity( var_0, var_1, var_2 )
                 return var_1;
             else
                 return undefined;
-        case "killstreak_solar_mp":
-        case "dam_turret_mp":
         case "warbird_missile_mp":
+        case "dam_turret_mp":
+        case "killstreak_solar_mp":
             if ( isdefined( var_1 ) && isdefined( var_1.killcament ) )
                 return var_1.killcament;
 
@@ -1436,9 +1436,9 @@ getkillcamentity( var_0, var_1, var_2 )
                 return undefined;
         case "orbital_laser_fov_mp":
             return undefined;
-        case "sentry_minigun_mp":
-        case "remote_energy_turret_mp":
         case "killstreakmahem_mp":
+        case "remote_energy_turret_mp":
+        case "sentry_minigun_mp":
             if ( isdefined( var_1 ) && isdefined( var_1.remotecontrolled ) )
                 return undefined;
 
@@ -1448,13 +1448,13 @@ getkillcamentity( var_0, var_1, var_2 )
                 return var_1.killcament;
 
             break;
-        case "ac130_25mm_mp":
-        case "ac130_105mm_mp":
-        case "ac130_40mm_mp":
-        case "ugv_turret_mp":
-        case "remote_turret_mp":
-        case "detroit_tram_turret_mp":
         case "killstreak_terrace_mp":
+        case "detroit_tram_turret_mp":
+        case "remote_turret_mp":
+        case "ugv_turret_mp":
+        case "ac130_40mm_mp":
+        case "ac130_105mm_mp":
+        case "ac130_25mm_mp":
             return undefined;
         case "iw5_dlcgun12loot8_mp":
             if ( isdefined( var_1.killcament ) )
@@ -1511,7 +1511,7 @@ hitlocdebug( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( var_0.hitlocinited ) )
     {
         for ( var_6 = 0; var_6 < 6; var_6++ )
-            var_0 setclientdvar( "ui_hitloc_" + var_6, "" );
+            var_0 _meth_82FC( "ui_hitloc_" + var_6, "" );
 
         var_0.hitlocinited = 1;
     }
@@ -1578,10 +1578,10 @@ hitlocdebug( var_0, var_1, var_2, var_3, var_4 )
             if ( var_0.damageinfo[var_6].jugg )
                 var_9 += " (Jugg)";
 
-            var_0 setclientdvar( "ui_hitloc_" + var_6, var_9 );
+            var_0 _meth_82FC( "ui_hitloc_" + var_6, var_9 );
         }
 
-        var_0 setclientdvar( "ui_hitloc_damage_" + var_6, var_8 + var_0.damageinfo[var_6].damage );
+        var_0 _meth_82FC( "ui_hitloc_damage_" + var_6, var_8 + var_0.damageinfo[var_6].damage );
     }
 }
 
@@ -1592,8 +1592,8 @@ ishardwrireprotected( var_0 )
 
     switch ( var_0 )
     {
-        case "killstreak_strike_missile_gas_mp":
         case "mp_lab_gas":
+        case "killstreak_strike_missile_gas_mp":
             return 1;
     }
 
@@ -1835,7 +1835,7 @@ callback_playerdamage_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
 
             var_2.explosiveinfo = [];
             var_2.explosiveinfo["damageTime"] = gettime();
-            var_2.explosiveinfo["damageId"] = var_0 getentitynumber();
+            var_2.explosiveinfo["damageId"] = var_0 _meth_81B1();
             var_2.explosiveinfo["returnToSender"] = 0;
             var_2.explosiveinfo["counterKill"] = 0;
             var_2.explosiveinfo["chainKill"] = 0;
@@ -1980,7 +1980,7 @@ callback_playerdamage_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
         }
 
         if ( var_3 > 0 && var_5 != "MOD_FALLING" )
-            var_2 setclientomnvar( "ui_damage_flash", 1 );
+            var_2 _meth_82FB( "ui_damage_flash", 1 );
 
         if ( var_17 && isdefined( var_1.gunner ) )
             var_22 = var_1.gunner;
@@ -2030,7 +2030,7 @@ callback_playerdamage_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
 
     if ( var_2.sessionstate != "dead" )
     {
-        var_24 = var_2 getentitynumber();
+        var_24 = var_2 _meth_81B1();
         var_25 = var_2.name;
         var_26 = var_2.pers["team"];
         var_27 = var_2.guid;
@@ -2038,7 +2038,7 @@ callback_playerdamage_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
 
         if ( isplayer( var_1 ) )
         {
-            var_29 = var_1 getentitynumber();
+            var_29 = var_1 _meth_81B1();
             var_30 = var_1.guid;
             var_31 = var_1.name;
             var_28 = var_1.pers["team"];
@@ -2144,8 +2144,8 @@ shouldweaponfeedback( var_0 )
 {
     switch ( var_0 )
     {
-        case "artillery_mp":
         case "stealth_bomb_mp":
+        case "artillery_mp":
             return 0;
     }
 
@@ -2181,8 +2181,8 @@ addattacker( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_
 
     if ( isdefined( var_2 ) && !isplayer( var_2 ) && isdefined( var_2.primaryweapon ) )
         var_0.attackerdata[var_1.guid].sprimaryweapon = var_2.primaryweapon;
-    else if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 getcurrentprimaryweapon() != "none" )
-        var_0.attackerdata[var_1.guid].sprimaryweapon = var_1 getcurrentprimaryweapon();
+    else if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_8312() != "none" )
+        var_0.attackerdata[var_1.guid].sprimaryweapon = var_1 _meth_8312();
     else
         var_0.attackerdata[var_1.guid].sprimaryweapon = undefined;
 
@@ -2237,12 +2237,12 @@ is_countered_by_hardwired( var_0 )
 {
     switch ( var_0 )
     {
-        case "stun_grenade_mp":
-        case "paint_grenade_mp":
-        case "emp_grenade_mp":
-        case "stun_grenade_var_mp":
-        case "emp_grenade_var_mp":
         case "paint_grenade_var_mp":
+        case "emp_grenade_var_mp":
+        case "stun_grenade_var_mp":
+        case "emp_grenade_mp":
+        case "paint_grenade_mp":
+        case "stun_grenade_mp":
             return 1;
     }
 
@@ -2258,7 +2258,7 @@ finishplayerdamagewrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
 {
     var_11 = 0;
 
-    if ( maps\mp\_utility::isusingremote() && var_2 >= self.health && !( var_3 & level.idflags_stun ) && !isdefined( self.inliveplayerkillstreak ) && !self isgod() )
+    if ( maps\mp\_utility::isusingremote() && var_2 >= self.health && !( var_3 & level.idflags_stun ) && !isdefined( self.inliveplayerkillstreak ) && !self _meth_852C() )
         var_11 = 1;
 
     if ( isdefined( level.ishorde ) && level.ishorde )
@@ -2267,7 +2267,7 @@ finishplayerdamagewrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
     if ( var_11 || maps\mp\_utility::isrocketcorpse() )
     {
         if ( !isdefined( var_7 ) )
-            var_7 = ( 0.0, 0.0, 0.0 );
+            var_7 = ( 0, 0, 0 );
 
         if ( !isdefined( var_1 ) && !isdefined( var_0 ) )
         {
@@ -2288,7 +2288,7 @@ finishplayerdamagewrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
         if ( isplayer( self ) )
         {
             var_12 = shouldplayblastimpact( var_3, var_4, var_5 );
-            var_13 = self finishplayerdamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_12 );
+            var_13 = self _meth_826A( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_12 );
 
             if ( isdefined( var_13 ) )
                 thread finishplayerdamage_impactfxwrapper( var_13[0], var_13[1], var_13[2], var_13[3], var_13[4], var_13[5], var_13[6] );
@@ -2324,7 +2324,7 @@ finishplayerdamage_impactfxwrapper( var_0, var_1, var_2, var_3, var_4, var_5, va
     if ( !isdefined( self ) || !isdefined( var_0 ) )
         return;
 
-    self finishplayerdamage_impactfx( var_0, var_1, var_2, var_3, var_4, var_5, var_6 );
+    self _meth_853F( var_0, var_1, var_2, var_3, var_4, var_5, var_6 );
 }
 
 callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
@@ -2342,8 +2342,8 @@ callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
 
     var_9.sweapon = var_4;
 
-    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 getcurrentprimaryweapon() != "none" )
-        var_9.sprimaryweapon = var_1 getcurrentprimaryweapon();
+    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_8312() != "none" )
+        var_9.sprimaryweapon = var_1 _meth_8312();
     else
         var_9.sprimaryweapon = undefined;
 
@@ -2391,7 +2391,7 @@ callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
             var_11.iconname = level.specialty_finalstand_icon;
         }
 
-        var_11.glowcolor = ( 1.0, 0.0, 0.0 );
+        var_11.glowcolor = ( 1, 0, 0 );
         var_11.sound = "mp_last_stand";
         var_11.duration = 2.0;
         self.health = 1;
@@ -2402,10 +2402,10 @@ callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
         {
             self.laststandparams = var_9;
             self.infinalstand = 1;
-            var_13 = self getweaponslistexclusives();
+            var_13 = self _meth_82D0();
 
             foreach ( var_15 in var_13 )
-                self takeweapon( var_15 );
+                self _meth_830F( var_15 );
 
             common_scripts\utility::_disableusability();
             thread enablelaststandweapons();
@@ -2425,7 +2425,7 @@ callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
 
             self.laststandparams = var_9;
             var_17 = undefined;
-            var_18 = self getweaponslistprimaries();
+            var_18 = self _meth_830C();
 
             foreach ( var_15 in var_18 )
             {
@@ -2439,14 +2439,14 @@ callback_playerlaststand( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
                 maps\mp\_utility::_giveweapon( var_17 );
             }
 
-            self givemaxammo( var_17 );
-            self disableweaponswitch();
+            self _meth_8332( var_17 );
+            self _meth_8321();
             common_scripts\utility::_disableusability();
 
             if ( !maps\mp\_utility::_hasperk( "specialty_laststandoffhand" ) )
-                self disableoffhandweapons();
+                self _meth_831F();
 
-            self switchtoweapon( var_17 );
+            self _meth_8315( var_17 );
             thread laststandtimer( 10, 0 );
         }
     }
@@ -2524,15 +2524,15 @@ laststandtimer( var_0, var_1 )
     if ( level.diehardmode == 1 && level.diehardmode != 2 )
     {
         var_2 = spawn( "script_model", self.origin );
-        var_2 setmodel( "tag_origin" );
-        var_2 setcursorhint( "HINT_NOICON" );
-        var_2 sethintstring( &"PLATFORM_REVIVE" );
+        var_2 _meth_80B1( "tag_origin" );
+        var_2 _meth_80DA( "HINT_NOICON" );
+        var_2 _meth_80DB( &"PLATFORM_REVIVE" );
         var_2 revivesetup( self );
         var_2 endon( "death" );
         var_3 = newteamhudelem( self.team );
-        var_3 setshader( "waypoint_revive", 8, 8 );
-        var_3 setwaypoint( 1, 1 );
-        var_3 settargetent( self );
+        var_3 _meth_80CC( "waypoint_revive", 8, 8 );
+        var_3 _meth_80D8( 1, 1 );
+        var_3 _meth_80CD( self );
         var_3 thread destroyonreviveentdeath( var_2 );
         var_3.color = ( 0.33, 0.75, 0.24 );
         maps\mp\_utility::playdeathsound();
@@ -2551,15 +2551,15 @@ laststandtimer( var_0, var_1 )
     {
         thread laststandkeepoverlay();
         var_2 = spawn( "script_model", self.origin );
-        var_2 setmodel( "tag_origin" );
-        var_2 setcursorhint( "HINT_NOICON" );
-        var_2 sethintstring( &"PLATFORM_REVIVE" );
+        var_2 _meth_80B1( "tag_origin" );
+        var_2 _meth_80DA( "HINT_NOICON" );
+        var_2 _meth_80DB( &"PLATFORM_REVIVE" );
         var_2 revivesetup( self );
         var_2 endon( "death" );
         var_3 = newteamhudelem( self.team );
-        var_3 setshader( "waypoint_revive", 8, 8 );
-        var_3 setwaypoint( 1, 1 );
-        var_3 settargetent( self );
+        var_3 _meth_80CC( "waypoint_revive", 8, 8 );
+        var_3 _meth_80D8( 1, 1 );
+        var_3 _meth_80CD( self );
         var_3 thread destroyonreviveentdeath( var_2 );
         var_3.color = ( 0.33, 0.75, 0.24 );
         maps\mp\_utility::playdeathsound();
@@ -2573,14 +2573,14 @@ laststandtimer( var_0, var_1 )
         }
 
         wait(var_0 / 3);
-        var_3.color = ( 1.0, 0.64, 0.0 );
+        var_3.color = ( 1, 0.64, 0 );
 
         while ( var_2.inuse )
             wait 0.05;
 
         maps\mp\_utility::playdeathsound();
         wait(var_0 / 3);
-        var_3.color = ( 1.0, 0.0, 0.0 );
+        var_3.color = ( 1, 0, 0 );
 
         while ( var_2.inuse )
             wait 0.05;
@@ -2731,29 +2731,29 @@ gethitlocheight( var_0 )
 {
     switch ( var_0 )
     {
-        case "head":
-        case "helmet":
         case "neck":
+        case "helmet":
+        case "head":
             return 60;
-        case "gun":
-        case "torso_upper":
-        case "right_arm_upper":
-        case "left_arm_upper":
-        case "right_arm_lower":
-        case "left_arm_lower":
-        case "right_hand":
         case "left_hand":
+        case "right_hand":
+        case "left_arm_lower":
+        case "right_arm_lower":
+        case "left_arm_upper":
+        case "right_arm_upper":
+        case "torso_upper":
+        case "gun":
             return 48;
         case "torso_lower":
             return 40;
-        case "right_leg_upper":
         case "left_leg_upper":
+        case "right_leg_upper":
             return 32;
-        case "right_leg_lower":
         case "left_leg_lower":
+        case "right_leg_lower":
             return 10;
-        case "right_foot":
         case "left_foot":
+        case "right_foot":
             return 5;
     }
 
@@ -2829,7 +2829,7 @@ delaystartragdoll( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !isdefined( var_0 ) )
         return;
 
-    if ( var_0 isragdoll() )
+    if ( var_0 _meth_81E0() )
         return;
 
     var_6 = var_0 getcorpseanim();
@@ -2847,7 +2847,7 @@ delaystartragdoll( var_0, var_1, var_2, var_3, var_4, var_5 )
     wait(var_12);
 
     if ( isdefined( var_0 ) )
-        var_0 startragdoll();
+        var_0 _meth_8023();
 }
 
 getmostkilledby()
@@ -2893,13 +2893,13 @@ getmostkilled()
 damageshellshockandrumble( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     thread maps\mp\gametypes\_weapons::onweapondamage( var_0, var_1, var_2, var_3, var_5 );
-    self playrumbleonentity( "sniper_fire" );
+    self _meth_80AD( "sniper_fire" );
 }
 
 revivesetup( var_0 )
 {
     var_1 = var_0.team;
-    self linkto( var_0, "tag_origin" );
+    self _meth_804D( var_0, "tag_origin" );
     self.owner = var_0;
     self.inuse = 0;
     self makeusable();
@@ -3013,11 +3013,11 @@ reviveholdthink( var_0, var_1, var_2 )
     var_4 hide();
 
     if ( isplayer( var_0 ) )
-        var_0 playerlinkto( var_4 );
+        var_0 _meth_807C( var_4 );
     else
-        var_0 linkto( var_4 );
+        var_0 _meth_804D( var_4 );
 
-    var_0 playerlinkedoffsetenable();
+    var_0 _meth_8081();
 
     if ( !isdefined( var_2 ) )
         var_2 = 1;
@@ -3063,7 +3063,7 @@ reviveholdthink_cleanup( var_0, var_1, var_2 )
 
     if ( isdefined( var_0 ) && maps\mp\_utility::isreallyalive( var_0 ) )
     {
-        var_0 unlink();
+        var_0 _meth_804F();
 
         if ( var_1 )
             var_0 common_scripts\utility::_enableweapon();
@@ -3072,15 +3072,15 @@ reviveholdthink_cleanup( var_0, var_1, var_2 )
 
 personalusebar( var_0 )
 {
-    self setclientomnvar( "ui_use_bar_text", 3 );
-    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
+    self _meth_82FB( "ui_use_bar_text", 3 );
+    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
     var_1 = undefined;
 
     if ( isdefined( var_0 ) && isdefined( var_0.owner ) )
     {
         var_1 = var_0.owner;
-        var_1 setclientomnvar( "ui_use_bar_text", 4 );
-        var_1 setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
+        var_1 _meth_82FB( "ui_use_bar_text", 4 );
+        var_1 _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
     }
 
     var_2 = -1;
@@ -3097,10 +3097,10 @@ personalusebar( var_0 )
                 var_3 = gettime();
                 var_4 = var_0.curprogress / var_0.usetime;
                 var_5 = var_3 + ( 1 - var_4 ) * var_0.usetime / var_0.userate;
-                self setclientomnvar( "ui_use_bar_end_time", int( var_5 ) );
+                self _meth_82FB( "ui_use_bar_end_time", int( var_5 ) );
 
                 if ( isdefined( var_1 ) )
-                    var_1 setclientomnvar( "ui_use_bar_end_time", int( var_5 ) );
+                    var_1 _meth_82FB( "ui_use_bar_end_time", int( var_5 ) );
             }
 
             var_2 = var_0.userate;
@@ -3110,10 +3110,10 @@ personalusebar( var_0 )
     }
 
     if ( isdefined( self ) )
-        self setclientomnvar( "ui_use_bar_end_time", 0 );
+        self _meth_82FB( "ui_use_bar_end_time", 0 );
 
     if ( isdefined( var_1 ) )
-        var_1 setclientomnvar( "ui_use_bar_end_time", 0 );
+        var_1 _meth_82FB( "ui_use_bar_end_time", 0 );
 }
 
 personalusebaroldstyle( var_0 )
@@ -3256,7 +3256,7 @@ _obituary( var_0, var_1, var_2, var_3 )
 
 logprintplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 {
-    var_7 = self getentitynumber();
+    var_7 = self _meth_81B1();
     var_8 = self.name;
     var_9 = self.team;
     var_10 = self.guid;
@@ -3266,7 +3266,7 @@ logprintplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         var_11 = var_1.guid;
         var_12 = var_1.name;
         var_13 = var_1.team;
-        var_14 = var_1 getentitynumber();
+        var_14 = var_1 _meth_81B1();
         var_15 = var_1.xuid + "(" + var_12 + ")";
     }
     else
@@ -3312,10 +3312,10 @@ setentitydamagecallback( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( var_3 ) )
         var_3 = ::modifydamage;
 
-    self setcandamage( 1 );
+    self _meth_82C0( 1 );
 
     if ( isdefined( self.classname ) && self.classname != "script_vehicle" )
-        self setdamagecallbackon( 1 );
+        self _meth_8495( 1 );
 
     self.health = 999999;
     self.maxhealth = var_0;
@@ -3339,7 +3339,7 @@ processdamagetaken( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
     if ( isdefined( var_1 ) && !maps\mp\gametypes\_weapons::friendlyfirecheck( self.owner, var_1 ) )
         return;
 
-    var_1 playrumbleonentity( "damage_light" );
+    var_1 _meth_80AD( "damage_light" );
 
     if ( isdefined( self.iscrashing ) && self.iscrashing )
         return;
@@ -3358,10 +3358,10 @@ processdamagetaken( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
 
         switch ( var_13 )
         {
-            case "paint_grenade_mp":
-            case "smoke_grenade_mp":
-            case "paint_grenade_var_mp":
             case "smoke_grenade_var_mp":
+            case "paint_grenade_var_mp":
+            case "smoke_grenade_mp":
+            case "paint_grenade_mp":
                 return;
         }
 
@@ -3467,23 +3467,23 @@ handlemissiledamage( var_0, var_1, var_2 )
 
     switch ( var_0 )
     {
-        case "bomb_site_mp":
-        case "remotemissile_projectile_mp":
-        case "remotemissile_projectile_cluster_parent_mp":
-        case "remotemissile_projectile_gas_mp":
-        case "orbital_carepackage_pod_mp":
-        case "orbital_carepackage_droppod_mp":
-        case "stinger_mp":
-        case "stealth_bomb_mp":
-        case "orbital_carepackage_pod_plane_mp":
-        case "remotemissile_projectile_cluster_child_mp":
-        case "dam_turret_mp":
-        case "warbird_missile_mp":
-        case "remotemissile_projectile_cluster_child_hellfire_mp":
-        case "remotemissile_projectile_secondary_mp":
-        case "airstrike_missile_mp":
-        case "orbitalsupport_105mm_mp":
         case "orbitalsupport_missile_mp":
+        case "orbitalsupport_105mm_mp":
+        case "airstrike_missile_mp":
+        case "remotemissile_projectile_secondary_mp":
+        case "remotemissile_projectile_cluster_child_hellfire_mp":
+        case "warbird_missile_mp":
+        case "dam_turret_mp":
+        case "remotemissile_projectile_cluster_child_mp":
+        case "orbital_carepackage_pod_plane_mp":
+        case "stealth_bomb_mp":
+        case "stinger_mp":
+        case "orbital_carepackage_droppod_mp":
+        case "orbital_carepackage_pod_mp":
+        case "remotemissile_projectile_gas_mp":
+        case "remotemissile_projectile_cluster_parent_mp":
+        case "remotemissile_projectile_mp":
+        case "bomb_site_mp":
             self.largeprojectiledamage = 1;
             var_3 = self.maxhealth + 1;
             break;
@@ -3504,16 +3504,16 @@ handlemissiledamage( var_0, var_1, var_2 )
 
             var_3 = self.maxhealth * var_5;
             break;
-        case "turretheadrocket_mp":
-        case "ugv_missile_mp":
-        case "assaultdrone_c4_mp":
-        case "killstreakmahem_mp":
         case "killstreak_orbital_laser_mp":
+        case "killstreakmahem_mp":
+        case "assaultdrone_c4_mp":
+        case "ugv_missile_mp":
+        case "turretheadrocket_mp":
             self.largeprojectiledamage = 0;
             var_3 = self.maxhealth + 1;
             break;
-        case "orbitalsupport_40mm_mp":
         case "orbitalsupport_40mmbuddy_mp":
+        case "orbitalsupport_40mm_mp":
             self.largeprojectiledamage = 0;
             var_3 *= 2;
             break;
@@ -3535,9 +3535,9 @@ handlegrenadedamage( var_0, var_1, var_2 )
     {
         switch ( var_3 )
         {
-            case "frag_grenade_mp":
-            case "semtex_mp":
             case "explosive_drone_mp":
+            case "semtex_mp":
+            case "frag_grenade_mp":
                 var_2 *= 4;
                 break;
             default:

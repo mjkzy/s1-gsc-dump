@@ -1,23 +1,23 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    _id_806C();
+    setup_callbacks();
 }
 
-_id_806C()
+setup_callbacks()
 {
-    level._id_0897["squadmate"]["gametype_update"] = ::_id_089E;
-    level._id_0897["player"]["think"] = ::_id_089B;
+    level.agent_funcs["squadmate"]["gametype_update"] = ::agent_squadmember_dom_think;
+    level.agent_funcs["player"]["think"] = ::agent_player_dom_think;
 }
 
-_id_089B()
+agent_player_dom_think()
 {
-    thread maps\mp\bots\_bots_gametype_dom::_id_15FF();
+    thread maps\mp\bots\_bots_gametype_dom::bot_dom_think();
 }
 
-_id_089E()
+agent_squadmember_dom_think()
 {
     var_0 = undefined;
 
@@ -33,8 +33,8 @@ _id_089E()
 
         if ( var_4 != self.team )
         {
-            if ( !maps\mp\bots\_bots_gametype_dom::_id_165B( var_0 ) )
-                maps\mp\bots\_bots_gametype_dom::_id_1B47( var_0, "critical", 1 );
+            if ( !maps\mp\bots\_bots_gametype_dom::bot_is_capturing_flag( var_0 ) )
+                maps\mp\bots\_bots_gametype_dom::capture_flag( var_0, "critical", 1 );
 
             return 1;
         }

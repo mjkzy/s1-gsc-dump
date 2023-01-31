@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -28,34 +28,34 @@ init()
     level._effect["orbital_laser_beam_lightshow_wide"] = loadfx( "vfx/beam/orbital_laser_lightbeam_lightshow_lg" );
     level._effect["orbital_laser_smoldering"] = loadfx( "vfx/beam/orbital_laser_smoldering" );
     level._effect["orbital_laser_death"] = loadfx( "vfx/beam/orbital_laser_lightbeam_burnmark" );
-    level._id_0607 = [];
-    level._id_0607 = spawnstruct();
-    level._id_0607.vehicle = "orbital_laser_strike_mp";
-    level._id_0607.helitype = "OrbitalStrike";
-    level._id_0607.maxhealth = 9999999;
-    level.killstreakfuncs["orbital_strike_laser"] = ::_id_98B7;
+    level._orbital_strike_setting = [];
+    level._orbital_strike_setting = spawnstruct();
+    level._orbital_strike_setting.vehicle = "orbital_laser_strike_mp";
+    level._orbital_strike_setting.helitype = "OrbitalStrike";
+    level._orbital_strike_setting.maxhealth = 9999999;
+    level.killstreakfuncs["orbital_strike_laser"] = ::tryuseorbitalstrike;
     level.killstreakwieldweapons["orbital_laser_fov_mp"] = "orbital_strike_laser";
 
-    if ( !isdefined( level._id_654F ) )
-        level._id_654F = [];
+    if ( !isdefined( level.orbital_lasers ) )
+        level.orbital_lasers = [];
 
     if ( level.teambased )
     {
-        level._id_654E = 0;
-        level._id_654D = 0;
+        level.orbital_laser_axis = 0;
+        level.orbital_laser_allies = 0;
     }
 
-    level._id_655C = spawnstruct();
-    level._id_655C._id_89DC = undefined;
-    level._id_655C.spawnpoint = undefined;
+    level.orbitallaseroverrides = spawnstruct();
+    level.orbitallaseroverrides.spawnheight = undefined;
+    level.orbitallaseroverrides.spawnpoint = undefined;
 
-    if ( isdefined( level._id_655B ) )
-        [[ level._id_655B ]]();
+    if ( isdefined( level.orbitallaseroverridefunc ) )
+        [[ level.orbitallaseroverridefunc ]]();
 }
 
-_id_98B7( var_0, var_1 )
+tryuseorbitalstrike( var_0, var_1 )
 {
-    if ( _id_1D14() )
+    if ( checkorbitallaserusage() )
     {
         self iclientprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
         return 0;
@@ -73,7 +73,7 @@ _id_98B7( var_0, var_1 )
     if ( level.teambased )
     {
         var_2 = self.team;
-        _id_7FCA( var_2, 1 );
+        setorbitallaserforteam( var_2, 1 );
     }
 
     var_3 = maps\mp\killstreaks\_killstreaks::initridekillstreak( "orbital_strike" );
@@ -83,7 +83,7 @@ _id_98B7( var_0, var_1 )
         maps\mp\_utility::decrementfauxvehiclecount();
 
         if ( level.teambased )
-            _id_7FCA( var_2, 0 );
+            setorbitallaserforteam( var_2, 0 );
 
         return 0;
     }
@@ -92,30 +92,30 @@ _id_98B7( var_0, var_1 )
         self notify( "used_horde_orbital" );
 
     maps\mp\_utility::setusingremote( "orbital_strike" );
-    var_3 = _id_8322( var_0, var_1 );
+    var_3 = setuporbitalstrike( var_0, var_1 );
     maps\mp\_matchdata::logkillstreakevent( "orbital_strike", self.origin );
     return var_3;
 }
 
-_id_1D14()
+checkorbitallaserusage()
 {
     if ( level.teambased )
     {
         if ( self.team == "allies" )
-            return level._id_654D;
+            return level.orbital_laser_allies;
         else
-            return level._id_654E;
+            return level.orbital_laser_axis;
     }
     else
-        return level._id_654F.size >= 2;
+        return level.orbital_lasers.size >= 2;
 }
 
-_id_7FCA( var_0, var_1 )
+setorbitallaserforteam( var_0, var_1 )
 {
     if ( var_0 == "allies" )
-        level._id_654D = var_1;
+        level.orbital_laser_allies = var_1;
     else
-        level._id_654E = var_1;
+        level.orbital_laser_axis = var_1;
 }
 
 orbitalstrikesetupdelay( var_0 )
@@ -125,53 +125,53 @@ orbitalstrikesetupdelay( var_0 )
     var_0 thermaldrawdisable();
 }
 
-_id_8322( var_0, var_1 )
+setuporbitalstrike( var_0, var_1 )
 {
-    _id_6C5A();
-    var_2 = _id_3776();
-    var_3 = spawnhelicopter( self, var_2.origin, ( 0.0, 0.0, 0.0 ), level._id_0607.vehicle, "tag_origin" );
+    playeraddnotifycommands();
+    var_2 = findbestspawnlocation();
+    var_3 = spawnhelicopter( self, var_2.origin, ( 0, 0, 0 ), level._orbital_strike_setting.vehicle, "tag_origin" );
 
     if ( !isdefined( var_3 ) )
         return 0;
 
     thread orbitalstrikesetupdelay( var_3 );
-    level._id_654F = common_scripts\utility::array_add( level._id_654F, var_3 );
+    level.orbital_lasers = common_scripts\utility::array_add( level.orbital_lasers, var_3 );
     var_3.modules = var_1;
     var_3.vehicletype = "orbital_strike";
     var_3.lifeid = var_0;
     var_3.team = self.pers["team"];
     var_3.pers["team"] = self.pers["team"];
     var_3.owner = self;
-    var_3.maxhealth = level._id_0607.maxhealth;
-    var_3._id_A3C2 = ( 0.0, 0.0, 0.0 );
-    var_3._id_91C5 = level._id_47F7;
-    var_3._id_6F89 = undefined;
-    var_3._id_7BF6 = undefined;
+    var_3.maxhealth = level._orbital_strike_setting.maxhealth;
+    var_3.zoffset = ( 0, 0, 0 );
+    var_3.targeting_delay = level.heli_targeting_delay;
+    var_3.primarytarget = undefined;
+    var_3.secondarytarget = undefined;
     var_3.attacker = undefined;
-    var_3._id_1FC7 = 0;
-    var_3._id_6293 = 1;
+    var_3.cloakstate = 0;
+    var_3.numcharges = 1;
 
     if ( common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_burst1" ) )
-        var_3._id_6293++;
+        var_3.numcharges++;
 
     if ( common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_burst2" ) )
-        var_3._id_6293++;
+        var_3.numcharges++;
 
-    var_3._id_A310 = common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_width" );
-    var_3._id_1363 = common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_beam" );
-    var_3._id_37D4 = 6;
+    var_3.widebeam = common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_width" );
+    var_3.beams = common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_beam" );
+    var_3.fireduration = 6;
 
     if ( common_scripts\utility::array_contains( var_3.modules, "orbital_strike_laser_duration" ) )
-        var_3._id_37D4 *= 1.5;
+        var_3.fireduration *= 1.5;
 
-    self._id_2199 = 1;
-    thread _id_5E8A( var_3 );
-    thread _id_5E88( var_3 );
-    thread _id_5E9A( var_3 );
-    thread _id_5EA9( var_3 );
-    thread _id_5E60( var_3 );
-    thread _id_6C7C( var_3 );
-    thread _id_A1F5( var_3, self );
+    self.controllingorbitallaser = 1;
+    thread monitororbitalstriketimeout( var_3 );
+    thread monitororbitalstrikedeath( var_3 );
+    thread monitorplayerdisconnect( var_3 );
+    thread monitorplayerteamchange( var_3 );
+    thread monitorgameended( var_3 );
+    thread playercontrolorbitalstrike( var_3 );
+    thread watchallplayerdeath( var_3, self );
     thread onplayerconnect( var_3, self );
     return 1;
 }
@@ -187,39 +187,39 @@ onplayerconnect( var_0, var_1 )
     for (;;)
     {
         level waittill( "connected", var_2 );
-        var_2 thread _id_A01C( var_0, var_1 );
+        var_2 thread waitforlaserdeath( var_0, var_1 );
     }
 }
 
-_id_A3F5( var_0 )
+zoomslam( var_0 )
 {
-    var_1 = spawn( "script_model", var_0.origin + ( 0.0, 0.0, 3000.0 ) );
-    var_1.angles = vectortoangles( ( 0.0, 0.0, 1.0 ) );
-    var_1 setmodel( "tag_origin" );
-    var_1 thread _id_9FFC( 5 );
+    var_1 = spawn( "script_model", var_0.origin + ( 0, 0, 3000 ) );
+    var_1.angles = vectortoangles( ( 0, 0, 1 ) );
+    var_1 _meth_80B1( "tag_origin" );
+    var_1 thread waitanddelete( 5 );
     var_2 = common_scripts\utility::array_add( maps\mp\_utility::get_players_watching(), self );
 
     foreach ( var_4 in var_2 )
     {
-        var_4 setclientomnvar( "cam_scene_name", "odin_zoom_down" );
-        var_4 setclientomnvar( "cam_scene_lead", var_0 getentitynumber() );
-        var_4 setclientomnvar( "cam_scene_support", var_1 getentitynumber() );
+        var_4 _meth_82FB( "cam_scene_name", "odin_zoom_down" );
+        var_4 _meth_82FB( "cam_scene_lead", var_0 _meth_81B1() );
+        var_4 _meth_82FB( "cam_scene_support", var_1 _meth_81B1() );
         var_4 playlocalsound( "vulcan_hud_transition" );
-        var_4 thread _id_1FEE( var_0 );
+        var_4 thread clouds( var_0 );
     }
 }
 
-_id_1FEE( var_0 )
+clouds( var_0 )
 {
     level endon( "game_ended" );
-    var_1 = spawn( "script_model", var_0.origin + ( 0.0, 0.0, -1000.0 ) );
-    var_1.angles = vectortoangles( ( 0.0, 0.0, 1.0 ) );
-    var_1 setmodel( "tag_origin" );
-    var_1 thread _id_9FFC( 5 );
+    var_1 = spawn( "script_model", var_0.origin + ( 0, 0, -1000 ) );
+    var_1.angles = vectortoangles( ( 0, 0, 1 ) );
+    var_1 _meth_80B1( "tag_origin" );
+    var_1 thread waitanddelete( 5 );
     playfxontagforclients( level._effect["orbital_laser_clouds"], var_1, "tag_origin", self );
 }
 
-_id_9FFC( var_0 )
+waitanddelete( var_0 )
 {
     self endon( "death" );
     level endon( "game_ended" );
@@ -227,160 +227,160 @@ _id_9FFC( var_0 )
     self delete();
 }
 
-_id_992C()
+turnonandhideorbitalhud()
 {
-    self setclientomnvar( "ui_orbital_laser", 1 );
-    self setclientomnvar( "ui_orbital_laser_mode", 0 );
-    self setclientomnvar( "ui_orbital_laser_charge", 0 );
-    self setclientomnvar( "ui_orbital_laser_bursts", 0 );
-    maps\mp\killstreaks\_aerial_utility::_id_6C96();
+    self _meth_82FB( "ui_orbital_laser", 1 );
+    self _meth_82FB( "ui_orbital_laser_mode", 0 );
+    self _meth_82FB( "ui_orbital_laser_charge", 0 );
+    self _meth_82FB( "ui_orbital_laser_bursts", 0 );
+    maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
 }
 
-_id_851C( var_0 )
+showorbitalstrikehud( var_0 )
 {
-    thread _id_070F();
-    self setclientomnvar( "ui_orbital_laser_mode", 1 );
-    self setclientomnvar( "ui_orbital_laser_bursts", var_0._id_6293 );
-    maps\mp\killstreaks\_aerial_utility::_id_6C96();
+    thread activatethermal();
+    self _meth_82FB( "ui_orbital_laser_mode", 1 );
+    self _meth_82FB( "ui_orbital_laser_bursts", var_0.numcharges );
+    maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
 }
 
-_id_655F( var_0, var_1 )
+orbitalstrikebeginchargeup( var_0, var_1 )
 {
     self endon( "disconnect" );
     self endon( "OrbitalStrikeStreakComplete" );
     var_2 = gettime() + var_1 * 1000;
-    self setclientomnvar( "ui_orbital_laser_charge", var_2 );
-    self setclientomnvar( "ui_orbital_laser_mode", 1 );
-    self playrumbleonentity( "orbital_laser_charge" );
-    _id_6DEA( var_0, 0 );
+    self _meth_82FB( "ui_orbital_laser_charge", var_2 );
+    self _meth_82FB( "ui_orbital_laser_mode", 1 );
+    self _meth_80AD( "orbital_laser_charge" );
+    playwarmupsounds( var_0, 0 );
     wait 0.1;
-    _id_6DE9( var_0 );
+    playwarmupeffects( var_0 );
 }
 
-_id_655E( var_0, var_1 )
+orbitalstrikchargeupspeedup( var_0, var_1 )
 {
     var_2 = gettime() + var_1 * 1000;
-    self setclientomnvar( "ui_orbital_laser_charge", var_2 );
-    self stoprumble( "orbital_laser_charge" );
-    self playrumbleonentity( "orbital_laser_charge_quick" );
-    _id_6DEA( var_0, 1 );
+    self _meth_82FB( "ui_orbital_laser_charge", var_2 );
+    self _meth_80AF( "orbital_laser_charge" );
+    self _meth_80AD( "orbital_laser_charge_quick" );
+    playwarmupsounds( var_0, 1 );
 }
 
-_id_6560( var_0 )
+orbitalstrikechargeupcomplete( var_0 )
 {
-    self setclientomnvar( "ui_orbital_laser_charge", 0 );
-    self stoprumble( "orbital_laser_charge" );
-    self stoprumble( "orbital_laser_charge_quick" );
+    self _meth_82FB( "ui_orbital_laser_charge", 0 );
+    self _meth_80AF( "orbital_laser_charge" );
+    self _meth_80AF( "orbital_laser_charge_quick" );
     self _meth_80AE( "orbital_laser_fire" );
 }
 
-_id_242F( var_0, var_1 )
+createorbitaltimer( var_0, var_1 )
 {
     var_2 = gettime() + var_1 * 1000;
-    thread _id_655F( var_0, var_1 );
+    thread orbitalstrikebeginchargeup( var_0, var_1 );
     maps\mp\_utility::waitfortimeornotify( var_1, "StartFire" );
     var_3 = var_2 - gettime();
 
     if ( var_3 > 2500 )
     {
-        _id_655E( var_0, 1.1 );
+        orbitalstrikchargeupspeedup( var_0, 1.1 );
         wait 1.1;
     }
     else
-        _id_8F06( var_0 );
+        stopwarmupsounds( var_0 );
 
-    _id_6560( var_0 );
+    orbitalstrikechargeupcomplete( var_0 );
 }
 
-_id_486F( var_0 )
+hidefirehud( var_0 )
 {
-    self setclientomnvar( "ui_orbital_laser_mode", 2 );
+    self _meth_82FB( "ui_orbital_laser_mode", 2 );
 }
 
-_id_7F85( var_0 )
+sethudnumbursts( var_0 )
 {
-    self setclientomnvar( "ui_orbital_laser_bursts", var_0._id_6293 );
+    self _meth_82FB( "ui_orbital_laser_bursts", var_0.numcharges );
 }
 
-_id_4061()
+getorbitallaserzheight()
 {
-    if ( isdefined( level._id_655C._id_89DC ) )
-        return level._id_655C._id_89DC;
+    if ( isdefined( level.orbitallaseroverrides.spawnheight ) )
+        return level.orbitallaseroverrides.spawnheight;
 
-    var_0 = maps\mp\killstreaks\_aerial_utility::_id_3FC1();
+    var_0 = maps\mp\killstreaks\_aerial_utility::gethelianchor();
     var_1 = var_0.origin[2] + 1024;
 
-    if ( isdefined( level._id_099D ) && isdefined( level._id_099D._id_89DC ) )
-        var_1 += level._id_099D._id_89DC;
+    if ( isdefined( level.airstrikeoverrides ) && isdefined( level.airstrikeoverrides.spawnheight ) )
+        var_1 += level.airstrikeoverrides.spawnheight;
 
     return var_1;
 }
 
-_id_3776()
+findbestspawnlocation()
 {
-    if ( !isdefined( self._id_8F4B ) )
-        self._id_8F4B = spawnstruct();
+    if ( !isdefined( self.strikespawnpoint ) )
+        self.strikespawnpoint = spawnstruct();
 
-    var_0 = maps\mp\killstreaks\_aerial_utility::_id_3FC1();
-    var_1 = _id_4061();
+    var_0 = maps\mp\killstreaks\_aerial_utility::gethelianchor();
+    var_1 = getorbitallaserzheight();
     var_2 = level.mapcenter;
 
-    if ( isdefined( level._id_655C.spawnpoint ) )
-        var_2 = level._id_655C.spawnpoint;
+    if ( isdefined( level.orbitallaseroverrides.spawnpoint ) )
+        var_2 = level.orbitallaseroverrides.spawnpoint;
 
-    self._id_8F4B.origin = var_2 + ( 0, 0, var_1 );
-    self._id_8F4B.angles = ( 0, self.angles[1], 0 );
-    return self._id_8F4B;
+    self.strikespawnpoint.origin = var_2 + ( 0, 0, var_1 );
+    self.strikespawnpoint.angles = ( 0, self.angles[1], 0 );
+    return self.strikespawnpoint;
 }
 
-_id_5E89( var_0 )
+monitororbitalstrikesafearea( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
-    thread maps\mp\killstreaks\_aerial_utility::_id_6CB4( var_0, "OrbitalStrikeStreakComplete" );
+    thread maps\mp\killstreaks\_aerial_utility::playerhandleboundarystatic( var_0, "OrbitalStrikeStreakComplete" );
     var_0 waittill( "outOfBounds" );
     wait 2;
     var_0 notify( "leaving" );
 }
 
-_id_6C7C( var_0 )
+playercontrolorbitalstrike( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     thread maps\mp\_utility::freezecontrolswrapper( 1 );
-    thread _id_5E89( var_0 );
+    thread monitororbitalstrikesafearea( var_0 );
     maps\mp\_utility::playersaveangles();
     wait 0.45;
-    thread _id_834D( 0.5 );
-    _id_A3F5( var_0 );
-    _id_992C();
+    thread setvulcanvisionandlightsetpermap( 0.5 );
+    zoomslam( var_0 );
+    turnonandhideorbitalhud();
     wait 1.5;
-    maps\mp\killstreaks\_aerial_utility::_id_6D51();
+    maps\mp\killstreaks\_aerial_utility::playershowfullstatic();
     thread maps\mp\_utility::freezecontrolswrapper( 0 );
     maps\mp\_utility::_giveweapon( "orbital_laser_fov_mp" );
-    self switchtoweapon( "orbital_laser_fov_mp" );
+    self _meth_8315( "orbital_laser_fov_mp" );
     common_scripts\utility::_disableweaponswitch();
-    self unlink();
+    self _meth_804F();
     var_0 _meth_8253( 0, 0, 0 );
-    var_0 _meth_8252( ( 0.0, 0.0, 0.0 ), 0, 0 );
-    thread _id_5665( var_0 );
-    thread _id_6DB6( var_0 );
-    self setangles( ( 0.0, 0.0, 0.0 ) );
+    var_0 _meth_8252( ( 0, 0, 0 ), 0, 0 );
+    thread leaveorbitalstrikeearly( var_0 );
+    thread playinteriorsound( var_0 );
+    self setangles( ( 0, 0, 0 ) );
     self _meth_8206( var_0 );
     wait 0.05;
-    self cameralinkto( var_0, "tag_origin" );
+    self _meth_81E2( var_0, "tag_origin" );
     wait 0.55;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
     var_0.killcamstarttime = gettime();
-    _id_851C( var_0 );
-    thread _id_A2DF( var_0 );
+    showorbitalstrikehud( var_0 );
+    thread weaponsetup( var_0 );
 }
 
-_id_7FE3()
+setplayerstance()
 {
-    if ( self getstance() == "prone" )
-        self setstance( "crouch" );
+    if ( self _meth_817C() == "prone" )
+        self _meth_817D( "crouch" );
 }
 
-_id_5665( var_0 )
+leaveorbitalstrikeearly( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
@@ -389,34 +389,34 @@ _id_5665( var_0 )
     for (;;)
     {
         self waittill( "ToggleControlState" );
-        thread _id_1ABE();
-        self._id_493C = 1;
+        thread cancelpossessbuttonpressmonitor();
+        self.holdingleavebutton = 1;
 
         for ( var_2 = 0; var_2 <= var_1; var_2++ )
         {
             wait 0.1;
 
-            if ( self._id_493C == 1 && var_2 == var_1 )
+            if ( self.holdingleavebutton == 1 && var_2 == var_1 )
             {
                 var_0 notify( "PossessHoldTimeComplete" );
                 continue;
             }
 
-            if ( self._id_493C == 0 )
+            if ( self.holdingleavebutton == 0 )
                 break;
         }
     }
 }
 
-_id_1ABE()
+cancelpossessbuttonpressmonitor()
 {
     self endon( "OrbitalStrikeStreakComplete" );
     self endon( "PossessHoldTimeComplete" );
     self waittill( "ToggleControlCancel" );
-    self._id_493C = 0;
+    self.holdingleavebutton = 0;
 }
 
-_id_070F()
+activatethermal()
 {
     self _meth_851A( 0 );
     self thermalvisionfofoverlayon();
@@ -427,10 +427,10 @@ _id_070F()
     var_3 = 5500;
     var_4 = 20;
     var_5 = 30;
-    thread maps\mp\killstreaks\_aerial_utility::_id_92FD( "OrbitalStrikeStreakComplete", var_0, var_1, var_2, var_3, var_4, var_5 );
+    thread maps\mp\killstreaks\_aerial_utility::thermalvision( "OrbitalStrikeStreakComplete", var_0, var_1, var_2, var_3, var_4, var_5 );
 }
 
-_id_6DB6( var_0 )
+playinteriorsound( var_0 )
 {
     var_1 = common_scripts\utility::array_add( maps\mp\_utility::get_players_watching(), self );
 
@@ -443,242 +443,242 @@ _id_6DB6( var_0 )
         var_0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_interior_loop_plr" );
 }
 
-_id_A2D5( var_0 )
+weaponlistenforstopfire( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
-    var_1 = gettime() + var_0._id_37D4 * 1000;
-    self setclientomnvar( "ui_orbital_laser_fire", var_1 );
-    wait(var_0._id_37D4);
-    self setclientomnvar( "ui_orbital_laser_fire", 0 );
+    var_1 = gettime() + var_0.fireduration * 1000;
+    self _meth_82FB( "ui_orbital_laser_fire", var_1 );
+    wait(var_0.fireduration);
+    self _meth_82FB( "ui_orbital_laser_fire", 0 );
     var_0 notify( "stop_charge" );
 }
 
-_id_3FF9( var_0 )
+getlaserradius( var_0 )
 {
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         return 256;
     else
         return 128;
 }
 
-_id_A2DF( var_0 )
+weaponsetup( var_0 )
 {
     var_1 = anglestoforward( var_0.angles );
     var_2 = anglestoright( var_0.angles );
     var_3 = var_0 gettagorigin( "tag_origin" ) + var_1 * 30;
-    var_4 = ( 0.0, 0.0, -1.0 );
+    var_4 = ( 0, 0, -1 );
     var_5 = var_3 + var_4 * 5000;
     var_6 = bullettrace( var_3, var_5, 0, var_0 );
     var_7 = var_6["position"];
-    var_8 = _id_3FF9( var_0 );
-    var_0._id_A2D3 = spawn( "script_model", var_3 );
-    var_0._id_A2D3 setmodel( "generic_prop_raven" );
-    var_0._id_A2D3 linktosynchronizedparent( var_0, "tag_origin" );
+    var_8 = getlaserradius( var_0 );
+    var_0.weaponlinker = spawn( "script_model", var_3 );
+    var_0.weaponlinker _meth_80B1( "generic_prop_raven" );
+    var_0.weaponlinker _meth_8446( var_0, "tag_origin" );
     var_9 = var_7;
     var_10 = vectortoangles( var_9 - var_3 );
     var_11 = spawn( "script_model", var_3 );
-    var_11 setmodel( "tag_origin" );
+    var_11 _meth_80B1( "tag_origin" );
     var_11.angles = var_10;
-    var_11 linktosynchronizedparent( var_0._id_A2D3, "tag_origin" );
-    var_0._id_A2E5 = var_11;
+    var_11 _meth_8446( var_0.weaponlinker, "tag_origin" );
+    var_0.weapontag01 = var_11;
     var_12 = spawn( "script_model", var_9 );
-    var_12.angles = ( -90.0, 0.0, 0.0 );
-    var_12 setmodel( "tag_origin" );
-    var_12 setotherent( var_11 );
+    var_12.angles = ( -90, 0, 0 );
+    var_12 _meth_80B1( "tag_origin" );
+    var_12 _meth_8383( var_11 );
     var_12 show();
-    var_0._id_A2E5._id_91C0 = var_12;
+    var_0.weapontag01.targetedent = var_12;
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
     {
         var_9 = var_7 + var_1 * var_8;
         var_10 = vectortoangles( var_9 - var_3 );
         var_13 = spawn( "script_model", var_3 );
-        var_13 setmodel( "tag_origin" );
+        var_13 _meth_80B1( "tag_origin" );
         var_13.angles = var_10;
-        var_13 linktosynchronizedparent( var_0._id_A2D3, "j_prop_1" );
-        var_0._id_A2E6 = var_13;
+        var_13 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_0.weapontag02 = var_13;
         var_14 = spawn( "script_model", var_9 );
-        var_14.angles = ( -90.0, 0.0, 0.0 );
-        var_14 setmodel( "tag_origin" );
-        var_14 setotherent( var_13 );
+        var_14.angles = ( -90, 0, 0 );
+        var_14 _meth_80B1( "tag_origin" );
+        var_14 _meth_8383( var_13 );
         var_14 show();
-        var_0._id_A2E6._id_91C0 = var_14;
+        var_0.weapontag02.targetedent = var_14;
         var_15 = sin( 60 ) * var_8;
         var_16 = cos( 60 ) * var_8;
         var_9 = var_7 - var_1 * var_16 + var_2 * var_15;
         var_10 = vectortoangles( var_9 - var_3 );
         var_17 = spawn( "script_model", var_3 );
-        var_17 setmodel( "tag_origin" );
+        var_17 _meth_80B1( "tag_origin" );
         var_17.angles = var_10;
-        var_17 linktosynchronizedparent( var_0._id_A2D3, "j_prop_1" );
-        var_0._id_A2E7 = var_17;
+        var_17 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_0.weapontag03 = var_17;
         var_18 = spawn( "script_model", var_9 );
-        var_18.angles = ( -90.0, 0.0, 0.0 );
-        var_18 setmodel( "tag_origin" );
-        var_18 setotherent( var_17 );
+        var_18.angles = ( -90, 0, 0 );
+        var_18 _meth_80B1( "tag_origin" );
+        var_18 _meth_8383( var_17 );
         var_18 show();
-        var_0._id_A2E7._id_91C0 = var_18;
+        var_0.weapontag03.targetedent = var_18;
         var_9 = var_7 - var_1 * var_16 - var_2 * var_15;
         var_10 = vectortoangles( var_9 - var_3 );
         var_19 = spawn( "script_model", var_3 );
-        var_19 setmodel( "tag_origin" );
+        var_19 _meth_80B1( "tag_origin" );
         var_19.angles = var_10;
-        var_19 linktosynchronizedparent( var_0._id_A2D3, "j_prop_1" );
-        var_0._id_A2E8 = var_19;
+        var_19 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_0.weapontag04 = var_19;
         var_20 = spawn( "script_model", var_9 );
-        var_20.angles = ( -90.0, 0.0, 0.0 );
-        var_20 setmodel( "tag_origin" );
-        var_20 setotherent( var_19 );
+        var_20.angles = ( -90, 0, 0 );
+        var_20 _meth_80B1( "tag_origin" );
+        var_20 _meth_8383( var_19 );
         var_20 show();
-        var_0._id_A2E8._id_91C0 = var_20;
+        var_0.weapontag04.targetedent = var_20;
     }
 
-    thread _id_8A5C( var_0 );
-    thread _id_5E8B( var_0 );
+    thread spinthelasers( var_0 );
+    thread monitororbitalstrikeweapon( var_0 );
 }
 
-_id_2875( var_0 )
+deleteweaponmodels( var_0 )
 {
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 delete();
-        var_0._id_A2E5 delete();
+        var_0.weapontag01.targetedent delete();
+        var_0.weapontag01 delete();
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 delete();
-            var_0._id_A2E6 delete();
-            var_0._id_A2E7._id_91C0 delete();
-            var_0._id_A2E7 delete();
-            var_0._id_A2E8._id_91C0 delete();
-            var_0._id_A2E8 delete();
+            var_0.weapontag02.targetedent delete();
+            var_0.weapontag02 delete();
+            var_0.weapontag03.targetedent delete();
+            var_0.weapontag03 delete();
+            var_0.weapontag04.targetedent delete();
+            var_0.weapontag04 delete();
         }
     }
 
-    if ( isdefined( var_0._id_A2D3 ) )
-        var_0._id_A2D3 delete();
+    if ( isdefined( var_0.weaponlinker ) )
+        var_0.weaponlinker delete();
 }
 
-_id_8A5C( var_0 )
+spinthelasers( var_0 )
 {
-    var_0._id_A2D3 scriptmodelplayanim( "mp_generic_prop_spin", "hello" );
+    var_0.weaponlinker _meth_8279( "mp_generic_prop_spin", "hello" );
 }
 
-_id_5E8B( var_0 )
+monitororbitalstrikeweapon( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 _meth_8263();
     wait 1;
     var_1 = 6;
 
-    while ( var_0._id_6293 > 0 )
+    while ( var_0.numcharges > 0 )
     {
-        _id_242F( var_0, var_1 );
-        var_0._id_6293--;
-        _id_7F85( var_0 );
-        thread _id_A2D5( var_0 );
-        _id_486F( var_0 );
-        _id_54FF( var_0 );
+        createorbitaltimer( var_0, var_1 );
+        var_0.numcharges--;
+        sethudnumbursts( var_0 );
+        thread weaponlistenforstopfire( var_0 );
+        hidefirehud( var_0 );
+        laserweapon( var_0 );
         wait 0.1;
     }
 
     var_0 notify( "done" );
 }
 
-_id_64A0( var_0, var_1 )
+oneshotsoundonmovingent( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
         var_1 = 5.0;
 
     var_2 = spawn( "script_model", self.origin );
-    var_2 setmodel( "tag_origin" );
-    var_2 linktosynchronizedparent( self );
+    var_2 _meth_80B1( "tag_origin" );
+    var_2 _meth_8446( self );
     var_2 playsound( var_0 );
-    var_2 thread _id_9FFC( var_1 );
+    var_2 thread waitanddelete( var_1 );
 }
 
-_id_64A1( var_0, var_1 )
+oneshotsoundonstationaryent( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
         var_1 = 5.0;
 
     var_2 = spawn( "script_model", self.origin );
-    var_2 setmodel( "tag_origin" );
+    var_2 _meth_80B1( "tag_origin" );
     var_2 playsound( var_0 );
-    var_2 thread _id_9FFC( var_1 );
+    var_2 thread waitanddelete( var_1 );
 }
 
-_id_8D23( var_0 )
+startlasersounds( var_0 )
 {
-    var_0._id_6DB4 = 1;
+    var_0.playingloopfiresounds = 1;
     var_1 = common_scripts\utility::array_add( maps\mp\_utility::get_players_watching(), self );
-    var_0._id_A2E5._id_91C0 thread common_scripts\utility::play_loop_sound_on_entity( "vulcan_beam_loop_npc" );
-    var_0._id_A2E5._id_91C0 thread common_scripts\utility::play_loop_sound_on_entity( "vulcan_impact_loop_npc" );
-    var_0._id_A2E5._id_91C0 _id_64A0( "vulcan_shot_snap_npc" );
-    var_0._id_A2E5._id_91C0 _id_64A0( "vulcan_shot_tail_npc" );
+    var_0.weapontag01.targetedent thread common_scripts\utility::play_loop_sound_on_entity( "vulcan_beam_loop_npc" );
+    var_0.weapontag01.targetedent thread common_scripts\utility::play_loop_sound_on_entity( "vulcan_impact_loop_npc" );
+    var_0.weapontag01.targetedent oneshotsoundonmovingent( "vulcan_shot_snap_npc" );
+    var_0.weapontag01.targetedent oneshotsoundonmovingent( "vulcan_shot_tail_npc" );
     var_2 = "vulcan_std_beam_loop_plr";
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
         var_2 = "vulcan_lshow_beam_loop_plr";
-    else if ( var_0._id_A310 )
+    else if ( var_0.widebeam )
         var_2 = "vulcan_wide_beam_loop_plr";
 
     var_0 thread maps\mp\_utility::playloopsoundtoplayers( "vulcan_beam_loop_plr", undefined, var_1 );
     var_0 thread maps\mp\_utility::playloopsoundtoplayers( var_2, undefined, var_1 );
     var_3 = "vulcan_shot_snap_plr";
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
         var_3 = "vulcan_shot_snap_lshow_plr";
-    else if ( var_0._id_A310 )
+    else if ( var_0.widebeam )
         var_3 = "vulcan_shot_snap_wide_plr";
 
     self playlocalsound( var_3 );
     self playlocalsound( "vulcan_shot_tail_plr" );
 }
 
-_id_8EEF( var_0 )
+stoplasersounds( var_0 )
 {
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
-        var_0._id_A2E5._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
+        var_0.weapontag01.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
+        var_0.weapontag01.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
-            var_0._id_A2E6._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
-            var_0._id_A2E7._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
-            var_0._id_A2E7._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
-            var_0._id_A2E8._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
-            var_0._id_A2E8._id_91C0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
+            var_0.weapontag02.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
+            var_0.weapontag02.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
+            var_0.weapontag03.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
+            var_0.weapontag03.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
+            var_0.weapontag04.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_npc" );
+            var_0.weapontag04.targetedent common_scripts\utility::stop_loop_sound_on_entity( "vulcan_impact_loop_npc" );
         }
     }
 
     var_1 = "vulcan_std_beam_loop_plr";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_1 = "vulcan_wide_beam_loop_plr";
 
     var_0 common_scripts\utility::stop_loop_sound_on_entity( "vulcan_beam_loop_plr" );
     var_0 common_scripts\utility::stop_loop_sound_on_entity( var_1 );
 
-    if ( isdefined( var_0._id_6DB4 ) && var_0._id_6DB4 )
+    if ( isdefined( var_0.playingloopfiresounds ) && var_0.playingloopfiresounds )
     {
-        var_0._id_6DB4 = 0;
+        var_0.playingloopfiresounds = 0;
 
-        if ( isdefined( var_0._id_A2E5 ) )
+        if ( isdefined( var_0.weapontag01 ) )
         {
-            var_0._id_A2E5._id_91C0 _id_64A1( "vulcan_beam_stop_npc" );
+            var_0.weapontag01.targetedent oneshotsoundonstationaryent( "vulcan_beam_stop_npc" );
 
-            if ( var_0._id_1363 )
+            if ( var_0.beams )
             {
-                var_0._id_A2E6._id_91C0 _id_64A1( "vulcan_beam_stop_npc" );
-                var_0._id_A2E7._id_91C0 _id_64A1( "vulcan_beam_stop_npc" );
-                var_0._id_A2E8._id_91C0 _id_64A1( "vulcan_beam_stop_npc" );
+                var_0.weapontag02.targetedent oneshotsoundonstationaryent( "vulcan_beam_stop_npc" );
+                var_0.weapontag03.targetedent oneshotsoundonstationaryent( "vulcan_beam_stop_npc" );
+                var_0.weapontag04.targetedent oneshotsoundonstationaryent( "vulcan_beam_stop_npc" );
             }
         }
 
-        if ( self._id_2199 )
+        if ( self.controllingorbitallaser )
         {
             var_2 = 1;
 
@@ -688,71 +688,71 @@ _id_8EEF( var_0 )
     }
 }
 
-_id_54FF( var_0 )
+laserweapon( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
-    _id_8F05( var_0 );
+    stopwarmupeffects( var_0 );
     waitframe();
     waitframe();
-    thread _id_37D8( var_0 );
-    thread _id_54FB( var_0 );
-    thread _id_54FD( var_0 );
-    thread _id_54F0( var_0 );
-    thread _id_54EF( var_0 );
+    thread firelaserbeam( var_0 );
+    thread laserpilotquake( var_0 );
+    thread lasersurfacequake( var_0 );
+    thread laserdophysics( var_0 );
+    thread laserdodamge( var_0 );
     self _meth_84E2( 0.3 );
     var_0 waittill( "stop_charge" );
     self _meth_84E2( 1.0 );
 }
 
-_id_54EF( var_0 )
+laserdodamge( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
     var_0 endon( "PossessHoldTimeComplete" );
     var_0 endon( "leaving" );
     var_0 endon( "stop_charge" );
-    var_1 = _id_3FF9( var_0 );
+    var_1 = getlaserradius( var_0 );
 
     for (;;)
     {
-        var_0 entityradiusdamage( var_0._id_A2E5._id_91C0.origin + ( 0.0, 0.0, 8.0 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+        var_0 entityradiusdamage( var_0.weapontag01.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
 
         if ( isdefined( level.ishorde ) && level.ishorde && isdefined( level.flying_attack_drones ) )
         {
             foreach ( var_3 in level.flying_attack_drones )
             {
-                if ( var_3.origin[2] > var_0._id_A2E5._id_91C0.origin[2] && _func_220( var_3.origin, var_0._id_A2E5._id_91C0.origin ) < int( var_1 * var_1 / 9 ) )
-                    var_3 dodamage( 90, var_0._id_A2E5._id_91C0.origin, self, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+                if ( var_3.origin[2] > var_0.weapontag01.targetedent.origin[2] && _func_220( var_3.origin, var_0.weapontag01.targetedent.origin ) < int( var_1 * var_1 / 9 ) )
+                    var_3 _meth_8051( 90, var_0.weapontag01.targetedent.origin, self, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
             }
         }
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0 entityradiusdamage( var_0._id_A2E6._id_91C0.origin + ( 0.0, 0.0, 8.0 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
-            var_0 entityradiusdamage( var_0._id_A2E7._id_91C0.origin + ( 0.0, 0.0, 8.0 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
-            var_0 entityradiusdamage( var_0._id_A2E8._id_91C0.origin + ( 0.0, 0.0, 8.0 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 entityradiusdamage( var_0.weapontag02.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 entityradiusdamage( var_0.weapontag03.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 entityradiusdamage( var_0.weapontag04.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
         }
 
-        glassradiusdamage( var_0._id_A2E5._id_91C0.origin + ( 0.0, 0.0, 32.0 ), var_1 * 2, 200, 200 );
+        glassradiusdamage( var_0.weapontag01.targetedent.origin + ( 0, 0, 32 ), var_1 * 2, 200, 200 );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            glassradiusdamage( var_0._id_A2E6._id_91C0.origin + ( 0.0, 0.0, 32.0 ), var_1 * 2, 200, 200 );
-            glassradiusdamage( var_0._id_A2E7._id_91C0.origin + ( 0.0, 0.0, 32.0 ), var_1 * 2, 200, 200 );
-            glassradiusdamage( var_0._id_A2E8._id_91C0.origin + ( 0.0, 0.0, 32.0 ), var_1 * 2, 200, 200 );
+            glassradiusdamage( var_0.weapontag02.targetedent.origin + ( 0, 0, 32 ), var_1 * 2, 200, 200 );
+            glassradiusdamage( var_0.weapontag03.targetedent.origin + ( 0, 0, 32 ), var_1 * 2, 200, 200 );
+            glassradiusdamage( var_0.weapontag04.targetedent.origin + ( 0, 0, 32 ), var_1 * 2, 200, 200 );
         }
 
         wait 0.15;
     }
 }
 
-_id_A1F5( var_0, var_1 )
+watchallplayerdeath( var_0, var_1 )
 {
     foreach ( var_3 in level.players )
-        var_3 thread _id_A01C( var_0, var_1 );
+        var_3 thread waitforlaserdeath( var_0, var_1 );
 }
 
-_id_A01C( var_0, var_1 )
+waitforlaserdeath( var_0, var_1 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
@@ -783,45 +783,45 @@ _id_A01C( var_0, var_1 )
     }
 }
 
-_id_54F0( var_0 )
+laserdophysics( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
     var_0 endon( "PossessHoldTimeComplete" );
     var_0 endon( "leaving" );
     var_0 endon( "stop_charge" );
-    var_1 = _id_3FF9( var_0 );
+    var_1 = getlaserradius( var_0 );
     var_2 = 2;
 
     for (;;)
     {
         var_3 = randomfloatrange( 0.65, 0.8 );
         var_4 = randomintrange( -180, 180 );
-        var_5 = ( var_0._id_A2E5._id_91C0.angles[0] * var_3, var_4, var_4 );
+        var_5 = ( var_0.weapontag01.targetedent.angles[0] * var_3, var_4, var_4 );
         var_6 = anglestoforward( var_5 );
-        physicsexplosionsphere( var_0._id_A2E5._id_91C0.origin + ( 0.0, 0.0, 1.0 ), var_1, 96, var_2 );
+        physicsexplosionsphere( var_0.weapontag01.targetedent.origin + ( 0, 0, 1 ), var_1, 96, var_2 );
         wait 0.4;
     }
 }
 
-_id_37D8( var_0 )
+firelaserbeam( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
-    _id_6D9A( var_0 );
-    _id_6A2C( var_0 );
-    _id_8D23( var_0 );
+    playfireeffects( var_0 );
+    playbeameffects( var_0 );
+    startlasersounds( var_0 );
     var_0 waittill( "stop_charge" );
 
     if ( isdefined( var_0 ) )
     {
-        _id_8EDF( var_0 );
-        _id_8ED8( var_0 );
-        _id_8EEF( var_0 );
+        stopfireeffects( var_0 );
+        stopbeameffects( var_0 );
+        stoplasersounds( var_0 );
     }
 }
 
-_id_54FB( var_0 )
+laserpilotquake( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
@@ -832,18 +832,18 @@ _id_54FB( var_0 )
     wait(var_1);
 }
 
-_id_54FD( var_0 )
+lasersurfacequake( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 endon( "death" );
     var_0 endon( "stop_weapon" );
     var_0 endon( "stop_charge" );
     var_1 = 0.25;
-    earthquake( 0.5, var_1, var_0._id_A2E5._id_91C0.origin + ( 0.0, 0.0, 16.0 ), 384 );
+    earthquake( 0.5, var_1, var_0.weapontag01.targetedent.origin + ( 0, 0, 16 ), 384 );
     wait(var_1);
 }
 
-_id_6A3F( var_0, var_1, var_2 )
+playeffectongroundent( var_0, var_1, var_2 )
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -885,45 +885,45 @@ _id_6A3F( var_0, var_1, var_2 )
         stopfxontag( var_0, self, "tag_origin" );
 }
 
-_id_6DE9( var_0 )
+playwarmupeffects( var_0 )
 {
     var_1 = "stop_warmup_fx";
-    var_2 = _id_4159( var_0 );
-    var_3 = _id_4159( var_0, 1 );
-    var_0._id_A2E5._id_91C0 thread _id_6A3F( var_2, var_3, var_1 );
+    var_2 = getwarmupeffect( var_0 );
+    var_3 = getwarmupeffect( var_0, 1 );
+    var_0.weapontag01.targetedent thread playeffectongroundent( var_2, var_3, var_1 );
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
     {
-        var_4 = _id_415A( var_0 );
-        var_5 = _id_415A( var_0, 1 );
-        var_0._id_A2E6._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
-        var_0._id_A2E7._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
-        var_0._id_A2E8._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
+        var_4 = getwarmuplightshoweffect( var_0 );
+        var_5 = getwarmuplightshoweffect( var_0, 1 );
+        var_0.weapontag02.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
+        var_0.weapontag03.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
+        var_0.weapontag04.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
     }
 }
 
-_id_8F05( var_0 )
+stopwarmupeffects( var_0 )
 {
     var_1 = "stop_warmup_fx";
 
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 notify( var_1 );
+        var_0.weapontag01.targetedent notify( var_1 );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 notify( var_1 );
-            var_0._id_A2E7._id_91C0 notify( var_1 );
-            var_0._id_A2E8._id_91C0 notify( var_1 );
+            var_0.weapontag02.targetedent notify( var_1 );
+            var_0.weapontag03.targetedent notify( var_1 );
+            var_0.weapontag04.targetedent notify( var_1 );
         }
     }
 }
 
-_id_4159( var_0, var_1 )
+getwarmupeffect( var_0, var_1 )
 {
     var_2 = "orbital_laser_warmup";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_2 += "_wide";
 
     if ( isdefined( var_1 ) && var_1 )
@@ -932,11 +932,11 @@ _id_4159( var_0, var_1 )
     return common_scripts\utility::getfx( var_2 );
 }
 
-_id_415A( var_0, var_1 )
+getwarmuplightshoweffect( var_0, var_1 )
 {
     var_2 = "orbital_laser_warmup_lightshow";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_2 += "_wide";
 
     if ( isdefined( var_1 ) && var_1 )
@@ -945,9 +945,9 @@ _id_415A( var_0, var_1 )
     return common_scripts\utility::getfx( var_2 );
 }
 
-_id_6DEA( var_0, var_1 )
+playwarmupsounds( var_0, var_1 )
 {
-    _id_8F06( var_0 );
+    stopwarmupsounds( var_0 );
     var_2 = "vulcan_charge_start_npc";
     var_3 = "vulcan_charge_start_plr";
 
@@ -957,29 +957,29 @@ _id_6DEA( var_0, var_1 )
         var_3 = "vulcan_charge_up_plr";
     }
 
-    var_0._id_A2E5._id_91C0 _meth_8438( var_2 );
+    var_0.weapontag01.targetedent _meth_8438( var_2 );
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
     {
-        var_0._id_A2E6._id_91C0 _meth_8438( var_2 );
-        var_0._id_A2E7._id_91C0 _meth_8438( var_2 );
-        var_0._id_A2E8._id_91C0 _meth_8438( var_2 );
+        var_0.weapontag02.targetedent _meth_8438( var_2 );
+        var_0.weapontag03.targetedent _meth_8438( var_2 );
+        var_0.weapontag04.targetedent _meth_8438( var_2 );
     }
 
     self playlocalsound( var_3 );
 }
 
-_id_8F06( var_0 )
+stopwarmupsounds( var_0 )
 {
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 stopsounds();
+        var_0.weapontag01.targetedent _meth_80AC();
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 stopsounds();
-            var_0._id_A2E7._id_91C0 stopsounds();
-            var_0._id_A2E8._id_91C0 stopsounds();
+            var_0.weapontag02.targetedent _meth_80AC();
+            var_0.weapontag03.targetedent _meth_80AC();
+            var_0.weapontag04.targetedent _meth_80AC();
         }
     }
 
@@ -990,47 +990,47 @@ _id_8F06( var_0 )
     }
 }
 
-_id_6D9A( var_0 )
+playfireeffects( var_0 )
 {
     var_1 = "stop_fire_fx";
-    var_2 = _id_3F92( var_0 );
-    var_3 = _id_3F92( var_0, 1 );
-    var_4 = _id_3F93( var_0 );
-    var_5 = _id_3F93( var_0, 1 );
+    var_2 = getfireeffect( var_0 );
+    var_3 = getfireeffect( var_0, 1 );
+    var_4 = getfirelightshoweffect( var_0 );
+    var_5 = getfirelightshoweffect( var_0, 1 );
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
     {
-        var_0._id_A2E5._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
-        var_0._id_A2E6._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
-        var_0._id_A2E7._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
-        var_0._id_A2E8._id_91C0 thread _id_6A3F( var_4, var_5, var_1 );
+        var_0.weapontag01.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
+        var_0.weapontag02.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
+        var_0.weapontag03.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
+        var_0.weapontag04.targetedent thread playeffectongroundent( var_4, var_5, var_1 );
     }
     else
-        var_0._id_A2E5._id_91C0 thread _id_6A3F( var_2, var_3, var_1 );
+        var_0.weapontag01.targetedent thread playeffectongroundent( var_2, var_3, var_1 );
 }
 
-_id_8EDF( var_0 )
+stopfireeffects( var_0 )
 {
     var_1 = "stop_fire_fx";
 
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 notify( var_1 );
+        var_0.weapontag01.targetedent notify( var_1 );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 notify( var_1 );
-            var_0._id_A2E7._id_91C0 notify( var_1 );
-            var_0._id_A2E8._id_91C0 notify( var_1 );
+            var_0.weapontag02.targetedent notify( var_1 );
+            var_0.weapontag03.targetedent notify( var_1 );
+            var_0.weapontag04.targetedent notify( var_1 );
         }
 
-        _id_6DBB( var_0 );
+        playlaserendingeffect( var_0 );
     }
 }
 
-_id_6DBB( var_0 )
+playlaserendingeffect( var_0 )
 {
-    var_1 = var_0._id_A2E5._id_91C0;
+    var_1 = var_0.weapontag01.targetedent;
 
     if ( var_1 _meth_850D() )
         playfx( level._effect["orbital_laser_ending_water"], var_1.origin, anglestoforward( var_1.angles ), anglestoup( var_1.angles ) );
@@ -1038,11 +1038,11 @@ _id_6DBB( var_0 )
         playfx( level._effect["orbital_laser_ending"], var_1.origin, anglestoforward( var_1.angles ), anglestoup( var_1.angles ) );
 }
 
-_id_3F92( var_0, var_1 )
+getfireeffect( var_0, var_1 )
 {
     var_2 = "orbital_laser_fire";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_2 += "_wide";
 
     if ( isdefined( var_1 ) && var_1 )
@@ -1051,11 +1051,11 @@ _id_3F92( var_0, var_1 )
     return common_scripts\utility::getfx( var_2 );
 }
 
-_id_3F93( var_0, var_1 )
+getfirelightshoweffect( var_0, var_1 )
 {
     var_2 = "orbital_laser_fire_lightshow";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_2 += "_wide";
 
     if ( isdefined( var_1 ) && var_1 )
@@ -1064,65 +1064,65 @@ _id_3F93( var_0, var_1 )
     return common_scripts\utility::getfx( var_2 );
 }
 
-_id_6A2C( var_0 )
+playbeameffects( var_0 )
 {
-    var_1 = _id_3F10( var_0 );
-    playfxontag( var_1, var_0._id_A2E5._id_91C0, "tag_origin" );
+    var_1 = getbeameffect( var_0 );
+    playfxontag( var_1, var_0.weapontag01.targetedent, "tag_origin" );
 
-    if ( var_0._id_1363 )
+    if ( var_0.beams )
     {
-        var_2 = _id_4002( var_0 );
-        playfxontag( var_2, var_0._id_A2E6._id_91C0, "tag_origin" );
-        playfxontag( var_2, var_0._id_A2E7._id_91C0, "tag_origin" );
-        playfxontag( var_2, var_0._id_A2E8._id_91C0, "tag_origin" );
+        var_2 = getlightshowbeameffect( var_0 );
+        playfxontag( var_2, var_0.weapontag02.targetedent, "tag_origin" );
+        playfxontag( var_2, var_0.weapontag03.targetedent, "tag_origin" );
+        playfxontag( var_2, var_0.weapontag04.targetedent, "tag_origin" );
     }
 }
 
-_id_8ED8( var_0 )
+stopbeameffects( var_0 )
 {
-    var_1 = _id_3F10( var_0 );
+    var_1 = getbeameffect( var_0 );
     waitframe();
 
-    if ( isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0.weapontag01 ) )
     {
-        stopfxontag( var_1, var_0._id_A2E5._id_91C0, "tag_origin" );
+        stopfxontag( var_1, var_0.weapontag01.targetedent, "tag_origin" );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_2 = _id_4002( var_0 );
-            stopfxontag( var_2, var_0._id_A2E6._id_91C0, "tag_origin" );
-            stopfxontag( var_2, var_0._id_A2E7._id_91C0, "tag_origin" );
-            stopfxontag( var_2, var_0._id_A2E8._id_91C0, "tag_origin" );
+            var_2 = getlightshowbeameffect( var_0 );
+            stopfxontag( var_2, var_0.weapontag02.targetedent, "tag_origin" );
+            stopfxontag( var_2, var_0.weapontag03.targetedent, "tag_origin" );
+            stopfxontag( var_2, var_0.weapontag04.targetedent, "tag_origin" );
         }
     }
 }
 
-_id_6DBC( var_0 )
+playlingereffects( var_0 )
 {
-    playfxontag( "orbital_laser_smoldering", var_0._id_A2E5._id_91C0, "tag_origin" );
+    playfxontag( "orbital_laser_smoldering", var_0.weapontag01.targetedent, "tag_origin" );
 }
 
-_id_3F10( var_0 )
+getbeameffect( var_0 )
 {
     var_1 = "orbital_laser_beam";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_1 += "_wide";
 
     return common_scripts\utility::getfx( var_1 );
 }
 
-_id_4002( var_0 )
+getlightshowbeameffect( var_0 )
 {
     var_1 = "orbital_laser_beam_lightshow";
 
-    if ( var_0._id_A310 )
+    if ( var_0.widebeam )
         var_1 += "_wide";
 
     return common_scripts\utility::getfx( var_1 );
 }
 
-_id_6562( var_0, var_1 )
+orbitalstriketimer( var_0, var_1 )
 {
     self endon( "disconnect" );
     self endon( "OrbitalStrikeStreakComplete" );
@@ -1130,7 +1130,7 @@ _id_6562( var_0, var_1 )
     var_1 notify( "leaving" );
 }
 
-_id_5E88( var_0 )
+monitororbitalstrikedeath( var_0 )
 {
     self endon( "disconnect" );
     self endon( "game_ended" );
@@ -1140,51 +1140,51 @@ _id_5E88( var_0 )
     var_0 notify( "finish_death" );
 }
 
-_id_5E8A( var_0 )
+monitororbitalstriketimeout( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_0 common_scripts\utility::waittill_any( "leaving", "crashing", "PossessHoldTimeComplete", "done", "finish_death" );
-    thread _id_6561( var_0 );
+    thread orbitalstrikecleanup( var_0 );
 }
 
-_id_41E1( var_0 )
+givecontrolback( var_0 )
 {
-    if ( isdefined( var_0 ) && isdefined( var_0._id_A2E5 ) )
+    if ( isdefined( var_0 ) && isdefined( var_0.weapontag01 ) )
     {
-        var_0._id_A2E5._id_91C0 setotherent( undefined );
+        var_0.weapontag01.targetedent _meth_8383( undefined );
 
-        if ( var_0._id_1363 )
+        if ( var_0.beams )
         {
-            var_0._id_A2E6._id_91C0 setotherent( undefined );
-            var_0._id_A2E7._id_91C0 setotherent( undefined );
-            var_0._id_A2E8._id_91C0 setotherent( undefined );
+            var_0.weapontag02.targetedent _meth_8383( undefined );
+            var_0.weapontag03.targetedent _meth_8383( undefined );
+            var_0.weapontag04.targetedent _meth_8383( undefined );
         }
     }
 
-    self setclientomnvar( "ui_orbital_laser_charge", 0 );
-    self setclientomnvar( "ui_orbital_laser_mode", 0 );
-    self setclientomnvar( "ui_orbital_laser_bursts", 0 );
-    self setclientomnvar( "ui_orbital_laser_fire", 0 );
-    self setclientomnvar( "ui_orbital_laser", 0 );
-    maps\mp\killstreaks\_aerial_utility::_id_6C89();
-    self takeweapon( "orbital_laser_fov_mp" );
+    self _meth_82FB( "ui_orbital_laser_charge", 0 );
+    self _meth_82FB( "ui_orbital_laser_mode", 0 );
+    self _meth_82FB( "ui_orbital_laser_bursts", 0 );
+    self _meth_82FB( "ui_orbital_laser_fire", 0 );
+    self _meth_82FB( "ui_orbital_laser", 0 );
+    maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
+    self _meth_830F( "orbital_laser_fov_mp" );
 
     if ( self.disabledweaponswitch > 0 )
         common_scripts\utility::_enableweaponswitch();
 
     self setblurforplayer( 0, 0 );
     self _meth_851A( 1 );
-    maps\mp\killstreaks\_aerial_utility::_id_2B1E( self );
+    maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( self );
     self thermalvisionfofoverlayoff();
     self _meth_8207();
-    self controlsunlink();
-    self cameraunlink();
+    self _meth_8201();
+    self _meth_81E3();
 
     if ( maps\mp\_utility::isusingremote() )
         maps\mp\_utility::clearusingremote();
 
-    thread _id_27D1();
-    thread _id_73E5( 0.5 );
+    thread delaycontrol();
+    thread removevulcanvisionandlightsetpermap( 0.5 );
 
     if ( getdvarint( "camera_thirdPerson" ) )
         maps\mp\_utility::setthirdpersondof( 1 );
@@ -1193,35 +1193,35 @@ _id_41E1( var_0 )
     self notify( "player_control_strike_over" );
 }
 
-_id_27D1()
+delaycontrol()
 {
     self freezecontrols( 1 );
     wait 0.5;
     self freezecontrols( 0 );
 }
 
-_id_5E9A( var_0 )
+monitorplayerdisconnect( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     self waittill( "disconnect" );
-    thread _id_6561( var_0, 1 );
+    thread orbitalstrikecleanup( var_0, 1 );
 }
 
-_id_5EA9( var_0 )
+monitorplayerteamchange( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     common_scripts\utility::waittill_either( "joined_team", "joined_spectators" );
-    thread _id_6561( var_0 );
+    thread orbitalstrikecleanup( var_0 );
 }
 
-_id_5E60( var_0 )
+monitorgameended( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     level waittill( "game_ended" );
-    thread _id_6561( var_0 );
+    thread orbitalstrikecleanup( var_0 );
 }
 
-_id_6561( var_0, var_1 )
+orbitalstrikecleanup( var_0, var_1 )
 {
     self notify( "OrbitalStrikeStreakComplete" );
     waittillframeend;
@@ -1234,85 +1234,85 @@ _id_6561( var_0, var_1 )
 
     if ( !var_1 )
     {
-        self._id_2199 = 0;
-        _id_41E1( var_0 );
-        _id_6D2D();
+        self.controllingorbitallaser = 0;
+        givecontrolback( var_0 );
+        playerremovenotifycommands();
     }
 
-    level._id_654F = common_scripts\utility::array_remove( level._id_654F, var_0 );
+    level.orbital_lasers = common_scripts\utility::array_remove( level.orbital_lasers, var_0 );
 
     if ( level.teambased )
-        _id_7FCA( var_0.team, 0 );
+        setorbitallaserforteam( var_0.team, 0 );
 
-    _id_8F06( var_0 );
-    _id_8EEF( var_0 );
-    _id_8F05( var_0 );
-    _id_8EDF( var_0 );
-    _id_8ED8( var_0 );
-    _id_2875( var_0 );
+    stopwarmupsounds( var_0 );
+    stoplasersounds( var_0 );
+    stopwarmupeffects( var_0 );
+    stopfireeffects( var_0 );
+    stopbeameffects( var_0 );
+    deleteweaponmodels( var_0 );
     var_0 delete();
     maps\mp\_utility::decrementfauxvehiclecount();
     waitframe();
 
     if ( isdefined( self ) )
     {
-        self stoprumble( "orbital_laser_charge" );
-        self stoprumble( "orbital_laser_charge_quick" );
+        self _meth_80AF( "orbital_laser_charge" );
+        self _meth_80AF( "orbital_laser_charge_quick" );
     }
 
     waitframe();
 
     if ( isdefined( self ) )
-        self stoprumble( "orbital_laser_fire" );
+        self _meth_80AF( "orbital_laser_fire" );
 }
 
-_id_6C5A()
+playeraddnotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self notifyonplayercommand( "SwitchVisionMode", "+actionslot 1" );
-        self notifyonplayercommand( "ToggleControlState", "+activate" );
-        self notifyonplayercommand( "ToggleControlCancel", "-activate" );
-        self notifyonplayercommand( "ToggleControlState", "+usereload" );
-        self notifyonplayercommand( "ToggleControlCancel", "-usereload" );
-        self notifyonplayercommand( "StartFire", "+attack" );
-        self notifyonplayercommand( "StartFire", "+attack_akimbo_accessible" );
+        self _meth_82DD( "SwitchVisionMode", "+actionslot 1" );
+        self _meth_82DD( "ToggleControlState", "+activate" );
+        self _meth_82DD( "ToggleControlCancel", "-activate" );
+        self _meth_82DD( "ToggleControlState", "+usereload" );
+        self _meth_82DD( "ToggleControlCancel", "-usereload" );
+        self _meth_82DD( "StartFire", "+attack" );
+        self _meth_82DD( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
-_id_6D2D()
+playerremovenotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self notifyonplayercommandremove( "SwitchVisionMode", "+actionslot 1" );
-        self notifyonplayercommandremove( "ToggleControlState", "+activate" );
-        self notifyonplayercommandremove( "ToggleControlCancel", "-activate" );
-        self notifyonplayercommandremove( "ToggleControlState", "+usereload" );
-        self notifyonplayercommandremove( "ToggleControlCancel", "-usereload" );
-        self notifyonplayercommandremove( "StartFire", "+attack" );
-        self notifyonplayercommandremove( "StartFire", "+attack_akimbo_accessible" );
+        self _meth_849C( "SwitchVisionMode", "+actionslot 1" );
+        self _meth_849C( "ToggleControlState", "+activate" );
+        self _meth_849C( "ToggleControlCancel", "-activate" );
+        self _meth_849C( "ToggleControlState", "+usereload" );
+        self _meth_849C( "ToggleControlCancel", "-usereload" );
+        self _meth_849C( "StartFire", "+attack" );
+        self _meth_849C( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
-_id_834D( var_0 )
+setvulcanvisionandlightsetpermap( var_0 )
 {
     self endon( "disconnect" );
     self endon( "game_ended" );
     self endon( "OrbitalStrikeStreakComplete" );
     wait(var_0);
 
-    if ( isdefined( level._id_9F74 ) )
-        self setclienttriggervisionset( level._id_9F74, 0 );
+    if ( isdefined( level.vulcanvisionset ) )
+        self _meth_847A( level.vulcanvisionset, 0 );
 
-    if ( isdefined( level._id_9F73 ) )
-        self lightsetforplayer( level._id_9F73 );
+    if ( isdefined( level.vulcanlightset ) )
+        self _meth_83C0( level.vulcanlightset );
 
-    maps\mp\killstreaks\_aerial_utility::_id_45F0();
+    maps\mp\killstreaks\_aerial_utility::handle_player_starting_aerial_view();
 }
 
-_id_73E5( var_0 )
+removevulcanvisionandlightsetpermap( var_0 )
 {
-    self setclienttriggervisionset( "", var_0 );
-    self lightsetforplayer( "" );
-    maps\mp\killstreaks\_aerial_utility::_id_45E2();
+    self _meth_847A( "", var_0 );
+    self _meth_83C0( "" );
+    maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
 }

@@ -1,51 +1,51 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
-    level.killstreakfuncs["agent"] = ::_id_98C7;
-    level.killstreakfuncs["recon_agent"] = ::_id_98BA;
+    level.killstreakfuncs["agent"] = ::tryusesquadmate;
+    level.killstreakfuncs["recon_agent"] = ::tryusereconsquadmate;
 }
 
-_id_806C()
+setup_callbacks()
 {
-    level._id_0897["squadmate"] = level._id_0897["player"];
-    level._id_0897["squadmate"]["think"] = ::_id_8ACB;
-    level._id_0897["squadmate"]["on_killed"] = ::_id_6439;
-    level._id_0897["squadmate"]["on_damaged"] = maps\mp\agents\_agents::_id_6437;
-    level._id_0897["squadmate"]["gametype_update"] = ::_id_60F9;
+    level.agent_funcs["squadmate"] = level.agent_funcs["player"];
+    level.agent_funcs["squadmate"]["think"] = ::squadmate_agent_think;
+    level.agent_funcs["squadmate"]["on_killed"] = ::on_agent_squadmate_killed;
+    level.agent_funcs["squadmate"]["on_damaged"] = maps\mp\agents\_agents::on_agent_player_damaged;
+    level.agent_funcs["squadmate"]["gametype_update"] = ::no_gametype_update;
 }
 
-_id_60F9()
+no_gametype_update()
 {
     return 0;
 }
 
-_id_98C7( var_0, var_1 )
+tryusesquadmate( var_0, var_1 )
 {
-    return _id_9C0B( "agent" );
+    return usesquadmate( "agent" );
 }
 
-_id_98BA( var_0, var_1 )
+tryusereconsquadmate( var_0, var_1 )
 {
-    return _id_9C0B( "reconAgent" );
+    return usesquadmate( "reconAgent" );
 }
 
-_id_9C0B( var_0 )
+usesquadmate( var_0 )
 {
-    if ( maps\mp\agents\_agent_utility::_id_4052( "squadmate" ) >= 5 )
+    if ( maps\mp\agents\_agent_utility::getnumactiveagents( "squadmate" ) >= 5 )
     {
         self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
-    if ( maps\mp\agents\_agent_utility::_id_4054( self ) >= 2 )
+    if ( maps\mp\agents\_agent_utility::getnumownedactiveagents( self ) >= 2 )
     {
         self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
-    var_1 = maps\mp\agents\_agent_utility::_id_414A( 0, 1 );
+    var_1 = maps\mp\agents\_agent_utility::getvalidspawnpathnodenearplayer( 0, 1 );
 
     if ( !isdefined( var_1 ) )
         return 0;
@@ -63,12 +63,12 @@ _id_9C0B( var_0 )
         return 0;
     }
 
-    var_4._id_53A8 = var_0;
+    var_4.killstreaktype = var_0;
 
-    if ( var_4._id_53A8 == "reconAgent" )
+    if ( var_4.killstreaktype == "reconAgent" )
     {
-        var_4 thread _id_7C7F( "iw6_riotshield_mp" );
-        var_4 thread _id_3799();
+        var_4 thread sendagentweaponnotify( "iw6_riotshield_mp" );
+        var_4 thread finishreconagentloadout();
         var_4 thread maps\mp\gametypes\_class::giveandapplyloadout( self.pers["team"], "reconAgent", 0 );
         var_4 maps\mp\agents\_agent_common::set_agent_health( 250 );
         var_4 maps\mp\perks\_perkfunctions::setlightarmor();
@@ -80,7 +80,7 @@ _id_9C0B( var_0 )
     return 1;
 }
 
-_id_3799()
+finishreconagentloadout()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -91,7 +91,7 @@ _id_3799()
     maps\mp\_utility::giveperk( "specialty_regenfaster", 0 );
 }
 
-_id_7C7F( var_0 )
+sendagentweaponnotify( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -104,7 +104,7 @@ _id_7C7F( var_0 )
     self notify( "weapon_change", var_0 );
 }
 
-_id_8ACB()
+squadmate_agent_think()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -118,17 +118,17 @@ _id_8ACB()
 
         if ( !var_0 )
         {
-            if ( !maps\mp\bots\_bots_util::_id_165F( self.owner ) )
-                maps\mp\bots\_bots_strategy::_id_1646( self.owner, 350 );
+            if ( !maps\mp\bots\_bots_util::bot_is_guarding_player( self.owner ) )
+                maps\mp\bots\_bots_strategy::bot_guard_player( self.owner, 350 );
         }
 
         wait 0.05;
     }
 }
 
-_id_6439( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
+on_agent_squadmate_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-    maps\mp\agents\_agents::_id_643F( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 0 );
+    maps\mp\agents\_agents::on_humanoid_agent_killed_common( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 0 );
 
     if ( isplayer( var_1 ) && isdefined( self.owner ) && var_1 != self.owner )
     {
@@ -136,5 +136,5 @@ _id_6439( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
         maps\mp\gametypes\_damage::onkillstreakkilled( var_1, var_4, var_3, var_2, "destroyed_squad_mate" );
     }
 
-    maps\mp\agents\_agent_utility::_id_2630();
+    maps\mp\agents\_agent_utility::deactivateagent();
 }

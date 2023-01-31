@@ -1,41 +1,41 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    level._id_164F = 0;
+    level.bot_ignore_precalc_paths = 0;
 
     if ( level.currentgen )
-        level._id_164F = 1;
+        level.bot_ignore_precalc_paths = 1;
 
-    _id_806C();
-    _id_8056();
-    level thread maps\mp\bots\_bots_util::_id_16A4( maps\mp\bots\_bots_util::_id_1725 );
+    setup_callbacks();
+    setup_bot_dom();
+    level thread maps\mp\bots\_bots_util::bot_monitor_enemy_camp_spots( maps\mp\bots\_bots_util::bot_valid_camp_assassin );
 }
 
-_id_806C()
+setup_callbacks()
 {
-    level.bot_funcs["crate_can_use"] = ::_id_2363;
-    level.bot_funcs["gametype_think"] = ::_id_15FF;
-    level.bot_funcs["should_start_cautious_approach"] = ::_id_8476;
-    level.bot_funcs["leader_dialog"] = ::_id_15FD;
+    level.bot_funcs["crate_can_use"] = ::crate_can_use;
+    level.bot_funcs["gametype_think"] = ::bot_dom_think;
+    level.bot_funcs["should_start_cautious_approach"] = ::should_start_cautious_approach_dom;
+    level.bot_funcs["leader_dialog"] = ::bot_dom_leader_dialog;
 
-    if ( !level._id_164F )
-        level.bot_funcs["get_watch_node_chance"] = ::_id_15FC;
+    if ( !level.bot_ignore_precalc_paths )
+        level.bot_funcs["get_watch_node_chance"] = ::bot_dom_get_node_chance;
 }
 
-_id_2363( var_0 )
+crate_can_use( var_0 )
 {
-    if ( isagent( self ) && !isdefined( var_0._id_175D ) )
+    if ( isagent( self ) && !isdefined( var_0.boxtype ) )
         return 0;
 
     if ( !maps\mp\_utility::isteamparticipant( self ) )
         return 1;
 
-    return maps\mp\bots\_bots_util::_id_1662();
+    return maps\mp\bots\_bots_util::bot_is_protecting();
 }
 
-_id_5E20()
+monitor_zone_control()
 {
     self notify( "monitor_zone_control" );
     self endon( "monitor_zone_control" );
@@ -57,7 +57,7 @@ _id_5E20()
     }
 }
 
-_id_5DA0()
+monitor_flag_ownership()
 {
     self notify( "monitor_flag_ownership" );
     self endon( "monitor_flag_ownership" );
@@ -77,123 +77,123 @@ _id_5DA0()
     }
 }
 
-_id_8056()
+setup_bot_dom()
 {
-    maps\mp\bots\_bots_util::_id_172D( 1 );
-    var_0 = _id_162A();
+    maps\mp\bots\_bots_util::bot_waittill_bots_enabled( 1 );
+    var_0 = bot_get_all_possible_flags();
 
     if ( var_0.size > 3 )
     {
-        while ( !isdefined( level._id_9210 ) )
+        while ( !isdefined( level.teleport_dom_finished_initializing ) )
             wait 0.05;
 
         var_1 = [];
 
         foreach ( var_3 in var_0 )
         {
-            if ( !isdefined( var_1[var_3._id_9251] ) )
-                var_1[var_3._id_9251] = [];
+            if ( !isdefined( var_1[var_3.teleport_zone] ) )
+                var_1[var_3.teleport_zone] = [];
 
-            var_1[var_3._id_9251] = common_scripts\utility::array_add( var_1[var_3._id_9251], var_3 );
+            var_1[var_3.teleport_zone] = common_scripts\utility::array_add( var_1[var_3.teleport_zone], var_3 );
         }
 
         foreach ( var_7, var_6 in var_1 )
         {
-            level._id_3322 = 0;
-            _id_15C1( var_6 );
-            maps\mp\bots\_bots_gametype_common::_id_15BF( var_6, var_7 + "_flag", level._id_164F );
+            level.entrance_points_finished_caching = 0;
+            bot_cache_flag_distances( var_6 );
+            maps\mp\bots\_bots_gametype_common::bot_cache_entrances_to_gametype_array( var_6, var_7 + "_flag", level.bot_ignore_precalc_paths );
         }
     }
     else
     {
-        maps\mp\bots\_bots_gametype_common::_id_15BF( var_0, "flag", level._id_164F );
-        _id_15C1( var_0 );
-        thread _id_172C( var_0 );
+        maps\mp\bots\_bots_gametype_common::bot_cache_entrances_to_gametype_array( var_0, "flag", level.bot_ignore_precalc_paths );
+        bot_cache_flag_distances( var_0 );
+        thread bot_wait_for_event_flag_swap( var_0 );
     }
 
     foreach ( var_3 in var_0 )
     {
-        var_3 thread _id_5E20();
-        var_3 thread _id_5DA0();
+        var_3 thread monitor_zone_control();
+        var_3 thread monitor_flag_ownership();
 
         if ( var_3.script_label != "_a" && var_3.script_label != "_b" && var_3.script_label != "_c" )
         {
 
         }
 
-        var_3._id_6136 = _func_1FE( var_3 );
-        maps\mp\bots\_bots_gametype_common::_id_15A3( var_3, var_3 );
-        var_3._id_5563["allies"] = 0;
-        var_3._id_5563["axis"] = 0;
+        var_3.nodes = _func_1FE( var_3 );
+        maps\mp\bots\_bots_gametype_common::bot_add_missing_nodes( var_3, var_3 );
+        var_3.last_time_secured["allies"] = 0;
+        var_3.last_time_secured["axis"] = 0;
     }
 
-    level._id_15FE = [];
-    level._id_15FE["axis"] = [];
-    level._id_15FE["allies"] = [];
-    level._id_1628 = 1;
+    level.bot_dom_override_flag_targets = [];
+    level.bot_dom_override_flag_targets["axis"] = [];
+    level.bot_dom_override_flag_targets["allies"] = [];
+    level.bot_gametype_precaching_done = 1;
 }
 
-_id_172C( var_0 )
+bot_wait_for_event_flag_swap( var_0 )
 {
     level endon( "game_ended" );
     level waittill( "dom_flags_moved" );
-    maps\mp\bots\_bots_gametype_common::_id_15BF( var_0, "flag", level._id_164F, 1 );
-    _id_15C1( var_0 );
+    maps\mp\bots\_bots_gametype_common::bot_cache_entrances_to_gametype_array( var_0, "flag", level.bot_ignore_precalc_paths, 1 );
+    bot_cache_flag_distances( var_0 );
 
     foreach ( var_2 in var_0 )
     {
-        var_2._id_6136 = _func_1FE( var_2 );
-        maps\mp\bots\_bots_gametype_common::_id_15A3( var_2, var_2 );
+        var_2.nodes = _func_1FE( var_2 );
+        maps\mp\bots\_bots_gametype_common::bot_add_missing_nodes( var_2, var_2 );
     }
 
     foreach ( var_5 in level.participants )
     {
         if ( maps\mp\_utility::isaiteamparticipant( var_5 ) )
-            var_5._id_399A = 1;
+            var_5.force_new_goal = 1;
     }
 }
 
-_id_162A()
+bot_get_all_possible_flags()
 {
-    if ( isdefined( level._id_09E0 ) )
-        return level._id_09E0;
+    if ( isdefined( level.all_dom_flags ) )
+        return level.all_dom_flags;
     else
         return level.flags;
 }
 
-_id_15C1( var_0 )
+bot_cache_flag_distances( var_0 )
 {
-    if ( !isdefined( level._id_3836 ) )
-        level._id_3836 = [];
+    if ( !isdefined( level.flag_distances ) )
+        level.flag_distances = [];
 
     for ( var_1 = 0; var_1 < var_0.size - 1; var_1++ )
     {
         for ( var_2 = var_1 + 1; var_2 < var_0.size; var_2++ )
         {
             var_3 = distance( var_0[var_1].origin, var_0[var_2].origin );
-            var_4 = _id_3D6C( var_0[var_1] );
-            var_5 = _id_3D6C( var_0[var_2] );
-            level._id_3836[var_4][var_5] = var_3;
-            level._id_3836[var_5][var_4] = var_3;
+            var_4 = get_flag_label( var_0[var_1] );
+            var_5 = get_flag_label( var_0[var_2] );
+            level.flag_distances[var_4][var_5] = var_3;
+            level.flag_distances[var_5][var_4] = var_3;
         }
     }
 }
 
-_id_8476( var_0 )
+should_start_cautious_approach_dom( var_0 )
 {
     if ( var_0 )
     {
-        if ( self._id_24E5 maps\mp\gametypes\dom::getflagteam() == "neutral" && _id_383A( self._id_24E5 ) )
+        if ( self.current_flag maps\mp\gametypes\dom::getflagteam() == "neutral" && flag_has_never_been_captured( self.current_flag ) )
         {
-            var_1 = _id_3CF5( self.lastspawnpoint.origin );
+            var_1 = get_closest_flag( self.lastspawnpoint.origin );
 
-            if ( var_1 == self._id_24E5 )
+            if ( var_1 == self.current_flag )
                 return 0;
             else
             {
-                var_2 = _id_3E04( var_1, self._id_24E5 );
-                var_3 = distancesquared( var_1.origin, self._id_24E5.origin );
-                var_4 = distancesquared( var_2.origin, self._id_24E5.origin );
+                var_2 = get_other_flag( var_1, self.current_flag );
+                var_3 = distancesquared( var_1.origin, self.current_flag.origin );
+                var_4 = distancesquared( var_2.origin, self.current_flag.origin );
 
                 if ( var_3 < var_4 )
                     return 0;
@@ -201,20 +201,20 @@ _id_8476( var_0 )
         }
     }
 
-    return maps\mp\bots\_bots_strategy::_id_8475( var_0 );
+    return maps\mp\bots\_bots_strategy::should_start_cautious_approach_default( var_0 );
 }
 
-_id_15FA()
+bot_dom_debug_should_capture_all()
 {
     return 0;
 }
 
-_id_15FB()
+bot_dom_debug_should_protect_all()
 {
     return 0;
 }
 
-_id_15FF()
+bot_dom_think()
 {
     self notify( "bot_dom_think" );
     self endon( "bot_dom_think" );
@@ -222,36 +222,36 @@ _id_15FF()
     self endon( "disconnect" );
     level endon( "game_ended" );
 
-    while ( !isdefined( level._id_1628 ) )
+    while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    self._id_399A = 0;
-    self._id_609A = 0;
-    self._id_60BE = 0;
+    self.force_new_goal = 0;
+    self.new_goal_time = 0;
+    self.next_strat_level_check = 0;
     self _meth_8351( "separation", 0 );
     self _meth_8351( "grenade_objectives", 1 );
     self _meth_8351( "use_obj_path_style", 1 );
 
     for (;;)
     {
-        maps\mp\bots\_bots_util::_id_1723();
+        maps\mp\bots\_bots_util::bot_update_camp_assassin();
         var_0 = gettime();
 
-        if ( var_0 > self._id_60BE )
+        if ( var_0 > self.next_strat_level_check )
         {
-            self._id_60BE = gettime() + 10000;
-            self._id_8F1D = self _meth_837B( "strategyLevel" );
+            self.next_strat_level_check = gettime() + 10000;
+            self.strategy_level = self _meth_837B( "strategyLevel" );
         }
 
-        if ( var_0 > self._id_609A || self._id_399A )
+        if ( var_0 > self.new_goal_time || self.force_new_goal )
         {
-            if ( _id_845B() )
-                self._id_609A = var_0 + 5000;
+            if ( should_delay_flag_decision() )
+                self.new_goal_time = var_0 + 5000;
             else
             {
-                self._id_399A = 0;
-                _id_15D7();
-                self._id_609A = var_0 + randomintrange( 30000, 45000 );
+                self.force_new_goal = 0;
+                bot_choose_flag();
+                self.new_goal_time = var_0 + randomintrange( 30000, 45000 );
             }
         }
 
@@ -259,24 +259,24 @@ _id_15FF()
     }
 }
 
-_id_845B()
+should_delay_flag_decision()
 {
-    if ( self._id_399A )
+    if ( self.force_new_goal )
         return 0;
 
-    if ( !maps\mp\bots\_bots_util::_id_165A() )
+    if ( !maps\mp\bots\_bots_util::bot_is_capturing() )
         return 0;
 
-    if ( self._id_24E5 maps\mp\gametypes\dom::getflagteam() == self.team )
+    if ( self.current_flag maps\mp\gametypes\dom::getflagteam() == self.team )
         return 0;
 
-    var_0 = _id_3D6B();
+    var_0 = get_flag_capture_radius();
 
-    if ( distancesquared( self.origin, self._id_24E5.origin ) < var_0 * 2 * ( var_0 * 2 ) )
+    if ( distancesquared( self.origin, self.current_flag.origin ) < var_0 * 2 * ( var_0 * 2 ) )
     {
-        var_1 = _id_3CC2( self.team );
+        var_1 = get_ally_flags( self.team );
 
-        if ( var_1.size == 2 && !common_scripts\utility::array_contains( var_1, self._id_24E5 ) && !_id_15A9() )
+        if ( var_1.size == 2 && !common_scripts\utility::array_contains( var_1, self.current_flag ) && !bot_allowed_to_3_cap() )
             return 0;
 
         return 1;
@@ -285,34 +285,34 @@ _id_845B()
     return 0;
 }
 
-_id_3E12()
+get_override_flag_targets()
 {
-    return level._id_15FE[self.team];
+    return level.bot_dom_override_flag_targets[self.team];
 }
 
-_id_46F4()
+has_override_flag_targets()
 {
-    var_0 = _id_3E12();
+    var_0 = get_override_flag_targets();
     return var_0.size > 0;
 }
 
-_id_3839( var_0 )
+flag_has_been_captured_before( var_0 )
 {
-    return !_id_383A( var_0 );
+    return !flag_has_never_been_captured( var_0 );
 }
 
-_id_383A( var_0 )
+flag_has_never_been_captured( var_0 )
 {
     return var_0.useobj.firstcapture;
 }
 
-_id_15D7()
+bot_choose_flag()
 {
     var_0 = undefined;
     var_1 = [];
     var_2 = [];
     var_3 = 1;
-    var_4 = _id_3E12();
+    var_4 = get_override_flag_targets();
 
     if ( var_4.size > 0 )
         var_5 = var_4;
@@ -325,7 +325,7 @@ _id_15D7()
 
         if ( var_3 )
         {
-            if ( _id_3839( var_5[var_6] ) )
+            if ( flag_has_been_captured_before( var_5[var_6] ) )
                 var_3 = 0;
             else
             {
@@ -350,12 +350,12 @@ _id_15D7()
     {
         if ( var_2.size == 1 )
         {
-            if ( !_id_16F8( var_2[0], 1 ) )
+            if ( !bot_should_defend_flag( var_2[0], 1 ) )
                 var_8 = 1;
             else
-                var_8 = !_id_16F7( 0.34 );
+                var_8 = !bot_should_defend( 0.34 );
 
-            if ( maps\mp\bots\_bots_util::_id_1636( self.team ) == 1 )
+            if ( maps\mp\bots\_bots_util::bot_get_max_players_on_team( self.team ) == 1 )
                 var_8 = 1;
         }
         else if ( var_2.size == 0 )
@@ -365,24 +365,24 @@ _id_15D7()
     {
         if ( var_2.size == 2 )
         {
-            if ( _id_15A9() )
+            if ( bot_allowed_to_3_cap() )
             {
-                if ( !_id_16F8( var_2[0], 2 ) && !_id_16F8( var_2[1], 2 ) )
+                if ( !bot_should_defend_flag( var_2[0], 2 ) && !bot_should_defend_flag( var_2[1], 2 ) )
                     var_8 = 1;
-                else if ( self._id_8F1D == 0 )
-                    var_8 = !_id_16F7( 0.34 );
+                else if ( self.strategy_level == 0 )
+                    var_8 = !bot_should_defend( 0.34 );
                 else
-                    var_8 = !_id_16F7( 0.5 );
+                    var_8 = !bot_should_defend( 0.5 );
             }
             else
                 var_8 = 0;
         }
         else if ( var_2.size == 1 )
         {
-            if ( !_id_16F8( var_2[0], 1 ) )
+            if ( !bot_should_defend_flag( var_2[0], 1 ) )
                 var_8 = 1;
             else
-                var_8 = !_id_16F7( 0.34 );
+                var_8 = !bot_should_defend( 0.34 );
         }
         else if ( var_2.size == 0 )
             var_8 = 1;
@@ -397,11 +397,11 @@ _id_15D7()
         else
             var_9 = var_1;
 
-        if ( var_3 && !_id_46F4() )
+        if ( var_3 && !has_override_flag_targets() )
         {
-            var_10 = _id_3DF4( var_9[0], 1 );
+            var_10 = get_num_allies_capturing_flag( var_9[0], 1 );
 
-            if ( var_10 < _id_5C2A() )
+            if ( var_10 < min_num_bots_assaulting_first_flag() )
                 var_11 = 0;
             else
             {
@@ -409,13 +409,13 @@ _id_15D7()
                 var_13 = 65;
                 var_14 = 15;
 
-                if ( self._id_8F1D == 0 )
+                if ( self.strategy_level == 0 )
                 {
                     var_12 = 50;
                     var_13 = 25;
                     var_14 = 25;
                 }
-                else if ( self._id_8F1D == 1 )
+                else if ( self.strategy_level == 1 )
                 {
                     var_12 = 40;
                     var_13 = 40;
@@ -437,7 +437,7 @@ _id_15D7()
             if ( var_11 == 0 )
                 var_16 = "critical";
 
-            _id_1B47( var_9[var_11], var_16 );
+            capture_flag( var_9[var_11], var_16 );
             return;
         }
 
@@ -462,10 +462,10 @@ _id_15D7()
                 var_20 = 1.5;
 
                 for ( var_6 = 0; var_6 < var_17.size; var_6++ )
-                    var_17[var_6] += level._id_3836[_id_3D6C( var_9[var_6] )][_id_3D6C( var_2[0] )] * var_20;
+                    var_17[var_6] += level.flag_distances[get_flag_label( var_9[var_6] )][get_flag_label( var_2[0] )] * var_20;
             }
 
-            if ( self._id_8F1D == 0 )
+            if ( self.strategy_level == 0 )
             {
                 var_15 = randomint( 100 );
 
@@ -562,7 +562,7 @@ _id_15D7()
 
         foreach ( var_26 in var_24 )
         {
-            if ( _id_16F8( var_26, var_2.size ) )
+            if ( bot_should_defend_flag( var_26, var_2.size ) )
             {
                 var_0 = var_26;
                 break;
@@ -571,11 +571,11 @@ _id_15D7()
 
         if ( !isdefined( var_0 ) )
         {
-            if ( self._id_8F1D == 0 )
+            if ( self.strategy_level == 0 )
                 var_0 = var_2[0];
             else if ( var_24.size == 2 )
             {
-                var_28 = _id_3E04( var_24[0], var_24[1] );
+                var_28 = get_other_flag( var_24[0], var_24[1] );
                 var_29 = common_scripts\utility::get_array_of_closest( var_28.origin, var_24 );
                 var_15 = randomint( 100 );
 
@@ -590,23 +590,23 @@ _id_15D7()
     }
 
     if ( var_8 )
-        _id_1B47( var_0 );
+        capture_flag( var_0 );
     else
-        _id_27A3( var_0 );
+        defend_flag( var_0 );
 }
 
-_id_5C2A()
+min_num_bots_assaulting_first_flag()
 {
-    var_0 = maps\mp\bots\_bots_util::_id_1636( self.team );
+    var_0 = maps\mp\bots\_bots_util::bot_get_max_players_on_team( self.team );
     return ceil( var_0 / 3 );
 }
 
-_id_15A9()
+bot_allowed_to_3_cap()
 {
-    if ( self._id_8F1D == 0 )
+    if ( self.strategy_level == 0 )
         return 1;
 
-    var_0 = _id_3E12();
+    var_0 = get_override_flag_targets();
 
     if ( var_0.size == 3 )
         return 1;
@@ -619,12 +619,12 @@ _id_15A9()
     return var_5;
 }
 
-_id_16F7( var_0 )
+bot_should_defend( var_0 )
 {
     if ( randomfloat( 1 ) < var_0 )
         return 1;
 
-    var_1 = level._id_16B2[self._id_67DC];
+    var_1 = level.bot_personality_type[self.personality];
 
     if ( var_1 == "stationary" )
         return 1;
@@ -632,88 +632,88 @@ _id_16F7( var_0 )
         return 0;
 }
 
-_id_1B47( var_0, var_1, var_2 )
+capture_flag( var_0, var_1, var_2 )
 {
-    self._id_24E5 = var_0;
+    self.current_flag = var_0;
 
-    if ( _id_15FB() )
+    if ( bot_dom_debug_should_protect_all() )
     {
         var_3["override_goal_type"] = var_1;
-        var_3["entrance_points_index"] = _id_3D6C( var_0 );
-        maps\mp\bots\_bots_strategy::_id_16C2( var_0.origin, _id_3D6D(), var_3 );
+        var_3["entrance_points_index"] = get_flag_label( var_0 );
+        maps\mp\bots\_bots_strategy::bot_protect_point( var_0.origin, get_flag_protect_radius(), var_3 );
     }
     else
     {
         var_3["override_goal_type"] = var_1;
-        var_3["entrance_points_index"] = _id_3D6C( var_0 );
-        maps\mp\bots\_bots_strategy::_id_15D2( var_0.origin, var_0._id_6136, var_0, var_3 );
+        var_3["entrance_points_index"] = get_flag_label( var_0 );
+        maps\mp\bots\_bots_strategy::bot_capture_zone( var_0.origin, var_0.nodes, var_0, var_3 );
     }
 
     if ( !isdefined( var_2 ) || !var_2 )
-        thread _id_5DA1( var_0 );
+        thread monitor_flag_status( var_0 );
 }
 
-_id_27A3( var_0 )
+defend_flag( var_0 )
 {
-    self._id_24E5 = var_0;
+    self.current_flag = var_0;
 
-    if ( _id_15FA() )
+    if ( bot_dom_debug_should_capture_all() )
     {
-        var_1["entrance_points_index"] = _id_3D6C( var_0 );
-        maps\mp\bots\_bots_strategy::_id_15D2( var_0.origin, var_0._id_6136, var_0, var_1 );
+        var_1["entrance_points_index"] = get_flag_label( var_0 );
+        maps\mp\bots\_bots_strategy::bot_capture_zone( var_0.origin, var_0.nodes, var_0, var_1 );
     }
     else
     {
-        var_1["entrance_points_index"] = _id_3D6C( var_0 );
+        var_1["entrance_points_index"] = get_flag_label( var_0 );
         var_1["nearest_node_to_center"] = var_0.nearest_node;
-        maps\mp\bots\_bots_strategy::_id_16C2( var_0.origin, _id_3D6D(), var_1 );
+        maps\mp\bots\_bots_strategy::bot_protect_point( var_0.origin, get_flag_protect_radius(), var_1 );
     }
 
-    thread _id_5DA1( var_0 );
+    thread monitor_flag_status( var_0 );
 }
 
-_id_3D6B()
+get_flag_capture_radius()
 {
-    if ( !isdefined( level._id_1B4A ) )
-        level._id_1B4A = 158;
+    if ( !isdefined( level.capture_radius ) )
+        level.capture_radius = 158;
 
-    return level._id_1B4A;
+    return level.capture_radius;
 }
 
-_id_3D6D()
+get_flag_protect_radius()
 {
-    if ( !isdefined( level._id_703C ) )
+    if ( !isdefined( level.protect_radius ) )
     {
         var_0 = self _meth_835F();
         var_1 = ( var_0[0] + var_0[1] ) / 2;
-        level._id_703C = min( 1000, var_1 / 3.5 );
+        level.protect_radius = min( 1000, var_1 / 3.5 );
     }
 
-    return level._id_703C;
+    return level.protect_radius;
 }
 
-_id_15FD( var_0, var_1 )
+bot_dom_leader_dialog( var_0, var_1 )
 {
     if ( issubstr( var_0, "losing" ) && var_0 != "losing_score" && var_0 != "losing_time" )
     {
         var_2 = getsubstr( var_0, var_0.size - 2 );
-        var_3 = _id_3E67( var_2 );
+        var_3 = get_specific_flag_by_label( var_2 );
 
-        if ( _id_15A8( var_3 ) )
+        if ( bot_allow_to_capture_flag( var_3 ) )
         {
-            self botmemoryevent( "known_enemy", undefined, var_3.origin );
+            self _meth_8362( "known_enemy", undefined, var_3.origin );
 
-            if ( !isdefined( self._id_553A ) || gettime() - self._id_553A > 10000 )
+            if ( !isdefined( self.last_losing_flag_react ) || gettime() - self.last_losing_flag_react > 10000 )
             {
-                if ( maps\mp\bots\_bots_util::_id_1662() )
+                if ( maps\mp\bots\_bots_util::bot_is_protecting() )
                 {
                     var_4 = distancesquared( self.origin, var_3.origin ) < 490000;
-                    var_5 = _id_1663( var_3 );
+                    var_5 = bot_is_protecting_flag( var_3 );
 
                     if ( var_4 || var_5 )
                     {
-                        _id_1B47( var_3 );
-                        self._id_553A = gettime();
+                        capture_flag( var_3 );
+                        self.last_losing_flag_react = gettime();
                     }
                 }
             }
@@ -722,16 +722,16 @@ _id_15FD( var_0, var_1 )
     else if ( issubstr( var_0, "secured" ) )
     {
         var_2 = getsubstr( var_0, var_0.size - 2 );
-        var_6 = _id_3E67( var_2 );
-        var_6._id_5563[self.team] = gettime();
+        var_6 = get_specific_flag_by_label( var_2 );
+        var_6.last_time_secured[self.team] = gettime();
     }
 
-    maps\mp\bots\_bots_util::_id_1681( var_0, var_1 );
+    maps\mp\bots\_bots_util::bot_leader_dialog( var_0, var_1 );
 }
 
-_id_15A8( var_0 )
+bot_allow_to_capture_flag( var_0 )
 {
-    var_1 = _id_3E12();
+    var_1 = get_override_flag_targets();
 
     if ( var_1.size == 0 )
         return 1;
@@ -742,34 +742,34 @@ _id_15A8( var_0 )
     return 0;
 }
 
-_id_5DA1( var_0 )
+monitor_flag_status( var_0 )
 {
     self notify( "monitor_flag_status" );
     self endon( "monitor_flag_status" );
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
-    var_1 = _id_3DF6( self.team );
-    var_2 = _id_3D6B() * _id_3D6B();
-    var_3 = _id_3D6B() * 3 * ( _id_3D6B() * 3 );
+    var_1 = get_num_ally_flags( self.team );
+    var_2 = get_flag_capture_radius() * get_flag_capture_radius();
+    var_3 = get_flag_capture_radius() * 3 * ( get_flag_capture_radius() * 3 );
     var_4 = 1;
 
     while ( var_4 )
     {
         var_5 = 0;
         var_6 = var_0 maps\mp\gametypes\dom::getflagteam();
-        var_7 = _id_3DF6( self.team );
-        var_8 = _id_3D4C( self.team );
+        var_7 = get_num_ally_flags( self.team );
+        var_8 = get_enemy_flags( self.team );
 
-        if ( maps\mp\bots\_bots_util::_id_165A() )
+        if ( maps\mp\bots\_bots_util::bot_is_capturing() )
         {
             if ( var_6 == self.team && var_0.useobj.claimteam == "none" )
             {
-                if ( !_id_15FA() )
+                if ( !bot_dom_debug_should_capture_all() )
                     var_5 = 1;
             }
 
-            if ( var_7 == 2 && var_6 != self.team && !_id_15A9() )
+            if ( var_7 == 2 && var_6 != self.team && !bot_allowed_to_3_cap() )
             {
                 if ( distancesquared( self.origin, var_0.origin ) > var_2 )
                     var_5 = 1;
@@ -777,14 +777,14 @@ _id_5DA1( var_0 )
 
             foreach ( var_10 in var_8 )
             {
-                if ( var_10 != var_0 && _id_15A8( var_10 ) )
+                if ( var_10 != var_0 && bot_allow_to_capture_flag( var_10 ) )
                 {
                     if ( distancesquared( self.origin, var_10.origin ) < var_3 )
                         var_5 = 1;
                 }
             }
 
-            if ( self istouching( var_0 ) && var_0.useobj.userate <= 0 )
+            if ( self _meth_80A9( var_0 ) && var_0.useobj.userate <= 0 )
             {
                 if ( self _meth_8365() )
                 {
@@ -799,9 +799,9 @@ _id_5DA1( var_0 )
                         {
                             var_15 = undefined;
 
-                            foreach ( var_17 in var_0._id_6136 )
+                            foreach ( var_17 in var_0.nodes )
                             {
-                                if ( !getnodesintrigger( var_17, var_14, 1 ) )
+                                if ( !_func_1FF( var_17, var_14, 1 ) )
                                 {
                                     var_15 = var_17.origin;
                                     break;
@@ -810,7 +810,7 @@ _id_5DA1( var_0 )
 
                             if ( isdefined( var_15 ) )
                             {
-                                self._id_27B2 = var_15;
+                                self.defense_investigate_specific_point = var_15;
                                 self notify( "defend_force_node_recalculation" );
                             }
                         }
@@ -819,11 +819,11 @@ _id_5DA1( var_0 )
             }
         }
 
-        if ( maps\mp\bots\_bots_util::_id_1662() )
+        if ( maps\mp\bots\_bots_util::bot_is_protecting() )
         {
             if ( var_6 != self.team )
             {
-                if ( !_id_15FB() )
+                if ( !bot_dom_debug_should_protect_all() )
                     var_5 = 1;
             }
             else if ( var_7 == 1 && var_1 > 1 )
@@ -834,7 +834,7 @@ _id_5DA1( var_0 )
 
         if ( var_5 )
         {
-            self._id_399A = 1;
+            self.force_new_goal = 1;
             var_4 = 0;
             self notify( "needs_new_flag_goal" );
             continue;
@@ -844,38 +844,38 @@ _id_5DA1( var_0 )
 
         if ( !( isdefined( var_19 ) && var_19 == "timeout" ) )
         {
-            var_20 = max( ( 3 - self._id_8F1D ) * 1.0 + randomfloatrange( -0.5, 0.5 ), 0 );
+            var_20 = max( ( 3 - self.strategy_level ) * 1.0 + randomfloatrange( -0.5, 0.5 ), 0 );
             wait(var_20);
         }
     }
 }
 
-_id_15FC( var_0 )
+bot_dom_get_node_chance( var_0 )
 {
-    if ( var_0 == self._id_611F )
+    if ( var_0 == self.node_closest_to_defend_center )
         return 1.0;
 
-    if ( !isdefined( self._id_24E5 ) )
+    if ( !isdefined( self.current_flag ) )
         return 1.0;
 
     var_1 = 0;
-    var_2 = _id_3D6C( self._id_24E5 );
-    var_3 = _id_3CC2( self.team );
+    var_2 = get_flag_label( self.current_flag );
+    var_3 = get_ally_flags( self.team );
 
     foreach ( var_5 in var_3 )
     {
-        if ( var_5 != self._id_24E5 )
+        if ( var_5 != self.current_flag )
         {
-            var_1 = var_0 maps\mp\bots\_bots_util::_id_6123( var_2, _id_3D6C( var_5 ) );
+            var_1 = var_0 maps\mp\bots\_bots_util::node_is_on_path_from_labels( var_2, get_flag_label( var_5 ) );
 
             if ( var_1 )
             {
-                var_6 = _id_3E04( self._id_24E5, var_5 );
+                var_6 = get_other_flag( self.current_flag, var_5 );
                 var_7 = var_6 maps\mp\gametypes\dom::getflagteam();
 
                 if ( var_7 != self.team )
                 {
-                    if ( var_0 maps\mp\bots\_bots_util::_id_6123( var_2, _id_3D6C( var_6 ) ) )
+                    if ( var_0 maps\mp\bots\_bots_util::node_is_on_path_from_labels( var_2, get_flag_label( var_6 ) ) )
                         var_1 = 0;
                 }
             }
@@ -888,18 +888,18 @@ _id_15FC( var_0 )
     return 1.0;
 }
 
-_id_3D6C( var_0 )
+get_flag_label( var_0 )
 {
     var_1 = "";
 
-    if ( isdefined( var_0._id_9251 ) )
-        var_1 += ( var_0._id_9251 + "_" );
+    if ( isdefined( var_0.teleport_zone ) )
+        var_1 += ( var_0.teleport_zone + "_" );
 
     var_1 += ( "flag" + var_0.script_label );
     return var_1;
 }
 
-_id_3E04( var_0, var_1 )
+get_other_flag( var_0, var_1 )
 {
     for ( var_2 = 0; var_2 < level.flags.size; var_2++ )
     {
@@ -908,13 +908,13 @@ _id_3E04( var_0, var_1 )
     }
 }
 
-_id_3E68( var_0 )
+get_specific_flag_by_letter( var_0 )
 {
     var_1 = "_" + tolower( var_0 );
-    _id_3E67( var_1 );
+    get_specific_flag_by_label( var_1 );
 }
 
-_id_3E67( var_0 )
+get_specific_flag_by_label( var_0 )
 {
     for ( var_1 = 0; var_1 < level.flags.size; var_1++ )
     {
@@ -923,7 +923,7 @@ _id_3E67( var_0 )
     }
 }
 
-_id_3CF5( var_0 )
+get_closest_flag( var_0 )
 {
     var_1 = undefined;
     var_2 = undefined;
@@ -942,10 +942,10 @@ _id_3CF5( var_0 )
     return var_1;
 }
 
-_id_3DF4( var_0, var_1 )
+get_num_allies_capturing_flag( var_0, var_1 )
 {
     var_2 = 0;
-    var_3 = _id_3D6B();
+    var_3 = get_flag_capture_radius();
 
     foreach ( var_5 in level.participants )
     {
@@ -956,7 +956,7 @@ _id_3DF4( var_0, var_1 )
         {
             if ( isai( var_5 ) )
             {
-                if ( var_5 _id_165B( var_0 ) )
+                if ( var_5 bot_is_capturing_flag( var_0 ) )
                     var_2++;
 
                 continue;
@@ -964,7 +964,7 @@ _id_3DF4( var_0, var_1 )
 
             if ( !isdefined( var_1 ) || !var_1 )
             {
-                if ( var_5 istouching( var_0 ) )
+                if ( var_5 _meth_80A9( var_0 ) )
                     var_2++;
             }
         }
@@ -973,28 +973,28 @@ _id_3DF4( var_0, var_1 )
     return var_2;
 }
 
-_id_165B( var_0 )
+bot_is_capturing_flag( var_0 )
 {
-    if ( !maps\mp\bots\_bots_util::_id_165A() )
+    if ( !maps\mp\bots\_bots_util::bot_is_capturing() )
         return 0;
 
-    return _id_170C( var_0 );
+    return bot_target_is_flag( var_0 );
 }
 
-_id_1663( var_0 )
+bot_is_protecting_flag( var_0 )
 {
-    if ( !maps\mp\bots\_bots_util::_id_1662() )
+    if ( !maps\mp\bots\_bots_util::bot_is_protecting() )
         return 0;
 
-    return _id_170C( var_0 );
+    return bot_target_is_flag( var_0 );
 }
 
-_id_170C( var_0 )
+bot_target_is_flag( var_0 )
 {
-    return self._id_24E5 == var_0;
+    return self.current_flag == var_0;
 }
 
-_id_3DF6( var_0 )
+get_num_ally_flags( var_0 )
 {
     var_1 = 0;
 
@@ -1009,7 +1009,7 @@ _id_3DF6( var_0 )
     return var_1;
 }
 
-_id_3D4C( var_0 )
+get_enemy_flags( var_0 )
 {
     var_1 = [];
 
@@ -1024,7 +1024,7 @@ _id_3D4C( var_0 )
     return var_1;
 }
 
-_id_3CC2( var_0 )
+get_ally_flags( var_0 )
 {
     var_1 = [];
 
@@ -1039,16 +1039,16 @@ _id_3CC2( var_0 )
     return var_1;
 }
 
-_id_16F8( var_0, var_1 )
+bot_should_defend_flag( var_0, var_1 )
 {
-    var_2 = _id_3DD4( var_1 );
-    var_3 = _id_3E2F( var_0 );
+    var_2 = get_max_num_defenders_wanted_per_flag( var_1 );
+    var_3 = get_players_defending_flag( var_0 );
     return var_3.size < var_2;
 }
 
-_id_3DD4( var_0 )
+get_max_num_defenders_wanted_per_flag( var_0 )
 {
-    var_1 = maps\mp\bots\_bots_util::_id_1636( self.team );
+    var_1 = maps\mp\bots\_bots_util::bot_get_max_players_on_team( self.team );
 
     if ( var_0 == 1 )
         return ceil( var_1 / 6 );
@@ -1056,9 +1056,9 @@ _id_3DD4( var_0 )
         return ceil( var_1 / 3 );
 }
 
-_id_3E2F( var_0 )
+get_players_defending_flag( var_0 )
 {
-    var_1 = _id_3D6D();
+    var_1 = get_flag_protect_radius();
     var_2 = [];
 
     foreach ( var_4 in level.participants )
@@ -1070,13 +1070,13 @@ _id_3E2F( var_0 )
         {
             if ( isai( var_4 ) )
             {
-                if ( var_4 _id_1663( var_0 ) )
+                if ( var_4 bot_is_protecting_flag( var_0 ) )
                     var_2 = common_scripts\utility::array_add( var_2, var_4 );
 
                 continue;
             }
 
-            var_5 = gettime() - var_0._id_5563[self.team];
+            var_5 = gettime() - var_0.last_time_secured[self.team];
 
             if ( var_5 < 10000 )
                 continue;

@@ -1,16 +1,16 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
     self endon( "death" );
     self endon( "killanimscript" );
-    self._id_24C6 endon( "disconnect" );
-    var_0 = self._id_24C6.origin - self.origin;
+    self.curmeleetarget endon( "disconnect" );
+    var_0 = self.curmeleetarget.origin - self.origin;
     var_1 = length( var_0 );
     var_2 = 1;
 
-    if ( var_1 < self._id_0E47 )
+    if ( var_1 < self.attackoffset )
     {
         var_3 = self.origin;
         var_2 = 0;
@@ -18,20 +18,20 @@ main()
     else
     {
         var_0 /= var_1;
-        var_3 = self._id_24C6.origin - var_0 * self._id_0E47;
+        var_3 = self.curmeleetarget.origin - var_0 * self.attackoffset;
     }
 
     var_4 = 0;
-    var_5 = self.origin + ( 0.0, 0.0, 30.0 );
-    var_6 = self._id_24C6.origin + ( 0.0, 0.0, 30.0 );
+    var_5 = self.origin + ( 0, 0, 30 );
+    var_6 = self.curmeleetarget.origin + ( 0, 0, 30 );
     var_7 = physicstrace( var_5, var_6 );
 
     if ( distancesquared( var_7, var_6 ) > 1 )
-        _id_5B84();
+        meleefailed();
     else
     {
         if ( var_2 )
-            var_8 = maps\mp\agents\_scriptedagents::_id_1AD2( self.origin, var_3 );
+            var_8 = maps\mp\agents\_scriptedagents::canmovepointtopoint( self.origin, var_3 );
         else
             var_8 = 1;
 
@@ -41,36 +41,36 @@ main()
             var_10 = 0;
         else
         {
-            var_9 = _id_8489( self._id_24C6 );
+            var_9 = shoulddoextendedkill( self.curmeleetarget );
             var_10 = isdefined( var_9 );
         }
 
-        self._id_14B3 = 1;
+        self.blockgoalpos = 1;
 
         if ( var_10 )
         {
-            _id_2C3B( var_9 );
+            doextendedkill( var_9 );
             return;
         }
 
-        _id_2D7E( var_3, var_8 );
+        dostandardkill( var_3, var_8 );
     }
 }
 
-_id_0140()
+end_script()
 {
     self _meth_8395( 1, 1 );
-    self._id_14B3 = 0;
+    self.blockgoalpos = 0;
 }
 
-_id_401F()
+getmeleeanimstate()
 {
     return "attack_run_and_jump";
 }
 
-_id_8489( var_0 )
+shoulddoextendedkill( var_0 )
 {
-    if ( !self._id_310E )
+    if ( !self.enableextendedkill )
         return undefined;
 
     var_1 = 4;
@@ -78,7 +78,7 @@ _id_8489( var_0 )
     if ( !maps\mp\_utility::isgameparticipant( var_0 ) )
         return undefined;
 
-    if ( _id_5183( var_0 ) )
+    if ( isprotectedbyriotshield( var_0 ) )
         return undefined;
 
     if ( var_0 maps\mp\_utility::isjuggernaut() )
@@ -96,26 +96,26 @@ _id_8489( var_0 )
     if ( var_5 > 0.707 )
     {
         var_6 = 0;
-        var_7 = rotatevector( ( 1.0, 0.0, 0.0 ), var_0.angles );
+        var_7 = rotatevector( ( 1, 0, 0 ), var_0.angles );
     }
     else if ( var_5 < -0.707 )
     {
         var_6 = 1;
-        var_7 = rotatevector( ( -1.0, 0.0, 0.0 ), var_0.angles );
+        var_7 = rotatevector( ( -1, 0, 0 ), var_0.angles );
     }
     else
     {
-        var_8 = maps\mp\agents\dog\_dog_think::_id_2478( var_2, var_4 );
+        var_8 = maps\mp\agents\dog\_dog_think::cross2d( var_2, var_4 );
 
         if ( var_8 > 0 )
         {
             var_6 = 3;
-            var_7 = rotatevector( ( 0.0, -1.0, 0.0 ), var_0.angles );
+            var_7 = rotatevector( ( 0, -1, 0 ), var_0.angles );
         }
         else
         {
             var_6 = 2;
-            var_7 = rotatevector( ( 0.0, 1.0, 0.0 ), var_0.angles );
+            var_7 = rotatevector( ( 0, 1, 0 ), var_0.angles );
         }
     }
 
@@ -125,7 +125,7 @@ _id_8489( var_0 )
         var_9 = 96;
 
     var_10 = var_0.origin - var_9 * var_7;
-    var_11 = maps\mp\agents\_scriptedagents::_id_2F8E( var_10 );
+    var_11 = maps\mp\agents\_scriptedagents::droppostoground( var_10 );
 
     if ( !isdefined( var_11 ) )
         return undefined;
@@ -133,50 +133,50 @@ _id_8489( var_0 )
     if ( abs( var_11[2] - var_10[2] ) > var_1 )
         return undefined;
 
-    if ( !self _meth_83E6( var_0.origin + ( 0.0, 0.0, 4.0 ), var_11 + ( 0.0, 0.0, 4.0 ), self.radius, self.height ) )
+    if ( !self _meth_83E6( var_0.origin + ( 0, 0, 4 ), var_11 + ( 0, 0, 4 ), self.radius, self.height ) )
         return undefined;
 
     return var_6;
 }
 
-_id_2C3B( var_0 )
+doextendedkill( var_0 )
 {
     var_1 = "attack_extended";
-    _id_2CF2( self._id_24C6, self._id_24C6.health, "MOD_MELEE_DOG" );
+    domeleedamage( self.curmeleetarget, self.curmeleetarget.health, "MOD_MELEE_DOG" );
     var_2 = self _meth_83D3( var_1, var_0 );
-    thread _id_3597( var_2, self._id_24C6.origin, self._id_24C6.angles );
-    maps\mp\agents\_scriptedagents::_id_6A27( var_1, var_0, "attack", "end" );
+    thread extendedkill_sticktovictim( var_2, self.curmeleetarget.origin, self.curmeleetarget.angles );
+    maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_1, var_0, "attack", "end" );
     self notify( "kill_stick" );
-    self._id_24C6 = undefined;
+    self.curmeleetarget = undefined;
     self _meth_8397( "anim deltas" );
-    self unlink();
+    self _meth_804F();
 }
 
-_id_3597( var_0, var_1, var_2 )
+extendedkill_sticktovictim( var_0, var_1, var_2 )
 {
     self endon( "death" );
     self endon( "killanimscript" );
     self endon( "kill_stick" );
     wait 0.05;
 
-    if ( isalive( self._id_24C6 ) )
+    if ( isalive( self.curmeleetarget ) )
         return;
 
-    var_3 = self._id_24C6 _meth_842C();
-    self linkto( var_3 );
+    var_3 = self.curmeleetarget _meth_842C();
+    self _meth_804D( var_3 );
     self _meth_8428( var_0, var_1, var_2 );
 }
 
-_id_2D7E( var_0, var_1 )
+dostandardkill( var_0, var_1 )
 {
-    var_2 = _id_401F();
+    var_2 = getmeleeanimstate();
     var_3 = 0;
 
     if ( !var_1 )
     {
-        if ( self _meth_838E( self._id_24C6 ) )
+        if ( self _meth_838E( self.curmeleetarget ) )
         {
-            var_4 = maps\mp\agents\_scriptedagents::_id_2F8E( self._id_24C6.origin );
+            var_4 = maps\mp\agents\_scriptedagents::droppostoground( self.curmeleetarget.origin );
 
             if ( isdefined( var_4 ) )
             {
@@ -185,19 +185,19 @@ _id_2D7E( var_0, var_1 )
             }
             else
             {
-                _id_5B84();
+                meleefailed();
                 return;
             }
         }
         else
         {
-            _id_5B84();
+            meleefailed();
             return;
         }
     }
 
-    self._id_55BA = undefined;
-    self._id_55BB = undefined;
+    self.lastmeleefailedmypos = undefined;
+    self.lastmeleefailedpos = undefined;
     var_5 = self _meth_83D3( var_2, 0 );
     var_6 = getanimlength( var_5 );
     var_7 = getnotetracktimes( var_5, "dog_melee" );
@@ -208,21 +208,21 @@ _id_2D7E( var_0, var_1 )
         var_8 = var_6;
 
     self _meth_839F( self.origin, var_0, var_8 );
-    thread _id_9B26( self._id_24C6, var_8, var_1 );
-    maps\mp\agents\_scriptedagents::_id_6A27( var_2, 0, "attack", "dog_melee" );
+    thread updatelerppos( self.curmeleetarget, var_8, var_1 );
+    maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_2, 0, "attack", "dog_melee" );
     self notify( "cancel_updatelerppos" );
     var_9 = 0;
 
-    if ( isdefined( self._id_24C6 ) )
-        var_9 = self._id_24C6.health;
+    if ( isdefined( self.curmeleetarget ) )
+        var_9 = self.curmeleetarget.health;
 
-    if ( isdefined( self._id_5B83 ) )
-        var_9 = self._id_5B83;
+    if ( isdefined( self.meleedamage ) )
+        var_9 = self.meleedamage;
 
-    if ( isdefined( self._id_24C6 ) )
-        _id_2CF2( self._id_24C6, var_9, "MOD_IMPACT" );
+    if ( isdefined( self.curmeleetarget ) )
+        domeleedamage( self.curmeleetarget, var_9, "MOD_IMPACT" );
 
-    self._id_24C6 = undefined;
+    self.curmeleetarget = undefined;
 
     if ( var_3 )
         self _meth_8395( 0, 1 );
@@ -231,10 +231,10 @@ _id_2D7E( var_0, var_1 )
 
     self _meth_8398( "gravity" );
     self _meth_8397( "anim deltas" );
-    maps\mp\agents\_scriptedagents::_id_A0F7( "attack", "end" );
+    maps\mp\agents\_scriptedagents::waituntilnotetrack( "attack", "end" );
 }
 
-_id_9B26( var_0, var_1, var_2 )
+updatelerppos( var_0, var_1, var_2 )
 {
     self endon( "killanimscript" );
     self endon( "death" );
@@ -252,7 +252,7 @@ _id_9B26( var_0, var_1, var_2 )
         if ( var_3 <= 0 )
             break;
 
-        var_5 = _id_4145( var_0, var_2 );
+        var_5 = getupdatedattackpos( var_0, var_2 );
 
         if ( !isdefined( var_5 ) )
             break;
@@ -261,11 +261,11 @@ _id_9B26( var_0, var_1, var_2 )
     }
 }
 
-_id_4145( var_0, var_1 )
+getupdatedattackpos( var_0, var_1 )
 {
     if ( !var_1 )
     {
-        var_2 = maps\mp\agents\_scriptedagents::_id_2F8E( var_0.origin );
+        var_2 = maps\mp\agents\_scriptedagents::droppostoground( var_0.origin );
         return var_2;
     }
     else
@@ -273,14 +273,14 @@ _id_4145( var_0, var_1 )
         var_3 = var_0.origin - self.origin;
         var_4 = length( var_3 );
 
-        if ( var_4 < self._id_0E47 )
+        if ( var_4 < self.attackoffset )
             return self.origin;
         else
         {
             var_3 /= var_4;
-            var_5 = var_0.origin - var_3 * self._id_0E47;
+            var_5 = var_0.origin - var_3 * self.attackoffset;
 
-            if ( maps\mp\agents\_scriptedagents::_id_1AD2( self.origin, var_5 ) )
+            if ( maps\mp\agents\_scriptedagents::canmovepointtopoint( self.origin, var_5 ) )
                 return var_5;
             else
                 return undefined;
@@ -288,9 +288,9 @@ _id_4145( var_0, var_1 )
     }
 }
 
-_id_5183( var_0 )
+isprotectedbyriotshield( var_0 )
 {
-    if ( var_0 maps\mp\_riotshield::_id_473D() )
+    if ( var_0 maps\mp\_riotshield::hasriotshield() )
     {
         var_1 = self.origin - var_0.origin;
         var_2 = vectornormalize( ( var_1[0], var_1[1], 0 ) );
@@ -309,16 +309,16 @@ _id_5183( var_0 )
     return 0;
 }
 
-_id_2CF2( var_0, var_1, var_2 )
+domeleedamage( var_0, var_1, var_2 )
 {
-    if ( _id_5183( var_0 ) )
+    if ( isprotectedbyriotshield( var_0 ) )
         return;
 
-    var_0 dodamage( var_1, self.origin, self, self, var_2 );
+    var_0 _meth_8051( var_1, self.origin, self, self, var_2 );
 }
 
-_id_5B84()
+meleefailed()
 {
-    self._id_55BA = self.origin;
-    self._id_55BB = self._id_24C6.origin;
+    self.lastmeleefailedmypos = self.origin;
+    self.lastmeleefailedpos = self.curmeleetarget.origin;
 }

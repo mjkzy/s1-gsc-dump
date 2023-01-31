@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 noself_func( var_0, var_1, var_2, var_3, var_4 )
 {
@@ -130,13 +130,13 @@ tostring( var_0 )
 
 track( var_0 )
 {
-    if ( isdefined( self._id_24FD ) )
+    if ( isdefined( self.current_target ) )
     {
-        if ( var_0 == self._id_24FD )
+        if ( var_0 == self.current_target )
             return;
     }
 
-    self._id_24FD = var_0;
+    self.current_target = var_0;
 }
 
 get_enemy_team( var_0 )
@@ -456,7 +456,7 @@ waittill_any_in_array_return( var_0 )
     return var_6;
 }
 
-_id_A065( var_0 )
+waittill_any_in_array_return_no_endon_death( var_0 )
 {
     var_1 = spawnstruct();
 
@@ -490,7 +490,7 @@ waittill_any_in_array_or_timeout( var_0, var_1 )
     return var_7;
 }
 
-_id_A063( var_0, var_1 )
+waittill_any_in_array_or_timeout_no_endon_death( var_0, var_1 )
 {
     var_2 = spawnstruct();
 
@@ -926,7 +926,7 @@ trigger_off_proc()
         self.realorigin = self.origin;
 
     if ( self.origin == self.realorigin )
-        self.origin += ( 0.0, 0.0, -10000.0 );
+        self.origin += ( 0, 0, -10000 );
 
     self.trigger_off = 1;
 }
@@ -1637,7 +1637,7 @@ draw_line_for_time( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         wait 0.05;
 }
 
-_id_9094( var_0, var_1 )
+table_combine( var_0, var_1 )
 {
     var_2 = [];
 
@@ -1849,7 +1849,7 @@ get_linked_ent()
     return var_0[0];
 }
 
-_id_3DBF()
+get_linked_vehicle_node()
 {
     var_0 = get_linked_vehicle_nodes();
     return var_0[0];
@@ -1911,7 +1911,7 @@ draw_arrow( var_0, var_1, var_2 )
 draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( !isdefined( var_2 ) )
-        var_2 = ( 0.0, 1.0, 0.0 );
+        var_2 = ( 0, 1, 0 );
 
     if ( !isdefined( var_3 ) )
         var_3 = 0;
@@ -1930,14 +1930,14 @@ draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 )
 
     for ( var_9 = var_8 + var_1 * 1000; var_8 < var_9 && isdefined( var_0 ); var_8 = gettime() )
     {
-        var_6[0] = var_0 getpointinbounds( 1, 1, 1 );
-        var_6[1] = var_0 getpointinbounds( 1, 1, -1 );
-        var_6[2] = var_0 getpointinbounds( -1, 1, -1 );
-        var_6[3] = var_0 getpointinbounds( -1, 1, 1 );
-        var_7[0] = var_0 getpointinbounds( 1, -1, 1 );
-        var_7[1] = var_0 getpointinbounds( 1, -1, -1 );
-        var_7[2] = var_0 getpointinbounds( -1, -1, -1 );
-        var_7[3] = var_0 getpointinbounds( -1, -1, 1 );
+        var_6[0] = var_0 _meth_8216( 1, 1, 1 );
+        var_6[1] = var_0 _meth_8216( 1, 1, -1 );
+        var_6[2] = var_0 _meth_8216( -1, 1, -1 );
+        var_6[3] = var_0 _meth_8216( -1, 1, 1 );
+        var_7[0] = var_0 _meth_8216( 1, -1, 1 );
+        var_7[1] = var_0 _meth_8216( 1, -1, -1 );
+        var_7[2] = var_0 _meth_8216( -1, -1, -1 );
+        var_7[3] = var_0 _meth_8216( -1, -1, 1 );
 
         for ( var_10 = 0; var_10 < 4; var_10++ )
         {
@@ -1954,12 +1954,12 @@ draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 )
     }
 }
 
-draw_trigger( var_0, var_1, var_2, var_3, var_4 )
+draw_volume( var_0, var_1, var_2, var_3, var_4 )
 {
     draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 );
 }
 
-_id_2DCB( var_0, var_1, var_2, var_3, var_4 )
+draw_trigger( var_0, var_1, var_2, var_3, var_4 )
 {
     draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 );
 }
@@ -1974,17 +1974,17 @@ fxexists( var_0 )
     return isdefined( level._effect[var_0] );
 }
 
-_id_6F91( var_0, var_1 )
+print_csv_asset( var_0, var_1 )
 {
     var_2 = var_1 + "," + var_0;
 
-    if ( isdefined( level._id_24A7[var_2] ) )
+    if ( isdefined( level.csv_lines[var_2] ) )
         return;
 
-    level._id_24A7[var_2] = 1;
+    level.csv_lines[var_2] = 1;
 }
 
-_id_36B4( var_0 )
+fileprint_csv_start( var_0 )
 {
 
 }
@@ -2010,7 +2010,7 @@ _disableusability()
         self.disabledusability = 0;
 
     self.disabledusability++;
-    self disableusability();
+    self _meth_832A();
 }
 
 _enableusability()
@@ -2022,14 +2022,14 @@ _enableusability()
         self.disabledusability--;
 
         if ( self.disabledusability == 0 )
-            self enableusability();
+            self _meth_832B();
     }
 }
 
 resetusability()
 {
     self.disabledusability = 0;
-    self enableusability();
+    self _meth_832B();
 }
 
 _disableweapon()
@@ -2038,7 +2038,7 @@ _disableweapon()
         self.disabledweapon = 0;
 
     self.disabledweapon++;
-    self disableweapons();
+    self _meth_831D();
 }
 
 _enableweapon()
@@ -2049,7 +2049,7 @@ _enableweapon()
     self.disabledweapon--;
 
     if ( !self.disabledweapon )
-        self enableweapons();
+        self _meth_831E();
 }
 
 isweaponenabled()
@@ -2063,7 +2063,7 @@ _disableweaponswitch()
         self.disabledweaponswitch = 0;
 
     self.disabledweaponswitch++;
-    self disableweaponswitch();
+    self _meth_8321();
 }
 
 _enableweaponswitch()
@@ -2078,7 +2078,7 @@ _enableweaponswitch()
         if ( isdefined( level.hordeweaponsjammed ) && level.hordeweaponsjammed == 1 )
             return;
         else
-            self enableweaponswitch();
+            self _meth_8322();
     }
 }
 
@@ -2093,7 +2093,7 @@ _disableoffhandweapons()
         self.disabledoffhandweapons = 0;
 
     self.disabledoffhandweapons++;
-    self disableoffhandweapons();
+    self _meth_831F();
 }
 
 _enableoffhandweapons()
@@ -2104,7 +2104,7 @@ _enableoffhandweapons()
     self.disabledoffhandweapons--;
 
     if ( !self.disabledoffhandweapons )
-        self enableoffhandweapons();
+        self _meth_8320();
 }
 
 isoffhandweaponenabled()
@@ -2114,13 +2114,13 @@ isoffhandweaponenabled()
 
 _enabledetonate( var_0, var_1 )
 {
-    if ( !self hasweapon( var_0 ) )
+    if ( !self _meth_8314( var_0 ) )
         return;
 
-    if ( self getdetonateenabled( var_0 ) == var_1 )
+    if ( self _meth_84C4( var_0 ) == var_1 )
         return;
 
-    self enabledetonate( var_0, var_1 );
+    self _meth_84C3( var_0, var_1 );
 
     if ( var_1 )
         self notify( "WeaponDetonateEnabled", var_0 );
@@ -2157,8 +2157,8 @@ random_weight_sorted( var_0 )
 
 spawn_tag_origin()
 {
-    var_0 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-    var_0 setmodel( "tag_origin" );
+    var_0 = spawn( "script_model", ( 0, 0, 0 ) );
+    var_0 _meth_80B1( "tag_origin" );
     var_0 hide();
 
     if ( isdefined( self.origin ) )
@@ -2326,13 +2326,13 @@ play_loopsound_in_space( var_0, var_1 )
     if ( !soundexists( var_0 ) )
         return;
 
-    var_2 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+    var_2 = spawn( "script_origin", ( 0, 0, 0 ) );
 
     if ( !isdefined( var_1 ) )
         var_1 = self.origin;
 
     var_2.origin = var_1;
-    var_2 playloopsound( var_0 );
+    var_2 _meth_8075( var_0 );
     return var_2;
 }
 
@@ -2341,7 +2341,7 @@ play_sound_in_space_with_angles( var_0, var_1, var_2, var_3 )
     if ( !soundexists( var_0 ) )
         return;
 
-    var_4 = spawn( "script_origin", ( 0.0, 0.0, 1.0 ) );
+    var_4 = spawn( "script_origin", ( 0, 0, 1 ) );
 
     if ( !isdefined( var_1 ) )
         var_1 = self.origin;
@@ -2352,14 +2352,14 @@ play_sound_in_space_with_angles( var_0, var_1, var_2, var_3 )
     if ( issp() )
     {
         if ( isdefined( var_3 ) && var_3 )
-            var_4 playsoundasmaster( var_0, "sounddone" );
+            var_4 _meth_8074( var_0, "sounddone" );
         else
             var_4 playsound( var_0, "sounddone" );
 
         var_4 waittill( "sounddone" );
     }
     else if ( isdefined( var_3 ) && var_3 )
-        var_4 playsoundasmaster( var_0 );
+        var_4 _meth_8074( var_0 );
     else
         var_4 playsound( var_0 );
 
@@ -2368,7 +2368,7 @@ play_sound_in_space_with_angles( var_0, var_1, var_2, var_3 )
 
 play_sound_in_space( var_0, var_1, var_2 )
 {
-    play_sound_in_space_with_angles( var_0, var_1, ( 0.0, 0.0, 0.0 ), var_2 );
+    play_sound_in_space_with_angles( var_0, var_1, ( 0, 0, 0 ), var_2 );
 }
 
 loop_fx_sound( var_0, var_1, var_2, var_3, var_4 )
@@ -2380,10 +2380,10 @@ loop_fx_sound( var_0, var_1, var_2, var_3, var_4 )
         var_2 = undefined;
 
     if ( isdefined( var_2 ) && var_2 && ( !isdefined( level.first_frame ) || level.first_frame == 1 ) )
-        spawnloopingsound( var_0, var_1, ( 0.0, 0.0, 0.0 ) );
+        spawnloopingsound( var_0, var_1, ( 0, 0, 0 ) );
     else
     {
-        var_5 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+        var_5 = spawn( "script_origin", ( 0, 0, 0 ) );
 
         if ( isdefined( var_3 ) )
         {
@@ -2392,8 +2392,8 @@ loop_fx_sound( var_0, var_1, var_2, var_3, var_4 )
         }
 
         var_5.origin = var_1;
-        var_5 playloopsound( var_0 );
-        var_5 willneverchange();
+        var_5 _meth_8075( var_0 );
+        var_5 _meth_80E1();
     }
 }
 
@@ -2412,7 +2412,7 @@ loop_fx_sound_with_angles( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         if ( isdefined( level.createfx_enabled ) && level.createfx_enabled && isdefined( var_5.loopsound_ent ) )
             var_7 = var_5.loopsound_ent;
         else
-            var_7 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+            var_7 = spawn( "script_origin", ( 0, 0, 0 ) );
 
         if ( isdefined( var_4 ) )
         {
@@ -2422,23 +2422,23 @@ loop_fx_sound_with_angles( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
         var_7.origin = var_1;
         var_7.angles = var_2;
-        var_7 playloopsound( var_0 );
+        var_7 _meth_8075( var_0 );
 
         if ( isdefined( level.createfx_enabled ) && level.createfx_enabled )
             var_5.loopsound_ent = var_7;
         else
-            var_7 willneverchange();
+            var_7 _meth_80E1();
     }
 }
 
 loop_fx_sound_interval( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    loop_fx_sound_interval_with_angles( var_0, var_1, ( 0.0, 0.0, 0.0 ), var_2, var_3, var_4, var_5 );
+    loop_fx_sound_interval_with_angles( var_0, var_1, ( 0, 0, 0 ), var_2, var_3, var_4, var_5 );
 }
 
 loop_fx_sound_interval_with_angles( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 {
-    var_7 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+    var_7 = spawn( "script_origin", ( 0, 0, 0 ) );
 
     if ( isdefined( var_3 ) )
     {
@@ -2542,7 +2542,7 @@ play_loop_sound_on_entity( var_0, var_1 )
     if ( !soundexists( var_0 ) )
         return;
 
-    var_2 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+    var_2 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_2 endon( "death" );
     thread delete_on_death( var_2 );
 
@@ -2550,18 +2550,18 @@ play_loop_sound_on_entity( var_0, var_1 )
     {
         var_2.origin = self.origin + var_1;
         var_2.angles = self.angles;
-        var_2 linktosynchronizedparent( self );
+        var_2 _meth_8446( self );
     }
     else
     {
         var_2.origin = self.origin;
         var_2.angles = self.angles;
-        var_2 linktosynchronizedparent( self );
+        var_2 _meth_8446( self );
     }
 
-    var_2 playloopsound( var_0 );
+    var_2 _meth_8075( var_0 );
     self waittill( "stop sound" + var_0 );
-    var_2 stoploopsound( var_0 );
+    var_2 _meth_80AB( var_0 );
     var_2 delete();
 }
 
@@ -2625,7 +2625,7 @@ create_lock( var_0, var_1 )
     level.lock[var_0] = var_2;
 }
 
-_id_57FC( var_0 )
+lock_exists( var_0 )
 {
     if ( !isdefined( level.lock ) )
         return 0;
@@ -2643,7 +2643,7 @@ lock( var_0 )
     var_1.count++;
 }
 
-_id_504A( var_0 )
+is_locked( var_0 )
 {
     var_1 = level.lock[var_0];
     return var_1.count > var_1.max_count;
@@ -2767,7 +2767,7 @@ is_player_gamepad_enabled()
 {
     if ( !level.console )
     {
-        var_0 = self usinggamepad();
+        var_0 = self _meth_834E();
 
         if ( isdefined( var_0 ) )
             return var_0;
@@ -2797,12 +2797,12 @@ add_destructible_type_function( var_0, var_1 )
     level.destructible_functions[var_0] = var_1;
 }
 
-_id_0756( var_0, var_1 )
+add_destructible_type_transient( var_0, var_1 )
 {
-    if ( !isdefined( level._id_2934 ) )
-        level._id_2934 = [];
+    if ( !isdefined( level.destructible_transient ) )
+        level.destructible_transient = [];
 
-    level._id_2934[var_0] = var_1;
+    level.destructible_transient[var_0] = var_1;
 }
 
 within_fov( var_0, var_1, var_2, var_3 )
@@ -2850,9 +2850,9 @@ entity_path_disconnect_thread( var_0 )
         if ( var_4 != var_1 || var_5 )
         {
             if ( var_4 )
-                self disconnectpaths();
+                self _meth_8057();
             else
-                self connectpaths();
+                self _meth_8058();
 
             var_1 = var_4;
         }
@@ -2939,16 +2939,16 @@ getfarthest( var_0, var_1, var_2 )
 
 missile_settargetandflightmode( var_0, var_1, var_2 )
 {
-    var_2 = ter_op( isdefined( var_2 ), var_2, ( 0.0, 0.0, 0.0 ) );
-    self missile_settargetent( var_0, var_2 );
+    var_2 = ter_op( isdefined( var_2 ), var_2, ( 0, 0, 0 ) );
+    self _meth_81D9( var_0, var_2 );
 
     switch ( var_1 )
     {
         case "direct":
-            self missile_setflightmodedirect();
+            self _meth_81DC();
             break;
         case "top":
-            self missile_setflightmodetop();
+            self _meth_81DD();
             break;
     }
 }
@@ -3036,7 +3036,7 @@ convertfogtech( var_0 )
                     var_0.sungreen = 0;
                     var_0.sunblue = 0;
                     var_0.hdrsuncolorintensity = 0;
-                    var_0.sundir = ( 0.0, 0.0, 0.0 );
+                    var_0.sundir = ( 0, 0, 0 );
                     var_0.sunbeginfadeangle = 0;
                     var_0.sunendfageangle = 0;
                     var_0.normalfogscale = 1;
@@ -3060,12 +3060,12 @@ set_fog_to_ent_values_dfog( var_0, var_1 )
         if ( !isplayer( self ) )
             setexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
         else
-            self playersetexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
+            self _meth_821E( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
     }
     else if ( !isplayer( self ) )
         setexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
     else
-        self playersetexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
+        self _meth_821E( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
 }
 
 set_fog_to_ent_values( var_0, var_1 )
@@ -3095,9 +3095,9 @@ set_fog_to_ent_values( var_0, var_1 )
         if ( level.nextgen && var_0.atmosfogenabled )
         {
             if ( isplayer( self ) )
-                self playersetatmosfog( var_1, var_0._id_0DC4, var_0._id_0DB7, var_0._id_0DB9, var_0._id_0DB8, var_0._id_0DB5, var_0._id_0DBD, var_0._id_0DB6, var_0._id_0DC2, var_0._id_0DB3, int( var_0._id_0DBF ), var_0._id_0DBE, var_0._id_0DC1, var_0._id_0DC0, var_0._id_0DC3, var_0._id_0DBB, var_0._id_0DBA, var_0._id_0DBC );
+                self _meth_8220( var_1, var_0.atmosfogsunfogcolor, var_0.atmosfoghazecolor, var_0.atmosfoghazestrength, var_0.atmosfoghazespread, var_0.atmosfogextinctionstrength, var_0.atmosfoginscatterstrength, var_0.atmosfoghalfplanedistance, var_0.atmosfogstartdistance, var_0.atmosfogdistancescale, int( var_0.atmosfogskydistance ), var_0.atmosfogskyangularfalloffenabled, var_0.atmosfogskyfalloffstartangle, var_0.atmosfogskyfalloffanglerange, var_0.atmosfogsundirection, var_0.atmosfogheightfogenabled, var_0.atmosfogheightfogbaseheight, var_0.atmosfogheightfoghalfplanedistance );
             else
-                setatmosfog( var_1, var_0._id_0DC4, var_0._id_0DB7, var_0._id_0DB9, var_0._id_0DB8, var_0._id_0DB5, var_0._id_0DBD, var_0._id_0DB6, var_0._id_0DC2, var_0._id_0DB3, int( var_0._id_0DBF ), var_0._id_0DBE, var_0._id_0DC1, var_0._id_0DC0, var_0._id_0DC3, var_0._id_0DBB, var_0._id_0DBA, var_0._id_0DBC );
+                setatmosfog( var_1, var_0.atmosfogsunfogcolor, var_0.atmosfoghazecolor, var_0.atmosfoghazestrength, var_0.atmosfoghazespread, var_0.atmosfogextinctionstrength, var_0.atmosfoginscatterstrength, var_0.atmosfoghalfplanedistance, var_0.atmosfogstartdistance, var_0.atmosfogdistancescale, int( var_0.atmosfogskydistance ), var_0.atmosfogskyangularfalloffenabled, var_0.atmosfogskyfalloffstartangle, var_0.atmosfogskyfalloffanglerange, var_0.atmosfogsundirection, var_0.atmosfogheightfogenabled, var_0.atmosfogheightfogbaseheight, var_0.atmosfogheightfoghalfplanedistance );
         }
         else
             set_fog_to_ent_values_dfog( var_0, var_1 );
@@ -3164,7 +3164,7 @@ hide_notsolid()
 show_solid()
 {
     if ( !isai( self ) )
-        self solid();
+        self _meth_82BE();
 
     if ( isdefined( self.oldcontents ) )
         self setcontents( self.oldcontents );

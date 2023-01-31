@@ -1,15 +1,15 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_A20F()
+watchexplosivedroneusage()
 {
     self endon( "spawned_player" );
     self endon( "disconnect" );
     self endon( "death" );
     self endon( "faux_spawn" );
 
-    if ( !isdefined( level._id_3575 ) )
-        _id_3570();
+    if ( !isdefined( level.explosivedronesettings ) )
+        explosivedroneinit();
 
     for (;;)
     {
@@ -26,28 +26,28 @@ _id_A20F()
             if ( !isdefined( var_0.weaponname ) )
                 var_0.weaponname = var_1;
 
-            var_0 thread _id_3571();
+            var_0 thread explosivedronelink();
         }
     }
 }
 
-_id_3571()
+explosivedronelink()
 {
-    thread _id_A221();
+    thread watchforstick();
     wait 0.1;
 
     if ( isdefined( self ) )
     {
         self.explosivedrone = spawn( "script_model", self.origin );
         self.explosivedrone.targetname = "explosive_drone_head_model";
-        self.explosivedrone setmodel( level._id_3575._id_5D3A );
+        self.explosivedrone _meth_80B1( level.explosivedronesettings.modelbase );
         self.explosivedrone.oldcontents = self.explosivedrone setcontents( 0 );
-        self.explosivedrone linkto( self, "tag_spike", ( 0.0, 0.0, 0.0 ), ( 0.0, 0.0, 0.0 ) );
+        self.explosivedrone _meth_804D( self, "tag_spike", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         self.explosivedrone.owner = self.owner;
         var_0 = self.explosivedrone;
         var_0 thread cleanup_on_grenade_death( self );
-        thread _id_5EC5();
-        thread _id_5E6B();
+        thread monitorspikedestroy();
+        thread monitorheaddestroy();
     }
 }
 
@@ -66,59 +66,59 @@ explosivegrenadedeath( var_0, var_1, var_2, var_3 )
         self notify( "death" );
 
         if ( isdefined( self.explosivedrone ) )
-            self.explosivedrone _id_2850();
+            self.explosivedrone deleteexplosivedrone();
 
         self delete();
     }
 }
 
-_id_357A( var_0, var_1, var_2, var_3 )
+explosiveheaddeath( var_0, var_1, var_2, var_3 )
 {
     if ( isdefined( self ) )
         self delete();
 }
 
-_id_3570()
+explosivedroneinit()
 {
-    level._id_3572 = 1;
-    level._id_3575 = spawnstruct();
-    level._id_3575._id_9364 = 20.0;
-    level._id_3575._id_3580 = 30.0;
-    level._id_3575.health = 60;
-    level._id_3575.maxhealth = 60;
-    level._id_3575._id_9D6D = "vehicle_tracking_drone_mp";
-    level._id_3575._id_5D3A = "npc_drone_explosive_main";
-    level._id_3575._id_3BAF = loadfx( "vfx/sparks/direct_hack_stun" );
-    level._id_3575._id_3BAB = loadfx( "vfx/lights/tracking_drone_laser_blue" );
-    level._id_3575._id_3BA9 = loadfx( "vfx/explosion/explosive_drone_explosion" );
-    level._id_3575._id_3BAD = loadfx( "vfx/explosion/explosive_drone_explosion" );
-    level._id_3575._id_3BA7 = loadfx( "vfx/lights/light_explosive_drone_beacon_enemy" );
-    level._id_3575._id_3BAA = loadfx( "vfx/lights/light_explosive_drone_beacon_friendly" );
-    level._id_3575._id_3BA8 = loadfx( "vfx/distortion/tracking_drone_distortion_hemi" );
-    level._id_3575._id_3BAC = loadfx( "vfx/trail/explosive_drone_thruster_large" );
-    level._id_3575._id_3BAE = loadfx( "vfx/trail/explosive_drone_thruster_small" );
-    level._id_3575._id_8898 = "wpn_explosive_drone_exp";
-    level._id_3575._id_889A = "wpn_explosive_drone_lock";
-    level._id_3575._id_8899 = "wpn_explosive_drone_open";
+    level.explosivedronemaxperplayer = 1;
+    level.explosivedronesettings = spawnstruct();
+    level.explosivedronesettings.timeout = 20.0;
+    level.explosivedronesettings.explosivetimeout = 30.0;
+    level.explosivedronesettings.health = 60;
+    level.explosivedronesettings.maxhealth = 60;
+    level.explosivedronesettings.vehicleinfo = "vehicle_tracking_drone_mp";
+    level.explosivedronesettings.modelbase = "npc_drone_explosive_main";
+    level.explosivedronesettings.fxid_sparks = loadfx( "vfx/sparks/direct_hack_stun" );
+    level.explosivedronesettings.fxid_laser_glow = loadfx( "vfx/lights/tracking_drone_laser_blue" );
+    level.explosivedronesettings.fxid_explode = loadfx( "vfx/explosion/explosive_drone_explosion" );
+    level.explosivedronesettings.fxid_lethalexplode = loadfx( "vfx/explosion/explosive_drone_explosion" );
+    level.explosivedronesettings.fxid_enemy_light = loadfx( "vfx/lights/light_explosive_drone_beacon_enemy" );
+    level.explosivedronesettings.fxid_friendly_light = loadfx( "vfx/lights/light_explosive_drone_beacon_friendly" );
+    level.explosivedronesettings.fxid_engine_distort = loadfx( "vfx/distortion/tracking_drone_distortion_hemi" );
+    level.explosivedronesettings.fxid_launch_thruster = loadfx( "vfx/trail/explosive_drone_thruster_large" );
+    level.explosivedronesettings.fxid_position_thruster = loadfx( "vfx/trail/explosive_drone_thruster_small" );
+    level.explosivedronesettings.sound_explode = "wpn_explosive_drone_exp";
+    level.explosivedronesettings.sound_lock = "wpn_explosive_drone_lock";
+    level.explosivedronesettings.sound_launch = "wpn_explosive_drone_open";
 
     foreach ( var_1 in level.players )
         var_1.is_being_tracked = 0;
 
-    level thread _id_64A8();
-    level._id_3576 = level._id_3575._id_9364;
-    level._id_3576 = level._id_3575._id_3580;
-    level._id_356A = 0;
-    level._id_356B = 0;
-    level._id_356C = 0;
+    level thread onexplosiveplayerconnect();
+    level.explosivedronetimeout = level.explosivedronesettings.timeout;
+    level.explosivedronetimeout = level.explosivedronesettings.explosivetimeout;
+    level.explosivedronedebugposition = 0;
+    level.explosivedronedebugpositionforward = 0;
+    level.explosivedronedebugpositionheight = 0;
 }
 
-_id_98A7( var_0 )
+tryuseexplosivedrone( var_0 )
 {
     var_1 = 1;
 
     if ( maps\mp\_utility::isusingremote() )
         return 0;
-    else if ( _id_33E0() )
+    else if ( exceededmaxexplosivedrones() )
     {
         self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
@@ -129,22 +129,22 @@ _id_98A7( var_0 )
         return 0;
     }
 
-    if ( !isdefined( self._id_3569 ) )
-        self._id_3569 = [];
+    if ( !isdefined( self.explosivedronearray ) )
+        self.explosivedronearray = [];
 
-    if ( self._id_3569.size )
+    if ( self.explosivedronearray.size )
     {
-        self._id_3569 = common_scripts\utility::array_removeundefined( self._id_3569 );
+        self.explosivedronearray = common_scripts\utility::array_removeundefined( self.explosivedronearray );
 
-        if ( self._id_3569.size >= level._id_3572 )
+        if ( self.explosivedronearray.size >= level.explosivedronemaxperplayer )
         {
-            if ( isdefined( self._id_3569[0] ) )
-                self._id_3569[0] thread _id_355A();
+            if ( isdefined( self.explosivedronearray[0] ) )
+                self.explosivedronearray[0] thread explosivedrone_leave();
         }
     }
 
     maps\mp\_utility::incrementfauxvehiclecount();
-    var_2 = var_0 _id_2400();
+    var_2 = var_0 createexplosivedrone();
 
     if ( !isdefined( var_2 ) )
     {
@@ -152,16 +152,16 @@ _id_98A7( var_0 )
         return 0;
     }
 
-    self playsound( level._id_3575._id_8899 );
-    self playsound( level._id_3575._id_889A );
-    self._id_3569[self._id_3569.size] = var_2;
-    thread _id_8D0D( var_2 );
-    playfxontag( level._id_3575._id_3BAC, var_2, "TAG_THRUSTER_BTM" );
+    self playsound( level.explosivedronesettings.sound_launch );
+    self playsound( level.explosivedronesettings.sound_lock );
+    self.explosivedronearray[self.explosivedronearray.size] = var_2;
+    thread startexplosivedrone( var_2 );
+    playfxontag( level.explosivedronesettings.fxid_launch_thruster, var_2, "TAG_THRUSTER_BTM" );
     var_0 notify( "mine_selfdestruct" );
     return var_2;
 }
 
-_id_2400( var_0, var_1, var_2, var_3 )
+createexplosivedrone( var_0, var_1, var_2, var_3 )
 {
     if ( !isdefined( var_0 ) )
         var_0 = 0;
@@ -179,8 +179,8 @@ _id_2400( var_0, var_1, var_2, var_3 )
         {
             var_11 = self.explosivedrone.origin;
             var_4 = self.explosivedrone.angles;
-            self.explosivedrone _id_2850();
-            _id_0849();
+            self.explosivedrone deleteexplosivedrone();
+            addtodeletespike();
         }
         else
             var_11 = self.origin;
@@ -194,7 +194,7 @@ _id_2400( var_0, var_1, var_2, var_3 )
 
     var_13 = anglestoup( self.angles );
     var_11 += var_13 * 10;
-    var_14 = spawnhelicopter( self.owner, var_11, var_4, level._id_3575._id_9D6D, level._id_3575._id_5D3A );
+    var_14 = spawnhelicopter( self.owner, var_11, var_4, level.explosivedronesettings.vehicleinfo, level.explosivedronesettings.modelbase );
 
     if ( !isdefined( var_14 ) )
         return;
@@ -202,20 +202,20 @@ _id_2400( var_0, var_1, var_2, var_3 )
     var_14.type = "explosive_drone";
     var_14 common_scripts\utility::make_entity_sentient_mp( self.owner.team );
     var_14 _meth_83F3( 1 );
-    var_14 _id_084A();
-    var_14 thread _id_73A5();
-    var_14.health = level._id_3575.health;
-    var_14.maxhealth = level._id_3575.maxhealth;
+    var_14 addtoexplosivedronelist();
+    var_14 thread removefromexplosivedronelistondeath();
+    var_14.health = level.explosivedronesettings.health;
+    var_14.maxhealth = level.explosivedronesettings.maxhealth;
     var_14.damagetaken = 0;
-    var_14._id_03E3 = 20;
-    var_14._id_3978 = 20;
+    var_14.speed = 20;
+    var_14.followspeed = 20;
     var_14.owner = self.owner;
     var_14.team = self.owner.team;
-    var_14 _meth_8283( var_14._id_03E3, 10, 10 );
+    var_14 _meth_8283( var_14.speed, 10, 10 );
     var_14 _meth_8292( 120, 90 );
     var_14 _meth_825A( 64 );
     var_14 _meth_8253( 20, 5, 5 );
-    var_14._id_3B88 = undefined;
+    var_14.fx_tag0 = undefined;
 
     if ( isdefined( var_14.type ) )
     {
@@ -225,54 +225,54 @@ _id_2400( var_0, var_1, var_2, var_3 )
         }
     }
 
-    var_14._id_5A54 = 2000;
-    var_14._id_5A3A = 300;
-    var_14._id_94B6 = undefined;
+    var_14.maxtrackingrange = 2000;
+    var_14.maxlaserrange = 300;
+    var_14.trackedplayer = undefined;
     var_15 = 45;
     var_16 = 45;
     var_14 _meth_8294( var_15, var_16 );
-    var_14._id_91D1 = var_11;
-    var_14._id_0E53 = 10000;
-    var_14._id_0E52 = 150;
-    var_14._id_0E54 = missile_createattractorent( var_14, var_14._id_0E53, var_14._id_0E52 );
-    var_14._id_4724 = 0;
+    var_14.targetpos = var_11;
+    var_14.attract_strength = 10000;
+    var_14.attract_range = 150;
+    var_14.attractor = missile_createattractorent( var_14, var_14.attract_strength, var_14.attract_range );
+    var_14.hasdodged = 0;
     var_14.stunned = 0;
-    var_14._id_4C0E = 0;
-    var_14 thread maps\mp\gametypes\_damage::setentitydamagecallback( var_14.maxhealth, undefined, ::_id_64A7, undefined, 0 );
-    var_14 thread _id_3561();
-    var_14 thread _id_3560();
-    var_14 thread _id_3568();
-    var_14 thread _id_3565();
-    var_14 thread _id_3564();
-    var_14 thread _id_3566();
-    var_14 thread _id_3563();
-    var_14 thread _id_3552();
-    var_14 thread _id_3554();
-    var_14 thread _id_2EE1();
+    var_14.inactive = 0;
+    var_14 thread maps\mp\gametypes\_damage::setentitydamagecallback( var_14.maxhealth, undefined, ::onexplosivedronedeath, undefined, 0 );
+    var_14 thread explosivedrone_watchdisable();
+    var_14 thread explosivedrone_watchdeath();
+    var_14 thread explosivedrone_watchtimeout();
+    var_14 thread explosivedrone_watchownerloss();
+    var_14 thread explosivedrone_watchownerdeath();
+    var_14 thread explosivedrone_watchroundend();
+    var_14 thread explosivedrone_watchhostmigration();
+    var_14 thread explosivedrone_enemy_lightfx();
+    var_14 thread explosivedrone_friendly_lightfx();
+    var_14 thread drone_thrusterfxexplosive();
     return var_14;
 }
 
-_id_0849()
+addtodeletespike()
 {
     var_0 = 5;
 
-    if ( !isdefined( level._id_8A56 ) )
+    if ( !isdefined( level.spikelist ) )
     {
-        level._id_8A56 = [];
-        level._id_8A57 = 0;
+        level.spikelist = [];
+        level.spikelistindex = 0;
     }
 
-    if ( level._id_8A56.size >= var_0 )
+    if ( level.spikelist.size >= var_0 )
     {
-        if ( isdefined( level._id_8A56[level._id_8A57] ) )
-            level._id_8A56[level._id_8A57] delete();
+        if ( isdefined( level.spikelist[level.spikelistindex] ) )
+            level.spikelist[level.spikelistindex] delete();
     }
 
-    level._id_8A56[level._id_8A57] = self;
-    level._id_8A57 = ( level._id_8A57 + 1 ) % var_0;
+    level.spikelist[level.spikelistindex] = self;
+    level.spikelistindex = ( level.spikelistindex + 1 ) % var_0;
 }
 
-_id_4B83( var_0 )
+idletargetmoverexplosive( var_0 )
 {
     self endon( "disconnect" );
     level endon( "game_ended" );
@@ -284,15 +284,15 @@ _id_4B83( var_0 )
         if ( maps\mp\_utility::isreallyalive( self ) && !maps\mp\_utility::isusingremote() && anglestoforward( self.angles ) != var_1 )
         {
             var_1 = anglestoforward( self.angles );
-            var_2 = self.origin + var_1 * -100 + ( 0.0, 0.0, 40.0 );
-            var_0 moveto( var_2, 0.5 );
+            var_2 = self.origin + var_1 * -100 + ( 0, 0, 40 );
+            var_0 _meth_82AE( var_2, 0.5 );
         }
 
         wait 0.5;
     }
 }
 
-_id_3552()
+explosivedrone_enemy_lightfx()
 {
     self endon( "death" );
     self.owner endon( "faux_spawn" );
@@ -302,26 +302,26 @@ _id_3552()
         if ( isdefined( var_1 ) && issentient( var_1 ) && issentient( self ) && var_1.team != self.team )
         {
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
         }
     }
 }
 
-_id_3554()
+explosivedrone_friendly_lightfx()
 {
     self endon( "death" );
     self.owner endon( "faux_spawn" );
@@ -331,29 +331,29 @@ _id_3554()
         if ( isdefined( var_1 ) && issentient( var_1 ) && issentient( self ) && var_1.team == self.team )
         {
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_1 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_1 );
         }
     }
 
-    thread _id_A203();
-    thread _id_A22E();
+    thread watchconnectedplayfxexplosive();
+    thread watchjoinedteamplayfxexplosive();
 }
 
-_id_2EE1()
+drone_thrusterfxexplosive()
 {
     self endon( "death" );
     self endon( "disconnect" );
@@ -363,122 +363,122 @@ _id_2EE1()
     {
         foreach ( var_1 in level.players )
         {
-            thread _id_2EDF( var_1 );
-            thread _id_2EE0( var_1 );
+            thread drone_thrusterfx_bottom_threaded( var_1 );
+            thread drone_thrusterfx_side_threaded( var_1 );
         }
 
         wait 1.1;
     }
 }
 
-_id_2EE0( var_0 )
+drone_thrusterfx_side_threaded( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
     self.owner endon( "faux_spawn" );
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_X_nY_Z", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_X_nY_Z", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_X_nY_nZ", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_X_nY_nZ", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_nX_nY_Z", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_nX_nY_Z", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_nX_nY_nZ", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_nX_nY_nZ", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_nX_Y_nZ", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_nX_Y_nZ", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_nX_Y_Z", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_nX_Y_Z", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_X_Y_Z", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_X_Y_Z", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUST_SIDE_X_Y_nZ", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUST_SIDE_X_Y_nZ", var_0 );
 }
 
-_id_2EDF( var_0 )
+drone_thrusterfx_bottom_threaded( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
     self.owner endon( "faux_spawn" );
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BAE ) )
-        playfxontagforclients( level._id_3575._id_3BAE, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_position_thruster ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_position_thruster, self, "TAG_THRUSTER_BTM", var_0 );
 
     wait 0.1;
 
-    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level._id_3575._id_3BA8 ) )
-        playfxontagforclients( level._id_3575._id_3BA8, self, "TAG_THRUSTER_BTM", var_0 );
+    if ( isdefined( var_0 ) && isdefined( self ) && isdefined( level.explosivedronesettings.fxid_engine_distort ) )
+        playfxontagforclients( level.explosivedronesettings.fxid_engine_distort, self, "TAG_THRUSTER_BTM", var_0 );
 }
 
-_id_A203()
+watchconnectedplayfxexplosive()
 {
     self endon( "death" );
     self.owner endon( "faux_spawn" );
@@ -491,26 +491,26 @@ _id_A203()
         if ( isdefined( var_0 ) && var_0.team == self.team )
         {
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
         }
     }
 }
 
-_id_A22E()
+watchjoinedteamplayfxexplosive()
 {
     self endon( "death" );
     self.owner endon( "faux_spawn" );
@@ -523,50 +523,50 @@ _id_A22E()
         if ( isdefined( var_0 ) && var_0.team == self.team )
         {
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BAA, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_friendly_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
             wait 0.15;
-            playfxontagforclients( level._id_3575._id_3BA7, self, "TAG_BEACON", var_0 );
+            playfxontagforclients( level.explosivedronesettings.fxid_enemy_light, self, "TAG_BEACON", var_0 );
         }
     }
 }
 
-_id_8D0D( var_0 )
+startexplosivedrone( var_0 )
 {
     level endon( "game_ended" );
     var_0 endon( "death" );
-    var_0 thread _id_3553();
+    var_0 thread explosivedrone_followtarget();
     var_0 thread createkillcamentity();
 
     if ( isdefined( var_0.type ) )
     {
         if ( var_0.type == "explosive_drone" )
-            var_0 thread _id_1D03();
+            var_0 thread checkforexplosivegoalexplosive();
     }
 }
 
-_id_1D03()
+checkforexplosivegoalexplosive()
 {
     level endon( "game_ended" );
     level endon( "host_migration_begin" );
     self endon( "death" );
     self endon( "leaving" );
     var_0 = gettime();
-    thread _id_14C2( var_0 );
+    thread blowupatendoftrackingtime( var_0 );
 }
 
-_id_14C2( var_0 )
+blowupatendoftrackingtime( var_0 )
 {
     level endon( "game_ended" );
     level endon( "host_migration_begin" );
@@ -579,11 +579,11 @@ _id_14C2( var_0 )
     if ( isdefined( self ) )
     {
         self notify( "exploding" );
-        thread _id_14C4();
+        thread blowupdronesequenceexplosive();
     }
 }
 
-_id_14C4()
+blowupdronesequenceexplosive()
 {
     var_0 = undefined;
 
@@ -592,7 +592,7 @@ _id_14C4()
         if ( isdefined( self.owner ) )
             var_0 = self.owner;
 
-        self playsound( level._id_3575._id_889A );
+        self playsound( level.explosivedronesettings.sound_lock );
         wait 0.5;
     }
 
@@ -601,7 +601,7 @@ _id_14C4()
         self playsound( "wpn_explosive_drone_exp" );
         var_1 = anglestoup( self.angles );
         var_2 = anglestoforward( self.angles );
-        playfx( level._id_3575._id_3BAD, self.origin, var_2, var_1 );
+        playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_2, var_1 );
 
         if ( isdefined( var_0 ) )
             self entityradiusdamage( self.origin, 256, 130, 55, var_0, "MOD_EXPLOSIVE", "explosive_drone_mp" );
@@ -612,7 +612,7 @@ _id_14C4()
     }
 }
 
-_id_992E()
+turnondangerlightsexplosive()
 {
     if ( isdefined( self ) )
     {
@@ -632,7 +632,7 @@ _id_992E()
         return;
 }
 
-_id_3553()
+explosivedrone_followtarget()
 {
     level endon( "game_ended" );
     level endon( "host_migration_begin" );
@@ -642,15 +642,15 @@ _id_3553()
 
     if ( !isdefined( self.owner ) )
     {
-        thread _id_355A();
+        thread explosivedrone_leave();
         return;
     }
 
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
-    self _meth_8283( self._id_3978, 10, 10 );
-    self._id_6F66 = self.owner;
-    self._id_94B6 = undefined;
+    self _meth_8283( self.followspeed, 10, 10 );
+    self.previoustrackedplayer = self.owner;
+    self.trackedplayer = undefined;
 
     for (;;)
     {
@@ -662,10 +662,10 @@ _id_3553()
 
         if ( isdefined( self.owner ) && isalive( self.owner ) )
         {
-            var_0 = self._id_5A54 * self._id_5A54;
+            var_0 = self.maxtrackingrange * self.maxtrackingrange;
             var_1 = var_0;
 
-            if ( !isdefined( self._id_94B6 ) || self._id_94B6 == self.owner )
+            if ( !isdefined( self.trackedplayer ) || self.trackedplayer == self.owner )
             {
                 foreach ( var_3 in level.players )
                 {
@@ -676,23 +676,23 @@ _id_3553()
                         if ( var_4 < var_1 )
                         {
                             var_1 = var_4;
-                            self._id_94B6 = var_3;
-                            thread _id_A243( var_3 );
+                            self.trackedplayer = var_3;
+                            thread watchplayerdeathdisconnectexplosive( var_3 );
                         }
                     }
                 }
             }
 
-            if ( !isdefined( self._id_94B6 ) )
-                thread _id_356F();
+            if ( !isdefined( self.trackedplayer ) )
+                thread explosivedroneexplode();
 
-            if ( isdefined( self._id_94B6 ) )
-                _id_355B( self._id_94B6 );
+            if ( isdefined( self.trackedplayer ) )
+                explosivedrone_movetoplayer( self.trackedplayer );
 
-            if ( self._id_94B6 != self._id_6F66 )
+            if ( self.trackedplayer != self.previoustrackedplayer )
             {
-                _id_8EE9( self._id_6F66 );
-                self._id_6F66 = self._id_94B6;
+                stophighlightingplayerexplosive( self.previoustrackedplayer );
+                self.previoustrackedplayer = self.trackedplayer;
             }
         }
 
@@ -700,17 +700,17 @@ _id_3553()
     }
 }
 
-_id_A243( var_0 )
+watchplayerdeathdisconnectexplosive( var_0 )
 {
     var_0 common_scripts\utility::waittill_any( "death", "disconnect", "faux_spawn", "joined_team" );
 
     if ( var_0.is_being_tracked == 1 )
-        thread _id_355A();
+        thread explosivedrone_leave();
     else
-        self._id_94B6 = undefined;
+        self.trackedplayer = undefined;
 }
 
-_id_355B( var_0 )
+explosivedrone_movetoplayer( var_0 )
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -724,7 +724,7 @@ _id_355B( var_0 )
     var_2 = 0;
     var_3 = 65;
 
-    switch ( var_0 getstance() )
+    switch ( var_0 _meth_817C() )
     {
         case "stand":
             var_3 = 65;
@@ -739,22 +739,22 @@ _id_355B( var_0 )
 
     var_4 = ( var_2, var_1, var_3 );
     self _meth_83F9( var_0, var_4 );
-    self._id_4EC1 = 1;
-    thread _id_3562();
-    thread _id_3567();
+    self.intransit = 1;
+    thread explosivedrone_watchforgoal();
+    thread explosivedrone_watchtargetdisconnect();
 }
 
-_id_355C()
+explosivedrone_stopmovement()
 {
     self _meth_825B( self.origin, 1 );
-    self._id_4EC1 = 0;
-    self._id_4C0E = 1;
+    self.intransit = 0;
+    self.inactive = 1;
 }
 
-_id_3551( var_0 )
+explosivedrone_changeowner( var_0 )
 {
     maps\mp\_utility::incrementfauxvehiclecount();
-    var_1 = var_0 _id_2400( 1, self.origin, self.angles );
+    var_1 = var_0 createexplosivedrone( 1, self.origin, self.angles );
 
     if ( !isdefined( var_1 ) )
     {
@@ -762,22 +762,22 @@ _id_3551( var_0 )
         return 0;
     }
 
-    if ( !isdefined( var_0._id_3569 ) )
-        var_0._id_3569 = [];
+    if ( !isdefined( var_0.explosivedronearray ) )
+        var_0.explosivedronearray = [];
 
-    var_0._id_3569[var_0._id_3569.size] = var_1;
-    var_0 thread _id_8D0D( var_1 );
+    var_0.explosivedronearray[var_0.explosivedronearray.size] = var_1;
+    var_0 thread startexplosivedrone( var_1 );
 
-    if ( isdefined( level._id_3575._id_3BAF ) )
+    if ( isdefined( level.explosivedronesettings.fxid_sparks ) )
     {
 
     }
 
-    _id_739F();
+    removeexplosivedrone();
     return 1;
 }
 
-_id_3559()
+explosivedrone_highlighttarget()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -785,26 +785,26 @@ _id_3559()
 
     if ( !isdefined( self.owner ) )
     {
-        thread _id_355A();
+        thread explosivedrone_leave();
         return;
     }
 
     self.owner endon( "disconnect" );
     self.owner endon( "joined_team" );
     self.owner endon( "joined_spectators" );
-    self._id_54FE = spawn( "script_model", self.origin );
-    self._id_54FE setmodel( "tag_laser" );
+    self.lasertag = spawn( "script_model", self.origin );
+    self.lasertag _meth_80B1( "tag_laser" );
 
     for (;;)
     {
-        if ( isdefined( self._id_94B6 ) )
+        if ( isdefined( self.trackedplayer ) )
         {
-            self._id_54FE.origin = self gettagorigin( "tag_weapon" );
+            self.lasertag.origin = self gettagorigin( "tag_weapon" );
             var_0 = 20;
-            var_1 = ( randomfloat( var_0 ), randomfloat( var_0 ), randomfloat( var_0 ) ) - ( 10.0, 10.0, 10.0 );
+            var_1 = ( randomfloat( var_0 ), randomfloat( var_0 ), randomfloat( var_0 ) ) - ( 10, 10, 10 );
             var_2 = 65;
 
-            switch ( self._id_94B6 getstance() )
+            switch ( self.trackedplayer _meth_817C() )
             {
                 case "stand":
                     var_2 = 65;
@@ -817,7 +817,7 @@ _id_3559()
                     break;
             }
 
-            self._id_54FE.angles = vectortoangles( self._id_94B6.origin + ( 0, 0, var_2 - 20 ) + var_1 - self.origin );
+            self.lasertag.angles = vectortoangles( self.trackedplayer.origin + ( 0, 0, var_2 - 20 ) + var_1 - self.origin );
         }
 
         if ( isdefined( self.stunned ) && self.stunned )
@@ -828,33 +828,33 @@ _id_3559()
 
         var_3 = undefined;
 
-        if ( isdefined( self._id_94B6 ) )
+        if ( isdefined( self.trackedplayer ) )
         {
-            var_4 = bullettrace( self.origin, self._id_94B6.origin, 1, self );
+            var_4 = bullettrace( self.origin, self.trackedplayer.origin, 1, self );
             var_3 = var_4["entity"];
         }
 
-        if ( isdefined( self._id_94B6 ) && self._id_94B6 != self.owner && isdefined( var_3 ) && var_3 == self._id_94B6 && distancesquared( self.origin, self._id_94B6.origin ) < self._id_5A3A * self._id_5A3A )
+        if ( isdefined( self.trackedplayer ) && self.trackedplayer != self.owner && isdefined( var_3 ) && var_3 == self.trackedplayer && distancesquared( self.origin, self.trackedplayer.origin ) < self.maxlaserrange * self.maxlaserrange )
         {
-            if ( self._id_94B6.is_being_tracked == 0 )
-                _id_8D19( self._id_94B6 );
+            if ( self.trackedplayer.is_being_tracked == 0 )
+                starthighlightingplayerexplosive( self.trackedplayer );
         }
-        else if ( isdefined( self._id_94B6 ) && self._id_94B6.is_being_tracked == 1 )
-            _id_8EE9( self._id_94B6 );
+        else if ( isdefined( self.trackedplayer ) && self.trackedplayer.is_being_tracked == 1 )
+            stophighlightingplayerexplosive( self.trackedplayer );
 
         wait 0.05;
     }
 }
 
-_id_8D19( var_0 )
+starthighlightingplayerexplosive( var_0 )
 {
-    self._id_54FE laseron( "explosive_drone_laser" );
-    playfxontag( level._id_3575._id_3BAB, self._id_54FE, "tag_laser" );
+    self.lasertag _meth_80B2( "explosive_drone_laser" );
+    playfxontag( level.explosivedronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
 
-    if ( isdefined( level._id_3575._id_889A ) )
-        self playsound( level._id_3575._id_889A );
+    if ( isdefined( level.explosivedronesettings.sound_lock ) )
+        self playsound( level.explosivedronesettings.sound_lock );
 
-    var_0 setperk( "specialty_radararrow", 1, 0 );
+    var_0 _meth_82A6( "specialty_radararrow", 1, 0 );
 
     if ( var_0.is_being_tracked == 0 )
     {
@@ -863,21 +863,21 @@ _id_8D19( var_0 )
     }
 }
 
-_id_8EE9( var_0 )
+stophighlightingplayerexplosive( var_0 )
 {
-    if ( isdefined( self._id_54FE ) )
+    if ( isdefined( self.lasertag ) )
     {
-        self._id_54FE laseroff();
-        stopfxontag( level._id_3575._id_3BAB, self._id_54FE, "tag_laser" );
+        self.lasertag _meth_80B3();
+        stopfxontag( level.explosivedronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
     }
 
     if ( isdefined( var_0 ) )
     {
-        if ( isdefined( level._id_3575._id_889A ) )
-            self stoploopsound();
+        if ( isdefined( level.explosivedronesettings.sound_lock ) )
+            self _meth_80AB();
 
-        if ( var_0 hasperk( "specialty_radararrow", 1 ) )
-            var_0 unsetperk( "specialty_radararrow", 1 );
+        if ( var_0 _meth_82A7( "specialty_radararrow", 1 ) )
+            var_0 _meth_82A9( "specialty_radararrow", 1 );
 
         var_0 notify( "player_not_tracked" );
         var_0.is_being_tracked = 0;
@@ -885,7 +885,7 @@ _id_8EE9( var_0 )
     }
 }
 
-_id_64A8()
+onexplosiveplayerconnect()
 {
     level endon( "game_ended" );
 
@@ -902,7 +902,7 @@ _id_64A8()
     }
 }
 
-_id_3562()
+explosivedrone_watchforgoal()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -913,46 +913,46 @@ _id_3562()
     self notify( "explosiveDrone_watchForGoal" );
     self endon( "explosiveDrone_watchForGoal" );
     var_0 = common_scripts\utility::waittill_any_return( "goal", "near_goal", "hit_goal" );
-    self._id_4EC1 = 0;
-    self._id_4C0E = 0;
+    self.intransit = 0;
+    self.inactive = 0;
     self notify( "hit_goal" );
 }
 
-_id_3560()
+explosivedrone_watchdeath()
 {
     level endon( "game_ended" );
     self endon( "gone" );
     self waittill( "death" );
-    thread _id_356E();
+    thread explosivedronedestroyed();
 }
 
-_id_3568()
+explosivedrone_watchtimeout()
 {
     level endon( "game_ended" );
     level endon( "host_migration_begin" );
     self endon( "death" );
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
-    var_0 = level._id_3576;
+    var_0 = level.explosivedronetimeout;
 
     if ( self.type == "explosive_drone" )
-        var_0 = level._id_3576;
+        var_0 = level.explosivedronetimeout;
 
     wait(var_0);
-    thread _id_355A();
+    thread explosivedrone_leave();
 }
 
-_id_3565()
+explosivedrone_watchownerloss()
 {
     level endon( "game_ended" );
     self endon( "death" );
     self endon( "leaving" );
     self.owner common_scripts\utility::waittill_any( "disconnect", "joined_team", "joined_spectators" );
     self notify( "owner_gone" );
-    thread _id_355A();
+    thread explosivedrone_leave();
 }
 
-_id_3564()
+explosivedrone_watchownerdeath()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -961,11 +961,11 @@ _id_3564()
     for (;;)
     {
         self.owner waittill( "death" );
-        thread _id_355A();
+        thread explosivedrone_leave();
     }
 }
 
-_id_3567()
+explosivedrone_watchtargetdisconnect()
 {
     level endon( "game_ended" );
     level endon( "host_migration_begin" );
@@ -976,12 +976,12 @@ _id_3567()
     self endon( "owner_gone" );
     self notify( "explosiveDrone_watchTargetDisconnect" );
     self endon( "explosiveDrone_watchTargetDisconnect" );
-    self._id_94B6 waittill( "disconnect" );
-    _id_8EE9( self._id_94B6 );
-    _id_355B( self.owner );
+    self.trackedplayer waittill( "disconnect" );
+    stophighlightingplayerexplosive( self.trackedplayer );
+    explosivedrone_movetoplayer( self.owner );
 }
 
-_id_3566()
+explosivedrone_watchroundend()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -989,10 +989,10 @@ _id_3566()
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
     level common_scripts\utility::waittill_any( "round_end_finished", "game_ended" );
-    thread _id_355A();
+    thread explosivedrone_leave();
 }
 
-_id_3563()
+explosivedrone_watchhostmigration()
 {
     level endon( "game_ended" );
     self endon( "death" );
@@ -1001,25 +1001,25 @@ _id_3563()
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
     level waittill( "host_migration_begin" );
-    _id_8EE9( self._id_94B6 );
+    stophighlightingplayerexplosive( self.trackedplayer );
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
-    thread _id_3551( self.owner );
+    thread explosivedrone_changeowner( self.owner );
 }
 
-_id_355A()
+explosivedrone_leave()
 {
     self endon( "death" );
     self notify( "leaving" );
-    _id_8EE9( self._id_94B6 );
-    _id_356F();
+    stophighlightingplayerexplosive( self.trackedplayer );
+    explosivedroneexplode();
 }
 
-_id_64A7( var_0, var_1, var_2, var_3 )
+onexplosivedronedeath( var_0, var_1, var_2, var_3 )
 {
     self notify( "death" );
 }
 
-_id_3558()
+explosivedrone_grenade_watchdisable()
 {
     self endon( "death" );
     self.owner endon( "disconnect" );
@@ -1029,11 +1029,11 @@ _id_3558()
     for (;;)
     {
         self waittill( "emp_damage", var_0, var_1 );
-        thread _id_3557();
+        thread explosivedrone_grenade_stunned();
     }
 }
 
-_id_3561()
+explosivedrone_watchdisable()
 {
     self endon( "death" );
     self.owner endon( "disconnect" );
@@ -1042,134 +1042,134 @@ _id_3561()
     for (;;)
     {
         self waittill( "emp_damage", var_0, var_1 );
-        thread _id_355F();
+        thread explosivedrone_stunned();
     }
 }
 
-_id_3557()
+explosivedrone_grenade_stunned()
 {
     self notify( "explosiveDrone_stunned" );
     self endon( "explosiveDrone_stunned" );
     self endon( "death" );
     self.owner endon( "disconnect" );
     level endon( "game_ended" );
-    _id_3555();
+    explosivedrone_grenade_stunbegin();
     wait 10.0;
-    _id_3556();
+    explosivedrone_grenade_stunend();
 }
 
-_id_355F()
+explosivedrone_stunned()
 {
     self notify( "explosiveDrone_stunned" );
     self endon( "explosiveDrone_stunned" );
     self endon( "death" );
     self.owner endon( "disconnect" );
     level endon( "game_ended" );
-    _id_355D();
+    explosivedrone_stunbegin();
     wait 10.0;
-    _id_355E();
+    explosivedrone_stunend();
 }
 
-_id_3555()
+explosivedrone_grenade_stunbegin()
 {
     if ( self.stunned )
         return;
 
     self.stunned = 1;
 
-    if ( isdefined( level._id_3575._id_3BAF ) )
-        playfxontag( level._id_3575._id_3BAF, self, "TAG_BEACON" );
+    if ( isdefined( level.explosivedronesettings.fxid_sparks ) )
+        playfxontag( level.explosivedronesettings.fxid_sparks, self, "TAG_BEACON" );
 }
 
-_id_355D()
+explosivedrone_stunbegin()
 {
     if ( self.stunned )
         return;
 
     self.stunned = 1;
 
-    if ( isdefined( level._id_3575._id_3BAF ) )
-        playfxontag( level._id_3575._id_3BAF, self, "TAG_BEACON" );
+    if ( isdefined( level.explosivedronesettings.fxid_sparks ) )
+        playfxontag( level.explosivedronesettings.fxid_sparks, self, "TAG_BEACON" );
 
-    thread _id_8EE9( self._id_94B6 );
-    self._id_94B6 = undefined;
-    self._id_6F66 = self.owner;
-    thread _id_355C();
+    thread stophighlightingplayerexplosive( self.trackedplayer );
+    self.trackedplayer = undefined;
+    self.previoustrackedplayer = self.owner;
+    thread explosivedrone_stopmovement();
 }
 
-_id_3556()
+explosivedrone_grenade_stunend()
 {
-    if ( isdefined( level._id_3575._id_3BAF ) )
-        killfxontag( level._id_3575._id_3BAF, self, "TAG_BEACON" );
+    if ( isdefined( level.explosivedronesettings.fxid_sparks ) )
+        killfxontag( level.explosivedronesettings.fxid_sparks, self, "TAG_BEACON" );
 
     self.stunned = 0;
-    self._id_4C0E = 0;
+    self.inactive = 0;
 }
 
-_id_355E()
+explosivedrone_stunend()
 {
-    if ( isdefined( level._id_3575._id_3BAF ) )
-        killfxontag( level._id_3575._id_3BAF, self, "TAG_BEACON" );
+    if ( isdefined( level.explosivedronesettings.fxid_sparks ) )
+        killfxontag( level.explosivedronesettings.fxid_sparks, self, "TAG_BEACON" );
 
     self.stunned = 0;
-    self._id_4C0E = 0;
+    self.inactive = 0;
 }
 
-_id_356E()
+explosivedronedestroyed()
 {
     if ( !isdefined( self ) )
         return;
 
-    _id_8EE9( self._id_94B6 );
-    _id_355E();
-    _id_356F();
+    stophighlightingplayerexplosive( self.trackedplayer );
+    explosivedrone_stunend();
+    explosivedroneexplode();
 }
 
-_id_356F()
+explosivedroneexplode()
 {
-    if ( isdefined( level._id_3575._id_3BA9 ) )
-        playfx( level._id_3575._id_3BA9, self.origin );
+    if ( isdefined( level.explosivedronesettings.fxid_explode ) )
+        playfx( level.explosivedronesettings.fxid_explode, self.origin );
 
-    if ( isdefined( level._id_3575._id_8898 ) )
-        self playsound( level._id_3575._id_8898 );
+    if ( isdefined( level.explosivedronesettings.sound_explode ) )
+        self playsound( level.explosivedronesettings.sound_explode );
 
     self notify( "exploding" );
-    _id_739F();
+    removeexplosivedrone();
 }
 
-_id_2850()
+deleteexplosivedrone()
 {
-    if ( isdefined( self._id_0E54 ) )
-        missile_deleteattractor( self._id_0E54 );
+    if ( isdefined( self.attractor ) )
+        missile_deleteattractor( self.attractor );
 
     removekillcamentity();
     self delete();
 }
 
-_id_739F()
+removeexplosivedrone()
 {
     maps\mp\_utility::decrementfauxvehiclecount();
 
     if ( isdefined( self.owner ) && isdefined( self.owner.explosivedrone ) )
         self.owner.explosivedrone = undefined;
 
-    _id_2850();
+    deleteexplosivedrone();
 }
 
-_id_084A()
+addtoexplosivedronelist()
 {
-    level.explosivedrones[self getentitynumber()] = self;
+    level.explosivedrones[self _meth_81B1()] = self;
 }
 
-_id_73A5()
+removefromexplosivedronelistondeath()
 {
-    var_0 = self getentitynumber();
+    var_0 = self _meth_81B1();
     self waittill( "death" );
     level.explosivedrones[var_0] = undefined;
     level.explosivedrones = common_scripts\utility::array_removeundefined( level.explosivedrones );
 }
 
-_id_33E0()
+exceededmaxexplosivedrones()
 {
     if ( isdefined( level.explosivedrones ) && level.explosivedrones.size >= maps\mp\_utility::maxvehiclesallowed() )
         return 1;
@@ -1177,7 +1177,7 @@ _id_33E0()
         return 0;
 }
 
-_id_3573()
+explosivedroneproximitytrigger()
 {
     self endon( "mine_destroyed" );
     self endon( "mine_selfdestruct" );
@@ -1188,17 +1188,17 @@ _id_3573()
 
     if ( isdefined( self ) && isdefined( self.explosivedrone ) )
     {
-        var_0 = self.explosivedrone gettagorigin( "TAG_BEACON" ) - self gettagorigin( "TAG_BEACON" ) + ( 0.0, 0.0, 10.0 );
+        var_0 = self.explosivedrone gettagorigin( "TAG_BEACON" ) - self gettagorigin( "TAG_BEACON" ) + ( 0, 0, 10 );
 
         if ( level.teambased )
             maps\mp\_entityheadicons::setteamheadicon( self.owner.team, var_0, "TAG_BEACON" );
         else
             maps\mp\_entityheadicons::setplayerheadicon( self.owner, var_0, "TAG_BEACON" );
 
-        var_1 = spawn( "trigger_radius", self.origin + ( 0.0, 0.0, -96.0 ), 0, 192, 192 );
+        var_1 = spawn( "trigger_radius", self.origin + ( 0, 0, -96 ), 0, 192, 192 );
         var_1.owner = self;
-        thread _id_356D( var_1 );
-        thread _id_A21F( var_1 );
+        thread explosivedronedeletetrigger( var_1 );
+        thread watchforpickup( var_1 );
         var_2 = undefined;
 
         while ( isdefined( self ) && isdefined( self.explosivedrone ) )
@@ -1217,7 +1217,7 @@ _id_3573()
                 continue;
             }
 
-            if ( isdefined( self.explosivedrone ) && !var_2 sightconetrace( self.explosivedrone gettagorigin( "TAG_BEACON" ), self.explosivedrone ) )
+            if ( isdefined( self.explosivedrone ) && !var_2 _meth_81D8( self.explosivedrone gettagorigin( "TAG_BEACON" ), self.explosivedrone ) )
             {
                 wait 0.1;
                 continue;
@@ -1226,7 +1226,7 @@ _id_3573()
             if ( isdefined( self.explosivedrone ) )
             {
                 var_3 = self.explosivedrone gettagorigin( "TAG_BEACON" );
-                var_4 = var_2 geteye();
+                var_4 = var_2 _meth_80A8();
 
                 if ( !bullettracepassed( var_3, var_4, 0, self.explosivedrone ) )
                 {
@@ -1236,12 +1236,12 @@ _id_3573()
             }
 
             if ( maps\mp\_utility::isreallyalive( var_2 ) && var_2 != self.owner && ( !level.teambased || var_2.team != self.owner.team ) && !self.stunned )
-                var_2 _id_98A7( self );
+                var_2 tryuseexplosivedrone( self );
         }
     }
 }
 
-_id_356D( var_0 )
+explosivedronedeletetrigger( var_0 )
 {
     common_scripts\utility::waittill_any( "mine_triggered", "mine_destroyed", "mine_selfdestruct", "death" );
 
@@ -1254,21 +1254,21 @@ _id_356D( var_0 )
     var_0 delete();
 }
 
-_id_84FF( var_0 )
+showdebugradius( var_0 )
 {
-    var_1 = spawnfx( level._id_3575._id_2CF1, var_0.origin );
+    var_1 = spawnfx( level.explosivedronesettings.dome, var_0.origin );
     triggerfx( var_1 );
     self waittill( "death" );
     var_1 delete();
 }
 
-_id_31B8()
+endonplayerspawn()
 {
     self.owner common_scripts\utility::waittill_any( "spawned_player", "faux_spawn", "delete_explosive_drones" );
     explosivegrenadedeath();
 }
 
-_id_5EC5()
+monitorspikedestroy()
 {
     self.owner endon( "death" );
     self.owner endon( "disconnect" );
@@ -1277,7 +1277,7 @@ _id_5EC5()
     explosivegrenadedeath();
 }
 
-_id_5E6B()
+monitorheaddestroy()
 {
     self.owner endon( "death" );
     self.owner endon( "disconnect" );
@@ -1291,7 +1291,7 @@ _id_5E6B()
         self playsound( "wpn_explosive_drone_exp" );
         var_0 = anglestoup( self.angles );
         var_1 = anglestoforward( self.angles );
-        playfx( level._id_3575._id_3BAD, self.origin, var_1, var_0 );
+        playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_1, var_0 );
         self entityradiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
         self notify( "death" );
     }
@@ -1299,7 +1299,7 @@ _id_5E6B()
     explosivegrenadedeath();
 }
 
-_id_8D14()
+startgrenadelightfx()
 {
     self endon( "death" );
     self.owner endon( "death" );
@@ -1311,17 +1311,17 @@ _id_8D14()
         foreach ( var_2 in level.players )
         {
             if ( isdefined( var_2 ) && issentient( var_2 ) && var_2.team == self.team && isdefined( self.explosivedrone ) )
-                thread _id_3B9F( level._id_3575._id_3BAA, self.explosivedrone, "TAG_BEACON", var_2 );
+                thread fxblink( level.explosivedronesettings.fxid_friendly_light, self.explosivedrone, "TAG_BEACON", var_2 );
 
             if ( isdefined( var_2 ) && issentient( var_2 ) && var_2.team != self.team && isdefined( self.explosivedrone ) )
-                thread _id_3B9F( level._id_3575._id_3BA7, self.explosivedrone, "TAG_BEACON", var_2 );
+                thread fxblink( level.explosivedronesettings.fxid_enemy_light, self.explosivedrone, "TAG_BEACON", var_2 );
         }
 
         wait(var_0);
     }
 }
 
-_id_3B9F( var_0, var_1, var_2, var_3 )
+fxblink( var_0, var_1, var_2, var_3 )
 {
     for ( var_4 = 0; var_4 <= 4 && isdefined( var_1 ); var_4++ )
     {
@@ -1333,7 +1333,7 @@ _id_3B9F( var_0, var_1, var_2, var_3 )
     }
 }
 
-_id_A221()
+watchforstick()
 {
     self endon( "death" );
     self.owner endon( "death" );
@@ -1346,14 +1346,14 @@ _id_A221()
 
     if ( isdefined( var_0[1] ) )
     {
-        var_1 = var_0[1]._id_7ADA;
+        var_1 = var_0[1].script_stay_drone;
 
         if ( var_0[1].classname == "script_model" && !( isdefined( var_1 ) && var_1 == 1 ) )
         {
             self playsound( "wpn_explosive_drone_exp" );
             var_2 = anglestoup( self.angles );
             var_3 = anglestoforward( self.angles );
-            playfx( level._id_3575._id_3BAD, self.origin, var_3, var_2 );
+            playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_3, var_2 );
             self entityradiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
             thread explosivegrenadedeath();
         }
@@ -1362,22 +1362,22 @@ _id_A221()
     if ( isdefined( self ) )
     {
         self.explosivedrone setcontents( self.explosivedrone.oldcontents );
-        thread _id_3573();
-        thread _id_31B8();
-        thread _id_3558();
-        thread _id_8D14();
+        thread explosivedroneproximitytrigger();
+        thread endonplayerspawn();
+        thread explosivedrone_grenade_watchdisable();
+        thread startgrenadelightfx();
         thread maps\mp\gametypes\_damage::setentitydamagecallback( 100, undefined, ::explosivegrenadedeath, undefined, 0 );
-        self.explosivedrone thread maps\mp\gametypes\_damage::setentitydamagecallback( 100, undefined, ::_id_357A, undefined, 0 );
+        self.explosivedrone thread maps\mp\gametypes\_damage::setentitydamagecallback( 100, undefined, ::explosiveheaddeath, undefined, 0 );
         thread maps\mp\gametypes\_weapons::stickyhandlemovers( "mine_selfdestruct" );
     }
 }
 
 createkillcamentity()
 {
-    var_0 = ( 0.0, 0.0, 0.0 );
+    var_0 = ( 0, 0, 0 );
     self.killcament = spawn( "script_model", self.origin );
-    self.killcament setscriptmoverkillcam( "explosive" );
-    self.killcament linkto( self, "TAG_THRUSTER_BTM", var_0, ( 0.0, 0.0, 0.0 ) );
+    self.killcament _meth_834D( "explosive" );
+    self.killcament _meth_804D( self, "TAG_THRUSTER_BTM", var_0, ( 0, 0, 0 ) );
     self.killcament setcontents( 0 );
     self.killcament.starttime = gettime();
 }
@@ -1388,7 +1388,7 @@ removekillcamentity()
         self.killcament delete();
 }
 
-_id_A21F( var_0 )
+watchforpickup( var_0 )
 {
     self.owner endon( "disconnect" );
     self.owner endon( "faux_spawn" );
@@ -1396,7 +1396,7 @@ _id_A21F( var_0 )
     self endon( "death" );
     self.owner endon( "death" );
     self.explosivedrone makeusable();
-    self.explosivedrone sethintstring( &"MP_PICKUP_EXPLOSIVE_DRONE" );
+    self.explosivedrone _meth_80DB( &"MP_PICKUP_EXPLOSIVE_DRONE" );
     self.explosivedrone _meth_849B( 1 );
     var_1 = getdvarfloat( "player_useRadius", 128 );
     var_1 *= var_1;
@@ -1406,9 +1406,9 @@ _id_A21F( var_0 )
         if ( !isdefined( self ) || !isdefined( var_0 ) )
             break;
 
-        var_2 = isdefined( self.explosivedrone ) && distancesquared( self.owner geteye(), self.explosivedrone.origin ) <= var_1;
+        var_2 = isdefined( self.explosivedrone ) && distancesquared( self.owner _meth_80A8(), self.explosivedrone.origin ) <= var_1;
 
-        if ( self.owner istouching( var_0 ) && var_2 )
+        if ( self.owner _meth_80A9( var_0 ) && var_2 )
         {
             var_3 = 0;
 
@@ -1417,13 +1417,13 @@ _id_A21F( var_0 )
                 if ( !maps\mp\_utility::isreallyalive( self.owner ) )
                     break;
 
-                if ( !self.owner istouching( var_0 ) )
+                if ( !self.owner _meth_80A9( var_0 ) )
                     break;
 
-                if ( self.owner fragbuttonpressed() || self.owner secondaryoffhandbuttonpressed() || isdefined( self.owner.throwinggrenade ) )
+                if ( self.owner _meth_82EE() || self.owner _meth_82EF() || isdefined( self.owner.throwinggrenade ) )
                     break;
 
-                if ( self.owner isusingturret() || self.owner maps\mp\_utility::isusingremote() )
+                if ( self.owner _meth_8342() || self.owner maps\mp\_utility::isusingremote() )
                     break;
 
                 if ( isdefined( self.owner.iscapturingcrate ) && self.owner.iscapturingcrate )
@@ -1439,8 +1439,8 @@ _id_A21F( var_0 )
 
                 if ( var_3 > 0.75 )
                 {
-                    self.owner setweaponammostock( self.weaponname, self.owner getweaponammostock( self.weaponname ) + 1 );
-                    self.explosivedrone _id_2850();
+                    self.owner _meth_82F7( self.weaponname, self.owner _meth_82F9( self.weaponname ) + 1 );
+                    self.explosivedrone deleteexplosivedrone();
                     self delete();
                     break;
                 }

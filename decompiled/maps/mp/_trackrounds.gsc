@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 trackrounds_think()
 {
@@ -10,14 +10,14 @@ trackrounds_think()
     self endon( "disconnect" );
     self endon( "faux_spawn" );
     self.trackrounds = spawnstruct();
-    self.trackrounds._id_46F6 = 0;
+    self.trackrounds.has_paint_pro = 0;
     self.trackrounds.has_trackrounds = 0;
 
     if ( maps\mp\_utility::_hasperk( "specialty_paint_pro" ) )
-        self.trackrounds._id_46F6 = 1;
+        self.trackrounds.has_paint_pro = 1;
 
-    var_0 = self getcurrentweapon();
-    _id_93C7( var_0 );
+    var_0 = self _meth_8311();
+    toggle_has_trackrounds( var_0 );
 
     for (;;)
     {
@@ -26,18 +26,18 @@ trackrounds_think()
         if ( var_0 == "none" )
         {
             wait 0.4;
-            var_0 = self getcurrentweapon();
+            var_0 = self _meth_8311();
 
             if ( var_0 == "none" )
                 return;
         }
 
-        _id_93C7( var_0 );
+        toggle_has_trackrounds( var_0 );
         wait 0.05;
     }
 }
 
-_id_93C7( var_0 )
+toggle_has_trackrounds( var_0 )
 {
     var_1 = undefined;
 
@@ -58,7 +58,7 @@ _id_93C7( var_0 )
 
         self.trackrounds.has_trackrounds = 0;
 
-        if ( !self.trackrounds._id_46F6 )
+        if ( !self.trackrounds.has_paint_pro )
             maps\mp\_utility::_unsetperk( "specialty_paint_pro" );
 
         return;
@@ -69,39 +69,39 @@ set_painted_trackrounds( var_0 )
 {
     if ( isplayer( self ) )
     {
-        if ( isdefined( self._id_665B ) && self._id_665B )
+        if ( isdefined( self.painted_tracked ) && self.painted_tracked )
             return;
 
-        self._id_665B = 1;
-        thread _id_9509();
+        self.painted_tracked = 1;
+        thread trackrounds_mark_till_death();
     }
 }
 
-_id_9508()
+trackrounds_death()
 {
     self endon( "disconnect" );
     level endon( "game_ended" );
     self waittill( "death" );
-    self._id_665B = 0;
+    self.painted_tracked = 0;
 }
 
-_id_9509()
+trackrounds_mark_till_death()
 {
     self endon( "disconnect" );
     self endon( "death" );
     level endon( "game_ended" );
-    thread _id_9508();
+    thread trackrounds_death();
 
     for (;;)
     {
         wait 0.1;
 
-        if ( self hasperk( "specialty_radararrow", 1 ) )
+        if ( self _meth_82A7( "specialty_radararrow", 1 ) )
             continue;
 
-        if ( self hasperk( "specialty_radarblip", 1 ) )
+        if ( self _meth_82A7( "specialty_radarblip", 1 ) )
             continue;
 
-        self setperk( "specialty_radarblip", 1, 0 );
+        self _meth_82A6( "specialty_radarblip", 1, 0 );
     }
 }

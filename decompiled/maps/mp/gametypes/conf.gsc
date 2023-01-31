@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -106,8 +106,8 @@ onstartgametype()
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_tdm_spawn_allies_start" );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_tdm_spawn_axis_start" );
     level.spawn_name = "mp_tdm_spawn";
@@ -158,14 +158,14 @@ spawndogtags( var_0, var_1 )
     }
     else
     {
-        var_3[0] = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-        var_3[0] setmodel( "prop_dogtags_future_enemy_animated" );
+        var_3[0] = spawn( "script_model", ( 0, 0, 0 ) );
+        var_3[0] _meth_80B1( "prop_dogtags_future_enemy_animated" );
         var_3[0] _meth_856C( 1 );
-        var_3[1] = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
-        var_3[1] setmodel( "prop_dogtags_future_friend_animated" );
+        var_3[1] = spawn( "script_model", ( 0, 0, 0 ) );
+        var_3[1] _meth_80B1( "prop_dogtags_future_friend_animated" );
         var_3[1] _meth_856C( 1 );
-        var_4 = spawn( "trigger_radius", ( 0.0, 0.0, 0.0 ), 0, 32, 32 );
-        level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0.0, 0.0, 16.0 ) );
+        var_4 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
+        level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0, 0, 16 ) );
         maps\mp\_utility::_objective_delete( level.dogtags[var_0.guid].objidallies );
         maps\mp\_utility::_objective_delete( level.dogtags[var_0.guid].objidaxis );
         maps\mp\_utility::_objective_delete( level.dogtags[var_0.guid].objidmlgspectator );
@@ -177,13 +177,13 @@ spawndogtags( var_0, var_1 )
         level.dogtags[var_0.guid].victim = var_0;
         level.dogtags[var_0.guid].victimteam = var_2;
         level.dogtags[var_0.guid].objid = maps\mp\gametypes\_gameobjects::getnextobjid();
-        objective_add( level.dogtags[var_0.guid].objid, "invisible", ( 0.0, 0.0, 0.0 ) );
+        objective_add( level.dogtags[var_0.guid].objid, "invisible", ( 0, 0, 0 ) );
         objective_icon( level.dogtags[var_0.guid].objid, "waypoint_dogtags" );
         level thread clearonvictimdisconnect( var_0 );
         var_0 thread tagteamupdater( level.dogtags[var_0.guid] );
     }
 
-    var_5 = var_0.origin + ( 0.0, 0.0, 14.0 );
+    var_5 = var_0.origin + ( 0, 0, 14 );
     level.dogtags[var_0.guid].curorigin = var_5;
     level.dogtags[var_0.guid].trigger.origin = var_5;
     level.dogtags[var_0.guid].visuals[0].origin = var_5;
@@ -195,10 +195,10 @@ spawndogtags( var_0, var_1 )
     level.dogtags[var_0.guid].attacker = var_1;
     objective_position( level.dogtags[var_0.guid].objid, var_5 );
     objective_state( level.dogtags[var_0.guid].objid, "active" );
-    objective_playerenemyteam( level.dogtags[var_0.guid].objid, var_0 getentitynumber() );
+    objective_playerenemyteam( level.dogtags[var_0.guid].objid, var_0 _meth_81B1() );
     playsoundatpos( var_5, "mp_killconfirm_tags_drop" );
-    level.dogtags[var_0.guid].visuals[0] scriptmodelplayanim( "mp_dogtag_spin" );
-    level.dogtags[var_0.guid].visuals[1] scriptmodelplayanim( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[0] _meth_8279( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[1] _meth_8279( "mp_dogtag_spin" );
 }
 
 showtoteam( var_0, var_1 )
@@ -280,10 +280,10 @@ resettags()
     self notify( "reset" );
     self.visuals[0] hide();
     self.visuals[1] hide();
-    self.curorigin = ( 0.0, 0.0, 1000.0 );
-    self.trigger.origin = ( 0.0, 0.0, 1000.0 );
-    self.visuals[0].origin = ( 0.0, 0.0, 1000.0 );
-    self.visuals[1].origin = ( 0.0, 0.0, 1000.0 );
+    self.curorigin = ( 0, 0, 1000 );
+    self.trigger.origin = ( 0, 0, 1000 );
+    self.visuals[0].origin = ( 0, 0, 1000 );
+    self.visuals[1].origin = ( 0, 0, 1000 );
     maps\mp\gametypes\_gameobjects::allowuse( "none" );
     objective_state( self.objid, "invisible" );
 }

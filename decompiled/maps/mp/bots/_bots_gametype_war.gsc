@@ -1,23 +1,23 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    _id_806C();
-    _id_805C();
+    setup_callbacks();
+    setup_bot_war();
 }
 
-_id_806C()
+setup_callbacks()
 {
-    level.bot_funcs["gametype_think"] = ::_id_1731;
+    level.bot_funcs["gametype_think"] = ::bot_war_think;
 }
 
-_id_805C()
+setup_bot_war()
 {
 
 }
 
-_id_1731()
+bot_war_think()
 {
     self notify( "bot_war_think" );
     self endon( "bot_war_think" );
@@ -28,7 +28,7 @@ _id_1731()
 
     for (;;)
     {
-        self [[ self._id_67DE ]]();
+        self [[ self.personality_update_function ]]();
         wait 0.05;
     }
 }

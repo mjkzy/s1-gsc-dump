@@ -1,17 +1,17 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 processlobbyscoreboards()
 {
     foreach ( var_1 in level.placement["all"] )
-        var_1 _id_7FE2();
+        var_1 setplayerscoreboardinfo();
 
     if ( level.multiteambased )
     {
-        _id_1886( "multiteam" );
+        buildscoreboardtype( "multiteam" );
 
         foreach ( var_1 in level.players )
-            var_1 setcommonplayerdata( "round", "scoreboardType", "multiteam" );
+            var_1 _meth_8247( "round", "scoreboardType", "multiteam" );
 
         setclientmatchdata( "alliesScore", -1 );
         setclientmatchdata( "axisScore", -1 );
@@ -33,8 +33,8 @@ processlobbyscoreboards()
 
         if ( var_7 == "tied" )
         {
-            _id_1886( "allies" );
-            _id_1886( "axis" );
+            buildscoreboardtype( "allies" );
+            buildscoreboardtype( "axis" );
 
             foreach ( var_1 in level.players )
             {
@@ -45,27 +45,27 @@ processlobbyscoreboards()
 
                 if ( var_9 == "spectator" )
                 {
-                    var_1 setcommonplayerdata( "round", "scoreboardType", "allies" );
+                    var_1 _meth_8247( "round", "scoreboardType", "allies" );
                     continue;
                 }
 
-                var_1 setcommonplayerdata( "round", "scoreboardType", var_9 );
+                var_1 _meth_8247( "round", "scoreboardType", var_9 );
             }
         }
         else
         {
-            _id_1886( var_7 );
+            buildscoreboardtype( var_7 );
 
             foreach ( var_1 in level.players )
-                var_1 setcommonplayerdata( "round", "scoreboardType", var_7 );
+                var_1 _meth_8247( "round", "scoreboardType", var_7 );
         }
     }
     else
     {
-        _id_1886( "neutral" );
+        buildscoreboardtype( "neutral" );
 
         foreach ( var_1 in level.players )
-            var_1 setcommonplayerdata( "round", "scoreboardType", "neutral" );
+            var_1 _meth_8247( "round", "scoreboardType", "neutral" );
 
         setclientmatchdata( "alliesScore", -1 );
         setclientmatchdata( "axisScore", -1 );
@@ -78,19 +78,19 @@ processlobbyscoreboards()
         if ( !var_1 maps\mp\_utility::rankingenabled() || maps\mp\_utility::practiceroundgame() )
             var_16 = var_1.pers["summary"]["xp"];
         else
-            var_16 = var_1 gettotalmpxp() - var_1.pers["summary"]["matchStartXp"];
+            var_16 = var_1 _meth_8507() - var_1.pers["summary"]["matchStartXp"];
 
-        var_1 setcommonplayerdata( "round", "totalXp", var_16 );
-        var_1 setcommonplayerdata( "round", "scoreXp", var_1.pers["summary"]["score"] );
-        var_1 setcommonplayerdata( "round", "challengeXp", var_1.pers["summary"]["challenge"] );
-        var_1 setcommonplayerdata( "round", "matchXp", var_1.pers["summary"]["match"] );
-        var_1 setcommonplayerdata( "round", "miscXp", var_1.pers["summary"]["misc"] );
-        var_1 setcommonplayerdata( "round", "entitlementXp", var_1.pers["summary"]["entitlementXP"] );
-        var_1 setcommonplayerdata( "round", "clanWarsXp", var_1.pers["summary"]["clanWarsXP"] );
+        var_1 _meth_8247( "round", "totalXp", var_16 );
+        var_1 _meth_8247( "round", "scoreXp", var_1.pers["summary"]["score"] );
+        var_1 _meth_8247( "round", "challengeXp", var_1.pers["summary"]["challenge"] );
+        var_1 _meth_8247( "round", "matchXp", var_1.pers["summary"]["match"] );
+        var_1 _meth_8247( "round", "miscXp", var_1.pers["summary"]["misc"] );
+        var_1 _meth_8247( "round", "entitlementXp", var_1.pers["summary"]["entitlementXP"] );
+        var_1 _meth_8247( "round", "clanWarsXp", var_1.pers["summary"]["clanWarsXP"] );
     }
 }
 
-_id_7FE2()
+setplayerscoreboardinfo()
 {
     var_0 = getclientmatchdata( "scoreboardPlayerCount" );
 
@@ -133,7 +133,7 @@ _id_7FE2()
     }
 }
 
-_id_1886( var_0 )
+buildscoreboardtype( var_0 )
 {
     if ( var_0 == "multiteam" )
     {

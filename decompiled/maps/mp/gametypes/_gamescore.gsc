@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 gethighestscoringplayer()
 {
@@ -237,7 +237,7 @@ sendupdatedteamscores()
     maps\mp\_utility::waittillslowprocessallowed();
 
     foreach ( var_1 in level.players )
-        var_1 updatescores();
+        var_1 _meth_829F();
 }
 
 sendupdateddmscores()
@@ -249,7 +249,7 @@ sendupdateddmscores()
 
     for ( var_0 = 0; var_0 < level.players.size; var_0++ )
     {
-        level.players[var_0] updatedmscores();
+        level.players[var_0] _meth_82A0();
         level.players[var_0].updateddmscores = 1;
     }
 }
@@ -410,7 +410,7 @@ initialdmscoreupdate()
                 continue;
 
             var_4.updateddmscores = 1;
-            var_4 updatedmscores();
+            var_4 _meth_82A0();
             var_1 = 1;
             wait 0.5;
         }

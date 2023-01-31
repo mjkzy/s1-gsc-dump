@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 watchtrophyusage()
 {
@@ -30,7 +30,7 @@ watchtrophyusage()
                 if ( var_3["fraction"] == 1 )
                 {
                     var_0 delete();
-                    self setweaponammostock( "trophy_mp", self getweaponammostock( "trophy_mp" ) + 1 );
+                    self _meth_82F7( "trophy_mp", self _meth_82F9( "trophy_mp" ) + 1 );
                     continue;
                 }
 
@@ -44,7 +44,7 @@ watchtrophyusage()
                 self.trophyarray[0] thread trophybreak();
 
             var_4 = spawn( "script_model", var_0.origin );
-            var_4 setmodel( "mp_trophy_system" );
+            var_4 _meth_80B1( "mp_trophy_system" );
             var_4 thread maps\mp\gametypes\_weapons::createbombsquadmodel( "mp_trophy_system_bombsquad", "tag_origin", self );
             var_4.angles = var_0.angles;
             self.trophyarray[self.trophyarray.size] = var_4;
@@ -68,9 +68,9 @@ watchtrophyusage()
             var_4 thread maps\mp\gametypes\_weapons::c4empkillstreakwait();
 
             if ( level.teambased )
-                var_4 maps\mp\_entityheadicons::setteamheadicon( var_4.team, ( 0.0, 0.0, 65.0 ) );
+                var_4 maps\mp\_entityheadicons::setteamheadicon( var_4.team, ( 0, 0, 65 ) );
             else
-                var_4 maps\mp\_entityheadicons::setplayerheadicon( var_4.owner, ( 0.0, 0.0, 65.0 ) );
+                var_4 maps\mp\_entityheadicons::setplayerheadicon( var_4.owner, ( 0, 0, 65 ) );
 
             wait 0.05;
 
@@ -106,9 +106,9 @@ trophychangeowner( var_0 )
     var_0.trophyarray[var_0.trophyarray.size] = self;
 
     if ( level.teambased )
-        maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0.0, 0.0, 65.0 ) );
+        maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0, 0, 65 ) );
     else
-        maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0.0, 0.0, 65.0 ) );
+        maps\mp\_entityheadicons::setplayerheadicon( self.owner, ( 0, 0, 65 ) );
 
     thread trophydamage( var_0 );
     thread trophyactive( var_0 );
@@ -122,8 +122,8 @@ trophyuselistener( var_0 )
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
     var_0 endon( "death" );
-    self.trigger setcursorhint( "HINT_NOICON" );
-    self.trigger sethintstring( &"MP_PICKUP_TROPHY" );
+    self.trigger _meth_80DA( "HINT_NOICON" );
+    self.trigger _meth_80DB( &"MP_PICKUP_TROPHY" );
     self.trigger maps\mp\_utility::setselfusable( var_0 );
     self.trigger thread maps\mp\_utility::notusableforjoiningplayers( var_0 );
 
@@ -131,8 +131,8 @@ trophyuselistener( var_0 )
     {
         self.trigger waittill( "trigger", var_0 );
         var_0 playlocalsound( "scavenger_pack_pickup" );
-        var_1 = var_0 getweaponammoclip( "trophy_mp" );
-        var_0 setweaponammoclip( "trophy_mp", var_1 + 1 );
+        var_1 = var_0 _meth_82F8( "trophy_mp" );
+        var_0 _meth_82F6( "trophy_mp", var_1 + 1 );
         var_0.trophyremainingammo = self.ammo;
         self.trigger delete();
         self delete();
@@ -206,19 +206,19 @@ trophyactive( var_0, var_1, var_2, var_3 )
             {
                 switch ( var_7.weaponname )
                 {
-                    case "claymore_mp":
-                    case "orbital_carepackage_pod_mp":
                     case "orbital_carepackage_droppod_mp":
+                    case "orbital_carepackage_pod_mp":
+                    case "claymore_mp":
                         continue;
                 }
             }
 
             switch ( var_7.model )
             {
-                case "weapon_parabolic_knife":
-                case "weapon_jammer":
-                case "weapon_radar":
                 case "mp_trophy_system":
+                case "weapon_radar":
+                case "weapon_jammer":
+                case "weapon_parabolic_knife":
                     continue;
             }
 
@@ -240,7 +240,7 @@ trophyactive( var_0, var_1, var_2, var_3 )
             {
                 if ( bullettracepassed( var_7.origin, self.origin, 0, self ) )
                 {
-                    var_9 = self.origin + ( 0.0, 0.0, 32.0 );
+                    var_9 = self.origin + ( 0, 0, 32 );
 
                     if ( isdefined( self.laserent ) )
                         var_9 = self.laserent.origin;
@@ -288,7 +288,7 @@ trophyactive( var_0, var_1, var_2, var_3 )
 trophysetmindot( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
-        var_1 = ( 0.0, 0.0, 0.0 );
+        var_1 = ( 0, 0, 0 );
 
     self.mindot = var_0;
     self.trophyangleoffset = var_1;
@@ -318,15 +318,15 @@ trophyhandlelaser( var_0, var_1 )
     self notify( "trophyDelayClearLaser" );
     self endon( "trophyDelayClearLaser" );
     self.laserent.angles = vectortoangles( var_1.origin - self.laserent.origin );
-    self.laserent laseron( "tracking_drone_laser" );
+    self.laserent _meth_80B2( "tracking_drone_laser" );
     wait 0.7;
-    self.laserent laseroff();
+    self.laserent _meth_80B3();
 }
 
 trophyaddlaser( var_0, var_1 )
 {
     self.laserent = spawn( "script_model", self.origin );
-    self.laserent setmodel( "tag_laser" );
+    self.laserent _meth_80B1( "tag_laser" );
     self.laserent.angles = self.angles;
     self.laserent.laseroriginoffset = var_0;
     self.laserent.laserforwardangles = var_1;
@@ -374,7 +374,7 @@ trophydamage( var_0 )
     self endon( "death" );
     var_0 endon( "death" );
     self endon( "change_owner" );
-    self setcandamage( 1 );
+    self _meth_82C0( 1 );
     self.health = 999999;
     self.maxhealth = 100;
     self.damagetaken = 0;
@@ -398,12 +398,12 @@ trophydamage( var_0 )
         {
             switch ( var_11 )
             {
-                case "flash_grenade_mp":
-                case "concussion_grenade_mp":
-                case "stun_grenade_mp":
-                case "smoke_grenade_mp":
-                case "stun_grenade_var_mp":
                 case "smoke_grenade_var_mp":
+                case "stun_grenade_var_mp":
+                case "smoke_grenade_mp":
+                case "stun_grenade_mp":
+                case "concussion_grenade_mp":
+                case "flash_grenade_mp":
                     continue;
             }
         }

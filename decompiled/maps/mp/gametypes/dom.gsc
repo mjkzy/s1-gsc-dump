@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -162,7 +162,7 @@ updatemlgobjectives()
 
             foreach ( var_3 in level.domflags )
             {
-                if ( var_1 istouching( var_3.levelflag ) )
+                if ( var_1 _meth_80A9( var_3.levelflag ) )
                 {
                     if ( var_3.numtouching["axis"] * var_3.numtouching["allies"] > 0 )
                         var_1.objective = 1;
@@ -227,8 +227,8 @@ precacheflags()
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_dom_spawn_allies_start" );
     maps\mp\gametypes\_spawnlogic::addstartspawnpoints( "mp_dom_spawn_axis_start" );
     level.spawn_name = "mp_dom_spawn";
@@ -394,8 +394,8 @@ domflags()
             var_7[0].angles = var_6.angles;
         }
 
-        var_7[0] setmodel( level.flagbasemodel );
-        var_8 = maps\mp\gametypes\_gameobjects::createuseobject( "neutral", var_6, var_7, ( 0.0, 0.0, 100.0 ) );
+        var_7[0] _meth_80B1( level.flagbasemodel );
+        var_8 = maps\mp\gametypes\_gameobjects::createuseobject( "neutral", var_6, var_7, ( 0, 0, 100 ) );
         var_8 maps\mp\gametypes\_gameobjects::allowuse( "enemy" );
         var_8 maps\mp\gametypes\_gameobjects::setusetime( level.domcapturetime );
         var_8 maps\mp\gametypes\_gameobjects::setusetext( &"MP_SECURING_POSITION" );
@@ -416,8 +416,8 @@ domflags()
         var_8.id = "domFlag";
         var_8.has_been_captured = 0;
         var_8.firstcapture = 1;
-        var_10 = var_7[0].origin + ( 0.0, 0.0, 32.0 );
-        var_11 = var_7[0].origin + ( 0.0, 0.0, -32.0 );
+        var_10 = var_7[0].origin + ( 0, 0, 32 );
+        var_11 = var_7[0].origin + ( 0, 0, -32 );
         var_12 = bullettrace( var_10, var_11, 0, var_7[0] );
         var_13 = vectortoangles( var_12["normal"] );
         var_8.baseeffectforward = anglestoforward( var_13 );
@@ -562,7 +562,7 @@ statusdialog( var_0, var_1, var_2 )
 onenduse( var_0, var_1, var_2 )
 {
     if ( isplayer( var_1 ) )
-        var_1 setclientomnvar( "ui_capture_icon", 0 );
+        var_1 _meth_82FB( "ui_capture_icon", 0 );
 
     var_3 = maps\mp\gametypes\_gameobjects::getownerteam();
 
@@ -993,13 +993,13 @@ flagsetup()
         {
             case "_a":
                 var_1.dompointnumber = 0;
-                continue;
+                break;
             case "_b":
                 var_1.dompointnumber = 1;
-                continue;
+                break;
             case "_c":
                 var_1.dompointnumber = 2;
-                continue;
+                break;
         }
     }
 
@@ -1034,13 +1034,13 @@ flagsetup()
         {
             case 0:
                 var_5.preferreddompoint = 0;
-                continue;
+                break;
             case 1:
                 var_5.preferreddompoint = 1;
-                continue;
+                break;
             case 2:
                 var_5.preferreddompoint = 2;
-                continue;
+                break;
         }
     }
 }

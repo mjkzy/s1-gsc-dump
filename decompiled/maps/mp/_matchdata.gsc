@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -22,16 +22,16 @@ init()
     }
 
     level.maxlives = 490;
-    level._id_5A34 = 150;
-    level._id_5A39 = 64;
+    level.maxevents = 150;
+    level.maxkillstreaks = 64;
     level.maxlogclients = 30;
-    level._id_5A43 = 5;
-    level._id_5A42 = 10;
-    level._id_5A3E = 10;
-    level thread _id_3BD9();
+    level.maxnumchallengesperplayer = 5;
+    level.maxnumawardsperplayer = 10;
+    level.maxloadouts = 10;
+    level thread gameendlistener();
 
     if ( getdvar( "virtualLobbyActive" ) != "1" )
-        level thread _id_7278();
+        level thread reconlogplayerinfo();
 }
 
 matchstarted()
@@ -48,7 +48,7 @@ matchstarted()
     var_1 = _func_2C4();
     setmatchdata( "localTimeStringAtMatchStart", var_1 );
 
-    if ( _id_4016() == 0 )
+    if ( getmatchstarttimeutc() == 0 )
         setmatchdata( "startTimeUTC", getsystemtime() );
 
     setmatchdata( "iseSports", maps\mp\_utility::ismlgmatch() );
@@ -71,11 +71,11 @@ matchstarted()
         var_2 = 1;
 
     setmatchdata( "isHardMode", var_2 );
-    thread _id_581C();
-    thread _id_06D9();
+    thread logbreadcrumbdata();
+    thread accumulateplayerpingdata();
 }
 
-_id_581C()
+logbreadcrumbdata()
 {
     level endon( "game_ended" );
 
@@ -95,7 +95,7 @@ _id_581C()
                 if ( isdefined( var_2.lastshotby ) )
                     var_3 = var_2.lastshotby;
 
-                lootservicevalidateplaytime( var_2, var_2.lifeid, var_0, var_3 );
+                _func_2B3( var_2, var_2.lifeid, var_0, var_3 );
                 var_2.lastshotby = undefined;
             }
         }
@@ -110,7 +110,7 @@ _id_581C()
     }
 }
 
-_id_06D9()
+accumulateplayerpingdata()
 {
     level endon( "game_ended" );
 
@@ -142,14 +142,14 @@ _id_06D9()
     }
 }
 
-_id_4016()
+getmatchstarttimeutc()
 {
     return getmatchdata( "startTimeUTC" );
 }
 
 logkillstreakevent( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || !_id_1AD0() )
+    if ( !canlogclient( self ) || !canlogkillstreak() )
         return;
 
     var_2 = getmatchdata( "killstreakCount" );
@@ -162,13 +162,13 @@ logkillstreakevent( var_0, var_1 )
     setmatchdata( "killstreaks", var_2, "eventPos", 2, int( var_1[2] ) );
     setmatchdata( "killstreaks", var_2, "index", var_2 );
     setmatchdata( "killstreaks", var_2, "coopPlayerIndex", 255 );
-    self._id_2517 = var_2;
+    self.currentkillstreakindex = var_2;
     reconspatialevent( var_1, "script_mp_killstreak: eventType %s, player_name %s, player %d, gameTime %d", var_0, self.name, self.clientid, gettime() );
 }
 
 loggameevent( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || !_id_1ACF() )
+    if ( !canlogclient( self ) || !canlogevent() )
         return;
 
     var_2 = getmatchdata( "eventCount" );
@@ -200,7 +200,7 @@ logmultikill( var_0, var_1 )
 
 logplayerlife( var_0 )
 {
-    if ( !_id_1ACE( self ) || !canloglife( self.lifeid ) )
+    if ( !canlogclient( self ) || !canloglife( self.lifeid ) )
         return;
 
     var_1 = gettime() - self.spawntime;
@@ -219,7 +219,7 @@ logplayerlife( var_0 )
         setmatchdata( "lives", self.lifeid, "spawnTimeDeciSecondsFromMatchStart", -1 );
 
     setmatchdata( "lives", self.lifeid, "durationDeciSeconds", var_2 );
-    var_3 = _id_5839();
+    var_3 = logloadout();
     setmatchdata( "lives", self.lifeid, "loadoutIndex", var_3 );
     var_4 = maps\mp\_utility::clamptoshort( self.pers["score"] - self.scoreatlifestart );
     setmatchdata( "lives", self.lifeid, "scoreEarnedDuringThisLife", var_4 );
@@ -236,7 +236,7 @@ logplayerlife( var_0 )
 
 logplayerxp( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) )
+    if ( !canlogclient( self ) )
         return;
 
     setmatchdata( "players", self.clientid, var_1, var_0 );
@@ -244,29 +244,29 @@ logplayerxp( var_0, var_1 )
 
 logcompletedchallenge( var_0 )
 {
-    if ( !isplayer( self ) || !_id_1ACE( self ) || isbot( self ) )
+    if ( !isplayer( self ) || !canlogclient( self ) || isbot( self ) )
         return;
 
     var_1 = getmatchdata( "players", self.clientid, "challengeCount" );
 
-    if ( var_1 < level._id_5A43 )
+    if ( var_1 < level.maxnumchallengesperplayer )
     {
         setmatchdata( "players", self.clientid, "challenges", var_1, var_0 );
         setmatchdata( "players", self.clientid, "challengeCount", var_1 + 1 );
     }
 }
 
-_id_5839()
+logloadout()
 {
     var_0 = 255;
 
-    if ( !_id_1ACE( self ) || !canloglife( self.lifeid ) || self.curclass == "gamemode" )
+    if ( !canlogclient( self ) || !canloglife( self.lifeid ) || self.curclass == "gamemode" )
         return var_0;
 
     var_1 = self.curclass;
     var_2 = 0;
 
-    for ( var_2 = 0; var_2 < level._id_5A3E; var_2++ )
+    for ( var_2 = 0; var_2 < level.maxloadouts; var_2++ )
     {
         var_3 = getmatchdata( "players", self.clientid, "loadouts", var_2, "slotUsed" );
 
@@ -281,7 +281,7 @@ _id_5839()
         }
     }
 
-    if ( var_2 == level._id_5A3E )
+    if ( var_2 == level.maxloadouts )
         return var_0;
 
     setmatchdata( "players", self.clientid, "loadouts", var_2, "slotUsed", 1 );
@@ -497,11 +497,11 @@ _id_5839()
     setmatchdata( "players", self.clientid, "loadouts", var_2, "assaultStreaks", 3, "modules", 0, var_38 );
     setmatchdata( "players", self.clientid, "loadouts", var_2, "assaultStreaks", 3, "modules", 1, var_39 );
     setmatchdata( "players", self.clientid, "loadouts", var_2, "assaultStreaks", 3, "modules", 2, var_40 );
-    thread _id_726A( self, var_17, var_18, var_19, var_20, var_21, var_23, var_24, var_25, var_26, var_11, var_12, var_13, var_9[0], var_9[1], var_9[2], var_9[3], var_9[4], var_9[5], var_10[0], var_10[1], var_10[2], var_5, var_29, var_30, var_31, var_6, var_32, var_33, var_34, var_7, var_35, var_36, var_37, var_8, var_38, var_39, var_40 );
+    thread recon_log_loadout( self, var_17, var_18, var_19, var_20, var_21, var_23, var_24, var_25, var_26, var_11, var_12, var_13, var_9[0], var_9[1], var_9[2], var_9[3], var_9[4], var_9[5], var_10[0], var_10[1], var_10[2], var_5, var_29, var_30, var_31, var_6, var_32, var_33, var_34, var_7, var_35, var_36, var_37, var_8, var_38, var_39, var_40 );
     return var_2;
 }
 
-_id_726A( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11, var_12, var_13, var_14, var_15, var_16, var_17, var_18, var_19, var_20, var_21, var_22, var_23, var_24, var_25, var_26, var_27, var_28, var_29, var_30, var_31, var_32, var_33, var_34, var_35, var_36, var_37 )
+recon_log_loadout( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11, var_12, var_13, var_14, var_15, var_16, var_17, var_18, var_19, var_20, var_21, var_22, var_23, var_24, var_25, var_26, var_27, var_28, var_29, var_30, var_31, var_32, var_33, var_34, var_35, var_36, var_37 )
 {
     var_38 = isbot( var_0 ) || istestclient( var_0 );
     var_39 = "_matchdata.gsc";
@@ -513,9 +513,9 @@ _id_726A( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, 
     reconevent( "script_mp_loadout_killstreaks: script_file %s, gameTime %d, player_name %s, killstreak_1 %s, killstreak_1_module_a %s, killstreak_1_module_b %s, killstreak_1_module_c %s, killstreak_2 %s, killstreak_2_module_a %s, killstreak_2_module_b %s, killstreak_2_module_c %s, killstreak_3 %s, killstreak_3_module_a %s, killstreak_3_module_b %s, killstreak_3_module_c %s, killstreak_4 %s, killstreak_4_module_a %s, killstreak_4_module_b %s, killstreak_4_module_c %s", var_39, var_40, var_42, var_22, var_23, var_24, var_25, var_26, var_27, var_28, var_29, var_30, var_31, var_32, var_33, var_34, var_35, var_36, var_37 );
 }
 
-_id_583C( var_0, var_1 )
+logplayerandkillerexomovedata( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || isplayer( var_1 ) && !_id_1ACE( var_1 ) || !canloglife( var_0 ) )
+    if ( !canlogclient( self ) || isplayer( var_1 ) && !canlogclient( var_1 ) || !canloglife( var_0 ) )
         return;
 
     if ( var_0 >= level.maxlives )
@@ -578,9 +578,9 @@ _id_583C( var_0, var_1 )
     }
 }
 
-_id_583B( var_0, var_1 )
+logplayerandkilleradsandfov( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || isplayer( var_1 ) && !_id_1ACE( var_1 ) || !canloglife( var_0 ) )
+    if ( !canlogclient( self ) || isplayer( var_1 ) && !canlogclient( var_1 ) || !canloglife( var_0 ) )
         return;
 
     if ( var_0 >= level.maxlives )
@@ -588,27 +588,27 @@ _id_583B( var_0, var_1 )
 
     if ( isplayer( var_1 ) )
     {
-        if ( var_1 playerads() > 0.5 )
+        if ( var_1 _meth_8340() > 0.5 )
             setmatchdata( "lives", var_0, "killerWasADS", 1 );
 
-        var_2 = var_1 geteye();
+        var_2 = var_1 _meth_80A8();
 
         if ( common_scripts\utility::within_fov( var_2, var_1.angles, self.origin, cos( getdvarfloat( "cg_fov" ) ) ) )
             setmatchdata( "lives", var_0, "victimWasInKillersFOV", 1 );
 
-        var_3 = self geteye();
+        var_3 = self _meth_80A8();
 
         if ( common_scripts\utility::within_fov( var_3, self.angles, var_1.origin, cos( getdvarfloat( "cg_fov" ) ) ) )
             setmatchdata( "lives", var_0, "killerWasInVictimsFOV", 1 );
     }
 
-    if ( self playerads() > 0.5 )
+    if ( self _meth_8340() > 0.5 )
         setmatchdata( "lives", var_0, "victimWasADS", 1 );
 }
 
-_id_583D( var_0, var_1 )
+logplayerandkillershieldcloakhoveractive( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || isplayer( var_1 ) && !_id_1ACE( var_1 ) || !canloglife( var_0 ) )
+    if ( !canlogclient( self ) || isplayer( var_1 ) && !canlogclient( var_1 ) || !canloglife( var_0 ) )
         return;
 
     if ( var_0 >= level.maxlives )
@@ -620,7 +620,7 @@ _id_583D( var_0, var_1 )
     if ( isdefined( self.exo_hover_on ) && self.exo_hover_on )
         setmatchdata( "lives", var_0, "victimHoverActive", 1 );
 
-    if ( self iscloaked() )
+    if ( self _meth_84F8() )
         setmatchdata( "lives", var_0, "victimCloakingActive", 1 );
 
     if ( isplayer( var_1 ) )
@@ -631,12 +631,12 @@ _id_583D( var_0, var_1 )
         if ( isdefined( var_1.exo_hover_on ) && var_1.exo_hover_on )
             setmatchdata( "lives", var_0, "killerHoverActive", 1 );
 
-        if ( var_1 iscloaked() )
+        if ( var_1 _meth_84F8() )
             setmatchdata( "lives", var_0, "killerCloakingActive", 1 );
     }
 }
 
-_id_29AC( var_0, var_1 )
+determineweaponnameandattachments( var_0, var_1 )
 {
     var_2 = undefined;
     var_3 = undefined;
@@ -648,7 +648,7 @@ _id_29AC( var_0, var_1 )
     }
     else
     {
-        var_2 = objective_current( var_0 );
+        var_2 = _func_1DF( var_0 );
         var_3 = weaponclass( var_0 );
     }
 
@@ -738,16 +738,16 @@ _id_29AC( var_0, var_1 )
 
     var_14 = spawnstruct();
     var_14.weaponname = var_5;
-    var_14._id_0053 = var_4;
-    var_14._id_A2EA = var_2;
-    var_14._id_A2CC = var_3;
-    var_14._id_A2D7 = var_0;
+    var_14.attachments = var_4;
+    var_14.weapontype = var_2;
+    var_14.weaponclass = var_3;
+    var_14.weaponnamefull = var_0;
     return var_14;
 }
 
-_id_5823( var_0, var_1 )
+logfirefightshotshits( var_0, var_1 )
 {
-    if ( !_id_1ACE( self ) || isplayer( var_1 ) && !_id_1ACE( var_1 ) || !canloglife( var_0 ) )
+    if ( !canlogclient( self ) || isplayer( var_1 ) && !canlogclient( var_1 ) || !canloglife( var_0 ) )
         return;
 
     if ( !isplayer( var_1 ) )
@@ -769,30 +769,30 @@ _id_5823( var_0, var_1 )
         setmatchdata( "lives", var_0, "killerHits", maps\mp\_utility::clamptobyte( self.enemyhitcounts[var_1.guid] ) );
 }
 
-_id_583E( var_0, var_1 )
+logplayerandkillerstanceandmotionstate( var_0, var_1 )
 {
     if ( !canloglife( var_0 ) )
         return;
 
-    if ( isplayer( self ) && _id_1ACE( self ) )
+    if ( isplayer( self ) && canlogclient( self ) )
     {
         var_2 = _func_2BE( self );
         setmatchdata( "lives", var_0, "victimStanceAndMotionState", var_2 );
     }
 
-    if ( isplayer( var_1 ) && _id_1ACE( var_1 ) )
+    if ( isplayer( var_1 ) && canlogclient( var_1 ) )
     {
         var_2 = _func_2BE( var_1 );
         setmatchdata( "lives", var_0, "killerStanceAndMotionState", var_2 );
     }
 }
 
-_id_581B( var_0, var_1 )
+logassists( var_0, var_1 )
 {
     if ( !canloglife( var_0 ) )
         return;
 
-    if ( isplayer( self ) && _id_1ACE( self ) )
+    if ( isplayer( self ) && canlogclient( self ) )
     {
         if ( isdefined( self.attackerdata ) )
         {
@@ -825,10 +825,10 @@ _id_581B( var_0, var_1 )
 
 logspecialassists( var_0, var_1 )
 {
-    if ( !isplayer( self ) || !_id_1ACE( self ) )
+    if ( !isplayer( self ) || !canlogclient( self ) )
         return;
 
-    if ( !isplayer( var_0 ) || !_id_1ACE( var_0 ) )
+    if ( !isplayer( var_0 ) || !canlogclient( var_0 ) )
         return;
 
     var_2 = self.lifeid;
@@ -868,7 +868,7 @@ logspecialassists( var_0, var_1 )
 
 logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 {
-    if ( !_id_1ACE( self ) || isplayer( var_1 ) && !_id_1ACE( var_1 ) || !canloglife( var_0 ) )
+    if ( !canlogclient( self ) || isplayer( var_1 ) && !canlogclient( var_1 ) || !canloglife( var_0 ) )
         return;
 
     if ( var_0 >= level.maxlives )
@@ -880,50 +880,50 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( isdefined( level.ishorde ) && level.ishorde )
         return;
 
-    _id_583C( var_0, var_1 );
-    _id_583B( var_0, var_1 );
-    _id_583D( var_0, var_1 );
-    _id_5823( var_0, var_1 );
-    _id_583E( var_0, var_1 );
-    _id_581B( var_0, var_1 );
-    var_8 = _id_29AC( var_4, var_5 );
+    logplayerandkillerexomovedata( var_0, var_1 );
+    logplayerandkilleradsandfov( var_0, var_1 );
+    logplayerandkillershieldcloakhoveractive( var_0, var_1 );
+    logfirefightshotshits( var_0, var_1 );
+    logplayerandkillerstanceandmotionstate( var_0, var_1 );
+    logassists( var_0, var_1 );
+    var_8 = determineweaponnameandattachments( var_4, var_5 );
 
     for ( var_9 = 0; var_9 < 3; var_9++ )
     {
-        if ( isdefined( var_8._id_0053[var_9] ) && var_8._id_0053[var_9] != "None" )
-            setmatchdata( "lives", var_0, "killersWeaponAttachments", var_9, var_8._id_0053[var_9] );
+        if ( isdefined( var_8.attachments[var_9] ) && var_8.attachments[var_9] != "None" )
+            setmatchdata( "lives", var_0, "killersWeaponAttachments", var_9, var_8.attachments[var_9] );
     }
 
-    if ( var_8._id_A2EA != "exclusive" )
+    if ( var_8.weapontype != "exclusive" )
         setmatchdata( "lives", var_0, "killersWeapon", var_8.weaponname );
 
-    if ( var_8._id_A2D7 == "altmode" )
+    if ( var_8.weaponnamefull == "altmode" )
         setmatchdata( "lives", var_0, "killersWeaponAltMode", 1 );
 
-    if ( maps\mp\_utility::iskillstreakweapon( var_8._id_A2D7 ) )
+    if ( maps\mp\_utility::iskillstreakweapon( var_8.weaponnamefull ) )
     {
         setmatchdata( "lives", var_0, "modifiers", "killstreak", 1 );
 
-        if ( isdefined( var_1._id_2517 ) )
+        if ( isdefined( var_1.currentkillstreakindex ) )
         {
-            var_10 = getmatchdata( "killstreaks", var_1._id_2517, "killsTotal" );
+            var_10 = getmatchdata( "killstreaks", var_1.currentkillstreakindex, "killsTotal" );
             var_10++;
-            setmatchdata( "killstreaks", var_1._id_2517, "killsTotal", maps\mp\_utility::clamptoshort( var_10 ) );
-            setmatchdata( "lives", var_0, "killerKillstreakIndex", var_1._id_2517 );
+            setmatchdata( "killstreaks", var_1.currentkillstreakindex, "killsTotal", maps\mp\_utility::clamptoshort( var_10 ) );
+            setmatchdata( "lives", var_0, "killerKillstreakIndex", var_1.currentkillstreakindex );
         }
     }
     else
         setmatchdata( "lives", var_0, "killerKillstreakIndex", 255 );
 
-    var_11 = _id_29AC( var_7, undefined );
+    var_11 = determineweaponnameandattachments( var_7, undefined );
 
     for ( var_9 = 0; var_9 < 3; var_9++ )
     {
-        if ( isdefined( var_11._id_0053[var_9] ) && var_11._id_0053[var_9] != "None" )
-            setmatchdata( "lives", var_0, "victimCurrentWeaponAtDeathAttachments", var_9, var_11._id_0053[var_9] );
+        if ( isdefined( var_11.attachments[var_9] ) && var_11.attachments[var_9] != "None" )
+            setmatchdata( "lives", var_0, "victimCurrentWeaponAtDeathAttachments", var_9, var_11.attachments[var_9] );
     }
 
-    if ( var_11._id_A2EA != "exclusive" )
+    if ( var_11.weapontype != "exclusive" )
     {
         if ( maps\mp\_utility::iskillstreakweapon( var_11.weaponname ) )
         {
@@ -937,7 +937,7 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
             setmatchdata( "lives", var_0, "victimCurrentWeaponAtDeath", var_11.weaponname );
     }
 
-    if ( isdefined( self.pickedupweaponfrom ) && isdefined( self.pickedupweaponfrom[var_11._id_A2D7] ) )
+    if ( isdefined( self.pickedupweaponfrom ) && isdefined( self.pickedupweaponfrom[var_11.weaponnamefull] ) )
         setmatchdata( "lives", var_0, "victimCurrentWeaponPickedUp", 1 );
 
     setmatchdata( "lives", var_0, "meansOfDeath", var_3 );
@@ -962,7 +962,7 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
         if ( var_1 maps\mp\_utility::isjuggernaut() )
             setmatchdata( "lives", var_0, "killerIsJuggernaut", 1 );
 
-        if ( isdefined( var_1.pickedupweaponfrom ) && isdefined( var_1.pickedupweaponfrom[var_8._id_A2D7] ) )
+        if ( isdefined( var_1.pickedupweaponfrom ) && isdefined( var_1.pickedupweaponfrom[var_8.weaponnamefull] ) )
             setmatchdata( "lives", var_0, "killerCurrentWeaponPickedUp", 1 );
     }
     else
@@ -1005,7 +1005,7 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     var_26 = gettime();
 
     if ( isplayer( var_1 ) )
-        var_23 = var_1 playerads();
+        var_23 = var_1 _meth_8340();
 
     var_27 = var_1.clientid;
 
@@ -1022,8 +1022,8 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( self.damage_info.size > 1 )
         var_17 = 0;
 
-    if ( isdefined( self.damage_info[var_1 getentitynumber()] ) )
-        var_18 = self.damage_info[var_1 getentitynumber()]._id_6288;
+    if ( isdefined( self.damage_info[var_1 _meth_81B1()] ) )
+        var_18 = self.damage_info[var_1 _meth_81B1()].num_shots;
 
     var_30 = self.pers["primaryWeapon"] + "_mp";
     var_31 = weaponclass( var_30 );
@@ -1037,8 +1037,8 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( isdefined( var_1.spawninfo ) && isdefined( var_1.spawninfo.spawntime ) && isplayer( var_1 ) )
         var_25 = ( var_26 - var_1.spawninfo.spawntime ) / 1000.0;
 
-    reconspatialevent( self.origin, "script_mp_playerdeath: player_name %s, life_id %d, angles %v, death_dot %f, is_jugg %b, is_killstreak %b, mod %s, gameTime %d, spawnToDeathTime %f, attackerAliveTime %f, attacker_life_id %d", self.name, self.lifeid, self.angles, var_13, var_1 maps\mp\_utility::isjuggernaut(), maps\mp\_utility::iskillstreakweapon( var_8._id_A2D7 ), var_3, var_26, var_24, var_25, var_28 );
-    reconspatialevent( self.origin, "script_mp_weaponinfo: player_name %s, life_id %d, isbot %b, attacker_name %s, attacker %d, attacker_pos %v, distance %f, ads_fraction %f, is_jugg %b, is_killstreak %b, weapon_type %s, weapon_class %s, weapon_name %s, isLoot %b, attachment0 %s, attachment1 %s, attachment2 %s, numShots %d, soleAttacker %b, gameTime %d", self.name, self.lifeid, var_19, var_16, var_27, var_1.origin, var_21, var_23, var_1 maps\mp\_utility::isjuggernaut(), maps\mp\_utility::iskillstreakweapon( var_8._id_A2D7 ), var_8._id_A2EA, var_8._id_A2CC, var_8.weaponname, var_22, var_8._id_0053[0], var_8._id_0053[1], var_8._id_0053[2], var_18, var_17, var_26 );
+    reconspatialevent( self.origin, "script_mp_playerdeath: player_name %s, life_id %d, angles %v, death_dot %f, is_jugg %b, is_killstreak %b, mod %s, gameTime %d, spawnToDeathTime %f, attackerAliveTime %f, attacker_life_id %d", self.name, self.lifeid, self.angles, var_13, var_1 maps\mp\_utility::isjuggernaut(), maps\mp\_utility::iskillstreakweapon( var_8.weaponnamefull ), var_3, var_26, var_24, var_25, var_28 );
+    reconspatialevent( self.origin, "script_mp_weaponinfo: player_name %s, life_id %d, isbot %b, attacker_name %s, attacker %d, attacker_pos %v, distance %f, ads_fraction %f, is_jugg %b, is_killstreak %b, weapon_type %s, weapon_class %s, weapon_name %s, isLoot %b, attachment0 %s, attachment1 %s, attachment2 %s, numShots %d, soleAttacker %b, gameTime %d", self.name, self.lifeid, var_19, var_16, var_27, var_1.origin, var_21, var_23, var_1 maps\mp\_utility::isjuggernaut(), maps\mp\_utility::iskillstreakweapon( var_8.weaponnamefull ), var_8.weapontype, var_8.weaponclass, var_8.weaponname, var_22, var_8.attachments[0], var_8.attachments[1], var_8.attachments[2], var_18, var_17, var_26 );
     reconspatialevent( self.origin, "script_mp_weaponinfo_ext: player_name %s, life_id %d, gametime %d, version %f, victimWeapon %s, victimWeaponClass %s, killerIsBot %b", self.name, self.lifeid, var_26, var_29, var_30, var_31, var_20 );
 
     if ( !isdefined( level.matchdata ) )
@@ -1086,9 +1086,9 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     }
 }
 
-_id_5841()
+logplayerdata()
 {
-    if ( !_id_1ACE( self ) )
+    if ( !canlogclient( self ) )
         return;
 
     setmatchdata( "players", self.clientid, "score", maps\mp\_utility::getpersstat( "score" ) );
@@ -1121,10 +1121,10 @@ endofgamesummarylogger()
         if ( !isdefined( var_1 ) )
             continue;
 
-        _id_5844( var_1 );
+        logplayerping( var_1 );
 
-        if ( isdefined( var_1._id_2990 ) && var_1._id_2990 && var_1 maps\mp\_utility::rankingenabled() )
-            var_1 setrankedplayerdata( "restXPGoal", var_1._id_2990 );
+        if ( isdefined( var_1.detectedexploit ) && var_1.detectedexploit && var_1 maps\mp\_utility::rankingenabled() )
+            var_1 _meth_8244( "restXPGoal", var_1.detectedexploit );
 
         var_2 = undefined;
         var_3 = 0;
@@ -1138,33 +1138,33 @@ endofgamesummarylogger()
 
             if ( var_2.size > 0 )
             {
-                var_1 setcommonplayerdata( "round", "challengeNumCompleted", var_2.size );
+                var_1 _meth_8247( "round", "challengeNumCompleted", var_2.size );
                 var_4 = maps\mp\_utility::clamptobyte( var_2.size );
                 setmatchdata( "players", var_1.clientid, "challengesCompleted", var_4 );
             }
             else
-                var_1 setcommonplayerdata( "round", "challengeNumCompleted", 0 );
+                var_1 _meth_8247( "round", "challengeNumCompleted", 0 );
         }
         else
-            var_1 setcommonplayerdata( "round", "challengeNumCompleted", 0 );
+            var_1 _meth_8247( "round", "challengeNumCompleted", 0 );
 
         for ( var_5 = 0; var_5 < 20; var_5++ )
         {
             if ( isdefined( var_2 ) && isdefined( var_2[var_5] ) && var_2[var_5] != 8000 )
             {
-                var_1 setcommonplayerdata( "round", "challengesCompleted", var_5, var_2[var_5] );
+                var_1 _meth_8247( "round", "challengesCompleted", var_5, var_2[var_5] );
                 continue;
             }
 
-            var_1 setcommonplayerdata( "round", "challengesCompleted", var_5, 0 );
+            var_1 _meth_8247( "round", "challengesCompleted", var_5, 0 );
         }
 
-        var_1 setcommonplayerdata( "round", "gameMode", level.gametype );
-        var_1 setcommonplayerdata( "round", "map", tolower( getdvar( "mapname" ) ) );
+        var_1 _meth_8247( "round", "gameMode", level.gametype );
+        var_1 _meth_8247( "round", "map", tolower( getdvar( "mapname" ) ) );
     }
 }
 
-_id_5844( var_0 )
+logplayerping( var_0 )
 {
     if ( !isdefined( var_0.pers["maxPing"] ) || !isdefined( var_0.pers["minPing"] ) || !isdefined( var_0.pers["pingAccumulation"] ) || !isdefined( var_0.pers["pingSampleCount"] ) )
         return;
@@ -1178,13 +1178,13 @@ _id_5844( var_0 )
     }
 }
 
-_id_3BD9()
+gameendlistener()
 {
     level waittill( "game_ended" );
 
     foreach ( var_1 in level.players )
     {
-        var_1 _id_5841();
+        var_1 logplayerdata();
 
         if ( !isalive( var_1 ) )
             continue;
@@ -1197,14 +1197,14 @@ _id_3BD9()
         if ( var_1.totallifetime > 0 )
         {
             var_4 = var_1 maps\mp\_utility::getpersstat( "score" ) / ( var_1.totallifetime / 60000 );
-            lootserviceonstartgame( var_1.xuid, var_4, var_1.team );
+            _func_241( var_1.xuid, var_4, var_1.team );
         }
 
         var_1.totallifetime = 0;
     }
 }
 
-_id_1ACE( var_0 )
+canlogclient( var_0 )
 {
     if ( isagent( var_0 ) )
         return 0;
@@ -1217,14 +1217,14 @@ _id_1ACE( var_0 )
     return var_0.clientid < level.maxlogclients;
 }
 
-_id_1ACF()
+canlogevent()
 {
-    return getmatchdata( "eventCount" ) < level._id_5A34;
+    return getmatchdata( "eventCount" ) < level.maxevents;
 }
 
-_id_1AD0()
+canlogkillstreak()
 {
-    return getmatchdata( "killstreakCount" ) < level._id_5A39;
+    return getmatchdata( "killstreakCount" ) < level.maxkillstreaks;
 }
 
 canloglife( var_0 )
@@ -1234,7 +1234,7 @@ canloglife( var_0 )
 
 logweaponstat( var_0, var_1, var_2 )
 {
-    if ( !_id_1ACE( self ) )
+    if ( !canlogclient( self ) )
         return;
 
     if ( maps\mp\_utility::iskillstreakweapon( var_0 ) )
@@ -1280,7 +1280,7 @@ buildbaseweaponlist()
 
 logkillsconfirmed()
 {
-    if ( !_id_1ACE( self ) )
+    if ( !canlogclient( self ) )
         return;
 
     setmatchdata( "players", self.clientid, "killsConfirmed", self.pers["confirmed"] );
@@ -1288,7 +1288,7 @@ logkillsconfirmed()
 
 logkillsdenied()
 {
-    if ( !_id_1ACE( self ) )
+    if ( !canlogclient( self ) )
         return;
 
     setmatchdata( "players", self.clientid, "killsDenied", self.pers["denied"] );
@@ -1298,20 +1298,20 @@ loginitialstats()
 {
     if ( getdvarint( "mdsd" ) > 0 )
     {
-        var_0 = self getrankedplayerdata( "experience" );
+        var_0 = self _meth_8223( "experience" );
         setmatchdata( "players", self.clientid, "startXp", var_0 );
-        setmatchdata( "players", self.clientid, "startKills", self getrankedplayerdata( "kills" ) );
-        setmatchdata( "players", self.clientid, "startDeaths", self getrankedplayerdata( "deaths" ) );
-        setmatchdata( "players", self.clientid, "startWins", self getrankedplayerdata( "wins" ) );
-        setmatchdata( "players", self.clientid, "startLosses", self getrankedplayerdata( "losses" ) );
-        setmatchdata( "players", self.clientid, "startHits", self getrankedplayerdata( "hits" ) );
-        setmatchdata( "players", self.clientid, "startMisses", self getrankedplayerdata( "misses" ) );
-        setmatchdata( "players", self.clientid, "startGamesPlayed", self getrankedplayerdata( "gamesPlayed" ) );
-        setmatchdata( "players", self.clientid, "startScore", self getrankedplayerdata( "score" ) );
-        setmatchdata( "players", self.clientid, "startUnlockPoints", self getrankedplayerdata( "unlockPoints" ) );
-        setmatchdata( "players", self.clientid, "startPrestige", self getrankedplayerdata( "prestige" ) );
-        setmatchdata( "players", self.clientid, "startDP", self getrankedplayerdata( "division" ) );
-        var_1 = self getrankedplayerdata( "mmr" );
+        setmatchdata( "players", self.clientid, "startKills", self _meth_8223( "kills" ) );
+        setmatchdata( "players", self.clientid, "startDeaths", self _meth_8223( "deaths" ) );
+        setmatchdata( "players", self.clientid, "startWins", self _meth_8223( "wins" ) );
+        setmatchdata( "players", self.clientid, "startLosses", self _meth_8223( "losses" ) );
+        setmatchdata( "players", self.clientid, "startHits", self _meth_8223( "hits" ) );
+        setmatchdata( "players", self.clientid, "startMisses", self _meth_8223( "misses" ) );
+        setmatchdata( "players", self.clientid, "startGamesPlayed", self _meth_8223( "gamesPlayed" ) );
+        setmatchdata( "players", self.clientid, "startScore", self _meth_8223( "score" ) );
+        setmatchdata( "players", self.clientid, "startUnlockPoints", self _meth_8223( "unlockPoints" ) );
+        setmatchdata( "players", self.clientid, "startPrestige", self _meth_8223( "prestige" ) );
+        setmatchdata( "players", self.clientid, "startDP", self _meth_8223( "division" ) );
+        var_1 = self _meth_8223( "mmr" );
         setmatchdata( "players", self.clientid, "startMMR", var_1 );
     }
 }
@@ -1320,19 +1320,19 @@ logfinalstats()
 {
     if ( getdvarint( "mdsd" ) > 0 )
     {
-        var_0 = self getrankedplayerdata( "experience" );
+        var_0 = self _meth_8223( "experience" );
         setmatchdata( "players", self.clientid, "endXp", var_0 );
-        setmatchdata( "players", self.clientid, "endKills", self getrankedplayerdata( "kills" ) );
-        setmatchdata( "players", self.clientid, "endDeaths", self getrankedplayerdata( "deaths" ) );
-        setmatchdata( "players", self.clientid, "endWins", self getrankedplayerdata( "wins" ) );
-        setmatchdata( "players", self.clientid, "endLosses", self getrankedplayerdata( "losses" ) );
-        setmatchdata( "players", self.clientid, "endHits", self getrankedplayerdata( "hits" ) );
-        setmatchdata( "players", self.clientid, "endMisses", self getrankedplayerdata( "misses" ) );
-        setmatchdata( "players", self.clientid, "endGamesPlayed", self getrankedplayerdata( "gamesPlayed" ) );
-        setmatchdata( "players", self.clientid, "endScore", self getrankedplayerdata( "score" ) );
-        setmatchdata( "players", self.clientid, "endUnlockPoints", self getrankedplayerdata( "unlockPoints" ) );
-        setmatchdata( "players", self.clientid, "endPrestige", self getrankedplayerdata( "prestige" ) );
-        var_1 = self getrankedplayerdata( "mmr" );
+        setmatchdata( "players", self.clientid, "endKills", self _meth_8223( "kills" ) );
+        setmatchdata( "players", self.clientid, "endDeaths", self _meth_8223( "deaths" ) );
+        setmatchdata( "players", self.clientid, "endWins", self _meth_8223( "wins" ) );
+        setmatchdata( "players", self.clientid, "endLosses", self _meth_8223( "losses" ) );
+        setmatchdata( "players", self.clientid, "endHits", self _meth_8223( "hits" ) );
+        setmatchdata( "players", self.clientid, "endMisses", self _meth_8223( "misses" ) );
+        setmatchdata( "players", self.clientid, "endGamesPlayed", self _meth_8223( "gamesPlayed" ) );
+        setmatchdata( "players", self.clientid, "endScore", self _meth_8223( "score" ) );
+        setmatchdata( "players", self.clientid, "endUnlockPoints", self _meth_8223( "unlockPoints" ) );
+        setmatchdata( "players", self.clientid, "endPrestige", self _meth_8223( "prestige" ) );
+        var_1 = self _meth_8223( "mmr" );
         setmatchdata( "players", self.clientid, "endMMR", var_1 );
 
         if ( isdefined( self.pers["rank"] ) )
@@ -1343,7 +1343,7 @@ logfinalstats()
     }
 }
 
-_id_7278()
+reconlogplayerinfo()
 {
     for (;;)
     {
@@ -1372,7 +1372,7 @@ _id_7278()
                 if ( isdefined( var_1.clientid ) )
                     var_4 = var_1.clientid;
 
-                var_5 = ( -999.0, -999.0, -999.0 );
+                var_5 = ( -999, -999, -999 );
 
                 if ( isdefined( var_1.angles ) )
                     var_5 = var_1.angles;

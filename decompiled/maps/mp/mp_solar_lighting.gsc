@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -7,10 +7,10 @@ main()
     setdvar( "r_lightGridIntensity", 1.33 );
     setdvar( "r_gunSightColorEntityScale", "7" );
     setdvar( "r_gunSightColorNoneScale", "0.8" );
-    thread _id_7E66();
+    thread set_lighting_values();
 }
 
-_id_7E66()
+set_lighting_values()
 {
     if ( _func_235() )
     {

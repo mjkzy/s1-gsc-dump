@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 getgroundslamminheight()
 {
@@ -52,9 +52,9 @@ monitorgroundslam()
     self endon( "disconnect" );
     var_0 = 10;
     var_1 = 4;
-    var_2 = ( 1.0, 0.0, 0.0 );
-    var_3 = ( 0.0, 1.0, 0.0 );
-    var_4 = ( 0.0, 0.0, 1.0 );
+    var_2 = ( 1, 0, 0 );
+    var_3 = ( 0, 1, 0 );
+    var_4 = ( 0, 0, 1 );
     var_5 = 16;
 
     for (;;)
@@ -103,10 +103,10 @@ monitorgroundslam()
 
         if ( getdvarint( "ground_slam_debug" ) )
         {
-            thread draw_circle_for_time( self.origin, var_14 + var_5, ( 0.0, 1.0, 0.0 ), 0, 16, var_0 );
+            thread draw_circle_for_time( self.origin, var_14 + var_5, ( 0, 1, 0 ), 0, 16, var_0 );
             var_20 = 100;
             var_21 = ( var_20 - var_9 ) * var_14 / ( var_10 - var_9 );
-            thread draw_circle_for_time( self.origin, var_21 + var_5, ( 1.0, 0.0, 0.0 ), 0, 16, var_0 );
+            thread draw_circle_for_time( self.origin, var_21 + var_5, ( 1, 0, 0 ), 0, 16, var_0 );
 
             foreach ( var_18 in level.players )
             {
@@ -138,15 +138,15 @@ monitorgroundslamhitplayer()
         if ( isdefined( level.groundslamhitplayer ) && self [[ level.groundslamhitplayer ]]( var_0 ) )
             continue;
 
-        var_0 dodamage( var_0.health, self.origin, self, self, "MOD_CRUSH", "boost_slam_mp" );
+        var_0 _meth_8051( var_0.health, self.origin, self, self, "MOD_CRUSH", "boost_slam_mp" );
     }
 }
 
 exo_power_cooldown( var_0 )
 {
     var_1 = int( var_0 * 1000 );
-    self setclientomnvar( "ui_exo_cooldown_time", var_1 );
+    self _meth_82FB( "ui_exo_cooldown_time", var_1 );
     wait(var_0);
-    self setclientomnvar( "ui_exo_cooldown_time", 0 );
+    self _meth_82FB( "ui_exo_cooldown_time", 0 );
     self playlocalsound( "exo_power_recharged" );
 }

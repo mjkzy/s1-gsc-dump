@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main( var_0 )
 {
@@ -126,7 +126,7 @@ createcarryobject( var_0, var_1, var_2, var_3 )
     var_4.type = "carryObject";
     var_4.curorigin = var_1.origin;
     var_4.ownerteam = var_0;
-    var_4.entnum = var_1 getentitynumber();
+    var_4.entnum = var_1 _meth_81B1();
 
     if ( issubstr( var_1.classname, "use" ) )
         var_4.triggertype = "use";
@@ -138,7 +138,7 @@ createcarryobject( var_0, var_1, var_2, var_3 )
     var_4.useweapon = undefined;
 
     if ( !isdefined( var_3 ) )
-        var_3 = ( 0.0, 0.0, 0.0 );
+        var_3 = ( 0, 0, 0 );
 
     var_4.offset3d = var_3;
 
@@ -234,7 +234,7 @@ deletecarryobject()
     var_0.ownerteam = undefined;
     var_0.entnum = undefined;
     var_0.triggertype = undefined;
-    var_0.trigger unlink();
+    var_0.trigger _meth_804F();
     var_0.trigger = undefined;
     var_0.useweapon = undefined;
     var_0.offset3d = undefined;
@@ -433,7 +433,7 @@ setpickedup( var_0 )
     for ( var_1 = 0; var_1 < self.visuals.size; var_1++ )
         self.visuals[var_1] hide();
 
-    self.trigger.origin += ( 0.0, 0.0, 10000.0 );
+    self.trigger.origin += ( 0, 0, 10000 );
     self notify( "pickup_object" );
 
     if ( isdefined( self.onpickup ) )
@@ -454,7 +454,7 @@ updatecarryobjectorigin()
     {
         if ( isdefined( self.carrier ) )
         {
-            self.curorigin = self.carrier.origin + ( 0.0, 0.0, 75.0 );
+            self.curorigin = self.carrier.origin + ( 0, 0, 75 );
             self.objpoints["allies"] maps\mp\gametypes\_objpoints::updateorigin( self.curorigin );
             self.objpoints["axis"] maps\mp\gametypes\_objpoints::updateorigin( self.curorigin );
 
@@ -532,15 +532,15 @@ giveobject( var_0 )
 
     if ( isdefined( var_0.carryweapon ) )
     {
-        var_0.carrierweaponcurrent = self getcurrentprimaryweapon();
-        var_0.carrierhascarryweaponinloadout = self hasweapon( var_0.carryweapon );
+        var_0.carrierweaponcurrent = self _meth_8312();
+        var_0.carrierhascarryweaponinloadout = self _meth_8314( var_0.carryweapon );
 
         if ( isdefined( var_0.carryweaponthink ) )
             self thread [[ var_0.carryweaponthink ]]();
 
-        self giveweapon( var_0.carryweapon );
-        self switchtoweaponimmediate( var_0.carryweapon );
-        self disableweaponpickup();
+        self _meth_830E( var_0.carryweapon );
+        self _meth_8316( var_0.carryweapon );
+        self _meth_82CB();
         common_scripts\utility::_disableweaponswitch();
     }
     else if ( !var_0.allowweapons )
@@ -637,9 +637,9 @@ onplayerlaststand()
 carryobject_overridemovingplatformdeath( var_0 )
 {
     for ( var_1 = 0; var_1 < var_0.carryobject.visuals.size; var_1++ )
-        var_0.carryobject.visuals[var_1] unlink();
+        var_0.carryobject.visuals[var_1] _meth_804F();
 
-    var_0.carryobject.trigger unlink();
+    var_0.carryobject.trigger _meth_804F();
     var_0.carryobject notify( "stop_pickup_timeout" );
     var_0.carryobject returnhome();
 }
@@ -659,19 +659,19 @@ setdropped()
     {
         if ( isdefined( self.carrier.body ) )
         {
-            var_0 = playerphysicstrace( self.carrier.origin + ( 0.0, 0.0, 20.0 ), self.carrier.origin - ( 0.0, 0.0, 2000.0 ), self.carrier.body );
-            var_1 = bullettrace( self.carrier.origin + ( 0.0, 0.0, 20.0 ), self.carrier.origin - ( 0.0, 0.0, 2000.0 ), 0, self.carrier.body );
+            var_0 = playerphysicstrace( self.carrier.origin + ( 0, 0, 20 ), self.carrier.origin - ( 0, 0, 2000 ), self.carrier.body );
+            var_1 = bullettrace( self.carrier.origin + ( 0, 0, 20 ), self.carrier.origin - ( 0, 0, 2000 ), 0, self.carrier.body );
         }
         else
         {
-            var_0 = playerphysicstrace( self.carrier.origin + ( 0.0, 0.0, 20.0 ), self.carrier.origin - ( 0.0, 0.0, 2000.0 ) );
-            var_1 = bullettrace( self.carrier.origin + ( 0.0, 0.0, 20.0 ), self.carrier.origin - ( 0.0, 0.0, 2000.0 ), 0 );
+            var_0 = playerphysicstrace( self.carrier.origin + ( 0, 0, 20 ), self.carrier.origin - ( 0, 0, 2000 ) );
+            var_1 = bullettrace( self.carrier.origin + ( 0, 0, 20 ), self.carrier.origin - ( 0, 0, 2000 ), 0 );
         }
     }
     else
     {
-        var_0 = playerphysicstrace( self.safeorigin + ( 0.0, 0.0, 20.0 ), self.safeorigin - ( 0.0, 0.0, 20.0 ) );
-        var_1 = bullettrace( self.safeorigin + ( 0.0, 0.0, 20.0 ), self.safeorigin - ( 0.0, 0.0, 20.0 ), 0, undefined );
+        var_0 = playerphysicstrace( self.safeorigin + ( 0, 0, 20 ), self.safeorigin - ( 0, 0, 20 ) );
+        var_1 = bullettrace( self.safeorigin + ( 0, 0, 20 ), self.safeorigin - ( 0, 0, 20 ), 0, undefined );
     }
 
     var_2 = self.carrier;
@@ -774,19 +774,19 @@ istouchingbadtrigger()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] istouching( var_0[var_1] ) )
+        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
             continue;
 
         return 1;
     }
 
-    if ( !self.visuals[0] physicsisactive() )
+    if ( !self.visuals[0] _meth_852A() )
     {
         var_0 = getentarray( "out_of_bounds_at_rest", "targetname" );
 
         for ( var_1 = 0; var_1 < var_0.size; var_1++ )
         {
-            if ( !self.visuals[0] istouching( var_0[var_1] ) )
+            if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
                 continue;
 
             return 1;
@@ -797,7 +797,7 @@ istouchingbadtrigger()
 
     for ( var_1 = 0; var_1 < var_2.size; var_1++ )
     {
-        if ( !self.visuals[0] istouching( var_2[var_1] ) )
+        if ( !self.visuals[0] _meth_80A9( var_2[var_1] ) )
             continue;
 
         return 1;
@@ -809,7 +809,7 @@ istouchingbadtrigger()
 
         for ( var_1 = 0; var_1 < var_3.size; var_1++ )
         {
-            if ( !self.visuals[0] istouching( var_3[var_1] ) )
+            if ( !self.visuals[0] _meth_80A9( var_3[var_1] ) )
                 continue;
 
             return 1;
@@ -821,10 +821,10 @@ istouchingbadtrigger()
 
 getcarrierweaponcurrent( var_0 )
 {
-    if ( isdefined( var_0.carrierweaponcurrent ) && self hasweapon( var_0.carrierweaponcurrent ) )
+    if ( isdefined( var_0.carrierweaponcurrent ) && self _meth_8314( var_0.carrierweaponcurrent ) )
         return var_0.carrierweaponcurrent;
 
-    var_1 = self getweaponslistprimaries();
+    var_1 = self _meth_830C();
     return var_1[0];
 }
 
@@ -848,11 +848,11 @@ takeobject( var_0 )
             var_1 = isdefined( var_0.keepcarryweapon ) && var_0.keepcarryweapon;
 
             if ( !var_0.carrierhascarryweaponinloadout && !var_1 )
-                self takeweapon( var_0.carryweapon );
+                self _meth_830F( var_0.carryweapon );
 
             var_2 = getcarrierweaponcurrent( var_0 );
-            self switchtoweapon( var_2 );
-            self enableweaponpickup();
+            self _meth_8315( var_2 );
+            self _meth_82CC();
             common_scripts\utility::_enableweaponswitch();
         }
         else if ( !var_0.allowweapons )
@@ -869,9 +869,9 @@ trackcarrier()
 
     while ( isdefined( self.carryobject ) && maps\mp\_utility::isreallyalive( self ) )
     {
-        if ( self isonground() )
+        if ( self _meth_8341() )
         {
-            var_0 = bullettrace( self.origin + ( 0.0, 0.0, 20.0 ), self.origin - ( 0.0, 0.0, 20.0 ), 0, undefined );
+            var_0 = bullettrace( self.origin + ( 0, 0, 20 ), self.origin - ( 0, 0, 20 ), 0, undefined );
 
             if ( var_0["fraction"] < 1 )
                 self.carryobject.safeorigin = var_0["position"];
@@ -890,10 +890,10 @@ manualdropthink()
 
     for (;;)
     {
-        while ( self attackbuttonpressed() || self fragbuttonpressed() || self secondaryoffhandbuttonpressed() || self meleebuttonpressed() )
+        while ( self attackbuttonpressed() || self _meth_82EE() || self _meth_82EF() || self meleebuttonpressed() )
             wait 0.05;
 
-        while ( !self attackbuttonpressed() && !self fragbuttonpressed() && !self secondaryoffhandbuttonpressed() && !self meleebuttonpressed() )
+        while ( !self attackbuttonpressed() && !self _meth_82EE() && !self _meth_82EF() && !self meleebuttonpressed() )
             wait 0.05;
 
         if ( isdefined( self.carryobject ) && !self usebuttonpressed() )
@@ -927,7 +927,7 @@ createuseobject( var_0, var_1, var_2, var_3, var_4 )
     var_5.type = "useObject";
     var_5.curorigin = var_1.origin;
     var_5.ownerteam = var_0;
-    var_5.entnum = var_1 getentitynumber();
+    var_5.entnum = var_1 _meth_81B1();
     var_5.keyobject = undefined;
 
     if ( issubstr( var_1.classname, "use" ) )
@@ -946,7 +946,7 @@ createuseobject( var_0, var_1, var_2, var_3, var_4 )
     var_5.visuals = var_2;
 
     if ( !isdefined( var_3 ) )
-        var_3 = ( 0.0, 0.0, 0.0 );
+        var_3 = ( 0, 0, 0 );
 
     var_5.offset3d = var_3;
 
@@ -1024,11 +1024,11 @@ createuseobject( var_0, var_1, var_2, var_3, var_4 )
 move_use_object( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
-        var_1 = ( 0.0, 0.0, 0.0 );
+        var_1 = ( 0, 0, 0 );
 
     if ( isdefined( self.trigger ) )
     {
-        self.trigger dontinterpolate();
+        self.trigger _meth_8092();
         self.trigger.origin = var_0;
     }
 
@@ -1037,7 +1037,7 @@ move_use_object( var_0, var_1 )
 
     if ( isdefined( self.levelflag ) )
     {
-        self.levelflag dontinterpolate();
+        self.levelflag _meth_8092();
         self.levelflag.origin = var_0;
     }
 
@@ -1045,7 +1045,7 @@ move_use_object( var_0, var_1 )
     {
         foreach ( var_3 in self.visuals )
         {
-            var_3 dontinterpolate();
+            var_3 _meth_8092();
             var_3.origin = var_0;
             var_3.baseorigin = var_0;
         }
@@ -1087,8 +1087,8 @@ move_use_object( var_0, var_1 )
     if ( isdefined( self.baseeffect ) )
     {
         self.baseeffect delete();
-        var_11 = self.visuals[0].origin + ( 0.0, 0.0, 32.0 );
-        var_12 = self.visuals[0].origin + ( 0.0, 0.0, -32.0 );
+        var_11 = self.visuals[0].origin + ( 0, 0, 32 );
+        var_12 = self.visuals[0].origin + ( 0, 0, -32 );
         var_13 = bullettrace( var_11, var_12, 0, undefined );
         var_14 = vectortoangles( var_13["normal"] );
         self.baseeffectforward = anglestoforward( var_14 );
@@ -1120,13 +1120,13 @@ useobjectusethink()
         if ( !caninteractwith( var_0.pers["team"] ) )
             continue;
 
-        if ( !var_0 isonground() )
+        if ( !var_0 _meth_8341() )
             continue;
 
-        if ( var_0 isdodging() )
+        if ( var_0 _meth_851F() )
             continue;
 
-        var_1 = var_0 getcurrentprimaryweapon();
+        var_1 = var_0 _meth_8312();
 
         if ( !var_0 maps\mp\_utility::isjuggernaut() && maps\mp\_utility::iskillstreakweapon( var_1 ) && !issubstr( var_1, "turrethead" ) )
             continue;
@@ -1454,7 +1454,7 @@ proxtriggerlos( var_0, var_1 )
 
     foreach ( var_6 in var_2 )
     {
-        var_7 = var_0 geteye();
+        var_7 = var_0 _meth_80A8();
         var_8 = self.trigger.origin + var_4 + ( 0, 0, var_6 );
         var_9 = bullettrace( var_7, var_8, 0, var_3, 0, 0, 0, 0, 1, 0, 0 );
 
@@ -1516,7 +1516,7 @@ triggertouchthink( var_0 )
     self.touchtriggers[var_0.entnum] = var_0.trigger;
     var_0 updateuserate();
 
-    while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0.trigger ) && ( self istouching( var_0.trigger ) || isboostingabovetriggerradius( var_0.trigger ) ) && !level.gameended )
+    while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0.trigger ) && ( self _meth_80A9( var_0.trigger ) || isboostingabovetriggerradius( var_0.trigger ) ) && !level.gameended )
     {
         if ( isplayer( self ) && var_0.usetime )
         {
@@ -1554,7 +1554,7 @@ isboostingabovetriggerradius( var_0 )
     if ( !maps\mp\_utility::isaugmentedgamemode() )
         return 0;
 
-    if ( !self ishighjumping() )
+    if ( !self _meth_83B4() )
         return 0;
 
     var_1 = _func_220( self.origin, var_0.origin );
@@ -1669,7 +1669,7 @@ updateuiprogress( var_0, var_1 )
                 var_5 = 0.01;
 
             if ( var_5 != 0 )
-                self setclientomnvar( "ui_capture_progress", var_5 );
+                self _meth_82FB( "ui_capture_progress", var_5 );
         }
 
         if ( ( var_2 == "sd" || var_2 == "sr" ) && isdefined( var_3 ) && ( var_3 == "bombZone" || var_3 == "defuseObject" ) )
@@ -1680,7 +1680,7 @@ updateuiprogress( var_0, var_1 )
             var_5 = max( 0.01, var_5 );
 
             if ( var_5 != 0 )
-                self setclientomnvar( "ui_capture_progress", var_5 );
+                self _meth_82FB( "ui_capture_progress", var_5 );
         }
 
         if ( var_2 == "twar" && isdefined( var_3 ) && var_3 == "twarZone" )
@@ -1691,7 +1691,7 @@ updateuiprogress( var_0, var_1 )
             var_5 = max( 0.01, var_5 );
 
             if ( var_5 != 0 )
-                self setclientomnvar( "ui_capture_progress", var_5 );
+                self _meth_82FB( "ui_capture_progress", var_5 );
         }
 
         if ( var_2 == "zombies" && isdefined( var_3 ) && var_3 == "defuseObject" )
@@ -1702,7 +1702,7 @@ updateuiprogress( var_0, var_1 )
             var_5 = max( 0.01, var_5 );
 
             if ( var_5 != 0 )
-                self setclientomnvar( "ui_capture_progress", var_5 );
+                self _meth_82FB( "ui_capture_progress", var_5 );
         }
     }
 
@@ -1712,44 +1712,44 @@ updateuiprogress( var_0, var_1 )
             var_1 = 0;
 
         if ( !var_1 )
-            self setclientomnvar( "ui_capture_icon", 0 );
+            self _meth_82FB( "ui_capture_icon", 0 );
         else if ( !var_4 )
         {
             if ( var_0.label == "_a" )
-                self setclientomnvar( "ui_capture_icon", 1 );
+                self _meth_82FB( "ui_capture_icon", 1 );
             else if ( var_0.label == "_b" )
-                self setclientomnvar( "ui_capture_icon", 2 );
+                self _meth_82FB( "ui_capture_icon", 2 );
             else if ( var_0.label == "_c" )
-                self setclientomnvar( "ui_capture_icon", 3 );
+                self _meth_82FB( "ui_capture_icon", 3 );
         }
         else
-            self setclientomnvar( "ui_capture_icon", 4 );
+            self _meth_82FB( "ui_capture_icon", 4 );
     }
 
     if ( ( var_2 == "sd" || var_2 == "sr" ) && isdefined( var_3 ) && ( var_3 == "bombZone" || var_3 == "defuseObject" ) )
     {
         if ( !var_1 )
-            self setclientomnvar( "ui_capture_icon", 0 );
+            self _meth_82FB( "ui_capture_icon", 0 );
         else if ( var_0 isfriendlyteam( self.pers["team"] ) )
-            self setclientomnvar( "ui_capture_icon", 2 );
+            self _meth_82FB( "ui_capture_icon", 2 );
         else
-            self setclientomnvar( "ui_capture_icon", 1 );
+            self _meth_82FB( "ui_capture_icon", 1 );
     }
 
     if ( var_2 == "twar" && isdefined( var_3 ) && var_3 == "twarZone" )
     {
         if ( !var_1 || isdefined( var_0.stalemate ) && var_0.stalemate )
-            self setclientomnvar( "ui_capture_icon", 0 );
+            self _meth_82FB( "ui_capture_icon", 0 );
         else
-            self setclientomnvar( "ui_capture_icon", 1 );
+            self _meth_82FB( "ui_capture_icon", 1 );
     }
 
     if ( var_2 == "zombies" && isdefined( var_3 ) && var_3 == "defuseObject" )
     {
         if ( !var_1 )
-            self setclientomnvar( "ui_capture_icon", 0 );
+            self _meth_82FB( "ui_capture_icon", 0 );
         else
-            self setclientomnvar( "ui_capture_icon", 1 );
+            self _meth_82FB( "ui_capture_icon", 1 );
     }
 }
 
@@ -1829,15 +1829,15 @@ useholdthink( var_0 )
     var_0 notify( "use_hold" );
 
     if ( isplayer( var_0 ) )
-        var_0 playerlinkto( self.trigger );
+        var_0 _meth_807C( self.trigger );
     else
-        var_0 linkto( self.trigger );
+        var_0 _meth_804D( self.trigger );
 
-    var_0 playerlinkedoffsetenable();
+    var_0 _meth_8081();
     var_0 clientclaimtrigger( self.trigger );
     var_0.claimtrigger = self.trigger;
     var_1 = self.useweapon;
-    var_2 = var_0 getcurrentweapon();
+    var_2 = var_0 _meth_8311();
 
     if ( isdefined( var_1 ) )
     {
@@ -1846,9 +1846,9 @@ useholdthink( var_0 )
 
         var_0.lastnonuseweapon = var_2;
         var_0 maps\mp\_utility::_giveweapon( var_1 );
-        var_0 setweaponammostock( var_1, 0 );
-        var_0 setweaponammoclip( var_1, 0 );
-        var_0 switchtoweaponimmediate( var_1 );
+        var_0 _meth_82F7( var_1, 0 );
+        var_0 _meth_82F6( var_1, 0 );
+        var_0 _meth_8316( var_1 );
 
         if ( !isdefined( self.attachdefault3pmodel ) || self.attachdefault3pmodel == 1 )
             var_0 thread attachusemodel();
@@ -1886,12 +1886,12 @@ useholdthink( var_0 )
             if ( var_2 != "none" )
                 var_0 maps\mp\_utility::switch_to_last_weapon( var_2 );
             else
-                var_0 takeweapon( var_1 );
+                var_0 _meth_830F( var_1 );
         }
         else
             var_0 common_scripts\utility::_enableweapon();
 
-        var_0 unlink();
+        var_0 _meth_804F();
 
         if ( !maps\mp\_utility::isreallyalive( var_0 ) )
             var_0.killedinuse = 1;
@@ -1918,10 +1918,10 @@ takeuseweapon( var_0 )
     self endon( "disconnect" );
     level endon( "game_ended" );
 
-    while ( self getcurrentweapon() == var_0 && !isdefined( self.throwinggrenade ) )
+    while ( self _meth_8311() == var_0 && !isdefined( self.throwinggrenade ) )
         wait 0.05;
 
-    self takeweapon( var_0 );
+    self _meth_830F( var_0 );
 }
 
 usetest( var_0, var_1, var_2, var_3 )
@@ -1929,7 +1929,7 @@ usetest( var_0, var_1, var_2, var_3 )
     if ( !maps\mp\_utility::isreallyalive( var_0 ) )
         return 0;
 
-    if ( !var_0 istouching( self.trigger ) )
+    if ( !var_0 _meth_80A9( self.trigger ) )
         return 0;
 
     if ( !var_0 usebuttonpressed() )
@@ -1967,7 +1967,7 @@ useholdthinkloop( var_0, var_1 )
     {
         var_4 += 0.05;
 
-        if ( !isdefined( var_2 ) || var_0 getcurrentweapon() == var_2 )
+        if ( !isdefined( var_2 ) || var_0 _meth_8311() == var_2 )
         {
             self.curprogress += 50 * self.userate;
             self.userate = 1 * var_0.objectivescaler;
@@ -1984,18 +1984,18 @@ useholdthinkloop( var_0, var_1 )
 
             if ( isdefined( var_2 ) )
             {
-                var_0 setweaponammostock( var_2, 1 );
-                var_0 setweaponammoclip( var_2, 1 );
+                var_0 _meth_82F7( var_2, 1 );
+                var_0 _meth_82F6( var_2, 1 );
 
                 if ( var_1 != "none" )
                     var_0 maps\mp\_utility::switch_to_last_weapon( var_1 );
                 else
-                    var_0 takeweapon( var_2 );
+                    var_0 _meth_830F( var_2 );
             }
             else
                 var_0 common_scripts\utility::_enableweapon();
 
-            var_0 unlink();
+            var_0 _meth_804F();
             return maps\mp\_utility::isreallyalive( var_0 );
         }
 
@@ -2080,7 +2080,7 @@ updatetrigger()
         return;
 
     if ( self.interactteam == "none" )
-        self.trigger.origin -= ( 0.0, 0.0, 50000.0 );
+        self.trigger.origin -= ( 0, 0, 50000 );
     else if ( self.interactteam == "any" )
     {
         self.trigger.origin = self.curorigin;
@@ -2095,7 +2095,7 @@ updatetrigger()
         else if ( self.ownerteam == "axis" )
             self.trigger setteamfortrigger( "axis" );
         else
-            self.trigger.origin -= ( 0.0, 0.0, 50000.0 );
+            self.trigger.origin -= ( 0, 0, 50000 );
     }
     else if ( self.interactteam == "enemy" )
     {
@@ -2152,24 +2152,24 @@ updateworldicon( var_0, var_1 )
 
         if ( var_1 )
         {
-            var_5 setshader( self.worldicons[var_0], level.objpointsize, level.objpointsize );
+            var_5 _meth_80CC( self.worldicons[var_0], level.objpointsize, level.objpointsize );
             var_5 fadeovertime( 0.05 );
             var_5.alpha = var_5.basealpha;
             var_5.isshown = 1;
 
             if ( isdefined( self.compassicons[var_0] ) )
-                var_5 setwaypoint( 1, 1 );
+                var_5 _meth_80D8( 1, 1 );
             else
-                var_5 setwaypoint( 1, 0 );
+                var_5 _meth_80D8( 1, 0 );
 
             if ( self.type == "carryObject" )
             {
                 if ( isdefined( self.carrier ) && !shouldpingobject( var_0 ) )
-                    var_5 settargetent( self.carrier );
+                    var_5 _meth_80CD( self.carrier );
                 else if ( !isdefined( self.carrier ) && isdefined( self.objectiveonvisuals ) && self.objectiveonvisuals )
-                    var_5 settargetent( self.visuals[0] );
+                    var_5 _meth_80CD( self.visuals[0] );
                 else
-                    var_5 cleartargetent();
+                    var_5 _meth_80CE();
             }
         }
         else
@@ -2177,7 +2177,7 @@ updateworldicon( var_0, var_1 )
             var_5 fadeovertime( 0.05 );
             var_5.alpha = 0;
             var_5.isshown = 0;
-            var_5 cleartargetent();
+            var_5 _meth_80CE();
         }
 
         var_5 thread hideworldiconongameend();
@@ -2323,7 +2323,7 @@ shouldshowcompassduetoradar( var_0 )
     if ( self.carrier maps\mp\_utility::_hasperk( "specialty_radarimmune" ) )
         return 0;
 
-    return setteamradar( var_0 );
+    return _func_176( var_0 );
 }
 
 updatevisibilityaccordingtoradar()
@@ -2373,7 +2373,7 @@ setteamusetext( var_0, var_1 )
 
 setusehinttext( var_0 )
 {
-    self.trigger sethintstring( var_0 );
+    self.trigger _meth_80DB( var_0 );
 }
 
 allowcarry( var_0 )
@@ -2406,7 +2406,7 @@ setmodelvisibility( var_0 )
             {
                 foreach ( var_3 in level.players )
                 {
-                    if ( var_3 istouching( self.visuals[var_1] ) )
+                    if ( var_3 _meth_80A9( self.visuals[var_1] ) )
                         var_3 maps\mp\_utility::_suicide();
                 }
 
@@ -2423,7 +2423,7 @@ setmodelvisibility( var_0 )
             if ( self.visuals[var_1].classname == "script_brushmodel" || self.visuals[var_1].classname == "script_model" )
             {
                 self.visuals[var_1] notify( "changing_solidness" );
-                self.visuals[var_1] notsolid();
+                self.visuals[var_1] _meth_82BF();
             }
         }
     }
@@ -2439,13 +2439,13 @@ makesolid()
     {
         for ( var_0 = 0; var_0 < level.players.size; var_0++ )
         {
-            if ( level.players[var_0] istouching( self ) )
+            if ( level.players[var_0] _meth_80A9( self ) )
                 break;
         }
 
         if ( var_0 == level.players.size )
         {
-            self solid();
+            self _meth_82BE();
             break;
         }
 

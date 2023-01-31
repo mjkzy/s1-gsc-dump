@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 exo_ping_think()
 {
@@ -11,7 +11,7 @@ exo_ping_think()
     self endon( "faux_spawn" );
     self endon( "exo_ping_taken" );
 
-    if ( !self hasweapon( "exoping_equipment_mp" ) )
+    if ( !self _meth_8314( "exoping_equipment_mp" ) )
         return;
 
     exo_ping_init();
@@ -23,20 +23,20 @@ exo_ping_think()
 exo_ping_init()
 {
     self.exo_ping_on = 0;
-    self batterysetdischargescale( "exoping_equipment_mp", 1.0 );
-    var_0 = self batterygetsize( "exoping_equipment_mp" );
+    self _meth_84A6( "exoping_equipment_mp", 1.0 );
+    var_0 = self _meth_84A5( "exoping_equipment_mp" );
 
-    if ( self gettacticalweapon() == "exoping_equipment_mp" )
+    if ( self _meth_831A() == "exoping_equipment_mp" )
     {
-        self setclientomnvar( "ui_exo_battery_level0", var_0 );
-        self setclientomnvar( "exo_ability_nrg_req0", batteryusepershot( "exoping_equipment_mp" ) );
-        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
+        self _meth_82FB( "ui_exo_battery_level0", var_0 );
+        self _meth_82FB( "exo_ability_nrg_req0", _func_298( "exoping_equipment_mp" ) );
+        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
     }
-    else if ( self getlethalweapon() == "exoping_equipment_mp" )
+    else if ( self _meth_8345() == "exoping_equipment_mp" )
     {
-        self setclientomnvar( "ui_exo_battery_level1", var_0 );
-        self setclientomnvar( "exo_ability_nrg_req1", batteryusepershot( "exoping_equipment_mp" ) );
-        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
+        self _meth_82FB( "ui_exo_battery_level1", var_0 );
+        self _meth_82FB( "exo_ability_nrg_req1", _func_298( "exoping_equipment_mp" ) );
+        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
     }
 
     if ( !isdefined( level.exo_ping_vfx_inactive ) )
@@ -72,9 +72,9 @@ toggle_exo_ping()
             continue;
         }
 
-        if ( self hasweapon( "exoping_equipment_mp" ) )
+        if ( self _meth_8314( "exoping_equipment_mp" ) )
         {
-            if ( self batterygetcharge( "exoping_equipment_mp" ) > 0 )
+            if ( self _meth_84A2( "exoping_equipment_mp" ) > 0 )
                 start_exo_ping();
         }
     }
@@ -92,7 +92,7 @@ monitor_exoping_battery_charge()
 
     while ( self.exo_ping_on == 1 )
     {
-        if ( self batterygetcharge( "exoping_equipment_mp" ) <= 0 )
+        if ( self _meth_84A2( "exoping_equipment_mp" ) <= 0 )
             thread stop_exo_ping();
 
         wait 0.05;
@@ -103,12 +103,12 @@ take_exo_ping()
 {
     self notify( "kill_battery" );
     self notify( "exo_ping_taken" );
-    self takeweapon( "exoping_equipment_mp" );
+    self _meth_830F( "exoping_equipment_mp" );
 }
 
 give_exo_ping()
 {
-    self giveweapon( "exoping_equipment_mp" );
+    self _meth_830E( "exoping_equipment_mp" );
     thread exo_ping_think();
 }
 
@@ -131,9 +131,9 @@ start_exo_ping()
     self endon( "stop_exo_ping" );
     self.exo_ping_on = 1;
     self.highlight_effect = maps\mp\_threatdetection::detection_highlight_hud_effect_on( self, -1 );
-    self setperk( "specialty_exo_ping", 1, 0 );
-    self batterydischargeonce( "exoping_equipment_mp", tablegetcolumncount( "exoping_equipment_mp" ) );
-    self batterydischargebegin( "exoping_equipment_mp" );
+    self _meth_82A6( "specialty_exo_ping", 1, 0 );
+    self _meth_84A1( "exoping_equipment_mp", _func_297( "exoping_equipment_mp" ) );
+    self _meth_849F( "exoping_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exoping_equipment_mp", "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( "exoping_equipment_mp" );
     thread monitor_exoping_battery_charge();
@@ -161,8 +161,8 @@ stop_exo_ping( var_0 )
     if ( isdefined( self.highlight_effect ) )
         maps\mp\_threatdetection::detection_highlight_hud_effect_off( self.highlight_effect );
 
-    self unsetperk( "specialty_exo_ping", 1 );
-    self batterydischargeend( "exoping_equipment_mp" );
+    self _meth_82A9( "specialty_exo_ping", 1 );
+    self _meth_84A0( "exoping_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exoping_equipment_mp", "ui_exo_battery_toggle", 0 );
     killpingfx();
 

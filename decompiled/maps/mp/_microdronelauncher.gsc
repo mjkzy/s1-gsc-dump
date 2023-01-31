@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 monitor_microdrone_launch()
 {
@@ -14,108 +14,108 @@ monitor_microdrone_launch()
         self waittill( "missile_fire", var_0, var_1 );
 
         if ( issubstr( var_1, "iw5_microdronelauncher_mp" ) )
-            var_0 setotherent( self );
+            var_0 _meth_8383( self );
     }
 }
 
-_id_29A3( var_0 )
+determine_projectile_position( var_0 )
 {
     self endon( "death" );
 
     for (;;)
     {
-        if ( !isdefined( self._id_6F57 ) )
-            self._id_6F57 = self.origin;
+        if ( !isdefined( self.previous_position ) )
+            self.previous_position = self.origin;
 
         wait 0.05;
-        self._id_6F57 = self.origin;
+        self.previous_position = self.origin;
     }
 }
 
-_id_29A4( var_0 )
+determine_sticky_position( var_0 )
 {
     var_0 endon( "spawned_player" );
 
-    if ( !isdefined( self._id_6F57 ) )
+    if ( !isdefined( self.previous_position ) )
         return;
 
     if ( !isdefined( self ) )
         return;
 
-    var_1 = self.origin - self._id_6F57;
+    var_1 = self.origin - self.previous_position;
     var_2 = vectortoangles( var_1 );
     var_3 = anglestoforward( var_2 ) * 8000;
     var_4 = self.origin + var_3;
-    var_5 = bullettrace( self._id_6F57, var_4, 1, var_0, 1, 1 );
+    var_5 = bullettrace( self.previous_position, var_4, 1, var_0, 1, 1 );
 
     if ( var_5["fraction"] < 1 && isdefined( var_5["position"] ) )
     {
         var_6 = spawn( "script_model", var_5["position"] );
-        var_6 setmodel( "projectile_semtex_grenade" );
+        var_6 _meth_80B1( "projectile_semtex_grenade" );
 
         if ( isdefined( var_5["entity"] ) )
         {
             if ( isplayer( var_5["entity"] ) )
             {
-                var_0 thread _id_84EB();
-                var_5["entity"] thread _id_84EB();
+                var_0 thread show_stuck_fanfare();
+                var_5["entity"] thread show_stuck_fanfare();
             }
 
-            var_6 linkto( var_5["entity"] );
+            var_6 _meth_804D( var_5["entity"] );
         }
 
-        var_6 thread _id_8E2D( var_0 );
-        var_6 thread _id_8E2B( var_0 );
-        var_6 thread _id_737E( var_0 );
+        var_6 thread sticky_timer( var_0 );
+        var_6 thread sticky_fx( var_0 );
+        var_6 thread remove_sticky( var_0 );
     }
 }
 
-_id_5BFD()
+microdronelauncher_cleanup()
 {
     common_scripts\utility::waittill_any( "death", "disconnect", "faux_spawn" );
 
-    if ( isdefined( self._id_4AE9 ) )
+    if ( isdefined( self.huditem ) )
     {
-        foreach ( var_1 in self._id_4AE9 )
+        foreach ( var_1 in self.huditem )
             var_1 destroy();
 
-        self._id_4AE9 = undefined;
+        self.huditem = undefined;
     }
 }
 
-_id_84EB()
+show_stuck_fanfare()
 {
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "faux_spawn" );
 
-    if ( !isdefined( self._id_4AE9 ) )
-        self._id_4AE9 = [];
+    if ( !isdefined( self.huditem ) )
+        self.huditem = [];
 
-    if ( isdefined( self._id_4AE9 ) && !isdefined( self._id_4AE9["mdlStuckText"] ) )
+    if ( isdefined( self.huditem ) && !isdefined( self.huditem["mdlStuckText"] ) )
     {
-        self._id_4AE9["mdlStuckText"] = newclienthudelem( self );
-        self._id_4AE9["mdlStuckText"].x = 0;
-        self._id_4AE9["mdlStuckText"].y = -170;
-        self._id_4AE9["mdlStuckText"].alignx = "center";
-        self._id_4AE9["mdlStuckText"].aligny = "middle";
-        self._id_4AE9["mdlStuckText"].horzalign = "center";
-        self._id_4AE9["mdlStuckText"].vertalign = "middle";
-        self._id_4AE9["mdlStuckText"].fontscale = 3.0;
-        self._id_4AE9["mdlStuckText"].alpha = 0.0;
-        self._id_4AE9["mdlStuckText"] settext( "STUCK!" );
-        thread _id_5BFD();
+        self.huditem["mdlStuckText"] = newclienthudelem( self );
+        self.huditem["mdlStuckText"].x = 0;
+        self.huditem["mdlStuckText"].y = -170;
+        self.huditem["mdlStuckText"].alignx = "center";
+        self.huditem["mdlStuckText"].aligny = "middle";
+        self.huditem["mdlStuckText"].horzalign = "center";
+        self.huditem["mdlStuckText"].vertalign = "middle";
+        self.huditem["mdlStuckText"].fontscale = 3.0;
+        self.huditem["mdlStuckText"].alpha = 0.0;
+        self.huditem["mdlStuckText"] settext( "STUCK!" );
+        thread microdronelauncher_cleanup();
     }
 
-    if ( isdefined( self._id_4AE9["mdlStuckText"] ) )
+    if ( isdefined( self.huditem["mdlStuckText"] ) )
     {
-        self._id_4AE9["mdlStuckText"].alpha = 1.0;
+        self.huditem["mdlStuckText"].alpha = 1.0;
         wait 2.0;
-        self._id_4AE9["mdlStuckText"].alpha = 0.0;
+        self.huditem["mdlStuckText"].alpha = 0.0;
     }
 }
 
-_id_8E2D( var_0 )
+sticky_timer( var_0 )
 {
     var_0 endon( "spawned_player" );
     wait 3;
@@ -125,73 +125,73 @@ _id_8E2D( var_0 )
     self notify( "exploded" );
 }
 
-_id_8E2B( var_0 )
+sticky_fx( var_0 )
 {
     var_0 endon( "spawned_player" );
     self endon( "exploded" );
-    self._id_3B75 = common_scripts\utility::spawn_tag_origin();
-    self._id_3B75.origin = self.origin;
-    self._id_3B75 show();
+    self.fx_origin = common_scripts\utility::spawn_tag_origin();
+    self.fx_origin.origin = self.origin;
+    self.fx_origin show();
     wait 0.1;
-    playfxontag( common_scripts\utility::getfx( "mdl_sticky_blinking" ), self._id_3B75, "tag_origin" );
+    playfxontag( common_scripts\utility::getfx( "mdl_sticky_blinking" ), self.fx_origin, "tag_origin" );
 }
 
-_id_737E( var_0 )
+remove_sticky( var_0 )
 {
-    thread _id_737F( var_0 );
-    thread _id_7380( var_0 );
+    thread remove_sticky_on_explosion( var_0 );
+    thread remove_sticky_on_respawn( var_0 );
 }
 
-_id_737F( var_0 )
+remove_sticky_on_explosion( var_0 )
 {
     var_0 endon( "spawned_player" );
     self waittill( "exploded" );
 
     if ( isdefined( self ) )
-        _id_1E85();
+        cleanup_sticky();
 }
 
-_id_7380( var_0 )
+remove_sticky_on_respawn( var_0 )
 {
     self endon( "exploded" );
     var_0 waittill( "spawned_player" );
 
     if ( isdefined( self ) )
-        _id_1E85();
+        cleanup_sticky();
 }
 
-_id_1E85()
+cleanup_sticky()
 {
-    stopfxontag( common_scripts\utility::getfx( "mdl_sticky_blinking" ), self._id_3B75, "tag_origin" );
+    stopfxontag( common_scripts\utility::getfx( "mdl_sticky_blinking" ), self.fx_origin, "tag_origin" );
     self delete();
 }
 
-_id_5BFC( var_0 )
+microdrone_think( var_0 )
 {
     self endon( "death" );
     var_0 endon( "death" );
     var_0 endon( "disconnect" );
     var_0 endon( "faux_spawn" );
     var_1 = self.origin;
-    _id_3D3C();
+    get_differentiated_velocity();
     wait 0.05;
-    _id_3D3C();
+    get_differentiated_velocity();
     wait 0.05;
     var_2 = 0.1;
-    var_3 = _id_3D3C();
+    var_3 = get_differentiated_velocity();
 
     for (;;)
     {
-        var_4 = _id_3D3C();
+        var_4 = get_differentiated_velocity();
         var_5 = 0;
 
         if ( var_2 >= 0.35 )
         {
-            var_6 = _id_5BF9( var_1, vectornormalize( var_3 ), var_4, var_0 );
+            var_6 = microdrone_get_best_target( var_1, vectornormalize( var_3 ), var_4, var_0 );
 
             if ( isdefined( var_6 ) )
             {
-                self missile_settargetent( var_6, _id_5BFA( var_6 ) );
+                self _meth_81D9( var_6, microdrone_get_target_offset( var_6 ) );
                 var_5 = 1;
                 var_3 = var_4;
             }
@@ -212,7 +212,7 @@ _id_5BFC( var_0 )
     }
 }
 
-_id_5BF9( var_0, var_1, var_2, var_3 )
+microdrone_get_best_target( var_0, var_1, var_2, var_3 )
 {
     var_4 = cos( 15 );
     var_5 = undefined;
@@ -226,7 +226,7 @@ _id_5BF9( var_0, var_1, var_2, var_3 )
         if ( var_8.team == var_3.team )
             continue;
 
-        var_9 = _id_5BFB( var_8 );
+        var_9 = microdrone_get_target_pos( var_8 );
         var_10 = vectordot( vectornormalize( var_2 ), vectornormalize( var_9 - self.origin ) );
 
         if ( var_10 > var_6 )
@@ -243,59 +243,59 @@ _id_5BF9( var_0, var_1, var_2, var_3 )
     return var_5;
 }
 
-_id_501C( var_0, var_1 )
+is_enemy_target( var_0, var_1 )
 {
     var_2 = undefined;
 
     if ( isai( var_0 ) )
         var_2 = var_0.team;
-    else if ( isdefined( var_0._id_7AE9 ) )
-        var_2 = var_0._id_7AE9;
+    else if ( isdefined( var_0.script_team ) )
+        var_2 = var_0.script_team;
 
     return isenemyteam( var_2, var_1.team );
 }
 
-_id_5BFB( var_0 )
+microdrone_get_target_pos( var_0 )
 {
-    return var_0 getpointinbounds( 0, 0, 0 );
+    return var_0 _meth_8216( 0, 0, 0 );
 }
 
-_id_5BFA( var_0 )
+microdrone_get_target_offset( var_0 )
 {
-    return _id_5BFB( var_0 ) - var_0.origin;
+    return microdrone_get_target_pos( var_0 ) - var_0.origin;
 }
 
-_id_3D3C()
+get_differentiated_velocity()
 {
-    _id_2A55();
-    return self._id_2A5D;
+    differentiate_motion();
+    return self.differentiated_velocity;
 }
 
-_id_2A55()
+differentiate_motion()
 {
     var_0 = gettime() * 0.001;
 
-    if ( !isdefined( self._id_2A5A ) )
+    if ( !isdefined( self.differentiated_last_update ) )
     {
-        self._id_2A5A = var_0;
-        self._id_2A59 = self.origin;
-        self._id_2A5B = ( 0.0, 0.0, 0.0 );
-        self._id_2A58 = ( 0.0, 0.0, 0.0 );
-        self._id_2A57 = ( 0.0, 0.0, 0.0 );
-        self._id_2A56 = ( 0.0, 0.0, 0.0 );
-        self._id_2A5D = ( 0.0, 0.0, 0.0 );
-        self._id_2A5C = 0;
+        self.differentiated_last_update = var_0;
+        self.differentiated_last_origin = self.origin;
+        self.differentiated_last_velocity = ( 0, 0, 0 );
+        self.differentiated_last_acceleration = ( 0, 0, 0 );
+        self.differentiated_jerk = ( 0, 0, 0 );
+        self.differentiated_acceleration = ( 0, 0, 0 );
+        self.differentiated_velocity = ( 0, 0, 0 );
+        self.differentiated_speed = 0;
     }
-    else if ( self._id_2A5A != var_0 )
+    else if ( self.differentiated_last_update != var_0 )
     {
-        var_1 = var_0 - self._id_2A5A;
-        self._id_2A5A = var_0;
-        self._id_2A57 = ( self._id_2A56 - self._id_2A58 ) / var_1;
-        self._id_2A58 = self._id_2A56;
-        self._id_2A56 = ( self._id_2A5D - self._id_2A5B ) / var_1;
-        self._id_2A5B = self._id_2A5D;
-        self._id_2A5D = ( self.origin - self._id_2A59 ) / var_1;
-        self._id_2A59 = self.origin;
-        self._id_2A5C = length( self._id_2A5D );
+        var_1 = var_0 - self.differentiated_last_update;
+        self.differentiated_last_update = var_0;
+        self.differentiated_jerk = ( self.differentiated_acceleration - self.differentiated_last_acceleration ) / var_1;
+        self.differentiated_last_acceleration = self.differentiated_acceleration;
+        self.differentiated_acceleration = ( self.differentiated_velocity - self.differentiated_last_velocity ) / var_1;
+        self.differentiated_last_velocity = self.differentiated_velocity;
+        self.differentiated_velocity = ( self.origin - self.differentiated_last_origin ) / var_1;
+        self.differentiated_last_origin = self.origin;
+        self.differentiated_speed = length( self.differentiated_velocity );
     }
 }

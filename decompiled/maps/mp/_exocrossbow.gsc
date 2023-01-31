@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 monitor_exocrossbow_launch()
 {
@@ -24,8 +24,8 @@ monitor_exocrossbow_launch()
         if ( !var_2 )
             continue;
 
-        var_0 setotherent( self );
-        var_0.ch_crossbow_player_jumping = self ishighjumping();
+        var_0 _meth_8383( self );
+        var_0.ch_crossbow_player_jumping = self _meth_83B4();
         thread wait_for_stuck( var_0 );
     }
 }
@@ -39,10 +39,10 @@ wait_for_stuck( var_0 )
     self endon( "faux_spawn" );
     var_0 endon( "death" );
     var_0 waittill( "missile_stuck", var_1 );
-    var_0 thread _id_29A4( self, var_1 );
+    var_0 thread determine_sticky_position( self, var_1 );
 }
 
-_id_29A4( var_0, var_1 )
+determine_sticky_position( var_0, var_1 )
 {
     self endon( "death" );
     var_0 endon( "disconnect" );
@@ -53,7 +53,7 @@ _id_29A4( var_0, var_1 )
 
     if ( isdefined( var_1 ) && !maps\mp\_utility::invirtuallobby() && isplayer( var_1 ) )
     {
-        self.ch_crossbow_victim_jumping = var_1 ishighjumping();
+        self.ch_crossbow_victim_jumping = var_1 _meth_83B4();
 
         if ( var_0 maps\mp\gametypes\_weapons::isstucktofriendly( var_1 ) )
             self.isstuck = "friendly";
@@ -66,50 +66,50 @@ _id_29A4( var_0, var_1 )
         }
     }
 
-    thread _id_8E2D( var_0 );
-    thread _id_8E2B( var_0 );
-    thread _id_737F( var_0 );
-    thread _id_1E86();
+    thread sticky_timer( var_0 );
+    thread sticky_fx( var_0 );
+    thread remove_sticky_on_explosion( var_0 );
+    thread cleanup_sticky_on_death();
     thread maps\mp\gametypes\_weapons::stickyhandlemovers( "detonate" );
 }
 
-_id_8E2D( var_0 )
+sticky_timer( var_0 )
 {
     self endon( "death" );
     wait 1.5;
     self notify( "exocrossbow_exploded" );
 }
 
-_id_8E2B( var_0 )
+sticky_fx( var_0 )
 {
     self endon( "exocrossbow_exploded" );
     self endon( "death" );
-    self._id_3B75 = common_scripts\utility::spawn_tag_origin();
-    self._id_3B75.origin = self.origin;
-    self._id_3B75.angles = self.angles;
-    self._id_3B75 show();
-    self._id_3B75 linkto( self );
+    self.fx_origin = common_scripts\utility::spawn_tag_origin();
+    self.fx_origin.origin = self.origin;
+    self.fx_origin.angles = self.angles;
+    self.fx_origin show();
+    self.fx_origin _meth_804D( self );
     wait 0.1;
-    playfxontag( common_scripts\utility::getfx( "exocrossbow_sticky_blinking" ), self._id_3B75, "tag_origin" );
+    playfxontag( common_scripts\utility::getfx( "exocrossbow_sticky_blinking" ), self.fx_origin, "tag_origin" );
     self playsound( "exocrossbow_warning" );
 }
 
-_id_737F( var_0 )
+remove_sticky_on_explosion( var_0 )
 {
     self endon( "death" );
     self waittill( "exocrossbow_exploded" );
-    _id_1E85();
+    cleanup_sticky();
 }
 
-_id_1E86()
+cleanup_sticky_on_death()
 {
     self endon( "exocrossbow_exploded" );
     self waittill( "death" );
-    _id_1E85();
+    cleanup_sticky();
 }
 
-_id_1E85()
+cleanup_sticky()
 {
-    stopfxontag( common_scripts\utility::getfx( "exocrossbow_sticky_blinking" ), self._id_3B75, "tag_origin" );
-    self._id_3B75 delete();
+    stopfxontag( common_scripts\utility::getfx( "exocrossbow_sticky_blinking" ), self.fx_origin, "tag_origin" );
+    self.fx_origin delete();
 }

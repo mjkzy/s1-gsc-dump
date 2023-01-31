@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -54,9 +54,9 @@ fontpulse( var_0 )
     var_0 endon( "disconnect" );
     var_0 endon( "joined_team" );
     var_0 endon( "joined_spectators" );
-    self changefontscaleovertime( self.inframes * 0.05 );
+    self _meth_808B( self.inframes * 0.05 );
     self.fontscale = self.maxfontscale;
     wait(self.inframes * 0.05);
-    self changefontscaleovertime( self.outframes * 0.05 );
+    self _meth_808B( self.outframes * 0.05 );
     self.fontscale = self.basefontscale;
 }

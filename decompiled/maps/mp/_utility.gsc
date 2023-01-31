@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 exploder_sound()
 {
@@ -11,8 +11,8 @@ exploder_sound()
 
 _beginlocationselection( var_0, var_1, var_2, var_3 )
 {
-    self beginlocationselection( var_1, var_2, var_3 );
-    self setclientomnvar( "ui_map_location_selector", 1 );
+    self _meth_831B( var_1, var_2, var_3 );
+    self _meth_82FB( "ui_map_location_selector", 1 );
     self.selectinglocation = 1;
     self setblurforplayer( 10.3, 0.3 );
     thread endselectiononaction( "cancel_location" );
@@ -33,9 +33,9 @@ stoplocationselection( var_0, var_1 )
 
     if ( !var_0 )
     {
-        self setclientomnvar( "ui_map_location_selector", 0 );
+        self _meth_82FB( "ui_map_location_selector", 0 );
         self setblurforplayer( 0, 0.3 );
-        self endlocationselection();
+        self _meth_831C();
         self.selectinglocation = undefined;
     }
 
@@ -129,13 +129,13 @@ delaythread_proc( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
 getplant()
 {
-    var_0 = self.origin + ( 0.0, 0.0, 10.0 );
+    var_0 = self.origin + ( 0, 0, 10 );
     var_1 = 11;
     var_2 = anglestoforward( self.angles );
     var_2 *= var_1;
     var_3[0] = var_0 + var_2;
     var_3[1] = var_0;
-    var_4 = bullettrace( var_3[0], var_3[0] + ( 0.0, 0.0, -18.0 ), 0, undefined );
+    var_4 = bullettrace( var_3[0], var_3[0] + ( 0, 0, -18 ), 0, undefined );
 
     if ( var_4["fraction"] < 1 )
     {
@@ -145,7 +145,7 @@ getplant()
         return var_5;
     }
 
-    var_4 = bullettrace( var_3[1], var_3[1] + ( 0.0, 0.0, -18.0 ), 0, undefined );
+    var_4 = bullettrace( var_3[1], var_3[1] + ( 0, 0, -18 ), 0, undefined );
 
     if ( var_4["fraction"] < 1 )
     {
@@ -155,16 +155,16 @@ getplant()
         return var_5;
     }
 
-    var_3[2] = var_0 + ( 16.0, 16.0, 0.0 );
-    var_3[3] = var_0 + ( 16.0, -16.0, 0.0 );
-    var_3[4] = var_0 + ( -16.0, -16.0, 0.0 );
-    var_3[5] = var_0 + ( -16.0, 16.0, 0.0 );
+    var_3[2] = var_0 + ( 16, 16, 0 );
+    var_3[3] = var_0 + ( 16, -16, 0 );
+    var_3[4] = var_0 + ( -16, -16, 0 );
+    var_3[5] = var_0 + ( -16, 16, 0 );
     var_6 = undefined;
     var_7 = undefined;
 
     for ( var_8 = 0; var_8 < var_3.size; var_8++ )
     {
-        var_4 = bullettrace( var_3[var_8], var_3[var_8] + ( 0.0, 0.0, -1000.0 ), 0, undefined );
+        var_4 = bullettrace( var_3[var_8], var_3[var_8] + ( 0, 0, -1000 ), 0, undefined );
 
         if ( !isdefined( var_6 ) || var_4["fraction"] < var_6 )
         {
@@ -188,7 +188,7 @@ orienttonormal( var_0 )
     var_2 = length( var_1 );
 
     if ( !var_2 )
-        return ( 0.0, 0.0, 0.0 );
+        return ( 0, 0, 0 );
 
     var_3 = vectornormalize( var_1 );
     var_4 = var_0[2] * -1;
@@ -273,7 +273,7 @@ playloopsoundtoplayers( var_0, var_1, var_2 )
     if ( !soundexists( var_0 ) )
         return;
 
-    var_3 = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+    var_3 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_3 endon( "death" );
     thread common_scripts\utility::delete_on_death( var_3 );
 
@@ -289,18 +289,18 @@ playloopsoundtoplayers( var_0, var_1, var_2 )
     {
         var_3.origin = self.origin + var_1;
         var_3.angles = self.angles;
-        var_3 linktosynchronizedparent( self );
+        var_3 _meth_8446( self );
     }
     else
     {
         var_3.origin = self.origin;
         var_3.angles = self.angles;
-        var_3 linktosynchronizedparent( self );
+        var_3 _meth_8446( self );
     }
 
-    var_3 playloopsound( var_0 );
+    var_3 _meth_8075( var_0 );
     self waittill( "stop sound" + var_0 );
-    var_3 stoploopsound( var_0 );
+    var_3 _meth_80AB( var_0 );
     var_3 delete();
 }
 
@@ -438,7 +438,7 @@ updatelowermessage()
         }
 
         if ( var_0.time > 0 && var_0.showtimer )
-            self.lowertimer settimer( max( var_0.time - ( gettime() - var_0.addtime ) / 1000, 0.1 ) );
+            self.lowertimer _meth_80CF( max( var_0.time - ( gettime() - var_0.addtime ) / 1000, 0.1 ) );
         else
         {
             if ( var_0.time > 0 && !var_0.showtimer )
@@ -658,7 +658,7 @@ printandsoundonplayer( var_0, var_1 )
 
 _playlocalsound( var_0 )
 {
-    if ( level.splitscreen && self getentitynumber() != 0 )
+    if ( level.splitscreen && self _meth_81B1() != 0 )
         return;
 
     self playlocalsound( var_0 );
@@ -782,7 +782,7 @@ initplayerstat( var_0, var_1 )
         self.stats["stats_" + var_0].value = var_1;
 
         if ( rankingenabled() )
-            self setcommonplayerdata( "round", "awards", var_0, 0 );
+            self _meth_8247( "round", "awards", var_0, 0 );
     }
 }
 
@@ -794,9 +794,9 @@ incplayerstat( var_0, var_1 )
     var_2 = self.stats["stats_" + var_0];
     var_2.value += var_1;
 
-    if ( isdefined( level._id_005F[var_0] ) && isdefined( level._id_005F[var_0]._id_6FDA ) && level._id_005F[var_0].saveonupdate )
+    if ( isdefined( level.awards[var_0] ) && isdefined( level.awards[var_0].process ) && level.awards[var_0].saveonupdate )
     {
-        var_3 = level._id_005F[var_0]._id_6FDA;
+        var_3 = level.awards[var_0].process;
         self [[ var_3 ]]( var_0, var_1 );
     }
 }
@@ -1069,7 +1069,7 @@ leaderdialogonplayer( var_0, var_1, var_2, var_3 )
         return;
 
     if ( !isdefined( var_3 ) )
-        var_3 = ( 0.0, 0.0, 0.0 );
+        var_3 = ( 0, 0, 0 );
 
     if ( isdefined( var_1 ) )
     {
@@ -1182,7 +1182,7 @@ leaderdialogonplayer_internal( var_0, var_1, var_2 )
             return;
 
         self.leaderdialogactive = var_4;
-        self playlocalannouncersound( var_4 );
+        self _meth_851B( var_4 );
         leaderdialog_trylockout( game["dialog"][var_0], self );
     }
     else
@@ -1319,31 +1319,31 @@ flushgroupdialogonplayer( var_0 )
 updatemainmenu()
 {
     if ( self.pers["team"] == "spectator" )
-        self setclientdvar( "g_scriptMainMenu", game["menu_team"] );
+        self _meth_82FC( "g_scriptMainMenu", game["menu_team"] );
     else
-        self setclientdvar( "g_scriptMainMenu", game["menu_class_" + self.pers["team"]] );
+        self _meth_82FC( "g_scriptMainMenu", game["menu_class_" + self.pers["team"]] );
 }
 
 updateobjectivetext()
 {
     if ( self.pers["team"] == "spectator" )
-        self setclientdvar( "cg_objectiveText", "" );
+        self _meth_82FC( "cg_objectiveText", "" );
     else
     {
         if ( getwatcheddvar( "scorelimit" ) > 0 && !isobjectivebased() )
         {
             if ( level.splitscreen )
             {
-                self setclientdvar( "cg_objectiveText", getobjectivescoretext( self.pers["team"] ) );
+                self _meth_82FC( "cg_objectiveText", getobjectivescoretext( self.pers["team"] ) );
                 return;
             }
 
-            self setclientdvar( "cg_objectiveText", getobjectivescoretext( self.pers["team"] ), getwatcheddvar( "scorelimit" ) );
+            self _meth_82FC( "cg_objectiveText", getobjectivescoretext( self.pers["team"] ), getwatcheddvar( "scorelimit" ) );
             return;
             return;
         }
 
-        self setclientdvar( "cg_objectiveText", getobjectivetext( self.pers["team"] ) );
+        self _meth_82FC( "cg_objectiveText", getobjectivetext( self.pers["team"] ) );
     }
 }
 
@@ -1617,17 +1617,17 @@ get_damageable_mine( var_0, var_1 )
 
 get_damageable_player_pos( var_0 )
 {
-    return var_0.origin + ( 0.0, 0.0, 32.0 );
+    return var_0.origin + ( 0, 0, 32 );
 }
 
 getstancecenter()
 {
-    if ( self getstance() == "crouch" )
-        var_0 = self.origin + ( 0.0, 0.0, 24.0 );
-    else if ( self getstance() == "prone" )
-        var_0 = self.origin + ( 0.0, 0.0, 10.0 );
+    if ( self _meth_817C() == "crouch" )
+        var_0 = self.origin + ( 0, 0, 24 );
+    else if ( self _meth_817C() == "prone" )
+        var_0 = self.origin + ( 0, 0, 10 );
     else
-        var_0 = self.origin + ( 0.0, 0.0, 32.0 );
+        var_0 = self.origin + ( 0, 0, 32 );
 
     return var_0;
 }
@@ -1642,12 +1642,12 @@ getdvarvec( var_0 )
     var_1 = getdvar( var_0 );
 
     if ( var_1 == "" )
-        return ( 0.0, 0.0, 0.0 );
+        return ( 0, 0, 0 );
 
     var_2 = strtok( var_1, " " );
 
     if ( var_2.size < 3 )
-        return ( 0.0, 0.0, 0.0 );
+        return ( 0, 0, 0 );
 
     setdvar( "tempR", var_2[0] );
     setdvar( "tempG", var_2[1] );
@@ -1668,39 +1668,39 @@ strip_suffix( var_0, var_1 )
 
 _takeweaponsexcept( var_0 )
 {
-    var_1 = self getweaponslistall();
+    var_1 = self _meth_830B();
 
     foreach ( var_3 in var_1 )
     {
         if ( var_3 == var_0 )
             continue;
         else
-            self takeweapon( var_3 );
+            self _meth_830F( var_3 );
     }
 }
 
 savedata()
 {
     var_0 = spawnstruct();
-    var_0.offhandclass = self gettacticalweapon();
+    var_0.offhandclass = self _meth_831A();
     var_0.actionslots = self.saved_actionslotdata;
-    var_0.currentweapon = self getcurrentweapon();
-    var_1 = self getweaponslistall();
+    var_0.currentweapon = self _meth_8311();
+    var_1 = self _meth_830B();
     var_0.weapons = [];
 
     foreach ( var_3 in var_1 )
     {
-        if ( objective_current( var_3 ) == "exclusive" )
+        if ( _func_1DF( var_3 ) == "exclusive" )
             continue;
 
-        if ( objective_current( var_3 ) == "altmode" )
+        if ( _func_1DF( var_3 ) == "altmode" )
             continue;
 
         var_4 = spawnstruct();
         var_4.name = var_3;
-        var_4.clipammor = self getweaponammoclip( var_3, "right" );
-        var_4.clipammol = self getweaponammoclip( var_3, "left" );
-        var_4.stockammo = self getweaponammostock( var_3 );
+        var_4.clipammor = self _meth_82F8( var_3, "right" );
+        var_4.clipammol = self _meth_82F8( var_3, "left" );
+        var_4.stockammo = self _meth_82F9( var_3 );
 
         if ( isdefined( self.throwinggrenade ) && self.throwinggrenade == var_3 )
             var_4.stockammo--;
@@ -1714,31 +1714,31 @@ savedata()
 restoredata()
 {
     var_0 = self.script_savedata;
-    self settacticalweapon( var_0.offhandclass );
+    self _meth_8319( var_0.offhandclass );
 
     foreach ( var_2 in var_0.weapons )
     {
         _giveweapon( var_2.name, int( tablelookup( "mp/camoTable.csv", 1, self.loadoutprimarycamo, 0 ) ) );
-        self setweaponammoclip( var_2.name, var_2.clipammor, "right" );
+        self _meth_82F6( var_2.name, var_2.clipammor, "right" );
 
         if ( issubstr( var_2.name, "akimbo" ) )
-            self setweaponammoclip( var_2.name, var_2.clipammol, "left" );
+            self _meth_82F6( var_2.name, var_2.clipammol, "left" );
 
-        self setweaponammostock( var_2.name, var_2.stockammo );
+        self _meth_82F7( var_2.name, var_2.stockammo );
     }
 
     foreach ( var_6, var_5 in var_0.actionslots )
         _setactionslot( var_6, var_5.type, var_5.item );
 
-    if ( self getcurrentweapon() == "none" )
+    if ( self _meth_8311() == "none" )
     {
         var_2 = var_0.currentweapon;
 
         if ( var_2 == "none" )
             var_2 = common_scripts\utility::getlastweapon();
 
-        self setspawnweapon( var_2 );
-        self switchtoweapon( var_2 );
+        self _meth_824F( var_2 );
+        self _meth_8315( var_2 );
     }
 }
 
@@ -1758,7 +1758,7 @@ _setactionslot( var_0, var_1, var_2 )
 {
     self.saved_actionslotdata[var_0].type = var_1;
     self.saved_actionslotdata[var_0].item = var_2;
-    self setactionslot( var_0, var_1, var_2 );
+    self _meth_8308( var_0, var_1, var_2 );
 }
 
 isfloat( var_0 )
@@ -2026,7 +2026,7 @@ gamehasstarted()
 
 getaverageorigin( var_0 )
 {
-    var_1 = ( 0.0, 0.0, 0.0 );
+    var_1 = ( 0, 0, 0 );
 
     if ( !var_0.size )
         return undefined;
@@ -2106,10 +2106,10 @@ clearusingremote()
 
     self.usingremote = undefined;
     common_scripts\utility::_enableoffhandweapons();
-    var_0 = self getcurrentweapon();
+    var_0 = self _meth_8311();
 
     if ( var_0 == "none" || iskillstreakweapon( var_0 ) )
-        self switchtoweapon( common_scripts\utility::getlastweapon() );
+        self _meth_8315( common_scripts\utility::getlastweapon() );
 
     freezecontrolswrapper( 0 );
     playerremotekillstreakshowhud();
@@ -2118,12 +2118,12 @@ clearusingremote()
 
 playerremotekillstreakhidehud()
 {
-    self setclientomnvar( "ui_killstreak_remote", 1 );
+    self _meth_82FB( "ui_killstreak_remote", 1 );
 }
 
 playerremotekillstreakshowhud()
 {
-    self setclientomnvar( "ui_killstreak_remote", 0 );
+    self _meth_82FB( "ui_killstreak_remote", 0 );
 }
 
 get_water_weapon()
@@ -2207,14 +2207,14 @@ _giveweapon( var_0, var_1, var_2 )
     if ( issubstr( var_0, "_akimbo" ) || isdefined( var_2 ) && var_2 == 1 )
     {
         if ( isagent( self ) )
-            self giveweapon( var_0, var_1, 1, -1, 0 );
+            self _meth_830E( var_0, var_1, 1, -1, 0 );
         else
-            self giveweapon( var_0, var_1, 1, -1, 0, self, var_3 );
+            self _meth_830E( var_0, var_1, 1, -1, 0, self, var_3 );
     }
     else if ( isagent( self ) )
-        self giveweapon( var_0, var_1, 0, -1, 0 );
+        self _meth_830E( var_0, var_1, 0, -1, 0 );
     else
-        self giveweapon( var_0, var_1, 0, -1, 0, self, var_3 );
+        self _meth_830E( var_0, var_1, 0, -1, 0, self, var_3 );
 }
 
 _hasperk( var_0 )
@@ -2230,7 +2230,7 @@ giveperk( var_0, var_1, var_2 )
     if ( issubstr( var_0, "_mp" ) )
     {
         _giveweapon( var_0, 0 );
-        self givestartammo( var_0 );
+        self _meth_8331( var_0 );
         _setperk( var_0, var_1 );
         return;
     }
@@ -2256,9 +2256,9 @@ _setperk( var_0, var_1, var_2 )
     var_3 = strip_suffix( var_0, "_lefthand" );
 
     if ( isdefined( var_2 ) )
-        self setperk( var_0, !isdefined( level.scriptperks[var_3] ), var_1, var_2 );
+        self _meth_82A6( var_0, !isdefined( level.scriptperks[var_3] ), var_1, var_2 );
     else
-        self setperk( var_0, !isdefined( level.scriptperks[var_3] ), var_1 );
+        self _meth_82A6( var_0, !isdefined( level.scriptperks[var_3] ), var_1 );
 }
 
 _unsetperk( var_0 )
@@ -2272,7 +2272,7 @@ _unsetperk( var_0 )
         self thread [[ level.perkunsetfuncs[var_0] ]]();
 
     var_1 = strip_suffix( var_0, "_lefthand" );
-    self unsetperk( var_0, !isdefined( level.scriptperks[var_1] ) );
+    self _meth_82A9( var_0, !isdefined( level.scriptperks[var_1] ) );
 }
 
 _clearperks()
@@ -2287,7 +2287,7 @@ _clearperks()
     self.perksperkname = [];
     self.perksuseslot = [];
     self.perksperkpower = [];
-    self clearperks();
+    self _meth_82A8();
 }
 
 cangiveability( var_0 )
@@ -2318,7 +2318,7 @@ _setability( var_0, var_1 )
             self thread [[ level.abilitysetfuncs[var_0] ]]();
     }
 
-    self setperk( var_0, !isdefined( level.scriptabilities[var_0] ), var_1 );
+    self _meth_82A6( var_0, !isdefined( level.scriptabilities[var_0] ), var_1 );
 }
 
 _unsetability( var_0 )
@@ -2331,7 +2331,7 @@ _unsetability( var_0 )
             self thread [[ level.abilityunsetfuncs[var_0] ]]();
     }
 
-    self unsetperk( var_0, !isdefined( level.scriptabilities[var_0] ) );
+    self _meth_82A9( var_0, !isdefined( level.scriptabilities[var_0] ) );
 }
 
 _clearabilities()
@@ -2343,7 +2343,7 @@ _clearabilities()
     }
 
     self.abilities = [];
-    self clearperks();
+    self _meth_82A8();
 }
 
 _hasability( var_0, var_1 )
@@ -2417,9 +2417,9 @@ swap( var_0, var_1, var_2 )
 _suicide()
 {
     if ( isusingremote() && !isdefined( self.fauxdead ) )
-        thread maps\mp\gametypes\_damage::playerkilled_internal( self, self, self, 10000, "MOD_SUICIDE", "frag_grenade_mp", ( 0.0, 0.0, 0.0 ), "none", 0, 1116, 1 );
+        thread maps\mp\gametypes\_damage::playerkilled_internal( self, self, self, 10000, "MOD_SUICIDE", "frag_grenade_mp", ( 0, 0, 0 ), "none", 0, 1116, 1 );
     else if ( !isusingremote() && !isdefined( self.fauxdead ) )
-        self suicide();
+        self _meth_826B();
 }
 
 isreallyalive( var_0 )
@@ -2486,14 +2486,14 @@ playdeathsound()
 
         if ( self.team == "axis" )
         {
-            if ( self hasfemalecustomizationmodel() )
+            if ( self _meth_843A() )
                 self playsound( "generic_death_enemy_fm_" + var_0 );
             else
                 self playsound( "generic_death_enemy_" + var_0 );
         }
         else
         {
-            if ( self hasfemalecustomizationmodel() )
+            if ( self _meth_843A() )
             {
                 self playsound( "generic_death_friendly_fm_" + var_0 );
                 return;
@@ -2652,7 +2652,7 @@ iskillstreakweapon( var_0 )
     if ( isdefined( level.killstreakwieldweapons ) && isdefined( level.killstreakwieldweapons[var_0] ) )
         return 1;
 
-    var_6 = objective_current( var_0 );
+    var_6 = _func_1DF( var_0 );
 
     if ( isdefined( var_6 ) && var_6 == "exclusive" )
         return 1;
@@ -2667,10 +2667,10 @@ isdestructibleweapon( var_0 )
 
     switch ( var_0 )
     {
-        case "destructible_toy":
-        case "destructible_car":
-        case "destructible":
         case "barrel_mp":
+        case "destructible":
+        case "destructible_car":
+        case "destructible_toy":
             return 1;
     }
 
@@ -2702,9 +2702,9 @@ isbombsiteweapon( var_0 )
 
     switch ( var_0 )
     {
-        case "search_dstry_bomb_mp":
-        case "search_dstry_bomb_defuse_mp":
         case "bomb_site_mp":
+        case "search_dstry_bomb_defuse_mp":
+        case "search_dstry_bomb_mp":
             return 1;
     }
 
@@ -2729,11 +2729,11 @@ is_legacy_weapon( var_0 )
 {
     switch ( var_0 )
     {
-        case "iw5_dlcgun6":
-        case "iw5_dlcgun6loot5":
-        case "iw5_dlcgun7loot0":
-        case "iw5_dlcgun7loot6":
         case "iw5_dlcgun8loot1":
+        case "iw5_dlcgun7loot6":
+        case "iw5_dlcgun7loot0":
+        case "iw5_dlcgun6loot5":
+        case "iw5_dlcgun6":
             return 1;
         default:
             return 0;
@@ -3256,14 +3256,14 @@ iscacprimaryweapon( var_0 )
 {
     switch ( getweaponclass( var_0 ) )
     {
-        case "weapon_smg":
-        case "weapon_assault":
-        case "weapon_riot":
-        case "weapon_sniper":
-        case "weapon_lmg":
-        case "weapon_shotgun":
-        case "weapon_heavy":
         case "weapon_special":
+        case "weapon_heavy":
+        case "weapon_shotgun":
+        case "weapon_lmg":
+        case "weapon_sniper":
+        case "weapon_riot":
+        case "weapon_assault":
+        case "weapon_smg":
             return 1;
         default:
             return 0;
@@ -3274,10 +3274,10 @@ iscacsecondaryweapon( var_0 )
 {
     switch ( getweaponclass( var_0 ) )
     {
-        case "weapon_projectile":
-        case "weapon_pistol":
-        case "weapon_machine_pistol":
         case "weapon_sec_special":
+        case "weapon_machine_pistol":
+        case "weapon_pistol":
+        case "weapon_projectile":
             return 1;
         default:
             return 0;
@@ -3534,7 +3534,7 @@ touchingbadtrigger()
 
     foreach ( var_2 in var_0 )
     {
-        if ( self istouching( var_2 ) )
+        if ( self _meth_80A9( var_2 ) )
             return 1;
     }
 
@@ -3542,7 +3542,7 @@ touchingbadtrigger()
 
     foreach ( var_2 in var_4 )
     {
-        if ( self istouching( var_2 ) )
+        if ( self _meth_80A9( var_2 ) )
             return 1;
     }
 
@@ -3556,7 +3556,7 @@ touchingbadtrigger()
 
                 foreach ( var_9 in var_7 )
                 {
-                    if ( self istouching( var_9 ) )
+                    if ( self _meth_80A9( var_9 ) )
                         return 1;
                 }
             }
@@ -3565,13 +3565,13 @@ touchingbadtrigger()
         {
             foreach ( var_12 in level.hordekilltriggers )
             {
-                if ( self istouching( var_12 ) )
+                if ( self _meth_80A9( var_12 ) )
                     return 1;
             }
         }
     }
 
-    if ( getdvar( "g_gametype" ) == "hp" && isdefined( level.zone ) && isdefined( level.zone.trig ) && self istouching( level.zone.trig ) )
+    if ( getdvar( "g_gametype" ) == "hp" && isdefined( level.zone ) && isdefined( level.zone.trig ) && self _meth_80A9( level.zone.trig ) )
         return 1;
 
     return 0;
@@ -3580,9 +3580,9 @@ touchingbadtrigger()
 setthirdpersondof( var_0 )
 {
     if ( var_0 )
-        self setdepthoffield( 0, 110, 512, 4096, 6, 1.8 );
+        self _meth_8186( 0, 110, 512, 4096, 6, 1.8 );
     else
-        self setdepthoffield( 0, 0, 512, 512, 4, 0 );
+        self _meth_8186( 0, 0, 512, 512, 4, 0 );
 }
 
 killtrigger( var_0, var_1, var_2 )
@@ -3596,7 +3596,7 @@ killtrigger( var_0, var_1, var_2 )
         if ( !isplayer( var_4 ) )
             continue;
 
-        var_4 suicide();
+        var_4 _meth_826B();
     }
 }
 
@@ -3605,8 +3605,8 @@ findisfacing( var_0, var_1, var_2 )
     var_3 = cos( var_2 );
     var_4 = anglestoforward( var_0.angles );
     var_5 = var_1.origin - var_0.origin;
-    var_4 *= ( 1.0, 1.0, 0.0 );
-    var_5 *= ( 1.0, 1.0, 0.0 );
+    var_4 *= ( 1, 1, 0 );
+    var_5 *= ( 1, 1, 0 );
     var_5 = vectornormalize( var_5 );
     var_4 = vectornormalize( var_4 );
     var_6 = vectordot( var_5, var_4 );
@@ -3732,7 +3732,7 @@ validateusestreak( var_0, var_1 )
     if ( isdefined( self.killstreaksdisabled ) && self.killstreaksdisabled )
         return 0;
 
-    if ( !self isonground() && isridekillstreak( var_2 ) )
+    if ( !self _meth_8341() && isridekillstreak( var_2 ) )
         return 0;
 
     if ( isusingremote() || isinremotetransition() )
@@ -3775,7 +3775,7 @@ validateusestreak( var_0, var_1 )
         return 0;
     }
 
-    if ( self isusingturret() && ( isridekillstreak( var_2 ) || iscarrykillstreak( var_2 ) ) )
+    if ( self _meth_8342() && ( isridekillstreak( var_2 ) || iscarrykillstreak( var_2 ) ) )
     {
         if ( !( isdefined( var_1 ) && var_1 ) )
             self iclientprintlnbold( &"MP_UNAVAILABLE_USING_TURRET" );
@@ -3804,25 +3804,25 @@ isridekillstreak( var_0 )
 {
     switch ( var_0 )
     {
-        case "mp_dam":
-        case "mp_detroit":
-        case "mp_levity":
-        case "mp_solar":
-        case "mp_terrace":
-        case "missile_strike":
-        case "orbital_strike":
-        case "orbital_strike_laser":
-        case "orbital_strike_chem":
-        case "orbital_strike_laser_chem":
-        case "orbital_strike_cluster":
-        case "orbital_strike_drone":
-        case "orbitalsupport":
-        case "mp_recreation":
-        case "recon_ugv":
-        case "warbird":
-        case "assault_ugv":
-        case "mp_bigben2":
         case "mp_seoul2":
+        case "mp_bigben2":
+        case "assault_ugv":
+        case "warbird":
+        case "recon_ugv":
+        case "mp_recreation":
+        case "orbitalsupport":
+        case "orbital_strike_drone":
+        case "orbital_strike_cluster":
+        case "orbital_strike_laser_chem":
+        case "orbital_strike_chem":
+        case "orbital_strike_laser":
+        case "orbital_strike":
+        case "missile_strike":
+        case "mp_terrace":
+        case "mp_solar":
+        case "mp_levity":
+        case "mp_detroit":
+        case "mp_dam":
             return 1;
         default:
             return 0;
@@ -3833,11 +3833,11 @@ iscarrykillstreak( var_0 )
 {
     switch ( var_0 )
     {
-        case "sentry":
-        case "deployable_ammo":
-        case "deployable_grenades":
-        case "deployable_exp_ammo":
         case "remote_mg_sentry_turret":
+        case "deployable_exp_ammo":
+        case "deployable_grenades":
+        case "deployable_ammo":
+        case "sentry":
             return 1;
         default:
             return 0;
@@ -3848,11 +3848,11 @@ shouldpreventearlyuse( var_0 )
 {
     switch ( var_0 )
     {
-        case "missile_strike":
-        case "orbital_strike_laser":
-        case "orbitalsupport":
-        case "warbird":
         case "strafing_run_airstrike":
+        case "warbird":
+        case "orbitalsupport":
+        case "orbital_strike_laser":
+        case "missile_strike":
             return 1;
     }
 
@@ -3863,16 +3863,16 @@ iskillstreakaffectedbyemp( var_0 )
 {
     switch ( var_0 )
     {
-        case "deployable_ammo":
-        case "deployable_grenades":
-        case "deployable_juicebox":
-        case "placeable_barrier":
-        case "agent":
-        case "recon_agent":
-        case "high_value_target":
-        case "eyes_on":
-        case "speed_boost":
         case "refill_grenades":
+        case "speed_boost":
+        case "eyes_on":
+        case "high_value_target":
+        case "recon_agent":
+        case "agent":
+        case "placeable_barrier":
+        case "deployable_juicebox":
+        case "deployable_grenades":
+        case "deployable_ammo":
             return 0;
         default:
             return 1;
@@ -3888,18 +3888,18 @@ isflyingkillstreak( var_0 )
 {
     switch ( var_0 )
     {
-        case "missile_strike":
-        case "orbital_strike":
-        case "orbital_strike_laser":
-        case "orbital_strike_chem":
-        case "orbital_strike_laser_chem":
-        case "orbital_strike_cluster":
-        case "orbital_strike_drone":
-        case "orbitalsupport":
-        case "airdrop_sentry_minigun":
-        case "airdrop_assault":
-        case "airdrop_support":
         case "orbital_carepackag":
+        case "airdrop_support":
+        case "airdrop_assault":
+        case "airdrop_sentry_minigun":
+        case "orbitalsupport":
+        case "orbital_strike_drone":
+        case "orbital_strike_cluster":
+        case "orbital_strike_laser_chem":
+        case "orbital_strike_chem":
+        case "orbital_strike_laser":
+        case "orbital_strike":
+        case "missile_strike":
             return 0;
         default:
             return 1;
@@ -3978,7 +3978,7 @@ getkillstreakalliesdialog( var_0 )
 
 getkillstreakenemydialog( var_0 )
 {
-    return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, var_0, level.global_tables["killstreakTable"]._id_3221 );
+    return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, var_0, level.global_tables["killstreakTable"].enemy_dialog_col );
 }
 
 getkillstreakenemyusedialog( var_0 )
@@ -4005,26 +4005,26 @@ _getmodulekillstreakweapon( var_0, var_1 )
     {
         switch ( var_3 )
         {
-            case "warbird_ai_attack":
             case "warbird_ai_follow":
+            case "warbird_ai_attack":
                 if ( issubstr( var_0, "warbird" ) )
                     return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, "uav", level.global_tables["killstreakTable"].weapon_col );
 
-                continue;
+                break;
             case "assault_ugv_ai":
                 if ( issubstr( var_0, "ugv" ) )
                     return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, "uav", level.global_tables["killstreakTable"].weapon_col );
 
-                continue;
-            case "turretheadenergy_mp":
-            case "turretheadrocket_mp":
+                break;
             case "turretheadmg_mp":
+            case "turretheadrocket_mp":
+            case "turretheadenergy_mp":
                 if ( issubstr( var_0, "ripped_turret" ) )
                     return var_3;
 
-                continue;
+                break;
             default:
-                continue;
+                break;
         }
     }
 }
@@ -4056,7 +4056,7 @@ getkillstreakunearnedicon( var_0 )
 
 getkillstreakallteamstreak( var_0 )
 {
-    return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, var_0, level.global_tables["killstreakTable"]._id_09E4 );
+    return tablelookup( level.global_tables["killstreakTable"].path, level.global_tables["killstreakTable"].ref_col, var_0, level.global_tables["killstreakTable"].all_team_streak_col );
 }
 
 currentactivevehiclecount( var_0 )
@@ -4112,7 +4112,7 @@ lightweightscalar( var_0 )
 
 allowteamchoice()
 {
-    if ( !nodesetremotemissilename() && getdvarint( "scr_skipclasschoice", 0 ) > 0 )
+    if ( !_func_2D7() && getdvarint( "scr_skipclasschoice", 0 ) > 0 )
         return 0;
 
     var_0 = int( tablelookup( "mp/gametypesTable.csv", 0, level.gametype, 4 ) );
@@ -4121,7 +4121,7 @@ allowteamchoice()
 
 allowclasschoice()
 {
-    if ( !nodesetremotemissilename() && getdvarint( "scr_skipclasschoice", 0 ) > 0 )
+    if ( !_func_2D7() && getdvarint( "scr_skipclasschoice", 0 ) > 0 )
         return 0;
 
     var_0 = int( tablelookup( "mp/gametypesTable.csv", 0, level.gametype, 5 ) );
@@ -4225,7 +4225,7 @@ reinitializethermal( var_0 )
         level waittill( "host_migration_begin" );
 
         if ( isdefined( self.lastvisionsetthermal ) )
-            self visionsetthermalforplayer( self.lastvisionsetthermal, 0 );
+            self _meth_82D7( self.lastvisionsetthermal, 0 );
     }
 }
 
@@ -4295,7 +4295,7 @@ recipeclassapplyjuggernaut( var_0 )
     }
 
     self.juggmovespeedscaler = 0.7;
-    self disableweaponpickup();
+    self _meth_82CB();
 
     if ( !getdvarint( "camera_thirdPerson" ) && !isdefined( level.ishorde ) && !( isdefined( level.iszombiegame ) && level.iszombiegame ) )
     {
@@ -4306,7 +4306,7 @@ recipeclassapplyjuggernaut( var_0 )
         self.juggernautoverlay.aligny = "top";
         self.juggernautoverlay.horzalign = "fullscreen";
         self.juggernautoverlay.vertalign = "fullscreen";
-        self.juggernautoverlay setshader( level.juggsettings["juggernaut"].overlay, 640, 480 );
+        self.juggernautoverlay _meth_80CC( level.juggsettings["juggernaut"].overlay, 640, 480 );
         self.juggernautoverlay.sort = -10;
         self.juggernautoverlay.archived = 1;
         self.juggernautoverlay.hidein3rdperson = 1;
@@ -4315,7 +4315,7 @@ recipeclassapplyjuggernaut( var_0 )
     thread maps\mp\killstreaks\_juggernaut::juggernautsounds();
 
     if ( level.gametype != "jugg" || isdefined( level.matchrules_showjuggradaricon ) && level.matchrules_showjuggradaricon )
-        self setperk( "specialty_radarjuggernaut", 1, 0 );
+        self _meth_82A6( "specialty_radarjuggernaut", 1, 0 );
 
     if ( isdefined( self.isjuggmodejuggernaut ) && self.isjuggmodejuggernaut )
     {
@@ -4333,7 +4333,7 @@ recipeclassapplyjuggernaut( var_0 )
 updatesessionstate( var_0 )
 {
     self.sessionstate = var_0;
-    self setclientomnvar( "ui_session_state", var_0 );
+    self _meth_82FB( "ui_session_state", var_0 );
 }
 
 cac_getcustomclassloc()
@@ -4341,7 +4341,7 @@ cac_getcustomclassloc()
     if ( isdefined( level.forcecustomclassloc ) )
         return level.forcecustomclassloc;
 
-    if ( getdvarint( "xblive_privatematch" ) || isonlinegame() )
+    if ( getdvarint( "xblive_privatematch" ) || _func_2BC() )
         return "privateMatchCustomClasses";
     else
         return "customClasses";
@@ -4379,9 +4379,9 @@ killteaminlaststand( var_0 )
 switch_to_last_weapon( var_0 )
 {
     if ( !isai( self ) )
-        self switchtoweapon( var_0 );
+        self _meth_8315( var_0 );
     else
-        self switchtoweapon( "none" );
+        self _meth_8315( "none" );
 }
 
 isaiteamparticipant( var_0 )
@@ -4632,12 +4632,12 @@ isvalidffatarget( var_0, var_1 )
 
 gethelipilotmeshoffset()
 {
-    return ( 0.0, 0.0, 5000.0 );
+    return ( 0, 0, 5000 );
 }
 
 gethelipilottraceoffset()
 {
-    return ( 0.0, 0.0, 2500.0 );
+    return ( 0, 0, 2500 );
 }
 
 revertvisionsetforplayer( var_0 )
@@ -4647,20 +4647,20 @@ revertvisionsetforplayer( var_0 )
 
     if ( isdefined( level.nukedetonated ) && isdefined( level.nukevisionset ) )
     {
-        self setclienttriggervisionset( level.nukevisionset, var_0 );
-        self visionsetnakedforplayer( level.nukevisionset, var_0 );
+        self _meth_847A( level.nukevisionset, var_0 );
+        self _meth_82D4( level.nukevisionset, var_0 );
         set_visionset_for_watching_players( level.nukevisionset, var_0 );
     }
     else if ( isdefined( self.usingremote ) && isdefined( self.ridevisionset ) )
     {
-        self setclienttriggervisionset( self.ridevisionset, var_0 );
-        self visionsetnakedforplayer( self.ridevisionset, var_0 );
+        self _meth_847A( self.ridevisionset, var_0 );
+        self _meth_82D4( self.ridevisionset, var_0 );
         set_visionset_for_watching_players( self.ridevisionset, var_0 );
     }
     else
     {
-        self setclienttriggervisionset( "", var_0 );
-        self visionsetnakedforplayer( "", var_0 );
+        self _meth_847A( "", var_0 );
+        self _meth_82D4( "", var_0 );
         set_visionset_for_watching_players( "", var_0 );
     }
 }
@@ -4674,7 +4674,7 @@ set_light_set_for_player( var_0 )
         level.lightset_previous = level.lightset_current;
 
     level.lightset_current = var_0;
-    self lightsetforplayer( var_0 );
+    self _meth_83C0( var_0 );
 }
 
 clear_light_set_for_player()
@@ -4691,7 +4691,7 @@ clear_light_set_for_player()
     }
 
     level.lightset_current = var_0;
-    self lightsetforplayer( var_0 );
+    self _meth_83C0( var_0 );
 }
 
 light_set_override_for_player( var_0, var_1, var_2, var_3 )
@@ -4699,11 +4699,11 @@ light_set_override_for_player( var_0, var_1, var_2, var_3 )
     if ( !isplayer( self ) )
         return;
 
-    self lightsetoverrideenableforplayer( var_0, var_1 );
+    self _meth_83C1( var_0, var_1 );
     waitfortimeornotifies( var_2, [ "death", "disconnect" ] );
 
     if ( isdefined( self ) )
-        self lightsetoverridedisableforplayer( var_3 );
+        self _meth_83C2( var_3 );
 }
 
 getuniqueid()
@@ -4711,7 +4711,7 @@ getuniqueid()
     if ( isdefined( self.pers["guid"] ) )
         return self.pers["guid"];
 
-    var_0 = self getguid();
+    var_0 = self _meth_8275();
 
     if ( var_0 == "0000000000000000" )
     {
@@ -4735,7 +4735,7 @@ get_players_watching( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = 0;
 
-    var_2 = self getentitynumber();
+    var_2 = self _meth_81B1();
     var_3 = [];
 
     foreach ( var_5 in level.players )
@@ -4749,7 +4749,7 @@ get_players_watching( var_0, var_1 )
         {
             if ( isdefined( var_5.team ) && var_5.team == "spectator" || var_5.sessionstate == "spectator" )
             {
-                var_7 = var_5 getspectatingplayer();
+                var_7 = var_5 _meth_829D();
 
                 if ( isdefined( var_7 ) && var_7 == self )
                     var_6 = 1;
@@ -4781,11 +4781,11 @@ set_visionset_for_watching_players( var_0, var_1, var_2, var_3, var_4, var_5, va
         var_9 notify( "changing_watching_visionset" );
 
         if ( isdefined( var_3 ) && var_3 )
-            var_9 visionsetmissilecamforplayer( var_0, var_1 );
+            var_9 _meth_82D6( var_0, var_1 );
         else if ( isdefined( var_6 ) && var_6 )
-            var_9 visionsetpostapplyforplayer( var_0, var_1 );
+            var_9 _meth_8469( var_0, var_1 );
         else
-            var_9 visionsetnakedforplayer( var_0, var_1 );
+            var_9 _meth_82D4( var_0, var_1 );
 
         if ( var_0 != "" && isdefined( var_2 ) )
         {
@@ -4802,8 +4802,8 @@ reset_visionset_on_spawn()
 {
     self endon( "disconnect" );
     self waittill( "spawned" );
-    self visionsetnakedforplayer( "", 0.0 );
-    self visionsetpostapplyforplayer( "", 0.0 );
+    self _meth_82D4( "", 0.0 );
+    self _meth_8469( "", 0.0 );
 }
 
 reset_visionset_on_team_change( var_0, var_1, var_2 )
@@ -4818,9 +4818,9 @@ reset_visionset_on_team_change( var_0, var_1, var_2 )
         if ( self.team != var_4 || !common_scripts\utility::array_contains( var_0 get_players_watching(), self ) )
         {
             if ( isdefined( var_2 ) && var_2 )
-                self visionsetpostapplyforplayer( "", 0.0 );
+                self _meth_8469( "", 0.0 );
             else
-                self visionsetnakedforplayer( "", 0.0 );
+                self _meth_82D4( "", 0.0 );
 
             self notify( "changing_visionset" );
             break;
@@ -4836,9 +4836,9 @@ reset_visionset_on_disconnect( var_0, var_1 )
     var_0 waittill( "disconnect" );
 
     if ( isdefined( var_1 ) && var_1 )
-        self visionsetpostapplyforplayer( "", 0.0 );
+        self _meth_8469( "", 0.0 );
     else
-        self visionsetnakedforplayer( "", 0.0 );
+        self _meth_82D4( "", 0.0 );
 }
 
 _validateattacker( var_0 )
@@ -4864,15 +4864,15 @@ _setnameplatematerial( var_0, var_1 )
 
     self.nameplatematerial[0] = var_0;
     self.nameplatematerial[1] = var_1;
-    self setnameplatematerial( var_0, var_1 );
+    self _meth_83EE( var_0, var_1 );
 }
 
 _restorepreviousnameplatematerial()
 {
     if ( isdefined( self.prevnameplatematerial ) )
-        self setnameplatematerial( self.prevnameplatematerial[0], self.prevnameplatematerial[1] );
+        self _meth_83EE( self.prevnameplatematerial[0], self.prevnameplatematerial[1] );
     else
-        self setnameplatematerial( "", "" );
+        self _meth_83EE( "", "" );
 
     self.nameplatematerial = undefined;
     self.prevnameplatematerial = undefined;
@@ -4905,34 +4905,34 @@ playanim( var_0, var_1 )
         wait(randomfloatrange( 0.0, 1 ));
 
     if ( var_1 == 0 )
-        self scriptmodelplayanim( self.script_animation );
+        self _meth_8279( self.script_animation );
     else
-        self scriptmodelplayanimdeltamotion( self.script_animation );
+        self _meth_827B( self.script_animation );
 }
 
 playerallowhighjump( var_0, var_1 )
 {
-    _playerallow( "highjump", var_0, var_1, ::allowhighjump );
+    _playerallow( "highjump", var_0, var_1, ::_meth_83B2 );
 }
 
 playerallowhighjumpdrop( var_0, var_1 )
 {
-    _playerallow( "highjumpdrop", var_0, var_1, ::allowhighjumpdrop );
+    _playerallow( "highjumpdrop", var_0, var_1, ::_meth_8486 );
 }
 
 playerallowboostjump( var_0, var_1 )
 {
-    _playerallow( "boostjump", var_0, var_1, ::allowboostjump );
+    _playerallow( "boostjump", var_0, var_1, ::_meth_849E );
 }
 
 playerallowpowerslide( var_0, var_1 )
 {
-    _playerallow( "powerslide", var_0, var_1, ::allowpowerslide );
+    _playerallow( "powerslide", var_0, var_1, ::_meth_8485 );
 }
 
 playerallowdodge( var_0, var_1 )
 {
-    _playerallow( "dodge", var_0, var_1, ::allowdodge );
+    _playerallow( "dodge", var_0, var_1, ::_meth_848D );
 }
 
 _playerallow( var_0, var_1, var_2, var_3, var_4 )
@@ -4990,9 +4990,9 @@ makegloballyusablebytype( var_0, var_1, var_2, var_3 )
     }
 
     _insertintoglobalusablelist( var_4, var_0, var_2, var_3 );
-    self makeglobalusable( var_4, var_2, var_3 );
-    self sethintstring( var_1 );
-    self setcursorhint( "HINT_NOICON" );
+    self _meth_80C1( var_4, var_2, var_3 );
+    self _meth_80DB( var_1 );
+    self _meth_80DA( "HINT_NOICON" );
 }
 
 _insertintoglobalusablelist( var_0, var_1, var_2, var_3 )
@@ -5019,7 +5019,7 @@ _insertintoglobalusablelist( var_0, var_1, var_2, var_3 )
             var_6.priority += 0.01;
 
             if ( var_6.enabled )
-                var_6.ent makeglobalusable( var_6.priority, var_6.player, var_6.team );
+                var_6.ent _meth_80C1( var_6.priority, var_6.player, var_6.team );
 
             if ( var_4 == -1 )
                 var_4 = var_5;
@@ -5056,7 +5056,7 @@ makegloballyunusablebytype()
     {
         var_4 = var_0.priority;
         level.globalusableents = common_scripts\utility::array_remove( level.globalusableents, var_0 );
-        self makeglobalunusable();
+        self _meth_80C2();
 
         foreach ( var_2 in level.globalusableents )
         {
@@ -5065,7 +5065,7 @@ makegloballyunusablebytype()
                 var_2.priority -= 0.01;
 
                 if ( var_2.enabled )
-                    var_2.ent makeglobalusable( var_2.priority, var_2.player, var_2.team );
+                    var_2.ent _meth_80C1( var_2.priority, var_2.player, var_2.team );
             }
         }
     }
@@ -5079,7 +5079,7 @@ disablegloballyusablebytype()
         {
             if ( var_1.enabled )
             {
-                var_1.ent makeglobalunusable();
+                var_1.ent _meth_80C2();
                 var_1.enabled = 0;
             }
 
@@ -5096,7 +5096,7 @@ enablegloballyusablebytype()
         {
             if ( !var_1.enabled )
             {
-                var_1.ent makeglobalusable( var_1.priority, var_1.player, var_1.team );
+                var_1.ent _meth_80C1( var_1.priority, var_1.player, var_1.team );
                 var_1.enabled = 1;
             }
 
@@ -5107,25 +5107,25 @@ enablegloballyusablebytype()
 
 setdof( var_0 )
 {
-    self setdepthoffield( var_0["nearStart"], var_0["nearEnd"], var_0["farStart"], var_0["farEnd"], var_0["nearBlur"], var_0["farBlur"] );
+    self _meth_8186( var_0["nearStart"], var_0["nearEnd"], var_0["farStart"], var_0["farEnd"], var_0["nearBlur"], var_0["farBlur"] );
 }
 
 is_exo_ability_weapon( var_0 )
 {
     switch ( var_0 )
     {
-        case "adrenaline_mp":
-        case "extra_health_mp":
-        case "exocloak_equipment_mp":
-        case "exohover_equipment_mp":
-        case "exoping_equipment_mp":
-        case "exorepulsor_equipment_mp":
-        case "exoshield_equipment_mp":
-        case "exoshieldhorde_equipment_mp":
-        case "exohoverhorde_equipment_mp":
-        case "exocloakhorde_equipment_mp":
-        case "exomute_equipment_mp":
         case "iw5_dlcgun12loot7_mp":
+        case "exomute_equipment_mp":
+        case "exocloakhorde_equipment_mp":
+        case "exohoverhorde_equipment_mp":
+        case "exoshieldhorde_equipment_mp":
+        case "exoshield_equipment_mp":
+        case "exorepulsor_equipment_mp":
+        case "exoping_equipment_mp":
+        case "exohover_equipment_mp":
+        case "exocloak_equipment_mp":
+        case "extra_health_mp":
+        case "adrenaline_mp":
             return 1;
         default:
             return 0;
@@ -5155,7 +5155,7 @@ isplayerffaenemy( var_0 )
 
 ismlgsystemlink()
 {
-    if ( isonlinegame() && getdvarint( "xblive_competitionmatch" ) )
+    if ( _func_2BC() && getdvarint( "xblive_competitionmatch" ) )
         return 1;
 
     return 0;
@@ -5212,7 +5212,7 @@ showfxtoteam( var_0 )
         {
             var_3 = var_2.team;
 
-            if ( var_3 != "axis" || var_2 ismlgspectator() )
+            if ( var_3 != "axis" || var_2 _meth_8432() )
                 var_3 = "allies";
 
             if ( var_0 == var_3 || var_0 == "neutral" )
@@ -5265,7 +5265,7 @@ spawnpatchclip( var_0, var_1, var_2 )
         return undefined;
 
     var_4 = spawn( "script_model", var_1 );
-    var_4 clonebrushmodeltoscriptmodel( var_3 );
+    var_4 _meth_8278( var_3 );
     var_4.angles = var_2;
     return var_4;
 }
@@ -5298,7 +5298,7 @@ setlightingstate_patched( var_0 )
                 if ( var_3.lightingstate == var_0 )
                 {
                     var_3 common_scripts\utility::show_solid();
-                    var_3 allowriotshieldplant();
+                    var_3 _meth_855F();
                     continue;
                 }
 

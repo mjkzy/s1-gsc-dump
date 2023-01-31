@@ -1,12 +1,12 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    thread _id_5903();
+    thread main_thread();
 }
 
-_id_5903()
+main_thread()
 {
     var_0 = common_scripts\utility::getstructarray( "teleport_world_origin", "targetname" );
     var_1 = level.gametype;
@@ -15,93 +15,93 @@ _id_5903()
         return;
 
     common_scripts\utility::flag_init( "teleport_setup_complete" );
-    level._id_9222 = [];
-    level._id_9209 = 1;
-    level._id_9248 = 0;
-    level._id_9247 = 0;
-    level._id_921C = 0;
-    level._id_921E = 0;
-    level._id_9215 = undefined;
-    level._id_923A = [];
-    level._id_9239 = [];
-    level._id_9223 = [];
-    level._id_9235 = [];
-    level._id_922B = level.onstartgametype;
-    level.onstartgametype = ::_id_922B;
-    level._id_9255 = ::_id_9216;
-    level._id_9256 = ::_id_9217;
+    level.teleport_minimaps = [];
+    level.teleport_allowed = 1;
+    level.teleport_to_offset = 0;
+    level.teleport_to_nodes = 0;
+    level.teleport_include_killsteaks = 0;
+    level.teleport_include_players = 0;
+    level.teleport_gamemode_func = undefined;
+    level.teleport_pre_funcs = [];
+    level.teleport_post_funcs = [];
+    level.teleport_nodes_in_zone = [];
+    level.teleport_pathnode_zones = [];
+    level.teleport_onstartgametype = level.onstartgametype;
+    level.onstartgametype = ::teleport_onstartgametype;
+    level.teleportgetactivenodesfunc = ::teleport_get_active_nodes;
+    level.teleportgetactivepathnodezonesfunc = ::teleport_get_active_pathnode_zones;
 }
 
-_id_921F()
+teleport_init()
 {
-    level._id_9245 = [];
+    level.teleport_spawn_info = [];
     var_0 = common_scripts\utility::getstructarray( "teleport_world_origin", "targetname" );
 
     if ( !var_0.size )
         return;
 
-    level._id_9253 = [];
+    level.teleport_zones = [];
 
     foreach ( var_2 in var_0 )
     {
         if ( !isdefined( var_2.script_noteworthy ) )
-            var_2.script_noteworthy = "zone_" + level._id_9253.size;
+            var_2.script_noteworthy = "zone_" + level.teleport_zones.size;
 
         var_2.name = var_2.script_noteworthy;
-        _id_9234( var_2 );
-        level._id_9223[var_2.name] = [];
-        level._id_9235[var_2.name] = [];
-        level._id_9253[var_2.script_noteworthy] = var_2;
+        teleport_parse_zone_targets( var_2 );
+        level.teleport_nodes_in_zone[var_2.name] = [];
+        level.teleport_pathnode_zones[var_2.name] = [];
+        level.teleport_zones[var_2.script_noteworthy] = var_2;
     }
 
     var_4 = getallnodes();
 
     foreach ( var_6 in var_4 )
     {
-        var_2 = _id_920E( var_6.origin );
-        level._id_9223[var_2.name][level._id_9223[var_2.name].size] = var_6;
+        var_2 = teleport_closest_zone( var_6.origin );
+        level.teleport_nodes_in_zone[var_2.name][level.teleport_nodes_in_zone[var_2.name].size] = var_6;
     }
 
     for ( var_8 = 0; var_8 < _func_201(); var_8++ )
     {
-        var_2 = _id_920E( _func_205( var_8 ) );
-        level._id_9235[var_2.name][level._id_9235[var_2.name].size] = var_8;
+        var_2 = teleport_closest_zone( _func_205( var_8 ) );
+        level.teleport_pathnode_zones[var_2.name][level.teleport_pathnode_zones[var_2.name].size] = var_8;
     }
 
-    if ( !isdefined( level._id_9252 ) )
+    if ( !isdefined( level.teleport_zone_current ) )
     {
-        if ( isdefined( level._id_9253["start"] ) )
-            _id_9241( "start" );
+        if ( isdefined( level.teleport_zones["start"] ) )
+            teleport_set_current_zone( "start" );
         else
         {
-            foreach ( var_11, var_10 in level._id_9253 )
+            foreach ( var_11, var_10 in level.teleport_zones )
             {
-                _id_9241( var_11 );
+                teleport_set_current_zone( var_11 );
                 break;
             }
         }
     }
 }
 
-_id_922B()
+teleport_onstartgametype()
 {
-    _id_921F();
+    teleport_init();
     var_0 = undefined;
     var_1 = undefined;
 
     switch ( level.gametype )
     {
         case "dom":
-            var_1 = ::_id_9228;
+            var_1 = ::teleport_onstartgamedom;
             break;
         case "ctf":
-            var_1 = ::_id_9227;
+            var_1 = ::teleport_onstartgamectf;
             break;
         case "hp":
-            var_1 = ::_id_922A;
+            var_1 = ::teleport_onstartgamehp;
             break;
         case "ball":
-            var_1 = ::_id_9225;
+            var_1 = ::teleport_onstartgameball;
             break;
         default:
             break;
@@ -110,7 +110,7 @@ _id_922B()
     if ( isdefined( var_0 ) )
         level [[ var_0 ]]();
 
-    level [[ level._id_922B ]]();
+    level [[ level.teleport_onstartgametype ]]();
 
     if ( isdefined( var_1 ) )
         level [[ var_1 ]]();
@@ -118,35 +118,35 @@ _id_922B()
     common_scripts\utility::flag_set( "teleport_setup_complete" );
 }
 
-_id_923D()
+teleport_pre_onstartgamesr()
 {
-    _id_923C();
+    teleport_pre_onstartgamesd_and_sr();
 }
 
-_id_923B()
+teleport_pre_onstartgamesd()
 {
-    _id_923C();
+    teleport_pre_onstartgamesd_and_sr();
 }
 
-_id_923C()
+teleport_pre_onstartgamesd_and_sr()
 {
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
-        var_1._id_7B6A = [];
-        var_1._id_7B4C = [];
-        var_1._id_7B4D = [];
+        var_1.sd_triggers = [];
+        var_1.sd_bombs = [];
+        var_1.sd_bombzones = [];
     }
 
     var_3 = getentarray( "sd_bomb_pickup_trig", "targetname" );
 
     foreach ( var_5 in var_3 )
     {
-        var_6 = _id_920E( var_5.origin );
+        var_6 = teleport_closest_zone( var_5.origin );
 
         if ( isdefined( var_6 ) )
         {
-            var_6._id_7B6A[var_6._id_7B6A.size] = var_5;
-            _id_920D( var_5, var_6.name );
+            var_6.sd_triggers[var_6.sd_triggers.size] = var_5;
+            teleport_change_targetname( var_5, var_6.name );
         }
     }
 
@@ -154,12 +154,12 @@ _id_923C()
 
     foreach ( var_10 in var_8 )
     {
-        var_6 = _id_920E( var_10.origin );
+        var_6 = teleport_closest_zone( var_10.origin );
 
         if ( isdefined( var_6 ) )
         {
-            var_6._id_7B4C[var_6._id_7B4C.size] = var_10;
-            _id_920D( var_10, var_6.name );
+            var_6.sd_bombs[var_6.sd_bombs.size] = var_10;
+            teleport_change_targetname( var_10, var_6.name );
         }
     }
 
@@ -167,59 +167,59 @@ _id_923C()
 
     foreach ( var_14 in var_12 )
     {
-        var_6 = _id_920E( var_14.origin );
+        var_6 = teleport_closest_zone( var_14.origin );
 
         if ( isdefined( var_6 ) )
         {
-            var_6._id_7B4D[var_6._id_7B4D.size] = var_14;
-            _id_920D( var_14, var_6.name );
+            var_6.sd_bombzones[var_6.sd_bombzones.size] = var_14;
+            teleport_change_targetname( var_14, var_6.name );
         }
     }
 
     var_16 = [];
 
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
-        if ( var_1._id_7B6A.size && var_1._id_7B6A.size && var_1._id_7B6A.size )
+        if ( var_1.sd_triggers.size && var_1.sd_triggers.size && var_1.sd_triggers.size )
             var_16[var_16.size] = var_1.name;
     }
 
-    _id_9214( var_16 );
-    var_19 = level._id_9253[level._id_9252];
-    _id_923E( var_19._id_7B6A );
-    _id_923E( var_19._id_7B4C );
-    _id_923E( var_19._id_7B4D );
+    teleport_gamemode_disable_teleport( var_16 );
+    var_19 = level.teleport_zones[level.teleport_zone_current];
+    teleport_restore_targetname( var_19.sd_triggers );
+    teleport_restore_targetname( var_19.sd_bombs );
+    teleport_restore_targetname( var_19.sd_bombzones );
 }
 
-_id_9229()
+teleport_onstartgamehorde()
 {
-    foreach ( var_1 in level._id_9253 )
-        var_1._id_4947 = [];
+    foreach ( var_1 in level.teleport_zones )
+        var_1.horde_drops = [];
 
     var_3 = common_scripts\utility::getstructarray( "horde_drop", "targetname" );
 
     foreach ( var_5 in var_3 )
     {
-        var_6 = _id_920E( var_5.origin );
+        var_6 = teleport_closest_zone( var_5.origin );
 
         if ( isdefined( var_6 ) )
-            var_6._id_4947[var_6._id_4947.size] = var_5;
+            var_6.horde_drops[var_6.horde_drops.size] = var_5;
     }
 
     var_8 = [];
 
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
-        if ( var_1._id_4947.size )
+        if ( var_1.horde_drops.size )
             var_8[var_8.size] = var_1.name;
     }
 
-    _id_9214( var_8 );
-    var_11 = level._id_9253[level._id_9252];
-    level.struct_class_names["targetname"]["horde_drop"] = var_11._id_4947;
+    teleport_gamemode_disable_teleport( var_8 );
+    var_11 = level.teleport_zones[level.teleport_zone_current];
+    level.struct_class_names["targetname"]["horde_drop"] = var_11.horde_drops;
 }
 
-_id_920D( var_0, var_1 )
+teleport_change_targetname( var_0, var_1 )
 {
     if ( !isarray( var_0 ) )
         var_0 = [ var_0 ];
@@ -229,15 +229,15 @@ _id_920D( var_0, var_1 )
 
     foreach ( var_3 in var_0 )
     {
-        var_3._id_7812 = var_3.targetname;
+        var_3.saved_targetname = var_3.targetname;
         var_3.targetname = var_3.targetname + "_" + var_1;
     }
 }
 
-_id_9214( var_0 )
+teleport_gamemode_disable_teleport( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        var_0 = getarraykeys( level._id_9253 );
+        var_0 = getarraykeys( level.teleport_zones );
 
     var_1 = game["teleport_zone_dom"];
 
@@ -247,92 +247,92 @@ _id_9214( var_0 )
         game["teleport_zone_dom"] = var_1;
     }
 
-    _id_924B( var_1, 0 );
-    level._id_9209 = 0;
+    teleport_to_zone( var_1, 0 );
+    level.teleport_allowed = 0;
 }
 
-_id_923E( var_0 )
+teleport_restore_targetname( var_0 )
 {
     if ( !isarray( var_0 ) )
         var_0 = [ var_0 ];
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2._id_7812 ) )
-            var_2.targetname = var_2._id_7812;
+        if ( isdefined( var_2.saved_targetname ) )
+            var_2.targetname = var_2.saved_targetname;
     }
 }
 
-_id_9227()
+teleport_onstartgamectf()
 {
-    level._id_9215 = ::_id_922E;
+    level.teleport_gamemode_func = ::teleport_onteleportctf;
 }
 
-_id_922A()
+teleport_onstartgamehp()
 {
-    if ( !isdefined( level._id_628D ) )
-        level._id_628D = 5;
+    if ( !isdefined( level.number_of_hp_zones_pre_teleport ) )
+        level.number_of_hp_zones_pre_teleport = 5;
 
-    level._id_6E9D = [];
-    level._id_6E6C = [];
+    level.pre_event_hp_zones = [];
+    level.post_event_hp_zones = [];
     level.all_hp_zones = level.zones;
 
     foreach ( var_1 in level.zones )
     {
-        if ( var_1.script_index > level._id_628D )
+        if ( var_1.script_index > level.number_of_hp_zones_pre_teleport )
         {
-            level._id_6E6C[level._id_6E6C.size] = var_1;
+            level.post_event_hp_zones[level.post_event_hp_zones.size] = var_1;
             continue;
         }
 
-        level._id_6E9D[level._id_6E9D.size] = var_1;
+        level.pre_event_hp_zones[level.pre_event_hp_zones.size] = var_1;
     }
 
-    level.zones = level._id_6E9D;
-    level._id_9215 = ::_id_9230;
+    level.zones = level.pre_event_hp_zones;
+    level.teleport_gamemode_func = ::teleport_onteleporthp;
 }
 
-_id_9225()
+teleport_onstartgameball()
 {
-    level._id_9215 = ::_id_922C;
+    level.teleport_gamemode_func = ::teleport_onteleportball;
 }
 
-_id_9228()
+teleport_onstartgamedom()
 {
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
         var_1.flags = [];
         var_1.domflags = [];
     }
 
-    level._id_09E0 = level.flags;
+    level.all_dom_flags = level.flags;
 
     foreach ( var_4 in level.flags )
     {
-        var_5 = _id_920E( var_4.origin );
+        var_5 = teleport_closest_zone( var_4.origin );
 
         if ( isdefined( var_5 ) )
         {
-            var_4._id_9251 = var_5.name;
+            var_4.teleport_zone = var_5.name;
             var_5.flags[var_5.flags.size] = var_4;
             var_5.domflags[var_5.domflags.size] = var_4.useobj;
         }
     }
 
-    level._id_2CEE = [];
+    level.dom_flag_data = [];
 
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
         foreach ( var_9 in var_1.flags )
         {
             var_10 = spawnstruct();
-            var_10._id_97C8 = var_9.origin;
-            var_10._id_9E91 = var_9.useobj.visuals[0].origin;
+            var_10.trigger_origin = var_9.origin;
+            var_10.visual_origin = var_9.useobj.visuals[0].origin;
             var_10.baseeffectpos = var_9.useobj.baseeffectpos;
             var_10.baseeffectforward = var_9.useobj.baseeffectforward;
             var_10.baseeffectright = var_9.useobj.baseeffectright;
-            var_10._id_62CC = var_9.useobj.curorigin;
-            var_10._id_62DA = [];
+            var_10.obj_origin = var_9.useobj.curorigin;
+            var_10.obj3d_origins = [];
 
             foreach ( var_12 in level.teamnamelist )
             {
@@ -340,27 +340,27 @@ _id_9228()
                 var_14 = maps\mp\gametypes\_objpoints::getobjpointbyname( var_13 );
 
                 if ( isdefined( var_14 ) )
-                    var_10._id_62DA[var_12] = ( var_14.x, var_14.y, var_14.z );
+                    var_10.obj3d_origins[var_12] = ( var_14.x, var_14.y, var_14.z );
             }
 
             var_13 = "objpoint_mlg_" + var_9.useobj.entnum;
             var_14 = maps\mp\gametypes\_objpoints::getobjpointbyname( var_13 );
 
             if ( isdefined( var_14 ) )
-                var_10._id_62DA["mlg"] = ( var_14.x, var_14.y, var_14.z );
+                var_10.obj3d_origins["mlg"] = ( var_14.x, var_14.y, var_14.z );
 
-            level._id_2CEE[var_1.name][var_9.useobj.label] = var_10;
+            level.dom_flag_data[var_1.name][var_9.useobj.label] = var_10;
         }
     }
 
-    level.flags = level._id_9253[level._id_9252].flags;
-    level.domflags = level._id_9253[level._id_9252].domflags;
+    level.flags = level.teleport_zones[level.teleport_zone_current].flags;
+    level.domflags = level.teleport_zones[level.teleport_zone_current].domflags;
 
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
         foreach ( var_4 in var_1.flags )
         {
-            if ( var_1.name == level._id_9252 )
+            if ( var_1.name == level.teleport_zone_current )
                 continue;
 
             var_4.useobj.visuals[0] delete();
@@ -368,41 +368,41 @@ _id_9228()
         }
     }
 
-    level._id_9215 = ::_id_922F;
-    _id_922F( level._id_9252 );
-    level._id_9210 = 1;
-    level thread _id_9211();
+    level.teleport_gamemode_func = ::teleport_onteleportdom;
+    teleport_onteleportdom( level.teleport_zone_current );
+    level.teleport_dom_finished_initializing = 1;
+    level thread teleport_dom_post_bot_cleanup();
 }
 
-_id_9211()
+teleport_dom_post_bot_cleanup()
 {
-    while ( !isdefined( level._id_1628 ) )
+    while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    foreach ( var_1 in level._id_9253 )
+    foreach ( var_1 in level.teleport_zones )
     {
         foreach ( var_3 in var_1.flags )
         {
-            var_4 = level._id_2CEE[var_1.name][var_3.useobj.label];
-            var_4._id_6136 = var_3._id_6136;
+            var_4 = level.dom_flag_data[var_1.name][var_3.useobj.label];
+            var_4.nodes = var_3.nodes;
 
-            if ( var_1.name != level._id_9252 )
+            if ( var_1.name != level.teleport_zone_current )
                 var_3 delete();
         }
     }
 }
 
-_id_9226()
+teleport_onstartgameconf()
 {
-    level._id_9215 = ::_id_922D;
+    level.teleport_gamemode_func = ::teleport_onteleportconf;
 }
 
-_id_922F( var_0 )
+teleport_onteleportdom( var_0 )
 {
-    var_1 = level._id_9253[level._id_9252];
-    var_2 = level._id_9253[var_0];
+    var_1 = level.teleport_zones[level.teleport_zone_current];
+    var_2 = level.teleport_zones[var_0];
 
-    if ( var_0 == level._id_9252 )
+    if ( var_0 == level.teleport_zone_current )
         return;
 
     foreach ( var_4 in level.domflags )
@@ -419,38 +419,38 @@ _id_922F( var_0 )
 
     foreach ( var_4 in level.flags )
     {
-        var_7 = level._id_2CEE[var_0][var_4.useobj.label];
-        var_4.origin = var_7._id_97C8;
-        var_4.useobj.visuals[0].origin = var_7._id_9E91;
+        var_7 = level.dom_flag_data[var_0][var_4.useobj.label];
+        var_4.origin = var_7.trigger_origin;
+        var_4.useobj.visuals[0].origin = var_7.visual_origin;
         var_4.useobj.baseeffectpos = var_7.baseeffectpos;
         var_4.useobj.baseeffectforward = var_7.baseeffectforward;
         var_4.useobj maps\mp\gametypes\dom::updatevisuals();
-        var_4._id_9251 = var_0;
-        var_4._id_6136 = var_7._id_6136;
+        var_4.teleport_zone = var_0;
+        var_4.nodes = var_7.nodes;
 
         if ( isdefined( var_4.useobj.objidallies ) )
-            objective_position( var_4.useobj.objidallies, var_7._id_62CC );
+            objective_position( var_4.useobj.objidallies, var_7.obj_origin );
 
         if ( isdefined( var_4.useobj.objidaxis ) )
-            objective_position( var_4.useobj.objidaxis, var_7._id_62CC );
+            objective_position( var_4.useobj.objidaxis, var_7.obj_origin );
 
         if ( isdefined( var_4.useobj.objidmlgspectator ) )
-            objective_position( var_4.useobj.objidmlgspectator, var_7._id_62CC );
+            objective_position( var_4.useobj.objidmlgspectator, var_7.obj_origin );
 
         foreach ( var_9 in level.teamnamelist )
         {
             var_10 = "objpoint_" + var_9 + "_" + var_4.useobj.entnum;
             var_11 = maps\mp\gametypes\_objpoints::getobjpointbyname( var_10 );
-            var_11.x = var_7._id_62DA[var_9][0];
-            var_11.y = var_7._id_62DA[var_9][1];
-            var_11.z = var_7._id_62DA[var_9][2];
+            var_11.x = var_7.obj3d_origins[var_9][0];
+            var_11.y = var_7.obj3d_origins[var_9][1];
+            var_11.z = var_7.obj3d_origins[var_9][2];
         }
 
         var_10 = "objpoint_mlg_" + var_4.useobj.entnum;
         var_11 = maps\mp\gametypes\_objpoints::getobjpointbyname( var_10 );
-        var_11.x = var_7._id_62DA["mlg"][0];
-        var_11.y = var_7._id_62DA["mlg"][1];
-        var_11.z = var_7._id_62DA["mlg"][2];
+        var_11.x = var_7.obj3d_origins["mlg"][0];
+        var_11.y = var_7.obj3d_origins["mlg"][1];
+        var_11.z = var_7.obj3d_origins["mlg"][2];
     }
 
     maps\mp\gametypes\dom::flagsetup();
@@ -459,7 +459,7 @@ _id_922F( var_0 )
     {
         var_16 = var_15.label;
 
-        foreach ( var_18 in level._id_9253["start"].domflags )
+        foreach ( var_18 in level.teleport_zones["start"].domflags )
         {
             if ( var_18.label == var_16 )
                 var_15.levelflag = var_18.levelflag;
@@ -470,7 +470,7 @@ _id_922F( var_0 )
     {
         var_16 = var_15.label;
 
-        foreach ( var_23 in level._id_9253["start"].flags )
+        foreach ( var_23 in level.teleport_zones["start"].flags )
         {
             if ( var_23.label == var_16 )
                 var_15.levelflag = var_23.levelflag;
@@ -478,9 +478,9 @@ _id_922F( var_0 )
     }
 }
 
-_id_921A( var_0, var_1 )
+teleport_get_matching_dom_flag( var_0, var_1 )
 {
-    foreach ( var_3 in level._id_9253[var_1].flags )
+    foreach ( var_3 in level.teleport_zones[var_1].flags )
     {
         if ( var_0.useobj.label == var_3.useobj.label )
             return var_3;
@@ -489,17 +489,17 @@ _id_921A( var_0, var_1 )
     return undefined;
 }
 
-_id_922E( var_0 )
+teleport_onteleportctf( var_0 )
 {
     if ( game["switchedsides"] )
     {
-        level._id_24AF["axis"] = getent( "post_event_capzone_allies", "targetname" );
-        level._id_24AF["allies"] = getent( "post_event_capzone_axis", "targetname" );
+        level.ctf_second_zones["axis"] = getent( "post_event_capzone_allies", "targetname" );
+        level.ctf_second_zones["allies"] = getent( "post_event_capzone_axis", "targetname" );
     }
     else
     {
-        level._id_24AF["allies"] = getent( "post_event_capzone_allies", "targetname" );
-        level._id_24AF["axis"] = getent( "post_event_capzone_axis", "targetname" );
+        level.ctf_second_zones["allies"] = getent( "post_event_capzone_allies", "targetname" );
+        level.ctf_second_zones["axis"] = getent( "post_event_capzone_axis", "targetname" );
     }
 
     var_1 = [];
@@ -507,18 +507,18 @@ _id_922E( var_0 )
     var_1["axis"] = level.capzones["axis"];
     var_2["allies"] = level.teamflags["allies"];
     var_2["axis"] = level.teamflags["axis"];
-    var_3["allies"] = level._id_24AF["allies"].origin;
-    var_3["axis"] = level._id_24AF["axis"].origin;
+    var_3["allies"] = level.ctf_second_zones["allies"].origin;
+    var_3["axis"] = level.ctf_second_zones["axis"].origin;
 
     foreach ( var_5 in var_1 )
     {
-        var_5 maps\mp\gametypes\_gameobjects::move_use_object( var_3[var_5.ownerteam], ( 0.0, 0.0, 85.0 ) );
+        var_5 maps\mp\gametypes\_gameobjects::move_use_object( var_3[var_5.ownerteam], ( 0, 0, 85 ) );
         var_5.trigger common_scripts\utility::trigger_off();
     }
 
     foreach ( var_8 in level.teamflags )
     {
-        var_8 maps\mp\gametypes\_gameobjects::move_use_object( var_3[var_8.ownerteam], ( 0.0, 0.0, 85.0 ) );
+        var_8 maps\mp\gametypes\_gameobjects::move_use_object( var_3[var_8.ownerteam], ( 0, 0, 85 ) );
 
         if ( isdefined( var_8.carrier ) )
         {
@@ -551,9 +551,9 @@ _id_922E( var_0 )
         var_5.trigger common_scripts\utility::trigger_on();
 }
 
-_id_9230( var_0 )
+teleport_onteleporthp( var_0 )
 {
-    level.zones = level._id_6E6C;
+    level.zones = level.post_event_hp_zones;
 
     if ( level.randomzonespawn == 0 )
         level.prevzoneindex = level.zones.size - 1;
@@ -567,27 +567,27 @@ _id_9230( var_0 )
     level notify( "zone_moved" );
 }
 
-_id_922C( var_0 )
+teleport_onteleportball( var_0 )
 {
-    level._id_12CD = common_scripts\utility::getstructarray( "ball_start_post_event", "targetname" );
+    level.ball_starts_post_event = common_scripts\utility::getstructarray( "ball_start_post_event", "targetname" );
 
     if ( game["switchedsides"] )
     {
-        level._id_12A3["allies"] = common_scripts\utility::getstruct( "ball_goal_axis_post_event", "targetname" );
-        level._id_12A3["axis"] = common_scripts\utility::getstruct( "ball_goal_allies_post_event", "targetname" );
+        level.ball_goals_post_event["allies"] = common_scripts\utility::getstruct( "ball_goal_axis_post_event", "targetname" );
+        level.ball_goals_post_event["axis"] = common_scripts\utility::getstruct( "ball_goal_allies_post_event", "targetname" );
     }
     else
     {
-        level._id_12A3["axis"] = common_scripts\utility::getstruct( "ball_goal_axis_post_event", "targetname" );
-        level._id_12A3["allies"] = common_scripts\utility::getstruct( "ball_goal_allies_post_event", "targetname" );
+        level.ball_goals_post_event["axis"] = common_scripts\utility::getstruct( "ball_goal_axis_post_event", "targetname" );
+        level.ball_goals_post_event["allies"] = common_scripts\utility::getstruct( "ball_goal_allies_post_event", "targetname" );
     }
 
     var_1 = [];
     var_1["allies"] = level.ball_goals["allies"];
     var_1["axis"] = level.ball_goals["axis"];
     var_2 = [];
-    var_2["allies"] = level._id_12A3["allies"].origin;
-    var_2["axis"] = level._id_12A3["axis"].origin;
+    var_2["allies"] = level.ball_goals_post_event["allies"].origin;
+    var_2["axis"] = level.ball_goals_post_event["axis"].origin;
 
     foreach ( var_4 in var_1 )
     {
@@ -599,7 +599,7 @@ _id_922C( var_0 )
             maps\mp\gametypes\ball::ball_goal_fx_for_player( var_7 );
     }
 
-    _id_16F0();
+    bot_setup_ball_jump_nodes();
     var_10 = _func_202( level.ball_goals["allies"].origin );
 
     if ( isdefined( var_10 ) )
@@ -612,7 +612,7 @@ _id_922C( var_0 )
 
     level.ball_starts = [];
 
-    foreach ( var_12 in level._id_12CD )
+    foreach ( var_12 in level.ball_starts_post_event )
         maps\mp\gametypes\ball::ball_add_start( var_12.origin );
 
     foreach ( var_15 in level.balls )
@@ -633,7 +633,7 @@ _id_922C( var_0 )
     }
 }
 
-_id_16F0()
+bot_setup_ball_jump_nodes()
 {
     var_0 = 400;
     wait 1.0;
@@ -642,7 +642,7 @@ _id_16F0()
 
     foreach ( var_4 in level.ball_goals )
     {
-        var_4._id_12A9 = [];
+        var_4.ball_jump_nodes = [];
         var_5 = getnodesinradius( var_4.origin, var_0, 0 );
 
         foreach ( var_7 in var_5 )
@@ -652,8 +652,8 @@ _id_16F0()
 
             var_1++;
 
-            if ( _id_15B8( var_7.origin, var_4, 1 ) )
-                var_4._id_12A9[var_4._id_12A9.size] = var_7;
+            if ( bot_ball_origin_can_see_goal( var_7.origin, var_4, 1 ) )
+                var_4.ball_jump_nodes[var_4.ball_jump_nodes.size] = var_7;
 
             if ( var_1 % var_2 == 0 )
                 wait 0.05;
@@ -661,7 +661,7 @@ _id_16F0()
 
         var_9 = 999999999;
 
-        foreach ( var_7 in var_4._id_12A9 )
+        foreach ( var_7 in var_4.ball_jump_nodes )
         {
             var_11 = _func_220( var_7.origin, var_4.origin );
 
@@ -676,29 +676,29 @@ _id_16F0()
     }
 }
 
-_id_15B8( var_0, var_1, var_2 )
+bot_ball_origin_can_see_goal( var_0, var_1, var_2 )
 {
-    var_3 = _id_15BA( var_0, var_1.origin );
+    var_3 = bot_ball_trace_to_origin( var_0, var_1.origin );
 
     if ( isdefined( var_2 ) && var_2 )
     {
         if ( !var_3 )
         {
             var_4 = var_1.origin - ( 0, 0, var_1.radius * 0.5 );
-            var_3 = _id_15BA( var_0, var_4 );
+            var_3 = bot_ball_trace_to_origin( var_0, var_4 );
         }
 
         if ( !var_3 )
         {
             var_4 = var_1.origin + ( 0, 0, var_1.radius * 0.5 );
-            var_3 = _id_15BA( var_0, var_4 );
+            var_3 = bot_ball_trace_to_origin( var_0, var_4 );
         }
     }
 
     return var_3;
 }
 
-_id_15BA( var_0, var_1 )
+bot_ball_trace_to_origin( var_0, var_1 )
 {
     if ( isdefined( self ) && ( isplayer( self ) || isagent( self ) ) )
         var_2 = playerphysicstrace( var_0, var_1, self );
@@ -708,18 +708,18 @@ _id_15BA( var_0, var_1 )
     return distancesquared( var_2, var_1 ) < 1;
 }
 
-_id_922D( var_0 )
+teleport_onteleportconf( var_0 )
 {
-    var_1 = _id_3E90( var_0 );
+    var_1 = get_teleport_delta( var_0 );
 
     foreach ( var_3 in level.dogtags )
     {
         var_4 = var_3.curorigin + var_1;
-        var_5 = _id_921B( var_4 );
+        var_5 = teleport_get_safe_node_near( var_4 );
 
         if ( isdefined( var_5 ) )
         {
-            var_5._id_555F = gettime();
+            var_5.last_teleport_time = gettime();
             var_6 = var_5.origin - var_3.curorigin;
             var_3.curorigin += var_6;
             var_3.trigger.origin += var_6;
@@ -732,7 +732,7 @@ _id_922D( var_0 )
     }
 }
 
-_id_921B( var_0 )
+teleport_get_safe_node_near( var_0 )
 {
     var_1 = gettime();
     var_2 = getnodesinradiussorted( var_0, 300, 0, 200, "Path" );
@@ -741,7 +741,7 @@ _id_921B( var_0 )
     {
         var_4 = var_2[var_3];
 
-        if ( isdefined( var_4._id_555F ) && var_4._id_555F == var_1 )
+        if ( isdefined( var_4.last_teleport_time ) && var_4.last_teleport_time == var_1 )
             continue;
 
         return var_4;
@@ -750,12 +750,12 @@ _id_921B( var_0 )
     return undefined;
 }
 
-_id_920E( var_0 )
+teleport_closest_zone( var_0 )
 {
     var_1 = undefined;
     var_2 = undefined;
 
-    foreach ( var_4 in level._id_9253 )
+    foreach ( var_4 in level.teleport_zones )
     {
         var_5 = distancesquared( var_4.origin, var_0 );
 
@@ -769,45 +769,45 @@ _id_920E( var_0 )
     return var_2;
 }
 
-_id_9231( var_0 )
+teleport_origin_use_nodes( var_0 )
 {
-    level._id_9247 = var_0;
+    level.teleport_to_nodes = var_0;
 }
 
-_id_9232( var_0 )
+teleport_origin_use_offset( var_0 )
 {
-    level._id_9248 = var_0;
+    level.teleport_to_offset = var_0;
 }
 
-_id_921D( var_0 )
+teleport_include_killstreaks( var_0 )
 {
-    level._id_921C = var_0;
+    level.teleport_include_killsteaks = var_0;
 }
 
-_id_9242( var_0, var_1 )
+teleport_set_minimap_for_zone( var_0, var_1 )
 {
-    level._id_9222[var_0] = var_1;
+    level.teleport_minimaps[var_0] = var_1;
 }
 
-_id_9244( var_0, var_1 )
+teleport_set_pre_func( var_0, var_1 )
 {
-    level._id_923A[var_1] = var_0;
+    level.teleport_pre_funcs[var_1] = var_0;
 }
 
-_id_9243( var_0, var_1 )
+teleport_set_post_func( var_0, var_1 )
 {
-    level._id_9239[var_1] = var_0;
+    level.teleport_post_funcs[var_1] = var_0;
 }
 
-_id_9234( var_0 )
+teleport_parse_zone_targets( var_0 )
 {
-    if ( isdefined( var_0._id_65A6 ) && var_0._id_65A6 )
+    if ( isdefined( var_0.origins_pasrsed ) && var_0.origins_pasrsed )
         return;
 
-    var_0._id_9233 = [];
-    var_0._id_9233["none"] = [];
-    var_0._id_9233["allies"] = [];
-    var_0._id_9233["axis"] = [];
+    var_0.teleport_origins = [];
+    var_0.teleport_origins["none"] = [];
+    var_0.teleport_origins["allies"] = [];
+    var_0.teleport_origins["axis"] = [];
     var_1 = common_scripts\utility::getstructarray( "teleport_zone_" + var_0.name, "targetname" );
 
     if ( isdefined( var_0.target ) )
@@ -824,12 +824,12 @@ _id_9234( var_0 )
         switch ( var_4.script_noteworthy )
         {
             case "teleport_origin":
-                var_5 = var_4.origin + ( 0.0, 0.0, 1.0 );
-                var_6 = var_4.origin - ( 0.0, 0.0, 250.0 );
+                var_5 = var_4.origin + ( 0, 0, 1 );
+                var_6 = var_4.origin - ( 0, 0, 250 );
                 var_7 = bullettrace( var_5, var_6, 0 );
 
                 if ( var_7["fraction"] == 1.0 )
-                    continue;
+                    break;
 
                 var_4.origin = var_7["position"];
             case "telport_origin_nodrop":
@@ -840,68 +840,68 @@ _id_9234( var_0 )
 
                 foreach ( var_10 in var_8 )
                 {
-                    if ( !isdefined( var_0._id_9233[var_10] ) )
+                    if ( !isdefined( var_0.teleport_origins[var_10] ) )
                         continue;
 
                     if ( !isdefined( var_4.angles ) )
-                        var_4.angles = ( 0.0, 0.0, 0.0 );
+                        var_4.angles = ( 0, 0, 0 );
 
-                    var_11 = var_0._id_9233[var_10].size;
-                    var_0._id_9233[var_10][var_11] = var_4;
+                    var_11 = var_0.teleport_origins[var_10].size;
+                    var_0.teleport_origins[var_10][var_11] = var_4;
                 }
 
-                continue;
+                break;
             default:
-                continue;
+                break;
         }
     }
 
-    var_0._id_65A6 = 1;
+    var_0.origins_pasrsed = 1;
 }
 
-_id_9241( var_0 )
+teleport_set_current_zone( var_0 )
 {
-    level._id_9252 = var_0;
+    level.teleport_zone_current = var_0;
 
-    if ( isdefined( level._id_9222[var_0] ) )
-        maps\mp\_compass::_id_831E( level._id_9222[var_0] );
+    if ( isdefined( level.teleport_minimaps[var_0] ) )
+        maps\mp\_compass::setupminimap( level.teleport_minimaps[var_0] );
 }
 
-_id_9213( var_0, var_1 )
+teleport_filter_spawn_point( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
-        var_1 = level._id_9252;
+        var_1 = level.teleport_zone_current;
 
     var_2 = [];
 
     foreach ( var_4 in var_0 )
     {
         if ( !isdefined( var_4.teleport_label ) )
-            var_4.teleport_label = "ent_" + var_4 getentitynumber();
+            var_4.teleport_label = "ent_" + var_4 _meth_81B1();
 
-        if ( !isdefined( level._id_9245[var_4.teleport_label] ) )
-            _id_9220( var_4 );
+        if ( !isdefined( level.teleport_spawn_info[var_4.teleport_label] ) )
+            teleport_init_spawn_info( var_4 );
 
-        if ( level._id_9245[var_4.teleport_label].zone == var_1 )
+        if ( level.teleport_spawn_info[var_4.teleport_label].zone == var_1 )
             var_2[var_2.size] = var_4;
     }
 
     return var_2;
 }
 
-_id_9220( var_0 )
+teleport_init_spawn_info( var_0 )
 {
     if ( !isdefined( var_0.teleport_label ) )
-        var_0.teleport_label = "ent_" + var_0 getentitynumber();
+        var_0.teleport_label = "ent_" + var_0 _meth_81B1();
 
-    if ( isdefined( level._id_9245[var_0.teleport_label] ) )
+    if ( isdefined( level.teleport_spawn_info[var_0.teleport_label] ) )
         return;
 
     var_1 = spawnstruct();
-    var_1._id_03DA = var_0;
+    var_1.spawner = var_0;
     var_2 = undefined;
 
-    foreach ( var_4 in level._id_9253 )
+    foreach ( var_4 in level.teleport_zones )
     {
         var_5 = distance( var_4.origin, var_0.origin );
 
@@ -912,12 +912,12 @@ _id_9220( var_0 )
         }
     }
 
-    level._id_9245[var_0.teleport_label] = var_1;
+    level.teleport_spawn_info[var_0.teleport_label] = var_1;
 }
 
-_id_9221( var_0 )
+teleport_is_valid_zone( var_0 )
 {
-    foreach ( var_3, var_2 in level._id_9253 )
+    foreach ( var_3, var_2 in level.teleport_zones )
     {
         if ( var_3 == var_0 )
             return 1;
@@ -926,40 +926,40 @@ _id_9221( var_0 )
     return 0;
 }
 
-_id_924B( var_0, var_1 )
+teleport_to_zone( var_0, var_1 )
 {
-    if ( !level._id_9209 )
+    if ( !level.teleport_allowed )
         return;
 
     if ( !isdefined( var_1 ) )
         var_1 = 1;
 
-    var_2 = level._id_923A[var_0];
+    var_2 = level.teleport_pre_funcs[var_0];
 
     if ( isdefined( var_2 ) && var_1 )
         [[ var_2 ]]();
 
-    var_3 = level._id_9253[level._id_9252];
-    var_4 = level._id_9253[var_0];
+    var_3 = level.teleport_zones[level.teleport_zone_current];
+    var_4 = level.teleport_zones[var_0];
 
     if ( !isdefined( var_3 ) || !isdefined( var_4 ) )
         return;
 
-    if ( level._id_921E )
+    if ( level.teleport_include_players )
     {
-        _id_924F( var_0 );
-        _id_924C( var_0 );
+        teleport_to_zone_players( var_0 );
+        teleport_to_zone_agents( var_0 );
     }
 
-    if ( level._id_921C )
-        _id_924E( var_0 );
+    if ( level.teleport_include_killsteaks )
+        teleport_to_zone_killstreaks( var_0 );
 
-    if ( isdefined( level._id_9215 ) )
-        [[ level._id_9215 ]]( var_0 );
+    if ( isdefined( level.teleport_gamemode_func ) )
+        [[ level.teleport_gamemode_func ]]( var_0 );
 
-    _id_9241( var_0 );
+    teleport_set_current_zone( var_0 );
     level notify( "teleport_to_zone", var_0 );
-    var_5 = level._id_9239[var_0];
+    var_5 = level.teleport_post_funcs[var_0];
 
     if ( isdefined( var_5 ) && var_1 )
         [[ var_5 ]]();
@@ -968,32 +968,32 @@ _id_924B( var_0, var_1 )
         [[ level.bot_funcs["post_teleport"] ]]();
 }
 
-_id_924C( var_0 )
+teleport_to_zone_agents( var_0 )
 {
-    var_1 = maps\mp\agents\_agent_utility::_id_3ED7( "all" );
+    var_1 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
 
     foreach ( var_3 in var_1 )
-        _id_924D( var_0, var_3 );
+        teleport_to_zone_character( var_0, var_3 );
 }
 
-_id_924F( var_0 )
+teleport_to_zone_players( var_0 )
 {
     foreach ( var_2 in level.players )
-        _id_924D( var_0, var_2 );
+        teleport_to_zone_character( var_0, var_2 );
 }
 
-_id_924D( var_0, var_1 )
+teleport_to_zone_character( var_0, var_1 )
 {
-    var_2 = level._id_9253[level._id_9252];
-    var_3 = level._id_9253[var_0];
+    var_2 = level.teleport_zones[level.teleport_zone_current];
+    var_3 = level.teleport_zones[var_0];
     var_4 = gettime();
 
     if ( isplayer( var_1 ) && ( var_1.sessionstate == "intermission" || var_1.sessionstate == "spectator" ) )
     {
         var_5 = getentarray( "mp_global_intermission", "classname" );
-        var_5 = _id_9213( var_5, var_0 );
+        var_5 = teleport_filter_spawn_point( var_5, var_0 );
         var_6 = var_5[0];
-        var_1 dontinterpolate();
+        var_1 _meth_8092();
         var_1 setorigin( var_6.origin );
         var_1 setangles( var_6.angles );
     }
@@ -1005,31 +1005,31 @@ _id_924D( var_0, var_1 )
         if ( isplayer( var_1 ) )
             var_8 = var_1 getangles();
 
-        foreach ( var_14, var_10 in var_3._id_9233 )
+        foreach ( var_14, var_10 in var_3.teleport_origins )
         {
-            var_3._id_9233[var_14] = common_scripts\utility::array_randomize( var_10 );
+            var_3.teleport_origins[var_14] = common_scripts\utility::array_randomize( var_10 );
 
             foreach ( var_12 in var_10 )
-                var_12._id_1E1D = 0;
+                var_12.claimed = 0;
         }
 
         var_15 = [];
 
         if ( level.teambased )
         {
-            if ( isdefined( var_1.team ) && isdefined( var_3._id_9233[var_1.team] ) )
-                var_15 = var_3._id_9233[var_1.team];
+            if ( isdefined( var_1.team ) && isdefined( var_3.teleport_origins[var_1.team] ) )
+                var_15 = var_3.teleport_origins[var_1.team];
         }
         else
-            var_15 = var_3._id_9233["none"];
+            var_15 = var_3.teleport_origins["none"];
 
         foreach ( var_12 in var_15 )
         {
-            if ( !var_12._id_1E1D )
+            if ( !var_12.claimed )
             {
                 var_7 = var_12.origin;
                 var_8 = var_12.angles;
-                var_12._id_1E1D = 1;
+                var_12.claimed = 1;
                 break;
             }
         }
@@ -1037,13 +1037,13 @@ _id_924D( var_0, var_1 )
         var_18 = var_3.origin - var_2.origin;
         var_19 = var_1.origin + var_18;
 
-        if ( !isdefined( var_7 ) && level._id_9248 )
+        if ( !isdefined( var_7 ) && level.teleport_to_offset )
         {
             if ( precachestatusicon( var_19 ) && !getstarttime( var_19 ) )
                 var_7 = var_19;
         }
 
-        if ( !isdefined( var_7 ) && level._id_9247 )
+        if ( !isdefined( var_7 ) && level.teleport_to_nodes )
         {
             var_20 = getnodesinradiussorted( var_19, 300, 0, 200, "Path" );
 
@@ -1051,14 +1051,14 @@ _id_924D( var_0, var_1 )
             {
                 var_22 = var_20[var_21];
 
-                if ( isdefined( var_22._id_555F ) && var_22._id_555F == var_4 )
+                if ( isdefined( var_22.last_teleport_time ) && var_22.last_teleport_time == var_4 )
                     continue;
 
                 var_12 = var_22.origin;
 
                 if ( precachestatusicon( var_12 ) && !getstarttime( var_12 ) )
                 {
-                    var_22._id_555F = var_4;
+                    var_22.last_teleport_time = var_4;
                     var_7 = var_12;
                     break;
                 }
@@ -1072,46 +1072,46 @@ _id_924D( var_0, var_1 )
         }
 
         var_1 _meth_8439();
-        var_1 dontinterpolate();
+        var_1 _meth_8092();
         var_1 setorigin( var_7 );
         var_1 setangles( var_8 );
-        thread _id_9250( var_1 );
+        thread teleport_validate_success( var_1 );
     }
 }
 
-_id_9250( var_0 )
+teleport_validate_success( var_0 )
 {
     waitframe();
 
     if ( isdefined( var_0 ) )
     {
-        var_1 = _id_920E( var_0.origin );
+        var_1 = teleport_closest_zone( var_0.origin );
 
-        if ( var_1.name != level._id_9252 )
+        if ( var_1.name != level.teleport_zone_current )
             var_0 maps\mp\_utility::_suicide();
     }
 }
 
-_id_3E90( var_0 )
+get_teleport_delta( var_0 )
 {
-    var_1 = level._id_9253[var_0];
-    var_2 = level._id_9253[level._id_9252];
+    var_1 = level.teleport_zones[var_0];
+    var_2 = level.teleport_zones[level.teleport_zone_current];
     var_3 = var_1.origin - var_2.origin;
     return var_3;
 }
 
-_id_924E( var_0 )
+teleport_to_zone_killstreaks( var_0 )
 {
 
 }
 
-_id_9224()
+teleport_notify_death()
 {
     if ( isdefined( self ) )
         self notify( "death" );
 }
 
-_id_0D15( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10 )
+array_thread_safe( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10 )
 {
     if ( !isdefined( var_0 ) )
         return;
@@ -1119,7 +1119,7 @@ _id_0D15( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, 
     common_scripts\utility::array_thread( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10 );
 }
 
-_id_0CF1( var_0, var_1, var_2, var_3, var_4 )
+array_levelthread_safe( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( !isdefined( var_0 ) )
         return;
@@ -1127,26 +1127,26 @@ _id_0CF1( var_0, var_1, var_2, var_3, var_4 )
     common_scripts\utility::array_levelthread( var_0, var_1, var_2, var_3, var_4 );
 }
 
-_id_9218()
+teleport_get_care_packages()
 {
     return getentarray( "care_package", "targetname" );
 }
 
-_id_9219()
+teleport_get_deployable_boxes()
 {
     var_0 = [];
     var_1 = getentarray( "script_model", "classname" );
 
     foreach ( var_3 in var_1 )
     {
-        if ( isdefined( var_3._id_175D ) )
+        if ( isdefined( var_3.boxtype ) )
             var_0[var_0.size] = var_3;
     }
 
     return var_0;
 }
 
-_id_9236( var_0, var_1 )
+teleport_place_on_ground( var_0, var_1 )
 {
     if ( !isdefined( var_0 ) )
         return;
@@ -1167,55 +1167,55 @@ _id_9236( var_0, var_1 )
         return 0;
 }
 
-_id_9205( var_0, var_1 )
+teleport_add_delta_targets( var_0, var_1 )
 {
-    if ( _id_920F( var_0 ) )
+    if ( teleport_delta_this_frame( var_0 ) )
         return;
 
-    _id_9204( var_0, var_1 );
+    teleport_add_delta( var_0, var_1 );
 
     if ( isdefined( var_0.target ) )
     {
         var_2 = getentarray( var_0.target, "targetname" );
         var_3 = common_scripts\utility::getstructarray( var_0.target, "targetname" );
         var_4 = common_scripts\utility::array_combine( var_2, var_3 );
-        common_scripts\utility::array_levelthread( var_4, ::_id_9205, var_1 );
+        common_scripts\utility::array_levelthread( var_4, ::teleport_add_delta_targets, var_1 );
     }
 }
 
-_id_9240( var_0 )
+teleport_self_add_delta_targets( var_0 )
 {
-    _id_9205( self, var_0 );
+    teleport_add_delta_targets( self, var_0 );
 }
 
-_id_923F( var_0 )
+teleport_self_add_delta( var_0 )
 {
-    _id_9204( self, var_0 );
+    teleport_add_delta( self, var_0 );
 }
 
-_id_9204( var_0, var_1 )
+teleport_add_delta( var_0, var_1 )
 {
     if ( isdefined( var_0 ) )
     {
-        if ( !_id_920F( var_0 ) )
+        if ( !teleport_delta_this_frame( var_0 ) )
         {
             var_0.origin += var_1;
-            var_0._id_555F = gettime();
+            var_0.last_teleport_time = gettime();
         }
     }
 }
 
-_id_920F( var_0 )
+teleport_delta_this_frame( var_0 )
 {
-    return isdefined( var_0._id_555F ) && var_0._id_555F == gettime();
+    return isdefined( var_0.last_teleport_time ) && var_0.last_teleport_time == gettime();
 }
 
-_id_9216()
+teleport_get_active_nodes()
 {
-    return level._id_9223[level._id_9252];
+    return level.teleport_nodes_in_zone[level.teleport_zone_current];
 }
 
-_id_9217()
+teleport_get_active_pathnode_zones()
 {
-    return level._id_9235[level._id_9252];
+    return level.teleport_pathnode_zones[level.teleport_zone_current];
 }

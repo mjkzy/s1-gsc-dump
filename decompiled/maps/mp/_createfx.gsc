@@ -1,17 +1,17 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_2402()
+createfx()
 {
-    level._id_3AEC = common_scripts\utility::void;
-    level._id_3AED = ::_id_3AED;
-    level._id_3AE9 = _id_A4EE::_id_5880;
-    level._id_3AEA = _id_A4EE::_id_649D;
-    level._id_3AE4 = _id_A4EE::_id_23CA;
-    level._id_3AEF = common_scripts\_createfx::_id_7487;
-    level._id_3AEE = common_scripts\_createfx::_id_6FE9;
-    level._id_3AEB = ::_id_3AEB;
-    level._id_5FA9 = 1;
+    level.func_position_player = common_scripts\utility::void;
+    level.func_position_player_get = ::func_position_player_get;
+    level.func_loopfxthread = common_scripts\_fx::loopfxthread;
+    level.func_oneshotfxthread = common_scripts\_fx::oneshotfxthread;
+    level.func_create_loopsound = common_scripts\_fx::create_loopsound;
+    level.func_updatefx = common_scripts\_createfx::restart_fx_looper;
+    level.func_process_fx_rotater = common_scripts\_createfx::process_fx_rotater;
+    level.func_player_speed = ::func_player_speed;
+    level.mp_createfx = 1;
     level.callbackstartgametype = common_scripts\utility::void;
     level.callbackplayerconnect = common_scripts\utility::void;
     level.callbackplayerdisconnect = common_scripts\utility::void;
@@ -23,12 +23,12 @@ _id_2402()
     level.callbackplayerconnect = ::callback_playerconnect;
     level.callbackplayermigrated = common_scripts\utility::void;
     maps\mp\gametypes\_gameobjects::main( [] );
-    thread common_scripts\_createfx::_id_3AE6();
-    common_scripts\_createfx::_id_2407();
+    thread common_scripts\_createfx::func_get_level_fx();
+    common_scripts\_createfx::createfx_common();
     level waittill( "eternity" );
 }
 
-_id_3AED( var_0 )
+func_position_player_get( var_0 )
 {
     return level.player.origin;
 }
@@ -41,19 +41,19 @@ callback_playerconnect()
     {
         var_0 = getentarray( "mp_global_intermission", "classname" );
         var_1 = ( var_0[0].angles[0], var_0[0].angles[1], 0.0 );
-        self spawn( var_0[0].origin, var_1 );
+        self _meth_826F( var_0[0].origin, var_1 );
         maps\mp\_utility::updatesessionstate( "playing" );
         self.maxhealth = 10000000;
         self.health = 10000000;
         level.player = self;
-        thread common_scripts\_createfx::_id_241B();
+        thread common_scripts\_createfx::createfxlogic();
     }
     else
-        kick( self getentitynumber() );
+        kick( self _meth_81B1() );
 }
 
-_id_3AEB()
+func_player_speed()
 {
-    var_0 = level._id_0575._id_6C16 / 190;
-    level.player setmovespeedscale( var_0 );
+    var_0 = level._createfx.player_speed / 190;
+    level.player _meth_81E1( var_0 );
 }

@@ -1,31 +1,39 @@
+// S1 GSC SOURCE
+// Dumped by https://github.com/xensik/gsc-tool
+
 main()
 {
     if ( !isdefined( level.anim_prop_models ) )
         level.anim_prop_models = [];
 
-    model_keys = getarraykeys( level.anim_prop_models );
+    var_0 = getarraykeys( level.anim_prop_models );
 
-    foreach ( model_key in model_keys )
+    foreach ( var_2 in var_0 )
     {
-        anim_keys = getarraykeys( level.anim_prop_models[model_key] );
+        var_3 = getarraykeys( level.anim_prop_models[var_2] );
 
-        foreach ( anim_key in anim_keys )
-            map_restart( level.anim_prop_models[model_key][anim_key] );
+        foreach ( var_5 in var_3 )
+            map_restart( level.anim_prop_models[var_2][var_5] );
     }
 
     waittillframeend;
     level.init_animatedmodels = [];
-    animated_models = getentarray( "animated_model", "targetname" );
-    common_scripts\utility::array_thread( animated_models, ::animateModel );
+    var_8 = getentarray( "animated_model", "targetname" );
+    common_scripts\utility::array_thread( var_8, ::animatemodel );
     level.init_animatedmodels = undefined;
 }
 
-animateModel()
+animatemodel()
 {
-    keys = getarraykeys( level.anim_prop_models[self.model] );
-    animkey = keys[randomint( keys.size )];
-    anim = level.anim_prop_models[self.model][animkey];
+    if ( isdefined( self.animation ) )
+        var_0 = self.animation;
+    else
+    {
+        var_1 = getarraykeys( level.anim_prop_models[self.model] );
+        var_2 = var_1[randomint( var_1.size )];
+        var_0 = level.anim_prop_models[self.model][var_2];
+    }
 
-    self scriptmodelplayanim( anim );
-    self willneverchange();
+    self _meth_8279( var_0 );
+    self _meth_80E1();
 }

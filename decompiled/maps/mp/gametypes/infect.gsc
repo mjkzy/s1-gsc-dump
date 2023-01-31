@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
@@ -176,8 +176,8 @@ onplayerconnect()
 
 initspawns()
 {
-    level.spawnmins = ( 0.0, 0.0, 0.0 );
-    level.spawnmaxs = ( 0.0, 0.0, 0.0 );
+    level.spawnmins = ( 0, 0, 0 );
+    level.spawnmaxs = ( 0, 0, 0 );
     level.spawn_name = "mp_tdm_spawn";
     maps\mp\gametypes\_spawnlogic::addspawnpoints( "allies", level.spawn_name );
     maps\mp\gametypes\_spawnlogic::addspawnpoints( "axis", level.spawn_name );
@@ -236,7 +236,7 @@ preloadweapons()
     }
 
     if ( var_0.size > 0 )
-        self loadweapons( var_0 );
+        self _meth_8511( var_0 );
 }
 
 onspawnplayer()
@@ -312,17 +312,17 @@ updateloadouts()
     {
         thread setinfectedmsg();
         thread setinfectedmodels();
-        self setmovespeedscale( 1.2 );
+        self _meth_81E1( 1.2 );
     }
 }
 
 setinfectedmodels()
 {
     self detachall();
-    self setmodel( "kva_hazmat_body_infected_mp" );
+    self _meth_80B1( "kva_hazmat_body_infected_mp" );
     self attach( "kva_hazmat_head_infected" );
-    self setviewmodel( "vm_kva_hazmat_infected" );
-    self setclothtype( "cloth" );
+    self _meth_8343( "vm_kva_hazmat_infected" );
+    self _meth_83DB( "cloth" );
 }
 
 setinfectedmsg()
@@ -364,7 +364,7 @@ choosefirstinfected()
 
     foreach ( var_4 in level.players )
     {
-        if ( maps\mp\_utility::matchmakinggame() && level.players.size > 1 && var_4 ishost() )
+        if ( maps\mp\_utility::matchmakinggame() && level.players.size > 1 && var_4 _meth_829C() )
         {
             var_2 = var_4;
             continue;
@@ -405,13 +405,13 @@ prepareforclasschange()
         wait 0.05;
     }
 
-    while ( self ismeleeing() )
+    while ( self _meth_812E() )
         wait 0.05;
 
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self isonground() && !self isonladder() )
+    while ( !self _meth_8341() && !self isonladder() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )
@@ -477,10 +477,10 @@ setinitialtonormalinfected()
 
 refillbattery()
 {
-    var_0 = self getweaponslistoffhands();
+    var_0 = self _meth_82CE();
 
     foreach ( var_2 in var_0 )
-        self batteryfullrecharge( var_2 );
+        self _meth_84A4( var_2 );
 }
 
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
@@ -582,7 +582,7 @@ finalsurvivoruav( var_0 )
             var_3.radarmode = "normal_radar";
     }
 
-    getteamradar( "axis", 1 );
+    _func_177( "axis", 1 );
 
     for (;;)
     {
@@ -591,7 +591,7 @@ finalsurvivoruav( var_0 )
 
         if ( var_1 )
         {
-            endparty( "axis", 0 );
+            _func_175( "axis", 0 );
             var_1 = 0;
         }
 
@@ -599,7 +599,7 @@ finalsurvivoruav( var_0 )
 
         if ( distance( var_5, var_0.origin ) < 200 )
         {
-            endparty( "axis", 1 );
+            _func_175( "axis", 1 );
             var_1 = 1;
 
             foreach ( var_3 in level.players )
@@ -620,7 +620,7 @@ enduavonlatejoiner( var_0 )
         {
             level notify( "infect_lateJoiner" );
             wait 0.05;
-            endparty( "axis", 0 );
+            _func_175( "axis", 0 );
             break;
         }
 

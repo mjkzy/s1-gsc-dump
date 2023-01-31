@@ -1,24 +1,24 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
-_id_0D47()
+assault_vehicle_ai_init()
 {
-    thread maps\mp\_aerial_pathnodes::_id_19C5();
+    thread maps\mp\_aerial_pathnodes::calculate_aerial_pathnodes();
 }
 
-_id_09A1( var_0 )
+aistartusingassaultvehicle( var_0 )
 {
-    thread _id_0D3E( var_0 );
+    thread assault_vehicle_ai_end_on_owner_disconnect( var_0 );
     wait 2.0;
-    maps\mp\_aerial_pathnodes::_id_A05C();
+    maps\mp\_aerial_pathnodes::waittill_aerial_pathnodes_calculated();
 
     if ( isdefined( var_0 ) )
     {
-        var_0._id_3287 = 0;
-        var_0._id_3288 = 0;
-        var_0 thread _id_0D39();
-        var_0 thread _id_0D4B();
-        var_0 thread _id_0D4C( !var_0._id_474A );
+        var_0.enemy_target_last_vis_time = 0;
+        var_0.enemy_target_visible = 0;
+        var_0 thread assault_vehicle_ai_aerial_movement();
+        var_0 thread assault_vehicle_ai_threat();
+        var_0 thread assault_vehicle_ai_weapons( !var_0.hasturret );
 
         if ( isdefined( level.ishorde ) && level.ishorde )
         {
@@ -35,14 +35,14 @@ assault_vehicle_horde_monitor_death( var_0 )
     self.aerialassaultdrone = undefined;
 }
 
-_id_0D3E( var_0 )
+assault_vehicle_ai_end_on_owner_disconnect( var_0 )
 {
     var_0 endon( "death" );
     self waittill( "disconnect" );
     var_0 notify( "death" );
 }
 
-_id_0D39()
+assault_vehicle_ai_aerial_movement()
 {
     self notify( "assault_vehicle_ai_aerial_movement" );
     self endon( "assault_vehicle_ai_aerial_movement" );
@@ -51,22 +51,22 @@ _id_0D39()
     self _meth_8283( var_0, 8, 60 );
     self _meth_8253( 0, 0, 0 );
     var_1 = undefined;
-    var_2 = _id_0D44();
+    var_2 = assault_vehicle_ai_get_nearest_node();
 
     if ( !isdefined( var_2 ) )
         return;
 
     var_3 = var_2;
 
-    if ( !maps\mp\_aerial_pathnodes::_id_6121( var_3 ) )
+    if ( !maps\mp\_aerial_pathnodes::node_is_aerial( var_3 ) )
     {
-        var_4 = maps\mp\_aerial_pathnodes::_id_3D52( 64, 0 );
+        var_4 = maps\mp\_aerial_pathnodes::get_ent_closest_aerial_node( 64, 0 );
 
         if ( isdefined( var_4 ) )
             var_3 = var_4;
     }
 
-    if ( maps\mp\_aerial_pathnodes::_id_6121( var_3 ) )
+    if ( maps\mp\_aerial_pathnodes::node_is_aerial( var_3 ) )
         var_1 = _func_200( self.origin, var_3.origin, 1, var_2 );
 
     if ( !isdefined( var_1 ) )
@@ -76,7 +76,7 @@ _id_0D39()
 
         while ( !isdefined( var_1 ) && var_6 < var_5 )
         {
-            var_7 = maps\mp\_aerial_pathnodes::_id_3D52( var_5, var_6 );
+            var_7 = maps\mp\_aerial_pathnodes::get_ent_closest_aerial_node( var_5, var_6 );
 
             if ( isdefined( var_7 ) )
             {
@@ -95,21 +95,21 @@ _id_0D39()
             return;
     }
 
-    var_8 = _id_0D38( var_1 );
-    _id_0D48( var_8 );
+    var_8 = assault_vehicle_ai_aerial_follow_path_outside( var_1 );
+    assault_vehicle_ai_move_to_aerial_node( var_8 );
     wait 0.85;
     var_9 = 1;
 
     if ( var_9 )
     {
         self notify( "in_air" );
-        _id_0D3B( var_8 );
+        assault_vehicle_ai_aerial_pathing_turret( var_8 );
     }
 }
 
-_id_0D38( var_0 )
+assault_vehicle_ai_aerial_follow_path_outside( var_0 )
 {
-    var_1 = ( 0.0, 0.0, 40.0 );
+    var_1 = ( 0, 0, 40 );
     var_2 = undefined;
 
     for ( var_3 = 0; var_3 < var_0.size; var_3++ )
@@ -119,20 +119,20 @@ _id_0D38( var_0 )
         if ( isdefined( var_2 ) && isdefined( var_2.targetname ) && var_2.targetname == "traverse" )
             assault_vehicle_ai_air_traverse( var_2, var_4, var_1 );
 
-        _id_0D3C( var_4.origin + var_1 );
+        assault_vehicle_ai_air_movement_func( var_4.origin + var_1 );
         var_5 = 0;
 
         while ( _func_220( var_4.origin, self.origin ) > squared( 24.0 ) )
         {
             var_5 += 0.05;
 
-            if ( var_5 > _id_0D49() )
+            if ( var_5 > assault_vehicle_ai_path_timeout_time() )
                 return;
 
             wait 0.05;
         }
 
-        if ( maps\mp\_aerial_pathnodes::_id_6121( var_4 ) )
+        if ( maps\mp\_aerial_pathnodes::node_is_aerial( var_4 ) )
             return var_4;
 
         var_2 = var_4;
@@ -141,16 +141,16 @@ _id_0D38( var_0 )
     return var_0[var_0.size - 1];
 }
 
-_id_0D48( var_0 )
+assault_vehicle_ai_move_to_aerial_node( var_0 )
 {
-    var_1 = var_0.origin + maps\mp\_aerial_pathnodes::_id_3CB0();
-    _id_0D3C( var_1 );
+    var_1 = var_0.origin + maps\mp\_aerial_pathnodes::get_aerial_offset();
+    assault_vehicle_ai_air_movement_func( var_1 );
 
     while ( distancesquared( self.origin, var_1 ) > 576.0 )
         wait 0.05;
 }
 
-_id_0D3B( var_0 )
+assault_vehicle_ai_aerial_pathing_turret( var_0 )
 {
     var_1 = var_0;
     var_2 = [];
@@ -158,8 +158,8 @@ _id_0D3B( var_0 )
 
     for (;;)
     {
-        var_1 = _id_0D4A( var_1, var_2 );
-        _id_0D48( var_1 );
+        var_1 = assault_vehicle_ai_pick_aerial_node( var_1, var_2 );
+        assault_vehicle_ai_move_to_aerial_node( var_1 );
         var_3 = var_1 _meth_8381();
 
         if ( !isdefined( var_2[var_3] ) )
@@ -170,36 +170,36 @@ _id_0D3B( var_0 )
     }
 }
 
-_id_0D3A()
+assault_vehicle_ai_aerial_pathing_c4()
 {
     for (;;)
     {
         var_0 = undefined;
 
-        if ( _id_0D3F() )
-            var_0 = self._id_3286 maps\mp\_aerial_pathnodes::_id_3D52();
+        if ( assault_vehicle_ai_enemy_exists_and_is_alive() )
+            var_0 = self.enemy_target maps\mp\_aerial_pathnodes::get_ent_closest_aerial_node();
 
         if ( !isdefined( var_0 ) )
-            var_0 = common_scripts\utility::random( level._id_088C );
+            var_0 = common_scripts\utility::random( level.aerial_pathnodes );
 
-        var_1 = maps\mp\_aerial_pathnodes::_id_3D52();
-        var_2 = maps\mp\_aerial_pathnodes::_id_376A( var_1, var_0 );
+        var_1 = maps\mp\_aerial_pathnodes::get_ent_closest_aerial_node();
+        var_2 = maps\mp\_aerial_pathnodes::find_path_between_aerial_nodes( var_1, var_0 );
 
         if ( isdefined( var_2 ) )
-            _id_0D42( var_2, ::_id_0D3C, ::_id_0D40, maps\mp\_aerial_pathnodes::_id_3CB0()[2] );
+            assault_vehicle_ai_follow_path( var_2, ::assault_vehicle_ai_air_movement_func, ::assault_vehicle_ai_enemy_moved_air, maps\mp\_aerial_pathnodes::get_aerial_offset()[2] );
 
-        if ( _id_0D3F() )
+        if ( assault_vehicle_ai_enemy_exists_and_is_alive() )
         {
-            if ( !_id_0D40( var_0 ) || _func_220( self.origin, self._id_3286.origin ) < squared( 200 ) )
+            if ( !assault_vehicle_ai_enemy_moved_air( var_0 ) || _func_220( self.origin, self.enemy_target.origin ) < squared( 200 ) )
             {
-                var_3 = self._id_3286.origin + ( 0.0, 0.0, 40.0 );
+                var_3 = self.enemy_target.origin + ( 0, 0, 40 );
                 self _meth_825B( var_3, 1 );
 
-                while ( _id_0D3F() && distancesquared( var_3, self.origin ) > squared( 24.0 ) )
+                while ( assault_vehicle_ai_enemy_exists_and_is_alive() && distancesquared( var_3, self.origin ) > squared( 24.0 ) )
                     wait 0.05;
 
                 wait 0.8;
-                _id_0D45( ::_id_0D3C, ::_id_0D41 );
+                assault_vehicle_ai_ground_movement( ::assault_vehicle_ai_air_movement_func, ::assault_vehicle_ai_enemy_moved_ground );
             }
         }
 
@@ -207,11 +207,11 @@ _id_0D3A()
     }
 }
 
-_id_0D4A( var_0, var_1 )
+assault_vehicle_ai_pick_aerial_node( var_0, var_1 )
 {
     var_2 = undefined;
     var_3 = 9999;
-    var_4 = common_scripts\utility::array_randomize( var_0._id_0889 );
+    var_4 = common_scripts\utility::array_randomize( var_0.aerial_neighbors );
 
     foreach ( var_6 in var_4 )
     {
@@ -231,7 +231,7 @@ _id_0D4A( var_0, var_1 )
     return var_2;
 }
 
-_id_0D44()
+assault_vehicle_ai_get_nearest_node()
 {
     var_0 = getclosestnodeinsight( self.origin, 1 );
 
@@ -246,22 +246,22 @@ _id_0D44()
     return var_0;
 }
 
-_id_0D45( var_0, var_1 )
+assault_vehicle_ai_ground_movement( var_0, var_1 )
 {
     self endon( "death" );
-    var_2 = _id_0D44();
+    var_2 = assault_vehicle_ai_get_nearest_node();
 
     if ( !isdefined( var_2 ) )
         return;
 
     for (;;)
     {
-        childthread _id_0D46( var_0, var_1 );
+        childthread assault_vehicle_ai_ground_movement_loop( var_0, var_1 );
         common_scripts\utility::waittill_any( "enemy" );
     }
 }
 
-_id_0D46( var_0, var_1 )
+assault_vehicle_ai_ground_movement_loop( var_0, var_1 )
 {
     self notify( "assault_vehicle_ai_ground_movement_loop" );
     self endon( "assault_vehicle_ai_ground_movement_loop" );
@@ -272,15 +272,15 @@ _id_0D46( var_0, var_1 )
         var_3 = undefined;
         var_4 = undefined;
 
-        if ( _id_0D3F() )
-            var_4 = self._id_3286.origin;
+        if ( assault_vehicle_ai_enemy_exists_and_is_alive() )
+            var_4 = self.enemy_target.origin;
         else
         {
             var_5 = 0;
 
             while ( !isdefined( var_3 ) && var_5 < 20 )
             {
-                var_3 = istestclient( self.origin, self.angles );
+                var_3 = _func_287( self.origin, self.angles );
 
                 if ( isdefined( var_3 ) )
                 {
@@ -297,7 +297,7 @@ _id_0D46( var_0, var_1 )
 
         if ( isdefined( var_4 ) )
         {
-            var_6 = _id_0D44();
+            var_6 = assault_vehicle_ai_get_nearest_node();
 
             if ( !isdefined( var_6 ) )
                 return;
@@ -305,7 +305,7 @@ _id_0D46( var_0, var_1 )
             var_7 = _func_200( self.origin, var_4, 0, var_6 );
 
             if ( isdefined( var_7 ) )
-                _id_0D42( var_7, var_0, var_1 );
+                assault_vehicle_ai_follow_path( var_7, var_0, var_1 );
             else
                 var_2[var_2.size] = var_3;
         }
@@ -314,14 +314,14 @@ _id_0D46( var_0, var_1 )
     }
 }
 
-_id_0D43()
+assault_vehicle_ai_get_camera_position()
 {
     var_0 = self _meth_84F9();
     var_1 = self.origin + rotatevector( var_0, self.angles );
     return var_1;
 }
 
-_id_0D4B()
+assault_vehicle_ai_threat()
 {
     self endon( "death" );
 
@@ -330,15 +330,15 @@ _id_0D4B()
         var_0 = [];
         var_1 = 0;
 
-        if ( isdefined( self._id_3286 ) && !isalive( self._id_3286 ) )
+        if ( isdefined( self.enemy_target ) && !isalive( self.enemy_target ) )
         {
-            var_2 = self._id_3286.lastinflictor;
+            var_2 = self.enemy_target.lastinflictor;
 
             if ( isdefined( var_2 ) )
             {
-                if ( var_2 == self || isdefined( var_2._id_9130 ) && var_2._id_9130 == self )
+                if ( var_2 == self || isdefined( var_2.tank ) && var_2.tank == self )
                 {
-                    self._id_379E = gettime() + 1000;
+                    self.fire_at_dead_time = gettime() + 1000;
                     wait 1.0;
                 }
             }
@@ -352,20 +352,20 @@ _id_0D4B()
                     continue;
 
                 var_5 = 0;
-                var_6 = _id_0D43();
-                var_7 = var_4.origin + ( 0.0, 0.0, 40.0 );
+                var_6 = assault_vehicle_ai_get_camera_position();
+                var_7 = var_4.origin + ( 0, 0, 40 );
 
-                if ( self._id_4716 )
+                if ( self.hasarhud )
                     var_5 = 1;
 
                 if ( isdefined( var_4.lastshotfiredtime ) && gettime() - var_4.lastshotfiredtime < 3.0 )
                     var_5 = 1;
-                else if ( setteamradarstrength( self.team ) > getuavstrengthlevelneutral() )
+                else if ( _func_178( self.team ) > getuavstrengthlevelneutral() )
                     var_5 = 1;
                 else if ( sighttracepassed( var_6, var_7, 0, self, var_4 ) )
                     var_5 = 1;
 
-                if ( var_5 && self._id_474A )
+                if ( var_5 && self.hasturret )
                 {
                     var_8 = self _meth_84FA();
                     var_9 = var_7 - var_6;
@@ -390,7 +390,7 @@ _id_0D4B()
         {
             var_13 = [];
 
-            foreach ( var_15 in level._id_89A1 )
+            foreach ( var_15 in level.spawnedwarbirds )
             {
                 if ( isdefined( var_15.team ) && var_15.team == "axis" )
                     var_13[var_13.size] = var_15;
@@ -401,8 +401,8 @@ _id_0D4B()
             foreach ( var_19 in var_17 )
             {
                 var_5 = 0;
-                var_6 = _id_0D43();
-                var_7 = ( 0.0, 0.0, 0.0 );
+                var_6 = assault_vehicle_ai_get_camera_position();
+                var_7 = ( 0, 0, 0 );
 
                 if ( isdefined( var_19.origin ) )
                 {
@@ -432,15 +432,15 @@ _id_0D4B()
                 var_1 = !var_1;
             }
 
-            foreach ( var_22 in level._id_49C1 )
+            foreach ( var_22 in level.hordesentryarray )
             {
                 var_5 = 0;
-                var_6 = _id_0D43();
-                var_7 = ( 0.0, 0.0, 0.0 );
+                var_6 = assault_vehicle_ai_get_camera_position();
+                var_7 = ( 0, 0, 0 );
 
                 if ( isdefined( var_22.origin ) )
                 {
-                    var_7 = var_22.origin + ( 0.0, 0.0, 40.0 );
+                    var_7 = var_22.origin + ( 0, 0, 40 );
 
                     if ( sighttracepassed( var_6, var_7, 0, self, var_22 ) )
                         var_5 = 1;
@@ -476,7 +476,7 @@ _id_0D4B()
                     continue;
                 }
 
-                if ( isdefined( var_26._id_511B ) && var_26._id_511B )
+                if ( isdefined( var_26.ishordedrone ) && var_26.ishordedrone )
                 {
                     if ( !isdefined( var_26.damagetaken ) || !isdefined( var_26.maxhealth ) || var_26.damagetaken > var_26.maxhealth )
                         var_24[var_24.size] = var_26;
@@ -484,7 +484,7 @@ _id_0D4B()
                     continue;
                 }
 
-                if ( isdefined( var_26._id_511C ) && var_26._id_511C )
+                if ( isdefined( var_26.ishordeenemysentry ) && var_26.ishordeenemysentry )
                 {
                     if ( !var_26.isalive )
                         var_24[var_24.size] = var_26;
@@ -498,51 +498,51 @@ _id_0D4B()
         if ( var_0.size > 0 )
         {
             var_30 = common_scripts\utility::get_array_of_closest( self.origin, var_0 );
-            var_31 = self._id_3286;
-            self._id_3286 = var_30[0];
+            var_31 = self.enemy_target;
+            self.enemy_target = var_30[0];
 
-            if ( !isdefined( var_31 ) || var_31 != self._id_3286 )
+            if ( !isdefined( var_31 ) || var_31 != self.enemy_target )
                 self notify( "enemy" );
         }
-        else if ( isdefined( self._id_3286 ) )
-            self._id_3286 = undefined;
+        else if ( isdefined( self.enemy_target ) )
+            self.enemy_target = undefined;
 
         wait 0.05;
     }
 }
 
-_id_0D4C( var_0 )
+assault_vehicle_ai_weapons( var_0 )
 {
     self endon( "death" );
 
     if ( var_0 )
         self waittill( "in_air" );
 
-    self._id_554C = 0;
-    self._id_4DCA = 1;
-    var_1 = squared( maps\mp\killstreaks\_drone_assault::_id_3F06() * 0.75 );
+    self.last_rocket_time = 0;
+    self.initial_enemy_target = 1;
+    var_1 = squared( maps\mp\killstreaks\_drone_assault::getassaultvehiclec4radius() * 0.75 );
 
     for (;;)
     {
-        if ( isdefined( self._id_91C2 ) )
+        if ( isdefined( self.targetent ) )
         {
-            if ( _id_0D3F() )
+            if ( assault_vehicle_ai_enemy_exists_and_is_alive() )
             {
-                if ( _id_0D3D() )
+                if ( assault_vehicle_ai_can_see_living_enemy() )
                 {
                     if ( isdefined( level.ishorde ) && level.ishorde )
                     {
-                        if ( isdefined( self._id_3286._id_511B ) && self._id_3286._id_511B )
-                            self._id_91C2.origin = self._id_3286.origin;
+                        if ( isdefined( self.enemy_target.ishordedrone ) && self.enemy_target.ishordedrone )
+                            self.targetent.origin = self.enemy_target.origin;
                         else
-                            self._id_91C2.origin = self._id_3286.origin + ( 0.0, 0.0, 40.0 );
+                            self.targetent.origin = self.enemy_target.origin + ( 0, 0, 40 );
                     }
-                    else if ( self._id_474A )
-                        self._id_91C2.origin = self._id_3286.origin + ( 0.0, 0.0, 40.0 );
+                    else if ( self.hasturret )
+                        self.targetent.origin = self.enemy_target.origin + ( 0, 0, 40 );
                     else
-                        self._id_91C2.origin = self._id_3286.origin + anglestoforward( self._id_3286.angles ) * 100;
+                        self.targetent.origin = self.enemy_target.origin + anglestoforward( self.enemy_target.angles ) * 100;
 
-                    var_2 = vectortoangles( self._id_91C2.origin - self.origin );
+                    var_2 = vectortoangles( self.targetent.origin - self.origin );
 
                     for ( var_3 = var_2[1] - self.angles[1]; var_3 > 180; var_3 -= 360 )
                     {
@@ -561,73 +561,73 @@ _id_0D4C( var_0 )
 
                     self _meth_827C( self.origin, ( var_2[0], var_5, self.angles[2] ), 0, 1 );
 
-                    if ( self._id_4DCA )
+                    if ( self.initial_enemy_target )
                     {
                         wait 0.1;
-                        self._id_4DCA = 0;
+                        self.initial_enemy_target = 0;
 
-                        if ( !_id_0D3D() )
+                        if ( !assault_vehicle_ai_can_see_living_enemy() )
                             continue;
                     }
 
-                    var_6 = self._id_473F && self._id_7589 > 0;
+                    var_6 = self.hasrockets && self.rocketammo > 0;
 
-                    if ( self._id_474A )
-                        var_7 = self._id_5BD2 gettagorigin( "tag_flash" );
+                    if ( self.hasturret )
+                        var_7 = self.mgturret gettagorigin( "tag_flash" );
                     else
                         var_7 = self.origin;
 
                     if ( var_6 )
-                        var_6 = distancesquared( var_7, self._id_3286.origin ) > 17424;
+                        var_6 = distancesquared( var_7, self.enemy_target.origin ) > 17424;
 
-                    var_8 = self._id_91C2.origin - var_7;
+                    var_8 = self.targetent.origin - var_7;
                     var_9 = vectortoangles( var_8 );
                     var_10 = self _meth_84FA();
                     var_11 = angleclamp180( var_9[0] );
                     var_12 = var_11 < var_10 && var_11 > -1 * var_10;
-                    var_13 = vectornormalize( anglestoforward( self.angles ) * ( 1.0, 1.0, 0.0 ) );
-                    var_14 = vectornormalize( var_8 * ( 1.0, 1.0, 0.0 ) );
+                    var_13 = vectornormalize( anglestoforward( self.angles ) * ( 1, 1, 0 ) );
+                    var_14 = vectornormalize( var_8 * ( 1, 1, 0 ) );
                     var_15 = vectordot( var_13, var_14 ) > 0.9;
 
                     if ( var_12 && var_15 )
                     {
-                        if ( self._id_473F && var_6 )
+                        if ( self.hasrockets && var_6 )
                         {
-                            if ( gettime() > self._id_554C + 1000 )
+                            if ( gettime() > self.last_rocket_time + 1000 )
                             {
-                                if ( self._id_4736 )
+                                if ( self.hasmg )
                                     self notify( "FireSecondaryWeapon" );
                                 else
                                     self notify( "FirePrimaryWeapon" );
 
-                                self._id_554C = gettime();
+                                self.last_rocket_time = gettime();
                             }
                         }
-                        else if ( self._id_4736 )
-                            self._id_5BD2 _meth_80EA();
-                        else if ( !self._id_474A )
+                        else if ( self.hasmg )
+                            self.mgturret _meth_80EA();
+                        else if ( !self.hasturret )
                         {
-                            if ( sighttracepassed( var_7, self._id_91C2.origin, 0, self, self._id_3286 ) )
+                            if ( sighttracepassed( var_7, self.targetent.origin, 0, self, self.enemy_target ) )
                                 self notify( "FirePrimaryWeapon" );
                         }
                     }
                 }
                 else
-                    self._id_4DCA = 1;
+                    self.initial_enemy_target = 1;
             }
-            else if ( isdefined( self._id_3286 ) && !isalive( self._id_3286 ) )
+            else if ( isdefined( self.enemy_target ) && !isalive( self.enemy_target ) )
             {
-                if ( self._id_4736 )
+                if ( self.hasmg )
                 {
-                    if ( isdefined( self._id_379E ) && gettime() < self._id_379E )
-                        self._id_5BD2 _meth_80EA();
+                    if ( isdefined( self.fire_at_dead_time ) && gettime() < self.fire_at_dead_time )
+                        self.mgturret _meth_80EA();
                 }
             }
         }
 
-        if ( self._id_4721 && !maps\mp\killstreaks\_drone_common::_id_2F10( self ) )
+        if ( self.hascloak && !maps\mp\killstreaks\_drone_common::droneiscloaked( self ) )
         {
-            if ( !isdefined( self._id_1FBB ) || self._id_1FBB == 0 )
+            if ( !isdefined( self.cloakcooldown ) || self.cloakcooldown == 0 )
                 self notify( "Cloak" );
         }
 
@@ -635,43 +635,43 @@ _id_0D4C( var_0 )
     }
 }
 
-_id_0D3F()
+assault_vehicle_ai_enemy_exists_and_is_alive()
 {
     if ( isdefined( level.ishorde ) && level.ishorde )
     {
-        if ( isdefined( self._id_3286 ) && isdefined( self._id_3286._id_511C ) && self._id_3286._id_511C )
-            return self._id_3286.isalive;
+        if ( isdefined( self.enemy_target ) && isdefined( self.enemy_target.ishordeenemysentry ) && self.enemy_target.ishordeenemysentry )
+            return self.enemy_target.isalive;
         else
-            return isdefined( self._id_3286 ) && isalive( self._id_3286 );
+            return isdefined( self.enemy_target ) && isalive( self.enemy_target );
     }
     else
-        return isdefined( self._id_3286 ) && isalive( self._id_3286 );
+        return isdefined( self.enemy_target ) && isalive( self.enemy_target );
 }
 
-_id_0D3D()
+assault_vehicle_ai_can_see_living_enemy()
 {
-    if ( !_id_0D3F() )
+    if ( !assault_vehicle_ai_enemy_exists_and_is_alive() )
         return 0;
 
-    if ( gettime() > self._id_3287 )
+    if ( gettime() > self.enemy_target_last_vis_time )
     {
-        self._id_3287 = gettime();
+        self.enemy_target_last_vis_time = gettime();
 
         if ( isdefined( level.ishorde ) && level.ishorde )
         {
-            if ( isdefined( self._id_3286._id_511B ) && self._id_3286._id_511B )
-                self._id_3288 = sighttracepassed( _id_0D43(), self._id_3286.origin, 0, self, self._id_3286 );
+            if ( isdefined( self.enemy_target.ishordedrone ) && self.enemy_target.ishordedrone )
+                self.enemy_target_visible = sighttracepassed( assault_vehicle_ai_get_camera_position(), self.enemy_target.origin, 0, self, self.enemy_target );
             else
-                self._id_3288 = sighttracepassed( _id_0D43(), self._id_3286.origin + ( 0.0, 0.0, 40.0 ), 0, self, self._id_3286 );
+                self.enemy_target_visible = sighttracepassed( assault_vehicle_ai_get_camera_position(), self.enemy_target.origin + ( 0, 0, 40 ), 0, self, self.enemy_target );
         }
         else
-            self._id_3288 = sighttracepassed( _id_0D43(), self._id_3286.origin + ( 0.0, 0.0, 40.0 ), 0, self, self._id_3286 );
+            self.enemy_target_visible = sighttracepassed( assault_vehicle_ai_get_camera_position(), self.enemy_target.origin + ( 0, 0, 40 ), 0, self, self.enemy_target );
     }
 
-    return self._id_3288;
+    return self.enemy_target_visible;
 }
 
-_id_0D42( var_0, var_1, var_2, var_3 )
+assault_vehicle_ai_follow_path( var_0, var_1, var_2, var_3 )
 {
     if ( !isdefined( var_3 ) )
         var_3 = 0;
@@ -687,19 +687,19 @@ _id_0D42( var_0, var_1, var_2, var_3 )
         while ( _func_220( var_6.origin, self.origin ) > squared( 24.0 ) )
         {
             var_7 += 0.05;
-            var_8 = var_7 > _id_0D49();
+            var_8 = var_7 > assault_vehicle_ai_path_timeout_time();
 
-            if ( !var_8 && _id_0D3F() )
+            if ( !var_8 && assault_vehicle_ai_enemy_exists_and_is_alive() )
                 var_8 = self [[ var_2 ]]( var_0[var_0.size - 1] );
 
             if ( var_8 )
                 return;
 
-            if ( self._id_474A && _id_0D3D() )
+            if ( self.hasturret && assault_vehicle_ai_can_see_living_enemy() )
             {
                 self [[ var_1 ]]( self.origin );
 
-                while ( _id_0D3D() )
+                while ( assault_vehicle_ai_can_see_living_enemy() )
                     wait 0.05;
 
                 self [[ var_1 ]]( var_6.origin );
@@ -710,18 +710,18 @@ _id_0D42( var_0, var_1, var_2, var_3 )
     }
 }
 
-_id_0D40( var_0 )
+assault_vehicle_ai_enemy_moved_air( var_0 )
 {
-    var_1 = self._id_3286 maps\mp\_aerial_pathnodes::_id_3D52();
+    var_1 = self.enemy_target maps\mp\_aerial_pathnodes::get_ent_closest_aerial_node();
     return var_1 != var_0;
 }
 
-_id_0D41( var_0 )
+assault_vehicle_ai_enemy_moved_ground( var_0 )
 {
-    return distancesquared( var_0.origin, self._id_3286.origin ) > squared( 128.0 );
+    return distancesquared( var_0.origin, self.enemy_target.origin ) > squared( 128.0 );
 }
 
-_id_0D49()
+assault_vehicle_ai_path_timeout_time()
 {
     return 7.5;
 }
@@ -740,20 +740,20 @@ assault_vehicle_ai_air_traverse( var_0, var_1, var_2 )
     if ( !isdefined( var_0.target ) || !isdefined( var_1.targetname ) || var_0.target != var_1.targetname )
         return;
 
-    if ( isdefined( var_0._id_0047 ) )
+    if ( isdefined( var_0.animscript ) )
     {
-        if ( var_0._id_0047 == "boost_jump_up" )
+        if ( var_0.animscript == "boost_jump_up" )
         {
             var_3 = 0.25 * ( var_1.origin - var_0.origin ) + var_0.origin;
             var_3 = ( var_3[0], var_3[1], var_1.origin[2] + 10 );
-            _id_0D3C( var_3 + var_2 );
+            assault_vehicle_ai_air_movement_func( var_3 + var_2 );
             var_4 = 0;
 
             while ( _func_220( var_3, self.origin ) > squared( 24.0 ) || self.origin[2] < var_3[2] )
             {
                 var_4 += 0.05;
 
-                if ( var_4 > _id_0D49() )
+                if ( var_4 > assault_vehicle_ai_path_timeout_time() )
                     return;
 
                 wait 0.05;
@@ -762,7 +762,7 @@ assault_vehicle_ai_air_traverse( var_0, var_1, var_2 )
     }
 }
 
-_id_0D3C( var_0 )
+assault_vehicle_ai_air_movement_func( var_0 )
 {
     self _meth_825B( var_0, 1 );
 }

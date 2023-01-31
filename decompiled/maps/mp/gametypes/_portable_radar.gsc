@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 deleteportableradar( var_0 )
 {
@@ -49,7 +49,7 @@ monitorportableradaruse()
             var_3.health = 100;
             var_3.team = self.team;
             var_3.owner = self;
-            var_3 setcandamage( 1 );
+            var_3 _meth_82C0( 1 );
             var_3 makeportableradar( self );
             var_3 portableradarsetup( self );
             var_3 thread maps\mp\gametypes\_weapons::createbombsquadmodel( "weapon_radar_bombsquad", "tag_origin", self );
@@ -62,12 +62,12 @@ monitorportableradaruse()
 
 portableradarsetup( var_0 )
 {
-    self setmodel( "weapon_radar" );
+    self _meth_80B1( "weapon_radar" );
 
     if ( level.teambased )
-        maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0.0, 0.0, 20.0 ) );
+        maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0, 0, 20 ) );
     else
-        maps\mp\_entityheadicons::setplayerheadicon( var_0, ( 0.0, 0.0, 20.0 ) );
+        maps\mp\_entityheadicons::setplayerheadicon( var_0, ( 0, 0, 20 ) );
 
     thread portableradardamagelistener( var_0 );
     thread portableradaruselistener( var_0 );
@@ -118,12 +118,12 @@ portableradardamagelistener( var_0 )
         {
             switch ( var_11 )
             {
-                case "flash_grenade_mp":
-                case "concussion_grenade_mp":
-                case "stun_grenade_mp":
-                case "smoke_grenade_mp":
-                case "stun_grenade_var_mp":
                 case "smoke_grenade_var_mp":
+                case "stun_grenade_var_mp":
+                case "smoke_grenade_mp":
+                case "stun_grenade_mp":
+                case "concussion_grenade_mp":
+                case "flash_grenade_mp":
                     continue;
             }
         }
@@ -153,7 +153,7 @@ portableradardamagelistener( var_0 )
 
             self playsound( "sentry_explode" );
             self.deatheffect = playfx( common_scripts\utility::getfx( "equipment_explode" ), self.origin );
-            self freeentitysentient();
+            self _meth_813A();
             var_2 thread deleteportableradar( self );
         }
     }
@@ -164,19 +164,19 @@ portableradaruselistener( var_0 )
     self endon( "death" );
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
-    self setcursorhint( "HINT_NOICON" );
-    self sethintstring( &"MP_PATCH_PICKUP_PORTABLE_RADAR" );
+    self _meth_80DA( "HINT_NOICON" );
+    self _meth_80DB( &"MP_PATCH_PICKUP_PORTABLE_RADAR" );
     maps\mp\_utility::setselfusable( var_0 );
 
     for (;;)
     {
         self waittill( "trigger", var_0 );
-        var_1 = var_0 getweaponammostock( "portable_radar_mp" );
+        var_1 = var_0 _meth_82F9( "portable_radar_mp" );
 
         if ( var_1 < _func_1E1( "portable_radar_mp" ) )
         {
             var_0 playlocalsound( "scavenger_pack_pickup" );
-            var_0 setweaponammostock( "portable_radar_mp", var_1 + 1 );
+            var_0 _meth_82F7( "portable_radar_mp", var_1 + 1 );
             var_0 thread deleteportableradar( self );
         }
     }

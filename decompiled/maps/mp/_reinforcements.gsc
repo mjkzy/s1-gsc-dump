@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -18,8 +18,8 @@ onplayerconnect()
         if ( isbot( var_1 ) )
             continue;
 
-        var_1 _id_7454();
-        var_1 thread _id_1D05();
+        var_1 resetreinforcements();
+        var_1 thread checkforreinforcements();
     }
 
     for (;;)
@@ -29,35 +29,35 @@ onplayerconnect()
         if ( isbot( var_1 ) )
             continue;
 
-        var_1 _id_7454();
-        var_1 thread _id_1D05();
+        var_1 resetreinforcements();
+        var_1 thread checkforreinforcements();
     }
 }
 
-_id_7454()
+resetreinforcements()
 {
-    self setclientomnvar( "ui_reinforcement_timer_type", 0 );
-    self setclientomnvar( "ui_reinforcement_timer", 0 );
+    self _meth_82FB( "ui_reinforcement_timer_type", 0 );
+    self _meth_82FB( "ui_reinforcement_timer", 0 );
 }
 
-_id_8F16( var_0 )
+storependingreinforcement( var_0 )
 {
     self.pers["reinforcements"] = spawnstruct();
     self.pers["reinforcements"].type = var_0;
-    self.pers["reinforcements"]._id_8D3C = maps\mp\_utility::getgametimepassedms();
+    self.pers["reinforcements"].starttimepassed = maps\mp\_utility::getgametimepassedms();
 }
 
-_id_1ABD()
+cancelpendingreinforcement()
 {
     self.pers["reinforcements"].type = 0;
 }
 
-_id_67B8()
+pendingreinforcementavailable()
 {
     return isdefined( self.pers["reinforcements"] );
 }
 
-_id_1D05()
+checkforreinforcements()
 {
     self endon( "disconnect" );
     level endon( "game_ended" );
@@ -68,9 +68,9 @@ _id_1D05()
     if ( self.health <= 0 )
         self waittill( "spawned_player" );
 
-    if ( _id_67B8() )
+    if ( pendingreinforcementavailable() )
     {
-        thread _id_2166();
+        thread continuereinforcements();
         return;
     }
 
@@ -81,39 +81,39 @@ _id_1D05()
     else
         var_0 = self _meth_850F();
 
-    _id_8F16( var_0 );
+    storependingreinforcement( var_0 );
 
     if ( var_0 == 0 )
         return;
 
-    var_2 = _id_4132( var_0 );
-    var_3 = _id_4130();
+    var_2 = gettimetoreinforcementfortypems( var_0 );
+    var_3 = gettimeremainingincludingrounds();
 
     if ( var_3 < var_2 )
     {
-        _id_1ABD();
+        cancelpendingreinforcement();
         return;
     }
 
-    thread _id_A026( var_0, var_2 );
+    thread waitforreinforcementoftype( var_0, var_2 );
 }
 
-_id_2166()
+continuereinforcements()
 {
     var_0 = self.pers["reinforcements"].type;
 
     if ( var_0 == 0 )
         return;
 
-    var_1 = _id_4132( var_0 );
+    var_1 = gettimetoreinforcementfortypems( var_0 );
     var_2 = maps\mp\_utility::getgametimepassedms();
-    var_3 = self.pers["reinforcements"]._id_8D3C;
+    var_3 = self.pers["reinforcements"].starttimepassed;
     var_1 -= var_2;
     var_1 += var_3;
-    thread _id_A026( var_0, var_1 );
+    thread waitforreinforcementoftype( var_0, var_1 );
 }
 
-_id_4130()
+gettimeremainingincludingrounds()
 {
     if ( maps\mp\_utility::isroundbased() )
     {
@@ -126,7 +126,7 @@ _id_4130()
         return maps\mp\gametypes\_gamelogic::gettimeremaining();
 }
 
-_id_4132( var_0 )
+gettimetoreinforcementfortypems( var_0 )
 {
     switch ( var_0 )
     {
@@ -145,7 +145,7 @@ _id_4132( var_0 )
     return 0;
 }
 
-_id_3FCF( var_0 )
+geticontypeforreinforcementoftype( var_0 )
 {
     switch ( var_0 )
     {
@@ -164,7 +164,7 @@ _id_3FCF( var_0 )
     return 0;
 }
 
-_id_3F24( var_0 )
+getcarepackagestreakforreinforcementoftype( var_0 )
 {
     switch ( var_0 )
     {
@@ -183,28 +183,28 @@ _id_3F24( var_0 )
     return "";
 }
 
-_id_A026( var_0, var_1 )
+waitforreinforcementoftype( var_0, var_1 )
 {
     self endon( "disconnect" );
     level endon( "game_ended" );
-    var_2 = _id_3FCF( var_0 );
-    self setclientomnvar( "ui_reinforcement_timer_type", var_2 );
-    self setclientomnvar( "ui_reinforcement_timer", gettime() + var_1 );
+    var_2 = geticontypeforreinforcementoftype( var_0 );
+    self _meth_82FB( "ui_reinforcement_timer_type", var_2 );
+    self _meth_82FB( "ui_reinforcement_timer", gettime() + var_1 );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_1 / 1000.0 );
-    self setclientomnvar( "ui_reinforcement_timer_type", 0 );
-    self setclientomnvar( "ui_reinforcement_timer", 0 );
-    _id_41FE( var_0 );
+    self _meth_82FB( "ui_reinforcement_timer_type", 0 );
+    self _meth_82FB( "ui_reinforcement_timer", 0 );
+    givereinforcementoftype( var_0 );
 }
 
-_id_41FE( var_0 )
+givereinforcementoftype( var_0 )
 {
     if ( !isplayer( self ) )
         return;
 
-    var_1 = _id_3F24( var_0 );
+    var_1 = getcarepackagestreakforreinforcementoftype( var_0 );
     var_2 = 500;
     var_3 = maps\mp\killstreaks\_killstreaks::getnextkillstreakslotindex( var_1 );
     thread maps\mp\gametypes\_hud_message::killstreaksplashnotify( var_1, var_2, undefined, undefined, var_3 );
     maps\mp\killstreaks\_killstreaks::givekillstreak( var_1 );
-    _id_1ABD();
+    cancelpendingreinforcement();
 }

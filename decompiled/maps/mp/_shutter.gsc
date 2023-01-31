@@ -1,10 +1,10 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    level._id_4C10 = 0;
-    common_scripts\utility::array_levelthread( getentarray( "wire", "targetname" ), ::_id_A33B );
+    level.inc = 0;
+    common_scripts\utility::array_levelthread( getentarray( "wire", "targetname" ), ::wirewander );
     var_0 = getentarray( "shutter_left", "targetname" );
     var_1 = getentarray( "shutter_right_open", "targetname" );
 
@@ -25,7 +25,7 @@ main()
     wait 0.2;
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
-        var_0[var_2]._id_8D44 = var_0[var_2].angles[1];
+        var_0[var_2].startyaw = var_0[var_2].angles[1];
 
     var_4 = getentarray( "shutter_right", "targetname" );
     var_1 = getentarray( "shutter_left_open", "targetname" );
@@ -39,20 +39,20 @@ main()
         var_4[var_4.size] = var_1[var_2];
 
     for ( var_2 = 0; var_2 < var_4.size; var_2++ )
-        var_4[var_2]._id_8D44 = var_4[var_2].angles[1];
+        var_4[var_2].startyaw = var_4[var_2].angles[1];
 
     var_1 = undefined;
     var_5 = "left";
 
     for (;;)
     {
-        common_scripts\utility::array_levelthread( var_0, ::_id_8553, var_5 );
-        common_scripts\utility::array_levelthread( var_4, ::_id_8554, var_5 );
+        common_scripts\utility::array_levelthread( var_0, ::shutterwanderleft, var_5 );
+        common_scripts\utility::array_levelthread( var_4, ::shutterwanderright, var_5 );
         level waittill( "wind blows", var_5 );
     }
 }
 
-_id_A32A()
+windcontroller()
 {
     for (;;)
     {
@@ -66,11 +66,11 @@ _id_A32A()
     }
 }
 
-_id_8553( var_0, var_1 )
+shutterwanderleft( var_0, var_1 )
 {
-    level._id_4C10++;
+    level.inc++;
     level endon( "wind blows" );
-    var_2 = var_0._id_8D44;
+    var_2 = var_0.startyaw;
 
     if ( var_1 == "left" )
         var_2 += 179.9;
@@ -89,7 +89,7 @@ _id_8553( var_0, var_1 )
         var_2 = var_0.angles[1] + var_4;
         var_5 = var_0.angles[1] + var_4 * -1;
 
-        if ( var_2 < var_0._id_8D44 || var_2 > var_0._id_8D44 + 179 )
+        if ( var_2 < var_0.startyaw || var_2 > var_0.startyaw + 179 )
             var_2 = var_5;
 
         var_6 = abs( var_0.angles[1] - var_2 );
@@ -103,11 +103,11 @@ _id_8553( var_0, var_1 )
     }
 }
 
-_id_8554( var_0, var_1 )
+shutterwanderright( var_0, var_1 )
 {
-    level._id_4C10++;
+    level.inc++;
     level endon( "wind blows" );
-    var_2 = var_0._id_8D44;
+    var_2 = var_0.startyaw;
 
     if ( var_1 == "left" )
         var_2 += 179.9;
@@ -126,7 +126,7 @@ _id_8554( var_0, var_1 )
         var_2 = var_0.angles[1] + var_4;
         var_5 = var_0.angles[1] + var_4 * -1;
 
-        if ( var_2 < var_0._id_8D44 || var_2 > var_0._id_8D44 + 179 )
+        if ( var_2 < var_0.startyaw || var_2 > var_0.startyaw + 179 )
             var_2 = var_5;
 
         var_6 = abs( var_0.angles[1] - var_2 );
@@ -140,16 +140,16 @@ _id_8554( var_0, var_1 )
     }
 }
 
-_id_A33B( var_0 )
+wirewander( var_0 )
 {
     var_1 = getentarray( var_0.target, "targetname" );
     var_2 = var_1[0].origin;
     var_3 = var_1[1].origin;
     var_4 = vectortoangles( var_2 - var_3 );
-    var_5 = spawn( "script_model", ( 0.0, 0.0, 0.0 ) );
+    var_5 = spawn( "script_model", ( 0, 0, 0 ) );
     var_5.origin = var_2 * 0.5 + var_3 * 0.5;
     var_5.angles = var_4;
-    var_0 linkto( var_5 );
+    var_0 _meth_804D( var_5 );
     var_6 = 2;
     var_7 = 0.9;
     var_8 = 4 + randomfloat( 2 );

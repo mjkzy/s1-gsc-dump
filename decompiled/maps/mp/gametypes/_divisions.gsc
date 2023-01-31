@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 checkforseason1start()
 {
@@ -18,19 +18,19 @@ checkforseason1start()
     if ( isdefined( self.pers["division"] ) && isdefined( self.pers["division"]["seasonStart"] ) )
         return;
 
-    var_0 = self getrankedplayerdata( "currentSeason" );
+    var_0 = self _meth_8223( "currentSeason" );
     var_1 = getdvarint( "scr_game_season" );
 
     if ( var_1 > 0 && var_0 == 0 )
     {
-        self setrankedplayerdata( "division", 0 );
-        self setrankedplayerdata( "mmr", -31768 );
-        self setrankedplayerdata( "divisionRelegationCounter", 0 );
-        self setrankedplayerdata( "divisionChallengePlayed", 0 );
-        self setrankedplayerdata( "divisionChallengeWon", 0 );
-        self setcommonplayerdata( "round", "matchPrediction", 0 );
-        self setcommonplayerdata( "round", "matchDp", 0 );
-        self setrankedplayerdata( "currentSeason", var_1 );
+        self _meth_8244( "division", 0 );
+        self _meth_8244( "mmr", -31768 );
+        self _meth_8244( "divisionRelegationCounter", 0 );
+        self _meth_8244( "divisionChallengePlayed", 0 );
+        self _meth_8244( "divisionChallengeWon", 0 );
+        self _meth_8247( "round", "matchPrediction", 0 );
+        self _meth_8247( "round", "matchDp", 0 );
+        self _meth_8244( "currentSeason", var_1 );
         self.pers["division"]["seasonStart"] = 1;
     }
 }
@@ -101,7 +101,7 @@ onplayerconnect()
     {
         checkforseason1start();
         initloss();
-        self setdivision( self.pers["division"]["init"]["dp"] );
+        self _meth_854F( self.pers["division"]["init"]["dp"] );
     }
 }
 
@@ -134,9 +134,9 @@ onmatchend()
             else
                 var_2 ondivisionloss( var_3 );
 
-            var_4 = var_2 getrankedplayerdata( "division" );
-            var_2 setcommonplayerdata( "round", "matchDp", var_4 - var_3 + 128 );
-            var_2 setrankedplayerdatareservedint( "rankedPlaylistLockTime", 0 );
+            var_4 = var_2 _meth_8223( "division" );
+            var_2 _meth_8247( "round", "matchDp", var_4 - var_3 + 128 );
+            var_2 _meth_84D1( "rankedPlaylistLockTime", 0 );
         }
 
         break;
@@ -157,7 +157,7 @@ ondivisionwin( var_0 )
     self.pers["division"]["dp"] = var_0;
 
     if ( self.pers["division"]["minDP"] == var_0 )
-        self setrankedplayerdata( "divisionRelegationCounter", self.pers["division"]["init"]["relegation"] );
+        self _meth_8244( "divisionRelegationCounter", self.pers["division"]["init"]["relegation"] );
 
     if ( isdefined( self.pers["division"]["maxDP"] ) )
     {
@@ -165,19 +165,19 @@ ondivisionwin( var_0 )
         {
             if ( self.pers["division"]["init"]["winBits"] > 0 )
             {
-                self setrankedplayerdata( "division", var_0 + 1 );
-                self setrankedplayerdata( "divisionRelegationCounter", 0 );
+                self _meth_8244( "division", var_0 + 1 );
+                self _meth_8244( "divisionRelegationCounter", 0 );
             }
             else
-                self setrankedplayerdata( "division", var_0 );
+                self _meth_8244( "division", var_0 );
 
             updatedivisionchallengestatus( 1 );
         }
         else
-            self setrankedplayerdata( "division", int( min( float( self.pers["division"]["maxDP"] ), float( var_0 + var_1 ) ) ) );
+            self _meth_8244( "division", int( min( float( self.pers["division"]["maxDP"] ), float( var_0 + var_1 ) ) ) );
     }
     else
-        self setrankedplayerdata( "division", var_0 + var_1 );
+        self _meth_8244( "division", var_0 + var_1 );
 }
 
 ondivisionloss( var_0 )
@@ -202,7 +202,7 @@ ondivisionloss( var_0 )
     else if ( self.pers["division"]["minDP"] == var_0 )
         return;
     else
-        self setrankedplayerdata( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
+        self _meth_8244( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
 }
 
 ondivisiontie( var_0 )
@@ -223,25 +223,25 @@ ondivisiontie( var_0 )
     setplayermmr( var_1 );
 
     if ( self.pers["division"]["minDP"] == var_0 )
-        self setrankedplayerdata( "divisionRelegationCounter", self.pers["division"]["init"]["relegation"] );
+        self _meth_8244( "divisionRelegationCounter", self.pers["division"]["init"]["relegation"] );
 
     if ( isdefined( self.pers["division"]["maxDP"] ) )
     {
         if ( self.pers["division"]["maxDP"] == var_0 )
         {
-            self setrankedplayerdata( "division", var_0 );
-            self setrankedplayerdata( "divisionChallengePlayed", self.pers["division"]["init"]["playBits"] );
-            self setrankedplayerdata( "divisionChallengeWon", self.pers["division"]["init"]["winBits"] );
+            self _meth_8244( "division", var_0 );
+            self _meth_8244( "divisionChallengePlayed", self.pers["division"]["init"]["playBits"] );
+            self _meth_8244( "divisionChallengeWon", self.pers["division"]["init"]["winBits"] );
             return;
         }
         else if ( var_1 > 0 )
         {
-            self setrankedplayerdata( "division", int( min( float( self.pers["division"]["maxDP"] ), float( var_0 + var_1 ) ) ) );
+            self _meth_8244( "division", int( min( float( self.pers["division"]["maxDP"] ), float( var_0 + var_1 ) ) ) );
             return;
         }
     }
 
-    self setrankedplayerdata( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
+    self _meth_8244( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
 }
 
 initloss()
@@ -250,7 +250,7 @@ initloss()
         return;
 
     clearmatchprediction();
-    var_0 = self getrankedplayerdata( "division" );
+    var_0 = self _meth_8223( "division" );
     var_1 = int( tablelookup( "mp/divisiontable.csv", 0, "forfeit", 1 ) );
     getdivisionchallengestatus();
     getmmr();
@@ -258,14 +258,14 @@ initloss()
     if ( self.pers["division"]["wins"] >= 2 || self.pers["division"]["losses"] >= 2 )
         cleardivisionchallengestatus();
 
-    if ( self getrankedplayerdata( "divisionRelegationCounter" ) >= 3 )
-        self setrankedplayerdata( "divisionRelegationCounter", 0 );
+    if ( self _meth_8223( "divisionRelegationCounter" ) >= 3 )
+        self _meth_8244( "divisionRelegationCounter", 0 );
 
     self.pers["division"]["init"]["dp"] = var_0;
     self.pers["division"]["init"]["deltaDP"] = var_1;
-    self.pers["division"]["init"]["relegation"] = self getrankedplayerdata( "divisionRelegationCounter" );
-    self.pers["division"]["init"]["playBits"] = self getrankedplayerdata( "divisionChallengePlayed" );
-    self.pers["division"]["init"]["winBits"] = self getrankedplayerdata( "divisionChallengeWon" );
+    self.pers["division"]["init"]["relegation"] = self _meth_8223( "divisionRelegationCounter" );
+    self.pers["division"]["init"]["playBits"] = self _meth_8223( "divisionChallengePlayed" );
+    self.pers["division"]["init"]["winBits"] = self _meth_8223( "divisionChallengeWon" );
     self.pers["division"]["init"]["MMR"] = self.pers["division"]["MMR"];
     thread updatelockouttime();
     self.pers["division"]["dp"] = var_0;
@@ -281,7 +281,7 @@ initloss()
         self.pers["division"]["losses"]++;
 
         if ( self.pers["division"]["losses"] >= 2 )
-            self setrankedplayerdata( "division", self.pers["division"]["minDP"] + getdivisionresetoffset() );
+            self _meth_8244( "division", self.pers["division"]["minDP"] + getdivisionresetoffset() );
         else
         {
 
@@ -298,18 +298,18 @@ initloss()
             if ( var_2 >= 3 )
             {
                 getdivisionpointrange( var_0 - 1 );
-                self setrankedplayerdata( "division", self.pers["division"]["minDP"] + getdivisionresetoffset() );
+                self _meth_8244( "division", self.pers["division"]["minDP"] + getdivisionresetoffset() );
             }
             else
             {
 
             }
 
-            self setrankedplayerdata( "divisionRelegationCounter", var_2 );
+            self _meth_8244( "divisionRelegationCounter", var_2 );
         }
     }
     else
-        self setrankedplayerdata( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
+        self _meth_8244( "division", int( max( float( self.pers["division"]["minDP"] ), float( var_0 + var_1 ) ) ) );
 }
 
 updatelockouttime()
@@ -323,14 +323,14 @@ updatelockouttime()
         if ( _func_294( self ) )
             break;
 
-        self setrankedplayerdatareservedint( "rankedPlaylistLockTime", gettimeutc() );
+        self _meth_84D1( "rankedPlaylistLockTime", gettimeutc() );
         wait 10;
     }
 }
 
 getdivisionpointrange( var_0 )
 {
-    var_1 = isremovedentity( "mp/divisiontable.csv" );
+    var_1 = _func_295( "mp/divisiontable.csv" );
     var_2 = tablelookuprownum( "mp/divisiontable.csv", 0, "bronze" );
 
     for ( var_3 = var_2; var_3 < var_1; var_3++ )
@@ -362,8 +362,8 @@ getdivisionpointrange( var_0 )
 
 getdivisionchallengestatus()
 {
-    var_0 = self getrankedplayerdata( "divisionChallengePlayed" );
-    var_1 = self getrankedplayerdata( "divisionChallengeWon" );
+    var_0 = self _meth_8223( "divisionChallengePlayed" );
+    var_1 = self _meth_8223( "divisionChallengeWon" );
     var_2 = 0;
     var_3 = 0;
 
@@ -388,8 +388,8 @@ getdivisionchallengestatus()
 
 cleardivisionchallengestatus()
 {
-    self setrankedplayerdata( "divisionChallengePlayed", 0 );
-    self setrankedplayerdata( "divisionChallengeWon", 0 );
+    self _meth_8244( "divisionChallengePlayed", 0 );
+    self _meth_8244( "divisionChallengeWon", 0 );
     self.pers["division"]["wins"] = 0;
     self.pers["division"]["losses"] = 0;
 }
@@ -404,13 +404,13 @@ updatedivisionchallengestatus( var_0 )
     if ( var_0 )
         var_2 |= 1;
 
-    self setrankedplayerdata( "divisionChallengePlayed", var_1 );
-    self setrankedplayerdata( "divisionChallengeWon", var_2 );
+    self _meth_8244( "divisionChallengePlayed", var_1 );
+    self _meth_8244( "divisionChallengeWon", var_2 );
 }
 
 getmmr()
 {
-    var_0 = self getrankedplayerdata( "mmr" );
+    var_0 = self _meth_8223( "mmr" );
     var_0 -= -32768;
     self.pers["division"]["MMR"] = var_0;
 }
@@ -418,7 +418,7 @@ getmmr()
 savemmr()
 {
     var_0 = self.pers["division"]["MMR"] + -32768;
-    self setrankedplayerdata( "mmr", var_0 );
+    self _meth_8244( "mmr", var_0 );
 }
 
 savematchprediction( var_0 )
@@ -436,7 +436,7 @@ savematchprediction( var_0 )
     else if ( var_0 == "loss" )
         var_1 |= 32;
 
-    self setcommonplayerdata( "round", "matchPrediction", var_1 );
+    self _meth_8247( "round", "matchPrediction", var_1 );
 }
 
 clearmatchprediction()
@@ -444,7 +444,7 @@ clearmatchprediction()
     if ( !isvalidplayer() )
         return;
 
-    self setcommonplayerdata( "round", "matchPrediction", 0 );
+    self _meth_8247( "round", "matchPrediction", 0 );
 }
 
 calculateteammmrs()

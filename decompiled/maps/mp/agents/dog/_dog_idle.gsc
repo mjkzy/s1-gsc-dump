@@ -1,103 +1,103 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    self._id_0C8D = "none";
-    _id_802C();
-    self._id_9363 += 2000;
-    self._id_1436 = 0;
+    self.animsubstate = "none";
+    settimeofnextsound();
+    self.timeofnextsound += 2000;
+    self.bidlehitreaction = 0;
     self _meth_8390( self.origin );
     self _meth_8396( "face angle abs", self.angles );
     self _meth_8397( "anim deltas" );
     self _meth_8398( "gravity" );
-    _id_9B6E();
+    updatestate();
 }
 
-_id_0140()
+end_script()
 {
-    if ( isdefined( self._id_6F77 ) )
+    if ( isdefined( self.prevturnrate ) )
     {
-        self _meth_839A( self._id_6F77 );
-        self._id_6F77 = undefined;
+        self _meth_839A( self.prevturnrate );
+        self.prevturnrate = undefined;
     }
 }
 
-_id_9B6E()
+updatestate()
 {
     self endon( "killanimscript" );
     self endon( "cancelidleloop" );
 
     for (;;)
     {
-        var_0 = self._id_0C8D;
-        var_1 = _id_29AB();
+        var_0 = self.animsubstate;
+        var_1 = determinestate();
 
-        if ( var_1 != self._id_0C8D )
-            _id_3309( var_1 );
+        if ( var_1 != self.animsubstate )
+            enterstate( var_1 );
 
-        _id_9AEC();
+        updateangle();
 
-        switch ( self._id_0C8D )
+        switch ( self.animsubstate )
         {
             case "idle_combat":
                 wait 0.2;
-                continue;
+                break;
             case "idle_noncombat":
                 if ( var_0 == "none" )
                 {
 
                 }
-                else if ( gettime() > self._id_9363 )
-                    _id_802C();
+                else if ( gettime() > self.timeofnextsound )
+                    settimeofnextsound();
 
                 wait 0.5;
-                continue;
+                break;
             default:
                 wait 1;
-                continue;
+                break;
         }
     }
 }
 
-_id_29AB()
+determinestate()
 {
-    if ( _id_847D() )
+    if ( shouldattackidle() )
         return "idle_combat";
     else
         return "idle_noncombat";
 }
 
-_id_3309( var_0 )
+enterstate( var_0 )
 {
-    _id_344B( self._id_0C8D );
-    self._id_0C8D = var_0;
-    _id_6DA8();
+    exitstate( self.animsubstate );
+    self.animsubstate = var_0;
+    playidleanim();
 }
 
-_id_344B( var_0 )
+exitstate( var_0 )
 {
-    if ( isdefined( self._id_6F77 ) )
+    if ( isdefined( self.prevturnrate ) )
     {
-        self _meth_839A( self._id_6F77 );
-        self._id_6F77 = undefined;
+        self _meth_839A( self.prevturnrate );
+        self.prevturnrate = undefined;
     }
 }
 
-_id_6DA8()
+playidleanim()
 {
-    if ( self._id_0C8D == "idle_combat" )
+    if ( self.animsubstate == "idle_combat" )
         self _meth_83D2( "attack_idle" );
     else
         self _meth_83D2( "casual_idle" );
 }
 
-_id_9AEC()
+updateangle()
 {
     var_0 = undefined;
 
-    if ( isdefined( self._id_0143 ) && distancesquared( self._id_0143.origin, self.origin ) < 1048576 )
-        var_0 = self._id_0143;
+    if ( isdefined( self.enemy ) && distancesquared( self.enemy.origin, self.origin ) < 1048576 )
+        var_0 = self.enemy;
     else if ( isdefined( self.owner ) && distancesquared( self.owner.origin, self.origin ) > 576 )
         var_0 = self.owner;
 
@@ -107,18 +107,18 @@ _id_9AEC()
         var_2 = vectortoangles( var_1 );
 
         if ( abs( angleclamp180( var_2[1] - self.angles[1] ) ) > 1 )
-            _id_9934( var_2[1] );
+            turntoangle( var_2[1] );
     }
 }
 
-_id_847D()
+shouldattackidle()
 {
-    return isdefined( self._id_0143 ) && maps\mp\_utility::isreallyalive( self._id_0143 ) && distancesquared( self.origin, self._id_0143.origin ) < 1000000;
+    return isdefined( self.enemy ) && maps\mp\_utility::isreallyalive( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) < 1000000;
 }
 
 _id_413B( var_0 )
 {
-    if ( _id_847D() )
+    if ( shouldattackidle() )
     {
         if ( var_0 < -135 || var_0 > 135 )
             return "attack_turn_180";
@@ -135,7 +135,7 @@ _id_413B( var_0 )
         return "casual_turn_left_90";
 }
 
-_id_9934( var_0 )
+turntoangle( var_0 )
 {
     var_1 = self.angles[1];
     var_2 = angleclamp180( var_0 - var_1 );
@@ -145,19 +145,19 @@ _id_9934( var_0 )
 
     if ( -10 < var_2 && var_2 < 10 )
     {
-        _id_7605( var_0, 2 );
+        rotatetoangle( var_0, 2 );
         return;
     }
 
     var_3 = _id_413B( var_2 );
     var_4 = self _meth_83D3( var_3, 0 );
     var_5 = getanimlength( var_4 );
-    var_6 = distance2dsquared( var_4 );
+    var_6 = _func_221( var_4 );
     self _meth_8397( "anim angle delta" );
 
     if ( animhasnotetrack( var_4, "turn_begin" ) && animhasnotetrack( var_4, "turn_end" ) )
     {
-        maps\mp\agents\_scriptedagents::_id_6A27( var_3, 0, "turn_in_place" );
+        maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_3, 0, "turn_in_place" );
         var_7 = getnotetracktimes( var_4, "turn_begin" );
         var_8 = getnotetracktimes( var_4, "turn_end" );
         var_9 = ( var_8[0] - var_7[0] ) * var_5;
@@ -165,32 +165,32 @@ _id_9934( var_0 )
         var_11 = abs( var_10 ) / var_9 / 20;
         var_11 = var_11 * 3.14159 / 180;
         var_12 = ( 0, angleclamp180( self.angles[1] + var_10 ), 0 );
-        self._id_6F77 = self _meth_839B();
+        self.prevturnrate = self _meth_839B();
         self _meth_839A( var_11 );
         self _meth_8396( "face angle abs", var_12 );
-        maps\mp\agents\_scriptedagents::_id_A0F7( "turn_in_place", "turn_end" );
-        self _meth_839A( self._id_6F77 );
-        self._id_6F77 = undefined;
-        maps\mp\agents\_scriptedagents::_id_A0F7( "turn_in_place", "end" );
+        maps\mp\agents\_scriptedagents::waituntilnotetrack( "turn_in_place", "turn_end" );
+        self _meth_839A( self.prevturnrate );
+        self.prevturnrate = undefined;
+        maps\mp\agents\_scriptedagents::waituntilnotetrack( "turn_in_place", "end" );
     }
     else
     {
-        self._id_6F77 = self _meth_839B();
+        self.prevturnrate = self _meth_839B();
         var_11 = abs( angleclamp180( var_2 - var_6[1] ) ) / var_5 / 20;
         var_11 = var_11 * 3.14159 / 180;
         self _meth_839A( var_11 );
         var_12 = ( 0, angleclamp180( var_0 - var_6[1] ), 0 );
         self _meth_8396( "face angle abs", var_12 );
-        maps\mp\agents\_scriptedagents::_id_6A27( var_3, 0, "turn_in_place" );
-        self _meth_839A( self._id_6F77 );
-        self._id_6F77 = undefined;
+        maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_3, 0, "turn_in_place" );
+        self _meth_839A( self.prevturnrate );
+        self.prevturnrate = undefined;
     }
 
     self _meth_8397( "anim deltas" );
-    _id_6DA8();
+    playidleanim();
 }
 
-_id_7605( var_0, var_1 )
+rotatetoangle( var_0, var_1 )
 {
     if ( abs( angleclamp180( var_0 - self.angles[1] ) ) <= var_1 )
         return;
@@ -202,16 +202,16 @@ _id_7605( var_0, var_1 )
         wait 0.1;
 }
 
-_id_802C()
+settimeofnextsound()
 {
-    self._id_9363 = gettime() + 8000 + randomint( 5000 );
+    self.timeofnextsound = gettime() + 8000 + randomint( 5000 );
 }
 
-_id_2CE2( var_0 )
+dohitreaction( var_0 )
 {
-    self._id_14B3 = 1;
-    self._id_03FC = 1;
-    self._id_1436 = 1;
+    self.blockgoalpos = 1;
+    self.statelocked = 1;
+    self.bidlehitreaction = 1;
     var_1 = angleclamp180( var_0 - self.angles[1] );
 
     if ( var_1 > 0 )
@@ -222,29 +222,29 @@ _id_2CE2( var_0 )
     self notify( "cancelidleloop" );
     self _meth_8397( "anim deltas" );
     self _meth_8396( "face angle abs", self.angles );
-    maps\mp\agents\_scriptedagents::_id_6A27( "stand_pain", var_2, "stand_pain" );
-    self._id_14B3 = 0;
-    self._id_03FC = 0;
-    self._id_1436 = 0;
+    maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( "stand_pain", var_2, "stand_pain" );
+    self.blockgoalpos = 0;
+    self.statelocked = 0;
+    self.bidlehitreaction = 0;
     self _meth_8396( "face angle abs", self.angles );
-    self._id_0C8D = "none";
-    thread _id_9B6E();
+    self.animsubstate = "none";
+    thread updatestate();
 }
 
-_id_6461( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
+ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
-    if ( self._id_1436 )
+    if ( self.bidlehitreaction )
         return;
 
     var_10 = vectortoangles( var_7 );
     var_11 = var_10[1] - 180;
-    _id_2CE2( var_11 );
+    dohitreaction( var_11 );
 }
 
-_id_64AA( var_0, var_1, var_2, var_3, var_4, var_5 )
+onflashbanged( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    if ( self._id_1436 )
+    if ( self.bidlehitreaction )
         return;
 
-    _id_2CE2( self.angles[1] + 180 );
+    dohitreaction( self.angles[1] + 180 );
 }

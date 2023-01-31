@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -58,12 +58,12 @@ onplayerconnect()
         var_0 thread monitorminetriggering();
         var_0 thread monitorboostjumpdistance();
         var_0 thread monitorplayermatchchallenges();
-        var_0 notifyonplayercommand( "hold_breath", "+breath_sprint" );
-        var_0 notifyonplayercommand( "hold_breath", "+melee_breath" );
-        var_0 notifyonplayercommand( "release_breath", "-breath_sprint" );
-        var_0 notifyonplayercommand( "release_breath", "-melee_breath" );
+        var_0 _meth_82DD( "hold_breath", "+breath_sprint" );
+        var_0 _meth_82DD( "hold_breath", "+melee_breath" );
+        var_0 _meth_82DD( "release_breath", "-breath_sprint" );
+        var_0 _meth_82DD( "release_breath", "-melee_breath" );
         var_0 thread monitorholdbreath();
-        var_0 notifyonplayercommand( "jumped", "+goStand" );
+        var_0 _meth_82DD( "jumped", "+goStand" );
         var_0 thread monitormantle();
     }
 }
@@ -97,7 +97,7 @@ monitorscavengerpickup()
     {
         self waittill( "scavenger_pickup" );
 
-        if ( self isitemunlocked( "specialty_scavenger" ) && maps\mp\_utility::_hasperk( "specialty_scavenger" ) && !maps\mp\_utility::isjuggernaut() )
+        if ( self _meth_8221( "specialty_scavenger" ) && maps\mp\_utility::_hasperk( "specialty_scavenger" ) && !maps\mp\_utility::isjuggernaut() )
         {
             processchallenge( "ch_scavenger_pro" );
             self.hasscavengedammothislife = 1;
@@ -115,7 +115,7 @@ monitorstreakreward()
     {
         self waittill( "received_earned_killstreak" );
 
-        if ( self isitemunlocked( "specialty_hardline" ) && maps\mp\_utility::_hasperk( "specialty_hardline" ) )
+        if ( self _meth_8221( "specialty_hardline" ) && maps\mp\_utility::_hasperk( "specialty_hardline" ) )
             processchallenge( "ch_hardline_pro" );
 
         wait 0.05;
@@ -133,7 +133,7 @@ monitorblastshieldsurvival()
         if ( isdefined( var_0 ) && isplayer( var_0 ) && self == var_0 )
             continue;
 
-        if ( self isitemunlocked( "_specialty_blastshield" ) && maps\mp\_utility::_hasperk( "_specialty_blastshield" ) )
+        if ( self _meth_8221( "_specialty_blastshield" ) && maps\mp\_utility::_hasperk( "_specialty_blastshield" ) )
             processchallenge( "ch_blastshield_pro" );
 
         waitframe();
@@ -298,9 +298,9 @@ ch_vehicle_kills( var_0 )
                 var_1 processchallenge( "ch_absentee" );
 
             break;
-        case "ac130_25mm_mp":
-        case "ac130_105mm_mp":
         case "ac130_40mm_mp":
+        case "ac130_105mm_mp":
+        case "ac130_25mm_mp":
             var_1 processchallenge( "ch_spectre" );
 
             if ( isdefined( var_1.finalkill ) )
@@ -358,7 +358,7 @@ ch_vehicle_killed( var_0 )
     if ( isdefined( var_0.vehicle ) && isdefined( var_0.vehicle.vehicletype ) && var_0.vehicle.vehicletype == "drone_recon" && issubstr( var_2, "exoknife" ) )
         var_1 processchallenge( "ch_precision_knife" );
 
-    if ( var_1 maps\mp\_utility::_hasperk( "specialty_class_blindeye" ) && ( !isdefined( var_0.vehicle._id_9D6D ) || var_0.vehicle._id_9D6D != "vehicle_tracking_drone_mp" ) )
+    if ( var_1 maps\mp\_utility::_hasperk( "specialty_class_blindeye" ) && ( !isdefined( var_0.vehicle.vehicleinfo ) || var_0.vehicle.vehicleinfo != "vehicle_tracking_drone_mp" ) )
         var_1 processchallenge( "ch_perk_blindeye" );
 }
 
@@ -467,7 +467,7 @@ processchallengedaily( var_0, var_1, var_2 )
     if ( getdvarint( "dailychallenge_killswitch", 0 ) == 0 && getdvarint( "dailychallenge_killswitch2", 0 ) == 0 )
         return;
 
-    var_3 = self getplayerdata( "dailyChallengeId", 0 );
+    var_3 = self _meth_8222( "dailyChallengeId", 0 );
     var_4 = getdvarint( "scr_current_playlist", 0 );
     var_5 = getdvarint( "scr_game_division", 0 );
     var_6 = 0;
@@ -1242,58 +1242,58 @@ ch_kills( var_0 )
     {
         switch ( var_69 )
         {
-            case "opticsacog2":
             case "opticsacog2ar":
+            case "opticsacog2":
                 if ( var_18 )
                     var_1 processchallenge( "ch_attach_kill_opticsacog2" );
 
-                continue;
-            case "ironsights":
-            case "opticsreddot":
-            case "opticseotech":
-            case "variablereddot":
+                break;
             case "opticstargetenhancer":
+            case "variablereddot":
+            case "opticseotech":
+            case "opticsreddot":
+            case "ironsights":
                 if ( var_18 )
                     var_1 processchallenge( "ch_attach_kill_" + var_69 );
 
-                continue;
-            case "akimbo":
-            case "xmags":
-            case "dualmag":
-            case "parabolicmicrophone":
-            case "foregrip":
-            case "firerate":
-            case "longrange":
-            case "quickdraw":
-            case "stock":
-            case "lasersight":
-            case "trackrounds":
+                break;
             case "heatsink":
+            case "trackrounds":
+            case "lasersight":
+            case "stock":
+            case "quickdraw":
+            case "longrange":
+            case "firerate":
+            case "foregrip":
+            case "parabolicmicrophone":
+            case "dualmag":
+            case "xmags":
+            case "akimbo":
                 var_1 processchallenge( "ch_attach_kill_" + var_69 );
-                continue;
-            case "opticsthermal":
+                break;
             case "opticsthermalar":
+            case "opticsthermal":
                 var_1 processchallenge( "ch_attach_kill_opticsthermal" );
-                continue;
-            case "silencer01":
-            case "silencerpistol":
+                break;
             case "silencersniper":
+            case "silencerpistol":
+            case "silencer01":
                 var_1 processchallenge( "ch_attach_kill_silencer01" );
-                continue;
-            case "stabilizer":
-            case "morsstabilizer":
-            case "gm6stabilizer":
-            case "m990stabilizer":
+                break;
             case "thorstabilizer":
+            case "m990stabilizer":
+            case "gm6stabilizer":
+            case "morsstabilizer":
+            case "stabilizer":
                 var_1 processchallenge( "ch_attach_kill_stabilizer" );
-                continue;
-            case "scopevz":
-            case "morsscopevz":
-            case "gm6scopevz":
-            case "thorscopevz":
+                break;
             case "m990scopevz":
+            case "thorscopevz":
+            case "gm6scopevz":
+            case "morsscopevz":
+            case "scopevz":
                 var_1 processchallenge( "ch_attach_kill_scopevz" );
-                continue;
+                break;
         }
     }
 
@@ -1450,19 +1450,19 @@ ch_kills( var_0 )
     {
         switch ( var_33 )
         {
-            case "weapon_smg":
-            case "weapon_assault":
-            case "weapon_sniper":
-            case "weapon_shotgun":
-            case "weapon_heavy":
-            case "weapon_special":
             case "weapon_pistol":
+            case "weapon_special":
+            case "weapon_heavy":
+            case "weapon_shotgun":
+            case "weapon_sniper":
+            case "weapon_assault":
+            case "weapon_smg":
                 switch ( var_31 )
                 {
-                    case "iw5_dlcgun2":
-                    case "iw5_dlcgun1":
-                    case "iw5_dlcgun3":
                     case "iw5_dlcgun4":
+                    case "iw5_dlcgun3":
+                    case "iw5_dlcgun1":
+                    case "iw5_dlcgun2":
                         var_1 processchallenge( "ch_attach_unlock_type1_" + var_32 );
                         break;
                     case "iw5_dlcgun6":
@@ -1507,10 +1507,10 @@ ch_kills( var_0 )
                 {
                     switch ( var_31 )
                     {
-                        case "iw5_dlcgun2":
-                        case "iw5_dlcgun1":
-                        case "iw5_dlcgun3":
                         case "iw5_dlcgun4":
+                        case "iw5_dlcgun3":
+                        case "iw5_dlcgun1":
+                        case "iw5_dlcgun2":
                             var_1 processchallenge( "ch_attach_unlock_type3_" + var_32 );
                             break;
                         case "iw5_dlcgun6":
@@ -1555,10 +1555,10 @@ ch_kills( var_0 )
                 {
                     switch ( var_31 )
                     {
-                        case "iw5_dlcgun2":
-                        case "iw5_dlcgun1":
-                        case "iw5_dlcgun3":
                         case "iw5_dlcgun4":
+                        case "iw5_dlcgun3":
+                        case "iw5_dlcgun1":
+                        case "iw5_dlcgun2":
                             var_1 processchallenge( "ch_attach_unlock_type2_" + var_32 );
                             break;
                         case "iw5_dlcgun6":
@@ -1765,7 +1765,7 @@ ch_kills( var_0 )
                 if ( isdefined( level.challengeinfo["ch_attach_kill_" + var_69] ) )
                     var_1 processchallenge( "ch_attach_kill_" + var_69 );
 
-                continue;
+                break;
         }
     }
 
@@ -1780,8 +1780,8 @@ ch_kills( var_0 )
             {
                 switch ( var_31 )
                 {
-                    case "iw5_dlcgun2":
                     case "iw5_dlcgun1":
+                    case "iw5_dlcgun2":
                         var_1 processchallenge( "ch_tier1_1_" + var_31 );
                         break;
                     case "iw5_dlcgun6":
@@ -1815,8 +1815,8 @@ ch_kills( var_0 )
             {
                 switch ( var_31 )
                 {
-                    case "iw5_dlcgun2":
                     case "iw5_dlcgun4":
+                    case "iw5_dlcgun2":
                         var_1 processchallenge( "ch_tier1_2_" + var_31 );
                         break;
                     case "iw5_dlcgun8loot1":
@@ -1848,16 +1848,16 @@ ch_kills( var_0 )
         {
             switch ( var_33 )
             {
-                case "weapon_smg":
-                case "weapon_assault":
-                case "weapon_sniper":
-                case "weapon_shotgun":
-                case "weapon_special":
                 case "weapon_pistol":
+                case "weapon_special":
+                case "weapon_shotgun":
+                case "weapon_sniper":
+                case "weapon_assault":
+                case "weapon_smg":
                     switch ( var_31 )
                     {
-                        case "iw5_dlcgun1":
                         case "iw5_dlcgun3":
+                        case "iw5_dlcgun1":
                             var_1 processchallenge( "ch_tier1_2_" + var_31 );
                             break;
                         case "iw5_dlcgun6":
@@ -1943,8 +1943,8 @@ ch_kills( var_0 )
         {
             switch ( var_31 )
             {
-                case "iw5_dlcgun2":
                 case "iw5_dlcgun1":
+                case "iw5_dlcgun2":
                     var_1 processchallenge( "ch_tier2_2_" + var_31 );
                     break;
                 case "iw5_dlcgun6":
@@ -1975,19 +1975,19 @@ ch_kills( var_0 )
         {
             switch ( var_33 )
             {
-                case "weapon_smg":
-                case "weapon_assault":
-                case "weapon_sniper":
-                case "weapon_shotgun":
-                case "weapon_heavy":
-                case "weapon_special":
                 case "weapon_pistol":
+                case "weapon_special":
+                case "weapon_heavy":
+                case "weapon_shotgun":
+                case "weapon_sniper":
+                case "weapon_assault":
+                case "weapon_smg":
                     switch ( var_31 )
                     {
-                        case "iw5_dlcgun2":
-                        case "iw5_dlcgun1":
-                        case "iw5_dlcgun3":
                         case "iw5_dlcgun4":
+                        case "iw5_dlcgun3":
+                        case "iw5_dlcgun1":
+                        case "iw5_dlcgun2":
                             var_1 processchallenge( "ch_tier2_4_" + var_31 );
                             break;
                         case "iw5_dlcgun6":
@@ -2050,19 +2050,19 @@ ch_kills( var_0 )
     {
         switch ( var_33 )
         {
-            case "weapon_smg":
-            case "weapon_assault":
-            case "weapon_sniper":
-            case "weapon_shotgun":
-            case "weapon_heavy":
-            case "weapon_special":
             case "weapon_pistol":
+            case "weapon_special":
+            case "weapon_heavy":
+            case "weapon_shotgun":
+            case "weapon_sniper":
+            case "weapon_assault":
+            case "weapon_smg":
                 switch ( var_31 )
                 {
-                    case "iw5_dlcgun2":
-                    case "iw5_dlcgun1":
-                    case "iw5_dlcgun3":
                     case "iw5_dlcgun4":
+                    case "iw5_dlcgun3":
+                    case "iw5_dlcgun1":
+                    case "iw5_dlcgun2":
                         var_1 processchallenge( "ch_tier2_5_" + var_31 );
                         break;
                     case "iw5_dlcgun6":
@@ -2361,12 +2361,12 @@ ch_roundwin( var_0 )
             case "sd":
                 var_1 processchallenge( "ch_victor_sd" );
                 break;
-            case "hp":
-            case "dm":
-            case "ctf":
-            case "dom":
-            case "koth":
             case "hc":
+            case "koth":
+            case "dom":
+            case "ctf":
+            case "dm":
+            case "hp":
                 break;
             default:
                 break;
@@ -2394,13 +2394,13 @@ playerdamaged( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6.smeansofdeath = var_3;
     var_6.sweapon = var_4;
     var_6.shitloc = var_5;
-    var_6.victimonground = var_6.victim isonground();
+    var_6.victimonground = var_6.victim _meth_8341();
 
     if ( isplayer( var_1 ) )
     {
         var_6.attackerinlaststand = isdefined( var_6.attacker.laststand );
-        var_6.attackeronground = var_6.attacker isonground();
-        var_6.attackerstance = var_6.attacker getstance();
+        var_6.attackeronground = var_6.attacker _meth_8341();
+        var_6.attackerstance = var_6.attacker _meth_817C();
     }
     else
     {
@@ -2440,13 +2440,13 @@ playerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     var_8.shitloc = var_6;
     var_8.time = gettime();
     var_8.modifiers = var_7;
-    var_8.victimonground = var_8.victim isonground();
+    var_8.victimonground = var_8.victim _meth_8341();
 
     if ( isplayer( var_1 ) )
     {
         var_8.attackerinlaststand = isdefined( var_8.attacker.laststand );
-        var_8.attackeronground = var_8.attacker isonground();
-        var_8.attackerstance = var_8.attacker getstance();
+        var_8.attackeronground = var_8.attacker _meth_8341();
+        var_8.attackerstance = var_8.attacker _meth_817C();
     }
     else
     {
@@ -2460,7 +2460,7 @@ playerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( isdefined( var_8.einflictor ) && isdefined( var_8.einflictor.firedads ) )
         var_9 = var_8.einflictor.firedads;
     else if ( isdefined( var_1 ) && isplayer( var_1 ) )
-        var_9 = var_1 playerads();
+        var_9 = var_1 _meth_8340();
 
     var_8.was_ads = 0;
 
@@ -2599,7 +2599,7 @@ monitorsprintdistance()
         thread monitorsprinttime();
         monitorsinglesprintdistance();
 
-        if ( self isitemunlocked( "specialty_longersprint" ) && maps\mp\_utility::_hasperk( "specialty_longersprint" ) )
+        if ( self _meth_8221( "specialty_longersprint" ) && maps\mp\_utility::_hasperk( "specialty_longersprint" ) )
             processchallenge( "ch_longersprint_pro", int( self.sprintdistthissprint / 12 ) );
     }
 }
@@ -2644,11 +2644,11 @@ monitorfalldistance()
             continue;
         }
 
-        if ( !self isonground() )
+        if ( !self _meth_8341() )
         {
             var_0 = self.origin[2];
 
-            while ( !self isonground() && isalive( self ) )
+            while ( !self _meth_8341() && isalive( self ) )
             {
                 if ( self.origin[2] > var_0 )
                     var_0 = self.origin[2];
@@ -2687,12 +2687,12 @@ monitorboostjumpdistance()
 
         self waittill( "exo_boost" );
 
-        if ( !self isonground() )
+        if ( !self _meth_8341() )
         {
             var_0 = self.origin[2];
             var_1 = self.origin[2];
 
-            while ( !self isonground() && isalive( self ) )
+            while ( !self _meth_8341() && isalive( self ) )
             {
                 if ( self.origin[2] > var_0 )
                     var_0 = self.origin[2];
@@ -2850,7 +2850,7 @@ monitormisccallback( var_0 )
         case "destroyed_explosive":
             processchallenge( "ch_backdraft" );
 
-            if ( self isitemunlocked( "specialty_detectexplosive" ) && maps\mp\_utility::_hasperk( "specialty_detectexplosive" ) )
+            if ( self _meth_8221( "specialty_detectexplosive" ) && maps\mp\_utility::_hasperk( "specialty_detectexplosive" ) )
                 processchallenge( "ch_detectexplosives_pro" );
 
             break;
@@ -2973,7 +2973,7 @@ processchallenge( var_0, var_1, var_2 )
         {
             thread giverankxpafterwait( var_0, var_4 );
             var_10 = _func_2C7( var_0, var_4 );
-            self challengenotification( var_10 );
+            self _meth_8443( var_10 );
             var_11 = common_scripts\utility::tostring( var_10 );
             var_12 = int( getsubstr( var_11, 0, var_11.size - 2 ) );
 
@@ -3098,7 +3098,7 @@ updatechallenges()
     if ( !mayprocesschallenges() )
         return;
 
-    if ( !self isitemunlocked( "challenges" ) )
+    if ( !self _meth_8221( "challenges" ) )
         return;
 
     var_0 = 0;
@@ -3390,7 +3390,7 @@ monitorkilledkillstreak()
     {
         self waittill( "destroyed_killstreak", var_0 );
 
-        if ( self isitemunlocked( "specialty_blindeye" ) && maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
+        if ( self _meth_8221( "specialty_blindeye" ) && maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
             processchallenge( "ch_blindeye_pro" );
 
         if ( isdefined( var_0 ) && var_0 == "stinger_mp" )
@@ -3445,19 +3445,19 @@ genericchallenge( var_0, var_1 )
 
 playerhasammo()
 {
-    var_0 = self getweaponslistprimaries();
+    var_0 = self _meth_830C();
 
     foreach ( var_2 in var_0 )
     {
-        if ( self getweaponammoclip( var_2 ) )
+        if ( self _meth_82F8( var_2 ) )
             return 1;
 
-        var_3 = weaponmaxammo( var_2 );
+        var_3 = _func_1E2( var_2 );
 
         if ( !isdefined( var_3 ) || var_3 == "none" )
             continue;
 
-        if ( self getweaponammoclip( var_3 ) )
+        if ( self _meth_82F8( var_3 ) )
             return 1;
     }
 
@@ -3471,7 +3471,7 @@ monitoradstime()
 
     for (;;)
     {
-        if ( self playerads() == 1 )
+        if ( self _meth_8340() == 1 )
             self.adstime += 0.05;
         else
             self.adstime = 0.0;
@@ -3489,7 +3489,7 @@ monitorpronetime()
 
     for (;;)
     {
-        var_1 = self getstance();
+        var_1 = self _meth_817C();
 
         if ( var_1 == "prone" && var_0 == 0 )
         {
@@ -3544,9 +3544,9 @@ monitormantle()
     for (;;)
     {
         self waittill( "jumped" );
-        var_0 = self getcurrentweapon();
+        var_0 = self _meth_8311();
         common_scripts\utility::waittill_notify_or_timeout( "weapon_change", 1 );
-        var_1 = self getcurrentweapon();
+        var_1 = self _meth_8311();
 
         if ( var_1 == "none" )
             self.mantling = 1;
@@ -3555,11 +3555,11 @@ monitormantle()
 
         if ( self.mantling )
         {
-            if ( self isitemunlocked( "specialty_fastmantle" ) && maps\mp\_utility::_hasperk( "specialty_fastmantle" ) )
+            if ( self _meth_8221( "specialty_fastmantle" ) && maps\mp\_utility::_hasperk( "specialty_fastmantle" ) )
                 processchallenge( "ch_fastmantle" );
 
             common_scripts\utility::waittill_notify_or_timeout( "weapon_change", 1 );
-            var_1 = self getcurrentweapon();
+            var_1 = self _meth_8311();
 
             if ( var_1 == var_0 )
                 self.mantling = 0;
@@ -3570,7 +3570,7 @@ monitormantle()
 monitorweaponswap()
 {
     self endon( "disconnect" );
-    var_0 = self getcurrentweapon();
+    var_0 = self _meth_8311();
 
     for (;;)
     {
@@ -3588,7 +3588,7 @@ monitorweaponswap()
         if ( maps\mp\_utility::isbombsiteweapon( var_1 ) )
             continue;
 
-        var_2 = objective_current( var_1 );
+        var_2 = _func_1DF( var_1 );
 
         if ( var_2 != "primary" )
             continue;
@@ -3654,10 +3654,10 @@ is_lethal_equipment( var_0 )
 
     switch ( var_0 )
     {
-        case "frag_grenade_mp":
-        case "semtex_mp":
-        case "exoknife_mp":
         case "explosive_drone_mp":
+        case "exoknife_mp":
+        case "semtex_mp":
+        case "frag_grenade_mp":
             return 1;
         default:
             return 0;

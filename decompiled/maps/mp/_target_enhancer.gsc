@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 target_enhancer_think()
 {
@@ -13,7 +13,7 @@ target_enhancer_think()
 
     for (;;)
     {
-        while ( self.has_target_enhancer && self playerads() < var_2 )
+        while ( self.has_target_enhancer && self _meth_8340() < var_2 )
             wait 0.05;
 
         if ( !self.has_target_enhancer )
@@ -22,13 +22,13 @@ target_enhancer_think()
             continue;
         }
 
-        if ( self isusingturret() )
+        if ( self _meth_8342() )
         {
             wait 0.05;
             continue;
         }
 
-        if ( isdefined( self._id_3089 ) && self._id_3089 )
+        if ( isdefined( self.empon ) && self.empon )
         {
             waitframe();
             continue;

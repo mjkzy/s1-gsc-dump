@@ -1,77 +1,104 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 main()
 {
-    _id_A77A::main();
-    _id_A6E9::main();
-    _id_A779::main();
+    maps\mp\mp_terrace_precache::main();
+    maps\createart\mp_terrace_art::main();
+    maps\mp\mp_terrace_fx::main();
     maps\mp\_load::main();
     maps\mp\mp_terrace_lighting::main();
     maps\mp\mp_terrace_aud::main();
-    maps\mp\_compass::_id_831E( "compass_map_mp_terrace" );
+    maps\mp\_compass::setupminimap( "compass_map_mp_terrace" );
     game["attackers"] = "allies";
     game["defenders"] = "axis";
-    level._id_0A9D = 0;
-    level thread _id_A75F::init();
-    level._id_088A = 400;
-    level._id_5985 = ::_id_9291;
-    level thread _id_4D6B();
-    level thread _id_4CB7();
-    level thread _id_4CB6();
-    level._id_6573 = ::_id_9292;
-    level._id_65AB = "mp_terrace_osp";
-    level._id_65A9 = "mp_terrace_osp";
-    level._id_2F3B = "mp_terrace_drone";
-    level._id_2F12 = "mp_terrace_drone";
-    level._id_A197 = "mp_terrace_warbird";
-    level._id_A18C = "mp_terrace_warbird";
+    level.allow_swimming = 0;
+    level thread maps\mp\_water::init();
+    level.aerial_pathnode_group_connect_dist = 400;
+    level.mapcustomkillstreakfunc = ::terracecustomkillstreakfunc;
+    level thread init_turbines();
+    level thread init_blimps();
+    level thread init_bells();
+    level.orbitalsupportoverridefunc = ::terracecustomospfunc;
+    level.ospvisionset = "mp_terrace_osp";
+    level.osplightset = "mp_terrace_osp";
+    level.dronevisionset = "mp_terrace_drone";
+    level.dronelightset = "mp_terrace_drone";
+    level.warbirdvisionset = "mp_terrace_warbird";
+    level.warbirdlightset = "mp_terrace_warbird";
+    terracefixup();
+    level thread terracedisconnectnodes();
 }
 
-_id_9292()
+terracefixup()
 {
-    level._id_6574._id_898B = 180;
-    level._id_6574._id_898A = 270;
+    var_0 = spawn( "trigger_radius", ( -1016, 3232, -416 ), 0, 300, 128 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1224, 3136, -488 ), 0, 300, 128 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1360, 3000, -536 ), 0, 300, 128 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1472, 2848, -800 ), 0, 300, 328 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1672, 2624, -824 ), 0, 300, 328 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1736, 2296, -696 ), 0, 300, 128 );
+    var_0.targetname = "out_of_bounds";
+    var_0 = spawn( "trigger_radius", ( -1944, 2032, -712 ), 0, 300, 128 );
+    var_0.targetname = "out_of_bounds";
+}
+
+terracedisconnectnodes()
+{
+    var_0 = getnodesinradiussorted( ( -899.981, 2463.71, -40 ), 256, 0 )[0];
+    var_1 = getnodesinradiussorted( ( -914.081, 2867.46, -288 ), 256, 0 )[0];
+    disconnectnodepair( var_0, var_1 );
+}
+
+terracecustomospfunc()
+{
+    level.orbitalsupportoverrides.spawnanglemin = 180;
+    level.orbitalsupportoverrides.spawnanglemax = 270;
 
     if ( level.currentgen )
     {
-        level._id_6574._id_0252 = 17.5;
-        level._id_6574._id_0380 = 17.5;
-        level._id_6574._id_04BD = -35;
-        level._id_6574._id_0089 = 60;
+        level.orbitalsupportoverrides.leftarc = 17.5;
+        level.orbitalsupportoverrides.rightarc = 17.5;
+        level.orbitalsupportoverrides.toparc = -35;
+        level.orbitalsupportoverrides.bottomarc = 60;
     }
 }
 
-_id_9291()
+terracecustomkillstreakfunc()
 {
-    level thread _id_A7DA::init();
+    level thread maps\mp\killstreaks\streak_mp_terrace::init();
 }
 
-_id_4D6B()
+init_turbines()
 {
     var_0 = getentarray( "turbine_blades", "targetname" );
-    common_scripts\utility::array_thread( var_0, ::_id_98EE );
+    common_scripts\utility::array_thread( var_0, ::turbine_spin );
 }
 
-_id_98EE()
+turbine_spin()
 {
     var_0 = 1800;
     var_1 = randomfloatrange( 30, 60 );
 
     for (;;)
     {
-        self rotatevelocity( ( 0, var_1, 0 ), var_0 );
+        self _meth_82BD( ( 0, var_1, 0 ), var_0 );
         wait(var_0);
     }
 }
 
-_id_4CB7()
+init_blimps()
 {
     var_0 = getentarray( "blimp", "targetname" );
-    common_scripts\utility::array_thread( var_0, ::_id_14A9 );
+    common_scripts\utility::array_thread( var_0, ::blimp_run );
 }
 
-_id_14A9()
+blimp_run()
 {
     var_0 = 600;
     var_1 = self;
@@ -83,22 +110,22 @@ _id_14A9()
         if ( !isdefined( var_1 ) )
             return;
 
-        self moveto( var_1.origin, var_0, var_0 * 0.1, var_0 * 0.1 );
+        self _meth_82AE( var_1.origin, var_0, var_0 * 0.1, var_0 * 0.1 );
         self _meth_82B5( var_1.angles, var_0, var_0 * 0.1, var_0 * 0.1 );
         wait(var_0);
     }
 }
 
-_id_4CB6()
+init_bells()
 {
     var_0 = getentarray( "bell_collision", "targetname" );
-    common_scripts\utility::array_thread( var_0, ::_id_13AC );
+    common_scripts\utility::array_thread( var_0, ::bell_run );
 }
 
-_id_13AC()
+bell_run()
 {
-    self setcandamage( 1 );
-    self ghost();
+    self _meth_82C0( 1 );
+    self _meth_8510();
 
     for (;;)
     {

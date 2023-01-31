@@ -1,5 +1,5 @@
 // S1 GSC SOURCE
-// Decompiled by https://github.com/xensik/gsc-tool
+// Dumped by https://github.com/xensik/gsc-tool
 
 init()
 {
@@ -75,13 +75,13 @@ donuke( var_0 )
 
     if ( !isdefined( level.nuke_clockobject ) )
     {
-        level.nuke_clockobject = spawn( "script_origin", ( 0.0, 0.0, 0.0 ) );
+        level.nuke_clockobject = spawn( "script_origin", ( 0, 0, 0 ) );
         level.nuke_clockobject hide();
     }
 
     if ( !isdefined( level.nuke_soundobject ) )
     {
-        level.nuke_soundobject = spawn( "script_origin", ( 0.0, 0.0, 1.0 ) );
+        level.nuke_soundobject = spawn( "script_origin", ( 0, 0, 1 ) );
         level.nuke_soundobject hide();
     }
 
@@ -130,7 +130,7 @@ nukeeffects()
         var_2 = vectornormalize( var_2 );
         var_3 = 300;
         var_4 = spawn( "script_model", var_1.origin + var_2 * var_3 );
-        var_4 setmodel( "tag_origin" );
+        var_4 _meth_80B1( "tag_origin" );
         var_4.angles = ( 0, var_1.angles[1] + 180, 90 );
         var_4 thread nukeeffect( var_1 );
     }
@@ -176,7 +176,7 @@ nukevision()
 
     foreach ( var_2 in level.players )
     {
-        var_2 setclienttriggervisionset( var_0, 0.5 );
+        var_2 _meth_847A( var_0, 0.5 );
         var_2 thread maps\mp\_flashgrenades::applyflash( 1.6, 0.35 );
     }
 
@@ -184,7 +184,7 @@ nukevision()
     wait 3.0;
 
     foreach ( var_2 in level.players )
-        var_2 setclienttriggervisionset( "", 10 );
+        var_2 _meth_847A( "", 10 );
 
     level.nukevisioninprogress = undefined;
 }
@@ -214,7 +214,7 @@ nukedeath()
             var_2 thread maps\mp\gametypes\_damage::finishplayerdamagewrapper( level.nukeinfo.player, level.nukeinfo.player, 999999, 0, "MOD_EXPLOSIVE", "nuke_mp", var_2.origin, var_2.origin, "none", 0, 0 );
 
             if ( isdefined( var_2.isjuggernaut ) && var_2.isjuggernaut == 1 )
-                var_2 dodamage( 1, var_2.origin, level.nukeinfo.player, level.nukeinfo.player, "MOD_EXPLOSIVE", "nuke_mp" );
+                var_2 _meth_8051( 1, var_2.origin, level.nukeinfo.player, level.nukeinfo.player, "MOD_EXPLOSIVE", "nuke_mp" );
 
             maps\mp\_utility::delaythread( var_0 + 1, ::bodygasfx, var_2.body );
             var_0 += 0.05;
@@ -322,9 +322,9 @@ onplayerspawned()
 
         if ( isdefined( level.nukevisioninprogress ) )
         {
-            self setclienttriggervisionset( "dna_bomb" );
+            self _meth_847A( "dna_bomb" );
             waitframe();
-            self setclienttriggervisionset( "", 10 );
+            self _meth_847A( "", 10 );
         }
     }
 }
