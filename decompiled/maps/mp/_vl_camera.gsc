@@ -2304,12 +2304,12 @@ monitor_member_class_changes()
                 var_32[level.costumecat2idx["shirt"]] = var_1.shirt;
                 var_32[level.costumecat2idx["head"]] = var_1.head;
                 var_32[level.costumecat2idx["pants"]] = var_1.pants;
-                var_32[level.costumecat2idx["eyewear"]] = var_1.eyeware;
+                var_32[level.costumecat2idx["eyewear"]] = var_1.eyewear;
                 var_32[level.costumecat2idx["hat"]] = var_1.hat;
                 var_32[level.costumecat2idx["kneepads"]] = var_1.kneepads;
                 var_32[level.costumecat2idx["gloves"]] = var_1.gloves;
                 var_32[level.costumecat2idx["shoes"]] = var_1.shoes;
-                var_32[level.costumecat2idx["gear"]] = var_1.__pad1B6;
+                var_32[level.costumecat2idx["gear"]] = var_1.gear;
                 var_32[level.costumecat2idx["exo"]] = var_1.exclusive;
                 var_33 = [];
 
@@ -2470,9 +2470,9 @@ override_member_loadout_for_practice_round( var_0 )
     var_4.shirt = var_5[level.costumecat2idx["shirt"]];
     var_4.head = var_5[level.costumecat2idx["head"]];
     var_4.pants = var_5[level.costumecat2idx["pants"]];
-    var_4.eyeware = var_5[level.costumecat2idx["eyewear"]];
+    var_4.eyewear = var_5[level.costumecat2idx["eyewear"]];
     var_4.hat = var_5[level.costumecat2idx["hat"]];
-    var_4.__pad1B6 = var_5[level.costumecat2idx["gear"]];
+    var_4.gear = var_5[level.costumecat2idx["gear"]];
     var_4.kneepads = var_5[level.costumecat2idx["kneepads"]];
     var_4.gloves = var_5[level.costumecat2idx["gloves"]];
     var_4.shoes = var_5[level.costumecat2idx["shoes"]];
