@@ -1,0 +1,70 @@
+// S1 GSC SOURCE
+// Dumped by https://github.com/xensik/gsc-tool
+
+main()
+{
+    var_0 = maps\_utility::create_vision_set_fog( "detroit" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_intro" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_camp" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_garage" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_hospital" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_school" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    var_0 = maps\_utility::create_vision_set_fog( "detroit_sewer" );
+    var_0.startdist = 17346.3;
+    var_0.halfwaydist = 32487.6;
+    var_0.red = 0.583682;
+    var_0.green = 0.52939;
+    var_0.blue = 0.302793;
+    var_0.maxopacity = 1;
+    var_0.transitiontime = 0;
+    var_0.sunfogenabled = 0;
+    maps\_utility::vision_set_fog_changes( "detroit_intro", 0 );
+}
