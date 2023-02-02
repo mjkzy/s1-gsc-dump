@@ -55,7 +55,7 @@ main()
             break;
     }
 
-    _id_A400::main();
+    character\character_atlas_smg_lowlod::main();
 }
 
 spawner()
@@ -65,7 +65,7 @@ spawner()
 
 precache()
 {
-    _id_A400::precache();
+    character\character_atlas_smg_lowlod::precache();
     precacheitem( "iw5_bal27_sp" );
     precacheitem( "iw5_bal27_sp_opticsacog2" );
     precacheitem( "iw5_bal27_sp_opticsreddot" );

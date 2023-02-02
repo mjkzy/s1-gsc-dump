@@ -208,7 +208,7 @@ shouldfacenodedir( var_0 )
     return var_0.type == "Guard" || var_0.type == "Exposed" || issubstr( var_0.type, "Cover " );
 }
 
-_id_413A( var_0 )
+getturnanim( var_0 )
 {
     var_1 = getdefaultidlestate();
 
@@ -263,7 +263,7 @@ turntoangle( var_0, var_1 )
     }
 
     stopidlesound();
-    var_4 = _id_413A( var_3 );
+    var_4 = getturnanim( var_3 );
     var_5 = getanimlength( var_4 );
     var_6 = getangledelta( var_4 );
     var_7 = 0.2;

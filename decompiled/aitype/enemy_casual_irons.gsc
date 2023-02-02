@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "none";
-    _id_A401::main();
+    character\character_casual_irons::main();
 }
 
 spawner()
@@ -32,5 +32,5 @@ spawner()
 
 precache()
 {
-    _id_A401::precache();
+    character\character_casual_irons::precache();
 }

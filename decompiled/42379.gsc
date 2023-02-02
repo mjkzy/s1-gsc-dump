@@ -21,7 +21,7 @@ system_message_loop()
             continue;
 
         system_event_change( "spotted" );
-        thread _id_908F();
+        thread system_state_spotted();
         common_scripts\utility::flag_waitopen( var_0 );
 
         if ( !common_scripts\utility::flag( "_stealth_enabled" ) )
@@ -44,7 +44,7 @@ system_event_change( var_0 )
     }
 }
 
-_id_908F()
+system_state_spotted()
 {
     while ( common_scripts\utility::flag( "_stealth_spotted" ) )
     {
@@ -75,13 +75,13 @@ _id_908F()
 
 _id_9090( var_0 )
 {
-    var_1 = _id_908E( var_0 );
+    var_1 = system_state_check_no_enemy( var_0 );
 
     if ( !var_1 )
         return;
 
     wait 1;
-    var_1 = _id_908E( var_0 );
+    var_1 = system_state_check_no_enemy( var_0 );
 
     if ( !var_1 )
         return;
@@ -89,7 +89,7 @@ _id_9090( var_0 )
     maps\_stealth_shared_utilities::group_flag_clear( "_stealth_spotted", var_0 );
 }
 
-_id_908E( var_0 )
+system_state_check_no_enemy( var_0 )
 {
     var_1 = maps\_stealth_shared_utilities::group_get_ai_in_group( var_0 );
 
@@ -297,10 +297,10 @@ system_default_event_distances()
     var_0["ai_eventDistGunShotTeam"]["hidden"] = 750;
     var_0["ai_eventDistNewEnemy"]["spotted"] = 750;
     var_0["ai_eventDistNewEnemy"]["hidden"] = 750;
-    _id_908D( var_0 );
+    system_set_event_distances( var_0 );
 }
 
-_id_908D( var_0 )
+system_set_event_distances( var_0 )
 {
     foreach ( var_6, var_2 in var_0 )
     {

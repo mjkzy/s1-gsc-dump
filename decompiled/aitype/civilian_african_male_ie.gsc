@@ -26,13 +26,13 @@ main()
     switch ( codescripts\character::get_random_character( 3 ) )
     {
         case 0:
-            _id_A410::main();
+            character\character_civ_african_male_b::main();
             break;
         case 1:
-            _id_A411::main();
+            character\character_civ_african_male_c::main();
             break;
         case 2:
-            _id_A412::main();
+            character\character_civ_african_male_d::main();
             break;
     }
 }
@@ -44,7 +44,7 @@ spawner()
 
 precache()
 {
-    _id_A410::precache();
-    _id_A411::precache();
-    _id_A412::precache();
+    character\character_civ_african_male_b::precache();
+    character\character_civ_african_male_c::precache();
+    character\character_civ_african_male_d::precache();
 }

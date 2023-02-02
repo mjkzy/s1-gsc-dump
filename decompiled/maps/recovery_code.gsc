@@ -2237,7 +2237,7 @@ make_camera_look_at_talker()
     while ( var_1 > 0 )
     {
         level.player _meth_804F();
-        level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r * var_1, level.jeeprideplayerlinktag.l * var_1, level.jeeprideplayerlinktag._id_9091 * var_1, level.jeeprideplayerlinktag.b * var_1 );
+        level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r * var_1, level.jeeprideplayerlinktag.l * var_1, level.jeeprideplayerlinktag.t * var_1, level.jeeprideplayerlinktag.b * var_1 );
         var_1 -= var_0;
         waitframe();
     }
@@ -2245,7 +2245,7 @@ make_camera_look_at_talker()
     var_1 = 1;
     level.jeeprideplayerlinktag _meth_804D( level.player_rig, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.player _meth_804F();
-    level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r * var_1, level.jeeprideplayerlinktag.l * var_1, level.jeeprideplayerlinktag._id_9091 * var_1, level.jeeprideplayerlinktag.b * var_1 );
+    level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r * var_1, level.jeeprideplayerlinktag.l * var_1, level.jeeprideplayerlinktag.t * var_1, level.jeeprideplayerlinktag.b * var_1 );
 }
 
 #using_animtree("vehicles");
@@ -2352,9 +2352,9 @@ tour_ride_player()
     level.jeeprideplayerlinktag _meth_804D( var_0, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.jeeprideplayerlinktag.r = 60;
     level.jeeprideplayerlinktag.l = 60;
-    level.jeeprideplayerlinktag._id_9091 = 30;
+    level.jeeprideplayerlinktag.t = 30;
     level.jeeprideplayerlinktag.b = 15;
-    level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r, level.jeeprideplayerlinktag.l, level.jeeprideplayerlinktag._id_9091, level.jeeprideplayerlinktag.b );
+    level.player _meth_807D( level.jeeprideplayerlinktag, "tag_origin", 1, level.jeeprideplayerlinktag.r, level.jeeprideplayerlinktag.l, level.jeeprideplayerlinktag.t, level.jeeprideplayerlinktag.b );
     var_0 _meth_804D( level.cart, "tag_body" );
     level.player _meth_80FE( 0.6, 0.4 );
     level.cart thread maps\_anim::anim_loop_solo( var_0, "rec_tour_ride_a_pt1", undefined, "tag_body" );
@@ -4775,7 +4775,7 @@ tour_shooting_range_use_triggers()
 tour_grenade_range_drone_spawn_with_spawner( var_0 )
 {
     var_1 = var_0 maps\_vehicle::spawn_vehicle_and_gopath();
-    level.score_keeper._id_59F3++;
+    level.score_keeper.max++;
     var_1 thread maps\recovery_utility::score_manager_detect_enemy_death();
     var_1 thread tour_grenade_range_drone_lifetime();
     return var_1;

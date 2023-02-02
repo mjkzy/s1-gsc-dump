@@ -37,7 +37,7 @@ main()
             break;
     }
 
-    _id_A3FA::main();
+    character\character_atlas_elete::main();
 }
 
 spawner()
@@ -47,7 +47,7 @@ spawner()
 
 precache()
 {
-    _id_A3FA::precache();
+    character\character_atlas_elete::precache();
     precacheitem( "iw5_uts19loot_sp" );
     precacheitem( "iw5_uts19loot_sp_opticstargetenhancer" );
     precacheitem( "iw5_uts19loot_sp_foregrip" );

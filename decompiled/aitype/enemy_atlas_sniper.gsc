@@ -34,7 +34,7 @@ main()
             break;
     }
 
-    _id_A3FF::main();
+    character\character_atlas_smg::main();
 }
 
 spawner()
@@ -44,7 +44,7 @@ spawner()
 
 precache()
 {
-    _id_A3FF::precache();
+    character\character_atlas_smg::precache();
     precacheitem( "iw5_thor_sp_thorscope" );
     precacheitem( "iw5_thor_sp_thorscopevz" );
     precacheitem( "iw5_thor_sp_thorstabilizer" );

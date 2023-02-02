@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "none";
-    _id_A448::main();
+    character\character_civ_s1_male_hostage_lag::main();
 }
 
 spawner()
@@ -32,5 +32,5 @@ spawner()
 
 precache()
 {
-    _id_A448::precache();
+    character\character_civ_s1_male_hostage_lag::precache();
 }

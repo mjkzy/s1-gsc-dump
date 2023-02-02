@@ -70,7 +70,7 @@ main()
             break;
     }
 
-    _id_A3F8::main();
+    character\character_atlas_arctic_smg::main();
 }
 
 spawner()
@@ -80,7 +80,7 @@ spawner()
 
 precache()
 {
-    _id_A3F8::precache();
+    character\character_atlas_arctic_smg::precache();
     precacheitem( "iw5_sn6_sp" );
     precacheitem( "iw5_sn6_sp_opticsacog2" );
     precacheitem( "iw5_sn6_sp_opticsreddot" );

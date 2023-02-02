@@ -40,7 +40,7 @@ main()
             break;
     }
 
-    _id_A3FE::main();
+    character\character_atlas_security_ar::main();
 }
 
 spawner()
@@ -50,7 +50,7 @@ spawner()
 
 precache()
 {
-    _id_A3FE::precache();
+    character\character_atlas_security_ar::precache();
     precacheitem( "iw5_kf5_sp" );
     precacheitem( "iw5_kf5_sp_opticstargetenhancer" );
     precacheitem( "iw5_kf5_sp_variablereddot" );

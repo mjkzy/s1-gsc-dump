@@ -2587,7 +2587,7 @@ right_swing_pressed()
     return level.player _meth_824C( var_0 );
 }
 
-_id_5679()
+left_swing_pressed()
 {
     var_0 = "BUTTON_LTRIG";
 
@@ -2706,7 +2706,7 @@ wait_until_left_swing_pressed( var_0 )
 
     for (;;)
     {
-        if ( _id_5679() )
+        if ( left_swing_pressed() )
         {
             level.player.waiting_on_left_swing = 0;
             var_1 maps\_shg_utility::hint_button_clear();
@@ -2742,7 +2742,7 @@ wait_until_next_left_swing( var_0 )
 
     for (;;)
     {
-        if ( isdefined( level.player._id_567A ) && level.player._id_567A == 1 && _id_5679() )
+        if ( isdefined( level.player.left_swing_released ) && level.player.left_swing_released == 1 && left_swing_pressed() )
         {
             level.player.waiting_on_left_swing = 0;
             var_1 maps\_shg_utility::hint_button_clear();
@@ -2771,13 +2771,13 @@ monitor_right_swing_released()
 
 monitor_left_swing_released()
 {
-    level.player._id_567A = 0;
+    level.player.left_swing_released = 0;
 
     for (;;)
     {
-        if ( !_id_5679() )
+        if ( !left_swing_pressed() )
         {
-            level.player._id_567A = 1;
+            level.player.left_swing_released = 1;
             return;
         }
 
@@ -2794,7 +2794,7 @@ wait_until_both_swings_pressed()
 
     for (;;)
     {
-        if ( _id_5679() && right_swing_pressed() )
+        if ( left_swing_pressed() && right_swing_pressed() )
         {
             level.player.waiting_on_left_swing = 0;
             level.player.waiting_on_right_swing = 0;

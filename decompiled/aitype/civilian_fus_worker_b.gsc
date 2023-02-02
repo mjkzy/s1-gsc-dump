@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "none";
-    _id_A44A::main();
+    character\character_civ_s1_worker_b::main();
 }
 
 spawner()
@@ -32,5 +32,5 @@ spawner()
 
 precache()
 {
-    _id_A44A::precache();
+    character\character_civ_s1_worker_b::precache();
 }

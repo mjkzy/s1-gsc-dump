@@ -32,13 +32,13 @@ main()
             character\character_civ_seoul_male_b::main();
             break;
         case 2:
-            character\character_civ_seoul_male_d::main();
+            character\character_civ_seoul_male_c::main();
             break;
         case 3:
-            character\character_civ_seoul_male_e::main();
+            character\character_civ_seoul_male_d::main();
             break;
         case 4:
-            character\character_civ_seoul_male_f::main();
+            character\character_civ_seoul_male_e::main();
             break;
     }
 }
@@ -52,7 +52,7 @@ precache()
 {
     character\character_civ_seoul_male_a::precache();
     character\character_civ_seoul_male_b::precache();
+    character\character_civ_seoul_male_c::precache();
     character\character_civ_seoul_male_d::precache();
     character\character_civ_seoul_male_e::precache();
-    character\character_civ_seoul_male_f::precache();
 }

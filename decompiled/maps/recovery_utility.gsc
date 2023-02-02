@@ -1502,7 +1502,7 @@ disable_aim_assist_on_script_model( var_0 )
 score_manager_print_final_score( var_0 )
 {
     var_1 = level.score_keeper.count;
-    var_2 = level.score_keeper._id_59F3;
+    var_2 = level.score_keeper.max;
 
     if ( var_0 == "holo_range" )
     {
@@ -1646,7 +1646,7 @@ score_manager_waittill_timeout_or_maxscore( var_0, var_1 )
     level.score_keeper thread score_manager_detect_timeout( var_0 );
 
     if ( !isdefined( var_1 ) )
-        var_1 = level.score_keeper._id_59F3 - level.score_keeper.count;
+        var_1 = level.score_keeper.max - level.score_keeper.count;
 
     while ( var_1 > 0 )
     {
@@ -1668,7 +1668,7 @@ score_manager_init( var_0 )
         level.score_keeper = spawnstruct();
 
     level.score_keeper.count = 0;
-    level.score_keeper._id_59F3 = var_0;
+    level.score_keeper.max = var_0;
     level.score_keeper notify( "score_manager_timed_out" );
 }
 

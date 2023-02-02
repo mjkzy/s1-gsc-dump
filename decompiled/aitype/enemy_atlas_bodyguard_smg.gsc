@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "iw5_sn6_sp_opticsreddot_silencer01";
-    _id_A3F9::main();
+    character\character_atlas_bodyguard_smg::main();
 }
 
 spawner()
@@ -32,7 +32,7 @@ spawner()
 
 precache()
 {
-    _id_A3F9::precache();
+    character\character_atlas_bodyguard_smg::precache();
     precacheitem( "iw5_sn6_sp_opticsreddot_silencer01" );
     precacheitem( "fraggrenade" );
 }

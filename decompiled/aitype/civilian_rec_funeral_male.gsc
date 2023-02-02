@@ -26,10 +26,10 @@ main()
     switch ( codescripts\character::get_random_character( 2 ) )
     {
         case 0:
-            _id_A42A::main();
+            character\character_civ_rec_funeral_male::main();
             break;
         case 1:
-            _id_A42B::main();
+            character\character_civ_rec_funeral_male_afr::main();
             break;
     }
 }
@@ -41,6 +41,6 @@ spawner()
 
 precache()
 {
-    _id_A42A::precache();
-    _id_A42B::precache();
+    character\character_civ_rec_funeral_male::precache();
+    character\character_civ_rec_funeral_male_afr::precache();
 }

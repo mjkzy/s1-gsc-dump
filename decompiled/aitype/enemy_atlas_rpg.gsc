@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "iw5_mahem_sp";
-    _id_A3FF::main();
+    character\character_atlas_smg::main();
 }
 
 spawner()
@@ -32,7 +32,7 @@ spawner()
 
 precache()
 {
-    _id_A3FF::precache();
+    character\character_atlas_smg::precache();
     precacheitem( "iw5_mahem_sp" );
     precacheitem( "iw5_titan45_sp" );
     precacheitem( "fraggrenade" );

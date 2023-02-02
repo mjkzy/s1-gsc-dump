@@ -1522,7 +1522,7 @@ mute_event_distances()
     var_0["ai_eventDistGunShotTeam"]["hidden"] = 1;
     var_0["ai_eventDistNewEnemy"]["spotted"] = 750;
     var_0["ai_eventDistNewEnemy"]["hidden"] = 1;
-    maps\_stealth_visibility_system::_id_908D( var_0 );
+    maps\_stealth_visibility_system::system_set_event_distances( var_0 );
 }
 
 setalertstencilstate( var_0 )

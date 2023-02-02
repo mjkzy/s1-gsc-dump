@@ -55,7 +55,7 @@ main()
             break;
     }
 
-    _id_A3FE::main();
+    character\character_atlas_security_ar::main();
 }
 
 spawner()
@@ -65,7 +65,7 @@ spawner()
 
 precache()
 {
-    _id_A3FE::precache();
+    character\character_atlas_security_ar::precache();
     precacheitem( "iw5_himar_sp_himarscope" );
     precacheitem( "iw5_himar_sp_opticsacog2" );
     precacheitem( "iw5_himar_sp_opticsreddot" );

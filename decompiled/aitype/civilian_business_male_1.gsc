@@ -26,19 +26,19 @@ main()
     switch ( codescripts\character::get_random_character( 5 ) )
     {
         case 0:
-            _id_A406::main();
+            character\character_civ_afr_dark_male_dress::main();
             break;
         case 1:
-            _id_A414::main();
+            character\character_civ_asi_male_dress::main();
             break;
         case 2:
-            _id_A41C::main();
+            character\character_civ_cau_male_dress::main();
             break;
         case 3:
-            _id_A421::main();
+            character\character_civ_mde_male_dress::main();
             break;
         case 4:
-            _id_A40D::main();
+            character\character_civ_afr_light_male_dress::main();
             break;
     }
 }
@@ -50,9 +50,9 @@ spawner()
 
 precache()
 {
-    _id_A406::precache();
-    _id_A414::precache();
-    _id_A41C::precache();
-    _id_A421::precache();
-    _id_A40D::precache();
+    character\character_civ_afr_dark_male_dress::precache();
+    character\character_civ_asi_male_dress::precache();
+    character\character_civ_cau_male_dress::precache();
+    character\character_civ_mde_male_dress::precache();
+    character\character_civ_afr_light_male_dress::precache();
 }

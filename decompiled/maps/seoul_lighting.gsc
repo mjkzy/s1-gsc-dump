@@ -3070,10 +3070,10 @@ pod_scripted_lights( var_0 )
 pod_light_intro_pre( var_0 )
 {
     var_1 = level.will_irons_intro;
-    var_0._id_567F = common_scripts\utility::spawn_tag_origin();
-    var_2 = var_0._id_567F;
-    var_0._id_5680 = common_scripts\utility::spawn_tag_origin();
-    var_3 = var_0._id_5680;
+    var_0.lens_left = common_scripts\utility::spawn_tag_origin();
+    var_2 = var_0.lens_left;
+    var_0.lens_right = common_scripts\utility::spawn_tag_origin();
+    var_3 = var_0.lens_right;
     var_0.redfill = common_scripts\utility::spawn_tag_origin();
     var_4 = var_0.redfill;
     var_3 _meth_804D( var_0, "body_animate_joint", ( -30, 68, 31 ), ( 0, -90, 90 ), 0 );
@@ -3112,10 +3112,10 @@ pod_light_intro( var_0 )
     var_6 = var_0.interior_light_bounce;
     var_0.door_open_blue = common_scripts\utility::spawn_tag_origin();
     var_7 = var_0.door_open_blue;
-    var_0._id_567F = common_scripts\utility::spawn_tag_origin();
-    var_8 = var_0._id_567F;
-    var_0._id_5680 = common_scripts\utility::spawn_tag_origin();
-    var_9 = var_0._id_5680;
+    var_0.lens_left = common_scripts\utility::spawn_tag_origin();
+    var_8 = var_0.lens_left;
+    var_0.lens_right = common_scripts\utility::spawn_tag_origin();
+    var_9 = var_0.lens_right;
     wait 0.05;
     var_0.door_open_bounce = common_scripts\utility::spawn_tag_origin();
     var_10 = var_0.door_open_bounce;

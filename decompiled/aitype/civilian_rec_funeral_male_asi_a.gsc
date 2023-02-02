@@ -22,7 +22,7 @@ main()
     }
 
     self.weapon = "none";
-    _id_A430::main();
+    character\character_civ_rec_funeral_male_asi_a::main();
 }
 
 spawner()
@@ -32,5 +32,5 @@ spawner()
 
 precache()
 {
-    _id_A430::precache();
+    character\character_civ_rec_funeral_male_asi_a::precache();
 }

@@ -26,25 +26,25 @@ main()
     switch ( codescripts\character::get_random_character( 7 ) )
     {
         case 0:
-            _id_A437::main();
+            character\character_civ_s1_female_a::main();
             break;
         case 1:
-            _id_A438::main();
+            character\character_civ_s1_female_b::main();
             break;
         case 2:
-            _id_A439::main();
+            character\character_civ_s1_female_c::main();
             break;
         case 3:
-            _id_A43A::main();
+            character\character_civ_s1_female_d::main();
             break;
         case 4:
-            _id_A43D::main();
+            character\character_civ_s1_female_e::main();
             break;
         case 5:
-            _id_A43E::main();
+            character\character_civ_s1_female_f::main();
             break;
         case 6:
-            _id_A43F::main();
+            character\character_civ_s1_female_g::main();
             break;
     }
 }
@@ -56,11 +56,11 @@ spawner()
 
 precache()
 {
-    _id_A437::precache();
-    _id_A438::precache();
-    _id_A439::precache();
-    _id_A43A::precache();
-    _id_A43D::precache();
-    _id_A43E::precache();
-    _id_A43F::precache();
+    character\character_civ_s1_female_a::precache();
+    character\character_civ_s1_female_b::precache();
+    character\character_civ_s1_female_c::precache();
+    character\character_civ_s1_female_d::precache();
+    character\character_civ_s1_female_e::precache();
+    character\character_civ_s1_female_f::precache();
+    character\character_civ_s1_female_g::precache();
 }

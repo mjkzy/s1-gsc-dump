@@ -36,7 +36,7 @@ init_globals()
     level.aud.cart_first_time = 1;
     level.aud.flame_loop = 0;
     level.aud.flame_loop2 = 0;
-    level.aud._id_5762 = 0;
+    level.aud.limp_footsteps = 0;
     level.aud.s2_walk_footsteps = 0;
     level.aud.mech_error_timeout = 0;
     level.aud.cell_prisoners_trig = 0;
@@ -815,13 +815,13 @@ aud_cap_s2_trolley_sfx_10( var_0 )
 
 aud_limp_on()
 {
-    level.aud._id_5762 = 1;
+    level.aud.limp_footsteps = 1;
     soundscripts\_audio_mix_manager::mm_add_submix( "limp_footsteps" );
 }
 
 aud_limp_exo()
 {
-    level.aud._id_5762 = 1;
+    level.aud.limp_footsteps = 1;
     soundscripts\_audio_mix_manager::mm_clear_submix( "limp_footsteps" );
     wait 0.5;
     soundscripts\_audio_mix_manager::mm_add_submix( "limp_footsteps_exo" );
@@ -829,7 +829,7 @@ aud_limp_exo()
 
 aud_limp_off()
 {
-    level.aud._id_5762 = 0;
+    level.aud.limp_footsteps = 0;
     soundscripts\_audio_mix_manager::mm_clear_submix( "limp_footsteps_exo" );
 }
 
@@ -1816,7 +1816,7 @@ aud_captured_foley_override_handler()
             case "sprintscuff":
                 break;
             case "prone":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( var_2 )
                     {
@@ -1855,7 +1855,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "crouchwalk":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     soundscripts\_snd_playsound::snd_play_2d( "gear_rattle_plr_limp_l" );
                     wait 0.1;
@@ -1881,7 +1881,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "crouchrun":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_run_plr_" + var_1 + "_l" ) )
                     {
@@ -1907,7 +1907,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "walk":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     soundscripts\_snd_playsound::snd_play_2d( "gear_rattle_plr_limp_l" );
                     wait 0.1;
@@ -1950,7 +1950,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "run":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_run_plr_" + var_1 + "_l" ) )
                     {
@@ -1974,7 +1974,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "sprint":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_run_plr_" + var_1 + "_l" ) )
                     {
@@ -1998,7 +1998,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "jump":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( common_scripts\utility::flag( "aud_glass_footsteps" ) )
                     {
@@ -2019,7 +2019,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "lightland":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_land_plr_med_" + var_1 ) )
                     {
@@ -2035,7 +2035,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "mediumland":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_land_plr_med_" + var_1 ) )
                     {
@@ -2051,7 +2051,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "heavyland":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_land_plr_med_" + var_1 ) )
                     {
@@ -2067,7 +2067,7 @@ aud_captured_foley_override_handler()
 
                 break;
             case "damageland":
-                if ( level.aud._id_5762 == 1 )
+                if ( level.aud.limp_footsteps == 1 )
                 {
                     if ( soundexists( "limp_land_plr_med_" + var_1 ) )
                     {

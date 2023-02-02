@@ -367,7 +367,7 @@ stealth_corpse_ranges_default()
 stealth_ai_event_dist_custom( var_0 )
 {
     var_1 = level._stealth.logic.detection_level;
-    maps\_stealth_visibility_system::_id_908D( var_0 );
+    maps\_stealth_visibility_system::system_set_event_distances( var_0 );
     maps\_stealth_visibility_system::system_event_change( var_1 );
 }
 

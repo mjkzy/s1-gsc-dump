@@ -26,10 +26,10 @@ main()
     switch ( codescripts\character::get_random_character( 2 ) )
     {
         case 0:
-            _id_A408::main();
+            character\character_civ_afr_lgt_female_cas::main();
             break;
         case 1:
-            _id_A407::main();
+            character\character_civ_afr_drk_female_cas::main();
             break;
     }
 }
@@ -41,6 +41,6 @@ spawner()
 
 precache()
 {
-    _id_A408::precache();
-    _id_A407::precache();
+    character\character_civ_afr_lgt_female_cas::precache();
+    character\character_civ_afr_drk_female_cas::precache();
 }

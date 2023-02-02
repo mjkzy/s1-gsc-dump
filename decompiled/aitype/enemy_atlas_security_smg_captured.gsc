@@ -31,7 +31,7 @@ main()
             break;
     }
 
-    _id_A3FE::main();
+    character\character_atlas_security_ar::main();
 }
 
 spawner()
@@ -41,7 +41,7 @@ spawner()
 
 precache()
 {
-    _id_A3FE::precache();
+    character\character_atlas_security_ar::precache();
     precacheitem( "iw5_sn6pickup_sp_xmags" );
     precacheitem( "iw5_hmr9pickup_sp_xmags" );
     precacheitem( "iw5_titan45pickup_sp_xmags" );

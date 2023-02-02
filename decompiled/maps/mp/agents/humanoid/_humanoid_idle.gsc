@@ -119,7 +119,7 @@ shouldattackidle()
     return 1;
 }
 
-_id_413B( var_0 )
+getturnanimstate( var_0 )
 {
     var_1 = "idle_noncombat_turn";
 
@@ -156,7 +156,7 @@ turntoangle( var_0 )
         return;
     }
 
-    var_3 = _id_413B( var_2 );
+    var_3 = getturnanimstate( var_2 );
     var_4 = var_3[0];
     var_5 = var_3[1];
     var_6 = self _meth_83D3( var_4, var_5 );

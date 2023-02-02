@@ -145,9 +145,9 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     if ( !level.currentgen )
     {
-        var_11._id_5681 = spawn( "script_model", var_12.origin );
-        var_11._id_5681 _meth_80B1( "vehicle_sniper_drone_hud_glass" );
-        var_11._id_5681 _meth_80A6( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
+        var_11.lensviewmodel = spawn( "script_model", var_12.origin );
+        var_11.lensviewmodel _meth_80B1( "vehicle_sniper_drone_hud_glass" );
+        var_11.lensviewmodel _meth_80A6( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
         childthread sniperdronelensdamaged();
     }
 
@@ -500,8 +500,8 @@ updateviewmodelvisibility()
             level.player.sniperdronedata.frameviewmodel hide();
             level.player.sniperdronedata.barrelviewmodel hide();
 
-            if ( isdefined( level.player.sniperdronedata._id_5681 ) )
-                level.player.sniperdronedata._id_5681 hide();
+            if ( isdefined( level.player.sniperdronedata.lensviewmodel ) )
+                level.player.sniperdronedata.lensviewmodel hide();
 
             var_0 = 1;
             continue;
@@ -512,8 +512,8 @@ updateviewmodelvisibility()
             level.player.sniperdronedata.frameviewmodel show();
             level.player.sniperdronedata.barrelviewmodel show();
 
-            if ( isdefined( level.player.sniperdronedata._id_5681 ) )
-                level.player.sniperdronedata._id_5681 show();
+            if ( isdefined( level.player.sniperdronedata.lensviewmodel ) )
+                level.player.sniperdronedata.lensviewmodel show();
 
             var_0 = 0;
         }
@@ -877,9 +877,9 @@ adjustmissileoverlay( var_0, var_1, var_2 )
 sniperdronelensdamaged()
 {
     level.player waittill( "kamikaze_damaged_lens" );
-    level.player.sniperdronedata._id_5681 _meth_80A7( level.player );
-    level.player.sniperdronedata._id_5681 hide();
-    level.player.sniperdronedata._id_5681 delete();
+    level.player.sniperdronedata.lensviewmodel _meth_80A7( level.player );
+    level.player.sniperdronedata.lensviewmodel hide();
+    level.player.sniperdronedata.lensviewmodel delete();
     level.player.sniperdronedata.damagedlensviewmodel = spawn( "script_model", level.player.sniperdronelink.origin );
     level.player.sniperdronedata.damagedlensviewmodel _meth_80B1( "vehicle_sniper_drone_hud_glass_break" );
     level.player.sniperdronedata.damagedlensviewmodel _meth_80A6( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );

@@ -82,8 +82,8 @@ setup_intel_player( var_0 )
     level.gather_intel_trigger delete();
     thread right_tap_monitor();
     thread right_swipe_monitor();
-    thread _id_567C();
-    thread _id_567B();
+    thread left_tap_monitor();
+    thread left_swipe_monitor();
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
@@ -203,7 +203,7 @@ right_swipe_monitor()
     }
 }
 
-_id_567C()
+left_tap_monitor()
 {
     level endon( "player_finished_desk_anim" );
 
@@ -214,7 +214,7 @@ _id_567C()
     }
 }
 
-_id_567B()
+left_swipe_monitor()
 {
     level endon( "player_finished_desk_anim" );
 

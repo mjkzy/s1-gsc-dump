@@ -835,7 +835,7 @@ ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
     if ( isdefined( self.owner ) )
         self.damagedownertome = vectornormalize( self.origin - self.owner.origin );
 
-    if ( _id_849C( var_2, var_5, var_4 ) )
+    if ( shouldplayhitreaction( var_2, var_5, var_4 ) )
     {
         switch ( self.aistate )
         {
@@ -849,7 +849,7 @@ ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
     }
 }
 
-_id_849C( var_0, var_1, var_2 )
+shouldplayhitreaction( var_0, var_1, var_2 )
 {
     if ( isdefined( var_1 ) && weaponclass( var_1 ) == "sniper" )
         return 1;

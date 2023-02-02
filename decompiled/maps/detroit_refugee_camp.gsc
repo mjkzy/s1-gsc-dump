@@ -35,7 +35,7 @@ refugee_camp_main()
     thread buttress_function();
     thread ambient_dialogue_manager();
     thread refugee_camp_cleanup();
-    thread _id_5676();
+    thread left_mount_trigger_function();
     thread middle_civ_manager();
 }
 
@@ -651,7 +651,7 @@ player_ads_disable_manager()
     level.player _meth_8300( 1 );
 }
 
-_id_5676()
+left_mount_trigger_function()
 {
     level endon( "player_has_used_bike" );
     level.playerisonleft = 0;

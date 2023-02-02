@@ -43,7 +43,7 @@ main()
             break;
     }
 
-    _id_A3FA::main();
+    character\character_atlas_elete::main();
 }
 
 spawner()
@@ -53,7 +53,7 @@ spawner()
 
 precache()
 {
-    _id_A3FA::precache();
+    character\character_atlas_elete::precache();
     precacheitem( "iw5_asawloot_sp" );
     precacheitem( "iw5_asawloot_sp_opticsacog2" );
     precacheitem( "iw5_asawloot_sp_opticsreddot" );

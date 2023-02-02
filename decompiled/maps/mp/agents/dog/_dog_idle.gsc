@@ -116,7 +116,7 @@ shouldattackidle()
     return isdefined( self.enemy ) && maps\mp\_utility::isreallyalive( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) < 1000000;
 }
 
-_id_413B( var_0 )
+getturnanimstate( var_0 )
 {
     if ( shouldattackidle() )
     {
@@ -149,7 +149,7 @@ turntoangle( var_0 )
         return;
     }
 
-    var_3 = _id_413B( var_2 );
+    var_3 = getturnanimstate( var_2 );
     var_4 = self _meth_83D3( var_3, 0 );
     var_5 = getanimlength( var_4 );
     var_6 = _func_221( var_4 );

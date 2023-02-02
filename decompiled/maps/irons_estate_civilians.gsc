@@ -1002,10 +1002,10 @@ driveway_car( var_0 )
 
     if ( var_0 == "driveway_car_1" )
     {
-        self._id_5674 = common_scripts\utility::spawn_tag_origin();
-        self._id_5674 _meth_804D( self, "tag_headlight_left", ( 25, -10, -20 ), ( 0, 0, 0 ) );
-        playfxontag( level._effect["ie_civ_sedan_headlight"], self._id_5674, "tag_origin" );
-        thread driveway_car_cleanup_fx( "driveway_car_1_path_end", self._id_5674, "ie_civ_sedan_headlight" );
+        self.left_headlight_tag = common_scripts\utility::spawn_tag_origin();
+        self.left_headlight_tag _meth_804D( self, "tag_headlight_left", ( 25, -10, -20 ), ( 0, 0, 0 ) );
+        playfxontag( level._effect["ie_civ_sedan_headlight"], self.left_headlight_tag, "tag_origin" );
+        thread driveway_car_cleanup_fx( "driveway_car_1_path_end", self.left_headlight_tag, "ie_civ_sedan_headlight" );
         self.right_headlight_tag = common_scripts\utility::spawn_tag_origin();
         self.right_headlight_tag _meth_804D( self, "tag_headlight_right", ( 25, 10, -20 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_civ_sedan_headlight"], self.right_headlight_tag, "tag_origin" );
@@ -1019,10 +1019,10 @@ driveway_car( var_0 )
     }
     else
     {
-        self._id_5674 = common_scripts\utility::spawn_tag_origin();
-        self._id_5674 _meth_804D( self, "tag_headlight_left", ( 20, 0, -15 ), ( 0, 0, 0 ) );
-        playfxontag( level._effect["ie_truck_headlight"], self._id_5674, "tag_origin" );
-        thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self._id_5674, "ie_truck_headlight" );
+        self.left_headlight_tag = common_scripts\utility::spawn_tag_origin();
+        self.left_headlight_tag _meth_804D( self, "tag_headlight_left", ( 20, 0, -15 ), ( 0, 0, 0 ) );
+        playfxontag( level._effect["ie_truck_headlight"], self.left_headlight_tag, "tag_origin" );
+        thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.left_headlight_tag, "ie_truck_headlight" );
         self.right_headlight_tag = common_scripts\utility::spawn_tag_origin();
         self.right_headlight_tag _meth_804D( self, "tag_headlight_right", ( 20, 0, -15 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_truck_headlight"], self.right_headlight_tag, "tag_origin" );
