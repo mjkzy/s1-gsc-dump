@@ -17,7 +17,7 @@ office_scene_pre_setup()
     maps\betrayal_util::prepare_blast_doors( "roof_window_blastdoor", -200 );
     maps\betrayal_util::prepare_blast_doors( "roof_slide_blastdoor", -160 );
     maps\betrayal_util::prepare_blast_doors( "roof_slide_blastdoor_mrX", -160 );
-    level.gideon _meth_81A3( 1 );
+    level.gideon pushplayer( 1 );
     level.gideon maps\_utility::set_moveplaybackrate( 1.025, 0.5 );
     common_scripts\utility::flag_set( "flag_dialogue_start_office" );
     common_scripts\utility::flag_wait( "flag_office_start_intro_pcap" );
@@ -35,12 +35,12 @@ office_scene_intro_pcap()
     level.player freezecontrols( 0 );
     var_0 = maps\_utility::spawn_anim_model( "player_rig", level.player.origin, level.player.angles );
     var_0 hide();
-    level.player _meth_8031( 40, 0.05 );
+    level.player lerpfov( 40, 0.05 );
     var_1 = 0.5;
-    level.player _meth_8080( var_0, "tag_player", var_1 );
-    level.player common_scripts\utility::delaycall( var_1, ::_meth_807D, var_0, "tag_player", 0.75, 8, 22, 14, 4, 1 );
-    level.player _meth_80FE();
-    level.player _meth_831E();
+    level.player playerlinktoblend( var_0, "tag_player", var_1 );
+    level.player common_scripts\utility::delaycall( var_1, ::playerlinktodelta, var_0, "tag_player", 0.75, 8, 22, 14, 4, 1 );
+    level.player enableslowaim();
+    level.player enableweapons();
     var_0 common_scripts\utility::delaycall( var_1, ::show );
     var_2 = [ var_0, level.gideon ];
     var_3 = maps\betrayal_util::get_ent_by_targetname( "animorg_intro_moment" );
@@ -48,9 +48,9 @@ office_scene_intro_pcap()
     var_3 maps\_anim::anim_single_solo( var_0, "intro" );
     var_0 delete();
     level.gideon maps\betrayal_util::setup_squad_member_for_gameplay();
-    level.player _meth_804F();
-    level.player _meth_80FF();
-    level.player _meth_8119( 1 );
+    level.player unlink();
+    level.player disableslowaim();
+    level.player allowcrouch( 1 );
     office_scene_player_give_just_hands();
     level thread maps\betrayal_util::start_player_office_scene_walk_sway();
     maps\_utility::autosave_by_name();
@@ -133,8 +133,8 @@ office_scene_open_swipe_door( var_0 )
 {
     var_1 = getent( "confrontation_door_security_scanner", "targetname" );
     var_2 = getent( "confrontation_door_security_scanner_glow", "targetname" );
-    var_1 _meth_80B1( "security_lock_01_unlocked" );
-    var_2 _meth_80B1( "security_lock_01_unlocked_glow" );
+    var_1 setmodel( "security_lock_01_unlocked" );
+    var_2 setmodel( "security_lock_01_unlocked_glow" );
     wait 2.75;
     var_3 = maps\betrayal_util::get_ents_by_targetname( "confrontation_room_enter_door_left" );
     var_3 soundscripts\_snd::snd_message( "aud_scanner_door_open" );
@@ -148,35 +148,35 @@ office_scene_open_swipe_door( var_0 )
 
 office_scene_player_actions_manager()
 {
-    level.player _meth_831D();
-    level.player _meth_830E( "iw5_unarmed_nullattach" );
+    level.player disableweapons();
+    level.player giveweapon( "iw5_unarmed_nullattach" );
     wait 0.5;
-    level.player _meth_8315( "iw5_unarmed_nullattach" );
-    level.player _meth_8321();
+    level.player switchtoweapon( "iw5_unarmed_nullattach" );
+    level.player disableweaponswitch();
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_8301( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_831F();
-    level.player _meth_84BF();
-    level.player _meth_8304( 0 );
+    level.player allowjump( 0 );
+    level.player allowprone( 0 );
+    level.player disableoffhandweapons();
+    level.player disableoffhandsecondaryweapons();
+    level.player allowsprint( 0 );
     common_scripts\utility::flag_wait( "flag_confrontation_give_player_real_gun" );
-    level.player _meth_830F( "iw5_unarmed_nullattach" );
-    var_0 = level.player _meth_82D1( "primary" );
-    level.player _meth_8322();
-    level.player _meth_8315( var_0[0] );
-    level.player _meth_831D();
-    level.player _meth_8301( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8320();
-    level.player _meth_84C0();
-    level.player _meth_8304( 1 );
+    level.player takeweapon( "iw5_unarmed_nullattach" );
+    var_0 = level.player getweaponslist( "primary" );
+    level.player enableweaponswitch();
+    level.player switchtoweapon( var_0[0] );
+    level.player disableweapons();
+    level.player allowjump( 1 );
+    level.player allowprone( 1 );
+    level.player enableoffhandweapons();
+    level.player enableoffhandsecondaryweapons();
+    level.player allowsprint( 1 );
 }
 
 office_scene_player_give_just_hands()
 {
-    level.player _meth_8130( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_81E1( 0.47 );
+    level.player allowmelee( 0 );
+    level.player allowsprint( 0 );
+    level.player setmovespeedscale( 0.47 );
 }
 
 office_scene_player_movement_manager()
@@ -194,7 +194,7 @@ office_scene_player_handle_move_speed()
     var_3 = 120;
     var_4 = 500;
     var_5 = 200;
-    level.player _meth_81E1( 1 );
+    level.player setmovespeedscale( 1 );
     level.playerspeedscale = 1;
     var_6 = 1;
 
@@ -214,7 +214,7 @@ office_scene_player_handle_move_speed()
 
             }
 
-            level.player _meth_81E1( var_11[0] );
+            level.player setmovespeedscale( var_11[0] );
             level.playerspeedscale = var_11[0];
             waitframe();
             continue;
@@ -235,7 +235,7 @@ office_scene_player_handle_move_speed()
             var_6 *= 0.9;
 
         var_11 = vectorlerp( ( level.playerspeedscale, 0, 0 ), ( var_6, 0, 0 ), 0.32 );
-        level.player _meth_81E1( var_11[0] );
+        level.player setmovespeedscale( var_11[0] );
         level.playerspeedscale = var_11[0];
         waitframe();
     }
@@ -246,11 +246,11 @@ office_scene_player_handle_move_speed()
     while ( var_6 < 1 )
     {
         var_6 += var_16;
-        level.player _meth_81E1( var_6 );
+        level.player setmovespeedscale( var_6 );
         wait 0.1;
     }
 
-    level.player _meth_81E1( 1 );
+    level.player setmovespeedscale( 1 );
 }
 
 office_scene_player_signed_distance_to_plane( var_0, var_1, var_2 )
@@ -372,9 +372,9 @@ office_scene_vignette_send_boat_through_path( var_0 )
     var_2 = self.angles;
     var_3 = getvehiclenode( self.target, "targetname" );
     thread maps\_vehicle_code::_vehicle_paths( var_3 );
-    self _meth_827F( var_3 );
+    self startpath( var_3 );
     self waittill( "reached_dynamic_path_end" );
-    self _meth_827C( var_1, var_2, 0 );
+    self vehicle_teleport( var_1, var_2, 0 );
     level.active_boats = common_scripts\utility::array_remove( level.active_boats, self );
 }
 
@@ -412,7 +412,7 @@ office_scene_vignette_helicopters()
 
 office_scene_silence_heli()
 {
-    self _meth_828B();
+    self vehicle_turnengineoff();
 }
 
 office_scene_vignette_handle_atlas_ai()
@@ -430,10 +430,10 @@ office_scene_vignette_handle_atlas_ai()
             var_6 maps\_utility::forceuseweapon( "iw5_bal27_sp_variablereddot", "primary" );
             var_6.disablearrivals = 1;
             var_6.disableexits = 1;
-            var_6 _meth_81A6( var_6.origin );
+            var_6 setgoalpos( var_6.origin );
             var_6 thread office_scene_vignette_atlas_walker_manager();
             waitframe();
-            var_6 _meth_81C6( var_5.origin, var_5.angles );
+            var_6 forceteleport( var_5.origin, var_5.angles );
             var_6 maps\betrayal_util::remove_display_name();
             var_6 maps\betrayal_util::stop_current_animations();
             var_6.animname = "generic";
@@ -482,7 +482,7 @@ office_scene_vignette_atlas_walker_manager()
         self.goalradius = 16;
         self notify( "move" );
         self waittill( "goal" );
-        self _meth_81A3( 1 );
+        self pushplayer( 1 );
     }
 
     common_scripts\utility::flag_wait( "trigger_office_scene_player_at_confrontation" );
@@ -606,9 +606,9 @@ office_scene_scripted_handle_landing_heli( var_0 )
 office_scene_scripted_player_blocker_move_with_gideon()
 {
     var_0 = maps\betrayal_util::get_ent_by_targetname( "block_player_from_confrontation_entrance" );
-    var_0 _meth_804D( level.gideon );
+    var_0 linkto( level.gideon );
     wait 5;
-    var_0 _meth_82BF();
+    var_0 notsolid();
     var_0 delete();
 }
 
@@ -638,16 +638,16 @@ confrontation_scene_master_handler( var_0 )
         thread maps\betrayal_util::open_sliding_door_toggle( var_1, "confrontation_room_exit_door", 0.2 );
         level.player maps\_shg_utility::setup_player_for_scene();
         level.confrontation_rig show();
-        level.player _meth_807D( level.confrontation_rig, "tag_player", 0.75, 10, 10, 7, 7, 1 );
+        level.player playerlinktodelta( level.confrontation_rig, "tag_player", 0.75, 10, 10, 7, 7, 1 );
 
         if ( level.nextgen )
-            _func_0D3( "r_adaptiveSubdivBaseFactor", 0.01 );
+            setsaveddvar( "r_adaptiveSubdivBaseFactor", 0.01 );
     }
 
     confrontation_scene_escape();
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptiveSubdivBaseFactor", 1.5 );
+        setsaveddvar( "r_adaptiveSubdivBaseFactor", 1.5 );
 
     confrontation_scene_cleaup();
     level thread escape_scene_master_handler();
@@ -670,8 +670,8 @@ hoverscreen_chromo_anim2( var_0, var_1 )
     {
         var_6 = 1.0 / var_3 * var_5;
         level.chromo_offset += var_6;
-        _func_0D3( "r_chromaticSeparationG", level.chromo_offset * -1 );
-        _func_0D3( "r_chromaticSeparationR", level.chromo_offset );
+        setsaveddvar( "r_chromaticSeparationG", level.chromo_offset * -1 );
+        setsaveddvar( "r_chromaticSeparationR", level.chromo_offset );
         wait 0.05;
     }
 }
@@ -679,12 +679,12 @@ hoverscreen_chromo_anim2( var_0, var_1 )
 create_confrontation_static_overlay( var_0, var_1, var_2 )
 {
     level.chromo_offset = 5;
-    _func_0D3( "r_chromaticAberrationTweaks", 1 );
-    _func_0D3( "r_chromaticAberration", 2 );
-    _func_0D3( "r_chromaticSeparationG", 0 );
-    _func_0D3( "r_chromaticSeparationR", 0 );
-    _func_0D3( "r_chromaticSeparationB", 0 );
-    _func_0D3( "r_chromaticAberrationAlpha", 1 );
+    setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+    setsaveddvar( "r_chromaticAberration", 2 );
+    setsaveddvar( "r_chromaticSeparationG", 0 );
+    setsaveddvar( "r_chromaticSeparationR", 0 );
+    setsaveddvar( "r_chromaticSeparationB", 0 );
+    setsaveddvar( "r_chromaticAberrationAlpha", 1 );
     var_3 = 1;
     return var_3;
 }
@@ -698,15 +698,15 @@ confrontation_static_start()
 
 confrontation_hudoutline_setup()
 {
-    _func_0D3( "r_hudoutlinehaloblurradius", 10 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinecurvywidth", 1 );
-    _func_0D3( "r_hudoutlinecurvywhen", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 3 );
-    _func_0D3( "r_hudoutlinecurvylumscale", 0.2 );
-    _func_0D3( "r_hudoutlinecurvydarkenscale", 0.25 );
-    _func_0D3( "r_hudoutlinecurvyblurradius", 0.5 );
-    _func_0D3( "r_hudoutlinecurvydepth", 0.8 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 10 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinecurvywidth", 1 );
+    setsaveddvar( "r_hudoutlinecurvywhen", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 3 );
+    setsaveddvar( "r_hudoutlinecurvylumscale", 0.2 );
+    setsaveddvar( "r_hudoutlinecurvydarkenscale", 0.25 );
+    setsaveddvar( "r_hudoutlinecurvyblurradius", 0.5 );
+    setsaveddvar( "r_hudoutlinecurvydepth", 0.8 );
 
     if ( !isdefined( level.player.detection_highlight_hud_effect ) )
     {
@@ -796,10 +796,10 @@ confrontation_hudoutline_animate()
         if ( isdefined( level.hologram_rand_level ) )
             var_2 = clamp( var_2 + level.hologram_rand_level * 5, -5, 5 ) * 2.5;
 
-        _func_0D3( "r_hudoutlinecurvylumscale", ( 0.15 + 0.1 * var_1 ) * level.hudoutline_conf_intensity );
-        _func_0D3( "r_hudoutlinehalolumscale", ( 0.15 + 0.1 * var_1 ) * level.hudoutline_conf_intensity );
-        _func_0D3( "r_chromaticSeparationG", level.chromo_offset * -1 * var_2 );
-        _func_0D3( "r_chromaticSeparationR", level.chromo_offset * var_2 );
+        setsaveddvar( "r_hudoutlinecurvylumscale", ( 0.15 + 0.1 * var_1 ) * level.hudoutline_conf_intensity );
+        setsaveddvar( "r_hudoutlinehalolumscale", ( 0.15 + 0.1 * var_1 ) * level.hudoutline_conf_intensity );
+        setsaveddvar( "r_chromaticSeparationG", level.chromo_offset * -1 * var_2 );
+        setsaveddvar( "r_chromaticSeparationR", level.chromo_offset * var_2 );
         var_0 += 0.05;
         wait 0.05;
     }
@@ -821,14 +821,14 @@ confrontation_hudoutline_cleanup()
         level.hudoutline_conf_intensity -= var_5;
         level.chromo_offset = clamp( level.chromo_offset, 0, 20 );
         level.hudoutline_conf_intensity = clamp( level.hudoutline_conf_intensity, 0, 20 );
-        _func_0D3( "r_chromaticSeparationG", level.chromo_offset * -1 );
-        _func_0D3( "r_chromaticSeparationR", level.chromo_offset );
+        setsaveddvar( "r_chromaticSeparationG", level.chromo_offset * -1 );
+        setsaveddvar( "r_chromaticSeparationR", level.chromo_offset );
         wait 0.05;
     }
 
-    _func_0D3( "r_hudoutlineenable", 0 );
-    _func_0D3( "r_chromaticAberrationTweaks", 0 );
-    _func_0D3( "r_chromaticAberration", 0 );
+    setsaveddvar( "r_hudoutlineenable", 0 );
+    setsaveddvar( "r_chromaticAberrationTweaks", 0 );
+    setsaveddvar( "r_chromaticAberration", 0 );
     level.player.detection_highlight_hud_effect destroy();
     level.player.detection_highlight_hud_effect = level.player.detection_highlight_hud_effect_old;
 }
@@ -842,7 +842,7 @@ confrontation_scene_setup()
     confrontation_hudoutline_setup();
     level thread maps\betrayal_lighting::lighting_confrontation_auto_dof( level.player, var_0 );
     var_0 attach( "npc_mp443_nocamo", "TAG_WEAPON_RIGHT", 1 );
-    var_0 _meth_8048( "TAG_RAIL_MASTER_ON", "npc_mp443_nocamo" );
+    var_0 hidepart( "TAG_RAIL_MASTER_ON", "npc_mp443_nocamo" );
     var_0 hide();
     var_0.ignoreall = 1;
     var_0.ignoreme = 1;
@@ -864,11 +864,11 @@ confrontation_scene_setup()
     level.escape_take_down_guard = var_2;
     var_3 = maps\_utility::spawn_anim_model( "flash_bang", var_2.origin, var_2.angles );
     var_4 = maps\_utility::spawn_anim_model( "irons_chair", var_0.origin, var_0.angles );
-    var_4 _meth_80B1( "dem_irons_chair_01_cloaktrans" );
+    var_4 setmodel( "dem_irons_chair_01_cloaktrans" );
     var_4 hide();
     var_5 = maps\_utility::spawn_anim_model( "guest_chair", var_0.origin, var_0.angles );
     var_5 hide();
-    var_5 _meth_80B1( "dem_irons_guest_chair_01_rig_cloaktrans" );
+    var_5 setmodel( "dem_irons_guest_chair_01_rig_cloaktrans" );
     var_6 = maps\_utility::spawn_anim_model( "jammer", level.ilana.origin, level.ilana.angles );
     var_7 = maps\betrayal_util::get_ent_by_targetname( "animorg_confrontation" );
     var_7 maps\_anim::anim_first_frame_solo( level.ilana, "confrontation_pt1" );
@@ -914,14 +914,14 @@ confrontation_scene_setup()
     waitframe();
     var_11 = var_0 getorigin();
     var_11 += ( 0, 0, -150 );
-    var_0 _meth_847B( var_11 );
-    var_1 _meth_847B( var_11 );
-    var_0 _meth_83AB( var_11 );
-    var_1 _meth_83AB( var_11 );
-    var_4 _meth_847B( var_11 );
-    var_5 _meth_847B( var_11 );
-    var_4 _meth_83AB( var_11 );
-    var_5 _meth_83AB( var_11 );
+    var_0 overridelightingorigin( var_11 );
+    var_1 overridelightingorigin( var_11 );
+    var_0 overridereflectionprobe( var_11 );
+    var_1 overridereflectionprobe( var_11 );
+    var_4 overridelightingorigin( var_11 );
+    var_5 overridelightingorigin( var_11 );
+    var_4 overridereflectionprobe( var_11 );
+    var_5 overridereflectionprobe( var_11 );
 }
 
 confrontation_scene_hologram()
@@ -933,7 +933,7 @@ confrontation_scene_hologram()
     level.gideon maps\betrayal_util::setup_squad_member_for_scene();
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptiveSubdivBaseFactor", 0.01 );
+        setsaveddvar( "r_adaptiveSubdivBaseFactor", 0.01 );
 
     var_0 maps\_anim::anim_single( level.hologram_guys, "confrontation_pt1" );
     confrontation_scene_cleanup_hologram();
@@ -942,7 +942,7 @@ confrontation_scene_hologram()
 
 confrontation_scene_irons_no_gun( var_0 )
 {
-    var_0 _meth_80B1( "irons_casual_nogun" );
+    var_0 setmodel( "irons_casual_nogun" );
 }
 
 confrontation_scene_cleanup_hologram()
@@ -963,19 +963,19 @@ confrontation_scene_open_flashbang_door( var_0 )
 confrontation_scene_flashbang_explode( var_0 )
 {
     soundscripts\_snd::snd_message( "bet_conf_flash_bang_exp" );
-    level.player _meth_83C0( "betrayal_interior_flash" );
+    level.player lightsetforplayer( "betrayal_interior_flash" );
     maps\_utility::vision_set_changes( "betrayal_interior_flash", 0.02 );
-    level.player _meth_80AD( "grenade_rumble" );
+    level.player playrumbleonentity( "grenade_rumble" );
     wait 1.0;
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "betrayal_interior_confrontation_2" );
+        level.player lightsetforplayer( "betrayal_interior_confrontation_2" );
         maps\_utility::vision_set_changes( "betrayal_interior", 2 );
     }
     else
     {
-        level.player _meth_83C0( "betrayal_interior_darker" );
+        level.player lightsetforplayer( "betrayal_interior_darker" );
         maps\_utility::vision_set_changes( "betrayal_interior_darker", 2 );
     }
 }
@@ -988,26 +988,26 @@ confrontation_scene_irons_lockdown()
     var_1 = maps\betrayal_util::get_ents_by_targetname( "confrontation_room_exit_door_right" );
     thread maps\betrayal_util::open_sliding_door_toggle( var_1, "confrontation_room_exit_door", 0.2 );
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_807D( level.confrontation_rig, "tag_player", 0.75, 0, 0, 0, 0, 1 );
-    level.player _meth_80FE();
+    level.player playerlinktodelta( level.confrontation_rig, "tag_player", 0.75, 0, 0, 0, 0, 1 );
+    level.player enableslowaim();
     var_2 = 0.5;
     level.confrontation_rig common_scripts\utility::delaycall( var_2, ::show );
-    level.player common_scripts\utility::delaycall( var_2 + 0.1, ::_meth_80A2, 2.0, 0.0, 1.0, 15, 15, 10, 8 );
+    level.player common_scripts\utility::delaycall( var_2 + 0.1, ::lerpviewangleclamp, 2.0, 0.0, 1.0, 15, 15, 10, 8 );
     common_scripts\utility::flag_set( "flag_confrontation_give_player_real_gun" );
 
     foreach ( var_4 in level.confrontation_guys )
         var_4 show();
 
     var_6 = getent( "betrayal_conf_ilana_origin", "targetname" );
-    level.confrontation_guys[0] _meth_847B( var_6.origin );
+    level.confrontation_guys[0] overridelightingorigin( var_6.origin );
     var_7 = getent( "betrayal_confrontation_guard1_origin", "targetname" );
     var_8 = getent( "betrayal_confrontation_guard2_origin", "targetname" );
-    level.confrontation_guys[3] _meth_847B( var_7.origin );
-    level.confrontation_guys[4] _meth_847B( var_8.origin );
+    level.confrontation_guys[3] overridelightingorigin( var_7.origin );
+    level.confrontation_guys[4] overridelightingorigin( var_8.origin );
     var_0 maps\_anim::anim_single( level.confrontation_guys, "confrontation_pt2" );
     confrontation_scene_cleanup_confrontation();
     common_scripts\utility::flag_set( "flag_dialog_confrontation_mrX" );
-    level.player _meth_80A2( 2.0, 0.0, 1.0, 10, 10, 7, 7 );
+    level.player lerpviewangleclamp( 2.0, 0.0, 1.0, 10, 10, 7, 7 );
     var_0 maps\_anim::anim_single( level.escape_guys1, "confrontation_pt2_pause" );
     maps\_utility::autosave_by_name();
 }
@@ -1030,7 +1030,7 @@ confrontation_scene_escape()
 {
     var_0 = maps\betrayal_util::get_ent_by_targetname( "animorg_confrontation" );
     common_scripts\utility::flag_set( "escape_lighting" );
-    level.ilana _meth_847C();
+    level.ilana defaultlightingorigin();
     common_scripts\utility::flag_set( "flag_dialog_confrontation_go" );
     soundscripts\_snd::snd_message( "bet_conf_fire_suppression" );
     var_0 maps\_anim::anim_single( level.escape_guys1, "escape_pt1" );
@@ -1056,8 +1056,8 @@ confrontation_scene_escape()
     }
 
     var_1 = level.escape_shoot_guard setcontents( 0 );
-    level.player _meth_80FF();
-    level.player _meth_804F();
+    level.player disableslowaim();
+    level.player unlink();
     level.confrontation_rig delete();
     thread confrontation_handle_player_clip();
     maps\_player_exo::player_exo_activate();
@@ -1068,7 +1068,7 @@ confrontation_scene_escape()
 
     foreach ( var_3 in level.escape_guys1 )
     {
-        if ( !_func_294( var_3 ) && var_3 != level.ilana )
+        if ( !isremovedentity( var_3 ) && var_3 != level.ilana )
         {
             if ( !isai( var_3 ) )
                 var_3 delete();
@@ -1085,7 +1085,7 @@ confrontation_scene_escape_player_rise( var_0 )
     level.escape_take_down_guard.a.nodeath = 1;
     level.escape_take_down_guard.noragdoll = 1;
     level.escape_take_down_guard maps\_utility::gun_remove();
-    level.escape_take_down_guard _meth_8052();
+    level.escape_take_down_guard kill();
 }
 
 confrontation_scene_escape_qte_fail( var_0 )
@@ -1141,12 +1141,12 @@ confrontation_scene_escape_qte_raise_gun( var_0 )
     confrontation_scene_qte_shoot_slomo_start();
     level.ilana maps\betrayal_util::setup_squad_member_for_gameplay();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_831F();
-    level.player _meth_84BF();
+    level.player disableoffhandweapons();
+    level.player disableoffhandsecondaryweapons();
     level.player notify( "stop_player_walk_sway" );
     level.player thread maps\_utility::blend_movespeedscale_default();
-    level.player _meth_81E1( 1 );
-    level.player _meth_80A2( 2.0, 0.0, 1.0, 15, 15, 10, 10 );
+    level.player setmovespeedscale( 1 );
+    level.player lerpviewangleclamp( 2.0, 0.0, 1.0, 15, 15, 10, 10 );
     var_0 hide();
 }
 
@@ -1167,8 +1167,8 @@ confrontation_scene_escape_qte_shoot( var_0 )
 
             confrontation_scene_qte_shoot_slomo_stop();
             common_scripts\utility::flag_set( "flag_escape_pt2_passed" );
-            level.player _meth_8320();
-            level.player _meth_84C0();
+            level.player enableoffhandweapons();
+            level.player enableoffhandsecondaryweapons();
             break;
         }
 
@@ -1183,7 +1183,7 @@ confrontation_scene_escape_guard_dies( var_0 )
     level.escape_shoot_guard.a.nodeath = 1;
     level.escape_shoot_guard.noragdoll = 1;
     level.escape_shoot_guard maps\_utility::stop_magic_bullet_shield();
-    level.escape_shoot_guard _meth_8052();
+    level.escape_shoot_guard kill();
 }
 
 confrontation_scene_gun_swap( var_0 )
@@ -1218,12 +1218,12 @@ confrontation_scene_qte_shoot_slomo_stop()
 
 confrontation_scene_player_rumble_heavy( var_0 )
 {
-    level.player _meth_80AD( "grenade_rumble" );
+    level.player playrumbleonentity( "grenade_rumble" );
 }
 
 confrontation_scene_player_rumble_light( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 confrontation_scene_cleaup()
@@ -1236,13 +1236,13 @@ confrontation_handle_player_clip()
     var_0 = maps\betrayal_util::get_ent_by_targetname( "confrontation_pass_ilona_blocker" );
     var_0.org_pos = var_0.origin;
     var_0.close_pos = var_0.origin - ( 0, 0, 128 );
-    var_0 _meth_82AE( var_0.close_pos, 0.1 );
+    var_0 moveto( var_0.close_pos, 0.1 );
     wait 7.25;
-    var_0 _meth_82AE( var_0.org_pos, 0.1 );
+    var_0 moveto( var_0.org_pos, 0.1 );
     escape_scene_setup_firedoor( "escape_scene_fire_safety_drop_door" );
     var_1 = maps\betrayal_util::get_ent_by_targetname( "escape_scene_fire_safety_drop_door" );
-    var_1.col _meth_82BF();
-    var_1.col _meth_8058();
+    var_1.col notsolid();
+    var_1.col connectpaths();
 }
 
 escape_scene_master_handler()
@@ -1292,17 +1292,17 @@ escape_scene_setup_firedoor( var_0 )
 
             var_7 = var_3 getorigin();
             var_7 += ( 0, 0, -5 );
-            var_3 _meth_847B( var_7 );
+            var_3 overridelightingorigin( var_7 );
 
             if ( level.currentgen )
             {
                 var_8 = getent( "door_lighting", "targetname" );
-                var_3 _meth_847B( var_8.origin );
+                var_3 overridelightingorigin( var_8.origin );
             }
         }
 
         if ( isdefined( var_3.col ) )
-            var_3.col _meth_804D( var_3 );
+            var_3.col linkto( var_3 );
 
         if ( !var_3 maps\_utility::ent_flag_exist( "fire_door_closed" ) )
             var_3 maps\_utility::ent_flag_init( "fire_door_closed" );
@@ -1321,7 +1321,7 @@ escape_scene_open_firedoor( var_0, var_1, var_2 )
     if ( !isdefined( var_2 ) )
         var_2 = 0.0;
 
-    self _meth_82AE( self.open_org, var_0, var_1, var_2 );
+    self moveto( self.open_org, var_0, var_1, var_2 );
 }
 
 escape_scene_close_firedoor( var_0, var_1, var_2 )
@@ -1334,7 +1334,7 @@ escape_scene_close_firedoor( var_0, var_1, var_2 )
     if ( !isdefined( var_2 ) )
         var_2 = 0.0;
 
-    self _meth_82AE( self.org_pos, var_0, var_1, var_2 );
+    self moveto( self.org_pos, var_0, var_1, var_2 );
 }
 
 escape_scene_sentinel_makes_contact()
@@ -1367,8 +1367,8 @@ escape_scene_start_hallway_drop_door()
         var_0 thread escape_scene_open_firedoor( 0.5, 0.4, 0.1 );
         soundscripts\_snd::snd_message( "fire_door_1_open", var_0 );
         wait 0.5;
-        var_0.col _meth_8058();
-        var_0.col _meth_82BE();
+        var_0.col connectpaths();
+        var_0.col solid();
     }
 
     var_0 thread escape_scene_wait_for_player_past_drop_door();
@@ -1396,14 +1396,14 @@ escape_scene_wait_for_player_past_guard_doors()
     {
         var_0 thread escape_scene_open_firedoor( 1.5, 1 );
         var_0 soundscripts\_snd::snd_message( "open_firedoor_for_guards" );
-        var_0.col _meth_8058();
+        var_0.col connectpaths();
     }
 
     if ( var_1 maps\_utility::ent_flag( "fire_door_closed" ) )
     {
         var_1 thread escape_scene_open_firedoor( 1.5, 1 );
         var_1 soundscripts\_snd::snd_message( "open_firedoor_for_guards" );
-        var_1.col _meth_8058();
+        var_1.col connectpaths();
     }
 }
 
@@ -1416,11 +1416,11 @@ escape_scene_wait_for_player_past_drop_door()
     {
         thread escape_scene_close_firedoor( 0.6, 0.5 );
         soundscripts\_snd::snd_message( "fire_door_1_close", self );
-        self.col _meth_82BE();
+        self.col solid();
         wait 0.5;
     }
 
-    self.col _meth_8057();
+    self.col disconnectpaths();
     thread escape_scene_manage_flood_spawn_fire_door();
     common_scripts\utility::flag_wait( "flag_escape_ilona_should_cover_player" );
     level.ilana maps\_utility::set_ignoreall( 0 );
@@ -1473,7 +1473,7 @@ escape_scene_guard_call_help()
         var_1 thread escape_scene_open_firedoor( 2, 0.0, 1.0 );
         var_1 soundscripts\_snd::snd_message( "open_firedoor_for_guards" );
         wait 0.5;
-        var_1.col _meth_8058();
+        var_1.col connectpaths();
     }
 
     var_1 thread escape_scene_close_door_when_player_close();
@@ -1484,12 +1484,12 @@ escape_scene_guard_call_help()
         var_2 thread escape_scene_open_firedoor( 2, 0.0, 1.0 );
         var_2 soundscripts\_snd::snd_message( "open_firedoor_for_guards" );
         wait 0.5;
-        var_2.col _meth_8058();
+        var_2.col connectpaths();
     }
 
     foreach ( var_4 in level.escape_scene_side_door_guards )
     {
-        if ( !_func_294( var_4 ) )
+        if ( !isremovedentity( var_4 ) )
             var_4.baseaccuracy = 10;
     }
 
@@ -1497,7 +1497,7 @@ escape_scene_guard_call_help()
 
     foreach ( var_4 in level.escape_scene_confrontation_room_guards )
     {
-        if ( !_func_294( var_4 ) )
+        if ( !isremovedentity( var_4 ) )
             var_4.baseaccuracy = 10;
     }
 }
@@ -1524,21 +1524,21 @@ escape_scene_manage_flood_spawn_fire_door()
     if ( !maps\_utility::ent_flag( "fire_door_closed" ) )
     {
         thread escape_scene_close_firedoor( 0.5, 0.5 );
-        self.col _meth_82BE();
+        self.col solid();
         wait 0.5;
     }
 
-    self.col _meth_8057();
+    self.col disconnectpaths();
     maps\betrayal_util::wait_for_trigger_and_ai_single( "trigger_escape_player_at_climb", level.ilana );
 
     if ( maps\_utility::ent_flag( "fire_door_closed" ) )
     {
         thread escape_scene_open_firedoor( 0.5, 0.5 );
-        self.col _meth_82BE();
+        self.col solid();
         wait 0.5;
     }
 
-    self.col _meth_8058();
+    self.col connectpaths();
     self notify( "closed" );
 }
 
@@ -1550,11 +1550,11 @@ escape_scene_close_door_when_player_close()
     if ( !maps\_utility::ent_flag( "fire_door_closed" ) )
     {
         thread escape_scene_close_firedoor( 0.5, 0.5 );
-        self.col _meth_82BE();
+        self.col solid();
         wait 0.5;
     }
 
-    self.col _meth_8057();
+    self.col disconnectpaths();
 }
 
 escape_scene_clean_up_secret_room()
@@ -1576,7 +1576,7 @@ escape_scene_hallway_run()
         var_0 thread escape_scene_open_firedoor( 2.0, 0.0, 1.0 );
         soundscripts\_snd::snd_message( "big_fire_door_open", var_0 );
         wait 0.5;
-        var_0.col _meth_8058();
+        var_0.col connectpaths();
     }
 
     maps\_utility::activate_trigger_with_targetname( "trigger_escape_move_to_climb" );
@@ -1590,7 +1590,7 @@ escape_scene_hallway_run()
         wait 0.4;
     }
 
-    var_0.col _meth_8057();
+    var_0.col disconnectpaths();
     level thread maps\betrayal_fx::escape_fire_door_slam_shut();
 }
 
@@ -1599,17 +1599,17 @@ escape_scene_hallway_climb()
     common_scripts\utility::flag_set( "flag_dialogue_escape_deadend" );
     common_scripts\utility::flag_wait( "flag_escape_open_elevator" );
     var_0 = maps\betrayal_util::get_ent_by_targetname( "elevator_shaft_blocker" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     wait 1.0;
     common_scripts\utility::flag_set( "flag_objective_escape_scene_elevator_open" );
     level thread escape_scene_open_elevator_doors();
     var_1 = maps\betrayal_util::get_ent_by_targetname( "escape_elevator_block_collision" );
-    var_1 _meth_82BF();
+    var_1 notsolid();
     wait 2.0;
     common_scripts\utility::flag_set( "flag_dialogue_escape_climb" );
     maps\_utility::activate_trigger_with_targetname( "trigger_escape_move_into_elevator_shaft" );
     maps\betrayal_util::wait_for_trigger_and_ai_single( "trigger_escape_in_elevator_shaft", level.ilana );
-    var_1 _meth_82BE();
+    var_1 solid();
     maps\_utility::autosave_by_name();
     level thread escape_scene_close_elevator_doors();
     level notify( "trigger_escape_in_elevator_shaft" );
@@ -1674,11 +1674,11 @@ escape_scene_open_elevator_doors()
 
 escape_scene_open_elveator_door()
 {
-    self.col _meth_8058();
-    self.col _meth_804D( self );
-    self _meth_82AE( self.open_org, 3.0, 1.0, 1.0 );
+    self.col connectpaths();
+    self.col linkto( self );
+    self moveto( self.open_org, 3.0, 1.0, 1.0 );
     wait 3.0;
-    self.col _meth_82BF();
+    self.col notsolid();
 }
 
 escape_scene_close_elevator_doors()
@@ -1711,10 +1711,10 @@ escape_scene_close_elevator_doors()
 
 escape_scene_close_elveator_door()
 {
-    self.col _meth_82BE();
-    self.col _meth_804D( self );
-    self _meth_82AE( self.org_pos, 3.0, 1.0, 1.0 );
-    self.col _meth_8057();
+    self.col solid();
+    self.col linkto( self );
+    self moveto( self.org_pos, 3.0, 1.0, 1.0 );
+    self.col disconnectpaths();
 }
 
 escape_scene_remove_guards_on_complete()
@@ -1773,8 +1773,8 @@ roof_scene_setup_failstates()
 roof_scene_industrial_section()
 {
     level.ilana.colornode_setgoal_func = ::roof_scene_scripted_ilona_fire_at_swarm;
-    _func_0D3( "glass_damageToWeaken", 32000 );
-    _func_0D3( "glass_damageToDestroy", 64000 );
+    setsaveddvar( "glass_damageToWeaken", 32000 );
+    setsaveddvar( "glass_damageToDestroy", 64000 );
 }
 
 roof_scene_industrial_drone_swarm_launch_manager( var_0 )
@@ -1808,7 +1808,7 @@ roof_scene_industrial_set_up_swarm()
 roof_scene_industrial_open_hatch()
 {
     common_scripts\utility::flag_set( "flag_roof_swarm_launched" );
-    self _meth_82B6( 95, 2.5, 0.25, 0.5 );
+    self rotatepitch( 95, 2.5, 0.25, 0.5 );
 }
 
 roof_scene_industrial_launch_drone_swarm()
@@ -1950,7 +1950,7 @@ roof_scene_grass_setup_blast_door_clip()
     foreach ( var_2 in var_0 )
     {
         var_2.down_pos = var_2.origin - ( 0, 0, 192 );
-        var_2 _meth_82AE( var_2.down_pos, 0.1 );
+        var_2 moveto( var_2.down_pos, 0.1 );
     }
 }
 
@@ -2007,12 +2007,12 @@ roof_scene_grass_death_squad_handler()
 
 roof_scene_slide()
 {
-    self _meth_817B();
+    self usetriggerrequirelookat();
     maps\_utility::addhinttrigger( &"BETRAYAL_HINT_SLIDE_MANTLE", &"BETRAYAL_HINT_SLIDE_MANTLE" );
-    level.player _meth_82DD( "fake_mantle_jump", "+gostand" );
+    level.player notifyonplayercommand( "fake_mantle_jump", "+gostand" );
     common_scripts\utility::run_thread_on_targetname( "trigger_roof_start_slide_player_present", ::roof_scene_slide_wait_for_player_jumped );
     level waittill( "flag_roof_player_jumped_off_atlas_building" );
-    level.player _meth_849C( "fake_mantle_jump", "+gostand" );
+    level.player notifyonplayercommandremove( "fake_mantle_jump", "+gostand" );
     self delete();
     level.ilana roof_scene_scripted_ilona_fire_at_swarm_behavior_clear();
     thread swim_scene_pre_setup();
@@ -2022,12 +2022,12 @@ roof_scene_slide()
     level.rig = maps\_utility::spawn_anim_model( "player_rig", level.player.origin, level.player.angles );
     level.rig hide();
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_80FE();
+    level.player enableslowaim();
     var_0 = 0.5;
-    level.player _meth_8080( level.rig, "tag_player", var_0 );
+    level.player playerlinktoblend( level.rig, "tag_player", var_0 );
     level.rig common_scripts\utility::delaycall( var_0, ::show );
-    level.player common_scripts\utility::delaycall( var_0, ::_meth_807D, level.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
-    level.player common_scripts\utility::delaycall( var_0 + 0.05, ::_meth_80A2, 1.0, 0, 0, 15, 15, 12, 8 );
+    level.player common_scripts\utility::delaycall( var_0, ::playerlinktodelta, level.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( var_0 + 0.05, ::lerpviewangleclamp, 1.0, 0, 0, 15, 15, 12, 8 );
     var_1 = maps\betrayal_util::get_ent_by_targetname( "animorg_roof_slide" );
     var_2 = [];
     var_2[0] = level.rig;
@@ -2052,8 +2052,8 @@ roof_scene_slide()
     soundscripts\_snd::snd_music_message( "roof_slide" );
     soundscripts\_snd::snd_message( "bet_escape_roof_slide" );
     var_1 maps\_anim::anim_single( var_2, "roof_slide" );
-    level.player _meth_804F();
-    level.player _meth_80FF();
+    level.player unlink();
+    level.player disableslowaim();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level.rig delete();
     maps\_utility::autosave_by_name();
@@ -2067,7 +2067,7 @@ roof_scene_slide_wait_for_player_jumped()
     {
         level.player waittill( "fake_mantle_jump" );
 
-        if ( self _meth_80A9( level.player ) )
+        if ( self istouching( level.player ) )
             break;
 
         wait 0.05;
@@ -2087,7 +2087,7 @@ roof_scene_slide_ilana_anim_to_swim()
     level.ilana.is_swimming = 1;
     maps\_anim::anim_single_solo( level.ilana, "roof_slide" );
     level.ilana.swim_path_targetname = "ilana_swim_path";
-    level.ilana _meth_819A( ::swim_scene_ilana_swim_on_path_behavior );
+    level.ilana animcustom( ::swim_scene_ilana_swim_on_path_behavior );
 }
 
 roof_scene_slide_slomo_start( var_0 )
@@ -2111,8 +2111,8 @@ roof_scene_slide_remove_glass_blocker( var_0 )
     foreach ( var_3 in var_1 )
         var_3 delete();
 
-    _func_0D3( "glass_damageToWeaken", 75 );
-    _func_0D3( "glass_damageToDestroy", 275 );
+    setsaveddvar( "glass_damageToWeaken", 75 );
+    setsaveddvar( "glass_damageToDestroy", 275 );
 }
 
 roof_scene_slide_raise_gates( var_0 )
@@ -2138,11 +2138,11 @@ roof_scene_vignette_civilians()
 
 roof_scene_scripted_ilona_fire_at_swarm( var_0 )
 {
-    self _meth_8168();
+    self clearentitytarget();
     maps\_utility::set_ignoreall( 0 );
     self notify( "stop_firing_at_swarm" );
     self endon( "stop_firing_at_swarm" );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     thread maps\_colors::color_node_arrival_notifies( var_0 );
     self waittill( "goal" );
 
@@ -2160,14 +2160,14 @@ roof_scene_scripted_ilona_fire_at_swarm( var_0 )
         }
     }
 
-    self _meth_8167( level.snake_cloud.snakes[0] );
+    self setentitytarget( level.snake_cloud.snakes[0] );
     maps\_utility::set_ignoreall( 0 );
 }
 
 roof_scene_scripted_ilona_fire_at_swarm_behavior_clear()
 {
     self notify( "stop_firing_at_swarm" );
-    self _meth_8168();
+    self clearentitytarget();
     self.colornode_setgoal_func = undefined;
 }
 
@@ -2175,17 +2175,17 @@ roof_scene_scripted_elevator_shaft_close()
 {
     wait 0.05;
     var_0 = maps\betrayal_util::get_ent_by_targetname( "roof_scene_elevator_hatch" );
-    var_0 _meth_80B1( "btr_elevator_vent_cover_a_closed" );
+    var_0 setmodel( "btr_elevator_vent_cover_a_closed" );
     var_1 = maps\betrayal_util::get_ent_by_targetname( "elevator_shaft_open_clip" );
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_8058();
+        var_1 connectpaths();
         var_1 delete();
     }
 
     var_2 = maps\betrayal_util::get_ent_by_targetname( "elevator_shaft_blocker" );
-    var_2 _meth_82BE();
+    var_2 solid();
     maps\betrayal_util::waittill_player_not_exo_climbing();
     var_3 = maps\betrayal_util::get_ent_by_targetname( "start_roof_ilana" );
 
@@ -2197,7 +2197,7 @@ roof_scene_scripted_elevator_shaft_close()
     if ( isdefined( var_4 ) )
         maps\_utility::activate_trigger_with_targetname( "roof_scene_ilona_start" );
 
-    level.ilana _meth_81C6( var_3.origin, var_3.angles );
+    level.ilana forceteleport( var_3.origin, var_3.angles );
 }
 
 roof_scene_enter_water_cleanup()
@@ -2212,8 +2212,8 @@ roof_scene_enter_water_cleanup()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
     }
 
     level.ilana.ignoreall = 1;
@@ -2242,7 +2242,7 @@ swim_scene_pre_setup()
 
 swim_scene_setup()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player.drowning_damage = level.player.maxhealth * 0.1 / level.player.damagemultiplier;
     maps\_underwater::override_breath_values( 24, 1 );
     thread swim_scene_handle_player_containment();
@@ -2262,9 +2262,9 @@ swim_scene_setup()
 
     if ( !isdefined( level.ilana.is_swimming ) )
     {
-        level.ilana _meth_8142( %body, 0 );
+        level.ilana clearanim( %body, 0 );
         level.ilana.swim_path_targetname = "ilana_swim_path";
-        level.ilana _meth_819A( ::swim_scene_ilana_swim_on_path_behavior );
+        level.ilana animcustom( ::swim_scene_ilana_swim_on_path_behavior );
     }
 
     common_scripts\_exploder::exploder( 3002 );
@@ -2292,9 +2292,9 @@ swim_scene_ilana_swim_on_path_behavior()
 
     maps\_utility::disable_pain();
     var_1 = var_0.origin;
-    self _meth_818E( "nogravity" );
+    self animmode( "nogravity" );
     var_2 = vectortoangles( var_1 - self.origin );
-    self _meth_8145( %bet_swimming_forward_idle_ilona, 1, 0.2, 1.2 );
+    self setanimknobrestart( %bet_swimming_forward_idle_ilona, 1, 0.2, 1.2 );
 
     for (;;)
     {
@@ -2313,7 +2313,7 @@ swim_scene_ilana_swim_on_path_behavior()
         var_4 = clamp( angleclamp180( var_3[0] - var_2[0] ), -1.5, 1.5 );
         var_5 = clamp( angleclamp180( var_3[1] - var_2[1] ), -1.5, 1.5 );
         var_2 = ( var_2[0] + var_4, var_2[1] + var_5, var_3[2] );
-        self _meth_818F( "face angle 3d", var_2, 1 );
+        self orientmode( "face angle 3d", var_2, 1 );
         wait 0.05;
     }
 
@@ -2324,11 +2324,11 @@ swim_scene_ilana_swim_on_path_behavior()
 
     var_7 = getent( "sewer_get_out_ilana", "targetname" );
     soundscripts\_snd::snd_message( "bet_ilona_swim_end", level.ilana );
-    self _meth_81C6( var_7.origin, var_7.angles );
+    self forceteleport( var_7.origin, var_7.angles );
     var_8 = getnode( "ilona_exit_swim_cover", "targetname" );
     maps\_utility::set_goal_node( var_8 );
-    self _meth_818E( "gravity" );
-    self _meth_818F( "face default" );
+    self animmode( "gravity" );
+    self orientmode( "face default" );
     maps\_utility::enable_pain();
 }
 
@@ -2358,7 +2358,7 @@ swim_scene_warbird_fire_at_target_for_duration( var_0, var_1 )
 {
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_8139( "allies" );
+        var_0 makeentitysentient( "allies" );
 
         if ( isdefined( var_0 ) )
             self.turret_target_override = var_0;
@@ -2430,16 +2430,16 @@ swim_scene_boat_sink()
             var_2 = var_4;
     }
 
-    var_2 _meth_804D( var_1 );
+    var_2 linkto( var_1 );
     var_6 = var_1 common_scripts\utility::spawn_tag_origin();
     var_6.angles = vectortoangles( anglestoup( var_1.angles ) );
-    var_6 _meth_804D( var_1 );
+    var_6 linkto( var_1 );
     self waittill( "trigger" );
     level.swim_warbird thread swim_scene_warbird_fire_at_target_for_duration( var_1, 3 );
     wait 4;
     level.player thread maps\betrayal_fx::canal_boat_explosion( var_6 );
     soundscripts\_snd::snd_message( "bet_swim_boat_explo", var_6 );
-    var_1 _meth_80AD( "grenade_rumble" );
+    var_1 playrumbleonentity( "grenade_rumble" );
     var_7 = undefined;
     var_8 = 0;
     var_9 = 0;
@@ -2463,8 +2463,8 @@ swim_scene_boat_sink()
         var_14 = randomfloatrange( -30, -20 );
         var_8 = clamp( randomfloatrange( -5.0, 5.0 ) + var_8, -20, 20 );
         var_9 = clamp( randomfloatrange( -5.0, 5.0 ) + var_9, -20, 20 );
-        var_1 _meth_82AE( var_1.origin + ( var_12, var_13, var_14 ), var_11 );
-        var_1 _meth_82B5( ( var_9, var_1.angles[1], var_8 ), var_11 );
+        var_1 moveto( var_1.origin + ( var_12, var_13, var_14 ), var_11 );
+        var_1 rotateto( ( var_9, var_1.angles[1], var_8 ), var_11 );
         wait(var_11);
     }
 
@@ -2472,7 +2472,7 @@ swim_scene_boat_sink()
     stopfxontag( level._effect["boat_explosion"], var_6, "tag_origin" );
     stopfxontag( level._effect["boat_explosion_underwater"], var_6, "tag_origin" );
     wait 4;
-    var_6 _meth_804F();
+    var_6 unlink();
     var_6 delete();
 }
 
@@ -2495,8 +2495,8 @@ swim_scene_boat_sink_bob()
         var_11 = clamp( self.origin[2] + randomfloatrange( -15, 15 ), var_4, var_5 );
         var_6 = clamp( randomfloatrange( -5.0, 5.0 ) + var_6, -20, 20 );
         var_7 = clamp( randomfloatrange( -5.0, 5.0 ) + var_7, -20, 20 );
-        self _meth_82AE( ( var_9, var_10, var_11 ), var_8 );
-        self _meth_82B5( ( var_7, self.angles[1], var_6 ), var_8 );
+        self moveto( ( var_9, var_10, var_11 ), var_8 );
+        self rotateto( ( var_7, self.angles[1], var_6 ), var_8 );
         wait(var_8);
     }
 }
@@ -2507,7 +2507,7 @@ swim_scene_dock_destroy()
     level thread maps\betrayal_fx::canal_dock_destroy();
     wait 0.5;
     level.dock_debris show();
-    level.dock_debris_blocker _meth_82BE();
+    level.dock_debris_blocker solid();
     soundscripts\_snd::snd_message( "bet_swim_dock_debris_blocker" );
     maps\_utility::autosave_by_name();
 
@@ -2519,7 +2519,7 @@ swim_scene_scripted_destroyed_dock_hide()
 {
     level.dock_debris = maps\betrayal_util::get_ent_by_targetname( "swim_scene_sunk_dock_debris" );
     level.dock_debris_blocker = maps\betrayal_util::get_ent_by_targetname( "swim_scene_debris_blocker" );
-    level.dock_debris_blocker _meth_82BF();
+    level.dock_debris_blocker notsolid();
     level.dock_debris hide();
 }
 
@@ -2583,16 +2583,16 @@ swim_scene_climb_out_water()
     var_0 = getentarray( "sewer_containment", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_82BF();
+        var_2 notsolid();
 
     common_scripts\utility::flag_wait( "flag_swim_water_player_out_of_water" );
     soundscripts\_snd::snd_music_message( "sewer_out_of_water" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_82BE();
+        var_2 solid();
 
     wait 1;
-    level.player _meth_831E();
+    level.player enableweapons();
 }
 
 swim_scene_handle_current()
@@ -2623,7 +2623,7 @@ swim_scene_handle_player_containment()
 
         foreach ( var_6 in var_0 )
         {
-            if ( level.player _meth_80A9( var_6 ) )
+            if ( level.player istouching( var_6 ) )
             {
                 var_4 = 1;
                 break;
@@ -2731,11 +2731,11 @@ sewer_scene_dialogue_manager()
 
 sewer_scene_ilona_movement_manager()
 {
-    level.ilana _meth_81A3( 1 );
+    level.ilana pushplayer( 1 );
     common_scripts\utility::flag_wait( "flag_sewer_oppression_event_ilona_start_secret" );
-    level.ilana _meth_81CA( "crouch", "prone" );
+    level.ilana allowedstances( "crouch", "prone" );
     common_scripts\utility::flag_wait( "flag_sewer_oppression_event_ilona_building_start" );
-    level.ilana _meth_81CA( "stand", "crouch", "prone" );
+    level.ilana allowedstances( "stand", "crouch", "prone" );
 }
 
 sewer_scene_manhole_interaction()
@@ -2777,7 +2777,7 @@ sewer_scene_manhole_interaction()
 
 sewer_scene_teleport_ilona_to_sewer_exit( var_0 )
 {
-    level.ilana _meth_81A3( 0 );
+    level.ilana pushplayer( 0 );
     level.ilana maps\betrayal_util::start_squad_member_at_start( "exit_sewer_ilana" );
 }
 
@@ -2902,7 +2902,7 @@ sewer_scene_market_section_handle_ilona_move()
 sewer_scene_guards_alerted_wake_up_scene()
 {
     common_scripts\utility::flag_wait( "flag_sewer_checkpoint_guards_wakeup" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_0 = sortbydistance( var_0, level.player.origin );
     level thread maps\betrayal_vo::play_dialogue_oldtown_player_spotted( var_0[0], var_0[1] );
     level notify( "market_walla_guards_wakeup" );
@@ -3207,7 +3207,7 @@ sewer_scene_checkpoint_guard_wakeup()
     common_scripts\utility::flag_wait( "flag_sewer_checkpoint_guards_wakeup" );
     maps\betrayal_util::stop_current_animations();
     maps\_utility::set_goal_radius( 128 );
-    self _meth_81A6( self.origin );
+    self setgoalpos( self.origin );
 
     for (;;)
     {
@@ -3276,15 +3276,15 @@ sewer_scene_checkpoint_player_killvol_handling()
     level.player endon( "death" );
     level.market_kill_volume = maps\betrayal_util::get_ent_by_targetname( "sewer_scene_security_magicbullet_player" );
     var_0 = getent( "sewer_scene_magic_bullet_start", "targetname" );
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
 
     for (;;)
     {
-        if ( level.player _meth_80A9( level.market_kill_volume ) )
+        if ( level.player istouching( level.market_kill_volume ) )
         {
-            var_1 = level.player _meth_80A8();
+            var_1 = level.player geteye();
             magicbullet( "iw5_thor_sp", var_0.origin, var_1 );
-            level.player _meth_8052();
+            level.player kill();
             wait 0.5;
             setdvar( "ui_deadquote", &"BETRAYAL_FAIL_ESCAPE" );
             maps\_utility::missionfailedwrapper();
@@ -3366,7 +3366,7 @@ sewer_scene_chkpt_fail_warbird()
     var_0 soundscripts\_snd::snd_message( "aud_ambient_helicopter", "chkpt_fail_warbird" );
     var_0 thread maps\_vehicle::godon();
     var_0 thread maps\betrayal_util::warbird_shooting_think( 0, 1 );
-    var_0 _meth_8265( level.player );
+    var_0 setlookatent( level.player );
     common_scripts\utility::flag_waitopen( "flag_sewer_player_failed_checkpoint" );
     var_1 = common_scripts\utility::getstruct( "final_path_fail_warbird", "targetname" );
     var_0 thread maps\_vehicle_code::_vehicle_paths( var_1 );
@@ -3478,7 +3478,7 @@ oldtown_freerun()
     level.ilana.runngun = 1;
     thread oldtown_freerun_ilana_awareness();
     common_scripts\utility::flag_set( "flag_enable_battle_chatter" );
-    level.player _meth_8490( "clut_betrayal_c3_01", 5 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 5 );
     thread oldtown_freerun_enemy_removal();
     thread oldtown_freerun_enemy_cleanup_maintain();
 
@@ -3572,9 +3572,9 @@ oldtown_freerun_civ_walker_maintainer( var_0, var_1, var_2, var_3 )
             var_4.goalradius = 32;
             var_4.alertlevel = "noncombat";
             var_4 maps\betrayal_util::set_custom_patrol_anim_set( "panic" );
-            var_4 _meth_81C6( var_1[0].origin, var_1[0].angles );
+            var_4 forceteleport( var_1[0].origin, var_1[0].angles );
             waitframe();
-            var_4 _meth_81A5( var_2[0] );
+            var_4 setgoalnode( var_2[0] );
             var_4 thread oldtown_freerun_civ_walker_panic();
             var_4 thread oldtown_freerun_civ_walker_removal();
         }
@@ -3600,7 +3600,7 @@ oldtown_freerun_civ_walker_panic()
     var_0 = level.esc_node_locations[0];
     level.esc_node_locations = common_scripts\utility::array_remove( level.esc_node_locations, level.esc_node_locations[0] );
     waitframe();
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
     var_0 thread maps\_anim::anim_loop_solo( self, "civ_react_cower_crouch_to_crouch_2", "stop_loop" );
 
@@ -3614,9 +3614,9 @@ oldtown_freerun_civ_walker_panic_retreat( var_0 )
     var_2 = var_1.script_noteworthy;
     common_scripts\utility::flag_wait( var_2 );
     self notify( "stop_loop" );
-    self _meth_8141();
+    self stopanimscripted();
     waitframe();
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     self waittill( "goal" );
     var_1 thread maps\_anim::anim_loop_solo( self, "civ_react_cower_crouch_to_crouch_2", "stop_loop" );
 }
@@ -3734,7 +3734,7 @@ oldtown_freerun_security_checkpoint_guards_hold_fire()
     foreach ( var_3 in var_1 )
         var_3 maps\_utility::set_ignoreall( 1 );
 
-    while ( level.player _meth_80A9( var_0 ) )
+    while ( level.player istouching( var_0 ) )
     {
         var_1 = common_scripts\utility::array_removeundefined( var_1 );
 
@@ -3927,8 +3927,8 @@ oldtown_freerun_enemy_dresser_kick()
     var_2 = getent( "dresser_org1", "targetname" );
     var_3 = getent( "event_cabinet", "targetname" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "cabinet_pull" );
-    var_2 _meth_804D( var_1, "tag_origin_animated" );
-    var_3 _meth_804D( var_1, "tag_origin_animated" );
+    var_2 linkto( var_1, "tag_origin_animated" );
+    var_3 linkto( var_1, "tag_origin_animated" );
     level waittill( "event_cabinet_go" );
     var_4 = maps\_utility::get_living_ai( "dresser_group_1", "script_noteworthy" );
     var_4.allowdeath = 0;
@@ -3940,7 +3940,7 @@ oldtown_freerun_enemy_dresser_kick()
     var_4 maps\_utility::stop_magic_bullet_shield();
     var_4.allowdeath = 1;
     wait(var_6 - 1.1);
-    var_2 _meth_8057();
+    var_2 disconnectpaths();
 }
 
 oldtown_freerun_enemy_fragging()
@@ -3948,7 +3948,7 @@ oldtown_freerun_enemy_fragging()
     common_scripts\utility::flag_wait( "freerun_frag_go" );
     var_0 = common_scripts\utility::getstruct( "frag_gren_end", "targetname" );
     var_1 = common_scripts\utility::getstruct( "frag_gren_start", "targetname" );
-    _func_070( "fraggrenade", var_1.origin, var_0.origin, 2 );
+    magicgrenade( "fraggrenade", var_1.origin, var_0.origin, 2 );
 }
 
 oldtown_freerun_doorkick_enemy_setup()
@@ -3980,17 +3980,17 @@ oldtown_freerun_doorkick_enemy()
     var_2 = getent( "model_enemy_doorkick_broken", "targetname" );
     var_3 = common_scripts\utility::getstruct( "struct_enemy_doorkick", "targetname" );
     level.enemy_doorkick = [ var_0, var_1, var_2 ];
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     var_2 hide();
     level waittill( "door_smash_open" );
-    var_0 _meth_8058();
+    var_0 connectpaths();
     var_2 show();
     var_1 delete();
     var_0 delete();
     var_4 = var_2.origin - var_3.origin;
     var_1 = var_2;
     var_5 = ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -10, 10 ) );
-    var_1 _meth_8276( var_1.origin + var_5, var_4 * randomintrange( 5, 15 ) );
+    var_1 physicslaunchserver( var_1.origin + var_5, var_4 * randomintrange( 5, 15 ) );
 }
 
 oldtown_freerun_doorkick_player()
@@ -4099,7 +4099,7 @@ oldtown_freerun_failstate_backtrack()
     wait 1;
     level thread maps\betrayal_vo::play_dialogue_oldtown_player_spotted( level.freerun_fail_hunter[0], level.freerun_fail_hunter[1] );
     wait 9;
-    level.player _meth_8052();
+    level.player kill();
     wait 0.5;
     setdvar( "ui_deadquote", &"BETRAYAL_FAIL_ESCAPE" );
     maps\_utility::missionfailedwrapper();
@@ -4467,7 +4467,7 @@ oldtown_dock_littlebird_rooftop_goal( var_0 )
     maps\_utility::disable_pain();
     self waittill( "jumpedout" );
     self.goalradius = 16;
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self.ignoreall = 1;
     self waittill( "goal" );
     maps\_utility::enable_pain();
@@ -4558,7 +4558,7 @@ oldtown_dock_fail_start()
 
         level.atlas_guard1 thread maps\betrayal_util::simple_anim_at_struct( "docks_guard1_animorg" );
         level.atlas_guard2 thread maps\betrayal_util::simple_anim_at_struct( "docks_guard2_animorg" );
-        var_5 = _func_0D6( "axis" );
+        var_5 = getaiarray( "axis" );
         var_5 = sortbydistance( var_5, level.player.origin );
         level thread maps\betrayal_vo::play_dialogue_oldtown_player_spotted( var_5[0], var_5[1] );
         thread oldtown_dock_fail_avoid_player_got_in_boat();
@@ -4626,14 +4626,14 @@ oldtown_dock_failstate_backtrack()
     var_2 = maps\betrayal_util::get_ent_by_targetname( "trigger_dock_backtrack_deathsquad" );
     var_3 = 0;
 
-    while ( !level.player _meth_80A9( var_2 ) )
+    while ( !level.player istouching( var_2 ) )
     {
-        if ( level.player _meth_80A9( var_1 ) && var_3 == 0 )
+        if ( level.player istouching( var_1 ) && var_3 == 0 )
         {
             thread maps\_utility::hintdisplayhandler( "leaving_mission_area_trigger", undefined, var_1 );
             var_3 = 1;
         }
-        else if ( !level.player _meth_80A9( var_2 ) )
+        else if ( !level.player istouching( var_2 ) )
             var_3 = 0;
 
         waitframe();
@@ -4646,7 +4646,7 @@ oldtown_dock_failstate_backtrack()
 
     if ( !maps\betrayal_util::player_mission_failed_handler( 8, undefined, "docks_end_fail_state_monitor" ) )
     {
-        level.player _meth_8052();
+        level.player kill();
         wait 0.5;
         setdvar( "ui_deadquote", &"BETRAYAL_FAIL_ESCAPE" );
         maps\_utility::missionfailedwrapper();
@@ -4687,7 +4687,7 @@ oldtown_dock_failstate_backtrack_deathsquad()
 play_grapple_anim( var_0 )
 {
     waittillframeend;
-    var_0 _meth_814B( level.scr_anim["grapple_launcher"]["boat_getin"] );
+    var_0 setanim( level.scr_anim["grapple_launcher"]["boat_getin"] );
 }
 
 boat_scene_master_handler( var_0 )
@@ -4715,16 +4715,16 @@ boat_scene_master_handler( var_0 )
         var_4 hide();
         level.player maps\_shg_utility::setup_player_for_scene( 1 );
         var_5 = 0.5;
-        level.player _meth_8080( var_4, "tag_player", var_5 );
-        level.player common_scripts\utility::delaycall( var_5, ::_meth_807D, var_4, "tag_player", 1, 0, 0, 0, 0, 1 );
-        level.player _meth_80FE();
+        level.player playerlinktoblend( var_4, "tag_player", var_5 );
+        level.player common_scripts\utility::delaycall( var_5, ::playerlinktodelta, var_4, "tag_player", 1, 0, 0, 0, 0, 1 );
+        level.player enableslowaim();
         var_4 common_scripts\utility::delaycall( var_5, ::show );
         var_6 = [ var_4, level.player_boat ];
         common_scripts\utility::delay_script_call( 3.0, common_scripts\utility::flag_set, "flag_dialogue_boat_grapple" );
         thread play_grapple_anim( var_4 );
         var_3 maps\_anim::anim_single( var_6, "boat_getin", undefined, undefined, undefined, 1 );
         wait 0.2;
-        level.player _meth_804F();
+        level.player unlink();
         var_4 delete();
 
         if ( level.currentgen )
@@ -4734,23 +4734,23 @@ boat_scene_master_handler( var_0 )
         level.player_boat makeusable();
         maps\betrayal_util::start_player_diveboat_ride();
         level.player_boat makeunusable();
-        level.player _meth_80FF();
-        level.player _meth_8119( 0 );
-        level.player _meth_811A( 0 );
+        level.player disableslowaim();
+        level.player allowcrouch( 0 );
+        level.player allowprone( 0 );
         level.player_boat thread boat_scene_drive_tutorial();
         maps\_utility::autosave_by_name();
     }
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", "1024" );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", "1024" );
 
-    level.player_boat _meth_822F();
+    level.player_boat vehphys_enablecrashing();
     common_scripts\utility::flag_set( "flag_objective_boat_chase_start" );
     common_scripts\utility::flag_set( "flag_boat_start_bobbing_boats" );
-    level.player _meth_8490( "clut_betrayal_c3_01", 5 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 5 );
     level.ilana.ignoreall = 1;
-    level.ilana _meth_81C6( level.player_boat gettagorigin( "tag_passenger" ), level.player_boat gettagangles( "tag_passenger" ) );
-    level.ilana _meth_804D( level.player_boat, "tag_passenger", ( 0, 0, -100 ), ( 0, 0, 0 ) );
+    level.ilana forceteleport( level.player_boat gettagorigin( "tag_passenger" ), level.player_boat gettagangles( "tag_passenger" ) );
+    level.ilana linkto( level.player_boat, "tag_passenger", ( 0, 0, -100 ), ( 0, 0, 0 ) );
     level.ilana hide();
     boat_scene_setup();
     common_scripts\utility::flag_set( "flag_boat_player_in_boat" );
@@ -4758,17 +4758,17 @@ boat_scene_master_handler( var_0 )
     boat_scene_crash_moment();
     common_scripts\utility::flag_set( "boat_crash_lighting" );
     maps\_utility::trigger_wait_targetname( "trigger_boat_crashed_in_building" );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
     level.player boat_scene_hide_warning_elem();
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", "256" );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", "256" );
 
     wait 0.05;
     maps\betrayal_util::move_player_to_ent_by_targetname( "start_climb_player" );
     level.ilana show();
-    level.ilana _meth_804F();
+    level.ilana unlink();
     level.ilana maps\betrayal_util::move_squad_member_to_ent_by_targetname( "start_climb_ilana" );
     level.ilana maps\_utility::set_goal_pos( level.ilana.origin );
     wait 0.05;
@@ -4788,16 +4788,16 @@ boat_scene_early_setup()
     if ( !isdefined( level.player_boat ) )
         level.player_boat = maps\_vehicle::spawn_vehicle_from_targetname( "vehicle_player_boat" );
 
-    level.player_boat _meth_822E();
+    level.player_boat vehphys_disablecrashing();
     level.player_boat.animname = "player_boat";
-    level.player_boat _meth_8115( #animtree );
+    level.player_boat useanimtree( #animtree );
     level thread boat_scene_early_setup_start_bobbing_boats();
-    level.player _meth_82FB( "ui_diveboat", 1 );
+    level.player setclientomnvar( "ui_diveboat", 1 );
 }
 
 boat_scene_swap_to_grapple_body( var_0 )
 {
-    var_0 _meth_80B1( "viewbody_atlas_military_smp_grapple" );
+    var_0 setmodel( "viewbody_atlas_military_smp_grapple" );
 }
 
 boat_scene_early_setup_start_bobbing_boats()
@@ -4888,15 +4888,15 @@ boat_scene_crash_moment()
     level.player_boat vehicle_scripts\_diveboat::remove_diveboat_weapons();
     level.player_boat vehicle_scripts\_diveboat::stop_diveboat_threads();
     level.player.drivingvehicle = undefined;
-    level.player_boat _meth_8099( level.player );
+    level.player_boat useby( level.player );
     level.player_boat makeunusable();
-    level.player_boat _meth_840F( 0 );
+    level.player_boat setviewmodeldepth( 0 );
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_807D( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
     common_scripts\utility::flag_set( "flag_objective_boat_chase_complete" );
     var_0 maps\_anim::anim_single( var_3, "boat_crash" );
     level notify( "boat_crash_end" );
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
 }
 
@@ -4910,10 +4910,10 @@ boat_scene_disable_dive()
 
     for (;;)
     {
-        if ( self _meth_80A9( level.player ) )
-            level.player_boat _meth_84E9( 0 );
+        if ( self istouching( level.player ) )
+            level.player_boat vehicle_diveboatenabledive( 0 );
         else
-            level.player_boat _meth_84E9( 1 );
+            level.player_boat vehicle_diveboatenabledive( 1 );
 
         wait 0.05;
     }
@@ -4971,15 +4971,15 @@ boat_scene_monitor_boat_params()
         var_1 = anglestoforward( self.angles );
         self.dive_boat_params.fwd_dir = ( var_1[0], var_1[1], 0 );
         var_2 = self.angles - var_0;
-        var_3 = self _meth_8286() / self _meth_84AD() * 7.0;
+        var_3 = self vehicle_getspeed() / self vehicle_gettopspeed() * 7.0;
         self.dive_boat_params.yawdiff = var_3 * var_2[1];
         var_4 = rotatevector( var_1, ( 0, var_3 * var_2[1], 0 ) );
         self.dive_boat_params.fwd_aug = ( var_4[0], var_4[1], 0 );
-        self.dive_boat_params.upsspeed = max( maps\betrayal_util::mph_to_ups( self _meth_8286() ), maps\betrayal_util::mph_to_ups( 5 ) );
+        self.dive_boat_params.upsspeed = max( maps\betrayal_util::mph_to_ups( self vehicle_getspeed() ), maps\betrayal_util::mph_to_ups( 5 ) );
         var_5 = anglestoright( self.angles );
         self.dive_boat_params.right = ( var_5[0], var_5[1], 0 );
 
-        if ( self _meth_84C7() )
+        if ( self vehicle_diveboatissubmerged() )
             maps\_utility::ent_flag_set( "dive_boat_params_underwater" );
         else
             maps\_utility::ent_flag_clear( "dive_boat_params_underwater" );
@@ -4998,9 +4998,9 @@ boat_scene_monitor_boat_params()
 boat_scene_show_warning_elem( var_0 )
 {
     if ( isdefined( var_0 ) && var_0 == "collision" )
-        level.player _meth_82FB( "ui_diveboat_msg", 1 );
+        level.player setclientomnvar( "ui_diveboat_msg", 1 );
     else if ( isdefined( var_0 ) && var_0 == "missile" )
-        level.player _meth_82FB( "ui_diveboat_msg", 2 );
+        level.player setclientomnvar( "ui_diveboat_msg", 2 );
 
     level.player thread boat_scene_cleanup_warning_elem_on_crash();
 }
@@ -5014,7 +5014,7 @@ boat_scene_cleanup_warning_elem_on_crash()
 
 boat_scene_hide_warning_elem()
 {
-    level.player _meth_82FB( "ui_diveboat_msg", 0 );
+    level.player setclientomnvar( "ui_diveboat_msg", 0 );
 }
 
 boat_scene_missile_dive_warning()
@@ -5031,7 +5031,7 @@ boat_scene_play_target_lock_sound_loop( var_0 )
 {
     level.player endon( "damage" );
 
-    for ( var_1 = 0; var_1 < var_0 && !self _meth_84C7(); var_1 += 0.35 )
+    for ( var_1 = 0; var_1 < var_0 && !self vehicle_diveboatissubmerged(); var_1 += 0.35 )
     {
         soundscripts\_snd::snd_message( "lock_on_target" );
         wait 0.35;
@@ -5047,7 +5047,7 @@ boat_scene_target_lock_sound()
         common_scripts\utility::flag_wait( "flag_incoming_missile_warning" );
         thread boat_scene_play_target_lock_sound_loop( 10 );
 
-        if ( !self _meth_84C7() )
+        if ( !self vehicle_diveboatissubmerged() )
             common_scripts\utility::flag_set( "flag_dialogue_boat_missiles" );
 
         common_scripts\utility::flag_clear( "flag_incoming_missile_warning" );
@@ -5147,7 +5147,7 @@ boat_scene_missile_flight( var_0, var_1 )
     wait 0.25;
     playfxontag( level._effect["bet_water_explosion_single"], var_13, "tag_origin" );
     boat_scene_spawn_water_impact( var_13.origin );
-    var_13 _meth_80AD( "grenade_rumble" );
+    var_13 playrumbleonentity( "grenade_rumble" );
 
     if ( isdefined( var_1 ) )
         boat_scene_missile_impact_damage_boat( var_13.origin );
@@ -5162,7 +5162,7 @@ boat_scene_missile_impact_damage_boat( var_0 )
         return;
 
     physicsexplosionsphere( var_0, 256, 0, 3 );
-    level.player _meth_8051( 200, var_0 );
+    level.player dodamage( 200, var_0 );
     wait 0.5;
 
     if ( level.player.health <= 0 )
@@ -5248,7 +5248,7 @@ boat_scene_moving_obstacle_spawn_boat_in_radius( var_0 )
 
     for (;;)
     {
-        if ( !isdefined( var_0 ) || _func_294( var_0 ) )
+        if ( !isdefined( var_0 ) || isremovedentity( var_0 ) )
             return;
 
         var_1 = distance2d( var_0.origin, level.player.origin );
@@ -5275,7 +5275,7 @@ boat_scene_moving_obstacle_delete_boat_on_spawner_death( var_0 )
     var_0.script_linkname = undefined;
     self waittill( "death" );
 
-    if ( isdefined( var_0 ) && !_func_294( var_0 ) )
+    if ( isdefined( var_0 ) && !isremovedentity( var_0 ) )
         var_0 delete();
 }
 
@@ -5287,7 +5287,7 @@ boat_scene_bobbing_obstacle( var_0 )
     if ( !isdefined( var_0 ) )
     {
         var_0 = maps\betrayal_util::get_ent_by_targetname( self.target );
-        var_0 _meth_804D( self );
+        var_0 linkto( self );
     }
 
     maps\_utility::ent_flag_init( "flag_big_bobbing" );
@@ -5394,10 +5394,10 @@ boat_scene_handle_boat_collisions()
     {
         self waittill( "veh_contact", var_0, var_1 );
 
-        if ( self _meth_8286() > 15 )
+        if ( self vehicle_getspeed() > 15 )
         {
-            level.player _meth_8051( 20, var_1 );
-            level.player _meth_80AD( "damage_heavy" );
+            level.player dodamage( 20, var_1 );
+            level.player playrumbleonentity( "damage_heavy" );
         }
 
         wait 0.05;
@@ -5412,8 +5412,8 @@ boat_scene_handle_boat_damage()
 
         if ( randomint( 100 ) < 5 )
         {
-            level.player _meth_8051( var_0 * 0.02, var_3, var_1 );
-            level.player _meth_80AD( "damage_light" );
+            level.player dodamage( var_0 * 0.02, var_3, var_1 );
+            level.player playrumbleonentity( "damage_light" );
         }
 
         maps\_vehicle::vehicle_set_health( 2000 );
@@ -5477,7 +5477,7 @@ boat_scene_fail_path()
 
 boat_scene_cleanup()
 {
-    level.player _meth_82FB( "ui_diveboat", 0 );
+    level.player setclientomnvar( "ui_diveboat", 0 );
     level notify( "boat_scene_cleanup" );
 }
 
@@ -5536,7 +5536,7 @@ climb_scene_setup()
     maps\_utility::clear_all_color_orders( "axis" );
     maps\_utility::clear_all_color_orders( "allies" );
     common_scripts\utility::flag_set( "flag_dialogue_start_climb" );
-    level.ilana _meth_80B1( "ilana_atlas_pmc_launcher" );
+    level.ilana setmodel( "ilana_atlas_pmc_launcher" );
     common_scripts\utility::run_thread_on_targetname( "finale_climb_civ_setup", maps\betrayal_util::civilian_setup, "flag_climb_player_discovered", 0 );
     maps\_utility::activate_trigger_with_targetname( "finale_climb_civ_setup" );
     common_scripts\utility::run_thread_on_targetname( "climbimg_moving_crate_on_foot_start_node", ::climb_scene_moving_crates );
@@ -5549,15 +5549,15 @@ climb_scene_setup()
     common_scripts\utility::run_thread_on_targetname( "trigger_skybridge_break_glass", ::climb_scene_skybridge_break_glass );
     level thread climb_scene_ilona_simple_climbing();
     level.ilana.script_careful = 1;
-    level.ilana _meth_84E5( "grapple" );
+    level.ilana pathabilityadd( "grapple" );
     level.ilana maps\_utility::set_moveplaybackrate( 1.0 );
     common_scripts\utility::run_thread_on_targetname( "trigger_climb_fail_trigger", ::climb_scene_fail_fall );
     maps\_exo_climb::setup_climb_model( "atlas_army", 1 );
 
-    foreach ( var_1 in level.player _meth_82CE() )
+    foreach ( var_1 in level.player getweaponslistoffhands() )
     {
         if ( common_scripts\utility::array_contains( level.player.variable_grenade["special"], var_1 ) )
-            level.player _meth_830F( var_1 );
+            level.player takeweapon( var_1 );
     }
 
     common_scripts\utility::flag_clear( "flag_hint_player_exoclimb_jumped" );
@@ -5618,14 +5618,14 @@ climb_scene_fail_fall()
 
         common_scripts\utility::flag_set( "flag_climb_falling_fail" );
         level.player.grapple["dist_max"] = 1;
-        _func_072( 5, 0.5 );
+        setblur( 5, 0.5 );
         wait 0.25;
 
         if ( isdefined( level.player.grapple ) && level.player.grapple["grappling"] )
         {
             common_scripts\utility::flag_clear( "flag_climb_falling_fail" );
             level.player.grapple["dist_max"] = var_0;
-            _func_072( 0, 0.25 );
+            setblur( 0, 0.25 );
             continue;
         }
 
@@ -5638,7 +5638,7 @@ climb_scene_fail_fall()
     level.player common_scripts\utility::waittill_any_timeout( 1, "death", "player_on_ground" );
 
     if ( isalive( level.player ) )
-        level.player _meth_8052();
+        level.player kill();
 
     wait 0.05;
     setdvar( "ui_deadquote", &"BETRAYAL_CLIMB_FALL_FAIL" );
@@ -5650,7 +5650,7 @@ climb_scene_fail_on_ground_notify()
 
     for (;;)
     {
-        if ( level.player _meth_8341() )
+        if ( level.player isonground() )
             level.player notify( "player_on_ground" );
 
         wait 0.05;
@@ -5661,7 +5661,7 @@ climb_scene_first_climb()
 {
     if ( level.currentgen )
     {
-        if ( !_func_21E( "betrayal_finale_tr" ) )
+        if ( !istransientloaded( "betrayal_finale_tr" ) )
             level waittill( "tff_post_canals_to_finale" );
     }
 
@@ -5745,14 +5745,14 @@ climb_scene_anim_boat_getout()
 {
     level.player maps\_shg_utility::setup_player_for_scene();
     var_0 = maps\_utility::spawn_anim_model( "player_rig_grapple", level.player.origin, level.player.angles );
-    level.player _meth_807D( var_0, "tag_player", 1, 20, 23, 12, 0, 1 );
-    level.player _meth_80FE();
+    level.player playerlinktodelta( var_0, "tag_player", 1, 20, 23, 12, 0, 1 );
+    level.player enableslowaim();
     var_1 = maps\_utility::spawn_anim_model( "player_boat", var_0.origin, var_0.angles );
     var_2 = [ var_0, var_1, level.ilana ];
     var_3 = maps\betrayal_util::get_ent_by_targetname( "animorg_boat_getout" );
     var_3 maps\_anim::anim_single( var_2, "boat_getout" );
-    level.player _meth_804F();
-    level.player _meth_80FF();
+    level.player unlink();
+    level.player disableslowaim();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     maps\_player_exo::player_exo_activate();
     var_0 delete();
@@ -5772,7 +5772,7 @@ climb_scene_grapple_hint_handler()
     {
         foreach ( var_3 in var_0 )
         {
-            if ( level.player _meth_80A9( var_3 ) )
+            if ( level.player istouching( var_3 ) )
             {
                 maps\_utility::hintdisplayhandler( "grapple" );
                 var_1 = var_3;
@@ -5783,7 +5783,7 @@ climb_scene_grapple_hint_handler()
         waitframe();
     }
 
-    while ( level.player _meth_80A9( var_1 ) )
+    while ( level.player istouching( var_1 ) )
         wait 0.5;
 
     wait 0.5;
@@ -5839,10 +5839,10 @@ climb_scene_on_foot_warbird_arrival()
 climb_scene_warbird_setup_rotar_death_trigger()
 {
     var_0 = getent( "climb_scene_warbird_kill_trigger", "script_noteworthy" );
-    var_0 _meth_8069();
-    var_0 _meth_804D( self );
+    var_0 enablelinkto();
+    var_0 linkto( self );
     self waittill( "death" );
-    var_0 _meth_804F();
+    var_0 unlink();
     var_0 delete();
 }
 
@@ -5874,7 +5874,7 @@ climb_scene_on_foot_crate_death_area()
 
         foreach ( var_5 in level.climbing_crates )
         {
-            if ( var_5 _meth_80A9( var_0 ) )
+            if ( var_5 istouching( var_0 ) )
             {
                 var_3 = 1;
                 break;
@@ -5886,14 +5886,14 @@ climb_scene_on_foot_crate_death_area()
             var_2 = 1;
 
             foreach ( var_8 in var_1 )
-                var_8 _meth_8059();
+                var_8 disconnectnode();
         }
         else if ( !var_3 && var_2 )
         {
             var_2 = 0;
 
             foreach ( var_8 in var_1 )
-                var_8 _meth_805A();
+                var_8 connectnode();
         }
 
         wait 0.05;
@@ -5907,7 +5907,7 @@ climbing_scene_on_foot_no_friendly_damage_in_death_area()
 
     for (;;)
     {
-        if ( var_0 _meth_80A9( level.ilana ) )
+        if ( var_0 istouching( level.ilana ) )
             level.ilana maps\_utility::disable_pain();
         else
             level.ilana maps\_utility::enable_pain();
@@ -5933,7 +5933,7 @@ climb_scene_second_climb_ilona_no_push()
 
         foreach ( var_3 in var_0 )
         {
-            if ( level.ilana _meth_80A9( var_3 ) )
+            if ( level.ilana istouching( var_3 ) )
                 var_1 = 1;
         }
 
@@ -5989,7 +5989,7 @@ climb_scene_skybridge_break_glass()
     self waittill( "trigger" );
     var_0 = maps\betrayal_util::get_ent_by_targetname( self.target );
     glassradiusdamage( var_0.origin, 200, 100, 50 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 climb_scene_set_colors_careful_on_arrival_setting( var_0 )
@@ -6003,7 +6003,7 @@ climb_scene_set_colors_careful_on_arrival_setting( var_0 )
 climb_scene_colors_careful_on_arrival( var_0 )
 {
     self endon( "death" );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     thread maps\_colors::color_node_arrival_notifies( var_0 );
     self waittill( "goal" );
     self.fixednode = 0;
@@ -6104,14 +6104,14 @@ climb_scene_moving_crates()
     foreach ( var_3 in var_0 )
     {
         var_4 = maps\betrayal_util::get_ent_by_targetname( var_3.target );
-        var_4 _meth_804D( var_3 );
+        var_4 linkto( var_3 );
         var_3.origin = self.origin;
 
         if ( isdefined( self.angles ) )
             var_3.angles = self.angles;
 
         var_3.animname = "construction_crate";
-        var_3 _meth_8115( #animtree );
+        var_3 useanimtree( #animtree );
         var_3 hide();
     }
 
@@ -6296,7 +6296,7 @@ climb_scene_move_crate_on_path( var_0 )
 
         var_17 = distance( var_4.origin, self.origin );
         var_18 = var_17 / var_16;
-        self _meth_82AE( var_4.origin, var_18, var_18 * var_12, var_18 * var_13 );
+        self moveto( var_4.origin, var_18, var_18 * var_12, var_18 * var_13 );
 
         if ( isdefined( var_4.angles ) && var_4.angles != self.angles )
             thread climb_scene_rotate_crate_on_path( var_4.angles, var_18 );
@@ -6311,7 +6311,7 @@ climb_scene_rotate_crate_on_path( var_0, var_1 )
     var_2 = var_1 / 2.0;
     var_3 = var_1 / 4.0;
     wait(var_3);
-    self _meth_82B5( var_0, var_2, var_2 / 5, var_2 / 5 );
+    self rotateto( var_0, var_2, var_2 / 5, var_2 / 5 );
 }
 
 climb_scene_start_crane()
@@ -6324,10 +6324,10 @@ climb_scene_start_crane()
     var_0.dropoff_goal_ang = var_2.angles;
     var_2 delete();
     var_3 = maps\betrayal_util::get_ent_by_targetname( "script_glass_shatter_node" );
-    var_3 _meth_804D( var_0 );
+    var_3 linkto( var_0 );
     self waittill( "trigger" );
     var_3 thread climb_scene_crane_glass_break();
-    var_0 _meth_82B5( var_0.pickup_goal_ang, 6.0, 1.0, 1.0 );
+    var_0 rotateto( var_0.pickup_goal_ang, 6.0, 1.0, 1.0 );
     var_4 = maps\betrayal_util::get_ent_by_targetname( "trigger_crane_player_mount" );
     var_5 = maps\betrayal_util::get_ent_by_targetname( var_4.target );
     var_6 = maps\_shg_utility::hint_button_position( "use", var_5.origin, undefined, 200 );
@@ -6339,13 +6339,13 @@ climb_scene_start_crane()
     level.player thread climb_scene_handle_crane_climb( var_0 );
     level waittill( "climb_scene_start_crane_move" );
     var_0 soundscripts\_snd::snd_message( "reverse_mag_glove_crane_move" );
-    var_0 _meth_82B5( var_0.dropoff_goal_ang, 7.0, 1.0, 1.0 );
+    var_0 rotateto( var_0.dropoff_goal_ang, 7.0, 1.0, 1.0 );
 }
 
 climb_scene_handle_crane_climb( var_0 )
 {
     var_1 = climb_scene_crane_mount();
-    var_1 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
     level.climbing_crane_allow_input = 1;
     var_1.start_moving = 0;
     var_1 thread climb_scene_handle_crane_climb_movement_input();
@@ -6401,22 +6401,22 @@ climb_scene_crane_allow_input( var_0 )
 
 climb_scene_crane_move_rumble( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 climb_scene_crane_grab_rumble( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 climb_scene_crane_move_shake( var_0 )
 {
-    level.player _meth_83FE( 4, 2, 0.5, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
+    level.player screenshakeonentity( 4, 2, 0.5, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
 }
 
 climb_scene_crane_grab_shake( var_0 )
 {
-    level.player _meth_83FE( 12, 6, 2, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
+    level.player screenshakeonentity( 12, 6, 2, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
 }
 
 climb_scene_handle_crane_climb_movement_input()
@@ -6425,7 +6425,7 @@ climb_scene_handle_crane_climb_movement_input()
 
     for (;;)
     {
-        var_0 = level.player _meth_82F3();
+        var_0 = level.player getnormalizedmovement();
 
         if ( length2d( var_0 ) <= 0.15 )
             self.start_moving = 0;
@@ -6448,14 +6448,14 @@ climb_scene_crane_mount()
     maps\_player_exo::player_exo_deactivate();
     var_0 = maps\_utility::spawn_anim_model( "player_rig_grapple", level.player.origin, level.player.angles );
     var_0 hide();
-    common_scripts\utility::array_thread( _func_0D6( "axis" ), maps\betrayal_util::delete_ai );
+    common_scripts\utility::array_thread( getaiarray( "axis" ), maps\betrayal_util::delete_ai );
     var_1 = maps\betrayal_util::get_ent_by_targetname( "animorg_construction_outro" );
     level.player maps\_shg_utility::setup_player_for_scene();
     var_2 = 0.5;
-    level.player _meth_80FE( 0.5, 0.3 );
-    level.player _meth_8080( var_0, "tag_player", var_2 );
-    level.player common_scripts\utility::delaycall( var_2, ::_meth_807D, var_0, "tag_player", 0.75, 0, 0, 0, 0, 1 );
-    level.player common_scripts\utility::delaycall( var_2 + 0.1, ::_meth_80A2, 0.5, 0, 0, 15, 15, 10, 36 );
+    level.player enableslowaim( 0.5, 0.3 );
+    level.player playerlinktoblend( var_0, "tag_player", var_2 );
+    level.player common_scripts\utility::delaycall( var_2, ::playerlinktodelta, var_0, "tag_player", 0.75, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( var_2 + 0.1, ::lerpviewangleclamp, 0.5, 0, 0, 15, 15, 10, 36 );
     var_0 common_scripts\utility::delaycall( var_2, ::show );
     level notify( "flag_dialogue_climb_crane_nag_stop" );
     common_scripts\utility::delay_script_call( 2, common_scripts\utility::flag_set, "flag_dialogue_crane_start" );
@@ -6469,7 +6469,7 @@ climb_scene_crane_dismount_to_wall( var_0 )
     var_2 = maps\_shg_utility::hint_button_position( "jump", var_1.origin, 500, 600 );
     common_scripts\utility::flag_set( "flag_dialogue_crane_jump" );
 
-    while ( !level.player _meth_83DE() )
+    while ( !level.player jumpbuttonpressed() )
         wait 0.05;
 
     var_2 maps\_shg_utility::hint_button_clear();
@@ -6477,7 +6477,7 @@ climb_scene_crane_dismount_to_wall( var_0 )
     var_0 notify( "stop_crane_idle" );
     var_0 notify( "stop_crane_move" );
     var_0 maps\_utility::anim_stopanimscripted();
-    level.player _meth_80A2( 1.0, 0, 0, 15, 15, 10, 6 );
+    level.player lerpviewangleclamp( 1.0, 0, 0, 15, 15, 10, 6 );
     common_scripts\utility::delay_script_call( 3, common_scripts\utility::flag_set, "flag_dialogue_crane_slide" );
     var_3 maps\_anim::anim_single_solo( var_0, "crane_to_final" );
     climb_scene_finale( var_0 );
@@ -6515,7 +6515,7 @@ climb_scene_finale( var_0 )
     if ( !isdefined( var_0 ) )
     {
         var_0 = maps\_utility::spawn_anim_model( "player_rig_grapple", level.player.origin, level.player.angles );
-        level.player _meth_807D( var_0, "tag_player", 0.75, 15, 15, 10, 15 );
+        level.player playerlinktodelta( var_0, "tag_player", 0.75, 15, 15, 10, 15 );
         level.player maps\_shg_utility::setup_player_for_scene();
     }
 
@@ -6523,8 +6523,8 @@ climb_scene_finale( var_0 )
     var_1 = common_scripts\utility::array_add( var_1, var_0 );
     var_2 = maps\betrayal_util::get_ent_by_targetname( "animorg_construction_outro" );
     thread maps\betrayal_lighting::setup_lighting_finale_start( var_1 );
-    level.player _meth_80FE();
-    level.player _meth_8031( 50, 2.0 );
+    level.player enableslowaim();
+    level.player lerpfov( 50, 2.0 );
     var_2 maps\_anim::anim_single( var_1, "finale_scene" );
 }
 
@@ -6592,7 +6592,7 @@ climb_scene_finale_setup_vehicle_ents()
     var_0[0] soundscripts\_snd::snd_message( "spawn_ending_pcap_warbird" );
     var_0[0].ignoreall = 1;
     var_0[0].animname = "warbird";
-    var_0[0] _meth_8115( #animtree );
+    var_0[0] useanimtree( #animtree );
     return var_0;
 }
 

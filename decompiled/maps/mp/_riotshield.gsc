@@ -20,12 +20,12 @@ init()
 
 precacheanims()
 {
-    map_restart( "npc_deployable_riotshield_stand_deploy" );
-    map_restart( "npc_deployable_riotshield_stand_destroyed" );
-    map_restart( "npc_deployable_riotshield_stand_shot" );
-    map_restart( "npc_deployable_riotshield_stand_shot_back" );
-    map_restart( "npc_deployable_riotshield_stand_melee_front" );
-    map_restart( "npc_deployable_riotshield_stand_melee_back" );
+    precachempanim( "npc_deployable_riotshield_stand_deploy" );
+    precachempanim( "npc_deployable_riotshield_stand_destroyed" );
+    precachempanim( "npc_deployable_riotshield_stand_shot" );
+    precachempanim( "npc_deployable_riotshield_stand_shot_back" );
+    precachempanim( "npc_deployable_riotshield_stand_melee_front" );
+    precachempanim( "npc_deployable_riotshield_stand_melee_back" );
 }
 
 hasriotshield()
@@ -68,7 +68,7 @@ weaponisshockplantriotshield( var_0 )
 getotherriotshieldname( var_0 )
 {
     var_1 = 0;
-    var_2 = self _meth_830C();
+    var_2 = self getweaponslistprimaries();
 
     foreach ( var_4 in var_2 )
     {
@@ -93,7 +93,7 @@ updatefrontandbackshields( var_0 )
     self.backshieldmodel = undefined;
 
     if ( !isdefined( var_0 ) )
-        var_0 = self _meth_8312();
+        var_0 = self getcurrentprimaryweapon();
 
     if ( weaponisriotshield( var_0 ) )
         self.frontshieldmodel = getweaponmodel( var_0 );
@@ -103,7 +103,7 @@ updatefrontandbackshields( var_0 )
     if ( isdefined( var_1 ) )
         self.backshieldmodel = getweaponmodel( var_1 );
 
-    self _meth_84C6( var_0 );
+    self refreshshieldmodels( var_0 );
 }
 
 riotshield_clear()
@@ -114,10 +114,10 @@ riotshield_clear()
 
 entisstucktoshield()
 {
-    if ( !self _meth_8068() )
+    if ( !self islinked() )
         return 0;
 
-    var_0 = self _meth_8531();
+    var_0 = self getlinkedtagname();
 
     if ( !isdefined( var_0 ) )
         return 0;
@@ -196,7 +196,7 @@ riotshield_watch_for_ladder_early_exit()
     while ( self isonladder() )
         waitframe();
 
-    self notify( "riotshield_change_weapon", self _meth_8312() );
+    self notify( "riotshield_change_weapon", self getcurrentprimaryweapon() );
 }
 
 riotshield_watch_for_exo_shield_pullback()
@@ -232,7 +232,7 @@ riotshield_watch_for_exo_shield_release()
     while ( isdefined( self.exo_shield_on ) && self.exo_shield_on )
         waitframe();
 
-    self notify( "riotshield_change_weapon", self _meth_8311() );
+    self notify( "riotshield_change_weapon", self getcurrentweapon() );
 }
 
 watchriotshieldloadout()
@@ -242,7 +242,7 @@ watchriotshieldloadout()
     self endon( "faux_spawn" );
     self endon( "track_riot_shield" );
     self waittill( "applyLoadout" );
-    updatefrontandbackshields( self _meth_8311() );
+    updatefrontandbackshields( self getcurrentweapon() );
 }
 
 trackriotshield()
@@ -259,7 +259,7 @@ trackriotshield()
     for (;;)
     {
         thread watchriotshieldpickup();
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( isdefined( self.exo_shield_on ) && self.exo_shield_on )
             var_0 = maps\mp\_exo_shield::get_exo_shield_weapon();
@@ -276,7 +276,7 @@ trackriotshield()
             {
                 if ( isdefined( self.riotshieldtakeweapon ) )
                 {
-                    self _meth_830F( self.riotshieldtakeweapon );
+                    self takeweapon( self.riotshieldtakeweapon );
                     self.riotshieldtakeweapon = undefined;
                 }
             }
@@ -307,7 +307,7 @@ watchriotshieldpickup()
     self waittill( "pickup_riotshield" );
     self endon( "weapon_change" );
     wait 0.5;
-    updateriotshieldattachfornewweapon( self _meth_8311() );
+    updateriotshieldattachfornewweapon( self getcurrentweapon() );
 }
 
 isvalidnonshieldweapon( var_0 )
@@ -343,12 +343,12 @@ handleriotshieldshockplant()
     var_3 = 150;
     var_4 = var_3 * var_3;
     var_5 = self.riotshieldentity.origin + ( 0, 0, -25 );
-    self entityradiusdamage( var_5, var_3, var_2, var_1, self, "MOD_EXPLOSIVE" );
+    self radiusdamage( var_5, var_3, var_2, var_1, self, "MOD_EXPLOSIVE" );
     playfx( level._effect["riot_shield_shock_fx"], var_5, anglestoforward( self.riotshieldentity.angles + ( -90, 0, 0 ) ) );
 
     foreach ( var_7 in level.players )
     {
-        if ( maps\mp\_utility::isreallyalive( var_7 ) && !_func_285( var_7, self ) )
+        if ( maps\mp\_utility::isreallyalive( var_7 ) && !isalliedsentient( var_7, self ) )
         {
             if ( distancesquared( var_5, var_7.origin ) < var_4 )
                 var_7 shellshock( "concussion_grenade_mp", 1 );
@@ -372,8 +372,8 @@ watchriotshielddeploy()
         waitframe();
     }
 
-    var_1 = self _meth_8311();
-    self _meth_845D( var_1, 0 );
+    var_1 = self getcurrentweapon();
+    self setweaponmodelvariant( var_1, 0 );
     var_2 = weaponisshockplantriotshield( var_1 );
     self playsound( "wpn_riot_shield_plant_punch" );
 
@@ -384,15 +384,15 @@ watchriotshielddeploy()
 
     if ( var_0 )
     {
-        var_4 = self _meth_84C1();
+        var_4 = self canplaceriotshield();
 
         if ( var_4["result"] && riotshielddistancetest( var_4["origin"] ) )
         {
             var_5 = 28;
             var_6 = spawnriotshieldcover( var_4["origin"] + ( 0, 0, var_5 ), var_4["angles"] );
             var_7 = spawnriotshieldcollision( var_4["origin"] + ( 0, 0, var_5 ), var_4["angles"], var_6 );
-            var_8 = _func_29D( self, var_6 );
-            var_9 = self _meth_830C();
+            var_8 = deployriotshield( self, var_6 );
+            var_9 = self getweaponslistprimaries();
             self.riotshieldretrievetrigger = var_8;
             self.riotshieldentity = var_6;
             self.riotshieldcollisionentity = var_7;
@@ -402,25 +402,25 @@ watchriotshielddeploy()
             else
                 playfxontag( common_scripts\utility::getfx( "riot_shield_deploy_smoke" ), var_6, "tag_weapon" );
 
-            var_6 _meth_827B( "npc_deployable_riotshield_stand_deploy" );
+            var_6 scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_deploy" );
             thread spawnshieldlights( var_6 );
             var_10 = 0;
 
-            if ( self.lastnonshieldweapon != "none" && self _meth_8314( self.lastnonshieldweapon ) )
-                self _meth_8316( self.lastnonshieldweapon );
+            if ( self.lastnonshieldweapon != "none" && self hasweapon( self.lastnonshieldweapon ) )
+                self switchtoweaponimmediate( self.lastnonshieldweapon );
             else if ( var_9.size > 0 )
-                self _meth_8316( var_9[0] );
+                self switchtoweaponimmediate( var_9[0] );
             else
                 var_10 = 1;
 
-            if ( !self _meth_8314( "iw5_combatknife_mp" ) )
+            if ( !self hasweapon( "iw5_combatknife_mp" ) )
             {
-                self _meth_830E( "iw5_combatknife_mp" );
+                self giveweapon( "iw5_combatknife_mp" );
                 self.riotshieldtakeweapon = "iw5_combatknife_mp";
             }
 
             if ( var_10 )
-                self _meth_8316( "iw5_combatknife_mp" );
+                self switchtoweaponimmediate( "iw5_combatknife_mp" );
 
             var_11 = spawnstruct();
             var_11.deathoverridecallback = ::damagethendestroyriotshield;
@@ -440,14 +440,14 @@ watchriotshielddeploy()
         {
             var_3 = 1;
             var_12 = weaponclipsize( var_1 );
-            self _meth_82F6( var_1, var_12 );
+            self setweaponammoclip( var_1, var_12 );
         }
     }
     else
         var_3 = 1;
 
     if ( var_3 )
-        self _meth_84C2();
+        self setriotshieldfailhint();
 }
 
 spawnshieldlights( var_0 )
@@ -483,7 +483,7 @@ spawnriotshieldcover( var_0, var_1 )
     var_2.targetname = "riotshield_mp";
     var_2.angles = var_1;
     var_3 = undefined;
-    var_4 = self _meth_8312();
+    var_4 = self getcurrentprimaryweapon();
 
     if ( weaponisriotshield( var_4 ) )
         var_3 = getweaponmodel( var_4 );
@@ -491,7 +491,7 @@ spawnriotshieldcover( var_0, var_1 )
     if ( !isdefined( var_3 ) )
         var_3 = "npc_deployable_riot_shield_base";
 
-    var_2 _meth_80B1( var_3 );
+    var_2 setmodel( var_3 );
     var_2.owner = self;
     var_2.team = self.team;
     return var_2;
@@ -502,12 +502,12 @@ spawnriotshieldcollision( var_0, var_1, var_2 )
     var_3 = spawn( "script_model", var_0, 1 );
     var_3.targetname = "riotshield_coll_mp";
     var_3.angles = var_1;
-    var_3 _meth_80B1( "tag_origin" );
+    var_3 setmodel( "tag_origin" );
     var_3.owner = self;
     var_3.team = self.team;
-    var_3 _meth_8278( level.riot_shield_collision );
-    var_3 _meth_8057();
-    var_3 _meth_8553( 0 );
+    var_3 clonebrushmodeltoscriptmodel( level.riot_shield_collision );
+    var_3 disconnectpaths();
+    var_3 sethighjumpresetallowed( 0 );
     return var_3;
 }
 
@@ -520,7 +520,7 @@ watchdeployedriotshieldents()
 
     if ( isdefined( self.riotshieldcollisionentity ) )
     {
-        self.riotshieldcollisionentity _meth_8058();
+        self.riotshieldcollisionentity connectpaths();
         self.riotshieldcollisionentity delete();
     }
 
@@ -533,7 +533,7 @@ deleteshieldontriggerpickup( var_0, var_1 )
     level endon( "game_ended" );
     var_0 endon( "death" );
     var_0 waittill( "trigger", var_2 );
-    _func_2CD( var_2, var_1 );
+    handlepickupdeployedriotshields( var_2, var_1 );
     self notify( "destroy_riotshield" );
 }
 
@@ -620,14 +620,14 @@ watchdeployedriotshielddamage()
             if ( var_12 )
             {
                 if ( var_14 )
-                    self _meth_827B( "npc_deployable_riotshield_stand_melee_back" );
+                    self scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_melee_back" );
                 else
-                    self _meth_827B( "npc_deployable_riotshield_stand_melee_front" );
+                    self scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_melee_front" );
             }
             else if ( var_14 )
-                self _meth_827B( "npc_deployable_riotshield_stand_shot_back" );
+                self scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_shot_back" );
             else
-                self _meth_827B( "npc_deployable_riotshield_stand_shot" );
+                self scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_shot" );
         }
     }
 }
@@ -642,13 +642,13 @@ damagethendestroyriotshield( var_0, var_1 )
 
     if ( isdefined( self.owner.riotshieldcollisionentity ) )
     {
-        self.owner.riotshieldcollisionentity _meth_8058();
+        self.owner.riotshieldcollisionentity connectpaths();
         self.owner.riotshieldcollisionentity delete();
     }
 
     self.owner.riotshieldentity = undefined;
-    self _meth_82BF();
-    self _meth_827B( "npc_deployable_riotshield_stand_destroyed" );
+    self notsolid();
+    self scriptmodelplayanimdeltamotion( "npc_deployable_riotshield_stand_destroyed" );
     wait(getdvarfloat( "riotshield_destroyed_cleanup_time" ));
     self delete();
 }

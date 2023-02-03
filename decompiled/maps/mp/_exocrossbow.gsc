@@ -24,8 +24,8 @@ monitor_exocrossbow_launch()
         if ( !var_2 )
             continue;
 
-        var_0 _meth_8383( self );
-        var_0.ch_crossbow_player_jumping = self _meth_83B4();
+        var_0 setotherent( self );
+        var_0.ch_crossbow_player_jumping = self ishighjumping();
         thread wait_for_stuck( var_0 );
     }
 }
@@ -53,7 +53,7 @@ determine_sticky_position( var_0, var_1 )
 
     if ( isdefined( var_1 ) && !maps\mp\_utility::invirtuallobby() && isplayer( var_1 ) )
     {
-        self.ch_crossbow_victim_jumping = var_1 _meth_83B4();
+        self.ch_crossbow_victim_jumping = var_1 ishighjumping();
 
         if ( var_0 maps\mp\gametypes\_weapons::isstucktofriendly( var_1 ) )
             self.isstuck = "friendly";
@@ -88,7 +88,7 @@ sticky_fx( var_0 )
     self.fx_origin.origin = self.origin;
     self.fx_origin.angles = self.angles;
     self.fx_origin show();
-    self.fx_origin _meth_804D( self );
+    self.fx_origin linkto( self );
     wait 0.1;
     playfxontag( common_scripts\utility::getfx( "exocrossbow_sticky_blinking" ), self.fx_origin, "tag_origin" );
     self playsound( "exocrossbow_warning" );

@@ -76,12 +76,12 @@ main2()
 
 setup_level_lighting_values()
 {
-    level.player _meth_83C0( "seoul" );
+    level.player lightsetforplayer( "seoul" );
     thread enable_physical_dof();
     thread outerspacelighting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dynamicOpl", 1 );
+        setsaveddvar( "r_dynamicOpl", 1 );
 }
 
 setup_subsurface_scatter()
@@ -152,8 +152,8 @@ init_level_lighting_flags()
 setup_seoul_space_entry_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_space_entry_lighting" );
-    level.player _meth_83C0( "space_entry" );
-    level.player _meth_8490( "clut_seoul_pod_v3", 0 );
+    level.player lightsetforplayer( "space_entry" );
+    level.player setclutforplayer( "clut_seoul_pod_v3", 0 );
 }
 
 setup_seoul_intro_lighting()
@@ -166,8 +166,8 @@ setup_seoul_intro_lighting()
     wait 2.8;
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_medium_dim", "seoul_intro_ceiling_fire_02" );
     maps\_utility::vision_set_fog_changes( "seoul_vista", 0.5 );
-    level.player _meth_83C0( "seoul_vista" );
-    level.player _meth_8490( "clut_seoul_vista", 0 );
+    level.player lightsetforplayer( "seoul_vista" );
+    level.player setclutforplayer( "clut_seoul_vista", 0 );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large", "fire_vista_01" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large", "fire_vista_03" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large", "fire_vista_04" );
@@ -194,8 +194,8 @@ intro_shadows()
 setup_seoul_hotel_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_hotel_lighting" );
-    level.player _meth_83C0( "seoul_hotel_top" );
-    level.player _meth_8490( "clut_seoul_hotel_atrium", 0 );
+    level.player lightsetforplayer( "seoul_hotel_top" );
+    level.player setclutforplayer( "clut_seoul_hotel_atrium", 0 );
 
     if ( level.nextgen )
         maps\_utility::vision_set_fog_changes( "seoul_hotel_interior", 0 );
@@ -215,11 +215,11 @@ setup_seoul_hotel_lighting()
 setup_seoul_fob_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_fob_lighting" );
-    level.player _meth_83C0( "seoul_streets" );
-    level.player _meth_8490( "clut_seoul_fob", 0 );
+    level.player lightsetforplayer( "seoul_streets" );
+    level.player setclutforplayer( "clut_seoul_fob", 0 );
     wait 0.05;
     maps\_utility::vision_set_fog_changes( "seoul_streets", 0.5 );
-    level.player _meth_83C0( "seoul_streets" );
+    level.player lightsetforplayer( "seoul_streets" );
     common_scripts\utility::flag_wait( "enable_fob_lighting_trigger" );
 
     if ( level.nextgen )
@@ -262,14 +262,14 @@ fob_fire_lighting()
 setup_seoul_drone_swarm_intro_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_drone_swarm_intro_lighting" );
-    level.player _meth_83C0( "seoul_streets" );
+    level.player lightsetforplayer( "seoul_streets" );
     maps\_utility::vision_set_fog_changes( "seoul_streets", 0.5 );
 }
 
 setup_seoul_hotel_entrance_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_hotel_entrance_lighting" );
-    level.player _meth_83C0( "seoul_streets" );
+    level.player lightsetforplayer( "seoul_streets" );
 
     if ( level.nextgen )
         maps\_utility::vision_set_fog_changes( "seoul_streets_dimfog", 0.5 );
@@ -286,12 +286,12 @@ setup_seoul_building_jump_sequence_lighting()
     if ( level.nextgen )
     {
         maps\_utility::vision_set_fog_changes( "seoul", 0.5 );
-        level.player _meth_83C0( "seoul" );
+        level.player lightsetforplayer( "seoul" );
     }
     else
     {
         maps\_utility::vision_set_fog_changes( "seoul_building_jump", 0.5 );
-        level.player _meth_83C0( "seoul_building_jump" );
+        level.player lightsetforplayer( "seoul_building_jump" );
     }
 }
 
@@ -300,11 +300,11 @@ setup_seoul_sinkhole_start_lighting()
     common_scripts\utility::flag_wait( "set_seoul_sinkhole_start_lighting" );
 
     if ( level.nextgen )
-        level.player _meth_83C0( "seoul" );
+        level.player lightsetforplayer( "seoul" );
     else
-        level.player _meth_83C0( "seoul_sinkhole" );
+        level.player lightsetforplayer( "seoul_sinkhole" );
 
-    level.player _meth_8490( "clut_seoul_fire_sinkhole", 1.0 );
+    level.player setclutforplayer( "clut_seoul_fire_sinkhole", 1.0 );
     maps\_utility::vision_set_fog_changes( "seoul_sinkhole", 0.5 );
 }
 
@@ -314,38 +314,38 @@ setup_seoul_subway_start_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "seoul" );
-        level.player _meth_8490( "seoul_subway", 1.0 );
+        level.player lightsetforplayer( "seoul" );
+        level.player setclutforplayer( "seoul_subway", 1.0 );
     }
     else
-        level.player _meth_83C0( "seoul_subway" );
+        level.player lightsetforplayer( "seoul_subway" );
 
     maps\_utility::vision_set_fog_changes( "seoul_subway_interior", 0.5 );
-    level.player _meth_83C0( "seoul_subway" );
+    level.player lightsetforplayer( "seoul_subway" );
 }
 
 setup_seoul_shopping_district_start_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_shopping_district_start_lighting" );
-    level.player _meth_83C0( "seoul_shopping_district" );
-    level.player _meth_8490( "clut_seoul_shopping", 1 );
+    level.player lightsetforplayer( "seoul_shopping_district" );
+    level.player setclutforplayer( "clut_seoul_shopping", 1 );
     maps\_utility::vision_set_fog_changes( "seoul_shopping", 1.5 );
     maps\_lighting::play_flickerlight_preset( "seoul_fire", "seoul_light_flicker_sign", 1300000 );
 
     if ( level.nextgen )
     {
         var_0 = getent( "seoul_flicker_streetlight_1", "targetname" );
-        var_0 _meth_81DF( 400000 );
+        var_0 setlightintensity( 400000 );
         var_1 = getent( "seoul_flicker_streetlight_2", "targetname" );
-        var_1 _meth_81DF( 360000 );
+        var_1 setlightintensity( 360000 );
         var_2 = getent( "seoul_flicker_streetlight_3", "targetname" );
-        var_2 _meth_81DF( 600000 );
+        var_2 setlightintensity( 600000 );
         var_3 = getent( "seoul_flicker_streetlight_4", "targetname" );
-        var_3 _meth_81DF( 920000 );
+        var_3 setlightintensity( 920000 );
         var_4 = getent( "seoul_flicker_streetlight_5", "targetname" );
-        var_4 _meth_81DF( 300000 );
+        var_4 setlightintensity( 300000 );
         var_5 = getent( "seoul_flicker_streetlight_6", "targetname" );
-        var_5 _meth_81DF( 300000 );
+        var_5 setlightintensity( 300000 );
         var_6 = getentarray( "seoul_shopping_streetlight_on", "targetname" );
         var_7 = getentarray( "seoul_shopping_streetlight_off", "targetname" );
 
@@ -363,12 +363,12 @@ setup_seoul_shopping_district_start_lighting()
             for ( var_8 = 0; var_8 < var_7.size; var_8++ )
                 var_7[var_8] show();
 
-            var_0 _meth_81DF( 0 );
-            var_1 _meth_81DF( 0 );
-            var_2 _meth_81DF( 0 );
-            var_3 _meth_81DF( 0 );
-            var_4 _meth_81DF( 0 );
-            var_5 _meth_81DF( 0 );
+            var_0 setlightintensity( 0 );
+            var_1 setlightintensity( 0 );
+            var_2 setlightintensity( 0 );
+            var_3 setlightintensity( 0 );
+            var_4 setlightintensity( 0 );
+            var_5 setlightintensity( 0 );
             common_scripts\_exploder::kill_exploder( 6425 );
             wait(randomfloatrange( 0.1, 1.0 ));
 
@@ -378,12 +378,12 @@ setup_seoul_shopping_district_start_lighting()
             for ( var_8 = 0; var_8 < var_7.size; var_8++ )
                 var_7[var_8] hide();
 
-            var_0 _meth_81DF( 100000 );
-            var_1 _meth_81DF( 160000 );
-            var_2 _meth_81DF( 150000 );
-            var_3 _meth_81DF( 320000 );
-            var_4 _meth_81DF( 200000 );
-            var_5 _meth_81DF( 200000 );
+            var_0 setlightintensity( 100000 );
+            var_1 setlightintensity( 160000 );
+            var_2 setlightintensity( 150000 );
+            var_3 setlightintensity( 320000 );
+            var_4 setlightintensity( 200000 );
+            var_5 setlightintensity( 200000 );
         }
     }
 }
@@ -391,22 +391,22 @@ setup_seoul_shopping_district_start_lighting()
 setup_seoul_canal_start_lighting()
 {
     common_scripts\utility::flag_wait( "set_seoul_canal_start_lighting" );
-    level.player _meth_83C0( "seoul_canal" );
-    level.player _meth_8490( "clut_seoul_canal", 1.0 );
+    level.player lightsetforplayer( "seoul_canal" );
+    level.player setclutforplayer( "clut_seoul_canal", 1.0 );
     maps\_utility::vision_set_fog_changes( "seoul_canal_entrance", 0.5 );
     maps\_shg_fx::set_sun_flare_position( ( -10, -80, 0 ) );
     thread enable_physical_dof_interest_of_time();
-    _func_0D3( "r_dof_physical_hipFstop", 2.0 );
+    setsaveddvar( "r_dof_physical_hipFstop", 2.0 );
     common_scripts\_exploder::kill_exploder( 6425 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbvelocityscalar", ".25" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbvelocityscalar", ".25" );
     }
 
     if ( level.nextgen )
-        _func_0D3( "r_mdaoOccluderCullDistance", "1000" );
+        setsaveddvar( "r_mdaoOccluderCullDistance", "1000" );
 
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_small", "fire_light_canal_small1" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_medium", "fire_light_canal_medium6" );
@@ -421,9 +421,9 @@ setup_seoul_canal_start_lighting()
         var_0 = getent( "light_weaplat_rim", "targetname" );
         var_1 = getent( "light_left_big_key", "targetname" );
         var_2 = getent( "canal_fire_light", "targetname" );
-        var_0 _meth_8498( "force_on" );
-        var_1 _meth_8498( "force_on" );
-        var_2 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
+        var_1 setlightshadowstate( "force_on" );
+        var_2 setlightshadowstate( "force_on" );
     }
 
     maps\_lighting::play_flickerlight_preset( "generic_fire_blimp", "fire_light_canal_large3", 10000000 );
@@ -437,7 +437,7 @@ binocular_mwp_rim_flicker()
 
 binocular_dof()
 {
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     common_scripts\utility::flag_set( "flag_autofocus_binoc_on" );
     maps\_utility::vision_set_fog_changes( "seoul_binoculars", 0.5 );
     enable_physical_dof_binoculars_autofocus_loop();
@@ -459,14 +459,14 @@ trigger_seoul_finale_cinematic_lighting()
 seoul_finale_cinematic_lighting()
 {
     self waittill( "trigger" );
-    level.player _meth_83C0( "seoul_finale_run" );
+    level.player lightsetforplayer( "seoul_finale_run" );
 
     if ( level.nextgen )
         maps\_utility::lerp_saveddvar( "r_mdaoCapsulestrength", 1, 1 );
 
-    level.player _meth_8490( "clut_seoul_ending_v3", 1.0 );
+    level.player setclutforplayer( "clut_seoul_ending_v3", 1.0 );
     wait 2;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
 }
 
 setup_lighting_weapons_platform_area()
@@ -486,8 +486,8 @@ setup_lighting_weapons_platform_area_volume()
         if ( level.nextgen )
         {
             var_0 = getent( "canal_fire_light", "targetname" );
-            var_0 _meth_8498( "normal" );
-            _func_0D3( "r_mbvelocityscalar", "1" );
+            var_0 setlightshadowstate( "normal" );
+            setsaveddvar( "r_mbvelocityscalar", "1" );
         }
     }
 }
@@ -509,33 +509,33 @@ setup_lighting_canal_area_volume()
         if ( level.nextgen )
         {
             var_0 = getent( "canal_fire_light", "targetname" );
-            var_0 _meth_8498( "force_on" );
+            var_0 setlightshadowstate( "force_on" );
         }
 
         if ( level.nextgen )
-            _func_0D3( "r_mbvelocityscalar", ".25" );
+            setsaveddvar( "r_mbvelocityscalar", ".25" );
     }
 }
 
 enable_motion_blur()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 }
 
 enable_motion_blur_rotation()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 }
 
 disable_motion_blur()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 enable_physical_dof()
@@ -545,44 +545,44 @@ enable_physical_dof()
 
 enable_physical_dof_hip()
 {
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 0.125 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.1 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 0.125 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.1 );
 }
 
 enable_physical_dof_hip_fob()
 {
-    _func_0D3( "r_dof_physical_bokehEnable", 1 );
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 2 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+    setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 2 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
 }
 
 setup_physical_dof_fob()
 {
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 }
 
 enable_physical_dof_fob_autofocus_loop()
 {
     if ( level.nextgen )
     {
-        level.player _meth_84BC( 18.0, 20.0 );
+        level.player setphysicalviewmodeldepthoffield( 18.0, 20.0 );
 
         while ( common_scripts\utility::flag( "flag_autofocus_on" ) == 1 )
         {
             waitframe();
             var_0 = trace_distance();
-            level.player _meth_84AB( 3.5, var_0, 5 );
+            level.player setphysicaldepthoffield( 3.5, var_0, 5 );
         }
 
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
 enable_physical_dof_binoculars_autofocus_loop()
 {
-    level.player _meth_84BC( 18.0, 20.0 );
+    level.player setphysicalviewmodeldepthoffield( 18.0, 20.0 );
 
     while ( common_scripts\utility::flag( "flag_autofocus_binoc_on" ) == 1 )
     {
@@ -591,20 +591,20 @@ enable_physical_dof_binoculars_autofocus_loop()
 
         if ( level.nextgen )
         {
-            level.player _meth_84AB( 0.2, var_0, 5 );
+            level.player setphysicaldepthoffield( 0.2, var_0, 5 );
             continue;
         }
 
-        level.player _meth_84AB( 1, var_0, 5 );
+        level.player setphysicaldepthoffield( 1, var_0, 5 );
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 trace_distance()
 {
     var_0 = 4096;
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = level.player getangles();
 
     if ( isdefined( level.player.dof_ref_ent ) )
@@ -630,10 +630,10 @@ dof_fob_moment_start()
         {
             self waittill( "trigger" );
             common_scripts\utility::flag_clear( "flag_autofocus_on" );
-            level.player _meth_84A9();
-            level.player _meth_84AB( 2.0, 45, 8 );
+            level.player enablephysicaldepthoffieldscripting();
+            level.player setphysicaldepthoffield( 2.0, 45, 8 );
 
-            while ( level.player _meth_80A9( self ) )
+            while ( level.player istouching( self ) )
                 wait 0.1;
         }
     }
@@ -651,10 +651,10 @@ dof_fob_autofocus_enable()
     {
         self waittill( "trigger" );
         common_scripts\utility::flag_set( "flag_autofocus_on" );
-        level.player _meth_84A9();
+        level.player enablephysicaldepthoffieldscripting();
         enable_physical_dof_fob_autofocus_loop();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -671,9 +671,9 @@ dof_fob_autofocus_disable()
     {
         self waittill( "trigger" );
         common_scripts\utility::flag_clear( "flag_autofocus_on" );
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -682,70 +682,70 @@ enable_physical_dof_car_door_shield()
 {
     level waittill( "player_owns_cardoor_shield" );
     common_scripts\utility::flag_clear( "flag_autofocus_on" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 22, 50000, 8, 8 );
-    level.player _meth_84BC( 4.0, 20.0 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 22, 50000, 8, 8 );
+    level.player setphysicalviewmodeldepthoffield( 4.0, 20.0 );
 }
 
 disable_dof_car_door_throw()
 {
     level.player waittill( "car_door_thrown" );
     common_scripts\utility::flag_clear( "flag_autofocus_on" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 enable_physical_dof_interest_of_time()
 {
     common_scripts\utility::flag_clear( "flag_autofocus_on" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 outerspacelighting()
 {
     wait 0.05;
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
 
     if ( common_scripts\utility::flag( "set_pre_seoul_intro_lighting" ) == 1 )
     {
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36118.5, 1519.77, 1799.09 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36118.5, 1519.77, 1799.09 ) );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36118.5, 1519.77, 1799.09 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36118.5, 1519.77, 1799.09 ) );
         common_scripts\utility::flag_waitopen( "set_pre_seoul_intro_lighting" );
     }
 
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
     common_scripts\utility::flag_wait( "set_seoul_intro_lighting" );
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
     common_scripts\utility::flag_waitopen( "set_seoul_intro_lighting" );
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
 }
 
 outerspace_intro_new()
 {
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
     common_scripts\utility::flag_waitopen( "set_seoul_intro_lighting" );
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
 }
 
 outerspacelighting_checkpoint()
 {
-    _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-    _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
+    setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+    setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36135.9, 1365.73, 1845.13 ) );
 }
 
 motion_blur_intro()
@@ -758,37 +758,37 @@ motion_blur_intro()
 dof_intro_pre()
 {
     wait 0.05;
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
         thread pod_cormack_custom_mats_on();
-        level.player _meth_84AB( 7, 15, 20, 20 );
+        level.player setphysicaldepthoffield( 7, 15, 20, 20 );
         maps\_utility::vision_set_fog_changes( "seoul_pre_space_entry_nofog", 1 );
-        level.player _meth_84AB( 2, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 2, 25, 20, 20 );
         wait 10;
         maps\_utility::vision_set_fog_changes( "seoul_pre_space_entry", 2 );
         wait 11.5;
-        level.player _meth_84AB( 2.5, 13.5, 20, 20 );
+        level.player setphysicaldepthoffield( 2.5, 13.5, 20, 20 );
         wait 3;
-        level.player _meth_84AB( 22, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
         wait 5;
         maps\_utility::vision_set_fog_changes( "seoul_pre_space_entry_fog", 0.5 );
-        _func_0D3( "r_eyeRedness", 0.7 );
-        _func_0D3( "r_eyepupil", 0.18 );
+        setsaveddvar( "r_eyeRedness", 0.7 );
+        setsaveddvar( "r_eyepupil", 0.18 );
     }
     else
     {
         thread pod_cormack_custom_mats_on();
-        level.player _meth_84AB( 8, 15, 20, 20 );
+        level.player setphysicaldepthoffield( 8, 15, 20, 20 );
         wait 11.5;
         maps\_utility::vision_set_fog_changes( "seoul_pre_space_entry", 1 );
-        level.player _meth_84AB( 3, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 3, 25, 20, 20 );
         wait 19.2;
-        level.player _meth_84AB( 3.5, 13.5, 20, 20 );
+        level.player setphysicaldepthoffield( 3.5, 13.5, 20, 20 );
         wait 3;
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         maps\_utility::vision_set_fog_changes( "seoul_pre_space_entry_fog", 0.5 );
     }
 }
@@ -799,94 +799,94 @@ dof_intro()
 
     if ( level.nextgen )
     {
-        level.player _meth_84AB( 22, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 4.5, 14.21, 20, 20 );
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        level.player setphysicaldepthoffield( 4.5, 14.21, 20, 20 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
         wait 2.5;
-        level.player _meth_84AB( 22, 100000, 20, 20 );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
         wait 0.5;
         maps\_utility::vision_set_fog_changes( "seoul_space_entry", 2 );
         wait 4;
-        level.player _meth_84AB( 3, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 3, 25, 20, 20 );
         wait 3.1;
-        level.player _meth_84AB( 22, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
         wait 3.9;
-        level.player _meth_84AB( 3, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 3, 25, 20, 20 );
         common_scripts\utility::flag_wait( "door_shut" );
-        level.player _meth_84AB( 3, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 3, 25, 20, 20 );
         wait 5;
-        level.player _meth_84AB( 22, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 3, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 3, 25, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 22, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 22, 100000, 20, 20 );
         level waittill( "pod_land_apartment" );
         thread intro_camera_blur();
-        level.player _meth_84AB( 5, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 5, 25, 20, 20 );
         level waittill( "player_drop_pod_door_kick" );
         wait 2.8;
-        level.player _meth_84AB( 6, 8600, 20, 20 );
+        level.player setphysicaldepthoffield( 6, 8600, 20, 20 );
         wait 8.25;
-        level.player _meth_84AB( 2, 35, 2, 2 );
+        level.player setphysicaldepthoffield( 2, 35, 2, 2 );
         wait 2.95;
-        level.player _meth_84AB( 1.5, 235, 4, 4 );
+        level.player setphysicaldepthoffield( 1.5, 235, 4, 4 );
         wait 5;
         wait 1.6;
-        level.player _meth_84AB( 3, 20, 25, 25 );
+        level.player setphysicaldepthoffield( 3, 20, 25, 25 );
         wait 1;
-        level.player _meth_84AB( 1.5, 75, 2, 2 );
-        _func_0D3( "r_eyeRedness", 0.2 );
-        _func_0D3( "r_eyepupil", 0.225 );
+        level.player setphysicaldepthoffield( 1.5, 75, 2, 2 );
+        setsaveddvar( "r_eyeRedness", 0.2 );
+        setsaveddvar( "r_eyepupil", 0.225 );
         level waittill( "droppod_empty" );
-        level.player _meth_84AB( 10, 7500, 1, 1 );
+        level.player setphysicaldepthoffield( 10, 7500, 1, 1 );
         wait 3.0;
-        _func_0D3( "r_mbEnable", "0" );
-        level.player _meth_84AA();
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        level.player disablephysicaldepthoffieldscripting();
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
     }
     else
     {
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 5.5, 14.21, 20, 20 );
+        level.player setphysicaldepthoffield( 5.5, 14.21, 20, 20 );
         wait 2.5;
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         wait 0.5;
         maps\_utility::vision_set_fog_changes( "seoul_space_entry", 2 );
         wait 4;
-        level.player _meth_84AB( 4, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 4, 25, 20, 20 );
         wait 3.1;
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         wait 3.9;
-        level.player _meth_84AB( 4, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 4, 25, 20, 20 );
         common_scripts\utility::flag_wait( "door_shut" );
-        level.player _meth_84AB( 4, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 4, 25, 20, 20 );
         wait 5;
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 4, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 4, 25, 20, 20 );
         wait 2;
-        level.player _meth_84AB( 23, 100000, 20, 20 );
+        level.player setphysicaldepthoffield( 23, 100000, 20, 20 );
         level waittill( "pod_land_apartment" );
         thread intro_camera_blur();
-        level.player _meth_84AB( 6, 25, 20, 20 );
+        level.player setphysicaldepthoffield( 6, 25, 20, 20 );
         level waittill( "player_drop_pod_door_kick" );
-        level.player _meth_84AB( 7, 8600, 20, 20 );
+        level.player setphysicaldepthoffield( 7, 8600, 20, 20 );
         wait 10;
-        level.player _meth_84AB( 3, 35, 2, 2 );
+        level.player setphysicaldepthoffield( 3, 35, 2, 2 );
         wait 3.1;
-        level.player _meth_84AB( 2.5, 235, 4, 4 );
+        level.player setphysicaldepthoffield( 2.5, 235, 4, 4 );
         wait 5;
         wait 1;
-        level.player _meth_84AB( 4, 20, 25, 25 );
+        level.player setphysicaldepthoffield( 4, 20, 25, 25 );
         wait 1.1;
-        level.player _meth_84AB( 2.5, 75, 2, 2 );
+        level.player setphysicaldepthoffield( 2.5, 75, 2, 2 );
         level waittill( "droppod_empty" );
-        level.player _meth_84AB( 11, 7500, 1, 1 );
+        level.player setphysicaldepthoffield( 11, 7500, 1, 1 );
         wait 3.0;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -966,71 +966,71 @@ lerp_angles_function( var_0, var_1, var_2 )
 dof_subway_cinematic()
 {
     enable_motion_blur_rotation();
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84AB( 8, 13 );
+    level.player setphysicaldepthoffield( 8, 13 );
     wait 1.7;
-    level.player _meth_84AB( 1, 169, 4, 4 );
+    level.player setphysicaldepthoffield( 1, 169, 4, 4 );
     wait 5.3;
-    level.player _meth_84AB( 3.5, 23, 10, 10 );
+    level.player setphysicaldepthoffield( 3.5, 23, 10, 10 );
     wait 1.5;
-    level.player _meth_84AB( 2, 140, 2, 4 );
+    level.player setphysicaldepthoffield( 2, 140, 2, 4 );
     wait 2;
-    level.player _meth_84AB( 1, 110, 1, 2 );
+    level.player setphysicaldepthoffield( 1, 110, 1, 2 );
     wait 10.2;
-    level.player _meth_84AB( 4, 30, 1, 2 );
+    level.player setphysicaldepthoffield( 4, 30, 1, 2 );
     wait 2.5;
-    level.player _meth_84AB( 12, 100, 1, 2 );
+    level.player setphysicaldepthoffield( 12, 100, 1, 2 );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 }
 
 dof_subway_cinematic_optimized()
 {
     enable_motion_blur_rotation();
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84AB( 8, 13, 20, 20 );
+    level.player setphysicaldepthoffield( 8, 13, 20, 20 );
     wait 1.7;
-    level.player _meth_84AB( 4, 169, 20, 20 );
+    level.player setphysicaldepthoffield( 4, 169, 20, 20 );
     wait 2.4;
-    level.player _meth_84AB( 0.25, 9, 40, 40 );
+    level.player setphysicaldepthoffield( 0.25, 9, 40, 40 );
     wait 0.3;
-    level.player _meth_84AB( 4, 169, 10, 10 );
+    level.player setphysicaldepthoffield( 4, 169, 10, 10 );
     wait 3;
-    level.player _meth_84AB( 4.5, 23, 10, 10 );
+    level.player setphysicaldepthoffield( 4.5, 23, 10, 10 );
     wait 1.5;
-    level.player _meth_84AB( 2, 140, 4, 4 );
+    level.player setphysicaldepthoffield( 2, 140, 4, 4 );
     wait 2;
-    level.player _meth_84AB( 2, 110, 1, 2 );
+    level.player setphysicaldepthoffield( 2, 110, 1, 2 );
     wait 10.2;
-    level.player _meth_84AB( 8, 30, 4, 4 );
+    level.player setphysicaldepthoffield( 8, 30, 4, 4 );
     wait 2.5;
-    level.player _meth_84AB( 12, 100, 1, 2 );
+    level.player setphysicaldepthoffield( 12, 100, 1, 2 );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 }
 
 lighting_subway_breach()
 {
     wait 4;
-    level.player _meth_83C0( "seoul_subway_breachflash" );
+    level.player lightsetforplayer( "seoul_subway_breachflash" );
     wait 0.5;
-    level.player _meth_83C0( "seoul_subway" );
+    level.player lightsetforplayer( "seoul_subway" );
 }
 
 cine_sub_fog()
@@ -1049,7 +1049,7 @@ cine_sub_will_all_mulitlight()
     if ( level.nextgen )
     {
         var_0 = getent( "cine_left_light_all", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         var_1 = var_0.origin;
         var_2 = var_0.angles;
         var_3 = common_scripts\utility::getstruct( "script_struct_sub_key_will", "targetname" );
@@ -1123,14 +1123,14 @@ vision_seoul_subway_interior()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "seoul_subway" );
+        level.player lightsetforplayer( "seoul_subway" );
 
         if ( level.currentgen )
-            level.player _meth_83C0( "seoul_subway" );
+            level.player lightsetforplayer( "seoul_subway" );
 
         maps\_utility::vision_set_fog_changes( "seoul_subway_interior", 3 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1151,10 +1151,10 @@ vision_seoul_art_center_atrium()
         else
         {
             maps\_utility::vision_set_fog_changes( "seoul_convention_center", 3 );
-            level.player _meth_83C0( "seoul_convention_center" );
+            level.player lightsetforplayer( "seoul_convention_center" );
         }
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1167,7 +1167,7 @@ trigger_seoul_building_jump()
 vision_seoul_building_jump()
 {
     self waittill( "trigger" );
-    level.player _meth_83C0( "seoul_building_jump" );
+    level.player lightsetforplayer( "seoul_building_jump" );
     maps\_utility::vision_set_fog_changes( "seoul_building_jump", 3 );
 
     if ( level.currentgen )
@@ -1189,10 +1189,10 @@ vision_seoul_building_jump()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_building_jump", 3 );
-        level.player _meth_8490( "clut_seoul_fire_sinkhole", 1.0 );
-        level.player _meth_83C0( "seoul_building_jump" );
+        level.player setclutforplayer( "clut_seoul_fire_sinkhole", 1.0 );
+        level.player lightsetforplayer( "seoul_building_jump" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1202,11 +1202,11 @@ setup_seoul_jump_lighting()
     common_scripts\utility::flag_wait( "set_seoul_jump_lighting" );
 
     if ( level.nextgen )
-        level.player _meth_83C0( "seoul" );
+        level.player lightsetforplayer( "seoul" );
     else
-        level.player _meth_83C0( "seoul_building_jump" );
+        level.player lightsetforplayer( "seoul_building_jump" );
 
-    level.player _meth_8490( "seoul", 1.0 );
+    level.player setclutforplayer( "seoul", 1.0 );
     maps\_utility::vision_set_fog_changes( "seoul_building_jump", 3 );
     maps\_lighting::play_flickerlight_preset( "seoul_fire", "flicker_fire_cb1_grp1", 512000 );
     maps\_lighting::play_flickerlight_preset( "seoul_fire", "flicker_fire_cb1_grp2a", 256000 );
@@ -1225,10 +1225,10 @@ vision_seoul_sinkhole()
 {
     self waittill( "trigger" );
     maps\_utility::vision_set_fog_changes( "seoul_sinkhole", 2 );
-    level.player _meth_83C0( "seoul_sinkhole" );
+    level.player lightsetforplayer( "seoul_sinkhole" );
 
     if ( level.currentgen )
-        level.player _meth_83C0( "seoul_sinkhole" );
+        level.player lightsetforplayer( "seoul_sinkhole" );
 
     maps\_lighting::play_flickerlight_preset( "seoul_fire", "flicker_fire_cb2_grp2b", 128000 );
     maps\_lighting::play_flickerlight_preset( "seoul_fire", "flicker_fire_cb2_grp2c", 128000 );
@@ -1264,9 +1264,9 @@ vision_seoul_sinkhole()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_sinkhole", 2 );
-        level.player _meth_83C0( "seoul_sinkhole" );
+        level.player lightsetforplayer( "seoul_sinkhole" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1280,12 +1280,12 @@ play_mwp_sinkhole_forceshadows()
 {
     self waittill( "trigger" );
     var_0 = getent( "spot_mwp_sinkhole", "targetname" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
     maps\_lighting::lerp_spot_intensity( "spot_mwp_sinkhole", 3, 1600000 );
     wait 1;
     maps\_lighting::lerp_spot_intensity( "spot_mwp_sinkhole", 6, 1 );
     wait 1;
-    var_0 _meth_8498( "normal" );
+    var_0 setlightshadowstate( "normal" );
 }
 
 trigger_enter_lensflare_subway_int_on()
@@ -1300,7 +1300,7 @@ play_lensflare_subway_int_on()
         self waittill( "trigger" );
         common_scripts\_exploder::exploder( "lensflare_subway_int" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1317,7 +1317,7 @@ play_lensflare_subway_int_off()
         self waittill( "trigger" );
         common_scripts\_exploder::kill_exploder( "lensflare_subway_int" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1338,7 +1338,7 @@ play_s_flicker_jb1()
     thread maps\_lighting::model_flicker_preset( "s_flicker_fluo_jump1", 0, 0, 640000, 9911, 9911, 0.01, 0.6, 0.03, 0.7, "kill_jb_s_flicker" );
     thread maps\_lighting::model_flicker_preset( "s_flicker_alarm_jump1", 0, 0, 8000, 9912, 9912, 0.3, 0.301, 1.2, 1.201, "kill_jb_s_flicker" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1360,7 +1360,7 @@ play_s_flicker_jb2()
     else
         thread maps\_lighting::model_flicker_preset( "s_flicker_fluo_jump2", 0, 0, 70000, 9922, 9922, 0.01, 0.3, 0.03, 0.7, "kill_jb_s_flicker" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1378,7 +1378,7 @@ play_s_flicker_sh()
     thread maps\_lighting::model_flicker_preset( "s_flicker_fluo_ceil_side", 0, 0, 10000, undefined, undefined, 0.01, 0.3, 0.03, 0.7, "kill_sh_s_flicker" );
     thread maps\_lighting::model_flicker_preset( "s_flicker_fluo_ceil_back", 0, 0, 10000, undefined, undefined, 0.01, 0.3, 0.03, 0.7, "kill_sh_s_flicker" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1392,9 +1392,9 @@ kill_s_flicker_jb()
     self waittill( "trigger" );
     level notify( "kill_jb_s_flicker" );
     var_0 = getent( "targ_s_flicker_fluo_jump2", "targetname" );
-    var_0 _meth_8498( "normal" );
+    var_0 setlightshadowstate( "normal" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1408,7 +1408,7 @@ kill_s_flicker_sh()
     self waittill( "trigger" );
     level notify( "kill_sh_s_flicker" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1421,9 +1421,9 @@ play_s_flicker_fluo_jump2_shadow_on()
 {
     self waittill( "trigger" );
     var_0 = getent( "targ_s_flicker_fluo_jump2", "targetname" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1437,9 +1437,9 @@ force_shadow_on_subcarback_firespot()
 {
     self waittill( "trigger" );
     var_0 = getent( "flicker_fire_sinkhole_lower4", "targetname" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1453,9 +1453,9 @@ force_shadow_off_subcarback_firespot()
 {
     self waittill( "trigger" );
     var_0 = getent( "flicker_fire_sinkhole_lower4", "targetname" );
-    var_0 _meth_8498( "normal" );
+    var_0 setlightshadowstate( "normal" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1471,7 +1471,7 @@ vision_enter_canal()
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_canal_entrance", 2 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
     }
 }
@@ -1488,10 +1488,10 @@ vision_seoul_hotel_interior()
         self waittill( "trigger" );
         common_scripts\utility::flag_set( "set_seoul_hotel_lighting" );
         maps\_utility::vision_set_fog_changes( "seoul_hotel_interior", 1 );
-        level.player _meth_83C0( "seoul_hotel_top" );
-        level.player _meth_8490( "clut_seoul_hotel_atrium", 1.0 );
+        level.player lightsetforplayer( "seoul_hotel_top" );
+        level.player setclutforplayer( "clut_seoul_hotel_atrium", 1.0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1511,18 +1511,18 @@ vision_seoul_hotel_interior_lrg()
 
         if ( level.nextgen )
         {
-            level.player _meth_83C0( "seoul_hotel_lrg" );
+            level.player lightsetforplayer( "seoul_hotel_lrg" );
             maps\_utility::vision_set_fog_changes( "seoul_hotel_interior_lrg", 1 );
         }
         else
         {
-            level.player _meth_83C0( "seoul_convention_center" );
+            level.player lightsetforplayer( "seoul_convention_center" );
             maps\_utility::vision_set_fog_changes( "seoul_convention_center", 1 );
         }
 
-        level.player _meth_8490( "clut_seoul_hotel_02", 1.0 );
+        level.player setclutforplayer( "clut_seoul_hotel_02", 1.0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1539,7 +1539,7 @@ vision_seoul_exterior()
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1555,10 +1555,10 @@ vision_seoul_vista()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_vista", 1 );
-        level.player _meth_83C0( "seoul_vista" );
-        level.player _meth_8490( "clut_seoul_vista", 0 );
+        level.player lightsetforplayer( "seoul_vista" );
+        level.player setclutforplayer( "clut_seoul_vista", 0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
     }
 }
@@ -1574,9 +1574,9 @@ vision_seoul_hotel_hallway_cg()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_hotel_hallway", 1 );
-        level.player _meth_83C0( "seoul_vista" );
+        level.player lightsetforplayer( "seoul_vista" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
     }
 }
@@ -1595,10 +1595,10 @@ vision_seoul_streets_02()
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "seoul_streets_dimfog", 1 );
 
-        level.player _meth_83C0( "seoul_streets" );
+        level.player lightsetforplayer( "seoul_streets" );
         disable_motion_blur();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
     }
 }
@@ -1617,9 +1617,9 @@ vision_seoul_streets_02_xx()
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "seoul_streets_dimfog", 1 );
 
-        level.player _meth_83C0( "seoul_streets" );
+        level.player lightsetforplayer( "seoul_streets" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
     }
 }
@@ -1636,7 +1636,7 @@ motion_blur_fall()
         self waittill( "trigger" );
         enable_motion_blur_rotation();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1656,8 +1656,8 @@ exit_hotel()
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "seoul_streets", 3 );
 
-        level.player _meth_83C0( "seoul_streets" );
-        level.player _meth_8490( "clut_seoul_fob", 1 );
+        level.player lightsetforplayer( "seoul_streets" );
+        level.player setclutforplayer( "clut_seoul_fob", 1 );
         thread fob_dof();
         thread fob_fire_lighting();
 
@@ -1666,7 +1666,7 @@ exit_hotel()
 
         }
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1687,13 +1687,13 @@ enter_hotel_lobby()
     {
         self waittill( "trigger" );
         thread hotel_lobby_fire_lighting();
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
         thread disable_motion_blur();
         maps\_utility::vision_set_fog_changes( "seoul_hotel_lobby", 1 );
-        level.player _meth_83C0( "seoul_hotel_lobby" );
-        level.player _meth_8490( "clut_seoul_hotel_atrium", 1.0 );
+        level.player lightsetforplayer( "seoul_hotel_lobby" );
+        level.player setclutforplayer( "clut_seoul_hotel_atrium", 1.0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1723,7 +1723,7 @@ vision_seoul_shopping()
         maps\_utility::vision_set_fog_changes( "seoul_shopping", 1 );
     }
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -1743,7 +1743,7 @@ fog_setup_shopping_restaraunt_interior_enter()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_shopping_district_interiors", 2 );
-        level.player _meth_83C0( "seoul_shopping_int" );
+        level.player lightsetforplayer( "seoul_shopping_int" );
     }
 }
 
@@ -1758,7 +1758,7 @@ fog_setup_shopping_restaraunt_interior_exit()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "seoul_shopping", 2 );
-        level.player _meth_83C0( "seoul_shopping_district" );
+        level.player lightsetforplayer( "seoul_shopping_district" );
     }
 }
 
@@ -1773,11 +1773,11 @@ shadow_shopping_walkway_pre_enter()
     {
         self waittill( "trigger" );
         var_0 = getent( "prim_spot_walkway_skyfill1", "targetname" );
-        var_0 _meth_8498( "normal" );
+        var_0 setlightshadowstate( "normal" );
         var_1 = getent( "prim_spot_walkway_skyfill2", "targetname" );
-        var_1 _meth_8498( "normal" );
+        var_1 setlightshadowstate( "normal" );
         maps\_utility::vision_set_fog_changes( "seoul_shopping", 2 );
-        level.player _meth_83C0( "seoul_shopping_district" );
+        level.player lightsetforplayer( "seoul_shopping_district" );
     }
 }
 
@@ -1792,11 +1792,11 @@ shadow_shopping_walkway_enter()
     {
         self waittill( "trigger" );
         var_0 = getent( "prim_spot_walkway_skyfill1", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         var_1 = getent( "prim_spot_walkway_skyfill2", "targetname" );
-        var_1 _meth_8498( "force_on" );
+        var_1 setlightshadowstate( "force_on" );
         maps\_utility::vision_set_fog_changes( "seoul_shopping_district_interiors", 2 );
-        level.player _meth_83C0( "seoul_shopping_int" );
+        level.player lightsetforplayer( "seoul_shopping_int" );
     }
 }
 
@@ -1813,11 +1813,11 @@ shadow_shopping_walkway_exit()
         {
             self waittill( "trigger" );
             var_0 = getent( "prim_spot_walkway_skyfill1", "targetname" );
-            var_0 _meth_8498( "normal" );
+            var_0 setlightshadowstate( "normal" );
             var_1 = getent( "prim_spot_walkway_skyfill2", "targetname" );
-            var_1 _meth_8498( "normal" );
+            var_1 setlightshadowstate( "normal" );
             var_2 = getent( "prim_spot_bar_skyfill1", "targetname" );
-            var_2 _meth_8498( "normal" );
+            var_2 setlightshadowstate( "normal" );
         }
     }
 }
@@ -1836,11 +1836,11 @@ shadow_bar2_enter()
         if ( level.nextgen )
         {
             var_0 = getent( "prim_spot_bar_skyfill1", "targetname" );
-            var_0 _meth_8498( "force_on" );
+            var_0 setlightshadowstate( "force_on" );
         }
 
         maps\_utility::vision_set_fog_changes( "seoul_shopping_district_interiors", 2 );
-        level.player _meth_83C0( "seoul_shopping_int" );
+        level.player lightsetforplayer( "seoul_shopping_int" );
     }
 }
 
@@ -1860,18 +1860,18 @@ shadow_bar2_exit()
             if ( level.nextgen )
             {
                 var_0 = getent( "prim_spot_bar_skyfill1", "targetname" );
-                var_0 _meth_8498( "normal" );
+                var_0 setlightshadowstate( "normal" );
             }
 
             maps\_utility::vision_set_fog_changes( "seoul_shopping", 2 );
-            level.player _meth_83C0( "seoul_shopping_district" );
+            level.player lightsetforplayer( "seoul_shopping_district" );
         }
     }
 }
 
 dof_triggers()
 {
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     level.player_dof_aperture = 2.5;
     common_scripts\utility::run_thread_on_targetname( "dof_enable_interior", ::dof_enable_interior );
     common_scripts\utility::run_thread_on_targetname( "dof_enable_exterior", ::dof_enable_exterior );
@@ -1881,107 +1881,107 @@ dof_triggers()
 dof_enable_interior()
 {
     self waittill( "trigger" );
-    level.player _meth_84AB( 3.5, 100 );
+    level.player setphysicaldepthoffield( 3.5, 100 );
     level.player_dof_aperture = 2.8;
 }
 
 dof_enable_exterior()
 {
     self waittill( "trigger" );
-    level.player _meth_84AB( 11, 100 );
+    level.player setphysicaldepthoffield( 11, 100 );
     level.player_dof_aperture = 8.0;
 }
 
 dof_enable_start()
 {
     self waittill( "trigger" );
-    level.player _meth_84AB( 2.8, 30 );
+    level.player setphysicaldepthoffield( 2.8, 30 );
     level.player_dof_aperture = 4.0;
 }
 
 bomb_plant_dof()
 {
     enable_motion_blur_rotation();
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 57 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 57 );
     wait 2;
-    level.player _meth_84AB( 15, 14, 5, 2 );
+    level.player setphysicaldepthoffield( 15, 14, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 6, 52, 2, 10 );
+    level.player setphysicaldepthoffield( 6, 52, 2, 10 );
     wait 4.3;
-    level.player _meth_84AB( 2.5, 36, 10, 2 );
+    level.player setphysicaldepthoffield( 2.5, 36, 10, 2 );
     wait 2.3;
-    level.player _meth_84AB( 3.5, 13.7, 10, 5 );
+    level.player setphysicaldepthoffield( 3.5, 13.7, 10, 5 );
     wait 0.45;
-    level.player _meth_84AB( 4.5, 19, 20, 10 );
+    level.player setphysicaldepthoffield( 4.5, 19, 20, 10 );
     wait 4.1;
-    level.player _meth_84AB( 3.5, 11.2, 10, 5 );
+    level.player setphysicaldepthoffield( 3.5, 11.2, 10, 5 );
     wait 0.55;
-    level.player _meth_84AB( 3.5, 24, 5, 2 );
+    level.player setphysicaldepthoffield( 3.5, 24, 5, 2 );
     wait 2.8;
-    level.player _meth_84AB( 2.5, 14.5, 10, 5 );
+    level.player setphysicaldepthoffield( 2.5, 14.5, 10, 5 );
     wait 0.4;
-    level.player _meth_84AB( 4.5, 21, 5, 2 );
+    level.player setphysicaldepthoffield( 4.5, 21, 5, 2 );
     wait 3;
-    level.player _meth_84AB( 4.5, 16, 5, 2 );
+    level.player setphysicaldepthoffield( 4.5, 16, 5, 2 );
     wait 0.6;
-    level.player _meth_84AB( 4.5, 9, 10, 5 );
+    level.player setphysicaldepthoffield( 4.5, 9, 10, 5 );
     wait 0.5;
-    level.player _meth_84AB( 2.5, 20, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 20, 5, 2 );
     wait 2.5;
-    level.player _meth_84AB( 4.5, 11, 10, 5 );
+    level.player setphysicaldepthoffield( 4.5, 11, 10, 5 );
     wait 0.5;
-    level.player _meth_84AB( 6, 20, 5, 2 );
+    level.player setphysicaldepthoffield( 6, 20, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 6, 300, 5, 2 );
+    level.player setphysicaldepthoffield( 6, 300, 5, 2 );
     wait 0.8;
-    level.player _meth_84AB( 22, 20, 2 );
+    level.player setphysicaldepthoffield( 22, 20, 2 );
     wait 1.7;
-    level.player _meth_84AB( 4, 300, 20, 2 );
+    level.player setphysicaldepthoffield( 4, 300, 20, 2 );
     wait 0.5;
-    level.player _meth_84AB( 3, 20, 2 );
+    level.player setphysicaldepthoffield( 3, 20, 2 );
     wait 2;
-    level.player _meth_84AB( 5, 9.7, 10, 2 );
+    level.player setphysicaldepthoffield( 5, 9.7, 10, 2 );
     wait 0.4;
-    level.player _meth_84AB( 3, 24, 10, 2 );
+    level.player setphysicaldepthoffield( 3, 24, 10, 2 );
     wait 1.8;
-    level.player _meth_84AB( 1.5, 17.8, 10, 2 );
+    level.player setphysicaldepthoffield( 1.5, 17.8, 10, 2 );
     wait 0.4;
-    level.player _meth_84AB( 2, 24, 10, 2 );
+    level.player setphysicaldepthoffield( 2, 24, 10, 2 );
     wait 0.7;
-    level.player _meth_84AB( 3, 14.7, 20, 2 );
+    level.player setphysicaldepthoffield( 3, 14.7, 20, 2 );
     wait 3.2;
-    level.player _meth_84AB( 12, 14, 50, 2 );
+    level.player setphysicaldepthoffield( 12, 14, 50, 2 );
     wait 2;
-    level.player _meth_84AB( 2.5, 300, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 300, 5, 2 );
     wait 10;
-    level.player _meth_84AB( 3, 250, 20, 2 );
+    level.player setphysicaldepthoffield( 3, 250, 20, 2 );
     wait 2.5;
-    level.player _meth_84AB( 2.5, 20, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 20, 5, 2 );
     wait 7;
-    level.player _meth_84AB( 2.5, 220, 1, 2 );
+    level.player setphysicaldepthoffield( 2.5, 220, 1, 2 );
     wait 6.5;
-    level.player _meth_84AB( 4, 21, 1, 2 );
+    level.player setphysicaldepthoffield( 4, 21, 1, 2 );
     wait 2;
-    level.player _meth_84AB( 4, 14.8, 5, 2 );
+    level.player setphysicaldepthoffield( 4, 14.8, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 6, 9, 5, 2 );
+    level.player setphysicaldepthoffield( 6, 9, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 2.5, 35, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 35, 5, 2 );
     wait 3;
-    level.player _meth_84AB( 4, 13, 2, 10 );
+    level.player setphysicaldepthoffield( 4, 13, 2, 10 );
     wait 1.5;
-    level.player _meth_84AB( 4, 11.4, 5, 10 );
+    level.player setphysicaldepthoffield( 4, 11.4, 5, 10 );
     wait 1;
-    level.player _meth_84AB( 4, 13, 10, 10 );
+    level.player setphysicaldepthoffield( 4, 13, 10, 10 );
     wait 1.5;
-    level.player _meth_84AB( 4, 19.5, 10, 10 );
+    level.player setphysicaldepthoffield( 4, 19.5, 10, 10 );
     wait 2.2;
-    level.player _meth_84AB( 4, 13, 10, 10 );
+    level.player setphysicaldepthoffield( 4, 13, 10, 10 );
     wait 7.3;
-    level.player _meth_84AB( 2.5, 37, 10, 10 );
+    level.player setphysicaldepthoffield( 2.5, 37, 10, 10 );
     wait 3;
-    level.player _meth_84AB( 2.5, 90, 1, 2 );
+    level.player setphysicaldepthoffield( 2.5, 90, 1, 2 );
 }
 
 bomb_plant_dof_bokeh()
@@ -1989,158 +1989,158 @@ bomb_plant_dof_bokeh()
     enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 57 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 57 );
     wait 2;
-    level.player _meth_84AB( 13, 14, 5, 2 );
+    level.player setphysicaldepthoffield( 13, 14, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 2, 52, 5, 10 );
+    level.player setphysicaldepthoffield( 2, 52, 5, 10 );
     wait 4.3;
-    level.player _meth_84AB( 1.5, 36, 10, 2 );
+    level.player setphysicaldepthoffield( 1.5, 36, 10, 2 );
     wait 2.2;
-    level.player _meth_84AB( 2.5, 13.7, 3, 5 );
+    level.player setphysicaldepthoffield( 2.5, 13.7, 3, 5 );
     wait 0.55;
-    level.player _meth_84AB( 3.5, 19, 20, 10 );
+    level.player setphysicaldepthoffield( 3.5, 19, 20, 10 );
     wait 4.2;
-    level.player _meth_84AB( 4, 11.2, 8, 5 );
+    level.player setphysicaldepthoffield( 4, 11.2, 8, 5 );
     wait 0.45;
-    level.player _meth_84AB( 2.5, 24, 12, 2 );
+    level.player setphysicaldepthoffield( 2.5, 24, 12, 2 );
     wait 2.8;
-    level.player _meth_84AB( 1.5, 14.5, 10, 5 );
+    level.player setphysicaldepthoffield( 1.5, 14.5, 10, 5 );
     wait 0.4;
-    level.player _meth_84AB( 5, 21, 10, 2 );
+    level.player setphysicaldepthoffield( 5, 21, 10, 2 );
     wait 2.2;
-    level.player _meth_84AB( 3.5, 17.6, 10, 2 );
+    level.player setphysicaldepthoffield( 3.5, 17.6, 10, 2 );
     wait 0.4;
-    level.player _meth_84AB( 3.5, 21, 5, 2 );
+    level.player setphysicaldepthoffield( 3.5, 21, 5, 2 );
     wait 0.4;
-    level.player _meth_84AB( 3.5, 16, 5, 2 );
+    level.player setphysicaldepthoffield( 3.5, 16, 5, 2 );
     wait 0.6;
-    level.player _meth_84AB( 5, 9, 5, 5 );
+    level.player setphysicaldepthoffield( 5, 9, 5, 5 );
     wait 0.5;
-    level.player _meth_84AB( 1.5, 20, 20, 2 );
+    level.player setphysicaldepthoffield( 1.5, 20, 20, 2 );
     wait 2.5;
-    level.player _meth_84AB( 8, 11, 5, 10 );
+    level.player setphysicaldepthoffield( 8, 11, 5, 10 );
     wait 0.5;
-    level.player _meth_84AB( 4, 20, 5, 2 );
+    level.player setphysicaldepthoffield( 4, 20, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 4, 300, 5, 2 );
+    level.player setphysicaldepthoffield( 4, 300, 5, 2 );
     wait 0.8;
-    level.player _meth_84AB( 22, 20, 20, 2 );
+    level.player setphysicaldepthoffield( 22, 20, 20, 2 );
     wait 1.7;
-    level.player _meth_84AB( 4, 300, 20, 2 );
+    level.player setphysicaldepthoffield( 4, 300, 20, 2 );
     wait 0.5;
-    level.player _meth_84AB( 2, 20, 2 );
+    level.player setphysicaldepthoffield( 2, 20, 2 );
     wait 2;
-    level.player _meth_84AB( 4, 9.7, 10, 2 );
+    level.player setphysicaldepthoffield( 4, 9.7, 10, 2 );
     wait 0.4;
-    level.player _meth_84AB( 2, 24, 10, 2 );
+    level.player setphysicaldepthoffield( 2, 24, 10, 2 );
     wait 1.8;
-    level.player _meth_84AB( 1.5, 17.8, 10, 2 );
+    level.player setphysicaldepthoffield( 1.5, 17.8, 10, 2 );
     wait 0.4;
-    level.player _meth_84AB( 1, 24, 10, 2 );
+    level.player setphysicaldepthoffield( 1, 24, 10, 2 );
     wait 0.6;
-    level.player _meth_84AB( 2, 14.7, 10, 2 );
+    level.player setphysicaldepthoffield( 2, 14.7, 10, 2 );
     wait 3.3;
-    level.player _meth_84AB( 6, 14, 50, 2 );
+    level.player setphysicaldepthoffield( 6, 14, 50, 2 );
     wait 1.3;
-    level.player _meth_84AB( 0.5, 24, 2, 1 );
+    level.player setphysicaldepthoffield( 0.5, 24, 2, 1 );
     wait 0.8;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 1.2;
-    level.player _meth_84AB( 12, 1, 40, 20 );
+    level.player setphysicaldepthoffield( 12, 1, 40, 20 );
     wait 0.5;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 1.5;
-    level.player _meth_84AB( 7, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 7, 1, 20, 10 );
     wait 0.5;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.5;
-    level.player _meth_84AB( 5, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 5, 1, 20, 10 );
     wait 0.1;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 15, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 15, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 12, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 12, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 11, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 11, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 9, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 9, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 12, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 12, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 8, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 8, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 10, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 10, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 8, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 8, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.05;
-    level.player _meth_84AB( 7, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 7, 1, 20, 10 );
     wait 0.3;
-    level.player _meth_84AB( 100, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 100, 1, 20, 10 );
     wait 0.5;
-    level.player _meth_84AB( 6, 1, 20, 10 );
+    level.player setphysicaldepthoffield( 6, 1, 20, 10 );
     wait 2;
-    level.player _meth_84AB( 100, 1, 2, 1 );
+    level.player setphysicaldepthoffield( 100, 1, 2, 1 );
     wait 2;
-    level.player _meth_84AB( 2, 250, 20, 2 );
+    level.player setphysicaldepthoffield( 2, 250, 20, 2 );
     wait 2.5;
-    level.player _meth_84AB( 0.5, 20, 5, 2 );
+    level.player setphysicaldepthoffield( 0.5, 20, 5, 2 );
     wait 7;
-    level.player _meth_84AB( 1.5, 220, 1, 2 );
+    level.player setphysicaldepthoffield( 1.5, 220, 1, 2 );
     wait 6.5;
-    level.player _meth_84AB( 3, 21, 1, 2 );
+    level.player setphysicaldepthoffield( 3, 21, 1, 2 );
     wait 2;
-    level.player _meth_84AB( 3, 14.8, 5, 2 );
+    level.player setphysicaldepthoffield( 3, 14.8, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 4, 9, 5, 2 );
+    level.player setphysicaldepthoffield( 4, 9, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 1.5, 35, 5, 2 );
+    level.player setphysicaldepthoffield( 1.5, 35, 5, 2 );
     wait 3;
-    level.player _meth_84AB( 3, 13, 2, 10 );
+    level.player setphysicaldepthoffield( 3, 13, 2, 10 );
     wait 1.5;
-    level.player _meth_84AB( 3, 11.4, 5, 10 );
+    level.player setphysicaldepthoffield( 3, 11.4, 5, 10 );
     wait 1;
-    level.player _meth_84AB( 3, 13, 10, 10 );
+    level.player setphysicaldepthoffield( 3, 13, 10, 10 );
     wait 1.5;
-    level.player _meth_84AB( 3, 19.5, 10, 10 );
+    level.player setphysicaldepthoffield( 3, 19.5, 10, 10 );
     wait 2.2;
-    level.player _meth_84AB( 3, 13, 10, 10 );
+    level.player setphysicaldepthoffield( 3, 13, 10, 10 );
     wait 2.4;
-    level.player _meth_84AB( 3, 10.9, 10, 10 );
+    level.player setphysicaldepthoffield( 3, 10.9, 10, 10 );
     wait 1.5;
-    level.player _meth_84AB( 3, 12.5, 5, 10 );
+    level.player setphysicaldepthoffield( 3, 12.5, 5, 10 );
     wait 3;
-    level.player _meth_84AB( 1.5, 37, 10, 10 );
+    level.player setphysicaldepthoffield( 1.5, 37, 10, 10 );
     wait 3;
-    level.player _meth_84AB( 1.5, 90, 1, 2 );
+    level.player setphysicaldepthoffield( 1.5, 90, 1, 2 );
 }
 
 lightset_seoul_shopping()
 {
     self waittill( "trigger" );
-    level.player _meth_83C0( "seoul_shopping_district" );
-    level.player _meth_8490( "clut_seoul_shopping", 1 );
+    level.player lightsetforplayer( "seoul_shopping_district" );
+    level.player setclutforplayer( "clut_seoul_shopping", 1 );
     level.player_dof_aperture = 3.0;
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
         wait 0.1;
 }
 
@@ -2153,9 +2153,9 @@ manage_force_shadow_lights()
     for (;;)
     {
         common_scripts\utility::flag_wait( "force_light_01" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         common_scripts\utility::flag_waitopen( "force_light_01" );
-        var_0 _meth_8498( "force_off" );
+        var_0 setlightshadowstate( "force_off" );
     }
 }
 
@@ -2168,9 +2168,9 @@ test()
 
 intro_camera_blur()
 {
-    _func_072( 9, 1 );
+    setblur( 9, 1 );
     wait 3;
-    _func_072( 0, 1 );
+    setblur( 0, 1 );
 }
 
 notetrack_setup( var_0 )
@@ -2185,13 +2185,13 @@ finale_eyes_custom_mats_on()
 
     if ( level.nextgen )
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
     }
     else
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
     }
 }
 
@@ -2200,14 +2200,14 @@ finale_mwp_lighting_offset()
     var_0 = level.weapon_platform_rigged;
     var_1 = var_0.origin;
     var_2 = getent( "lighting_centroid_mwp", "targetname" );
-    var_0 _meth_847B( var_2.origin );
+    var_0 overridelightingorigin( var_2.origin );
 }
 
 mwp_lighting_origin_offset_reset()
 {
     var_0 = level.weapon_platform_rigged;
     wait 35;
-    var_0 _meth_847C();
+    var_0 defaultlightingorigin();
 }
 
 mwp_bombplant_reflection_probe_lightgrid_tweaks()
@@ -2220,61 +2220,61 @@ mwp_bombplant_reflection_probe_lightgrid_tweaks()
 mwp_explosion_lightset_vig()
 {
     wait 40.7;
-    level.player _meth_83C0( "seoul_finexp_brightest" );
+    level.player lightsetforplayer( "seoul_finexp_brightest" );
     wait 0.1;
-    level.player _meth_83C0( "seoul_finexp_dark" );
+    level.player lightsetforplayer( "seoul_finexp_dark" );
     wait 0.3;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 1.6;
-    level.player _meth_83C0( "seoul_finexp_brightest" );
+    level.player lightsetforplayer( "seoul_finexp_brightest" );
     wait 0.1;
-    level.player _meth_83C0( "seoul_finexp_dark" );
+    level.player lightsetforplayer( "seoul_finexp_dark" );
     wait 0.3;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.6;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.1;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
     wait 0.05;
-    level.player _meth_83C0( "seoul_finexp_bright" );
+    level.player lightsetforplayer( "seoul_finexp_bright" );
     wait 0.3;
-    level.player _meth_83C0( "seoul_finexp_dark" );
+    level.player lightsetforplayer( "seoul_finexp_dark" );
     wait 0.5;
-    level.player _meth_83C0( "seoul_finexp_brightest" );
+    level.player lightsetforplayer( "seoul_finexp_brightest" );
     wait 0.5;
-    level.player _meth_83C0( "seoul_finexp_dark" );
+    level.player lightsetforplayer( "seoul_finexp_dark" );
     wait 0.5;
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
 }
 
 canal_wmp_key_tweaks()
@@ -2290,18 +2290,18 @@ pre_bomb_plant_lighting()
     thread mwp_cine_optimize_will_key_left_pre_firerim();
 
     if ( level.nextgen )
-        _func_0D3( "r_mbvelocityscalar", "1" );
+        setsaveddvar( "r_mbvelocityscalar", "1" );
 
     if ( level.nextgen )
     {
         maps\_lighting::set_spot_color( "light_cine_key_rad", ( 0.101, 0.2, 0.515 ) );
-        _func_0D3( "r_mdaoCapsulestrength", "1" );
+        setsaveddvar( "r_mdaoCapsulestrength", "1" );
     }
 
     if ( level.nextgen )
     {
         var_2 = getent( "light_cine_key_rad", "targetname" );
-        var_2 _meth_8020( 60, 20 );
+        var_2 setlightfovrange( 60, 20 );
         thread maps\_lighting::lerp_spot_intensity( "light_cine_key_rad", 1, 80000 );
     }
 
@@ -2330,7 +2330,7 @@ bomb_plant_lighting()
     if ( level.nextgen )
         var_1 = getent( "light_cine_key_rad", "targetname" );
 
-    level.player _meth_83C0( "seoul_finale" );
+    level.player lightsetforplayer( "seoul_finale" );
 
     if ( level.nextgen )
         maps\_utility::lerp_saveddvar( "r_mdaoCapsulestrength", 0.25, 1 );
@@ -2380,7 +2380,7 @@ mwp_cine_optimize_will_key_left_post_firerim()
         maps\_lighting::execute_scriptable_primary_light( var_2 );
         wait 11;
         maps\_lighting::stop_scriptable_primary_light( var_2 );
-        var_0 _meth_8046( 300 );
+        var_0 setlightradius( 300 );
     }
 }
 
@@ -2389,7 +2389,7 @@ mwp_cine_optimize_left_big_key_all()
     if ( level.nextgen )
     {
         var_0 = getent( "light_left_big_key", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         var_1 = var_0.origin;
         var_2 = var_0.angles;
         var_3 = common_scripts\utility::getstruct( "script_struct_light_left_cormack_run", "targetname" );
@@ -2419,7 +2419,7 @@ mwp_cine_optimize_left_big_key_all()
         lerp_angles_function( var_0, 0.05, var_4.angles );
         wait 0.05;
         thread maps\_lighting::lerp_spot_intensity( "light_left_big_key", 1.5, 1500000 );
-        level.player _meth_8490( "clut_seoul_ending_v2", 10.0 );
+        level.player setclutforplayer( "clut_seoul_ending_v2", 10.0 );
         wait 5;
         thread maps\_lighting::lerp_spot_intensity( "light_left_big_key", 0.05, 10000 );
         var_0 maps\_lighting::lerp_light_fov_range( 30, 10, 35, 5, 0.05 );
@@ -2430,7 +2430,7 @@ mwp_cine_optimize_left_big_key_all()
         var_0 maps\_lighting::lerp_light_fov_range( 30, 10, 40, 20, 1 );
         lerp_angles_function( var_0, 2, var_6.angles );
         var_9 = getent( "light_weaplat_rim", "targetname" );
-        var_9 _meth_8498( "force_off" );
+        var_9 setlightshadowstate( "force_off" );
         wait 6.35;
         var_0 maps\_lighting::lerp_light_fov_range( 40, 20, 40, 30, 0.05 );
         lerp_origin_function( var_0, 0.1, var_8.origin );
@@ -2450,7 +2450,7 @@ mwp_cine_optimize_weaplat_rim_all()
     if ( level.nextgen )
     {
         var_0 = getent( "light_weaplat_rim", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         var_1 = var_0.origin;
         var_2 = var_0.angles;
         var_3 = common_scripts\utility::getstruct( "script_struct_light_cine_fire_body", "targetname" );
@@ -2481,7 +2481,7 @@ mwp_cine_optimize_weaplat_rim_all()
         wait 10.5;
         thread maps\_lighting::set_spot_intensity( "light_weaplat_rim", 320000 );
         maps\_lighting::set_spot_color( "light_weaplat_rim", ( 1, 0.346, 0.0467 ) );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         maps\_lighting::stop_flickerlight( "firelight_motion_weaplat_rim_body", "light_weaplat_rim", 0 );
         maps\_lighting::stop_flickerlight( "firelight_motion_weaplat_rim_cormack", "light_weaplat_rim", 0 );
         var_0 maps\_lighting::lerp_light_fov_range( 120, 80, 90, 30, 0.05 );
@@ -2511,9 +2511,9 @@ mwp_cine_lighhting_radspot()
         wait 3;
         thread maps\_lighting::lerp_spot_intensity( "light_left_big_key", 1, 1 );
         var_0 = getent( "light_left_big_key", "targetname" );
-        var_0 _meth_8498( "force_off" );
+        var_0 setlightshadowstate( "force_off" );
         wait 2;
-        level.player _meth_8490( "clut_seoul_ending_v2", 10.0 );
+        level.player setclutforplayer( "clut_seoul_ending_v2", 10.0 );
         thread maps\_lighting::lerp_spot_intensity( "light_cine_finale_left_key_a", 1, 1280000 );
         wait 15;
         var_1 = getent( "light_cine_finale_left_key_a", "targetname" );
@@ -2521,7 +2521,7 @@ mwp_cine_lighhting_radspot()
         wait 7;
         maps\_lighting::stop_flickerlight( "firelight_motion_weaplat_flyup", "light_weaplat_rim", 0 );
         var_2 = getent( "light_weaplat_rim", "targetname" );
-        var_2 _meth_8498( "force_off" );
+        var_2 setlightshadowstate( "force_off" );
         wait 1.5;
         wait 1.5;
         wait 0.7;
@@ -2540,7 +2540,7 @@ mwp_cine_lighhting_radspot()
         wait 6.5;
         thread maps\_lighting::lerp_spot_intensity( "light_cine_finale_left_key_d", 2, 800000 );
         var_5 = getent( "light_cine_finale_left_key_d", "targetname" );
-        var_5 _meth_8498( "force_on" );
+        var_5 setlightshadowstate( "force_on" );
         wait 2;
         thread maps\_lighting::lerp_spot_intensity( "light_cine_finale_left_key_a", 1, 1 );
         wait 2;
@@ -2554,9 +2554,9 @@ mwp_cine_lighhting_fx()
     level waittill( "panel_close_wait" );
     var_0 = level.weapon_platform_rigged;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( level.will_irons, "J_head", ( 5, -5, -8 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( level.will_irons, "J_head", ( 5, -5, -8 ), ( 0, 0, 0 ), 0 );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( level.will_irons, "J_head", ( 4, -4, 9 ), ( 0, 0, 0 ), 0 );
+    var_2 linkto( level.will_irons, "J_head", ( 4, -4, 9 ), ( 0, 0, 0 ), 0 );
 
     if ( level.nextgen )
         maps\_utility::lerp_saveddvar( "r_mdaoCapsulestrength", 0.25, 2 );
@@ -2566,16 +2566,16 @@ mwp_cine_lighhting_fx()
     playfxontag( common_scripts\utility::getfx( "light_left_shut_blink" ), var_0, "tag_left_key" );
     wait 14.8;
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( level.will_irons, "J_head", ( 0, -6, 7 ), ( 0, 0, 0 ), 0 );
+    var_3 linkto( level.will_irons, "J_head", ( 0, -6, 7 ), ( 0, 0, 0 ), 0 );
     wait 3.5;
     wait 1.8;
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( level.will_irons, "J_head", ( 0, 5, -4 ), ( 0, 0, 0 ), 0 );
+    var_4 linkto( level.will_irons, "J_head", ( 0, 5, -4 ), ( 0, 0, 0 ), 0 );
 
     if ( level.nextgen )
     {
         var_5 = getent( "light_cine_key_rad", "targetname" );
-        var_5 _meth_8498( "force_off" );
+        var_5 setlightshadowstate( "force_off" );
     }
 
     wait 2;
@@ -2584,7 +2584,7 @@ mwp_cine_lighhting_fx()
         maps\_utility::lerp_saveddvar( "r_mdaoCapsulestrength", 0.15, 1 );
 
     wait 3.95;
-    level.player _meth_83C0( "seoul_mad" );
+    level.player lightsetforplayer( "seoul_mad" );
     wait 2;
     killfxontag( common_scripts\utility::getfx( "light_left_shut_spot" ), var_0, "tag_left_key" );
     wait 0.05;
@@ -2606,18 +2606,18 @@ mwp_cine_lighhting_fx()
     wait 2;
 
     if ( level.nextgen )
-        _func_0D3( "r_eyepupil", ".1" );
+        setsaveddvar( "r_eyepupil", ".1" );
 
     wait 2.5;
-    level.player _meth_83C0( "seoul_fin_cormack" );
+    level.player lightsetforplayer( "seoul_fin_cormack" );
     wait 3.35;
     level.player thread maps\_lighting::screen_effect_base( 200, "ac130_overlay_pip_vignette", 0, 0, 0.2, 0, 0 );
     wait 6.65;
     var_6 = common_scripts\utility::spawn_tag_origin();
-    var_6 _meth_804D( level.cormack, "J_head", ( 3, 8, 0 ), ( 0, 0, 0 ), 0 );
+    var_6 linkto( level.cormack, "J_head", ( 3, 8, 0 ), ( 0, 0, 0 ), 0 );
     wait 4;
     var_7 = common_scripts\utility::spawn_tag_origin();
-    var_7 _meth_804D( level.cormack, "J_head", ( 4, -4, 9 ), ( 0, 0, 0 ), 0 );
+    var_7 linkto( level.cormack, "J_head", ( 4, -4, 9 ), ( 0, 0, 0 ), 0 );
     wait 7.5;
     level.player thread maps\_lighting::screen_effect_base( 40, "ac130_overlay_pip_vignette", 3, 0, 0.7, 0, 0 );
     wait 2.5;
@@ -2648,22 +2648,22 @@ finale_part1_cineviewmodel_lighting( var_0 )
 finale_cineviewmodel_lighting( var_0 )
 {
     var_1 = getent( "lighting_centroid_viewmodel", "targetname" );
-    var_0 _meth_847B( var_0.origin );
+    var_0 overridelightingorigin( var_0.origin );
     var_2 = level.cormack;
     var_3 = getent( "lighting_centroid_cormac", "targetname" );
-    var_3 _meth_804D( var_2, "J_Head" );
-    var_2 _meth_847B( var_3.origin );
+    var_3 linkto( var_2, "J_Head" );
+    var_2 overridelightingorigin( var_3.origin );
 }
 
 fob_street_dof()
 {
     common_scripts\utility::flag_wait( "dof_fob" );
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        level.player _meth_84AB( 2, 200, 20, 20 );
+        level.player setphysicaldepthoffield( 2, 200, 20, 20 );
     else
-        level.player _meth_84AB( 20, 10000, 20, 20 );
+        level.player setphysicaldepthoffield( 20, 10000, 20, 20 );
 
     common_scripts\utility::flag_waitopen( "dof_fob" );
     thread enable_physical_dof_hip();
@@ -2692,7 +2692,7 @@ bomb_light( var_0 )
 {
     var_0.light = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.light;
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
     wait 3.75;
     playfxontag( common_scripts\utility::getfx( "light_blink_red" ), var_1, "tag_origin" );
     common_scripts\utility::flag_wait( "cleanup_finale_explosive" );
@@ -2718,17 +2718,17 @@ reflection_pod_guys( var_0, var_1, var_2, var_3 )
     }
 
     foreach ( var_10 in var_0 )
-        var_10 _meth_83AB( var_1.origin );
+        var_10 overridereflectionprobe( var_1.origin );
 }
 
 reflection_pod_guys_landing( var_0, var_1, var_2, var_3 )
 {
-    _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36131, 1697.47, 1819.99 ) );
-    _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36131, 1697.47, 1819.99 ) );
+    setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36131, 1697.47, 1819.99 ) );
+    setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36131, 1697.47, 1819.99 ) );
     var_4 = getent( "red_reflection_01", "targetname" );
 
     foreach ( var_6 in var_0 )
-        var_6 _meth_83AB( var_4.origin );
+        var_6 overridereflectionprobe( var_4.origin );
 }
 
 reflection_pod_guys2( var_0, var_1, var_2, var_3 )
@@ -2736,7 +2736,7 @@ reflection_pod_guys2( var_0, var_1, var_2, var_3 )
     wait 2.8;
 
     foreach ( var_5 in var_0 )
-        var_5 _meth_83AC();
+        var_5 defaultreflectionprobe();
 
     wait 25;
     thread force_shadow_hotel();
@@ -2747,9 +2747,9 @@ force_shadow_hotel()
     if ( level.nextgen )
     {
         var_0 = getent( "firelight_hotel_small_11", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         level waittill( "hotel_fall" );
-        var_0 _meth_8498( "force_off" );
+        var_0 setlightshadowstate( "force_off" );
     }
 }
 
@@ -2768,7 +2768,7 @@ intro_spotlight_setup()
         maps\_lighting::set_spot_color( "pre_pod_key", ( 0.35, 0.75, 1 ) );
         thread maps\_lighting::lerp_spot_intensity( "pre_pod_key", 0, 600 );
         wait 1;
-        var_0 _meth_8046( 250 );
+        var_0 setlightradius( 250 );
         wait 7;
         wait 5;
         thread maps\_lighting::lerp_spot_intensity( "pre_pod_key", 4, 1550 );
@@ -2779,7 +2779,7 @@ intro_spotlight_setup()
         maps\_lighting::execute_scriptable_primary_light( var_5 );
         wait 15;
         maps\_lighting::stop_scriptable_primary_light( var_5 );
-        var_0 _meth_8046( 250 );
+        var_0 setlightradius( 250 );
         wait 0.05;
     }
     else
@@ -2787,9 +2787,9 @@ intro_spotlight_setup()
         maps\_lighting::set_spot_color( "pre_pod_key", ( 0.35, 1, 0.757 ) );
         thread maps\_lighting::lerp_spot_intensity( "pre_pod_key", 0, 60 );
         wait 1;
-        var_0 _meth_8046( 250 );
+        var_0 setlightradius( 250 );
         wait 38.1;
-        var_0 _meth_8046( 250 );
+        var_0 setlightradius( 250 );
         wait 0.05;
     }
 }
@@ -2801,17 +2801,17 @@ pod_cormack_custom_mats_on()
 
     if ( level.nextgen )
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_l", "mc/mtl_burke_eye_shader_seoulpod_l" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_r", "mc/mtl_burke_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_1 overridematerial( "mtl_burke_eye_shader_l", "mc/mtl_burke_eye_shader_seoulpod_l" );
+        var_1 overridematerial( "mtl_burke_eye_shader_r", "mc/mtl_burke_eye_shader_seoulpod_r" );
     }
     else
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_l", "mqc/mtl_burke_eye_shader_seoulpod_l" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_r", "mqc/mtl_burke_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_1 overridematerial( "mtl_burke_eye_shader_l", "mqc/mtl_burke_eye_shader_seoulpod_l" );
+        var_1 overridematerial( "mtl_burke_eye_shader_r", "mqc/mtl_burke_eye_shader_seoulpod_r" );
     }
 }
 
@@ -2822,23 +2822,23 @@ pod_cormack_custom_mats_landing_on()
 
     if ( level.nextgen )
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_l", "mc/mtl_burke_eye_shader_seoulpod_l" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_r", "mc/mtl_burke_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_1 overridematerial( "mtl_burke_eye_shader_l", "mc/mtl_burke_eye_shader_seoulpod_l" );
+        var_1 overridematerial( "mtl_burke_eye_shader_r", "mc/mtl_burke_eye_shader_seoulpod_r" );
     }
     else
     {
-        var_0 _meth_846C( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
-        var_0 _meth_846C( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_l", "mqc/mtl_burke_eye_shader_seoulpod_l" );
-        var_1 _meth_846C( "mtl_burke_eye_shader_r", "mqc/mtl_burke_eye_shader_seoulpod_r" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_l", "mqc/mtl_cormack_eye_shader_seoulpod_l" );
+        var_0 overridematerial( "mtl_cormack_eye_shader_r", "mqc/mtl_cormack_eye_shader_seoulpod_r" );
+        var_1 overridematerial( "mtl_burke_eye_shader_l", "mqc/mtl_burke_eye_shader_seoulpod_l" );
+        var_1 overridematerial( "mtl_burke_eye_shader_r", "mqc/mtl_burke_eye_shader_seoulpod_r" );
     }
 
     level waittill( "player_drop_pod_door_kick" );
     wait 2.8;
-    var_0 _meth_846D();
-    var_1 _meth_846D();
+    var_0 overridematerialreset();
+    var_1 overridematerialreset();
 }
 
 blimp_scripted_lights( var_0 )
@@ -2866,7 +2866,7 @@ pod_scripted_lights( var_0 )
     var_3 = anglestoforward( ( 0, -20, 0 ) );
     var_0.door_open_blue = common_scripts\utility::spawn_tag_origin();
     var_4 = var_0.door_open_blue;
-    var_4 _meth_804D( var_0, "body_animate_joint", ( -20, 60, 20 ), ( 0, -20, 0 ), 0 );
+    var_4 linkto( var_0, "body_animate_joint", ( -20, 60, 20 ), ( 0, -20, 0 ), 0 );
     var_5 = undefined;
     var_6 = undefined;
 
@@ -2882,7 +2882,7 @@ pod_scripted_lights( var_0 )
     }
 
     wait 0.05;
-    level.player _meth_83C0( "seoul_intro_outside" );
+    level.player lightsetforplayer( "seoul_intro_outside" );
 
     if ( level.nextgen )
     {
@@ -2894,7 +2894,7 @@ pod_scripted_lights( var_0 )
 
     wait 3;
     wait 5.1;
-    level.player _meth_83C0( "seoul_intro" );
+    level.player lightsetforplayer( "seoul_intro" );
 
     if ( level.nextgen )
     {
@@ -2905,7 +2905,7 @@ pod_scripted_lights( var_0 )
         maps\_lighting::stop_scriptable_primary_light( var_5 );
 
     wait 0.05;
-    level.player _meth_83C0( "seoul_intro" );
+    level.player lightsetforplayer( "seoul_intro" );
     var_7 = undefined;
     var_8 = undefined;
 
@@ -2923,9 +2923,9 @@ pod_scripted_lights( var_0 )
     }
 
     wait 3;
-    level.player _meth_83C0( "seoul_intro_outside" );
+    level.player lightsetforplayer( "seoul_intro_outside" );
     wait 4;
-    level.player _meth_83C0( "seoul_intro_missle_hit" );
+    level.player lightsetforplayer( "seoul_intro_missle_hit" );
 
     if ( level.nextgen )
     {
@@ -2956,7 +2956,7 @@ pod_scripted_lights( var_0 )
     playfxontag( common_scripts\utility::getfx( "pod_godray" ), var_4, "tag_origin" );
     common_scripts\utility::flag_wait( "door_pop" );
     wait 0.5;
-    level.player _meth_83C0( "seoul_intro_bright" );
+    level.player lightsetforplayer( "seoul_intro_bright" );
     maps\_utility::vision_set_fog_changes( "seoul_space_entry_bright", 0.5 );
     killfxontag( common_scripts\utility::getfx( "pod_godray" ), var_4, "tag_origin" );
 
@@ -2988,7 +2988,7 @@ pod_scripted_lights( var_0 )
     wait 0.75;
     playfxontag( common_scripts\utility::getfx( "pod_light_spot_blue" ), var_4, "tag_origin" );
     wait 0.75;
-    level.player _meth_83C0( "seoul_intro" );
+    level.player lightsetforplayer( "seoul_intro" );
     maps\_utility::vision_set_fog_changes( "seoul_space_entry", 2 );
     common_scripts\utility::flag_wait( "door_shut" );
     killfxontag( common_scripts\utility::getfx( "pod_light_spot_blue" ), var_4, "tag_origin" );
@@ -3048,7 +3048,7 @@ pod_scripted_lights( var_0 )
     wait 3;
 
     if ( level.nextgen )
-        level.player _meth_83C0( "seoul_intro_outside_dim" );
+        level.player lightsetforplayer( "seoul_intro_outside_dim" );
 
     if ( level.nextgen )
     {
@@ -3061,10 +3061,10 @@ pod_scripted_lights( var_0 )
     wait 3.7;
 
     if ( level.nextgen )
-        level.player _meth_83C0( "seoul_intro_outside_hit" );
+        level.player lightsetforplayer( "seoul_intro_outside_hit" );
 
     wait 0.4;
-    level.player _meth_83C0( "seoul_intro_outside_dim" );
+    level.player lightsetforplayer( "seoul_intro_outside_dim" );
 }
 
 pod_light_intro_pre( var_0 )
@@ -3076,8 +3076,8 @@ pod_light_intro_pre( var_0 )
     var_3 = var_0.lens_right;
     var_0.redfill = common_scripts\utility::spawn_tag_origin();
     var_4 = var_0.redfill;
-    var_3 _meth_804D( var_0, "body_animate_joint", ( -30, 68, 31 ), ( 0, -90, 90 ), 0 );
-    var_4 _meth_804D( var_1, "J_Head", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
+    var_3 linkto( var_0, "body_animate_joint", ( -30, 68, 31 ), ( 0, -90, 90 ), 0 );
+    var_4 linkto( var_1, "J_Head", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
     wait 9;
     playfxontag( common_scripts\utility::getfx( "seo_lens_pod" ), var_3, "tag_origin" );
     wait 16;
@@ -3085,10 +3085,10 @@ pod_light_intro_pre( var_0 )
     killfxontag( common_scripts\utility::getfx( "seo_lens_pod" ), var_3, "tag_origin" );
 
     if ( level.nextgen )
-        level.player _meth_83C0( "seoul_intro_outside_light" );
+        level.player lightsetforplayer( "seoul_intro_outside_light" );
 
     wait 10;
-    level.player _meth_83C0( "seoul_intro_outside" );
+    level.player lightsetforplayer( "seoul_intro_outside" );
 }
 
 pod_light_intro( var_0 )
@@ -3098,7 +3098,7 @@ pod_light_intro( var_0 )
 
     common_scripts\utility::flag_wait( "dialogue_droppod_intro_phase_2b" );
     var_1 = level.cormack_intro;
-    _func_0D3( "r_lightgridintensity", 0 );
+    setsaveddvar( "r_lightgridintensity", 0 );
     var_0.interior_sun = common_scripts\utility::spawn_tag_origin();
     var_2 = var_0.interior_sun;
     var_0.interior_light_red = common_scripts\utility::spawn_tag_origin();
@@ -3130,19 +3130,19 @@ pod_light_intro( var_0 )
     wait 0.05;
     var_0.redfill2 = common_scripts\utility::spawn_tag_origin();
     var_15 = var_0.redfill2;
-    var_6 _meth_804D( var_0, "body_animate_joint", ( 25, -20, 80 ), ( 0, 0, 0 ), 0 );
-    var_3 _meth_804D( var_0, "body_animate_joint", ( -20, -30, 53 ), ( 30, 30, 0 ), 0 );
-    var_4 _meth_804D( var_0, "body_animate_joint", ( -20, -30, 30 ), ( 10, 30, 0 ), 0 );
-    var_2 _meth_804D( var_0, "body_animate_joint", ( 0, 0, 120 ), ( 90, 0, 0 ), 0 );
-    var_7 _meth_804D( var_0, "body_animate_joint", ( -20, 60, 20 ), ( 0, -20, 0 ), 0 );
+    var_6 linkto( var_0, "body_animate_joint", ( 25, -20, 80 ), ( 0, 0, 0 ), 0 );
+    var_3 linkto( var_0, "body_animate_joint", ( -20, -30, 53 ), ( 30, 30, 0 ), 0 );
+    var_4 linkto( var_0, "body_animate_joint", ( -20, -30, 30 ), ( 10, 30, 0 ), 0 );
+    var_2 linkto( var_0, "body_animate_joint", ( 0, 0, 120 ), ( 90, 0, 0 ), 0 );
+    var_7 linkto( var_0, "body_animate_joint", ( -20, 60, 20 ), ( 0, -20, 0 ), 0 );
     wait 0.05;
-    var_10 _meth_804D( var_0, "body_animate_joint", ( 30, -5, 0 ), ( 0, 0, 0 ), 0 );
-    var_11 _meth_804D( var_0, "body_animate_joint", ( 30, 12, 10 ), ( 0, 0, 0 ), 0 );
-    var_13 _meth_804D( var_0, "body_animate_joint", ( 16, -20, 30 ), ( 0, 125, 0 ), 0 );
-    var_14 _meth_804D( var_0, "body_animate_joint", ( 5, 15, 20 ), ( 0, -90, 10 ), 0 );
-    var_5 _meth_804D( var_0, "body_animate_joint", ( -5, -30, 25 ), ( 30, 30, 0 ), 0 );
+    var_10 linkto( var_0, "body_animate_joint", ( 30, -5, 0 ), ( 0, 0, 0 ), 0 );
+    var_11 linkto( var_0, "body_animate_joint", ( 30, 12, 10 ), ( 0, 0, 0 ), 0 );
+    var_13 linkto( var_0, "body_animate_joint", ( 16, -20, 30 ), ( 0, 125, 0 ), 0 );
+    var_14 linkto( var_0, "body_animate_joint", ( 5, 15, 20 ), ( 0, -90, 10 ), 0 );
+    var_5 linkto( var_0, "body_animate_joint", ( -5, -30, 25 ), ( 30, 30, 0 ), 0 );
     wait 0.05;
-    var_15 _meth_804D( var_0, "body_animate_joint", ( -25, 0, 10 ), ( 30, 30, 0 ), 0 );
+    var_15 linkto( var_0, "body_animate_joint", ( -25, 0, 10 ), ( 30, 30, 0 ), 0 );
     level notify( "pod_lights_on" );
 
     if ( level.nextgen )
@@ -3153,7 +3153,7 @@ pod_light_intro( var_0 )
         wait 0.5;
         playfxontag( common_scripts\utility::getfx( "light_red_point_intro" ), var_5, "tag_origin" );
         wait 3;
-        level.player _meth_83C0( "seoul_intro_outside" );
+        level.player lightsetforplayer( "seoul_intro_outside" );
         killfxontag( common_scripts\utility::getfx( "light_yellow_spot2" ), var_14, "tag_origin" );
         killfxontag( common_scripts\utility::getfx( "light_red_point_intro" ), var_5, "tag_origin" );
         wait 0.05;
@@ -3161,17 +3161,17 @@ pod_light_intro( var_0 )
         wait 4.25;
         killfxontag( common_scripts\utility::getfx( "light_pod_screen" ), var_2, "tag_origin" );
         wait 0.25;
-        level.player _meth_83C0( "seoul_intro" );
+        level.player lightsetforplayer( "seoul_intro" );
         playfxontag( common_scripts\utility::getfx( "light_yellow_spot" ), var_3, "tag_origin" );
         playfxontag( common_scripts\utility::getfx( "pod_emissive_yellow" ), var_13, "tag_origin" );
         wait 3.0;
         killfxontag( common_scripts\utility::getfx( "light_yellow_spot" ), var_3, "tag_origin" );
         killfxontag( common_scripts\utility::getfx( "pod_emissive_yellow" ), var_13, "tag_origin" );
-        level.player _meth_83C0( "seoul_intro_outside" );
+        level.player lightsetforplayer( "seoul_intro_outside" );
         wait 0.05;
         playfxontag( common_scripts\utility::getfx( "light_pod_screen" ), var_2, "tag_origin" );
         level waittill( "missle_hit" );
-        level.player _meth_83C0( "seoul_intro" );
+        level.player lightsetforplayer( "seoul_intro" );
         wait 0.05;
         killfxontag( common_scripts\utility::getfx( "light_pod_screen" ), var_2, "tag_origin" );
         wait 0.05;
@@ -3190,11 +3190,11 @@ pod_light_intro( var_0 )
         killfxontag( common_scripts\utility::getfx( "pod_godray" ), var_7, "tag_origin" );
         playfxontag( common_scripts\utility::getfx( "pod_blue_bounce" ), var_11, "tag_origin" );
         wait 0.05;
-        level.player _meth_83C0( "seoul_intro_bright" );
+        level.player lightsetforplayer( "seoul_intro_bright" );
         maps\_utility::vision_set_fog_changes( "seoul_space_entry_bright", 0.5 );
         wait 1;
         maps\_utility::vision_set_fog_changes( "seoul_space_entry", 2 );
-        level.player _meth_83C0( "seoul_intro" );
+        level.player lightsetforplayer( "seoul_intro" );
         wait 3;
         common_scripts\utility::flag_wait( "door_shut" );
         wait 0.05;
@@ -3212,23 +3212,23 @@ pod_light_intro( var_0 )
         wait 3;
         killfxontag( common_scripts\utility::getfx( "light_green_spot" ), var_3, "tag_origin" );
         killfxontag( common_scripts\utility::getfx( "green_fill" ), var_10, "tag_origin" );
-        level.player _meth_83C0( "seoul_vista" );
+        level.player lightsetforplayer( "seoul_vista" );
         wait 3.75;
-        level.player _meth_83C0( "seoul_intro_outside_hit" );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36129.9, 910.88, 1819.92 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 36129.9, 910.88, 1819.92 ) );
+        level.player lightsetforplayer( "seoul_intro_outside_hit" );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36129.9, 910.88, 1819.92 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 36129.9, 910.88, 1819.92 ) );
         wait 0.3;
-        level.player _meth_83C0( "seoul_vista" );
+        level.player lightsetforplayer( "seoul_vista" );
         level waittill( "hit_exit" );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 36327.9, 1157.88, 1847.92 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 35894, 587, 1830 ) );
     }
 
     level waittill( "pod_land_apartment" );
     thread pod_cormack_custom_mats_landing_on();
-    level.player _meth_83C0( "seoul_intro_dark" );
+    level.player lightsetforplayer( "seoul_intro_dark" );
     wait 5.5;
-    level.player _meth_83C0( "seoul_landing" );
+    level.player lightsetforplayer( "seoul_landing" );
     wait 0.25;
 
     if ( level.nextgen )
@@ -3245,7 +3245,7 @@ pod_light_intro( var_0 )
     killfxontag( common_scripts\utility::getfx( "red_fill" ), var_10, "tag_origin" );
     wait 0.05;
     common_scripts\_exploder::exploder( 7695 );
-    _func_0D3( "r_lightgridintensity", 1 );
+    setsaveddvar( "r_lightgridintensity", 1 );
     common_scripts\utility::flag_clear( "set_seoul_intro_lighting" );
 
     if ( level.nextgen )
@@ -3256,11 +3256,11 @@ pod_light_intro( var_0 )
     }
 
     wait 0.5;
-    level.player _meth_83C0( "seoul_vista_01" );
+    level.player lightsetforplayer( "seoul_vista_01" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_medium", "seoul_intro_ceiling_fire_01" );
     wait 15;
-    level.player _meth_83C0( "seoul_vista" );
-    level.player _meth_8490( "clut_seoul_vista", 0 );
+    level.player lightsetforplayer( "seoul_vista" );
+    level.player setclutforplayer( "clut_seoul_vista", 0 );
     common_scripts\_exploder::kill_exploder( 7695 );
     wait 9;
 }
@@ -3276,18 +3276,18 @@ drone_lighting()
     foreach ( var_4 in level.flock_drones )
     {
         if ( isdefined( var_4 ) )
-            var_4 _meth_83AB( var_0.origin );
+            var_4 overridereflectionprobe( var_0.origin );
     }
 
     foreach ( var_4 in level.flock_drones )
     {
         if ( isdefined( var_4 ) )
-            var_4 _meth_83AC();
+            var_4 defaultreflectionprobe();
     }
 }
 
 setup_hemiao_enable()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 }

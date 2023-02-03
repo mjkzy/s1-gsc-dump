@@ -34,14 +34,14 @@ lsr_rocket_think( var_0 )
 
     for (;;)
     {
-        if ( var_0 _meth_8340() > 0.3 )
+        if ( var_0 playerads() > 0.3 )
         {
             var_1 = anglestoforward( var_0 getangles() );
-            var_2 = var_0 _meth_80A8();
+            var_2 = var_0 geteye();
             var_3 = var_2 + var_1 * 15000;
             var_4 = bullettrace( var_2, var_3, 1, var_0, 1, 0, 0, 0, 0 );
             var_0.lsr_target_ent.origin = var_4["position"];
-            self _meth_81D9( var_0.lsr_target_ent );
+            self missile_settargetent( var_0.lsr_target_ent );
         }
 
         wait 0.05;

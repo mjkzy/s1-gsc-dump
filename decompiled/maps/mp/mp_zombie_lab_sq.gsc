@@ -59,7 +59,7 @@ setupweaponstationblocker()
         var_1 = getent( var_0.target, "targetname" );
 
         if ( isdefined( var_1 ) )
-            var_1 _meth_8446( var_0 );
+            var_1 vehicle_jetbikesethoverforcescale( var_0 );
     }
 
     waitframe();
@@ -170,7 +170,7 @@ onanyplayerspawned()
         level waittill( "player_spawned", var_0 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.badgeupgradecount ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", var_0.badgeupgradecount );
+            var_0 setclientomnvar( "ui_zm_ee_int", var_0.badgeupgradecount );
     }
 }
 
@@ -201,7 +201,7 @@ stage1_logic()
 {
     var_0 = common_scripts\utility::getstruct( "blackbox1Use", "targetname" );
     var_1 = spawn( "script_origin", var_0.origin );
-    var_1 _meth_8075( "ee_black_box_loop" );
+    var_1 playloopsound( "ee_black_box_loop" );
 
     if ( !isdefined( var_0 ) )
         return;
@@ -210,7 +210,7 @@ stage1_logic()
     var_0 waittill( "activated", var_2 );
     var_2 playergivebox();
     var_2 playlocalsound( "ee_grab_black_box" );
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     var_2 thread playerplaysqvo( 1, 1 );
     maps\mp\zombies\_zombies_sidequests::stage_completed( "main", "stage1" );
     waitframe();
@@ -437,7 +437,7 @@ playerhasbox()
 
 playergivebox()
 {
-    setomnvar( "ui_zm_ee_player_index", self _meth_81B1() );
+    setomnvar( "ui_zm_ee_player_index", self getentitynumber() );
     self.hasbox = 1;
     thread playertakeboxondisconnect();
 }
@@ -468,7 +468,7 @@ stage3_init()
         level.sq_cage1 = var_4[0];
 
         for ( var_5 = 1; var_5 < var_4.size; var_5++ )
-            var_4[var_5] _meth_8446( level.sq_cage1 );
+            var_4[var_5] vehicle_jetbikesethoverforcescale( level.sq_cage1 );
     }
 
     var_6 = getentarray( "cage2", "targetname" );
@@ -478,13 +478,13 @@ stage3_init()
         level.sq_cage2 = var_6[0];
 
         for ( var_5 = 1; var_5 < var_6.size; var_5++ )
-            var_6[var_5] _meth_8446( level.sq_cage2 );
+            var_6[var_5] vehicle_jetbikesethoverforcescale( level.sq_cage2 );
     }
 
     var_7 = getent( "badge_s3", "targetname" );
 
     if ( isdefined( var_7 ) )
-        var_7 _meth_8446( level.sq_cage2 );
+        var_7 vehicle_jetbikesethoverforcescale( level.sq_cage2 );
 }
 
 stage3_logic()
@@ -537,7 +537,7 @@ cagewedgelogic( var_0 )
     var_5 = var_3[1] / var_1;
     var_6 = var_3[2] / var_1;
     var_0.health = 9999;
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
 
     for ( var_7 = 0; var_7 < var_1; var_7++ )
     {
@@ -547,8 +547,8 @@ cagewedgelogic( var_0 )
         var_0 thread wedgewiggle();
     }
 
-    var_0 _meth_82AE( var_0.origin + ( 0, 0, -100 ), 1 );
-    var_0 _meth_8438( "ee_wedge_wiggle_done" );
+    var_0 moveto( var_0.origin + ( 0, 0, -100 ), 1 );
+    var_0 playsoundonmovingent( "ee_wedge_wiggle_done" );
     wait 1;
     level notify( "cage_wedge_complete" );
 }
@@ -559,11 +559,11 @@ wedgewiggle()
         return;
 
     self.iswiggling = 1;
-    self _meth_8438( "ee_wedge_wiggle" );
+    self playsoundonmovingent( "ee_wedge_wiggle" );
     var_0 = randomint( 10 );
-    self _meth_82B6( var_0, 0.1 );
+    self rotatepitch( var_0, 0.1 );
     wait 0.15;
-    self _meth_82B6( -1 * var_0, 0.1 );
+    self rotatepitch( -1 * var_0, 0.1 );
     wait 0.15;
     self.iswiggling = 0;
 }
@@ -589,11 +589,11 @@ wigglecage()
     level.sq_cage1 endon( "move_start" );
     var_0 = level.sq_cage1.origin;
     var_1 = var_0 + ( 0, 0, -20 );
-    level.sq_cage1 _meth_8438( "ee_lift_down_blocked" );
+    level.sq_cage1 playsoundonmovingent( "ee_lift_down_blocked" );
     level.sq_cage1.iswiggling = 1;
-    level.sq_cage1 _meth_82AE( var_1, 0.5, 0, 0.1 );
+    level.sq_cage1 moveto( var_1, 0.5, 0, 0.1 );
     wait 0.6;
-    level.sq_cage1 _meth_82AE( var_0, 0.5, 0.2, 0.1 );
+    level.sq_cage1 moveto( var_0, 0.5, 0.2, 0.1 );
     wait 0.6;
     level.sq_cage1.iswiggling = undefined;
     level notify( "cage_wiggle_complete" );
@@ -639,16 +639,16 @@ movecages( var_0 )
     level.sq_cage2 notify( "move_start" );
     level.sq_cage1.ismoving = 1;
     level.sq_cage2.ismoving = 1;
-    level.sq_cage1 _meth_82AE( level.sq_cage1.downposition, 1, 0, 0.1 );
-    level.sq_cage2 _meth_82AE( level.sq_cage2.upposition, 1, 0, 0.1 );
-    level.sq_cage1 _meth_8438( "ee_lift_down" );
+    level.sq_cage1 moveto( level.sq_cage1.downposition, 1, 0, 0.1 );
+    level.sq_cage2 moveto( level.sq_cage2.upposition, 1, 0, 0.1 );
+    level.sq_cage1 playsoundonmovingent( "ee_lift_down" );
     wait 1.1;
     level thread collectbadgestage3( var_0 );
     wait 5;
-    level.sq_cage2 _meth_8438( "ee_lift_up" );
+    level.sq_cage2 playsoundonmovingent( "ee_lift_up" );
     level notify( "cage2_reset" );
-    level.sq_cage1 _meth_82AE( level.sq_cage1.upposition, 2, 0.3, 0.5 );
-    level.sq_cage2 _meth_82AE( level.sq_cage2.downposition, 2, 0.3, 0.5 );
+    level.sq_cage1 moveto( level.sq_cage1.upposition, 2, 0.3, 0.5 );
+    level.sq_cage2 moveto( level.sq_cage2.downposition, 2, 0.3, 0.5 );
     wait 2.1;
     level.sq_cage1.ismoving = 0;
     level.sq_cage2.ismoving = 0;
@@ -682,7 +682,7 @@ playermonitorgroundslam( var_0 )
         if ( !maps\mp\zombies\_zombies_zone_manager::isplayerinzone( "military" ) )
             continue;
 
-        var_2 = self _meth_80A8();
+        var_2 = self geteye();
         var_3 = var_2 + ( 0, 0, -100 );
         var_4 = bullettrace( var_2, var_3, 0, self );
         var_5 = var_4["entity"];
@@ -834,7 +834,7 @@ stage4_get_players_in_incinerator()
     {
         foreach ( var_3 in level.players )
         {
-            if ( var_3 _meth_80A9( var_1 ) )
+            if ( var_3 istouching( var_1 ) )
                 var_0[var_0.size] = var_3;
         }
     }
@@ -876,10 +876,10 @@ stage4_incinerator_pusher( var_0 )
     var_1.start = var_1.origin;
     var_1.end = common_scripts\utility::getstruct( var_1.target, "targetname" ).origin;
     var_1.unresolved_collision_func = ::stage4_force_players_out;
-    var_1 _meth_82AE( var_1.end, var_0 );
-    var_1 _meth_8075( "incinerator_room_machine_loop" );
+    var_1 moveto( var_1.end, var_0 );
+    var_1 playloopsound( "incinerator_room_machine_loop" );
     wait(var_0);
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     wait 3;
     var_1.origin = var_1.start;
 }
@@ -896,7 +896,7 @@ stage4_incinerator_ground()
         var_4 = ( min( var_2[0].origin[0], var_2[1].origin[0] ), min( var_2[0].origin[1], var_2[1].origin[1] ), 0 );
         var_5 = ( randomfloatrange( var_4[0], var_3[0] ), randomfloatrange( var_4[1], var_3[1] ), 0 );
         var_6 = spawn( "script_model", var_5 + ( 0, 0, 1 ) );
-        var_6 _meth_80B1( "dlc_badge_decker" );
+        var_6 setmodel( "dlc_badge_decker" );
         var_6.hidden = 1;
         var_6 hide();
         var_7 = 0;
@@ -928,7 +928,7 @@ stage4_incinerator_ground_run()
         if ( !isdefined( var_2 ) && isplayer( var_2 ) )
             continue;
 
-        var_6 = var_2 _meth_80A8();
+        var_6 = var_2 geteye();
         var_7 = var_6 + anglestoforward( var_2 getangles() ) * 5000;
         var_8 = bullettrace( var_6, var_7, 0 );
         var_4 = var_8["position"];
@@ -953,11 +953,11 @@ stage4_key_show()
     var_1 = 50;
     var_2 = 0.6;
     var_3 = 5;
-    var_0 _meth_82AE( var_0.origin + ( 0, 0, var_1 ), var_2, 0, var_2 );
+    var_0 moveto( var_0.origin + ( 0, 0, var_1 ), var_2, 0, var_2 );
     var_4 = 360 * var_3 / var_2 * 2;
-    var_0 _meth_82BD( ( var_4, var_4, 0 ), var_2 * 2 );
+    var_0 rotatevelocity( ( var_4, var_4, 0 ), var_2 * 2 );
     wait(var_2);
-    var_0 _meth_82AE( var_0.origin - ( 0, 0, var_1 ), var_2, var_2, 0 );
+    var_0 moveto( var_0.origin - ( 0, 0, var_1 ), var_2, var_2, 0 );
 }
 
 stage4_key_pickup()
@@ -1031,7 +1031,7 @@ stage5_logic()
     }
 
     level notify( "main_stage4_ending" );
-    var_1 _meth_82AE( var_1.origin + ( 0, 40, 0 ), 3 );
+    var_1 moveto( var_1.origin + ( 0, 40, 0 ), 3 );
     wait 3.5;
     var_13 = 1;
     var_2 thread maps\mp\zombies\_zombies_sidequests::fake_use( "activated", ::playercancollectstagebadge, var_13, "main_stage5_over", 80 );
@@ -1125,7 +1125,7 @@ playfailfxkeypad( var_0 )
     var_0 endon( "activated" );
     maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_biometric_lock_on" ), var_0, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "dlc_prop_biometric_lock_fail" ), var_0, "tag_origin" );
-    var_0 _meth_8438( "ui_button_error" );
+    var_0 playsoundonmovingent( "ui_button_error" );
     wait 1;
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_biometric_lock_on" ), var_0, "tag_origin" );
     var_0.failfxon = undefined;
@@ -1180,7 +1180,7 @@ stage6_magicbox( var_0 )
     if ( !isdefined( var_0.modelent ) )
         return;
 
-    var_0.modelent _meth_82C0( 1 );
+    var_0.modelent setcandamage( 1 );
 
     for (;;)
     {
@@ -1214,7 +1214,7 @@ stage6_magicbox( var_0 )
     else
         var_0 releaseclaimedtrigger();
 
-    var_0.weaponmodel _meth_80B1( "dlc_badge_lilith" );
+    var_0.weaponmodel setmodel( "dlc_badge_lilith" );
     var_0.magicboxgivefunc = ::stage6_magicbox_give_badge;
     var_0.magicboxpickupstrfunc = ::stage6_magicbox_pickup_str;
     var_0.magicboxcanpickupfunc = ::stage6_magicbox_can_pickup;
@@ -1340,8 +1340,8 @@ dropbadge( var_0 )
     var_0 += ( 0, 0, 16 );
     var_1 = spawn( "script_model", var_0 );
     var_1.angles = ( 0, 0, 0 );
-    var_1 _meth_80B1( "dlc_badge_generic_anim" );
-    var_1 _meth_82BF();
+    var_1 setmodel( "dlc_badge_generic_anim" );
+    var_1 notsolid();
     var_2 = spawn( "trigger_radius", var_0, 0, 32, 32 );
     var_1.trigger = var_2;
     level.sq_droppedbadges[level.sq_droppedbadges.size] = var_1;
@@ -1368,7 +1368,7 @@ badgeshowtoplayers()
 
 badgebounce()
 {
-    self _meth_827B( "mp_dogtag_spin", "badge" );
+    self scriptmodelplayanimdeltamotion( "mp_dogtag_spin", "badge" );
 }
 
 badgepickup()
@@ -1406,7 +1406,7 @@ badgestartflashing()
 
     for (;;)
     {
-        self _meth_8510();
+        self ghost();
         wait 0.25;
         self show();
         wait 0.25;
@@ -1452,7 +1452,7 @@ playerincrementbadge( var_0 )
     else
         self.badgeupgradecount = var_0;
 
-    self _meth_82FB( "ui_zm_ee_int", self.badgeupgradecount );
+    self setclientomnvar( "ui_zm_ee_int", self.badgeupgradecount );
 }
 
 stage8_init()
@@ -1552,7 +1552,7 @@ cardreaderfailfx( var_0 )
     var_0 endon( "activated" );
     maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_scanner_door_lock_on" ), var_0, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "dlc_prop_scanner_door_lock_fail" ), var_0, "tag_origin" );
-    var_0 _meth_8438( "ui_button_error" );
+    var_0 playsoundonmovingent( "ui_button_error" );
     wait 1;
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_scanner_door_lock_on" ), var_0, "tag_origin" );
     var_0.failfxon = undefined;
@@ -1650,7 +1650,7 @@ stage10_end( var_0 )
     if ( isdefined( var_4 ) )
     {
         var_5 = var_4.origin + ( 0, 0, var_4.offsetmove );
-        var_4 _meth_82AE( var_5, 2, 0.5, 0.5 );
+        var_4 moveto( var_5, 2, 0.5, 0.5 );
     }
 
     maps\mp\zombies\_zombies_sidequests::sidequest_iprintlnbold( "Super weapon upgrade station unlocked." );
@@ -1749,9 +1749,9 @@ stage11_logic()
     level.warbird.team = "allies";
     level.warbird.heli_type = "warbird";
     var_3 = 40;
-    level.warbird _meth_8283( var_3, var_3 / 4, var_3 / 4 );
-    level.warbird _meth_825A( 100 );
-    level.warbird _meth_82C0( 1 );
+    level.warbird vehicle_setspeed( var_3, var_3 / 4, var_3 / 4 );
+    level.warbird setneargoalnotifydist( 100 );
+    level.warbird setcandamage( 1 );
     level.warbird.health = 9999;
     maps\mp\_utility::incrementfauxvehiclecount();
     level.warbird thread warbirdtravellogic( var_0 );
@@ -1776,7 +1776,7 @@ warbirdtravellogic( var_0 )
         if ( !isdefined( var_2 ) )
             return;
 
-        self _meth_825B( var_2.origin, 0 );
+        self setvehgoalpos( var_2.origin, 0 );
         self waittill( "near_goal" );
     }
 }
@@ -1792,7 +1792,7 @@ warbirdmonitorhealth( var_0 )
 
         if ( var_10 == level.ocp_weap_name )
         {
-            self _meth_82C0( 0 );
+            self setcandamage( 0 );
             thread maps\mp\killstreaks\_aerial_utility::heli_crash();
             thread orbital_package_heli_crash_sound();
             var_0.indoors = 1;
@@ -1872,8 +1872,8 @@ playhelicopterend2vo()
 warbirdwaitlogic( var_0, var_1 )
 {
     self notify( "stopLoop" );
-    self _meth_825B( var_0.origin, 1 );
-    self _meth_8265( var_1 );
+    self setvehgoalpos( var_0.origin, 1 );
+    self setlookatent( var_1 );
     common_scripts\utility::waittill_notify_or_timeout( "near_goal", 10 );
 
     for (;;)
@@ -1918,8 +1918,8 @@ warbirdtraveltoend( var_0, var_1 )
             var_1 = var_2;
     }
 
-    self _meth_825B( var_1.origin, 1 );
-    self _meth_8266();
+    self setvehgoalpos( var_1.origin, 1 );
+    self clearlookatent();
 
     if ( isdefined( var_0 ) )
     {
@@ -1931,7 +1931,7 @@ warbirdtraveltoend( var_0, var_1 )
         if ( isdefined( var_3 ) && var_3 == "timeout" && !maps\mp\zombies\_util::is_true( level.warbird.iscrashing ) )
         {
             level notify( "warbird_crash_abort" );
-            self _meth_82C0( 0 );
+            self setcandamage( 0 );
             thread maps\mp\killstreaks\_aerial_utility::heli_crash();
         }
 
@@ -1949,9 +1949,9 @@ warbirdtraveltoend( var_0, var_1 )
 
         foreach ( var_5 in level.players )
         {
-            var_5 _meth_82FB( "ui_killstreak_remote", 1 );
-            var_5 _meth_82FB( "ui_killstreak_blackout", 1 );
-            var_5 _meth_82FB( "ui_killstreak_blackout_fade_end", gettime() + 3000 );
+            var_5 setclientomnvar( "ui_killstreak_remote", 1 );
+            var_5 setclientomnvar( "ui_killstreak_blackout", 1 );
+            var_5 setclientomnvar( "ui_killstreak_blackout_fade_end", gettime() + 3000 );
         }
 
         wait 6;
@@ -1967,7 +1967,7 @@ set_side_quest_coop_data( var_0 )
         if ( !isdefined( var_2.joinedround1 ) || !var_2.joinedround1 )
             continue;
 
-        var_3 = var_2 _meth_8554( "eggData" );
+        var_3 = var_2 getcoopplayerdatareservedint( "eggData" );
 
         if ( var_0 )
         {
@@ -1980,7 +1980,7 @@ set_side_quest_coop_data( var_0 )
             var_2.sidequest = 1;
         }
 
-        var_2 _meth_8555( "eggData", var_3 );
+        var_2 setcoopplayerdatareservedint( "eggData", var_3 );
         setmatchdata( "players", var_2.clientid, "startPrestige", var_2.sidequest );
     }
 }
@@ -2038,7 +2038,7 @@ song_play( var_0 )
 
     if ( maps\mp\zombies\_util::is_true( level.sq_song_ent.playing ) )
     {
-        level.sq_song_ent _meth_80AC();
+        level.sq_song_ent stopsounds();
         level.sq_song_ent.playing = 0;
         wait 0.2;
     }
@@ -2050,16 +2050,16 @@ song_play( var_0 )
     else
         var_1 = "zmb_mus_ee_01_prvw";
 
-    level.sq_song_ent _meth_8438( var_1 );
+    level.sq_song_ent playsoundonmovingent( var_1 );
     level.sq_song_ent.playing = 1;
     wait(var_0);
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
 }
 
 song_stop()
 {
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
     level notify( "sq_song_stop" );
 }

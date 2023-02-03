@@ -107,7 +107,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
 
     if ( !isdefined( game["switchedsides"] ) )
         game["switchedsides"] = 0;
@@ -212,7 +212,7 @@ ontimelimit()
 spawn_flag_projector( var_0 )
 {
     var_1 = spawn( "script_model", var_0 );
-    var_1 _meth_80B1( "flag_holo_base_ground" );
+    var_1 setmodel( "flag_holo_base_ground" );
     return var_1;
 }
 
@@ -301,8 +301,8 @@ zone_flag_effect()
 {
     zone_flag_effect_stop();
     var_0 = level.twar_use_obj.visuals[0];
-    self.flagfx = _func_2C1( level.flagfxid, var_0, "tag_fx_flag" );
-    setwinningteam( self.flagfx, 1 );
+    self.flagfx = spawnlinkedfx( level.flagfxid, var_0, "tag_fx_flag" );
+    setfxkillondelete( self.flagfx, 1 );
     triggerfx( self.flagfx );
 }
 
@@ -317,7 +317,7 @@ zone_boarder_effect()
     zone_boarder_effect_stop();
     var_0 = level.twar_use_obj.visuals[0];
     self.boarderfx = spawnfx( level.boarderfxid, var_0.origin, anglestoup( var_0.angles ) );
-    setwinningteam( self.boarderfx, 1 );
+    setfxkillondelete( self.boarderfx, 1 );
     triggerfx( self.boarderfx );
 }
 
@@ -342,7 +342,7 @@ update_flag_outline()
         var_1 = getdvarint( "scr_twar_flag_outline_color_enemy", -1 );
         var_2 = getdvarint( "scr_twar_flag_outline_color_neutral", -1 );
         var_3 = getdvarint( "scr_twar_flag_outline_depth", 0 );
-        self _meth_8423( level.players );
+        self hudoutlinedisableforclients( level.players );
         var_4 = level.twar_use_obj maps\mp\gametypes\_gameobjects::getclaimteam();
         var_5 = [];
         var_6 = [];
@@ -364,13 +364,13 @@ update_flag_outline()
         }
 
         if ( var_5.size && var_0 >= 0 )
-            self _meth_8422( var_5, var_0, var_3 );
+            self hudoutlineenableforclients( var_5, var_0, var_3 );
 
         if ( var_6.size && var_1 >= 0 )
-            self _meth_8422( var_6, var_1, var_3 );
+            self hudoutlineenableforclients( var_6, var_1, var_3 );
 
         if ( var_7.size && var_2 >= 0 )
-            self _meth_8422( var_7, var_2, var_3 );
+            self hudoutlineenableforclients( var_7, var_2, var_3 );
     }
 }
 
@@ -1158,7 +1158,7 @@ get_zone_origins_auto()
 
     foreach ( var_15 in var_2 )
     {
-        if ( var_7 && !_func_20C( var_15, 1 ) )
+        if ( var_7 && !nodeexposedtosky( var_15, 1 ) )
             continue;
 
         var_16 = [];
@@ -1551,7 +1551,7 @@ updateminions()
     while ( !level.gameended )
     {
         if ( isdefined( var_4 ) )
-            var_4 _meth_80CF( var_2 );
+            var_4 settimer( var_2 );
 
         wait(var_2);
         maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
@@ -1578,7 +1578,7 @@ updateminions()
 
                 if ( isdefined( var_23 ) )
                 {
-                    var_23 _meth_8310();
+                    var_23 takeallweapons();
                     var_24 = getdvarint( "scr_twar_minionweapon", 0 );
                     var_25 = "";
 
@@ -1596,8 +1596,8 @@ updateminions()
                             break;
                     }
 
-                    var_23 _meth_830E( var_25 );
-                    var_23 _meth_8316( var_25 );
+                    var_23 giveweapon( var_25 );
+                    var_23 switchtoweaponimmediate( var_25 );
                     var_23 maps\mp\_utility::giveperk( "specialty_minion", 0 );
                     var_23.movespeedscaler = getdvarfloat( "scr_twar_minionmovespeedscale", 0.85 );
                     var_23.damage_scale = getdvarfloat( "scr_twar_miniondamagescale", 0.5 );
@@ -1606,9 +1606,9 @@ updateminions()
                     var_23 thread minion_ai();
                     update_minion_hud_outlines();
                     var_23 detachall();
-                    var_23 _meth_80B1( "kva_hazmat_body_infected_mp" );
+                    var_23 setmodel( "kva_hazmat_body_infected_mp" );
                     var_23 attach( "kva_hazmat_head_infected" );
-                    var_23 _meth_83DB( "cloth" );
+                    var_23 setclothtype( "cloth" );
                     var_26 = getdvarfloat( "scr_twar_minionhealthscale", 0.75 );
                     var_23 maps\mp\agents\_agent_common::set_agent_health( int( var_23.health * var_26 ) );
                     var_15[var_17]++;
@@ -1620,7 +1620,7 @@ updateminions()
                 foreach ( var_10, var_31 in var_29 )
                 {
                     var_31 hud_set_visible();
-                    var_31 _meth_80D7( var_15[var_10] );
+                    var_31 setvalue( var_15[var_10] );
                     var_31 maps\mp\_utility::delaythread( 3.0, ::hud_set_invisible );
                 }
             }
@@ -1638,7 +1638,7 @@ updateminions()
 
 is_minion()
 {
-    return self _meth_82A7( "specialty_minion", 1 );
+    return self hasperk( "specialty_minion", 1 );
 }
 
 hud_set_visible()
@@ -1708,15 +1708,15 @@ update_minion_hud_outlines()
         if ( var_7 is_minion() )
         {
             if ( level.players.size > 0 )
-                var_7 _meth_8423( level.players );
+                var_7 hudoutlinedisableforclients( level.players );
 
             if ( var_2 )
             {
                 if ( var_0.size > 0 )
-                    var_7 _meth_8422( var_0, common_scripts\utility::ter_op( var_7.team == "allies", 2, 3 ), 1 );
+                    var_7 hudoutlineenableforclients( var_0, common_scripts\utility::ter_op( var_7.team == "allies", 2, 3 ), 1 );
 
                 if ( var_1.size > 0 )
-                    var_7 _meth_8422( var_1, common_scripts\utility::ter_op( var_7.team == "axis", 2, 3 ), 1 );
+                    var_7 hudoutlineenableforclients( var_1, common_scripts\utility::ter_op( var_7.team == "axis", 2, 3 ), 1 );
             }
         }
     }
@@ -1731,7 +1731,7 @@ minion_ai()
         if ( isdefined( level.twar_use_obj ) )
         {
             var_0 = level.twar_use_obj.trigger.origin;
-            self _meth_8354( var_0, level.zone_radius * 0.9, "objective" );
+            self botsetscriptgoal( var_0, level.zone_radius * 0.9, "objective" );
         }
 
         wait 0.1;

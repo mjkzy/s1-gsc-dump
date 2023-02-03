@@ -7,11 +7,11 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "fusion_intro_tr" ) )
+        if ( istransientloaded( "fusion_intro_tr" ) )
             var_0 = "intro";
-        else if ( _func_21E( "fusion_middle_tr" ) )
+        else if ( istransientloaded( "fusion_middle_tr" ) )
             var_0 = "middle";
-        else if ( _func_21E( "fusion_outro_tr" ) )
+        else if ( istransientloaded( "fusion_outro_tr" ) )
             var_0 = "outro";
     }
 
@@ -93,17 +93,17 @@ fov_set_to_35( var_0 )
 
 rumble_small( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 rumble_medium( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 rumble_large( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 fov_lerp_to_50_blendtime( var_0, var_1 )
@@ -135,7 +135,7 @@ interior_player_anims( var_0 )
 
 clear_player_anim( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 #using_animtree("generic_human");
@@ -309,7 +309,7 @@ ai_kill( var_0 )
     var_0.a.nodeath = 1;
     var_0 maps\_utility::set_battlechatter( 0 );
     wait 0.05;
-    var_0 _meth_8052();
+    var_0 kill();
 }
 
 ai_kill_no_ragdoll( var_0 )
@@ -319,12 +319,12 @@ ai_kill_no_ragdoll( var_0 )
     var_0.noragdoll = 1;
     var_0.a.nodeath = 1;
     wait 0.05;
-    var_0 _meth_8052();
+    var_0 kill();
 }
 
 clear_npc_anim( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 #using_animtree("vehicles");
@@ -414,7 +414,7 @@ load_vehicle_anims( var_0 )
 
 clear_vehicle_anim( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 #using_animtree("script_model");
@@ -602,7 +602,7 @@ load_script_model_anims( var_0 )
 swap_cockpit_model( var_0 )
 {
     if ( isdefined( var_0 ) && isdefined( var_0.vehicle_to_swap ) )
-        var_0.vehicle_to_swap _meth_80B1( "vehicle_vm_x4walker_wheels" );
+        var_0.vehicle_to_swap setmodel( "vehicle_vm_x4walker_wheels" );
 }
 
 notetrack_setup_middle()
@@ -677,5 +677,5 @@ end_drag_dust( var_0 )
 
 fusion_door_explosion_swap( var_0 )
 {
-    var_0 _meth_80B1( "door_controlroom_01_damage_rig" );
+    var_0 setmodel( "door_controlroom_01_damage_rig" );
 }

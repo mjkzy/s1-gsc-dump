@@ -52,7 +52,7 @@ portable_mg_behavior()
             if ( isdefined( var_0.radius ) )
                 self.goalradius = var_0.radius;
 
-            self _meth_81A5( var_0 );
+            self setgoalnode( var_0 );
         }
     }
 
@@ -108,7 +108,7 @@ mg42_trigger()
 mgturret_auto( var_0 )
 {
     var_0 waittill( "trigger" );
-    var_1 = _func_0D6( "bad_guys" );
+    var_1 = getaiarray( "bad_guys" );
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -116,7 +116,7 @@ mgturret_auto( var_0 )
             var_1[var_2] notify( "auto_ai" );
     }
 
-    var_3 = _func_0D8();
+    var_3 = getspawnerarray();
 
     for ( var_2 = 0; var_2 < var_3.size; var_2++ )
     {
@@ -139,11 +139,11 @@ mg42_suppressionfire( var_0 )
     {
         while ( self.suppresionfire )
         {
-            self _meth_8106( var_0[randomint( var_0.size )] );
+            self settargetentity( var_0[randomint( var_0.size )] );
             wait(2 + randomfloat( 2 ));
         }
 
-        self _meth_8108();
+        self cleartargetentity();
 
         while ( !self.suppresionfire )
             wait 1;
@@ -155,8 +155,8 @@ manual_think( var_0 )
     var_1 = self.origin;
     self waittill( "auto_ai" );
     var_0 notify( "stopfiring" );
-    var_0 _meth_8065( "auto_ai" );
-    var_0 _meth_8106( level.player );
+    var_0 setmode( "auto_ai" );
+    var_0 settargetentity( level.player );
 }
 
 burst_fire_settings( var_0 )
@@ -206,7 +206,7 @@ burst_fire_unmanned()
     {
         var_6 = ( var_4 - gettime() ) * 0.001;
 
-        if ( self _meth_80E4() && var_6 <= 0 )
+        if ( self isfiringturret() && var_6 <= 0 )
         {
             if ( var_5 != "fire" )
             {
@@ -237,7 +237,7 @@ doshoot()
 
     for (;;)
     {
-        self _meth_80EA();
+        self shootturret();
         self notify( "turret_fire" );
         wait 0.1;
     }
@@ -293,7 +293,7 @@ random_spread( var_0 )
     self notify( "stop random_spread" );
     self endon( "stop random_spread" );
     self endon( "stopfiring" );
-    self _meth_8106( var_0 );
+    self settargetentity( var_0 );
 
     for (;;)
     {
@@ -311,15 +311,15 @@ mg42_firing( var_0 )
 {
     self notify( "stop_using_built_in_burst_fire" );
     self endon( "stop_using_built_in_burst_fire" );
-    var_0 _meth_80E3();
+    var_0 stopfiring();
 
     for (;;)
     {
         var_0 waittill( "startfiring" );
         thread burst_fire( var_0 );
-        var_0 _meth_80E2();
+        var_0 startfiring();
         var_0 waittill( "stopfiring" );
-        var_0 _meth_80E3();
+        var_0 stopfiring();
     }
 }
 
@@ -350,13 +350,13 @@ burst_fire( var_0, var_1 )
 
     for (;;)
     {
-        var_0 _meth_80E2();
+        var_0 startfiring();
 
         if ( isdefined( var_1 ) )
             var_0 thread random_spread( var_1 );
 
         wait(var_4 + randomfloat( var_5 ));
-        var_0 _meth_80E3();
+        var_0 stopfiring();
         wait(var_2 + randomfloat( var_3 ));
     }
 }
@@ -400,7 +400,7 @@ _spawner_mg42_think()
         }
 
         var_2 = [];
-        var_3 = _func_0D6();
+        var_3 = getaiarray();
 
         for ( var_4 = 0; var_4 < var_3.size; var_4++ )
         {
@@ -470,7 +470,7 @@ mg42_think()
 
         while ( !isdefined( var_3 ) )
         {
-            var_3 = self _meth_8093();
+            var_3 = self dospawn();
             wait 1;
         }
 
@@ -536,10 +536,10 @@ player_safe()
     if ( !isdefined( level.player_covertrigger ) )
         return 0;
 
-    if ( level.player _meth_817C() == "prone" )
+    if ( level.player getstance() == "prone" )
         return 1;
 
-    if ( level.player_covertype == "cow" && level.player _meth_817C() == "crouch" )
+    if ( level.player_covertype == "cow" && level.player getstance() == "crouch" )
         return 1;
 
     return 0;
@@ -547,9 +547,9 @@ player_safe()
 
 stance_num()
 {
-    if ( level.player _meth_817C() == "prone" )
+    if ( level.player getstance() == "prone" )
         return ( 0, 0, 5 );
-    else if ( level.player _meth_817C() == "crouch" )
+    else if ( level.player getstance() == "crouch" )
         return ( 0, 0, 25 );
 
     return ( 0, 0, 50 );
@@ -560,7 +560,7 @@ mg42_gunner_manual_think( var_0, var_1 )
     self endon( "death" );
     self endon( "auto_ai" );
     self.pacifist = 1;
-    self _meth_81A6( var_0.org );
+    self setgoalpos( var_0.org );
     self.goalradius = level.magic_distance;
     self waittill( "goal" );
 
@@ -571,14 +571,14 @@ mg42_gunner_manual_think( var_0, var_1 )
     }
 
     self.pacifist = 0;
-    var_0 _meth_8065( "auto_ai" );
-    var_0 _meth_8108();
+    var_0 setmode( "auto_ai" );
+    var_0 cleartargetentity();
     var_2 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_3 = spawn( "script_model", ( 0, 0, 0 ) );
     var_3.scale = 3;
 
     if ( getdvar( "mg42" ) != "off" )
-        var_3 _meth_80B1( "temp" );
+        var_3 setmodel( "temp" );
 
     var_3 thread temp_think( var_0, var_2 );
     level thread kill_objects( self, "death", var_2, var_3 );
@@ -594,8 +594,8 @@ mg42_gunner_manual_think( var_0, var_1 )
         thread shoot_mg42_script_targets( var_5 );
         move_use_turret( var_0 );
         self.target_entity = var_2;
-        var_0 _meth_8065( "manual_ai" );
-        var_0 _meth_8106( var_2 );
+        var_0 setmode( "manual_ai" );
+        var_0 settargetentity( var_2 );
         var_0 notify( "startfiring" );
         var_8 = 15;
         var_9 = 0.08;
@@ -686,7 +686,7 @@ mg42_gunner_manual_think( var_0, var_1 )
             {
                 if ( !var_0.player_target )
                 {
-                    var_0 _meth_8106( level.player );
+                    var_0 settargetentity( level.player );
                     var_0.player_target = 1;
                     var_3.targent = level.player;
                 }
@@ -694,7 +694,7 @@ mg42_gunner_manual_think( var_0, var_1 )
                 wait 0.2;
             }
 
-            var_0 _meth_8065( "manual_ai" );
+            var_0 setmode( "manual_ai" );
             move_use_turret( var_0 );
             var_0 notify( "startfiring" );
             var_11 = gettime() + 1500 + randomfloat( 4000 );
@@ -706,7 +706,7 @@ mg42_gunner_manual_think( var_0, var_1 )
                     var_16 = getentarray( level.player_covertrigger.target, "targetname" );
                     var_16 = var_16[randomint( var_16.size )];
                     var_2.origin = var_16.origin + ( randomfloat( 30 ) - 15, randomfloat( 30 ) - 15, randomfloat( 40 ) - 60 );
-                    var_0 _meth_8106( var_2 );
+                    var_0 settargetentity( var_2 );
                     var_3.targent = var_2;
                     wait(randomfloat( 1 ));
                     continue;
@@ -720,8 +720,8 @@ mg42_gunner_manual_think( var_0, var_1 )
 
             if ( var_0.player_target )
             {
-                var_0 _meth_8065( "auto_ai" );
-                var_0 _meth_8108();
+                var_0 setmode( "auto_ai" );
+                var_0 cleartargetentity();
                 var_0.player_target = 0;
                 var_3.targent = var_3;
                 var_3.origin = ( 0, 0, 0 );
@@ -766,21 +766,21 @@ shoot_mg42_script_targets( var_0 )
 
 move_use_turret( var_0, var_1, var_2 )
 {
-    self _meth_81A6( var_0.org );
+    self setgoalpos( var_0.org );
     self.goalradius = level.magic_distance;
     self waittill( "goal" );
 
     if ( isdefined( var_1 ) && var_1 == "auto_ai" )
     {
-        var_0 _meth_8065( "auto_ai" );
+        var_0 setmode( "auto_ai" );
 
         if ( isdefined( var_2 ) )
-            var_0 _meth_8106( var_2 );
+            var_0 settargetentity( var_2 );
         else
-            var_0 _meth_8108();
+            var_0 cleartargetentity();
     }
 
-    self _meth_818A( var_0 );
+    self useturret( var_0 );
 }
 
 temp_think( var_0, var_1 )
@@ -815,7 +815,7 @@ turret_think( var_0 )
         var_1 waittill( "turret_deactivate" );
         wait(var_2 + randomfloat( var_3 - var_2 ));
 
-        while ( !_func_097( var_1 ) )
+        while ( !isturretactive( var_1 ) )
         {
             turret_find_user( var_0, var_1 );
             wait 1.0;
@@ -825,16 +825,16 @@ turret_think( var_0 )
 
 turret_find_user( var_0, var_1 )
 {
-    var_2 = _func_0D6();
+    var_2 = getaiarray();
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
-        if ( var_2[var_3] _meth_815F( var_0.origin ) && var_2[var_3] _meth_818C( var_1 ) )
+        if ( var_2[var_3] isingoal( var_0.origin ) && var_2[var_3] canuseturret( var_1 ) )
         {
             var_4 = var_2[var_3].keepclaimednodeifvalid;
             var_2[var_3].keepclaimednodeifvalid = 0;
 
-            if ( !var_2[var_3] _meth_81F0( var_0 ) )
+            if ( !var_2[var_3] usecovernode( var_0 ) )
                 var_2[var_3].keepclaimednodeifvalid = var_4;
         }
     }
@@ -898,7 +898,7 @@ mg42_target_drones( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         var_0 = 0;
 
-    self _meth_8065( "manual_ai" );
+    self setmode( "manual_ai" );
     var_3 = maps\_utility::getdifficulty();
 
     if ( !isdefined( level.drones ) )
@@ -911,11 +911,11 @@ mg42_target_drones( var_0, var_1, var_2 )
         if ( var_4 )
         {
             if ( isdefined( self.drones_targets_sets_to_default ) )
-                self _meth_8065( self.defaultonmode );
+                self setmode( self.defaultonmode );
             else if ( var_0 )
-                self _meth_8065( "auto_nonai" );
+                self setmode( "auto_nonai" );
             else
-                self _meth_8065( "auto_ai" );
+                self setmode( "auto_ai" );
 
             level waittill( "new_drone" );
         }
@@ -927,7 +927,7 @@ mg42_target_drones( var_0, var_1, var_2 )
 
         if ( !var_0 )
         {
-            var_5 = self _meth_80EB();
+            var_5 = self getturretowner();
 
             if ( !isalive( var_5 ) || isplayer( var_5 ) )
             {
@@ -974,23 +974,23 @@ mg42_target_drones( var_0, var_1, var_2 )
                 [[ self.anim_wait_func ]]();
 
             if ( var_0 )
-                self _meth_8065( "manual" );
+                self setmode( "manual" );
             else
-                self _meth_8065( "manual_ai" );
+                self setmode( "manual_ai" );
 
-            self _meth_8106( var_7, ( 0, 0, 32 ) );
+            self settargetentity( var_7, ( 0, 0, 32 ) );
             drone_target( var_7, 1, var_2 );
-            self _meth_8108();
-            self _meth_80E3();
+            self cleartargetentity();
+            self stopfiring();
 
-            if ( !var_0 && !( isdefined( self _meth_80EB() ) && self _meth_80EB() == var_5 ) )
+            if ( !var_0 && !( isdefined( self getturretowner() ) && self getturretowner() == var_5 ) )
                 break;
         }
 
         self.convergencetime = self.oldconvergencetime;
         self.oldconvergencetime = undefined;
-        self _meth_8108();
-        self _meth_80E3();
+        self cleartargetentity();
+        self stopfiring();
 
         if ( level.drones[var_6].lastindex )
         {
@@ -1012,7 +1012,7 @@ drone_target( var_0, var_1, var_2 )
     while ( var_3 > gettime() || var_4 )
     {
         common_scripts\utility::lock( "mg42_drones_target_trace" );
-        var_5 = self _meth_8109( 1 );
+        var_5 = self getturrettarget( 1 );
 
         if ( !bullettracepassed( self gettagorigin( "tag_flash" ), var_0.origin + ( 0, 0, 40 ), 0, var_0 ) )
         {
@@ -1027,14 +1027,14 @@ drone_target( var_0, var_1, var_2 )
 
         if ( !var_4 )
         {
-            self _meth_80E2();
+            self startfiring();
             var_4 = 1;
         }
 
         common_scripts\utility::unlock_wait( "mg42_drones_target_trace" );
     }
 
-    self _meth_80E3();
+    self stopfiring();
     maps\_utility::structarray_shuffle( level.drones[var_0.team], 1 );
 }
 
@@ -1059,7 +1059,7 @@ get_bestdrone( var_0, var_1 )
 
         var_2 = level.drones[var_0].array[var_4];
 
-        if ( !bullettracepassed( self gettagorigin( "tag_flash" ), var_2 _meth_8096(), 0, var_2 ) )
+        if ( !bullettracepassed( self gettagorigin( "tag_flash" ), var_2 getcentroid(), 0, var_2 ) )
         {
             var_2 = undefined;
             continue;
@@ -1068,7 +1068,7 @@ get_bestdrone( var_0, var_1 )
         break;
     }
 
-    var_7 = self _meth_8109( 1 );
+    var_7 = self getturrettarget( 1 );
 
     if ( !isdefined( self.prefers_drones ) )
     {
@@ -1243,7 +1243,7 @@ restoredefaultpitch()
     self endon( "gun_placed_again" );
     self waittill( "restore_default_drop_pitch" );
     wait 1;
-    self _meth_815B();
+    self restoredefaultdroppitch();
 }
 
 dropturret()
@@ -1256,10 +1256,10 @@ dropturretproc()
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
     var_0.origin = self gettagorigin( level.portable_mg_gun_tag );
     var_0.angles = self gettagangles( level.portable_mg_gun_tag );
-    var_0 _meth_80B1( self.turretmodel );
+    var_0 setmodel( self.turretmodel );
     var_1 = anglestoforward( self.angles );
     var_1 *= 100;
-    var_0 _meth_82B2( var_1, 0.5 );
+    var_0 movegravity( var_1, 0.5 );
     self detach( self.turretmodel, level.portable_mg_gun_tag );
     self.turretmodel = undefined;
     wait 0.7;
@@ -1295,7 +1295,7 @@ restoredefaults()
 restorepitch()
 {
     self waittill( "turret_deactivate" );
-    self _meth_815B();
+    self restoredefaultdroppitch();
 }
 
 update_enemy_target_pos_while_running( var_0 )
@@ -1349,7 +1349,7 @@ record_bread_crumbs_for_ambush( var_0 )
 
 aim_turret_at_ambush_point_or_visible_enemy( var_0, var_1 )
 {
-    if ( !isalive( self.current_enemy ) && self _meth_81BE( self.current_enemy ) )
+    if ( !isalive( self.current_enemy ) && self cansee( self.current_enemy ) )
     {
         var_1.origin = self.last_enemy_sighting_position;
         return;
@@ -1404,30 +1404,30 @@ find_a_new_turret_spot( var_0 )
     if ( var_3 == "ambush" )
         aim_turret_at_ambush_point_or_visible_enemy( var_2, var_0 );
 
-    var_2 _meth_8106( var_0 );
+    var_2 settargetentity( var_0 );
 }
 
 snap_lock_turret_onto_target( var_0 )
 {
-    var_0 _meth_8065( "manual" );
+    var_0 setmode( "manual" );
     wait 0.5;
-    var_0 _meth_8065( "manual_ai" );
+    var_0 setmode( "manual_ai" );
 }
 
 leave_gun_and_run_to_new_spot( var_0 )
 {
-    self _meth_818B();
+    self stopuseturret();
     animscripts\shared::placeweaponon( self.primaryweapon, "none" );
     var_1 = get_turret_setup_anim( var_0 );
     var_2 = getstartorigin( var_0.origin, var_0.angles, var_1 );
-    self _meth_8160( var_2 );
+    self setruntopos( var_2 );
     self waittill( "runto_arrived" );
     use_the_turret( var_0 );
 }
 
 pickup_gun( var_0 )
 {
-    self _meth_818B();
+    self stopuseturret();
     self.turret hide_turret();
 }
 
@@ -1454,7 +1454,7 @@ run_to_new_spot_and_setup_gun( var_0 )
     self notify( "kill_get_gun_back_on_killanimscript_thread" );
     animscripts\shared::placeweaponon( self.weapon, "none" );
 
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
         self.health = 1;
 
     self.run_overrideanim = %saw_gunner_run_fast;
@@ -1462,7 +1462,7 @@ run_to_new_spot_and_setup_gun( var_0 )
     self attach( self.turretmodel, level.portable_mg_gun_tag );
     thread turretdeathdetacher();
     var_3 = getstartorigin( var_0.origin, var_0.angles, var_2 );
-    self _meth_8160( var_3 );
+    self setruntopos( var_3 );
     wait 0.05;
     common_scripts\utility::set_all_exceptions( animscripts\combat::exception_exposed_mg42_portable );
     common_scripts\utility::clear_exception( "move" );
@@ -1470,19 +1470,19 @@ run_to_new_spot_and_setup_gun( var_0 )
 
     while ( distance( self.origin, var_3 ) > 16 )
     {
-        self _meth_8160( var_3 );
+        self setruntopos( var_3 );
         wait 0.05;
     }
 
     self notify( "kill_turret_detach_thread" );
 
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
         self.health = var_1;
 
     if ( soundexists( "weapon_setup" ) )
         thread common_scripts\utility::play_sound_in_space( "weapon_setup" );
 
-    self _meth_813E( "setup_done", var_0.origin, var_0.angles, var_2 );
+    self animscripted( "setup_done", var_0.origin, var_0.angles, var_2 );
     restoredefaults();
     self waittillmatch( "setup_done", "end" );
     var_0 notify( "restore_default_drop_pitch" );
@@ -1496,7 +1496,7 @@ run_to_new_spot_and_setup_gun( var_0 )
 
 move_to_run_pos()
 {
-    self _meth_8160( self.runpos );
+    self setruntopos( self.runpos );
 }
 
 hold_indefintely()
@@ -1562,14 +1562,14 @@ turret_user_moves()
 
 use_the_turret( var_0 )
 {
-    var_1 = self _meth_818A( var_0 );
+    var_1 = self useturret( var_0 );
 
     if ( var_1 )
     {
         common_scripts\utility::set_exception( "move", ::turret_user_moves );
         self.turret = var_0;
         thread mg42_firing( var_0 );
-        var_0 _meth_8065( "manual_ai" );
+        var_0 setmode( "manual_ai" );
         var_0 thread restorepitch();
         self.turret = var_0;
         var_0.owner = self;
@@ -1577,7 +1577,7 @@ use_the_turret( var_0 )
     }
     else
     {
-        var_0 _meth_815B();
+        var_0 restoredefaultdroppitch();
         return 0;
     }
 }
@@ -1604,7 +1604,7 @@ get_portable_mg_spot( var_0 )
 gettakennodes()
 {
     var_0 = [];
-    var_1 = _func_0D6();
+    var_1 = getaiarray();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -1711,7 +1711,7 @@ hide_turret()
     self hide();
     self.solid = 0;
     self makeunusable();
-    self _meth_815A( 0 );
+    self setdefaultdroppitch( 0 );
     thread restoredefaultpitch();
 }
 
@@ -1735,7 +1735,7 @@ stop_mg_behavior_if_flanked()
 
 turret_is_mine( var_0 )
 {
-    var_1 = var_0 _meth_80EB();
+    var_1 = var_0 getturretowner();
 
     if ( !isdefined( var_1 ) )
         return 0;

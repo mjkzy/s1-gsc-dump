@@ -291,13 +291,13 @@ anim_first_frame_on_guy( var_0, var_1, var_2, var_3, var_4 )
     {
         var_0._first_frame_anim = var_1;
         var_0._animname = var_5;
-        var_0 _meth_819A( animscripts\first_frame::main );
+        var_0 animcustom( animscripts\first_frame::main );
     }
     else
     {
-        var_0 _meth_8141();
-        var_0 _meth_8143( level.scr_anim[var_5][var_1], 1, 0, 0 );
-        var_0 _meth_8117( level.scr_anim[var_5][var_1], 0 );
+        var_0 stopanimscripted();
+        var_0 setanimknob( level.scr_anim[var_5][var_1], 1, 0, 0 );
+        var_0 setanimtime( level.scr_anim[var_5][var_1], 0 );
     }
 }
 
@@ -323,7 +323,7 @@ anim_custom_animmode_on_guy( var_0, var_1, var_2, var_3, var_4, var_5, var_6, va
     var_0._animname = var_9;
     var_0._custom_anim_loop = var_6;
     var_0._custom_anim_thread = var_7;
-    var_0 _meth_819A( animscripts\animmode::main );
+    var_0 animcustom( animscripts\animmode::main );
 }
 
 anim_loop( var_0, var_1, var_2, var_3, var_4 )
@@ -471,7 +471,7 @@ anim_loop_packet( var_0, var_1, var_2, var_3 )
                     var_32 = 0.2;
 
                 var_6 last_anim_time_check( var_1, var_31 );
-                var_6 _meth_813E( var_9, var_19, var_20, level.scr_anim[var_31][var_1][var_11], undefined, undefined, var_32 );
+                var_6 animscripted( var_9, var_19, var_20, level.scr_anim[var_31][var_1][var_11], undefined, undefined, var_32 );
                 var_33 = getanimlength( level.scr_anim[var_31][var_1][var_11] );
 
                 if ( var_33 < var_14 )
@@ -629,17 +629,17 @@ anim_single_internal( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( isplayer( var_8 ) )
             {
                 var_28 = level.scr_anim[var_26]["root"];
-                var_8 _meth_814B( var_28, 0, var_27 );
+                var_8 setanim( var_28, 0, var_27 );
                 var_29 = level.scr_anim[var_26][var_1];
-                var_8 _meth_8111( var_18, var_29, 1, var_27 );
+                var_8 setflaggedanim( var_18, var_29, 1, var_27 );
             }
             else if ( var_8.code_classname == "misc_turret" )
             {
                 var_29 = level.scr_anim[var_26][var_1];
-                var_8 _meth_8111( var_18, var_29, 1, var_27 );
+                var_8 setflaggedanim( var_18, var_29, 1, var_27 );
             }
             else
-                var_8 _meth_813E( var_18, var_11, var_12, level.scr_anim[var_26][var_1], undefined, undefined, var_27 );
+                var_8 animscripted( var_18, var_11, var_12, level.scr_anim[var_26][var_1], undefined, undefined, var_27 );
 
             var_30 = getanimlength( level.scr_anim[var_26][var_1] );
 
@@ -679,7 +679,7 @@ anim_single_internal( var_0, var_1, var_2, var_3, var_4, var_5 )
             {
                 var_8 thread maps\_utility::play_sound_on_entity( var_24, "single dialogue" );
 
-                if ( var_8 _meth_852B() )
+                if ( var_8 hasanimtree() )
                     var_8 thread anim_facialfiller( "single dialogue" );
             }
 
@@ -726,9 +726,9 @@ anim_single_internal( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( isdefined( level.scr_anim[var_26][var_1] ) )
             {
                 var_28 = level.scr_anim[var_26]["root"];
-                var_8 _meth_814B( var_28, 1, 0.2 );
+                var_8 setanim( var_28, 1, 0.2 );
                 var_29 = level.scr_anim[var_26][var_1];
-                var_8 _meth_8142( var_29, 0.2 );
+                var_8 clearanim( var_29, 0.2 );
             }
         }
 
@@ -774,7 +774,7 @@ anim_animationendnotify( var_0, var_1, var_2, var_3 )
     if ( var_3 > 0 && var_2 > 0 )
     {
         var_0 maps\_utility::waittill_match_or_timeout( "single anim", "end", var_2 );
-        var_0 _meth_8141();
+        var_0 stopanimscripted();
     }
     else
         var_0 waittillmatch( "single anim", "end" );
@@ -1195,7 +1195,7 @@ anim_handle_notetrack( var_0, var_1, var_2, var_3 )
         if ( isdefined( var_0["swap_part_to_efx"] ) )
         {
             playfxontag( level._effect[var_0["swap_part_to_efx"]], var_1, var_0["selftag"] );
-            var_1 _meth_8048( var_0["selftag"] );
+            var_1 hidepart( var_0["selftag"] );
         }
 
         if ( isdefined( var_0["trace_part_for_efx"] ) )
@@ -1225,7 +1225,7 @@ anim_handle_notetrack( var_0, var_1, var_2, var_3 )
         playfxontag( level._effect[var_0["effect_looped"]], var_1, var_0["selftag"] );
 
     if ( isdefined( var_0["lui_notify"] ) )
-        _func_23F( var_0["lui_notify"], 0 );
+        luinotifyevent( var_0["lui_notify"], 0 );
 
     if ( isdefined( var_0["omnvar"] ) )
         setomnvar( var_0["omnvar"], var_0["value"] );
@@ -1270,7 +1270,7 @@ trace_part_for_efx( var_0, var_1, var_2, var_3 )
     playfx( var_1, var_7.last_pos );
 
     if ( var_3 == 0 )
-        self _meth_8048( var_0 );
+        self hidepart( var_0 );
     else
         thread hidepartatdepth( var_7.last_pos[2] - var_3, var_0 );
 }
@@ -1282,7 +1282,7 @@ hidepartatdepth( var_0, var_1 )
     while ( self gettagorigin( var_1 )[2] > var_0 )
         wait 0.05;
 
-    self _meth_8048( var_1 );
+    self hidepart( var_1 );
 }
 
 test_trace_tag( var_0 )
@@ -1329,7 +1329,7 @@ anim_addmodel( var_0, var_1 )
 
     var_2 = var_0.scriptmodel.size;
     var_0.scriptmodel[var_2] = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0.scriptmodel[var_2] _meth_80B1( var_1["create model"] );
+    var_0.scriptmodel[var_2] setmodel( var_1["create model"] );
     var_0.scriptmodel[var_2].origin = var_0 gettagorigin( var_1["selftag"] );
     var_0.scriptmodel[var_2].angles = var_0 gettagangles( var_1["selftag"] );
 }
@@ -1727,7 +1727,7 @@ anim_teleport( var_0, var_1, var_2 )
 
         if ( isai( var_7 ) )
         {
-            var_7 _meth_81C5( var_8 );
+            var_7 teleport( var_8 );
             continue;
         }
 
@@ -1750,8 +1750,8 @@ anim_moveto( var_0, var_1, var_2, var_3, var_4, var_5 )
         if ( isai( var_10 ) )
             continue;
 
-        var_10 _meth_82AE( var_11, var_3, var_4, var_5 );
-        var_10 _meth_82B5( var_12, var_3, var_4, var_5 );
+        var_10 moveto( var_11, var_3, var_4, var_5 );
+        var_10 rotateto( var_12, var_3, var_4, var_5 );
     }
 }
 
@@ -1764,7 +1764,7 @@ anim_generic_teleport( var_0, var_1, var_2 )
     var_7 = getstartangles( var_4, var_5, level.scr_anim["generic"][var_1] );
 
     if ( isai( var_0 ) )
-        var_0 _meth_81C5( var_6 );
+        var_0 teleport( var_6 );
     else
     {
         var_0.origin = var_6;
@@ -1785,7 +1785,7 @@ anim_spawn_model( var_0, var_1, var_2, var_3 )
     var_7 = getstartorigin( var_5, var_6, level.scr_anim[var_1][var_2] );
     var_8 = getstartorigin( var_5, var_6, level.scr_anim[var_1][var_2] );
     var_9 = spawn( "script_model", var_7 );
-    var_9 _meth_80B1( var_0 );
+    var_9 setmodel( var_0 );
     var_9.angles = var_8;
     return var_9;
 }
@@ -1799,8 +1799,8 @@ anim_link_tag_model( var_0, var_1 )
 {
     var_2 = self gettagorigin( var_1 );
     var_3 = spawn( "script_model", var_2 );
-    var_3 _meth_80B1( var_0 );
-    var_3 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( var_0 );
+    var_3 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     return var_3;
 }
 
@@ -1901,7 +1901,7 @@ anim_changes_pushplayer( var_0 )
     if ( isdefined( self.dontchangepushplayer ) )
         return;
 
-    self _meth_81A3( var_0 );
+    self pushplayer( var_0 );
     return;
 }
 
@@ -1914,7 +1914,7 @@ reach_with_arrivals_begin( var_0 )
 
 reach_with_planting( var_0 )
 {
-    var_1 = self _meth_813C( var_0 );
+    var_1 = self getdroptofloorposition( var_0 );
     var_0 = var_1;
     var_0 = reach_with_standard_adjustments_begin( var_0 );
     self.disablearrivals = 1;
@@ -1923,7 +1923,7 @@ reach_with_planting( var_0 )
 
 reach_with_planting_and_arrivals( var_0 )
 {
-    var_1 = self _meth_813C( var_0 );
+    var_1 = self getdroptofloorposition( var_0 );
     var_0 = var_1;
     var_0 = reach_with_standard_adjustments_begin( var_0 );
     self.disablearrivals = 0;
@@ -1932,7 +1932,7 @@ reach_with_planting_and_arrivals( var_0 )
 
 setanimtree()
 {
-    self _meth_8115( level.scr_animtree[self.animname] );
+    self useanimtree( level.scr_animtree[self.animname] );
 }
 
 anim_single_solo( var_0, var_1, var_2, var_3, var_4 )
@@ -2012,7 +2012,7 @@ anim_reach_and_approach_node_solo( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_4 ) )
         var_11.arrivalstance = var_4;
     else
-        var_11.arrivalstance = self _meth_8034();
+        var_11.arrivalstance = self gethighestnodestance();
 
     var_0.scriptedarrivalent = var_11;
     anim_reach_and_approach( var_5, var_1, var_2 );
@@ -2103,13 +2103,13 @@ anim_generic_queue( var_0, var_1, var_2, var_3, var_4 )
 anim_dontpushplayer( var_0 )
 {
     foreach ( var_2 in var_0 )
-        var_2 _meth_81A3( 0 );
+        var_2 pushplayer( 0 );
 }
 
 anim_pushplayer( var_0 )
 {
     foreach ( var_2 in var_0 )
-        var_2 _meth_81A3( 1 );
+        var_2 pushplayer( 1 );
 }
 
 removenotetrack( var_0, var_1, var_2, var_3, var_4 )
@@ -2457,7 +2457,7 @@ disabledefaultfacialanims( var_0 )
     if ( !isdefined( var_0 ) || var_0 )
     {
         self.bdisabledefaultfacialanims = 1;
-        self _meth_8142( %head, 0.2 );
+        self clearanim( %head, 0.2 );
         self.facialidx = undefined;
     }
     else
@@ -2472,8 +2472,8 @@ anim_facialanim( var_0, var_1, var_2 )
     var_0 notify( "newLookTarget" );
     waittillframeend;
     disabledefaultfacialanims();
-    var_0 _meth_814B( %scripted_talking, 5, 0.2 );
-    var_0 _meth_810D( "face_done_" + var_1, var_2, 1, 0, 1 );
+    var_0 setanim( %scripted_talking, 5, 0.2 );
+    var_0 setflaggedanimknobrestart( "face_done_" + var_1, var_2, 1, 0, 1 );
     thread force_face_anim_to_play( var_0, var_1, var_2 );
     thread clearfaceanimonanimdone( var_0, "face_done_" + var_1, var_1 );
 }
@@ -2487,8 +2487,8 @@ force_face_anim_to_play( var_0, var_1, var_2 )
     for (;;)
     {
         disabledefaultfacialanims();
-        var_0 _meth_814B( %scripted_talking, 5, 0.4 );
-        var_0 _meth_8153( "face_done_" + var_1, var_2, 1, 0, 1 );
+        var_0 setanim( %scripted_talking, 5, 0.4 );
+        var_0 setflaggedanimknoblimited( "face_done_" + var_1, var_2, 1, 0, 1 );
         wait 0.05;
     }
 }
@@ -2508,26 +2508,26 @@ anim_facialfiller( var_0, var_1 )
     if ( !isdefined( var_1 ) && isdefined( self.looktarget ) )
         var_1 = self.looktarget;
 
-    if ( self _meth_84F3() )
+    if ( self hasblendshapes() )
         var_3 = %generic_talker_blend;
     else
     {
-        var_4 = self _meth_8442( "jnt_lips_L" );
+        var_4 = self gettagindex( "jnt_lips_L" );
 
         if ( var_4 != -1 )
             var_3 = %generic_talker_bs;
-        else if ( self _meth_813D() )
+        else if ( self isbadguy() )
             var_3 = %generic_talker_axis;
         else
             var_3 = %generic_talker_allies;
     }
 
-    self _meth_8146( var_3, 1, 0, 1 );
-    self _meth_814B( %scripted_talking, 5, 0.4 );
+    self setanimknoblimitedrestart( var_3, 1, 0, 1 );
+    self setanim( %scripted_talking, 5, 0.4 );
     disabledefaultfacialanims();
     set_talker_until_msg( var_0, var_3 );
     var_2 = 0.3;
-    self _meth_8142( %scripted_talking, 0.2 );
+    self clearanim( %scripted_talking, 0.2 );
     disabledefaultfacialanims( 0 );
 }
 
@@ -2538,8 +2538,8 @@ set_talker_until_msg( var_0, var_1 )
     for (;;)
     {
         wait 0.2;
-        self _meth_8144( var_1, 1, 0, 1 );
-        self _meth_814B( %scripted_talking, 5, 0.4 );
+        self setanimknoblimited( var_1, 1, 0, 1 );
+        self setanim( %scripted_talking, 5, 0.4 );
         disabledefaultfacialanims();
     }
 }
@@ -2549,15 +2549,15 @@ talk_for_time( var_0 )
     self endon( "death" );
     var_1 = %generic_talker_allies;
 
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
         var_1 = %generic_talker_axis;
 
-    self _meth_8146( var_1, 1, 0, 1 );
-    self _meth_814B( %scripted_talking, 5, 0.4 );
+    self setanimknoblimitedrestart( var_1, 1, 0, 1 );
+    self setanim( %scripted_talking, 5, 0.4 );
     disabledefaultfacialanims();
     wait(var_0);
     var_2 = 0.3;
-    self _meth_8142( %scripted_talking, 0.2 );
+    self clearanim( %scripted_talking, 0.2 );
     disabledefaultfacialanims( 0 );
 }
 
@@ -2619,7 +2619,7 @@ clearfaceanimonanimdone( var_0, var_1, var_2 )
     var_0 endon( "death" );
     var_0 waittillmatch( var_1, "end" );
     var_3 = 0.3;
-    var_0 _meth_8142( %scripted_talking, 0.2 );
+    var_0 clearanim( %scripted_talking, 0.2 );
     disabledefaultfacialanims( 0 );
 }
 
@@ -2661,10 +2661,10 @@ set_start_pos( var_0, var_1, var_2, var_3, var_4 )
         if ( isdefined( self.anim_start_at_groundpos ) )
             var_7 = maps\_utility::groundpos( var_7 );
 
-        self _meth_81C6( var_7, var_8 );
+        self forceteleport( var_7, var_8 );
     }
     else if ( self.code_classname == "script_vehicle" )
-        self _meth_827C( getstartorigin( var_1, var_2, var_6 ), getstartangles( var_1, var_2, var_6 ) );
+        self vehicle_teleport( getstartorigin( var_1, var_2, var_6 ), getstartangles( var_1, var_2, var_6 ) );
     else
     {
         self.origin = getstartorigin( var_1, var_2, var_6 );
@@ -2733,7 +2733,7 @@ anim_set_rate_internal( var_0, var_1, var_2 )
     if ( isarray( var_4 ) )
         var_4 = var_4[0];
 
-    self _meth_8111( "single anim", var_4, 1, 0, var_1 );
+    self setflaggedanim( "single anim", var_4, 1, 0, var_1 );
 }
 
 anim_set_time( var_0, var_1, var_2 )
@@ -2744,7 +2744,7 @@ anim_set_time( var_0, var_1, var_2 )
 anim_self_set_time( var_0, var_1 )
 {
     var_2 = maps\_utility::getanim( var_0 );
-    self _meth_8117( var_2, var_1 );
+    self setanimtime( var_2, var_1 );
 }
 
 last_anim_time_check( var_0, var_1 )

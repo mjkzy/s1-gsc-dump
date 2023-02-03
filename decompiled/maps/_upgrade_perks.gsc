@@ -154,33 +154,33 @@ upgrade_perk_active_code( var_0, var_1 )
     if ( var_1 )
     {
         upgrade_perk_script_code( level.upgrade_perk_code[var_0], 1 );
-        self _meth_82A6( level.upgrade_perk_code[var_0], 1, 0 );
+        self setperk( level.upgrade_perk_code[var_0], 1, 0 );
 
         if ( isdefined( level.upgrade_perk_dvar[var_0] ) )
-            _func_0D3( level.upgrade_perk_dvar[var_0], level.upgrade_perk_dvar_newval[var_0] );
+            setsaveddvar( level.upgrade_perk_dvar[var_0], level.upgrade_perk_dvar_newval[var_0] );
 
         if ( isdefined( level.upgrade_perk_code_2[var_0] ) )
         {
-            self _meth_82A6( level.upgrade_perk_code_2[var_0], 1, 0 );
+            self setperk( level.upgrade_perk_code_2[var_0], 1, 0 );
 
             if ( isdefined( level.upgrade_perk_dvar_2[var_0] ) )
-                _func_0D3( level.upgrade_perk_dvar_2[var_0], level.upgrade_perk_dvar_newval_2[var_0] );
+                setsaveddvar( level.upgrade_perk_dvar_2[var_0], level.upgrade_perk_dvar_newval_2[var_0] );
         }
     }
     else
     {
         upgrade_perk_script_code( level.upgrade_perk_code[var_0], 0 );
-        self _meth_82A9( level.upgrade_perk_code[var_0], 1 );
+        self unsetperk( level.upgrade_perk_code[var_0], 1 );
 
         if ( isdefined( level.upgrade_perk_dvar[var_0] ) )
-            _func_0D3( level.upgrade_perk_dvar[var_0], level.upgrade_perk_dvar_origval[var_0] );
+            setsaveddvar( level.upgrade_perk_dvar[var_0], level.upgrade_perk_dvar_origval[var_0] );
 
         if ( isdefined( level.upgrade_perk_code_2[var_0] ) )
         {
-            self _meth_82A9( level.upgrade_perk_code_2[var_0], 1 );
+            self unsetperk( level.upgrade_perk_code_2[var_0], 1 );
 
             if ( isdefined( level.upgrade_perk_dvar_2[var_0] ) )
-                _func_0D3( level.upgrade_perk_dvar_2[var_0], level.upgrade_perk_dvar_origval_2[var_0] );
+                setsaveddvar( level.upgrade_perk_dvar_2[var_0], level.upgrade_perk_dvar_origval_2[var_0] );
         }
     }
 }

@@ -58,12 +58,12 @@ onplayerconnect()
         var_0 thread monitorminetriggering();
         var_0 thread monitorboostjumpdistance();
         var_0 thread monitorplayermatchchallenges();
-        var_0 _meth_82DD( "hold_breath", "+breath_sprint" );
-        var_0 _meth_82DD( "hold_breath", "+melee_breath" );
-        var_0 _meth_82DD( "release_breath", "-breath_sprint" );
-        var_0 _meth_82DD( "release_breath", "-melee_breath" );
+        var_0 notifyonplayercommand( "hold_breath", "+breath_sprint" );
+        var_0 notifyonplayercommand( "hold_breath", "+melee_breath" );
+        var_0 notifyonplayercommand( "release_breath", "-breath_sprint" );
+        var_0 notifyonplayercommand( "release_breath", "-melee_breath" );
         var_0 thread monitorholdbreath();
-        var_0 _meth_82DD( "jumped", "+goStand" );
+        var_0 notifyonplayercommand( "jumped", "+goStand" );
         var_0 thread monitormantle();
     }
 }
@@ -97,7 +97,7 @@ monitorscavengerpickup()
     {
         self waittill( "scavenger_pickup" );
 
-        if ( self _meth_8221( "specialty_scavenger" ) && maps\mp\_utility::_hasperk( "specialty_scavenger" ) && !maps\mp\_utility::isjuggernaut() )
+        if ( self isitemunlocked( "specialty_scavenger" ) && maps\mp\_utility::_hasperk( "specialty_scavenger" ) && !maps\mp\_utility::isjuggernaut() )
         {
             processchallenge( "ch_scavenger_pro" );
             self.hasscavengedammothislife = 1;
@@ -115,7 +115,7 @@ monitorstreakreward()
     {
         self waittill( "received_earned_killstreak" );
 
-        if ( self _meth_8221( "specialty_hardline" ) && maps\mp\_utility::_hasperk( "specialty_hardline" ) )
+        if ( self isitemunlocked( "specialty_hardline" ) && maps\mp\_utility::_hasperk( "specialty_hardline" ) )
             processchallenge( "ch_hardline_pro" );
 
         wait 0.05;
@@ -133,7 +133,7 @@ monitorblastshieldsurvival()
         if ( isdefined( var_0 ) && isplayer( var_0 ) && self == var_0 )
             continue;
 
-        if ( self _meth_8221( "_specialty_blastshield" ) && maps\mp\_utility::_hasperk( "_specialty_blastshield" ) )
+        if ( self isitemunlocked( "_specialty_blastshield" ) && maps\mp\_utility::_hasperk( "_specialty_blastshield" ) )
             processchallenge( "ch_blastshield_pro" );
 
         waitframe();
@@ -467,7 +467,7 @@ processchallengedaily( var_0, var_1, var_2 )
     if ( getdvarint( "dailychallenge_killswitch", 0 ) == 0 && getdvarint( "dailychallenge_killswitch2", 0 ) == 0 )
         return;
 
-    var_3 = self _meth_8222( "dailyChallengeId", 0 );
+    var_3 = self getplayerdata( "dailyChallengeId", 0 );
     var_4 = getdvarint( "scr_current_playlist", 0 );
     var_5 = getdvarint( "scr_game_division", 0 );
     var_6 = 0;
@@ -1134,7 +1134,7 @@ ch_kills( var_0 )
         if ( var_54 && var_1 maps\mp\_utility::_hasperk( "specialty_class_peripherals" ) )
             var_1 processchallenge( "ch_perk_peripheral" );
 
-        if ( var_54 && var_1 maps\mp\_utility::_hasperk( "specialty_class_dexterity" ) && ( var_1 _meth_83D8() || var_1 _meth_8520() ) )
+        if ( var_54 && var_1 maps\mp\_utility::_hasperk( "specialty_class_dexterity" ) && ( var_1 issprinting() || var_1 ispowersliding() ) )
             var_1 processchallenge( "ch_perk_gungho" );
 
         if ( var_54 && var_1 maps\mp\_utility::_hasperk( "specialty_exo_blastsuppressor" ) )
@@ -2394,13 +2394,13 @@ playerdamaged( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6.smeansofdeath = var_3;
     var_6.sweapon = var_4;
     var_6.shitloc = var_5;
-    var_6.victimonground = var_6.victim _meth_8341();
+    var_6.victimonground = var_6.victim isonground();
 
     if ( isplayer( var_1 ) )
     {
         var_6.attackerinlaststand = isdefined( var_6.attacker.laststand );
-        var_6.attackeronground = var_6.attacker _meth_8341();
-        var_6.attackerstance = var_6.attacker _meth_817C();
+        var_6.attackeronground = var_6.attacker isonground();
+        var_6.attackerstance = var_6.attacker getstance();
     }
     else
     {
@@ -2440,13 +2440,13 @@ playerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     var_8.shitloc = var_6;
     var_8.time = gettime();
     var_8.modifiers = var_7;
-    var_8.victimonground = var_8.victim _meth_8341();
+    var_8.victimonground = var_8.victim isonground();
 
     if ( isplayer( var_1 ) )
     {
         var_8.attackerinlaststand = isdefined( var_8.attacker.laststand );
-        var_8.attackeronground = var_8.attacker _meth_8341();
-        var_8.attackerstance = var_8.attacker _meth_817C();
+        var_8.attackeronground = var_8.attacker isonground();
+        var_8.attackerstance = var_8.attacker getstance();
     }
     else
     {
@@ -2460,7 +2460,7 @@ playerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( isdefined( var_8.einflictor ) && isdefined( var_8.einflictor.firedads ) )
         var_9 = var_8.einflictor.firedads;
     else if ( isdefined( var_1 ) && isplayer( var_1 ) )
-        var_9 = var_1 _meth_8340();
+        var_9 = var_1 playerads();
 
     var_8.was_ads = 0;
 
@@ -2599,7 +2599,7 @@ monitorsprintdistance()
         thread monitorsprinttime();
         monitorsinglesprintdistance();
 
-        if ( self _meth_8221( "specialty_longersprint" ) && maps\mp\_utility::_hasperk( "specialty_longersprint" ) )
+        if ( self isitemunlocked( "specialty_longersprint" ) && maps\mp\_utility::_hasperk( "specialty_longersprint" ) )
             processchallenge( "ch_longersprint_pro", int( self.sprintdistthissprint / 12 ) );
     }
 }
@@ -2644,11 +2644,11 @@ monitorfalldistance()
             continue;
         }
 
-        if ( !self _meth_8341() )
+        if ( !self isonground() )
         {
             var_0 = self.origin[2];
 
-            while ( !self _meth_8341() && isalive( self ) )
+            while ( !self isonground() && isalive( self ) )
             {
                 if ( self.origin[2] > var_0 )
                     var_0 = self.origin[2];
@@ -2687,12 +2687,12 @@ monitorboostjumpdistance()
 
         self waittill( "exo_boost" );
 
-        if ( !self _meth_8341() )
+        if ( !self isonground() )
         {
             var_0 = self.origin[2];
             var_1 = self.origin[2];
 
-            while ( !self _meth_8341() && isalive( self ) )
+            while ( !self isonground() && isalive( self ) )
             {
                 if ( self.origin[2] > var_0 )
                     var_0 = self.origin[2];
@@ -2850,7 +2850,7 @@ monitormisccallback( var_0 )
         case "destroyed_explosive":
             processchallenge( "ch_backdraft" );
 
-            if ( self _meth_8221( "specialty_detectexplosive" ) && maps\mp\_utility::_hasperk( "specialty_detectexplosive" ) )
+            if ( self isitemunlocked( "specialty_detectexplosive" ) && maps\mp\_utility::_hasperk( "specialty_detectexplosive" ) )
                 processchallenge( "ch_detectexplosives_pro" );
 
             break;
@@ -2972,8 +2972,8 @@ processchallenge( var_0, var_1, var_2 )
         while ( var_7 )
         {
             thread giverankxpafterwait( var_0, var_4 );
-            var_10 = _func_2C7( var_0, var_4 );
-            self _meth_8443( var_10 );
+            var_10 = getchallengeid( var_0, var_4 );
+            self challengenotification( var_10 );
             var_11 = common_scripts\utility::tostring( var_10 );
             var_12 = int( getsubstr( var_11, 0, var_11.size - 2 ) );
 
@@ -2996,7 +2996,7 @@ processchallenge( var_0, var_1, var_2 )
 
             var_4++;
             var_7--;
-            var_17 = _func_2D3( var_10 );
+            var_17 = getchallengerewarditem( var_10 );
 
             if ( var_17 != 0 )
                 maps\mp\_matchdata::logcompletedchallenge( var_10 );
@@ -3098,7 +3098,7 @@ updatechallenges()
     if ( !mayprocesschallenges() )
         return;
 
-    if ( !self _meth_8221( "challenges" ) )
+    if ( !self isitemunlocked( "challenges" ) )
         return;
 
     var_0 = 0;
@@ -3390,7 +3390,7 @@ monitorkilledkillstreak()
     {
         self waittill( "destroyed_killstreak", var_0 );
 
-        if ( self _meth_8221( "specialty_blindeye" ) && maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
+        if ( self isitemunlocked( "specialty_blindeye" ) && maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
             processchallenge( "ch_blindeye_pro" );
 
         if ( isdefined( var_0 ) && var_0 == "stinger_mp" )
@@ -3445,19 +3445,19 @@ genericchallenge( var_0, var_1 )
 
 playerhasammo()
 {
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
-        if ( self _meth_82F8( var_2 ) )
+        if ( self getweaponammoclip( var_2 ) )
             return 1;
 
-        var_3 = _func_1E2( var_2 );
+        var_3 = weaponaltweaponname( var_2 );
 
         if ( !isdefined( var_3 ) || var_3 == "none" )
             continue;
 
-        if ( self _meth_82F8( var_3 ) )
+        if ( self getweaponammoclip( var_3 ) )
             return 1;
     }
 
@@ -3471,7 +3471,7 @@ monitoradstime()
 
     for (;;)
     {
-        if ( self _meth_8340() == 1 )
+        if ( self playerads() == 1 )
             self.adstime += 0.05;
         else
             self.adstime = 0.0;
@@ -3489,7 +3489,7 @@ monitorpronetime()
 
     for (;;)
     {
-        var_1 = self _meth_817C();
+        var_1 = self getstance();
 
         if ( var_1 == "prone" && var_0 == 0 )
         {
@@ -3514,7 +3514,7 @@ monitorpowerslidetime()
 
     for (;;)
     {
-        while ( !self _meth_8520() )
+        while ( !self ispowersliding() )
             wait 0.05;
 
         self.powerslidetime = gettime();
@@ -3544,9 +3544,9 @@ monitormantle()
     for (;;)
     {
         self waittill( "jumped" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
         common_scripts\utility::waittill_notify_or_timeout( "weapon_change", 1 );
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
 
         if ( var_1 == "none" )
             self.mantling = 1;
@@ -3555,11 +3555,11 @@ monitormantle()
 
         if ( self.mantling )
         {
-            if ( self _meth_8221( "specialty_fastmantle" ) && maps\mp\_utility::_hasperk( "specialty_fastmantle" ) )
+            if ( self isitemunlocked( "specialty_fastmantle" ) && maps\mp\_utility::_hasperk( "specialty_fastmantle" ) )
                 processchallenge( "ch_fastmantle" );
 
             common_scripts\utility::waittill_notify_or_timeout( "weapon_change", 1 );
-            var_1 = self _meth_8311();
+            var_1 = self getcurrentweapon();
 
             if ( var_1 == var_0 )
                 self.mantling = 0;
@@ -3570,7 +3570,7 @@ monitormantle()
 monitorweaponswap()
 {
     self endon( "disconnect" );
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     for (;;)
     {
@@ -3588,7 +3588,7 @@ monitorweaponswap()
         if ( maps\mp\_utility::isbombsiteweapon( var_1 ) )
             continue;
 
-        var_2 = _func_1DF( var_1 );
+        var_2 = weaponinventorytype( var_1 );
 
         if ( var_2 != "primary" )
             continue;

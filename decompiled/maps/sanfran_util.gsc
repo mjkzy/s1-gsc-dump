@@ -11,14 +11,14 @@ spawn_squad( var_0 )
     if ( isdefined( var_0 ) )
     {
         var_1 = getent( var_0 + "_burke", "targetname" );
-        level.burke _meth_81C5( var_1.origin, var_1.angles );
-        level.burke _meth_81A6( level.burke.origin );
+        level.burke teleport( var_1.origin, var_1.angles );
+        level.burke setgoalpos( level.burke.origin );
         var_2 = getent( var_0 + "_saint", "targetname" );
-        level.saint _meth_81C5( var_2.origin, var_2.angles );
-        level.saint _meth_81A6( level.saint.origin );
+        level.saint teleport( var_2.origin, var_2.angles );
+        level.saint setgoalpos( level.saint.origin );
     }
 
-    level.player _meth_8177( "sentinel" );
+    level.player setthreatbiasgroup( "sentinel" );
 }
 
 setup_hero( var_0 )
@@ -31,7 +31,7 @@ setup_hero( var_0 )
 
     level.heroes[level.heroes.size] = self;
     maps\_utility::make_hero();
-    self _meth_8177( "sentinel" );
+    self setthreatbiasgroup( "sentinel" );
 }
 
 set_player_start( var_0 )
@@ -110,7 +110,7 @@ solid_ents_by_targetname( var_0 )
     var_1 = getentarray( var_0, "targetname" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_82BE();
+        var_3 solid();
 }
 
 notsolid_ents_by_targetname( var_0 )
@@ -118,7 +118,7 @@ notsolid_ents_by_targetname( var_0 )
     var_1 = getentarray( var_0, "targetname" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_82BF();
+        var_3 notsolid();
 }
 
 connectpaths_ents_by_targetname( var_0 )
@@ -128,7 +128,7 @@ connectpaths_ents_by_targetname( var_0 )
     foreach ( var_3 in var_1 )
     {
         if ( var_3.classname == "script_brushmodel" )
-            var_3 _meth_8058();
+            var_3 connectpaths();
     }
 }
 
@@ -139,7 +139,7 @@ disconnectpaths_ents_by_targetname( var_0 )
     foreach ( var_3 in var_1 )
     {
         if ( var_3.classname == "script_brushmodel" )
-            var_3 _meth_8057();
+            var_3 disconnectpaths();
     }
 }
 
@@ -207,7 +207,7 @@ put_bridge_in_proper_place()
         var_2.origin += ( 0, -9216, 0 );
 
         if ( var_2.classname == "script_brushmodel" )
-            var_2 _meth_8057();
+            var_2 disconnectpaths();
     }
 }
 
@@ -341,7 +341,7 @@ toggle_boat_visibility_group( var_0 )
 
             foreach ( var_6 in var_2 )
             {
-                if ( level.player _meth_80A9( var_6 ) )
+                if ( level.player istouching( var_6 ) )
                 {
                     var_4 = 1;
                     break;
@@ -363,7 +363,7 @@ toggle_boat_visibility_group( var_0 )
 
             foreach ( var_6 in var_2 )
             {
-                if ( level.player _meth_80A9( var_6 ) )
+                if ( level.player istouching( var_6 ) )
                 {
                     var_4 = 1;
                     break;
@@ -418,7 +418,7 @@ drone_lookat_ent( var_0, var_1, var_2, var_3 )
         self.angles = var_5;
     else
     {
-        self _meth_82B5( var_5 + var_3, var_1, var_1 / 5, var_1 / 5 );
+        self rotateto( var_5 + var_3, var_1, var_1 / 5, var_1 / 5 );
         self waittill( "rotatedone" );
         self notify( "drone_lookat_done" );
     }
@@ -428,7 +428,7 @@ drone_lookat_ent( var_0, var_1, var_2, var_3 )
         for (;;)
         {
             var_5 = vectortoangles( var_4.origin - self.origin ) + var_3;
-            self _meth_82B5( var_5, 0.05, 0, 0 );
+            self rotateto( var_5, 0.05, 0, 0 );
             wait 0.05;
         }
     }
@@ -437,7 +437,7 @@ drone_lookat_ent( var_0, var_1, var_2, var_3 )
 drone_moveto_ent( var_0, var_1 )
 {
     var_2 = getent( var_0, "targetname" );
-    self _meth_82AE( var_2.origin, var_1, var_1 / 5, var_1 / 5 );
+    self moveto( var_2.origin, var_1, var_1 / 5, var_1 / 5 );
     self waittill( "movedone" );
     self notify( "drone_moveto_done" );
 }
@@ -462,7 +462,7 @@ setup_move_player_pitbull( var_0 )
     level.player_pitbull = maps\_vehicle::spawn_vehicle_from_targetname( "player_pitbull" );
     thread maps\_vehicle_traffic::add_script_car( level.player_pitbull );
     var_1 = getent( var_0, "targetname" );
-    level.player_pitbull _meth_827C( var_1.origin, var_1.angles );
+    level.player_pitbull vehicle_teleport( var_1.origin, var_1.angles );
 }
 
 setup_move_friendly_pitbull( var_0 )
@@ -482,10 +482,10 @@ setup_move_chase_van( var_0 )
 setup_start_vehicle_on_path( var_0 )
 {
     var_1 = getent( var_0, "targetname" );
-    self _meth_827C( var_1.origin, var_1.angles );
+    self vehicle_teleport( var_1.origin, var_1.angles );
     var_2 = getvehiclenode( var_1.target, "targetname" );
     thread maps\_vehicle_code::_vehicle_paths( var_2 );
-    self _meth_827F( var_2 );
+    self startpath( var_2 );
 }
 
 enable_pitbull_shooting()
@@ -527,7 +527,7 @@ friendly_pitbull_shadow_player()
 wait_for_crash_at_end()
 {
     self waittill( "reached_end_node" );
-    self _meth_8051( 1000000000, self.origin );
+    self dodamage( 1000000000, self.origin );
     playfxontag( level._effect["tanker_explosion"], self, "tag_origin" );
     soundscripts\_snd::snd_message( "car_chase_crash" );
     wait 4.0;
@@ -584,7 +584,7 @@ get_vehicles_to_point_at_same_time( var_0, var_1, var_2, var_3, var_4 )
     {
         var_5 = var_0 get_dist_to_end_in_miles( var_1 );
         var_6 = var_2 get_dist_to_end_in_miles( var_3 );
-        var_7 = var_0 _meth_8286();
+        var_7 = var_0 vehicle_getspeed();
 
         if ( var_7 > 0 )
         {
@@ -595,7 +595,7 @@ get_vehicles_to_point_at_same_time( var_0, var_1, var_2, var_3, var_4 )
             else
                 var_9 = 50;
 
-            var_2 _meth_8283( var_9, 100, 5 );
+            var_2 vehicle_setspeed( var_9, 100, 5 );
         }
 
         wait 0.05;
@@ -617,7 +617,7 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
     for (;;)
     {
-        var_10 = var_0 _meth_8286();
+        var_10 = var_0 vehicle_getspeed();
         var_11 = vectornormalize( anglestoforward( var_0.angles ) );
         var_12 = self.origin - var_0.origin;
         var_13 = vectordot( var_11, var_12 ) * var_11;
@@ -657,10 +657,10 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
         {
             if ( vectordot( level.player_pitbull.origin - self.origin, anglestoforward( self.angles ) ) > 0 )
             {
-                [var_18, var_19] = maps\_vehicle_traffic::time_and_distance_of_closest_approach( self.origin, self _meth_8287(), level.player_pitbull.origin, level.player_pitbull _meth_8287(), 0.1, 234, 0 );
+                [var_18, var_19] = maps\_vehicle_traffic::time_and_distance_of_closest_approach( self.origin, self vehicle_getvelocity(), level.player_pitbull.origin, level.player_pitbull vehicle_getvelocity(), 0.1, 234, 0 );
 
                 if ( var_18 < 2 && var_19 < 234 )
-                    var_10 = level.player_pitbull _meth_8286() * 0.6;
+                    var_10 = level.player_pitbull vehicle_getspeed() * 0.6;
             }
         }
 
@@ -671,7 +671,7 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
         else
             var_10 = clamp( var_10, 20, 200 );
 
-        self _meth_8283( var_10, 100, 100 );
+        self vehicle_setspeed( var_10, 100, 100 );
         wait 0.05;
     }
 }
@@ -684,7 +684,7 @@ chase_cleanup_after_player_crash()
     self endon( "death" );
     common_scripts\utility::flag_wait( "flag_player_crashed" );
     wait 0.5;
-    self _meth_8291( 100 );
+    self resumespeed( 100 );
 }
 
 vehicle_oscillate_location( var_0, var_1 )
@@ -843,9 +843,9 @@ get_closest_ai_to_origin( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_9 = [];
 
     if ( isdefined( var_1 ) )
-        var_9 = _func_0D6( var_1 );
+        var_9 = getaiarray( var_1 );
     else
-        var_9 = _func_0D6();
+        var_9 = getaiarray();
 
     var_10 = undefined;
     var_11 = 99999;
@@ -902,7 +902,7 @@ kill_no_react()
     self.allowdeath = 1;
     self.a.nodeath = 1;
     thread maps\_utility::set_battlechatter( 0 );
-    self _meth_8052();
+    self kill();
 }
 
 anim_reach_together_with_overrides( var_0, var_1, var_2 )
@@ -970,8 +970,8 @@ open_car_door( var_0, var_1 )
         return;
 
     self.animname = var_0;
-    self _meth_8115( #animtree );
-    self _meth_814B( maps\_utility::getanim( var_1 ) );
+    self useanimtree( #animtree );
+    self setanim( maps\_utility::getanim( var_1 ) );
 }
 
 container_death_anims()
@@ -1096,10 +1096,10 @@ intro_drive_hint()
         if ( level.player_pitbull.veh_speed > 5 )
             break;
 
-        if ( level.player _meth_824C( "BUTTON_B" ) )
+        if ( level.player buttonpressed( "BUTTON_B" ) )
             break;
 
-        level.player_pitbull _meth_8230( 35.0 );
+        level.player_pitbull vehphys_setspeed( 35.0 );
         wait 0.05;
     }
 }
@@ -1155,7 +1155,7 @@ player_has_jumped()
     if ( common_scripts\utility::flag( "missionfailed" ) )
         return 1;
 
-    if ( level.player _meth_83DE() )
+    if ( level.player jumpbuttonpressed() )
         return 1;
 
     return 0;
@@ -1250,7 +1250,7 @@ civilian_drone_setup()
     thread civilian_drone_runner_collision();
     soundscripts\_snd::snd_message( "panic_walla_oneshots", self );
     self waittill( "goal" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "drone_stop" );
     self notify( "stop_loop" );
     self notify( "single anim", "end" );
@@ -1356,8 +1356,8 @@ get_civilian_car( var_0 )
             if ( isdefined( var_4.script_noteworthy ) && var_4.script_noteworthy == "door_open_col" )
             {
                 var_2["door"] = var_4;
-                var_2["door"] _meth_82BF();
-                var_2["door"] _meth_8058();
+                var_2["door"] notsolid();
+                var_2["door"] connectpaths();
             }
             else
                 var_2["col"] = var_4;
@@ -1369,17 +1369,17 @@ get_civilian_car( var_0 )
     if ( issubstr( var_2["model"].model, "sedan" ) )
     {
         var_2["model"].animname = "sedan";
-        var_2["model"] _meth_8115( #animtree );
+        var_2["model"] useanimtree( #animtree );
     }
     else if ( issubstr( var_2["model"].model, "compact" ) || issubstr( var_2["model"].model, "economy" ) )
     {
         var_2["model"].animname = "compact";
-        var_2["model"] _meth_8115( #animtree );
+        var_2["model"] useanimtree( #animtree );
     }
     else if ( issubstr( var_2["model"].model, "truck" ) )
     {
         var_2["model"].animname = "truck";
-        var_2["model"] _meth_8115( #animtree );
+        var_2["model"] useanimtree( #animtree );
     }
 
     return var_2;
@@ -1449,14 +1449,14 @@ civilian_in_car_get_out( var_0, var_1, var_2, var_3, var_4 )
     {
         var_6 = 0;
 
-        if ( level.player _meth_80A9( var_0["door"] ) )
+        if ( level.player istouching( var_0["door"] ) )
             var_6 = 1;
 
-        var_7 = _func_0D6();
+        var_7 = getaiarray();
 
         foreach ( var_1 in var_7 )
         {
-            if ( isalive( var_1 ) && var_1 _meth_80A9( var_0["door"] ) )
+            if ( isalive( var_1 ) && var_1 istouching( var_0["door"] ) )
                 var_6 = 1;
         }
 
@@ -1466,8 +1466,8 @@ civilian_in_car_get_out( var_0, var_1, var_2, var_3, var_4 )
         wait 1;
     }
 
-    var_0["door"] _meth_8057();
-    var_0["door"] _meth_82BE();
+    var_0["door"] disconnectpaths();
+    var_0["door"] solid();
 }
 
 cleanup_on_goal()
@@ -1479,7 +1479,7 @@ cleanup_on_goal()
 cower_cleanup_civs_on_goal()
 {
     self waittill( "goal" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "drone_stop" );
     self notify( "stop_loop" );
     self notify( "single anim", "end" );
@@ -1563,13 +1563,13 @@ player_can_see_civ( var_0 )
     if ( !common_scripts\utility::within_fov( level.player.origin, level.player.angles, var_0.origin, 0.743 ) )
         return 0;
 
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = undefined;
 
     for ( var_3 = 0; var_3 < 2; var_3++ )
     {
         var_4 = var_0.origin;
-        var_5 = var_0 _meth_80A8();
+        var_5 = var_0 geteye();
         var_6 = ( var_5 + var_4 ) * 0.5;
         var_7 = bullettrace( var_1, var_6, 0, var_2 );
 
@@ -1670,7 +1670,7 @@ civ_damage_check()
         if ( isdefined( self.magic_bullet_shield ) )
             maps\_utility::stop_magic_bullet_shield();
 
-        self _meth_8023();
+        self startragdoll();
     }
 }
 
@@ -2092,10 +2092,10 @@ heli_shoot_enemies()
     foreach ( var_2 in var_0 )
     {
         var_3 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3 _meth_80B1( "tag_laser" );
+        var_3 setmodel( "tag_laser" );
         var_3.origin = var_2 gettagorigin( "tag_flash" );
         var_3.angles = var_2 gettagangles( "tag_flash" );
-        var_3 _meth_80B2();
+        var_3 laseron();
         var_2.fake_laser = var_3;
         var_2 thread delete_laser_on_death();
         var_2 thread force_fake_laser_origin_link();
@@ -2127,7 +2127,7 @@ heli_shoot_enemy_trace_then_fire( var_0 )
     for (;;)
     {
         wait 0.05;
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
 
         if ( var_1.size <= 0 )
             continue;
@@ -2160,7 +2160,7 @@ heli_shoot_enemy_trace_then_fire( var_0 )
                 var_5 = var_3.origin + ( 0, 0, 32 ) - var_0.fake_laser.origin;
 
             var_6 = vectortoangles( var_5 );
-            var_0.fake_laser _meth_82B5( var_6, 0.25 );
+            var_0.fake_laser rotateto( var_6, 0.25 );
             wait 0.25;
         }
 
@@ -2275,7 +2275,7 @@ fadeoverlay( var_0, var_1, var_2 )
 {
     self fadeovertime( var_0 );
     self.alpha = var_1;
-    _func_072( var_2, var_0 );
+    setblur( var_2, var_0 );
     wait(var_0);
 }
 
@@ -2321,13 +2321,13 @@ fall_fail()
 
         if ( var_0 == level.player )
         {
-            _func_072( 5, 0.5 );
+            setblur( 5, 0.5 );
             thread player_falling_kill_logic( 1.5 );
-            level.player _meth_831D();
+            level.player disableweapons();
             var_1 = spawn( "script_origin", level.player.origin );
             var_1.angles = ( -90, 360, 0 );
-            var_1 _meth_82B2( level.player getvelocity(), 15 );
-            level.player _meth_8080( var_1, undefined, 1.2 );
+            var_1 movegravity( level.player getvelocity(), 15 );
+            level.player playerlinktoblend( var_1, undefined, 1.2 );
             setdvar( "ui_deadquote", &"SANFRAN_FAIL_SKIP_OBJECTIVE" );
             thread introscreen_generic_fade_out( "black", 999, 0, 1 );
             maps\_utility::missionfailedwrapper();
@@ -2437,11 +2437,11 @@ player_falling_kill_logic( var_0 )
     common_scripts\utility::flag_clear( "can_save" );
     var_4 = gettime() + var_0 * 1000;
 
-    while ( !level.player _meth_8341() && gettime() < var_4 )
+    while ( !level.player isonground() && gettime() < var_4 )
         wait 0.05;
 
-    if ( level.player _meth_8341() )
-        level.player _meth_8052();
+    if ( level.player isonground() )
+        level.player kill();
     else
         maps\_utility::missionfailedwrapper();
 }
@@ -2457,7 +2457,7 @@ introscreen_generic_fade_out( var_0, var_1, var_2, var_3 )
     var_4.horzalign = "fullscreen";
     var_4.vertalign = "fullscreen";
     var_4.foreground = 0;
-    var_4 _meth_80CC( var_0, 640, 480 );
+    var_4 setshader( var_0, 640, 480 );
 
     if ( isdefined( var_3 ) && var_3 > 0 )
     {

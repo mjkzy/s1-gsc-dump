@@ -65,11 +65,11 @@ dynamiceventstartfunc()
     var_2 = getent( "physicsJolt", "targetname" );
     physicsjolt( var_2.origin, 512, 256, ( 0, -0.4, 0.1 ) );
     var_3 = var_0 common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0 );
+    var_3 linkto( var_0 );
     var_3 show();
     playfxontag( common_scripts\utility::getfx( "lib_hatchet_doors_open" ), var_3, "tag_origin" );
     var_4 = var_1 common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( var_1 );
+    var_4 linkto( var_1 );
     var_4 show();
     playfxontag( common_scripts\utility::getfx( "lib_hatchet_doors_open_2" ), var_4, "tag_origin" );
     thread maps\mp\mp_liberty_fx::dynamic_door_dust_effect();
@@ -82,10 +82,10 @@ dynamiceventstartfunc()
     }
 
     level thread common_scripts\_exploder::activate_clientside_exploder( 2 );
-    var_0 _meth_82B5( ( 0, 0, -80 ), 15, 4, 4 );
-    var_1 _meth_82B5( ( 0, 0, 80 ), 15, 4, 4 );
-    var_9 = var_0 _meth_8436();
-    var_9 = common_scripts\utility::array_combine( var_9, var_1 _meth_8436() );
+    var_0 rotateto( ( 0, 0, -80 ), 15, 4, 4 );
+    var_1 rotateto( ( 0, 0, 80 ), 15, 4, 4 );
+    var_9 = var_0 getlinkedchildren();
+    var_9 = common_scripts\utility::array_combine( var_9, var_1 getlinkedchildren() );
 
     for ( var_10 = 0; var_10 < var_9.size; var_10++ )
     {
@@ -111,8 +111,8 @@ dynamiceventendfunc()
     level notify( "doors opening" );
     var_0 = getent( "ape_door", "targetname" );
     var_1 = getent( "ape_door2", "targetname" );
-    var_0 _meth_82B5( ( 0, 0, -80 ), 1 );
-    var_1 _meth_82B5( ( 0, 0, 80 ), 1 );
+    var_0 rotateto( ( 0, 0, -80 ), 1 );
+    var_1 rotateto( ( 0, 0, 80 ), 1 );
     thread disconnectnodes();
 }
 
@@ -121,12 +121,12 @@ dynamictraversals()
     var_0 = getnodearray( "dynamic_traversal_add", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8059();
+        var_2 disconnectnode();
 
     level waittill( "doors opening" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_805A();
+        var_2 connectnode();
 }
 
 disconnectnodes()
@@ -134,12 +134,12 @@ disconnectnodes()
     var_0 = getnodearray( "dynamic_node_delete", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8059();
+        var_2 disconnectnode();
 
     var_4 = getnodearray( "dynamic_traversal_delete", "script_noteworthy" );
 
     foreach ( var_6 in var_4 )
-        var_6 _meth_8059();
+        var_6 disconnectnode();
 }
 
 monkeys()
@@ -171,7 +171,7 @@ startdefaultanim()
     else if ( var_1 == "b2" )
         var_2 = "2";
 
-    self _meth_8279( "liberty_monkey_calm_idle_" + var_1 + var_2 );
+    self scriptmodelplayanim( "liberty_monkey_calm_idle_" + var_1 + var_2 );
     self.freakoutstate = "calm";
 }
 
@@ -195,7 +195,7 @@ monkeysmonitorshooting()
     {
         foreach ( var_1 in level.monkeytriggerplayers )
         {
-            if ( isplayer( var_1 ) && var_1 _meth_812D() )
+            if ( isplayer( var_1 ) && var_1 isfiring() )
             {
                 foreach ( var_3 in level.monkeys )
                 {
@@ -213,7 +213,7 @@ monkeysmonitorshooting()
 
 monitormonkeytriggerexit( var_0 )
 {
-    while ( isdefined( self ) && self _meth_80A9( var_0 ) )
+    while ( isdefined( self ) && self istouching( var_0 ) )
         wait 0.05;
 
     if ( common_scripts\utility::array_contains( level.monkeytriggerplayers, self ) )
@@ -238,19 +238,19 @@ monkeyfreakout()
     else if ( var_1 == "b2" )
         var_2 = "2";
 
-    self _meth_827A();
-    self _meth_8279( "liberty_monkey_calm_2_freak_" + var_1 + var_2, "freak_out" );
+    self scriptmodelclearanim();
+    self scriptmodelplayanim( "liberty_monkey_calm_2_freak_" + var_1 + var_2, "freak_out" );
     self waittillmatch( "freak_out", "end" );
-    self _meth_827A();
-    self _meth_8279( "liberty_monkey_freak_idle_" + var_1 + var_2, "freak_idle" );
+    self scriptmodelclearanim();
+    self scriptmodelplayanim( "liberty_monkey_freak_idle_" + var_1 + var_2, "freak_idle" );
     self.freakoutstate = "freaking_out";
     self waittillmatch( "freak_idle", "end" );
-    self _meth_827A();
+    self scriptmodelclearanim();
     self endon( "cancel_calmdown" );
     self.freakoutstate = "calm";
-    self _meth_8279( "liberty_monkey_freak_2_calm_" + var_1 + var_2, "freak_2_calm" );
+    self scriptmodelplayanim( "liberty_monkey_freak_2_calm_" + var_1 + var_2, "freak_2_calm" );
     self waittillmatch( "freak_2_calm", "end" );
-    self _meth_827A();
+    self scriptmodelclearanim();
     restartdefaultanim( var_1 );
 }
 
@@ -265,7 +265,7 @@ aud_monkey_freakout()
 
 restartdefaultanim( var_0 )
 {
-    self _meth_8279( "liberty_monkey_calm_idle_" + var_0 );
+    self scriptmodelplayanim( "liberty_monkey_calm_idle_" + var_0 );
     self.freakoutstate = "calm";
 }
 
@@ -293,7 +293,7 @@ startdefaultanim2()
     else
         var_2 = "";
 
-    self _meth_8279( "liberty_monkey_calm_idle_" + var_1 + var_2 );
+    self scriptmodelplayanim( "liberty_monkey_calm_idle_" + var_1 + var_2 );
     self.freakoutstate = "calm";
 }
 
@@ -317,7 +317,7 @@ monkeysmonitorshooting2()
     {
         foreach ( var_1 in level.monkeytriggerplayers2 )
         {
-            if ( isplayer( var_1 ) && var_1 _meth_812D() )
+            if ( isplayer( var_1 ) && var_1 isfiring() )
             {
                 foreach ( var_3 in level.monkeys2 )
                 {
@@ -335,7 +335,7 @@ monkeysmonitorshooting2()
 
 monitormonkeytriggerexit2( var_0 )
 {
-    while ( isdefined( self ) && self _meth_80A9( var_0 ) )
+    while ( isdefined( self ) && self istouching( var_0 ) )
         wait 0.05;
 
     if ( common_scripts\utility::array_contains( level.monkeytriggerplayers2, self ) )
@@ -350,25 +350,25 @@ monkeyfreakout2()
     wait(var_0);
     var_1 = common_scripts\utility::random( level.monkeyanimvariants );
     var_2 = common_scripts\utility::random( level.monkeyanimsubvariants );
-    self _meth_827A();
-    self _meth_8279( "liberty_monkey_calm_2_freak_" + var_1 + var_2, "freak_out" );
+    self scriptmodelclearanim();
+    self scriptmodelplayanim( "liberty_monkey_calm_2_freak_" + var_1 + var_2, "freak_out" );
     self waittillmatch( "freak_out", "end" );
-    self _meth_827A();
-    self _meth_8279( "liberty_monkey_freak_idle_" + var_1 + var_2, "freak_idle" );
+    self scriptmodelclearanim();
+    self scriptmodelplayanim( "liberty_monkey_freak_idle_" + var_1 + var_2, "freak_idle" );
     self.freakoutstate = "freaking_out";
     self waittillmatch( "freak_idle", "end" );
-    self _meth_827A();
+    self scriptmodelclearanim();
     self endon( "cancel_calmdown" );
     self.freakoutstate = "calm";
-    self _meth_8279( "liberty_monkey_freak_2_calm_" + var_1 + var_2, "freak_2_calm" );
+    self scriptmodelplayanim( "liberty_monkey_freak_2_calm_" + var_1 + var_2, "freak_2_calm" );
     self waittillmatch( "freak_2_calm", "end" );
-    self _meth_827A();
+    self scriptmodelclearanim();
     restartdefaultanim2( var_1 );
 }
 
 restartdefaultanim2( var_0 )
 {
-    self _meth_8279( "liberty_monkey_calm_idle_" + var_0 );
+    self scriptmodelplayanim( "liberty_monkey_calm_idle_" + var_0 );
     self.freakoutstate = "calm";
 }
 

@@ -18,8 +18,8 @@ opticsthermal_think()
     for (;;)
     {
         var_1 = !self.has_opticsthermal;
-        var_1 |= ( self.has_opticsthermal && self _meth_8340() < var_0 );
-        var_1 |= self _meth_8342();
+        var_1 |= ( self.has_opticsthermal && self playerads() < var_0 );
+        var_1 |= self isusingturret();
         var_1 |= self.orbitalthermalmode;
 
         if ( var_1 )
@@ -36,8 +36,8 @@ opticsthermal_blur( var_0, var_1 )
     if ( var_0.opticsthermalenabled )
         return;
 
-    var_0 _meth_84A9( 3 );
-    var_0 _meth_84AB( 70, 0, 40, 80 );
+    var_0 enablephysicaldepthoffieldscripting( 3 );
+    var_0 setphysicaldepthoffield( 70, 0, 40, 80 );
     var_0.opticsthermalenabled = 1;
 }
 
@@ -46,6 +46,6 @@ opticsthermal_blur_off( var_0 )
     if ( !var_0.opticsthermalenabled )
         return;
 
-    var_0 _meth_84AA();
+    var_0 disablephysicaldepthoffieldscripting();
     var_0.opticsthermalenabled = 0;
 }

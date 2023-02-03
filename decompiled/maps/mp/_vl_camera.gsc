@@ -86,7 +86,7 @@ setup_camparams()
     var_0.movespeed = 150;
     var_0.angspeed = 800;
     var_0.prelobbyzoom = 0;
-    var_1 = self _meth_844D();
+    var_1 = self getunnormalizedcameramovement();
     var_0.oldrotx = var_1[0];
     var_0.oldroty = var_1[1];
     var_0.zoom = 0.5;
@@ -178,8 +178,8 @@ vlobby_lighting_setup()
         var_0 [[ level.vl_lighting_setup ]]();
     else
     {
-        var_0 _meth_84A9();
-        var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
+        var_0 enablephysicaldepthoffieldscripting();
+        var_0 setphysicaldepthoffield( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
     }
 }
 
@@ -244,7 +244,7 @@ vlobby_dof_based_on_focus( var_0 )
         else if ( var_9 > 128 )
             var_9 = 128;
 
-        var_1 _meth_84AB( var_9, var_3, level.camparams.dof_time, level.camparams.dof_time * 2 );
+        var_1 setphysicaldepthoffield( var_9, var_3, level.camparams.dof_time, level.camparams.dof_time * 2 );
     }
 }
 
@@ -265,11 +265,11 @@ vlobby_handle_mode_change( var_0, var_1, var_2 )
 
         if ( var_1 == "cac" )
         {
-            var_3 _meth_82D4( "mp_vlobby_refraction_cac", 0 );
-            var_3 _meth_83C0( "mp_vl_create_a_class" );
+            var_3 visionsetnakedforplayer( "mp_vlobby_refraction_cac", 0 );
+            var_3 lightsetforplayer( "mp_vl_create_a_class" );
         }
         else if ( var_1 == "cao" )
-            var_3 _meth_84AB( 1.53, 130, level.camparams.dof_time, level.camparams.dof_time );
+            var_3 setphysicaldepthoffield( 1.53, 130, level.camparams.dof_time, level.camparams.dof_time );
         else if ( var_1 == "clanprofile" )
             var_3 setdefaultdof();
         else if ( var_1 == "prelobby" )
@@ -307,14 +307,14 @@ vlobby_handle_mode_change( var_0, var_1, var_2 )
 setdefaultpostfx()
 {
     var_0 = self;
-    var_0 _meth_82D4( "mp_vlobby_room", 0 );
-    var_0 _meth_83C0( "mp_vlobby_room" );
+    var_0 visionsetnakedforplayer( "mp_vlobby_room", 0 );
+    var_0 lightsetforplayer( "mp_vlobby_room" );
 }
 
 setdefaultdof()
 {
     var_0 = self;
-    var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
+    var_0 setphysicaldepthoffield( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
 }
 
 fixlocalfocus()
@@ -337,8 +337,8 @@ vlobby_player()
     self endon( "disconnect" );
     wait 0.05;
     var_0 = self;
-    var_0 _meth_82FB( "ui_vlobby_round_state", 0 );
-    var_0 _meth_82FB( "ui_vlobby_round_timer", 0 );
+    var_0 setclientomnvar( "ui_vlobby_round_state", 0 );
+    var_0 setclientomnvar( "ui_vlobby_round_timer", 0 );
     var_0 grab_players_classes();
     var_1 = var_0.origin;
     var_2 = var_0.angles;
@@ -349,7 +349,7 @@ vlobby_player()
     var_5 = anglestoright( var_0.angles );
     var_6 = var_4;
     var_7 = getgroundposition( var_1, 20, 512, 120 );
-    var_8 = var_0 _meth_8297();
+    var_8 = var_0 getxuid();
     var_9 = var_8 == "";
     var_10 = undefined;
     level.needlocalmemberid = 1;
@@ -394,7 +394,7 @@ vlobby_player()
         maps\mp\_vl_base::vlprintln( "adding xuid " + var_8 + "from vlobby_player" );
         var_20 = maps\mp\_vl_base::add_avatar( var_8 );
         var_0 spawn_an_avatar( var_0.avatar_spawnpoint, var_11, var_0.secondaryweapon, var_12, var_0.loadoutequipment, var_0.loadoutoffhand, var_0.perks, var_0.sessioncostume, var_0.name, var_20, 0 );
-        _func_2D4( level.vlavatars[var_20], var_8 );
+        setentplayerxuidforemblem( level.vlavatars[var_20], var_8 );
         thread setvirtuallobbypresentable();
     }
     else
@@ -402,7 +402,7 @@ vlobby_player()
 
     setdvar( "virtuallobbymembers", level.xuid2ownerid.size );
     var_0.cao_agent = var_0 spawn_an_avatar( var_19, var_11, var_0.secondaryweapon, var_12, var_0.loadoutequipment, var_0.loadoutoffhand, var_0.perks, var_0.sessioncostume, var_0.name, 0, 1 );
-    _func_2D4( var_0.cao_agent, var_8 );
+    setentplayerxuidforemblem( var_0.cao_agent, var_8 );
     hide_avatar( var_0.cao_agent );
     var_0.clan_agents = [];
     var_21 = [ 0, 1, 4 ];
@@ -433,7 +433,7 @@ vlobby_player()
     var_25 = vectornormalize( var_25 );
     var_27 = spawn( "script_model", var_24 );
     var_27.angles = var_26;
-    var_27 _meth_80B1( "tag_player" );
+    var_27 setmodel( "tag_player" );
     var_27.startorigin = var_24;
     var_27.startangles = var_26;
     var_27.savedorigin = ( 0, 0, 0 );
@@ -453,10 +453,10 @@ vlobby_player()
     var_27.movingstate = "starting";
     level.vlcamera = var_27;
     var_0 setorigin( var_27.origin );
-    var_0 _meth_807C( var_27, "tag_player" );
-    var_0 _meth_81E2( var_27, "tag_player" );
+    var_0 playerlinkto( var_27, "tag_player" );
+    var_0 cameralinkto( var_27, "tag_player" );
     level.in_firingrange = 0;
-    var_0 _meth_8131( 0 );
+    var_0 allowfire( 0 );
     var_0 maps\mp\_vl_base::prep_for_controls( var_0.spawned_avatar, var_0.spawned_avatar.spawn_angles );
     var_0 maps\mp\_vl_base::prep_for_controls( var_0.cao_agent, var_0.cao_agent.spawn_angles );
     var_0 maps\mp\_vl_base::prep_for_controls( var_0.clan_agents[0], var_0.clan_agents[0].spawn_angles );
@@ -479,7 +479,7 @@ vlobby_player()
     thread monitor_vl_mode_change();
     var_37 = 0;
     var_38 = 0;
-    var_0 _meth_82FC( "cg_fovscale", "0.6153" );
+    var_0 setclientdvar( "cg_fovscale", "0.6153" );
     var_0 notify( "fade_in" );
 
     for (;;)
@@ -520,7 +520,7 @@ vlobby_player()
                 var_37 = 1;
                 setdvar( "lui_enabled", "0" );
                 level.debug_fly = undefined;
-                var_0 _meth_8131( 1 );
+                var_0 allowfire( 1 );
             }
 
             var_0 debug_fly( var_27 );
@@ -531,7 +531,7 @@ vlobby_player()
             var_37 = 0;
             var_27.origin = var_27.startorigin;
             var_27.angles = var_27.startangles;
-            var_0 _meth_8131( 0 );
+            var_0 allowfire( 0 );
         }
 
         if ( !level.in_firingrange )
@@ -647,9 +647,9 @@ vlobby_player()
                             if ( var_43 == level.vl_local_focus )
                             {
                                 if ( isdefined( level.cao_xuid ) && level.cao_xuid != var_8 )
-                                    _func_2D4( var_41, level.cao_xuid, 1 );
+                                    setentplayerxuidforemblem( var_41, level.cao_xuid, 1 );
 
-                                _func_2D4( var_41, var_8 );
+                                setentplayerxuidforemblem( var_41, var_8 );
                                 level.cao_xuid = var_8;
                                 break;
                             }
@@ -879,7 +879,7 @@ cammove( var_0, var_1, var_2, var_3 )
     if ( isdefined( self.cut ) )
         self.origin = var_0;
     else
-        self _meth_82AE( var_0, var_1, var_2, var_3 );
+        self moveto( var_0, var_1, var_2, var_3 );
 }
 
 camrotate( var_0, var_1, var_2, var_3 )
@@ -887,7 +887,7 @@ camrotate( var_0, var_1, var_2, var_3 )
     if ( isdefined( self.cut ) )
         self.angles = var_0;
     else
-        self _meth_82B5( var_0, var_1, var_2, var_3 );
+        self rotateto( var_0, var_1, var_2, var_3 );
 }
 
 rotateavatartagcamera( var_0, var_1 )
@@ -1107,7 +1107,7 @@ lobby_update_group_new( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( var_0.cut ) )
     {
-        var_0 _meth_8092();
+        var_0 dontinterpolate();
         var_0.cut = undefined;
     }
 
@@ -1146,7 +1146,7 @@ resetvirtuallobbypresentable()
 moveplayereyetocam( var_0 )
 {
     var_1 = level.players[0];
-    var_2 = var_1 _meth_80A8();
+    var_2 = var_1 geteye();
     var_3 = var_2 - var_1.origin;
     var_1 setorigin( var_0.origin - var_3, 0 );
     var_1 setangles( ( var_1.angles[0], var_0.angles[1], var_1.angles[2] ) );
@@ -1231,7 +1231,7 @@ cao_update( var_0, var_1, var_2 )
 
     if ( isdefined( var_0.cut ) )
     {
-        var_0 _meth_8092();
+        var_0 dontinterpolate();
         var_0.cut = undefined;
     }
 }
@@ -1350,7 +1350,7 @@ wait_load_costume( var_0, var_1 )
     hide_avatar( var_0 );
     thread wait_load_costume_timeout( 5.0, var_0 );
 
-    for ( var_2 = self _meth_84EF( var_0.costume, var_0.team ); !var_2; var_2 = self _meth_84EF( var_0.costume, var_0.team ) )
+    for ( var_2 = self loadcostumemodels( var_0.costume, var_0.team ); !var_2; var_2 = self loadcostumemodels( var_0.costume, var_0.team ) )
         wait 0.1;
 
     if ( var_1 )
@@ -1398,12 +1398,12 @@ spawn_an_avatar( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 
     var_15.camera_cut = 1;
     var_15.camera_tag_origin = ( 0, 0, 0 );
     var_15.camera_tag_angles = ( 0, 0, 0 );
-    var_15 _meth_83FC();
+    var_15 motionblurhqenable();
 
     if ( !isdefined( self.spawned_avatar ) )
         self.spawned_avatar = var_15;
 
-    var_15 _meth_83D1( 1 );
+    var_15 enableanimstate( 1 );
 
     if ( var_10 == 1 )
     {
@@ -1481,10 +1481,10 @@ checkweapchange( var_0 )
                 var_1 = var_2[0] + "_" + var_2[1];
         }
 
-        var_3 = self _meth_83D3();
-        var_4 = self _meth_83D3( "lobby_idle", "cao_01" );
+        var_3 = self getanimentry();
+        var_4 = self getanimentry( "lobby_idle", "cao_01" );
         var_5 = getanimdata( var_1 );
-        var_6 = self _meth_83D3( var_5.animstate, var_5.alias );
+        var_6 = self getanimentry( var_5.animstate, var_5.alias );
 
         if ( isdefined( level.camparams.mode ) )
         {
@@ -1509,8 +1509,8 @@ checkweapchange( var_0 )
                                 thread showprimarydelayed( self );
                             }
 
-                            self.primaryweaponent _meth_8483( self.primaryweapon );
-                            self.akimboweaponent _meth_8483( self.primaryweapon );
+                            self.primaryweaponent setpickupweapon( self.primaryweapon );
+                            self.akimboweaponent setpickupweapon( self.primaryweapon );
 
                             if ( issubstr( self.primaryweapon, "akimbo" ) || issubstr( self.primaryweapon, "akimboxmg" ) )
                             {
@@ -1520,7 +1520,7 @@ checkweapchange( var_0 )
                             else
                             {
                                 self.akimboweaponent hide();
-                                self.akimboweaponent _meth_804A();
+                                self.akimboweaponent hideallparts();
                             }
 
                             self.stored_weapon = self.primaryweapon;
@@ -1548,10 +1548,10 @@ isweaponloaded( var_0 )
 
     if ( level.players.size > 0 )
     {
-        var_1 = level.players[0] _meth_8535( var_0 );
+        var_1 = level.players[0] worldweaponsloaded( var_0 );
 
         if ( !var_1 )
-            level.players[0] _meth_8511( var_0 );
+            level.players[0] loadweapons( var_0 );
     }
 
     return var_1;
@@ -1590,7 +1590,7 @@ getanimdata( var_0 )
         var_1.camera_state = "stand";
     }
 
-    self _meth_83D0( "vlobby_animclass" );
+    self setanimclass( "vlobby_animclass" );
 
     if ( !isdefined( var_1.camera_state ) )
         var_1.camera_state = "stand";
@@ -1620,12 +1620,12 @@ vl_give_weapons( var_0, var_1 )
         {
             var_2 = spawn( "weapon_" + var_1.primaryweapon, ( 0, 0, 0 ) );
             var_3 = get_xuid_for_avatar( var_1 );
-            _func_2D4( var_2, var_3 );
+            setentplayerxuidforemblem( var_2, var_3 );
             var_1.primaryweaponent = var_2;
             var_2.primaryweapon = var_1.primaryweapon;
             var_1.primaryweaponent show();
-            var_1.primaryweaponent _meth_804C();
-            var_1.primaryweaponent _meth_8483( var_1.primaryweapon );
+            var_1.primaryweaponent showallparts();
+            var_1.primaryweaponent setpickupweapon( var_1.primaryweapon );
             attachprimaryweapon( var_1 );
         }
         else if ( var_1.primaryweaponent.primaryweapon != var_1.primaryweapon )
@@ -1635,7 +1635,7 @@ vl_give_weapons( var_0, var_1 )
         {
             var_4 = spawn( "weapon_" + var_1.primaryweapon, ( 0, 0, 0 ) );
             var_3 = get_xuid_for_avatar( var_1 );
-            _func_2D4( var_4, var_3 );
+            setentplayerxuidforemblem( var_4, var_3 );
             var_1.akimboweaponent = var_4;
             var_4.primaryweapon = var_1.primaryweapon;
         }
@@ -1650,18 +1650,18 @@ vl_give_weapons( var_0, var_1 )
         if ( issubstr( var_1.akimboweaponent.primaryweapon, "riotshield" ) )
             var_5 = "tag_weapon_left";
 
-        var_1.akimboweaponent _meth_804F();
+        var_1.akimboweaponent unlink();
         var_1.akimboweaponent.origin = var_1 gettagorigin( var_5 );
         var_1.akimboweaponent.angles = var_1 gettagangles( var_5 );
-        var_1.akimboweaponent _meth_8446( var_1, var_5 );
-        var_1.akimboweaponent _meth_8530( var_0 );
+        var_1.akimboweaponent vehicle_jetbikesethoverforcescale( var_1, var_5 );
+        var_1.akimboweaponent setowneroriginal( var_0 );
 
         if ( issubstr( var_1.primaryweaponent.primaryweapon, "akimbo" ) || issubstr( var_1.primaryweaponent.primaryweapon, "akimboxmg" ) )
             thread showakimbodelayed( var_1 );
         else if ( !isdefined( var_1.stored_weapon ) )
         {
             var_1.akimboweaponent hide();
-            var_1.akimboweaponent _meth_804A();
+            var_1.akimboweaponent hideallparts();
         }
     }
 
@@ -1671,8 +1671,8 @@ vl_give_weapons( var_0, var_1 )
         {
             if ( isdefined( var_1.secondaryweaponent ) )
             {
-                if ( var_1.secondaryweaponent _meth_8068() )
-                    var_1.secondaryweaponent _meth_804F();
+                if ( var_1.secondaryweaponent islinked() )
+                    var_1.secondaryweaponent unlink();
 
                 var_1.secondaryweaponent delete();
             }
@@ -1683,23 +1683,23 @@ vl_give_weapons( var_0, var_1 )
             {
                 var_6 = spawn( "weapon_" + var_1.secondaryweapon, ( 0, 0, 0 ) );
                 var_3 = get_xuid_for_avatar( var_1 );
-                _func_2D4( var_6, var_3 );
+                setentplayerxuidforemblem( var_6, var_3 );
                 var_1.secondaryweaponent = var_6;
                 var_6.secondaryweapon = var_1.secondaryweapon;
             }
             else if ( var_1.secondaryweaponent.secondaryweapon != var_1.secondaryweapon )
             {
-                var_1.secondaryweaponent _meth_8483( var_1.secondaryweapon );
+                var_1.secondaryweaponent setpickupweapon( var_1.secondaryweapon );
                 var_1.secondaryweaponent.secondaryweapon = var_1.secondaryweapon;
             }
 
             var_7 = "tag_stowed_back";
-            var_1.secondaryweaponent _meth_804F();
+            var_1.secondaryweaponent unlink();
             var_1.secondaryweaponent.origin = var_1 gettagorigin( var_7 );
             var_1.secondaryweaponent.angles = var_1 gettagangles( var_7 );
-            var_1.secondaryweaponent _meth_8446( var_1, var_7 );
-            var_1.secondaryweaponent _meth_804C();
-            var_1.secondaryweaponent _meth_8530( var_0 );
+            var_1.secondaryweaponent vehicle_jetbikesethoverforcescale( var_1, var_7 );
+            var_1.secondaryweaponent showallparts();
+            var_1.secondaryweaponent setowneroriginal( var_0 );
         }
     }
     else
@@ -1723,11 +1723,11 @@ attachprimaryweapon( var_0 )
     if ( issubstr( var_0.primaryweaponent.primaryweapon, "riotshield" ) )
         var_2 = "tag_weapon_left";
 
-    var_0.primaryweaponent _meth_804F();
+    var_0.primaryweaponent unlink();
     var_0.primaryweaponent.origin = var_0 gettagorigin( var_2 );
     var_0.primaryweaponent.angles = var_0 gettagangles( var_2 );
-    var_0.primaryweaponent _meth_8446( var_0, var_2 );
-    var_0.primaryweaponent _meth_8530( var_1 );
+    var_0.primaryweaponent vehicle_jetbikesethoverforcescale( var_0, var_2 );
+    var_0.primaryweaponent setowneroriginal( var_1 );
 }
 
 addlaunchers( var_0 )
@@ -1768,7 +1768,7 @@ showakimbodelayed( var_0 )
         if ( issubstr( var_0.primaryweaponent.primaryweapon, "akimbo" ) || issubstr( var_0.primaryweaponent.primaryweapon, "akimboxmg" ) )
         {
             var_0.akimboweaponent show();
-            var_0.akimboweaponent _meth_804C();
+            var_0.akimboweaponent showallparts();
         }
     }
 }
@@ -1788,13 +1788,13 @@ showprimarydelayed( var_0 )
     if ( level.camparams.newmode != "cao" && level.camparams.mode != "cao" && !var_1 )
     {
         var_0.primaryweaponent show();
-        var_0.primaryweaponent _meth_804C();
+        var_0.primaryweaponent showallparts();
     }
 }
 
 vl_avatar_costume( var_0, var_1, var_2 )
 {
-    var_0 _meth_8310();
+    var_0 takeallweapons();
     var_0 detachall();
     var_0.headmodel = undefined;
 
@@ -1837,7 +1837,7 @@ vl_avatar_loadout( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8
     var_9 maps\mp\gametypes\_teams::playermodelforweapon( var_4, maps\mp\_utility::getbaseweaponname( var_3 ) );
 
     if ( var_10 && isdefined( level.players[0] ) )
-        level.players[0] _meth_84BA( var_9.costume );
+        level.players[0] setcostumemodels( var_9.costume );
 
     var_9.primaryweapon = var_2;
     var_9.secondaryweapon = "none";
@@ -1991,7 +1991,7 @@ monitor_create_a_class( var_0 )
 
                     maps\mp\_vl_base::vlprintln( "weapon_stream: " + var_8 );
                     var_9 = [ var_8 ];
-                    self _meth_8511( var_9 );
+                    self loadweapons( var_9 );
                 }
 
                 monitor_cac_set_weapon( var_0, "none" );
@@ -2333,7 +2333,7 @@ monitor_member_class_changes()
                     var_35 = maps\mp\gametypes\vlobby::getspawnpoint( var_34 );
                     spawn_an_avatar( var_35, var_29, var_30, var_31, var_18, var_19, var_33, var_32, var_1.name, var_34, 0 );
                     maps\mp\_vl_base::avatar_after_spawn( var_34 );
-                    _func_2D4( level.vlavatars[var_34], var_1.xuid );
+                    setentplayerxuidforemblem( level.vlavatars[var_34], var_1.xuid );
                     level.vlavatars[var_34].loadout = var_1;
                     level.vlavatars[var_34].membertimeout = gettime() + 4000;
 
@@ -2407,7 +2407,7 @@ monitor_member_class_changes()
 
 vl_vfx_for_avatar()
 {
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
         maps\mp\gametypes\_class::checkforcostumeset();
 
@@ -2417,23 +2417,23 @@ vl_vfx_for_avatar()
 
             if ( !isdefined( self.camera_state ) || self.camera_state != "crouch" || self == level.players[0].cao_agent )
             {
-                if ( !isdefined( self.spawned_vfx_setbonus_stand ) || _func_294( self.spawned_vfx_setbonus_stand ) )
+                if ( !isdefined( self.spawned_vfx_setbonus_stand ) || isremovedentity( self.spawned_vfx_setbonus_stand ) )
                 {
-                    if ( isdefined( self.spawned_vfx_setbonus_crouch ) && !_func_294( self.spawned_vfx_setbonus_crouch ) )
+                    if ( isdefined( self.spawned_vfx_setbonus_crouch ) && !isremovedentity( self.spawned_vfx_setbonus_crouch ) )
                         self.spawned_vfx_setbonus_crouch delete();
 
                     self.spawned_vfx_setbonus_stand = spawnfx( level.vfx_setbonus_stand_01, self.origin );
-                    setwinningteam( self.spawned_vfx_setbonus_stand, 1 );
+                    setfxkillondelete( self.spawned_vfx_setbonus_stand, 1 );
                     triggerfx( self.spawned_vfx_setbonus_stand, -6 );
                 }
             }
-            else if ( !isdefined( self.spawned_vfx_setbonus_crouch ) || _func_294( self.spawned_vfx_setbonus_crouch ) )
+            else if ( !isdefined( self.spawned_vfx_setbonus_crouch ) || isremovedentity( self.spawned_vfx_setbonus_crouch ) )
             {
-                if ( isdefined( self.spawned_vfx_setbonus_stand ) && !_func_294( self.spawned_vfx_setbonus_stand ) )
+                if ( isdefined( self.spawned_vfx_setbonus_stand ) && !isremovedentity( self.spawned_vfx_setbonus_stand ) )
                     self.spawned_vfx_setbonus_stand delete();
 
                 self.spawned_vfx_setbonus_crouch = spawnfx( level.vfx_setbonus_crouch_01, self.origin );
-                setwinningteam( self.spawned_vfx_setbonus_crouch, 1 );
+                setfxkillondelete( self.spawned_vfx_setbonus_crouch, 1 );
                 triggerfx( self.spawned_vfx_setbonus_crouch, -6 );
             }
         }
@@ -2441,10 +2441,10 @@ vl_vfx_for_avatar()
         {
             self.set_bonus_vfx = 0;
 
-            if ( isdefined( self.spawned_vfx_setbonus_crouch ) && !_func_294( self.spawned_vfx_setbonus_crouch ) )
+            if ( isdefined( self.spawned_vfx_setbonus_crouch ) && !isremovedentity( self.spawned_vfx_setbonus_crouch ) )
                 self.spawned_vfx_setbonus_crouch delete();
 
-            if ( isdefined( self.spawned_vfx_setbonus_stand ) && !_func_294( self.spawned_vfx_setbonus_stand ) )
+            if ( isdefined( self.spawned_vfx_setbonus_stand ) && !isremovedentity( self.spawned_vfx_setbonus_stand ) )
                 self.spawned_vfx_setbonus_stand delete();
         }
     }
@@ -2454,18 +2454,18 @@ override_member_loadout_for_practice_round( var_0 )
 {
     if ( !isdefined( level.practice_round_costume ) )
     {
-        level.practice_round_max_costumes = _func_296( level.practiceroundcostumetablename ) - 1;
+        level.practice_round_max_costumes = tablegetcolumncount( level.practiceroundcostumetablename ) - 1;
         level.practice_round_costume = randomint( level.practice_round_max_costumes );
     }
 
     if ( !isdefined( level.practice_round_class ) )
     {
-        var_1 = _func_296( level.practiceroundclasstablename ) - 1;
+        var_1 = tablegetcolumncount( level.practiceroundclasstablename ) - 1;
         level.practice_round_class = randomint( var_1 );
     }
 
     var_4 = var_0;
-    var_5 = _func_2CF( level.practiceroundcostumetablename, level.practice_round_costume + 1 );
+    var_5 = getcostumefromtable( level.practiceroundcostumetablename, level.practice_round_costume + 1 );
     var_4.gender = var_5[level.costumecat2idx["gender"]];
     var_4.shirt = var_5[level.costumecat2idx["shirt"]];
     var_4.head = var_5[level.costumecat2idx["head"]];
@@ -2560,8 +2560,8 @@ monitor_member_timeouts()
     for (;;)
     {
         var_0 = getdvarint( "splitscreen", 0 );
-        var_1 = _func_2BB();
-        var_2 = _func_2BC();
+        var_1 = isonlinegame();
+        var_2 = issystemlink();
 
         foreach ( var_5, var_4 in level.vlavatars )
         {
@@ -2798,7 +2798,7 @@ monitor_create_an_operator( var_0 )
                     var_3.costumes[var_3.previewcostume][var_4] = var_3.previewgearid;
 
                     if ( var_3.previewcostume == var_3.activecostume )
-                        var_3 _meth_84BA( var_3.costumes[var_3.previewcostume] );
+                        var_3 setcostumemodels( var_3.costumes[var_3.previewcostume] );
                 }
             }
 
@@ -2835,7 +2835,7 @@ monitor_create_an_operator( var_0 )
                 var_3.costumes[var_7][var_4] = var_14;
             }
 
-            var_3 _meth_84BA( var_3.costumes[var_7] );
+            var_3 setcostumemodels( var_3.costumes[var_7] );
         }
     }
 }
@@ -2919,12 +2919,12 @@ monitor_clans()
 hide_avatar( var_0 )
 {
     var_0 hide();
-    var_0 _meth_804A();
+    var_0 hideallparts();
 
-    if ( isdefined( var_0.spawned_vfx_setbonus_crouch ) && !_func_294( var_0.spawned_vfx_setbonus_crouch ) )
+    if ( isdefined( var_0.spawned_vfx_setbonus_crouch ) && !isremovedentity( var_0.spawned_vfx_setbonus_crouch ) )
         var_0.spawned_vfx_setbonus_crouch delete();
 
-    if ( isdefined( var_0.spawned_vfx_setbonus_stand ) && !_func_294( var_0.spawned_vfx_setbonus_stand ) )
+    if ( isdefined( var_0.spawned_vfx_setbonus_stand ) && !isremovedentity( var_0.spawned_vfx_setbonus_stand ) )
         var_0.spawned_vfx_setbonus_stand delete();
 
     hide_avatar_weapons( var_0 );
@@ -2937,18 +2937,18 @@ show_avatar( var_0 )
 
     addlaunchers( var_0 );
     var_0 show();
-    var_0 _meth_804C();
+    var_0 showallparts();
 
     if ( isdefined( var_0.primaryweaponent ) )
     {
         var_0.primaryweaponent show();
-        var_0.primaryweaponent _meth_804C();
+        var_0.primaryweaponent showallparts();
     }
 
     if ( isdefined( var_0.secondaryweaponent ) )
     {
         var_0.secondaryweaponent show();
-        var_0.secondaryweaponent _meth_804C();
+        var_0.secondaryweaponent showallparts();
     }
 
     if ( isdefined( var_0.akimboweaponent ) && isdefined( var_0.akimboweaponent.primaryweapon ) )
@@ -2956,7 +2956,7 @@ show_avatar( var_0 )
         if ( issubstr( var_0.akimboweaponent.primaryweapon, "akimbo" ) || issubstr( var_0.akimboweaponent.primaryweapon, "akimboxmg" ) )
         {
             var_0.akimboweaponent show();
-            var_0.akimboweaponent _meth_804C();
+            var_0.akimboweaponent showallparts();
         }
     }
 
@@ -2969,7 +2969,7 @@ hide_avatar_primary_weapon( var_0 )
     {
         var_0 notify( "hide_primary_weapon" );
         var_0.primaryweaponent hide();
-        var_0.primaryweaponent _meth_804A();
+        var_0.primaryweaponent hideallparts();
     }
 }
 
@@ -2979,7 +2979,7 @@ hide_avatar_secondary_weapon( var_0 )
     {
         var_0 notify( "hide_secondary_weapon" );
         var_0.secondaryweaponent hide();
-        var_0.secondaryweaponent _meth_804A();
+        var_0.secondaryweaponent hideallparts();
     }
 }
 
@@ -2989,7 +2989,7 @@ hide_avatar_akimbo_weapon( var_0 )
     {
         var_0 notify( "hide_akimbo_weapon" );
         var_0.akimboweaponent hide();
-        var_0.akimboweaponent _meth_804A();
+        var_0.akimboweaponent hideallparts();
     }
 }
 
@@ -3034,7 +3034,7 @@ remove_avatar( var_0 )
     }
 
     maps\mp\_vl_base::vlprint( "Removing xuid " + var_3 + " for ownerId " + var_0 + "\\n" );
-    _func_2D4( level.vlavatars[var_0], var_3, 1 );
+    setentplayerxuidforemblem( level.vlavatars[var_0], var_3, 1 );
     level.xuid2ownerid[var_3] = undefined;
     level.avatarinfo[var_0].timetodelete = 0;
     level.avatarinfo[var_0].avatar = undefined;
@@ -3055,31 +3055,31 @@ remove_avatar( var_0 )
     }
 
     hide_avatar( var_4 );
-    var_4 _meth_8310();
+    var_4 takeallweapons();
     var_4 detachall();
     var_4.headmodel = undefined;
-    var_4 _meth_804A();
+    var_4 hideallparts();
 
     if ( isdefined( var_4.avatar_spawnpoint.spawned_avatar ) )
         var_4.avatar_spawnpoint.spawned_avatar = undefined;
 
     if ( isdefined( var_4.primaryweaponent ) )
     {
-        _func_2D4( var_4.primaryweaponent, var_3, 1 );
+        setentplayerxuidforemblem( var_4.primaryweaponent, var_3, 1 );
         var_4.primaryweaponent delete();
         var_4.primaryweaponent = undefined;
     }
 
     if ( isdefined( var_4.secondaryweaponent ) )
     {
-        _func_2D4( var_4.secondaryweaponent, var_3, 1 );
+        setentplayerxuidforemblem( var_4.secondaryweaponent, var_3, 1 );
         var_4.secondaryweaponent delete();
         var_4.secondaryweaponent = undefined;
     }
 
     if ( isdefined( var_4.akimboweaponent ) )
     {
-        _func_2D4( var_4.akimboweaponent, var_3, 1 );
+        setentplayerxuidforemblem( var_4.akimboweaponent, var_3, 1 );
         var_4.akimboweaponent delete();
         var_4.akimboweaponent = undefined;
     }
@@ -3100,11 +3100,11 @@ reset_bot_settings_for_a_few_frames()
     for ( var_0 = 0; var_0 < 2; var_0++ )
     {
         maps\mp\agents\_agent_common::set_agent_health( 100 );
-        self _meth_8358();
-        self _meth_8356();
+        self botclearscriptenemy();
+        self botclearscriptgoal();
         bot_disable_tactical_goals();
-        self _meth_8351( "disable_movement", 1 );
-        self _meth_8351( "disable_rotation", 1 );
+        self botsetflag( "disable_movement", 1 );
+        self botsetflag( "disable_rotation", 1 );
         wait 0.05;
     }
 }
@@ -3121,7 +3121,7 @@ use_animstate( var_0, var_1, var_2 )
 
     if ( !isdefined( self.animalias ) )
     {
-        self _meth_83D0( "vlobby_animclass" );
+        self setanimclass( "vlobby_animclass" );
         var_4 = 1;
         level notify( "stop_reset_bot_settings" );
         hackagentangles( self.spawn_angles );
@@ -3135,7 +3135,7 @@ use_animstate( var_0, var_1, var_2 )
 
     self.animalias = var_0;
     self.animstate = var_2;
-    self _meth_83D2( var_2, var_0, var_3 );
+    self setanimstate( var_2, var_0, var_3 );
 
     if ( !isdefined( var_1 ) || !var_1 )
     {
@@ -3898,7 +3898,7 @@ debug_draw_aim( var_0 )
     }
 
     var_0.angles = ( angleclamp180( var_0.angles[0] ), angleclamp180( var_0.angles[1] ), angleclamp180( var_0.angles[2] ) );
-    var_0 _meth_8092();
+    var_0 dontinterpolate();
 }
 
 test_pathing( var_0, var_1, var_2, var_3 )
@@ -3957,7 +3957,7 @@ debug_pathing()
     }
 
     var_7 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_7 _meth_80B1( "tag_player" );
+    var_7 setmodel( "tag_player" );
     level.use_lookahead = 0;
     var_8 = 0;
     var_9 = 1;
@@ -3966,9 +3966,9 @@ debug_pathing()
 
     for (;;)
     {
-        if ( self _meth_82EE() )
+        if ( self fragbuttonpressed() )
         {
-            while ( self _meth_82EE() )
+            while ( self fragbuttonpressed() )
                 wait 0.05;
 
             var_9++;
@@ -3987,9 +3987,9 @@ debug_pathing()
             var_0 = 1;
         }
 
-        if ( self _meth_82EF() )
+        if ( self secondaryoffhandbuttonpressed() )
         {
-            while ( self _meth_82EF() )
+            while ( self secondaryoffhandbuttonpressed() )
                 wait 0.05;
 
             var_8++;
@@ -4045,8 +4045,8 @@ debug_fly( var_0 )
     var_1 = 30;
     var_2 = 10;
     var_3 = 10;
-    var_4 = self _meth_844D();
-    var_5 = self _meth_82F3();
+    var_4 = self getunnormalizedcameramovement();
+    var_5 = self getnormalizedmovement();
     var_6 = anglestoforward( var_4 );
     var_7 = anglestoup( var_4 );
     var_8 = anglestoright( var_4 );
@@ -4057,7 +4057,7 @@ debug_fly( var_0 )
     else if ( self attackbuttonpressed() )
         var_9 = 1;
 
-    if ( self _meth_82EF() )
+    if ( self secondaryoffhandbuttonpressed() )
     {
         var_1 *= 0.1;
         var_2 *= 0.1;
@@ -4075,7 +4075,7 @@ vlobby_vegnette( var_0, var_1 )
         self.vegnette = newclienthudelem( self );
         self.vegnette.x = 0;
         self.vegnette.y = 0;
-        self.vegnette _meth_80CC( var_1, 640, 480 );
+        self.vegnette setshader( var_1, 640, 480 );
         self.vegnette.alignx = "left";
         self.vegnette.aligny = "top";
         self.vegnette.horzalign = "fullscreen";
@@ -4085,13 +4085,13 @@ vlobby_vegnette( var_0, var_1 )
 
     if ( isdefined( self.vegnette ) && self.vegnette.alpha > 0 && var_0 == 0 )
     {
-        self.vegnette _meth_80CC( var_1, 640, 480 );
+        self.vegnette setshader( var_1, 640, 480 );
         self.vegnette.alpha = 0;
     }
 
     if ( isdefined( self.vegnette ) && self.vegnette.alpha < 1 && var_0 == 1 )
     {
-        self.vegnette _meth_80CC( var_1, 640, 480 );
+        self.vegnette setshader( var_1, 640, 480 );
         self.vegnette.alpha = 1;
     }
 }

@@ -436,17 +436,17 @@ load_prop_anims()
 
 simple_player_rumble_heavy( var_0 )
 {
-    level.player _meth_80AD( "grenade_rumble" );
+    level.player playrumbleonentity( "grenade_rumble" );
 }
 
 simple_player_rumble_medium( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 simple_player_rumble_light( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 boat_crash_break_glass( var_0 )
@@ -456,7 +456,7 @@ boat_crash_break_glass( var_0 )
 
 change_fov_back_to_65( var_0 )
 {
-    level.player _meth_8031( 65, 0.6 );
+    level.player lerpfov( 65, 0.6 );
 }
 
 finale_cloak_off( var_0 )
@@ -467,7 +467,7 @@ finale_cloak_off( var_0 )
 show_hologram( var_0 )
 {
     var_0 show();
-    var_0 _meth_808E();
+    var_0 dontcastshadows();
     thread show_hologram_reveal( var_0 );
 }
 
@@ -483,12 +483,12 @@ show_hologram_reveal( var_0 )
         level.confrontation_holo[level.confrontation_holo.size] = var_0;
         thread maps\betrayal_code::confrontation_static_start();
         wait 0.05;
-        var_0 _meth_83A7( 0.0, 0.0 );
+        var_0 setmaterialscriptparam( 0.0, 0.0 );
         wait 0.05;
-        var_0 _meth_83A7( 1.0, 3.0 );
-        var_0 _meth_83FA( 0, 1 );
+        var_0 setmaterialscriptparam( 1.0, 3.0 );
+        var_0 hudoutlineenable( 0, 1 );
         wait(var_1);
-        var_0 _meth_83A7( 0.0, 1.0 );
+        var_0 setmaterialscriptparam( 0.0, 1.0 );
         wait 1.0;
         var_0 hide();
     }
@@ -497,12 +497,12 @@ show_hologram_reveal( var_0 )
     {
         level.confrontation_holo[level.confrontation_holo.size] = var_0;
         wait 0.05;
-        var_0 _meth_83A7( 0.0, 0.0 );
+        var_0 setmaterialscriptparam( 0.0, 0.0 );
         wait 0.05;
-        var_0 _meth_83A7( 1.0, 3.0 );
-        var_0 _meth_83FA( 0, 1 );
+        var_0 setmaterialscriptparam( 1.0, 3.0 );
+        var_0 hudoutlineenable( 0, 1 );
         wait(var_1);
-        var_0 _meth_83A7( 0.0, 1.0 );
+        var_0 setmaterialscriptparam( 0.0, 1.0 );
         wait 1.0;
         var_0 hide();
     }
@@ -510,37 +510,37 @@ show_hologram_reveal( var_0 )
     if ( var_0.model == "irons_casual" )
     {
         level.confrontation_holo[level.confrontation_holo.size] = var_0;
-        var_0 _meth_846C( "mtl_irons_casual_upperbody_skin", "mtl_irons_casual_upperbody_skin_cloak" );
-        var_0 _meth_846C( "mtl_irons_casual_upperbody", "mtl_irons_casual_upperbody_cloak" );
-        var_0 _meth_846C( "mtl_irons_casual_lowerbody", "mtl_irons_casual_lowerbody_cloak" );
-        var_0 _meth_846C( "mtl_irons_casual_loadouts", "mtl_irons_casual_loadouts_cloak" );
-        var_0 _meth_846C( "mtl_faceitem_tongue", "mtl_faceitem_tongue_cloak" );
-        var_0 _meth_846C( "mtl_faceitems_teeth", "mtl_faceitems_teeth_cloak" );
-        var_0 _meth_846C( "mtl_eyebrow_burke", "mtl_eyebrow_burke_cloak" );
-        var_0 _meth_846C( "mtl_faceitem_eyelash_irons", "mtl_faceitem_eyelash_irons_cloak" );
+        var_0 overridematerial( "mtl_irons_casual_upperbody_skin", "mtl_irons_casual_upperbody_skin_cloak" );
+        var_0 overridematerial( "mtl_irons_casual_upperbody", "mtl_irons_casual_upperbody_cloak" );
+        var_0 overridematerial( "mtl_irons_casual_lowerbody", "mtl_irons_casual_lowerbody_cloak" );
+        var_0 overridematerial( "mtl_irons_casual_loadouts", "mtl_irons_casual_loadouts_cloak" );
+        var_0 overridematerial( "mtl_faceitem_tongue", "mtl_faceitem_tongue_cloak" );
+        var_0 overridematerial( "mtl_faceitems_teeth", "mtl_faceitems_teeth_cloak" );
+        var_0 overridematerial( "mtl_eyebrow_burke", "mtl_eyebrow_burke_cloak" );
+        var_0 overridematerial( "mtl_faceitem_eyelash_irons", "mtl_faceitem_eyelash_irons_cloak" );
 
         if ( level.nextgen )
         {
-            var_0 _meth_846C( "mtl_irons_eye_shader_r", "mtl_irons_eye_shader_r_cloak" );
-            var_0 _meth_846C( "mtl_irons_eye_shader_l", "mtl_irons_eye_shader_l_cloak" );
+            var_0 overridematerial( "mtl_irons_eye_shader_r", "mtl_irons_eye_shader_r_cloak" );
+            var_0 overridematerial( "mtl_irons_eye_shader_l", "mtl_irons_eye_shader_l_cloak" );
         }
         else
         {
-            var_0 _meth_846C( "mtl_eyeball_irons_cg", "mtl_eyeball_irons_cg_cloak" );
-            var_0 _meth_846C( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_tns_cloak" );
+            var_0 overridematerial( "mtl_eyeball_irons_cg", "mtl_eyeball_irons_cg_cloak" );
+            var_0 overridematerial( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_tns_cloak" );
         }
 
-        var_0 _meth_846C( "mtl_mp443_base", "mtl_mp443_base_cloak" );
-        var_0 _meth_846C( "mtl_iron_sights_color", "mtl_mp443_base_nocamo_cloaktrans" );
-        var_0 _meth_846C( "mtl_caddy_pistol_small", "mtl_caddy_pistol_small_cloak" );
-        var_0 _meth_846C( "mtl_range_pistol_small_01a", "mtl_mp443_base_nocamo_cloaktrans" );
+        var_0 overridematerial( "mtl_mp443_base", "mtl_mp443_base_cloak" );
+        var_0 overridematerial( "mtl_iron_sights_color", "mtl_mp443_base_nocamo_cloaktrans" );
+        var_0 overridematerial( "mtl_caddy_pistol_small", "mtl_caddy_pistol_small_cloak" );
+        var_0 overridematerial( "mtl_range_pistol_small_01a", "mtl_mp443_base_nocamo_cloaktrans" );
         wait 0.05;
-        var_0 _meth_83A7( 0.0, 0.0 );
+        var_0 setmaterialscriptparam( 0.0, 0.0 );
         wait 0.05;
-        var_0 _meth_83A7( 1.0, 3.0 );
-        var_0 _meth_83FA( 0, 1 );
+        var_0 setmaterialscriptparam( 1.0, 3.0 );
+        var_0 hudoutlineenable( 0, 1 );
         wait(var_1);
-        var_0 _meth_83A7( 0.0, 1.0 );
+        var_0 setmaterialscriptparam( 0.0, 1.0 );
         wait 0.5;
         var_0 hide();
         thread maps\betrayal_code::confrontation_hudoutline_cleanup();
@@ -550,28 +550,28 @@ show_hologram_reveal( var_0 )
     if ( var_0.model == "civ_urban_male_body_f" )
     {
         level.confrontation_holo[level.confrontation_holo.size] = var_0;
-        var_0 _meth_80B1( "dr_mwi_body_cloaktrans" );
-        var_0 _meth_846C( "mtl_faceitem_tongue", "mtl_faceitem_tongue_cloak" );
-        var_0 _meth_846C( "mtl_faceitems_teeth", "mtl_faceitems_teeth_cloak" );
+        var_0 setmodel( "dr_mwi_body_cloaktrans" );
+        var_0 overridematerial( "mtl_faceitem_tongue", "mtl_faceitem_tongue_cloak" );
+        var_0 overridematerial( "mtl_faceitems_teeth", "mtl_faceitems_teeth_cloak" );
 
         if ( level.nextgen )
         {
-            var_0 _meth_846C( "mtl_prime_minister_eye_shader_l", "mtl_irons_eye_shader_l_cloak" );
-            var_0 _meth_846C( "mtl_prime_minister_eye_shader_r", "mtl_irons_eye_shader_r_cloak" );
+            var_0 overridematerial( "mtl_prime_minister_eye_shader_l", "mtl_irons_eye_shader_l_cloak" );
+            var_0 overridematerial( "mtl_prime_minister_eye_shader_r", "mtl_irons_eye_shader_r_cloak" );
         }
         else
-            var_0 _meth_846C( "mtl_cormack_eye", "mtl_cormack_eye_cloak" );
+            var_0 overridematerial( "mtl_cormack_eye", "mtl_cormack_eye_cloak" );
 
-        var_0 _meth_846C( "mtl_faceitem_eyelash", "mtl_faceitem_eyelash_irons_cloak" );
-        var_0 _meth_846C( "mtl_shg_shiny_lense", "mtl_shg_shiny_lense_cloak" );
-        var_0 _meth_846C( "mtl_head_m_gen_cau_shipley", "mtl_head_m_gen_cau_shipley_cloaktrans" );
+        var_0 overridematerial( "mtl_faceitem_eyelash", "mtl_faceitem_eyelash_irons_cloak" );
+        var_0 overridematerial( "mtl_shg_shiny_lense", "mtl_shg_shiny_lense_cloak" );
+        var_0 overridematerial( "mtl_head_m_gen_cau_shipley", "mtl_head_m_gen_cau_shipley_cloaktrans" );
         wait 0.05;
-        var_0 _meth_83A7( 0.0, 0.0 );
+        var_0 setmaterialscriptparam( 0.0, 0.0 );
         wait 0.05;
-        var_0 _meth_83A7( 1.0, 3.0 );
-        var_0 _meth_83FA( 0, 1 );
+        var_0 setmaterialscriptparam( 1.0, 3.0 );
+        var_0 hudoutlineenable( 0, 1 );
         wait(var_1);
-        var_0 _meth_83A7( 0.0, 1.0 );
+        var_0 setmaterialscriptparam( 0.0, 1.0 );
         wait 1;
         var_0 hide();
     }
@@ -589,9 +589,9 @@ cloak_on( var_0 )
         var_0 = 0.75;
 
     var_1 = 0;
-    self _meth_80B1( self.cloakedmodel );
-    self _meth_8448();
-    self _meth_83A7( 0.0, var_0 );
+    self setmodel( self.cloakedmodel );
+    self drawpostresolve();
+    self setmaterialscriptparam( 0.0, var_0 );
     self.cloak = "on";
     wait 0.1;
     maps\_cloak::set_cloak_material_for_npc_weapon();
@@ -603,10 +603,10 @@ cloak_off( var_0 )
         var_0 = 0.75;
 
     var_1 = 0;
-    self _meth_83A7( 1.0, var_0 );
+    self setmaterialscriptparam( 1.0, var_0 );
     wait(var_0);
-    self _meth_8449();
-    self _meth_80B1( self.defaultmodel );
+    self drawpostresolveoff();
+    self setmodel( self.defaultmodel );
     self.cloak = "off";
 }
 
@@ -614,15 +614,15 @@ set_cloak_material_for_npc_weapon()
 {
     if ( self.weapon != "iw5_unarmed" )
     {
-        self _meth_846C( "_base_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "_iron_sights_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "_iron_sights_color", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_weapon_suppressor_b", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_screen_a_green", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_magazine_out", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_magazine_inside", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_optics_variable_red_dot", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_optics_variable_red_dot_lens_02", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_iron_sights", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_base_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_iron_sights_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_iron_sights_color", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_weapon_suppressor_b", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_screen_a_green", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_magazine_out", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_magazine_inside", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_optics_variable_red_dot", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_optics_variable_red_dot_lens_02", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_iron_sights", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
     }
 }

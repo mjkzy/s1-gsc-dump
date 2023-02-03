@@ -84,7 +84,7 @@ water_depth_below( var_0 )
     if ( isplayer( self ) )
         var_3 = playerphysicstrace( var_2, var_2 - ( 0, 0, 1000 ), self );
     else
-        var_3 = self _meth_83E5( var_2, var_2 - ( 0, 0, 1000 ), 15, 60, 1 );
+        var_3 = self aiphysicstrace( var_2, var_2 - ( 0, 0, 1000 ), 15, 60, 1 );
 
     return var_2[2] - var_3[2] - 1.0;
 }
@@ -113,19 +113,19 @@ playerinwater( var_0 )
         maps\_utility::ent_flag_waitopen( "water_trigger_paused" );
         var_2 = 0;
 
-        if ( isdefined( var_0 ) && self _meth_80A9( var_0 ) )
+        if ( isdefined( var_0 ) && self istouching( var_0 ) )
             var_2 = 1;
         else
         {
             foreach ( var_4 in level.underwatertriggers )
             {
-                if ( ( !isdefined( var_0 ) || var_4 != var_0 ) && self _meth_80A9( var_4 ) )
+                if ( ( !isdefined( var_0 ) || var_4 != var_0 ) && self istouching( var_4 ) )
                 {
                     var_2 = 1;
                     self.water_touching = var_2;
                     var_0 = var_4;
                     self.water_trigger_current = var_4;
-                    _func_0D3( "player_swimWaterSurface", getwaterline( var_0 ) );
+                    setsaveddvar( "player_swimWaterSurface", getwaterline( var_0 ) );
                     break;
                 }
             }
@@ -151,12 +151,12 @@ playerinwater( var_0 )
             water_set_depth( water_depth_below( var_0 ) );
             under_water_set( 0, getwaterline( var_0 ) );
             var_7 = self getvelocity();
-            self _meth_82F1( ( var_7[0], var_7[1], min( 0, var_7[2] ) ) );
+            self setvelocity( ( var_7[0], var_7[1], min( 0, var_7[2] ) ) );
         }
 
         if ( var_2 && !isdefined( self.underwater ) )
         {
-            if ( self _meth_8341() )
+            if ( self isonground() )
                 var_1 = level getwaterline( var_0 ) - self.origin[2];
             else
                 var_1 = water_depth_below( var_0 );
@@ -225,7 +225,7 @@ under_water_set( var_0, var_1 )
         }
         else if ( isdefined( self.underwater_walk ) )
         {
-            if ( self _meth_8341() || !isdefined( var_1 ) || !player_in_deep_water() )
+            if ( self isonground() || !isdefined( var_1 ) || !player_in_deep_water() )
                 maps\_swim_player::disable_player_underwater_walk();
         }
 
@@ -243,7 +243,7 @@ player_can_stop_swimming( var_0 )
     if ( !isdefined( self.swimming ) )
         return 1;
 
-    if ( !isdefined( self.water_touching ) || !self.water_touching || self _meth_8341() || !isdefined( var_0 ) || !player_in_deep_water() )
+    if ( !isdefined( self.water_touching ) || !self.water_touching || self isonground() || !isdefined( var_0 ) || !player_in_deep_water() )
     {
         var_1 = self.origin + ( 0, 0, -1 );
         var_2 = playerphysicstrace( var_1, self.origin );
@@ -270,12 +270,12 @@ water_default_vision_set_enabled( var_0 )
         if ( isdefined( level.visionset_underwater ) )
             var_2 = level.visionset_underwater;
 
-        self _meth_847A( var_2, var_1 );
-        self _meth_82D4( var_2, var_1 );
+        self setclienttriggervisionset( var_2, var_1 );
+        self visionsetnakedforplayer( var_2, var_1 );
         maps\_utility::vision_set_fog_changes( var_2, var_1 );
 
         if ( isdefined( level.clut_underwater ) )
-            self _meth_8490( level.clut_underwater, 0 );
+            self setclutforplayer( level.clut_underwater, 0 );
 
         if ( isdefined( level.underwater_lightset ) )
             set_light_set_for_player( level.underwater_lightset );
@@ -284,7 +284,7 @@ water_default_vision_set_enabled( var_0 )
             thread setdof( level.dofunderwater );
 
         playfx( common_scripts\utility::getfx( "water_screen_plunge" ), self.origin );
-        self _meth_8218( 0 );
+        self setwatersheeting( 0 );
         setunderwateraudiozone();
         self playlocalsound( "underwater_enter" );
     }
@@ -296,13 +296,13 @@ water_default_vision_set_enabled( var_0 )
             set_light_set_for_player( level.lightset_previous );
 
         if ( isdefined( level.clut_previous ) )
-            self _meth_8490( level.clut_previous, 1 );
+            self setclutforplayer( level.clut_previous, 1 );
 
         if ( isdefined( level.dofdefault ) )
             thread setdof( level.dofdefault );
 
         playfx( common_scripts\utility::getfx( "water_screen_emerge" ), self.origin );
-        self _meth_8218( 1, 1 );
+        self setwatersheeting( 1, 1 );
         clearunderwateraudiozone();
         self playlocalsound( "breathing_better" );
         self playlocalsound( "underwater_exit" );
@@ -394,9 +394,9 @@ water_set_control_options( var_0, var_1, var_2 )
     if ( var_2 && isdefined( level.water_allow_prone ) && !level.water_allow_prone )
         var_2 = 0;
 
-    self _meth_8301( var_0 );
-    self _meth_8304( var_1 );
-    self _meth_811A( var_2 );
+    self allowjump( var_0 );
+    self allowsprint( var_1 );
+    self allowprone( var_2 );
 }
 
 water_depth_state( var_0 )
@@ -462,7 +462,7 @@ wading_footsteps( var_0, var_1, var_2 )
     if ( !isdefined( self.water_ground_ref_ent ) )
     {
         self.water_ground_ref_ent = spawn( "script_model", ( 0, 0, 0 ) );
-        self _meth_8091( self.water_ground_ref_ent );
+        self playersetgroundreferenceent( self.water_ground_ref_ent );
     }
 
     var_4 = 0;
@@ -487,7 +487,7 @@ wading_footsteps( var_0, var_1, var_2 )
 
         if ( var_12 == 0.0 )
         {
-            self.water_ground_ref_ent _meth_82B5( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
+            self.water_ground_ref_ent rotateto( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
             var_4 = self.water_ground_ref_ent.angles[0];
         }
         else
@@ -508,12 +508,12 @@ wading_footsteps( var_0, var_1, var_2 )
             {
                 var_13 = "walk";
 
-                if ( self _meth_83D8() )
+                if ( self issprinting() )
                     var_13 = "sprint";
-                else if ( self _meth_82F3()[0] > 0.5 )
+                else if ( self getnormalizedmovement()[0] > 0.5 )
                     var_13 = "run";
 
-                if ( self _meth_817C() != "stand" )
+                if ( self getstance() != "stand" )
                     var_13 = "crouch" + var_13;
 
                 var_14 = "_r";
@@ -530,7 +530,7 @@ wading_footsteps( var_0, var_1, var_2 )
             var_16 = sin( var_4 * -0.5 ) * var_9;
             var_7 = sin( var_4 * 0.5 ) * var_10;
             var_17 = wading_adjust_angles( ( var_15, var_16, var_7 ) );
-            self.water_ground_ref_ent _meth_82B5( var_17, var_5, var_5 * 0.5, var_5 * 0.5 );
+            self.water_ground_ref_ent rotateto( var_17, var_5, var_5 * 0.5, var_5 * 0.5 );
         }
 
         wait 0.05;
@@ -655,7 +655,7 @@ wading_footsteps_ends()
     if ( isdefined( self.water_ground_ref_ent ) )
     {
         var_0 = 0.25;
-        self.water_ground_ref_ent _meth_82B5( ( 0, 0, 0 ), var_0, var_0 * 0.5, var_0 * 0.5 );
+        self.water_ground_ref_ent rotateto( ( 0, 0, 0 ), var_0, var_0 * 0.5, var_0 * 0.5 );
         maps\_utility::blend_movespeedscale( 1.0, var_0 );
         wait(var_0);
 
@@ -667,7 +667,7 @@ wading_footsteps_ends()
         self.water_wading_move_speed_target = undefined;
         self.water_wading_move_speed = undefined;
         self.water_wading_waterdepthtype = undefined;
-        self _meth_8091( undefined );
+        self playersetgroundreferenceent( undefined );
         self notify( "blend_movespeedscale" );
         maps\_utility_code::movespeed_set_func( 1.0 );
     }
@@ -686,7 +686,7 @@ setunderwateraudiozone()
     level.underwater_sound_ent = soundscripts\_snd_playsound::snd_play_loop_2d( "underwater_bubbles_lp" );
     soundscripts\_snd_filters::snd_set_filter( "underwater", 1, 0 );
     soundscripts\_audio_reverb::rvb_start_preset( "underwater", 1 );
-    level.player _meth_812A( 1, 1 );
+    level.player seteqlerp( 1, 1 );
 }
 
 clearunderwateraudiozone()
@@ -739,7 +739,7 @@ clearunderwateraudiozone()
         soundscripts\_audio_reverb::rvb_deactive_reverb();
     }
 
-    level.player _meth_812A( 1, 0 );
+    level.player seteqlerp( 1, 0 );
 }
 
 override_deadquote()
@@ -868,7 +868,7 @@ underwaterbubbles()
     self endon( "above_water" );
     var_0 = common_scripts\utility::spawn_tag_origin();
     waittillframeend;
-    var_0 _meth_80A6( level.player, "tag_origin", ( 25, 0, 0 ), ( 0, 0, 0 ), 0 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 25, 0, 0 ), ( 0, 0, 0 ), 0 );
     thread delete_vm_underwater_org( var_0 );
 
     for (;;)
@@ -886,7 +886,7 @@ delete_vm_underwater_org( var_0 )
 {
     common_scripts\utility::waittill_any( "above_water", "death" );
     killfxontag( common_scripts\utility::getfx( "water_bubbles" ), var_0, "tag_origin" );
-    var_0 _meth_80A7( level.player );
+    var_0 unlinkfromplayerview( level.player );
     waitframe();
     var_0 delete();
 }
@@ -897,12 +897,12 @@ underwatercloudy()
     {
         var_0 = common_scripts\utility::spawn_tag_origin();
         var_0.angles = ( 0, 0, 0 );
-        var_0.origin = level.player _meth_80A8() - ( 0, 0, 0 );
-        var_0 _meth_80A6( level.player, "tag_origin", ( 70, 0, -1 ), ( -90, 0, 0 ), 0 );
+        var_0.origin = level.player geteye() - ( 0, 0, 0 );
+        var_0 linktoplayerview( level.player, "tag_origin", ( 70, 0, -1 ), ( -90, 0, 0 ), 0 );
         playfxontag( common_scripts\utility::getfx( level.underwater_cloudy ), var_0, "tag_origin" );
         self waittill( "above_water" );
         killfxontag( common_scripts\utility::getfx( level.underwater_cloudy ), var_0, "tag_origin" );
-        var_0 _meth_80A7( level.player );
+        var_0 unlinkfromplayerview( level.player );
         var_0 delete();
     }
 }
@@ -917,7 +917,7 @@ isabovewaterline( var_0 )
 
 getplayereyeheight()
 {
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
     return var_0[2];
 }
 
@@ -931,7 +931,7 @@ getwaterline( var_0 )
 
 setdof( var_0 )
 {
-    self _meth_8186( var_0["nearStart"], var_0["nearEnd"], var_0["farStart"], var_0["farEnd"], var_0["nearBlur"], var_0["farBlur"] );
+    self setdepthoffield( var_0["nearStart"], var_0["nearEnd"], var_0["farStart"], var_0["farEnd"], var_0["nearBlur"], var_0["farBlur"] );
 }
 
 set_light_set_for_player( var_0 )
@@ -940,7 +940,7 @@ set_light_set_for_player( var_0 )
         level.lightset_previous = level.lightset_current;
 
     level.lightset_current = var_0;
-    self _meth_83C0( var_0 );
+    self lightsetforplayer( var_0 );
 }
 
 revertvisionsetforplayer( var_0 )
@@ -950,20 +950,20 @@ revertvisionsetforplayer( var_0 )
 
     if ( isdefined( self.ridevisionset ) )
     {
-        self _meth_847A( self.ridevisionset, var_0 );
-        self _meth_82D4( self.ridevisionset, var_0 );
+        self setclienttriggervisionset( self.ridevisionset, var_0 );
+        self visionsetnakedforplayer( self.ridevisionset, var_0 );
     }
 
     if ( isdefined( level.visionset_default ) )
     {
-        self _meth_847A( level.visionset_default, var_0 );
-        self _meth_82D4( level.visionset_default, var_0 );
+        self setclienttriggervisionset( level.visionset_default, var_0 );
+        self visionsetnakedforplayer( level.visionset_default, var_0 );
         maps\_utility::vision_set_fog_changes( level.visionset_default, var_0 );
     }
     else
     {
-        self _meth_847A( "", var_0 );
-        self _meth_82D4( "", var_0 );
+        self setclienttriggervisionset( "", var_0 );
+        self visionsetnakedforplayer( "", var_0 );
     }
 }
 
@@ -977,7 +977,7 @@ watchaienterwater( var_0 )
     {
         foreach ( var_2 in level.underwatertriggers )
         {
-            if ( ( !isdefined( var_0.inwater ) || !var_0.inwater ) && var_0 _meth_80A9( var_2 ) )
+            if ( ( !isdefined( var_0.inwater ) || !var_0.inwater ) && var_0 istouching( var_2 ) )
             {
                 var_0.inwater = 1;
 
@@ -1013,13 +1013,13 @@ aiinwater( var_0 )
         maps\_utility::ent_flag_waitopen( "water_trigger_paused" );
         var_1 = 0;
 
-        if ( isdefined( var_0 ) && self _meth_80A9( var_0 ) )
+        if ( isdefined( var_0 ) && self istouching( var_0 ) )
             var_1 = 1;
         else
         {
             foreach ( var_3 in level.underwatertriggers )
             {
-                if ( ( !isdefined( var_0 ) || var_3 != var_0 ) && self _meth_80A9( var_3 ) )
+                if ( ( !isdefined( var_0 ) || var_3 != var_0 ) && self istouching( var_3 ) )
                 {
                     var_1 = 1;
                     var_0 = var_3;

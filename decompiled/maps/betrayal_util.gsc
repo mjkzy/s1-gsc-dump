@@ -11,28 +11,28 @@ move_player_to_ent_by_targetname( var_0 )
 move_squad_member_to_ent_by_targetname( var_0 )
 {
     var_1 = get_ent_by_targetname( var_0 );
-    self _meth_81C6( var_1.origin, var_1.angles );
+    self forceteleport( var_1.origin, var_1.angles );
 }
 
 move_squad_member_to_ent( var_0 )
 {
-    self _meth_81C6( var_0.origin, var_0.angles );
+    self forceteleport( var_0.origin, var_0.angles );
 }
 
 give_player_just_hands()
 {
-    level.player _meth_831D();
-    level.player _meth_8130( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_81E1( 0.45 );
+    level.player disableweapons();
+    level.player allowmelee( 0 );
+    level.player allowsprint( 0 );
+    level.player setmovespeedscale( 0.45 );
     level thread start_player_walk_sway();
 }
 
 give_player_gun()
 {
-    level.player _meth_831E();
-    level.player _meth_8130( 1 );
-    level.player _meth_8304( 1 );
+    level.player enableweapons();
+    level.player allowmelee( 1 );
+    level.player allowsprint( 1 );
     level.player maps\_utility::blend_movespeedscale_default();
     level.player notify( "stop_player_walk_sway" );
 }
@@ -58,7 +58,7 @@ start_player_walk_sway()
 
     for (;;)
     {
-        _func_234( level.player.origin, 1, 1, 0.5, 2, 0.2, 0.2, 0, 0.15, 0.18, 0.05 );
+        screenshake( level.player.origin, 1, 1, 0.5, 2, 0.2, 0.2, 0, 0.15, 0.18, 0.05 );
         wait 1.5;
     }
 }
@@ -71,15 +71,15 @@ start_player_office_scene_walk_sway()
     var_0 = getdvar( "bg_viewBobAmplitudeStanding" );
     var_1 = getdvar( "bg_viewBobAmplitudeDucked" );
     var_2 = getdvar( "bg_viewBobMax" );
-    _func_0D3( "bg_viewBobAmplitudeStanding", "0.005 0.01" );
-    _func_0D3( "bg_viewBobAmplitudeDucked", "0.002 0.005" );
-    _func_0D3( "bg_viewBobMax", 3 );
-    level.player _meth_83F5( 0.8 );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", "0.005 0.01" );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", "0.002 0.005" );
+    setsaveddvar( "bg_viewBobMax", 3 );
+    level.player setbobrate( 0.8 );
     common_scripts\utility::flag_wait( "flag_confrontation_give_player_real_gun" );
-    _func_0D3( "bg_viewBobAmplitudeStanding", var_0 );
-    _func_0D3( "bg_viewBobAmplitudeDucked", var_1 );
-    _func_0D3( "bg_viewBobMax", var_2 );
-    level.player _meth_83F5( 1 );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", var_0 );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", var_1 );
+    setsaveddvar( "bg_viewBobMax", var_2 );
+    level.player setbobrate( 1 );
 }
 
 player_apply_mission_failed_wrapper_on_death_for_duration( var_0, var_1 )
@@ -142,7 +142,7 @@ spawn_squad_member( var_0, var_1 )
 
     var_2 setup_hero( var_1 );
     var_2 start_squad_member_at_start( var_0 + "_" + var_1 );
-    var_2 _meth_81A6( var_2.origin );
+    var_2 setgoalpos( var_2.origin );
     return var_2;
 }
 
@@ -155,7 +155,7 @@ setup_hero( var_0 )
 start_squad_member_at_start( var_0 )
 {
     var_1 = get_ent_by_targetname( var_0 );
-    self _meth_81C6( var_1.origin, var_1.angles );
+    self forceteleport( var_1.origin, var_1.angles );
 }
 
 player_knockout_white()
@@ -196,7 +196,7 @@ fadeoverlay( var_0, var_1, var_2 )
 {
     self fadeovertime( var_0 );
     self.alpha = var_1;
-    _func_072( var_2, var_0 );
+    setblur( var_2, var_0 );
     wait(var_0);
 }
 
@@ -212,9 +212,9 @@ animate_player_on_rig_simple( var_0, var_1, var_2, var_3, var_4 )
 
     var_6 = get_ent_by_targetname( var_2 );
     var_6 maps\_anim::anim_first_frame_solo( level.rig, var_1 );
-    level.player _meth_8080( level.rig, "tag_player", var_5 );
+    level.player playerlinktoblend( level.rig, "tag_player", var_5 );
     level.rig common_scripts\utility::delaycall( var_5, ::show );
-    level.player common_scripts\utility::delaycall( var_5, ::_meth_807D, level.rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( var_5, ::playerlinktodelta, level.rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
 
     if ( isdefined( var_4 ) )
     {
@@ -224,7 +224,7 @@ animate_player_on_rig_simple( var_0, var_1, var_2, var_3, var_4 )
     else
         var_6 maps\_anim::anim_single_solo( level.rig, var_1 );
 
-    level.player _meth_804F();
+    level.player unlink();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level.rig delete();
 }
@@ -310,7 +310,7 @@ force_to_always_sidearm()
 set_custom_patrol_anim_set( var_0 )
 {
     set_custom_run_anim( var_0 );
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.oldcombatmode = self.combatmode;
     self.combatmode = "no_cover";
     maps\_utility::disable_cqbwalk();
@@ -358,7 +358,7 @@ clear_custom_patrol_anim_set()
     self.startmovetransitionanim = undefined;
     self.customarrivalfunc = undefined;
     self.startidletransitionanim = undefined;
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
 
     if ( isdefined( self.oldcombatmode ) )
         self.combatmode = self.oldcombatmode;
@@ -377,8 +377,8 @@ custom_idle_trans_function()
     if ( !isdefined( self.heat ) )
         thread animscripts\cover_arrival::abortapproachifthreatened();
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
     animscripts\face::playfacialanim( var_1, "run" );
     animscripts\shared::donotetracks( "coverArrival", animscripts\cover_arrival::handlestartaim );
     var_2 = anim.arrivalendstance[self.approachtype];
@@ -388,7 +388,7 @@ custom_idle_trans_function()
 
     self.a.movement = "stop";
     self.a.arrivaltype = self.approachtype;
-    self _meth_8142( %root, 0.3 );
+    self clearanim( %root, 0.3 );
     self.lastapproachaborttime = undefined;
     var_3 = self.origin - self.goalpos;
 }
@@ -527,7 +527,7 @@ generic_event_actor_animations( var_0, var_1, var_2 )
 stop_current_animations( var_0 )
 {
     self endon( "death" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "drone_stop" );
     self notify( "stop_loop" );
     self notify( "single anim", "end" );
@@ -604,7 +604,7 @@ clean_up_ai_single( var_0 )
 
 clean_up_ai( var_0 )
 {
-    var_1 = _func_0D6();
+    var_1 = getaiarray();
 
     foreach ( var_3 in var_1 )
     {
@@ -670,9 +670,9 @@ open_door( var_0, var_1, var_2 )
     foreach ( var_4 in var_0 )
     {
         if ( var_4.classname == "script_brushmodel" )
-            var_4 _meth_8058();
+            var_4 connectpaths();
 
-        var_4 _meth_82B7( var_2, var_1, var_1 / 5, var_1 / 5 );
+        var_4 rotateyaw( var_2, var_1, var_1 / 5, var_1 / 5 );
     }
 
     wait(var_1);
@@ -680,7 +680,7 @@ open_door( var_0, var_1, var_2 )
     foreach ( var_4 in var_0 )
     {
         if ( var_4.classname == "script_brushmodel" )
-            var_4 _meth_8057();
+            var_4 disconnectpaths();
     }
 }
 
@@ -699,51 +699,51 @@ open_sliding_door_toggle( var_0, var_1, var_2, var_3 )
         var_6 = get_ent_by_targetname( var_5.targetname + "_goal" );
         var_7 = get_ent_by_targetname( var_5.targetname + "_default_org" );
         var_5.col = get_ent_by_targetname( var_5.target );
-        var_5.col _meth_804D( var_5 );
+        var_5.col linkto( var_5 );
 
         if ( isdefined( var_5.col ) && var_5.col.classname == "script_brushmodel" )
-            var_5.col _meth_8058();
+            var_5.col connectpaths();
 
         if ( isdefined( var_3 ) )
         {
             var_8 = var_3 * ( var_6.origin - var_7.origin ) + var_7.origin;
             soundscripts\_snd::snd_message( "bet_conf_door_opens", var_5 );
-            var_5 _meth_82AE( var_8, var_2, var_2 / 2, var_2 / 2 );
+            var_5 moveto( var_8, var_2, var_2 / 2, var_2 / 2 );
             wait(var_2);
-            var_5.col _meth_8057();
+            var_5.col disconnectpaths();
             continue;
         }
 
         if ( var_5.origin == var_6.origin )
         {
-            var_5 _meth_82AE( var_7.origin, var_2, var_2 / 2, var_2 / 2 );
+            var_5 moveto( var_7.origin, var_2, var_2 / 2, var_2 / 2 );
             wait(var_2);
-            var_5.col _meth_8057();
+            var_5.col disconnectpaths();
 
             if ( var_5.classname == "script_brushmodel" )
-                var_5 _meth_8057();
+                var_5 disconnectpaths();
 
             continue;
         }
 
         if ( var_5.origin == var_7.origin )
         {
-            var_5 _meth_82AE( var_6.origin, var_2, var_2 / 2, var_2 / 2 );
+            var_5 moveto( var_6.origin, var_2, var_2 / 2, var_2 / 2 );
             wait(var_2);
-            var_5.col _meth_8058();
+            var_5.col connectpaths();
 
             if ( var_5.classname == "script_brushmodel" )
-                var_5 _meth_8058();
+                var_5 connectpaths();
 
             continue;
         }
 
-        var_5 _meth_82AE( var_6.origin, var_2, var_2 / 2, var_2 / 2 );
+        var_5 moveto( var_6.origin, var_2, var_2 / 2, var_2 / 2 );
         wait(var_2);
-        var_5.col _meth_8058();
+        var_5.col connectpaths();
 
         if ( var_5.classname == "script_brushmodel" )
-            var_5 _meth_8058();
+            var_5 connectpaths();
     }
 }
 
@@ -775,7 +775,7 @@ raise_blast_doors( var_0, var_1, var_2 )
         for ( var_7 = []; var_6 < var_3.size && var_3[var_6].door_num == var_4; var_6++ )
         {
             var_3[var_6].prepared = 0;
-            var_3[var_6] _meth_82AE( var_3[var_6].original_org, var_1, 0, var_1 / 4 );
+            var_3[var_6] moveto( var_3[var_6].original_org, var_1, 0, var_1 / 4 );
             var_7[var_7.size] = var_3[var_6];
         }
 
@@ -799,7 +799,7 @@ blast_doors_mr_x( var_0, var_1 )
     foreach ( var_8 in var_0 )
     {
         var_9 = randomfloatrange( var_2, var_3 );
-        var_8 _meth_82AE( var_8.opened_org + var_4[var_6] * anglestoup( var_8.angles ), var_9, 0, var_9 / 4 );
+        var_8 moveto( var_8.opened_org + var_4[var_6] * anglestoup( var_8.angles ), var_9, 0, var_9 / 4 );
         wait 0.1;
         var_6++;
 
@@ -813,7 +813,7 @@ blast_doors_mr_x( var_0, var_1 )
     foreach ( var_8 in var_0 )
     {
         var_9 = randomfloatrange( var_2, var_3 );
-        var_8 _meth_82AE( var_8.original_org - var_5[var_6] * anglestoup( var_8.angles ), var_9, 0, var_9 / 4 );
+        var_8 moveto( var_8.original_org - var_5[var_6] * anglestoup( var_8.angles ), var_9, 0, var_9 / 4 );
         wait 0.1;
         var_6++;
 
@@ -825,7 +825,7 @@ blast_doors_mr_x( var_0, var_1 )
 
     foreach ( var_8 in var_0 )
     {
-        var_8 _meth_82AE( var_8.opened_org, var_2, 0, var_2 / 4 );
+        var_8 moveto( var_8.opened_org, var_2, 0, var_2 / 4 );
         wait 0.1;
     }
 
@@ -836,7 +836,7 @@ blast_doors_mr_x( var_0, var_1 )
     foreach ( var_8 in var_0 )
     {
         var_9 = randomfloatrange( var_2, var_3 );
-        var_8 _meth_82AE( var_8.original_org, var_9, 0, var_9 / 4 );
+        var_8 moveto( var_8.original_org, var_9, 0, var_9 / 4 );
     }
 }
 
@@ -886,7 +886,7 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
     for (;;)
     {
-        var_10 = var_0 _meth_8286();
+        var_10 = var_0 vehicle_getspeed();
         var_11 = vectornormalize( anglestoforward( var_0.angles ) );
         var_12 = self.origin - var_0.origin;
         var_13 = vectordot( var_11, var_12 ) * var_11;
@@ -926,10 +926,10 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
         {
             if ( vectordot( level.player.drivingvehicle.origin - self.origin, anglestoforward( self.angles ) ) > 0 )
             {
-                [var_18, var_19] = time_and_distance_of_closest_approach( self.origin, self _meth_8287(), level.player.drivingvehicle.origin, level.player.drivingvehicle _meth_8287(), 0.1, 234, 0 );
+                [var_18, var_19] = time_and_distance_of_closest_approach( self.origin, self vehicle_getvelocity(), level.player.drivingvehicle.origin, level.player.drivingvehicle vehicle_getvelocity(), 0.1, 234, 0 );
 
                 if ( var_18 < 2 && var_19 < 234 )
-                    var_10 = level.player.drivingvehicle _meth_8286() * 0.6;
+                    var_10 = level.player.drivingvehicle vehicle_getspeed() * 0.6;
             }
         }
 
@@ -940,7 +940,7 @@ vehicle_chase_target( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
         else
             var_10 = clamp( var_10, 20, 200 );
 
-        self _meth_8283( var_10, 100, 100 );
+        self vehicle_setspeed( var_10, 100, 100 );
         wait 0.05;
     }
 }
@@ -1070,7 +1070,7 @@ wait_for_trigger_with_group_touching( var_0, var_1, var_2 )
 
         foreach ( var_6 in var_2 )
         {
-            if ( !var_6 _meth_80A9( var_3 ) )
+            if ( !var_6 istouching( var_3 ) )
                 var_4 = 0;
         }
 
@@ -1111,12 +1111,12 @@ wait_for_trigger_with_group_not_touching( var_0, var_1, var_2 )
     {
         var_4 = 1;
 
-        if ( var_1 && level.player _meth_80A9( var_3 ) )
+        if ( var_1 && level.player istouching( var_3 ) )
             var_4 = 0;
 
         foreach ( var_6 in var_2 )
         {
-            if ( var_6 _meth_80A9( var_3 ) )
+            if ( var_6 istouching( var_3 ) )
                 var_4 = 0;
         }
 
@@ -1223,7 +1223,7 @@ drone_swarm_kamikaze_set_attack_vars( var_0, var_1, var_2, var_3 )
 
 drone_swarm_kamikaze_attack_player( var_0, var_1 )
 {
-    var_2 = level.player _meth_80A8();
+    var_2 = level.player geteye();
     var_3 = self gettagorigin( "tag_origin" );
 
     if ( !isdefined( level.swarm_last_player_pos ) )
@@ -1238,8 +1238,8 @@ drone_swarm_kamikaze_attack_player( var_0, var_1 )
         if ( !isdefined( var_4 ) || !var_4 maps\_vehicle::isvehicle() )
             return 0;
 
-        var_4 _meth_827C( self.origin, self.angles );
-        var_4 _meth_8283( 20, 20, 20 );
+        var_4 vehicle_teleport( self.origin, self.angles );
+        var_4 vehicle_setspeed( 20, 20, 20 );
         var_5 = undefined;
 
         if ( isdefined( var_1 ) )
@@ -1274,7 +1274,7 @@ drone_swarm_kamikaze_seek_player( var_0 )
         else
         {
             var_2 = anglestoforward( level.player getangles() );
-            var_3 = level.player _meth_80A8() + 30 * var_2;
+            var_3 = level.player geteye() + 30 * var_2;
             var_4 = self gettagorigin( "tag_origin" );
             var_5 = vectornormalize( var_3 - var_4 );
             var_6 = var_4 + var_5 * 20;
@@ -1301,7 +1301,7 @@ drone_swarm_kamikaze_set_goal( var_0 )
     if ( !maps\_vehicle::isvehicle() )
         return;
 
-    self _meth_825B( var_0 );
+    self setvehgoalpos( var_0 );
 }
 
 drone_swarm_kamikaze_explode()
@@ -1314,18 +1314,18 @@ drone_swarm_kamikaze_explode()
     if ( randomint( 100 ) < 5 )
         playfx( common_scripts\utility::getfx( "drone_sparks" ), var_2 );
 
-    self entityradiusdamage( var_2, 130, var_0, var_1, self );
+    self radiusdamage( var_2, 130, var_0, var_1, self );
     earthquake( randomfloatrange( 0.25, 1 ), 0.5, level.player.origin, 32 );
     var_4 = spawn( "script_model", var_2 );
-    var_4 _meth_80B1( "vehicle_mil_attack_drone_destroy" );
+    var_4 setmodel( "vehicle_mil_attack_drone_destroy" );
     var_4.angles = var_3;
     playfxontag( level._effect["swarm_death_explosion"], self, "tag_origin" );
     soundscripts\_snd::snd_message( "pdrone_death_explode" );
-    self _meth_8052();
+    self kill();
     waitframe();
-    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player _meth_80A8();
+    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player geteye();
     var_6 = randomintrange( 50, 80 );
-    var_4 _meth_8276( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 * var_6 );
+    var_4 physicslaunchserver( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 * var_6 );
 
     if ( randomint( 100 ) < 5 )
         playfxontag( common_scripts\utility::getfx( "drone_smoke" ), var_4, "tag_origin" );
@@ -1351,8 +1351,8 @@ warbird_shooting_think( var_0, var_1, var_2 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -1386,7 +1386,7 @@ warbird_fire_init( var_0, var_1 )
 
         if ( !isdefined( self.turret_target_override ) )
         {
-            var_5 = _func_0D6( "allies" );
+            var_5 = getaiarray( "allies" );
 
             if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
             {
@@ -1420,7 +1420,7 @@ warbird_fire_init( var_0, var_1 )
                 if ( isdefined( var_0 ) && var_0 )
                 {
                     var_13 = self.mgturret[0] gettagorigin( "tag_flash" );
-                    var_14 = var_9 _meth_80A8();
+                    var_14 = var_9 geteye();
                     var_15 = vectornormalize( var_14 - var_13 );
                     var_16 = var_14 + var_15 * 20;
 
@@ -1437,24 +1437,24 @@ warbird_fire_init( var_0, var_1 )
 
         if ( isdefined( var_11 ) )
         {
-            var_2 _meth_8106( var_11 );
-            var_3 _meth_8106( var_11 );
-            var_2 _meth_8179();
-            var_3 _meth_8179();
-            var_2 _meth_80E2();
-            var_3 _meth_80E2();
+            var_2 settargetentity( var_11 );
+            var_3 settargetentity( var_11 );
+            var_2 turretfireenable();
+            var_3 turretfireenable();
+            var_2 startfiring();
+            var_3 startfiring();
             warbird_wait_for_fire_target_done( var_11, var_0 );
-            var_2 _meth_8108();
-            var_3 _meth_8108();
-            var_2 _meth_815C();
-            var_3 _meth_815C();
+            var_2 cleartargetentity();
+            var_3 cleartargetentity();
+            var_2 turretfiredisable();
+            var_3 turretfiredisable();
         }
 
         wait(var_4);
     }
 
-    var_2 _meth_815C();
-    var_3 _meth_815C();
+    var_2 turretfiredisable();
+    var_3 turretfiredisable();
 }
 
 warbird_wait_for_fire_target_done( var_0, var_1 )
@@ -1478,7 +1478,7 @@ warbird_wait_for_fire_target_done( var_0, var_1 )
         if ( isdefined( var_1 ) && var_1 )
         {
             var_4 = self.mgturret[0] gettagorigin( "tag_flash" );
-            var_5 = var_0 _meth_80A8();
+            var_5 = var_0 geteye();
             var_6 = vectornormalize( var_5 - var_4 );
             var_7 = var_4 + var_6 * 20;
 
@@ -1603,7 +1603,7 @@ assign_goal_vol( var_0, var_1 )
     if ( isdefined( self ) )
     {
         var_2 = getent( var_0, "targetname" );
-        self _meth_81A9( var_2 );
+        self setgoalvolumeauto( var_2 );
 
         if ( isdefined( var_1 ) )
             self.goalradius = var_1;
@@ -1615,7 +1615,7 @@ assign_goal_node( var_0, var_1 )
     if ( isdefined( self ) )
     {
         var_2 = getnode( var_0, "targetname" );
-        self _meth_81A5( var_2 );
+        self setgoalnode( var_2 );
 
         if ( isdefined( var_1 ) )
             self.goalradius = var_1;
@@ -1626,9 +1626,9 @@ setupenemygoalvolumesettings( var_0, var_1 )
 {
     var_0 = common_scripts\utility::array_randomize( var_0 );
 
-    if ( level.player _meth_80A9( var_0[0] ) )
+    if ( level.player istouching( var_0[0] ) )
     {
-        self _meth_81A9( var_0[1] );
+        self setgoalvolumeauto( var_0[1] );
         waitframe();
 
         if ( isdefined( var_1 ) )
@@ -1636,7 +1636,7 @@ setupenemygoalvolumesettings( var_0, var_1 )
     }
     else
     {
-        self _meth_81A9( var_0[0] );
+        self setgoalvolumeauto( var_0[0] );
         waitframe();
 
         if ( isdefined( var_1 ) )
@@ -1875,7 +1875,7 @@ civilian_spawn_single( var_0, var_1, var_2 )
         var_3.ignoreme = 1;
         var_3.ignoreall = 1;
         var_3 maps\_utility::disable_pain();
-        var_3 _meth_81C6( self.origin, self.angles );
+        var_3 forceteleport( self.origin, self.angles );
     }
     else
     {
@@ -1981,7 +1981,7 @@ civilian_setup_esc_nodes( var_0 )
                 level.esc_node_locations = sortbydistance( level.esc_node_locations, var_3.origin );
                 var_1 = level.esc_node_locations[0];
                 level.esc_node_locations = common_scripts\utility::array_remove( level.esc_node_locations, level.esc_node_locations[0] );
-                var_3 _meth_81A5( var_1 );
+                var_3 setgoalnode( var_1 );
 
                 if ( isdefined( var_1.target ) )
                     var_3 thread civilian_actor_ai_player_reaction( var_1 );
@@ -2008,7 +2008,7 @@ civilian_setup_esc_nodes( var_0 )
             }
         }
 
-        var_3 _meth_81A5( var_1 );
+        var_3 setgoalnode( var_1 );
     }
 }
 
@@ -2040,8 +2040,8 @@ civilian_actor_behavior_manager( var_0, var_1, var_2 )
 
     if ( var_1 )
     {
-        self _meth_81FF( level.player );
-        self _meth_81FF();
+        self setlookatentity( level.player );
+        self setlookatentity();
     }
 
     thread civilian_actor_play_reaction( var_1 );
@@ -2074,9 +2074,9 @@ civilian_watch_player_when_close()
         var_0 = distance( self.origin, level.player.origin );
 
         if ( var_0 <= 100 )
-            self _meth_81FF( level.player );
+            self setlookatentity( level.player );
         else
-            self _meth_81B7();
+            self stoplookat();
 
         wait 0.5;
     }
@@ -2155,7 +2155,7 @@ civilian_actor_play_reaction( var_0 )
     if ( isdefined( self.script_parameters ) )
     {
         if ( isdefined( self.final_animation_angles ) && isdefined( self.final_animation_origin ) && isdefined( self.script_nodestate ) )
-            self _meth_81C6( self.final_animation_origin, self.final_animation_angles );
+            self forceteleport( self.final_animation_origin, self.final_animation_angles );
 
         stop_current_animations();
         self.animname = "generic";
@@ -2165,10 +2165,10 @@ civilian_actor_play_reaction( var_0 )
     else
     {
         if ( isdefined( self.final_animation_angles ) && isdefined( self.script_nodestate ) )
-            self _meth_81C6( self.origin, self.final_animation_angles );
+            self forceteleport( self.origin, self.final_animation_angles );
 
         if ( isdefined( self.final_animation_origin ) && isdefined( self.script_nodestate ) )
-            self _meth_81C6( self.final_animation_origin, self.angles );
+            self forceteleport( self.final_animation_origin, self.angles );
 
         stop_current_animations();
         thread maps\_anim::anim_loop( [ self ], var_1 );
@@ -2185,7 +2185,7 @@ civilian_actor_ai_player_reaction( var_0 )
     common_scripts\utility::flag_wait( var_2 );
     stop_current_animations();
     waitframe();
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     self waittill( "goal" );
     self waittill( "done_reacting" );
     stop_current_animations();
@@ -2287,7 +2287,7 @@ civilian_get_random_walk()
 
 civilian_cleanup( var_0 )
 {
-    if ( isdefined( var_0 ) && !_func_294( var_0 ) )
+    if ( isdefined( var_0 ) && !isremovedentity( var_0 ) )
         var_0 delete();
 }
 
@@ -2340,7 +2340,7 @@ civilian_walker_setup( var_0, var_1 )
             }
 
             waitframe();
-            var_10 _meth_81A3( 1 );
+            var_10 pushplayer( 1 );
             var_10 thread civilian_walker_behavior_manager( var_0 );
             var_10 thread civilian_walker_idle_when_blocked();
         }
@@ -2468,7 +2468,7 @@ civilian_walker_update_current_goal_and_animate_to( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        self _meth_81A5( var_1 );
+        self setgoalnode( var_1 );
 
         if ( isdefined( var_0.script_noteworthy ) )
         {
@@ -2515,7 +2515,7 @@ civilian_walker_play_reaction()
 
 bullet_thing( var_0 )
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     var_1 = self;
 
     switch ( var_0 )
@@ -2543,7 +2543,7 @@ bullet_thing( var_0 )
             self.health += var_2;
     }
 
-    self _meth_8052();
+    self kill();
     var_1 delete();
 }
 
@@ -2552,7 +2552,7 @@ bullet_magnet_shield( var_0 )
     var_0 endon( "death" );
     self endon( "death" );
     self.health = 20000;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -2575,7 +2575,7 @@ bullet_magnet_shield( var_0 )
                     var_15 delete();
             }
 
-            _func_070( var_10, var_11, var_12, 1 );
+            magicgrenade( var_10, var_11, var_12, 1 );
         }
         else
             magicbullet( var_10, var_11, self.origin );
@@ -2589,7 +2589,7 @@ bullet_deflector_shield( var_0 )
     var_0 endon( "death" );
     self endon( "death" );
     self.health = 20000;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -2611,7 +2611,7 @@ bullet_deflector_shield( var_0 )
                     var_15 delete();
             }
 
-            _func_070( var_10, var_11, var_12, 1 );
+            magicgrenade( var_10, var_11, var_12, 1 );
         }
         else
             magicbullet( var_10, var_11, var_12 );
@@ -2625,7 +2625,7 @@ bullet_shield_shield( var_0 )
     var_0 endon( "death" );
     self endon( "death" );
     self.health = 20000;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -2907,7 +2907,7 @@ heli_hold_position( var_0, var_1 )
     for (;;)
     {
         if ( !common_scripts\utility::array_contains( level.looping_helis_currently_moving, self ) )
-            self _meth_827C( var_0.origin, var_0.angles, 0 );
+            self vehicle_teleport( var_0.origin, var_0.angles, 0 );
 
         wait 5;
 
@@ -2928,7 +2928,7 @@ send_heli_through_path( var_0 )
 
     if ( isdefined( self ) )
     {
-        self _meth_827C( var_1, var_2, 0 );
+        self vehicle_teleport( var_1, var_2, 0 );
         level.looping_helis_currently_moving = common_scripts\utility::array_remove( level.looping_helis_currently_moving, self );
     }
 }
@@ -2942,9 +2942,9 @@ heli_delete_on_pathend()
 
 start_player_diveboat_ride()
 {
-    level.player_boat _meth_8099( level.player );
+    level.player_boat useby( level.player );
     level.player_boat vehicle_scripts\_diveboat::do_diveboat_threads();
-    level.player_boat _meth_840F( 1 );
+    level.player_boat setviewmodeldepth( 1 );
     level.player.drivingvehicle = level.player_boat;
 }
 
@@ -2963,7 +2963,7 @@ scripted_spin_fan_blades( var_0, var_1 )
         }
 
         var_3 += 90;
-        self _meth_82B7( 90, var_2, 0, 0 );
+        self rotateyaw( 90, var_2, 0, 0 );
         wait(var_2);
     }
 }
@@ -3121,7 +3121,7 @@ player_can_see_point( var_0, var_1 )
     if ( !common_scripts\utility::within_fov( level.player.origin, var_3, var_0, var_2 ) )
         return 0;
 
-    var_4 = level.player _meth_80A8();
+    var_4 = level.player geteye();
 
     if ( sighttracepassed( var_4, var_0, 1, level.player ) )
         return 1;
@@ -3139,7 +3139,7 @@ player_can_see_ai_bones( var_0, var_1 )
     if ( !common_scripts\utility::within_fov( level.player.origin, level.player.angles, var_0.origin, var_2 ) )
         return 0;
 
-    var_3 = level.player _meth_80A8();
+    var_3 = level.player geteye();
     var_4 = var_0 gettagorigin( "j_head" );
 
     if ( sighttracepassed( var_3, var_4, 1, level.player, var_0 ) )

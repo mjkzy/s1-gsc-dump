@@ -54,7 +54,7 @@ tryusekillstreak( var_0, var_1 )
 {
     if ( level.fauxvehiclecount + 1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
@@ -92,7 +92,7 @@ tryusekillstreak( var_0, var_1 )
     }
     else
     {
-        self iclientprintlnbold( &"MP_DETROIT_MAP_KILLSTREAK_NOT_AVAILABLE" );
+        self iprintlnbold( &"MP_DETROIT_MAP_KILLSTREAK_NOT_AVAILABLE" );
         return 0;
     }
 }
@@ -108,16 +108,16 @@ run_tram_killstreak( var_0 )
     var_0.stopdamagefunc = 0;
     var_0 tram_show_icon();
     var_0 thread maps\mp\gametypes\_damage::setentitydamagecallback( 1000, undefined, ::tramondeath, undefined, 1 );
-    self _meth_82DD( "CancelTramStart", "+usereload" );
-    self _meth_82DD( "CancelTramEnd", "-usereload" );
+    self notifyonplayercommand( "CancelTramStart", "+usereload" );
+    self notifyonplayercommand( "CancelTramEnd", "-usereload" );
     maps\mp\_utility::setusingremote( "mp_detroit_tram" );
-    self _meth_80E8( var_0.turret, 30, var_0.angles[1] - 90 );
+    self remotecontrolturret( var_0.turret, 30, var_0.angles[1] - 90 );
     var_0 thread tram_update_shooting_location();
     var_0 common_scripts\utility::make_entity_sentient_mp( var_0.team );
-    self _meth_807E( var_0, "tag_player", 0, 180, 180, 0, 90, 0 );
-    self _meth_80A0( 0 );
+    self playerlinkweaponviewtodelta( var_0, "tag_player", 0, 180, 180, 0, 90, 0 );
+    self playerlinkedsetviewznear( 0 );
     self thermalvisionfofoverlayon();
-    self _meth_82FB( "ui_detroit_tram_turret", 1 );
+    self setclientomnvar( "ui_detroit_tram_turret", 1 );
     var_0 thread tram_killstreak_team_change_watch();
     var_0 thread tram_killstreak_cancel_watch();
     var_0 thread tram_killstreak_exit_watch();
@@ -133,8 +133,8 @@ tram_update_shooting_location()
     var_0 endon( "disconnect" );
     self.turret endon( "death" );
     self.target_ent = spawn( "script_model", ( 0, 0, 0 ) );
-    self.target_ent _meth_80B1( "tag_origin" );
-    self.turret _meth_8508( self.target_ent );
+    self.target_ent setmodel( "tag_origin" );
+    self.turret turretsetgroundaimentity( self.target_ent );
 
     for (;;)
     {
@@ -161,9 +161,9 @@ tram_show_icon()
         objective_state( var_1, "active" );
 
         if ( var_2 == "allies" )
-            objective_playerteam( var_1, self.owner _meth_81B1() );
+            objective_playerteam( var_1, self.owner getentitynumber() );
         else
-            objective_playerenemyteam( var_1, self.owner _meth_81B1() );
+            objective_playerenemyteam( var_1, self.owner getentitynumber() );
 
         objective_onentitywithrotation( var_1, self.turret.obj_ent );
     }
@@ -232,11 +232,11 @@ tram_killstreak_exit_watch()
     self endon( "disconnect" );
     self waittill( "player_exit" );
     tram_hide_icon();
-    self.owner _meth_82FB( "ui_detroit_tram_turret", 0 );
+    self.owner setclientomnvar( "ui_detroit_tram_turret", 0 );
     self.owner thermalvisionfofoverlayoff();
-    self.owner _meth_804F();
-    self.owner _meth_80E9( self.turret );
-    self _meth_813A();
+    self.owner unlink();
+    self.owner remotecontrolturretoff( self.turret );
+    self freeentitysentient();
     self.owner maps\mp\_utility::clearusingremote();
     self.owner = undefined;
     thread maps\mp\killstreaks\_killstreaks::updateaerialkillstreakmarker();
@@ -249,29 +249,29 @@ spawn_tram_turret()
     var_0 = "tag_turret";
     var_1 = spawnturret( "misc_turret", self.origin, "detroit_tram_turret_mp", 0 );
     var_1.angles = ( 0, 0, 0 );
-    var_1 _meth_80B1( "vehicle_xh9_warbird_turret_detroit_mp" );
-    var_1 _meth_815A( 45.0 );
-    var_1 _meth_804D( self, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( "vehicle_xh9_warbird_turret_detroit_mp" );
+    var_1 setdefaultdroppitch( 45.0 );
+    var_1 linkto( self, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1.owner = self.owner;
     var_1.health = 99999;
     var_1.maxhealth = 1000;
     var_1.damagetaken = 0;
     var_1.stunned = 0;
     var_1.stunnedtime = 0.0;
-    var_1 _meth_82C0( 0 );
-    var_1 _meth_82C1( 0 );
+    var_1 setcandamage( 0 );
+    var_1 setcanradiusdamage( 0 );
     var_1.team = self.team;
     var_1.pers["team"] = self.team;
 
     if ( level.teambased )
-        var_1 _meth_8135( self.team );
+        var_1 setturretteam( self.team );
 
-    var_1 _meth_8065( "sentry_manual" );
-    var_1 _meth_8103( self.owner );
-    var_1 _meth_8105( 0 );
+    var_1 setmode( "sentry_manual" );
+    var_1 setsentryowner( self.owner );
+    var_1 setturretminimapvisible( 0 );
     var_1.chopper = self;
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_804D( var_1, "tag_aim_pivot", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_aim_pivot", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_2 setcontents( 0 );
     var_1 thread common_scripts\utility::delete_on_death( var_2 );
     var_1.obj_ent = var_2;

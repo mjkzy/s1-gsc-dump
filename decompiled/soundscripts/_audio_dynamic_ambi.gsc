@@ -433,10 +433,10 @@ dambx_play_component_loops( var_0, var_1, var_2, var_3, var_4 )
                 var_7 = spawn( "script_origin", level.player.origin );
 
             level._audio.damb.loop_entity_ref_count++;
-            var_7 _meth_8075( var_6 );
+            var_7 playloopsound( var_6 );
 
             if ( isdefined( var_4 ) )
-                var_7 _meth_804D( var_4 );
+                var_7 linkto( var_4 );
 
             var_8 = level._audio.damb.single_loop_handle_index;
             level._audio.damb.playing[var_0][var_1]["single_loops"][var_8] = var_7;
@@ -719,7 +719,7 @@ dambx_perform_oneshot_event( var_0, var_1, var_2 )
         var_4 = spawn( "script_origin", var_3 + var_2.start_position );
 
         if ( isdefined( var_2.ent ) && var_2.mode == "attach" )
-            var_4 _meth_804D( var_2.ent );
+            var_4 linkto( var_2.ent );
 
         var_4 playsound( var_2.alias["name"], "sounddone" );
         var_4 thread soundscripts\_audio::aud_check_sound_done();
@@ -734,18 +734,18 @@ dambx_perform_oneshot_event( var_0, var_1, var_2 )
             if ( isdefined( var_2.end_position ) && !isdefined( var_2.entity ) )
             {
                 var_6 = 0.1 * var_2.travel_time;
-                var_4 _meth_82AE( var_3 + var_2.end_position, var_2.travel_time, var_6, var_6 );
+                var_4 moveto( var_3 + var_2.end_position, var_2.travel_time, var_6, var_6 );
             }
 
             if ( isdefined( var_2.start_pitch ) )
-                var_4 _meth_806D( var_2.start_pitch );
+                var_4 scalepitch( var_2.start_pitch );
 
             if ( isdefined( var_2.pitch_time ) )
             {
                 wait 0.05;
 
                 if ( isdefined( var_4 ) && !var_4.sounddone )
-                    var_4 _meth_806D( var_2.end_pitch, var_2.pitch_time );
+                    var_4 scalepitch( var_2.end_pitch, var_2.pitch_time );
             }
 
             thread dambx_wait_till_sound_done_and_remove_handle( var_0, var_1, var_5, var_4 );
@@ -793,15 +793,15 @@ dambx_perform_loop_event( var_0, var_1, var_2 )
         var_13 = spawn( "script_origin", var_3 + var_2.start_position );
 
         if ( isdefined( var_2.ent ) && var_2.mode == "attach" )
-            var_13 _meth_804D( var_2.ent );
+            var_13 linkto( var_2.ent );
 
-        var_13 _meth_8075( var_9 );
+        var_13 playloopsound( var_9 );
 
         if ( isdefined( var_10 ) )
         {
-            var_13 _meth_806F( 0.0 );
+            var_13 scalevolume( 0.0 );
             wait 0.05;
-            var_13 _meth_806F( 1.0, var_10 );
+            var_13 scalevolume( 1.0, var_10 );
         }
 
         var_13 thread soundscripts\_audio::aud_check_sound_done();
@@ -822,18 +822,18 @@ dambx_perform_loop_event( var_0, var_1, var_2 )
             if ( var_15 )
             {
                 var_16 = 0.1 * var_2.travel_time;
-                var_13 _meth_82AE( var_3 + var_2.end_position, var_2.travel_time, var_16, var_16 );
+                var_13 moveto( var_3 + var_2.end_position, var_2.travel_time, var_16, var_16 );
             }
 
             if ( isdefined( var_2.start_pitch ) )
-                var_13 _meth_806C( var_2.start_pitch );
+                var_13 setpitch( var_2.start_pitch );
 
             if ( isdefined( var_2.pitch_time ) )
             {
                 wait 0.05;
 
                 if ( isdefined( var_13 ) && !var_13.sounddone )
-                    var_13 _meth_806C( var_2.end_pitch, var_2.pitch_time );
+                    var_13 setpitch( var_2.end_pitch, var_2.pitch_time );
             }
 
             wait(var_8);
@@ -857,7 +857,7 @@ dambx_perform_loop_event( var_0, var_1, var_2 )
                         thread soundscripts\_audio::aud_fade_loop_out_and_delete( var_13, var_11 );
                     else
                     {
-                        var_13 _meth_80AB();
+                        var_13 stoploopsound();
                         wait 0.05;
                         var_13 delete();
                     }
@@ -870,7 +870,7 @@ dambx_perform_loop_event( var_0, var_1, var_2 )
                 return;
             }
 
-            var_13 _meth_80AB();
+            var_13 stoploopsound();
             var_13 delete();
             decrement_ref_count();
             level._audio.damb.playing[var_0][var_1]["loops"][var_14] = undefined;
@@ -1109,9 +1109,9 @@ dambx_fade_out_playing_sound( var_0, var_1 )
 {
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_806F( 0.0, var_1 );
+        var_0 scalevolume( 0.0, var_1 );
         wait(var_1);
-        var_0 _meth_80AC();
+        var_0 stopsounds();
         wait 0.05;
         var_0 delete();
         decrement_ref_count();
@@ -1120,12 +1120,12 @@ dambx_fade_out_playing_sound( var_0, var_1 )
 
 dambx_fade_out_playing_loop( var_0, var_1, var_2 )
 {
-    var_0 _meth_806F( 0.0, var_1 );
+    var_0 scalevolume( 0.0, var_1 );
     wait(var_1);
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_80AB();
+        var_0 stoploopsound();
         wait 0.05;
         var_0 delete();
     }
@@ -1209,18 +1209,18 @@ dambx_get_loop_def_from_string_table_internal( var_0, var_1 )
     var_6 = undefined;
     var_7 = undefined;
     var_8 = [];
-    var_9 = _func_28F( var_0, "loop_defs", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
+    var_9 = packedtablesectionlookup( var_0, "loop_defs", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
 
     if ( isdefined( var_9 ) )
     {
         for ( var_10 = 0; var_10 < var_3; var_10++ )
         {
-            var_11 = _func_290( var_0, 0, "loop_defs", var_10, var_9[0], var_9[1] );
+            var_11 = packedtablelookupwithrange( var_0, 0, "loop_defs", var_10, var_9[0], var_9[1] );
 
             if ( !isdefined( var_11 ) || var_11 == "" )
                 return;
 
-            var_12 = _func_290( var_0, 0, var_1, var_10, var_9[0], var_9[1] );
+            var_12 = packedtablelookupwithrange( var_0, 0, var_1, var_10, var_9[0], var_9[1] );
 
             if ( var_12 != "" && var_11 != "comments" )
             {
@@ -1303,18 +1303,18 @@ dambx_get_component_from_string_table_internal( var_0, var_1 )
     var_14 = [];
     var_15 = [];
     var_16 = 0;
-    var_17 = _func_28F( var_0, "components", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
+    var_17 = packedtablesectionlookup( var_0, "components", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
 
     if ( isdefined( var_17 ) )
     {
         for ( var_18 = 1; var_18 < var_3; var_18++ )
         {
-            var_19 = _func_290( var_0, 0, "components", var_18, var_17[0], var_17[1] );
+            var_19 = packedtablelookupwithrange( var_0, 0, "components", var_18, var_17[0], var_17[1] );
 
             if ( !isdefined( var_19 ) )
                 return;
 
-            var_20 = _func_290( var_0, 0, var_1, var_18, var_17[0], var_17[1] );
+            var_20 = packedtablelookupwithrange( var_0, 0, var_1, var_18, var_17[0], var_17[1] );
 
             if ( var_20 != "" && var_19 != "comments" )
             {
@@ -1458,14 +1458,14 @@ dambx_get_preset_from_stringtable_internal( var_0, var_1 )
     var_4 = [];
     var_5 = [];
     var_6 = [];
-    var_7 = _func_28F( var_0, "dynamic_ambience_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
+    var_7 = packedtablesectionlookup( var_0, "dynamic_ambience_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
 
     if ( isdefined( var_7 ) )
     {
         for ( var_8 = 1; var_8 < var_2; var_8++ )
         {
-            var_9 = _func_290( var_0, 0, "dynamic_ambience_names", var_8, var_7[0], var_7[1] );
-            var_10 = _func_290( var_0, 0, var_1, var_8, var_7[0], var_7[1] );
+            var_9 = packedtablelookupwithrange( var_0, 0, "dynamic_ambience_names", var_8, var_7[0], var_7[1] );
+            var_10 = packedtablelookupwithrange( var_0, 0, var_1, var_8, var_7[0], var_7[1] );
             var_11 = 0;
 
             if ( var_10 != "" && var_9 != "comments" )

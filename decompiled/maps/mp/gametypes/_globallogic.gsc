@@ -7,7 +7,7 @@ init()
     level.ps3 = getdvar( "ps3Game" ) == "true";
     level.xenon = getdvar( "xenonGame" ) == "true";
     level.console = getdvar( "consoleGame" ) == "true";
-    level.onlinegame = _func_2BB();
+    level.onlinegame = isonlinegame();
     level.rankedmatch = level.onlinegame && !getdvarint( "xblive_privatematch" );
     level.practiceround = getdvarint( "practiceroundgame" );
     level.script = tolower( getdvar( "mapname" ) );

@@ -6,19 +6,19 @@ main()
     if ( !isdefined( level.func ) )
         level.func = [];
 
-    level.func["setsaveddvar"] = ::_func_0D3;
-    level.func["useanimtree"] = ::_meth_8115;
-    level.func["setanim"] = ::_meth_814B;
-    level.func["setanimknob"] = ::_meth_8143;
-    level.func["setflaggedanimknob"] = ::_meth_8152;
-    level.func["setflaggedanimknobrestart"] = ::_meth_810D;
-    level.func["setanimlimited"] = ::_meth_814C;
-    level.func["setanimtime"] = ::_meth_8117;
-    level.func["getanimtime"] = ::_meth_814F;
+    level.func["setsaveddvar"] = ::setsaveddvar;
+    level.func["useanimtree"] = ::useanimtree;
+    level.func["setanim"] = ::setanim;
+    level.func["setanimknob"] = ::setanimknob;
+    level.func["setflaggedanimknob"] = ::setflaggedanimknob;
+    level.func["setflaggedanimknobrestart"] = ::setflaggedanimknobrestart;
+    level.func["setanimlimited"] = ::setanimlimited;
+    level.func["setanimtime"] = ::setanimtime;
+    level.func["getanimtime"] = ::getanimtime;
     level.func["getanimlength"] = ::getanimlength;
-    level.func["clearanim"] = ::_meth_8142;
-    level.func["kill"] = ::_meth_8052;
-    level.func["magicgrenade"] = ::_func_070;
+    level.func["clearanim"] = ::clearanim;
+    level.func["kill"] = ::kill;
+    level.func["magicgrenade"] = ::magicgrenade;
     set_early_level();
     maps\_utility::set_console_status();
     level.global_callbacks = [];
@@ -111,9 +111,9 @@ main()
     init_level_players();
 
     if ( issplitscreen() )
-        _func_0D3( "cg_fovScale", "0.75" );
+        setsaveddvar( "cg_fovScale", "0.75" );
     else
-        _func_0D3( "cg_fovScale", "1" );
+        setsaveddvar( "cg_fovScale", "1" );
 
     level.radiation_totalpercent = 0;
     common_scripts\utility::flag_init( "missionfailed" );
@@ -125,14 +125,14 @@ main()
     thread maps\_gameskill::aa_init_stats();
     thread player_death_detection();
     level.default_run_speed = 190;
-    _func_0D3( "g_speed", level.default_run_speed );
+    setsaveddvar( "g_speed", level.default_run_speed );
 
     if ( maps\_utility::is_specialop() )
-        _func_0D3( "sv_saveOnStartMap", 0 );
+        setsaveddvar( "sv_saveOnStartMap", 0 );
     else if ( isdefined( level.credits_active ) )
-        _func_0D3( "sv_saveOnStartMap", 0 );
+        setsaveddvar( "sv_saveOnStartMap", 0 );
     else
-        _func_0D3( "sv_saveOnStartMap", 1 );
+        setsaveddvar( "sv_saveOnStartMap", 1 );
 
     common_scripts\utility::create_lock( "mg42_drones" );
     common_scripts\utility::create_lock( "mg42_drones_target_trace" );
@@ -149,24 +149,24 @@ main()
 
     common_scripts\utility::struct_class_init();
     common_scripts\utility::flag_init( "player_flashed" );
-    level.connectpathsfunction = ::_meth_8058;
-    level.disconnectpathsfunction = ::_meth_8057;
+    level.connectpathsfunction = ::connectpaths;
+    level.disconnectpathsfunction = ::disconnectpaths;
     level.badplace_cylinder_func = ::badplace_cylinder;
     level.badplace_delete_func = ::badplace_delete;
     level.isaifunc = ::isai;
     level.createclientfontstring_func = maps\_hud_util::createclientfontstring;
     level.hudsetpoint_func = maps\_hud_util::setpoint;
-    level.makeentitysentient_func = ::_meth_8139;
-    level.freeentitysentient_func = ::_meth_813A;
-    level.laseron_func = ::_meth_80B2;
-    level.laseroff_func = ::_meth_80B3;
+    level.makeentitysentient_func = ::makeentitysentient;
+    level.freeentitysentient_func = ::freeentitysentient;
+    level.laseron_func = ::laseron;
+    level.laseroff_func = ::laseroff;
     level.stat_track_kill_func = maps\_player_stats::register_kill;
     level.stat_track_damage_func = maps\_player_stats::register_shot_hit;
     level.dopickyautosavechecks = 1;
     level.autosave_threat_check_enabled = 1;
     level.getnodefunction = ::getnode;
     level.getnodearrayfunction = ::getnodearray;
-    level.addaieventlistener_func = ::_meth_8041;
+    level.addaieventlistener_func = ::addaieventlistener;
 
     if ( !isdefined( level._notetrackfx ) )
         level._notetrackfx = [];
@@ -228,7 +228,7 @@ main()
     precacheshader( "waypoint_ammo" );
     precachestring( &"init_hud" );
     precachestring( &"close_hud" );
-    _func_251( "nvg_laser" );
+    precachelaser( "nvg_laser" );
     level._effect["deathfx_bloodpool_generic"] = loadfx( "vfx/weaponimpact/deathfx_bloodpool_generic" );
     animscripts\pain::initpainfx();
     animscripts\melee::melee_init();
@@ -269,7 +269,7 @@ main()
     soundscripts\_audio::aud_init();
     soundscripts\_snd::snd_init();
     maps\_trigger::init_script_triggers();
-    _func_0D3( "ufoHitsTriggers", "0" );
+    setsaveddvar( "ufoHitsTriggers", "0" );
     maps\_hud::init();
     do_no_game_start();
 
@@ -295,7 +295,7 @@ main()
     if ( !maps\_utility::is_specialop() )
     {
         maps\_loadout::init_loadout();
-        _func_0D3( "ui_campaign", level.campaign );
+        setsaveddvar( "ui_campaign", level.campaign );
     }
 
     common_scripts\_destructible::init();
@@ -374,18 +374,18 @@ main()
     {
         if ( var_9.name == level.script )
         {
-            _func_0D3( "ui_currentLevelIndex", var_10 );
+            setsaveddvar( "ui_currentLevelIndex", var_10 );
             break;
         }
     }
 
-    if ( level.script == level.missionsettings.levels[0].name && !level.player _meth_820E( "hasEverPlayed_SP" ) )
+    if ( level.script == level.missionsettings.levels[0].name && !level.player getlocalplayerprofiledata( "hasEverPlayed_SP" ) )
         maps\_utility::delaythread( 0.1, ::update_gamer_profile );
 
-    var_11 = level.player _meth_820D( "gameskill" );
+    var_11 = level.player getplayersetting( "gameskill" );
     var_12 = level.difficultytype[int( var_11 )];
-    _func_2A3( "start_difficulty", var_12 );
-    _func_2A3( "final_difficulty", var_12 );
+    setspmatchdata( "start_difficulty", var_12 );
+    setspmatchdata( "final_difficulty", var_12 );
     level thread maps\_utility::start_monitor_escape_artist();
     level notify( "load_finished" );
     run_post_function();
@@ -394,7 +394,7 @@ main()
 
 update_gamer_profile()
 {
-    level.player _meth_820F( "hasEverPlayed_SP", 1 );
+    level.player setlocalplayerprofiledata( "hasEverPlayed_SP", 1 );
     updategamerprofile();
 }
 
@@ -430,15 +430,15 @@ weapon_ammo()
             if ( isdefined( var_2.script_ammo_max ) )
             {
                 var_4 = weaponclipsize( var_3 );
-                var_5 = _func_1E1( var_3 );
-                var_2 _meth_817E( var_4, var_5, var_4, 0 );
-                var_6 = _func_1E2( var_3 );
+                var_5 = weaponmaxammo( var_3 );
+                var_2 itemweaponsetammo( var_4, var_5, var_4, 0 );
+                var_6 = weaponaltweaponname( var_3 );
 
                 if ( var_6 != "none" )
                 {
                     var_7 = weaponclipsize( var_6 );
-                    var_8 = _func_1E1( var_6 );
-                    var_2 _meth_817E( var_7, var_8, var_7, 1 );
+                    var_8 = weaponmaxammo( var_6 );
+                    var_2 itemweaponsetammo( var_7, var_8, var_7, 1 );
                 }
 
                 continue;
@@ -487,7 +487,7 @@ weapon_ammo()
 
                 }
 
-                var_2 _meth_817E( var_4, var_10 );
+                var_2 itemweaponsetammo( var_4, var_10 );
             }
 
             if ( var_11 )
@@ -502,7 +502,7 @@ weapon_ammo()
 
                 }
 
-                var_2 _meth_817E( var_12, var_13, 0, 1 );
+                var_2 itemweaponsetammo( var_12, var_13, 0, 1 );
             }
         }
     }
@@ -547,7 +547,7 @@ playerdamagerumble()
         if ( isdefined( self.specialdamage ) )
             continue;
 
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
     }
 }
 
@@ -584,7 +584,7 @@ pianothink()
 {
     var_0 = self getorigin();
     var_1 = "piano_" + self.script_noteworthy;
-    self _meth_80DB( &"SCRIPT_PLATFORM_PIANO" );
+    self sethintstring( &"SCRIPT_PLATFORM_PIANO" );
 
     for (;;)
     {
@@ -610,9 +610,9 @@ waterthink()
         if ( !level.player.inwater && var_2 )
         {
             var_2 = 0;
-            level.player _meth_811A( 1 );
-            level.player _meth_8119( 1 );
-            level.player _meth_8118( 1 );
+            level.player allowprone( 1 );
+            level.player allowcrouch( 1 );
+            level.player allowstand( 1 );
             thread waterthink_rampspeed( level.default_run_speed );
         }
 
@@ -620,7 +620,7 @@ waterthink()
         level.player.inwater = 1;
         var_2 = 1;
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
         {
             level.player.inwater = 1;
             var_3 = level.player getorigin();
@@ -637,14 +637,14 @@ waterthink()
             thread waterthink_rampspeed( var_5 );
 
             if ( abs( var_4 ) > level.depth_allow_crouch )
-                level.player _meth_8119( 0 );
+                level.player allowcrouch( 0 );
             else
-                level.player _meth_8119( 1 );
+                level.player allowcrouch( 1 );
 
             if ( abs( var_4 ) > level.depth_allow_prone )
-                level.player _meth_811A( 0 );
+                level.player allowprone( 0 );
             else
-                level.player _meth_811A( 1 );
+                level.player allowprone( 1 );
 
             wait 0.5;
         }
@@ -674,14 +674,14 @@ waterthink_rampspeed( var_0 )
         var_3 = getdvarint( "g_speed" );
 
         if ( var_4 )
-            _func_0D3( "g_speed", var_3 - var_6 );
+            setsaveddvar( "g_speed", var_3 - var_6 );
         else
-            _func_0D3( "g_speed", var_3 + var_6 );
+            setsaveddvar( "g_speed", var_3 + var_6 );
 
         wait 0.05;
     }
 
-    _func_0D3( "g_speed", var_0 );
+    setsaveddvar( "g_speed", var_0 );
 }
 
 massnodeinitfunctions()
@@ -771,11 +771,11 @@ handle_starts()
         var_8 = getdvar( "sv_savegametransients", "" );
 
         if ( var_8 == "" )
-            _func_21F( "" );
+            loadstartpointtransient( "" );
         else
         {
             var_9 = strtok( var_8, "," );
-            _func_21F( var_9 );
+            loadstartpointtransient( var_9 );
         }
     }
     else if ( level.start_point != "default" )
@@ -787,9 +787,9 @@ handle_starts()
             var_11 = var_10["transients_to_load"];
 
             if ( var_11.size > 0 )
-                _func_21F( var_11 );
+                loadstartpointtransient( var_11 );
             else
-                _func_21F( "" );
+                loadstartpointtransient( "" );
         }
     }
 
@@ -921,8 +921,8 @@ start_menu()
 
 start_nogame()
 {
-    common_scripts\utility::array_call( _func_0D6(), ::delete );
-    common_scripts\utility::array_call( _func_0D8(), ::delete );
+    common_scripts\utility::array_call( getaiarray(), ::delete );
+    common_scripts\utility::array_call( getspawnerarray(), ::delete );
 }
 
 get_start_dvars()
@@ -988,7 +988,7 @@ display_starts()
 
     for (;;)
     {
-        if ( !level.player _meth_824C( "F10" ) )
+        if ( !level.player buttonpressed( "F10" ) )
             level.display_starts_pressed = 0;
 
         if ( var_11 != var_7 )
@@ -999,24 +999,24 @@ display_starts()
 
         if ( !var_8 )
         {
-            if ( level.player _meth_824C( "UPARROW" ) || level.player _meth_824C( "DPAD_UP" ) || level.player _meth_824C( "APAD_UP" ) )
+            if ( level.player buttonpressed( "UPARROW" ) || level.player buttonpressed( "DPAD_UP" ) || level.player buttonpressed( "APAD_UP" ) )
             {
                 var_8 = 1;
                 var_7--;
             }
         }
-        else if ( !level.player _meth_824C( "UPARROW" ) && !level.player _meth_824C( "DPAD_UP" ) && !level.player _meth_824C( "APAD_UP" ) )
+        else if ( !level.player buttonpressed( "UPARROW" ) && !level.player buttonpressed( "DPAD_UP" ) && !level.player buttonpressed( "APAD_UP" ) )
             var_8 = 0;
 
         if ( !var_9 )
         {
-            if ( level.player _meth_824C( "DOWNARROW" ) || level.player _meth_824C( "DPAD_DOWN" ) || level.player _meth_824C( "APAD_DOWN" ) )
+            if ( level.player buttonpressed( "DOWNARROW" ) || level.player buttonpressed( "DPAD_DOWN" ) || level.player buttonpressed( "APAD_DOWN" ) )
             {
                 var_9 = 1;
                 var_7++;
             }
         }
-        else if ( !level.player _meth_824C( "DOWNARROW" ) && !level.player _meth_824C( "DPAD_DOWN" ) && !level.player _meth_824C( "APAD_DOWN" ) )
+        else if ( !level.player buttonpressed( "DOWNARROW" ) && !level.player buttonpressed( "DPAD_DOWN" ) && !level.player buttonpressed( "APAD_DOWN" ) )
             var_9 = 0;
 
         if ( var_7 < 0 )
@@ -1025,13 +1025,13 @@ display_starts()
         if ( var_7 >= var_0.size )
             var_7 = 0;
 
-        if ( level.player _meth_824C( "BUTTON_B" ) )
+        if ( level.player buttonpressed( "BUTTON_B" ) )
         {
             start_display_cleanup( var_1, var_2 );
             break;
         }
 
-        if ( level.player _meth_824C( "kp_enter" ) || level.player _meth_824C( "BUTTON_A" ) || level.player _meth_824C( "enter" ) )
+        if ( level.player buttonpressed( "kp_enter" ) || level.player buttonpressed( "BUTTON_A" ) || level.player buttonpressed( "enter" ) )
         {
             if ( var_0[var_7] == "cancel" )
             {
@@ -1098,7 +1098,7 @@ setobjectivetextcolors()
     var_0 = "1.0 1.0 1.0";
     var_1 = "0.9 0.9 0.9";
     var_2 = "0.85 0.85 0.85";
-    _func_0D3( "con_typewriterColorBase", var_0 );
+    setsaveddvar( "con_typewriterColorBase", var_0 );
 }
 
 ammo_pickup( var_0 )
@@ -1226,7 +1226,7 @@ ammo_pickup( var_0 )
 
         var_4 = undefined;
         var_5 = undefined;
-        var_6 = var_3 _meth_830B();
+        var_6 = var_3 getweaponslistall();
 
         for ( var_7 = 0; var_7 < var_6.size; var_7++ )
         {
@@ -1254,14 +1254,14 @@ ammo_pickup( var_0 )
         if ( !isdefined( var_4 ) )
             continue;
 
-        if ( var_3 _meth_8334( var_4 ) >= 1 )
+        if ( var_3 getfractionmaxammo( var_4 ) >= 1 )
             continue;
 
         break;
     }
 
     if ( isdefined( var_5 ) )
-        var_3 _meth_830E( var_4 );
+        var_3 giveweapon( var_4 );
     else
     {
         var_9 = 1;
@@ -1273,7 +1273,7 @@ ammo_pickup( var_0 )
         else if ( var_0 == "pistol" )
             var_9 = 15;
 
-        var_3 _meth_82F7( var_4, var_3 _meth_82F9( var_4 ) + var_9 );
+        var_3 setweaponammostock( var_4, var_3 setweaponammostock( var_4 ) + var_9 );
     }
 
     var_3 playlocalsound( "grenade_pickup" );
@@ -1296,10 +1296,10 @@ load_friendlies()
     else
         return;
 
-    var_1 = _func_0D6( "allies" );
+    var_1 = getaiarray( "allies" );
     var_2 = var_1.size;
     var_3 = 0;
-    var_4 = _func_0DA( "allies" );
+    var_4 = getspawnerteamarray( "allies" );
     var_5 = var_4.size;
     var_6 = 0;
 
@@ -1491,7 +1491,7 @@ watchweaponchange()
         level.friendly_thermal_reflector_effect = loadfx( "vfx/unique/thermal_beacon_inverted" );
 
     self endon( "death" );
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( weap_has_thermal( var_0 ) )
         thread thermal_tracker();
@@ -1541,8 +1541,8 @@ em1_heat_meter()
 
     for (;;)
     {
-        var_0 = self _meth_8311();
-        var_1 = self _meth_83B9( var_0 );
+        var_0 = self getcurrentweapon();
+        var_1 = self getweaponheatlevel( var_0 );
         setomnvar( "ui_em1_heat", var_1 );
         wait 0.05;
     }
@@ -1601,7 +1601,7 @@ himar_print_ammo()
     setomnvar( "ui_himar_printing", 0 );
     var_0 = undefined;
 
-    foreach ( var_2 in self _meth_830C() )
+    foreach ( var_2 in self getweaponslistprimaries() )
     {
         if ( issubstr( var_2, "himar" ) )
         {
@@ -1615,7 +1615,7 @@ himar_print_ammo()
 
     for (;;)
     {
-        var_4 = self _meth_8334( var_0 );
+        var_4 = self getfractionmaxammo( var_0 );
         setomnvar( "ui_himar_printing", var_4 );
 
         if ( var_4 < 1.0 )
@@ -1623,14 +1623,14 @@ himar_print_ammo()
             thread himar_printing_ammo_full_check( var_0 );
             common_scripts\utility::waittill_notify_or_timeout( "himar_ammo_full", 30 );
             self notify( "stop_himar_printing_ammo_full_check" );
-            var_5 = self _meth_82F9( var_0 );
-            var_6 = _func_1E1( var_0 );
+            var_5 = self setweaponammostock( var_0 );
+            var_6 = weaponmaxammo( var_0 );
             var_7 = var_5 + weaponclipsize( var_0 );
 
             if ( var_7 > var_6 )
                 var_7 = var_6;
 
-            self _meth_82F7( var_0, var_7 );
+            self setweaponammostock( var_0, var_7 );
             continue;
         }
 
@@ -1642,7 +1642,7 @@ himar_printing_ammo_full_check( var_0 )
 {
     self endon( "stop_himar_printing_ammo_full_check" );
 
-    while ( self _meth_8334( var_0 ) != 1 )
+    while ( self getfractionmaxammo( var_0 ) != 1 )
         wait 0.5;
 
     self notify( "himar_ammo_full" );
@@ -1661,7 +1661,7 @@ weap_is_himar( var_0 )
 
 player_has_printing_himar()
 {
-    foreach ( var_1 in self _meth_830C() )
+    foreach ( var_1 in self getweaponslistprimaries() )
     {
         if ( issubstr( var_1, "iw5_himar_sp" ) && issubstr( var_1, "himarscope" ) )
             return 1;
@@ -1682,7 +1682,7 @@ weap_has_thermal( var_0 )
     if ( var_0 == "none" )
         return 0;
 
-    if ( _func_1E6( var_0 ) )
+    if ( weaponhasthermalscope( var_0 ) )
         return 1;
 
     return 0;
@@ -1698,7 +1698,7 @@ thermal_tracker()
     for (;;)
     {
         var_1 = var_0;
-        var_0 = self _meth_8340();
+        var_0 = self playerads();
 
         if ( turn_thermal_on( var_0, var_1 ) )
             thermal_effectson();
@@ -1734,7 +1734,7 @@ turn_thermal_off( var_0, var_1 )
 thermal_effectson()
 {
     self.is_in_thermal_vision = 1;
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     foreach ( var_2 in var_0 )
     {
@@ -1761,7 +1761,7 @@ thermal_effectsoff()
 {
     self.is_in_thermal_vision = undefined;
     level notify( "thermal_fx_off" + self.unique_id );
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
         var_0[var_1].has_thermal_fx = undefined;
@@ -1794,12 +1794,12 @@ loop_friendly_thermal_reflector_effect( var_0, var_1 )
 
 claymore_pickup_think_global()
 {
-    precacheitem( "claymore" );
+    precacheshellshock( "claymore" );
     self endon( "deleted" );
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( &"WEAPON_CLAYMORE_PICKUP" );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( &"WEAPON_CLAYMORE_PICKUP" );
     self makeusable();
-    var_0 = _func_1E1( "claymore" ) + weaponclipsize( "claymore" );
+    var_0 = weaponmaxammo( "claymore" ) + weaponclipsize( "claymore" );
 
     if ( isdefined( self.script_ammo_clip ) )
         var_0 = self.script_ammo_clip;
@@ -1810,44 +1810,44 @@ claymore_pickup_think_global()
         var_1 playsound( "null" );
         var_2 = 0;
 
-        if ( !var_1 _meth_8314( "claymore" ) )
-            var_1 _meth_830E( "claymore" );
+        if ( !var_1 hasweapon( "claymore" ) )
+            var_1 giveweapon( "claymore" );
         else
             var_2 = var_1 getammocount( "claymore" );
 
         if ( isdefined( var_0 ) && var_0 > 0 )
         {
             var_0 = var_2 + var_0;
-            var_3 = _func_1E1( "claymore" );
+            var_3 = weaponmaxammo( "claymore" );
             var_4 = weaponclipsize( "claymore" );
 
             if ( var_0 >= var_4 )
             {
                 var_0 -= var_4;
-                var_1 _meth_82F6( "claymore", var_4 );
+                var_1 setweaponammoclip( "claymore", var_4 );
             }
 
             if ( var_0 >= var_3 )
             {
                 var_0 -= var_3;
-                var_1 _meth_82F7( "claymore", var_3 );
+                var_1 setweaponammostock( "claymore", var_3 );
             }
             else if ( var_0 > 0 )
             {
-                var_1 _meth_82F7( "claymore", var_0 );
+                var_1 setweaponammostock( "claymore", var_0 );
                 var_0 = 0;
             }
         }
         else
-            var_1 _meth_8332( "claymore" );
+            var_1 givemaxammo( "claymore" );
 
         var_5 = 4;
 
         if ( isdefined( var_1.remotemissile_actionslot ) && var_1.remotemissile_actionslot == 4 )
             var_5 = 2;
 
-        var_1 _meth_8308( var_5, "weapon", "claymore" );
-        var_1 _meth_8315( "claymore" );
+        var_1 setactionslot( var_5, "weapon", "claymore" );
+        var_1 switchtoweapon( "claymore" );
     }
 
     if ( isdefined( self.target ) )
@@ -1866,15 +1866,15 @@ ammo_cache_think_global( var_0 )
 {
     self endon( "remove_ammo_cache" );
     self.use_trigger = spawn( "script_model", self.origin + ( 0, 0, 28 ) );
-    self.use_trigger _meth_80B1( "tag_origin" );
+    self.use_trigger setmodel( "tag_origin" );
     self.use_trigger makeusable();
-    self.use_trigger _meth_80DA( "HINT_NOICON" );
+    self.use_trigger setcursorhint( "HINT_NOICON" );
     var_1 = &"WEAPON_CACHE_USE_HINT";
 
     if ( getdvar( "consoleGame" ) == "true" )
         var_1 = &"WEAPON_CACHE_USE_CONTROLLER_HINT";
 
-    self.use_trigger _meth_80DB( var_1 );
+    self.use_trigger sethintstring( var_1 );
 
     if ( !isdefined( var_0 ) || isdefined( var_0 ) && var_0 )
         thread ammo_icon_think();
@@ -1890,9 +1890,9 @@ ammo_cache_think_global( var_0 )
         self notify( "used_ammo_cache" );
         self.use_trigger makeunusable();
         var_2 playsound( "player_refill_all_ammo" );
-        var_2 _meth_831D();
+        var_2 disableweapons();
         wait 0.1;
-        var_3 = var_2 _meth_830B();
+        var_3 = var_2 getweaponslistall();
 
         foreach ( var_5 in var_3 )
         {
@@ -1902,18 +1902,18 @@ ammo_cache_think_global( var_0 )
             if ( var_5 == "c4" )
                 continue;
 
-            var_2 _meth_8332( var_5 );
+            var_2 givemaxammo( var_5 );
             var_6 = weaponclipsize( var_5 );
 
             if ( isdefined( var_6 ) )
             {
-                if ( var_2 _meth_82F8( var_5 ) < var_6 )
-                    var_2 _meth_82F6( var_5, var_6 );
+                if ( var_2 getweaponammoclip( var_5 ) < var_6 )
+                    var_2 setweaponammoclip( var_5, var_6 );
             }
         }
 
         wait 1.4;
-        var_2 _meth_831E();
+        var_2 enableweapons();
         self.use_trigger makeusable();
         var_2.using_ammo_cache = undefined;
     }
@@ -1924,13 +1924,13 @@ ammo_icon_think()
     self endon( "remove_ammo_cache" );
     var_0 = spawn( "trigger_radius", self.origin, 0, 320, 72 );
     var_1 = newhudelem();
-    var_1 _meth_80CC( "waypoint_ammo", 1, 1 );
+    var_1 setshader( "waypoint_ammo", 1, 1 );
     var_1.alpha = 0;
     var_1.color = ( 1, 1, 1 );
     var_1.x = self.origin[0];
     var_1.y = self.origin[1];
     var_1.z = self.origin[2] + 16;
-    var_1 _meth_80D8( 1, 1 );
+    var_1 setwaypoint( 1, 1 );
     self.ammo_icon = var_1;
     self.ammo_icon_trig = var_0;
 
@@ -1949,14 +1949,14 @@ ammo_icon_think()
         if ( !isplayer( var_2 ) )
             continue;
 
-        while ( var_2 _meth_80A9( var_0 ) )
+        while ( var_2 istouching( var_0 ) )
         {
             var_3 = 1;
-            var_4 = var_2 _meth_8311();
+            var_4 = var_2 getcurrentweapon();
 
             if ( var_4 == "none" )
                 var_3 = 0;
-            else if ( var_2 _meth_8334( var_4 ) > 0.9 )
+            else if ( var_2 getfractionmaxammo( var_4 ) > 0.9 )
                 var_3 = 0;
 
             if ( maps\_utility::player_looking_at( self.origin, 0.8, 1 ) && var_3 )
@@ -2057,7 +2057,7 @@ weapon_list_debug()
 
     }
 
-    var_8 = _func_0D8();
+    var_8 = getspawnerarray();
     var_9 = [];
 
     foreach ( var_11 in var_8 )
@@ -2107,7 +2107,7 @@ do_no_game_start()
     if ( !maps\_utility::is_no_game_start() )
         return;
 
-    _func_0D3( "ufoHitsTriggers", "1" );
+    setsaveddvar( "ufoHitsTriggers", "1" );
     level.stop_load = 1;
 
     if ( isdefined( level.custom_no_game_setupfunc ) )

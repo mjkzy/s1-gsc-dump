@@ -51,12 +51,12 @@ setup_individual_exploder( var_0 )
     if ( exploder_model_is_damaged_model( var_0 ) )
     {
         var_0 hide();
-        var_0 _meth_82BF();
+        var_0 notsolid();
 
         if ( isdefined( var_0.spawnflags ) && var_0.spawnflags & 1 )
         {
             if ( isdefined( var_0.script_disconnectpaths ) )
-                var_0 _meth_8058();
+                var_0 connectpaths();
         }
 
         return;
@@ -65,10 +65,10 @@ setup_individual_exploder( var_0 )
     if ( exploder_model_is_chunk( var_0 ) )
     {
         var_0 hide();
-        var_0 _meth_82BF();
+        var_0 notsolid();
 
         if ( isdefined( var_0.spawnflags ) && var_0.spawnflags & 1 )
-            var_0 _meth_8058();
+            var_0 connectpaths();
 
         return;
     }
@@ -626,11 +626,11 @@ brush_delete()
 
         self.exploded = 1;
         self.model hide();
-        self.model _meth_82BF();
+        self.model notsolid();
         wait 3;
         self.exploded = undefined;
         self.model show();
-        self.model _meth_82BE();
+        self.model solid();
         return;
     }
 
@@ -691,13 +691,13 @@ brush_throw()
             var_11 = ( var_9.origin - var_0.origin ) * self.v["physics"];
         }
 
-        self.model _meth_82C2( var_10, var_11 );
+        self.model physicslaunchclient( var_10, var_11 );
         return;
     }
     else
     {
-        self.model _meth_82BD( ( var_5, var_6, var_7 ), 12 );
-        self.model _meth_82B2( ( var_5, var_6, var_7 ), 12 );
+        self.model rotatevelocity( ( var_5, var_6, var_7 ), 12 );
+        self.model movegravity( ( var_5, var_6, var_7 ), 12 );
     }
 
     if ( level.createfx_enabled )
@@ -727,7 +727,7 @@ brush_show()
     if ( !isdefined( self.model.script_modelname ) )
     {
         self.model show();
-        self.model _meth_82BE();
+        self.model solid();
     }
     else
     {
@@ -736,7 +736,7 @@ brush_show()
         if ( isdefined( self.model.script_linkname ) )
             var_0.script_linkname = self.model.script_linkname;
 
-        var_0 _meth_80B1( self.model.script_modelname );
+        var_0 setmodel( self.model.script_modelname );
         var_0 show();
     }
 
@@ -762,7 +762,7 @@ brush_show()
         if ( !isdefined( self.model.script_modelname ) )
         {
             self.model hide();
-            self.model _meth_82BF();
+            self.model notsolid();
         }
     }
 }
@@ -773,7 +773,7 @@ exploder_rumble()
         return;
 
     exploder_delay();
-    level.player _meth_80AD( self.v["rumble"] );
+    level.player playrumbleonentity( self.v["rumble"] );
 }
 
 exploder_delay()
@@ -890,7 +890,7 @@ cannon_effect()
     self.looper = spawnfx( common_scripts\utility::getfx( self.v["fxid"] ), self.v["origin"], self.v["forward"], self.v["up"] );
 
     if ( level.createfx_enabled )
-        setwinningteam( self.looper, 1 );
+        setfxkillondelete( self.looper, 1 );
 
     if ( self.v["delay"] >= 0 )
         triggerfx( self.looper );
@@ -966,7 +966,7 @@ kill_exploder( var_0 )
         foreach ( var_3 in var_1 )
         {
             if ( isdefined( var_3.looper ) )
-                setwinningteam( var_3.looper, 1 );
+                setfxkillondelete( var_3.looper, 1 );
         }
 
         waitframe();
@@ -997,7 +997,7 @@ activate_clientside_exploder( var_0, var_1, var_2 )
         return;
 
     var_3 = int( var_0 );
-    _func_222( var_3, var_1, var_2 );
+    activateclientexploder( var_3, var_1, var_2 );
 }
 
 deactivate_clientside_exploder( var_0, var_1, var_2 )
@@ -1006,7 +1006,7 @@ deactivate_clientside_exploder( var_0, var_1, var_2 )
         return;
 
     var_3 = int( var_0 );
-    _func_292( var_3, var_1, var_2 );
+    stopclientexploder( var_3, var_1, var_2 );
 }
 
 is_valid_clientside_exploder_name( var_0 )

@@ -126,12 +126,12 @@ propanims()
 alleysgatebashrumblelight( var_0 )
 {
     earthquake( 0.25, 0.25, var_0.origin, 256 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 alleysgateriprumbleheavy( var_0 )
 {
     thread maps\greece_alleys::alleysgateripunblockpath();
     earthquake( 0.5, 0.5, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }

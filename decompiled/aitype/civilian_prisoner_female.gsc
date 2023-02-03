@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "none";
@@ -36,7 +36,7 @@ main()
 
 spawner()
 {
-    self _meth_8040( "team3" );
+    self setspawnerteam( "team3" );
 }
 
 precache()

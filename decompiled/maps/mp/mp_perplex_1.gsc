@@ -19,16 +19,16 @@ main()
 
     if ( level.nextgen )
     {
-        map_restart( "per_ferry_boat" );
-        map_restart( "per_sail_boat" );
-        map_restart( "per_sail_boat_idle_a" );
-        map_restart( "per_sail_boat_idle_b" );
-        map_restart( "per_sail_boat_idle_c" );
-        map_restart( "per_sail_boat_idle_d" );
-        map_restart( "per_windmill_idle01" );
-        map_restart( "per_windmill_idle02" );
-        map_restart( "per_windmill_idle03" );
-        map_restart( "per_windmill_idle04" );
+        precachempanim( "per_ferry_boat" );
+        precachempanim( "per_sail_boat" );
+        precachempanim( "per_sail_boat_idle_a" );
+        precachempanim( "per_sail_boat_idle_b" );
+        precachempanim( "per_sail_boat_idle_c" );
+        precachempanim( "per_sail_boat_idle_d" );
+        precachempanim( "per_windmill_idle01" );
+        precachempanim( "per_windmill_idle02" );
+        precachempanim( "per_windmill_idle03" );
+        precachempanim( "per_windmill_idle04" );
     }
 
     level.goliath_bad_landing_volumes = [];
@@ -94,7 +94,7 @@ goliathoutofmapfix()
         var_0 waittill( "trigger", var_1 );
 
         if ( isbot( var_1 ) || isagent( var_1 ) )
-            var_1 _meth_8051( var_1.health + 999, var_0.origin );
+            var_1 dodamage( var_1.health + 999, var_0.origin );
     }
 }
 
@@ -192,7 +192,7 @@ dynamiceventsetupsuspendedapartment( var_0, var_1 )
     foreach ( var_5 in var_2 )
     {
         if ( var_5 != var_3 )
-            var_5 _meth_8446( var_3 );
+            var_5 vehicle_jetbikesethoverforcescale( var_3 );
     }
 
     var_9 = getent( var_0 + "_col", "targetname" );
@@ -213,15 +213,15 @@ dynamiceventsetupsuspendedapartment( var_0, var_1 )
     var_14 = var_10 gettagorigin( "TAG_HANDLE" );
     var_15 = var_10 gettagangles( "TAG_HANDLE" );
     var_16 = spawn( "script_model", var_14 );
-    var_16 _meth_80B1( "genericprop" );
+    var_16 setmodel( "genericprop" );
     var_16.angles = var_15;
-    var_16 _meth_8446( var_10, "TAG_HANDLE" );
+    var_16 vehicle_jetbikesethoverforcescale( var_10, "TAG_HANDLE" );
     var_17 = var_10 gettagorigin( "body_main" );
     var_18 = var_10 gettagangles( "body_main" );
     var_19 = spawn( "script_model", var_17 );
-    var_19 _meth_80B1( "genericprop" );
+    var_19 setmodel( "genericprop" );
     var_19.angles = var_18;
-    var_19 _meth_8446( var_10, "body_main" );
+    var_19 vehicle_jetbikesethoverforcescale( var_10, "body_main" );
 
     if ( level.nextgen )
     {
@@ -232,55 +232,55 @@ dynamiceventsetupsuspendedapartment( var_0, var_1 )
         var_24 = var_10 gettagorigin( "fx_joint_0" );
         var_25 = var_10 gettagangles( "fx_joint_0" );
         var_26 = spawn( "script_model", var_24 );
-        var_26 _meth_80B1( "genericprop" );
+        var_26 setmodel( "genericprop" );
         var_26.angles = var_25;
-        var_26 _meth_8446( var_10, "fx_joint_0" );
+        var_26 vehicle_jetbikesethoverforcescale( var_10, "fx_joint_0" );
         var_27 = var_10 gettagorigin( "fx_joint_1" );
         var_28 = var_10 gettagangles( "fx_joint_1" );
         var_29 = spawn( "script_model", var_27 );
-        var_29 _meth_80B1( "genericprop" );
+        var_29 setmodel( "genericprop" );
         var_29.angles = var_28;
-        var_29 _meth_8446( var_10, "fx_joint_1" );
+        var_29 vehicle_jetbikesethoverforcescale( var_10, "fx_joint_1" );
         var_30 = var_10 gettagorigin( "fx_joint_2" );
         var_31 = var_10 gettagangles( "fx_joint_2" );
         var_32 = spawn( "script_model", var_30 );
-        var_32 _meth_80B1( "genericprop" );
+        var_32 setmodel( "genericprop" );
         var_32.angles = var_31;
-        var_32 _meth_8446( var_10, "fx_joint_2" );
+        var_32 vehicle_jetbikesethoverforcescale( var_10, "fx_joint_2" );
         var_33 = var_10 gettagorigin( "fx_joint_3" );
         var_34 = var_10 gettagangles( "fx_joint_3" );
         var_35 = spawn( "script_model", var_33 );
-        var_35 _meth_80B1( "genericprop" );
+        var_35 setmodel( "genericprop" );
         var_35.angles = var_25;
-        var_35 _meth_8446( var_10, "fx_joint_3" );
-        var_21 _meth_8446( var_26 );
-        var_20 _meth_8446( var_29 );
-        var_23 _meth_8446( var_32 );
-        var_22 _meth_8446( var_35 );
+        var_35 vehicle_jetbikesethoverforcescale( var_10, "fx_joint_3" );
+        var_21 vehicle_jetbikesethoverforcescale( var_26 );
+        var_20 vehicle_jetbikesethoverforcescale( var_29 );
+        var_23 vehicle_jetbikesethoverforcescale( var_32 );
+        var_22 vehicle_jetbikesethoverforcescale( var_35 );
         var_10.clipents = [ var_21, var_26, var_20, var_29, var_23, var_32, var_22, var_35, var_12, var_19, var_13, var_11 ];
     }
     else
     {
         var_36 = getent( var_0 + "_drone_legs_col", "targetname" );
-        var_36 _meth_8446( var_19 );
+        var_36 vehicle_jetbikesethoverforcescale( var_19 );
         var_10.legsclip = var_36;
         var_10.clipents = [ var_12, var_19, var_13, var_11 ];
     }
 
     var_37 = getent( "dynamic_event_slot_clip", "targetname" );
     thread dynamiceventcollisionhandling( var_9, var_37 );
-    var_9 _meth_8446( var_3 );
+    var_9 vehicle_jetbikesethoverforcescale( var_3 );
     var_3.col = var_9;
     var_3.proxy = var_16;
-    var_12 _meth_8446( var_19 );
-    var_13 _meth_8446( var_19 );
+    var_12 vehicle_jetbikesethoverforcescale( var_19 );
+    var_13 vehicle_jetbikesethoverforcescale( var_19 );
     var_10.bodyclip = var_12;
     var_10.bodyclip.parent = var_19;
     var_3.origin = var_14;
     var_3.angles = var_15 - ( 0, 180, 0 );
     var_9.angles = var_3.angles;
-    var_3 _meth_8446( var_16 );
-    var_10 _meth_848B( var_1, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneIdle" );
+    var_3 vehicle_jetbikesethoverforcescale( var_16 );
+    var_10 scriptmodelplayanimdeltamotionfrompos( var_1, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneIdle" );
     level.dynamiceventdrones[level.dynamiceventdrones.size] = var_10;
     level.dynamiceventapartments[level.dynamiceventapartments.size] = var_3;
     return var_3;
@@ -315,11 +315,11 @@ dynamiceventhandleshiftingapartment( var_0, var_1, var_2, var_3, var_4 )
         var_0.legsclip delete();
 
     thread playdroneactivevfx( var_0 );
-    var_0 _meth_827A();
+    var_0 scriptmodelclearanim();
     var_1 aud_map_event_start();
-    var_1.proxy _meth_804F();
-    var_0 _meth_848B( var_3, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneDropoff" );
-    var_1.proxy _meth_848B( var_2, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles );
+    var_1.proxy unlink();
+    var_0 scriptmodelplayanimdeltamotionfrompos( var_3, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneDropoff" );
+    var_1.proxy scriptmodelplayanimdeltamotionfrompos( var_2, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles );
     thread dynamiceventplayaccordion( var_1.targetname + "_accordian", 5 );
     thread notifybuildinginplace( var_1.targetname, 15 );
     wait(var_4);
@@ -375,11 +375,11 @@ notifybuildinginplace( var_0, var_1 )
 dynamiceventhandlefinalshiftingapartment( var_0, var_1, var_2, var_3 )
 {
     var_0 waittillmatch( "droneIdle", "end" );
-    var_0 _meth_827A();
-    var_0 _meth_848B( var_2, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneReposition" );
+    var_0 scriptmodelclearanim();
+    var_0 scriptmodelplayanimdeltamotionfrompos( var_2, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles, "droneReposition" );
     var_0 waittillmatch( "droneReposition", "end" );
-    var_0 _meth_827A();
-    var_0 _meth_848B( var_3, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles );
+    var_0 scriptmodelclearanim();
+    var_0 scriptmodelplayanimdeltamotionfrompos( var_3, level.dynamiceventanimorg.origin, level.dynamiceventanimorg.angles );
 }
 
 dynamiceventcollisionhandling( var_0, var_1 )
@@ -389,7 +389,7 @@ dynamiceventcollisionhandling( var_0, var_1 )
     foreach ( var_3 in level.dynamiceventdrones )
     {
         if ( isdefined( var_3.bodyclip ) )
-            var_3.bodyclip _meth_804F();
+            var_3.bodyclip unlink();
     }
 
     level waittill( "dynamic_event_started" );
@@ -404,7 +404,7 @@ dynamiceventcollisionhandling( var_0, var_1 )
                 var_3.bodyclip.angles = var_3.bodyclip.parent.angles;
             }
 
-            var_3.bodyclip _meth_8446( var_3.bodyclip.parent );
+            var_3.bodyclip vehicle_jetbikesethoverforcescale( var_3.bodyclip.parent );
         }
     }
 
@@ -414,7 +414,7 @@ dynamiceventcollisionhandling( var_0, var_1 )
 
 dynamiceventplayaccordion( var_0, var_1 )
 {
-    var_2 = _func_231( var_0, "targetname" );
+    var_2 = getscriptablearray( var_0, "targetname" );
 
     if ( isdefined( var_1 ) )
         wait(var_1);
@@ -422,7 +422,7 @@ dynamiceventplayaccordion( var_0, var_1 )
     if ( isdefined( var_2 ) )
     {
         foreach ( var_4 in var_2 )
-            var_4 _meth_83F6( "root_part", "anim_state" );
+            var_4 setscriptablepartstate( "root_part", "anim_state" );
     }
 }
 
@@ -476,7 +476,7 @@ dynamiceventsuspendedapartmentshiftanimend()
     }
 
     foreach ( var_9 in level.dynamiceventapartments )
-        var_9 _meth_804F();
+        var_9 unlink();
 
     level.building01.origin = var_0.origin;
     level.building01.angles = var_0.angles;
@@ -493,15 +493,15 @@ dynamiceventsuspendedapartmentshiftanimend()
         var_9.col.angles = var_9.angles;
     }
 
-    var_4 _meth_827A();
+    var_4 scriptmodelclearanim();
     var_4.origin = level.dynamiceventanimorg.origin;
     var_4.angles = level.dynamiceventanimorg.angles;
     level.building04.origin = level.dynamiceventanimorg.origin;
     level.building04.angles = level.dynamiceventanimorg.angles - ( 0, 180, 0 );
     level.building04.proxy.origin = level.dynamiceventanimorg.origin;
     level.building04.proxy.angles = level.dynamiceventanimorg.angles;
-    var_4 _meth_827B( "per_drone04_idle02" );
-    level.building04 _meth_8446( level.building04.proxy );
+    var_4 scriptmodelplayanimdeltamotion( "per_drone04_idle02" );
+    level.building04 vehicle_jetbikesethoverforcescale( level.building04.proxy );
 
     foreach ( var_6 in level.dynamiceventdrones )
     {
@@ -515,7 +515,7 @@ dynamiceventsuspendedapartmentshiftanimend()
 playdronevfx( var_0 )
 {
     playfxontag( common_scripts\utility::getfx( "mp_plex_drone_hover" ), var_0, "TAG_ORIGIN" );
-    var_0 _meth_8075( "mp_pp_drone_idle_lo" );
+    var_0 playloopsound( "mp_pp_drone_idle_lo" );
 }
 
 playdroneactivevfx( var_0 )
@@ -557,12 +557,12 @@ do_drone_top_damage()
                     if ( !isdefined( var_9 ) || !isalive( var_9 ) )
                         continue;
 
-                    if ( _func_220( var_7.origin, var_9.origin ) < var_3 )
+                    if ( distance2dsquared( var_7.origin, var_9.origin ) < var_3 )
                     {
                         var_10 = var_9.origin[2] - var_7.origin[2];
 
                         if ( var_10 > var_2 && var_10 < var_1 )
-                            var_9 _meth_8051( 1000, var_7.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
+                            var_9 dodamage( 1000, var_7.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
                     }
                 }
 
@@ -570,7 +570,7 @@ do_drone_top_damage()
                 {
                     foreach ( var_13 in level.ugvs )
                     {
-                        if ( _func_220( var_7.origin, var_13.origin ) < var_3 )
+                        if ( distance2dsquared( var_7.origin, var_13.origin ) < var_3 )
                         {
                             var_14 = var_13.origin[2] - var_7.origin[2];
 
@@ -615,15 +615,15 @@ handledynamiceventpathnodesforstate( var_0 )
     }
     else
     {
-        var_1 _meth_8057();
+        var_1 disconnectpaths();
         var_1 common_scripts\utility::trigger_off();
-        var_2 _meth_8057();
+        var_2 disconnectpaths();
         var_2 common_scripts\utility::trigger_off();
-        var_3 _meth_8057();
+        var_3 disconnectpaths();
         var_3 common_scripts\utility::trigger_off();
-        var_4 _meth_8058();
+        var_4 connectpaths();
         var_4 common_scripts\utility::trigger_off();
-        var_5 _meth_8058();
+        var_5 connectpaths();
         var_5 common_scripts\utility::trigger_off();
         level waittill( "dynamic_event_started" );
         disconnectnodesforbrush( var_4 );
@@ -645,12 +645,12 @@ gamemodetraversalcheck()
 
     if ( level.gametype == "ball" )
     {
-        var_0 _meth_8057();
+        var_0 disconnectpaths();
         var_0 common_scripts\utility::trigger_off();
     }
     else
     {
-        var_0 _meth_8058();
+        var_0 connectpaths();
         var_0 common_scripts\utility::trigger_off();
     }
 
@@ -660,14 +660,14 @@ gamemodetraversalcheck()
 connectnodesforbrush( var_0 )
 {
     var_0 common_scripts\utility::trigger_on();
-    var_0 _meth_8058();
+    var_0 connectpaths();
     var_0 common_scripts\utility::trigger_off();
 }
 
 disconnectnodesforbrush( var_0 )
 {
     var_0 common_scripts\utility::trigger_on();
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     var_0 common_scripts\utility::trigger_off();
 }
 
@@ -684,18 +684,18 @@ vignetteferry()
 {
     var_0 = getent( "ferry_loop_org", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "per_ferryboat_01" );
+    var_1 setmodel( "per_ferryboat_01" );
     var_1.angles = var_0.angles;
 
     for (;;)
     {
-        var_1 _meth_8279( "per_ferry_boat" );
+        var_1 scriptmodelplayanim( "per_ferry_boat" );
         playfxontag( common_scripts\utility::getfx( "boat_wake_ferryboat_main_foam" ), var_1, "boat_body" );
         var_2 = randomintrange( 220, 340 );
         wait(var_2);
         stopfxontag( common_scripts\utility::getfx( "boat_wake_ferryboat_main_foam" ), var_1, "boat_body" );
         wait 2;
-        var_1 _meth_827A();
+        var_1 scriptmodelclearanim();
     }
 }
 
@@ -707,11 +707,11 @@ vignetterooftopwindmills()
     {
         if ( isdefined( var_2.script_noteworthy ) )
         {
-            var_2 _meth_8279( var_2.script_noteworthy );
+            var_2 scriptmodelplayanim( var_2.script_noteworthy );
             continue;
         }
 
-        var_2 _meth_8279( "per_windmill_idle01" );
+        var_2 scriptmodelplayanim( "per_windmill_idle01" );
     }
 }
 
@@ -724,59 +724,59 @@ vignettesailboats()
             case 1:
                 var_1 = getent( "sailboat_idle_a_org", "targetname" );
                 var_2 = spawn( "script_model", var_1.origin );
-                var_2 _meth_80B1( "per_sailboat_01" );
+                var_2 setmodel( "per_sailboat_01" );
                 var_2.angles = var_1.angles;
                 playfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
-                var_2 _meth_8279( "per_sail_boat_idle_a" );
+                var_2 scriptmodelplayanim( "per_sail_boat_idle_a" );
                 break;
             case 2:
                 var_1 = getent( "sailboat_idle_b_org", "targetname" );
                 var_2 = spawn( "script_model", var_1.origin );
-                var_2 _meth_80B1( "per_sailboat_01" );
+                var_2 setmodel( "per_sailboat_01" );
                 var_2.angles = var_1.angles;
                 playfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
-                var_2 _meth_8279( "per_sail_boat_idle_b" );
+                var_2 scriptmodelplayanim( "per_sail_boat_idle_b" );
                 break;
             case 3:
                 var_1 = getent( "sailboat_idle_c_org", "targetname" );
                 var_2 = spawn( "script_model", var_1.origin );
-                var_2 _meth_80B1( "per_sailboat_01" );
+                var_2 setmodel( "per_sailboat_01" );
                 var_2.angles = var_1.angles;
                 playfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
-                var_2 _meth_8279( "per_sail_boat_idle_c" );
+                var_2 scriptmodelplayanim( "per_sail_boat_idle_c" );
                 break;
             case 4:
                 var_1 = getent( "sailboat_idle_d_org", "targetname" );
                 var_2 = spawn( "script_model", var_1.origin );
-                var_2 _meth_80B1( "per_sailboat_01" );
+                var_2 setmodel( "per_sailboat_01" );
                 var_2.angles = var_1.angles;
                 playfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
-                var_2 _meth_8279( "per_sail_boat_idle_d" );
+                var_2 scriptmodelplayanim( "per_sail_boat_idle_d" );
                 break;
             case 5:
                 var_1 = getent( "ferry_idle_org", "targetname" );
                 var_3 = spawn( "script_model", var_1.origin );
-                var_3 _meth_80B1( "per_ferryboat_01" );
+                var_3 setmodel( "per_ferryboat_01" );
                 var_3.angles = var_1.angles;
-                var_3 _meth_8279( "per_ferry_boat_dock_idle" );
+                var_3 scriptmodelplayanim( "per_ferry_boat_dock_idle" );
                 break;
         }
     }
 
     var_4 = getent( "sailboat_loop_org", "targetname" );
     var_2 = spawn( "script_model", var_4.origin );
-    var_2 _meth_80B1( "per_sailboat_01" );
+    var_2 setmodel( "per_sailboat_01" );
     var_2.angles = var_4.angles;
 
     for (;;)
     {
-        var_2 _meth_8279( "per_sail_boat" );
+        var_2 scriptmodelplayanim( "per_sail_boat" );
         playfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
         var_5 = randomintrange( 180, 300 );
         wait(var_5);
         stopfxontag( common_scripts\utility::getfx( "boat_wake_sailboat_main_foam" ), var_2, "boat_body" );
         wait 2;
-        var_2 _meth_827A();
+        var_2 scriptmodelclearanim();
     }
 }
 

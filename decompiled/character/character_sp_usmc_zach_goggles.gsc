@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "body_sp_usmc_zach" );
+    self setmodel( "body_sp_usmc_zach" );
     self attach( "head_sp_usmc_zach_zach_body_goggles", "", 1 );
     self.headmodel = "head_sp_usmc_zach_zach_body_goggles";
     self.voice = "american";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

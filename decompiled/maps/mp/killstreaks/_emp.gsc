@@ -109,8 +109,8 @@ applyemp( var_0 )
     }
 
     self.empscrambleid = maps\mp\gametypes\_scrambler::playersethudempscrambled( level.empendtime, var_1, "emp" );
-    self _meth_84BE( "digital_distort_mp" );
-    self _meth_8064( 1.0, 1.0 );
+    self digitaldistortsetmaterial( "digital_distort_mp" );
+    self digitaldistortsetparams( 1.0, 1.0 );
     self.empon = 1;
     self notify( "applyEMPkillstreak" );
     self setempjammed( 1, level.empequipmentdisabled );
@@ -133,9 +133,9 @@ playerdelaystartsparkseffect()
 
     if ( !isdefined( self.empfx ) )
     {
-        self.empfx = _func_2C1( common_scripts\utility::getfx( "emp_third_person_sparks" ), self, "j_shoulder_ri" );
+        self.empfx = spawnlinkedfx( common_scripts\utility::getfx( "emp_third_person_sparks" ), self, "j_shoulder_ri" );
         triggerfx( self.empfx );
-        setwinningteam( self.empfx, 1 );
+        setfxkillondelete( self.empfx, 1 );
     }
 }
 
@@ -159,12 +159,12 @@ dynamicdistortion()
             break;
 
         var_6 = ( var_5 - var_0 ) / var_5;
-        self _meth_8064( var_6 * var_3 + var_2, 1.0 );
+        self digitaldistortsetparams( var_6 * var_3 + var_2, 1.0 );
         var_0 += var_4;
         wait(var_4);
     }
 
-    self _meth_8064( 0.0, 0.0 );
+    self digitaldistortsetparams( 0.0, 0.0 );
 }
 
 removeemp( var_0 )
@@ -185,11 +185,11 @@ removeemp( var_0 )
     }
     else if ( self.team == "spectator" )
     {
-        self _meth_82FB( "ui_exo_reboot_end_time", 0 );
-        self _meth_82FB( "ui_exo_reboot_type", 0 );
+        self setclientomnvar( "ui_exo_reboot_end_time", 0 );
+        self setclientomnvar( "ui_exo_reboot_type", 0 );
     }
 
-    self _meth_8064( 0.0, 0.0 );
+    self digitaldistortsetparams( 0.0, 0.0 );
     self.empon = undefined;
     self notify( "removeEMPkillstreak" );
     self setempjammed( 0 );
@@ -242,9 +242,9 @@ emp_artifacts( var_0 )
     if ( isdefined( level.ishorde ) && level.ishorde )
         wait 0.1;
 
-    self _meth_82FB( "ui_hud_static", 2 );
+    self setclientomnvar( "ui_hud_static", 2 );
     wait(var_0);
-    self _meth_82FB( "ui_hud_static", 0 );
+    self setclientomnvar( "ui_hud_static", 0 );
 }
 
 emp_jamteam( var_0, var_1 )
@@ -270,7 +270,7 @@ emp_jamteam( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 _meth_8212( 1 );
+            var_4 setmotiontrackervisible( 1 );
 
         var_4 thread emp_artifacts( var_2 );
     }
@@ -323,7 +323,7 @@ emp_jamteam( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 _meth_8212( 0 );
+            var_4 setmotiontrackervisible( 0 );
     }
 
     level.empowner = undefined;
@@ -349,7 +349,7 @@ emp_jamplayers( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 _meth_8212( 1 );
+            var_4 setmotiontrackervisible( 1 );
 
         var_4 thread emp_artifacts( var_2 );
     }
@@ -400,7 +400,7 @@ emp_jamplayers( var_0, var_1 )
             continue;
 
         if ( var_4 maps\mp\_utility::_hasperk( "specialty_localjammer" ) )
-            var_4 _meth_8212( 0 );
+            var_4 setmotiontrackervisible( 0 );
     }
 
     level.empplayer = undefined;
@@ -441,7 +441,7 @@ emp_playertracker()
         {
             if ( var_2.team == "spectator" )
             {
-                var_3 = var_2 _meth_829D();
+                var_3 = var_2 getspectatingplayer();
 
                 if ( !isdefined( var_3 ) || !var_3 issystemhacked() )
                     var_2 removeemp( var_0 );
@@ -530,7 +530,7 @@ destroyactivehelis( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
@@ -571,7 +571,7 @@ destroyactivelittlebirds( var_0, var_1, var_2, var_3 )
         if ( isdefined( var_12.cratetype ) )
             var_12 = var_12.enemymodel;
 
-        var_12 _meth_8051( var_6, var_12.origin, var_0, var_0, var_4, var_5 );
+        var_12 dodamage( var_6, var_12.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
@@ -601,7 +601,7 @@ destroyactiveturrets( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_8.maxhealth + 1;
-        var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+        var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
     }
 
     if ( isdefined( level.ishorde ) && level.ishorde )
@@ -644,7 +644,7 @@ destroyactiverockets( var_0, var_1, var_2, var_3 )
         if ( shoulddamagerocket( var_8 ) )
         {
             var_6 = var_8.maxhealth + 1;
-            var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+            var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
         }
         else
         {
@@ -694,7 +694,7 @@ destroyactiveuavs( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
@@ -724,7 +724,7 @@ destroyactiveugvs( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_8.maxhealth + 1;
-        var_8 _meth_8051( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
+        var_8 dodamage( var_6, var_8.origin, var_0, var_0, var_4, var_5 );
         wait 0.05;
     }
 }
@@ -755,7 +755,7 @@ destroyactivedrones( var_0, var_1, var_2, var_3 )
         }
 
         var_6 = var_9.maxhealth + 1;
-        var_9 _meth_8051( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
+        var_9 dodamage( var_6, var_9.origin, var_0, var_0, var_4, var_5 );
     }
 
     foreach ( var_13 in level.grenades )

@@ -51,7 +51,7 @@ launch_threads()
 
 launch_loops()
 {
-    if ( level.currentgen && !_func_21E( "sanfran_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "sanfran_outro_tr" ) )
         level waittill( "tff_transition_intro_to_outro" );
 
     common_scripts\utility::loop_fx_sound( "emt_fire_roar_s_01", ( -4079, 71789, 67 ), 1 );
@@ -101,9 +101,9 @@ precache_presets()
 
 aud_set_timescale()
 {
-    _func_07C( "voices", 0 );
-    _func_07C( "voices_critical", 0 );
-    _func_07C( "scripted", 0 );
+    soundsettimescalefactor( "voices", 0 );
+    soundsettimescalefactor( "voices_critical", 0 );
+    soundsettimescalefactor( "scripted", 0 );
 }
 
 register_snd_messages()
@@ -383,7 +383,7 @@ aud_drone_view_intro_target()
 aud_fadeup_intro_loop( var_0, var_1, var_2 )
 {
     wait(var_0);
-    self _meth_806F( var_1, var_2 );
+    self scalevolume( var_1, var_2 );
 }
 
 snd_play_2d_sound( var_0, var_1, var_2, var_3, var_4 )
@@ -403,7 +403,7 @@ sndx_play_2d_sound( var_0, var_1, var_2, var_3, var_4 )
     {
         wait(var_3);
         self playsound( var_0, var_4 );
-        self _meth_806F( var_1, var_2 );
+        self scalevolume( var_1, var_2 );
     }
 }
 
@@ -418,12 +418,12 @@ sndx_fade_and_stop_sound( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_806F( 0, var_0 );
+        var_1 scalevolume( 0, var_0 );
         wait(var_0);
 
         if ( isdefined( var_1 ) )
         {
-            var_1 _meth_80AC();
+            var_1 stopsounds();
             wait 0.05;
             var_1 delete();
         }
@@ -493,7 +493,7 @@ atlas_van_explode( var_0 )
     soundscripts\_snd_playsound::snd_play_delayed_linked( "atlas_van_explo" );
     wait 0.3;
 
-    if ( isdefined( self ) && isdefined( var_0 ) && var_0 _meth_8286() > 5 )
+    if ( isdefined( self ) && isdefined( var_0 ) && var_0 vehicle_getspeed() > 5 )
         soundscripts\_snd_playsound::snd_play_linked( "atlas_van_explode_debris" );
 }
 
@@ -582,7 +582,7 @@ spawn_new_traffic_vehicle()
     for (;;)
     {
         var_6 = soundscripts\_audio_vehicle_manager::dist2yards( distance( var_0.origin, level.player.origin ) );
-        var_7 = var_0 _meth_8286();
+        var_7 = var_0 vehicle_getspeed();
 
         if ( !var_1 && ( var_6 < var_5 && var_7 > var_2 ) )
         {
@@ -621,8 +621,8 @@ spawn_driving_police_car( var_0 )
 
     while ( !isdefined( level.aud.median_crash ) && isdefined( var_1 ) && isdefined( var_3 ) )
     {
-        var_5 = _func_245( var_1.origin, ( 0, 0, 0 ), level.player.origin, level.player getvelocity(), 2, 2 );
-        var_3 _meth_806D( var_5, var_4 );
+        var_5 = dopplerpitch( var_1.origin, ( 0, 0, 0 ), level.player.origin, level.player getvelocity(), 2, 2 );
+        var_3 scalepitch( var_5, var_4 );
         wait(var_4);
     }
 
@@ -794,10 +794,10 @@ start_parked_police_car_radio()
 {
     var_0 = self;
     var_1 = spawn( "script_origin", var_0.origin );
-    var_1 _meth_804D( var_0 );
-    var_1 _meth_806F( 0, 0 );
+    var_1 linkto( var_0 );
+    var_1 scalevolume( 0, 0 );
     var_1 soundscripts\_snd_playsound::snd_play_loop( "sfa_police_radio" );
-    var_1 _meth_806F( 1, 0.5 );
+    var_1 scalevolume( 1, 0.5 );
     return var_1;
 }
 
@@ -829,8 +829,8 @@ dopplerize_suv_drive_up( var_0 )
 
     while ( isdefined( var_0 ) )
     {
-        var_5 = _func_245( var_1.origin, var_1 _meth_8287(), level.player.origin, level.player getvelocity(), var_3, var_4 );
-        var_0 _meth_806D( var_5, var_2 );
+        var_5 = dopplerpitch( var_1.origin, var_1 vehicle_getvelocity(), level.player.origin, level.player getvelocity(), var_3, var_4 );
+        var_0 scalepitch( var_5, var_2 );
         wait(var_2);
     }
 }
@@ -928,7 +928,7 @@ aud_little_bird_hit()
     var_0 waittill( "crash_done" );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_806F( 0, 0.1 );
+        var_1 scalevolume( 0, 0.1 );
 
     soundscripts\_audio_mix_manager::mm_add_submix( "little_bird_crash", 0.03 );
     var_2 = spawnstruct();
@@ -997,7 +997,7 @@ is_player_touching_median_trigger( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        if ( level.player _meth_80A9( var_2 ) )
+        if ( level.player istouching( var_2 ) )
             return 1;
     }
 
@@ -1043,7 +1043,7 @@ panic_walla( var_0 )
             var_13 = var_7 / var_8;
             var_14 = soundscripts\_audio_vehicle_manager::units2yards( var_13 );
             var_15 = soundscripts\_snd::snd_map( var_14, var_3 );
-            var_5 _meth_806F( var_2 * var_15 );
+            var_5 scalevolume( var_2 * var_15 );
         }
         else
         {
@@ -1266,7 +1266,7 @@ setup_audio_zone_bridge_intact()
 {
     wait 14;
 
-    if ( level.currentgen && !_func_21E( "sanfran_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "sanfran_outro_tr" ) )
         level waittill( "tff_transition_intro_to_outro" );
 
     soundscripts\_audio_zone_manager::azm_start_zone( "sf_a_ext_bridge_intact", 20 );
@@ -1277,7 +1277,7 @@ setup_gate_crash()
     var_0 = self;
     var_1 = 30;
     var_2 = 60;
-    var_3 = level.player_pitbull _meth_8286();
+    var_3 = level.player_pitbull vehicle_getspeed();
     var_4 = distance2d( level.player.origin, level.player_pitbull.origin );
 
     if ( var_3 < var_1 )
@@ -1310,7 +1310,7 @@ setup_gate_crash()
 
 point_source_dambs()
 {
-    if ( level.currentgen && !_func_21E( "sanfran_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "sanfran_outro_tr" ) )
         level waittill( "tff_transition_intro_to_outro" );
 
     soundscripts\_audio_dynamic_ambi::damb_start_preset_at_point( "sf_a_fire_bed", ( 5824, 71978, 443 ) );
@@ -1563,7 +1563,7 @@ canyon_whizby_sounds( var_0, var_1 )
 canyon_whizby_sound( var_0, var_1, var_2 )
 {
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_8075( "sanfran_player_pitbull_reflection" );
+    var_3 playloopsound( "sanfran_player_pitbull_reflection" );
     var_4 = 1500;
     var_5 = 0.1;
     var_6 = 72;
@@ -1584,8 +1584,8 @@ canyon_whizby_sound( var_0, var_1, var_2 )
 
         var_15 = soundscripts\_audio_vehicle_manager::avm_compute_doppler_pitch( var_3.origin, ( 0, 0, 0 ), var_0.origin, var_0 maps\_shg_utility::get_differentiated_velocity(), 1, 1 );
         var_16 = var_9 * clamp( squared( maps\_shg_utility::get_differentiated_speed() / var_8 ), 0, 1 );
-        var_3 _meth_806D( var_15, 0.05 );
-        var_3 _meth_806E( var_16, 0.05 );
+        var_3 scalepitch( var_15, 0.05 );
+        var_3 setvolume( var_16, 0.05 );
         waitframe();
     }
 

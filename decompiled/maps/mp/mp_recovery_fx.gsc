@@ -78,7 +78,7 @@ panaramic_screen_fx()
     wait 5;
     var_0 = ( 0, 180, 0 );
     level.panoramicfx = spawnfx( common_scripts\utility::getfx( "panoramic_screen_runner" ), ( 353.028, 1314.23, 195.384 ), anglestoforward( var_0 ) );
-    setwinningteam( level.panoramicfx, 1 );
+    setfxkillondelete( level.panoramicfx, 1 );
     triggerfx( level.panoramicfx );
 }
 

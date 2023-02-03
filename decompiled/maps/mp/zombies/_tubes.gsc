@@ -52,7 +52,7 @@ linktargets()
     var_0 = getentarray( self.target, "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
 }
 
 runtube()
@@ -66,41 +66,41 @@ runtube()
     if ( isdefined( self.door ) )
     {
         var_2 = 0.5;
-        self.door _meth_82B5( self.door.openangles, var_2 );
+        self.door rotateto( self.door.openangles, var_2 );
         wait(var_2);
     }
 
     for (;;)
     {
-        self.trigger _meth_80DB( &"ZOMBIE_H2O_USE_TUBE" );
-        self.trigger _meth_80DA( "HINT_NOICON" );
+        self.trigger sethintstring( &"ZOMBIE_H2O_USE_TUBE" );
+        self.trigger setcursorhint( "HINT_NOICON" );
         self.trigger waittill( "trigger", var_3 );
-        self.trigger _meth_80DB( "" );
-        var_3 _meth_817D( "stand" );
+        self.trigger sethintstring( "" );
+        var_3 setstance( "stand" );
         var_3.inteleport = 1;
 
         if ( isdefined( self.door ) )
-            self.door _meth_82B5( self.door.closeangles, var_0 );
+            self.door rotateto( self.door.closeangles, var_0 );
 
         var_4 = spawn( "script_model", var_3.origin );
         var_4.angles = ( 0, var_3.angles[1], 0 );
-        var_4 _meth_80B1( "tag_origin" );
-        var_3 _meth_807C( var_4, "tag_origin", var_0 );
+        var_4 setmodel( "tag_origin" );
+        var_3 playerlinkto( var_4, "tag_origin", var_0 );
         thread maps\mp\mp_zombie_h2o_aud::sndtubestart( var_4, var_3 );
-        var_4 _meth_82AE( self.start.origin, var_0 );
+        var_4 moveto( self.start.origin, var_0 );
         wait(var_0);
         var_5 = distance( var_4.origin, self.startend.origin ) / var_1;
-        var_4 _meth_82AE( self.startend.origin, var_5, var_5, 0 );
+        var_4 moveto( self.startend.origin, var_5, var_5, 0 );
         var_6 = anglesdelta( var_4.angles, self.startend.angles );
 
         if ( var_6 > 0 )
-            var_4 _meth_82B5( self.startend.angles, var_5 );
+            var_4 rotateto( self.startend.angles, var_5 );
 
         var_3 thread playertubevo();
         wait(var_5);
 
         if ( isdefined( self.door ) )
-            self.door _meth_82B5( self.door.openangles, var_0 );
+            self.door rotateto( self.door.openangles, var_0 );
 
         thread endtube( var_4, var_3, var_1 );
     }
@@ -109,24 +109,24 @@ runtube()
 endtube( var_0, var_1, var_2 )
 {
     if ( isdefined( var_1 ) )
-        var_1 _meth_8092();
+        var_1 dontinterpolate();
 
-    var_0 _meth_8092();
+    var_0 dontinterpolate();
     var_0.origin = self.endstart.origin;
     var_0.angles = self.endstart.angles;
     var_3 = distance( var_0.origin, self.end.origin ) / var_2;
-    var_0 _meth_82AE( self.end.origin, var_3, var_3, 0 );
+    var_0 moveto( self.end.origin, var_3, var_3, 0 );
     thread maps\mp\mp_zombie_h2o_aud::sndtubeend( self.end.origin, var_1 );
     var_4 = anglesdelta( var_0.angles, self.end.angles );
 
     if ( var_4 > 0 )
-        var_0 _meth_82B5( self.end.angles, var_3 );
+        var_0 rotateto( self.end.angles, var_3 );
 
     wait(var_3);
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_804F();
+        var_1 unlink();
         var_1.inteleport = 0;
     }
 

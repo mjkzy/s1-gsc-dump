@@ -67,18 +67,18 @@ main()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_tonemap", "1" );
+        setsaveddvar( "r_tonemap", "1" );
 
-        if ( _func_236() )
+        if ( isusingssao() )
             return;
     }
 }
 
 set_reactive_motion_values()
 {
-    _func_0D3( "r_reactiveMotionWindAmplitudeScale", "0.3" );
+    setsaveddvar( "r_reactiveMotionWindAmplitudeScale", "0.3" );
 }
 
 precachefx()
@@ -512,25 +512,25 @@ intro_ar_sethud()
 intro_ar_anchor_anim( var_0 )
 {
     var_1[0] = newclienthudelem( level.player );
-    var_1[0] _meth_80CC( "qr_anchor", 30, 30 );
+    var_1[0] setshader( "qr_anchor", 30, 30 );
     var_1[0] intro_ar_sethud();
     var_1[0].sort = 9;
     var_1[0].x = -49;
     var_1[0].y = 49;
     var_1[1] = newclienthudelem( level.player );
-    var_1[1] _meth_80CC( "qr_anchor", 30, 30 );
+    var_1[1] setshader( "qr_anchor", 30, 30 );
     var_1[1] intro_ar_sethud();
     var_1[1].sort = 9;
     var_1[1].x = -49;
     var_1[1].y = -49;
     var_1[2] = newclienthudelem( level.player );
-    var_1[2] _meth_80CC( "qr_anchor", 30, 30 );
+    var_1[2] setshader( "qr_anchor", 30, 30 );
     var_1[2] intro_ar_sethud();
     var_1[2].sort = 9;
     var_1[2].x = 49;
     var_1[2].y = -49;
     var_1[3] = newclienthudelem( level.player );
-    var_1[3] _meth_80CC( "qr_anchor", 30, 30 );
+    var_1[3] setshader( "qr_anchor", 30, 30 );
     var_1[3] intro_ar_sethud();
     var_1[3].sort = 9;
     var_1[3].x = 49;
@@ -555,7 +555,7 @@ intro_ar_anchor_anim( var_0 )
 intro_ar_loadtext( var_0 )
 {
     var_1 = newclienthudelem( level.player );
-    var_1 _meth_80CC( "ar_loadtext", 128, 32 );
+    var_1 setshader( "ar_loadtext", 128, 32 );
     var_1 intro_ar_sethud();
     var_1.sort = 9;
     var_1.y = -96;
@@ -618,11 +618,11 @@ intro_ar_scale_ssao( var_0, var_1 )
     for ( var_5 = 0; var_5 < var_4; var_5++ )
     {
         var_6 = var_2 + var_3 * var_5 / var_4;
-        _func_0D3( "r_ssaoStrength", var_6 );
+        setsaveddvar( "r_ssaoStrength", var_6 );
         waitframe();
     }
 
-    _func_0D3( "r_ssaoStrength", var_0 );
+    setsaveddvar( "r_ssaoStrength", var_0 );
 }
 
 intro_armap_moment()
@@ -639,27 +639,27 @@ intro_armap_moment()
     var_4 = common_scripts\utility::spawn_tag_origin();
     var_4.origin = var_1 gettagorigin( "tag_fx" );
     var_4.angles = var_1 gettagangles( "tag_fx" );
-    var_4 _meth_804D( var_1, "tag_fx" );
+    var_4 linkto( var_1, "tag_fx" );
     var_5 = common_scripts\utility::spawn_tag_origin();
     var_5.origin = var_1 gettagorigin( "tag_pathA" );
     var_5.angles = var_1 gettagangles( "tag_pathA" );
-    var_5 _meth_804D( var_1, "tag_pathA" );
+    var_5 linkto( var_1, "tag_pathA" );
     var_6 = common_scripts\utility::spawn_tag_origin();
     var_6.origin = var_1 gettagorigin( "tag_pathA1" );
     var_6.angles = var_1 gettagangles( "tag_pathA1" );
-    var_6 _meth_804D( var_1, "tag_pathA1" );
+    var_6 linkto( var_1, "tag_pathA1" );
     var_7 = common_scripts\utility::spawn_tag_origin();
     var_7.origin = var_1 gettagorigin( "tag_pathA2" );
     var_7.angles = var_1 gettagangles( "tag_pathA2" );
-    var_7 _meth_804D( var_1, "tag_pathA2" );
+    var_7 linkto( var_1, "tag_pathA2" );
     var_8 = common_scripts\utility::spawn_tag_origin();
     var_8.origin = var_1 gettagorigin( "tag_pathA3" );
     var_8.angles = var_1 gettagangles( "tag_pathA3" );
-    var_8 _meth_804D( var_1, "tag_pathA3" );
-    var_1 _meth_83AB( ( 10960, -112640, 1912 ) );
-    var_3 _meth_83AB( ( 10960, -112640, 1912 ) );
-    var_0 _meth_83AB( ( 10960, -112640, 1912 ) );
-    var_1 _meth_83A7( 0.0, 0.0 );
+    var_8 linkto( var_1, "tag_pathA3" );
+    var_1 overridereflectionprobe( ( 10960, -112640, 1912 ) );
+    var_3 overridereflectionprobe( ( 10960, -112640, 1912 ) );
+    var_0 overridereflectionprobe( ( 10960, -112640, 1912 ) );
+    var_1 setmaterialscriptparam( 0.0, 0.0 );
     var_9 = getent( "armapbox", "targetname" );
     var_10 = [];
     var_10[0] = var_0;
@@ -687,10 +687,10 @@ intro_armap_moment()
     var_11 maps\_anim::anim_first_frame( var_10, "fly_in_intro", "tag_ar_map" );
     common_scripts\utility::flag_set( "fx_ar_start" );
     playfxontag( common_scripts\utility::getfx( "ar_map" ), var_4, "tag_origin" );
-    var_0 _meth_804D( var_11, "tag_ar_map" );
-    var_1 _meth_804D( var_11, "tag_ar_map" );
-    var_2 _meth_804D( var_11, "tag_ar_map" );
-    var_3 _meth_804D( var_11, "tag_ar_map" );
+    var_0 linkto( var_11, "tag_ar_map" );
+    var_1 linkto( var_11, "tag_ar_map" );
+    var_2 linkto( var_11, "tag_ar_map" );
+    var_3 linkto( var_11, "tag_ar_map" );
 
     if ( !isdefined( "fusion_start_map_anim" ) )
         common_scripts\utility::flag_init( "fusion_start_map_anim" );
@@ -702,14 +702,14 @@ intro_armap_moment()
     var_1 show();
     var_2 show();
     var_3 show();
-    var_3 _meth_8048( "body_4" );
-    var_3 _meth_8048( "body_6" );
+    var_3 hidepart( "body_4" );
+    var_3 hidepart( "body_6" );
     thread intro_ar_path_anim( var_0, var_5, var_6, var_7, var_8 );
     thread intro_play_ar_anim( var_11, var_10 );
     common_scripts\utility::flag_wait( "fusion_map_target_01" );
-    var_3 _meth_804B( "body_4" );
+    var_3 showpart( "body_4" );
     common_scripts\utility::flag_wait( "fusion_map_target_02" );
-    var_3 _meth_804B( "body_6" );
+    var_3 showpart( "body_6" );
     common_scripts\utility::flag_wait( "fusion_stop_map_anim" );
     var_0 hide();
     var_1 delete();
@@ -770,7 +770,7 @@ intro_fly_in_missile_hit_warbird( var_0 )
     playfxontag( common_scripts\utility::getfx( "light_explosion_flash" ), level.warbird_a, "TAG_open_door" );
     var_2 = common_scripts\utility::spawn_tag_origin();
     var_3 = ( -18.957, 66.128, -7.108 );
-    var_2 _meth_804D( var_0, "body_animate_jnt", var_3, ( 0, 0, 0 ) );
+    var_2 linkto( var_0, "body_animate_jnt", var_3, ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "vehicle_damaged_fire_m" ), var_2, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "vehicle_damaged_fire_m" ), var_0, "TAG_STATIC_TAIL_ROTOR" );
     playfxontag( common_scripts\utility::getfx( "fusion_warbird_interior_fire" ), var_0, "body_animate_jnt" );
@@ -1188,7 +1188,7 @@ big_pipe_explosion_vfx_after_hangar()
 
     common_scripts\_exploder::exploder( 6500 );
     soundscripts\_snd::snd_message( "pressure_explosion", 6500 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.4, 1, level.player.origin, 200 );
     wait 0.75;
     common_scripts\_exploder::exploder( 6501 );
@@ -1205,7 +1205,7 @@ underground_pipe_explosion_utility_truck_vfx( var_0 )
     common_scripts\_exploder::exploder( 6510 );
     var_1 = 6510;
     common_scripts\utility::flag_set( "cooling_tower_cart_explosion_lighting" );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.55, 1, level.player.origin, 200 );
     soundscripts\_snd::snd_message( "fus_truck_flip_01", var_1 );
     playfxontag( common_scripts\utility::getfx( "trail_steam_round_lrg_runner" ), self, "tag_origin" );
@@ -1222,7 +1222,7 @@ underground_pipe_explosion_pickup_truck_vfx( var_0 )
 
     common_scripts\_exploder::exploder( 6520 );
     var_1 = 6520;
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 1, 1, level.player.origin, 200 );
     soundscripts\_snd::snd_message( "fus_truck_flip_02", var_1 );
     playfxontag( common_scripts\utility::getfx( "trail_steam_round_lrg_runner" ), self, "tag_origin" );
@@ -1233,9 +1233,9 @@ underground_pipe_explosion_pickup_truck_vfx( var_0 )
 
 init_smvals()
 {
-    _func_0D3( "fx_alphathreshold", 5 );
+    setsaveddvar( "fx_alphathreshold", 5 );
     level waittill( "big_moment_vfx_start" );
-    _func_0D3( "fx_alphathreshold", 12 );
+    setsaveddvar( "fx_alphathreshold", 12 );
 }
 
 kill_all_env_fx()
@@ -1263,7 +1263,7 @@ pressure_explosion_leadup_1()
 {
     common_scripts\_exploder::exploder( 7001 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7001 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1271,7 +1271,7 @@ pressure_explosion_leadup_2()
 {
     common_scripts\_exploder::exploder( 7002 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7002 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1279,7 +1279,7 @@ pressure_explosion_leadup_3()
 {
     common_scripts\_exploder::exploder( 7003 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7003 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1287,7 +1287,7 @@ pressure_explosion_leadup_4()
 {
     common_scripts\_exploder::exploder( 7004 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7004 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1295,7 +1295,7 @@ pressure_explosion_leadup_5()
 {
     common_scripts\_exploder::exploder( 7005 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7005 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1303,7 +1303,7 @@ pressure_explosion_leadup_6()
 {
     common_scripts\_exploder::exploder( 7006 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7006 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1311,7 +1311,7 @@ pressure_explosion_leadup_7()
 {
     common_scripts\_exploder::exploder( 7007 );
     soundscripts\_snd::snd_message( "pressure_explosion", 7007 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.5, level.player.origin, 500 );
 }
 
@@ -1471,8 +1471,8 @@ big_moment_ending_vfx_rolling_smk()
 big_moment_ending_vfx_thick_smk_vm()
 {
     var_0 = spawn( "script_model", level.player.origin );
-    var_0 _meth_80B1( "tag_origin" );
-    var_0 _meth_804D( level.player );
+    var_0 setmodel( "tag_origin" );
+    var_0 linkto( level.player );
     playfxontag( common_scripts\utility::getfx( "fusion_end_thick_smk_vm" ), var_0, "tag_origin" );
     wait 4.5;
     stopfxontag( common_scripts\utility::getfx( "fusion_end_thick_smk_vm" ), var_0, "tag_origin" );

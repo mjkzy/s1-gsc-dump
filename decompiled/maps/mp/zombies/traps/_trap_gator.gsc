@@ -24,7 +24,7 @@ trap_gator_enter( var_0 )
     var_7 = ( var_1.origin[0], var_1.origin[1], var_1.origin[2] );
     var_8 = spawn( "script_model", var_7 );
     var_8.angles = var_1.angles;
-    var_8 _meth_80B1( "zom_king_croc_albino" );
+    var_8 setmodel( "zom_king_croc_albino" );
 
     if ( isdefined( level.gator_kills_active ) && level.gator_kills_active == 1 )
     {
@@ -32,9 +32,9 @@ trap_gator_enter( var_0 )
         var_8 thread gator_collision_attach( var_0, 0 );
     }
 
-    var_8 _meth_82BF();
-    var_8 _meth_8438( "gator_spawn_vox" );
-    var_8 _meth_8279( "zom_alligator_trap_spawn" );
+    var_8 notsolid();
+    var_8 playsoundonmovingent( "gator_spawn_vox" );
+    var_8 scriptmodelplayanim( "zom_alligator_trap_spawn" );
     var_9 = var_2.origin;
     var_10 = ( 0, 0, 90 );
     playfx( common_scripts\utility::getfx( "trap_gator_enter_splash" ), var_9, var_10 );
@@ -103,7 +103,7 @@ isanyplayerinrange()
 
     foreach ( var_2 in level.players )
     {
-        if ( _func_220( self.origin, var_2.origin ) < var_0 )
+        if ( distance2dsquared( self.origin, var_2.origin ) < var_0 )
             return 1;
     }
 
@@ -116,7 +116,7 @@ trap_gator_spawn( var_0, var_1 )
     var_3 = ( 0, randomfloat( 360 ), 0 );
     var_4 = spawn( "script_model", var_2 );
     var_4.angles = var_3;
-    var_4 _meth_80B1( "zom_king_croc_albino" );
+    var_4 setmodel( "zom_king_croc_albino" );
 
     if ( isdefined( level.gator_kills_active ) && level.gator_kills_active == 1 )
     {
@@ -131,7 +131,7 @@ gator_collision_attach( var_0, var_1 )
 {
     var_0.origin = self.origin;
     var_0.angles = self.angles + ( 0, 90, 0 );
-    var_0 _meth_804D( self, "J_MainRoot" );
+    var_0 linkto( self, "J_MainRoot" );
 
     if ( var_1 )
     {
@@ -140,8 +140,8 @@ gator_collision_attach( var_0, var_1 )
         var_4 = self gettagangles( var_2 );
         var_5 = spawn( "script_model", var_3 );
         var_5.angles = var_4;
-        var_5 _meth_80B1( "dlc2_zom_gib_arm_pickup" );
-        var_5 _meth_804D( self, var_2, ( 14, -20, -7 ), ( 0, 0, 0 ) );
+        var_5 setmodel( "dlc2_zom_gib_arm_pickup" );
+        var_5 linkto( self, var_2, ( 14, -20, -7 ), ( 0, 0, 0 ) );
         waittill_gator_death();
         var_5 delete();
     }
@@ -182,7 +182,7 @@ trap_gator_gib_death()
         return;
 
     var_0 = spawn( "script_origin", self.origin );
-    var_0 _meth_804D( self, "J_MainRoot" );
+    var_0 linkto( self, "J_MainRoot" );
     level waittill( "gator_killed" );
     self hide();
     playfx( common_scripts\utility::getfx( "dlc_gator_death" ), var_0.origin + ( 0, 0, 32 ) );
@@ -206,12 +206,12 @@ trap_gator_attack( var_0, var_1, var_2 )
     }
 
     var_6 = "zom_alligator_trap_attack_0" + ( var_3 + 1 );
-    var_1 _meth_839D( 1 );
+    var_1 scragentsetscripted( 1 );
     var_1 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "SynchronizedAnim" );
-    var_1 _meth_8398( "noclip" );
+    var_1 scragentsetphysicsmode( "noclip" );
     thread playsplash( var_0, var_1 );
-    var_0 _meth_8279( var_6, "dummy" );
-    var_1 _meth_8561( 0.2, 0.1, var_0, var_4, var_5 );
+    var_0 scriptmodelplayanim( var_6, "dummy" );
+    var_1 scragentsynchronizeanims( 0.2, 0.1, var_0, var_4, var_5 );
     var_1 maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( "alligator_trap_victim", var_3, "scripted_anim" );
     var_1 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "SynchronizedAnim" );
 
@@ -222,7 +222,7 @@ trap_gator_attack( var_0, var_1, var_2 )
         if ( isdefined( var_1.maxhealth ) )
             var_7 = var_1.maxhealth * 10;
 
-        var_1 _meth_8051( var_7, var_0.origin, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_zm_mp" );
+        var_1 dodamage( var_7, var_0.origin, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_zm_mp" );
     }
 
     wait 1.0;
@@ -241,7 +241,7 @@ playsplash( var_0, var_1 )
     earthquake( 0.3, 0.75, var_2, 400 );
     playrumbleonposition( "artillery_rumble", var_2 );
     playfx( common_scripts\utility::getfx( "trap_gator_emerge_splash" ), var_2, var_3 );
-    var_0 _meth_8438( "gator_attack_vox" );
+    var_0 playsoundonmovingent( "gator_attack_vox" );
     wait 0.2;
 
     if ( isdefined( var_1 ) && isalive( var_1 ) )
@@ -293,7 +293,7 @@ trap_gator_radius_damage( var_0 )
                 var_4 = var_3.maxhealth * 0.5;
         }
 
-        var_3 _meth_8051( var_4, var_0, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_zm_mp" );
+        var_3 dodamage( var_4, var_0, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_zm_mp" );
     }
 }
 
@@ -301,7 +301,7 @@ trap_gator_push_players( var_0 )
 {
     waitframe();
     var_1 = vectornormalize( ( self.origin - var_0 ) * ( 1, 1, 0 ) );
-    self _meth_82F1( var_1 * 100 );
+    self setvelocity( var_1 * 100 );
 }
 
 trap_gator_pitfall_audio()
@@ -330,7 +330,7 @@ trap_gator_pitfall_player_audio( var_0, var_1, var_2 )
     for (;;)
     {
         var_0 waittill( var_1 );
-        var_0 _meth_8438( var_2 );
+        var_0 playsoundonmovingent( var_2 );
 
         if ( var_1 == "death" )
             break;

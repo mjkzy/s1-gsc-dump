@@ -21,8 +21,8 @@ spawn_player_rig()
     {
         var_0 = spawn( "script_model", ( 0, 0, 0 ) );
         var_0.animname = "_vehicle_player_rig";
-        var_0 _meth_8115( #animtree );
-        var_0 _meth_80B1( "viewbody_generic_s1" );
+        var_0 useanimtree( #animtree );
+        var_0 setmodel( "viewbody_generic_s1" );
     }
 
     return var_0;

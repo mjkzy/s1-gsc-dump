@@ -12,7 +12,7 @@ main( var_0, var_1 )
 init_and_run( var_0, var_1 )
 {
     var_1 = common_scripts\utility::ter_op( isdefined( var_1 ), var_1, 1 );
-    _func_07F();
+    precachenightvisioncodeassets();
     precacheshellshock( "nightvision" );
     level.nightvision_dlight_effect = loadfx( "fx/misc/NV_dlight" );
     level.nightvision_reflector_effect = loadfx( "fx/misc/ir_tapeReflect" );
@@ -26,7 +26,7 @@ init_and_run( var_0, var_1 )
         var_3 maps\_utility::ent_flag_init( "nightvision_dlight_enabled" );
         var_3 maps\_utility::ent_flag_set( "nightvision_dlight_enabled" );
         var_3 maps\_utility::ent_flag_clear( "nightvision_dlight_enabled" );
-        var_3 _meth_8308( var_1, "nightvision" );
+        var_3 setactionslot( var_1, "nightvision" );
     }
 
     visionsetnight( "default_night" );
@@ -68,7 +68,7 @@ nightvision_on()
     wait 1.0;
     maps\_utility::ent_flag_set( "nightvision_on" );
     self.nightvision_enabled = 1;
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
     common_scripts\utility::array_thread( var_0, ::enable_ir_beacon );
 
     if ( !maps\_utility::exists_global_spawn_function( "allies", ::enable_ir_beacon ) )
@@ -137,7 +137,7 @@ nightvision_off()
 
 nightvision_effectsoff()
 {
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     foreach ( var_2 in var_0 )
     {

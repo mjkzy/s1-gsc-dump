@@ -13,13 +13,13 @@ main_thread()
 
 render_detect_ranges()
 {
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     foreach ( var_2 in var_0 )
         var_2 render_detect_ranges_for_entity();
 
     level.player render_detect_ranges_for_entity();
-    var_4 = _func_0D6( "bad_guys" );
+    var_4 = getaiarray( "bad_guys" );
 
     foreach ( var_2 in var_4 )
         var_2 render_vision_cone_for_entity();
@@ -31,7 +31,7 @@ render_vision_cone_for_entity()
         return;
 
     var_0 = self.angles;
-    var_1 = self _meth_80A8() + ( 0, 0, -70 );
+    var_1 = self geteye() + ( 0, 0, -70 );
     var_2 = acos( self.fovcosine );
     render_vision_cone( var_1, var_0, var_2, ( 0, 1, 0 ) );
 }
@@ -70,7 +70,7 @@ render_detect_ranges_for_entity()
 
 render_ranges_for_the_corpses()
 {
-    var_0 = _func_0D9();
+    var_0 = getcorpsearray();
 
     foreach ( var_2 in var_0 )
         var_2 render_ranges_for_a_corpse();
@@ -105,7 +105,7 @@ record_enemy_notification( var_0, var_1 )
         level._stealth.debug.last_enemy_notification = spawnstruct();
 
     level._stealth.debug.last_enemy_notification.spotter = var_0;
-    level._stealth.debug.last_enemy_notification.spotterviewpoint = var_0 _meth_80A8() + ( 0, 0, -70 );
+    level._stealth.debug.last_enemy_notification.spotterviewpoint = var_0 geteye() + ( 0, 0, -70 );
     level._stealth.debug.last_enemy_notification.spotterangles = var_0.angles;
     level._stealth.debug.last_enemy_notification.spotterfov = acos( var_0.fovcosine );
     level._stealth.debug.last_enemy_notification.spottedstance = var_1 maps\_stealth_visibility_friendly::friendly_get_stance();
@@ -247,8 +247,8 @@ last_known_position_monitor()
     {
         if ( isdefined( self._stealth ) && isdefined( self.enemy ) )
         {
-            self._stealth.logic.last_known_enemy_pos = self _meth_81C1( self.enemy );
-            self._stealth.logic.last_known_enemy_reason = self _meth_8441( self.enemy );
+            self._stealth.logic.last_known_enemy_pos = self lastknownpos( self.enemy );
+            self._stealth.logic.last_known_enemy_reason = self lastknownreason( self.enemy );
         }
 
         if ( isdefined( self._stealth ) && isdefined( self._stealth.logic.last_known_enemy_pos ) )

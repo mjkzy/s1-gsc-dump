@@ -76,7 +76,7 @@ monitor_zone_control()
 
         if ( var_0 != "none" )
         {
-            var_1 = _func_202( self.origin );
+            var_1 = getzonenearest( self.origin );
 
             if ( isdefined( var_1 ) )
                 botzonesetteam( var_1, var_0 );
@@ -96,9 +96,9 @@ bot_twar_think()
     while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    self _meth_8351( "separation", 0 );
-    self _meth_8379( "beeline" );
-    self _meth_8351( "force_sprint", 1 );
+    self botsetflag( "separation", 0 );
+    self botsetpathingstyle( "beeline" );
+    self botsetflag( "force_sprint", 1 );
 
     for (;;)
     {

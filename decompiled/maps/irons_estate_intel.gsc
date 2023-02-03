@@ -54,7 +54,7 @@ cormack_anim_rate_change( var_0, var_1 )
 {
     wait 0.05;
     var_0 = level.allies[0] maps\_utility::getanim( var_0 );
-    level.allies[0] _meth_83C7( var_0, var_1 );
+    level.allies[0] setanimrate( var_0, var_1 );
 }
 
 setup_intel_player( var_0 )
@@ -78,7 +78,7 @@ setup_intel_player( var_0 )
     soundscripts\_snd::snd_message( "aud_intel" );
     objective_position( maps\_utility::obj( "intel" ), ( 0, 0, 0 ) );
     common_scripts\utility::flag_set( "player_used_intel_trigger" );
-    _func_0D3( "objectiveHide", 1 );
+    setsaveddvar( "objectiveHide", 1 );
     level.gather_intel_trigger delete();
     thread right_tap_monitor();
     thread right_swipe_monitor();
@@ -89,52 +89,52 @@ setup_intel_player( var_0 )
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player maps\_tagging::tagging_set_enabled( 0 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_84BF();
-    level.player _meth_831F();
-    level.player _meth_817D( "stand" );
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player disableoffhandsecondaryweapons();
+    level.player disableoffhandweapons();
+    level.player setstance( "stand" );
     level.meet_cormack_kill_org notify( "stop_pent_desk_idle" );
     wait 0.05;
-    level.player _meth_8080( level.intel_player_rig, "tag_player", 0.6 );
+    level.player playerlinktoblend( level.intel_player_rig, "tag_player", 0.6 );
     level.meet_cormack_kill_org thread maps\_anim::anim_single( [ level.intel_player_rig, level.allies[0] ], "pent_desk" );
     wait 0.6;
-    var_2 = level.player _meth_8311();
-    var_3 = level.player _meth_830B();
-    level.player _meth_8310();
+    var_2 = level.player getcurrentweapon();
+    var_3 = level.player getweaponslistall();
+    level.player takeallweapons();
 
     foreach ( var_5 in var_3 )
     {
         if ( isdefined( var_5 ) && var_5 == "iw5_kf5singleshot_sp_opticsreddot_silencer01" )
-            level.player _meth_830E( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+            level.player giveweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
 
         if ( isdefined( var_5 ) && var_5 == "iw5_sn6_sp_opticsreddot_silencer01" )
-            level.player _meth_830E( "iw5_sn6_sp_opticsreddot_silencer01" );
+            level.player giveweapon( "iw5_sn6_sp_opticsreddot_silencer01" );
 
         if ( isdefined( var_5 ) && var_5 == "iw5_pbwsingleshot_sp_silencerpistol" )
-            level.player _meth_830E( "iw5_pbwsingleshot_sp_silencerpistol" );
+            level.player giveweapon( "iw5_pbwsingleshot_sp_silencerpistol" );
     }
 
     if ( isdefined( var_2 ) && var_2 == "iw5_kf5singleshot_sp_opticsreddot_silencer01" )
-        level.player _meth_8315( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+        level.player switchtoweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
     else if ( isdefined( var_2 ) && var_2 == "iw5_sn6_sp_opticsreddot_silencer01" || var_2 == "iw5_pbwsingleshot_sp_silencerpistol" )
-        level.player _meth_8315( "iw5_sn6_sp_opticsreddot_silencer01" );
+        level.player switchtoweapon( "iw5_sn6_sp_opticsreddot_silencer01" );
 
-    level.player _meth_807D( level.intel_player_rig, "tag_player", 1.0, 10, 10, 5, 5, 1 );
+    level.player playerlinktodelta( level.intel_player_rig, "tag_player", 1.0, 10, 10, 5, 5, 1 );
     level.hack_device show();
     level.intel_player_rig show();
     level.intel_player_rig waittillmatch( "single anim", "end" );
     common_scripts\utility::flag_set( "player_finished_desk_anim" );
-    level.player _meth_804F();
-    level.player _meth_831E();
+    level.player unlink();
+    level.player enableweapons();
     level.player freezecontrols( 0 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 1 );
     level.player maps\_tagging::tagging_set_enabled( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
     level.intel_player_rig delete();
     thread maps\irons_estate_meet_cormack_pt2::elevator_top_enemies_setup();
 }
@@ -142,13 +142,13 @@ setup_intel_player( var_0 )
 hack_device_setup()
 {
     level.hack_device = spawn( "script_model", ( 0, 0, 0 ) );
-    level.hack_device _meth_80B1( "base_hack_device_01" );
-    level.hack_device _meth_804D( level.intel_player_rig, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.hack_device setmodel( "base_hack_device_01" );
+    level.hack_device linkto( level.intel_player_rig, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.hack_device hide();
     level.intel_player_rig waittillmatch( "single anim", "drop_device" );
-    level.hack_device _meth_804F();
+    level.hack_device unlink();
     level.intel_player_rig waittillmatch( "single anim", "pick_up_device" );
-    level.hack_device _meth_804D( level.intel_player_rig, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.hack_device linkto( level.intel_player_rig, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.intel_player_rig waittillmatch( "single anim", "end" );
 
     if ( isdefined( level.hack_device ) )
@@ -162,23 +162,23 @@ vo_test()
     soundscripts\_snd::snd_message( "aud_lockdown_alarm" );
     level.allies[0] waittillmatch( "single anim", "end" );
     objective_state_nomessage( maps\_utility::obj( "intel" ), "done" );
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
     common_scripts\utility::flag_set( "intel_end" );
 }
 
 temp_bink_stuff()
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_0D3( "cg_cinematicCanPause", "1" );
-    _func_057( "ie_penthouse_desk", 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "1" );
+    cinematicingame( "ie_penthouse_desk", 1 );
     level.intel_player_rig waittillmatch( "single anim", "bink_start" );
     pausecinematicingame( 0 );
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
-    _func_0D3( "cg_cinematicCanPause", "0" );
-    _func_0D3( "cg_cinematicFullScreen", "1" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicFullScreen", "1" );
 }
 
 right_tap_monitor()

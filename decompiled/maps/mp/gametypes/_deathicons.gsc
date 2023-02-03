@@ -55,11 +55,11 @@ adddeathicon( var_0, var_1, var_2, var_3, var_4 )
     var_6.archived = 1;
 
     if ( level.splitscreen )
-        var_6 _meth_80CC( "headicon_dead", 14, 14 );
+        var_6 setshader( "headicon_dead", 14, 14 );
     else
-        var_6 _meth_80CC( "headicon_dead", 7, 7 );
+        var_6 setshader( "headicon_dead", 7, 7 );
 
-    var_6 _meth_80D8( 0 );
+    var_6 setwaypoint( 0 );
     self.lastdeathicon = var_6;
     var_6 thread destroyslowly( var_3 );
 }

@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "s1_m160_npc_only";
@@ -27,13 +27,13 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_sentinel_soldier_cloaked::precache();
-    precacheitem( "s1_m160_npc_only" );
-    precacheitem( "beretta" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "s1_m160_npc_only" );
+    precacheshellshock( "beretta" );
+    precacheshellshock( "fraggrenade" );
 }

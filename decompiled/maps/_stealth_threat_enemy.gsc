@@ -157,7 +157,7 @@ enemy_announce_alert()
     self endon( "death" );
     wait 0.25;
 
-    if ( isdefined( self.enemy ) && self _meth_81BE( self.enemy ) )
+    if ( isdefined( self.enemy ) && self cansee( self.enemy ) )
     {
         maps\_stealth_shared_utilities::enemy_announce_snd( "huh" );
         thread maps\_stealth_shared_utilities::enemy_announce_attack();
@@ -214,11 +214,11 @@ enemy_alert_level_warning1()
         return;
 
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-    self _meth_81A6( var_3 );
+    self setgoalpos( var_3 );
     self.goalradius = 64;
     common_scripts\utility::waittill_notify_or_timeout( "goal", 2 );
 
-    if ( !self _meth_815F( self.origin ) )
+    if ( !self isingoal( self.origin ) )
         self.shootposoverride = var_3 + ( 0, 0, 64 );
 
     enemy_lookaround_for_time( 10 );
@@ -246,7 +246,7 @@ enemy_alert_level_warning2()
     var_0 = self.enemy.origin;
     var_1 = distance( var_0, self.origin );
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-    self _meth_81A6( var_0 );
+    self setgoalpos( var_0 );
     self.goalradius = var_1 * 0.5;
     self waittill( "goal" );
 
@@ -265,7 +265,7 @@ enemy_alert_level_warning2()
         maps\_utility::set_dog_walk_anim();
     }
 
-    self _meth_81A6( var_0 );
+    self setgoalpos( var_0 );
     self.goalradius = 64;
     self.disablearrivals = 1;
     self.disableexits = 1;
@@ -297,7 +297,7 @@ enemy_alert_level_attack_wrapper()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
     {
         var_0 = self.origin;
-        self _meth_8160( var_0 );
+        self setruntopos( var_0 );
     }
     else
         self notify( "endNewEnemyReactionAnim" );
@@ -334,7 +334,7 @@ enemy_close_in_on_target()
 
     while ( isdefined( self.enemy ) && maps\_utility::ent_flag( "_stealth_enabled" ) )
     {
-        self _meth_81A6( self.enemy.origin );
+        self setgoalpos( self.enemy.origin );
         self.goalradius = var_0;
 
         if ( var_0 > 600 )

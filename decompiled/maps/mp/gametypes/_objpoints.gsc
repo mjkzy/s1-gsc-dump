@@ -43,8 +43,8 @@ createteamobjpoint( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6.team = var_2;
     var_6.isflashing = 0;
     var_6.isshown = 1;
-    var_6 _meth_80CC( var_3, level.objpointsize, level.objpointsize );
-    var_6 _meth_80D8( 1, 0 );
+    var_6 setshader( var_3, level.objpointsize, level.objpointsize );
+    var_6 setwaypoint( 1, 0 );
 
     if ( isdefined( var_4 ) )
         var_6.alpha = var_4;

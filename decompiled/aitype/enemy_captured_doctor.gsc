@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "iw5_sn6pickup_sp_xmags";
@@ -27,13 +27,13 @@ main()
 
 spawner()
 {
-    self _meth_8040( "neutral" );
+    self setspawnerteam( "neutral" );
 }
 
 precache()
 {
     character\character_doctor_cpt::precache();
-    precacheitem( "iw5_sn6pickup_sp_xmags" );
-    precacheitem( "iw5_titan45pickup_sp_xmags" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_sn6pickup_sp_xmags" );
+    precacheshellshock( "iw5_titan45pickup_sp_xmags" );
+    precacheshellshock( "fraggrenade" );
 }

@@ -31,12 +31,12 @@ add_hovertank_turret( var_0, var_1, var_2 )
         var_2 = "vehicle_mil_hovertank_vm";
 
     var_3 = spawnturret( "misc_turret", var_0 gettagorigin( "tag_origin" ), var_1 );
-    var_3 _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.hovertank_turret = var_3;
-    var_3 _meth_8065( "manual" );
-    var_3 _meth_80B1( var_2 );
+    var_3 setmode( "manual" );
+    var_3 setmodel( var_2 );
     var_3 hide();
-    var_3 _meth_815C();
+    var_3 turretfiredisable();
     var_0.turret = var_3;
     return var_3;
 }
@@ -47,7 +47,7 @@ hovertank_swap_model( var_0, var_1, var_2 )
     {
         var_0 hide();
         var_1 show();
-        var_1 _meth_840F( 1 );
+        var_1 setviewmodeldepth( 1 );
     }
     else
     {
@@ -61,25 +61,25 @@ hovertank_ride( var_0, var_1 )
     self setangles( var_0 gettagangles( "tag_turret" ) );
     var_0 hide();
     var_1 show();
-    var_1 _meth_840F( 1 );
-    self _meth_820B( var_0, 1 );
+    var_1 setviewmodeldepth( 1 );
+    self drivevehicleandcontrolturret( var_0, 1 );
     self.driving_hovertank = var_0;
     self.drivingvehicle = var_0;
-    var_1 _meth_8099( self );
+    var_1 useby( self );
     var_1 makeunusable();
-    self _meth_80F4();
+    self disableturretdismount();
     soundscripts\_audio::aud_disable_deathsdoor_audio();
     self.aim_turnrate_pitch = getdvarint( "aim_turnrate_pitch" );
     self.aim_turnrate_pitch_ads = getdvarint( "aim_turnrate_pitch_ads" );
     self.aim_turnrate_yaw = getdvarint( "aim_turnrate_yaw" );
     self.aim_turnrate_yaw_ads = getdvarint( "aim_turnrate_yaw_ads" );
     self.aim_accel_turnrate_lerp = getdvarint( "aim_accel_turnrate_lerp" );
-    _func_0D3( "aim_turnrate_pitch", 70 );
-    _func_0D3( "aim_turnrate_pitch_ads", 70 );
-    _func_0D3( "aim_turnrate_yaw", 125 );
-    _func_0D3( "aim_turnrate_yaw_ads", 85 );
-    _func_0D3( "aim_accel_turnrate_lerp", 200 );
-    var_0 _meth_83F3();
+    setsaveddvar( "aim_turnrate_pitch", 70 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 70 );
+    setsaveddvar( "aim_turnrate_yaw", 125 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 85 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 200 );
+    var_0 makevehiclenotcollidewithplayers();
     thread end_ride_on_hovertank_done( var_0, var_1 );
     hovertank_hud_init( self );
     self notify( "noHealthOverlay" );
@@ -105,11 +105,11 @@ hovertank_fx()
     self endon( "death" );
     var_0 = self;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "tag_origin", ( 10, 0, 10 ), ( -90, 0, 0 ) );
+    var_1 linkto( self, "tag_origin", ( 10, 0, 10 ), ( -90, 0, 0 ) );
 
     for (;;)
     {
-        var_2 = var_0 _meth_8473();
+        var_2 = var_0 vehicle_hovertankgetthrottleforce();
         var_3 = var_2[0];
         var_4 = var_2[1];
         wait 1;
@@ -120,9 +120,9 @@ hovertank_fx()
 
 init_hovertank_weapons()
 {
-    precacheitem( "hovertank_antiair" );
-    precacheitem( "hovertank_cannon" );
-    precacheitem( "hovertank_missile_small" );
+    precacheshellshock( "hovertank_antiair" );
+    precacheshellshock( "hovertank_cannon" );
+    precacheshellshock( "hovertank_missile_small" );
     precacheshellshock( "hovertank_cannon" );
     precacheshader( "reticle_hovertank_cannon" );
     precacheshader( "reticle_hovertank_emp" );
@@ -306,7 +306,7 @@ hovertank_hud_init( var_0 )
     level.huditem["crosshairs"][0].aligny = "middle";
     level.huditem["crosshairs"][0].horzalign = "center";
     level.huditem["crosshairs"][0].vertalign = "middle";
-    level.huditem["crosshairs"][0] _meth_80CC( level.hovertank_weapon[0].overlay, level.hovertank_weapon[0].shader_width, level.hovertank_weapon[0].shader_height );
+    level.huditem["crosshairs"][0] setshader( level.hovertank_weapon[0].overlay, level.hovertank_weapon[0].shader_width, level.hovertank_weapon[0].shader_height );
     level.huditem["crosshairs"][0].sort = -2;
     level.huditem["crosshairs"][0].alpha = 0.0;
     level.huditem["crosshairs"][1] = newclienthudelem( var_0 );
@@ -316,7 +316,7 @@ hovertank_hud_init( var_0 )
     level.huditem["crosshairs"][1].aligny = "middle";
     level.huditem["crosshairs"][1].horzalign = "center";
     level.huditem["crosshairs"][1].vertalign = "middle";
-    level.huditem["crosshairs"][1] _meth_80CC( level.hovertank_weapon[1].overlay, level.hovertank_weapon[1].shader_width, level.hovertank_weapon[1].shader_height );
+    level.huditem["crosshairs"][1] setshader( level.hovertank_weapon[1].overlay, level.hovertank_weapon[1].shader_width, level.hovertank_weapon[1].shader_height );
     level.huditem["crosshairs"][1].sort = -2;
     level.huditem["crosshairs"][1].alpha = 0.0;
     var_6 = 24;
@@ -329,7 +329,7 @@ hovertank_hud_init( var_0 )
     level.huditem["crosshairs"][2][0].aligny = "middle";
     level.huditem["crosshairs"][2][0].horzalign = "center";
     level.huditem["crosshairs"][2][0].vertalign = "middle";
-    level.huditem["crosshairs"][2][0] _meth_80CC( level.hovertank_weapon[2].overlay, level.hovertank_weapon[2].shader_width, level.hovertank_weapon[2].shader_height );
+    level.huditem["crosshairs"][2][0] setshader( level.hovertank_weapon[2].overlay, level.hovertank_weapon[2].shader_width, level.hovertank_weapon[2].shader_height );
     level.huditem["crosshairs"][2][0].sort = -2;
     level.huditem["crosshairs"][2][0].alpha = 0.0;
     level.huditem["crosshairs"][2][1] = newclienthudelem( var_0 );
@@ -339,7 +339,7 @@ hovertank_hud_init( var_0 )
     level.huditem["crosshairs"][2][1].aligny = "middle";
     level.huditem["crosshairs"][2][1].horzalign = "center";
     level.huditem["crosshairs"][2][1].vertalign = "middle";
-    level.huditem["crosshairs"][2][1] _meth_80CC( level.hovertank_weapon[2].overlay, int( level.hovertank_weapon[2].shader_width * ( 1 + var_8 ) ), int( level.hovertank_weapon[2].shader_height * ( 1 + var_8 ) ) );
+    level.huditem["crosshairs"][2][1] setshader( level.hovertank_weapon[2].overlay, int( level.hovertank_weapon[2].shader_width * ( 1 + var_8 ) ), int( level.hovertank_weapon[2].shader_height * ( 1 + var_8 ) ) );
     level.huditem["crosshairs"][2][1].sort = -2;
     level.huditem["crosshairs"][2][1].alpha = 0.0;
     level.huditem["crosshairs"][2][2] = newclienthudelem( var_0 );
@@ -349,7 +349,7 @@ hovertank_hud_init( var_0 )
     level.huditem["crosshairs"][2][2].aligny = "middle";
     level.huditem["crosshairs"][2][2].horzalign = "center";
     level.huditem["crosshairs"][2][2].vertalign = "middle";
-    level.huditem["crosshairs"][2][2] _meth_80CC( level.hovertank_weapon[2].overlay, int( level.hovertank_weapon[2].shader_width * ( 1 + var_8 * 2 ) ), int( level.hovertank_weapon[2].shader_height * ( 1 + var_8 * 2 ) ) );
+    level.huditem["crosshairs"][2][2] setshader( level.hovertank_weapon[2].overlay, int( level.hovertank_weapon[2].shader_width * ( 1 + var_8 * 2 ) ), int( level.hovertank_weapon[2].shader_height * ( 1 + var_8 * 2 ) ) );
     level.huditem["crosshairs"][2][2].sort = -2;
     level.huditem["crosshairs"][2][2].alpha = 0.0;
     var_9 = common_scripts\utility::ter_op( var_1, 102.4, 128 );
@@ -377,12 +377,12 @@ hovertank_hud_init( var_0 )
     level.huditem["weapon_icon"][0].horzalign = "center";
     level.huditem["weapon_icon"][0].vertalign = "bottom";
 
-    if ( !level.player _meth_834E() )
-        level.huditem["weapon_icon"][0] _meth_80CC( "s1_icon_hovertank_canon_pc", var_12, var_11 );
+    if ( !level.player usinggamepad() )
+        level.huditem["weapon_icon"][0] setshader( "s1_icon_hovertank_canon_pc", var_12, var_11 );
     else if ( level.ps3 || level.ps4 )
-        level.huditem["weapon_icon"][0] _meth_80CC( "s1_icon_hovertank_canon_ps3", var_12, var_11 );
+        level.huditem["weapon_icon"][0] setshader( "s1_icon_hovertank_canon_ps3", var_12, var_11 );
     else
-        level.huditem["weapon_icon"][0] _meth_80CC( "s1_icon_hovertank_canon", var_12, var_11 );
+        level.huditem["weapon_icon"][0] setshader( "s1_icon_hovertank_canon", var_12, var_11 );
 
     level.huditem["weapon_icon"][0].icon_width = var_12;
     level.huditem["weapon_icon"][0].icon_height = var_11;
@@ -426,12 +426,12 @@ hovertank_hud_init( var_0 )
     level.huditem["weapon_icon"][1].horzalign = "center";
     level.huditem["weapon_icon"][1].vertalign = "bottom";
 
-    if ( !level.player _meth_834E() )
-        level.huditem["weapon_icon"][1] _meth_80CC( "s1_icon_hovertank_missile_small_pc", var_12, var_11 );
+    if ( !level.player usinggamepad() )
+        level.huditem["weapon_icon"][1] setshader( "s1_icon_hovertank_missile_small_pc", var_12, var_11 );
     else if ( level.ps3 || level.ps4 )
-        level.huditem["weapon_icon"][1] _meth_80CC( "s1_icon_hovertank_missile_small_ps3", var_12, var_11 );
+        level.huditem["weapon_icon"][1] setshader( "s1_icon_hovertank_missile_small_ps3", var_12, var_11 );
     else
-        level.huditem["weapon_icon"][1] _meth_80CC( "s1_icon_hovertank_missile_small", var_12, var_11 );
+        level.huditem["weapon_icon"][1] setshader( "s1_icon_hovertank_missile_small", var_12, var_11 );
 
     level.huditem["weapon_icon"][1].icon_width = var_12;
     level.huditem["weapon_icon"][1].icon_height = var_11;
@@ -473,12 +473,12 @@ hovertank_hud_init( var_0 )
     level.huditem["weapon_icon"][2].horzalign = "center";
     level.huditem["weapon_icon"][2].vertalign = "bottom";
 
-    if ( !level.player _meth_834E() )
-        level.huditem["weapon_icon"][2] _meth_80CC( "s1_icon_hovertank_antiair_pc", var_12, var_11 );
+    if ( !level.player usinggamepad() )
+        level.huditem["weapon_icon"][2] setshader( "s1_icon_hovertank_antiair_pc", var_12, var_11 );
     else if ( level.ps3 || level.ps4 )
-        level.huditem["weapon_icon"][2] _meth_80CC( "s1_icon_hovertank_antiair_ps3", var_12, var_11 );
+        level.huditem["weapon_icon"][2] setshader( "s1_icon_hovertank_antiair_ps3", var_12, var_11 );
     else
-        level.huditem["weapon_icon"][2] _meth_80CC( "s1_icon_hovertank_antiair", var_12, var_11 );
+        level.huditem["weapon_icon"][2] setshader( "s1_icon_hovertank_antiair", var_12, var_11 );
 
     level.huditem["weapon_icon"][2].icon_width = var_12;
     level.huditem["weapon_icon"][2].icon_height = var_11;
@@ -503,9 +503,9 @@ give_hovertank_weapons( var_0 )
     level.last_hovertank_weapon_anim = "";
     level.last_hovertank_weapon_anim_complete_time = gettime();
     var_1 = self;
-    var_1 _meth_831D();
-    var_1 _meth_80EF();
-    var_1 _meth_823C();
+    var_1 disableweapons();
+    var_1 enableinvulnerability();
+    var_1 painvisionoff();
     var_1 maps\_utility::ent_flag_clear( "player_has_red_flashing_overlay" );
     var_1 notify( "noHealthOverlay" );
     thread shotfired();
@@ -524,7 +524,7 @@ remove_hovertank_weapons()
     var_0 = self;
     level.huditem = common_scripts\utility::array_removeundefined( level.huditem );
     maps\_utility::deep_array_thread( level.huditem, maps\_hud_util::destroyelem );
-    var_0 _meth_80F0();
+    var_0 disableinvulnerability();
     level.hovertank_player = undefined;
 }
 
@@ -543,7 +543,7 @@ hovertank_rumble()
     for (;;)
     {
         var_5 = var_4;
-        var_4 = self _meth_8286();
+        var_4 = self vehicle_getspeed();
         var_6 = var_1 * clamp( var_4 / var_0, 0.0, 1.0 );
         var_6 *= randomfloat( 1.0 );
         var_7 = 0.0;
@@ -561,7 +561,7 @@ get_hovertank_shake_value()
 {
     var_0 = 0;
     var_1 = 12;
-    return self _meth_8286() / var_1;
+    return self vehicle_getspeed() / var_1;
 }
 
 hovertank_rumble_stop()
@@ -576,7 +576,7 @@ hovertank_physics()
 
     for (;;)
     {
-        _func_244( self.origin, 200 );
+        wakeupphysicssphere( self.origin, 200 );
         wait 0.05;
     }
 }
@@ -590,8 +590,8 @@ end_ride_on_hovertank_done( var_0, var_1 )
 
 endride( var_0, var_1 )
 {
-    self _meth_820C( var_0 );
-    var_1 _meth_8099( self );
+    self drivevehicleandcontrolturretoff( var_0 );
+    var_1 useby( self );
     level notify( "hovertank_cannon_reload_hint" );
     common_scripts\utility::flag_clear( "hovertank_reload_hint" );
     remove_hovertank_weapons();
@@ -602,11 +602,11 @@ endride( var_0, var_1 )
     maps\_utility::ent_flag_clear( "player_no_auto_blur" );
     thread maps\_gameskill::healthoverlay();
     soundscripts\_audio::aud_enable_deathsdoor_audio();
-    _func_0D3( "aim_turnrate_pitch", self.aim_turnrate_pitch );
-    _func_0D3( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
-    _func_0D3( "aim_turnrate_yaw", self.aim_turnrate_yaw );
-    _func_0D3( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
-    _func_0D3( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
+    setsaveddvar( "aim_turnrate_pitch", self.aim_turnrate_pitch );
+    setsaveddvar( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
+    setsaveddvar( "aim_turnrate_yaw", self.aim_turnrate_yaw );
+    setsaveddvar( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
+    setsaveddvar( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
     self.driving_hovertank = undefined;
     self.drivingvehicle = undefined;
     self notify( "hovertank_dismounted" );
@@ -620,52 +620,52 @@ hoverscreen_reveal( var_0 )
     var_1 = level.hovertank_turret gettagorigin( "tag_aim_animated" );
     thread hoverscreen_turnon_movie();
     level.player common_scripts\utility::delaycall( var_0, ::freezecontrols, 0 );
-    _func_0D3( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
 
     if ( isdefined( level.use_hovertank_chromatic_aberration ) && level.use_hovertank_chromatic_aberration )
     {
-        _func_0D3( "r_chromaticAberrationTweaks", 1 );
-        _func_0D3( "r_chromaticAberration", 0 );
-        _func_0D3( "r_chromaticSeparationG", -10 );
-        _func_0D3( "r_chromaticSeparationR", 10 );
+        setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+        setsaveddvar( "r_chromaticAberration", 0 );
+        setsaveddvar( "r_chromaticSeparationG", -10 );
+        setsaveddvar( "r_chromaticSeparationR", 10 );
     }
 
     level.player freezecontrols( 1 );
     wait 0.05;
     setomnvar( "ui_labtank", 1 );
-    _func_23F( &"qflash01" );
-    level.hovertank_turret _meth_846C( "mtl_hovertank_body_gun", "mtl_hovertank_body_gun_no_z" );
-    level.hovertank_turret _meth_8048( "TAG_AIM_HIDE" );
-    level.hovertank_turret _meth_8048( "TAG_AIM_UNHIDE" );
+    luinotifyevent( &"qflash01" );
+    level.hovertank_turret overridematerial( "mtl_hovertank_body_gun", "mtl_hovertank_body_gun_no_z" );
+    level.hovertank_turret hidepart( "TAG_AIM_HIDE" );
+    level.hovertank_turret hidepart( "TAG_AIM_UNHIDE" );
 }
 
 hoverscreen_turnon_movie()
 {
     wait 0.05;
-    level.hovertank_turret _meth_804B( "TAG_BOOT" );
-    _func_05C();
-    level.hovertank_turret _meth_846C( "mtl_hovertank_int_screen02", "m/mtl_hovertank_int_screen01" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "lab_tank_bootup" );
+    level.hovertank_turret showpart( "TAG_BOOT" );
+    stopcinematicingame();
+    level.hovertank_turret overridematerial( "mtl_hovertank_int_screen02", "m/mtl_hovertank_int_screen01" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "lab_tank_bootup" );
     wait 1.26;
-    level.hovertank_turret _meth_846D();
+    level.hovertank_turret overridematerialreset();
     wait 0.74;
-    level.hovertank_turret _meth_8048( "TAG_BOOT" );
-    _func_05C();
+    level.hovertank_turret hidepart( "TAG_BOOT" );
+    stopcinematicingame();
 }
 
 hoverscreen_turnoff_movie()
 {
     wait 0.05;
-    level.hovertank_turret _meth_804B( "TAG_BOOT" );
-    _func_05C();
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "lab_tank_shutdown" );
+    level.hovertank_turret showpart( "TAG_BOOT" );
+    stopcinematicingame();
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "lab_tank_shutdown" );
     wait 0.5;
-    level.hovertank_turret _meth_846C( "mtl_hovertank_int_screen02", "m/mtl_hovertank_int_screen01" );
+    level.hovertank_turret overridematerial( "mtl_hovertank_int_screen02", "m/mtl_hovertank_int_screen01" );
     wait 0.5;
-    level.hovertank_turret _meth_8048( "TAG_BOOT" );
-    _func_05C();
+    level.hovertank_turret hidepart( "TAG_BOOT" );
+    stopcinematicingame();
 }
 
 hoverscreen_turnoff( var_0, var_1 )
@@ -676,18 +676,18 @@ hoverscreen_turnoff( var_0, var_1 )
     var_2 = level.hovertank_turret gettagorigin( "tag_aim_animated" );
     thread hoverscreen_turnoff_movie();
     wait(var_1);
-    _func_0D3( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
 
     if ( isdefined( level.use_hovertank_chromatic_aberration ) && level.use_hovertank_chromatic_aberration )
     {
-        _func_0D3( "r_chromaticAberrationTweaks", 1 );
-        _func_0D3( "r_chromaticAberration", 0 );
-        _func_0D3( "r_chromaticSeparationG", -10 );
-        _func_0D3( "r_chromaticSeparationR", 10 );
+        setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+        setsaveddvar( "r_chromaticAberration", 0 );
+        setsaveddvar( "r_chromaticSeparationG", -10 );
+        setsaveddvar( "r_chromaticSeparationR", 10 );
     }
 
     wait 0.05;
-    level.hovertank_turret _meth_846C( "mtl_hovertank_body_gun", "mtl_hovertank_body_gun_no_z" );
+    level.hovertank_turret overridematerial( "mtl_hovertank_body_gun", "mtl_hovertank_body_gun_no_z" );
     wait 0.05;
 }
 
@@ -716,7 +716,7 @@ hoverscreen_hit( var_0, var_1 )
         level.huditem["hovertank_hit01"][var_0].horzalign = "center";
         level.huditem["hovertank_hit01"][var_0].vertalign = "bottom";
         var_4 = "mtl_hovertank_screen_hit_0" + var_0;
-        level.huditem["hovertank_hit01"][var_0] _meth_80CC( var_4, var_2, var_3 );
+        level.huditem["hovertank_hit01"][var_0] setshader( var_4, var_2, var_3 );
         level.huditem["hovertank_hit01"][var_0].alpha = 0.0;
         level.huditem["hovertank_hit01"][var_0].color = ( 1, 1, 1 );
     }
@@ -751,7 +751,7 @@ hoverscreen_chromo_anim2( var_0, var_1 )
     if ( var_1 )
         var_2 = var_1;
 
-    _func_0D3( "r_chromaticAberration", 1 );
+    setsaveddvar( "r_chromaticAberration", 1 );
     var_3 = var_0 * 20;
     var_4 = 0;
     level.chromo_offset = 20 * var_2;
@@ -761,44 +761,44 @@ hoverscreen_chromo_anim2( var_0, var_1 )
     {
         var_6 = 1.0 / var_3 * var_5;
         level.chromo_offset -= var_6;
-        _func_0D3( "r_chromaticSeparationG", level.chromo_offset * -1 );
-        _func_0D3( "r_chromaticSeparationR", level.chromo_offset );
+        setsaveddvar( "r_chromaticSeparationG", level.chromo_offset * -1 );
+        setsaveddvar( "r_chromaticSeparationR", level.chromo_offset );
         wait 0.05;
     }
 
     level.chromo_offset = 0;
-    _func_0D3( "r_chromaticSeparationG", 0 );
-    _func_0D3( "r_chromaticSeparationR", 0 );
+    setsaveddvar( "r_chromaticSeparationG", 0 );
+    setsaveddvar( "r_chromaticSeparationR", 0 );
 }
 
 hoverscreen_chromo_anim( var_0, var_1 )
 {
-    _func_0D3( "r_chromaticAberration", 2 );
+    setsaveddvar( "r_chromaticAberration", 2 );
     var_2 = var_0 * 20;
     var_3 = 0;
-    var_1 _meth_83FA( 0 );
+    var_1 hudoutlineenable( 0 );
 
     for ( var_3 = 0; var_3 < var_2; var_3++ )
     {
         var_4 = ( var_2 + 1 - var_3 ) / 60 * 5;
-        _func_0D3( "r_chromaticSeparationG", var_4 * -1 );
-        _func_0D3( "r_chromaticSeparationR", var_4 );
+        setsaveddvar( "r_chromaticSeparationG", var_4 * -1 );
+        setsaveddvar( "r_chromaticSeparationR", var_4 );
         wait 0.05;
     }
 }
 
 hoverscreen_chromo_anim_turnoff( var_0, var_1 )
 {
-    _func_0D3( "r_chromaticAberration", 2 );
+    setsaveddvar( "r_chromaticAberration", 2 );
     var_2 = var_0 * 20;
     var_3 = 0;
-    var_1 _meth_83FA( 0 );
+    var_1 hudoutlineenable( 0 );
 
     for ( var_3 = 0; var_3 < var_2; var_3++ )
     {
         var_4 = ( var_2 + 1 - var_3 ) / 60 * 5;
-        _func_0D3( "r_chromaticSeparationG", var_4 * -1 );
-        _func_0D3( "r_chromaticSeparationR", var_4 );
+        setsaveddvar( "r_chromaticSeparationG", var_4 * -1 );
+        setsaveddvar( "r_chromaticSeparationR", var_4 );
         wait 0.05;
     }
 }
@@ -856,7 +856,7 @@ change_weapons( var_0 )
 
             if ( issubstr( level.current_weapon, "cannon" ) && var_2 == "antiair" )
             {
-                var_0 _meth_8145( %lab_htank_emp_to_cannon_vmhtank, 1, var_4 );
+                var_0 setanimknobrestart( %lab_htank_emp_to_cannon_vmhtank, 1, var_4 );
                 level.last_hovertank_weapon_anim = "emp_to_cannon";
                 level.last_hovertank_weapon_anim_complete_time = gettime() + 1000 * getanimlength( %lab_htank_emp_to_cannon_vmhtank );
                 soundscripts\_snd::snd_message( "hovertank_switch_to_cannon" );
@@ -865,9 +865,9 @@ change_weapons( var_0 )
             else if ( issubstr( level.current_weapon, "antiair" ) && var_2 == "cannon" )
             {
                 if ( gettime() >= level.last_hovertank_weapon_anim_complete_time )
-                    var_0 _meth_8145( %lab_htank_cannon_to_emp_vmhtank, 1, 0.0 );
+                    var_0 setanimknobrestart( %lab_htank_cannon_to_emp_vmhtank, 1, 0.0 );
                 else
-                    var_0 _meth_8145( %lab_htank_cannon_to_emp_vmhtank, 1, var_4 );
+                    var_0 setanimknobrestart( %lab_htank_cannon_to_emp_vmhtank, 1, var_4 );
 
                 level.last_hovertank_weapon_anim = "cannon_to_emp";
                 level.last_hovertank_weapon_anim_complete_time = gettime() + 1000 * getanimlength( %lab_htank_cannon_to_emp_vmhtank );
@@ -931,9 +931,9 @@ change_weapons( var_0 )
 change_weapons_listener()
 {
     level endon( "hovertank_end" );
-    self _meth_82DD( "antiair_button", "+stance" );
-    self _meth_82DD( "cannon_button", "weapnext" );
-    self _meth_82DD( "missiles_button", "+usereload" );
+    self notifyonplayercommand( "antiair_button", "+stance" );
+    self notifyonplayercommand( "cannon_button", "weapnext" );
+    self notifyonplayercommand( "missiles_button", "+usereload" );
     notifyoncommand( "LISTEN_attack_button_pressed", "+attack" );
     notifyoncommand( "LISTEN_attack_button_pressed", "+attack_akimbo_accessible" );
     var_0 = "default";
@@ -942,42 +942,42 @@ change_weapons_listener()
     {
         if ( !level.player common_scripts\utility::is_player_gamepad_enabled() )
         {
-            self _meth_82DD( "antiair_button", "+actionslot 4" );
-            self _meth_82DD( "cannon_button", "+actionslot 3" );
-            self _meth_82DD( "missiles_button", "weapnext" );
+            self notifyonplayercommand( "antiair_button", "+actionslot 4" );
+            self notifyonplayercommand( "cannon_button", "+actionslot 3" );
+            self notifyonplayercommand( "missiles_button", "weapnext" );
         }
         else
         {
-            self _meth_849C( "antiair_button", "+actionslot 4" );
-            self _meth_849C( "cannon_button", "+actionslot 3" );
-            self _meth_849C( "missiles_button", "weapnext" );
+            self notifyonplayercommandremove( "antiair_button", "+actionslot 4" );
+            self notifyonplayercommandremove( "cannon_button", "+actionslot 3" );
+            self notifyonplayercommandremove( "missiles_button", "weapnext" );
         }
 
-        if ( issubstr( _func_2C6(), "nomad_tactical" ) )
+        if ( issubstr( getbuttonsconfig(), "nomad_tactical" ) )
         {
             if ( var_0 != "nomad" )
             {
-                self _meth_849C( "antiair_button", "+stance" );
-                self _meth_849C( "antiair_button", "+melee_zoom" );
-                self _meth_82DD( "antiair_button", "+melee_breath" );
+                self notifyonplayercommandremove( "antiair_button", "+stance" );
+                self notifyonplayercommandremove( "antiair_button", "+melee_zoom" );
+                self notifyonplayercommand( "antiair_button", "+melee_breath" );
                 var_0 = "nomad_tactical";
             }
         }
-        else if ( issubstr( _func_2C6(), "tactical" ) )
+        else if ( issubstr( getbuttonsconfig(), "tactical" ) )
         {
             if ( var_0 != "tactical" )
             {
-                self _meth_849C( "antiair_button", "+stance" );
-                self _meth_849C( "antiair_button", "+melee_breath" );
-                self _meth_82DD( "antiair_button", "+melee_zoom" );
+                self notifyonplayercommandremove( "antiair_button", "+stance" );
+                self notifyonplayercommandremove( "antiair_button", "+melee_breath" );
+                self notifyonplayercommand( "antiair_button", "+melee_zoom" );
                 var_0 = "tactical";
             }
         }
         else
         {
-            self _meth_849C( "antiair_button", "+melee_zoom" );
-            self _meth_849C( "antiair_button", "+melee_breath" );
-            self _meth_82DD( "antiair_button", "+stance" );
+            self notifyonplayercommandremove( "antiair_button", "+melee_zoom" );
+            self notifyonplayercommandremove( "antiair_button", "+melee_breath" );
+            self notifyonplayercommand( "antiair_button", "+stance" );
             var_0 = "default";
         }
 
@@ -997,12 +997,12 @@ scale_missile_reticle_with_dist( var_0 )
         if ( issubstr( level.current_weapon, "missile" ) )
         {
             var_4 = [];
-            var_5 = level.hovertank_player _meth_80A8() + 15000 * anglestoforward( level.hovertank_player getangles() );
+            var_5 = level.hovertank_player geteye() + 15000 * anglestoforward( level.hovertank_player getangles() );
 
             if ( isdefined( var_0 ) )
-                var_4 = bullettrace( level.hovertank_player _meth_80A8() + anglestoforward( var_0 gettagangles( "tag_flash" ) ) * 32, var_5, 1, var_0 );
+                var_4 = bullettrace( level.hovertank_player geteye() + anglestoforward( var_0 gettagangles( "tag_flash" ) ) * 32, var_5, 1, var_0 );
             else
-                var_4 = bullettrace( level.player _meth_80A8() + anglestoforward( level.player _meth_8036() ) * 32, var_5, 1, level.player );
+                var_4 = bullettrace( level.player geteye() + anglestoforward( level.player getgunangles() ) * 32, var_5, 1, level.player );
 
             var_6 = distance( level.player.origin, var_4["position"] );
 
@@ -1074,7 +1074,7 @@ weapon_fire( var_0 )
     var_1 = 0;
     var_2 = 0.2;
     var_3 = 1;
-    var_4 = level.hovertank_player _meth_80A8()[2];
+    var_4 = level.hovertank_player geteye()[2];
     var_5 = 1.5;
     var_6 = 0;
 
@@ -1097,24 +1097,24 @@ weapon_fire( var_0 )
             if ( isdefined( var_0 ) )
                 var_8 = var_0 get_weapon_fire_pos( level.current_weapon, var_6 );
             else
-                var_8 = level.player _meth_80A8();
+                var_8 = level.player geteye();
 
-            var_9 = level.hovertank_player _meth_80A8() + 15000 * anglestoforward( level.hovertank_player getangles() );
+            var_9 = level.hovertank_player geteye() + 15000 * anglestoforward( level.hovertank_player getangles() );
 
             if ( level.time_of_hovertank_fire - var_1 > var_2 * 1000 )
                 var_3 = 1;
 
             if ( level.time_of_hovertank_fire - var_1 > var_5 * 1000 )
-                var_4 = level.hovertank_player _meth_80A8()[2];
+                var_4 = level.hovertank_player geteye()[2];
 
             if ( issubstr( level.current_weapon, "missile" ) )
             {
                 var_7 = [];
 
                 if ( isdefined( var_0 ) )
-                    var_7 = bullettrace( level.hovertank_player _meth_80A8() + anglestoforward( var_0 gettagangles( "tag_flash" ) ) * 32, var_9, 1, var_0 );
+                    var_7 = bullettrace( level.hovertank_player geteye() + anglestoforward( var_0 gettagangles( "tag_flash" ) ) * 32, var_9, 1, var_0 );
                 else
-                    var_7 = bullettrace( level.player _meth_80A8() + anglestoforward( level.player _meth_8036() ) * 32, var_9, 1, level.player );
+                    var_7 = bullettrace( level.player geteye() + anglestoforward( level.player getgunangles() ) * 32, var_9, 1, level.player );
 
                 var_10 = 0;
                 var_11 = 0;
@@ -1127,7 +1127,7 @@ weapon_fire( var_0 )
                     if ( isdefined( var_0 ) )
                         var_12 = var_0 gettagangles( "tag_flash" );
                     else
-                        var_12 = level.player _meth_8036();
+                        var_12 = level.player getgunangles();
 
                     if ( var_6 == 0 )
                         var_10 = anglestoright( var_12 ) * randomintrange( -1 * getdvarint( "ht_missile_end_max" ), getdvarint( "ht_missile_end_min" ) );
@@ -1148,7 +1148,7 @@ weapon_fire( var_0 )
                     if ( isdefined( var_0 ) )
                         var_12 = var_0 gettagangles( "tag_flash" );
                     else
-                        var_12 = level.player _meth_8036();
+                        var_12 = level.player getgunangles();
 
                     var_9 = var_8 + anglestoforward( ( 0, var_12[1], 0 ) ) * getdvarint( "ht_missile_end_forward" ) + anglestoup( ( 0, var_12[1], 0 ) ) * getdvarint( "ht_missile_end_rad" ) * sin( var_11 ) + anglestoright( ( 0, var_12[1], 0 ) ) * getdvarint( "ht_missile_end_rad" ) * cos( var_11 );
                 }
@@ -1156,16 +1156,16 @@ weapon_fire( var_0 )
             else
             {
                 var_1 = level.time_of_hovertank_fire;
-                var_7 = bullettrace( level.hovertank_player _meth_80A8() + 150 * anglestoforward( level.hovertank_player getangles() ), var_9, 1, var_0 );
+                var_7 = bullettrace( level.hovertank_player geteye() + 150 * anglestoforward( level.hovertank_player getangles() ), var_9, 1, var_0 );
 
                 if ( isdefined( var_7["position"] ) )
                 {
                     var_9 = var_7["position"];
-                    var_4 = level.hovertank_player _meth_80A8()[2] - var_7["position"][2];
+                    var_4 = level.hovertank_player geteye()[2] - var_7["position"][2];
                     var_4 = common_scripts\utility::ter_op( var_4 > 0, var_4, 0 );
                 }
                 else
-                    var_9 = level.hovertank_player _meth_80A8() + var_4 / cos( 90 - level.hovertank_player getangles()[0] ) * anglestoforward( level.hovertank_player getangles() );
+                    var_9 = level.hovertank_player geteye() + var_4 / cos( 90 - level.hovertank_player getangles()[0] ) * anglestoforward( level.hovertank_player getangles() );
             }
 
             var_13 = magicbullet( level.current_weapon, var_8, var_9, level.hovertank_player );
@@ -1189,7 +1189,7 @@ weapon_fire( var_0 )
             else
             {
                 var_15 = level.player.origin;
-                var_12 = level.player _meth_8036();
+                var_12 = level.player getgunangles();
             }
 
             var_16 = 0.5;
@@ -1202,19 +1202,19 @@ weapon_fire( var_0 )
                 playfxontag( common_scripts\utility::getfx( "hovertank_cannon_dust_ring" ), var_0, "tag_flash_animated" );
                 earthquake( 1, 0.5, level.hovertank_player.origin, 500 );
                 level.hovertank_player shellshock( "hovertank_cannon", 2 );
-                level.hovertank_player _meth_80AD( "heavygun_fire" );
+                level.hovertank_player playrumbleonentity( "heavygun_fire" );
                 soundscripts\_snd::snd_message( "hovertank_cannon_fire" );
 
                 if ( isdefined( var_0 ) )
                 {
                     if ( level.last_hovertank_weapon_anim == "cannon_fire" || gettime() >= level.last_hovertank_weapon_anim_complete_time )
-                        var_0 _meth_8145( %lab_htank_cannon_fire_vmhtank, 1, 0.0 );
+                        var_0 setanimknobrestart( %lab_htank_cannon_fire_vmhtank, 1, 0.0 );
                     else
-                        var_0 _meth_8145( %lab_htank_cannon_fire_vmhtank, 1, var_16 );
+                        var_0 setanimknobrestart( %lab_htank_cannon_fire_vmhtank, 1, var_16 );
 
                     level.last_hovertank_weapon_anim = "cannon_fire";
                     level.last_hovertank_weapon_anim_complete_time = gettime() + 1000 * getanimlength( %lab_htank_cannon_fire_vmhtank );
-                    var_0 _meth_814D( %lab_htank_cannon_cylinder_vmhtank, 1, 0.0 );
+                    var_0 setanimrestart( %lab_htank_cannon_cylinder_vmhtank, 1, 0.0 );
                     soundscripts\_snd::snd_message( "hovertank_barrel_turn" );
                 }
 
@@ -1224,16 +1224,16 @@ weapon_fire( var_0 )
             {
                 playfxontag( common_scripts\utility::getfx( "hovertank_aa_flash_vm" ), var_0, "tag_flash_2" );
                 level.hovertank_player shellshock( "hovertank_cannon", 1 );
-                level.hovertank_player _meth_80AD( "heavygun_fire" );
+                level.hovertank_player playrumbleonentity( "heavygun_fire" );
                 soundscripts\_snd::snd_message( "hovertank_antiair_fire" );
                 physicsjolt( var_15, 300, 250, anglestoforward( var_12 ) * -0.01 );
 
                 if ( isdefined( var_0 ) )
                 {
                     if ( level.last_hovertank_weapon_anim == "emp_fire" || gettime() >= level.last_hovertank_weapon_anim_complete_time )
-                        var_0 _meth_8145( %lab_htank_emp_fire_vmhtank, 1, 0.0 );
+                        var_0 setanimknobrestart( %lab_htank_emp_fire_vmhtank, 1, 0.0 );
                     else
-                        var_0 _meth_8145( %lab_htank_emp_fire_vmhtank, 1, var_16 );
+                        var_0 setanimknobrestart( %lab_htank_emp_fire_vmhtank, 1, var_16 );
 
                     level.last_hovertank_weapon_anim = "emp_fire";
                     level.last_hovertank_weapon_anim_complete_time = gettime() + 1000 * getanimlength( %lab_htank_emp_fire_vmhtank );
@@ -1243,7 +1243,7 @@ weapon_fire( var_0 )
             else if ( issubstr( level.current_weapon, "missile" ) )
             {
                 level.hovertank_player shellshock( "hovertank_cannon", 0.1 );
-                level.hovertank_player _meth_80AD( "silencer_fire" );
+                level.hovertank_player playrumbleonentity( "silencer_fire" );
                 physicsjolt( var_15, 300, 250, anglestoforward( var_12 ) * -0.01 );
             }
         }
@@ -1274,7 +1274,7 @@ get_weapon_fire_pos( var_0, var_1 )
     else if ( issubstr( var_0, "cannon" ) )
         return self gettagorigin( "tag_flash" );
     else
-        return level.hovertank_player _meth_80A8();
+        return level.hovertank_player geteye();
 }
 
 hovertank_projectile_callback( var_0 )
@@ -1288,14 +1288,14 @@ hovertank_projectile_callback( var_0 )
         playfx( common_scripts\utility::getfx( "hovertank_anti_pers_muzzle_flash_vm" ), self.origin, anglestoforward( self.angles ), anglestoup( self.angles ) );
         var_3 = -64;
         var_4 = 64;
-        var_5 = _func_0A2();
+        var_5 = target_getarray();
         var_6 = [];
 
         for ( var_7 = 0; var_7 < var_5.size; var_7++ )
         {
             if ( !isdefined( var_5[var_7].missile_targetting ) )
             {
-                if ( _func_09F( var_5[var_7], level.hovertank_player, 75, 60 ) )
+                if ( target_isincircle( var_5[var_7], level.hovertank_player, 75, 60 ) )
                     var_6[var_6.size] = var_5[var_7];
             }
         }
@@ -1315,9 +1315,9 @@ hovertank_projectile_callback( var_0 )
             var_9.missile_targetting = 1;
         }
 
-        _func_09A( var_8 );
-        _func_0A6( var_8, level.hovertank_player );
-        self _meth_81D9( var_8 );
+        target_set( var_8 );
+        target_hidefromplayer( var_8, level.hovertank_player );
+        self missile_settargetent( var_8 );
         thread missile_delayed_trail();
         self waittill( "death" );
 
@@ -1685,17 +1685,17 @@ hud_blink_current_weapon_name( var_0 )
 hovertank_ride_anims()
 {
     self endon( "death" );
-    self _meth_8115( #animtree );
-    self _meth_814B( %lab_htank_idle_vm );
-    self _meth_814B( %lab_htank_idle_vmhtank );
+    self useanimtree( #animtree );
+    self setanim( %lab_htank_idle_vm );
+    self setanim( %lab_htank_idle_vmhtank );
 
     for (;;)
     {
         self waittill( "large_hit_react" );
         var_0 = getanimlength( %lab_htank_react_large_vmhtank );
-        self _meth_8145( %lab_htank_react_large_vmhtank, 1, 0 );
+        self setanimknobrestart( %lab_htank_react_large_vmhtank, 1, 0 );
         wait(var_0);
-        self _meth_8143( %lab_htank_idle_vmhtank, 1, 0.5 );
+        self setanimknob( %lab_htank_idle_vmhtank, 1, 0.5 );
     }
 }
 
@@ -1703,10 +1703,10 @@ init_hovertank()
 {
     if ( isdefined( self ) && self != level )
     {
-        self _meth_8115( #animtree );
+        self useanimtree( #animtree );
 
         if ( self.vehicletype != "hovertank_npc_physics_tank" )
-            self _meth_8456( 0.7 );
+            self vehicle_hovertanksethoverforcescale( 0.7 );
 
         self.script_bulletshield = 1;
         self.script_grenadeshield = 1;
@@ -1807,8 +1807,8 @@ set_up_target()
         if ( isdefined( self.script_parameters ) && self.script_parameters == "no_target" )
             return;
 
-        _func_09A( self, get_npc_center_offset() );
-        _func_0A6( self, level.hovertank_player );
+        target_set( self, get_npc_center_offset() );
+        target_hidefromplayer( self, level.hovertank_player );
     }
 }
 
@@ -1816,7 +1816,7 @@ get_npc_center_offset()
 {
     if ( isai( self ) && isalive( self ) )
     {
-        var_0 = self _meth_80A8()[2];
+        var_0 = self geteye()[2];
         var_1 = self.origin[2];
         var_2 = ( var_0 - var_1 ) / 2;
         return ( 0, 0, var_2 );
@@ -1875,7 +1875,7 @@ pass_hovertank_damage_to_player()
             var_10 = var_3 + var_2 * var_11 * -1;
         }
 
-        level.player _meth_8051( 0.1, var_10, var_1 );
+        level.player dodamage( 0.1, var_10, var_1 );
     }
 }
 
@@ -2214,8 +2214,8 @@ missile_tracking_hud()
 {
     level endon( "hovertank_end" );
     self.tracked = 1;
-    _func_09A( self );
-    _func_09C( self, "hud_minimap_tracking_drone_red" );
+    target_set( self );
+    target_setshader( self, "hud_minimap_tracking_drone_red" );
 }
 
 update_hovertank_icons()
@@ -2227,19 +2227,19 @@ update_hovertank_icons()
 
 update_hovertank_icons_proc( var_0, var_1 )
 {
-    if ( !level.player _meth_834E() )
+    if ( !level.player usinggamepad() )
     {
-        level.huditem["weapon_icon"][var_0] _meth_80CC( var_1 + "_pc", get_icon_width( var_0 ), get_icon_height( var_0 ) );
+        level.huditem["weapon_icon"][var_0] setshader( var_1 + "_pc", get_icon_width( var_0 ), get_icon_height( var_0 ) );
         level.huditem["weapon_key"][var_0].alpha = 1;
     }
     else if ( level.ps3 || level.ps4 )
     {
-        level.huditem["weapon_icon"][var_0] _meth_80CC( var_1 + "_ps3", get_icon_width( var_0 ), get_icon_height( var_0 ) );
+        level.huditem["weapon_icon"][var_0] setshader( var_1 + "_ps3", get_icon_width( var_0 ), get_icon_height( var_0 ) );
         level.huditem["weapon_key"][var_0].alpha = 0;
     }
     else
     {
-        level.huditem["weapon_icon"][var_0] _meth_80CC( var_1, get_icon_width( var_0 ), get_icon_height( var_0 ) );
+        level.huditem["weapon_icon"][var_0] setshader( var_1, get_icon_width( var_0 ), get_icon_height( var_0 ) );
         level.huditem["weapon_key"][var_0].alpha = 0;
     }
 }

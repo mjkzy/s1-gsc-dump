@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 4 ) )
@@ -42,16 +42,16 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_us_marine_shotgun_lowlod::precache();
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "iw5_uts19_sp_opticstargetenhancer" );
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "iw5_uts19_sp_opticsreddot" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_uts19_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_uts19_sp_opticsreddot" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
 }

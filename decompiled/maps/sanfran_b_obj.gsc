@@ -54,7 +54,7 @@ track_reinforcement_location( var_0, var_1, var_2 )
                 var_5 /= var_6;
 
                 if ( var_3 )
-                    var_4 _meth_82AE( var_5, 0.2 );
+                    var_4 moveto( var_5, 0.2 );
                 else
                 {
                     var_3 = 1;
@@ -119,7 +119,7 @@ obj_console()
     objective_setpointertextoverride( maps\_utility::obj( "obj_laser" ), &"SANFRAN_B_OBJ_USE" );
     var_1 = getent( "trig_use_console", "targetname" );
     var_1 common_scripts\utility::trigger_on();
-    var_1 _meth_80DB( &"SANFRAN_B_CONSOLE_HINT" );
+    var_1 sethintstring( &"SANFRAN_B_CONSOLE_HINT" );
     var_1 waittill( "trigger" );
     common_scripts\utility::flag_set( "obj_laser" );
 }

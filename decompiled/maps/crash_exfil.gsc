@@ -40,8 +40,8 @@ precache_vtol_takedown()
     common_scripts\utility::flag_init( "player_exfil_success" );
     common_scripts\utility::flag_init( "exfil_fail" );
     precacherumble( "hijack_plane_medium" );
-    precacheitem( "iw5_stingerm7fastprojectile_sp" );
-    precacheitem( "turretheadmg_sp" );
+    precacheshellshock( "iw5_stingerm7fastprojectile_sp" );
+    precacheshellshock( "turretheadmg_sp" );
     precachemodel( "genericprop_x5" );
     precachemodel( "atlas_stabilize_vial_static" );
     precachemodel( "atlas_stabilize_crate" );
@@ -76,14 +76,14 @@ debug_start_vtol_takedown()
     maps\crash_utility::setup_allies();
     soundscripts\_snd::snd_message( "start_vtol_takedown" );
     setsunflareposition( ( -10.39, -112.7, 0 ) );
-    level.player _meth_83C0( "crash_avalanche", 0 );
-    level.player _meth_8490( "clut_crash_crash_site", 2 );
+    level.player lightsetforplayer( "crash_avalanche", 0 );
+    level.player setclutforplayer( "clut_crash_crash_site", 2 );
     maps\_utility::vision_set_fog_changes( "crash_avalanche", 0 );
-    _func_0D3( "r_dof_physical_enable", 1 );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
-    _func_0D3( "r_dof_physical_hipenable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 3.2 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.07 );
+    setsaveddvar( "r_dof_physical_enable", 1 );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
+    setsaveddvar( "r_dof_physical_hipenable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 3.2 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.07 );
     thread dead_stinger_guy();
     thread vtol_takedown_gideon();
     thread vtol_takedown_cormack();
@@ -131,7 +131,7 @@ dead_stinger_guy()
     var_1 maps\_utility::gun_remove();
     var_1.script_friendname = " ";
     var_1.name = " ";
-    var_1 _meth_8171();
+    var_1 invisiblenotsolid();
     var_0 thread maps\_anim::anim_loop_solo( var_1, "npc_deadbody_01", "stop_loop" );
 }
 
@@ -146,11 +146,11 @@ vtol_takedown_gun_pickup()
     soundscripts\_snd::snd_message( "pickup_stinger" );
     var_1 delete();
     level.player_weapons = level.player maps\_utility::get_storable_weapons_list_all();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_stingerm7fastprojectile_sp" );
-    level.player _meth_82F7( "iw5_stingerm7fastprojectile_sp", 0 );
-    level.player _meth_8315( "iw5_stingerm7fastprojectile_sp" );
-    level.player _meth_8321();
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_stingerm7fastprojectile_sp" );
+    level.player setweaponammostock( "iw5_stingerm7fastprojectile_sp", 0 );
+    level.player switchtoweapon( "iw5_stingerm7fastprojectile_sp" );
+    level.player disableweaponswitch();
     thread vtol_player_fired();
     common_scripts\utility::flag_wait( "gideon_intro_done" );
     thread vtol_takedown_vtol();
@@ -164,16 +164,16 @@ vtol_takedown_gun_pickup()
     maps\_utility::delaythread( 5, common_scripts\utility::flag_set, "obj_end_get_gun" );
     common_scripts\utility::flag_wait_or_timeout( "obj_end_get_gun", 5 );
     common_scripts\utility::flag_wait( "vtol_swap_player_weapon" );
-    level.player _meth_831D();
-    level.player _meth_8310();
-    level.player _meth_830E( "s1_unarmed" );
-    level.player _meth_8315( "s1_unarmed" );
+    level.player disableweapons();
+    level.player takeallweapons();
+    level.player giveweapon( "s1_unarmed" );
+    level.player switchtoweapon( "s1_unarmed" );
 
     while ( level.player maps\_utility::issliding() )
         wait 0.05;
 
-    level.player _meth_817D( "stand" );
-    level.player _meth_831E();
+    level.player setstance( "stand" );
+    level.player enableweapons();
     common_scripts\utility::flag_set( "player_bottom_of_hill" );
 }
 
@@ -182,11 +182,11 @@ vtol_player_fired()
     level waittill( "stinger_fired", var_0, var_1 );
     common_scripts\utility::flag_set( "player_stinger_fired" );
     wait 0.1;
-    _func_0D3( "objectiveHide", 1 );
+    setsaveddvar( "objectiveHide", 1 );
     wait 0.2;
     common_scripts\utility::flag_set( "cormack_fires_stinger" );
     common_scripts\utility::flag_wait( "obj_end_exfil" );
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
 }
 
 vtol_takedown_hide_check()
@@ -195,7 +195,7 @@ vtol_takedown_hide_check()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) )
+        if ( level.player istouching( self ) )
         {
             common_scripts\utility::flag_set( "obj_end_get_gun" );
             common_scripts\utility::flag_set( "ready_for_vtol" );
@@ -209,7 +209,7 @@ vtol_takedown_gideon()
 {
     level.vtol_animnode = common_scripts\utility::getstruct( "avalanche_animnode", "targetname" );
     var_0 = level.player;
-    level.gideon _meth_81A3( 1 );
+    level.gideon pushplayer( 1 );
     level.vtol_animnode maps\_anim::anim_single_solo( level.gideon, "vtol_ambush_intro" );
     common_scripts\utility::flag_set( "gideon_intro_done" );
 
@@ -234,7 +234,7 @@ vtol_takedown_gideon()
     var_1 = getent( "block_vtol_slide", "targetname" );
     var_1 delete();
 
-    while ( level.gideon _meth_814F( level.gideon maps\_utility::getanim( "vtol_sliding_off_cliff_gideon" ) ) < 1 && !common_scripts\utility::flag( "start_exfil" ) )
+    while ( level.gideon getanimtime( level.gideon maps\_utility::getanim( "vtol_sliding_off_cliff_gideon" ) ) < 1 && !common_scripts\utility::flag( "start_exfil" ) )
         wait 0.05;
 
     thread maps\crash_fx::gideon_boost_jump();
@@ -286,27 +286,27 @@ vtol_takedown_cormack_stinger()
     var_0 maps\_anim::anim_first_frame_solo( var_1, "vtol_ambush_intro" );
     var_3 = spawn( "script_model", var_1 gettagorigin( "j_prop_1" ) );
     var_3.angles = var_1 gettagangles( "j_prop_1" );
-    var_3 _meth_80B1( "npc_stingerm7_nocamo" );
-    var_3 _meth_804D( var_1, "j_prop_1" );
+    var_3 setmodel( "npc_stingerm7_nocamo" );
+    var_3 linkto( var_1, "j_prop_1" );
     var_4 = spawn( "script_model", var_2 gettagorigin( "j_prop_1" ) );
     var_4.angles = var_2 gettagangles( "j_prop_1" );
-    var_4 _meth_80B1( "projectile_stinger_missile" );
-    var_4 _meth_804D( var_2, "j_prop_1" );
+    var_4 setmodel( "projectile_stinger_missile" );
+    var_4 linkto( var_2, "j_prop_1" );
     var_4 hide();
     var_5 = spawn( "script_model", var_2 gettagorigin( "j_prop_2" ) );
     var_5.angles = var_2 gettagangles( "j_prop_2" );
-    var_5 _meth_80B1( "projectile_stinger_missile" );
-    var_5 _meth_804D( var_2, "j_prop_2" );
+    var_5 setmodel( "projectile_stinger_missile" );
+    var_5 linkto( var_2, "j_prop_2" );
     var_5 hide();
     var_6 = spawn( "script_model", var_2 gettagorigin( "j_prop_3" ) );
     var_6.angles = var_2 gettagangles( "j_prop_3" );
-    var_6 _meth_80B1( "projectile_stinger_missile" );
-    var_6 _meth_804D( var_2, "j_prop_3" );
+    var_6 setmodel( "projectile_stinger_missile" );
+    var_6 linkto( var_2, "j_prop_3" );
     var_6 hide();
     var_7 = spawn( "script_model", var_2 gettagorigin( "j_prop_4" ) );
     var_7.angles = var_2 gettagangles( "j_prop_4" );
-    var_7 _meth_80B1( "projectile_stinger_missile" );
-    var_7 _meth_804D( var_2, "j_prop_4" );
+    var_7 setmodel( "projectile_stinger_missile" );
+    var_7 linkto( var_2, "j_prop_4" );
     var_7 hide();
     common_scripts\utility::flag_wait( "cormack_start_vtol" );
     var_0 maps\_anim::anim_single_solo( var_1, "vtol_ambush_intro" );
@@ -388,7 +388,7 @@ vtol_takedown_vtol()
     level.end_vtol.animname = "crashed_vtol";
     level.end_vtol maps\_anim::setanimtree();
     level.end_vtol maps\_vehicle::godon();
-    level.end_vtol _meth_8259( "axis" );
+    level.end_vtol setvehicleteam( "axis" );
     level.end_vtol hide();
     level.end_vtol.stinger_override_tags = [ "tag_driver", "tag_grapple_fl", "tag_grapple_br", "TAG_STATIC_TAIL_ROTOR" ];
     level.end_vtol thread maps\crash_warbird_missile_defense::heli_flares_monitor();
@@ -397,8 +397,8 @@ vtol_takedown_vtol()
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_804D( level.end_vtol );
-        var_0 _meth_82BF();
+        var_0 linkto( level.end_vtol );
+        var_0 notsolid();
     }
 
     common_scripts\utility::flag_wait( "obj_end_get_gun" );
@@ -447,42 +447,42 @@ vtol_takedown_vtol()
     maps\_utility::delaythread( 4.0, common_scripts\utility::flag_set, "obj_final_recover_cargo" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_82BE();
+        var_0 solid();
 
     thread vtol_takedown_terrain();
     thread vtol_takedown_vtol_slide_fx();
 
     if ( level.nextgen )
     {
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_main", "m/mtl_xh9_warbird_main_destroy" );
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_main_02", "m/mtl_xh9_warbird_main_02_destroy" );
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_windows_out", "m/mtl_xh9_warbird_windows_out_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_main", "m/mtl_xh9_warbird_main_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_main_02", "m/mtl_xh9_warbird_main_02_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_windows_out", "m/mtl_xh9_warbird_windows_out_destroy" );
     }
     else
     {
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_main", "mq/mtl_xh9_warbird_main_destroy" );
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_main_02", "mq/mtl_xh9_warbird_main_02_destroy" );
-        level.end_vtol _meth_846C( "mtl_xh9_warbird_windows_out", "mq/mtl_xh9_warbird_windows_out_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_main", "mq/mtl_xh9_warbird_main_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_main_02", "mq/mtl_xh9_warbird_main_02_destroy" );
+        level.end_vtol overridematerial( "mtl_xh9_warbird_windows_out", "mq/mtl_xh9_warbird_windows_out_destroy" );
     }
 
-    level.end_vtol _meth_804B( "TAG_STATIC_MAIN_ROTOR_L" );
-    level.end_vtol _meth_804B( "TAG_STATIC_MAIN_ROTOR_R" );
-    level.end_vtol _meth_804B( "TAG_STATIC_TAIL_ROTOR" );
-    level.end_vtol _meth_8048( "TAG_SPIN_MAIN_ROTOR_L" );
-    level.end_vtol _meth_8048( "TAG_SPIN_MAIN_ROTOR_R" );
-    level.end_vtol _meth_8048( "TAG_SPIN_TAIL_ROTOR" );
+    level.end_vtol showpart( "TAG_STATIC_MAIN_ROTOR_L" );
+    level.end_vtol showpart( "TAG_STATIC_MAIN_ROTOR_R" );
+    level.end_vtol showpart( "TAG_STATIC_TAIL_ROTOR" );
+    level.end_vtol hidepart( "TAG_SPIN_MAIN_ROTOR_L" );
+    level.end_vtol hidepart( "TAG_SPIN_MAIN_ROTOR_R" );
+    level.end_vtol hidepart( "TAG_SPIN_TAIL_ROTOR" );
     level.vtol_animnode maps\_anim::anim_single_solo( level.end_vtol, "vtol_ambush_crash" );
     thread avalanche_environment();
     thread vtol_takedown_player_grabs_cargo();
     common_scripts\utility::flag_set( "vtol_done_sliding" );
     level.vtol_animnode thread maps\_anim::anim_single_solo( level.end_vtol, "vtol_sliding_off_cliff" );
 
-    while ( level.end_vtol _meth_814F( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ) ) < 1 && !common_scripts\utility::flag( "kill_sliding_anims" ) )
+    while ( level.end_vtol getanimtime( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ) ) < 1 && !common_scripts\utility::flag( "kill_sliding_anims" ) )
         wait 0.05;
 
     if ( common_scripts\utility::flag( "kill_sliding_anims" ) )
     {
-        level.end_vtol _meth_83C7( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
+        level.end_vtol setanimrate( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
         common_scripts\utility::flag_wait( "start_vtol_exfil" );
         level.vtol_animnode thread maps\_anim::anim_single_solo( level.end_vtol, "avalanche_exit_fail" );
     }
@@ -501,9 +501,9 @@ stinger_add_hit()
 {
     level endon( "missiles_hit_vtol" );
     common_scripts\utility::flag_wait( "player_stinger_hit" );
-    level.end_vtol _meth_814B( level.end_vtol maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
-    level.end_cables _meth_814B( level.end_cables maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
-    level.end_crate _meth_814B( level.end_crate maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
+    level.end_vtol setanim( level.end_vtol maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
+    level.end_cables setanim( level.end_cables maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
+    level.end_crate setanim( level.end_crate maps\_utility::getanim( "ambush_hit_add" ), 0.5 );
 }
 
 vtol_takedown_vtol_slide_fx()
@@ -540,8 +540,8 @@ vtol_delayed_stinger_ignore( var_0 )
 vtol_damage_monitor()
 {
     level endon( "vtol_takedown_vtol_hit" );
-    level.end_vtol _meth_82C0( 1 );
-    level.end_vtol _meth_82C1( 1 );
+    level.end_vtol setcandamage( 1 );
+    level.end_vtol setcanradiusdamage( 1 );
 
     for (;;)
     {
@@ -581,24 +581,24 @@ vtol_takedown_shoot_monitor()
 
 vtol_takedown_cargo_and_cables()
 {
-    level.end_cables _meth_82BF();
+    level.end_cables notsolid();
     level.end_crate.origin = level.end_cables gettagorigin( "tag_attach" );
     level.end_crate.angles = level.end_cables gettagangles( "tag_attach" );
-    level.end_crate _meth_82BF();
+    level.end_crate notsolid();
     level.end_crate_clip.origin = level.end_crate.origin;
     level.end_crate_clip.angles = level.end_crate.angles;
-    level.end_crate_clip _meth_804D( level.end_crate );
-    level.end_crate_clip _meth_82BF();
+    level.end_crate_clip linkto( level.end_crate );
+    level.end_crate_clip notsolid();
     var_0 = getent( "end_cargo_trigger", "targetname" );
-    var_0 _meth_8069();
-    var_0 _meth_804D( level.end_crate, "tag_origin", ( 64, 0, 48 ), ( 0, 0, 0 ) );
+    var_0 enablelinkto();
+    var_0 linkto( level.end_crate, "tag_origin", ( 64, 0, 48 ), ( 0, 0, 0 ) );
     var_0 common_scripts\utility::trigger_off();
     level.final_loc = level.end_crate common_scripts\utility::spawn_tag_origin();
     level.final_loc.origin = level.end_crate gettagorigin( "j_casing_lid" );
-    level.final_loc _meth_804D( level.end_crate, "j_casing_lid" );
+    level.final_loc linkto( level.end_crate, "j_casing_lid" );
     level.final_use_struct = level.end_crate common_scripts\utility::spawn_tag_origin();
     level.final_use_struct.origin = level.end_crate gettagorigin( "j_casing_lid" );
-    level.final_use_struct _meth_804D( level.end_crate, "j_casing_lid" );
+    level.final_use_struct linkto( level.end_crate, "j_casing_lid" );
     var_1 = [];
     var_1[0] = level.end_crate;
     var_1[1] = level.end_cables;
@@ -635,20 +635,20 @@ vtol_takedown_cargo_and_cables()
 
     }
 
-    level.end_cables _meth_82BE();
-    level.end_crate _meth_82BE();
-    level.end_crate_clip _meth_82BE();
+    level.end_cables solid();
+    level.end_crate solid();
+    level.end_crate_clip solid();
     level.vtol_animnode maps\_anim::anim_single( var_1, "vtol_ambush_crash" );
     var_0 common_scripts\utility::trigger_on();
     level.vtol_animnode thread maps\_anim::anim_single( var_1, "vtol_sliding_off_cliff" );
 
-    while ( level.end_vtol _meth_814F( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ) ) < 1 && !common_scripts\utility::flag( "kill_sliding_anims" ) )
+    while ( level.end_vtol getanimtime( level.end_vtol maps\_utility::getanim( "vtol_sliding_off_cliff" ) ) < 1 && !common_scripts\utility::flag( "kill_sliding_anims" ) )
         wait 0.05;
 
     if ( common_scripts\utility::flag( "kill_sliding_anims" ) )
     {
-        level.end_cables _meth_83C7( level.end_cables maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
-        level.end_crate _meth_83C7( level.end_crate maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
+        level.end_cables setanimrate( level.end_cables maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
+        level.end_crate setanimrate( level.end_crate maps\_utility::getanim( "vtol_sliding_off_cliff" ), 0 );
         level.exfil_animnode = level.end_crate common_scripts\utility::spawn_tag_origin();
         common_scripts\utility::flag_set( "start_exfil" );
         level.exfil_animnode maps\_anim::anim_single_solo( level.end_crate, "avalanche_exit" );
@@ -722,20 +722,20 @@ vtol_takedown_player_grabs_cargo()
     var_1 = maps\_utility::spawn_anim_model( "rig" );
     var_1 hide();
     var_2 = spawn( "script_model", var_1.origin );
-    var_2 _meth_80B1( "atlas_stabilize_vial_static" );
+    var_2 setmodel( "atlas_stabilize_vial_static" );
     var_2 hide();
     var_2.origin = var_1 gettagorigin( "tag_weapon_right" );
     var_2.angles = var_1 gettagangles( "tag_weapon_right" );
-    var_2 _meth_804D( var_1, "tag_weapon_right" );
+    var_2 linkto( var_1, "tag_weapon_right" );
     soundscripts\_snd::snd_message( "recover_cargo" );
     level.exfil_animnode thread maps\_anim::anim_single_solo( var_1, "avalanche_exit" );
     thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    level.player _meth_8080( var_1, "tag_player", 0.6 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.6 );
     wait 0.3;
     var_1 show();
     wait 0.3;
     common_scripts\utility::flag_set( "obj_end_recover_cargo" );
-    level.player _meth_807D( var_1, "tag_player", 1, 25, 25, 20, 20, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 25, 25, 20, 20, 1 );
     common_scripts\_exploder::exploder( 5186 );
     wait 0.5;
     level notify( "moved_indoors" );
@@ -750,7 +750,7 @@ vtol_takedown_player_grabs_cargo()
         soundscripts\_snd::snd_message( "exfil_fail" );
         wait 1;
         var_4 = var_1 common_scripts\utility::spawn_tag_origin();
-        var_4 _meth_804D( var_1, "tag_origin" );
+        var_4 linkto( var_1, "tag_origin" );
         playfxontag( common_scripts\utility::getfx( "screen_avalanche_death" ), var_4, "tag_origin" );
         wait 0.75;
         setdvar( "ui_deadquote", &"CRASH_FAIL_CARGO" );
@@ -764,10 +764,10 @@ exfil_player_jump( var_0 )
 {
     level.player endon( "exfil_fail" );
     thread maps\_utility::hintdisplayhandler( "end_jump" );
-    level.player _meth_82DD( "exfil_jump", "+gostand" );
+    level.player notifyonplayercommand( "exfil_jump", "+gostand" );
     level.player waittill( "exfil_jump" );
     waitframe();
-    level.player _meth_82DD( "exfil_jump2", "+gostand" );
+    level.player notifyonplayercommand( "exfil_jump2", "+gostand" );
     level.player waittill( "exfil_jump2" );
     common_scripts\utility::flag_set( "player_exfil_success" );
 }
@@ -791,7 +791,7 @@ vtol_takedown_chopper()
     level.end_chopper.animname = "exfil_heli";
     level.end_chopper maps\_anim::setanimtree();
     level.end_chopper hide();
-    level.end_chopper _meth_828B();
+    level.end_chopper vehicle_turnengineoff();
     var_0 maps\_anim::anim_first_frame_solo( level.end_chopper, "avalanche_exit" );
     common_scripts\utility::flag_wait( "start_exfil" );
     level.end_chopper show();
@@ -874,8 +874,8 @@ avalanche_environment()
     while ( !common_scripts\utility::flag( "obj_end_recover_cargo" ) )
     {
         var_0 = randomfloatrange( 1.5, 5.5 );
-        level.player _meth_80AD( "hijack_plane_medium" );
-        _func_234( level.player.origin, 0.5, 0.5, 0.25, var_0, 0, 0.5, 500, 8, 5, 2 );
+        level.player playrumbleonentity( "hijack_plane_medium" );
+        screenshake( level.player.origin, 0.5, 0.5, 0.25, var_0, 0, 0.5, 500, 8, 5, 2 );
         wait(var_0 + randomfloatrange( 0.5, 1.5 ));
     }
 }

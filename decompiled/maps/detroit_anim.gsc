@@ -8,20 +8,20 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "detroit_intro_tr" ) )
+        if ( istransientloaded( "detroit_intro_tr" ) )
             level.transient_zone = "intro";
-        else if ( _func_21E( "detroit_middle_tr" ) )
+        else if ( istransientloaded( "detroit_middle_tr" ) )
             level.transient_zone = "middle";
 
-        if ( _func_21E( "detroit_gatetrans_tr" ) )
+        if ( istransientloaded( "detroit_gatetrans_tr" ) )
             level.transient_zone += "_gate";
-        else if ( _func_21E( "detroit_school_interior_tr" ) )
+        else if ( istransientloaded( "detroit_school_interior_tr" ) )
             level.transient_zone += "_school";
-        else if ( _func_21E( "detroit_nightclub_interior_tr" ) )
+        else if ( istransientloaded( "detroit_nightclub_interior_tr" ) )
             level.transient_zone += "_nightclub";
-        else if ( _func_21E( "detroit_hospital_interior_tr" ) )
+        else if ( istransientloaded( "detroit_hospital_interior_tr" ) )
             level.transient_zone += "_hospital";
-        else if ( _func_21E( "detroit_outro_tr" ) )
+        else if ( istransientloaded( "detroit_outro_tr" ) )
             level.transient_zone += "_outro";
     }
 
@@ -741,7 +741,7 @@ player_anims_toload()
 
 change_fov_back_to_65( var_0 )
 {
-    level.player _meth_8031( 65, 2 );
+    level.player lerpfov( 65, 2 );
 }
 
 begin_wallpull_slowmo( var_0 )
@@ -762,51 +762,51 @@ hospital_slowmo_start( var_0 )
 hospital_breach_punch( var_0 )
 {
     var_1 = earthquake( 0.6, 0.2, level.player.origin, 1000 );
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
 }
 
 doctor_capture_player_melee_and_hit( var_0 )
 {
-    level.player _meth_8051( level.player.maxhealth / 4, level.player.origin );
+    level.player dodamage( level.player.maxhealth / 4, level.player.origin );
     controller_rumble_heavy_long( var_0 );
 }
 
 doctor_capture_player_killed( var_0 )
 {
-    level.player _meth_8051( level.player.maxhealth, level.player.origin );
-    level.player _meth_8052();
+    level.player dodamage( level.player.maxhealth, level.player.origin );
+    level.player kill();
     maps\_player_death::set_deadquote( &"DETROIT_QTE_FAIL" );
     maps\_utility::missionfailedwrapper();
 }
 
 controller_rumble_heavy_long( var_0 )
 {
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 }
 
 controller_rumble_light_long( var_0 )
 {
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
 }
 
 controller_rumble_heavy( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 controller_rumble_light( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 give_weapon_knife( var_0 )
 {
     if ( maps\_utility::player_has_weapon( "iw5_unarmeddetroit_nullattach" ) )
     {
-        level.player _meth_830F( "iw5_unarmeddetroit_nullattach" );
+        level.player takeweapon( "iw5_unarmeddetroit_nullattach" );
         wait 1.2;
-        level.player _meth_830E( "iw5_bal27_sp_silencer01_variablereddot" );
-        level.player _meth_8315( "iw5_bal27_sp_silencer01_variablereddot" );
+        level.player giveweapon( "iw5_bal27_sp_silencer01_variablereddot" );
+        level.player switchtoweapon( "iw5_bal27_sp_silencer01_variablereddot" );
     }
 
     maps\_variable_grenade::give_player_variable_grenade();
@@ -814,13 +814,13 @@ give_weapon_knife( var_0 )
 
 player_bike_to_ai_model( var_0 )
 {
-    level.player_bike _meth_80B1( "vehicle_mil_hoverbike_ai" );
+    level.player_bike setmodel( "vehicle_mil_hoverbike_ai" );
     level notify( "switch_bikes_to_ai" );
 }
 
 player_bike_to_vm_model( var_0 )
 {
-    level.player_bike _meth_80B1( "vehicle_mil_hoverbike_vm" );
+    level.player_bike setmodel( "vehicle_mil_hoverbike_vm" );
     level notify( "switch_bikes_to_vm" );
 }
 

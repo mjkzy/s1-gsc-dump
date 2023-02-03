@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 0.0, 0.0 );
-        self _meth_816D( 256.0, 1024.0 );
+        self setengagementmindist( 0.0, 0.0 );
+        self setengagementmaxdist( 256.0, 1024.0 );
     }
 
     self.weapon = "exo_minigun";
@@ -27,15 +27,15 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_mech::precache();
-    precacheitem( "exo_minigun" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "exo_minigun" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
     maps\_mech::main();
 }

@@ -29,7 +29,7 @@ agent_squadmember_conf_think()
     {
         self.next_time_check_tags = gettime() + 500;
         var_0 = 0.78;
-        var_1 = self.owner _meth_8387();
+        var_1 = self.owner getnearestnode();
 
         if ( isdefined( var_1 ) )
         {
@@ -47,14 +47,14 @@ agent_squadmember_conf_think()
         {
             self.tag_getting = var_3;
             maps\mp\bots\_bots_strategy::bot_defend_stop();
-            self _meth_8354( self.tag_getting.curorigin, 0, "objective", undefined, level.bot_tag_obj_radius );
+            self botsetscriptgoal( self.tag_getting.curorigin, 0, "objective", undefined, level.bot_tag_obj_radius );
         }
 
         return 1;
     }
     else if ( isdefined( self.tag_getting ) )
     {
-        self _meth_8356();
+        self botclearscriptgoal();
         self.tag_getting = undefined;
     }
 

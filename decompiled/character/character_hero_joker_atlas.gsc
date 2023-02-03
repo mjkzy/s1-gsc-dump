@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "atlas_body" );
+    self setmodel( "atlas_body" );
     self attach( "head_hero_joker_goggles", "", 1 );
     self.headmodel = "head_hero_joker_goggles";
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

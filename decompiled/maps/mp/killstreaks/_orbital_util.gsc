@@ -71,7 +71,7 @@ playerplayinvalidpositioneffect( var_0 )
     if ( !isdefined( var_1 ) )
     {
         var_3 = anglestoforward( self getangles() );
-        var_4 = self _meth_80A8();
+        var_4 = self geteye();
         var_5 = var_4 + var_3 * 500;
         var_1 = bullettrace( var_4, var_5, 0, self, 1, 0, 0, 0, 0 );
     }
@@ -91,7 +91,7 @@ playerplayinvalidpositioneffect( var_0 )
 
     var_9 = spawn( "script_model", var_6 + ( 0, 0, 5 ) );
     var_9.angles = ( -90, 0, 0 );
-    var_9 _meth_80B1( "tag_origin" );
+    var_9 setmodel( "tag_origin" );
     var_9 hide();
     var_9 showtoplayer( self );
     playfxontag( var_0, var_9, "tag_origin" );
@@ -102,7 +102,7 @@ playerplayinvalidpositioneffect( var_0 )
 playergetnodelookingat( var_0 )
 {
     var_1 = anglestoforward( self getangles() );
-    var_2 = self _meth_80A8();
+    var_2 = self geteye();
     var_3 = var_2 + var_1 * 500;
     var_4 = bullettrace( var_2, var_3, 0, self, 1, 0, 0, 0, 0 );
     self.lastnodelookingattrace = var_4;
@@ -216,12 +216,12 @@ nodeispathnode( var_0 )
 
 nodeisremotemissilefromabove( var_0 )
 {
-    return nodeispathnode( var_0 ) && _func_2C8( var_0 ) && _func_2C9( var_0 ) == "up" || isdefined( var_0.bestmissilespawnabove );
+    return nodeispathnode( var_0 ) && nodehasremotemissileset( var_0 ) && nodegetremotemissilename( var_0 ) == "up" || isdefined( var_0.bestmissilespawnabove );
 }
 
 nodehasremotemissiledataset( var_0 )
 {
-    return nodeispathnode( var_0 ) && _func_2C8( var_0 ) || isdefined( var_0.bestmissilespawnabove ) || isdefined( var_0.bestmissilespawn );
+    return nodeispathnode( var_0 ) && nodehasremotemissileset( var_0 ) || isdefined( var_0.bestmissilespawnabove ) || isdefined( var_0.bestmissilespawn );
 }
 
 nodegetremotemissileorgfromabove( var_0 )
@@ -245,9 +245,9 @@ nodegetremotemissleentorg( var_0, var_1 )
 {
     var_2 = undefined;
 
-    if ( nodeispathnode( var_0 ) && _func_2C8( var_0 ) )
+    if ( nodeispathnode( var_0 ) && nodehasremotemissileset( var_0 ) )
     {
-        var_3 = _func_2C9( var_0 );
+        var_3 = nodegetremotemissilename( var_0 );
 
         foreach ( var_5 in var_1 )
         {
@@ -305,7 +305,7 @@ remotemissileenttracetooriginpassedwrapper( var_0, var_1, var_2 )
     if ( var_2 == "goliath" )
         var_3 = 41;
 
-    return _func_2CA( var_0, var_1, var_3, 1 );
+    return remotemissileenttracetooriginpassed( var_0, var_1, var_3, 1 );
 }
 
 nodecanhitground( var_0, var_1 )
@@ -319,10 +319,10 @@ nodecanhitground( var_0, var_1 )
             return 0;
     }
 
-    if ( _func_2C8( var_0 ) )
-        return _func_2C9( var_0 ) != "none";
+    if ( nodehasremotemissileset( var_0 ) )
+        return nodegetremotemissilename( var_0 ) != "none";
     else
-        return _func_20C( var_0, 1 );
+        return nodeexposedtosky( var_0, 1 );
 }
 
 carepackagetrace( var_0, var_1, var_2 )
@@ -344,7 +344,7 @@ carepackagetrace( var_0, var_1, var_2 )
             var_7 += 26;
 
         var_8 = var_7 * var_7;
-        var_9 = _func_220( var_6.origin, var_0 );
+        var_9 = distance2dsquared( var_6.origin, var_0 );
 
         if ( var_9 < var_8 )
             return 0;
@@ -368,7 +368,7 @@ carepackagetrace( var_0, var_1, var_2 )
     }
 
     level.orbital_util_capsule_traces--;
-    return _func_2AB( var_0 + ( 0, 0, 6 ), var_4, var_4 * 2, var_1, 0 );
+    return capsuletracepassed( var_0 + ( 0, 0, 6 ), var_4, var_4 * 2, var_1, 0 );
 }
 
 playergetnearestnode( var_0, var_1 )
@@ -376,7 +376,7 @@ playergetnearestnode( var_0, var_1 )
     if ( !isdefined( var_0 ) )
     {
         var_2 = 300;
-        var_3 = self _meth_80A8();
+        var_3 = self geteye();
         var_4 = anglestoforward( self.angles );
         var_5 = var_3 + var_4 * var_2;
         var_6 = bullettrace( var_3, var_5, 0, self );
@@ -413,7 +413,7 @@ playergetnearestnode( var_0, var_1 )
             var_7 = playergetclosestnode( 500, 0, self.origin, 0, 0, var_1 );
 
         if ( !isdefined( var_7 ) )
-            var_7 = self _meth_8387();
+            var_7 = self getnearestnode();
     }
 
     self.lastnearestnode = var_7;
@@ -430,7 +430,7 @@ orbitalbadlandingcheck( var_0 )
 
         foreach ( var_3 in level.orbital_util_covered_volumes )
         {
-            var_1 = _func_22A( var_0, var_3 );
+            var_1 = ispointinvolume( var_0, var_3 );
 
             if ( var_1 )
                 return 1;
@@ -446,7 +446,7 @@ goliathbadlandingcheck( var_0 )
     {
         foreach ( var_2 in level.goliath_bad_landing_volumes )
         {
-            if ( _func_22A( var_0, var_2 ) )
+            if ( ispointinvolume( var_0, var_2 ) )
                 return 1;
         }
     }
@@ -485,7 +485,7 @@ playerfindnodeinfrontinternal( var_0, var_1, var_2, var_3, var_4 )
         {
             var_4.numtraces--;
             var_4.maxnodes--;
-            var_6 = self _meth_80A8();
+            var_6 = self geteye();
             var_7 = var_5.origin + ( 0, 0, 6 );
             var_8 = bullettrace( var_6, var_7, 0, self );
             var_9 = var_8["fraction"] == 1 && carepackagetrace( var_5.origin, self, var_3 );
@@ -534,7 +534,7 @@ checknodestart( var_0, var_1, var_2 )
     var_5 = spawnstruct();
     var_5.nodestocheck = [];
     var_5.nodeschecked = [];
-    var_5.nodeschecked["" + var_0 _meth_8381()] = var_0;
+    var_5.nodeschecked["" + var_0 getnodenumber()] = var_0;
     var_5.nextnodes = getlinkednodes( var_0, 1 );
     addnodestobechecked( var_5, 1, var_0, var_3, var_1, var_2 );
     var_6 = 0;
@@ -550,8 +550,8 @@ checknodestart( var_0, var_1, var_2 )
             if ( !carepackagetrace( var_7.origin, var_1, var_2 ) )
             {
                 var_7.nodechecked = 1;
-                var_5.nodestocheck["" + var_7 _meth_8381()] = undefined;
-                var_5.nodeschecked["" + var_7 _meth_8381()] = var_7;
+                var_5.nodestocheck["" + var_7 getnodenumber()] = undefined;
+                var_5.nodeschecked["" + var_7 getnodenumber()] = var_7;
                 var_8 = var_7.linkdistance + 1;
 
                 if ( var_8 <= 6 )
@@ -639,12 +639,12 @@ addnodestobechecked( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( !var_8 )
             {
                 var_7.nodechecked = 1;
-                var_0.nodeschecked["" + var_7 _meth_8381()] = var_7;
+                var_0.nodeschecked["" + var_7 getnodenumber()] = var_7;
             }
             else if ( !isdefined( var_7.linkdistance ) )
             {
                 var_7.linkdistance = var_1;
-                var_0.nodestocheck["" + var_7 _meth_8381()] = var_7;
+                var_0.nodestocheck["" + var_7 getnodenumber()] = var_7;
             }
             else if ( var_7.linkdistance > var_1 )
                 var_7.linkdistance = var_1;
@@ -724,7 +724,7 @@ nodesetremotemissilenamewrapper( var_0, var_1 )
     if ( var_2.size > 0 )
     {
         var_3 = var_2[0];
-        _func_2D6( var_3, var_1 );
+        nodesetremotemissilename( var_3, var_1 );
     }
     else
     {

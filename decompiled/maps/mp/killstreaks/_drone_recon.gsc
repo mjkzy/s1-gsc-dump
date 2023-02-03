@@ -27,7 +27,7 @@ tryuserecondrone( var_0, var_1 )
 {
     if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + 1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
@@ -36,7 +36,7 @@ tryuserecondrone( var_0, var_1 )
 
     if ( !var_2.placementok )
     {
-        self iclientprintlnbold( &"MP_DRONE_PLACEMENT_INVALID" );
+        self iprintlnbold( &"MP_DRONE_PLACEMENT_INVALID" );
         maps\mp\_utility::decrementfauxvehiclecount();
         return 0;
     }
@@ -54,7 +54,7 @@ tryuserecondrone( var_0, var_1 )
     maps\mp\_utility::setusingremote( "recon_ugv" );
     var_4 = createreconuav( var_0, var_1, var_2.origin, var_2.angles );
     common_scripts\utility::_enableweaponswitch();
-    self _meth_8315( "killstreak_predator_missile_mp" );
+    self switchtoweapon( "killstreak_predator_missile_mp" );
 
     if ( isdefined( var_4 ) )
     {
@@ -150,16 +150,16 @@ setupplayercommands( var_0 )
     if ( isbot( self ) )
         return;
 
-    self _meth_82DD( "recon_fire_main", "+attack" );
-    self _meth_82DD( "recon_fire_main", "+attack_akimbo_accessible" );
-    self _meth_82DD( "recon_fire_secondary", "+speed_throw" );
-    self _meth_82DD( "recon_fire_secondary", "+toggleads_throw" );
-    self _meth_82DD( "recon_fire_secondary", "+ads_akimbo_accessible" );
+    self notifyonplayercommand( "recon_fire_main", "+attack" );
+    self notifyonplayercommand( "recon_fire_main", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "recon_fire_secondary", "+speed_throw" );
+    self notifyonplayercommand( "recon_fire_secondary", "+toggleads_throw" );
+    self notifyonplayercommand( "recon_fire_secondary", "+ads_akimbo_accessible" );
 
     if ( common_scripts\utility::array_contains( var_0, "recon_ugv_cloak" ) )
     {
-        self _meth_82DD( "Cloak", "+activate" );
-        self _meth_82DD( "Cloak", "+usereload" );
+        self notifyonplayercommand( "Cloak", "+activate" );
+        self notifyonplayercommand( "Cloak", "+usereload" );
     }
 }
 
@@ -168,16 +168,16 @@ disableplayercommands( var_0 )
     if ( isbot( self ) )
         return;
 
-    self _meth_849C( "recon_fire_main", "+attack" );
-    self _meth_849C( "recon_fire_main", "+attack_akimbo_accessible" );
-    self _meth_849C( "recon_fire_secondary", "+speed_throw" );
-    self _meth_849C( "recon_fire_secondary", "+toggleads_throw" );
-    self _meth_849C( "recon_fire_secondary", "+ads_akimbo_accessible" );
+    self notifyonplayercommandremove( "recon_fire_main", "+attack" );
+    self notifyonplayercommandremove( "recon_fire_main", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "recon_fire_secondary", "+speed_throw" );
+    self notifyonplayercommandremove( "recon_fire_secondary", "+toggleads_throw" );
+    self notifyonplayercommandremove( "recon_fire_secondary", "+ads_akimbo_accessible" );
 
     if ( isdefined( var_0 ) && var_0.hascloak )
     {
-        self _meth_849C( "Cloak", "+activate" );
-        self _meth_849C( "Cloak", "+usereload" );
+        self notifyonplayercommandremove( "Cloak", "+activate" );
+        self notifyonplayercommandremove( "Cloak", "+usereload" );
     }
 }
 
@@ -204,8 +204,8 @@ playercommonreconvehiclesetup( var_0, var_1, var_2 )
     var_0.hasempgrenade = common_scripts\utility::array_contains( var_0.modules, "recon_ugv_emp" );
     var_0 hide();
     var_0 makeunusable();
-    var_0 _meth_8202( 23, -9, 23 );
-    var_0 _meth_82C0( 1 );
+    var_0 makevehiclesolidcapsule( 23, -9, 23 );
+    var_0 setcandamage( 1 );
     var_0 common_scripts\utility::make_entity_sentient_mp( var_0.team );
     reconspawnturret( var_0 );
     thread maps\mp\killstreaks\_drone_common::dronesetupcloaking( var_0, var_0.hascloak );
@@ -219,7 +219,7 @@ playercommonreconvehiclesetup( var_0, var_1, var_2 )
 
     thread maps\mp\killstreaks\_drone_common::updateshootinglocation( var_0, common_scripts\utility::getfx( var_3 ), 1 );
     thread maps\mp\killstreaks\_drone_common::playerhandleexhaustfx( var_0, "recond_drone_exhaust", "tag_exhaust" );
-    var_0.mgturret _meth_8106( var_0.targetent );
+    var_0.mgturret settargetentity( var_0.targetent );
     thread reconplayerexit( var_0 );
 }
 
@@ -230,32 +230,32 @@ reconspawnturret( var_0 )
     var_3 = "vehicle_atlas_aerial_drone_02_patrol_mp_turret_75p";
     var_4 = spawnturret( "misc_turret", var_0 gettagorigin( var_2 ), var_1, 0 );
     var_4.angles = var_0 gettagangles( var_2 );
-    var_4 _meth_80B1( var_3 );
-    var_4 _meth_815A( 45.0 );
-    var_4 _meth_804D( var_0, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 setmodel( var_3 );
+    var_4 setdefaultdroppitch( 45.0 );
+    var_4 linkto( var_0, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4.owner = var_0.owner;
     var_4.health = 99999;
     var_4.maxhealth = 1000;
     var_4.damagetaken = 0;
     var_4.stunned = 0;
     var_4.stunnedtime = 0.0;
-    var_4 _meth_82C0( 0 );
-    var_4 _meth_82C1( 0 );
+    var_4 setcandamage( 0 );
+    var_4 setcanradiusdamage( 0 );
     var_4 makeunusable();
     var_4.team = var_0.team;
     var_4.pers["team"] = var_0.team;
 
     if ( level.teambased )
-        var_4 _meth_8135( var_0.team );
+        var_4 setturretteam( var_0.team );
 
-    var_4 _meth_8065( "sentry_manual" );
-    var_4 _meth_8103( var_0.owner );
-    var_4 _meth_8105( 0 );
+    var_4 setmode( "sentry_manual" );
+    var_4 setsentryowner( var_0.owner );
+    var_4 setturretminimapvisible( 0 );
     var_4.chopper = var_0;
     var_4 setcontents( 0 );
     var_4.firesoundent = spawn( "script_model", var_0 gettagorigin( var_2 ) );
-    var_4.firesoundent _meth_80B1( "tag_origin" );
-    var_4.firesoundent _meth_8446( var_0, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4.firesoundent setmodel( "tag_origin" );
+    var_4.firesoundent vehicle_jetbikesethoverforcescale( var_0, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4.firesoundent setcontents( 0 );
     var_4 hide();
     var_0.mgturret = var_4;
@@ -288,9 +288,9 @@ firethreatgrenades( var_0 )
         }
 
         maps\mp\killstreaks\_aerial_utility::playerfakeshootpaintgrenadeattarget( var_0.mgturret.firesoundent, var_3, var_4, var_2, var_0 );
-        self _meth_82FB( "ui_recondrone_paint", 2 );
+        self setclientomnvar( "ui_recondrone_paint", 2 );
         wait 2;
-        self _meth_82FB( "ui_recondrone_paint", 1 );
+        self setclientomnvar( "ui_recondrone_paint", 1 );
         var_2 = 0;
     }
 }
@@ -307,9 +307,9 @@ fireempgrenades( var_0 )
         var_1 = var_0.mgturret gettagorigin( "tag_aim" );
         var_2 = var_0.targetent.origin;
         maps\mp\killstreaks\_aerial_utility::playerfakeshootempgrenadeattarget( var_0.mgturret.firesoundent, var_1, var_2 );
-        self _meth_82FB( "ui_recondrone_emp", 2 );
+        self setclientomnvar( "ui_recondrone_emp", 2 );
         wait 5;
-        self _meth_82FB( "ui_recondrone_emp", 1 );
+        self setclientomnvar( "ui_recondrone_emp", 1 );
     }
 }
 
@@ -335,8 +335,8 @@ startusingreconvehicle( var_0 )
         var_1 maps\mp\_utility::setthirdpersondof( 0 );
 
     var_1 maps\mp\_utility::playersaveangles();
-    var_1 _meth_81E2( var_0, "tag_origin" );
-    var_1 _meth_8206( var_0 );
+    var_1 cameralinkto( var_0, "tag_origin" );
+    var_1 remotecontrolvehicle( var_0 );
     var_1 thread maps\mp\killstreaks\_drone_common::setdronevisionandlightsetpermap( 1.5, var_0 );
     var_1.using_remote_tank = 1;
 
@@ -350,18 +350,18 @@ reconhudsetup( var_0 )
     self endon( "disconnect" );
     reconhudremove( var_0 );
     wait 0.5;
-    self _meth_82FB( "ui_recondrone_toggle", 1 );
+    self setclientomnvar( "ui_recondrone_toggle", 1 );
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
-    self _meth_82FB( "ui_recondrone_countdown", var_0.endtime );
+    self setclientomnvar( "ui_recondrone_countdown", var_0.endtime );
 
     if ( var_0.hascloak )
-        self _meth_82FB( "ui_drone_cloak", 2 );
+        self setclientomnvar( "ui_drone_cloak", 2 );
 
     if ( var_0.haspaintgrenade )
-        self _meth_82FB( "ui_recondrone_paint", 1 );
+        self setclientomnvar( "ui_recondrone_paint", 1 );
 
     if ( var_0.hasempgrenade )
-        self _meth_82FB( "ui_recondrone_emp", 1 );
+        self setclientomnvar( "ui_recondrone_emp", 1 );
 
     if ( var_0.hasarhud )
         self thermalvisionfofoverlayon();
@@ -369,13 +369,13 @@ reconhudsetup( var_0 )
 
 reconhudremove( var_0 )
 {
-    self _meth_82FB( "ui_recondrone_toggle", 0 );
-    self _meth_82FB( "ui_recondrone_countdown", 0 );
-    self _meth_82FB( "ui_drone_cloak", 0 );
-    self _meth_82FB( "ui_drone_cloak_time", 0 );
-    self _meth_82FB( "ui_drone_cloak_cooldown", 0 );
-    self _meth_82FB( "ui_recondrone_paint", 0 );
-    self _meth_82FB( "ui_recondrone_emp", 0 );
+    self setclientomnvar( "ui_recondrone_toggle", 0 );
+    self setclientomnvar( "ui_recondrone_countdown", 0 );
+    self setclientomnvar( "ui_drone_cloak", 0 );
+    self setclientomnvar( "ui_drone_cloak_time", 0 );
+    self setclientomnvar( "ui_drone_cloak_cooldown", 0 );
+    self setclientomnvar( "ui_recondrone_paint", 0 );
+    self setclientomnvar( "ui_recondrone_emp", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 }
 
@@ -443,15 +443,15 @@ reconhandletimeout( var_0 )
 
 reconhandledeath( var_0 )
 {
-    var_1 = var_0 _meth_81B1();
+    var_1 = var_0 getentitynumber();
     var_0 maps\mp\killstreaks\_drone_common::droneaddtogloballist( var_1 );
     var_0 waittill( "death", var_2 );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_8510();
+        var_0 ghost();
 
     if ( isdefined( var_0.mgturret ) )
-        var_0.mgturret _meth_8510();
+        var_0.mgturret ghost();
 
     if ( isdefined( self ) )
         maps\mp\_utility::freezecontrolswrapper( 1 );
@@ -506,7 +506,7 @@ reconsetinactivity( var_0 )
     if ( isdefined( var_1.using_remote_tank ) && var_1.using_remote_tank )
     {
         var_1 notify( "end_remote" );
-        var_1 _meth_8207( var_0 );
+        var_1 remotecontrolvehicleoff( var_0 );
         var_1 thermalvisionfofoverlayoff();
         thread maps\mp\killstreaks\_drone_common::removedronevisionandlightsetpermap( 1.5 );
         var_1 reconhudremove( var_0 );
@@ -516,9 +516,9 @@ reconsetinactivity( var_0 )
             var_1 maps\mp\_utility::clearusingremote();
 
         var_2 = maps\mp\_utility::getkillstreakweapon( "recon_ugv" );
-        var_1 _meth_830F( var_2 );
-        var_1 _meth_8322();
-        var_1 _meth_8315( common_scripts\utility::getlastweapon() );
+        var_1 takeweapon( var_2 );
+        var_1 enableweaponswitch();
+        var_1 switchtoweapon( common_scripts\utility::getlastweapon() );
         var_1 maps\mp\_utility::playerrestoreangles();
 
         if ( getdvarint( "camera_thirdPerson" ) )

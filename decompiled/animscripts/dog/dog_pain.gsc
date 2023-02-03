@@ -18,21 +18,21 @@ main()
 
     if ( isdefined( self.enemy ) && isdefined( self.enemy.syncedmeleetarget ) && self.enemy.syncedmeleetarget == self && ( !isdefined( self.disablepain ) || !self.disablepain ) )
     {
-        self _meth_804F();
+        self unlink();
         self.enemy.syncedmeleetarget = undefined;
     }
 
-    self _meth_818E( "zonly_physics" );
-    self _meth_8142( %body, 0.2 );
+    self animmode( "zonly_physics" );
+    self clearanim( %body, 0.2 );
 
     if ( self.prevscript == "dog_stop" )
         var_0 = "idle_pain";
     else
         var_0 = "run_pain";
 
-    self _meth_8113( "dog_pain_anim", getdogpainanim( var_0 ), 1, 0.2, 1 );
+    self setflaggedanimrestart( "dog_pain_anim", getdogpainanim( var_0 ), 1, 0.2, 1 );
 
-    if ( self _meth_83CD() )
+    if ( self isdogbeingdriven() )
         self playsound( "bullet_large_flesh" );
     else
         self playsound( "bullet_large_flesh_npc" );

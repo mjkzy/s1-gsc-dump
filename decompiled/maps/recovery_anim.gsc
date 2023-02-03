@@ -590,7 +590,7 @@ warbird_start_shooting( var_0 )
 warbird_crush_player( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_warbird_crush" );
-    level.player _meth_8052();
+    level.player kill();
 }
 
 training_s1_head_shot1( var_0 )
@@ -598,7 +598,7 @@ training_s1_head_shot1( var_0 )
     if ( isalive( var_0 ) )
     {
         var_1 = common_scripts\utility::getstruct( "training_s1_kill_location", "targetname" );
-        magicbullet( "iw5_bal27_sp_silencer01_variablereddot", var_1.origin, var_0 _meth_80A8() );
+        magicbullet( "iw5_bal27_sp_silencer01_variablereddot", var_1.origin, var_0 geteye() );
     }
 }
 
@@ -609,7 +609,7 @@ training_s1_head_shot2( var_0 )
         var_1 = common_scripts\utility::getstruct( "training_s1_kill_location", "targetname" );
         var_0 maps\_utility::stop_magic_bullet_shield();
         var_0 maps\_utility::set_allowdeath( 1 );
-        magicbullet( "iw5_bal27_sp_silencer01_variablereddot", var_1.origin, var_0 _meth_80A8() );
+        magicbullet( "iw5_bal27_sp_silencer01_variablereddot", var_1.origin, var_0 geteye() );
         var_0.noragdoll = 1;
         ai_kill( var_0 );
     }
@@ -624,7 +624,7 @@ ai_kill( var_0 )
     var_0.a.nodeath = 1;
     var_0 maps\_utility::set_battlechatter( 0 );
     wait 0.05;
-    var_0 _meth_8052();
+    var_0 kill();
 }
 
 training_s1_breach_slowmo_start( var_0 )
@@ -640,18 +640,18 @@ training_s1_breach_slowmo_start( var_0 )
     maps\_utility::slowmo_setspeed_slow( var_4 );
     maps\_utility::slowmo_setlerptime_in( var_1 );
     maps\_utility::slowmo_lerp_in();
-    level.player _meth_81E1( var_3 );
+    level.player setmovespeedscale( var_3 );
     wait(var_5);
     level.player thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     maps\_utility::slowmo_setlerptime_out( var_2 );
     maps\_utility::slowmo_lerp_out();
     maps\_utility::slowmo_end();
-    level.player _meth_81E1( 1.0 );
+    level.player setmovespeedscale( 1.0 );
 }
 
 training_s1_breach_gun_up( var_0 )
 {
-    level.player _meth_831E();
+    level.player enableweapons();
 }
 
 training_s2_breach_slowmo_start( var_0 )
@@ -667,28 +667,28 @@ training_s2_breach_slowmo_start( var_0 )
     maps\_utility::slowmo_setspeed_slow( var_4 );
     maps\_utility::slowmo_setlerptime_in( var_1 );
     maps\_utility::slowmo_lerp_in();
-    level.player _meth_81E1( var_3 );
+    level.player setmovespeedscale( var_3 );
     wait(var_5);
     level.player thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     maps\_utility::slowmo_setlerptime_out( var_2 );
     maps\_utility::slowmo_lerp_out();
     maps\_utility::slowmo_end();
-    level.player _meth_81E1( 1.0 );
+    level.player setmovespeedscale( 1.0 );
 }
 
 training_s1_end_fov_start( var_0 )
 {
-    level.player _meth_8031( 50, 2 );
+    level.player lerpfov( 50, 2 );
 }
 
 training_s1_end_fov_end( var_0 )
 {
-    level.player _meth_8031( 65, 2 );
+    level.player lerpfov( 65, 2 );
 }
 
 training_s1_intro_gun_up( var_0 )
 {
-    level.player _meth_831E();
+    level.player enableweapons();
 }
 
 gideon_can_exit_range( var_0 )
@@ -713,5 +713,5 @@ ilona_cannot_turn( var_0 )
 
 warbird_land_fov_change( var_0 )
 {
-    level.player _meth_8031( 45, 2 );
+    level.player lerpfov( 45, 2 );
 }

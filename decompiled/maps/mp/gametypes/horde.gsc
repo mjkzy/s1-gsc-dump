@@ -246,7 +246,7 @@ settimeromnvar( var_0, var_1 )
     foreach ( var_3 in level.players )
     {
         if ( !isagent( var_3 ) )
-            var_3 _meth_82FB( var_0, var_1 );
+            var_3 setclientomnvar( var_0, var_1 );
     }
 }
 
@@ -255,7 +255,7 @@ updatetimeromnvars( var_0 )
     foreach ( var_3, var_2 in level.timeromnvars )
     {
         if ( !isagent( var_0 ) )
-            var_0 _meth_82FB( var_3, var_2 );
+            var_0 setclientomnvar( var_3, var_2 );
     }
 }
 
@@ -288,7 +288,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
 
     if ( !isdefined( game["switchedsides"] ) )
         game["switchedsides"] = 0;
@@ -390,7 +390,7 @@ forceclassselection( var_0 )
     var_0.classselection = 1;
     thread monitorclassselection( var_0 );
     var_1 = var_0 common_scripts\utility::waittill_any_timeout( 60, "death", "becameSpectator" );
-    var_0 _meth_82FB( "ui_horde_show_armory", 0 );
+    var_0 setclientomnvar( "ui_horde_show_armory", 0 );
     var_0.usingarmory = 0;
     var_0.classselection = 0;
 
@@ -412,8 +412,8 @@ monitorclassselection( var_0 )
         if ( var_1 == "horde_armory_closed" )
         {
             wait 0.5;
-            var_0 _meth_82FB( "ui_horde_armory_type", "class" );
-            var_0 _meth_82FB( "ui_horde_show_armory", 1 );
+            var_0 setclientomnvar( "ui_horde_armory_type", "class" );
+            var_0 setclientomnvar( "ui_horde_show_armory", 1 );
         }
     }
 }
@@ -511,9 +511,9 @@ monitorinactivity( var_0 )
 
     for (;;)
     {
-        var_3 = var_0 _meth_82F3();
+        var_3 = var_0 getnormalizedmovement();
 
-        if ( var_0 attackbuttonpressed() || var_0 adsbuttonpressed() || var_0 meleebuttonpressed() || var_0 _meth_82EE() || var_0 _meth_82EF() || var_0 _meth_83DE() || var_0 _meth_83BB() || var_3[0] != 0 || var_3[1] != 0 )
+        if ( var_0 attackbuttonpressed() || var_0 adsbuttonpressed() || var_0 meleebuttonpressed() || var_0 fragbuttonpressed() || var_0 secondaryoffhandbuttonpressed() || var_0 jumpbuttonpressed() || var_0 sprintbuttonpressed() || var_3[0] != 0 || var_3[1] != 0 )
         {
             var_1 = 0;
             var_2 = 0;
@@ -521,12 +521,12 @@ monitorinactivity( var_0 )
 
         if ( var_1 >= 180 )
         {
-            kick( var_0 _meth_81B1(), "EXE_PLAYERKICKED_INACTIVE" );
+            kick( var_0 getentitynumber(), "EXE_PLAYERKICKED_INACTIVE" );
             break;
         }
         else if ( var_1 >= 170 && !var_2 )
         {
-            var_0 iclientprintlnbold( &"GAME_INACTIVEDROPWARNING" );
+            var_0 iprintlnbold( &"GAME_INACTIVEDROPWARNING" );
             var_2 = 1;
         }
 
@@ -582,14 +582,14 @@ onspawnplayer()
                 self.agentname = var_0["name_localized"];
 
             thread playaispawneffect();
-            self _meth_837A( "allowGrenades", 1 );
+            self botsetdifficultysetting( "allowGrenades", 1 );
         }
         else
         {
             self.pers["gamemodeLoadout"] = level.hordeloadouts["squadmate"];
             maps\mp\bots\_bots_util::bot_set_personality( "camper" );
             maps\mp\bots\_bots_util::bot_set_difficulty( "regular" );
-            self _meth_837A( "allowGrenades", 1 );
+            self botsetdifficultysetting( "allowGrenades", 1 );
         }
 
         self.avoidkillstreakonspawntimer = 0;
@@ -619,26 +619,26 @@ onspawnfinished( var_0 )
 
     if ( maps\mp\gametypes\_horde_util::isonhumanteam( self ) )
     {
-        self _meth_8332( level.playerstartweaponname );
+        self givemaxammo( level.playerstartweaponname );
 
         if ( self.gamemodefirstspawn )
-            self _meth_82FB( "ui_horde_show_armory", 1 );
+            self setclientomnvar( "ui_horde_show_armory", 1 );
 
         if ( isplayer( self ) )
         {
-            self _meth_82F6( "frag_grenade_mp", 1 );
-            self _meth_82F6( "none", 0 );
-            self _meth_82FB( "exo_ability_nrg_total0", 0 );
-            self _meth_82FB( "ui_exo_battery_level0", 0 );
-            self _meth_830F( "frag_grenade_mp" );
-            self _meth_8344( "frag_grenade_horde_mp" );
-            self _meth_830E( "frag_grenade_horde_mp" );
-            self _meth_82F6( "frag_grenade_horde_mp", 4 );
+            self setweaponammoclip( "frag_grenade_mp", 1 );
+            self setweaponammoclip( "none", 0 );
+            self setclientomnvar( "exo_ability_nrg_total0", 0 );
+            self setclientomnvar( "ui_exo_battery_level0", 0 );
+            self takeweapon( "frag_grenade_mp" );
+            self setlethalweapon( "frag_grenade_horde_mp" );
+            self giveweapon( "frag_grenade_horde_mp" );
+            self setweaponammoclip( "frag_grenade_horde_mp", 4 );
             maps\mp\_utility::giveperk( "specialty_pistoldeath", 0 );
             maps\mp\_utility::giveperk( "specialty_horde_dualprimary", 1, 1 );
-            self _meth_8511( [ "iw5_em1_mp", "iw5_kf5_mp", "iw5_uts19_mp", "iw5_titan45_mp", "iw5_vbr_mp", "iw5_pbw_mp" ] );
-            self _meth_8511( [ "iw5_microdronelauncher_mp", "iw5_microdronelaunchercoop_mp" ] );
-            self _meth_8511( maps\mp\gametypes\_horde_laststand::hordelaststandweapon() );
+            self loadweapons( [ "iw5_em1_mp", "iw5_kf5_mp", "iw5_uts19_mp", "iw5_titan45_mp", "iw5_vbr_mp", "iw5_pbw_mp" ] );
+            self loadweapons( [ "iw5_microdronelauncher_mp", "iw5_microdronelaunchercoop_mp" ] );
+            self loadweapons( maps\mp\gametypes\_horde_laststand::hordelaststandweapon() );
             childthread updaterespawnsplash( self.gamemodefirstspawn );
             removeperkhud( self );
             updatetimeromnvars( self );
@@ -667,134 +667,134 @@ onspawnfinished( var_0 )
         {
             case "shotgun":
                 self.agentname = &"HORDE_GRUNT";
-                self _meth_837A( "maxNonAutoFireDelay", 1500 );
-                self _meth_837A( "minNonAutoFireDelay", 800 );
-                self _meth_852D( randomintrange( 1, 5 ) );
+                self botsetdifficultysetting( "maxNonAutoFireDelay", 1500 );
+                self botsetdifficultysetting( "minNonAutoFireDelay", 800 );
+                self setagentcostumeindex( randomintrange( 1, 5 ) );
                 break;
             case "smg":
                 self.agentname = &"HORDE_GUNNER";
                 hordesetcharactermodel( "kva_body_smg_mp", "kva_head_smg" );
-                self _meth_837A( "minBurstFireTime", 100 );
-                self _meth_837A( "maxBurstFireTime", 600 );
-                self _meth_837A( "minTimeBetweenBursts", 600 );
-                self _meth_837A( "maxTimeBetweenBursts", 1500 );
-                self _meth_837A( "dodgeChance", 0.3 );
-                self _meth_837A( "dodgeIntelligence", 0.8 );
-                self _meth_852D( randomintrange( 5, 9 ) );
+                self botsetdifficultysetting( "minBurstFireTime", 100 );
+                self botsetdifficultysetting( "maxBurstFireTime", 600 );
+                self botsetdifficultysetting( "minTimeBetweenBursts", 600 );
+                self botsetdifficultysetting( "maxTimeBetweenBursts", 1500 );
+                self botsetdifficultysetting( "dodgeChance", 0.3 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
+                self setagentcostumeindex( randomintrange( 5, 9 ) );
                 break;
             case "cloak":
                 self.agentname = &"HORDE_ASSASSIN";
                 self.movespeedscaler = var_0["movespeedscale"];
-                self _meth_837A( "minBurstFireTime", 200 );
-                self _meth_837A( "maxBurstFireTime", 1000 );
-                self _meth_837A( "minTimeBetweenBursts", 500 );
-                self _meth_837A( "maxTimeBetweenBursts", 1200 );
-                self _meth_837A( "dodgeChance", 0.8 );
-                self _meth_837A( "dodgeIntelligence", 1.0 );
-                self _meth_852D( 10 );
-                self _meth_844B();
+                self botsetdifficultysetting( "minBurstFireTime", 200 );
+                self botsetdifficultysetting( "maxBurstFireTime", 1000 );
+                self botsetdifficultysetting( "minTimeBetweenBursts", 500 );
+                self botsetdifficultysetting( "maxTimeBetweenBursts", 1200 );
+                self botsetdifficultysetting( "dodgeChance", 0.8 );
+                self botsetdifficultysetting( "dodgeIntelligence", 1.0 );
+                self setagentcostumeindex( 10 );
+                self cloakingenable();
                 break;
             case "assault":
                 self.agentname = &"HORDE_ASSAULT";
-                self _meth_837A( "minBurstFireTime", 400 );
-                self _meth_837A( "maxBurstFireTime", 1200 );
-                self _meth_837A( "minTimeBetweenBursts", 400 );
-                self _meth_837A( "maxTimeBetweenBursts", 1200 );
-                self _meth_837A( "dodgeChance", 0.6 );
-                self _meth_837A( "dodgeIntelligence", 0.8 );
+                self botsetdifficultysetting( "minBurstFireTime", 400 );
+                self botsetdifficultysetting( "maxBurstFireTime", 1200 );
+                self botsetdifficultysetting( "minTimeBetweenBursts", 400 );
+                self botsetdifficultysetting( "maxTimeBetweenBursts", 1200 );
+                self botsetdifficultysetting( "dodgeChance", 0.6 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
 
                 if ( level.hordelevelflip < 2 )
                 {
-                    self _meth_837A( "strafeChance", 0.4 );
-                    self _meth_837A( "reactionTime", 425 );
+                    self botsetdifficultysetting( "strafeChance", 0.4 );
+                    self botsetdifficultysetting( "reactionTime", 425 );
                 }
 
-                self _meth_852D( 10 );
+                self setagentcostumeindex( 10 );
                 break;
             case "assault_elite":
                 self.agentname = &"HORDE_ELITE";
-                self _meth_837A( "minBurstFireTime", 600 );
-                self _meth_837A( "maxBurstFireTime", 2400 );
-                self _meth_837A( "minTimeBetweenBursts", 100 );
-                self _meth_837A( "maxTimeBetweenBursts", 600 );
-                self _meth_837A( "dodgeChance", 0.6 );
-                self _meth_837A( "dodgeIntelligence", 0.8 );
-                self _meth_837A( "reactionTime", 100 );
-                self _meth_837A( "diveChance", 0.2 );
+                self botsetdifficultysetting( "minBurstFireTime", 600 );
+                self botsetdifficultysetting( "maxBurstFireTime", 2400 );
+                self botsetdifficultysetting( "minTimeBetweenBursts", 100 );
+                self botsetdifficultysetting( "maxTimeBetweenBursts", 600 );
+                self botsetdifficultysetting( "dodgeChance", 0.6 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
+                self botsetdifficultysetting( "reactionTime", 100 );
+                self botsetdifficultysetting( "diveChance", 0.2 );
 
                 if ( level.hordelevelflip < 3 )
-                    self _meth_837A( "strafeChance", 0.7 );
+                    self botsetdifficultysetting( "strafeChance", 0.7 );
 
-                self _meth_852D( randomintrange( 19, 23 ) );
+                self setagentcostumeindex( randomintrange( 19, 23 ) );
 
                 if ( level.hordelevelflip > 1 || getdvarint( "scr_horde_preview" ) > 0 )
                 {
-                    self _meth_8310();
-                    self _meth_830E( "turretheadmg_mp" );
-                    self _meth_8316( "turretheadmg_mp" );
+                    self takeallweapons();
+                    self giveweapon( "turretheadmg_mp" );
+                    self switchtoweaponimmediate( "turretheadmg_mp" );
                 }
 
                 break;
             case "epm3":
                 self.agentname = &"HORDE_EPM3";
-                self _meth_837A( "dodgeChance", 0.4 );
-                self _meth_837A( "dodgeIntelligence", 0.8 );
-                self _meth_837A( "minInaccuracy", 0.1 );
-                self _meth_837A( "maxInaccuracy", 0.15 );
-                self _meth_837A( "minNonAutoFireDelay", 200 );
-                self _meth_837A( "maxNonAutoFireDelay", 400 );
+                self botsetdifficultysetting( "dodgeChance", 0.4 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
+                self botsetdifficultysetting( "minInaccuracy", 0.1 );
+                self botsetdifficultysetting( "maxInaccuracy", 0.15 );
+                self botsetdifficultysetting( "minNonAutoFireDelay", 200 );
+                self botsetdifficultysetting( "maxNonAutoFireDelay", 400 );
 
                 if ( level.hordelevelflip < 3 )
-                    self _meth_837A( "reactionTime", 200 );
+                    self botsetdifficultysetting( "reactionTime", 200 );
 
                 if ( level.hordelevelflip < 2 )
-                    self _meth_837A( "strafeChance", 0.5 );
+                    self botsetdifficultysetting( "strafeChance", 0.5 );
 
-                self _meth_852D( 15 );
+                self setagentcostumeindex( 15 );
                 break;
             case "em1":
                 self.agentname = &"HORDE_BEAMER";
                 hordesetcharactermodel( "kva_hazmat_body_a_mp", "kva_hazmat_head_a" );
-                self _meth_837A( "dodgeChance", 0.3 );
-                self _meth_837A( "dodgeIntelligence", 0.5 );
-                self _meth_837A( "maxNonAutoFireDelay", 2800 );
-                self _meth_837A( "minNonAutoFireDelay", 1500 );
-                self _meth_852D( 9 );
+                self botsetdifficultysetting( "dodgeChance", 0.3 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.5 );
+                self botsetdifficultysetting( "maxNonAutoFireDelay", 2800 );
+                self botsetdifficultysetting( "minNonAutoFireDelay", 1500 );
+                self setagentcostumeindex( 9 );
                 break;
             case "em1_heavy":
                 self.agentname = &"HORDE_BEAMER_HEAVY";
                 hordesetcharactermodel( "nk_army_assault_body_mp", "nk_army_a_head" );
-                self _meth_837A( "dodgeChance", 0.5 );
-                self _meth_837A( "dodgeIntelligence", 0.5 );
-                self _meth_837A( "maxNonAutoFireDelay", 1400 );
-                self _meth_837A( "minNonAutoFireDelay", 750 );
-                self _meth_852D( 18 );
+                self botsetdifficultysetting( "dodgeChance", 0.5 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.5 );
+                self botsetdifficultysetting( "maxNonAutoFireDelay", 1400 );
+                self botsetdifficultysetting( "minNonAutoFireDelay", 750 );
+                self setagentcostumeindex( 18 );
                 break;
             case "rocket":
                 self.agentname = &"HORDE_LAUNCHER";
                 hordesetcharactermodel( "atlas_arctic_guard_body_mp", "atlas_arctic_head_a" );
-                self _meth_837A( "maxNonAutoFireDelay", 2000 );
-                self _meth_837A( "minNonAutoFireDelay", 1000 );
-                self _meth_852D( 17 );
+                self botsetdifficultysetting( "maxNonAutoFireDelay", 2000 );
+                self botsetdifficultysetting( "minNonAutoFireDelay", 1000 );
+                self setagentcostumeindex( 17 );
 
                 if ( level.hordelevelflip > 1 || getdvarint( "scr_horde_preview" ) > 0 )
                 {
-                    self _meth_8310();
-                    self _meth_830E( "turretheadrocket_mp" );
-                    self _meth_8316( "turretheadrocket_mp" );
+                    self takeallweapons();
+                    self giveweapon( "turretheadrocket_mp" );
+                    self switchtoweaponimmediate( "turretheadrocket_mp" );
                 }
 
                 break;
             case "jugg":
                 self.agentname = &"HORDE_AST";
                 maps\mp\killstreaks\_juggernaut::playersetjuggexomodel();
-                self _meth_8494( 1 );
-                self _meth_8352( "stand" );
-                self _meth_8301( 0 );
-                self _meth_8302( 0 );
-                self _meth_8303( 0 );
-                self _meth_8119( 0 );
-                self _meth_811A( 0 );
+                self setplayermech( 1 );
+                self botsetstance( "stand" );
+                self allowjump( 0 );
+                self allowladder( 0 );
+                self allowmantle( 0 );
+                self allowcrouch( 0 );
+                self allowprone( 0 );
                 maps\mp\_utility::playerallowhighjump( 0, "class" );
                 maps\mp\_utility::playerallowdodge( 0, "class" );
                 hordeattachminigunbarrel();
@@ -809,14 +809,14 @@ onspawnfinished( var_0 )
             case "jugg_handler":
                 self.agentname = &"HORDE_AST";
                 maps\mp\killstreaks\_juggernaut::playersetjuggexomodel();
-                self _meth_8494( 1 );
+                self setplayermech( 1 );
                 thread hordeaddcompaniondrone( 1, 1, 1 );
-                self _meth_8352( "stand" );
-                self _meth_8301( 0 );
-                self _meth_8302( 0 );
-                self _meth_8303( 0 );
-                self _meth_8119( 0 );
-                self _meth_811A( 0 );
+                self botsetstance( "stand" );
+                self allowjump( 0 );
+                self allowladder( 0 );
+                self allowmantle( 0 );
+                self allowcrouch( 0 );
+                self allowprone( 0 );
                 maps\mp\_utility::playerallowhighjump( 0, "class" );
                 maps\mp\_utility::playerallowdodge( 0, "class" );
                 hordeattachminigunbarrel();
@@ -832,23 +832,23 @@ onspawnfinished( var_0 )
                 break;
             case "handler":
                 self.agentname = &"HORDE_HANDLER";
-                self _meth_837A( "minBurstFireTime", 1500 );
-                self _meth_837A( "maxBurstFireTime", 3000 );
-                self _meth_837A( "dodgeChance", 0.2 );
-                self _meth_837A( "dodgeIntelligence", 0.4 );
+                self botsetdifficultysetting( "minBurstFireTime", 1500 );
+                self botsetdifficultysetting( "maxBurstFireTime", 3000 );
+                self botsetdifficultysetting( "dodgeChance", 0.2 );
+                self botsetdifficultysetting( "dodgeIntelligence", 0.4 );
                 thread hordeaddcompaniondrone();
-                self _meth_852D( randomintrange( 11, 15 ) );
+                self setagentcostumeindex( randomintrange( 11, 15 ) );
                 break;
             case "zombie":
                 maps\mp\gametypes\_horde_zombies::hordesetzombiemodel();
                 maps\mp\gametypes\_horde_zombies::hordezombiesounds();
-                self _meth_8352( "stand" );
-                self _meth_8119( 0 );
+                self botsetstance( "stand" );
+                self allowcrouch( 0 );
                 break;
             default:
         }
 
-        self _meth_83DB( "cloth" );
+        self setclothtype( "cloth" );
     }
 
     self.gamemodefirstspawn = 0;
@@ -857,76 +857,76 @@ onspawnfinished( var_0 )
 hordeattachminigunbarrel()
 {
     self.barrellinker = spawn( "script_model", self gettagorigin( "tag_barrel" ) );
-    self.barrellinker _meth_80B1( "generic_prop_raven" );
-    self.barrellinker _meth_8446( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
+    self.barrellinker setmodel( "generic_prop_raven" );
+    self.barrellinker vehicle_jetbikesethoverforcescale( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
     self.barrel = spawn( "script_model", self.barrellinker gettagorigin( "j_prop_1" ) );
-    self.barrel _meth_80B1( "npc_exo_armor_minigun_barrel" );
-    self.barrel _meth_8446( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    self.barrel setmodel( "npc_exo_armor_minigun_barrel" );
+    self.barrel vehicle_jetbikesethoverforcescale( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
 }
 
 hordeaddgeneraltuningvalues()
 {
     var_0 = self;
-    var_0 _meth_837A( "visionBlinded", 0.05 );
-    var_0 _meth_837A( "hearingDeaf", 0.05 );
-    var_0 _meth_837A( "targetVehicleChance", 1 );
-    var_0 _meth_837A( "meleeReactAllowed", 1 );
-    var_0 _meth_837A( "meleeReactionTime", 600 );
-    var_0 _meth_837A( "meleeDist", 85 );
-    var_0 _meth_837A( "meleeChargeDist", 100 );
-    var_0 _meth_837A( "minBurstFireTime", 400 );
-    var_0 _meth_837A( "maxBurstFireTime", 2400 );
-    var_0 _meth_837A( "minTimeBetweenBursts", 400 );
-    var_0 _meth_837A( "maxTimeBetweenBursts", 1200 );
-    var_0 _meth_837A( "dodgeChance", 0.0 );
-    var_0 _meth_837A( "dodgeIntelligence", 0.0 );
-    var_0 _meth_837A( "strafeChance", 0.35 );
-    var_0 _meth_837A( "avoidSkyPercent", 0 );
+    var_0 botsetdifficultysetting( "visionBlinded", 0.05 );
+    var_0 botsetdifficultysetting( "hearingDeaf", 0.05 );
+    var_0 botsetdifficultysetting( "targetVehicleChance", 1 );
+    var_0 botsetdifficultysetting( "meleeReactAllowed", 1 );
+    var_0 botsetdifficultysetting( "meleeReactionTime", 600 );
+    var_0 botsetdifficultysetting( "meleeDist", 85 );
+    var_0 botsetdifficultysetting( "meleeChargeDist", 100 );
+    var_0 botsetdifficultysetting( "minBurstFireTime", 400 );
+    var_0 botsetdifficultysetting( "maxBurstFireTime", 2400 );
+    var_0 botsetdifficultysetting( "minTimeBetweenBursts", 400 );
+    var_0 botsetdifficultysetting( "maxTimeBetweenBursts", 1200 );
+    var_0 botsetdifficultysetting( "dodgeChance", 0.0 );
+    var_0 botsetdifficultysetting( "dodgeIntelligence", 0.0 );
+    var_0 botsetdifficultysetting( "strafeChance", 0.35 );
+    var_0 botsetdifficultysetting( "avoidSkyPercent", 0 );
 
     if ( level.currentroundnumber > 8 && level.hordelevelflip == 1 )
     {
-        var_0 _meth_837A( "minInaccuracy", 0.75 );
-        var_0 _meth_837A( "maxInaccuracy", 1.5 );
+        var_0 botsetdifficultysetting( "minInaccuracy", 0.75 );
+        var_0 botsetdifficultysetting( "maxInaccuracy", 1.5 );
     }
     else if ( level.hordelevelflip == 1 )
     {
-        var_0 _meth_837A( "minInaccuracy", 2.25 );
-        var_0 _meth_837A( "maxInaccuracy", 4.5 );
+        var_0 botsetdifficultysetting( "minInaccuracy", 2.25 );
+        var_0 botsetdifficultysetting( "maxInaccuracy", 4.5 );
     }
 
     if ( level.currentroundnumber > 20 || level.hordelevelflip > 1 )
     {
-        var_0 _meth_837A( "adsAllowed", 1 );
-        var_0 _meth_837A( "diveChance", 0.15 );
-        var_0 _meth_837A( "strafeChance", 0.5 );
-        var_0 _meth_837A( "strategyLevel", 1 );
+        var_0 botsetdifficultysetting( "adsAllowed", 1 );
+        var_0 botsetdifficultysetting( "diveChance", 0.15 );
+        var_0 botsetdifficultysetting( "strafeChance", 0.5 );
+        var_0 botsetdifficultysetting( "strategyLevel", 1 );
     }
 
     if ( level.hordelevelflip == 2 )
     {
-        var_0 _meth_837A( "reactionTime", 200 );
-        var_0 _meth_837A( "strategyLevel", 3 );
-        var_0 _meth_837A( "cornerFireChance", 0.5 );
-        var_0 _meth_837A( "cornerJumpChance", 0.3 );
-        var_0 _meth_837A( "strafeChance", 0.7 );
-        var_0 _meth_837A( "diveChance", 0.2 );
-        var_0 _meth_837A( "launcherRespawnChance", 0.25 );
-        var_0 _meth_837A( "minInaccuracy", 0.5 );
-        var_0 _meth_837A( "maxInaccuracy", 1.0 );
-        var_0 _meth_837A( "grenadeCookPrecision", 500 );
+        var_0 botsetdifficultysetting( "reactionTime", 200 );
+        var_0 botsetdifficultysetting( "strategyLevel", 3 );
+        var_0 botsetdifficultysetting( "cornerFireChance", 0.5 );
+        var_0 botsetdifficultysetting( "cornerJumpChance", 0.3 );
+        var_0 botsetdifficultysetting( "strafeChance", 0.7 );
+        var_0 botsetdifficultysetting( "diveChance", 0.2 );
+        var_0 botsetdifficultysetting( "launcherRespawnChance", 0.25 );
+        var_0 botsetdifficultysetting( "minInaccuracy", 0.5 );
+        var_0 botsetdifficultysetting( "maxInaccuracy", 1.0 );
+        var_0 botsetdifficultysetting( "grenadeCookPrecision", 500 );
     }
     else if ( level.hordelevelflip > 2 )
     {
-        var_0 _meth_837A( "reactionTime", 100 );
-        var_0 _meth_837A( "strategyLevel", 3 );
-        var_0 _meth_837A( "cornerFireChance", 1.0 );
-        var_0 _meth_837A( "cornerJumpChance", 0.75 );
-        var_0 _meth_837A( "diveChance", 0.2 );
-        var_0 _meth_837A( "strafeChance", 0.9 );
-        var_0 _meth_837A( "launcherRespawnChance", 0.4 );
-        var_0 _meth_837A( "minInaccuracy", 0.25 );
-        var_0 _meth_837A( "maxInaccuracy", 0.75 );
-        var_0 _meth_837A( "grenadeCookPrecision", 100 );
+        var_0 botsetdifficultysetting( "reactionTime", 100 );
+        var_0 botsetdifficultysetting( "strategyLevel", 3 );
+        var_0 botsetdifficultysetting( "cornerFireChance", 1.0 );
+        var_0 botsetdifficultysetting( "cornerJumpChance", 0.75 );
+        var_0 botsetdifficultysetting( "diveChance", 0.2 );
+        var_0 botsetdifficultysetting( "strafeChance", 0.9 );
+        var_0 botsetdifficultysetting( "launcherRespawnChance", 0.4 );
+        var_0 botsetdifficultysetting( "minInaccuracy", 0.25 );
+        var_0 botsetdifficultysetting( "maxInaccuracy", 0.75 );
+        var_0 botsetdifficultysetting( "grenadeCookPrecision", 100 );
     }
 }
 
@@ -946,8 +946,8 @@ hordeaddnavigationabilities()
             return;
 
         var_0 maps\mp\_utility::playerallowdodge( 1, "class" );
-        var_0 _meth_837A( "dodgeChance", 0.3 );
-        var_0 _meth_837A( "dodgeIntelligence", 0.8 );
+        var_0 botsetdifficultysetting( "dodgeChance", 0.3 );
+        var_0 botsetdifficultysetting( "dodgeIntelligence", 0.8 );
     }
     else if ( level.currentroundnumber < 3 )
         var_0 maps\mp\_utility::playerallowdodge( 0, "class" );
@@ -991,9 +991,9 @@ hordeapplyaimodifiersdiceroll( var_0, var_1 )
 hordeaddtoxicgas()
 {
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "tag_origin" );
+    var_0 setmodel( "tag_origin" );
     waitframe();
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 16 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 16 ), ( 0, 0, 0 ) );
     wait 1;
 
     foreach ( var_2 in level.players )
@@ -1008,7 +1008,7 @@ hordeaddtoxicgascleanup( var_0 )
     self waittill( "death" );
 
     foreach ( var_2 in level.players )
-        _func_2AC( common_scripts\utility::getfx( "toxic_gas" ), var_0, "tag_origin", var_2 );
+        stopfxontagforclient( common_scripts\utility::getfx( "toxic_gas" ), var_0, "tag_origin", var_2 );
 
     var_0 delete();
 }
@@ -1033,20 +1033,20 @@ hordeaddexplosivedeath()
 {
     self waittill( "death" );
     var_0 = self.origin;
-    _func_071( "frag_grenade_mp", var_0, ( 0, 0, 0 ), 2 );
+    magicgrenademanual( "frag_grenade_mp", var_0, ( 0, 0, 0 ), 2 );
 }
 
 hordeaddexoshield()
 {
-    self _meth_837A( "allowGrenades", 1 );
-    self _meth_837A( "exoTacticalAllowed", 1 );
+    self botsetdifficultysetting( "allowGrenades", 1 );
+    self botsetdifficultysetting( "exoTacticalAllowed", 1 );
     self.pers["numberOfTimesShieldUsed"] = 0;
-    self _meth_8319( "exoshieldhorde_equipment_mp" );
-    self _meth_830E( "exoshieldhorde_equipment_mp" );
+    self settacticalweapon( "exoshieldhorde_equipment_mp" );
+    self giveweapon( "exoshieldhorde_equipment_mp" );
     thread maps\mp\_exo_shield::exo_shield_think();
     maps\mp\_utility::giveperk( "specialty_extratactical", 0 );
-    var_0 = self _meth_82F8( "exoshieldhorde_equipment_mp" );
-    self _meth_82F6( "exoshieldhorde_equipment_mp", var_0 + 1 );
+    var_0 = self getweaponammoclip( "exoshieldhorde_equipment_mp" );
+    self setweaponammoclip( "exoshieldhorde_equipment_mp", var_0 + 1 );
 }
 
 hordeaddcompaniondrone( var_0, var_1, var_2 )
@@ -1091,7 +1091,7 @@ handlerdronethink( var_0, var_1, var_2 )
         var_0 waittill( "death" );
 
     self.maxhealth = 1;
-    self _meth_8075( level.trackingdronesettings.sound_lock );
+    self playloopsound( level.trackingdronesettings.sound_lock );
     self notify( "leaving" );
     var_3 = maps\mp\gametypes\_horde_util::hordegetclosesthealthyplayer( self.origin );
 
@@ -1101,13 +1101,13 @@ handlerdronethink( var_0, var_1, var_2 )
         return;
     }
 
-    self _meth_83F9( var_3, ( 0, 0, 72 ) );
+    self setdronegoalpos( var_3, ( 0, 0, 72 ) );
     thread handlerdronedetonate( var_3 );
     common_scripts\utility::waittill_any_timeout( 10, "detonate" );
-    self _meth_80AB();
+    self stoploopsound();
     self playsound( "drone_warning_beap" );
     wait 1.4;
-    self entityradiusdamage( self.origin, 256, 200, 25, self, "MOD_EXPLOSIVE" );
+    self radiusdamage( self.origin, 256, 200, 25, self, "MOD_EXPLOSIVE" );
     thread maps\mp\_tracking_drone::trackingdroneexplode();
 }
 
@@ -1209,7 +1209,7 @@ monitoronlydrones()
                     }
 
                     var_3 = 0;
-                    var_4 = var_2 _meth_830C();
+                    var_4 = var_2 getweaponslistprimaries();
 
                     foreach ( var_6 in var_4 )
                     {
@@ -1260,7 +1260,7 @@ updateoutlines( var_0 )
     foreach ( var_2 in level.carepackages )
     {
         if ( isdefined( var_2.outlinecolor ) )
-            var_2.friendlymodel _meth_83FA( var_2.outlinecolor, 0 );
+            var_2.friendlymodel hudoutlineenable( var_2.outlinecolor, 0 );
     }
 
     wait 0.05;
@@ -1271,33 +1271,33 @@ updateoutlines( var_0 )
     foreach ( var_5 in level.characters )
     {
         if ( isdefined( var_5.outlinecolor ) )
-            var_5 _meth_83FA( var_5.outlinecolor, 0 );
+            var_5 hudoutlineenable( var_5.outlinecolor, 0 );
     }
 
     foreach ( var_8 in level.flying_attack_drones )
     {
         if ( isdefined( var_8.lasttwoenemies ) )
         {
-            var_8 _meth_83FA( level.enemyoutlinecolor, 0 );
-            var_8.droneturret _meth_83FA( level.enemyoutlinecolor, 0 );
+            var_8 hudoutlineenable( level.enemyoutlinecolor, 0 );
+            var_8.droneturret hudoutlineenable( level.enemyoutlinecolor, 0 );
             continue;
         }
 
-        var_8 _meth_83FA( level.enemyoutlinecolor, 1 );
-        var_8.droneturret _meth_83FA( level.enemyoutlinecolor, 1 );
+        var_8 hudoutlineenable( level.enemyoutlinecolor, 1 );
+        var_8.droneturret hudoutlineenable( level.enemyoutlinecolor, 1 );
     }
 
     foreach ( var_11 in level.spawnedwarbirds )
     {
         if ( isdefined( var_11.lasttwoenemies ) )
         {
-            var_11 _meth_83FA( level.enemyoutlinecolor, 0 );
-            var_11.warbirdturret _meth_83FA( level.enemyoutlinecolor, 0 );
+            var_11 hudoutlineenable( level.enemyoutlinecolor, 0 );
+            var_11.warbirdturret hudoutlineenable( level.enemyoutlinecolor, 0 );
             continue;
         }
 
-        var_11 _meth_83FA( level.enemyoutlinecolor, 1 );
-        var_11.warbirdturret _meth_83FA( level.enemyoutlinecolor, 1 );
+        var_11 hudoutlineenable( level.enemyoutlinecolor, 1 );
+        var_11.warbirdturret hudoutlineenable( level.enemyoutlinecolor, 1 );
     }
 
     if ( isdefined( level.hordearmories ) )
@@ -1322,7 +1322,7 @@ updateobjectiveui( var_0 )
 
         if ( level.objdefend )
         {
-            var_0 _meth_82FB( "ui_horde_count_type", "horde_defend" );
+            var_0 setclientomnvar( "ui_horde_count_type", "horde_defend" );
             setomnvar( "ui_horde_objcount_1", level.currentdefendloc.killcount );
             setomnvar( "ui_horde_objmax_1", level.horde_defend_killcount );
         }
@@ -1333,19 +1333,19 @@ updateobjectiveui( var_0 )
             if ( level.objintel )
                 var_1 = "horde_intel";
 
-            var_0 _meth_82FB( "ui_horde_count_type", var_1 );
+            var_0 setclientomnvar( "ui_horde_count_type", var_1 );
             setomnvar( "ui_horde_objcount_1", level.hordecollected );
             setomnvar( "ui_horde_objmax_1", level.horde_collect_count );
         }
         else if ( level.objdefuse )
         {
-            var_0 _meth_82FB( "ui_horde_count_type", "horde_defuse" );
+            var_0 setclientomnvar( "ui_horde_count_type", "horde_defuse" );
             setomnvar( "ui_horde_objcount_1", level.hordedefused );
             setomnvar( "ui_horde_objmax_1", level.horde_defuse_count );
         }
         else if ( level.objuplink )
         {
-            var_0 _meth_82FB( "ui_horde_count_type", "horde_uplink" );
+            var_0 setclientomnvar( "ui_horde_count_type", "horde_uplink" );
             setomnvar( "ui_horde_objcount_1", level.horde_ball_score );
             setomnvar( "ui_horde_objmax_1", level.horde_ball_score_count );
         }
@@ -1357,7 +1357,7 @@ hordesetcharactermodel( var_0, var_1 )
     if ( getdvarint( "horde_set_character_models" ) == 1 || maps\mp\_utility::getmapname() == "mp_prison_z" && issubstr( var_0, "zombie" ) )
     {
         self detachall();
-        self _meth_80B1( var_0 );
+        self setmodel( var_0 );
 
         if ( isdefined( var_1 ) )
         {
@@ -1374,7 +1374,7 @@ ammorefillprimary()
 
     for (;;)
     {
-        self _meth_8332( self.primaryweapon );
+        self givemaxammo( self.primaryweapon );
         wait 12;
     }
 }
@@ -1386,7 +1386,7 @@ ammorefillsecondary()
 
     for (;;)
     {
-        self _meth_8332( self.secondaryweapon );
+        self givemaxammo( self.secondaryweapon );
         wait 8;
     }
 }
@@ -1543,7 +1543,7 @@ runhordeuplink()
     {
         var_1 thread maps\mp\gametypes\_hud_message::splashnotify( "horde_obj_uplink" );
         var_1 maps\mp\_utility::leaderdialogonplayer( "coop_gdn_satellite_start", "horde", 1 );
-        var_1 _meth_82FB( "ui_horde_count_type", "horde_uplink" );
+        var_1 setclientomnvar( "ui_horde_count_type", "horde_uplink" );
     }
 
     level.horde_ball_score_count = int( min( 10, 3 + 1 * ( maps\mp\gametypes\_horde_util::getnumplayers() - 1 ) ) );
@@ -1625,7 +1625,7 @@ runhordedefend()
     {
         var_1 thread maps\mp\gametypes\_hud_message::splashnotify( "horde_obj_defend" );
         var_1 maps\mp\_utility::leaderdialogonplayer( "coop_gdn_hardpoint", "horde", 1 );
-        var_1 _meth_82FB( "ui_horde_count_type", "horde_defend" );
+        var_1 setclientomnvar( "ui_horde_count_type", "horde_defend" );
     }
 
     if ( !isdefined( level.hordedefendlocs ) || level.hordedefendlocs.size < 1 )
@@ -1696,17 +1696,17 @@ hordedefendenemyoutline( var_0, var_1 )
             if ( distance( var_0.origin, var_1.origin ) < 800 )
             {
                 if ( level.currentaliveenemycount < 3 )
-                    var_3 _meth_8420( var_0, 4, 0 );
+                    var_3 hudoutlineenableforclient( var_0, 4, 0 );
                 else
-                    var_3 _meth_8420( var_0, 4, 1 );
+                    var_3 hudoutlineenableforclient( var_0, 4, 1 );
 
                 continue;
             }
 
             if ( level.currentaliveenemycount < 3 )
-                var_3 _meth_8420( var_0, level.enemyoutlinecolor, 0 );
+                var_3 hudoutlineenableforclient( var_0, level.enemyoutlinecolor, 0 );
             else
-                var_3 _meth_8421( var_0 );
+                var_3 hudoutlinedisableforclient( var_0 );
 
             var_3.outlinecolor = level.enemyoutlinecolor;
         }
@@ -1718,11 +1718,11 @@ hordedefendenemyoutline( var_0, var_1 )
     {
         if ( level.currentaliveenemycount < 3 )
         {
-            var_3 _meth_8420( var_0, level.enemyoutlinecolor, 0 );
+            var_3 hudoutlineenableforclient( var_0, level.enemyoutlinecolor, 0 );
             continue;
         }
 
-        var_3 _meth_8421( var_0 );
+        var_3 hudoutlinedisableforclient( var_0 );
     }
 }
 
@@ -1737,7 +1737,7 @@ hordeinitdefuseobjects()
         level.hordebombs[var_0] initdefuseobject();
         level.hordebombs[var_0] makeusable();
         var_1 = &"PLATFORM_HOLD_TO_DEFUSE_EXPLOSIVES";
-        level.hordebombs[var_0] _meth_80DB( var_1 );
+        level.hordebombs[var_0] sethintstring( var_1 );
     }
 }
 
@@ -1786,7 +1786,7 @@ runhordedefuse()
 
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_82FB( "ui_horde_count_type", "horde_defuse" );
+        var_1 setclientomnvar( "ui_horde_count_type", "horde_defuse" );
         var_1 thread maps\mp\gametypes\_hud_message::splashnotify( "horde_obj_defuse" );
         var_1 maps\mp\_utility::leaderdialogonplayer( "coop_gdn_empbombsshowingonsensors", "horde", 1 );
     }
@@ -1811,7 +1811,7 @@ runhordedefuse()
         level.hordedefuseobjects[var_3].origin = level.hordedefuselocs[var_3].origin;
         level.hordedefuseobjects[var_3].visuals[0].origin = level.hordedefuselocs[var_3].origin;
         level.hordedefuseobjects[var_3].visuals[0].angles = level.hordedefuselocs[var_3].angles;
-        level.hordedefuseobjects[var_3].visuals[0] _meth_83FA( 4, 0 );
+        level.hordedefuseobjects[var_3].visuals[0] hudoutlineenable( 4, 0 );
         level.hordedefuseobjects[var_3].visuals[0] show();
         level.hordedefuseobjects[var_3].visuals[0] makeusable();
         level.hordedefuseobjects[var_3].visuals[0] thread defusethink();
@@ -1943,7 +1943,7 @@ runhordecollect()
 
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_82FB( "ui_horde_count_type", "horde_collect" );
+        var_1 setclientomnvar( "ui_horde_count_type", "horde_collect" );
         var_1 thread maps\mp\gametypes\_hud_message::splashnotify( "horde_obj_collect" );
         var_1 maps\mp\_utility::leaderdialogonplayer( "coop_gdn_dogtagsareinthefield", "horde", 1 );
     }
@@ -2017,7 +2017,7 @@ runhordeintel()
     foreach ( var_1 in level.players )
     {
         var_1 thread maps\mp\gametypes\_hud_message::splashnotify( "horde_obj_intel" );
-        var_1 _meth_82FB( "ui_horde_count_type", "horde_intel" );
+        var_1 setclientomnvar( "ui_horde_count_type", "horde_intel" );
         var_1 maps\mp\_utility::leaderdialogonplayer( "coop_gdn_hostilesincomingsearchdowned", "horde", 1 );
     }
 
@@ -2070,11 +2070,11 @@ checkdefendkill( var_0, var_1 )
             {
                 var_1.owner thread maps\mp\gametypes\_rank::xppointspopup( "horde_defend", 150 );
                 level thread maps\mp\gametypes\_horde_util::hordeupdatescore( var_1.owner, 150 );
-                var_1.owner _meth_82FB( "ui_horde_count", 1 );
+                var_1.owner setclientomnvar( "ui_horde_count", 1 );
             }
             else if ( isdefined( var_1 ) )
             {
-                var_1 _meth_82FB( "ui_horde_count", 1 );
+                var_1 setclientomnvar( "ui_horde_count", 1 );
                 var_1 thread maps\mp\gametypes\_rank::xppointspopup( "horde_defend", 150 );
                 level thread maps\mp\gametypes\_horde_util::hordeupdatescore( var_1, 150 );
             }
@@ -2142,7 +2142,7 @@ failureeventemp()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_8447( "ui_horde_armory_type" );
+        var_2 = var_1 getclientomnvar( "ui_horde_armory_type" );
 
         if ( var_2 != "killstreak_armory" && var_2 != "perk_armory" )
             maps\mp\gametypes\_horde_armory::hordecleanuparmory( var_1 );
@@ -2183,7 +2183,7 @@ failureeventsmokethink()
         if ( !isdefined( var_3 ) )
             continue;
 
-        _func_071( "smoke_grenade_mp", var_3.origin, ( 0, 0, 0 ), 1 );
+        magicgrenademanual( "smoke_grenade_mp", var_3.origin, ( 0, 0, 0 ), 1 );
         var_0++;
     }
 }
@@ -2262,9 +2262,9 @@ failureeventmissileburstthink( var_0, var_1, var_2, var_3, var_4, var_5, var_6, 
             if ( var_1 )
                 var_13 thread hordespawnnanoswarm();
 
-            var_13 _meth_81DA( var_12 );
-            var_13 _meth_81DC();
-            var_13 _meth_8464( 1 );
+            var_13 missile_settargetpos( var_12 );
+            var_13 missile_setflightmodedirect();
+            var_13 setmissileminimapvisible( 1 );
             wait(randomfloatrange( var_4, var_5 ));
         }
 
@@ -2277,7 +2277,7 @@ hordespawnnanoswarm()
     self endon( "cancel_swarm" );
     common_scripts\utility::waittill_any( "death", "startSwarm" );
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "tag_origin" );
+    var_0 setmodel( "tag_origin" );
     var_1 = spawn( "script_model", var_0.origin );
     var_0.killcament = var_1;
     var_2 = level._missile_strike_setting["Particle_FX"].gas;
@@ -2286,7 +2286,7 @@ hordespawnnanoswarm()
     foreach ( var_4 in level.players )
         playfxontagforclients( var_2, var_0, "tag_origin", var_4 );
 
-    badplace_cylinder( "gas_zone" + var_0 _meth_81B1(), 20, var_0.origin, 200, 128, level.enemyteam );
+    badplace_cylinder( "gas_zone" + var_0 getentitynumber(), 20, var_0.origin, 200, 128, level.enemyteam );
     var_0 thread failureeventmissileburstgasdamage();
     wait 20;
     var_0.killcament delete();
@@ -2301,7 +2301,7 @@ failureeventmissileburstgasdamage()
 
     for (;;)
     {
-        self.killcament entityradiusdamage( self.origin, var_0, var_1, var_1, undefined, "MOD_TRIGGER_HURT", "killstreak_strike_missile_gas_mp", 0 );
+        self.killcament radiusdamage( self.origin, var_0, var_1, var_1, undefined, "MOD_TRIGGER_HURT", "killstreak_strike_missile_gas_mp", 0 );
         wait 1;
     }
 }
@@ -2410,15 +2410,15 @@ failureeventpistolsonlythink( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
-    var_1 = self _meth_8447( "ui_horde_player_class" );
-    var_2 = self _meth_8312();
+    var_1 = self getclientomnvar( "ui_horde_player_class" );
+    var_2 = self getcurrentprimaryweapon();
 
     if ( maps\mp\_utility::isusingremote() )
         var_2 = self.hordeclassweapons[var_1]["primary"];
 
     if ( var_2 == "iw5_carrydrone_mp" )
     {
-        var_3 = self _meth_830C();
+        var_3 = self getweaponslistprimaries();
         var_2 = var_3[0];
     }
 
@@ -2439,26 +2439,26 @@ handlejammedpistols( var_0 )
     var_1 = maps\mp\gametypes\_horde_laststand::hordelaststandweapon();
 
     if ( !maps\mp\gametypes\_horde_laststand::haslaststandweapon( var_1 ) )
-        self _meth_830E( var_1 );
+        self giveweapon( var_1 );
 
     if ( !isdefined( self.underwater ) && !maps\mp\gametypes\_horde_util::isplayerinlaststand( self ) )
-        self _meth_8316( var_1 );
+        self switchtoweaponimmediate( var_1 );
 
-    self _meth_8321();
-    var_2 = self _meth_82F9( var_0 );
+    self disableweaponswitch();
+    var_2 = self setweaponammostock( var_0 );
     var_3 = weaponclipsize( var_0 );
 
     if ( var_2 < var_3 )
-        self _meth_82F7( var_0, var_3 );
+        self setweaponammostock( var_0, var_3 );
 
     var_4 = ( self.weaponjamcompletiontime - gettime() ) * 0.001;
     wait(var_4);
 
     if ( !isdefined( self.underwater ) && !maps\mp\gametypes\_horde_util::isplayerinlaststand( self ) )
-        self _meth_8322();
+        self enableweaponswitch();
 
     if ( !self.hadlaststandweapon )
-        self _meth_830F( var_1 );
+        self takeweapon( var_1 );
 }
 
 failureeventpistolsreenabled( var_0 )
@@ -2479,7 +2479,7 @@ failurepistolshandleremotereturn()
     self waittill( "stopped_using_remote" );
 
     if ( isdefined( level.hordeweaponsjammed ) && level.hordeweaponsjammed )
-        self _meth_8316( "iw5_titan45_mp_xmags" );
+        self switchtoweaponimmediate( "iw5_titan45_mp_xmags" );
 }
 
 closeclassmenu()
@@ -2538,7 +2538,7 @@ notifyroundover()
         if ( level.currentroundnumber == 10 && maps\mp\_utility::getmapname() == "mp_prison_z" )
         {
             level notify( "zombies_start" );
-            _func_260( 1 );
+            setnojiptime( 1 );
             thread maps\mp\gametypes\_horde_zombies::runhordezombies();
         }
         else
@@ -2582,7 +2582,7 @@ hordecustomgiveloadout( var_0 )
 setupplayerafterrevivefromspectator()
 {
     self notify( "revive" );
-    var_0 = self _meth_8447( "ui_horde_player_class" );
+    var_0 = self getclientomnvar( "ui_horde_player_class" );
     var_1 = level.classsettings[var_0]["speed"];
     self.laststand = undefined;
     self.inlaststand = 0;
@@ -2596,14 +2596,14 @@ setupplayerafterrevivefromspectator()
     if ( maps\mp\_utility::_hasperk( "specialty_lightweight" ) )
         self.movespeedscaler = maps\mp\_utility::lightweightscalar();
 
-    self _meth_83FB();
-    self _meth_82C7();
-    self _meth_817D( "stand" );
+    self hudoutlinedisable();
+    self laststandrevive();
+    self setstance( "stand" );
     thread maps\mp\gametypes\_horde_util::hordeallowallboost( 1, "laststand" );
-    self _meth_8130( 1 );
-    self _meth_831E();
+    self allowmelee( 1 );
+    self enableweapons();
     common_scripts\utility::_enableusability();
-    self _meth_8320();
+    self enableoffhandweapons();
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     maps\mp\_utility::clearlowermessage( "last_stand" );
     maps\mp\_utility::giveperk( "specialty_pistoldeath", 0 );
@@ -2645,22 +2645,22 @@ respawnplayer( var_0 )
         var_0.alreadyaddedtoalivecount = 1;
         var_0 maps\mp\killstreaks\_killstreaks::clearkillstreaks( 1 );
         var_0 notify( "horde_end_spectate" );
-        var_1 = var_0 _meth_8447( "ui_horde_player_class" );
+        var_1 = var_0 getclientomnvar( "ui_horde_player_class" );
 
         if ( var_1 == "none" )
         {
             var_1 = "light";
-            var_0 _meth_82FB( "ui_horde_player_class", var_1 );
+            var_0 setclientomnvar( "ui_horde_player_class", var_1 );
             var_0.classmaxhealth = var_0.classsettings[var_1]["classhealth"];
             var_2 = var_0.hordeclassweapons[var_1]["secondary"];
             var_0.primaryweaponsammo[var_2]["ammoclip"] = 15;
             var_0.primaryweaponsammo[var_2]["ammostock"] = 90;
-            var_0 _meth_82F6( var_2, 15 );
+            var_0 setweaponammoclip( var_2, 15 );
             var_0.classsettings[var_1]["battery"] = level.classsettings[var_1]["battery"];
             var_0.lasttacticalweapon = var_0.classsettings[var_1]["exoAbility"];
             wait 0.1;
 
-            if ( var_0 _meth_8447( "horde_first_spawn" ) == 1 )
+            if ( var_0 getclientomnvar( "horde_first_spawn" ) == 1 )
                 thread maps\mp\gametypes\_horde_armory::hordeclassrunfirstspawn( var_0 );
         }
 
@@ -2672,19 +2672,19 @@ respawnplayer( var_0 )
             resetwateronrevivefromspectator();
 
         var_0 setupplayerafterrevivefromspectator();
-        var_0 _meth_8344( var_0.lastlethalweapon );
-        var_0 _meth_830E( var_0.lastlethalweapon );
-        var_0 _meth_8319( var_0.lasttacticalweapon );
-        var_0 _meth_830E( var_0.lasttacticalweapon );
-        var_0 _meth_82F6( var_0.lastlethalweapon, var_0.lastlethalweaponammoclip );
+        var_0 setlethalweapon( var_0.lastlethalweapon );
+        var_0 giveweapon( var_0.lastlethalweapon );
+        var_0 settacticalweapon( var_0.lasttacticalweapon );
+        var_0 giveweapon( var_0.lasttacticalweapon );
+        var_0 setweaponammoclip( var_0.lastlethalweapon, var_0.lastlethalweaponammoclip );
         var_0 maps\mp\gametypes\_horde_armory::armorygiveexoability( var_0.lasttacticalweapon, 1 );
         var_0 maps\mp\_utility::playerallowdodge( var_0.classsettings[var_1]["allowDodge"], "class" );
         var_0 maps\mp\_utility::playerallowpowerslide( var_0.classsettings[var_1]["allowSlide"], "class" );
         var_0 thread addlastperks();
-        var_3 = var_0 _meth_8447( "ui_horde_player_class" );
+        var_3 = var_0 getclientomnvar( "ui_horde_player_class" );
         maps\mp\gametypes\_horde_armory::hordegiveability( var_0, var_3 );
-        var_0 _meth_82FB( "ks_count1", 0 );
-        var_0 _meth_82FB( "ks_count_updated", 1 );
+        var_0 setclientomnvar( "ks_count1", 0 );
+        var_0 setclientomnvar( "ks_count_updated", 1 );
         var_0.maxhealth = var_0.classmaxhealth + var_0.hordearmor * 40;
         var_0.health = var_0.maxhealth;
 
@@ -2733,13 +2733,13 @@ updateachievements()
     if ( level.hordelevelflip > 1 )
     {
         foreach ( var_1 in level.players )
-            var_1 _meth_80F9( "COOP_EXO_SURVIVOR" );
+            var_1 giveachievement( "COOP_EXO_SURVIVOR" );
     }
 
     if ( level.hordelevelflip > 2 )
     {
         foreach ( var_1 in level.players )
-            var_1 _meth_80F9( "COOP_FLIP_FLOP" );
+            var_1 giveachievement( "COOP_FLIP_FLOP" );
     }
 }
 
@@ -2830,7 +2830,7 @@ updatehordesettings()
     }
 
     if ( level.currentroundnumber > 4 )
-        _func_25F( 1 );
+        setnojipscore( 1 );
 
     foreach ( var_3 in level.players )
     {
@@ -2893,9 +2893,9 @@ hordeupdateroundstats()
 
     foreach ( var_2 in level.players )
     {
-        var_2 _meth_82FB( "ui_horde_round_kills", var_2.roundkills );
-        var_2 _meth_82FB( "ui_horde_round_headshots", var_2.roundheadshots );
-        var_2 _meth_82FB( "ui_horde_round_points", var_2.roundupgradepoints );
+        var_2 setclientomnvar( "ui_horde_round_kills", var_2.roundkills );
+        var_2 setclientomnvar( "ui_horde_round_headshots", var_2.roundheadshots );
+        var_2 setclientomnvar( "ui_horde_round_points", var_2.roundupgradepoints );
     }
 
     if ( getomnvar( "ui_horde_show_objstatus" ) > 0 )
@@ -3087,7 +3087,7 @@ shownextroundmessage()
     horderoundintermission();
 
     foreach ( var_1 in level.players )
-        var_1 _meth_82FB( "ui_horde_show_readyup", 0 );
+        var_1 setclientomnvar( "ui_horde_show_readyup", 0 );
 
     setomnvar( "ui_horde_round_number", level.currentroundnumber );
     level thread respawneliminatedplayers();
@@ -3135,7 +3135,7 @@ horderoundintermission()
         sethudtimer( "start_time", getroundintermissiontimer() );
 
         foreach ( var_1 in level.players )
-            var_1 _meth_82FB( "ui_horde_show_readyup", 1 );
+            var_1 setclientomnvar( "ui_horde_show_readyup", 1 );
     }
 
     if ( level.currentroundnumber == 1 )
@@ -3148,7 +3148,7 @@ horderoundintermission()
         level notify( "wave_final_countdown" );
 
         foreach ( var_1 in level.players )
-            var_1 _meth_82FB( "ui_horde_show_readyup", 0 );
+            var_1 setclientomnvar( "ui_horde_show_readyup", 0 );
 
         hordeintermissionfinalcountdown();
         thread hordeintermissionclearcountdown();
@@ -3245,7 +3245,7 @@ hordemonitordoubletap( var_0, var_1 )
                         level.players_ready++;
 
                         if ( level.players_ready < level.players.size )
-                            var_0 _meth_82FB( "ui_horde_show_readyup", 2 );
+                            var_0 setclientomnvar( "ui_horde_show_readyup", 2 );
 
                         var_0 notify( "ready" );
                     }
@@ -3405,7 +3405,7 @@ watchforhostmigrationsetround()
                     continue;
 
                 if ( !isagent( var_2 ) )
-                    var_2 _meth_82FB( "ui_horde_update_perk", var_2.horde_perks[var_4]["index"] );
+                    var_2 setclientomnvar( "ui_horde_update_perk", var_2.horde_perks[var_4]["index"] );
 
                 wait 0.05;
             }
@@ -3423,13 +3423,13 @@ watchforhostmigrationselectclass()
 
         foreach ( var_1 in level.players )
         {
-            var_2 = var_1 _meth_8447( "ui_horde_show_armory" );
-            var_3 = var_1 _meth_8447( "ui_horde_armory_type" );
+            var_2 = var_1 getclientomnvar( "ui_horde_show_armory" );
+            var_3 = var_1 getclientomnvar( "ui_horde_armory_type" );
 
             if ( var_2 && var_3 != "killstreak_armory" && var_3 != "perk_armory" )
             {
-                var_1 _meth_82FB( "ui_horde_show_armory", 0 );
-                var_1 _meth_832B();
+                var_1 setclientomnvar( "ui_horde_show_armory", 0 );
+                var_1 enableusability();
             }
         }
 
@@ -3439,8 +3439,8 @@ watchforhostmigrationselectclass()
         {
             if ( !var_1.classchosen )
             {
-                var_1 _meth_82FB( "ui_horde_armory_type", "class" );
-                var_1 _meth_82FB( "ui_horde_show_armory", 1 );
+                var_1 setclientomnvar( "ui_horde_armory_type", "class" );
+                var_1 setclientomnvar( "ui_horde_show_armory", 1 );
             }
         }
     }
@@ -3448,7 +3448,7 @@ watchforhostmigrationselectclass()
 
 getweaponfxheight( var_0 )
 {
-    var_1 = var_0 _meth_817C();
+    var_1 = var_0 getstance();
 
     if ( var_1 == "stand" )
         return 48;
@@ -3524,13 +3524,13 @@ cullbadjuggspawns( var_0 )
     {
         foreach ( var_2 in var_0 )
         {
-            if ( maps\mp\_utility::getmapname() == "mp_recovery" && ( _func_220( var_2.origin, ( -631, -313.2, 38 ) ) < 4096 || _func_220( var_2.origin, ( -1276, -129, 148 ) ) < 4096 ) )
+            if ( maps\mp\_utility::getmapname() == "mp_recovery" && ( distance2dsquared( var_2.origin, ( -631, -313.2, 38 ) ) < 4096 || distance2dsquared( var_2.origin, ( -1276, -129, 148 ) ) < 4096 ) )
                 var_0 = common_scripts\utility::array_remove( var_0, var_2 );
 
-            if ( maps\mp\_utility::getmapname() == "mp_refraction" && _func_220( var_2.origin, ( -2356, -1208, 2304 ) ) < 4096 )
+            if ( maps\mp\_utility::getmapname() == "mp_refraction" && distance2dsquared( var_2.origin, ( -2356, -1208, 2304 ) ) < 4096 )
                 var_0 = common_scripts\utility::array_remove( var_0, var_2 );
 
-            if ( maps\mp\_utility::getmapname() == "mp_comeback" && ( _func_220( var_2.origin, ( 814, -945, 239 ) ) < 4096 || _func_220( var_2.origin, ( 474, 788, 184 ) ) < 4096 ) )
+            if ( maps\mp\_utility::getmapname() == "mp_comeback" && ( distance2dsquared( var_2.origin, ( 814, -945, 239 ) ) < 4096 || distance2dsquared( var_2.origin, ( 474, 788, 184 ) ) < 4096 ) )
                 var_0 = common_scripts\utility::array_remove( var_0, var_2 );
         }
     }
@@ -3544,7 +3544,7 @@ cullbaddogspawns( var_0 )
     {
         foreach ( var_2 in var_0 )
         {
-            if ( maps\mp\_utility::getmapname() == "mp_lab2" && _func_220( var_2.origin, ( -529, 1378, 499 ) ) < 4096 )
+            if ( maps\mp\_utility::getmapname() == "mp_lab2" && distance2dsquared( var_2.origin, ( -529, 1378, 499 ) ) < 4096 )
                 var_0 = common_scripts\utility::array_remove( var_0, var_2 );
         }
     }
@@ -3847,8 +3847,8 @@ modifyplayerdamagehorde( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7,
                     if ( isdefined( var_0.isspectator ) && var_0.isspectator )
                         return 0;
 
-                    self _meth_83FB();
-                    self _meth_831D();
+                    self hudoutlinedisable();
+                    self disableweapons();
                     self.movespeedscaler = 0.05;
 
                     if ( level.players.size > 1 )
@@ -3978,7 +3978,7 @@ monitorpointnotifylua( var_0 )
         if ( var_0.pointnotifylua.size > 0 )
         {
             if ( !isagent( var_0 ) )
-                var_0 _meth_82FB( "ui_horde_award_points", var_0.pointnotifylua[var_0.pointnotifylua.size - 1] );
+                var_0 setclientomnvar( "ui_horde_award_points", var_0.pointnotifylua[var_0.pointnotifylua.size - 1] );
 
             var_0.pointnotifylua = removelastelement( var_0.pointnotifylua );
         }
@@ -3995,10 +3995,10 @@ monitorbackbutton( var_0 )
 
     for (;;)
     {
-        if ( var_0 _meth_824C( "BUTTON_BACK" ) )
+        if ( var_0 buttonpressed( "BUTTON_BACK" ) )
         {
             if ( var_0 maps\mp\_utility::isusingremote() && var_0.usingremote == "horde_player_drone" || !var_0 maps\mp\_utility::isusingremote() )
-                var_0 _meth_82FB( "ui_horde_show_armory", 1 );
+                var_0 setclientomnvar( "ui_horde_show_armory", 1 );
         }
 
         wait 0.05;
@@ -4040,7 +4040,7 @@ removeperkhud( var_0 )
 {
     if ( isplayer( var_0 ) && !isagent( var_0 ) )
     {
-        var_0 _meth_82FB( "ui_horde_update_perk", 0 );
+        var_0 setclientomnvar( "ui_horde_update_perk", 0 );
         var_0.horde_perks = [];
     }
 }
@@ -4089,12 +4089,12 @@ chancetospawnpickup( var_0 )
 spawnintelpickup( var_0 )
 {
     var_1 = spawn( "script_model", var_0 );
-    var_1 _meth_80B1( "greece_drone_control_pad" );
+    var_1 setmodel( "greece_drone_control_pad" );
     var_1.angles = ( 0, 0, 0 ) + ( randomint( 360 ), randomint( 360 ), randomint( 360 ) );
-    var_1 _meth_8276( var_1.origin, ( 0, 0, -1 ) );
+    var_1 physicslaunchserver( var_1.origin, ( 0, 0, -1 ) );
     var_1 makeusable();
-    var_1 _meth_80DB( &"HORDE_PICKUP_INTEL" );
-    var_1 _meth_83FA( 4, 0 );
+    var_1 sethintstring( &"HORDE_PICKUP_INTEL" );
+    var_1 hudoutlineenable( 4, 0 );
     var_2 = maps\mp\gametypes\_gameobjects::getnextobjid();
     objective_add( var_2, "active", var_1.origin, "objective_sm" );
     var_1.objectiveindex = var_2;
@@ -4103,7 +4103,7 @@ spawnintelpickup( var_0 )
     var_3 playlocalsound( "mp_killconfirm_tags_pickup" );
     level.hordecollected++;
     setomnvar( "ui_horde_objcount_1", level.hordecollected );
-    var_3 _meth_82FB( "ui_horde_count", 1 );
+    var_3 setclientomnvar( "ui_horde_count", 1 );
     var_3 thread maps\mp\gametypes\_rank::xppointspopup( "horde_collect", 500 );
     level thread maps\mp\gametypes\_horde_util::hordeupdatescore( var_3, 500 );
     level.currentpointtotal += 500;
@@ -4127,10 +4127,10 @@ spawnpickup( var_0, var_1, var_2, var_3, var_4 )
         var_3 = 15;
 
     var_5[0] = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5[0] _meth_80B1( var_1 );
+    var_5[0] setmodel( var_1 );
 
     if ( isdefined( var_4 ) && var_4 )
-        var_5[0] _meth_83FA( 1, 0 );
+        var_5[0] hudoutlineenable( 1, 0 );
 
     var_6 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
     var_7 = maps\mp\gametypes\_gameobjects::createuseobject( level.playerteam, var_6, var_5, ( 0, 0, 16 ), 1 );
@@ -4162,11 +4162,11 @@ pickupbounce()
 
     for (;;)
     {
-        var_0 _meth_82AE( var_2, var_3, 0.15, 0.15 );
-        var_0 _meth_82B7( 180, var_3 );
+        var_0 moveto( var_2, var_3, 0.15, 0.15 );
+        var_0 rotateyaw( 180, var_3 );
         wait(var_3);
-        var_0 _meth_82AE( var_1, var_3, 0.15, 0.15 );
-        var_0 _meth_82B7( 180, var_3 );
+        var_0 moveto( var_1, var_3, 0.15, 0.15 );
+        var_0 rotateyaw( 180, var_3 );
         wait(var_3);
     }
 }
@@ -4223,7 +4223,7 @@ collectpickup( var_0 )
     var_0 playlocalsound( "mp_killconfirm_tags_pickup" );
     level.hordecollected++;
     setomnvar( "ui_horde_objcount_1", level.hordecollected );
-    var_0 _meth_82FB( "ui_horde_count", 1 );
+    var_0 setclientomnvar( "ui_horde_count", 1 );
     var_0 thread maps\mp\gametypes\_rank::xppointspopup( "horde_collect", 200 );
     level thread maps\mp\gametypes\_horde_util::hordeupdatescore( var_0, 200 );
     level.currentpointtotal += 200;
@@ -4417,8 +4417,8 @@ hordeloadwaveweapons()
 
     foreach ( var_5 in level.players )
     {
-        var_5 _meth_8511( level.hordewaveweapons );
-        var_5 _meth_8511( [ "iw5_microdronelauncher_mp" ] );
+        var_5 loadweapons( level.hordewaveweapons );
+        var_5 loadweapons( [ "iw5_microdronelauncher_mp" ] );
     }
 }
 
@@ -4467,7 +4467,7 @@ monitorplayercamping( var_0 )
         if ( !isdefined( var_5 ) )
             continue;
 
-        var_5 _meth_848F( 0 );
+        var_5 vehicle_setminimapvisible( 0 );
         var_5.health = 50;
         var_5 camperdroneseektarget( var_0 );
     }
@@ -4529,17 +4529,17 @@ camperdroneseektarget( var_0 )
     level endon( "game_ended" );
     self endon( "death" );
     self notify( "leaving" );
-    self _meth_83F9( var_0, ( 0, 0, 72 ) );
+    self setdronegoalpos( var_0, ( 0, 0, 72 ) );
     thread handlerdronedetonate( var_0 );
     thread hordespawnnanoswarm();
     thread camperdronecancel( var_0, var_0.origin );
     common_scripts\utility::waittill_any_timeout( 20, "detonate" );
-    self _meth_80AB();
+    self stoploopsound();
     self playsound( "drone_warning_beap" );
     wait 1.4;
     self notify( "startSwarm" );
     waitframe();
-    self entityradiusdamage( self.origin, 256, 100, 25, self, "MOD_EXPLOSIVE" );
+    self radiusdamage( self.origin, 256, 100, 25, self, "MOD_EXPLOSIVE" );
     thread maps\mp\_tracking_drone::trackingdroneexplode();
 }
 

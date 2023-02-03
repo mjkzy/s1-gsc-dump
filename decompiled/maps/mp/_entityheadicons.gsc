@@ -124,8 +124,8 @@ setheadicon( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_
 
         var_13.archived = var_5;
         var_13.alpha = 0.85;
-        var_13 _meth_80CC( var_1, var_3, var_4 );
-        var_13 _meth_80D8( var_7, var_8, var_9, var_10 );
+        var_13 setshader( var_1, var_3, var_4 );
+        var_13 setwaypoint( var_7, var_8, var_9, var_10 );
 
         if ( var_11 == "" )
         {
@@ -139,7 +139,7 @@ setheadicon( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_
             var_13.x = var_2[0];
             var_13.y = var_2[1];
             var_13.z = var_2[2];
-            var_13 _meth_80CD( self, var_11 );
+            var_13 settargetent( self, var_11 );
         }
 
         thread destroyiconsondeath();
@@ -243,8 +243,8 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
     var_6 = newteamhudelem( var_0 );
     var_6.archived = 1;
     var_6.alpha = 0.8;
-    var_6 _meth_80CC( var_5, 10, 10 );
-    var_6 _meth_80D8( 0, 0, 0, 1 );
+    var_6 setshader( var_5, 10, 10 );
+    var_6 setwaypoint( 0, 0, 0, 1 );
     self.entityheadicon = var_6;
 
     if ( !isdefined( var_3 ) )
@@ -261,7 +261,7 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
             var_6.x = self.entityheadiconoffset[0];
             var_6.y = self.entityheadiconoffset[1];
             var_6.z = self.entityheadiconoffset[2];
-            var_6 _meth_80CD( self, var_2 );
+            var_6 settargetent( self, var_2 );
         }
     }
     else
@@ -281,7 +281,7 @@ setteamheadicon( var_0, var_1, var_2, var_3 )
             var_6.x = var_8[0];
             var_6.y = var_8[1];
             var_6.z = var_8[2];
-            var_6 _meth_80CD( self, var_2 );
+            var_6 settargetent( self, var_2 );
         }
     }
 
@@ -324,8 +324,8 @@ setplayerheadicon( var_0, var_1, var_2 )
     var_5 = newclienthudelem( var_0 );
     var_5.archived = 1;
     var_5.alpha = 0.8;
-    var_5 _meth_80CC( var_4, 10, 10 );
-    var_5 _meth_80D8( 0, 0, 0, 1 );
+    var_5 setshader( var_4, 10, 10 );
+    var_5 setwaypoint( 0, 0, 0, 1 );
     self.entityheadicon = var_5;
 
     if ( var_2 == "" )
@@ -340,7 +340,7 @@ setplayerheadicon( var_0, var_1, var_2 )
         var_5.x = self.entityheadiconoffset[0];
         var_5.y = self.entityheadiconoffset[1];
         var_5.z = self.entityheadiconoffset[2];
-        var_5 _meth_80CD( self, var_2 );
+        var_5 settargetent( self, var_2 );
     }
 
     thread destroyheadiconsondeath();

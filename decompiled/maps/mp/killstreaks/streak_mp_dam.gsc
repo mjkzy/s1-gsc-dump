@@ -11,7 +11,7 @@ init()
     precacheshader( "s1_railgun_hud_reticle_meter_circ" );
     precacheshader( "s1_railgun_hud_inner_frame_edge" );
     precacheshader( "s1_railgun_hud_inner_frame_edge_right" );
-    precacheitem( "killstreak_dam_mp" );
+    precacheshellshock( "killstreak_dam_mp" );
     precachemodel( "mp_dam_large_caliber_turret" );
     level.huditem = [];
 }
@@ -20,7 +20,7 @@ tryusedamkillstreak( var_0, var_1 )
 {
     if ( isdefined( level.mp_dam_player ) )
     {
-        self iclientprintlnbold( &"MP_DAM_IN_USE" );
+        self iprintlnbold( &"MP_DAM_IN_USE" );
         return 0;
     }
 
@@ -35,7 +35,7 @@ tryusedamkillstreak( var_0, var_1 )
 
     if ( isdefined( self.controllingwarbird ) && self.controllingwarbird == 1 )
     {
-        self iclientprintlnbold( &"MP_WARBIRD_ACTIVE" );
+        self iprintlnbold( &"MP_WARBIRD_ACTIVE" );
         return 0;
     }
 
@@ -63,8 +63,8 @@ setmpdamplayer( var_0 )
         return 0;
 
     level.mp_dam_player = var_0;
-    var_0 _meth_82DD( "SwitchTurret", "weapnext" );
-    var_0 _meth_82DD( "SwitchVisionMode", "+actionslot 1" );
+    var_0 notifyonplayercommand( "SwitchTurret", "weapnext" );
+    var_0 notifyonplayercommand( "SwitchVisionMode", "+actionslot 1" );
     thread maps\mp\_utility::teamplayercardsplash( "used_mp_dam", var_0 );
     var_0 thread waitsetthermal( 1.0 );
 
@@ -88,7 +88,7 @@ cycleturretcontrol()
 
     if ( isdefined( level.damturrets ) )
     {
-        var_0 _meth_80FE( 0.2, 0.2 );
+        var_0 enableslowaim( 0.2, 0.2 );
 
         for (;;)
         {
@@ -100,27 +100,27 @@ cycleturretcontrol()
                 var_2.pers["team"] = var_0.team;
 
                 if ( level.teambased )
-                    var_2 _meth_8135( var_0.team );
+                    var_2 setturretteam( var_0.team );
 
                 var_0.turret = var_2;
-                var_2 _meth_8065( "sentry_manual" );
-                var_2 _meth_8103( var_0 );
+                var_2 setmode( "sentry_manual" );
+                var_2 setsentryowner( var_0 );
                 var_0 thread shotfired( var_2 );
 
                 if ( var_1 == 0 )
-                    var_0 _meth_807E( var_2, "tag_player", 0, 60, 30, 5, 58, 0 );
+                    var_0 playerlinkweaponviewtodelta( var_2, "tag_player", 0, 60, 30, 5, 58, 0 );
                 else
-                    var_0 _meth_807E( var_2, "tag_player", 0, 40, 50, 5, 58, 0 );
+                    var_0 playerlinkweaponviewtodelta( var_2, "tag_player", 0, 40, 50, 5, 58, 0 );
 
-                var_0 _meth_80A1( 1 );
-                var_0 _meth_80E8( var_2, 40 );
+                var_0 playerlinkedsetusebaseangleforviewclamp( 1 );
+                var_0 remotecontrolturret( var_2, 40 );
 
                 if ( !isdefined( var_2.killcament ) )
                 {
                     var_3 = ( -142, 0, 562 );
                     var_2.killcament = spawn( "script_model", var_2 gettagorigin( "tag_player" ) + var_3 );
-                    var_2.killcament _meth_834D( "explosive" );
-                    var_2.killcament _meth_804D( var_2 );
+                    var_2.killcament setscriptmoverkillcam( "explosive" );
+                    var_2.killcament linkto( var_2 );
                     var_2.killcament setcontents( 0 );
                 }
 
@@ -129,22 +129,22 @@ cycleturretcontrol()
                 if ( isdefined( self.damthermal ) && self.damthermal == 1 )
                     self thermalvisionon();
 
-                self _meth_82FB( "ui_damturret_toggle", 1 );
+                self setclientomnvar( "ui_damturret_toggle", 1 );
                 self waittill( "SwitchTurret" );
 
                 if ( isdefined( self.damthermal ) && self.damthermal == 1 )
                     self thermalvisionoff();
 
-                self _meth_82FB( "ui_damturret_toggle", 0 );
+                self setclientomnvar( "ui_damturret_toggle", 0 );
 
                 if ( isdefined( var_2.killcament ) )
                     var_2.killcament delete();
 
                 var_0 transitionturret();
-                var_0 _meth_804F();
-                var_0 _meth_80E9( var_2 );
-                var_2 _meth_8065( "manual" );
-                var_2 _meth_8106( level.damdefaultaiment );
+                var_0 unlink();
+                var_0 remotecontrolturretoff( var_2 );
+                var_2 setmode( "manual" );
+                var_2 settargetentity( level.damdefaultaiment );
             }
         }
     }
@@ -152,7 +152,7 @@ cycleturretcontrol()
 
 transitionturret()
 {
-    self _meth_82D4( "black_bw", 0.75 );
+    self visionsetnakedforplayer( "black_bw", 0.75 );
     wait 0.8;
     revertvisionsetforturretplayer( 0.5 );
 }
@@ -163,11 +163,11 @@ revertvisionsetforturretplayer( var_0 )
         var_0 = 1;
 
     if ( isdefined( level.nukedetonated ) && isdefined( level.nukevisionset ) )
-        self _meth_82D4( level.nukevisionset, var_0 );
+        self visionsetnakedforplayer( level.nukevisionset, var_0 );
     else if ( isdefined( self.usingremote ) && isdefined( self.ridevisionset ) )
-        self _meth_82D4( self.ridevisionset, var_0 );
+        self visionsetnakedforplayer( self.ridevisionset, var_0 );
     else
-        self _meth_82D4( "", var_0 );
+        self visionsetnakedforplayer( "", var_0 );
 }
 
 waitsetthermal( var_0 )
@@ -175,7 +175,7 @@ waitsetthermal( var_0 )
     self endon( "disconnect" );
     level endon( "mp_dam_player_removed" );
     wait(var_0);
-    self _meth_82D7( game["thermal_vision"], 0 );
+    self visionsetthermalforplayer( game["thermal_vision"], 0 );
     self thermalvisionfofoverlayon();
     self setblurforplayer( 1.1, 0 );
 }
@@ -202,7 +202,7 @@ creatempdamkillstreakclock()
     self endon( "mp_dam_player_removed" );
     self.dam_clock = maps\mp\gametypes\_hud_util::createtimer( "hudsmall", 0.9 );
     self.dam_clock maps\mp\gametypes\_hud_util::setpoint( "CENTER", "CENTER", 0, -145 );
-    self.dam_clock _meth_80CF( level.dam_killstreak_duration );
+    self.dam_clock settimer( level.dam_killstreak_duration );
     self.dam_clock.color = ( 1, 1, 1 );
     self.dam_clock.archived = 0;
     self.dam_clock.foreground = 1;
@@ -296,15 +296,15 @@ removempdamplayer( var_0, var_1 )
 
     if ( !var_1 )
     {
-        var_0 _meth_82FB( "ui_damturret_toggle", 0 );
+        var_0 setclientomnvar( "ui_damturret_toggle", 0 );
         var_0 setblurforplayer( 0, 0 );
         var_0 thermalvisionoff();
         var_0 thermalvisionfofoverlayoff();
-        var_0 _meth_80E9( var_0.turret );
-        var_0 _meth_804F();
+        var_0 remotecontrolturretoff( var_0.turret );
+        var_0 unlink();
         var_0 maps\mp\_utility::clearusingremote();
         var_0 maps\mp\_utility::revertvisionsetforplayer( 0.5 );
-        var_0 _meth_80FF();
+        var_0 disableslowaim();
 
         if ( getdvarint( "camera_thirdPerson" ) )
             var_0 maps\mp\_utility::setthirdpersondof( 1 );
@@ -314,8 +314,8 @@ removempdamplayer( var_0, var_1 )
 
         foreach ( var_3 in level.damturrets )
         {
-            var_3 _meth_8065( "manual" );
-            var_3 _meth_8106( level.damdefaultaiment );
+            var_3 setmode( "manual" );
+            var_3 settargetentity( level.damdefaultaiment );
 
             if ( isdefined( var_3.killcament ) )
                 var_3.killcament delete();
@@ -382,7 +382,7 @@ shotfireddarkscreenoverlay()
         self.darkscreenoverlay.aligny = "top";
         self.darkscreenoverlay.horzalign = "fullscreen";
         self.darkscreenoverlay.vertalign = "fullscreen";
-        self.darkscreenoverlay _meth_80CC( "black", 640, 480 );
+        self.darkscreenoverlay setshader( "black", 640, 480 );
         self.darkscreenoverlay.sort = -10;
         self.darkscreenoverlay.alpha = 0.0;
     }
@@ -407,9 +407,9 @@ movementaudio( var_0 )
 
     for (;;)
     {
-        var_1 = var_0 _meth_8478();
+        var_1 = var_0 getturretyawrate();
         var_1 = abs( var_1 );
-        var_2 = var_0 _meth_8479();
+        var_2 = var_0 getturretpitchrate();
         var_2 = abs( var_2 );
 
         if ( var_1 > 0.1 )
@@ -417,12 +417,12 @@ movementaudio( var_0 )
             if ( !isdefined( level.aud.turretyawlp ) )
             {
                 level.aud.turretyawlp = spawn( "script_origin", var_0.origin );
-                level.aud.turretyawlp _meth_8075( "wpn_railgun_dam_lat_move_lp" );
+                level.aud.turretyawlp playloopsound( "wpn_railgun_dam_lat_move_lp" );
             }
         }
         else if ( isdefined( level.aud.turretyawlp ) )
         {
-            level.aud.turretyawlp _meth_80AB();
+            level.aud.turretyawlp stoploopsound();
             level.aud.turretyawlp delete();
             level.aud.turretyawlp = undefined;
             var_0 playsound( "wpn_railgun_dam_lat_stop" );
@@ -433,12 +433,12 @@ movementaudio( var_0 )
             if ( !isdefined( level.aud.turretpitchlp ) )
             {
                 level.aud.turretpitchlp = spawn( "script_origin", var_0.origin );
-                level.aud.turretpitchlp _meth_8075( "wpn_railgun_dam_vert_move_lp" );
+                level.aud.turretpitchlp playloopsound( "wpn_railgun_dam_vert_move_lp" );
             }
         }
         else if ( isdefined( level.aud.turretpitchlp ) )
         {
-            level.aud.turretpitchlp _meth_80AB();
+            level.aud.turretpitchlp stoploopsound();
             level.aud.turretpitchlp delete();
             level.aud.turretpitchlp = undefined;
             var_0 playsound( "wpn_railgun_dam_vert_stop" );
@@ -454,14 +454,14 @@ movementaudiocleanup()
 
     if ( isdefined( level.aud.turretyawlp ) )
     {
-        level.aud.turretyawlp _meth_80AB();
+        level.aud.turretyawlp stoploopsound();
         level.aud.turretyawlp delete();
         level.aud.turretyawlp = undefined;
     }
 
     if ( isdefined( level.aud.turretpitchlp ) )
     {
-        level.aud.turretpitchlp _meth_80AB();
+        level.aud.turretpitchlp stoploopsound();
         level.aud.turretpitchlp delete();
         level.aud.turretpitchlp = undefined;
     }

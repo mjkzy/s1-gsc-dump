@@ -21,9 +21,9 @@ playersethudempscrambled( var_0, var_1, var_2 )
 
     if ( !isdefined( self.scrambleeventcurrent ) || isevent1highpriority( var_4, self.scrambleeventcurrent ) )
     {
-        self _meth_82FB( "ui_exo_reboot_end_time", var_4.endtime );
-        self _meth_82FB( "ui_exo_reboot_text", var_4.textid );
-        self _meth_82FB( "ui_exo_reboot_type", var_4.typeid );
+        self setclientomnvar( "ui_exo_reboot_end_time", var_4.endtime );
+        self setclientomnvar( "ui_exo_reboot_text", var_4.textid );
+        self setclientomnvar( "ui_exo_reboot_type", var_4.typeid );
         self.scrambleeventcurrent = var_4;
         thread _playermonitorscrambleevents( var_4 );
     }
@@ -50,9 +50,9 @@ playersethudempscrambledoff( var_0 )
 
             if ( isdefined( var_2 ) )
             {
-                self _meth_82FB( "ui_exo_reboot_end_time", var_2.endtime );
-                self _meth_82FB( "ui_exo_reboot_text", var_2.textid );
-                self _meth_82FB( "ui_exo_reboot_type", var_2.typeid );
+                self setclientomnvar( "ui_exo_reboot_end_time", var_2.endtime );
+                self setclientomnvar( "ui_exo_reboot_text", var_2.textid );
+                self setclientomnvar( "ui_exo_reboot_type", var_2.typeid );
                 self.scrambleeventcurrent = var_2;
             }
         }
@@ -60,8 +60,8 @@ playersethudempscrambledoff( var_0 )
 
     if ( self.scrambleevents.size == 0 )
     {
-        self _meth_82FB( "ui_exo_reboot_end_time", 0 );
-        self _meth_82FB( "ui_exo_reboot_type", 0 );
+        self setclientomnvar( "ui_exo_reboot_end_time", 0 );
+        self setclientomnvar( "ui_exo_reboot_type", 0 );
         self.scrambleevents = undefined;
         self.scrambleeventcurrent = undefined;
     }
@@ -207,7 +207,7 @@ monitorscrambleruse()
                 if ( var_3["fraction"] == 1 )
                 {
                     var_0 delete();
-                    self _meth_82F7( "scrambler_mp", self _meth_82F9( "scrambler_mp" ) + 1 );
+                    self setweaponammostock( "scrambler_mp", self setweaponammostock( "scrambler_mp" ) + 1 );
                     continue;
                 }
 
@@ -224,7 +224,7 @@ monitorscrambleruse()
             var_5.health = 100;
             var_5.team = self.team;
             var_5.owner = self;
-            var_5 _meth_82C0( 1 );
+            var_5 setcandamage( 1 );
             var_5 makescrambler( self );
             var_5 common_scripts\utility::make_entity_sentient_mp( self.team, 1 );
             var_5 scramblersetup( self );
@@ -242,7 +242,7 @@ monitorscrambleruse()
 
 scramblersetup( var_0 )
 {
-    self _meth_80B1( "weapon_jammer" );
+    self setmodel( "weapon_jammer" );
 
     if ( level.teambased )
         maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0, 0, 20 ) );
@@ -328,7 +328,7 @@ scramblerdamagelistener( var_0 )
 
             self playsound( "sentry_explode" );
             self.deatheffect = playfx( common_scripts\utility::getfx( "equipment_explode" ), self.origin );
-            self _meth_813A();
+            self freeentitysentient();
             var_2 thread deletescrambler( self );
         }
     }
@@ -339,19 +339,19 @@ scrambleruselistener( var_0 )
     self endon( "death" );
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( &"MP_PATCH_PICKUP_SCRAMBLER" );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( &"MP_PATCH_PICKUP_SCRAMBLER" );
     maps\mp\_utility::setselfusable( var_0 );
 
     for (;;)
     {
         self waittill( "trigger", var_0 );
-        var_1 = var_0 _meth_82F9( "scrambler_mp" );
+        var_1 = var_0 setweaponammostock( "scrambler_mp" );
 
-        if ( var_1 < _func_1E1( "scrambler_mp" ) )
+        if ( var_1 < weaponmaxammo( "scrambler_mp" ) )
         {
             var_0 playlocalsound( "scavenger_pack_pickup" );
-            var_0 _meth_82F7( "scrambler_mp", var_1 + 1 );
+            var_0 setweaponammostock( "scrambler_mp", var_1 + 1 );
             var_0 thread deletescrambler( self );
         }
     }

@@ -59,7 +59,7 @@ post_load()
         level.rh_exit_door.animname = "runtoheli_door";
         level.rh_exit_door maps\_anim::setanimtree();
         level.rh_exit_door.col = getent( "door_bh_heli_link", "targetname" );
-        level.rh_exit_door.col _meth_804D( level.rh_exit_door, "j_bone_door_right", ( 28, 1.5, 48 ), ( 0, 0, 0 ) );
+        level.rh_exit_door.col linkto( level.rh_exit_door, "j_bone_door_right", ( 28, 1.5, 48 ), ( 0, 0, 0 ) );
         common_scripts\utility::getstruct( "struct_run_to_heli_manticore", "targetname" ) maps\_anim::anim_first_frame_solo( level.rh_exit_door, "runtoheli_door_kick" );
     }
 
@@ -91,12 +91,12 @@ setup_warbird()
     maps\_vehicle::godon();
     self makeunusable();
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "vehicle_xh9_warbird_interior_collision" );
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 setmodel( "vehicle_xh9_warbird_interior_collision" );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.heli_collision = var_0;
     level._facility.warbird = self;
     var_1 = getent( "refl_probe_heli_open", "targetname" );
-    level._facility.warbird _meth_83AB( var_1.origin );
+    level._facility.warbird overridereflectionprobe( var_1.origin );
     var_0 hide();
     level waittill( "heliride_blood" );
     var_0 show();
@@ -106,12 +106,12 @@ setup_warbird()
 
 start_incinerator()
 {
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     maps\captured_util::warp_allies( "struct_anim_incinerator" );
     level.player thread maps\_utility::blend_movespeedscale( 0.8 );
     level.player maps\captured_util::warp_to_start( "struct_playerstart_incinerator" );
-    level.player _meth_8310();
-    level.player _meth_8130( 0 );
+    level.player takeallweapons();
+    level.player allowmelee( 0 );
     var_0 = getent( "aut_doctor_hatch", "targetname" );
     var_0 delete();
 }
@@ -122,8 +122,8 @@ main_incinerator()
     maps\_utility::autosave_by_name( "incinerator" );
     wait 0.05;
     common_scripts\utility::flag_set( "flag_incinerator_saved" );
-    level.player common_scripts\utility::delaycall( 0.6, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 0.6, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 0.6, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 0.6, ::playrumbleonentity, "heavy_1s" );
     maps\_player_exo::player_exo_deactivate();
     var_0 = common_scripts\utility::getstruct( "struct_anim_incinerator", "targetname" );
     var_1 = maps\_utility::spawn_anim_model( "player_rig" );
@@ -143,13 +143,13 @@ incinerator_intro( var_0, var_1, var_2, var_3, var_4 )
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_incinerator_tr" ) )
+        if ( !istransientloaded( "captured_incinerator_tr" ) )
         {
             level notify( "tff_pre_autopsy_to_incinerator" );
-            _func_219( "captured_autopsy_tr" );
-            _func_218( "captured_incinerator_tr" );
+            unloadtransient( "captured_autopsy_tr" );
+            loadtransient( "captured_incinerator_tr" );
 
-            while ( !_func_21E( "captured_incinerator_tr" ) )
+            while ( !istransientloaded( "captured_incinerator_tr" ) )
                 wait 0.05;
 
             level notify( "tff_post_autopsy_to_incinerator" );
@@ -159,11 +159,11 @@ incinerator_intro( var_0, var_1, var_2, var_3, var_4 )
     var_0 maps\_anim::anim_first_frame( [ var_2, var_3, var_4 ], "incinerator_push" );
     level.ally show();
     level.player freezecontrols( 1 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8304( 0 );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 0 );
+    level.player allowjump( 0 );
+    level.player allowsprint( 0 );
     level.player thread maps\_utility::blend_movespeedscale( 0.2 );
     thread maps\captured_util::smooth_player_link( var_1, 0.4 );
     thread incinerator_player_damage();
@@ -176,7 +176,7 @@ incinerator_intro( var_0, var_1, var_2, var_3, var_4 )
     level.player common_scripts\utility::delaycall( var_6, ::freezecontrols, 0 );
     level.player maps\_utility::delaythread( var_6, maps\_utility::blend_movespeedscale, 0.5, 5.0 );
     level.player maps\_utility::delaythread( var_6, ::incinerator_stance );
-    level.player common_scripts\utility::delaycall( var_6, ::_meth_804F );
+    level.player common_scripts\utility::delaycall( var_6, ::unlink );
     var_1 common_scripts\utility::delaycall( var_6, ::hide );
     wait 8.3;
     common_scripts\utility::flag_set( "flag_incinerator_fires_start" );
@@ -191,8 +191,8 @@ incinerator_cart_push( var_0, var_1, var_2, var_3, var_4 )
     var_6 = getent( "use_incinerator_cart", "targetname" );
     level.pipe = maps\_utility::spawn_anim_model( "incinerator_pipe" );
     var_7 = spawn( "script_model", ( 7959, -13466, -1773 ) );
-    var_7 _meth_80B1( "tag_origin" );
-    level.pipe _meth_83EF( var_7 );
+    var_7 setmodel( "tag_origin" );
+    level.pipe retargetscriptmodellighting( var_7 );
     var_0 maps\_anim::anim_first_frame_solo( level.pipe, "incinerator_crawl" );
     wait 21.0;
     var_6 makeusable();
@@ -204,16 +204,16 @@ incinerator_cart_push( var_0, var_1, var_2, var_3, var_4 )
     level.player thread maps\_utility::blend_movespeedscale( 0.8 );
     level.player thread still_pressing_use_button();
     level.player freezecontrols( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
+    level.player allowstand( 1 );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
     common_scripts\utility::flag_set( "flag_incinerator_push_start" );
-    level.ally _meth_814B( level.ally maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0.9, 0.5 );
+    level.ally setanim( level.ally maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0.9, 0.5 );
     var_0 thread maps\_anim::anim_single_solo( var_1, "incinerator_push_start" );
-    level.player _meth_8080( var_1, "tag_player", 0.5 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.5 );
     wait 0.5;
     var_1 show();
-    level.player _meth_807D( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
     var_8 = getanimlength( var_1 maps\_utility::getanim( "incinerator_push_start" ) );
     wait(var_8 - 0.5);
     var_9 = 0;
@@ -227,11 +227,11 @@ incinerator_cart_push( var_0, var_1, var_2, var_3, var_4 )
     {
         wait 0.05;
         var_0 notify( "started_pushing_cart" );
-        var_11 = level.player _meth_82F3();
+        var_11 = level.player getnormalizedmovement();
         var_12 = max( var_11[0], -1.0 * var_11[1] );
         var_13 = var_1 maps\_utility::getanim( "incinerator_push" );
         var_14 = getanimlength( var_13 );
-        var_9 = ( var_1 _meth_814F( var_13 ) * var_14 + 0.05 ) / var_14;
+        var_9 = ( var_1 getanimtime( var_13 ) * var_14 + 0.05 ) / var_14;
 
         if ( 0.2 > var_9 || var_9 > 0.28 )
         {
@@ -255,7 +255,7 @@ incinerator_cart_push( var_0, var_1, var_2, var_3, var_4 )
     }
 
     soundscripts\_snd::snd_message( "aud_incin_cart_done" );
-    level.ally _meth_8141();
+    level.ally stopanimscripted();
     common_scripts\utility::flag_set( "flag_pushing_cart" );
     common_scripts\utility::flag_set( "flag_incinerator_push_done" );
     maps\_anim::anim_set_rate( var_10, "incinerator_push", 1 );
@@ -272,14 +272,14 @@ incinerator_crawl( var_0, var_1 )
     var_2 = 0;
     var_3 = [ var_1, level.pipe ];
     thread incinerator_player_end_anim_and_cleanup( var_0, var_3 );
-    level.player _meth_80FE( 0.3, 0.15 );
-    level.player _meth_807D( var_1, "tag_player", 0.5, 20, 30, 15, 0, 1 );
+    level.player enableslowaim( 0.3, 0.15 );
+    level.player playerlinktodelta( var_1, "tag_player", 0.5, 20, 30, 15, 0, 1 );
 
     while ( !common_scripts\utility::flag( "flag_incinerator_player_pipe_grab" ) )
     {
         wait 0.05;
-        var_4 = level.player _meth_82F3()[0];
-        var_2 = var_1 _meth_814F( var_1 maps\_utility::getanim( "incinerator_crawl" ) );
+        var_4 = level.player getnormalizedmovement()[0];
+        var_2 = var_1 getanimtime( var_1 maps\_utility::getanim( "incinerator_crawl" ) );
 
         if ( var_4 > 0.5 && !common_scripts\utility::flag( "flag_pushing_cart" ) )
         {
@@ -298,7 +298,7 @@ incinerator_crawl( var_0, var_1 )
     common_scripts\utility::flag_set( "flag_incinerator_crawl_pull" );
     maps\_anim::anim_set_rate( var_3, "incinerator_crawl", 1 );
     common_scripts\utility::flag_wait( "flag_incinerator_player_saved" );
-    level.player _meth_8080( var_1, "tag_player", 1.0 );
+    level.player playerlinktoblend( var_1, "tag_player", 1.0 );
     var_0 notify( "ally_pull_player" );
     var_0 thread maps\_anim::anim_single_solo( level.ally, "incinerator_crawl_pull", undefined, 0.2 );
 }
@@ -307,18 +307,18 @@ incinerator_player_end_anim_and_cleanup( var_0, var_1 )
 {
     level.player thread maps\_utility::blend_movespeedscale( 0.2 );
     var_0 maps\_anim::anim_single( var_1, "incinerator_crawl" );
-    _func_0D3( "g_friendlyNameDist", level.friendlynamedist );
-    level.player _meth_804F();
+    setsaveddvar( "g_friendlyNameDist", level.friendlynamedist );
+    level.player unlink();
     level.player freezecontrols( 0 );
-    level.player _meth_8118( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_831E();
-    level.player _meth_8304( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_80FF();
-    level.player _meth_8320();
+    level.player allowstand( 1 );
+    level.player allowprone( 1 );
+    level.player allowjump( 1 );
+    level.player allowcrouch( 1 );
+    level.player enableweapons();
+    level.player allowsprint( 1 );
+    level.player allowmelee( 1 );
+    level.player disableslowaim();
+    level.player enableoffhandweapons();
     var_1[0] delete();
     level.player thread incinerator_player_wobble();
     level.player thread maps\captured_util::start_one_handed_gunplay( "iw5_titan45pickup_sp_xmags" );
@@ -333,11 +333,11 @@ incinerator_stance()
 
     while ( !common_scripts\utility::flag( "flag_between_carts_end" ) )
     {
-        level.player _meth_817D( "crouch" );
-        level.player _meth_8118( 0 );
+        level.player setstance( "crouch" );
+        level.player allowstand( 0 );
         common_scripts\utility::flag_wait_either( "flag_between_carts", "flag_between_carts_end" );
-        level.player _meth_817D( "stand" );
-        level.player _meth_8118( 1 );
+        level.player setstance( "stand" );
+        level.player allowstand( 1 );
 
         if ( common_scripts\utility::flag( "flag_between_carts" ) )
             level.player forcemantle();
@@ -350,15 +350,15 @@ incinerator_ally_push( var_0, var_1 )
 {
     self notify( "started_pushing_cart" );
     self endon( "started_pushing_cart" );
-    self _meth_814B( maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0, 0.5 );
+    self setanim( maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0, 0.5 );
 }
 
 incinerator_ally_push_stop( var_0, var_1 )
 {
     if ( var_1 < 0.22 )
-        self _meth_814B( maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0.99, 0.5 );
+        self setanim( maps\_utility::getanim( "incinerator_push_stop_1" )[0], 0.99, 0.5 );
     else
-        self _meth_814B( maps\_utility::getanim( "incinerator_push_stop_2" )[0], 0.99, 0.5 );
+        self setanim( maps\_utility::getanim( "incinerator_push_stop_2" )[0], 0.99, 0.5 );
 }
 
 still_pressing_use_button()
@@ -398,7 +398,7 @@ incinerator_player_damage()
             if ( !common_scripts\utility::flag( "flag_incinerator_push_done" ) )
             {
                 wait 0.05;
-                level.player _meth_8051( var_1, var_0.origin );
+                level.player dodamage( var_1, var_0.origin );
                 continue;
             }
 
@@ -413,14 +413,14 @@ incinerator_player_damage()
     for ( var_1 = 0; !common_scripts\utility::flag( "flag_incinerator_push_done" ); var_1 += 0.1 )
     {
         wait 0.5;
-        level.player _meth_8051( var_1, var_0.origin );
+        level.player dodamage( var_1, var_0.origin );
     }
 
     common_scripts\utility::flag_wait( "lgt_flag_inc_near_miss" );
 
     while ( !common_scripts\utility::flag( "flag_incinerator_crawl_start" ) )
     {
-        level.player _meth_80AD( "tank_rumble" );
+        level.player playrumbleonentity( "tank_rumble" );
         wait 1.0;
     }
 
@@ -430,7 +430,7 @@ incinerator_player_damage()
     while ( !common_scripts\utility::flag( "flag_incinerator_player_pipe_grab" ) )
     {
         wait(var_2);
-        level.player _meth_8051( var_1, var_0.origin );
+        level.player dodamage( var_1, var_0.origin );
         var_1 += 0.5;
 
         if ( var_2 > 0.05 )
@@ -443,11 +443,11 @@ incinerator_player_damage()
     common_scripts\utility::flag_wait( "flag_incinerator_player_saved" );
     wait 2.0;
     level.player thread incinerator_player_blur();
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 
     for ( var_3 = 0; var_3 < 4; var_3++ )
     {
-        level.player _meth_80AD( "tank_rumble" );
+        level.player playrumbleonentity( "tank_rumble" );
         wait 1.0;
     }
 }
@@ -459,7 +459,7 @@ incinerator_rumble_hold( var_0 )
 
     for ( var_1 = 0; var_1 < var_0; var_1++ )
     {
-        level.player _meth_80AD( "tank_rumble" );
+        level.player playrumbleonentity( "tank_rumble" );
         wait 1.0;
     }
 }
@@ -471,9 +471,9 @@ incinerator_player_blur()
     for ( var_0 = 6; var_0 > 1; var_0 -= 1.2 )
     {
         var_1 = randomfloatrange( 1, 2 );
-        _func_072( randomfloatrange( 0.666667 * var_0, var_0 ), var_1 );
+        setblur( randomfloatrange( 0.666667 * var_0, var_0 ), var_1 );
         wait(var_1);
-        _func_072( 0, var_1 );
+        setblur( 0, var_1 );
         wait(var_1);
         wait(randomfloatrange( 2, 4 ));
     }
@@ -484,12 +484,12 @@ incinerator_player_wobble()
     self endon( "death" );
     var_0 = common_scripts\utility::spawn_tag_origin();
     var_1 = ( randomfloatrange( -6, 6 ), randomfloatrange( -6, 6 ), randomfloatrange( -6, 6 ) );
-    self _meth_8091( var_0 );
-    var_0 _meth_82B5( var_1, 3, randomfloatrange( 0.75, 1.5 ), randomfloatrange( 0.75, 1.5 ) );
+    self playersetgroundreferenceent( var_0 );
+    var_0 rotateto( var_1, 3, randomfloatrange( 0.75, 1.5 ), randomfloatrange( 0.75, 1.5 ) );
     wait 3.0;
-    var_0 _meth_82B5( ( 0, 0, 0 ), 3, randomfloatrange( 0.75, 1.5 ), randomfloatrange( 0.75, 1.5 ) );
+    var_0 rotateto( ( 0, 0, 0 ), 3, randomfloatrange( 0.75, 1.5 ), randomfloatrange( 0.75, 1.5 ) );
     wait 3.0;
-    self _meth_8091( undefined );
+    self playersetgroundreferenceent( undefined );
     var_0 delete();
 }
 
@@ -522,7 +522,7 @@ main_battle_to_heli()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_helipad_tr" ) )
+        if ( !istransientloaded( "captured_helipad_tr" ) )
             level waittill( "tff_post_incinerator_to_helipad" );
     }
 
@@ -588,7 +588,7 @@ bh_pit_exit( var_0, var_1 )
 
     while ( !common_scripts\utility::flag( "flag_bh_yard" ) && !common_scripts\utility::flag( "flag_bh_pit_all_clear" ) )
     {
-        var_3 = level.player _meth_8311();
+        var_3 = level.player getcurrentweapon();
 
         if ( var_3 != "none" && var_3 != "iw5_kvahazmatknifeonearm_sp" && level.player getammocount( var_3 ) / weaponclipsize( var_3 ) >= 0.5 )
             break;
@@ -647,8 +647,8 @@ bh_yard_exit()
 
     foreach ( var_2 in var_0 )
     {
-        var_2 _meth_82AE( var_2.open, 1.25, 0.2, 0.5 );
-        var_2.link common_scripts\utility::delaycall( 0.75, ::_meth_8058 );
+        var_2 moveto( var_2.open, 1.25, 0.2, 0.5 );
+        var_2.link common_scripts\utility::delaycall( 0.75, ::connectpaths );
     }
 
     level.ally maps\_utility::enable_cqbwalk();
@@ -667,9 +667,9 @@ bh_yard_exit()
 
         foreach ( var_2 in var_0 )
         {
-            var_2 _meth_82AE( var_2.close, 1.25, 0.2, 0.5 );
-            var_2.link common_scripts\utility::delaycall( 0.5, ::_meth_8057 );
-            var_2.link common_scripts\utility::delaycall( 0.75, ::_meth_8057 );
+            var_2 moveto( var_2.close, 1.25, 0.2, 0.5 );
+            var_2.link common_scripts\utility::delaycall( 0.5, ::disconnectpaths );
+            var_2.link common_scripts\utility::delaycall( 0.75, ::disconnectpaths );
         }
 
         wait 1.25;
@@ -682,8 +682,8 @@ bh_yard_exit()
 
         foreach ( var_2 in var_0 )
         {
-            var_2 _meth_82AE( var_2.open, 1.25, 0.2, 0.5 );
-            var_2.link common_scripts\utility::delaycall( 0.5, ::_meth_8058 );
+            var_2 moveto( var_2.open, 1.25, 0.2, 0.5 );
+            var_2.link common_scripts\utility::delaycall( 0.5, ::connectpaths );
         }
 
         wait 1.25;
@@ -694,7 +694,7 @@ bh_yard_exit()
 
     foreach ( var_12 in var_10 )
     {
-        if ( !var_12 _meth_80A9( var_9 ) )
+        if ( !var_12 istouching( var_9 ) )
         {
             var_12 notify( "stop_opfor_one_handed" );
             var_12 delete();
@@ -717,7 +717,7 @@ bh_helo_flyby()
 
 bh_pit_yard_visblock( var_0 )
 {
-    var_0 _meth_82B1( 256, 0.05 );
+    var_0 movez( 256, 0.05 );
     common_scripts\utility::flag_wait( "flag_bh_pit_all_clear" );
     var_0 maps\_utility::delaythread( 30, maps\_utility::_delete );
     var_0 maps\_utility::flagwaitthread( [ "flag_bh_yard", 15 ], maps\_utility::_delete );
@@ -746,11 +746,11 @@ bh_yard_doors()
     foreach ( var_3 in var_1 )
     {
         var_4 = getent( var_3.target, "targetname" );
-        var_4 _meth_804D( var_3 );
+        var_4 linkto( var_3 );
         var_3.link = var_4;
         var_3.open = var_3.origin;
         var_3.close = var_0.origin;
-        var_3 _meth_82AE( var_3.close, 0.05 );
+        var_3 moveto( var_3.close, 0.05 );
     }
 
     for (;;)
@@ -760,8 +760,8 @@ bh_yard_doors()
 
         foreach ( var_3 in var_1 )
         {
-            var_3 _meth_82AE( var_3.open, 1.25, 0.2, 0.5 );
-            var_3.link common_scripts\utility::delaycall( 0.5, ::_meth_8058 );
+            var_3 moveto( var_3.open, 1.25, 0.2, 0.5 );
+            var_3.link common_scripts\utility::delaycall( 0.5, ::connectpaths );
         }
 
         wait 1.5;
@@ -773,8 +773,8 @@ bh_yard_doors()
 
         foreach ( var_3 in var_1 )
         {
-            var_3 _meth_82AE( var_3.close, 1.25, 0.2, 0.5 );
-            var_3.link common_scripts\utility::delaycall( 0.5, ::_meth_8057 );
+            var_3 moveto( var_3.close, 1.25, 0.2, 0.5 );
+            var_3.link common_scripts\utility::delaycall( 0.5, ::disconnectpaths );
         }
     }
 }
@@ -830,7 +830,7 @@ main_run_to_heli()
     common_scripts\utility::flag_set( "flag_bh_run" );
     level.ally maps\_utility::disable_ai_color();
     level.ally thread maps\_utility::follow_path( getnode( "node_bh_run", "targetname" ) );
-    _func_0D3( "player_sprintUnlimited", "1" );
+    setsaveddvar( "player_sprintUnlimited", "1" );
     level notify( "stop_caravan_spawner" );
     var_1 = maps\_vehicle::spawn_vehicles_from_targetname_and_drive( "veh_bh_explo" );
     var_2 = maps\_vehicle::spawn_vehicles_from_targetname_and_drive( "veh_bh_mid" );
@@ -847,12 +847,12 @@ main_run_to_heli()
 
     if ( !common_scripts\utility::flag( "flag_bh_helo_opfor_stairs" ) )
     {
-        level.ally _meth_81E7();
+        level.ally shoot();
         maps\_utility::kill_deathflag( "flag_bh_helo_opfor_stairs" );
     }
 
     wait 2.2;
-    level.ally _meth_81E7();
+    level.ally shoot();
     common_scripts\utility::flag_wait( "flag_battle_to_heli_end" );
 }
 
@@ -885,7 +885,7 @@ run_to_heli_manticore_scene( var_0 )
     common_scripts\utility::flag_waitopen( "flag_currently_nagging" );
     wait 1.0;
     var_3 = getanimlength( level.ally maps\_utility::getanim( "runtoheli_window_start" ) );
-    var_4 = level.ally _meth_814F( level.ally maps\_utility::getanim( "runtoheli_window_start" ) );
+    var_4 = level.ally getanimtime( level.ally maps\_utility::getanim( "runtoheli_window_start" ) );
 
     if ( var_4 > 0 )
         wait(var_3 - var_4 * var_3);
@@ -909,7 +909,7 @@ run_to_heli_manticore_scene( var_0 )
     var_1 notify( "runtoheli_door_ender" );
     var_1 thread maps\_anim::anim_single_solo( level.ally, "runtoheli_door_kick" );
     var_1 thread maps\_anim::anim_single_solo( var_0, "runtoheli_door_kick" );
-    var_0.col _meth_8058();
+    var_0.col connectpaths();
     level notify( "stop_caravan_spawner" );
 }
 
@@ -932,7 +932,7 @@ bh_attacker_accuracy_increaser()
             var_2 = 0.25;
 
         if ( var_2 > 10 )
-            level.player _meth_8051( 500, ( 12248, -12629, -1948 ) );
+            level.player dodamage( 500, ( 12248, -12629, -1948 ) );
 
         if ( var_0 > 0.01 )
             var_1 *= var_2;
@@ -959,7 +959,7 @@ bh_attacker_accuracy_increaser()
     level._facility.warbird.perferred_crash_location = level._facility.warbird;
     level._facility.warbird maps\_utility::destructible_force_explosion();
     level.ally maps\_utility::stop_magic_bullet_shield();
-    level.ally _meth_8052();
+    level.ally kill();
     setdvar( "ui_deadquote", &"CAPTURED_FAIL_GIDEON_KILLED" );
     thread maps\_utility::missionfailedwrapper();
 }
@@ -988,7 +988,7 @@ bh_run_mechs()
     var_0 = maps\_utility::array_spawn( getentarray( "opfor_bh_mech", "targetname" ), 1 );
     common_scripts\utility::array_thread( var_0, maps\captured_util::ignore_everything );
     var_1 = getdvarfloat( "ai_eventDistGunshot" );
-    _func_0D3( "ai_eventDistGunshot", 0 );
+    setsaveddvar( "ai_eventDistGunshot", 0 );
     var_2 = maps\_utility::array_spawn( getentarray( "run_to_heli_mechanic", "targetname" ), 1 );
     common_scripts\utility::array_thread( var_2, maps\captured_util::ignore_everything );
     var_2[0].animname = "worker_1";
@@ -1002,12 +1002,12 @@ bh_run_mechs()
     var_5 = getent( "door_bh_mech", "targetname" );
     var_6 = getent( "door_bh_mech_door_cover", "targetname" );
     var_6 hide();
-    var_6 _meth_82BF();
-    var_5 _meth_82B1( 100, 6, 0, 0.5 );
+    var_6 notsolid();
+    var_5 movez( 100, 6, 0, 0.5 );
     var_7 = getnodearray( "bh_run_mech_node", "targetname" );
     wait 3.0;
     common_scripts\utility::array_thread( var_0, maps\captured_util::unignore_everything );
-    _func_0D3( "ai_eventDistGunshot", var_1 );
+    setsaveddvar( "ai_eventDistGunshot", var_1 );
     wait 3.0;
     var_8 = 0;
 
@@ -1048,8 +1048,8 @@ bh_heli_enemy_killer( var_0, var_1 )
     {
         if ( isalive( var_3 ) )
         {
-            level.ally _meth_81E7();
-            level.ally _meth_81E7();
+            level.ally shoot();
+            level.ally shoot();
             maps\_utility::kill_deathflag( var_3.script_deathflag );
         }
 
@@ -1064,7 +1064,7 @@ bh_cleanup()
     foreach ( var_2 in var_0 )
         var_2 notify( "stop current floodspawner" );
 
-    var_4 = _func_0D6( "axis" );
+    var_4 = getaiarray( "axis" );
 
     foreach ( var_6 in var_4 )
     {
@@ -1100,7 +1100,7 @@ bh_cleanup()
     }
 
     level.player notify( "stop_one_handed_gunplay" );
-    _func_0D3( "player_sprintUnlimited", "0" );
+    setsaveddvar( "player_sprintUnlimited", "0" );
 }
 
 rh_loader_movement()
@@ -1120,28 +1120,28 @@ rh_loader_movement()
             continue;
         }
 
-        var_5 _meth_804D( var_0 );
+        var_5 linkto( var_0 );
     }
 
     var_7 = getent( "rh_crane_back", "targetname" );
     playfxontag( level._effect["cap_crane_light"], var_2, "crane_T" );
     playfxontag( level._effect["cap_crane_light"], var_7, "crane_T" );
     soundscripts\_snd::snd_message( "aud_manticore_crane" );
-    var_2 _meth_82B0( 240, 10, 2, 2 );
-    var_1 _meth_82B0( 240, 10, 2, 2 );
-    var_0 _meth_82B0( 240, 10, 2, 2 );
+    var_2 movey( 240, 10, 2, 2 );
+    var_1 movey( 240, 10, 2, 2 );
+    var_0 movey( 240, 10, 2, 2 );
     wait 10.0;
-    var_1 _meth_82B1( -122, 8, 2, 2 );
-    var_0 _meth_82B1( -122, 8, 2, 2 );
+    var_1 movez( -122, 8, 2, 2 );
+    var_0 movez( -122, 8, 2, 2 );
     wait 9.0;
-    var_1 _meth_82B1( 60, 4, 2, 2 );
+    var_1 movez( 60, 4, 2, 2 );
     wait 4.0;
-    var_2 _meth_82B0( -400, 15, 2, 2 );
-    var_1 _meth_82B0( -400, 15, 2, 2 );
+    var_2 movey( -400, 15, 2, 2 );
+    var_1 movey( -400, 15, 2, 2 );
     wait 15.0;
-    var_7 _meth_82AF( -460, 10, 2, 2 );
+    var_7 movex( -460, 10, 2, 2 );
     wait 10.0;
-    var_7 _meth_82AF( 460, 10, 2, 2 );
+    var_7 movex( 460, 10, 2, 2 );
 }
 
 setup_spawners()
@@ -1202,7 +1202,7 @@ main_heliride()
     common_scripts\_exploder::exploder( "fx_heli_flyby_dust_settle" );
     common_scripts\_exploder::exploder( "fx_heli_dust_settle" );
     common_scripts\utility::flag_wait( "flag_heliride_warbird_mount" );
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     common_scripts\utility::flag_set( "flag_battle_to_heli_end" );
     soundscripts\_snd::snd_message( "stop_post_courtyard_ext_alarms_2" );
     common_scripts\utility::array_thread( getentarray( "trig_mb1", "script_noteworthy" ), common_scripts\utility::trigger_off );
@@ -1221,43 +1221,43 @@ vtol_sequence()
     var_0 = level._facility.warbird;
     var_0.animname = "warbird";
     common_scripts\utility::flag_wait( "flag_heliride_warbird_mount" );
-    level.player common_scripts\utility::delaycall( 6.25, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 9.45, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 12.45, ::_meth_80AD, "light_2s" );
-    level.player common_scripts\utility::delaycall( 15.0, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 18.0, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 19.75, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 21.0, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 25.25, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 26.4, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 26.75, ::_meth_80AD, "heavy_3s" );
-    _func_0D3( "ammoCounterHide", "1" );
+    level.player common_scripts\utility::delaycall( 6.25, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 9.45, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 12.45, ::playrumbleonentity, "light_2s" );
+    level.player common_scripts\utility::delaycall( 15.0, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 18.0, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 19.75, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 21.0, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 25.25, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 26.4, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 26.75, ::playrumbleonentity, "heavy_3s" );
+    setsaveddvar( "ammoCounterHide", "1" );
     level.player notify( "stop_one_handed_gunplay" );
-    level.player _meth_83F7();
-    level.player _meth_8485( 0 );
-    level.player _meth_817D( "stand" );
+    level.player stopsliding();
+    level.player allowpowerslide( 0 );
+    level.player setstance( "stand" );
     level.player freezecontrols( 1 );
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8130( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowmelee( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
     var_1 = spawnstruct();
     var_1.origin = ( 10401.9, -5807.3, 637.251 );
     level.glass = spawn( "script_model", var_1.origin );
-    level.glass _meth_80B1( "vehicle_xh9_warbird_interior_glass" );
-    level.glass _meth_804D( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.glass setmodel( "vehicle_xh9_warbird_interior_glass" );
+    level.glass linkto( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.glass hide();
     level.glass_broken = spawn( "script_model", var_1.origin );
-    level.glass_broken _meth_80B1( "vehicle_xh9_warbird_interior_glass_brkn" );
-    level.glass_broken _meth_804D( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.glass_broken setmodel( "vehicle_xh9_warbird_interior_glass_brkn" );
+    level.glass_broken linkto( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.glass_broken hide();
     maps\_player_exo::player_exo_deactivate();
     level.player maps\_utility::player_speed_default();
     level.ally maps\_utility::disable_heat_behavior();
     level.ally maps\captured_util::unignore_everything();
     level.player maps\_utility::set_player_attacker_accuracy( 1.0 );
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     maps\_utility::autosave_by_name( "heliride" );
     level.player_rig = maps\_utility::spawn_anim_model( "player_rig" );
     level.player_rig hide();
@@ -1271,9 +1271,9 @@ vtol_sequence()
     var_5 = [ level.ally, var_0, level.pilot, var_4, level.mech_pilot ];
     var_1 thread maps\_anim::anim_single_solo( level.player_rig, "warbird_scene_begin" );
     thread heliride_rockets_and_slowmo();
-    level.player _meth_831D();
+    level.player disableweapons();
     level notify( "all_heliride_pieces_spawned" );
-    level.player _meth_8080( level.player_rig, "tag_player", 0.5 );
+    level.player playerlinktoblend( level.player_rig, "tag_player", 0.5 );
     var_6 = getanimlength( level.player_rig maps\_utility::getanim( "warbird_scene_begin" ) );
     thread bh_cleanup();
     wait(var_6);
@@ -1282,26 +1282,26 @@ vtol_sequence()
     var_1 maps\_anim::anim_single_solo( level.player_rig, "warbird_scene" );
     var_7 = maps\_hud_util::create_client_overlay( "black", 1, level.player );
     level notify( "heli_ride_crashed" );
-    level.player _meth_8481();
+    level.player showviewmodel();
     var_0 delete();
     level.player_rig delete();
     var_4 delete();
     level.pilot delete();
     level.mech_pilot delete();
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 
     if ( isdefined( common_scripts\utility::getstruct( "struct_playerstart_mb1", "targetname" ) ) )
         level.player maps\captured_util::warp_to_start( "struct_playerstart_mb1" );
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_mechbattle_tr" ) )
+        if ( !istransientloaded( "captured_mechbattle_tr" ) )
         {
             level notify( "tff_pre_helipad_to_mechbattle" );
-            _func_219( "captured_helipad_tr" );
-            _func_218( "captured_mechbattle_tr" );
+            unloadtransient( "captured_helipad_tr" );
+            loadtransient( "captured_mechbattle_tr" );
 
-            while ( !_func_21E( "captured_mechbattle_tr" ) )
+            while ( !istransientloaded( "captured_mechbattle_tr" ) )
                 wait 0.05;
 
             level notify( "tff_post_helipad_to_mechbattle" );
@@ -1312,7 +1312,7 @@ vtol_sequence()
     var_7 fadeovertime( 5.0 );
     var_7.alpha = 0;
     thread maps\captured_fx::fx_heli_crash_hero_falling_dust();
-    _func_0D3( "ammoCounterHide", "0" );
+    setsaveddvar( "ammoCounterHide", "0" );
     common_scripts\utility::flag_set( "flag_heliride_end" );
 }
 
@@ -1349,7 +1349,7 @@ heliride_rockets_and_slowmo()
 nt_warbird_mech_link( var_0 )
 {
     var_1 = var_0;
-    var_1 _meth_8446( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 vehicle_jetbikesethoverforcescale( level._facility.warbird, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 }
 
 nt_warbird_anims_start( var_0 )

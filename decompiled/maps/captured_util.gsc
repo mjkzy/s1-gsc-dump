@@ -16,8 +16,8 @@ warp_to_start( var_0 )
     if ( !isdefined( var_1 ) )
         return;
 
-    if ( self _meth_8068() )
-        self _meth_804F();
+    if ( self islinked() )
+        self unlink();
 
     if ( self == level.player )
     {
@@ -25,7 +25,7 @@ warp_to_start( var_0 )
         level.player setangles( var_1.angles );
     }
     else
-        self _meth_81C6( var_1.origin, var_1.angles );
+        self forceteleport( var_1.origin, var_1.angles );
 }
 
 warp_allies( var_0, var_1, var_2 )
@@ -332,14 +332,14 @@ setup_player_for_animated_sequence( var_0, var_1, var_2, var_3, var_4, var_5, va
     level.player.mover = var_10;
     var_10.origin = var_2;
     var_10.angles = var_3;
-    var_9 _meth_804D( var_10 );
+    var_9 linkto( var_10 );
 
     if ( var_0 )
     {
         if ( isarray( var_1 ) )
-            level.player _meth_807D( var_9, "tag_origin", var_8, var_1[0], var_1[1], var_1[2], var_1[3], 1 );
+            level.player playerlinktodelta( var_9, "tag_origin", var_8, var_1[0], var_1[1], var_1[2], var_1[3], 1 );
         else
-            level.player _meth_807D( var_9, "tag_origin", var_8, var_1, var_1, var_1, var_1, 1 );
+            level.player playerlinktodelta( var_9, "tag_origin", var_8, var_1, var_1, var_1, var_1, 1 );
     }
 
     if ( var_4 )
@@ -352,14 +352,14 @@ player_animated_sequence_restrictions( var_0 )
         level.player waittill( "notify_player_animated_sequence_restrictions" );
 
     level.player.disablereload = 1;
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8321();
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8130( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowmelee( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
 }
 
 player_animated_sequence_cleanup()
@@ -368,17 +368,17 @@ player_animated_sequence_cleanup()
     {
         level.player.early_weapon_enabled = undefined;
         level.player.disablereload = 0;
-        level.player _meth_831E();
-        level.player _meth_8320();
-        level.player _meth_8322();
+        level.player enableweapons();
+        level.player enableoffhandweapons();
+        level.player enableweaponswitch();
     }
 
-    level.player _meth_8119( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_804F();
+    level.player allowcrouch( 1 );
+    level.player allowjump( 1 );
+    level.player allowmelee( 1 );
+    level.player allowprone( 1 );
+    level.player allowsprint( 1 );
+    level.player unlink();
 
     if ( isdefined( level.player.mover ) )
         level.player.mover delete();
@@ -394,9 +394,9 @@ smooth_player_link( var_0, var_1, var_2 )
     else if ( !isarray( var_2 ) )
         var_2 = [ var_2, var_2, var_2, var_2 ];
 
-    level.player _meth_8080( var_0, "tag_player", var_1 );
+    level.player playerlinktoblend( var_0, "tag_player", var_1 );
     wait(var_1);
-    level.player _meth_807D( var_0, "tag_player", 1, var_2[0], var_2[1], var_2[2], var_2[3], 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, var_2[0], var_2[1], var_2[2], var_2[3], 1 );
     var_0 show();
 }
 
@@ -409,7 +409,7 @@ anim_self_set_real_time( var_0, var_1 )
 {
     var_2 = maps\_utility::getanim( var_0 );
     var_3 = var_1 / getanimlength( var_2 );
-    self _meth_8117( var_2, var_3 );
+    self setanimtime( var_2, var_3 );
 }
 
 start_one_handed_gunplay( var_0 )
@@ -421,10 +421,10 @@ start_one_handed_gunplay( var_0 )
     self.gun_threat = -512;
 
     if ( !isdefined( var_0 ) )
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
-    self _meth_8321();
-    self _meth_812F( 0 );
+    self disableweaponswitch();
+    self setautopickup( 0 );
     self.one_weap = "init";
     self.one_ammo = 15;
     self.one_frac = 1;
@@ -438,7 +438,7 @@ start_one_handed_gunplay( var_0 )
     self.ot["a_kill"] = 15000;
     level one_handed_help_vo_setup();
     level.player thread one_handed_help_flash_ally_tracker( 1000 );
-    self _meth_830E( "iw5_mahem_sp" );
+    self giveweapon( "iw5_mahem_sp" );
     thread one_handed_swap_tracking();
 
     if ( issubstr( var_0, "knife" ) )
@@ -496,7 +496,7 @@ one_handed_drop_handling()
                 var_2 = spawn( maps\_utility::string( "weapon_" + one_handed_get_base_weapon( var_1.classname ) ), var_1.origin );
                 var_2.angles = var_1.angles;
                 var_2.dropped = 1;
-                var_2 _meth_817E( self.one_ammo, 0 );
+                var_2 itemweaponsetammo( self.one_ammo, 0 );
                 var_1 delete();
 
                 if ( self.one_frac <= 0.33 )
@@ -521,8 +521,8 @@ one_handed_grenade_handling()
     for (;;)
     {
         self waittill( "grenade_fire" );
-        var_0 = self _meth_82F8( self _meth_8311() );
-        var_1 = one_handed_get_base_weapon( self _meth_8311() );
+        var_0 = self getweaponammoclip( self getcurrentweapon() );
+        var_1 = one_handed_get_base_weapon( self getcurrentweapon() );
 
         if ( isdefined( var_1 ) && issubstr( var_1, "knife" ) )
             continue;
@@ -534,7 +534,7 @@ one_handed_grenade_handling()
             var_4 = self.origin + randomfloatrange( 16, 24 ) * var_3 + randomfloatrange( -6, 6 ) * var_2 + ( 0, 0, 4 );
             var_5 = spawn( maps\_utility::string( "weapon_" + var_1 ), var_4 );
             var_5.angles = ( 0, randomint( 360 ), 0 );
-            var_5 _meth_817E( var_0, 0 );
+            var_5 itemweaponsetammo( var_0, 0 );
         }
 
         one_handed_switch_to_melee( 1 );
@@ -552,7 +552,7 @@ one_handed_ammo_tracking()
     {
         var_0 = common_scripts\utility::waittill_notify_or_timeout_return( "one_hand_pickup", 0.05 );
         var_1 = gettime();
-        self.one_weap = self _meth_8311();
+        self.one_weap = self getcurrentweapon();
 
         if ( self.one_weap != "none" && self.one_weap != "iw5_kvahazmatknifeonearm_sp" )
         {
@@ -624,10 +624,10 @@ one_handed_mantle_handling()
     for (;;)
     {
         self waittill( "foley", var_0 );
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
 
         if ( issubstr( var_0, "mantle" ) && isdefined( self.switch_to_melee ) && !issubstr( var_1, "knife" ) )
-            self _meth_830F( self _meth_8311() );
+            self takeweapon( self getcurrentweapon() );
     }
 }
 
@@ -641,10 +641,10 @@ one_handed_exododge_handling()
     for (;;)
     {
         self waittill( "exo_dodge" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( isdefined( self.switch_to_melee ) && !issubstr( var_0, "knife" ) )
-            self _meth_830F( self _meth_8311() );
+            self takeweapon( self getcurrentweapon() );
     }
 }
 
@@ -702,10 +702,10 @@ one_handed_weapon_check_swap( var_0, var_1 )
 
     if ( isdefined( var_0 ) && ( !issubstr( var_0, "onearm_sp" ) || var_0 != self.one_weap ) )
     {
-        var_2 = self _meth_82F8( var_0 );
+        var_2 = self getweaponammoclip( var_0 );
 
         if ( !isdefined( var_1 ) || var_1 )
-            self _meth_830F( self _meth_8311() );
+            self takeweapon( self getcurrentweapon() );
 
         var_3 = "iw5_titan45onearm_sp_xmags";
 
@@ -724,12 +724,12 @@ one_handed_weapon_check_swap( var_0, var_1 )
             setthreatbias( "axis", "player", self.gun_threat );
             self notify( "stop_switch_to_melee" );
             self.switch_to_melee = undefined;
-            self _meth_830E( var_3 );
+            self giveweapon( var_3 );
             soundscripts\_snd::snd_message( "aud_onearm_weapon_swap", var_3 );
-            self _meth_8315( var_3 );
-            self _meth_82F7( var_3, 0 );
-            self _meth_82F6( var_3, var_2 );
-            self _meth_84F2();
+            self switchtoweapon( var_3 );
+            self setweaponammostock( var_3, 0 );
+            self setweaponammoclip( var_3, var_2 );
+            self enablealternatemelee();
         }
 
         return var_3;
@@ -740,7 +740,7 @@ one_handed_weapon_check_swap( var_0, var_1 )
         setthreatbias( "axis", "player", self.gun_threat );
         self notify( "stop_switch_to_melee" );
         self.switch_to_melee = undefined;
-        self _meth_82F7( var_0, 0 );
+        self setweaponammostock( var_0, 0 );
     }
 
     return var_0;
@@ -749,7 +749,7 @@ one_handed_weapon_check_swap( var_0, var_1 )
 one_handed_get_base_weapon( var_0, var_1, var_2 )
 {
     if ( !isdefined( var_0 ) )
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
     var_0 = tolower( var_0 );
     var_3 = var_2;
@@ -778,20 +778,20 @@ one_handed_switch_to_melee( var_0 )
 
     self notify( "bullet_weapon_dropped" );
     setthreatbias( "axis", "player", self.melee_threat );
-    self _meth_830E( "iw5_kvahazmatknifeonearm_sp" );
-    self _meth_8315( "iw5_kvahazmatknifeonearm_sp" );
+    self giveweapon( "iw5_kvahazmatknifeonearm_sp" );
+    self switchtoweapon( "iw5_kvahazmatknifeonearm_sp" );
     self.switch_to_melee = 1;
 
-    while ( !isdefined( var_0 ) && !issubstr( self _meth_8311(), "knife" ) )
+    while ( !isdefined( var_0 ) && !issubstr( self getcurrentweapon(), "knife" ) )
         wait 0.05;
 
     self.switch_to_melee = undefined;
-    var_1 = self _meth_830B();
+    var_1 = self getweaponslistall();
 
     foreach ( var_3 in var_1 )
     {
         if ( var_3 != "iw5_kvahazmatknifeonearm_sp" && var_3 != "iw5_mahem_sp" && var_3 != "flash_grenade" )
-            self _meth_830F( var_3 );
+            self takeweapon( var_3 );
     }
 }
 
@@ -803,11 +803,11 @@ one_handed_melee_take_weapon( var_0 )
     var_1 = one_handed_weapon_check_swap( var_0, 0 );
     setthreatbias( "axis", "player", self.gun_threat );
     self.switch_to_melee = undefined;
-    self _meth_830F( "iw5_kvahazmatknifeonearm_sp" );
-    self _meth_830E( var_1 );
-    self _meth_8315( var_1 );
-    self _meth_82F7( var_1, 0 );
-    self _meth_82F6( var_1, int( randomfloatrange( 0.5, 1 ) * weaponclipsize( var_1 ) ) );
+    self takeweapon( "iw5_kvahazmatknifeonearm_sp" );
+    self giveweapon( var_1 );
+    self switchtoweapon( var_1 );
+    self setweaponammostock( var_1, 0 );
+    self setweaponammoclip( var_1, int( randomfloatrange( 0.5, 1 ) * weaponclipsize( var_1 ) ) );
     self notify( "one_handed_weapon_swap", 1.0 );
 }
 
@@ -942,7 +942,7 @@ one_handed_help_gen()
     if ( distancesquared( level.ally.origin, level.player.origin ) < 65536 )
         var_0 = [ "cap_gdn_hangintheremitchell", "cap_gdn_weregonnamakeit" ];
 
-    if ( self _meth_81BE( level.player ) && level.player.one_weap == "iw5_kvahazmatknifeonearm_sp" )
+    if ( self cansee( level.player ) && level.player.one_weap == "iw5_kvahazmatknifeonearm_sp" )
         var_0 = common_scripts\utility::array_combine( var_0, [ "cap_gdn_youreouttimeto" ] );
 
     if ( var_0.size > 0 )
@@ -959,7 +959,7 @@ one_handed_help_flash()
     if ( animscripts\combat::waitforstancechange() )
         return 0;
 
-    var_0 = common_scripts\utility::get_array_of_closest( level.player.origin, _func_0D6( "axis" ), undefined, undefined, 1024, 192 );
+    var_0 = common_scripts\utility::get_array_of_closest( level.player.origin, getaiarray( "axis" ), undefined, undefined, 1024, 192 );
 
     if ( self.grenadeammo < 1 )
         maps\_utility::set_grenadeammo( 100 );
@@ -988,8 +988,8 @@ one_handed_help_flash()
 
     foreach ( var_5 in var_0 )
     {
-        if ( self _meth_81BE( var_5 ) )
-            var_3 = self _meth_8037( self.origin + var_2, var_5 _meth_8097(), 2 );
+        if ( self cansee( var_5 ) )
+            var_3 = self magicgrenade( self.origin + var_2, var_5 getshootatpos(), 2 );
 
         if ( isdefined( var_3 ) )
             break;
@@ -1027,7 +1027,7 @@ ally_one_handed_grenade_proc()
         if ( getthreatbias( "axis", "player" ) > -1024 )
             continue;
 
-        var_0 = common_scripts\utility::get_array_of_closest( level.player.origin, _func_0D6( "axis" ), undefined, undefined, 1024, 192 );
+        var_0 = common_scripts\utility::get_array_of_closest( level.player.origin, getaiarray( "axis" ), undefined, undefined, 1024, 192 );
 
         if ( self.grenadeammo < 1 )
             maps\_utility::set_grenadeammo( 1 );
@@ -1049,7 +1049,7 @@ ally_one_handed_grenade_proc()
         foreach ( var_5 in var_0 )
         {
             animscripts\combat_utility::setactivegrenadetimer( var_5 );
-            var_3 = animscripts\combat_utility::trygrenadethrow( var_5, var_5 _meth_8097(), var_1, var_2, 1, 0, 1 );
+            var_3 = animscripts\combat_utility::trygrenadethrow( var_5, var_5 getshootatpos(), var_1, var_2, 1, 0, 1 );
 
             if ( var_3 )
             {
@@ -1086,7 +1086,7 @@ one_handed_help_aggro()
     self endon( "death" );
     var_0 = [];
 
-    foreach ( var_2 in common_scripts\utility::get_array_of_closest( level.player.origin, _func_0D6( "axis" ), undefined, undefined, 384 ) )
+    foreach ( var_2 in common_scripts\utility::get_array_of_closest( level.player.origin, getaiarray( "axis" ), undefined, undefined, 384 ) )
     {
         if ( isplayer( var_2.enemy ) )
             var_0[var_0.size] = var_2;
@@ -1094,7 +1094,7 @@ one_handed_help_aggro()
 
     foreach ( var_2 in var_0 )
     {
-        if ( self _meth_81BE( var_2 ) )
+        if ( self cansee( var_2 ) )
         {
             self.aggressivemode = 1;
             maps\_utility::set_favoriteenemy( var_2 );
@@ -1137,7 +1137,7 @@ opfor_help_aggro_cleanup( var_0 )
 get_player_speed()
 {
     self endon( "death" );
-    var_0 = self _meth_81B2();
+    var_0 = self getentityvelocity();
     return sqrt( squared( var_0[0] ) + squared( var_0[1] ) );
 }
 
@@ -1190,7 +1190,7 @@ opfor_death_mod()
     if ( !isdefined( var_3 ) )
         var_3 = self;
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     maps\_utility::place_weapon_on( one_handed_get_base_weapon( self.weapon, 1, "iw5_titan45onearmgundown_sp_xmags" ), "right" );
@@ -1236,7 +1236,7 @@ opfor_ammo_drop_mod()
     if ( isdefined( self.dropweapon ) && !self.dropweapon )
         var_0 delete();
     else if ( weaponclass( var_1 ) == "pistol" || weaponclass( var_1 ) == "smg" )
-        var_0 _meth_817E( int( randomfloatrange( 0.7, 1 ) * weaponclipsize( var_1 ) ), 0 );
+        var_0 itemweaponsetammo( int( randomfloatrange( 0.7, 1 ) * weaponclipsize( var_1 ) ), 0 );
     else
         var_0 delete();
 }
@@ -1275,7 +1275,7 @@ door_setup( var_0, var_1, var_2 )
                 {
                     var_3.hinge = var_7;
                     var_3.hinge.tag_name = var_2;
-                    var_3 _meth_804D( var_3.hinge );
+                    var_3 linkto( var_3.hinge );
                 }
             }
         }
@@ -1288,7 +1288,7 @@ door_setup( var_0, var_1, var_2 )
         var_3.hinge.angles = var_3 gettagangles( var_2 );
 
         if ( !isdefined( var_1 ) )
-            var_3 _meth_804D( var_3.hinge );
+            var_3 linkto( var_3.hinge );
     }
 
     if ( isdefined( var_4 ) )
@@ -1296,9 +1296,9 @@ door_setup( var_0, var_1, var_2 )
         var_3.col_brush = var_4;
 
         if ( isdefined( var_2 ) )
-            var_3.col_brush _meth_804D( var_3, var_2 );
+            var_3.col_brush linkto( var_3, var_2 );
         else
-            var_3.col_brush _meth_804D( var_3 );
+            var_3.col_brush linkto( var_3 );
     }
     else if ( var_3.classname == "script_brushmodel" )
         var_3.col_brush = var_3;
@@ -1318,15 +1318,15 @@ door_close( var_0, var_1, var_2 )
     if ( isdefined( self._lastanimtime ) )
     {
         self._lastanimtime = undefined;
-        self _meth_8116();
+        self stopuseanimtree();
     }
 
     var_4 = undefined;
 
     if ( isdefined( var_3.hinge ) )
     {
-        if ( !var_3 _meth_8068() )
-            var_3 _meth_804D( var_3.hinge );
+        if ( !var_3 islinked() )
+            var_3 linkto( var_3.hinge );
 
         var_4 = var_3.hinge;
     }
@@ -1339,9 +1339,9 @@ door_close( var_0, var_1, var_2 )
         var_5 = var_1;
 
     if ( isdefined( var_0 ) )
-        var_4 _meth_82B7( var_0, var_5 );
+        var_4 rotateyaw( var_0, var_5 );
     else
-        var_4 _meth_82B5( var_3.original_angles, var_5 );
+        var_4 rotateto( var_3.original_angles, var_5 );
 
     if ( isdefined( var_2 ) )
         wait(var_2);
@@ -1349,7 +1349,7 @@ door_close( var_0, var_1, var_2 )
         wait(var_5);
 
     if ( isdefined( var_3.col_brush ) )
-        var_3.col_brush _meth_8057();
+        var_3.col_brush disconnectpaths();
 }
 
 door_open( var_0, var_1, var_2 )
@@ -1359,15 +1359,15 @@ door_open( var_0, var_1, var_2 )
     if ( isdefined( self._lastanimtime ) )
     {
         self._lastanimtime = undefined;
-        self _meth_8116();
+        self stopuseanimtree();
     }
 
     var_4 = undefined;
 
     if ( isdefined( var_3.hinge ) )
     {
-        if ( !var_3 _meth_8068() )
-            var_3 _meth_804D( var_3.hinge );
+        if ( !var_3 islinked() )
+            var_3 linkto( var_3.hinge );
 
         var_4 = var_3.hinge;
     }
@@ -1390,7 +1390,7 @@ door_open( var_0, var_1, var_2 )
     if ( isdefined( var_1 ) )
         var_7 = var_1;
 
-    var_4 _meth_82B7( var_5, var_7 );
+    var_4 rotateyaw( var_5, var_7 );
 
     if ( isdefined( var_2 ) )
         wait(var_2);
@@ -1398,7 +1398,7 @@ door_open( var_0, var_1, var_2 )
         wait(var_7);
 
     if ( isdefined( var_3.col_brush ) )
-        var_3.col_brush _meth_8058();
+        var_3.col_brush connectpaths();
 
     if ( isdefined( var_2 ) && var_2 < var_7 )
         wait(var_7 - var_2);
@@ -1406,31 +1406,31 @@ door_open( var_0, var_1, var_2 )
     wait 0.05;
 
     if ( isdefined( var_6 ) )
-        var_4 _meth_82B7( var_6, 2.5, 0.05, 2.45 );
+        var_4 rotateyaw( var_6, 2.5, 0.05, 2.45 );
 }
 
 door_lower( var_0, var_1, var_2 )
 {
-    self _meth_82AE( var_0, var_1 );
+    self moveto( var_0, var_1 );
 
     if ( isdefined( var_2 ) )
         wait(var_2);
     else
         wait(var_1);
 
-    self.col_brush _meth_8057();
+    self.col_brush disconnectpaths();
 }
 
 door_raise( var_0, var_1, var_2 )
 {
-    self _meth_82AE( var_0, var_1 );
+    self moveto( var_0, var_1 );
 
     if ( isdefined( var_2 ) )
         wait(var_2);
     else
         wait(var_1);
 
-    self.col_brush _meth_8058();
+    self.col_brush connectpaths();
 }
 
 captured_caravan_spawner( var_0, var_1, var_2, var_3, var_4 )
@@ -1575,7 +1575,7 @@ mission_timer()
     level.display_array = [];
     level.time_display_array = [];
     var_1 = mission_timer_hud_creator( 10, 420 );
-    var_1 _meth_80D1( var_0 );
+    var_1 settimerstatic( var_0 );
 
     for (;;)
     {
@@ -1584,7 +1584,7 @@ mission_timer()
         for (;;)
         {
             wait 1.0;
-            var_1 _meth_80D1( var_0 );
+            var_1 settimerstatic( var_0 );
 
             if ( var_2 != level.location_array.size )
             {
@@ -1615,7 +1615,7 @@ mission_timer()
 
     foreach ( var_9 in level.time_display_array )
     {
-        var_9 _meth_80D1( level.time_array[var_4] );
+        var_9 settimerstatic( level.time_array[var_4] );
         var_4 += 1;
     }
 }
@@ -1675,7 +1675,7 @@ waittill_entity_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5, v
     if ( isdefined( var_6 ) )
     {
         var_12 = var_0 common_scripts\utility::spawn_tag_origin();
-        var_12 _meth_804D( var_0, var_6, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_12 linkto( var_0, var_6, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     if ( !isdefined( var_7 ) )
@@ -1697,18 +1697,18 @@ waittill_entity_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5, v
         if ( isdefined( var_9 ) )
             common_scripts\utility::flag_wait( var_9 );
 
-        if ( isdefined( var_1 ) && var_1 != "melee" && level.player meleebuttonpressed() || level.player _meth_812C() || !level.player _meth_8341() || level.player _meth_817C() == "prone" )
+        if ( isdefined( var_1 ) && var_1 != "melee" && level.player meleebuttonpressed() || level.player isthrowinggrenade() || !level.player isonground() || level.player getstance() == "prone" )
         {
             common_scripts\utility::flag_clear( var_13 );
             var_15 = 0;
-            level.player _meth_82CC();
+            level.player enableweaponpickup();
         }
         else if ( level.player maps\_utility::player_looking_at( var_12.origin, var_10, 1 ) )
         {
             var_16 = undefined;
 
             if ( var_5 )
-                var_16 = level.player _meth_80A8();
+                var_16 = level.player geteye();
             else
                 var_16 = level.player.origin;
 
@@ -1723,7 +1723,7 @@ waittill_entity_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5, v
                 {
                     common_scripts\utility::flag_clear( var_13 );
                     var_15 = 0;
-                    level.player _meth_82CC();
+                    level.player enableweaponpickup();
                 }
             }
             else if ( distance( var_16, var_12.origin ) <= var_11 )
@@ -1735,14 +1735,14 @@ waittill_entity_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5, v
             {
                 common_scripts\utility::flag_clear( var_13 );
                 var_15 = 0;
-                level.player _meth_82CC();
+                level.player enableweaponpickup();
             }
         }
         else
         {
             common_scripts\utility::flag_clear( var_13 );
             var_15 = 0;
-            level.player _meth_82CC();
+            level.player enableweaponpickup();
         }
 
         if ( isdefined( var_1 ) )
@@ -1764,13 +1764,13 @@ waittill_entity_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5, v
                 maps\_utility::display_hint_timeout( var_2 );
 
             var_14 = 0;
-            level.player _meth_82CB();
+            level.player disableweaponpickup();
         }
 
         wait 0.05;
     }
 
-    level.player _meth_82CC();
+    level.player enableweaponpickup();
     common_scripts\utility::flag_clear( var_13 );
 
     if ( isdefined( var_6 ) )
@@ -1804,7 +1804,7 @@ ignore_everything()
     self.a.disablepain = save_ignore_setting( self.a.disablepain, "a.disablePain", 1 );
     self.allowpain = save_ignore_setting( self.allowpain, "allowPain", 0 );
     self.ignoresonicaoe = save_ignore_setting( self.ignoresonicaoe, "IgnoreSonicAoE", 1 );
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
 }
 
 save_ignore_setting( var_0, var_1, var_2 )
@@ -1819,7 +1819,7 @@ save_ignore_setting( var_0, var_1, var_2 )
 
 unignore_everything( var_0 )
 {
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     if ( isdefined( self.script_drone ) )
@@ -1898,7 +1898,7 @@ cap_civilian_damage_proc( var_0 )
             continue;
         }
 
-        self _meth_8052( var_2 _meth_80A8(), var_2 );
+        self kill( var_2 geteye(), var_2 );
     }
 }
 
@@ -1913,7 +1913,7 @@ kill_no_react()
     self.allowdeath = 1;
     self.a.nodeath = 1;
     maps\_utility::set_battlechatter( 0 );
-    self _meth_8052();
+    self kill();
 }
 
 start_point_is_after( var_0, var_1 )
@@ -2027,11 +2027,11 @@ waittill_notify_func_ent( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
 ambient_fan_rotate()
 {
-    self _meth_82B6( randomint( 360 ), 0.1 );
+    self rotatepitch( randomint( 360 ), 0.1 );
 
     for (;;)
     {
-        self _meth_82B6( 360, 3 );
+        self rotatepitch( 360, 3 );
         wait 3;
     }
 }
@@ -2058,7 +2058,7 @@ physics_bodies_on( var_0, var_1, var_2 )
     {
         var_7 = common_scripts\utility::random( var_4 );
         var_8 = spawn( "script_model", var_6.origin );
-        var_8 _meth_80B1( var_7 );
+        var_8 setmodel( var_7 );
         var_8.angles = var_6.angles;
         level.hanging_bodies = common_scripts\utility::array_add( level.hanging_bodies, var_8 );
     }
@@ -2072,7 +2072,7 @@ physics_bodies_off()
 
         foreach ( var_2 in level.hanging_bodies )
         {
-            var_2 _meth_84E1();
+            var_2 physicsstop();
             var_2 delete();
             level.hanging_bodies = common_scripts\utility::array_remove( level.hanging_bodies, var_2 );
         }
@@ -2242,7 +2242,7 @@ tff_cleanup_vehicle( var_0 )
             if ( !isdefined( var_3 ) )
                 return;
 
-            if ( _func_294( var_3 ) )
+            if ( isremovedentity( var_3 ) )
                 return;
 
             if ( var_3 maps\_vehicle::isvehicle() )
@@ -2256,7 +2256,7 @@ tff_cleanup_vehicle( var_0 )
         if ( !isdefined( self ) )
             return;
 
-        if ( _func_294( self ) )
+        if ( isremovedentity( self ) )
             return;
 
         if ( maps\_vehicle::isvehicle() )
@@ -2270,8 +2270,8 @@ captured_player_cuffs()
 {
     var_0 = self;
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "s1_vm_handcuffs" );
-    var_1 _meth_804D( var_0, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( "s1_vm_handcuffs" );
+    var_1 linkto( var_0, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     return var_1;
 }
 
@@ -2279,8 +2279,8 @@ captured_worker_weapons()
 {
     var_0 = self;
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "npc_titan45_nocamo" );
-    var_1 _meth_804D( var_0, "tag_stowed_hip_rear", ( -12, 10, -2 ), ( 30, 150, 0 ) );
+    var_1 setmodel( "npc_titan45_nocamo" );
+    var_1 linkto( var_0, "tag_stowed_hip_rear", ( -12, 10, -2 ), ( 30, 150, 0 ) );
     var_0.no_friendly_fire_penalty = 1;
     var_0 waittill( "death" );
     var_1 delete();

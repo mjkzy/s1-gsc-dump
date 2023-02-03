@@ -65,7 +65,7 @@ init_local()
     thread maps\_vehicle::vehicle_lights_on( "running" );
 
     if ( issubstr( self.classname, "sentinel" ) )
-        self _meth_8048( "main_rotor_static_jnt" );
+        self hidepart( "main_rotor_static_jnt" );
 
     waittillframeend;
 
@@ -86,8 +86,8 @@ show_blurry_rotors()
 {
     if ( issubstr( self.classname, "sentinel" ) )
     {
-        self _meth_8048( "main_rotor_static_jnt" );
-        self _meth_804B( "main_rotor_jnt" );
+        self hidepart( "main_rotor_static_jnt" );
+        self showpart( "main_rotor_jnt" );
     }
 }
 
@@ -95,8 +95,8 @@ show_static_rotors()
 {
     if ( issubstr( self.classname, "sentinel" ) )
     {
-        self _meth_804B( "main_rotor_static_jnt" );
-        self _meth_8048( "main_rotor_jnt" );
+        self showpart( "main_rotor_static_jnt" );
+        self hidepart( "main_rotor_jnt" );
     }
 }
 
@@ -104,8 +104,8 @@ attach_littlebird_parts()
 {
     switch ( self.classname )
     {
-        case "script_vehicle_littlebird_sentinel_bench":
         case "script_vehicle_littlebird_atlas_bench":
+        case "script_vehicle_littlebird_sentinel_bench":
             self attach( "vehicle_sentinel_littlebird_benchleft", "TAG_BENCH_ATTACH_LEFT" );
             self attach( "vehicle_sentinel_littlebird_benchright", "TAG_BENCH_ATTACH_RIGHT" );
             break;
@@ -275,7 +275,7 @@ littlebird_emp_death( var_0, var_1 )
     self notify( "emp_death" );
     maps\_vehicle::vehicle_lights_off( "all" );
     self.vehicle_stays_alive = 1;
-    var_2 = self _meth_8287();
+    var_2 = self vehicle_getvelocity();
     var_3 = 250;
 
     if ( isdefined( level.get_littlebird_crash_location_override ) )
@@ -290,9 +290,9 @@ littlebird_emp_death( var_0, var_1 )
     self notify( "deathspin" );
     thread littlebird_deathspin();
     var_6 = 1000;
-    self _meth_8283( var_6, 40, 1000 );
-    self _meth_825A( var_3 );
-    self _meth_825B( var_4, 0 );
+    self vehicle_setspeed( var_6, 40, 1000 );
+    self setneargoalnotifydist( var_3 );
+    self setvehgoalpos( var_4, 0 );
     thread littlebird_emp_crash_movement( var_4, var_3, var_6 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     self notify( "stop_crash_loop_sound" );
@@ -304,7 +304,7 @@ littlebird_emp_death( var_0, var_1 )
     if ( getdvar( "mapname" ) == "lab" )
         check_lab_achievement();
 
-    self _meth_8052( self.origin, var_0 );
+    self kill( self.origin, var_0 );
 }
 
 check_lab_achievement()
@@ -321,8 +321,8 @@ check_lab_achievement()
 littlebird_deathspin()
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
 
     for (;;)
     {
@@ -330,7 +330,7 @@ littlebird_deathspin()
             return;
 
         var_0 = randomintrange( 90, 120 );
-        self _meth_825E( self.angles[1] + var_0 );
+        self settargetyaw( self.angles[1] + var_0 );
         wait 0.5;
     }
 }
@@ -338,8 +338,8 @@ littlebird_deathspin()
 littlebird_emp_crash_movement( var_0, var_1, var_2 )
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
     var_3 = 400;
     var_4 = 100;
     var_5 = undefined;
@@ -357,8 +357,8 @@ littlebird_emp_crash_movement( var_0, var_1, var_2 )
 helicopter_crash_rotate()
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
 
     for (;;)
     {
@@ -366,7 +366,7 @@ helicopter_crash_rotate()
             return;
 
         var_0 = randomintrange( 90, 120 );
-        self _meth_825E( self.angles[1] + var_0 );
+        self settargetyaw( self.angles[1] + var_0 );
         wait 0.5;
     }
 }

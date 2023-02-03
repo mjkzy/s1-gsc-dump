@@ -326,7 +326,7 @@ playertakestreaksupportinput( var_0 )
         if ( !var_0.active )
             return;
 
-        if ( isdefined( self _meth_84C5() ) && self _meth_84C5() == var_0 && self usebuttonpressed() && self _meth_8341() )
+        if ( isdefined( self playergetuseent() ) && self playergetuseent() == var_0 && self usebuttonpressed() && self isonground() )
         {
             var_2 = playergetusetime();
             var_1 = playerhandlejoining( var_0, var_2 );
@@ -412,8 +412,8 @@ playerhandlejoining( var_0, var_1 )
 
 useholdthink( var_0, var_1, var_2 )
 {
-    var_0 _meth_807C( var_2 );
-    var_0 _meth_8081();
+    var_0 playerlinkto( var_2 );
+    var_0 playerlinkedoffsetenable();
     var_0.manuallyjoiningkillstreak = 1;
     thread useholdthinkcleanuponplayerdeath( var_0 );
     self.curprogress = 0;
@@ -423,13 +423,13 @@ useholdthink( var_0, var_1, var_2 )
 
     if ( isdefined( var_0.inwater ) )
     {
-        var_0 _meth_8119( 0 );
-        var_0 _meth_811A( 0 );
+        var_0 allowcrouch( 0 );
+        var_0 allowprone( 0 );
     }
 
     var_0 maps\mp\_utility::_giveweapon( "killstreak_remote_turret_mp" );
-    var_0 _meth_8315( "killstreak_remote_turret_mp" );
-    var_0 _meth_8321();
+    var_0 switchtoweapon( "killstreak_remote_turret_mp" );
+    var_0 disableweaponswitch();
     var_0 thread personalusebar( self, var_2 );
     var_3 = useholdthinkloop( var_0, var_2 );
 
@@ -445,9 +445,9 @@ useholdthink( var_0, var_1, var_2 )
     if ( isdefined( var_0 ) )
     {
         var_0.manuallyjoiningkillstreak = 0;
-        var_0 _meth_82FB( "ui_use_bar_text", 0 );
-        var_0 _meth_82FB( "ui_use_bar_end_time", 0 );
-        var_0 _meth_82FB( "ui_use_bar_start_time", 0 );
+        var_0 setclientomnvar( "ui_use_bar_text", 0 );
+        var_0 setclientomnvar( "ui_use_bar_end_time", 0 );
+        var_0 setclientomnvar( "ui_use_bar_start_time", 0 );
     }
 
     self notify( "coopUtilUseHoldThinkComplete" );
@@ -463,9 +463,9 @@ useholdthinkcleanuponplayerdeath( var_0 )
     {
         var_0 playerresetaftercoopstreakinternal();
         var_0.manuallyjoiningkillstreak = 0;
-        var_0 _meth_82FB( "ui_use_bar_text", 0 );
-        var_0 _meth_82FB( "ui_use_bar_end_time", 0 );
-        var_0 _meth_82FB( "ui_use_bar_start_time", 0 );
+        var_0 setclientomnvar( "ui_use_bar_text", 0 );
+        var_0 setclientomnvar( "ui_use_bar_end_time", 0 );
+        var_0 setclientomnvar( "ui_use_bar_start_time", 0 );
     }
 }
 
@@ -473,12 +473,12 @@ playerresetaftercoopstreakinternal()
 {
     maps\mp\killstreaks\_killstreaks::takekillstreakweaponifnodupe( "killstreak_predator_missile_mp" );
     maps\mp\killstreaks\_killstreaks::takekillstreakweaponifnodupe( "killstreak_remote_turret_mp" );
-    self _meth_8119( 1 );
-    self _meth_811A( 1 );
-    self _meth_8322();
-    self _meth_8315( common_scripts\utility::getlastweapon() );
+    self allowcrouch( 1 );
+    self allowprone( 1 );
+    self enableweaponswitch();
+    self switchtoweapon( common_scripts\utility::getlastweapon() );
     thread playerdelaycontrol();
-    self _meth_804F();
+    self unlink();
 }
 
 playersetupcoopstreakinternal( var_0 )
@@ -486,11 +486,11 @@ playersetupcoopstreakinternal( var_0 )
     if ( isdefined( var_0 ) )
         wait(var_0);
 
-    self _meth_8322();
+    self enableweaponswitch();
     maps\mp\_utility::_giveweapon( "killstreak_predator_missile_mp" );
-    self _meth_8316( "killstreak_predator_missile_mp" );
+    self switchtoweaponimmediate( "killstreak_predator_missile_mp" );
     maps\mp\killstreaks\_killstreaks::takekillstreakweaponifnodupe( "killstreak_remote_turret_mp" );
-    self _meth_8321();
+    self disableweaponswitch();
 }
 
 playerdelaycontrol()
@@ -505,8 +505,8 @@ personalusebar( var_0, var_1 )
 {
     self endon( "disconnect" );
     var_1 endon( "streakPromptStopped" );
-    self _meth_82FB( "ui_use_bar_text", 2 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
+    self setclientomnvar( "ui_use_bar_text", 2 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
     var_2 = -1;
 
     while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0 ) && var_0.inuse && !level.gameended )
@@ -521,7 +521,7 @@ personalusebar( var_0, var_1 )
                 var_3 = gettime();
                 var_4 = var_0.curprogress / var_0.usetime;
                 var_5 = var_3 + ( 1 - var_4 ) * var_0.usetime / var_0.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_5 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_5 ) );
             }
 
             var_2 = var_0.userate;
@@ -530,7 +530,7 @@ personalusebar( var_0, var_1 )
         wait 0.05;
     }
 
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
 }
 
 useholdthinkloop( var_0, var_1 )

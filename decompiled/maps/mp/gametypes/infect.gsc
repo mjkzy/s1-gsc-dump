@@ -84,7 +84,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
     maps\mp\_utility::setobjectivetext( "allies", &"OBJECTIVES_INFECT" );
     maps\mp\_utility::setobjectivetext( "axis", &"OBJECTIVES_INFECT" );
 
@@ -236,7 +236,7 @@ preloadweapons()
     }
 
     if ( var_0.size > 0 )
-        self _meth_8511( var_0 );
+        self loadweapons( var_0 );
 }
 
 onspawnplayer()
@@ -312,17 +312,17 @@ updateloadouts()
     {
         thread setinfectedmsg();
         thread setinfectedmodels();
-        self _meth_81E1( 1.2 );
+        self setmovespeedscale( 1.2 );
     }
 }
 
 setinfectedmodels()
 {
     self detachall();
-    self _meth_80B1( "kva_hazmat_body_infected_mp" );
+    self setmodel( "kva_hazmat_body_infected_mp" );
     self attach( "kva_hazmat_head_infected" );
-    self _meth_8343( "vm_kva_hazmat_infected" );
-    self _meth_83DB( "cloth" );
+    self setviewmodel( "vm_kva_hazmat_infected" );
+    self setclothtype( "cloth" );
 }
 
 setinfectedmsg()
@@ -364,7 +364,7 @@ choosefirstinfected()
 
     foreach ( var_4 in level.players )
     {
-        if ( maps\mp\_utility::matchmakinggame() && level.players.size > 1 && var_4 _meth_829C() )
+        if ( maps\mp\_utility::matchmakinggame() && level.players.size > 1 && var_4 ishost() )
         {
             var_2 = var_4;
             continue;
@@ -405,13 +405,13 @@ prepareforclasschange()
         wait 0.05;
     }
 
-    while ( self _meth_812E() )
+    while ( self ismeleeing() )
         wait 0.05;
 
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self _meth_8341() && !self isonladder() )
+    while ( !self isonground() && !self isonladder() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )
@@ -477,10 +477,10 @@ setinitialtonormalinfected()
 
 refillbattery()
 {
-    var_0 = self _meth_82CE();
+    var_0 = self getweaponslistoffhands();
 
     foreach ( var_2 in var_0 )
-        self _meth_84A4( var_2 );
+        self batteryfullrecharge( var_2 );
 }
 
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
@@ -582,7 +582,7 @@ finalsurvivoruav( var_0 )
             var_3.radarmode = "normal_radar";
     }
 
-    _func_177( "axis", 1 );
+    setteamradarstrength( "axis", 1 );
 
     for (;;)
     {
@@ -591,7 +591,7 @@ finalsurvivoruav( var_0 )
 
         if ( var_1 )
         {
-            _func_175( "axis", 0 );
+            setteamradar( "axis", 0 );
             var_1 = 0;
         }
 
@@ -599,7 +599,7 @@ finalsurvivoruav( var_0 )
 
         if ( distance( var_5, var_0.origin ) < 200 )
         {
-            _func_175( "axis", 1 );
+            setteamradar( "axis", 1 );
             var_1 = 1;
 
             foreach ( var_3 in level.players )
@@ -620,7 +620,7 @@ enduavonlatejoiner( var_0 )
         {
             level notify( "infect_lateJoiner" );
             wait 0.05;
-            _func_175( "axis", 0 );
+            setteamradar( "axis", 0 );
             break;
         }
 
@@ -720,10 +720,10 @@ updateteamscores()
 {
     level.infect_teamscores["allies"] = getteamsize( "allies" );
     game["teamScores"]["allies"] = level.infect_teamscores["allies"];
-    updateclientnames( "allies", level.infect_teamscores["allies"] );
+    setteamscore( "allies", level.infect_teamscores["allies"] );
     level.infect_teamscores["axis"] = getteamsize( "axis" );
     game["teamScores"]["axis"] = level.infect_teamscores["axis"];
-    updateclientnames( "axis", level.infect_teamscores["axis"] );
+    setteamscore( "axis", level.infect_teamscores["axis"] );
 }
 
 setspecialloadouts()

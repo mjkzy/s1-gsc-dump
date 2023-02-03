@@ -267,7 +267,7 @@ initdismembermentweaponmodifiers()
     var_3 = 3;
     var_4 = 4;
     var_5 = 5;
-    var_6 = _func_295( var_0 );
+    var_6 = tablegetrowcount( var_0 );
 
     for ( var_7 = 0; var_7 < var_6; var_7++ )
     {
@@ -402,7 +402,7 @@ mutator_precloneswap()
     self detachall();
 
     if ( isdefined( self.swapbody ) )
-        self _meth_80B1( self.swapbody );
+        self setmodel( self.swapbody );
 
     if ( var_0 )
     {
@@ -425,8 +425,8 @@ mutatorexo()
     thread mutatorspawnsound( "exo" );
     maps\mp\agents\humanoid\_humanoid_util::enable_humanoid_exo_abilities();
     self.boostfxtag = "tag_jetpack";
-    var_0 = self _meth_83B8();
-    self _meth_80B1( level.exobodyparts[var_0]["torso"] );
+    var_0 = self getmodelfromentity();
+    self setmodel( level.exobodyparts[var_0]["torso"] );
 
     if ( isdefined( level.exobodyparts[var_0]["heads"] ) )
     {
@@ -480,7 +480,7 @@ mutatorfast()
     var_16 = randomint( var_9.size );
     self.precloneswapfunc = ::mutator_precloneswap;
     self detachall();
-    self _meth_80B1( var_0[var_11] );
+    self setmodel( var_0[var_11] );
     self.swapbody = var_1[var_11];
     self attach( var_2[var_12] );
     self.headmodel = var_2[var_12];
@@ -499,7 +499,7 @@ mutatorfast()
     var_17 = maps\mp\gametypes\zombies::geteyeeffectforzombie( "fast", self.headmodel );
     maps\mp\zombies\_util::zombie_set_eyes( var_17 );
     torso_effects_apply( "mut_fast" );
-    self _meth_83E4( "slush" );
+    self setsurfacetype( "slush" );
 
     if ( !isdefined( self.moverateroundmod ) )
         self.moverateroundmod = 0;
@@ -520,7 +520,7 @@ mutatoremz_clearemp( var_0 )
     self playsoundtoplayer( "emp_system_reboot", self );
 
     if ( !maps\mp\zombies\_util::iszombieshardmode() )
-        self _meth_8064( 0.0, 0.0 );
+        self digitaldistortsetparams( 0.0, 0.0 );
 
     maps\mp\gametypes\_scrambler::playersethudempscrambledoff( var_0 );
 }
@@ -542,7 +542,7 @@ mutatoremz_rumbleloop( var_0 )
 
     while ( gettime() < var_1 )
     {
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         wait 0.05;
     }
 }
@@ -555,7 +555,7 @@ mutatoremz_watchdistortdisconnectdeath( var_0 )
 
     if ( isdefined( self ) )
     {
-        self _meth_8064( 0.0, 0.0 );
+        self digitaldistortsetparams( 0.0, 0.0 );
         maps\mp\gametypes\_scrambler::playersethudempscrambledoff( var_0 );
     }
 }
@@ -567,8 +567,8 @@ mutatoremz_digitaldistort( var_0, var_1 )
     self endon( "faux_spawn" );
     self endon( "joined_team" );
     var_2 = 0.6;
-    self _meth_84BE( "digital_distort_mp" );
-    self _meth_8064( var_2, 1.0 );
+    self digitaldistortsetmaterial( "digital_distort_mp" );
+    self digitaldistortsetparams( var_2, 1.0 );
     thread mutatoremz_watchdistortdisconnectdeath( var_1 );
     wait 0.1;
     var_3 = var_0;
@@ -581,12 +581,12 @@ mutatoremz_digitaldistort( var_0, var_1 )
     while ( var_3 > 0 )
     {
         var_8 = var_6 * var_3 / var_0 + var_5;
-        self _meth_8064( var_8, 1.0 );
+        self digitaldistortsetparams( var_8, 1.0 );
         var_3 -= var_7;
         wait(var_7);
     }
 
-    self _meth_8064( 0.0, 0.0 );
+    self digitaldistortsetparams( 0.0, 0.0 );
 }
 
 mutatoremz_applyemp()
@@ -686,7 +686,7 @@ mutatoremz_watchforproximityboosters()
                 if ( var_5.ignoreme || maps\mp\zombies\_util::shouldignoreent( var_5 ) )
                     continue;
 
-                if ( var_5 _meth_8546() )
+                if ( var_5 isnotarget() )
                     continue;
 
                 var_3[var_3.size] = var_5;
@@ -750,7 +750,7 @@ mutatoremz_bursttonearbyplayers( var_0 )
         if ( var_6.ignoreme || maps\mp\zombies\_util::shouldignoreent( var_6 ) )
             continue;
 
-        if ( var_6 _meth_8546() )
+        if ( var_6 isnotarget() )
             continue;
 
         var_6 playlocalsound( "zmb_emz_impact" );
@@ -794,7 +794,7 @@ mutatoremz()
         var_16 = randomint( var_9.size );
         self.precloneswapfunc = ::mutator_precloneswap;
         self detachall();
-        self _meth_80B1( var_0[var_11] );
+        self setmodel( var_0[var_11] );
         self.swapbody = var_1[var_11];
         self attach( var_2[var_12] );
         self.headmodel = var_2[var_12];
@@ -822,8 +822,8 @@ mutatoremz()
         maps\mp\zombies\_util::playfxontagnetwork( level._effect["mut_emz_arm_l"], self.goliathweapon, "tag_fx" );
     }
 
-    self _meth_83E4( "bark" );
-    self _meth_8075( "zmb_emz_crackle_loop" );
+    self setsurfacetype( "bark" );
+    self playloopsound( "zmb_emz_crackle_loop" );
     thread mutatoremz_watchforattackhits();
     thread mutatoremz_watchforproximityboosters();
     self waittill( "death" );
@@ -832,7 +832,7 @@ mutatoremz()
 mutatoremz_dog()
 {
     thread mutatorspawnsound( "emz" );
-    self _meth_80B1( "zom_dog_emz" );
+    self setmodel( "zom_dog_emz" );
     maps\mp\zombies\_util::zombie_set_eyes( "zombie_dog_eye_emp" );
 
     if ( isdefined( level._effect["mut_emz_head"] ) )
@@ -847,8 +847,8 @@ mutatoremz_dog()
     if ( isdefined( level._effect["mut_emz_back"] ) )
         maps\mp\zombies\_util::playfxontagnetwork( level._effect["mut_emz_back"], self, "spine4_jnt" );
 
-    self _meth_83E4( "bark" );
-    self _meth_8075( "zmb_emz_crackle_loop" );
+    self setsurfacetype( "bark" );
+    self playloopsound( "zmb_emz_crackle_loop" );
     thread mutatoremz_watchforattackhits();
     thread mutatoremz_watchforproximityboosters();
     self waittill( "death" );
@@ -925,23 +925,23 @@ mutatorexploder_explode( var_0, var_1, var_2 )
     if ( isalive( self ) )
     {
         trymutilate( undefined, "exploder_zm_large_mp", "MOD_EXPLOSIVE", 1.0, self, undefined );
-        self _meth_826B();
+        self suicide();
     }
 }
 
 mutatorexploder_warningsound( var_0 )
 {
     var_1 = spawn( "script_model", var_0 );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     waitframe();
 
     if ( isdefined( self ) )
     {
-        var_1 _meth_8438( "zmb_exploder_warning" );
+        var_1 playsoundonmovingent( "zmb_exploder_warning" );
         common_scripts\utility::waittill_either( "death", "stopWarningSound" );
     }
 
-    var_1 _meth_80AC();
+    var_1 stopsounds();
     wait 1.0;
     var_1 delete();
 }
@@ -971,7 +971,7 @@ mutatorexploder_proximitybomb()
                 if ( var_3.ignoreme || maps\mp\zombies\_util::shouldignoreent( var_3 ) )
                     continue;
 
-                if ( var_3 _meth_8546() )
+                if ( var_3 isnotarget() )
                     continue;
 
                 if ( distancesquared( var_3.origin, self.origin ) > var_0 )
@@ -986,8 +986,8 @@ mutatorexploder_proximitybomb()
         {
             self.ignoreall = 1;
             self.curmeleetarget = undefined;
-            self _meth_8390( self.origin );
-            self _meth_839D( 1 );
+            self scragentsetgoalpos( self.origin );
+            self scragentsetscripted( 1 );
             maps\mp\agents\_scripted_agent_anim_util::set_anim_state( "exploder_explode" );
             var_5 = "j_spineupper";
 
@@ -1035,7 +1035,7 @@ mutatorexploder()
     var_12 = randomint( var_6.size );
     self.precloneswapfunc = ::mutator_precloneswap;
     self detachall();
-    self _meth_80B1( var_0[var_7] );
+    self setmodel( var_0[var_7] );
     self.swapbody = var_1[var_7];
     self attach( var_2[var_8] );
     self.headmodel = var_2[var_8];
@@ -1050,7 +1050,7 @@ mutatorexploder()
     var_13 = maps\mp\gametypes\zombies::geteyeeffectforzombie( "exploder", self.headmodel );
     maps\mp\zombies\_util::zombie_set_eyes( var_13 );
     torso_effects_apply( "mut_exp" );
-    self _meth_83E4( "fruit" );
+    self setsurfacetype( "fruit" );
     thread exploder_ambient_sound();
     self.hasexploded = 0;
     thread mutatorexploder_proximitybomb();
@@ -1074,7 +1074,7 @@ mutatorexploder_dog()
     if ( isdefined( level._effect["mut_exp_back"] ) )
         maps\mp\zombies\_util::playfxontagnetwork( level._effect["mut_exp_back"], self, "spine4_jnt" );
 
-    self _meth_83E4( "fruit" );
+    self setsurfacetype( "fruit" );
     thread exploder_ambient_sound();
     self.hasexploded = 0;
     self.bypasscorpse = 1;
@@ -1084,16 +1084,16 @@ mutatorexploder_dog()
 
 exploder_ambient_sound()
 {
-    self _meth_8075( "zmb_exploder_ambient_loop" );
+    self playloopsound( "zmb_exploder_ambient_loop" );
     self waittill( "death" );
-    self _meth_80AB( "zmb_exploder_ambient_loop" );
+    self stoploopsound( "zmb_exploder_ambient_loop" );
 }
 
 runner_ambient_sound()
 {
     var_0 = spawn( "script_origin", self.origin );
-    var_0 _meth_804D( self );
-    var_0 _meth_8075( "zmb_runner_ambient_loop" );
+    var_0 linkto( self );
+    var_0 playloopsound( "zmb_runner_ambient_loop" );
     var_1 = 0;
 
     while ( isalive( self ) )
@@ -1103,21 +1103,21 @@ runner_ambient_sound()
 
         if ( var_1 == 0 && var_3 < 5 )
         {
-            var_0 _meth_806F( 0, 0.5 );
-            self _meth_806F( 1, 0.5 );
+            var_0 scalevolume( 0, 0.5 );
+            self scalevolume( 1, 0.5 );
             var_1 = 1;
         }
         else if ( var_1 && var_3 >= 5 )
         {
-            var_0 _meth_806F( 1, 0.5 );
-            self _meth_806F( 0, 0.5 );
+            var_0 scalevolume( 1, 0.5 );
+            self scalevolume( 0, 0.5 );
             var_1 = 0;
         }
 
         wait 1;
     }
 
-    var_0 _meth_80AB( "zmb_runner_ambient_loop" );
+    var_0 stoploopsound( "zmb_runner_ambient_loop" );
     waitframe();
     var_0 delete();
 }
@@ -1136,9 +1136,9 @@ startcrawl()
         maps\mp\agents\humanoid\_humanoid_util::lungemeleeupdate( 10.0, 240, 120, "attack_lunge_boost", level._effect["boost_lunge"], 1, 255 );
 
     maps\mp\agents\humanoid\_humanoid_util::leapdisable();
-    self _meth_853D( 0 );
-    self _meth_8541( 1 );
-    self _meth_83A0( 15 );
+    self scragentallowboost( 0 );
+    self scragentsetorienttoground( 1 );
+    self scragentsetviewheight( 15 );
     level.crawlingzombies++;
     self waittill( "death" );
     level.crawlingzombies--;
@@ -1364,7 +1364,7 @@ mutilate( var_0, var_1, var_2, var_3, var_4 )
 
             if ( isdefined( self.linked_fx ) && isdefined( self.linked_fx["tag_eye"] ) )
             {
-                setwinningteam( self.linked_fx["tag_eye"], 1 );
+                setfxkillondelete( self.linked_fx["tag_eye"], 1 );
                 thread delayeddeleteeyesfx();
             }
         }
@@ -1401,7 +1401,7 @@ mutilate( var_0, var_1, var_2, var_3, var_4 )
             }
             else
             {
-                self _meth_83D0( var_8 );
+                self setanimclass( var_8 );
 
                 if ( self.aistate == "idle" )
                     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( "idle_noncombat" );
@@ -1570,7 +1570,7 @@ detachlimb( var_0, var_1, var_2, var_3, var_4 )
             if ( !isdefined( var_10 ) )
                 var_10 = var_1;
 
-            var_9 _meth_80B1( var_10 );
+            var_9 setmodel( var_10 );
             var_9.angles = var_6;
             var_11 = ( 0, 0, randomfloatrange( 1000, 2000 ) );
 
@@ -1601,8 +1601,8 @@ detachlimb( var_0, var_1, var_2, var_3, var_4 )
             var_16 = length( var_15 );
             var_17 = var_15 / var_16;
             var_16 = min( var_16, 1750 );
-            var_9 _meth_83C3( var_17 * var_16, var_13 );
-            var_9 _meth_8559();
+            var_9 physicslaunchclientwithimpulse( var_17 * var_16, var_13 );
+            var_9 deleteonhostmigration();
 
             if ( level.nextdismemberedbodypartindex < level.dismemberedbodyparts.size )
                 level.dismemberedbodyparts[level.nextdismemberedbodypartindex] delete();
@@ -1647,7 +1647,7 @@ play_dismember_sound( var_0 )
     waitframe();
 
     if ( self.health > 0 )
-        self _meth_8438( var_0 );
+        self playsoundonmovingent( var_0 );
     else
         self playsound( var_0 );
 }
@@ -1664,7 +1664,7 @@ mutatorspawnsound( var_0 )
     {
         wait(randomfloatrange( 0.2, 0.8 ));
         var_1 = level.mutators[var_0][2];
-        self _meth_8438( var_1 );
+        self playsoundonmovingent( var_1 );
     }
 }
 

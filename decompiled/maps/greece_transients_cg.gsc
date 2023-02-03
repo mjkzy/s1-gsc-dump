@@ -3,22 +3,22 @@
 
 transition_unload_then_load_safely( var_0, var_1, var_2 )
 {
-    if ( _func_21E( var_0 ) )
-        _func_219( var_0 );
+    if ( istransientloaded( var_0 ) )
+        unloadtransient( var_0 );
 
     for (;;)
     {
-        if ( !_func_21E( var_0 ) )
+        if ( !istransientloaded( var_0 ) )
             break;
 
         wait 0.1;
     }
 
-    _func_218( var_1 );
+    loadtransient( var_1 );
 
     for (;;)
     {
-        if ( _func_21E( var_1 ) )
+        if ( istransientloaded( var_1 ) )
             break;
 
         wait 0.1;
@@ -74,16 +74,16 @@ setup_start_points_for_transients()
     maps\_utility::set_start_transients( "start_ending_hades", var_0 );
     level.transient_zone = "";
 
-    if ( _func_21E( "greece_intro_tr" ) )
+    if ( istransientloaded( "greece_intro_tr" ) )
         level.transient_zone = "intro";
 
-    if ( _func_21E( "greece_confCenter_tr" ) )
+    if ( istransientloaded( "greece_confCenter_tr" ) )
         level.transient_zone += "_confCenter";
-    else if ( _func_21E( "greece_middle_tr" ) )
+    else if ( istransientloaded( "greece_middle_tr" ) )
         level.transient_zone += "_middle";
-    else if ( _func_21E( "greece_outro_tr" ) )
+    else if ( istransientloaded( "greece_outro_tr" ) )
         level.transient_zone += "_outro";
-    else if ( _func_21E( "greece_hades_fight_tr" ) )
+    else if ( istransientloaded( "greece_hades_fight_tr" ) )
         level.transient_zone += "_hades_fight";
 
     if ( level.transient_zone == "intro" )

@@ -71,23 +71,23 @@ setup_flickerlight_motion_presets()
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disableLightSets", 0 );
-        level.player _meth_83C0( "irons_estate" );
+        setsaveddvar( "r_disableLightSets", 0 );
+        level.player lightsetforplayer( "irons_estate" );
     }
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", 0.7 );
-        _func_0D3( "r_gunSightColorNoneScale", 0.2 );
+        setsaveddvar( "r_gunSightColorEntityScale", 0.7 );
+        setsaveddvar( "r_gunSightColorNoneScale", 0.2 );
     }
 }
 
 set_hemi_ao()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 }
 
 irons_estate_vignette()
@@ -97,33 +97,33 @@ irons_estate_vignette()
 
 irons_estate_outside_vision_setup()
 {
-    level.player _meth_83C0( "irons_estate" );
+    level.player lightsetforplayer( "irons_estate" );
     maps\_utility::vision_set_fog_changes( "irons_estate", 0 );
-    level.player _meth_8490( "clut_base_default", 0 );
+    level.player setclutforplayer( "clut_base_default", 0 );
 }
 
 irons_estate_briefing_setup()
 {
     common_scripts\utility::flag_wait( "introscreen1_complete" );
-    level.player _meth_83C0( "irons_estate_briefing" );
+    level.player lightsetforplayer( "irons_estate_briefing" );
     maps\_utility::vision_set_fog_changes( "irons_estate_briefing", 0 );
-    level.player _meth_8490( "clut_base_briefing", 0 );
+    level.player setclutforplayer( "clut_base_briefing", 0 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 13, 27, 1, 1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 13, 27, 1, 1 );
     wait 8;
-    level.player _meth_84AB( 11, 27, 1, 1 );
+    level.player setphysicaldepthoffield( 11, 27, 1, 1 );
     level waittill( "player_can_move" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
     maps\_lighting::lerp_spot_intensity( "Illona_briefing_fill", 1, 0 );
     maps\_lighting::lerp_spot_intensity( "Illona_briefing_bounce", 1, 0 );
@@ -143,9 +143,9 @@ force_bounce_on_briefing_hanger()
     if ( level.nextgen )
     {
         var_0 = getent( "briefing_hanger_lod", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         common_scripts\utility::flag_wait( "intro_begin" );
-        var_0 _meth_8498( "force_off" );
+        var_0 setlightshadowstate( "force_off" );
     }
 }
 
@@ -154,9 +154,9 @@ force_bounce_on_briefing_hanger_02()
     if ( level.nextgen )
     {
         var_0 = getent( "briefing_hanger_lod_02", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         common_scripts\utility::flag_wait( "intro_begin" );
-        var_0 _meth_8498( "force_off" );
+        var_0 setlightshadowstate( "force_off" );
     }
 }
 
@@ -164,17 +164,17 @@ irons_estate_waterfall_cave_setup()
 {
     common_scripts\utility::flag_wait( "intro_begin" );
     maps\_lighting::play_flickerlight_motion_preset( "water_motion_large", "water_shim_01" );
-    level.player _meth_83C0( "irons_estate_waterfall_intro" );
+    level.player lightsetforplayer( "irons_estate_waterfall_intro" );
 
     if ( level.nextgen )
     {
         maps\_utility::vision_set_fog_changes( "irons_estate_waterfall_intro", 0 );
-        level.player _meth_8490( "clut_base_default", 0 );
+        level.player setclutforplayer( "clut_base_default", 0 );
     }
     else
     {
         maps\_utility::vision_set_fog_changes( "irons_estate_waterfall_intro", 0.1 );
-        level.player _meth_8490( "clut_base_cave", 0.1 );
+        level.player setclutforplayer( "clut_base_cave", 0.1 );
     }
 
     common_scripts\utility::flag_wait( "drone_passed" );
@@ -185,9 +185,9 @@ irons_estate_waterfall_setup()
 {
     common_scripts\utility::flag_wait( "intro_waterfall_dof" );
     maps\_lighting::play_flickerlight_motion_preset( "water_motion_large", "water_shim_01" );
-    level.player _meth_83C0( "irons_estate_waterfall" );
+    level.player lightsetforplayer( "irons_estate_waterfall" );
     maps\_utility::vision_set_fog_changes( "irons_estate_waterfall", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "water_shim_off" );
     maps\_lighting::stop_flickerlight( "water_motion_large", "water_shim_01", 0 );
@@ -197,9 +197,9 @@ irons_estate_waterfall_debug_checkpoint()
 {
     common_scripts\utility::flag_wait( "grapple_debug" );
     maps\_lighting::play_flickerlight_motion_preset( "water_motion_large", "water_shim_01" );
-    level.player _meth_83C0( "irons_estate_waterfall" );
+    level.player lightsetforplayer( "irons_estate_waterfall" );
     maps\_utility::vision_set_fog_changes( "irons_estate_waterfall", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "water_shim_off" );
     maps\_lighting::stop_flickerlight( "water_motion_large", "water_shim_01", 0 );
@@ -208,77 +208,77 @@ irons_estate_waterfall_debug_checkpoint()
 irons_estate_intro_reveal_setup()
 {
     common_scripts\utility::flag_wait( "spawn_infil_enemies" );
-    level.player _meth_83C0( "irons_estate_intro_reveal" );
+    level.player lightsetforplayer( "irons_estate_intro_reveal" );
     maps\_utility::vision_set_fog_changes( "irons_estate_intro_reveal", 0.1 );
-    level.player _meth_8490( "clut_base_default", 0.1 );
+    level.player setclutforplayer( "clut_base_default", 0.1 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 }
 
 irons_estate_intro_reveal_setup_debug_checkpoint()
 {
     common_scripts\utility::flag_wait( "irons_estate_recon_dof" );
-    level.player _meth_83C0( "irons_estate_intro_reveal" );
+    level.player lightsetforplayer( "irons_estate_intro_reveal" );
     maps\_utility::vision_set_fog_changes( "irons_estate_intro_reveal", 0 );
-    level.player _meth_8490( "clut_base_default", 0 );
+    level.player setclutforplayer( "clut_base_default", 0 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 }
 
 irons_estate_tutorial_setup()
 {
     common_scripts\utility::flag_wait( "irons_estate_tutorial_dof" );
-    level.player _meth_83C0( "irons_estate_tutorial" );
+    level.player lightsetforplayer( "irons_estate_tutorial" );
     maps\_utility::vision_set_fog_changes( "irons_estate_tutorial", 1 );
-    level.player _meth_8490( "clut_base_default", 1 );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.12, 548, 1, 1 );
+    level.player setclutforplayer( "clut_base_default", 1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.12, 548, 1, 1 );
     common_scripts\utility::flag_wait( "stealth_display_tutorial_over" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 }
 
 irons_estate_recon_setup()
 {
     common_scripts\utility::flag_wait( "irons_estate_tutorial_end" );
-    level.player _meth_83C0( "irons_estate" );
+    level.player lightsetforplayer( "irons_estate" );
     maps\_utility::vision_set_fog_changes( "irons_estate", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 }
 
 irons_estate_security_center_setup()
 {
     level waittill( "player_planting_emp" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 8, 15, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 8, 15, 1, 1 );
     common_scripts\utility::flag_wait( "security_center_enter_anim_done" );
-    level.player _meth_84AA();
-    _func_0D3( "r_mbEnable", "0" );
-    level.player _meth_83C0( "irons_estate_security_center" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_mbEnable", "0" );
+    level.player lightsetforplayer( "irons_estate_security_center" );
     maps\_utility::vision_set_fog_changes( "irons_estate_security_center", 2 );
-    level.player _meth_8490( "clut_base_security_center", 2 );
+    level.player setclutforplayer( "clut_base_security_center", 2 );
     common_scripts\utility::flag_wait( "handprint_start" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 17, 0, 1, 1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 17, 0, 1, 1 );
     wait 3;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     setsunflareposition( ( -45, -15, 0 ) );
 }
 
 irons_estate_security_center_debug_checkpoint()
 {
     common_scripts\utility::flag_wait( "inside_security_center" );
-    level.player _meth_83C0( "irons_estate_security_center" );
+    level.player lightsetforplayer( "irons_estate_security_center" );
     maps\_utility::vision_set_fog_changes( "irons_estate_security_center", 0 );
-    level.player _meth_8490( "clut_base_security_center", 0 );
+    level.player setclutforplayer( "clut_base_security_center", 0 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "handprint_start" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 17, 0, 1, 1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 17, 0, 1, 1 );
     wait 3;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 irons_estate_penthouse_cormack_setup()
@@ -289,9 +289,9 @@ irons_estate_penthouse_cormack_setup()
 irons_estate_security_center_exit_setup()
 {
     common_scripts\utility::flag_wait( "outside_security_center" );
-    level.player _meth_83C0( "irons_estate" );
+    level.player lightsetforplayer( "irons_estate" );
     maps\_utility::vision_set_fog_changes( "irons_estate", 10 );
-    level.player _meth_8490( "clut_base_default", 10 );
+    level.player setclutforplayer( "clut_base_default", 10 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "firelight_on" );
     maps\_lighting::play_flickerlight_motion_preset( "fire_motion_medium", "fireplace_01" );
@@ -307,25 +307,25 @@ garage_door_shut_off()
     var_0 show();
     var_1 hide();
     var_2 = getent( "garage_door_light", "targetname" );
-    var_2 _meth_81DF( 0 );
+    var_2 setlightintensity( 0 );
 }
 
 irons_estate_penthouse_setup()
 {
     common_scripts\utility::flag_wait( "irons_estate_penthouse_dof" );
     maps\_lighting::play_flickerlight_motion_preset( "fire_motion_medium", "fireplace_01" );
-    level.player _meth_83C0( "irons_estate_penthouse" );
+    level.player lightsetforplayer( "irons_estate_penthouse" );
     maps\_utility::vision_set_fog_changes( "irons_estate_penthouse", 4 );
-    level.player _meth_8490( "clut_base_default", 1 );
+    level.player setclutforplayer( "clut_base_default", 1 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "player_used_intel_trigger" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 8, 15, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 8, 15, 1, 1 );
     common_scripts\utility::flag_wait( "player_finished_desk_anim" );
-    level.player _meth_84AA();
-    _func_0D3( "r_mbEnable", "0" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_mbEnable", "0" );
     common_scripts\utility::flag_wait( "firelight_off" ) maps\_lighting::stop_flickerlight( "fire_motion_medium", "fireplace_01", 0 );
 }
 
@@ -333,38 +333,38 @@ irons_estate_intel_debug_checkpoint()
 {
     common_scripts\utility::flag_wait( "intel_debug_lighting" );
     maps\_lighting::play_flickerlight_motion_preset( "fire_motion_medium", "fireplace_01" );
-    level.player _meth_83C0( "irons_estate_penthouse" );
+    level.player lightsetforplayer( "irons_estate_penthouse" );
     maps\_utility::vision_set_fog_changes( "irons_estate_penthouse", 1 );
-    level.player _meth_8490( "clut_base_default", 1 );
+    level.player setclutforplayer( "clut_base_default", 1 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "player_used_intel_trigger" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 22, 49, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 22, 49, 1, 1 );
     common_scripts\utility::flag_wait( "player_finished_desk_anim" );
-    level.player _meth_84AA();
-    _func_0D3( "r_mbEnable", "0" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_mbEnable", "0" );
     common_scripts\utility::flag_wait( "firelight_off" ) maps\_lighting::stop_flickerlight( "fire_motion_medium", "fireplace_01", 0 );
 }
 
 irons_estate_elevator_dof()
 {
     common_scripts\utility::flag_wait( "elevator_rappel_start" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 18, 0, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 18, 0, 1, 1 );
     wait 2;
-    level.player _meth_84AB( 5, 0, 1, 1 );
+    level.player setphysicaldepthoffield( 5, 0, 1, 1 );
     wait 2;
-    level.player _meth_84AA();
-    _func_0D3( "r_mbEnable", "0" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_mbEnable", "0" );
 
     if ( level.currentgen )
     {
         var_0 = getent( "guard_house_exit_light", "targetname" );
-        var_0 _meth_81DF( 15000 );
+        var_0 setlightintensity( 15000 );
     }
 }
 
@@ -372,19 +372,19 @@ irons_estate_car_setup()
 {
     common_scripts\utility::flag_wait( "player_under_car" );
     wait 2;
-    level.player _meth_83C0( "irons_estate_car" );
+    level.player lightsetforplayer( "irons_estate_car" );
     maps\_utility::vision_set_fog_changes( "irons_estate_car", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     wait 16;
     maps\_utility::vision_set_fog_changes( "irons_estate_hanger", 2 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 3, 22, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 3, 22, 1, 1 );
     common_scripts\utility::flag_wait( "track_irons_start" );
-    level.player _meth_84AA();
-    _func_0D3( "r_mbEnable", "0" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_mbEnable", "0" );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 }
 
@@ -392,49 +392,49 @@ irons_estate_hanger_setup()
 {
     common_scripts\utility::flag_wait( "irons_estate_hanger_dof" );
     maps\_lighting::lerp_spot_intensity( "spacey_bounce", 0, 0 );
-    level.player _meth_83C0( "irons_estate_hanger" );
+    level.player lightsetforplayer( "irons_estate_hanger" );
     maps\_utility::vision_set_fog_changes( "irons_estate_hanger", 2 );
-    level.player _meth_8490( "clut_base_default", 0 );
+    level.player setclutforplayer( "clut_base_default", 0 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     common_scripts\utility::flag_wait( "at_listening_position" );
     maps\_lighting::lerp_spot_intensity( "spacey_bounce", 0, 2000 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 10, 500, 1, 1 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 10, 500, 1, 1 );
     wait 7;
-    level.player _meth_84AB( 35, 500, 1, 1 );
+    level.player setphysicaldepthoffield( 35, 500, 1, 1 );
     wait 6;
-    level.player _meth_84AB( 30, 540, 1, 1 );
+    level.player setphysicaldepthoffield( 30, 540, 1, 1 );
     common_scripts\utility::flag_wait( "track_irons_end" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     maps\_lighting::lerp_spot_intensity( "spacey_bounce", 1, 0 );
-    _func_0D3( "r_mbEnable", "0" );
+    setsaveddvar( "r_mbEnable", "0" );
 }
 
 force_bounce_on()
 {
     common_scripts\utility::flag_wait( "bounce_force_on" );
     var_0 = getent( "spacey_bounce_force_on", "targetname" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
     common_scripts\utility::flag_wait( "bounce_force_off" );
-    var_0 _meth_8498( "force_off" );
+    var_0 setlightshadowstate( "force_off" );
 }
 
 plant_tracker_debug_checkpoint()
 {
     common_scripts\utility::flag_wait( "irons_estate_plant_tracker_debug" );
-    level.player _meth_83C0( "irons_estate_hanger" );
+    level.player lightsetforplayer( "irons_estate_hanger" );
     maps\_utility::vision_set_fog_changes( "irons_estate_hanger", 0 );
-    level.player _meth_8490( "clut_base_default", 0 );
+    level.player setclutforplayer( "clut_base_default", 0 );
 }
 
 irons_estate_exfil_setup()
 {
     common_scripts\utility::flag_wait( "irons_estate_exfil" );
-    level.player _meth_83C0( "irons_estate_exfil" );
+    level.player lightsetforplayer( "irons_estate_exfil" );
     maps\_utility::vision_set_fog_changes( "irons_estate_exfil", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
     playfxontag( level._effect["ie_light_red_cormack_plane"], level.vtol, "TAG_LT_WING_CORMACK_LIGHT" );
     playfxontag( level._effect["ie_light_red_cormack_plane"], level.vtol, "TAG_RT_WING_CORMACK_LIGHT" );
@@ -454,39 +454,39 @@ plant_tracker_light_model_swap()
 irons_estate_plane_setup()
 {
     common_scripts\utility::flag_wait( "player_grappled_to_vtol" );
-    level.player _meth_83C0( "irons_estate_plane" );
+    level.player lightsetforplayer( "irons_estate_plane" );
     maps\_utility::vision_set_fog_changes( "irons_estate_plane", 2 );
-    level.player _meth_8490( "clut_base_default", 2 );
+    level.player setclutforplayer( "clut_base_default", 2 );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 5, 29, 1, 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 5, 29, 1, 1 );
         wait 2;
-        level.player _meth_84AB( 9, 0, 1, 1 );
+        level.player setphysicaldepthoffield( 9, 0, 1, 1 );
         wait 2;
-        level.player _meth_84AB( 5, 29, 1, 1 );
+        level.player setphysicaldepthoffield( 5, 29, 1, 1 );
         wait 4;
-        level.player _meth_84AB( 6, 30, 1, 1 );
+        level.player setphysicaldepthoffield( 6, 30, 1, 1 );
         wait 2;
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 0.6816, 47.298, 1, 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 0.6816, 47.298, 1, 1 );
         wait 1.5;
-        level.player _meth_84AB( 5.84, 0, 1, 1 );
+        level.player setphysicaldepthoffield( 5.84, 0, 1, 1 );
         wait 2;
-        level.player _meth_84AB( 2.66, 30, 1, 1 );
+        level.player setphysicaldepthoffield( 2.66, 30, 1, 1 );
         wait 4;
-        level.player _meth_84AB( 1.6, 100, 1, 1 );
+        level.player setphysicaldepthoffield( 1.6, 100, 1, 1 );
         wait 2;
     }
 
@@ -499,28 +499,28 @@ irons_estate_underwater_setup()
     level.player.underwater = 1;
     level.player thread maps\_water::underwaterbubbles();
     level.player thread maps\_water::underwatercloudy();
-    level.player _meth_83C0( "irons_estate_underwater_waterfall" );
+    level.player lightsetforplayer( "irons_estate_underwater_waterfall" );
     maps\_utility::vision_set_fog_changes( "irons_estate_underwater_waterfall", 0 );
-    level.player _meth_8490( "clut_base_default", 0 );
-    level.player _meth_8218( 1, 2.0 );
+    level.player setclutforplayer( "clut_base_default", 0 );
+    level.player setwatersheeting( 1, 2.0 );
     level.player playlocalsound( "underwater_enter" );
     setsunflareposition( ( -44.0771, 52.229, 0 ) );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 9.8, 24, 1, 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 9.8, 24, 1, 1 );
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 1.65, 110, 1, 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 1.65, 110, 1, 1 );
     }
 }
 
@@ -540,7 +540,7 @@ set_security_lights()
     if ( pre_hack_security_check() )
     {
         foreach ( var_2 in var_0 )
-            var_2 _meth_81DF( 0 );
+            var_2 setlightintensity( 0 );
 
         common_scripts\utility::flag_wait( "security_center_wake_up" );
         var_4 = 6;
@@ -550,12 +550,12 @@ set_security_lights()
         while ( var_5 < var_4 )
         {
             foreach ( var_2 in var_0 )
-                var_2 _meth_81DF( 200 );
+                var_2 setlightintensity( 200 );
 
             wait(var_6);
 
             foreach ( var_2 in var_0 )
-                var_2 _meth_81DF( 0 );
+                var_2 setlightintensity( 0 );
 
             var_5++;
             wait(var_6);
@@ -563,7 +563,7 @@ set_security_lights()
     }
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 6000 );
+        var_2 setlightintensity( 6000 );
 }
 
 set_security_center_tv()
@@ -574,7 +574,7 @@ set_security_center_tv()
     if ( pre_hack_security_check() )
     {
         foreach ( var_2 in var_0 )
-            var_2 _meth_81DF( 0 );
+            var_2 setlightintensity( 0 );
 
         common_scripts\utility::flag_wait( "security_center_wake_up" );
         var_4 = 6;
@@ -587,17 +587,17 @@ set_security_center_tv()
             {
                 if ( level.nextgen )
                 {
-                    var_2 _meth_81DF( 800 );
+                    var_2 setlightintensity( 800 );
                     continue;
                 }
 
-                var_2 _meth_81DF( 1000 );
+                var_2 setlightintensity( 1000 );
             }
 
             wait(var_6);
 
             foreach ( var_2 in var_0 )
-                var_2 _meth_81DF( 0 );
+                var_2 setlightintensity( 0 );
 
             var_5++;
             wait(var_6);
@@ -608,11 +608,11 @@ set_security_center_tv()
     {
         if ( level.nextgen )
         {
-            var_2 _meth_81DF( 800 );
+            var_2 setlightintensity( 800 );
             continue;
         }
 
-        var_2 _meth_81DF( 1000 );
+        var_2 setlightintensity( 1000 );
     }
 
     thread maps\irons_estate_code::security_center_bink();
@@ -626,12 +626,12 @@ tennis_court_lights_intial()
     var_0 = getentarray( "tennis_court_net_light", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 800 );
+        var_2 setlightintensity( 800 );
 
     var_4 = getentarray( "tennis_court_light", "script_noteworthy" );
 
     foreach ( var_2 in var_4 )
-        var_2 _meth_81DF( 100 );
+        var_2 setlightintensity( 100 );
 }
 
 tennis_court_lights_dimmed()
@@ -639,12 +639,12 @@ tennis_court_lights_dimmed()
     var_0 = getentarray( "tennis_court_net_light", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 400 );
+        var_2 setlightintensity( 400 );
 
     var_4 = getentarray( "tennis_court_light", "script_noteworthy" );
 
     foreach ( var_2 in var_4 )
-        var_2 _meth_81DF( 50 );
+        var_2 setlightintensity( 50 );
 }
 
 tennis_court_lights_on()
@@ -652,10 +652,10 @@ tennis_court_lights_on()
     var_0 = getentarray( "tennis_court_net_light", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 800 );
+        var_2 setlightintensity( 800 );
 
     var_4 = getentarray( "tennis_court_light", "script_noteworthy" );
 
     foreach ( var_2 in var_4 )
-        var_2 _meth_81DF( 100 );
+        var_2 setlightintensity( 100 );
 }

@@ -34,16 +34,16 @@ hordespawnenemyturret( var_0, var_1 )
     var_2.guardian = 0;
     var_2.ishordeenemysentry = 1;
     var_2.isalive = 1;
-    var_2 _meth_80B1( "npc_sentry_energy_turret_base" );
-    var_2 _meth_8065( "sentry" );
-    var_2 _meth_8135( "axis" );
-    var_2 _meth_8103( undefined );
-    var_2 _meth_8105( 1, var_0 );
-    var_2 _meth_8156( 360 );
-    var_2 _meth_8155( 360 );
-    var_2 _meth_8158( 90 );
-    var_2 _meth_815A( -89.0 );
-    var_2 _meth_82C0( 1 );
+    var_2 setmodel( "npc_sentry_energy_turret_base" );
+    var_2 setmode( "sentry" );
+    var_2 setturretteam( "axis" );
+    var_2 setsentryowner( undefined );
+    var_2 setturretminimapvisible( 1, var_0 );
+    var_2 setleftarc( 360 );
+    var_2 setrightarc( 360 );
+    var_2 setbottomarc( 90 );
+    var_2 setdefaultdroppitch( -89.0 );
+    var_2 setcandamage( 1 );
     var_2.damagefade = 1.0;
     var_2 thread hordeturretpicktarget();
     var_2 thread hordeturretshoot();
@@ -69,13 +69,13 @@ hordeturretshoot()
 
         if ( isdefined( self.targetplayer ) )
         {
-            if ( isdefined( self _meth_8109( 1 ) ) )
+            if ( isdefined( self getturrettarget( 1 ) ) )
             {
                 var_0 = randomintrange( 25, 50 );
 
                 for ( var_1 = 0; var_1 < var_0; var_1++ )
                 {
-                    self _meth_80EA();
+                    self shootturret();
                     wait 0.1;
                 }
 
@@ -101,15 +101,15 @@ hordeturretpicktarget()
         if ( !self.stunned && !isdefined( self.waitingtodie ) && isdefined( var_0 ) )
         {
             if ( isdefined( var_0.isaerialassaultdrone ) && var_0.isaerialassaultdrone )
-                self _meth_8106( var_0, ( 0, 0, -20 ) );
+                self settargetentity( var_0, ( 0, 0, -20 ) );
             else
-                self _meth_8106( var_0 );
+                self settargetentity( var_0 );
 
             self.targetplayer = var_0;
         }
         else
         {
-            self _meth_8108();
+            self cleartargetentity();
             self.targetplayer = undefined;
         }
 
@@ -120,18 +120,18 @@ hordeturretpicktarget()
 hordeturret_setactive()
 {
     self endon( "death" );
-    self _meth_815A( 0.0 );
+    self setdefaultdroppitch( 0.0 );
     self makeunusable();
-    self _meth_8136();
+    self maketurretsolid();
     self.team = "axis";
-    self _meth_8135( "axis" );
+    self setturretteam( "axis" );
     thread hordeturret_handledeath();
     thread hordeturret_setupdamagecallback();
 }
 
 hordeturret_handledeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death", var_1, var_2, var_3 );
     self.isalive = 0;
 
@@ -153,17 +153,17 @@ hordeturret_handledeath()
 
     level.hordesentryarray = common_scripts\utility::array_remove( level.hordesentryarray, self );
     self.damagecallback = undefined;
-    self _meth_82C0( 0 );
-    self _meth_8495( 0 );
-    self _meth_813A();
+    self setcandamage( 0 );
+    self setdamagecallbackon( 0 );
+    self freeentitysentient();
 
     if ( !isdefined( self ) )
         return;
 
     hordeturret_setinactive();
-    self _meth_815A( 35 );
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setdefaultdroppitch( 35 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
     var_4 = self.owner;
     self.waitingtodie = 1;
     self playsound( "sentry_explode" );
@@ -191,8 +191,8 @@ hordeturret_handledeath()
 hordeturret_setupdamagecallback()
 {
     self.damagecallback = ::hordeturret_handledamagecallback;
-    self _meth_82C0( 1 );
-    self _meth_8495( 1 );
+    self setcandamage( 1 );
+    self setdamagecallbackon( 1 );
 }
 
 hordeturret_handledamagecallback( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11 )
@@ -259,5 +259,5 @@ hordeturret_handledamagecallback( var_0, var_1, var_2, var_3, var_4, var_5, var_
 
 hordeturret_setinactive()
 {
-    self _meth_8065( "sentry_offline" );
+    self setmode( "sentry_offline" );
 }

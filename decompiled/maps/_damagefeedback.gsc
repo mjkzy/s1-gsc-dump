@@ -21,7 +21,7 @@ init_damage_feedback()
     self.hud_damagefeedback.vertalign = "middle";
     self.hud_damagefeedback.alpha = 0;
     self.hud_damagefeedback.archived = 1;
-    self.hud_damagefeedback _meth_80CC( "damage_feedback", 50, 100 );
+    self.hud_damagefeedback setshader( "damage_feedback", 50, 100 );
     self.hud_damagefeedback.y = 25;
     self.hud_damagefeedback_headshot = newclienthudelem( self );
     self.hud_damagefeedback_headshot.alignx = "center";
@@ -30,7 +30,7 @@ init_damage_feedback()
     self.hud_damagefeedback_headshot.vertalign = "middle";
     self.hud_damagefeedback_headshot.alpha = 0;
     self.hud_damagefeedback_headshot.archived = 1;
-    self.hud_damagefeedback_headshot _meth_80CC( "damage_feedback_headshot", 50, 100 );
+    self.hud_damagefeedback_headshot setshader( "damage_feedback_headshot", 50, 100 );
     self.hud_damagefeedback_headshot.y = 25;
 }
 

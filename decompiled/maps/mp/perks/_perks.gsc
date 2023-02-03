@@ -317,7 +317,7 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     }
     else if ( isexplosivedamagemod( var_3 ) )
     {
-        if ( isplayer( var_1 ) && var_1 != var_0 && ( var_1 _meth_8221( "specialty_paint" ) && var_1 maps\mp\_utility::_hasperk( "specialty_paint" ) ) && !maps\mp\_utility::iskillstreakweapon( var_4 ) )
+        if ( isplayer( var_1 ) && var_1 != var_0 && ( var_1 isitemunlocked( "specialty_paint" ) && var_1 maps\mp\_utility::_hasperk( "specialty_paint" ) ) && !maps\mp\_utility::iskillstreakweapon( var_4 ) )
         {
             if ( !var_0 maps\mp\perks\_perkfunctions::ispainted() )
                 var_1 maps\mp\gametypes\_missions::processchallenge( "ch_paint_pro" );
@@ -368,7 +368,7 @@ cac_modified_damage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     }
     else if ( var_3 == "MOD_FALLING" )
     {
-        if ( var_0 _meth_8221( "specialty_falldamage" ) && var_0 maps\mp\_utility::_hasperk( "specialty_falldamage" ) )
+        if ( var_0 isitemunlocked( "specialty_falldamage" ) && var_0 maps\mp\_utility::_hasperk( "specialty_falldamage" ) )
         {
             var_9 = 0;
             var_2 = 0;
@@ -502,7 +502,7 @@ giveblindeyeafterspawn()
 
 applyperks()
 {
-    self _meth_8309( 0.5 );
+    self setviewkickscale( 0.5 );
 
     if ( maps\mp\_utility::_hasperk( "specialty_extended_battery" ) )
         maps\mp\_utility::giveperk( "specialty_exo_slamboots", 0 );
@@ -567,7 +567,7 @@ applyperks()
     }
 
     if ( maps\mp\_utility::_hasperk( "specialty_class_toughness" ) )
-        self _meth_8309( 0.2 );
+        self setviewkickscale( 0.2 );
 
     if ( maps\mp\_utility::_hasperk( "specialty_class_scavenger" ) )
     {

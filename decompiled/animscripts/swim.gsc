@@ -4,7 +4,7 @@
 moveswim()
 {
     self endon( "movemode" );
-    self _meth_818F( "face enemy or motion" );
+    self orientmode( "face enemy or motion" );
 
     if ( animscripts\utility::isspaceai() )
         self.turnrate = 0.16;
@@ -35,10 +35,10 @@ swim_begin()
     self.swim.statefns["track_none"] = [ ::swim_null, ::swim_null ];
     self.swim.statefns["track_forward"] = [ ::swim_track_forward_enter, ::swim_track_forward_exit ];
     self.swim.statefns["track_strafe"] = [ ::swim_track_strafe_enter, ::swim_track_strafe_exit ];
-    self _meth_814C( getswimanim( "aim_stand_D" ) );
-    self _meth_814C( getswimanim( "aim_stand_U" ) );
-    self _meth_814C( getswimanim( "aim_stand_L" ) );
-    self _meth_814C( getswimanim( "aim_stand_R" ) );
+    self setanimlimited( getswimanim( "aim_stand_D" ) );
+    self setanimlimited( getswimanim( "aim_stand_U" ) );
+    self setanimlimited( getswimanim( "aim_stand_L" ) );
+    self setanimlimited( getswimanim( "aim_stand_R" ) );
     self.custommovetransition = ::swim_movebegin;
     self.permanentcustommovetransition = 1;
     self.pathturnanimoverridefunc = ::swim_pathchange_getturnanim;
@@ -83,7 +83,7 @@ moveswim_noncombat()
     if ( animscripts\utility::isspaceai() )
         var_1 = 0.2;
 
-    self _meth_8152( "swimanim", var_0, 1, var_1, self.moveplaybackrate );
+    self setflaggedanimknob( "swimanim", var_0, 1, var_1, self.moveplaybackrate );
     swim_updateleananim();
     animscripts\notetracks::donotetracksfortime( 0.2, "swimanim" );
 }
@@ -149,7 +149,7 @@ moveswim_combat()
         var_2 = 0.2;
 
     swim_updateleananim();
-    self _meth_8152( "swimanim", var_1, 1, var_2, self.moveplaybackrate );
+    self setflaggedanimknob( "swimanim", var_1, 1, var_2, self.moveplaybackrate );
     animscripts\notetracks::donotetracksfortime( 0.2, "swimanim" );
 }
 
@@ -181,7 +181,7 @@ moveswim_noncombat_exit()
 
 moveswim_combat_enter()
 {
-    self _meth_8143( %combatrun, 1.0, 0.5, self.moveplaybackrate );
+    self setanimknob( %combatrun, 1.0, 0.5, self.moveplaybackrate );
 
     if ( self.swim.movestate != "combat_forward" )
         moveswim_combat_move_set( "combat_forward" );
@@ -217,9 +217,9 @@ moveswim_combat_forward_exit()
 
 moveswim_combat_strafe_enter()
 {
-    self _meth_8144( getswimanim( "strafe_B" ), 1, 0.1, self.sidesteprate, 1 );
-    self _meth_8144( getswimanim( "strafe_L" ), 1, 0.1, self.sidesteprate, 1 );
-    self _meth_8144( getswimanim( "strafe_R" ), 1, 0.1, self.sidesteprate, 1 );
+    self setanimknoblimited( getswimanim( "strafe_B" ), 1, 0.1, self.sidesteprate, 1 );
+    self setanimknoblimited( getswimanim( "strafe_L" ), 1, 0.1, self.sidesteprate, 1 );
+    self setanimknoblimited( getswimanim( "strafe_R" ), 1, 0.1, self.sidesteprate, 1 );
 
     if ( self.swim.trackstate != "track_strafe" )
         swim_track_set( "track_strafe" );
@@ -237,10 +237,10 @@ moveswim_combat_strafe_enter()
 
 moveswim_combat_strafe_exit()
 {
-    self _meth_8142( %combatrun_forward, 0.2 );
-    self _meth_8142( %combatrun_backward, 0.2 );
-    self _meth_8142( %combatrun_left, 0.2 );
-    self _meth_8142( %combatrun_right, 0.2 );
+    self clearanim( %combatrun_forward, 0.2 );
+    self clearanim( %combatrun_backward, 0.2 );
+    self clearanim( %combatrun_left, 0.2 );
+    self clearanim( %combatrun_right, 0.2 );
 
     if ( animscripts\utility::isspaceai() )
         self.turnrate = 0.16;
@@ -265,19 +265,19 @@ swim_track_set( var_0 )
 
 swim_track_forward_enter()
 {
-    self _meth_814C( getswimanim( "aim_move_D" ) );
-    self _meth_814C( getswimanim( "aim_move_L" ) );
-    self _meth_814C( getswimanim( "aim_move_R" ) );
-    self _meth_814C( getswimanim( "aim_move_U" ) );
+    self setanimlimited( getswimanim( "aim_move_D" ) );
+    self setanimlimited( getswimanim( "aim_move_L" ) );
+    self setanimlimited( getswimanim( "aim_move_R" ) );
+    self setanimlimited( getswimanim( "aim_move_U" ) );
     thread moveswim_track_combat();
 }
 
 swim_track_forward_exit()
 {
-    self _meth_8142( %aim_2, 0.2 );
-    self _meth_8142( %aim_4, 0.2 );
-    self _meth_8142( %aim_6, 0.2 );
-    self _meth_8142( %aim_8, 0.2 );
+    self clearanim( %aim_2, 0.2 );
+    self clearanim( %aim_4, 0.2 );
+    self clearanim( %aim_6, 0.2 );
+    self clearanim( %aim_8, 0.2 );
 }
 
 swim_track_strafe_enter()
@@ -287,10 +287,10 @@ swim_track_strafe_enter()
 
 swim_track_strafe_exit()
 {
-    self _meth_8142( %w_aim_4, 0.2 );
-    self _meth_8142( %w_aim_6, 0.2 );
-    self _meth_8142( %w_aim_8, 0.2 );
-    self _meth_8142( %w_aim_2, 0.2 );
+    self clearanim( %w_aim_4, 0.2 );
+    self clearanim( %w_aim_6, 0.2 );
+    self clearanim( %w_aim_8, 0.2 );
+    self clearanim( %w_aim_2, 0.2 );
 }
 
 moveswim_track_combat()
@@ -340,7 +340,7 @@ swim_shoulddonodeexit()
     var_0 = self.maxfaceenemydist;
     self.maxfaceenemydist = 128;
 
-    if ( !self _meth_8191() )
+    if ( !self shouldfacemotion() )
     {
         self.maxfaceenemydist = var_0;
         return 0;
@@ -407,26 +407,26 @@ swim_movebegin()
             var_6 = anglestoforward( self.angles );
     }
 
-    self _meth_818E( "nogravity", 0 );
+    self animmode( "nogravity", 0 );
     var_10 = randomfloatrange( 0.9, 1.1 );
     var_11 = 0.3;
-    self _meth_818F( "face angle 3d", self.angles );
+    self orientmode( "face angle 3d", self.angles );
 
     if ( isdefined( var_1 ) && !animscripts\utility::isspaceai() )
     {
-        self _meth_8110( "startturn", var_1, %body, 1, 0.3, var_10 * self.moveplaybackrate );
+        self setflaggedanimknoballrestart( "startturn", var_1, %body, 1, 0.3, var_10 * self.moveplaybackrate );
         animscripts\shared::donotetracks( "startturn" );
         var_11 = 0.5;
     }
     else if ( isdefined( var_1 ) && animscripts\utility::isspaceai() )
     {
         if ( isdefined( var_7 ) )
-            self _meth_818F( "face direction", var_6 );
+            self orientmode( "face direction", var_6 );
 
         self.prevturnrate = 0.16;
         self.turnrate = 5.0;
         var_11 = 0.1;
-        self _meth_8110( "startturn", var_1, %body, 1, var_11, var_10 * self.moveplaybackrate );
+        self setflaggedanimknoballrestart( "startturn", var_1, %body, 1, var_11, var_10 * self.moveplaybackrate );
         animscripts\shared::donotetracks( "startturn" );
         var_11 = 0.5;
         self.turnrate = 0.16;
@@ -466,13 +466,13 @@ swim_movebegin()
 
     self.prevturnrate = self.turnrate;
     self.turnrate = var_17;
-    self _meth_818F( "face direction", var_6 );
-    self _meth_8110( "startmove", var_2, %body, 1, var_11, var_10 * self.moveplaybackrate );
+    self orientmode( "face direction", var_6 );
+    self setflaggedanimknoballrestart( "startmove", var_2, %body, 1, var_11, var_10 * self.moveplaybackrate );
     animscripts\shared::donotetracks( "startmove" );
     self.turnrate = self.prevturnrate;
     self.prevturnrate = undefined;
-    self _meth_818F( "face default" );
-    self _meth_818E( "none", 0 );
+    self orientmode( "face default" );
+    self animmode( "none", 0 );
 
     if ( animscripts\utility::isspaceai() )
     {
@@ -485,7 +485,7 @@ swim_movebegin()
         if ( isdefined( self.node ) )
             var_19 = self.node.origin;
 
-        if ( _func_220( self.origin, var_19 ) > var_18 )
+        if ( distance2dsquared( self.origin, var_19 ) > var_18 )
             self notify( "force_space_rotation_update", 0, 0, undefined, 1 );
     }
 
@@ -497,20 +497,20 @@ swim_movebegin()
 
 swim_setleananims()
 {
-    self _meth_814C( getswimanim( "turn_add_l" ) );
-    self _meth_814C( getswimanim( "turn_add_r" ) );
-    self _meth_814C( getswimanim( "turn_add_u" ) );
-    self _meth_814C( getswimanim( "turn_add_d" ) );
+    self setanimlimited( getswimanim( "turn_add_l" ) );
+    self setanimlimited( getswimanim( "turn_add_r" ) );
+    self setanimlimited( getswimanim( "turn_add_u" ) );
+    self setanimlimited( getswimanim( "turn_add_d" ) );
     self.prevleanfracyaw = 0;
     self.prevleanfracpitch = 0;
 }
 
 swim_clearleananims()
 {
-    self _meth_8142( %add_turn_l, 0.2 );
-    self _meth_8142( %add_turn_r, 0.2 );
-    self _meth_8142( %add_turn_u, 0.2 );
-    self _meth_8142( %add_turn_d, 0.2 );
+    self clearanim( %add_turn_l, 0.2 );
+    self clearanim( %add_turn_r, 0.2 );
+    self clearanim( %add_turn_u, 0.2 );
+    self clearanim( %add_turn_d, 0.2 );
     self.prevleanfracyaw = undefined;
     self.prevleanfracpitch = undefined;
 }
@@ -595,7 +595,7 @@ swim_choosestart()
     var_20 = swim_getangleindex( var_17, var_18 );
     var_21 = var_14;
 
-    if ( !isdefined( var_21 ) && isdefined( self.prevnode ) && _func_220( self.prevnode.origin, self.origin ) < 36 )
+    if ( !isdefined( var_21 ) && isdefined( self.prevnode ) && distance2dsquared( self.prevnode.origin, self.origin ) < 36 )
         var_21 = swim_getapproachtype( self.prevnode );
 
     if ( var_19 == 4 && isdefined( var_21 ) )
@@ -673,7 +673,7 @@ swim_setupapproach()
 
     self.swim.arrivalpathgoalpos = self.pathgoalpos;
 
-    if ( isdefined( self _meth_819D() ) )
+    if ( isdefined( self getnegotiationstartnode() ) )
         return;
 
     var_0 = animscripts\cover_arrival::getapproachent();
@@ -809,8 +809,8 @@ swim_determineapproachanim3d( var_0, var_1, var_2, var_3, var_4, var_5 )
     {
         var_6 = ( 0, 0, 0 );
         var_7 = ( 0, 0, 0 );
-        var_8 = combineangles( _func_24C( var_4 ), var_5 );
-        var_9 = _func_24D( vectornormalize( self.origin - var_2 ), var_4 ) * -1.0;
+        var_8 = combineangles( invertangles( var_4 ), var_5 );
+        var_9 = rotatevectorinverted( vectornormalize( self.origin - var_2 ), var_4 ) * -1.0;
         var_10 = swim_determineapproachanim( var_0, var_1, var_6, var_9, var_7, var_8, 1, var_2, var_4 );
 
         if ( var_10 )
@@ -857,7 +857,7 @@ swim_dofinalarrival( var_0, var_1, var_2, var_3, var_4 )
         if ( var_8 < 12 || self.fixednode || !isdefined( self.node ) || !animscripts\cover_arrival::isthreatenedbyenemy() )
         {
             self.swim.arrivalpathgoalpos = var_5.m_worldstartpos;
-            self _meth_8160( var_5.m_worldstartpos );
+            self setruntopos( var_5.m_worldstartpos );
 
             if ( animscripts\utility::isspaceai() )
             {
@@ -869,7 +869,7 @@ swim_dofinalarrival( var_0, var_1, var_2, var_3, var_4 )
                     {
                         self.prevturnrate = self.turnrate;
                         self.turnrate = 0.1;
-                        var_13 = _func_24E( var_5.m_delta, var_5.m_angledelta, var_1, var_4 );
+                        var_13 = calculatestartorientation( var_5.m_delta, var_5.m_angledelta, var_1, var_4 );
                         self notify( "force_space_rotation_update", 0, 0, var_13[1] );
                         break;
                     }
@@ -891,9 +891,9 @@ swim_dofinalarrival( var_0, var_1, var_2, var_3, var_4 )
     self.swim.arrivalanim = var_5.m_anim;
 
     if ( animscripts\utility::isspaceai() )
-        var_15 = self _meth_81E4( var_5.m_worldstartpos, var_4[1] - var_5.m_angledelta[1], var_4[0] - var_5.m_angledelta[0], var_4, var_5.m_angledelta );
+        var_15 = self startcoverarrival( var_5.m_worldstartpos, var_4[1] - var_5.m_angledelta[1], var_4[0] - var_5.m_angledelta[0], var_4, var_5.m_angledelta );
     else
-        self _meth_81E4( var_5.m_worldstartpos, var_4[1] - var_5.m_angledelta[1], var_4[0] - var_5.m_angledelta[0] );
+        self startcoverarrival( var_5.m_worldstartpos, var_4[1] - var_5.m_angledelta[1], var_4[0] - var_5.m_angledelta[0] );
 }
 
 swim_coverarrival_main()
@@ -914,8 +914,8 @@ swim_coverarrival_main()
         thread space_arrival_turnrate_delay();
     }
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, var_2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, var_2, self.movetransitionrate );
     animscripts\shared::donotetracks( "coverArrival", ::swim_handlestartcoveraim );
 
     if ( !animhasnotetrack( var_1, "start_aim" ) )
@@ -931,7 +931,7 @@ swim_coverarrival_main()
         self.prevturnrate = undefined;
     }
 
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
     self.lastapproachaborttime = undefined;
     self.swim.arrivalanim = undefined;
 
@@ -952,7 +952,7 @@ swim_getanimstartpos( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( var_4 )
     {
-        var_5 = _func_24E( var_2, var_3, var_0, var_1 );
+        var_5 = calculatestartorientation( var_2, var_3, var_0, var_1 );
         return var_5[0];
     }
 
@@ -971,10 +971,10 @@ swim_maymovefrompointtopoint( var_0, var_1, var_2, var_3, var_4 )
     if ( var_2 )
     {
         var_1 = rotatevector( var_1, var_4 ) + var_3;
-        return self _meth_81C4( var_3, var_1, 0, 1 );
+        return self maymovefrompointtopoint( var_3, var_1, 0, 1 );
     }
 
-    return self _meth_81C4( var_0, var_1, 0, 1 );
+    return self maymovefrompointtopoint( var_0, var_1, 0, 1 );
 }
 
 swim_determineapproachanim( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
@@ -1171,7 +1171,7 @@ swim_dostrafe()
         moveswim_combat_move_set( "combat_strafe" );
 
     var_0 = getswimanim( "forward_aim" );
-    self _meth_8153( "swimanim", var_0, 1, 0.1, 1, 1 );
+    self setflaggedanimknoblimited( "swimanim", var_0, 1, 0.1, 1, 1 );
     thread swim_updatestrafeanim();
     animscripts\notetracks::donotetracksfortime( 0.2, "swimanim" );
     self notify( "end_swim_updatestrafeanim" );
@@ -1207,7 +1207,7 @@ swim_updatestrafeanim()
                 var_1["right"] = 0;
             }
             else
-                var_1 = animscripts\utility::quadrantanimweights( self _meth_8190() );
+                var_1 = animscripts\utility::quadrantanimweights( self getmotionangle() );
 
             if ( isdefined( self.update_move_front_bias ) )
             {
@@ -1239,10 +1239,10 @@ swim_getstrafeblendtime()
 swim_setstrafeweights( var_0, var_1, var_2, var_3 )
 {
     var_4 = swim_getstrafeblendtime();
-    self _meth_814B( %combatrun_forward, var_0, var_4, 1, 1 );
-    self _meth_814B( %combatrun_backward, var_1, var_4, 1, 1 );
-    self _meth_814B( %combatrun_left, var_2, var_4, 1, 1 );
-    self _meth_814B( %combatrun_right, var_3, var_4, 1, 1 );
+    self setanim( %combatrun_forward, var_0, var_4, 1, 1 );
+    self setanim( %combatrun_backward, var_1, var_4, 1, 1 );
+    self setanim( %combatrun_left, var_2, var_4, 1, 1 );
+    self setanim( %combatrun_right, var_3, var_4, 1, 1 );
 
     if ( var_0 > 0 )
         return "front";
@@ -1259,28 +1259,28 @@ swim_setstrafeaimset( var_0 )
     switch ( var_0 )
     {
         case "front":
-            self _meth_8144( getswimanim( "aim_move_U" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "aim_move_D" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "aim_move_L" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "aim_move_R" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "aim_move_U" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "aim_move_D" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "aim_move_L" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "aim_move_R" ), 1, 0.1 );
             break;
         case "back":
-            self _meth_8144( getswimanim( "strafe_B_aim_U" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_B_aim_D" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_B_aim_L" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_B_aim_R" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_B_aim_U" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_B_aim_D" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_B_aim_L" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_B_aim_R" ), 1, 0.1 );
             break;
         case "left":
-            self _meth_8144( getswimanim( "strafe_L_aim_U" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_L_aim_D" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_L_aim_L" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_L_aim_R" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_L_aim_U" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_L_aim_D" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_L_aim_L" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_L_aim_R" ), 1, 0.1 );
             break;
         case "right":
-            self _meth_8144( getswimanim( "strafe_R_aim_U" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_R_aim_D" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_R_aim_L" ), 1, 0.1 );
-            self _meth_8144( getswimanim( "strafe_R_aim_R" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_R_aim_U" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_R_aim_D" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_R_aim_L" ), 1, 0.1 );
+            self setanimknoblimited( getswimanim( "strafe_R_aim_R" ), 1, 0.1 );
             break;
         default:
     }
@@ -1320,10 +1320,10 @@ swim_updatestrafeaimanim()
 
 swim_setstrafeaimweights( var_0, var_1, var_2, var_3 )
 {
-    self _meth_814B( %w_aim_4, var_2, 0.2, 1, 1 );
-    self _meth_814B( %w_aim_6, var_3, 0.2, 1, 1 );
-    self _meth_814B( %w_aim_8, var_0, 0.2, 1, 1 );
-    self _meth_814B( %w_aim_2, var_1, 0.2, 1, 1 );
+    self setanim( %w_aim_4, var_2, 0.2, 1, 1 );
+    self setanim( %w_aim_6, var_3, 0.2, 1, 1 );
+    self setanim( %w_aim_8, var_0, 0.2, 1, 1 );
+    self setanim( %w_aim_2, var_1, 0.2, 1, 1 );
 }
 
 swim_pathchange_getturnanim( var_0, var_1 )
@@ -1371,16 +1371,16 @@ swim_updateleananim()
         if ( self.prevleanfracyaw <= 0 && var_0 < 0.075 )
             var_0 = 0;
 
-        self _meth_814B( %add_turn_l, var_0, 0.2, 1, 1 );
-        self _meth_814B( %add_turn_r, 0.0, 0.2, 1, 1 );
+        self setanim( %add_turn_l, var_0, 0.2, 1, 1 );
+        self setanim( %add_turn_r, 0.0, 0.2, 1, 1 );
     }
     else
     {
         if ( self.prevleanfracyaw >= 0 && var_0 > -0.075 )
             var_0 = 0;
 
-        self _meth_814B( %add_turn_l, 0, 0.2, 1, 1 );
-        self _meth_814B( %add_turn_r, 0 - var_0, 0.2, 1, 1 );
+        self setanim( %add_turn_l, 0, 0.2, 1, 1 );
+        self setanim( %add_turn_r, 0 - var_0, 0.2, 1, 1 );
     }
 
     self.prevleanfracyaw = var_0;
@@ -1391,16 +1391,16 @@ swim_updateleananim()
         if ( self.prevleanfracpitch <= 0 && var_0 < 0.075 )
             var_0 = 0;
 
-        self _meth_814B( %add_turn_d, var_0, 0.2, 1, 1 );
-        self _meth_814B( %add_turn_u, 0.0, 0.2, 1, 1 );
+        self setanim( %add_turn_d, var_0, 0.2, 1, 1 );
+        self setanim( %add_turn_u, 0.0, 0.2, 1, 1 );
     }
     else
     {
         if ( self.prevleanfracpitch >= 0 && var_0 > -0.075 )
             var_0 = 0;
 
-        self _meth_814B( %add_turn_d, 0, 0.2, 1, 1 );
-        self _meth_814B( %add_turn_u, 0 - var_0, 0.2, 1, 1 );
+        self setanim( %add_turn_d, 0, 0.2, 1, 1 );
+        self setanim( %add_turn_u, 0 - var_0, 0.2, 1, 1 );
     }
 
     self.prevleanfracpitch = var_0;

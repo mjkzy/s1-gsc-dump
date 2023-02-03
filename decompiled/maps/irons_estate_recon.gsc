@@ -47,7 +47,7 @@ handle_recon()
     common_scripts\utility::flag_wait( "target_tracking_online" );
     thread maps\_utility::hintdisplayhandler( "HINT_TAGGING" );
     level.enemy_tagged = undefined;
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     common_scripts\utility::array_thread( var_0, ::enemies_tagged );
     common_scripts\utility::flag_wait( "target_tracking_online" );
     level.player maps\_tagging::tagging_set_enabled( 1 );
@@ -74,8 +74,8 @@ recon_allies()
     if ( self.animname == "knox" )
     {
         level.knox_pda = spawn( "script_model", ( 0, 0, 0 ) );
-        level.knox_pda _meth_80B1( "greece_drone_control_pad" );
-        level.knox_pda _meth_804D( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.knox_pda setmodel( "greece_drone_control_pad" );
+        level.knox_pda linkto( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     if ( !isdefined( level.recon_anim_struct ) )
@@ -85,7 +85,7 @@ recon_allies()
     {
         var_0 = getnode( self.animname + "_infil_grapple_node_1", "targetname" );
         maps\_utility::set_goal_radius( 16 );
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
         level.recon_anim_struct maps\_anim::anim_single_solo( self, "recon_enter" );
         thread cormack_ilana_infil();
     }
@@ -118,11 +118,11 @@ cormack_ilana_infil()
 
     var_0 = getnode( self.animname + "_infil_grapple_node_1", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
     var_0 = getnode( self.animname + "_infil_grapple_node_2", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
 
     if ( self.animname == "ilana" )
@@ -130,7 +130,7 @@ cormack_ilana_infil()
 
     var_0 = getnode( self.animname + "_infil_grapple_node_3", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
 
     if ( isdefined( self.magic_bullet_shield ) )

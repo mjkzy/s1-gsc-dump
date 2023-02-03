@@ -92,23 +92,23 @@ mobile_cover_drone_hint_think()
     {
         if ( isdefined( self.linked_player ) )
         {
-            self.link_trigger _meth_80C2();
+            self.link_trigger makeglobalunusable();
             var_2 = 0;
             var_3 += 0.05;
 
             if ( var_3 > var_0 )
-                self.unlink_trigger _meth_80C1( -999 );
+                self.unlink_trigger makeglobalusable( -999 );
         }
         else
         {
-            self.unlink_trigger _meth_80C2();
+            self.unlink_trigger makeglobalunusable();
             var_2 += 0.05;
             var_3 = 0;
 
             if ( var_2 > var_1 && should_show_prompt( level.player ) )
-                self.link_trigger _meth_80C1( -999 );
+                self.link_trigger makeglobalusable( -999 );
             else
-                self.link_trigger _meth_80C2();
+                self.link_trigger makeglobalunusable();
         }
 
         waitframe();
@@ -166,13 +166,13 @@ player_link_to_cover( var_0 )
     maps\_warzone_tactics::remove_object_from_tactics_system( self );
     self.linked_player endon( "death" );
     self.linked_player player_update_slow_aim( 1, self );
-    self.linked_player _meth_8301( 0 );
+    self.linked_player allowjump( 0 );
     level.old_viewbobamplitudestanding = getdvar( "bg_viewBobAmplitudeStanding" );
     level.old_viewbobamplitudeducked = getdvar( "bg_viewBobAmplitudeDucked" );
     level.old_viewbobamplitudesprinting = getdvar( "bg_viewBobAmplitudeSprinting" );
-    _func_0D3( "bg_viewBobAmplitudeStanding", "0 0" );
-    _func_0D3( "bg_viewBobAmplitudeDucked", "0 0" );
-    _func_0D3( "bg_viewBobAmplitudeSprinting", "0 0" );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", "0 0" );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", "0 0" );
+    setsaveddvar( "bg_viewBobAmplitudeSprinting", "0 0" );
     self.window_position = "up";
     self.blend = 0;
     self.linked_player notify( "player_linked_to_cover" );
@@ -181,19 +181,19 @@ player_link_to_cover( var_0 )
         self.dummy_player = common_scripts\utility::spawn_tag_origin();
 
     self.dummy_player.origin = self.linked_player.origin;
-    self.dummy_player.angles = ( 0, self.linked_player _meth_8036()[1], 0 );
+    self.dummy_player.angles = ( 0, self.linked_player getgunangles()[1], 0 );
     self.dummy_player.vel = ( 0, 0, 0 );
     self.tag_origin = common_scripts\utility::spawn_tag_origin();
     self.tag_origin.origin = self.dummy_player.origin;
     self.tag_origin.angles = self.dummy_player.angles;
-    self.linked_player _meth_807D( self.tag_origin, "tag_origin", 1.0, 0, 0, 80, 80, 0, 0 );
+    self.linked_player playerlinktodelta( self.tag_origin, "tag_origin", 1.0, 0, 0, 80, 80, 0, 0 );
     self.ads = self.linked_player adsbuttonpressed();
-    self.linked_player _meth_834C( 1 );
+    self.linked_player enablemousesteer( 1 );
     maps\_variable_grenade::change_threat_detection_style( "detectable" );
     stopfxontag( common_scripts\utility::getfx( "unlink_light" ), self, "tag_fx" );
     playfxontag( common_scripts\utility::getfx( "link_light" ), self, "tag_fx" );
-    self _meth_846C( "mtl_mobile_cover_glass_vm", "mtl_mobile_cover_glass_vm_active" );
-    self _meth_83F3( 1 );
+    self overridematerial( "mtl_mobile_cover_glass_vm", "mtl_mobile_cover_glass_vm_active" );
+    self makevehiclenotcollidewithplayers( 1 );
     thread player_ads_think();
     thread mobile_cover_link_think();
     thread mobile_cover_sound_think();
@@ -229,7 +229,7 @@ pass_mech_melee_damage_to_player()
 
             var_10 = distance( self.origin, var_1.origin );
             var_11 = var_3 + var_2 * var_10 * -1;
-            self.linked_player _meth_8051( var_0, var_11, var_1 );
+            self.linked_player dodamage( var_0, var_11, var_1 );
         }
     }
 }
@@ -277,7 +277,7 @@ mimic_player_move( var_0, var_1, var_2, var_3 )
     if ( level.player maps\_utility::isads() )
         var_15 *= 0.4;
 
-    var_16 = var_0 _meth_817C();
+    var_16 = var_0 getstance();
     var_17 = 9.0;
 
     if ( var_16 == "prone" )
@@ -291,7 +291,7 @@ mimic_player_move( var_0, var_1, var_2, var_3 )
         var_17 = 12.0;
     }
 
-    var_18 = var_0 _meth_8340();
+    var_18 = var_0 playerads();
 
     if ( var_18 > 0.5 )
         var_15 *= 0.5;
@@ -303,7 +303,7 @@ mimic_player_move( var_0, var_1, var_2, var_3 )
     var_22 = length( var_21 );
     var_23 = vectornormalize( var_21 );
     var_22 *= var_15;
-    var_24 = _func_238( var_1.origin + ( 0, 0, 100 ), var_1.origin + ( 0, 0, -100 ), self );
+    var_24 = playerphysicstraceinfo( var_1.origin + ( 0, 0, 100 ), var_1.origin + ( 0, 0, -100 ), self );
     var_25 = var_24["normal"];
     var_21 = maps\_pmove::pm_projectvelocity( var_21, var_25 );
     var_26 = vectordot( var_1.vel, var_23 );
@@ -339,10 +339,10 @@ mimic_player_move( var_0, var_1, var_2, var_3 )
 
 mobile_cover_dummy_player_think()
 {
-    var_0 = self.linked_player _meth_82F3();
-    var_1 = self.linked_player _meth_830D();
+    var_0 = self.linked_player getnormalizedmovement();
+    var_1 = self.linked_player getnormalizedcameramovements();
     var_1 = ( var_1[0], -1 * var_1[1], 0 );
-    var_2 = self.linked_player _meth_83A8();
+    var_2 = self.linked_player getaimassistdeltas();
     var_3 = 0.05;
     var_4 = self.dummy_player.origin;
     mimic_player_move( self.linked_player, self.dummy_player, 127 * var_0[0], 127 * var_0[1] );
@@ -379,7 +379,7 @@ mobile_cover_dummy_player_think()
     if ( self.linked_player adsbuttonpressed() && !self.ads )
     {
         self.ads = 1;
-        var_12 = self.linked_player _meth_83A9();
+        var_12 = self.linked_player getaimassisttargetangles();
 
         if ( var_12[1] != 0 || var_12[0] != 0 )
             var_11 = var_12[1];
@@ -395,7 +395,7 @@ mobile_cover_dummy_player_think()
     {
         var_15 = 30 - var_14;
         var_16 = self.dummy_player.origin - var_13 * var_15;
-        var_17 = _func_238( var_16 + ( 0, 0, 8 ), var_16 - ( 0, 0, 8 ), self );
+        var_17 = playerphysicstraceinfo( var_16 + ( 0, 0, 8 ), var_16 - ( 0, 0, 8 ), self );
 
         if ( var_17["fraction"] > 0 )
             self.dummy_player.origin = var_17["position"];
@@ -462,7 +462,7 @@ mobile_cover_link_think_angle_controller()
         var_29 = angleclamp( var_20 + var_28 );
         var_30 = var_16 + anglestoforward( ( 0, var_29, 0 ) ) * var_23;
         var_31 = ( 0, var_17, 0 );
-        self.tag_origin _meth_804F();
+        self.tag_origin unlink();
         self.tag_origin.origin = self.dummy_player.origin;
         self.tag_origin.angles = self.dummy_player.angles;
         drive_cover( var_30, var_31 );
@@ -487,9 +487,9 @@ drive_cover( var_0, var_1 )
 {
     var_2 = 0.738636;
 
-    foreach ( var_4 in _func_0D6( "all" ) )
+    foreach ( var_4 in getaiarray( "all" ) )
     {
-        if ( isalive( var_4 ) && var_4 _meth_80A9( self ) )
+        if ( isalive( var_4 ) && var_4 istouching( self ) )
         {
             var_5 = var_0 - self.origin;
             var_6 = vectornormalize( self.origin - var_4.origin );
@@ -535,8 +535,8 @@ drive_cover( var_0, var_1 )
     var_12 = distance2d( self.origin, var_0 ) * var_2;
     var_13 = self.dummy_player maps\_shg_utility::get_differentiated_speed() / 17.6;
     var_12 = clamp( var_12, 0.01, var_13 + 5 );
-    self _meth_8285( var_1[1] );
-    self _meth_8229( var_0, var_12 );
+    self vehicle_rotateyaw( var_1[1] );
+    self vehicledriveto( var_0, var_12 );
 }
 
 filter_lead_controller_init( var_0, var_1, var_2, var_3, var_4 )
@@ -670,8 +670,8 @@ player_ads_think()
 
         play_window_sound( var_2, self.blend );
         var_6 = sigmoid( self.blend );
-        self _meth_814B( %mobile_cover_window_down_pose, var_6, 0.05, 1 );
-        self _meth_814B( %mobile_cover_window_up_pose, 1 - var_6, 0.05, 1 );
+        self setanim( %mobile_cover_window_down_pose, var_6, 0.05, 1 );
+        self setanim( %mobile_cover_window_up_pose, 1 - var_6, 0.05, 1 );
         self.linked_player player_update_slow_aim( 1, self );
 
         if ( self.blend > 0.5 )
@@ -737,8 +737,8 @@ close_ads_window_on_unlink()
 
         play_window_sound( var_1, self.blend );
         var_2 = sigmoid( self.blend );
-        self _meth_814B( %mobile_cover_window_down_pose, var_2, 0.05, 1 );
-        self _meth_814B( %mobile_cover_window_up_pose, 1 - var_2, 0.05, 1 );
+        self setanim( %mobile_cover_window_down_pose, var_2, 0.05, 1 );
+        self setanim( %mobile_cover_window_up_pose, 1 - var_2, 0.05, 1 );
         var_1 = self.blend;
         wait 0.05;
     }
@@ -748,8 +748,8 @@ player_update_slow_aim( var_0, var_1 )
 {
     if ( var_0 )
     {
-        var_2 = self _meth_820E( "viewSensitivity" );
-        var_3 = pow( self _meth_8340(), 3 );
+        var_2 = self getlocalplayerprofiledata( "viewSensitivity" );
+        var_3 = pow( self playerads(), 3 );
         var_4 = maps\_utility::linear_interpolate( var_3, 0.480769, 1.90259 ) / var_2;
 
         if ( var_1.extra_slow_player )
@@ -757,8 +757,8 @@ player_update_slow_aim( var_0, var_1 )
 
         var_4 = clamp( var_4, 0.01, 0.99 );
         var_5 = clamp( var_4 * 6, 0.01, 0.99 );
-        self _meth_80FE( var_5, var_4 );
-        self _meth_81E1( 0.6 );
+        self enableslowaim( var_5, var_4 );
+        self setmovespeedscale( 0.6 );
         self.yaw_scale = maps\_utility::linear_interpolate( var_3, 0.480769, 0.120192 );
         self.move_scale = 0.6;
     }
@@ -766,8 +766,8 @@ player_update_slow_aim( var_0, var_1 )
     {
         self.yaw_scale = 1.0;
         self.move_scale = 1.0;
-        self _meth_80FF();
-        self _meth_81E1( 1 );
+        self disableslowaim();
+        self setmovespeedscale( 1 );
     }
 }
 
@@ -789,7 +789,7 @@ player_unlink_on_sprint()
 
     for (;;)
     {
-        if ( self.linked_player _meth_83BB() && !self.ads )
+        if ( self.linked_player sprintbuttonpressed() && !self.ads )
         {
             player_unlink_from_cover();
             break;
@@ -815,26 +815,26 @@ player_unlink_from_cover()
     self.linked_player.linked_to_cover = undefined;
     vehicle_scripts\_cover_drone_aud::snd_stop_cover_drone( 1.0, 1.5 );
     maps\_warzone_tactics::add_object_to_tactics_system( self );
-    self _meth_804F();
-    self.linked_player _meth_804F();
+    self unlink();
+    self.linked_player unlink();
     self.tag_origin delete();
     self.tag_origin = undefined;
     self.dummy_player delete();
     self.dummy_player = undefined;
-    self.linked_player _meth_834C( 0 );
+    self.linked_player enablemousesteer( 0 );
     thread unlink_failsafe();
-    _func_0D3( "bg_viewBobAmplitudeStanding", level.old_viewbobamplitudestanding );
-    _func_0D3( "bg_viewBobAmplitudeDucked", level.old_viewbobamplitudeducked );
-    _func_0D3( "bg_viewBobAmplitudeSprinting", level.old_viewbobamplitudesprinting );
-    self.linked_player _meth_8301( 1 );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", level.old_viewbobamplitudestanding );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", level.old_viewbobamplitudeducked );
+    setsaveddvar( "bg_viewBobAmplitudeSprinting", level.old_viewbobamplitudesprinting );
+    self.linked_player allowjump( 1 );
     self.linked_player enable_weapon_pickup_wrapper();
     self.linked_player player_update_slow_aim( 0 );
-    self.linked_player _meth_83D7( ( 0, 0, 0 ), 1 );
+    self.linked_player pushplayervector( ( 0, 0, 0 ), 1 );
     maps\_variable_grenade::change_threat_detection_style( "enhanceable" );
-    self _meth_8229( self.origin, 0 );
+    self vehicledriveto( self.origin, 0 );
     stopfxontag( common_scripts\utility::getfx( "link_light" ), self, "tag_fx" );
     playfxontag( common_scripts\utility::getfx( "unlink_light" ), self, "tag_fx" );
-    self _meth_846D();
+    self overridematerialreset();
     var_0 = self.linked_player;
     self.linked_player = undefined;
     var_0 notify( "player_unlinked_from_cover" );
@@ -849,11 +849,11 @@ unlink_failsafe()
     self endon( "death" );
     level.player endon( "death" );
 
-    while ( level.player _meth_80A9( self ) )
+    while ( level.player istouching( self ) )
     {
-        self _meth_8455();
+        self vehicle_removebrushmodelcollision();
         waitframe();
-        self _meth_8454();
+        self vehicle_assignbrushmodelcollision();
     }
 
     self.unlink_failsafe_running = undefined;
@@ -876,7 +876,7 @@ player_enable_highlight()
     var_0 = newclienthudelem( self.linked_player );
     var_0.color = ( 1, 0.05, 0.025 );
     var_0.alpha = 0.01;
-    var_0 _meth_83A4( -1 );
+    var_0 setradarhighlight( -1 );
     self.linked_player waittill( "player_unlinked_from_cover" );
     var_0 destroy();
 }
@@ -915,9 +915,9 @@ create_ads_hint_string()
     var_0.hidewhendead = 1;
     var_0.hidewheninmenu = 1;
 
-    if ( level.player _meth_834E() )
+    if ( level.player usinggamepad() )
         var_0 settext( &"COVER_DRONE_LOWER_SHIELD" );
-    else if ( _func_0DD( "+toggleads_throw" )["count"] > 0 )
+    else if ( getkeybinding( "+toggleads_throw" )["count"] > 0 )
         var_0 settext( &"COVER_DRONE_LOWER_SHIELD_KB" );
     else
         var_0 settext( &"COVER_DRONE_LOWER_SHIELD" );
@@ -932,8 +932,8 @@ mobile_cover_sound_think()
 
     var_0 = common_scripts\utility::spawn_tag_origin();
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( self, "", ( 0, 18, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_804D( self, "", ( 0, -18, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "", ( 0, 18, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( self, "", ( 0, -18, 0 ), ( 0, 0, 0 ) );
     thread mobile_cover_sound_loop( var_0 );
     thread mobile_cover_sound_loop( var_1 );
     self.linked_player common_scripts\utility::waittill_either( "death", "player_unlinked_from_cover" );
@@ -960,12 +960,12 @@ mobile_cover_sound_loop( var_0 )
         var_6 = var_0.origin;
         var_9 = maps\_shg_utility::linear_map_clamp( var_7, 0, var_3, 0, 1 );
         var_9 = clamp( var_9, 0.002, 3.99 );
-        var_0 _meth_806C( var_9, 0.05 );
+        var_0 setpitch( var_9, 0.05 );
 
         if ( var_7 > var_2 )
-            var_0 _meth_806E( maps\_shg_utility::linear_map_clamp( var_7, 0, var_3, var_4, var_5 ), 0.05 );
+            var_0 setvolume( maps\_shg_utility::linear_map_clamp( var_7, 0, var_3, var_4, var_5 ), 0.05 );
         else
-            var_0 _meth_806E( 0, 0.05 );
+            var_0 setvolume( 0, 0.05 );
 
         waitframe();
     }
@@ -1031,10 +1031,10 @@ record_grenade_rising_edges()
 
     for (;;)
     {
-        if ( self _meth_812C( 1 ) && !var_0 )
+        if ( self isthrowinggrenade( 1 ) && !var_0 )
             self.is_really_throwing_grenade_rising_edge_time = gettime();
 
-        var_0 = self _meth_812C( 1 );
+        var_0 = self isthrowinggrenade( 1 );
         waitframe();
     }
 }
@@ -1043,7 +1043,7 @@ is_really_throwing_grenade()
 {
     var_0 = 300.0;
 
-    if ( !self _meth_812C( 1 ) )
+    if ( !self isthrowinggrenade( 1 ) )
         return 0;
 
     if ( self.last_grenade_throw_time > self.is_really_throwing_grenade_rising_edge_time && gettime() - self.last_grenade_throw_time > var_0 )

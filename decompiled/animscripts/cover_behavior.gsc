@@ -56,9 +56,9 @@ main( var_0 )
         }
 
         if ( animscripts\utility::isspaceai() )
-            self _meth_81C7( self.covernode.origin );
+            self safeteleport( self.covernode.origin );
         else
-            self _meth_81C7( self.covernode.origin, getcorrectcoverangles() );
+            self safeteleport( self.covernode.origin, getcorrectcoverangles() );
 
         if ( !var_3 )
         {
@@ -130,7 +130,7 @@ end_script( var_0 )
         self.meleecoverchargemintime = undefined;
     }
 
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
     self.facialidx = undefined;
 }
 
@@ -145,7 +145,7 @@ getcorrectcoverangles()
 
 respondtodeadteammate()
 {
-    if ( self _meth_8164() && self.a.respondtodeathtime < gettime() )
+    if ( self atdangerousnode() && self.a.respondtodeathtime < gettime() )
     {
         if ( animscripts\combat_utility::lookforbettercover() )
             return 1;
@@ -288,7 +288,7 @@ suppressedbehavior( var_0 )
     while ( animscripts\utility::issuppressedwrapper() )
     {
         var_2 = 0;
-        self _meth_81C7( self.covernode.origin );
+        self safeteleport( self.covernode.origin );
         var_3 = 1;
 
         if ( isdefined( self.favor_blindfire ) )
@@ -765,12 +765,12 @@ turntomatchnodedirection( var_0 )
         var_1 = self.node;
         var_2 = abs( angleclamp180( self.angles[1] - var_1.angles[1] + var_0 ) );
 
-        if ( self.a.pose == "stand" && var_1 _meth_8034() != "stand" )
+        if ( self.a.pose == "stand" && var_1 gethighestnodestance() != "stand" )
         {
             if ( var_2 > 45 && var_2 < 90 )
-                self _meth_818F( "face angle", self.angles[1] );
+                self orientmode( "face angle", self.angles[1] );
             else
-                self _meth_818F( "face current" );
+                self orientmode( "face current" );
 
             var_3 = 1.5;
             var_4 = %exposed_stand_2_crouch;
@@ -781,9 +781,9 @@ turntomatchnodedirection( var_0 )
             var_5 = getnotetracktimes( var_4, "anim_pose = \"crouch\"" )[0];
             var_5 = min( 1, var_5 * 1.1 );
             var_6 = var_5 * getanimlength( var_4 ) / var_3;
-            self _meth_8110( "crouchanim", var_4, %body, 1, 0.2, var_3 );
+            self setflaggedanimknoballrestart( "crouchanim", var_4, %body, 1, 0.2, var_3 );
             animscripts\notetracks::donotetracksfortime( var_6, "crouchanim" );
-            self _meth_8142( %body, 0.2 );
+            self clearanim( %body, 0.2 );
         }
 
         if ( animscripts\utility::isspaceai() )
@@ -792,7 +792,7 @@ turntomatchnodedirection( var_0 )
             return;
         }
         else
-            self _meth_818F( "face angle", self.angles[1] );
+            self orientmode( "face angle", self.angles[1] );
 
         var_7 = angleclamp180( self.angles[1] - var_1.angles[1] + var_0 );
 
@@ -854,9 +854,9 @@ movetonearbycover()
     if ( distancesquared( self.origin, self.node.origin ) > 256 )
         return 0;
 
-    var_0 = self _meth_81EB();
+    var_0 = self findshufflecovernode();
 
-    if ( isdefined( var_0 ) && var_0 != self.node && self _meth_81F0( var_0 ) )
+    if ( isdefined( var_0 ) && var_0 != self.node && self usecovernode( var_0 ) )
     {
         self.shufflemove = 1;
         self.shufflenode = var_0;

@@ -9,7 +9,7 @@ movecqb()
 
     if ( self.a.pose != "stand" )
     {
-        self _meth_8142( %animscript_root, 0.2 );
+        self clearanim( %animscript_root, 0.2 );
 
         if ( self.a.pose == "prone" )
             animscripts\utility::exitpronewrapper( 1 );
@@ -23,7 +23,7 @@ movecqb()
     if ( animscripts\run::move_checkstairstransition() )
         return;
 
-    self _meth_8142( %stair_transitions, 0.2 );
+    self clearanim( %stair_transitions, 0.2 );
 
     if ( animscripts\run::standrun_checkreload() )
         return;
@@ -47,7 +47,7 @@ movecqb()
     if ( self.timeofmaincqbupdate - var_0 > var_3 * 1000 )
         var_4 = %stand_and_crouch;
 
-    self _meth_810F( "runanim", var_1, var_4, 1, var_2, self.moveplaybackrate, 1 );
+    self setflaggedanimknoball( "runanim", var_1, var_4, 1, var_2, self.moveplaybackrate, 1 );
     cqb_playfacialanim( var_1 );
     animscripts\run::setmovenonforwardanims( animscripts\utility::lookupanim( "cqb", "move_b" ), animscripts\utility::lookupanim( "cqb", "move_l" ), animscripts\utility::lookupanim( "cqb", "move_r" ) );
     thread animscripts\run::setcombatstandmoveanimweights( "cqb" );
@@ -90,14 +90,14 @@ determinecqbanim()
 cqb_reloadinternal()
 {
     self endon( "movemode" );
-    self _meth_818F( "face motion" );
+    self orientmode( "face motion" );
     var_0 = "reload_" + animscripts\combat_utility::getuniqueflagnameindex();
     var_1 = animscripts\utility::lookupanim( "cqb", "reload" );
 
     if ( isarray( var_1 ) )
         var_1 = var_1[randomint( var_1.size )];
 
-    self _meth_8110( var_0, var_1, %body, 1, 0.25 );
+    self setflaggedanimknoballrestart( var_0, var_1, %body, 1, 0.25 );
     cqb_playfacialanim( var_1 );
     animscripts\run::setmovenonforwardanims( animscripts\utility::lookupanim( "cqb", "move_b" ), animscripts\utility::lookupanim( "cqb", "move_l" ), animscripts\utility::lookupanim( "cqb", "move_r" ) );
     thread animscripts\run::setcombatstandmoveanimweights( "cqb" );
@@ -140,7 +140,7 @@ findcqbpointsofinterest()
 
     for (;;)
     {
-        var_0 = _func_0D6();
+        var_0 = getaiarray();
         var_1 = 0;
 
         foreach ( var_3 in var_0 )
@@ -148,7 +148,7 @@ findcqbpointsofinterest()
             if ( isalive( var_3 ) && var_3 animscripts\utility::iscqbwalking() && !isdefined( var_3.disable_cqb_points_of_interest ) )
             {
                 var_4 = var_3.a.movement != "stop";
-                var_5 = ( var_3.origin[0], var_3.origin[1], var_3 _meth_8097()[2] );
+                var_5 = ( var_3.origin[0], var_3.origin[1], var_3 getshootatpos()[2] );
                 var_6 = var_5;
                 var_7 = anglestoforward( var_3.angles );
 
@@ -212,5 +212,5 @@ cqb_playfacialanim( var_0 )
 cqb_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

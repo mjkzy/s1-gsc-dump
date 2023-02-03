@@ -57,7 +57,7 @@ onforfeit( var_0 )
     level.forcedend = 1;
 
     if ( isplayer( var_3 ) )
-        logstring( "forfeit, win: " + var_3 _meth_8297() + "(" + var_3.name + ")" );
+        logstring( "forfeit, win: " + var_3 getxuid() + "(" + var_3.name + ")" );
     else
         logstring( "forfeit, win: " + var_3 + ", allies: " + game["teamScores"]["allies"] + ", opfor: " + game["teamScores"]["axis"] );
 
@@ -507,7 +507,7 @@ prematchperiod()
     for ( var_0 = 0; var_0 < level.players.size; var_0++ )
     {
         level.players[var_0] maps\mp\_utility::freezecontrolswrapper( 0 );
-        level.players[var_0] _meth_831E();
+        level.players[var_0] enableweapons();
         level.players[var_0] enableammogeneration();
         var_1 = maps\mp\_utility::getobjectivehinttext( level.players[var_0].pers["team"] );
 
@@ -527,7 +527,7 @@ graceperiod()
 
     if ( !isdefined( game["clientActive"] ) )
     {
-        while ( _func_27D() == 0 )
+        while ( getactiveclientcount() == 0 )
             wait 0.05;
 
         game["clientActive"] = 1;
@@ -780,7 +780,7 @@ updatewinlossstats( var_0 )
             if ( isdefined( var_2.connectedpostgame ) )
                 continue;
 
-            if ( level.hostforcedend && var_2 _meth_829C() )
+            if ( level.hostforcedend && var_2 ishost() )
             {
                 var_2 maps\mp\gametypes\_persistence::statset( "currentWinStreak", 0 );
                 continue;
@@ -801,7 +801,7 @@ updatewinlossstats( var_0 )
             if ( isdefined( var_2.connectedpostgame ) )
                 continue;
 
-            if ( level.hostforcedend && var_2 _meth_829C() )
+            if ( level.hostforcedend && var_2 ishost() )
             {
                 var_2 maps\mp\gametypes\_persistence::statset( "currentWinStreak", 0 );
                 continue;
@@ -817,7 +817,7 @@ updatewinlossstats( var_0 )
             if ( isdefined( var_2.connectedpostgame ) )
                 continue;
 
-            if ( level.hostforcedend && var_2 _meth_829C() )
+            if ( level.hostforcedend && var_2 ishost() )
             {
                 var_2 maps\mp\gametypes\_persistence::statset( "currentWinStreak", 0 );
                 continue;
@@ -861,8 +861,8 @@ freezeplayerforroundend( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.05;
 
-    self _meth_8325();
-    self _meth_826C();
+    self closepopupmenu();
+    self closeingamemenu();
     wait(var_0);
     maps\mp\_utility::freezecontrolswrapper( 1 );
 }
@@ -897,7 +897,7 @@ updatematchbonusscores( var_0 )
         }
 
         if ( var_1 != "tie" )
-            clientannouncement( var_1 );
+            setwinningteam( var_1 );
 
         foreach ( var_4 in level.players )
         {
@@ -910,7 +910,7 @@ updatematchbonusscores( var_0 )
             if ( var_4.timeplayed["total"] < 1 || var_4.pers["participation"] < 1 )
                 continue;
 
-            if ( level.hostforcedend && var_4 _meth_829C() )
+            if ( level.hostforcedend && var_4 ishost() )
                 continue;
 
             var_5 = 0;
@@ -948,7 +948,7 @@ updatematchbonusscores( var_0 )
             if ( var_4.timeplayed["total"] < 1 || var_4.pers["participation"] < 1 )
                 continue;
 
-            if ( level.hostforcedend && var_4 _meth_829C() )
+            if ( level.hostforcedend && var_4 ishost() )
                 continue;
 
             var_4.iswinner = 0;
@@ -1024,7 +1024,7 @@ setxenonranks( var_0 )
         if ( maps\mp\_utility::getminutespassed() )
             var_4 = var_3.score / maps\mp\_utility::getminutespassed();
 
-        _func_173( var_3, var_3.clientid, int( var_4 ) );
+        setplayerteamrank( var_3, var_3.clientid, int( var_4 ) );
     }
 }
 
@@ -1059,7 +1059,7 @@ checktimelimit( var_0 )
         return;
 
     if ( maps\mp\_utility::gettimepassedpercentage() > level.timepercentagecutoff )
-        _func_260( 1 );
+        setnojiptime( 1 );
 
     var_1 = gettimeremaining();
 
@@ -1447,7 +1447,7 @@ gethostplayer()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( var_0[var_1] _meth_829C() )
+        if ( var_0[var_1] ishost() )
             return var_0[var_1];
     }
 }
@@ -1494,7 +1494,7 @@ roundendwait( var_0, var_1 )
         var_6 = level.players;
 
         foreach ( var_3 in var_6 )
-            var_3 _meth_82FB( "ui_round_end", 0 );
+            var_3 setclientomnvar( "ui_round_end", 0 );
 
         level notify( "round_end_finished" );
         return;
@@ -1527,14 +1527,14 @@ roundendwait( var_0, var_1 )
     var_6 = level.players;
 
     foreach ( var_3 in var_6 )
-        var_3 _meth_82FB( "ui_round_end", 0 );
+        var_3 setclientomnvar( "ui_round_end", 0 );
 
     level notify( "round_end_finished" );
 }
 
 roundenddof( var_0 )
 {
-    self _meth_8186( 0, 128, 512, 4000, 6, 1.8 );
+    self setdepthoffield( 0, 128, 512, 4000, 6, 1.8 );
 }
 
 callback_startgametype()
@@ -1652,7 +1652,7 @@ callback_startgametype()
         {
             if ( !level.splitscreen )
             {
-                if ( _func_27A() )
+                if ( isdedicatedserver() )
                     level.prematchperiod = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "graceperiod_ds" );
                 else
                     level.prematchperiod = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "graceperiod" );
@@ -1662,7 +1662,7 @@ callback_startgametype()
         }
         else
         {
-            if ( _func_27A() )
+            if ( isdedicatedserver() )
                 level.prematchperiod = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "playerwaittime_ds" );
             else
                 level.prematchperiod = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "playerwaittime" );
@@ -1910,7 +1910,7 @@ setattackingteam()
 
 callback_codeendgame()
 {
-    _func_174();
+    endparty();
 
     if ( !level.gameended )
         level thread forceend();
@@ -2133,7 +2133,7 @@ startgame()
     if ( var_0 || var_1 )
         thread updategameduration();
 
-    _func_240();
+    lootserviceonstartgame();
 }
 
 wavespawntimer()
@@ -2248,7 +2248,7 @@ displayroundend( var_0, var_1 )
     {
         foreach ( var_3 in level.players )
         {
-            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 _meth_8432() )
+            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 ismlgspectator() )
                 continue;
 
             if ( level.teambased )
@@ -2276,7 +2276,7 @@ displaygameend( var_0, var_1 )
     {
         foreach ( var_3 in level.players )
         {
-            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 _meth_8432() )
+            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 ismlgspectator() )
                 continue;
 
             if ( level.teambased )
@@ -2321,7 +2321,7 @@ displayroundswitch()
 
     foreach ( var_2 in level.players )
     {
-        if ( isdefined( var_2.connectedpostgame ) || var_2.pers["team"] == "spectator" && !var_2 _meth_8432() )
+        if ( isdefined( var_2.connectedpostgame ) || var_2.pers["team"] == "spectator" && !var_2 ismlgspectator() )
             continue;
 
         var_2 thread maps\mp\gametypes\_hud_message::teamoutcomenotify( var_0, 1, game["end_reason"]["switching_sides"] );
@@ -2344,12 +2344,12 @@ freezeallplayers( var_0, var_1 )
 
         if ( isdefined( var_1 ) && var_1 )
         {
-            var_3 _meth_82FD( "cg_everyoneHearsEveryone", 1, "cg_fovScale", 1 );
-            var_3 _meth_82FB( "fov_scale", 1 );
+            var_3 setclientdvars( "cg_everyoneHearsEveryone", 1, "cg_fovScale", 1 );
+            var_3 setclientomnvar( "fov_scale", 1 );
             continue;
         }
 
-        var_3 _meth_82FD( "cg_everyoneHearsEveryone", 1 );
+        var_3 setclientdvars( "cg_everyoneHearsEveryone", 1 );
     }
 
     if ( isdefined( level.agentarray ) )
@@ -2388,7 +2388,7 @@ endgameovertime( var_0, var_1 )
 
     foreach ( var_3 in level.players )
     {
-        if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 _meth_8432() )
+        if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 ismlgspectator() )
             continue;
 
         if ( level.teambased )
@@ -2423,7 +2423,7 @@ endgameovertime( var_0, var_1 )
 
         foreach ( var_3 in level.players )
         {
-            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 _meth_8432() )
+            if ( isdefined( var_3.connectedpostgame ) || var_3.pers["team"] == "spectator" && !var_3 ismlgspectator() )
                 continue;
 
             if ( level.teambased )
@@ -2442,7 +2442,7 @@ endgameovertime( var_0, var_1 )
     level notify( "restarting" );
     game["state"] = "playing";
     setdvar( "ui_game_state", game["state"] );
-    _func_169( 1 );
+    map_restart( 1 );
 }
 
 endgamehalftime( var_0 )
@@ -2486,7 +2486,7 @@ endgamehalftime( var_0 )
 
     foreach ( var_5 in level.players )
     {
-        if ( isdefined( var_5.connectedpostgame ) || var_5.pers["team"] == "spectator" && !var_5 _meth_8432() )
+        if ( isdefined( var_5.connectedpostgame ) || var_5.pers["team"] == "spectator" && !var_5 ismlgspectator() )
             continue;
 
         var_5 thread maps\mp\gametypes\_hud_message::teamoutcomenotify( var_1, 1, var_3 );
@@ -2510,7 +2510,7 @@ endgamehalftime( var_0 )
 
         foreach ( var_5 in level.players )
         {
-            if ( isdefined( var_5.connectedpostgame ) || var_5.pers["team"] == "spectator" && !var_5 _meth_8432() )
+            if ( isdefined( var_5.connectedpostgame ) || var_5.pers["team"] == "spectator" && !var_5 ismlgspectator() )
                 continue;
 
             var_5 thread maps\mp\gametypes\_hud_message::teamoutcomenotify( "halftime", 1, var_11 );
@@ -2523,7 +2523,7 @@ endgamehalftime( var_0 )
     level notify( "restarting" );
     game["state"] = "playing";
     setdvar( "ui_game_state", game["state"] );
-    _func_169( 1 );
+    map_restart( 1 );
 }
 
 updategameduration()
@@ -2616,7 +2616,7 @@ endgame( var_0, var_1, var_2 )
 
     foreach ( var_5 in level.players )
     {
-        var_5 _meth_82FC( "ui_opensummary", 1 );
+        var_5 setclientdvar( "ui_opensummary", 1 );
 
         if ( maps\mp\_utility::wasonlyround() || maps\mp\_utility::waslastround() )
             var_5 maps\mp\killstreaks\_killstreaks::clearkillstreaks( 1 );
@@ -2656,7 +2656,7 @@ endgame( var_0, var_1, var_2 )
             level notify( "restarting" );
             game["state"] = "playing";
             setdvar( "ui_game_state", "playing" );
-            _func_169( 1 );
+            map_restart( 1 );
             return;
         }
 
@@ -2701,8 +2701,8 @@ endgame( var_0, var_1, var_2 )
 
     foreach ( var_5 in level.players )
     {
-        var_5 _meth_8325();
-        var_5 _meth_826C();
+        var_5 closepopupmenu();
+        var_5 closeingamemenu();
         var_5 notify( "reset_outcome" );
         var_5 thread maps\mp\gametypes\_playerlogic::spawnintermission();
     }
@@ -2721,7 +2721,7 @@ endgame( var_0, var_1, var_2 )
 
         setmatchdata( "alliesScore", game["teamScores"]["allies"] );
         setmatchdata( "axisScore", game["teamScores"]["axis"] );
-        _func_242( var_0 );
+        tournamentreportwinningteam( var_0 );
     }
     else
         setmatchdata( "victor", "none" );
@@ -2740,9 +2740,9 @@ endgame( var_0, var_1, var_2 )
 
     if ( maps\mp\_utility::matchmakinggame() )
     {
-        setmatchdata( "playlistVersion", _func_27B() );
-        setmatchdata( "playlistID", _func_27C() );
-        setmatchdata( "isDedicated", _func_27A() );
+        setmatchdata( "playlistVersion", getplaylistversion() );
+        setmatchdata( "playlistID", getplaylistid() );
+        setmatchdata( "isDedicated", isdedicatedserver() );
     }
 
     setmatchdata( "levelMaxClients", level.maxclients );
@@ -2754,7 +2754,7 @@ endgame( var_0, var_1, var_2 )
         var_5.pers["segments"] = var_5.segments;
     }
 
-    _func_243();
+    tournamentreportendofgame();
     var_20 = 0;
 
     if ( maps\mp\_utility::practiceroundgame() )
@@ -2979,7 +2979,7 @@ getscoreperminute( var_0 )
     if ( isplayer( self ) )
         var_4 = self.score / var_3;
     else
-        var_4 = setclientnamemode( var_0 ) / var_3;
+        var_4 = getteamscore( var_0 ) / var_3;
 
     return var_4;
 }
@@ -2991,7 +2991,7 @@ getscoreremaining( var_0 )
     if ( isplayer( self ) )
         var_2 = var_1 - self.score;
     else
-        var_2 = var_1 - setclientnamemode( var_0 );
+        var_2 = var_1 - getteamscore( var_0 );
 
     return var_2;
 }
@@ -3034,7 +3034,7 @@ processlobbydata()
         var_0++;
 
         if ( isdefined( level.iszombiegame ) && level.iszombiegame )
-            var_2.clientmatchdataid = var_2 _meth_81B1();
+            var_2.clientmatchdataid = var_2 getentitynumber();
 
         setclientmatchdata( "players", var_2.clientmatchdataid, "name", maps\mp\gametypes\_playerlogic::truncateplayername( var_2.name ) );
         setclientmatchdata( "players", var_2.clientmatchdataid, "xuid", var_2.xuid );
@@ -3043,7 +3043,7 @@ processlobbydata()
     maps\mp\_awards::assignawards();
     maps\mp\_scoreboard::processlobbyscoreboards();
     sendclientmatchdata();
-    _func_23E();
+    lootserviceonendgame();
 }
 
 trackleaderboarddeathstats( var_0, var_1 )
@@ -3069,7 +3069,7 @@ trackattackerleaderboarddeathstats( var_0, var_1, var_2 )
             if ( isdefined( var_2 ) && isdefined( var_2.firedads ) )
                 var_3 = var_2.firedads;
             else
-                var_3 = self _meth_8340();
+                var_3 = self playerads();
 
             if ( var_3 < 0.2 )
                 thread threadedsetweaponstatbyname( var_0, 1, "hipfirekills" );
@@ -3113,7 +3113,7 @@ setweaponstat( var_0, var_1, var_2 )
     if ( var_2 != "timeInUse" && var_2 != "deaths" && !var_5 )
     {
         var_6 = var_0;
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( var_0 != var_6 && maps\mp\_utility::iskillstreakweapon( var_0 ) )
             return;
@@ -3217,31 +3217,31 @@ checkforpersonalbests()
 
         if ( var_1 maps\mp\_utility::rankingenabled() )
         {
-            var_2 = var_1 _meth_8226( "round", "kills" );
-            var_3 = var_1 _meth_8226( "round", "deaths" );
+            var_2 = var_1 getcommonplayerdata( "round", "kills" );
+            var_3 = var_1 getcommonplayerdata( "round", "deaths" );
             var_4 = var_1.pers["summary"]["xp"];
             var_5 = var_1.score;
             var_6 = getroundaccuracy( var_1 );
-            var_7 = var_1 _meth_8223( "bestKills" );
-            var_8 = var_1 _meth_8223( "mostDeaths" );
-            var_9 = var_1 _meth_8223( "mostXp" );
-            var_10 = var_1 _meth_8223( "bestScore" );
-            var_11 = var_1 _meth_8223( "bestAccuracy" );
+            var_7 = var_1 getrankedplayerdata( "bestKills" );
+            var_8 = var_1 getrankedplayerdata( "mostDeaths" );
+            var_9 = var_1 getrankedplayerdata( "mostXp" );
+            var_10 = var_1 getrankedplayerdata( "bestScore" );
+            var_11 = var_1 getrankedplayerdata( "bestAccuracy" );
 
             if ( var_2 > var_7 )
-                var_1 _meth_8244( "bestKills", var_2 );
+                var_1 setrankedplayerdata( "bestKills", var_2 );
 
             if ( var_4 > var_9 )
-                var_1 _meth_8244( "mostXp", var_4 );
+                var_1 setrankedplayerdata( "mostXp", var_4 );
 
             if ( var_3 > var_8 )
-                var_1 _meth_8244( "mostDeaths", var_3 );
+                var_1 setrankedplayerdata( "mostDeaths", var_3 );
 
             if ( var_5 > var_10 )
-                var_1 _meth_8244( "bestScore", var_5 );
+                var_1 setrankedplayerdata( "bestScore", var_5 );
 
             if ( var_6 > var_11 )
-                var_1 _meth_8244( "bestAccuracy", var_6 );
+                var_1 setrankedplayerdata( "bestAccuracy", var_6 );
 
             var_1 checkforbestweapon();
             var_1 maps\mp\_matchdata::logplayerxp( var_4, "totalXp" );
@@ -3261,12 +3261,12 @@ checkforpersonalbests()
 
 getroundaccuracy( var_0 )
 {
-    var_1 = float( var_0 _meth_8223( "totalShots" ) - var_0.pers["previous_shots"] );
+    var_1 = float( var_0 getrankedplayerdata( "totalShots" ) - var_0.pers["previous_shots"] );
 
     if ( var_1 == 0 )
         return 0;
 
-    var_2 = float( var_0 _meth_8223( "hits" ) - var_0.pers["previous_hits"] );
+    var_2 = float( var_0 getrankedplayerdata( "hits" ) - var_0.pers["previous_hits"] );
     var_3 = clamp( var_2 / var_1, 0.0, 1.0 ) * 10000.0;
     return int( var_3 );
 }
@@ -3283,7 +3283,7 @@ checkforbestweapon()
 
         if ( !maps\mp\_utility::iskillstreakweapon( var_2 ) && var_3 != "killstreak" && var_3 != "other" )
         {
-            var_4 = self _meth_8223( "bestWeapon", "kills" );
+            var_4 = self getrankedplayerdata( "bestWeapon", "kills" );
             var_5 = 0;
 
             if ( isdefined( self.pers["mpWeaponStats"][var_2] ) && isdefined( self.pers["mpWeaponStats"][var_2]["kills"] ) )
@@ -3292,7 +3292,7 @@ checkforbestweapon()
 
                 if ( var_5 > var_4 )
                 {
-                    self _meth_8244( "bestWeapon", "kills", var_5 );
+                    self setrankedplayerdata( "bestWeapon", "kills", var_5 );
                     var_6 = 0;
 
                     if ( isdefined( self.pers["mpWeaponStats"][var_2]["shots"] ) )
@@ -3313,12 +3313,12 @@ checkforbestweapon()
                     if ( isdefined( self.pers["mpWeaponStats"][var_2]["deaths"] ) )
                         var_9 = self.pers["mpWeaponStats"][var_2]["deaths"];
 
-                    self _meth_8244( "bestWeapon", "shots", var_6 );
-                    self _meth_8244( "bestWeapon", "headShots", var_7 );
-                    self _meth_8244( "bestWeapon", "hits", var_8 );
-                    self _meth_8244( "bestWeapon", "deaths", var_9 );
+                    self setrankedplayerdata( "bestWeapon", "shots", var_6 );
+                    self setrankedplayerdata( "bestWeapon", "headShots", var_7 );
+                    self setrankedplayerdata( "bestWeapon", "hits", var_8 );
+                    self setrankedplayerdata( "bestWeapon", "deaths", var_9 );
                     var_10 = int( tablelookup( "mp/statstable.csv", 4, var_2, 0 ) );
-                    self _meth_8244( "bestWeaponIndex", var_10 );
+                    self setrankedplayerdata( "bestWeaponIndex", var_10 );
                 }
             }
         }
@@ -3328,7 +3328,7 @@ checkforbestweapon()
 updatecombatrecordforplayertrends()
 {
     var_0 = 5;
-    var_1 = self _meth_8223( "combatRecord", "numTrends" );
+    var_1 = self getrankedplayerdata( "combatRecord", "numTrends" );
     var_1++;
 
     if ( var_1 > var_0 )
@@ -3339,12 +3339,12 @@ updatecombatrecordforplayertrends()
         {
             for ( var_2 = 0; var_2 < var_0 - 1; var_2++ )
             {
-                var_3 = self _meth_8223( "combatRecord", "trend", var_2 + 1, "timestamp" );
-                var_4 = self _meth_8223( "combatRecord", "trend", var_2 + 1, "kills" );
-                var_5 = self _meth_8223( "combatRecord", "trend", var_2 + 1, "deaths" );
-                self _meth_8244( "combatRecord", "trend", var_2, "timestamp", var_3 );
-                self _meth_8244( "combatRecord", "trend", var_2, "kills", var_4 );
-                self _meth_8244( "combatRecord", "trend", var_2, "deaths", var_5 );
+                var_3 = self getrankedplayerdata( "combatRecord", "trend", var_2 + 1, "timestamp" );
+                var_4 = self getrankedplayerdata( "combatRecord", "trend", var_2 + 1, "kills" );
+                var_5 = self getrankedplayerdata( "combatRecord", "trend", var_2 + 1, "deaths" );
+                self setrankedplayerdata( "combatRecord", "trend", var_2, "timestamp", var_3 );
+                self setrankedplayerdata( "combatRecord", "trend", var_2, "kills", var_4 );
+                self setrankedplayerdata( "combatRecord", "trend", var_2, "deaths", var_5 );
             }
         }
     }
@@ -3352,10 +3352,10 @@ updatecombatrecordforplayertrends()
     var_3 = maps\mp\_utility::gettimeutc_for_stat_recording();
     var_4 = self.kills;
     var_5 = self.deaths;
-    self _meth_8244( "combatRecord", "trend", var_1 - 1, "timestamp", var_3 );
-    self _meth_8244( "combatRecord", "trend", var_1 - 1, "kills", var_4 );
-    self _meth_8244( "combatRecord", "trend", var_1 - 1, "deaths", var_5 );
-    self _meth_8244( "combatRecord", "numTrends", var_1 );
+    self setrankedplayerdata( "combatRecord", "trend", var_1 - 1, "timestamp", var_3 );
+    self setrankedplayerdata( "combatRecord", "trend", var_1 - 1, "kills", var_4 );
+    self setrankedplayerdata( "combatRecord", "trend", var_1 - 1, "deaths", var_5 );
+    self setrankedplayerdata( "combatRecord", "numTrends", var_1 );
 }
 
 updatecombatrecordcommondata()
@@ -3374,7 +3374,7 @@ updatecombatrecordcommondata()
     if ( isdefined( self.combatrecordtie ) )
         incrementcombatrecordstat( "ties", 1 );
 
-    var_1 = self _meth_8223( "combatRecord", level.gametype, "timeStampFirstGame" );
+    var_1 = self getrankedplayerdata( "combatRecord", level.gametype, "timeStampFirstGame" );
 
     if ( var_1 == 0 )
         setcombatrecordstat( "timeStampFirstGame", var_0 );
@@ -3382,19 +3382,19 @@ updatecombatrecordcommondata()
 
 incrementcombatrecordstat( var_0, var_1 )
 {
-    var_2 = self _meth_8223( "combatRecord", level.gametype, var_0 );
+    var_2 = self getrankedplayerdata( "combatRecord", level.gametype, var_0 );
     var_2 += var_1;
-    self _meth_8244( "combatRecord", level.gametype, var_0, var_2 );
+    self setrankedplayerdata( "combatRecord", level.gametype, var_0, var_2 );
 }
 
 setcombatrecordstat( var_0, var_1 )
 {
-    self _meth_8244( "combatRecord", level.gametype, var_0, var_1 );
+    self setrankedplayerdata( "combatRecord", level.gametype, var_0, var_1 );
 }
 
 setcombatrecordstatifgreater( var_0, var_1 )
 {
-    var_2 = self _meth_8223( "combatRecord", level.gametype, var_0 );
+    var_2 = self getrankedplayerdata( "combatRecord", level.gametype, var_0 );
 
     if ( var_1 > var_2 )
         setcombatrecordstat( var_0, var_1 );

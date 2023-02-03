@@ -144,10 +144,10 @@ sndx_play_alias_thread( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
     {
         var_15 = "tag_origin";
 
-        if ( isdefined( var_13.model ) || var_13.model != "" || var_13 _meth_8442( var_15 ) < 0 )
+        if ( isdefined( var_13.model ) || var_13.model != "" || var_13 gettagindex( var_15 ) < 0 )
             var_15 = "";
 
-        var_5 _meth_804D( var_13, var_15, var_10, ( 0, 0, 0 ) );
+        var_5 linkto( var_13, var_15, var_10, ( 0, 0, 0 ) );
         var_5 thread sndx_play_alias_monitor_linkdeath( var_8, var_14, var_13 );
     }
 
@@ -169,12 +169,12 @@ sndx_play_alias_thread( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
     else
         var_5 snd_play_loop( var_0 );
 
-    var_5 _meth_806F( 0, 0 );
+    var_5 scalevolume( 0, 0 );
 
     if ( isstring( var_6 ) )
         var_5 thread sndx_play_alias_monitor_stopnotify( var_8, var_14, var_6 );
 
-    var_5 _meth_806F( var_9, var_7 );
+    var_5 scalevolume( var_9, var_7 );
 }
 
 sndx_play_alias_monitor_linkdeath( var_0, var_1, var_2 )
@@ -213,7 +213,7 @@ sndx_play_alias_fade_delete( var_0, var_1 )
     {
         if ( isdefined( var_0 ) )
         {
-            var_2 _meth_806F( 0, var_0 );
+            var_2 scalevolume( 0, var_0 );
             wait(var_0);
             waittillframeend;
         }
@@ -245,7 +245,7 @@ snd_play_loop( var_0 )
     {
         if ( !isdefined( self.snd_is_loop ) )
         {
-            self _meth_8075( var_0 );
+            self playloopsound( var_0 );
             self.guid = soundscripts\_snd::snd_new_guid();
             self.snd_is_loop = 1;
         }
@@ -265,12 +265,12 @@ snd_stop_sound()
     if ( isdefined( self.snd_is_one_shot ) )
     {
         self.snd_is_one_shot = undefined;
-        self _meth_80AC();
+        self stopsounds();
     }
     else if ( isdefined( self.snd_is_loop ) )
     {
         self.snd_is_loop = undefined;
-        self _meth_80AB();
+        self stoploopsound();
         self notify( "sounddone" );
     }
 }
@@ -281,7 +281,7 @@ snd_play_amb_loop( var_0, var_1, var_2, var_3 )
     {
         var_4 = 0.1;
         var_5 = spawn( "script_origin", var_1 );
-        var_5 _meth_8075( var_0 );
+        var_5 playloopsound( var_0 );
         level waittill( var_2 );
 
         if ( isdefined( var_3 ) )
@@ -289,7 +289,7 @@ snd_play_amb_loop( var_0, var_1, var_2, var_3 )
 
         if ( isdefined( var_5 ) )
         {
-            var_5 _meth_806F( 0, var_4 );
+            var_5 scalevolume( 0, var_4 );
             wait 0.05;
             var_5 delete();
             return;

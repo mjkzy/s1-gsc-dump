@@ -45,9 +45,9 @@ init_local()
 
     if ( self.model == "vehicle_vm_pitbull" )
     {
-        self _meth_8048( "TAG_WINDSHIELD1" );
-        self _meth_8048( "TAG_WINDSHIELD2" );
-        self _meth_8048( "TAG_WINDSHIELD3" );
+        self hidepart( "TAG_WINDSHIELD1" );
+        self hidepart( "TAG_WINDSHIELD2" );
+        self hidepart( "TAG_WINDSHIELD3" );
     }
 }
 

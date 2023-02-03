@@ -36,8 +36,8 @@ onplayerconnect()
 
 resetreinforcements()
 {
-    self _meth_82FB( "ui_reinforcement_timer_type", 0 );
-    self _meth_82FB( "ui_reinforcement_timer", 0 );
+    self setclientomnvar( "ui_reinforcement_timer_type", 0 );
+    self setclientomnvar( "ui_reinforcement_timer", 0 );
 }
 
 storependingreinforcement( var_0 )
@@ -79,7 +79,7 @@ checkforreinforcements()
     if ( maps\mp\_utility::practiceroundgame() )
         var_0 = 4;
     else
-        var_0 = self _meth_850F();
+        var_0 = self consumereinforcement();
 
     storependingreinforcement( var_0 );
 
@@ -188,11 +188,11 @@ waitforreinforcementoftype( var_0, var_1 )
     self endon( "disconnect" );
     level endon( "game_ended" );
     var_2 = geticontypeforreinforcementoftype( var_0 );
-    self _meth_82FB( "ui_reinforcement_timer_type", var_2 );
-    self _meth_82FB( "ui_reinforcement_timer", gettime() + var_1 );
+    self setclientomnvar( "ui_reinforcement_timer_type", var_2 );
+    self setclientomnvar( "ui_reinforcement_timer", gettime() + var_1 );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_1 / 1000.0 );
-    self _meth_82FB( "ui_reinforcement_timer_type", 0 );
-    self _meth_82FB( "ui_reinforcement_timer", 0 );
+    self setclientomnvar( "ui_reinforcement_timer_type", 0 );
+    self setclientomnvar( "ui_reinforcement_timer", 0 );
     givereinforcementoftype( var_0 );
 }
 

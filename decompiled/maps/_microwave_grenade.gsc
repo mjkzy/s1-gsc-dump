@@ -8,7 +8,7 @@ main()
 
 init_microwave_grenade()
 {
-    precacheitem( "microwave_grenade" );
+    precacheshellshock( "microwave_grenade" );
     precacheshellshock( "flashbang" );
     precache_microwave_grenade_fx();
     precache_microwave_anims();
@@ -116,12 +116,12 @@ microwave_set_safe_goal( var_0 )
     if ( isdefined( var_0 ) )
     {
         maps\_utility::set_goalradius( 20 );
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
     }
     else
     {
         maps\_utility::set_goalradius( 50 );
-        self _meth_81A7( level.player );
+        self setgoalentity( level.player );
     }
 }
 
@@ -139,7 +139,7 @@ ai_flee_from_microwave( var_0, var_1 )
     self.mw_old_animname = self.animname;
     self.mw_grenade = var_0;
     self.animname = "generic";
-    self _meth_8166();
+    self clearenemy();
     self.mw_old_badplace_awareness = self.badplaceawareness;
     self.badplaceawareness = 0;
     self.ignoreall = 1;
@@ -270,7 +270,7 @@ play_character_microwave_sparks( var_0, var_1, var_2 )
     while ( gettime() < var_2 )
     {
         wait(randomfloatrange( 0.15, 0.25 ));
-        var_4 = _func_0D6( "axis", "allies" );
+        var_4 = getaiarray( "axis", "allies" );
         var_5 = [];
 
         foreach ( var_7 in var_4 )

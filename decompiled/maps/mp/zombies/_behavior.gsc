@@ -42,7 +42,7 @@ humanoid_begin_melee()
     if ( !isdefined( self.lastmeleepos ) || distancesquared( self.lastmeleepos, self.origin ) > 256 )
         self.meleemovemode = self.movemode;
 
-    self _meth_839C( self.curmeleetarget );
+    self scragentbeginmelee( self.curmeleetarget );
     return 1;
 }
 
@@ -100,16 +100,16 @@ humanoid_seek_enemy_melee( var_0 )
             if ( !var_10 && var_9 <= var_3 && var_8 > squared( self.defaultgoalradius ) )
                 var_10 = 1;
 
-            self _meth_8394( self.defaultgoalradius );
+            self scragentsetgoalradius( self.defaultgoalradius );
         }
         else if ( !maps\mp\agents\humanoid\_humanoid_util::hasvalidmeleesectorsfortype( var_1, self.meleesectortype ) )
         {
-            self _meth_8394( self.defaultgoalradius );
+            self scragentsetgoalradius( self.defaultgoalradius );
             var_10 = 1;
         }
         else
         {
-            self _meth_8394( var_2 );
+            self scragentsetgoalradius( var_2 );
 
             if ( var_9 <= var_3 )
             {
@@ -119,7 +119,7 @@ humanoid_seek_enemy_melee( var_0 )
         }
 
         if ( var_10 )
-            self _meth_8390( var_6.origin );
+            self scragentsetgoalpos( var_6.origin );
 
         return 1;
     }
@@ -147,10 +147,10 @@ humanoid_seek_enemies_all_known()
         if ( var_3.ignoreme || isdefined( var_3.owner ) && var_3.owner.ignoreme )
             continue;
 
-        if ( ( isagent( var_3 ) || isplayer( var_3 ) ) && ( var_3 _meth_8546() || isdefined( var_3.owner ) && var_3.owner _meth_8546() ) )
+        if ( ( isagent( var_3 ) || isplayer( var_3 ) ) && ( var_3 isnotarget() || isdefined( var_3.owner ) && var_3.owner isnotarget() ) )
             continue;
 
-        if ( _func_285( self, var_3 ) )
+        if ( isalliedsentient( self, var_3 ) )
             continue;
 
         if ( maps\mp\zombies\_util::shouldignoreent( var_3 ) )
@@ -180,9 +180,9 @@ humanoid_seek_enemies_all_known()
         if ( var_7 < var_6 * var_6 )
             var_6 = 16;
 
-        if ( self.bhasnopath || distancesquared( self _meth_8391(), var_5[0].origin ) > var_6 * var_6 )
+        if ( self.bhasnopath || distancesquared( self scragentgetgoalpos(), var_5[0].origin ) > var_6 * var_6 )
         {
-            self _meth_8390( var_5[0].origin );
+            self scragentsetgoalpos( var_5[0].origin );
             self.bhasnopath = 0;
         }
 
@@ -194,7 +194,7 @@ humanoid_seek_enemies_all_known()
 
 humanoid_seek_random_loc()
 {
-    var_0 = distancesquared( self _meth_8391(), self.origin ) < self.defaultgoalradius * self.defaultgoalradius;
+    var_0 = distancesquared( self scragentgetgoalpos(), self.origin ) < self.defaultgoalradius * self.defaultgoalradius;
 
     if ( var_0 || self.bhasnopath )
     {
@@ -211,7 +211,7 @@ humanoid_seek_random_loc()
 
         if ( isdefined( self.last_random_path_node ) )
         {
-            self _meth_8390( self.last_random_path_node.origin );
+            self scragentsetgoalpos( self.last_random_path_node.origin );
             self.bhasnopath = 0;
         }
     }
@@ -224,9 +224,9 @@ humanoid_follow( var_0 )
     if ( !isdefined( var_0 ) )
         return 0;
 
-    if ( self.bhasnopath || distancesquared( self _meth_8391(), var_0.origin ) < 16384 )
+    if ( self.bhasnopath || distancesquared( self scragentgetgoalpos(), var_0.origin ) < 16384 )
     {
-        self _meth_8390( var_0.origin );
+        self scragentsetgoalpos( var_0.origin );
         self.bhasnopath = 0;
     }
 

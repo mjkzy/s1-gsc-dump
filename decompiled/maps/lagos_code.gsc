@@ -3,7 +3,7 @@
 
 lagos_title_screen()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     thread maps\_shg_utility::play_chyron_video( "chyron_text_lagos", 2, 3 );
     common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -94,7 +94,7 @@ drone_intro()
     thread maps\_player_exo::player_exo_deactivate();
     var_0 = 105;
     level.origfov = getdvarint( "cg_fov" );
-    level.player _meth_8031( var_0, 0.5 );
+    level.player lerpfov( var_0, 0.5 );
     common_scripts\utility::flag_set( "fly_drone_in_progess" );
     thread lagos_title_screen();
     thread drone_intro_kva_front_setup();
@@ -129,20 +129,20 @@ drone_intro_fov_shift()
 {
     var_0 = 105;
     level.origfov = getdvarint( "cg_fov" );
-    level.player _meth_8031( var_0, 0.5 );
+    level.player lerpfov( var_0, 0.5 );
     level waittill( "drone_opening_finished" );
-    level.player _meth_8031( level.origfov, 2 );
+    level.player lerpfov( level.origfov, 2 );
 }
 
 drone_intro_fov_shift_on( var_0 )
 {
     var_1 = 50;
-    level.player _meth_8031( var_1, 0.1 );
+    level.player lerpfov( var_1, 0.1 );
 }
 
 drone_intro_fov_shift_off( var_0 )
 {
-    level.player _meth_8031( level.origfov, 0.5 );
+    level.player lerpfov( level.origfov, 0.5 );
 }
 
 drone_intro_conf_room_scene()
@@ -150,7 +150,7 @@ drone_intro_conf_room_scene()
     var_0 = getent( "anim_org_drone_opening", "targetname" );
     level.player maps\_shg_utility::setup_player_for_scene();
     var_1 = maps\_utility::spawn_anim_model( "player_arms" );
-    level.player _meth_807D( var_1, "tag_player", 1, 30, 30, 0, 0, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 30, 30, 0, 0, 1 );
     soundscripts\_snd::snd_message( "fly_drone_camera_start_1", var_1, level.player );
     var_1 hide();
     var_2 = getent( "kva_hostage_leader", "targetname" );
@@ -209,10 +209,10 @@ set_stream_origin_for_intro()
     var_0 -= 10.0;
     wait(var_0);
     var_1 = ( -49739, 15569, 314 );
-    level.player _meth_8237( var_1 );
+    level.player playersetstreamorigin( var_1 );
     common_scripts\utility::flag_wait( "squad_opening_start" );
     wait 2.0;
-    level.player _meth_8238();
+    level.player playerclearstreamorigin();
 }
 
 drone_start_player_input()
@@ -315,9 +315,9 @@ drone_intro_nig_mil_setup()
 
 warbird_hide_blury_rotors()
 {
-    self _meth_8048( "TAG_SPIN_MAIN_ROTOR_L" );
-    self _meth_8048( "TAG_SPIN_MAIN_ROTOR_R" );
-    self _meth_8048( "TAG_SPIN_TAIL_ROTOR" );
+    self hidepart( "TAG_SPIN_MAIN_ROTOR_L" );
+    self hidepart( "TAG_SPIN_MAIN_ROTOR_R" );
+    self hidepart( "TAG_SPIN_TAIL_ROTOR" );
 }
 
 squad_opening()
@@ -346,10 +346,10 @@ squad_opening()
     var_4 = maps\_utility::spawn_anim_model( "lag_intro_prop2" );
     var_1 maps\_anim::anim_first_frame_solo( var_4, "squad_opening" );
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_80FE( 0.2, 0.2 );
+    level.player enableslowaim( 0.2, 0.2 );
     var_5 = maps\_utility::spawn_anim_model( "player_rig" );
     var_1 maps\_anim::anim_first_frame_solo( var_5, "squad_opening" );
-    level.player _meth_807D( var_5, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_5, "tag_player", 1, 7, 7, 5, 5, 1 );
     var_6 = [ var_3, var_4 ];
     var_2 thread maps\_anim::anim_first_frame( [ level.squad_opening_warbird ], "squad_opening" );
     var_1 maps\_anim::anim_first_frame( var_6, "squad_opening" );
@@ -365,15 +365,15 @@ squad_opening()
     thread squad_opening_names();
     var_1 maps\_anim::anim_single_solo( var_5, "squad_opening" );
     common_scripts\utility::flag_set( "obj_rescue_PM_pos" );
-    level.player _meth_804F();
+    level.player unlink();
     var_5 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_80FF();
-    level.player _meth_80F0();
-    level.player _meth_831E();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_8300( 1 );
+    level.player disableslowaim();
+    level.player disableinvulnerability();
+    level.player enableweapons();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player allowads( 1 );
     maps\_utility::autosave_by_name();
     level notify( "intro_walkway_go" );
     thread maps\_player_exo::player_exo_activate();
@@ -408,7 +408,7 @@ squad_intro_anim_burke( var_0 )
     var_3.origin = var_1;
     var_3.angles = var_2;
     waitframe();
-    var_3 _meth_804D( level.burke, "J_SpineUpper", ( 5, -6, 0 ), ( 0, 0, 90 ) );
+    var_3 linkto( level.burke, "J_SpineUpper", ( 5, -6, 0 ), ( 0, 0, 90 ) );
     thread maps\lagos_utility::ally_redirect_goto_node( "Gideon", "intro_walkway_burke", 1, maps\lagos_utility::disable_awareness );
     var_0 maps\_anim::anim_single_solo_run( level.burke, "squad_opening" );
     level waittill( "roof_breach_start" );
@@ -430,7 +430,7 @@ squad_intro_anim_ajani( var_0 )
 squad_intro_fov_shift_on( var_0 )
 {
     var_1 = 50;
-    level.player _meth_8031( var_1, 0.5 );
+    level.player lerpfov( var_1, 0.5 );
 }
 
 squad_intro_fov_shift_off( var_0 )
@@ -438,7 +438,7 @@ squad_intro_fov_shift_off( var_0 )
     if ( !isdefined( level.origfov ) )
         level.origfov = 65;
 
-    level.player _meth_8031( level.origfov, 0.5 );
+    level.player lerpfov( level.origfov, 0.5 );
 }
 
 vig_intro_civ_populate()
@@ -475,13 +475,13 @@ vig_vehicle_traffic_straight_mover_movement( var_0 )
     if ( isdefined( var_0 ) )
     {
         level waittill( var_0 );
-        self _meth_82AE( self.origin + ( 0, var_1 * -1, 0 ), var_2, var_3, var_4 );
+        self moveto( self.origin + ( 0, var_1 * -1, 0 ), var_2, var_3, var_4 );
         wait(var_2);
         level notify( "straight_done_moving" );
     }
     else
     {
-        self _meth_82AE( self.origin + ( 0, var_1 * -1, 0 ), var_2, var_3, var_4 );
+        self moveto( self.origin + ( 0, var_1 * -1, 0 ), var_2, var_3, var_4 );
         level notify( "straight_done_moving" );
     }
 }
@@ -493,7 +493,7 @@ vig_vehicle_traffic_turn_mover_movement( var_0, var_1 )
     wait(randomfloat( 0.75 ));
     var_2 maps\_vehicle::gopath();
     wait(randomfloat( 0.55 ));
-    var_2 _meth_8284( 0, 50, 50 );
+    var_2 vehicle_setspeedimmediate( 0, 50, 50 );
 
     if ( isdefined( var_0 ) )
         level waittill( var_0 );
@@ -502,7 +502,7 @@ vig_vehicle_traffic_turn_mover_movement( var_0, var_1 )
         return;
 
     level.intro_reg_vehicles = common_scripts\utility::array_add( level.intro_reg_vehicles, var_2 );
-    var_2 _meth_8283( 5, 10, 10 );
+    var_2 vehicle_setspeed( 5, 10, 10 );
     var_2 maps\_vehicle::gopath();
     var_2 waittill( "goal" );
 
@@ -695,7 +695,7 @@ vig_civ_traffic_spawn_idle_drones( var_0, var_1, var_2 )
 
 vig_civ_fail_on_damage()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self waittill( "damage" );
     setdvar( "ui_deadquote", &"LAGOS_FAIL_FRIENDLY_FIRE" );
     maps\_utility::missionfailedwrapper();
@@ -736,9 +736,9 @@ vig_civ_traffic_spawn_walker_drones( var_0, var_1, var_2, var_3 )
             level.vig_walker_streetarray = common_scripts\utility::array_add( level.vig_walker_streetarray, var_6 );
             var_6.goalradius = 32;
             var_6.ignoreall = 1;
-            var_6 _meth_81C6( var_5.origin, var_5.angles );
+            var_6 forceteleport( var_5.origin, var_5.angles );
             waitframe();
-            var_6 _meth_81A5( var_2[0] );
+            var_6 setgoalnode( var_2[0] );
             var_6 thread vig_civ_walker_removal();
         }
     }
@@ -761,9 +761,9 @@ vig_civ_walker_maintainer( var_0, var_1, var_2, var_3 )
             var_4 = var_0[0] maps\_utility::spawn_ai( 1 );
             level.vig_walker_streetarray = common_scripts\utility::array_add( level.vig_walker_streetarray, var_4 );
             var_4.goalradius = 32;
-            var_4 _meth_81C6( var_1[0].origin, var_1[0].angles );
+            var_4 forceteleport( var_1[0].origin, var_1[0].angles );
             waitframe();
-            var_4 _meth_81A5( var_2[0] );
+            var_4 setgoalnode( var_2[0] );
             var_4 thread vig_civ_walker_removal();
         }
 
@@ -830,26 +830,26 @@ vig_bike_rider_init( var_0, var_1 )
         else
             var_5 character\character_civilian_slum_male_ab::main();
 
-        var_5 _meth_8115( #animtree );
-        var_5 _meth_814B( level.scr_anim["generic"]["bike_rider"] );
+        var_5 useanimtree( #animtree );
+        var_5 setanim( level.scr_anim["generic"]["bike_rider"] );
         var_6 = randomint( 6 );
 
         switch ( var_6 )
         {
             case 0:
-                var_4 _meth_80B1( "vehicle_scooter_vespa_static_blue" );
+                var_4 setmodel( "vehicle_scooter_vespa_static_blue" );
                 thread vig_bike_rider_scooter( var_4, var_5, var_3 );
                 break;
             case 1:
-                var_4 _meth_80B1( "vehicle_scooter_vespa_static_green" );
+                var_4 setmodel( "vehicle_scooter_vespa_static_green" );
                 thread vig_bike_rider_scooter( var_4, var_5, var_3 );
                 break;
             case 2:
-                var_4 _meth_80B1( "vehicle_scooter_vespa_static_cream" );
+                var_4 setmodel( "vehicle_scooter_vespa_static_cream" );
                 thread vig_bike_rider_scooter( var_4, var_5, var_3 );
                 break;
             case 3:
-                var_4 _meth_80B1( "vehicle_scooter_vespa_static_lightblue" );
+                var_4 setmodel( "vehicle_scooter_vespa_static_lightblue" );
                 thread vig_bike_rider_scooter( var_4, var_5, var_3 );
                 break;
             case 4:
@@ -887,7 +887,7 @@ vig_bike_rider_scooter( var_0, var_1, var_2 )
 {
     var_1.origin = var_0.origin;
     var_1.angles = var_0.angles;
-    var_1 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
     level.bike_riders = common_scripts\utility::array_add( level.bike_riders, var_1 );
     level.bike_riders = common_scripts\utility::array_add( level.bike_riders, var_0 );
     var_0 thread vig_bike_rider_nav( var_1, var_0, var_2 );
@@ -895,14 +895,14 @@ vig_bike_rider_scooter( var_0, var_1, var_2 )
 
 vig_bike_rider_cyclist( var_0, var_1, var_2 )
 {
-    var_0 _meth_80B1( "com_bike_animated" );
-    var_0 _meth_8115( level.scr_animtree["bike"] );
-    var_0 _meth_814B( level.scr_anim["bike"]["pedal"] );
+    var_0 setmodel( "com_bike_animated" );
+    var_0 useanimtree( level.scr_animtree["bike"] );
+    var_0 setanim( level.scr_anim["bike"]["pedal"] );
     var_1.origin = var_0 gettagorigin( "j_frame" );
     var_1.origin += ( -12, 0, -30 );
     var_1.angles = var_0 gettagangles( "j_frame" );
     var_1.angles += ( 0, 180, 0 );
-    var_1 _meth_804D( var_0, "j_frame" );
+    var_1 linkto( var_0, "j_frame" );
     level.bike_riders = common_scripts\utility::array_add( level.bike_riders, var_1 );
     level.bike_riders = common_scripts\utility::array_add( level.bike_riders, var_0 );
     var_0 thread vig_bike_rider_nav( var_1, var_0, var_2 );
@@ -924,7 +924,7 @@ vig_bike_rider_nav( var_0, var_1, var_2 )
         else
             var_1.angles = ( 0, var_6[1] + 180, 0 );
 
-        var_1 _meth_82AE( var_4.origin, var_5, 0, 0 );
+        var_1 moveto( var_4.origin, var_5, 0, 0 );
 
         if ( !isdefined( var_4.target ) )
         {
@@ -1073,7 +1073,7 @@ exo_door_disable_melee()
 
         if ( isplayer( var_0 ) )
         {
-            level.player _meth_8130( 0 );
+            level.player allowmelee( 0 );
             thread maps\lagos_utility::hint_instant( &"LAGOS_EXO_DOOR_BREACH" );
 
             while ( common_scripts\utility::flag( "flag_exo_door_trigger" ) )
@@ -1088,7 +1088,7 @@ exo_door_disable_melee()
                 waitframe();
             }
 
-            level.player _meth_8130( 1 );
+            level.player allowmelee( 1 );
             thread maps\lagos_utility::hint_fade_instant();
         }
     }
@@ -1098,10 +1098,10 @@ exo_door()
 {
     level.player endon( "death" );
     var_0 = getent( "exo_door_model", "targetname" );
-    var_0 _meth_846C( "mtl_lag_exo_door_breach_broken", "mtl_lag_exo_door_breach" );
+    var_0 overridematerial( "mtl_lag_exo_door_breach_broken", "mtl_lag_exo_door_breach" );
 
     if ( level.currentgen )
-        var_0 _meth_846C( "mq/mtl_lag_exo_door_breach_broken", "mq/mtl_lag_exo_door_breach" );
+        var_0 overridematerial( "mq/mtl_lag_exo_door_breach_broken", "mq/mtl_lag_exo_door_breach" );
 
     var_0.animname = "exo_door_model";
     var_0 maps\_utility::assign_animtree();
@@ -1126,7 +1126,7 @@ exo_door()
     if ( var_6 )
         level.player maps\_player_exo::player_exo_remove_single( "shield" );
 
-    level.player _meth_8310();
+    level.player takeallweapons();
     soundscripts\_snd::snd_message( "plr_exo_door_kick" );
     common_scripts\utility::flag_set( "obj_progress_exo_door_clear" );
     level notify( "tram_stop" );
@@ -1141,17 +1141,17 @@ exo_door()
     var_1 maps\_anim::anim_first_frame_solo( var_7, "exo_door" );
     var_7 hide();
     var_9 = 0.5;
-    level.player _meth_8080( var_7, "tag_player", var_9, var_9 * 0.5, var_9 * 0.5 );
+    level.player playerlinktoblend( var_7, "tag_player", var_9, var_9 * 0.5, var_9 * 0.5 );
     wait(var_9);
     var_7 show();
-    level.player _meth_807D( var_7, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_7, "tag_player", 1, 7, 7, 5, 5, 1 );
     var_2 = common_scripts\utility::array_add( var_2, var_7 );
     thread exo_door_tilt_camera_during_animation( var_7 );
     var_7 common_scripts\utility::delaycall( 3.33333, ::hide );
     var_1 maps\_anim::anim_single( var_2, "exo_door" );
-    var_0 _meth_846D();
+    var_0 overridematerialreset();
     waitframe();
-    level.player _meth_804F();
+    level.player unlink();
     var_7 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level.player maps\_utility::restore_players_weapons( "player_weapons" );
@@ -1170,7 +1170,7 @@ exo_door_tilt_camera_during_animation( var_0 )
 {
     level.player endon( "death" );
     wait 3.0;
-    level.player _meth_80A2( 1, 0.75, 0.25, 45, 45, 0, 0 );
+    level.player lerpviewangleclamp( 1, 0.75, 0.25, 45, 45, 0, 0 );
 }
 
 gov_building_firefight_init_shooting()
@@ -1423,7 +1423,7 @@ gov_building_firefight_change_pos()
     {
         level.pos_array = common_scripts\utility::array_randomize( level.pos_array );
 
-        if ( !_func_027( level.pos_array[0] ) )
+        if ( !isnodeoccupied( level.pos_array[0] ) )
         {
             if ( isdefined( self.last_set_goalnode ) && self.last_set_goalnode != level.pos_array[0] )
                 level.pos_array = common_scripts\utility::array_add( level.pos_array, self.last_set_goalnode );
@@ -1444,7 +1444,7 @@ gov_building_gren_guy()
 {
     var_0 = maps\_utility::get_living_ai( "front_mil_gren_guy", "script_noteworthy" );
     var_1 = common_scripts\utility::getstruct( "gren_target", "targetname" );
-    _func_070( "smoke_grenade_american", var_0.origin, var_1.origin, 1 );
+    magicgrenade( "smoke_grenade_american", var_0.origin, var_1.origin, 1 );
 }
 
 gov_building_explode_advance_guys()
@@ -1461,20 +1461,20 @@ gov_building_explode_advance_guys()
 
 gov_building_firefight_turret_settings( var_0 )
 {
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.fixednode = 1;
     self.goalradius = 70;
     self.combatmode = "ambush";
     maps\_utility::disable_long_death();
-    self _meth_81A6( var_0.origin );
+    self setgoalpos( var_0.origin );
     self waittill( "goal" );
-    self _meth_818A( var_0 );
+    self useturret( var_0 );
     var_0 makeunusable();
-    var_0 _meth_8135( "axis" );
-    var_0 _meth_802F( 0 );
-    var_0 _meth_8133( 3, "yaw" );
-    var_0 _meth_8133( 1.5, "pitch" );
-    var_0 _meth_810B( 5 );
+    var_0 setturretteam( "axis" );
+    var_0 setturretcanaidetach( 0 );
+    var_0 setconvergencetime( 3, "yaw" );
+    var_0 setconvergencetime( 1.5, "pitch" );
+    var_0 setaispread( 5 );
 }
 
 gov_firefight_enemy_reload_anims( var_0 )
@@ -1491,7 +1491,7 @@ gov_firefight_enemy_reload_anims( var_0 )
     {
         foreach ( var_3 in var_1 )
         {
-            if ( !_func_027( var_3 ) )
+            if ( !isnodeoccupied( var_3 ) )
             {
                 maps\_utility::set_goal_node( var_3 );
                 self waittill( "goal" );
@@ -1501,7 +1501,7 @@ gov_firefight_enemy_reload_anims( var_0 )
                 wait(randomfloatrange( 20, 40 ));
             }
 
-            if ( _func_027( var_3 ) )
+            if ( isnodeoccupied( var_3 ) )
             {
                 wait(randomfloatrange( 3, 5 ));
                 continue;
@@ -1516,12 +1516,12 @@ gov_firefight_detect_breach()
 {
     level waittill( "allies_breached" );
     wait 1.5;
-    self _meth_8141();
+    self stopanimscripted();
     self.ignoreall = 0;
 
     if ( isdefined( self.script_noteworthy ) && self.script_noteworthy == "gov_building_kva_soldier" )
     {
-        self _meth_8177();
+        self setthreatbiasgroup();
         var_0 = randomint( level.alpha_squad_and_player.size );
         maps\_utility::set_favoriteenemy( level.alpha_squad_and_player[var_0] );
     }
@@ -1773,7 +1773,7 @@ government_building()
     foreach ( var_2 in level.xraywall_on )
     {
         if ( var_2.classname == "script_model" )
-            var_2 _meth_82BF();
+            var_2 notsolid();
     }
 
     var_4 = common_scripts\utility::getstruct( "exo_climb_start_1", "targetname" );
@@ -1905,10 +1905,10 @@ gov_roof_breach_anim_setup()
     var_2 soundscripts\_snd::snd_message( "gov_building_mute_device" );
     var_1 hide();
     var_6 = 0.5;
-    level.player _meth_8080( var_1, "tag_player", var_6, var_6 * 0.5, var_6 * 0.5 );
+    level.player playerlinktoblend( var_1, "tag_player", var_6, var_6 * 0.5, var_6 * 0.5 );
     wait(var_6);
     var_1 show();
-    level.player _meth_807D( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
     level.burke maps\_utility::place_weapon_on( level.burke.primaryweapon, "chest" );
     var_0 maps\_anim::anim_first_frame( var_4, "roof_mute_breach_plant" );
     var_0 thread maps\_anim::anim_single_solo( var_1, "roof_mute_breach_plant" );
@@ -1937,7 +1937,7 @@ gov_roof_breach_anim_setup()
     thread gov_roof_breach_enable_player_invul();
     thread gov_roof_breach_end_slomo();
     wait 1.7;
-    level.player _meth_831E();
+    level.player enableweapons();
     wait 0.3;
     level notify( "allies_breached" );
     var_12 = rooftop_anim_length();
@@ -1948,14 +1948,14 @@ gov_roof_breach_anim_setup()
     var_13 = 0.3;
     var_12 -= var_13;
     wait(var_13);
-    level.player _meth_8091( var_1 );
-    level.player _meth_8091( undefined );
-    level.player _meth_807D( var_1, "tag_player", 0, 60, 20, 30, 30, 0 );
+    level.player playersetgroundreferenceent( var_1 );
+    level.player playersetgroundreferenceent( undefined );
+    level.player playerlinktodelta( var_1, "tag_player", 0, 60, 20, 30, 30, 0 );
     wait(var_12);
     common_scripts\utility::flag_set( "player_landed_roof_breach" );
     var_14 = common_scripts\utility::getstruct( "roof_breach_joker_tp", "targetname" );
-    level.joker _meth_81C6( var_14.origin, var_14.angles );
-    level.player _meth_804F();
+    level.joker forceteleport( var_14.origin, var_14.angles );
+    level.player unlink();
     var_1 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level notify( "player_landed_roof_breach" );
@@ -1968,16 +1968,16 @@ gov_roof_breach_marker_setup()
 {
     var_0 = getent( "mute_breach_obj_prop", "targetname" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "mutecharge_obj" );
+    var_1 setmodel( "mutecharge_obj" );
     var_1.angles = var_0.angles;
     var_1.origin = var_0.origin;
     level waittill( "exo_climb_success" );
     var_2 = getent( "gov_breach_trigger", "targetname" );
     var_3 = var_2 maps\_shg_utility::hint_button_trigger( "x", 400 );
-    var_2 _meth_80DB( &"LAGOS_ROOF_MUTE_CHARGE" );
+    var_2 sethintstring( &"LAGOS_ROOF_MUTE_CHARGE" );
     var_2 waittill( "trigger", var_4 );
     var_3 maps\_shg_utility::hint_button_clear();
-    var_2 _meth_80DB( "" );
+    var_2 sethintstring( "" );
     var_2 makeunusable();
     common_scripts\utility::flag_set( "flag_roof_charge_planted" );
     level waittill( "roof_breach_start" );
@@ -2051,9 +2051,9 @@ gov_roof_breach_enemy_react_anims( var_0 )
 gov_roof_breach_enable_player_invul()
 {
     level endon( "end_shoot_dudes" );
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     level waittill( "player_landed_roof_breach" );
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 }
 
 gov_roof_breach_multi_kill( var_0 )
@@ -2132,7 +2132,7 @@ gov_roof_breach_roof_destruction()
     var_0 = getentarray( "mute_breach_brush", "targetname" );
     var_1 = getentarray( "mute_breach_brush_damage", "targetname" );
     common_scripts\utility::array_call( var_1, ::hide );
-    common_scripts\utility::array_call( var_1, ::_meth_82BF );
+    common_scripts\utility::array_call( var_1, ::notsolid );
     level waittill( "destroy_roof" );
 }
 
@@ -2142,7 +2142,7 @@ notetrack_swap_roof_brush( var_0 )
     var_2 = getentarray( "mute_breach_brush_damage", "targetname" );
     common_scripts\utility::array_call( var_1, ::delete );
     common_scripts\utility::array_call( var_2, ::show );
-    common_scripts\utility::array_call( var_2, ::_meth_82BE );
+    common_scripts\utility::array_call( var_2, ::solid );
 }
 
 gov_roof_breach_kill_assignment()
@@ -2238,9 +2238,9 @@ gov_hostage_approach()
     thread gov_rear_setup();
     thread gov_hostage_breach_setup();
     wait 2;
-    level.burke _meth_81CA( "crouch", "stand" );
-    level.joker _meth_81CA( "crouch", "stand" );
-    level.ajani _meth_81CA( "crouch", "stand" );
+    level.burke allowedstances( "crouch", "stand" );
+    level.joker allowedstances( "crouch", "stand" );
+    level.ajani allowedstances( "crouch", "stand" );
     level.burke maps\_utility::enable_cqbwalk();
     level.joker maps\_utility::enable_cqbwalk();
     level.ajani maps\_utility::enable_cqbwalk();
@@ -2360,9 +2360,9 @@ gov_hostage_breach_setup()
         level.pre_h_breach_burke_start = common_scripts\utility::getstruct( "gov_hostage_4_burke", "targetname" );
         level.pre_h_breach_joker_start = common_scripts\utility::getstruct( "gov_hostage_4_joker", "targetname" );
         level.pre_h_breach_ajani_start = common_scripts\utility::getstruct( "gov_hostage_4_ajani", "targetname" );
-        level.burke _meth_81C5( level.pre_h_breach_burke_start.origin, level.pre_h_breach_burke_start.angles );
-        level.joker _meth_81C5( level.pre_h_breach_joker_start.origin, level.pre_h_breach_joker_start.angles );
-        level.ajani _meth_81C5( level.pre_h_breach_ajani_start.origin, level.pre_h_breach_ajani_start.angles );
+        level.burke teleport( level.pre_h_breach_burke_start.origin, level.pre_h_breach_burke_start.angles );
+        level.joker teleport( level.pre_h_breach_joker_start.origin, level.pre_h_breach_joker_start.angles );
+        level.ajani teleport( level.pre_h_breach_ajani_start.origin, level.pre_h_breach_ajani_start.angles );
         thread maps\lagos_utility::ally_redirect_goto_node( "Gideon", "gov_h_breach_burke" );
         thread maps\lagos_utility::ally_redirect_goto_node( "Joker", "gov_h_breach_joker" );
         thread maps\lagos_utility::ally_redirect_goto_node( "Ajani", "gov_h_breach_ajani" );
@@ -2396,25 +2396,25 @@ gov_hostage_breach_anim_setup()
     var_0 maps\_anim::anim_first_frame_solo( var_1, "h_breach" );
     var_1 hide();
     var_2 = 0.5;
-    level.player _meth_8080( var_1, "tag_player", var_2, var_2 * 0.5, var_2 * 0.5 );
+    level.player playerlinktoblend( var_1, "tag_player", var_2, var_2 * 0.5, var_2 * 0.5 );
     wait(var_2);
     var_1 show();
-    level.player _meth_807D( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
     var_3 = maps\_utility::spawn_anim_model( "h_breach_device", var_0.origin );
     var_4 = getent( "harmonic_breach_lighting_centroid", "targetname" );
-    var_3 _meth_847B( var_4.origin );
+    var_3 overridelightingorigin( var_4.origin );
     var_5 = [ var_1, var_3, level.joker ];
     var_0 maps\_anim::anim_single( var_5, "h_breach" );
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
     var_6 = getent( "harmonic_breach_player_blocker", "targetname" );
-    var_6 _meth_82BE();
+    var_6 solid();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level notify( "h_breach_start" );
     maps\_utility::autosave_by_name();
     level waittill( "BreachComplete" );
     level thread maps\lagos_fx::harmonic_breach_flash_off();
-    var_6 _meth_82BF();
+    var_6 notsolid();
     common_scripts\utility::flag_set( "flag_h_breach_complete" );
 }
 
@@ -2422,7 +2422,7 @@ gov_hostage_breach_marker_setup()
 {
     var_0 = getent( "h_breach_obj_prop", "targetname" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "lag_harmonic_breach_device_obj" );
+    var_1 setmodel( "lag_harmonic_breach_device_obj" );
     var_1.angles = var_0.angles;
     var_1.origin = var_0.origin;
     level waittill( "h_breach_prep" );
@@ -2430,13 +2430,13 @@ gov_hostage_breach_marker_setup()
     var_2.origin += ( 0, 0, 8 );
     var_3 = getent( "gov_h_breach_trigger", "targetname" );
     var_4 = var_3 maps\_shg_utility::hint_button_trigger( "x", 400 );
-    var_3 _meth_80DB( &"LAGOS_PLACE_SENSOR" );
+    var_3 sethintstring( &"LAGOS_PLACE_SENSOR" );
     var_3 waittill( "trigger", var_5 );
     common_scripts\utility::flag_set( "flag_h_breach_started" );
     thread gov_hostage_breach_fail_miss_trigger();
     level waittill( "h_breach_anim_init" );
     var_4 maps\_shg_utility::hint_button_clear();
-    var_3 _meth_80DB( "" );
+    var_3 sethintstring( "" );
     wait 0.4;
 
     if ( isdefined( var_1 ) )
@@ -2453,9 +2453,9 @@ gov_hostage_breach_post_anim_setup()
         level.post_h_breach_burke_start = common_scripts\utility::getstruct( "gov_hostage_4_burke", "targetname" );
         level.post_h_breach_joker_start = common_scripts\utility::getstruct( "gov_hostage_4_joker", "targetname" );
         level.post_h_breach_ajani_start = common_scripts\utility::getstruct( "gov_hostage_4_ajani", "targetname" );
-        level.burke _meth_81C5( level.post_h_breach_burke_start.origin, level.post_h_breach_burke_start.angles );
-        level.joker _meth_81C5( level.post_h_breach_joker_start.origin, level.post_h_breach_joker_start.angles );
-        level.ajani _meth_81C5( level.post_h_breach_ajani_start.origin, level.post_h_breach_ajani_start.angles );
+        level.burke teleport( level.post_h_breach_burke_start.origin, level.post_h_breach_burke_start.angles );
+        level.joker teleport( level.post_h_breach_joker_start.origin, level.post_h_breach_joker_start.angles );
+        level.ajani teleport( level.post_h_breach_ajani_start.origin, level.post_h_breach_ajani_start.angles );
         thread maps\lagos_utility::ally_redirect_goto_node( "Gideon", "gov_h_breach_burke" );
         thread maps\lagos_utility::ally_redirect_goto_node( "Joker", "gov_h_breach_joker" );
         thread maps\lagos_utility::ally_redirect_goto_node( "Ajani", "gov_h_breach_ajani" );
@@ -2713,10 +2713,10 @@ gov_hostage_breach_give_radio()
     var_0 = self gettagorigin( "TAG_INHAND" );
     var_1 = self gettagangles( "TAG_INHAND" );
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_80B1( "com_hand_radio" );
+    var_2 setmodel( "com_hand_radio" );
     var_2.origin = var_0;
     var_2.angles = var_1;
-    var_2 _meth_804D( self, "TAG_INHAND" );
+    var_2 linkto( self, "TAG_INHAND" );
     self waittill( "anim_breach_complete" );
     var_2 delete();
 }
@@ -2727,16 +2727,16 @@ restrict_movement_while_releasing_the_pm()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
-            level.player _meth_8119( 0 );
-            level.player _meth_811A( 0 );
+            level.player allowcrouch( 0 );
+            level.player allowprone( 0 );
 
-            while ( level.player _meth_80A9( var_0 ) )
+            while ( level.player istouching( var_0 ) )
                 waitframe();
 
-            level.player _meth_8119( 1 );
-            level.player _meth_811A( 1 );
+            level.player allowcrouch( 1 );
+            level.player allowprone( 1 );
         }
 
         waitframe();
@@ -2749,33 +2749,33 @@ gov_hostage_player_scan( var_0, var_1 )
     maps\_utility::autosave_by_name();
     var_2 = getent( "player_release_pm_trigger", "targetname" );
     var_3 = var_2 maps\_shg_utility::hint_button_trigger( "x", 400 );
-    var_2 _meth_80DB( &"LAGOS_RELEASE_PM" );
+    var_2 sethintstring( &"LAGOS_RELEASE_PM" );
     var_2 waittill( "trigger", var_4 );
     var_3 maps\_shg_utility::hint_button_clear();
-    var_2 _meth_80DB( "" );
+    var_2 sethintstring( "" );
     var_2 makeunusable();
     common_scripts\utility::flag_set( "hostage_release_lighting" );
     common_scripts\utility::flag_set( "flag_hostage_scan_started" );
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_80FE( 0.2, 0.2 );
+    level.player enableslowaim( 0.2, 0.2 );
     getent( "PM_use_clip", "targetname" ) delete();
     var_5 = maps\_utility::spawn_anim_model( "player_rig", level.player.origin );
     var_5 hide();
     var_0 maps\_anim::anim_first_frame_solo( var_5, "h_breach_pt2" );
     var_6 = 0.5;
-    level.player _meth_8080( var_5, "tag_player", var_6, var_6 * 0.5, var_6 * 0.5 );
+    level.player playerlinktoblend( var_5, "tag_player", var_6, var_6 * 0.5, var_6 * 0.5 );
     wait(var_6);
-    level.player _meth_807D( var_5, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_5, "tag_player", 1, 7, 7, 5, 5, 1 );
     var_5 show();
     level notify( "player_end_scan" );
     common_scripts\utility::flag_set( "pm_released" );
     common_scripts\utility::flag_set( "obj_progress_free_pm_clear" );
     var_0 maps\_anim::anim_single_solo( var_5, "h_breach_pt2" );
     common_scripts\utility::flag_clear( "pm_released" );
-    level.player _meth_804F();
+    level.player unlink();
     var_5 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_80FF();
+    level.player disableslowaim();
     wait 1;
     common_scripts\utility::flag_set( "obj_complete_rescue_PM" );
     wait 1;
@@ -2899,7 +2899,7 @@ roundabout_combat()
 
     var_15 = 2000;
     var_10.health = var_15;
-    var_10 _meth_82C0( 1 );
+    var_10 setcandamage( 1 );
     var_10 thread roundabout_tanker_damage( var_15 );
     level.roundabout_ropes = [];
     wait 4;
@@ -2929,12 +2929,12 @@ roundabout_combat()
     {
         if ( isdefined( var_18 ) && isalive( var_18 ) )
         {
-            var_18 _meth_81AB();
+            var_18 cleargoalvolume();
             var_18 maps\_utility::player_seek_disable();
             waitframe();
 
             if ( isdefined( var_18 ) && isalive( var_18 ) )
-                var_18 _meth_81A9( var_16 );
+                var_18 setgoalvolumeauto( var_16 );
         }
     }
 
@@ -3046,12 +3046,12 @@ roundabout_combat()
         {
             if ( isdefined( var_18 ) && isalive( var_18 ) )
             {
-                var_18 _meth_81AB();
+                var_18 cleargoalvolume();
                 var_18 maps\_utility::player_seek_disable();
                 waitframe();
 
                 if ( isdefined( var_18 ) && isalive( var_18 ) )
-                    var_18 _meth_81A9( var_16 );
+                    var_18 setgoalvolumeauto( var_16 );
             }
         }
     }
@@ -3108,7 +3108,7 @@ roundabout_combat()
                 {
                     roundabout_combat_tanker_explode();
                     var_9 = maps\_utility::array_removedead_or_dying( var_9 );
-                    common_scripts\utility::array_call( var_9, ::_meth_8052 );
+                    common_scripts\utility::array_call( var_9, ::kill );
                 }
             }
         }
@@ -3138,10 +3138,10 @@ roundabout_combat()
             {
                 if ( isdefined( var_18 ) && isalive( var_18 ) )
                 {
-                    var_18 _meth_81AB();
+                    var_18 cleargoalvolume();
                     var_18 maps\_utility::player_seek_disable();
                     waitframe();
-                    var_18 _meth_81A9( var_37 );
+                    var_18 setgoalvolumeauto( var_37 );
 
                     if ( var_38 % 2 )
                         var_18 thread maps\lagos_utility::ignore_all_until_path_end();
@@ -3163,7 +3163,7 @@ roundabout_magic_microwave_grenade()
     wait 5;
     var_0 = common_scripts\utility::getstruct( "microwave_gren_throw", "targetname" );
     var_1 = common_scripts\utility::getstruct( "microwave_gren_target", "targetname" );
-    var_2 = _func_070( "microwave_grenade", var_0.origin, var_1.origin );
+    var_2 = magicgrenade( "microwave_grenade", var_0.origin, var_1.origin );
     var_2 thread maps\_microwave_grenade::microwave_grenade_explode_wait();
     var_2 waittill( "explode", var_3 );
     common_scripts\utility::flag_set( "flag_roundabout_magic_MWG" );
@@ -3182,7 +3182,7 @@ hint_text_exo_shield()
 
             while ( !common_scripts\utility::flag( "flag_roundabout_exo_shield" ) )
             {
-                if ( level.player _meth_824C( "DPAD_DOWN" ) )
+                if ( level.player buttonpressed( "DPAD_DOWN" ) )
                     common_scripts\utility::flag_set( "flag_roundabout_exo_shield" );
 
                 waitframe();
@@ -3254,7 +3254,7 @@ roundabout_rush_goal( var_0, var_1, var_2, var_3 )
 
             var_6.ignoreme = 1;
             var_6.grenadeammo = 0;
-            var_6 _meth_81A9( var_4 );
+            var_6 setgoalvolumeauto( var_4 );
             var_6.rushed = 1;
             var_6 thread maps\lagos_utility::ignore_until_goal_reached();
             var_6 waittill( "goal" );
@@ -3354,7 +3354,7 @@ roundabout_combat_initial()
     var_13 = getent( "magicDest_roundabout_opening_6", "targetname" );
     common_scripts\utility::flag_set( "roundabout_RPG_start" );
     soundscripts\_snd::snd_message( "roundabout_general_mayhem" );
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     var_14 = magicbullet( "iw5_mahemstraight_sp", var_5.origin, var_7.origin );
     var_14 soundscripts\_snd::snd_message( "roundabout_rpg_fire" );
     wait 0.75;
@@ -3402,7 +3402,7 @@ roundabout_combat_initial()
     }
 
     thread maps\lagos_utility::stop_vehicle_traffic_roundabout_straightways();
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 
     if ( level.nextgen )
         radiusdamage( common_scripts\utility::getstruct( "roundabout_magic_extra_damage_1", "targetname" ).origin, 350, 10000, 9000 );
@@ -3431,7 +3431,7 @@ roundabout_combat_initial()
     var_22 = getent( "enemy_goal_Roundabout_Fallback_East", "targetname" );
 
     foreach ( var_1 in level.enemies_1_a_south )
-        var_1 _meth_81A9( var_22 );
+        var_1 setgoalvolumeauto( var_22 );
 
     maps\_utility::battlechatter_on( "allies" );
     maps\_utility::battlechatter_on( "axis" );
@@ -3449,7 +3449,7 @@ roundabout_combat_tanker_explode()
     foreach ( var_3 in var_1 )
     {
         if ( var_3.classname == "script_model" )
-            var_3 _meth_80B1( "ind_semi_truck_fuel_tank_destroy" );
+            var_3 setmodel( "ind_semi_truck_fuel_tank_destroy" );
     }
 
     var_5 = getentarray( "tanker_explosion_cab", "script_noteworthy" );
@@ -3457,7 +3457,7 @@ roundabout_combat_tanker_explode()
     foreach ( var_3 in var_5 )
     {
         if ( var_3.classname == "script_model" )
-            var_3 _meth_80B1( "ind_semi_truck_03_destroy" );
+            var_3 setmodel( "ind_semi_truck_03_destroy" );
     }
 
     var_8 = getentarray( "roundabout_rpg_building_clean_geo", "targetname" );
@@ -3491,7 +3491,7 @@ roundabout_combat_tanker_explode()
     else
         roundabout_combat_tanker_explode_veh_cg();
 
-    var_14 = _func_0D9();
+    var_14 = getcorpsearray();
 
     foreach ( var_16 in var_14 )
     {
@@ -3545,7 +3545,7 @@ roundabout_combat_start_slow_motion()
     level.player thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     level.player thread maps\lagos_qte::player_heartbeat();
     maps\_utility::slowmo_start();
-    level.player _meth_8130( 0 );
+    level.player allowmelee( 0 );
     maps\_utility::slowmo_setspeed_slow( 0.1 );
     maps\_utility::slowmo_setlerptime_in( 0.25 );
     maps\_utility::slowmo_lerp_in();
@@ -3554,7 +3554,7 @@ roundabout_combat_start_slow_motion()
     level.player thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     maps\_utility::slowmo_setlerptime_out( 0.75 );
     maps\_utility::slowmo_lerp_out();
-    level.player _meth_8130( 1 );
+    level.player allowmelee( 1 );
     maps\_utility::slowmo_end();
     earthquake( 0.5, 1, level.player.origin, 1000 );
 }
@@ -3598,8 +3598,8 @@ kill_kva_on_rope( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     {
         self notify( "killanimscript" );
         maps\lagos_utility::challenge_point_award();
-        self _meth_8052( self.origin );
-        self _meth_8023();
+        self kill( self.origin );
+        self startragdoll();
     }
 }
 
@@ -3635,8 +3635,8 @@ threaded_anim_roundabout_rappel( var_0, var_1, var_2 )
 {
     var_1 endon( "death" );
     var_3 = spawn( "script_model", var_0.origin );
-    var_3 _meth_80B1( "rope50ft" );
-    var_3 _meth_8115( level.scr_animtree["rappel_roundabout"] );
+    var_3 setmodel( "rope50ft" );
+    var_3 useanimtree( level.scr_animtree["rappel_roundabout"] );
     var_3.animname = "rappel_roundabout";
     level.roundabout_ropes = common_scripts\utility::array_add( level.roundabout_ropes, var_3 );
 
@@ -3719,7 +3719,7 @@ roundabout_lobby_security_desk_front()
     var_3 thread maps\_anim::anim_loop_solo( var_1, "security_loop_2", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_0" );
     var_3 notify( "stop_loop" );
-    var_1 _meth_81FF( level.player );
+    var_1 setlookatentity( level.player );
     var_3 maps\_anim::anim_single_solo( var_1, "security_react_2" );
     var_3 maps\_anim::anim_single_solo( var_1, "security_react_loop_2" );
     var_1 thread fleeingcivilian_roundaboutexit_lobby( "civilian_goal_Roundabout_delete_front" );
@@ -3742,7 +3742,7 @@ roundabout_lobby_phone_front()
     var_1 thread maps\_anim::anim_loop_solo( var_0, "phone_loop_1", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_0" );
     var_1 notify( "stop_loop" );
-    var_0 _meth_81FF( level.player );
+    var_0 setlookatentity( level.player );
     var_1 maps\_anim::anim_single_solo( var_0, "phone_react_1" );
     var_1 thread maps\_anim::anim_loop_solo( var_0, "phone_react_loop_1", "stop_loop" );
     common_scripts\utility::flag_wait( "roundabout_wave_1A_complete" );
@@ -3764,15 +3764,15 @@ roundabout_lobby_couch_front()
     var_1.animname = "lobby_couch";
     var_2 = getent( "anim_org_rb_lobby_couch_front", "targetname" );
     var_3 = spawn( "script_model", var_2.origin );
-    var_3 _meth_80B1( "npc_exo_launch_pad" );
+    var_3 setmodel( "npc_exo_launch_pad" );
     var_3.animname = "lobby_tablet";
-    var_3 _meth_8115( level.scr_animtree["lobby_tablet"] );
+    var_3 useanimtree( level.scr_animtree["lobby_tablet"] );
     var_2 thread maps\_anim::anim_loop_solo( var_0, "couch_loop_1", "stop_loop" );
     var_2 thread maps\_anim::anim_loop_solo( var_1, "couch_loop_2", "stop_loop" );
     var_2 thread maps\_anim::anim_loop_solo( var_3, "lobby_tablet_loop", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_0" );
     var_2 notify( "stop_loop" );
-    var_1 _meth_81FF( level.player );
+    var_1 setlookatentity( level.player );
     var_2 thread roundabout_lobby_reacts_into_walk( var_0, "couch_react_1_short" );
     var_2 thread roundabout_lobby_reacts_into_walk( var_1, "couch_react_2_short" );
     var_2 maps\_anim::anim_single_solo_run( var_3, "lobby_tablet_react_short" );
@@ -3811,8 +3811,8 @@ roundabout_lobby_elevator()
     var_4 thread roundabout_lobby_elevator_exiting_react_1( var_8 );
     var_5 thread roundabout_lobby_elevator_exiting_react_2( var_9 );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_1" );
-    var_0 _meth_82AE( ( -52453, 7644, 321.5 ), 1.5, 0.25, 0.25 );
-    var_1 _meth_82AE( ( -52273, 7644, 321.5 ), 1.5, 0.25, 0.25 );
+    var_0 moveto( ( -52453, 7644, 321.5 ), 1.5, 0.25, 0.25 );
+    var_1 moveto( ( -52273, 7644, 321.5 ), 1.5, 0.25, 0.25 );
     common_scripts\utility::flag_wait( "roundabout_wave_1A_complete" );
     var_6 notify( "stop_loop" );
     var_7 notify( "stop_loop" );
@@ -3840,7 +3840,7 @@ roundabout_lobby_elevator_waiting_react_2( var_0 )
     var_0 thread maps\_anim::anim_loop_solo( self, "waiting_react_2_pre", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_0" );
     var_0 notify( "stop_loop" );
-    self _meth_81FF( level.player );
+    self setlookatentity( level.player );
     var_0 maps\_anim::anim_single_solo( self, "waiting_react_2" );
     var_0 maps\_anim::anim_loop_solo( self, "waiting_react_loop_2", "stop_loop" );
 }
@@ -3851,7 +3851,7 @@ roundabout_lobby_elevator_exiting_react_1( var_0 )
     var_0 maps\_anim::anim_first_frame_solo( self, "exiting_react_1" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_1" );
     wait 1.5;
-    self _meth_81FF( level.player );
+    self setlookatentity( level.player );
     var_0 maps\_anim::anim_single_solo( self, "exiting_react_1" );
     var_0 maps\_anim::anim_loop_solo( self, "exiting_react_loop_1", "stop_loop" );
 }
@@ -3889,7 +3889,7 @@ roundabout_lobby_couch()
     var_2 thread maps\_anim::anim_loop_solo( var_1, "couch_loop_2", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_1" );
     var_2 notify( "stop_loop" );
-    var_1 _meth_81FF( level.player );
+    var_1 setlookatentity( level.player );
     var_2 thread roundabout_lobby_reacts_into_walk( var_0, "couch_react_1" );
     var_2 thread roundabout_lobby_reacts_into_walk( var_1, "couch_react_2" );
 }
@@ -3913,7 +3913,7 @@ roundabout_lobby_security_desk()
     var_3 thread maps\_anim::anim_loop_solo( var_1, "security_loop_2", "stop_loop" );
     common_scripts\utility::flag_wait( "flag_roundabout_player_move_2" );
     var_3 notify( "stop_loop" );
-    var_1 _meth_81FF( level.player );
+    var_1 setlookatentity( level.player );
     var_3 maps\_anim::anim_single_solo( var_1, "security_react_2" );
     var_3 maps\_anim::anim_single_solo( var_1, "security_react_loop_2" );
     var_1 thread fleeingcivilian_roundaboutexit_lobby( "civilian_goal_Roundabout_delete_front" );
@@ -3935,7 +3935,7 @@ roundabout_lobby_phone()
     var_0.attachedpropmodel = "electronics_pda_big";
     var_0.attachedproptag = "TAG_WEAPON_RIGHT";
     common_scripts\utility::flag_wait( "flag_roundabout_move_1" );
-    var_0 _meth_81FF( level.player );
+    var_0 setlookatentity( level.player );
     var_1 thread maps\_anim::anim_single_solo( var_0, "phone_react_1" );
     var_1 thread maps\_anim::anim_loop_solo( var_0, "phone_react_loop_1", "stop_loop" );
     common_scripts\utility::flag_wait( "roundabout_wave_1A_complete" );
@@ -4002,9 +4002,9 @@ roundabout_street_drop_bikes()
     var_1.animname = "street_drop_bike";
     var_2 = getent( "anim_org_rb_street_bike_drop", "targetname" );
     var_3 = spawn( "script_model", var_2.origin );
-    var_3 _meth_80B1( "s1_bicycle" );
+    var_3 setmodel( "s1_bicycle" );
     var_3.animname = "bike";
-    var_3 _meth_8115( level.scr_animtree["bike"] );
+    var_3 useanimtree( level.scr_animtree["bike"] );
     common_scripts\utility::flag_wait( "flag_roundabout_traffic_move" );
     var_2 thread maps\_anim::anim_loop_solo( var_0, "drop_bike_loop_1", "stop_loop" );
     var_2 thread maps\_anim::anim_loop_solo( var_1, "drop_bike_loop_2", "stop_loop" );
@@ -4072,10 +4072,10 @@ fleeingcivilian_roundaboutexit_lobby( var_0 )
 {
     if ( isdefined( self ) && isalive( self ) )
     {
-        self _meth_81FF();
+        self setlookatentity();
         self.ignoreall = 1;
         self.ignoreme = 1;
-        self _meth_81A9( getent( var_0, "targetname" ) );
+        self setgoalvolumeauto( getent( var_0, "targetname" ) );
         thread maps\lagos_utility::cleanup_on_goal();
     }
 }
@@ -4142,7 +4142,7 @@ roundabout_traffic()
 {
     if ( level.nextgen )
         common_scripts\utility::flag_wait( "flag_roundabout_spawn_vehicles" );
-    else if ( !_func_21E( "lagos_middle_tr" ) )
+    else if ( !istransientloaded( "lagos_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     if ( level.currentgen )
@@ -4196,7 +4196,7 @@ roundabout_center_vehicles()
     for ( var_0 = 0; var_0 < level.roundabout_center_vehicles.size; var_0++ )
     {
         level.roundabout_center_vehicles[var_0] thread maps\_vehicle::vehicle_paths( level.roundabout_center_vehicle_nodes[var_0] );
-        level.roundabout_center_vehicles[var_0] _meth_827F( level.roundabout_center_vehicle_nodes[var_0] );
+        level.roundabout_center_vehicles[var_0] startpath( level.roundabout_center_vehicle_nodes[var_0] );
     }
 }
 
@@ -4340,7 +4340,7 @@ roundabout_center_vehicles_cg()
     for ( var_0 = 0; var_0 < level.roundabout_center_vehicles_moving.size; var_0++ )
     {
         level.roundabout_center_vehicles_moving[var_0] thread maps\_vehicle::vehicle_paths( level.roundabout_center_vehicle_nodes_cg[var_0] );
-        level.roundabout_center_vehicles_moving[var_0] _meth_827F( level.roundabout_center_vehicle_nodes_cg[var_0] );
+        level.roundabout_center_vehicles_moving[var_0] startpath( level.roundabout_center_vehicle_nodes_cg[var_0] );
         wait(randomfloatrange( 0.1, 0.25 ));
     }
 }
@@ -4426,7 +4426,7 @@ alley1_stage1_combat()
 
     foreach ( var_4 in var_2 )
     {
-        var_4 _meth_816D( 256, 512 );
+        var_4 setengagementmaxdist( 256, 512 );
         level.alley1_kva = common_scripts\utility::array_add( level.alley1_kva, var_4 );
         var_1 = common_scripts\utility::array_add( var_1, var_4 );
         var_4.allowdeath = 1;
@@ -4498,7 +4498,7 @@ alley1_force_deaths()
     foreach ( var_1 in self )
     {
         if ( isdefined( var_1 ) && isalive( var_1 ) )
-            var_1 _meth_8052();
+            var_1 kill();
     }
 }
 
@@ -4516,7 +4516,7 @@ alley1_stage2_combat()
     setthreatbias( "friendly_squad", "player_haters", -10000 );
     setthreatbias( "player_haters", "friendly_squad", -10000 );
     setthreatbias( "player_haters", "player", 10000 );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     var_0 = 3;
     var_1 = 1;
     var_2 = [];
@@ -4535,13 +4535,13 @@ alley1_stage2_combat()
         var_8.allowdeath = 1;
         var_8 maps\_utility::disable_long_death();
         var_8 maps\lagos_utility::equip_microwave_grenade();
-        var_8 _meth_816D( 256, 512 );
+        var_8 setengagementmaxdist( 256, 512 );
         var_8 maps\lagos_utility::assign_goal_vol( "alley1_stage2_vol1" );
     }
 
     var_9 = getent( "alley1_stage2_balcony_enemy_A", "targetname" ) maps\_utility::spawn_ai( 1 );
     level.alley1_kva = common_scripts\utility::array_add( level.alley1_kva, var_9 );
-    var_9 _meth_816D( 256, 512 );
+    var_9 setengagementmaxdist( 256, 512 );
     var_9 maps\lagos_utility::assign_goal_vol( "alley1_stage2_vol1_A" );
     var_2 thread alley1_force_deaths();
 
@@ -4555,7 +4555,7 @@ alley1_stage2_combat()
         var_8.allowdeath = 1;
         var_8 maps\_utility::disable_long_death();
         var_8 maps\lagos_utility::equip_microwave_grenade();
-        var_8 _meth_816D( 256, 512 );
+        var_8 setengagementmaxdist( 256, 512 );
         var_8 maps\lagos_utility::assign_goal_vol( "alley1_stage2_vol2" );
     }
 
@@ -4616,7 +4616,7 @@ alley1_stage3_combat()
         var_4.allowdeath = 1;
         var_4 maps\_utility::disable_long_death();
         var_4 maps\lagos_utility::equip_microwave_grenade();
-        var_4 _meth_816D( 256, 512 );
+        var_4 setengagementmaxdist( 256, 512 );
     }
 
     wait 1;
@@ -4686,8 +4686,8 @@ alley1_oncoming()
     var_6 maps\_utility::assign_animtree();
     var_5 thread maps\_anim::anim_first_frame_solo( var_6, "oncoming_gate_open" );
     var_7 = getent( "oncoming_gate_blocker", "targetname" );
-    var_7 _meth_804D( var_6, "gateSlide" );
-    var_7 _meth_8057();
+    var_7 linkto( var_6, "gateSlide" );
+    var_7 disconnectpaths();
     var_8 = [ level.joker, var_6 ];
     level waittill( "alley_oncoming_ally_goto" );
     thread maps\lagos_vo::alley_1_complete_dialogue();
@@ -4717,7 +4717,7 @@ alley1_oncoming()
     common_scripts\utility::flag_set( "alley_oncoming_gate_lighting" );
     wait 4;
     level notify( "oncoming_gate_open" );
-    var_7 _meth_8058();
+    var_7 connectpaths();
     common_scripts\utility::flag_set( "obj_pos_pursue_hostage_truck_oncoming1_set" );
     thread alley1_oncoming_truck_seq();
     thread maps\lagos_vo::alley_oncoming_dialogue();
@@ -4770,7 +4770,7 @@ alley1_oncoming_truck_seq()
     var_0 = getent( "anim_org_oncoming_alley", "targetname" );
     var_1 = maps\_vehicle::spawn_vehicle_from_targetname( "vehicle_downhill_stairs" );
     var_1.animname = "oncoming_truck";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_2 = getent( "oncoming_truck_sweeper", "targetname" );
     var_2 maps\lagos_utility::fake_linkto( var_1 );
     var_1.vehicle_stays_alive = 1;
@@ -4850,13 +4850,13 @@ oncoming_bypass_kill( var_0, var_1 )
     {
         if ( common_scripts\utility::flag( var_1 ) )
         {
-            level.player _meth_8051( level.player.maxhealth / 50, self gettagorigin( "tag_flash" ), var_0, var_0, "MOD_RIFLE_BULLET" );
+            level.player dodamage( level.player.maxhealth / 50, self gettagorigin( "tag_flash" ), var_0, var_0, "MOD_RIFLE_BULLET" );
             wait 0.2;
-            level.player _meth_8051( level.player.maxhealth, self gettagorigin( "tag_flash" ), var_0, var_0, "MOD_RIFLE_BULLET" );
+            level.player dodamage( level.player.maxhealth, self gettagorigin( "tag_flash" ), var_0, var_0, "MOD_RIFLE_BULLET" );
             wait 0.1;
 
             if ( isalive( level.player ) )
-                level.player _meth_8052();
+                level.player kill();
         }
 
         waitframe();
@@ -4931,7 +4931,7 @@ alley1_oncoming_truck_sweeper_monitor( var_0 )
         var_0 waittill( "trigger", var_1 );
 
         if ( isdefined( var_1 ) && isplayer( var_1 ) )
-            self _meth_8052();
+            self kill();
 
         waitframe();
     }
@@ -4982,9 +4982,9 @@ alley2_jumpers_setup( var_0, var_1 )
     var_2.goalradius = 16;
     var_2.ignoreall = 1;
     var_2.ignoreme = 1;
-    var_2 _meth_81A5( var_1 );
+    var_2 setgoalnode( var_1 );
     var_2 waittill( "goal" );
-    var_2 _meth_8141();
+    var_2 stopanimscripted();
     var_2 delete();
 }
 
@@ -4993,7 +4993,7 @@ alley2_stage1_combat()
     setthreatbias( "friendly_squad", "player_haters", -10000 );
     setthreatbias( "player_haters", "friendly_squad", -10000 );
     setthreatbias( "player_haters", "player", 10000 );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     var_0 = 1;
     var_1 = 1;
     var_2 = [];
@@ -5145,7 +5145,7 @@ alley2_combat_enemy_vol_assign( var_0 )
 
 alley2_combat_player_monitor( var_0, var_1, var_2, var_3, var_4 )
 {
-    if ( !level.player _meth_80A9( var_0 ) )
+    if ( !level.player istouching( var_0 ) )
     {
         waitframe();
         return;
@@ -5162,7 +5162,7 @@ alley2_combat_vol_assign( var_0, var_1, var_2 )
 
     foreach ( var_4 in var_0 )
     {
-        var_5 = var_4 _meth_81AA();
+        var_5 = var_4 getgoalvolume();
 
         if ( randomint( 100 ) > 80 )
         {
@@ -5188,7 +5188,7 @@ alley2_spawner_locator( var_0 )
     {
         foreach ( var_3 in var_0 )
         {
-            var_4 = self _meth_80A8();
+            var_4 = self geteye();
             var_5 = var_3.origin;
             var_6 = sighttracepassed( var_4, var_5, 0, self );
 
@@ -5216,7 +5216,7 @@ flank_magic_gren()
 {
     var_0 = common_scripts\utility::getstruct( "microwave_gren_throw_flank", "targetname" );
     var_1 = common_scripts\utility::getstruct( "microwave_gren_target_flank", "targetname" );
-    var_2 = _func_070( "microwave_grenade", var_0.origin, var_1.origin );
+    var_2 = magicgrenade( "microwave_grenade", var_0.origin, var_1.origin );
     var_2 thread maps\_microwave_grenade::microwave_grenade_explode_wait();
 }
 
@@ -5244,7 +5244,7 @@ flank_combat()
     var_3 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "enemy_vehicle_Flank_Hummer" );
     var_3.dontunloadonend = 1;
     var_3.vehicle_stays_alive = 1;
-    var_3.mgturret[0] _meth_8136();
+    var_3.mgturret[0] maketurretsolid();
 
     if ( level.currentgen )
         var_3 thread tff_cleanup_vehicle( "alley" );
@@ -5278,7 +5278,7 @@ flank_combat()
     soundscripts\_snd::snd_message( "truck_turret_flank_alley_drive_away", var_3 );
     var_10 = getvehiclenode( "node_flank_hummer_second_path", "targetname" );
     var_3 thread maps\_vehicle::vehicle_paths( var_10 );
-    var_3 _meth_827F( var_10 );
+    var_3 startpath( var_10 );
     var_3.dontunloadonend = 0;
     var_11 = maps\_utility::array_spawn_targetname( "enemy_spawner_Flank_A", 1 );
     var_3 thread flank_technical_unload();
@@ -5302,7 +5302,7 @@ flank_combat()
     foreach ( var_7 in var_12 )
     {
         if ( isdefined( var_7 ) && isalive( var_7 ) && !maps\_utility::player_can_see_ai( var_7 ) )
-            var_7 _meth_8052();
+            var_7 kill();
 
         var_12 = maps\_utility::array_removedead_or_dying( var_12 );
     }
@@ -5327,9 +5327,9 @@ flank_combat()
     var_0 = getnode( "flank_wall_start_burke", "targetname" );
     var_1 = getnode( "flank_wall_start_joker", "targetname" );
     var_2 = getnode( "flank_wall_start_ajani", "targetname" );
-    level.burke _meth_81A5( var_0 );
-    level.joker _meth_81A5( var_1 );
-    level.ajani _meth_81A5( var_2 );
+    level.burke setgoalnode( var_0 );
+    level.joker setgoalnode( var_1 );
+    level.ajani setgoalnode( var_2 );
 }
 
 flank_technical_unload()
@@ -5345,7 +5345,7 @@ flank_wall_climb_force_check()
     level.player.hack_fix_lagos_flank_alley_camera_pop = 1;
 
     if ( !common_scripts\utility::flag( "flank_vehicle_turret_dead" ) )
-        level.player _meth_8052();
+        level.player kill();
 }
 
 flank_wall_climb_force_dismount()
@@ -5376,10 +5376,10 @@ flank_wall_climb_force_dismount()
     var_5 = getnode( "frogger_start_burke", "targetname" );
     var_6 = getnode( "frogger_start_joker", "targetname" );
     var_7 = getnode( "frogger_start_ajani", "targetname" );
-    level.burke _meth_81A5( var_5 );
-    level.joker _meth_81A5( var_6 );
+    level.burke setgoalnode( var_5 );
+    level.joker setgoalnode( var_6 );
     wait 1;
-    level.ajani _meth_81A5( var_7 );
+    level.ajani setgoalnode( var_7 );
 }
 
 flank_handle_player_bypass()
@@ -5441,15 +5441,15 @@ flank_alley_door_kick()
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "flank_alley_door_kick_open" );
     var_2 = getent( "flank_alley_door_collision_a", "targetname" );
     var_3 = getent( "flank_alley_door_collision_b", "targetname" );
-    var_2 _meth_804D( var_1, "doora" );
-    var_3 _meth_804D( var_1, "doorb" );
+    var_2 linkto( var_1, "doora" );
+    var_3 linkto( var_1, "doorb" );
     common_scripts\utility::flag_wait( "alley_flank_start" );
 
-    if ( _func_220( level.player.origin, var_0.origin ) < _func_220( level.burke.origin, var_0.origin ) && !common_scripts\utility::flag( "flank_playerstart" ) )
+    if ( distance2dsquared( level.player.origin, var_0.origin ) < distance2dsquared( level.burke.origin, var_0.origin ) && !common_scripts\utility::flag( "flank_playerstart" ) )
     {
         var_0 thread maps\_anim::anim_single_solo( var_1, "flank_alley_door_kick_open" );
-        var_2 common_scripts\utility::delaycall( 2, ::_meth_8058 );
-        var_3 common_scripts\utility::delaycall( 2, ::_meth_8058 );
+        var_2 common_scripts\utility::delaycall( 2, ::connectpaths );
+        var_3 common_scripts\utility::delaycall( 2, ::connectpaths );
         common_scripts\utility::flag_wait( "flank_spawn" );
 
         if ( !common_scripts\utility::flag( "flank_vehicle_turret_dead" ) )
@@ -5469,8 +5469,8 @@ flank_alley_door_kick()
         var_0 maps\_anim::anim_reach_solo( level.burke, "burke_flank_kick_start" );
         thread flank_alley_door_kick_civilian_react( var_0, var_4 );
         var_0 thread maps\_anim::anim_single_solo( var_1, "flank_alley_door_kick_open" );
-        var_2 common_scripts\utility::delaycall( 2, ::_meth_8058 );
-        var_3 common_scripts\utility::delaycall( 2, ::_meth_8058 );
+        var_2 common_scripts\utility::delaycall( 2, ::connectpaths );
+        var_3 common_scripts\utility::delaycall( 2, ::connectpaths );
         var_0 maps\_anim::anim_single_solo( level.burke, "burke_flank_kick_start" );
 
         if ( !common_scripts\utility::flag( "flank_vehicle_turret_dead" ) )
@@ -5489,8 +5489,8 @@ flank_alley_door_kick_doors_open( var_0, var_1 )
     wait 2;
     var_2 = ( 0, 26.3, 0 );
     var_3 = ( 0, 313.1, 0 );
-    var_0 _meth_82B5( var_2, 0.1 );
-    var_1 _meth_82B5( var_3, 0.1 );
+    var_0 rotateto( var_2, 0.1 );
+    var_1 rotateto( var_3, 0.1 );
 }
 
 flank_alley_door_kick_civilian_react( var_0, var_1 )
@@ -5515,7 +5515,7 @@ flank_make_gunner_vulerable()
     wait 4;
 
     if ( isdefined( self ) && isalive( self ) )
-        self _meth_8052();
+        self kill();
 }
 
 flank_gunner_damage_function( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -5596,7 +5596,7 @@ frogger_combat()
     setthreatbias( "friendly_squad", "player_haters", -10000 );
     setthreatbias( "player_haters", "friendly_squad", -10000 );
     setthreatbias( "player_haters", "player", 10000 );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     level.player maps\_utility::add_damage_function( ::frogger_impact_damage_function );
     level.frogger_spawners = getentarray( "frogger_car_spawner", "targetname" );
 
@@ -5723,7 +5723,7 @@ frogger_handle_bypass_middle()
     var_0 = getthreatbias( "frogger_middle", "friendly_squad" );
     var_1 = getthreatbias( "frogger_middle", "player" );
     common_scripts\utility::flag_wait( "frogger_flag_player_middle" );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     setthreatbias( "frogger_middle", "friendly_squad", -10000 );
     setthreatbias( "frogger_middle", "player", 10000 );
 }
@@ -5738,10 +5738,10 @@ frogger_squad_crossing()
     level.frogger_teleport_end = getnodearray( "frogger_teleport_end", "targetname" );
 
     foreach ( var_3 in level.frogger_teleport_middle )
-        var_3 _meth_8059();
+        var_3 disconnectnode();
 
     foreach ( var_3 in level.frogger_teleport_end )
-        var_3 _meth_8059();
+        var_3 disconnectnode();
 
     common_scripts\utility::flag_wait( "frogger_flag_player_middle" );
     level.burke thread frogger_teleport_middle_check();
@@ -5792,7 +5792,7 @@ frogger_teleport_middle_check()
         {
             if ( !maps\_utility::within_fov_2d( level.player.origin, level.player.angles, var_6.origin, cos( var_2 ) ) && distance2d( level.player.origin, var_6.origin ) > 56 )
             {
-                var_6 _meth_805A();
+                var_6 connectnode();
                 level.frogger_teleport_middle = common_scripts\utility::array_remove( level.frogger_teleport_middle, var_6 );
                 var_1 = 1;
                 maps\_utility::teleport_ai( var_6 );
@@ -5838,7 +5838,7 @@ frogger_teleport_end_check()
         {
             if ( !maps\_utility::within_fov_2d( level.player.origin, level.player.angles, var_6.origin, cos( var_2 ) ) && distance2d( level.player.origin, var_6.origin ) > 56 )
             {
-                var_6 _meth_805A();
+                var_6 connectnode();
                 level.frogger_teleport_end = common_scripts\utility::array_remove( level.frogger_teleport_end, var_6 );
                 var_1 = 1;
                 maps\_utility::teleport_ai( var_6 );
@@ -5864,7 +5864,7 @@ frogger_brake_vehicle_at_trigger( var_0 )
 
         if ( var_1 maps\_vehicle::isvehicle() )
         {
-            var_1 _meth_8283( 0, 15, 15 );
+            var_1 vehicle_setspeed( 0, 15, 15 );
             thread frogger_slow_down_lane( var_1.lane, var_0 );
         }
     }
@@ -5896,10 +5896,10 @@ frogger_slow_down_lane( var_0, var_1 )
 
         foreach ( var_4 in level.frogger_vehicles )
         {
-            if ( isdefined( var_4 ) && isdefined( var_4.lane ) && var_4 maps\_vehicle::isvehicle() && var_4.lane == var_0 && var_4 _meth_8286() != 0 )
+            if ( isdefined( var_4 ) && isdefined( var_4.lane ) && var_4 maps\_vehicle::isvehicle() && var_4.lane == var_0 && var_4 vehicle_getspeed() != 0 )
             {
                 if ( var_4 maps\_vehicle::isvehicle() )
-                    var_4 _meth_8283( 0, 15, 5 );
+                    var_4 vehicle_setspeed( 0, 15, 5 );
             }
         }
 
@@ -5908,10 +5908,10 @@ frogger_slow_down_lane( var_0, var_1 )
 
     foreach ( var_4 in level.frogger_vehicles )
     {
-        if ( isdefined( var_4 ) && isdefined( var_4.lane ) && var_4 maps\_vehicle::isvehicle() && var_4.lane == var_0 && var_4 _meth_8286() != 40 )
+        if ( isdefined( var_4 ) && isdefined( var_4.lane ) && var_4 maps\_vehicle::isvehicle() && var_4.lane == var_0 && var_4 vehicle_getspeed() != 40 )
         {
             if ( var_4 maps\_vehicle::isvehicle() )
-                var_4 _meth_8283( 40, 15, 5 );
+                var_4 vehicle_setspeed( 40, 15, 5 );
         }
     }
 
@@ -6027,7 +6027,7 @@ frogger_vehicle_hit_fail()
 
         if ( var_4 == "MOD_GRENADE_SPLASH" || var_4 == "MOD_GRENADE" )
         {
-            self _meth_8052();
+            self kill();
             setdvar( "ui_deadquote", &"SCRIPT_MISSIONFAIL_CIVILIAN_KILLED" );
             maps\_utility::missionfailedwrapper();
         }
@@ -6054,7 +6054,7 @@ frogger_spawn_selection( var_0, var_1 )
         {
             if ( var_0 != 8 && var_0 != 7 && var_0 != 4 )
             {
-                var_3 _meth_822E();
+                var_3 vehphys_disablecrashing();
                 var_3 thread frogger_vehicle_hit_react();
             }
         }
@@ -6082,13 +6082,13 @@ frogger_spawn_selection( var_0, var_1 )
     {
         var_4 = var_5 maps\_utility::spawn_ai( 1 );
         var_3 maps\_utility::guy_enter_vehicle( var_4 );
-        var_4 _meth_82C0( 0 );
+        var_4 setcandamage( 0 );
     }
 
     var_6 = getvehiclenode( "frogger_lane_" + var_0, "targetname" );
-    var_3 _meth_827C( var_6.origin, var_6.angles, 1 );
+    var_3 vehicle_teleport( var_6.origin, var_6.angles, 1 );
     var_3 thread maps\_vehicle::vehicle_paths( var_6 );
-    var_3 _meth_827F( var_6 );
+    var_3 startpath( var_6 );
     return var_3;
 }
 
@@ -6146,7 +6146,7 @@ frogger_release_vehicle_at_trigger()
             level.frogger_vehicles = common_scripts\utility::array_remove( level.frogger_vehicles, var_0 );
 
             if ( level.nextgen )
-                var_0 _meth_8283( 40, 15, 5 );
+                var_0 vehicle_setspeed( 40, 15, 5 );
         }
     }
 }
@@ -6169,7 +6169,7 @@ destroy_all_frogger_vehicles_lane( var_0 )
 
 player_exo_jump_release_hint_off()
 {
-    if ( level.player _meth_824C( "DPAD_UP" ) )
+    if ( level.player buttonpressed( "DPAD_UP" ) )
         return 1;
 
     return 0;
@@ -6177,7 +6177,7 @@ player_exo_jump_release_hint_off()
 
 player_exo_jump_hint_off()
 {
-    if ( level.player _meth_83DE() )
+    if ( level.player jumpbuttonpressed() )
         return 1;
 
     return 0;
@@ -6213,14 +6213,14 @@ traffic_traverse_start()
     common_scripts\utility::flag_set( "obj_progress_pursue_hostage_truck_highway" );
     common_scripts\utility::flag_set( "done_traffic_ledge_jump_start" );
     common_scripts\utility::flag_set( "traffic_ledge_lighting" );
-    level.player _meth_80FE( 0.2, 0.2 );
+    level.player enableslowaim( 0.2, 0.2 );
     level.player maps\_shg_utility::setup_player_for_scene();
     thread maps\_player_exo::player_exo_deactivate();
     level.player_rig_highway_ledge = maps\_utility::spawn_anim_model( "player_rig", level.player.origin );
     level.player_rig_highway_ledge hide();
     var_3 = 0.5;
-    level.player _meth_8080( level.player_rig_highway_ledge, "tag_player", var_3 );
-    level.player common_scripts\utility::delaycall( var_3, ::_meth_807D, level.player_rig_highway_ledge, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktoblend( level.player_rig_highway_ledge, "tag_player", var_3 );
+    level.player common_scripts\utility::delaycall( var_3, ::playerlinktodelta, level.player_rig_highway_ledge, "tag_player", 1, 7, 7, 5, 5, 1 );
     level.player_rig_highway_ledge common_scripts\utility::delaycall( var_3, ::show );
     thread maps\lagos_vo::highway_ledge_jump_go_dialogue();
     level.player maps\_utility::remove_damage_function( ::frogger_impact_damage_function );
@@ -6231,7 +6231,7 @@ traffic_traverse_start()
     level.burke.grenadeammo = 0;
     level.burke.baseaccuracy = 0.15;
     level.burke thread maps\lagos_utility::keep_filling_clip_ammo( 1 );
-    level.burke _meth_81A3( 1 );
+    level.burke pushplayer( 1 );
     level.burke.pushable = 0;
     var_0 maps\_anim::anim_first_frame_solo( level.player_rig_highway_ledge, "traffic_start_VM" );
     var_0 notify( "stop_loop" );
@@ -6248,12 +6248,12 @@ traffic_traverse_start()
     level.burke maps\_utility::set_goal_radius( 16 );
     var_4 = getnode( "cover_bus_traverse_1", "targetname" );
     level.burke maps\_utility::set_goal_node( var_4 );
-    level.player _meth_804F();
+    level.player unlink();
     level.player_rig_highway_ledge delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8301( 1 );
+    level.player allowjump( 1 );
     level.player thread maps\lagos_utility::give_player_more_ammo( 5 );
-    level.player _meth_80FF();
+    level.player disableslowaim();
 
     if ( level.currentgen )
         level.player setorigin( level.player.origin + ( 0, -36, 5 ) );
@@ -6283,7 +6283,7 @@ start_bus_moving_before_anim_ends( var_0, var_1, var_2 )
 {
     wait(var_2);
     var_3 = getvehiclenode( var_1, "targetname" );
-    var_0 _meth_827F( var_3 );
+    var_0 startpath( var_3 );
 }
 
 traffic_anim_bus_1( var_0, var_1 )
@@ -6297,7 +6297,7 @@ traffic_anim_bus_1( var_0, var_1 )
 wheel_for_hostage_car()
 {
     wait 0.5;
-    self _meth_814B( %lag_takedown_van_wheels, 1, 0, -1 );
+    self setanim( %lag_takedown_van_wheels, 1, 0, -1 );
 }
 
 traffic_start_camera_shake()
@@ -6337,9 +6337,9 @@ trigger_kill_player()
         if ( isdefined( var_0 ) && isplayer( var_0 ) && level.player.jump_state != 2 && !common_scripts\utility::flag( "flag_highway_final_takedown_started" ) )
         {
             earthquake( 0.5, 2, level.player.origin, 512 );
-            level.player _meth_80AD( "damage_heavy" );
+            level.player playrumbleonentity( "damage_heavy" );
             level.player freezecontrols( 1 );
-            level.player _meth_8052();
+            level.player kill();
             level notify( "player_fell_highway" );
         }
     }
@@ -6365,12 +6365,12 @@ traffic_traverse_ledge_player_validation()
 
         if ( isplayer( var_0 ) )
         {
-            level.player _meth_8301( 0 );
+            level.player allowjump( 0 );
             thread maps\lagos_utility::hint_instant( &"LAGOS_BUS_JUMP_1" );
 
             while ( common_scripts\utility::flag( "flag_traffic_ledge_jump_trigger" ) )
             {
-                if ( level.player _meth_83DE() )
+                if ( level.player jumpbuttonpressed() )
                 {
                     thread maps\lagos_utility::hint_fade_instant();
                     common_scripts\utility::flag_set( "flag_highway_ledge_climb_started" );
@@ -6380,7 +6380,7 @@ traffic_traverse_ledge_player_validation()
                 waitframe();
             }
 
-            level.player _meth_8301( 1 );
+            level.player allowjump( 1 );
             thread maps\lagos_utility::hint_fade_instant();
         }
     }
@@ -6397,9 +6397,9 @@ traffic_traverse_start_player_input()
 
 traffic_traverse_start_player_validation()
 {
-    level.player _meth_82DD( "traffic_traverse_start_player", "+gostand" );
+    level.player notifyonplayercommand( "traffic_traverse_start_player", "+gostand" );
     level.player waittill( "traffic_traverse_start_player" );
-    level.player _meth_849C( "traffic_traverse_start_player", "+gostand" );
+    level.player notifyonplayercommandremove( "traffic_traverse_start_player", "+gostand" );
     common_scripts\utility::flag_set( "flag_highway_ledge_jump_started" );
 }
 
@@ -6440,11 +6440,11 @@ traffic_rooftop_traverse()
     var_14 = getent( "sb_bus_traverse_3", "targetname" );
     var_15 = getent( "sb_bus_traverse_4", "targetname" );
     var_16 = getent( "sb_bus_traverse_5", "targetname" );
-    var_12 _meth_804D( var_2 );
-    var_13 _meth_804D( var_3 );
-    var_14 _meth_804D( var_4 );
-    var_15 _meth_804D( var_5 );
-    var_16 _meth_804D( var_6 );
+    var_12 linkto( var_2 );
+    var_13 linkto( var_3 );
+    var_14 linkto( var_4 );
+    var_15 linkto( var_5 );
+    var_16 linkto( var_6 );
     var_17 = getent( "trigger_bus_traverse_2", "targetname" );
     var_18 = getent( "trigger_bus_traverse_3", "targetname" );
     var_19 = getent( "trigger_bus_traverse_4", "targetname" );
@@ -6456,16 +6456,16 @@ traffic_rooftop_traverse()
     level.trigger_bus_traverse_5_flag_in = getent( "traffic_final_takedown_trigger_in", "targetname" );
     level.trigger_bus_traverse_5_flag_in maps\lagos_utility::fake_linkto( var_6 );
     level.trigger_bus_traverse_5_threaded = getent( "trigger_player_ready_for_final_takedown", "targetname" );
-    level.trigger_bus_traverse_5_threaded _meth_8069();
-    level.trigger_bus_traverse_5_threaded _meth_804D( var_6 );
+    level.trigger_bus_traverse_5_threaded enablelinkto();
+    level.trigger_bus_traverse_5_threaded linkto( var_6 );
     level.trigger_bus_traverse_5_looking = getent( "traffic_final_takedown_trigger_looking", "targetname" );
     level.trigger_bus_traverse_5_looking maps\lagos_utility::fake_linkto( var_6 );
     level.final_bus = var_6;
     level.final_bus.animname = "final_bus";
     level.bus_5_hop_blocker_a = getent( "bus_5_hop_blocker_a", "targetname" );
     level.bus_5_hop_blocker_b = getent( "bus_5_hop_blocker_b", "targetname" );
-    level.bus_5_hop_blocker_a _meth_804D( var_6 );
-    level.bus_5_hop_blocker_b _meth_804D( var_6 );
+    level.bus_5_hop_blocker_a linkto( var_6 );
+    level.bus_5_hop_blocker_b linkto( var_6 );
     var_21 = getent( "trigger_bus_traverse_2_burke", "targetname" );
     var_22 = getent( "trigger_bus_traverse_3_burke", "targetname" );
     var_23 = getent( "trigger_bus_traverse_4_burke", "targetname" );
@@ -6478,10 +6478,10 @@ traffic_rooftop_traverse()
     if ( !isdefined( level.debugstart_middle_takedown ) )
     {
         common_scripts\utility::flag_wait( "flag_start_traffic_traverse" );
-        var_2 _meth_827F( var_7 );
-        var_2 _meth_822E();
-        var_3 _meth_827F( var_8 );
-        var_3 _meth_822E();
+        var_2 startpath( var_7 );
+        var_2 vehphys_disablecrashing();
+        var_3 startpath( var_8 );
+        var_3 vehphys_disablecrashing();
         common_scripts\utility::flag_wait( "flag_highway_VM_looking_forward" );
         thread traffic_suv_group_a();
         thread traffic_suv_group_b();
@@ -6495,8 +6495,8 @@ traffic_rooftop_traverse()
         traffic_vehicle_start_check( "trigger_spawn_traverse_2", "bus_traverse_1" );
         thread traffic_burke_jump_bus_2();
         traffic_vehicle_start_check( "trigger_spawn_traverse_3_start", "bus_traverse_2" );
-        var_4 _meth_827F( var_9 );
-        var_4 _meth_822E();
+        var_4 startpath( var_9 );
+        var_4 vehphys_disablecrashing();
         traffic_vehicle_start_check( "trigger_spawn_traverse_3", "bus_traverse_2" );
         thread traffic_bus_3_flag_check();
         thread traffic_burke_jump_bus_3();
@@ -6512,14 +6512,14 @@ traffic_rooftop_traverse()
     else
         traffic_vehicle_start_check( "trigger_spawn_traverse_4_start_debug", "bus_traverse_3" );
 
-    var_5 _meth_827F( var_10 );
-    var_5 _meth_822E();
+    var_5 startpath( var_10 );
+    var_5 vehphys_disablecrashing();
     traffic_vehicle_start_check( "trigger_spawn_traverse_4", "bus_traverse_3" );
     thread traffic_burke_jump_bus_4();
     traffic_vehicle_start_check( "trigger_spawn_traverse_5_start", "bus_traverse_4" );
-    var_6 _meth_827F( var_11 );
-    var_6 _meth_822E();
-    var_0 _meth_827F( var_1 );
+    var_6 startpath( var_11 );
+    var_6 vehphys_disablecrashing();
+    var_0 startpath( var_1 );
     traffic_vehicle_start_check( "trigger_spawn_traverse_5", "bus_traverse_4" );
     thread traffic_burke_jump_bus_5();
     common_scripts\utility::flag_wait( "flag_bus_traverse_5_start_takedown" );
@@ -6671,10 +6671,10 @@ traffic_link_luggage( var_0, var_1, var_2 )
     foreach ( var_4 in var_1 )
     {
         if ( var_4.classname != "script_origin" )
-            var_4 _meth_804D( var_0 );
+            var_4 linkto( var_0 );
     }
 
-    var_0 _meth_804D( var_2 );
+    var_0 linkto( var_2 );
 }
 
 traffic_suv_group_a()
@@ -6796,9 +6796,9 @@ traffic_helicopter()
     level.vehicle_aianims["script_vehicle_littlebird_kva_armed"][7].explosion_death = %death_explosion_stand_f_v2;
     level.helo soundscripts\_snd::snd_message( "spawn_traffic_helicopter" );
     var_0 = getent( "heli_bullet_source_left", "targetname" );
-    var_0 _meth_804D( level.helo );
+    var_0 linkto( level.helo );
     var_1 = getent( "heli_bullet_source_right", "targetname" );
-    var_1 _meth_804D( level.helo );
+    var_1 linkto( level.helo );
     level.burke.baseaccuracy = 0.05;
     level.player maps\_utility::add_damage_function( ::highway_veteran_helo_reduction );
     wait 3;
@@ -6885,18 +6885,18 @@ traffic_takedown()
         thread maps\lagos_utility::start_end_takedown_highway_path_player_side();
         var_0 maps\lagos_qte::setup_vehicles_for_takedown();
         var_0 maps\_anim::anim_first_frame_solo( level.hostage_truck, "hostage_truck_takedown_pt1" );
-        level.player _meth_804F();
+        level.player unlink();
         var_1.origin = getstartorigin( level.hostage_truck gettagorigin( "tag_body" ), level.hostage_truck gettagangles( "tag_body" ), var_1 maps\_utility::getanim( "hostage_truck_takedown_pt0" ) );
-        var_1 _meth_808E();
+        var_1 dontcastshadows();
         level.hostage_truck maps\_anim::anim_first_frame_solo( var_1, "hostage_truck_takedown_pt0", "tag_body" );
         var_0 maps\_anim::anim_first_frame_solo( level.final_bus, "hostage_truck_takedown_pt1" );
-        var_1 _meth_804D( level.hostage_truck, "tag_body" );
+        var_1 linkto( level.hostage_truck, "tag_body" );
         level.player setorigin( var_1 gettagorigin( "tag_player" ) );
-        level.player _meth_807F( var_1, "tag_player" );
+        level.player playerlinktoabsolute( var_1, "tag_player" );
         var_1 show();
         level.hostage_truck thread maps\_anim::anim_single_solo( var_1, "hostage_truck_takedown_pt0", "tag_body" );
         var_2 = getanimlength( var_1 maps\_utility::getanim( "hostage_truck_takedown_pt0" ) );
-        level.player common_scripts\utility::delaycall( var_2, ::_meth_804F );
+        level.player common_scripts\utility::delaycall( var_2, ::unlink );
         var_1 common_scripts\utility::delaycall( var_2, ::hide );
         level.player maps\_utility::delaythread( var_2, maps\_shg_utility::setup_player_for_gameplay );
         earthquake( 1, 0.5, level.player.origin, 10000 );
@@ -6908,7 +6908,7 @@ traffic_takedown()
         var_0 maps\lagos_qte::setup_vehicles_for_takedown();
 
     var_1 show();
-    level.player _meth_849C( "exo_jump_button", "+gostand" );
+    level.player notifyonplayercommandremove( "exo_jump_button", "+gostand" );
 
     if ( !common_scripts\utility::flag( "takedown_playerstart" ) )
     {
@@ -6925,7 +6925,7 @@ traffic_takedown()
     else
         common_scripts\utility::flag_set( "flag_highway_final_takedown_started" );
 
-    _func_0D3( "g_friendlynamedist", 0 );
+    setsaveddvar( "g_friendlynamedist", 0 );
     common_scripts\utility::flag_clear( "flag_player_traversing_traffic" );
 
     if ( !isdefined( level.burke ) )
@@ -6969,7 +6969,7 @@ traffic_takedown()
     thread lagos_player_swimming_pt1();
     thread lagos_player_swimming_pt2();
     level waittill( "swimming_fade" );
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     var_9 = 3;
     thread maps\_hud_util::fade_out( var_9, "black" );
     var_1 common_scripts\utility::delaycall( var_9, ::delete );
@@ -6992,7 +6992,7 @@ traffic_traverse_final_takedown_truck_start( var_0 )
 traffic_traverse_final_takedown_burke_start()
 {
     level endon( "flag_player_hold_on" );
-    level.burke _meth_804D( level.hostage_truck, "tag_body" );
+    level.burke linkto( level.hostage_truck, "tag_body" );
     level.hostage_truck maps\_anim::anim_single_solo( level.burke, "lag_truck_takedown_pt1_into", "tag_body" );
     level.player.jump_state = 0;
     level.hostage_truck maps\_anim::anim_loop_solo( level.burke, "lag_truck_takedown_pt1_burke_loop", undefined, "tag_body" );
@@ -7011,13 +7011,13 @@ traffic_traverse_final_takedown_start_player_input()
 
 traffic_traverse_final_takedown_start_player_validation( var_0 )
 {
-    level.player _meth_82DD( "final_takedown_jump", "+gostand" );
+    level.player notifyonplayercommand( "final_takedown_jump", "+gostand" );
     level endon( "flag_highway_final_takedown_started" );
     level endon( "traffic_traverse_final_takedown_jump_failed" );
 
     for (;;)
     {
-        while ( !level.player _meth_8341() )
+        while ( !level.player isonground() )
             wait 0.05;
 
         level.player waittill( "final_takedown_jump" );
@@ -7029,11 +7029,11 @@ traffic_traverse_final_takedown_start_player_validation( var_0 )
 
 traffic_player_hostage_truck_jump_passed( var_0 )
 {
-    if ( level.player _meth_8214( level.hostage_truck.origin + ( 0, 0, 72 ), 65, 500 ) )
+    if ( level.player worldpointinreticle_circle( level.hostage_truck.origin + ( 0, 0, 72 ), 65, 500 ) )
     {
         if ( distance( level.player.origin, level.hostage_truck.origin ) <= var_0 )
         {
-            if ( level.player _meth_82F3()[0] > 0.5 )
+            if ( level.player getnormalizedmovement()[0] > 0.5 )
             {
                 if ( common_scripts\utility::flag( "flag_traffic_final_takedown_trigger_in" ) )
                     return 1;
@@ -7048,7 +7048,7 @@ shore_pcap( var_0 )
 {
     common_scripts\utility::flag_set( "obj_complete_pursue_hostage_truck" );
     thread maps\_player_exo::player_exo_deactivate();
-    level.player _meth_80FE( 0.2, 0.2 );
+    level.player enableslowaim( 0.2, 0.2 );
 
     if ( isdefined( var_0 ) )
         wait(var_0);
@@ -7056,7 +7056,7 @@ shore_pcap( var_0 )
         wait 6;
 
     var_1 = 55;
-    level.player _meth_8031( var_1, 0.1 );
+    level.player lerpfov( var_1, 0.1 );
 
     if ( !isdefined( level.burke ) )
         level.burke = getent( "burke_takedown", "targetname" ) maps\_utility::spawn_ai( 1, 1 );
@@ -7075,7 +7075,7 @@ shore_pcap( var_0 )
     thread maps\_hud_util::fade_in( 3, "black" );
     thread maps\lagos_vo::pcap_shore_outro();
     var_6 = [ level.burke, var_2, var_3, var_4, level.hostage_1 ];
-    level.player _meth_807D( var_4, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 7, 7, 5, 5, 1 );
     waitframe();
     soundscripts\_snd::snd_message( "shore_ending" );
     level.hostage_1 attach( "npc_bal27_nocamo", "TAG_WEAPON_RIGHT", 0 );
@@ -7090,7 +7090,7 @@ shore_pcap( var_0 )
     thread maps\_utility::battlechatter_off( "axis" );
     wait(var_7);
     level.player freezecontrols( 1 );
-    level.player _meth_804F();
+    level.player unlink();
     var_4 delete();
     maps\_utility::nextmission();
 }
@@ -7098,8 +7098,8 @@ shore_pcap( var_0 )
 enable_player_swimming()
 {
     thread disable_player_swimming();
-    level.player _meth_831D();
-    level.player _meth_80F0();
+    level.player disableweapons();
+    level.player disableinvulnerability();
 }
 
 disable_player_swimming()
@@ -7134,7 +7134,7 @@ hostage_truck_swimming_drowning_monitor( var_0 )
 
     for ( var_1 = 0; !common_scripts\utility::flag( var_0 ); var_1++ )
     {
-        level.player _meth_8051( 10, level.player.origin );
+        level.player dodamage( 10, level.player.origin );
 
         if ( var_1 == 1 || var_1 == 4 || var_1 == 8 )
         {
@@ -7152,13 +7152,13 @@ traffic_traverse_fail_check()
 
     while ( common_scripts\utility::flag( "flag_player_traversing_traffic" ) && isdefined( level.bus_jump_count ) )
     {
-        if ( _func_220( level.player.origin, level.burke.origin ) > var_0 )
+        if ( distance2dsquared( level.player.origin, level.burke.origin ) > var_0 )
         {
             if ( level.bus_jump_count > 1 && !common_scripts\utility::flag( "flag_bus_traverse_" + level.bus_jump_count + "_burke" ) )
                 traffic_burke_recover_failed_jump();
         }
 
-        if ( _func_220( level.player.origin, level.burke.origin ) > var_0 )
+        if ( distance2dsquared( level.player.origin, level.burke.origin ) > var_0 )
         {
             common_scripts\utility::flag_clear( "flag_player_traversing_traffic" );
             setdvar( "ui_deadquote", &"LAGOS_BUS_JUMP_FAILED" );
@@ -7171,7 +7171,7 @@ traffic_traverse_fail_check()
 
 player_upkeep()
 {
-    level.player _meth_8332( "iw5_bal27_sp_variablereddot" );
+    level.player givemaxammo( "iw5_bal27_sp_variablereddot" );
 }
 
 level_bounds()
@@ -7408,143 +7408,143 @@ level_progress_froggercomplete()
 
 notetrack_gov_wall_climb_intro_right_start( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_gov_wall_climb_intro_left_start( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_gov_wall_climb_intro_right_plant( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_gov_wall_climb_intro_left_plant( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_roof_breach_medium( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 notetrack_roof_breach_small( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     wait 4;
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 notetrack_roof_breach_large( var_0 )
 {
     wait 0.5;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_roof_breach_land( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_h_breach_small( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_gov_rescue_handcuffs( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_highway_bus_land_from_ledge( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_highway_jump_land( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_middle_takedown_grab_side( var_0 )
 {
     wait 0.1;
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 notetrack_middle_takedown_truck_swipe( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_dodge" );
     wait 0.25;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_middle_takedown_jump_to_truck( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_jump" );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_middle_takedown_land_on_truck( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_jump" );
     wait 1.25;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_middle_takedown_punch_window( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_pull_windshield" );
     wait 0.25;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
     rumble_middle_takedown_throw_guy();
 }
 
 rumble_middle_takedown_throw_guy()
 {
     wait 1.5;
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     wait 2;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_middle_takedown_jump_to_bus( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_jump2" );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_middle_takedown_land_on_bus( var_0 )
 {
     common_scripts\utility::flag_wait( "flag_player_jump2" );
     wait 1.5;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_highway_final_td_mirror_snap_and_drag( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     wait 1;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_highway_final_td_suv_collision( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_highway_final_td_truck_rail_impact( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     wait 0.4;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 notetrack_highway_final_td_truck_water_impact( var_0 )
 {
     wait 0.7;
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }

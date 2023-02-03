@@ -152,7 +152,7 @@ monitorplayerinexploitvolume()
 
                     foreach ( var_6 in var_2[var_11.currentzone] )
                     {
-                        if ( var_11 _meth_80A9( var_6 ) )
+                        if ( var_11 istouching( var_6 ) )
                         {
                             var_11.isinexploitspot = 1;
                             break;
@@ -207,7 +207,7 @@ spawnzombie( var_0, var_1, var_2 )
     var_5.spawner = var_4;
     var_5 updatemeleechargeforcurrenthealth();
 
-    if ( _func_2D9( var_5 ) )
+    if ( isscriptedagent( var_5 ) )
     {
         if ( isdefined( var_2 ) )
             var_5 thread maps\mp\zombies\_util::zombie_set_eyes( var_2 );
@@ -215,11 +215,11 @@ spawnzombie( var_0, var_1, var_2 )
             var_5 thread setdefaulteyes();
     }
 
-    var_5 _meth_8177( "zombies" );
+    var_5 setthreatbiasgroup( "zombies" );
     var_5 thread domoveloopeffects();
 
-    if ( _func_2D9( var_5 ) )
-        var_5 _meth_8556( var_0 );
+    if ( isscriptedagent( var_5 ) )
+        var_5 scragentsetzombietype( var_0 );
 
     if ( isdefined( level.onzombiespawnfuncs ) )
     {
@@ -234,23 +234,23 @@ updatemeleechargeforcurrenthealth()
 {
     if ( maps\mp\zombies\_util::isinstakill() )
     {
-        self _meth_8549( 1 );
-        self _meth_854E( 1 );
+        self setmeleechargevalid( 1 );
+        self setexomeleechargevalid( 1 );
     }
     else
     {
         if ( self.health <= level.playermeleedamage )
-            self _meth_8549( 1 );
+            self setmeleechargevalid( 1 );
         else
-            self _meth_8549( 0 );
+            self setmeleechargevalid( 0 );
 
         if ( self.health <= level.playerexomeleedamage )
         {
-            self _meth_854E( 1 );
+            self setexomeleechargevalid( 1 );
             return;
         }
 
-        self _meth_854E( 0 );
+        self setexomeleechargevalid( 0 );
     }
 }
 
@@ -336,7 +336,7 @@ deathgibmonitor()
     if ( !isplayer( var_0 ) )
         return;
 
-    var_3 = var_0 _meth_8311();
+    var_3 = var_0 getcurrentweapon();
     var_4 = maps\mp\_utility::getweaponclass( var_3 );
     var_5 = distance( var_0.origin, self.origin );
 
@@ -363,7 +363,7 @@ deathgibs( var_0 )
 deathragdoll()
 {
     var_0 = self.origin + ( 0, 0, 8 );
-    self.body _meth_8023();
+    self.body startragdoll();
     wait 0.1;
     physicsexplosionsphere( var_0, 128, 0, 5, 0 );
 }
@@ -400,7 +400,7 @@ monitorbadzombieai()
         var_5 = distancesquared( self.origin, var_1 );
         var_6 = ( gettime() - var_2 ) / 1000;
         var_7 = var_5 > 16384;
-        var_8 = _func_2D9( self ) && self.aistate == "melee" && isdefined( self.curmeleetarget ) && distancesquared( self.curmeleetarget.origin, self.origin ) < 6400;
+        var_8 = isscriptedagent( self ) && self.aistate == "melee" && isdefined( self.curmeleetarget ) && distancesquared( self.curmeleetarget.origin, self.origin ) < 6400;
 
         if ( var_7 || var_8 )
         {
@@ -479,7 +479,7 @@ monitorstuckintraversal()
         if ( self.velocity_zero_time > 2.0 )
         {
             var_0 = undefined;
-            var_1 = self _meth_819D();
+            var_1 = self getnegotiationstartnode();
 
             if ( isdefined( var_1 ) )
             {
@@ -491,7 +491,7 @@ monitorstuckintraversal()
 
             if ( !isdefined( var_0 ) && maps\mp\zombies\_util::getzombieslevelnum() >= 3 )
             {
-                var_3 = self _meth_83E1();
+                var_3 = self getpathgoalpos();
 
                 if ( isdefined( var_3 ) && distancesquared( self.origin, var_3 ) > 120 )
                 {
@@ -514,7 +514,7 @@ monitorstuckintraversal()
 
                     if ( var_9 >= 2 )
                     {
-                        var_12 = self _meth_8551();
+                        var_12 = self scragentgetnodesonpath();
 
                         if ( var_12.size > 0 )
                             var_0 = var_12[0].origin;
@@ -546,7 +546,7 @@ onzombiekilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     }
 
     thread maps\mp\zombies\_mutators::onkilledmutators( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
-    self _meth_83FB();
+    self hudoutlinedisable();
     maps\mp\zombies\_util::onscriptagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
     spawnzombiekilledfx( self.activemutators, var_3, var_4 );
 }
@@ -763,7 +763,7 @@ spawncorpsefullbodygib( var_0 )
     var_4 = level.dismemberment["full"]["fxTagName"];
     playfxontag( var_3, self.body, var_4 );
     var_5 = maps\mp\zombies\_util::getdismembersoundname();
-    self.body _meth_8438( level.dismemberment["full"][var_5] );
+    self.body playsoundonmovingent( level.dismemberment["full"][var_5] );
     wait 3;
 
     if ( isdefined( self.body ) )
@@ -842,7 +842,7 @@ onzombiedamagefinished( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
     if ( isalive( self ) )
     {
         if ( var_11 && !maps\mp\zombies\_util::ispendingdeath() )
-            self _meth_826B();
+            self suicide();
         else
             updatemeleechargeforcurrenthealth();
     }

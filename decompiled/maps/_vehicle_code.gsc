@@ -83,7 +83,7 @@ vehicle_linked_entities_think()
     foreach ( var_4 in var_0 )
     {
         if ( var_4 != var_2 )
-            var_4 _meth_804D( var_2 );
+            var_4 linkto( var_2 );
     }
 
     self waittill( "spawned", var_8 );
@@ -93,7 +93,7 @@ vehicle_linked_entities_think()
         var_4 show();
 
         if ( var_4 != var_2 )
-            var_4 _meth_804D( var_8 );
+            var_4 linkto( var_8 );
     }
 
     var_8 waittill( "death" );
@@ -332,7 +332,7 @@ path_detour( var_0 )
         self.attachedpath = var_2;
         thread _vehicle_paths();
 
-        if ( self _meth_822B() && isdefined( var_1.script_transmission ) )
+        if ( self vehicle_isphysveh() && isdefined( var_1.script_transmission ) )
             thread reverse_node( var_1 );
 
         return;
@@ -353,7 +353,7 @@ reverse_node( var_0 )
 
 _setswitchnode( var_0, var_1 )
 {
-    self _meth_8280( var_0, var_1 );
+    self setswitchnode( var_0, var_1 );
 }
 
 detour_flag( var_0 )
@@ -401,9 +401,9 @@ spawn_array( var_0 )
                 var_8 = maps\_spawner::get_spawner_from_pool( var_4, 1 );
 
             if ( isdefined( var_4.script_forcespawn ) || var_2 )
-                var_6 = var_8 _meth_8094( var_7 );
+                var_6 = var_8 stalingradspawn( var_7 );
             else
-                var_6 = var_8 _meth_8093( var_7 );
+                var_6 = var_8 dospawn( var_7 );
 
             if ( isdefined( var_4.script_spawn_pool ) )
             {
@@ -730,7 +730,7 @@ vehicle_paths_non_heli( var_0 )
             }
 
             if ( var_4.script_noteworthy == "engineoff" )
-                self _meth_828B();
+                self vehicle_turnengineoff();
         }
 
         if ( isdefined( var_4.script_crashtypeoverride ) )
@@ -796,7 +796,7 @@ vehicle_paths_non_heli( var_0 )
             if ( isdefined( var_4.script_decel ) )
                 var_7 = var_4.script_decel;
 
-            self _meth_8283( 0, var_7 );
+            self vehicle_setspeed( 0, var_7 );
             maps\_utility::ent_flag_wait( var_4.script_ent_flag_wait );
 
             if ( !isdefined( self ) )
@@ -807,7 +807,7 @@ vehicle_paths_non_heli( var_0 )
             if ( isdefined( var_4.script_accel ) )
                 var_8 = var_4.script_accel;
 
-            self _meth_8291( var_8 );
+            self resumespeed( var_8 );
         }
 
         if ( isdefined( var_4.script_delay ) )
@@ -817,7 +817,7 @@ vehicle_paths_non_heli( var_0 )
             if ( isdefined( var_4.script_decel ) )
                 var_7 = var_4.script_decel;
 
-            self _meth_8283( 0, var_7 );
+            self vehicle_setspeed( 0, var_7 );
 
             if ( isdefined( var_4.target ) )
                 thread overshoot_next_node( [[ var_5 ]]( var_4.target ) );
@@ -829,7 +829,7 @@ vehicle_paths_non_heli( var_0 )
             if ( isdefined( var_4.script_accel ) )
                 var_8 = var_4.script_accel;
 
-            self _meth_8291( var_8 );
+            self resumespeed( var_8 );
         }
 
         if ( isdefined( var_4.script_flag_wait ) )
@@ -879,7 +879,7 @@ vehicle_paths_non_heli( var_0 )
         if ( isdefined( self.set_lookat_point ) )
         {
             self.set_lookat_point = undefined;
-            self _meth_8266();
+            self clearlookatent();
         }
 
         if ( isdefined( var_4.script_vehicle_lights_off ) )
@@ -905,7 +905,7 @@ vehicle_paths_non_heli( var_0 )
         }
         else if ( islastnode( var_4 ) || isdefined( var_4.script_unload ) )
         {
-            var_10 = max( 0.01, length( self _meth_8287() ) );
+            var_10 = max( 0.01, length( self vehicle_getvelocity() ) );
             var_11 = distance( self.origin, var_4.origin );
             var_12 = max( 0.01, var_11 / var_10 );
             self notify( "about_to_stop", var_12 );
@@ -977,10 +977,10 @@ vehicle_paths_helicopter( var_0, var_1, var_2 )
 
         if ( isdefined( var_7.script_helimove ) )
         {
-            self _meth_8293( var_7.script_helimove );
+            self setyawspeedbyname( var_7.script_helimove );
 
             if ( var_7.script_helimove == "faster" )
-                self _meth_8294( 25, 50 );
+                self setmaxpitchroll( 25, 50 );
         }
 
         if ( isdefined( var_7.script_noteworthy ) )
@@ -1040,7 +1040,7 @@ vehicle_paths_helicopter( var_0, var_1, var_2 )
             }
 
             if ( var_7.script_noteworthy == "engineoff" )
-                self _meth_828B();
+                self vehicle_turnengineoff();
         }
 
         if ( isdefined( var_7.script_crashtypeoverride ) )
@@ -1083,7 +1083,7 @@ vehicle_paths_helicopter( var_0, var_1, var_2 )
         if ( vehicle_should_unload( ::heli_wait_node, var_7 ) )
             thread unload_node( var_7 );
 
-        if ( self _meth_822B() )
+        if ( self vehicle_isphysveh() )
         {
             if ( isdefined( var_7.script_transmission ) )
             {
@@ -1112,7 +1112,7 @@ vehicle_paths_helicopter( var_0, var_1, var_2 )
         if ( isdefined( self.set_lookat_point ) )
         {
             self.set_lookat_point = undefined;
-            self _meth_8266();
+            self clearlookatent();
         }
 
         if ( isdefined( var_7.script_vehicle_lights_off ) )
@@ -1199,7 +1199,7 @@ heli_wait_node( var_0, var_1, var_2 )
                 var_0.origin = maps\_utility::groundpos( var_0.origin ) + ( 0, 0, self.fastropeoffset );
         }
 
-        self _meth_8253( 0, 0, 0 );
+        self sethoverparams( 0, 0, 0 );
     }
 
     if ( isdefined( var_0.script_unload ) && isdefined( self.parachute_unload ) )
@@ -1251,11 +1251,11 @@ heli_wait_node( var_0, var_1, var_2 )
     if ( isdefined( self.heliheightoverride ) )
         var_15 = ( var_15[0], var_15[1], self.heliheightoverride );
 
-    self _meth_8260( var_15, var_5, var_6, var_7, var_0.script_goalyaw, var_0.script_anglevehicle, var_14, var_4, var_13, var_9, var_10, var_11, var_12, var_8 );
+    self vehicle_helisetai( var_15, var_5, var_6, var_7, var_0.script_goalyaw, var_0.script_anglevehicle, var_14, var_4, var_13, var_9, var_10, var_11, var_12, var_8 );
 
     if ( isdefined( var_0.radius ) )
     {
-        self _meth_825A( var_0.radius );
+        self setneargoalnotifydist( var_0.radius );
         common_scripts\utility::waittill_any( "near_goal", "goal" );
     }
     else
@@ -1318,7 +1318,7 @@ vehicle_init( var_0 )
     if ( isdefined( level.vehicle_hide_list[var_1] ) )
     {
         foreach ( var_3 in level.vehicle_hide_list[var_1] )
-            var_0 _meth_8048( var_3 );
+            var_0 hidepart( var_3 );
     }
 
     if ( var_0.vehicletype == "empty" )
@@ -1351,7 +1351,7 @@ vehicle_init( var_0 )
     if ( isdefined( level.vehicle_draw_thermal ) )
     {
         if ( level.vehicle_draw_thermal )
-            var_0 _meth_8029();
+            var_0 thermaldrawenable();
     }
 
     var_0 maps\_utility::ent_flag_init( "unloaded" );
@@ -1389,7 +1389,7 @@ vehicle_init( var_0 )
     var_0 thread maps\_vehicle_aianim::handle_attached_guys();
 
     if ( isdefined( var_0.script_friendname ) )
-        var_0 _meth_8258( var_0.script_friendname, &"" );
+        var_0 setvehiclelookattext( var_0.script_friendname, &"" );
 
     if ( !var_0 ischeap() )
         var_0 thread vehicle_handleunloadevent();
@@ -1421,7 +1421,7 @@ vehicle_init( var_0 )
     vehicle_levelstuff( var_0 );
 
     if ( isdefined( var_0.script_team ) )
-        var_0 _meth_8259( var_0.script_team );
+        var_0 setvehicleteam( var_0.script_team );
 
     if ( !var_0 ischeap() )
         var_0 thread disconnect_paths_whenstopped();
@@ -1436,7 +1436,7 @@ vehicle_init( var_0 )
     if ( var_0 hashelicopterdustkickup() && !var_11 )
         var_0 thread aircraft_wash_thread();
 
-    if ( var_0 _meth_822B() )
+    if ( var_0 vehicle_isphysveh() )
     {
         if ( isdefined( var_0.script_pathtype ) )
             var_0.veh_pathtype = var_0.script_pathtype;
@@ -1474,12 +1474,12 @@ kill_damage( var_0 )
         return;
 
     if ( level.vehicle_death_radiusdamage[var_0].bkillplayer )
-        level.player _meth_8132( 0 );
+        level.player enablehealthshield( 0 );
 
-    self entityradiusdamage( self.origin + level.vehicle_death_radiusdamage[var_0].offset, level.vehicle_death_radiusdamage[var_0].range, var_1, var_2, self );
+    self radiusdamage( self.origin + level.vehicle_death_radiusdamage[var_0].offset, level.vehicle_death_radiusdamage[var_0].range, var_1, var_2, self );
 
     if ( level.vehicle_death_radiusdamage[var_0].bkillplayer )
-        level.player _meth_8132( 1 );
+        level.player enablehealthshield( 1 );
 }
 
 vehicle_kill_common( var_0, var_1 )
@@ -1610,7 +1610,7 @@ vehicle_kill()
             var_13 = level.vehicle_rumble[var_1];
 
         if ( isdefined( var_13 ) )
-            self _meth_80AF( var_13.rumble );
+            self stoprumble( var_13.rumble );
 
         if ( isdefined( level.vehicle_death_thread ) && isdefined( var_0 ) && isdefined( level.vehicle_death_thread[var_0] ) )
             thread [[ level.vehicle_death_thread[var_0] ]]();
@@ -1624,8 +1624,8 @@ vehicle_kill()
         {
             wait 0.05;
 
-            if ( !isdefined( self.dontdisconnectpaths ) && !self _meth_822B() )
-                self _meth_8057();
+            if ( !isdefined( self.dontdisconnectpaths ) && !self vehicle_isphysveh() )
+                self disconnectpaths();
 
             _freevehicle();
             wait 0.05;
@@ -1639,7 +1639,7 @@ vehicle_kill()
             self notify( "newpath" );
 
             if ( !isdefined( self.dontdisconnectpaths ) )
-                self _meth_8057();
+                self disconnectpaths();
 
             vehicle_kill_badplace_forever();
             _freevehicle();
@@ -1667,7 +1667,7 @@ vehicle_kill()
             if ( !isdefined( self ) )
                 continue;
 
-            if ( self _meth_822B() )
+            if ( self vehicle_isphysveh() )
             {
                 while ( isdefined( self ) && self.veh_speed != 0 )
                     wait 1;
@@ -1675,11 +1675,11 @@ vehicle_kill()
                 if ( !isdefined( self ) )
                     return;
 
-                self _meth_8057();
+                self disconnectpaths();
                 self notify( "kill_badplace_forever" );
-                self _meth_8052();
+                self kill();
                 self notify( "newpath" );
-                self _meth_828B();
+                self vehicle_turnengineoff();
                 return;
             }
             else
@@ -1700,7 +1700,7 @@ vehicle_kill()
 _freevehicle()
 {
     self notify( "newpath" );
-    self _meth_8255();
+    self freevehicle();
     maps\_utility::delaythread( 0.05, ::extra_vehicle_cleanup );
 }
 
@@ -1813,13 +1813,13 @@ vehicle_finish_death( var_0 )
     if ( !isdefined( self ) )
         return;
 
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 
     if ( isdefined( level.vehicle_driveidle[var_0] ) )
-        self _meth_8142( level.vehicle_driveidle[var_0], 0 );
+        self clearanim( level.vehicle_driveidle[var_0], 0 );
 
     if ( isdefined( level.vehicle_driveidle_r[var_0] ) )
-        self _meth_8142( level.vehicle_driveidle_r[var_0], 0 );
+        self clearanim( level.vehicle_driveidle_r[var_0], 0 );
 }
 
 vehicle_should_do_rocket_death( var_0, var_1, var_2 )
@@ -1853,7 +1853,7 @@ vehicle_do_crash( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( self.script_crashtypeoverride ) )
         var_4 = self.script_crashtypeoverride;
-    else if ( self _meth_822B() )
+    else if ( self vehicle_isphysveh() )
         var_4 = "physics";
     else if ( _ishelicopter() )
         var_4 = "helicopter";
@@ -1867,18 +1867,18 @@ vehicle_do_crash( var_0, var_1, var_2, var_3 )
             break;
         case "tank":
             if ( !isdefined( self.rollingdeath ) )
-                self _meth_8283( 0, 25 );
+                self vehicle_setspeed( 0, 25 );
             else
             {
-                self _meth_8283( 8, 25 );
+                self vehicle_setspeed( 8, 25 );
                 self waittill( "deathrolloff" );
-                self _meth_8283( 0, 25 );
+                self vehicle_setspeed( 0, 25 );
             }
 
             self notify( "deadstop" );
 
             if ( !isdefined( self.dontdisconnectpaths ) )
-                self _meth_8057();
+                self disconnectpaths();
 
             if ( isdefined( self.tankgetout ) && self.tankgetout > 0 )
                 self waittill( "animsdone" );
@@ -1886,15 +1886,15 @@ vehicle_do_crash( var_0, var_1, var_2, var_3 )
             break;
         case "diveboat":
             if ( !isdefined( self.dontdisconnectpaths ) )
-                self _meth_8057();
+                self disconnectpaths();
 
             break;
         case "physics":
-            self crash();
+            self vehphys_crash();
             self notify( "deadstop" );
 
             if ( !isdefined( self.dontdisconnectpaths ) )
-                self _meth_8057();
+                self disconnectpaths();
 
             if ( isdefined( self.tankgetout ) && self.tankgetout > 0 )
                 self waittill( "animsdone" );
@@ -1903,7 +1903,7 @@ vehicle_do_crash( var_0, var_1, var_2, var_3 )
     }
 
     if ( isdefined( level.vehicle_hasmainturret[var_0] ) && level.vehicle_hasmainturret[var_0] )
-        self _meth_8263();
+        self clearturrettarget();
 
     if ( _ishelicopter() )
     {
@@ -1912,7 +1912,7 @@ vehicle_do_crash( var_0, var_1, var_2, var_3 )
     }
     else
     {
-        while ( !is_corpse() && isdefined( self ) && self _meth_8286() > 0 )
+        while ( !is_corpse() && isdefined( self ) && self vehicle_getspeed() > 0 )
             wait 0.1;
     }
 
@@ -1944,10 +1944,10 @@ set_death_model( var_0, var_1 )
     var_2 = _get_dummy();
 
     if ( isdefined( self.clear_anims_on_death ) )
-        var_2 _meth_8142( %root, 0 );
+        var_2 clearanim( %root, 0 );
 
     if ( isdefined( self ) )
-        var_2 _meth_80B1( var_0 );
+        var_2 setmodel( var_0 );
 }
 
 helicopter_crash( var_0, var_1, var_2 )
@@ -1979,7 +1979,7 @@ kill_riders( var_0 )
         if ( isdefined( var_2.magic_bullet_shield ) )
             var_2 maps\_utility::stop_magic_bullet_shield();
 
-        var_2 _meth_8052();
+        var_2 kill();
     }
 }
 
@@ -2018,7 +2018,7 @@ vehicle_becomes_crashable()
     }
 
     self notify( "script_crash_vehicle" );
-    self crash();
+    self vehphys_crash();
 }
 
 _vehicle_landvehicle( var_0, var_1 )
@@ -2028,10 +2028,10 @@ _vehicle_landvehicle( var_0, var_1 )
     if ( !isdefined( var_0 ) )
         var_0 = 2;
 
-    self _meth_825A( var_0 );
-    self _meth_8253( 0, 0, 0 );
-    self _meth_825D();
-    self _meth_825E( common_scripts\utility::flat_angle( self.angles )[1] );
+    self setneargoalnotifydist( var_0 );
+    self sethoverparams( 0, 0, 0 );
+    self cleargoalyaw();
+    self settargetyaw( common_scripts\utility::flat_angle( self.angles )[1] );
     _setvehgoalpos_wrap( maps\_utility::groundpos( self.origin ), 1 );
     self waittill( "goal" );
 }
@@ -2090,7 +2090,7 @@ vehicle_aim_turret_at_angle( var_0 )
     var_1 = anglestoforward( self.angles + ( 0, var_0, 0 ) );
     var_1 *= 10000;
     var_1 += ( 0, 0, 70 );
-    self _meth_8261( var_1 );
+    self setturrettargetvec( var_1 );
 }
 
 vehicle_landvehicle( var_0, var_1 )
@@ -2137,7 +2137,7 @@ _mount_snowmobile( var_0, var_1 )
     var_9 = common_scripts\utility::drop_to_ground( var_9 );
     self.goalradius = 8;
     self.disablearrivals = 1;
-    self _meth_81A6( var_9 );
+    self setgoalpos( var_9 );
     self waittill( "goal" );
     var_0 maps\_anim::anim_generic( self, var_8, var_5 );
     var_0 thread maps\_vehicle_aianim::guy_enter( self );
@@ -2153,8 +2153,8 @@ waittill_stable( var_0 )
     if ( isdefined( self.dropoff_height ) )
     {
         var_4 = maps\_utility::groundpos( var_0.origin ) + ( 0, 0, self.dropoff_height );
-        self _meth_825E( var_0.angles[1] );
-        self _meth_825B( var_4, 1 );
+        self settargetyaw( var_0.angles[1] );
+        self setvehgoalpos( var_4, 1 );
         self waittill( "goal" );
     }
 
@@ -2177,7 +2177,7 @@ _vehicle_badplace()
 
     self endon( "kill_badplace_forever" );
 
-    if ( !self _meth_822B() )
+    if ( !self vehicle_isphysveh() )
         self endon( "death" );
 
     self endon( "delete" );
@@ -2207,7 +2207,7 @@ _vehicle_badplace()
                 return;
         }
 
-        var_4 = self _meth_8286();
+        var_4 = self vehicle_getspeed();
 
         if ( var_4 <= 0 )
         {
@@ -2384,7 +2384,7 @@ _setvehgoalpos_wrap( var_0, var_1 )
     if ( isdefined( self.originheightoffset ) )
         var_0 += ( 0, 0, self.originheightoffset );
 
-    self _meth_825B( var_0, var_1 );
+    self setvehgoalpos( var_0, var_1 );
 }
 
 helicopter_crash_move( var_0, var_1 )
@@ -2417,9 +2417,9 @@ helicopter_crash_move( var_0, var_1 )
     if ( var_5 )
     {
         var_6 = 60;
-        self _meth_8283( var_6, 15, 10 );
-        self _meth_825A( var_2.radius );
-        self _meth_825B( var_2.origin, 0 );
+        self vehicle_setspeed( var_6, 15, 10 );
+        self setneargoalnotifydist( var_2.radius );
+        self setvehgoalpos( var_2.origin, 0 );
         thread helicopter_crash_flavor( var_2.origin, var_6 );
         common_scripts\utility::waittill_any( "goal", "near_goal" );
         helicopter_crash_path( var_2 );
@@ -2430,13 +2430,13 @@ helicopter_crash_move( var_0, var_1 )
 
         if ( isdefined( self.heli_crash_lead ) )
         {
-            var_7 = self.origin + self.heli_crash_lead * self _meth_8287();
+            var_7 = self.origin + self.heli_crash_lead * self vehicle_getvelocity();
             var_7 = ( var_7[0], var_7[1], var_7[2] + var_4 );
         }
 
-        self _meth_8283( 40, 10, 10 );
-        self _meth_825A( 300 );
-        self _meth_825B( var_7, 1 );
+        self vehicle_setspeed( 40, 10, 10 );
+        self setneargoalnotifydist( 300 );
+        self setvehgoalpos( var_7, 1 );
         thread helicopter_crash_flavor( var_7, 40 );
         var_8 = "blank";
 
@@ -2454,7 +2454,7 @@ helicopter_crash_move( var_0, var_1 )
                 var_8 = "death";
         }
 
-        self _meth_825B( var_2.origin, 0 );
+        self setvehgoalpos( var_2.origin, 0 );
         self waittill( "goal" );
         helicopter_crash_path( var_2 );
     }
@@ -2476,8 +2476,8 @@ helicopter_crash_path( var_0 )
         if ( isdefined( var_0.radius ) )
             var_1 = var_0.radius;
 
-        self _meth_825A( var_1 );
-        self _meth_825B( var_0.origin, 0 );
+        self setneargoalnotifydist( var_1 );
+        self setvehgoalpos( var_0.origin, 0 );
         common_scripts\utility::waittill_any( "goal", "near_goal" );
     }
 }
@@ -2485,7 +2485,7 @@ helicopter_crash_path( var_0 )
 helicopter_crash_flavor( var_0, var_1 )
 {
     self endon( "crash_done" );
-    self _meth_8266();
+    self clearlookatent();
     var_2 = 0;
 
     if ( isdefined( self.preferred_crash_style ) )
@@ -2540,9 +2540,9 @@ helicopter_in_air_explosion()
 helicopter_crash_directed( var_0, var_1 )
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8294( randomintrange( 20, 90 ), randomintrange( 5, 90 ) );
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setmaxpitchroll( randomintrange( 20, 90 ), randomintrange( 5, 90 ) );
+    self setyawspeed( 400, 100, 100 );
     var_2 = 90 * randomintrange( -2, 3 );
 
     for (;;)
@@ -2550,7 +2550,7 @@ helicopter_crash_directed( var_0, var_1 )
         var_3 = var_0 - self.origin;
         var_4 = vectortoyaw( var_3 );
         var_4 += var_2;
-        self _meth_825E( var_4 );
+        self settargetyaw( var_4 );
         wait 0.1;
     }
 }
@@ -2558,8 +2558,8 @@ helicopter_crash_directed( var_0, var_1 )
 helicopter_crash_zigzag()
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
     var_0 = randomint( 2 );
 
     for (;;)
@@ -2570,9 +2570,9 @@ helicopter_crash_zigzag()
         var_1 = randomintrange( 20, 120 );
 
         if ( var_0 )
-            self _meth_825E( self.angles[1] + var_1 );
+            self settargetyaw( self.angles[1] + var_1 );
         else
-            self _meth_825E( self.angles[1] - var_1 );
+            self settargetyaw( self.angles[1] - var_1 );
 
         var_0 = 1 - var_0;
         var_2 = randomfloatrange( 0.5, 1.0 );
@@ -2583,8 +2583,8 @@ helicopter_crash_zigzag()
 helicopter_crash_rotate()
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
 
     for (;;)
     {
@@ -2592,7 +2592,7 @@ helicopter_crash_rotate()
             return;
 
         var_0 = randomintrange( 90, 120 );
-        self _meth_825E( self.angles[1] + var_0 );
+        self settargetyaw( self.angles[1] + var_0 );
         wait 0.5;
     }
 }
@@ -2624,7 +2624,7 @@ detach_getoutrigs()
     var_0 = getarraykeys( self.fastroperig );
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
-        self.fastroperig[var_0[var_1]] _meth_804F();
+        self.fastroperig[var_0[var_1]] unlink();
 }
 
 _get_dummy()
@@ -2682,7 +2682,7 @@ kill_jolt( var_0 )
     if ( !isdefined( self ) )
         return;
 
-    self _meth_8254( self.origin + ( 23, 33, 64 ), 3 );
+    self joltbody( self.origin + ( 23, 33, 64 ), 3 );
     wait 2;
 
     if ( !isdefined( self ) )
@@ -2807,16 +2807,16 @@ deathfx_ent()
     {
         var_0 = spawn( "script_model", ( 0, 0, 0 ) );
         var_1 = _get_dummy();
-        var_0 _meth_80B1( self.model );
+        var_0 setmodel( self.model );
         var_0.origin = var_1.origin;
         var_0.angles = var_1.angles;
-        var_0 _meth_82BF();
+        var_0 notsolid();
         var_0 hide();
-        var_0 _meth_804D( var_1 );
+        var_0 linkto( var_1 );
         self.deathfx_ent = var_0;
     }
     else
-        self.deathfx_ent _meth_80B1( self.model );
+        self.deathfx_ent setmodel( self.model );
 
     return self.deathfx_ent;
 }
@@ -2842,7 +2842,7 @@ playloopedfxontag_originupdate( var_0, var_1 )
     var_1.forwardvec = anglestoforward( var_1.angles );
     var_1.upvec = anglestoup( var_1.angles );
 
-    while ( isdefined( self ) && self.code_classname == "script_vehicle" && self _meth_8286() > 0 )
+    while ( isdefined( self ) && self.code_classname == "script_vehicle" && self vehicle_getspeed() > 0 )
     {
         var_2 = _get_dummy();
         var_1.angles = var_2 gettagangles( var_0 );
@@ -2899,7 +2899,7 @@ apply_truckjunk()
         else
         {
             var_3 = spawn( "script_model", self.origin );
-            var_3 _meth_80B1( var_2.model );
+            var_3 setmodel( var_2.model );
         }
 
         var_4 = "tag_body";
@@ -2921,7 +2921,7 @@ apply_truckjunk()
         if ( isdefined( var_2.script_parameters ) )
             var_3.script_parameters = var_2.script_parameters;
 
-        var_3 _meth_804D( self, var_4, var_2.origin, var_2.angles );
+        var_3 linkto( self, var_4, var_2.origin, var_2.angles );
 
         if ( isdefined( var_2.destructible_type ) )
         {
@@ -2936,14 +2936,14 @@ apply_truckjunk()
 truckjunk_dyn( var_0 )
 {
     var_0 endon( "death" );
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
     var_0.health = 8000;
     var_0 waittill( "damage" );
     var_0 hide();
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1.origin = var_0.origin;
     var_1.angles = var_0.angles;
-    var_1 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
     playfxontag( self.destroyefx, var_1, "tag_origin" );
 }
 
@@ -3096,15 +3096,15 @@ manual_tag_linkto( var_0, var_1 )
 
 humvee_antenna_animates( var_0 )
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     humvee_antenna_animates_until_death( var_0 );
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_8142( var_0["idle"], 0 );
-    self _meth_8142( var_0["rot_l"], 0 );
-    self _meth_8142( var_0["rot_r"], 0 );
+    self clearanim( var_0["idle"], 0 );
+    self clearanim( var_0["rot_l"], 0 );
+    self clearanim( var_0["rot_r"], 0 );
 }
 
 humvee_antenna_animates_until_death( var_0 )
@@ -3119,11 +3119,11 @@ humvee_antenna_animates_until_death( var_0 )
             var_1 = 0.0001;
 
         var_2 = randomfloatrange( 0.3, 0.7 );
-        self _meth_814B( var_0["idle"], var_1, 0, var_2 );
+        self setanim( var_0["idle"], var_1, 0, var_2 );
         var_2 = randomfloatrange( 0.1, 0.8 );
-        self _meth_814B( var_0["rot_l"], 1, 0, var_2 );
+        self setanim( var_0["rot_l"], 1, 0, var_2 );
         var_2 = randomfloatrange( 0.1, 0.8 );
-        self _meth_814B( var_0["rot_r"], 1, 0, var_2 );
+        self setanim( var_0["rot_r"], 1, 0, var_2 );
         wait 0.5;
     }
 }
@@ -3159,7 +3159,7 @@ update_steering( var_0 )
 
         if ( isdefined( var_0.leanasitturns ) && var_0.leanasitturns )
         {
-            var_2 = var_0 _meth_8289();
+            var_2 = var_0 vehicle_getsteering();
             var_2 *= -1.0;
             var_1 += var_2;
 
@@ -3227,7 +3227,7 @@ set_lookat_from_dest( var_0 )
     if ( !isdefined( var_1 ) )
         return;
 
-    self _meth_8265( var_1 );
+    self setlookatent( var_1 );
     self.set_lookat_point = 1;
 }
 
@@ -3334,14 +3334,14 @@ damage_hints_cleanup()
 
 copy_attachments( var_0 )
 {
-    var_1 = self _meth_802C();
+    var_1 = self getattachsize();
     var_2 = [];
 
     for ( var_3 = 0; var_3 < var_1; var_3++ )
-        var_2[var_3] = tolower( self _meth_802D( var_3 ) );
+        var_2[var_3] = tolower( self getattachmodelname( var_3 ) );
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
-        var_0 attach( var_2[var_3], tolower( self _meth_802E( var_3 ) ) );
+        var_0 attach( var_2[var_3], tolower( self getattachtagname( var_3 ) ) );
 }
 
 lights_off( var_0, var_1, var_2 )
@@ -3571,7 +3571,7 @@ do_multiple_treads()
 
 tread_wait()
 {
-    var_0 = self _meth_8286();
+    var_0 = self vehicle_getspeed();
 
     if ( !var_0 )
         return -1;
@@ -3609,7 +3609,7 @@ tread( var_0, var_1, var_2, var_3, var_4, var_5 )
 
 get_treadfx( var_0, var_1 )
 {
-    var_2 = self _meth_8256( var_1 );
+    var_2 = self getwheelsurface( var_1 );
 
     if ( !isdefined( var_0.vehicletype ) )
     {
@@ -3711,10 +3711,10 @@ disconnect_paths_whenstopped()
 
     while ( isdefined( self ) )
     {
-        if ( self _meth_8286() < 1 )
+        if ( self vehicle_getspeed() < 1 )
         {
             if ( !isdefined( self.dontdisconnectpaths ) )
-                self _meth_8057();
+                self disconnectpaths();
             else
             {
 
@@ -3722,11 +3722,11 @@ disconnect_paths_whenstopped()
 
             self notify( "speed_zero_path_disconnect" );
 
-            while ( self _meth_8286() < 1 )
+            while ( self vehicle_getspeed() < 1 )
                 wait 0.05;
         }
 
-        self _meth_8058();
+        self connectpaths();
         wait 1;
     }
 }
@@ -3758,11 +3758,11 @@ mginit()
         var_6 = spawnturret( "misc_turret", ( 0, 0, 0 ), var_5.info );
 
         if ( isdefined( var_5.offset_tag ) )
-            var_6 _meth_804D( self, var_5.tag, var_5.offset_tag, ( 0, -1 * var_1, 0 ) );
+            var_6 linkto( self, var_5.tag, var_5.offset_tag, ( 0, -1 * var_1, 0 ) );
         else
-            var_6 _meth_804D( self, var_5.tag, ( 0, 0, 0 ), ( 0, -1 * var_1, 0 ) );
+            var_6 linkto( self, var_5.tag, ( 0, 0, 0 ), ( 0, -1 * var_1, 0 ) );
 
-        var_6 _meth_80B1( var_5.model );
+        var_6 setmodel( var_5.model );
         var_6.angles = self.angles;
         var_6.isvehicleattached = 1;
         var_6.ownervehicle = self;
@@ -3782,7 +3782,7 @@ mginit()
             var_6.maxrange = var_5.maxrange;
 
         if ( isdefined( var_5.defaultdroppitch ) )
-            var_6 _meth_815A( var_5.defaultdroppitch );
+            var_6 setdefaultdroppitch( var_5.defaultdroppitch );
 
         self.mgturret[var_7] = var_6;
 
@@ -3821,14 +3821,14 @@ set_turret_team( var_0 )
     {
         case "allies":
         case "friendly":
-            var_0 _meth_8135( "allies" );
+            var_0 setturretteam( "allies" );
             break;
         case "axis":
         case "enemy":
-            var_0 _meth_8135( "axis" );
+            var_0 setturretteam( "axis" );
             break;
         case "team3":
-            var_0 _meth_8135( "team3" );
+            var_0 setturretteam( "team3" );
             break;
         default:
             break;
@@ -3845,7 +3845,7 @@ animate_drive_idle()
     var_0 = self.model;
     var_1 = -1;
     var_2 = undefined;
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 
     if ( !isdefined( level.vehicle_driveidle[var_0] ) )
         return;
@@ -3877,11 +3877,11 @@ animate_drive_idle()
                 continue;
             }
 
-            var_6 _meth_814B( level.vehicle_driveidle[var_0], 1, 0.2, var_4 );
+            var_6 setanim( level.vehicle_driveidle[var_0], 1, 0.2, var_4 );
             return;
         }
 
-        var_8 = self _meth_8286();
+        var_8 = self vehicle_getspeed();
 
         if ( self.modeldummyon && isdefined( self.dummyspeed ) )
             var_8 = self.dummyspeed;
@@ -3894,13 +3894,13 @@ animate_drive_idle()
             {
                 var_7 = level.vehicle_driveidle[var_0];
                 var_9 = 1 - var_6 getnormalanimtime( level.vehicle_driveidle_r[var_0] );
-                var_6 _meth_8142( level.vehicle_driveidle_r[var_0], 0 );
+                var_6 clearanim( level.vehicle_driveidle_r[var_0], 0 );
             }
             else
             {
                 var_7 = level.vehicle_driveidle_r[var_0];
                 var_9 = 1 - var_6 getnormalanimtime( level.vehicle_driveidle[var_0] );
-                var_6 _meth_8142( level.vehicle_driveidle[var_0], 0 );
+                var_6 clearanim( level.vehicle_driveidle[var_0], 0 );
             }
 
             var_2 = 0.01;
@@ -3915,13 +3915,13 @@ animate_drive_idle()
 
         if ( var_10 != var_1 )
         {
-            var_6 _meth_814B( var_7, 1, 0.05, var_10 );
+            var_6 setanim( var_7, 1, 0.05, var_10 );
             var_1 = var_10;
         }
 
         if ( isdefined( var_2 ) )
         {
-            var_6 _meth_8117( var_7, var_2 );
+            var_6 setanimtime( var_7, var_2 );
             var_2 = undefined;
         }
 
@@ -3937,13 +3937,13 @@ setup_dynamic_detour( var_0, var_1 )
 
 setup_ai()
 {
-    foreach ( var_1 in _func_0D6() )
+    foreach ( var_1 in getaiarray() )
     {
         if ( isdefined( var_1.script_vehicleride ) )
             level.vehicle_rideai = array_2dadd( level.vehicle_rideai, var_1.script_vehicleride, var_1 );
     }
 
-    foreach ( var_1 in _func_0D8() )
+    foreach ( var_1 in getspawnerarray() )
     {
         if ( isdefined( var_1.script_vehicleride ) )
             level.vehicle_ridespawners = array_2dadd( level.vehicle_ridespawners, var_1.script_vehicleride, var_1 );
@@ -4142,13 +4142,13 @@ setturretfireondrones( var_0 )
 
 getnormalanimtime( var_0 )
 {
-    var_1 = self _meth_814F( var_0 );
+    var_1 = self getanimtime( var_0 );
     var_2 = getanimlength( var_0 );
 
     if ( var_1 == 0 )
         return 0;
 
-    return self _meth_814F( var_0 ) / getanimlength( var_0 );
+    return self getanimtime( var_0 ) / getanimlength( var_0 );
 }
 
 rotor_anim()
@@ -4157,7 +4157,7 @@ rotor_anim()
 
     for (;;)
     {
-        self _meth_814B( maps\_utility::getanim( "rotors" ), 1, 0, 1 );
+        self setanim( maps\_utility::getanim( "rotors" ), 1, 0, 1 );
         wait(var_0);
     }
 }
@@ -4166,19 +4166,19 @@ suspend_drive_anims()
 {
     self notify( "suspend_drive_anims" );
     var_0 = self.model;
-    self _meth_8142( level.vehicle_driveidle[var_0], 0 );
-    self _meth_8142( level.vehicle_driveidle_r[var_0], 0 );
+    self clearanim( level.vehicle_driveidle[var_0], 0 );
+    self clearanim( level.vehicle_driveidle_r[var_0], 0 );
 }
 
 idle_animations()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 
     if ( !isdefined( level.vehicle_idleanim[self.model] ) )
         return;
 
     foreach ( var_1 in level.vehicle_idleanim[self.model] )
-        self _meth_814B( var_1 );
+        self setanim( var_1 );
 }
 
 vehicle_rumble()
@@ -4200,8 +4200,8 @@ vehicle_rumble()
     var_2 = var_1.radius * 2;
     var_3 = -1 * var_1.radius;
     var_4 = spawn( "trigger_radius", self.origin + ( 0, 0, var_3 ), 0, var_1.radius, var_2 );
-    var_4 _meth_8069();
-    var_4 _meth_804D( self );
+    var_4 enablelinkto();
+    var_4 linkto( self );
     self.rumbletrigger = var_4;
     self endon( "death" );
 
@@ -4239,21 +4239,21 @@ vehicle_rumble()
     {
         var_4 waittill( "trigger" );
 
-        if ( self _meth_8286() == 0 || !self.rumbleon )
+        if ( self vehicle_getspeed() == 0 || !self.rumbleon )
         {
             wait 0.1;
             continue;
         }
 
-        self _meth_80AE( var_1.rumble );
+        self playrumblelooponentity( var_1.rumble );
 
-        while ( level.player _meth_80A9( var_4 ) && self.rumbleon && self _meth_8286() > 0 )
+        while ( level.player istouching( var_4 ) && self.rumbleon && self vehicle_getspeed() > 0 )
         {
             earthquake( self.rumble_scale, self.rumble_duration, self.origin, self.rumble_radius );
             wait(self.rumble_basetime + randomfloat( self.rumble_randomaditionaltime ));
         }
 
-        self _meth_80AF( var_1.rumble );
+        self stoprumble( var_1.rumble );
     }
 }
 
@@ -4374,7 +4374,7 @@ vehicle_resumepathvehicle()
 {
     if ( !_ishelicopter() )
     {
-        self _meth_8291( 35 );
+        self resumespeed( 35 );
         return;
     }
 
@@ -4685,7 +4685,7 @@ getonpath( var_0 )
             if ( isdefined( self.vehicle_heli_default_path_speeds ) )
                 self [[ self.vehicle_heli_default_path_speeds ]]();
             else
-                self _meth_8283( 60, 20, 10 );
+                self vehicle_setspeed( 60, 20, 10 );
         }
 
         return;
@@ -4698,10 +4698,10 @@ getonpath( var_0 )
         self.origin = var_1.origin;
 
         if ( !isdefined( var_0 ) )
-            self _meth_827D( var_1 );
+            self attachpath( var_1 );
     }
     else if ( isdefined( self.speed ) )
-        self _meth_8284( self.speed, 20 );
+        self vehicle_setspeedimmediate( self.speed, 20 );
     else if ( isdefined( var_1.speed ) )
     {
         if ( isdefined( self.vehicle_heli_default_path_speeds ) )
@@ -4717,13 +4717,13 @@ getonpath( var_0 )
             if ( isdefined( var_1.script_decel ) )
                 var_7 = var_1.script_decel;
 
-            self _meth_8284( var_1.speed, var_7, var_8 );
+            self vehicle_setspeedimmediate( var_1.speed, var_7, var_8 );
         }
     }
     else if ( isdefined( self.vehicle_heli_default_path_speeds ) )
         self [[ self.vehicle_heli_default_path_speeds ]]();
     else
-        self _meth_8283( 60, 20, 10 );
+        self vehicle_setspeed( 60, 20, 10 );
 
     thread _vehicle_paths( undefined, _ishelicopter() );
 }
@@ -4736,7 +4736,7 @@ _vehicle_resume_named( var_0 )
     if ( self.vehicle_stop_named.size )
         return;
 
-    self _meth_8291( var_1 );
+    self resumespeed( var_1 );
 }
 
 _vehicle_stop_named( var_0, var_1, var_2 )
@@ -4744,7 +4744,7 @@ _vehicle_stop_named( var_0, var_1, var_2 )
     if ( !isdefined( self.vehicle_stop_named ) )
         self.vehicle_stop_named = [];
 
-    self _meth_8283( 0, var_1, var_2 );
+    self vehicle_setspeed( 0, var_1, var_2 );
     self.vehicle_stop_named[var_0] = var_1;
 }
 
@@ -4779,18 +4779,18 @@ unload_node( var_0 )
     {
         if ( isdefined( self.parachute_unload ) )
         {
-            self _meth_8294( 0, 0 );
+            self setmaxpitchroll( 0, 0 );
             waittill_dropoff_height();
-            common_scripts\utility::delaycall( 5, ::_meth_8294, 15, 15 );
+            common_scripts\utility::delaycall( 5, ::setmaxpitchroll, 15, 15 );
         }
         else
         {
-            self _meth_8253( 0 );
+            self sethoverparams( 0 );
             waittill_stable( var_0 );
         }
     }
     else if ( !isdefined( self.moving_unload ) || !self.moving_unload )
-        self _meth_8283( 0, 35 );
+        self vehicle_setspeed( 0, 35 );
 
     if ( isdefined( var_0.script_noteworthy ) )
     {
@@ -4833,8 +4833,8 @@ move_turrets_here( var_0 )
 
     foreach ( var_4, var_3 in self.mgturret )
     {
-        var_3 _meth_804F();
-        var_3 _meth_804D( var_0, level.vehicle_mgturret[var_1][var_4].tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_3 unlink();
+        var_3 linkto( var_0, level.vehicle_mgturret[var_1][var_4].tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 }
 
@@ -4842,8 +4842,8 @@ vehicle_pathdetach()
 {
     self.attachedpath = undefined;
     self notify( "newpath" );
-    self _meth_825C( common_scripts\utility::flat_angle( self.angles )[1] );
-    self _meth_825B( self.origin + ( 0, 0, 4 ), 1 );
+    self setgoalyaw( common_scripts\utility::flat_angle( self.angles )[1] );
+    self setvehgoalpos( self.origin + ( 0, 0, 4 ), 1 );
 }
 
 waittill_dropoff_height()
@@ -4904,7 +4904,7 @@ _mgoff()
         if ( isdefined( var_1.script_fireondrones ) )
             var_1.script_fireondrones = 0;
 
-        var_1 _meth_8065( "manual" );
+        var_1 setmode( "manual" );
     }
 }
 
@@ -4931,10 +4931,10 @@ _mgon()
         if ( isdefined( var_1.defaultonmode ) )
         {
             if ( var_1.defaultonmode != "sentry" )
-                var_1 _meth_8065( var_1.defaultonmode );
+                var_1 setmode( var_1.defaultonmode );
         }
         else
-            var_1 _meth_8065( "auto_nonai" );
+            var_1 setmode( "auto_nonai" );
 
         set_turret_team( var_1 );
     }
@@ -4946,8 +4946,8 @@ _force_kill()
         common_scripts\_destructible::force_explosion();
     else
     {
-        self _meth_8052();
-        self _meth_82C0( 0 );
+        self kill();
+        self setcandamage( 0 );
     }
 }
 
@@ -5040,7 +5040,7 @@ _gopath( var_0 )
         if ( isdefined( var_1 ) )
             var_0 thread _vehicle_paths( var_1 );
 
-        var_0 _meth_827F();
+        var_0 startpath();
     }
 }
 
@@ -5060,7 +5060,7 @@ _vehicle_spawn( var_0 )
     if ( !isspawner( var_0 ) )
         return;
 
-    var_1 = var_0 _meth_822A();
+    var_1 = var_0 vehicle_dospawn();
 
     if ( !isdefined( var_0.spawned_count ) )
         var_0.spawned_count = 0;
@@ -5293,7 +5293,7 @@ vehicle_liftoffvehicle( var_0 )
         var_0 = 512;
 
     var_1 = self.origin + ( 0, 0, var_0 );
-    self _meth_825A( 10 );
+    self setneargoalnotifydist( 10 );
     setvehgoalpos_wrap( var_1, 1 );
     self waittill( "goal" );
 }
@@ -5301,8 +5301,8 @@ vehicle_liftoffvehicle( var_0 )
 move_effects_ent_here( var_0 )
 {
     var_1 = deathfx_ent();
-    var_1 _meth_804F();
-    var_1 _meth_804D( var_0 );
+    var_1 unlink();
+    var_1 linkto( var_0 );
 }
 
 model_dummy_death()
@@ -5370,22 +5370,22 @@ kill_death_anim_thread_picked( var_0 )
 {
     self.killdeathanimating = 1;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    self _meth_828D( var_1.origin, var_1.angles, 0, 0 );
-    self _meth_828B();
+    self vehicle_orientto( var_1.origin, var_1.angles, 0, 0 );
+    self vehicle_turnengineoff();
     self notify( "kill_death_anim", var_0 );
 
     if ( isstring( var_0 ) )
     {
-        self _meth_82C0( 0 );
+        self setcandamage( 0 );
         var_1 maps\_anim::anim_single_solo( self, var_0 );
     }
     else
     {
-        self _meth_8115( #animtree );
-        self _meth_813E( "vehicle_death_anim", var_1.origin, var_1.angles, var_0 );
-        self _meth_825A( 30 );
-        self _meth_825B( var_1.origin, 1 );
-        self _meth_825C( var_1.angles[1] );
+        self useanimtree( #animtree );
+        self animscripted( "vehicle_death_anim", var_1.origin, var_1.angles, var_0 );
+        self setneargoalnotifydist( 30 );
+        self setvehgoalpos( var_1.origin, 1 );
+        self setgoalyaw( var_1.angles[1] );
         self waittillmatch( "vehicle_death_anim", "end" );
     }
 

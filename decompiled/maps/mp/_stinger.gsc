@@ -40,7 +40,7 @@ stillvalidstingerlock( var_0 )
     if ( !isdefined( var_0 ) )
         return 0;
 
-    if ( !self _meth_8214( var_0.origin, 65, 85 ) )
+    if ( !self worldpointinreticle_circle( var_0.origin, 65, 85 ) )
         return 0;
 
     if ( isdefined( level.ac130 ) && self.stingertarget == level.ac130.planemodel && !isdefined( level.ac130player ) )
@@ -66,7 +66,7 @@ loopstingerlockingfeedback()
             level.ac130player playlocalsound( "missile_locking" );
 
         self playlocalsound( "stinger_locking" );
-        self _meth_80AD( "ac130_25mm_fire" );
+        self playrumbleonentity( "ac130_25mm_fire" );
         wait 0.6;
     }
 }
@@ -85,14 +85,14 @@ loopstingerlockedfeedback()
             level.ac130player playlocalsound( "missile_locking" );
 
         self playlocalsound( "stinger_locked" );
-        self _meth_80AD( "ac130_25mm_fire" );
+        self playrumbleonentity( "ac130_25mm_fire" );
         wait 0.25;
     }
 }
 
 locksighttest( var_0 )
 {
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
 
     if ( !isdefined( var_0 ) )
         return 0;
@@ -102,13 +102,13 @@ locksighttest( var_0 )
     if ( var_2 )
         return 1;
 
-    var_3 = var_0 _meth_8216( 1, 0, 0 );
+    var_3 = var_0 getpointinbounds( 1, 0, 0 );
     var_2 = sighttracepassed( var_1, var_3, 0, var_0 );
 
     if ( var_2 )
         return 1;
 
-    var_4 = var_0 _meth_8216( -1, 0, 0 );
+    var_4 = var_0 getpointinbounds( -1, 0, 0 );
     var_2 = sighttracepassed( var_1, var_4, 0, var_0 );
 
     if ( var_2 )
@@ -289,13 +289,13 @@ stingerusageloop()
     {
         wait 0.05;
 
-        if ( self _meth_8340() < 0.95 )
+        if ( self playerads() < 0.95 )
         {
             resetstingerlocking();
             continue;
         }
 
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
 
         if ( issubstr( var_1, "stingerm7" ) )
             continue;
@@ -327,7 +327,7 @@ stingerusageloop()
                 if ( !isdefined( var_5 ) )
                     continue;
 
-                var_6 = self _meth_8214( var_5.origin, 65, 75 );
+                var_6 = self worldpointinreticle_circle( var_5.origin, 65, 75 );
 
                 if ( var_6 )
                     var_3[var_3.size] = var_5;

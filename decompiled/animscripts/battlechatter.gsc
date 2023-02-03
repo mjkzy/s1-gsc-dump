@@ -626,7 +626,7 @@ enablebattlechatter()
 {
     init_battlechatter();
     anim.player thread animscripts\battlechatter_ai::addtosystem();
-    var_0 = _func_0D6();
+    var_0 = getaiarray();
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
         var_0[var_1] animscripts\battlechatter_ai::addtosystem();
@@ -638,7 +638,7 @@ disablebattlechatter()
         return;
 
     shutdown_battlechatter();
-    var_0 = _func_0D6();
+    var_0 = getaiarray();
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
@@ -753,7 +753,7 @@ playthreatevent()
     switch ( self.chatqueue["threat"].eventtype )
     {
         case "infantry":
-            if ( isplayer( var_0 ) || !isdefined( var_0 _meth_8194() ) )
+            if ( isplayer( var_0 ) || !isdefined( var_0 getturret() ) )
                 var_1 = threatinfantry( var_0 );
             else
             {
@@ -1061,7 +1061,7 @@ addcalloutresponseevent( var_0, var_1, var_2 )
 
     var_3 = "affirm";
 
-    if ( !var_1.responder _meth_81BE( var_2 ) && randomint( 100 ) < anim.eventchance["response"]["callout_negative"] )
+    if ( !var_1.responder cansee( var_2 ) && randomint( 100 ) < anim.eventchance["response"]["callout_negative"] )
         var_3 = "neg";
 
     var_1.responder animscripts\battlechatter_ai::addresponseevent( "callout", var_3, var_0, 0.9 );
@@ -1829,7 +1829,7 @@ playphrase( var_0, var_1 )
 
         var_8 = gettime();
         var_9 = spawn( "script_origin", self gettagorigin( "j_head" ) );
-        var_9 _meth_804D( self );
+        var_9 linkto( self );
         thread stop_speaking( var_0.soundaliases[var_7], var_9 );
 
         if ( var_0.master && self.team == "allies" )
@@ -1868,7 +1868,7 @@ stop_speaking( var_0, var_1 )
 {
     var_1 endon( "death" );
     common_scripts\utility::waittill_either( "death", "dog_attacks_ai" );
-    var_1 _meth_80AC();
+    var_1 stopsounds();
     waitframe();
     var_1 notify( var_0 );
     var_1 delete();
@@ -2216,7 +2216,7 @@ bcgetclaimednode()
 
 enemy_team_name()
 {
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
         return 1;
     else
         return 0;
@@ -2257,7 +2257,7 @@ getclosestfriendlyspeaker( var_0 )
 getspeakers( var_0, var_1 )
 {
     var_2 = [];
-    var_3 = _func_0D6( var_1 );
+    var_3 = getaiarray( var_1 );
 
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
     {
@@ -2369,7 +2369,7 @@ get_all_my_locations()
         return var_0;
 
     var_1 = anim.bcs_locations;
-    var_2 = self _meth_80AA( var_1 );
+    var_2 = self getistouchingentities( var_1 );
 
     if ( !isdefined( var_2 ) )
         return var_0;
@@ -3318,7 +3318,7 @@ playflavorburstline( var_0, var_1 )
 {
     anim endon( "battlechatter disabled" );
     var_2 = spawn( "script_origin", var_0 gettagorigin( "j_head" ) );
-    var_2 _meth_804D( var_0 );
+    var_2 linkto( var_0 );
     var_2 playsound( var_1, var_1, 1 );
     var_2 waittill( var_1 );
     var_2 delete();
@@ -3439,7 +3439,7 @@ drawbcdirections( var_0, var_1, var_2 )
 
 resetnextsaytimes( var_0, var_1 )
 {
-    var_2 = _func_0D6( var_0 );
+    var_2 = getaiarray( var_0 );
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {

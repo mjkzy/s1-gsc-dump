@@ -189,9 +189,9 @@ urbandoorsclose()
         return;
 
     var_0.lockdown = 0;
-    var_0 _meth_82AE( var_0.startorg, 3, 1, 0.2 );
+    var_0 moveto( var_0.startorg, 3, 1, 0.2 );
     wait 3.1;
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     urbandoorsswingshut();
 }
 
@@ -206,7 +206,7 @@ urbandoorsswingshut()
             if ( !var_2.open )
                 continue;
 
-            var_2 _meth_82B7( -90, 1.5, 0.5, 0.1 );
+            var_2 rotateyaw( -90, 1.5, 0.5, 0.1 );
             var_2.open = 0;
         }
     }
@@ -220,7 +220,7 @@ urbandoorsswingshut()
             if ( !var_2.open )
                 continue;
 
-            var_2 _meth_82B7( 90, 1.5, 0.5, 0.1 );
+            var_2 rotateyaw( 90, 1.5, 0.5, 0.1 );
             var_2.open = 0;
         }
     }
@@ -239,9 +239,9 @@ urbandoorsopen()
         var_0.startorg = var_0.origin;
 
     var_1 = var_0.startorg + ( 0, 0, -98 );
-    var_0 _meth_82AE( var_1, 3, 1, 0.2 );
+    var_0 moveto( var_1, 3, 1, 0.2 );
     wait 3.1;
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     urbandoorsswingopen();
 }
 
@@ -256,7 +256,7 @@ urbandoorsswingopen()
             if ( var_2.open )
                 continue;
 
-            var_2 _meth_82B7( 90, 1.5, 0.5, 0.1 );
+            var_2 rotateyaw( 90, 1.5, 0.5, 0.1 );
             var_2.open = 1;
         }
     }
@@ -270,7 +270,7 @@ urbandoorsswingopen()
             if ( var_2.open )
                 continue;
 
-            var_2 _meth_82B7( -90, 1.5, 0.5, 0.1 );
+            var_2 rotateyaw( -90, 1.5, 0.5, 0.1 );
             var_2.open = 1;
         }
     }
@@ -289,8 +289,8 @@ urbanblockerssolid()
 {
     var_0 = getent( "lockdown_blocker", "targetname" );
     var_0 show();
-    var_0 _meth_8057();
-    var_0 _meth_82BE();
+    var_0 disconnectpaths();
+    var_0 solid();
     level.dynamicspawns = ::urbandynamicspawns;
 }
 
@@ -307,8 +307,8 @@ urbanblockersnonsolid()
 {
     var_0 = getent( "lockdown_blocker", "targetname" );
     var_0 hide();
-    var_0 _meth_8058();
-    var_0 _meth_82BF();
+    var_0 connectpaths();
+    var_0 notsolid();
     level.dynamicspawns = undefined;
 }
 
@@ -366,7 +366,7 @@ urbananimateopenloop()
             continue;
 
         if ( var_1.closeanim != "" )
-            var_1.ent _meth_827B( var_1.loopingopenanim );
+            var_1.ent scriptmodelplayanimdeltamotion( var_1.loopingopenanim );
     }
 }
 
@@ -377,7 +377,7 @@ urbananimatelockdown()
         if ( !isdefined( var_1.ent ) )
             continue;
 
-        var_1.ent _meth_827A();
+        var_1.ent scriptmodelclearanim();
 
         if ( var_1.closeanim == "" )
         {
@@ -385,7 +385,7 @@ urbananimatelockdown()
             continue;
         }
 
-        var_1.ent _meth_827B( var_1.closeanim );
+        var_1.ent scriptmodelplayanimdeltamotion( var_1.closeanim );
     }
 }
 
@@ -396,7 +396,7 @@ urbananimatereleaselockdown()
         if ( !isdefined( var_1.ent ) )
             continue;
 
-        var_1.ent _meth_827A();
+        var_1.ent scriptmodelclearanim();
 
         if ( var_1.openanim == "" )
         {
@@ -404,7 +404,7 @@ urbananimatereleaselockdown()
             continue;
         }
 
-        var_1.ent _meth_827B( var_1.openanim );
+        var_1.ent scriptmodelplayanimdeltamotion( var_1.openanim );
     }
 }
 
@@ -416,7 +416,7 @@ urbansetuphoverbike()
         return;
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8279( "urban_hoverbike_idle", "nothing" );
+        var_2 scriptmodelplayanim( "urban_hoverbike_idle", "nothing" );
 }
 
 urbananimateriders()
@@ -434,25 +434,25 @@ urbananimateriders()
         var_4.angles = ( 0, 0, 0 );
 
     var_5 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5 _meth_80B1( "vehicle_urb_police_hoverbike_ai" );
+    var_5 setmodel( "vehicle_urb_police_hoverbike_ai" );
     var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_6 _meth_80B1( "vehicle_urb_police_hoverbike_ai" );
+    var_6 setmodel( "vehicle_urb_police_hoverbike_ai" );
     var_7 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_7 _meth_80B1( "urb_hoverbike_rider" );
+    var_7 setmodel( "urb_hoverbike_rider" );
     var_8 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_8 _meth_80B1( "urb_hoverbike_rider" );
-    var_5 _meth_8075( "jtbk_engine" );
+    var_8 setmodel( "urb_hoverbike_rider" );
+    var_5 playloopsound( "jtbk_engine" );
     waitframe();
-    var_7 _meth_8446( var_5, "tag_driver", ( 0, 0, 0 ), ( 0, 90, 0 ) );
-    var_8 _meth_8446( var_6, "tag_driver", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+    var_7 vehicle_jetbikesethoverforcescale( var_5, "tag_driver", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+    var_8 vehicle_jetbikesethoverforcescale( var_6, "tag_driver", ( 0, 0, 0 ), ( 0, 90, 0 ) );
     wait 1;
     level thread urbancalculatebikeunitspersecond( var_5 );
     level thread urbancalculatebikeunitspersecond( var_6 );
 
     for (;;)
     {
-        var_5 _meth_848B( "urban_hoverbike_racer_1", var_4.origin, var_4.angles );
-        var_6 _meth_848B( "urban_hoverbike_racer_2", var_4.origin, var_4.angles );
+        var_5 scriptmodelplayanimdeltamotionfrompos( "urban_hoverbike_racer_1", var_4.origin, var_4.angles );
+        var_6 scriptmodelplayanimdeltamotionfrompos( "urban_hoverbike_racer_2", var_4.origin, var_4.angles );
         wait(var_2);
         var_9 = max( var_5.unitspersecond, var_6.unitspersecond );
         var_10 = var_3 / var_9 * 3;
@@ -465,10 +465,10 @@ urbananimateriders()
 
 urbanmovebikeforward( var_0, var_1, var_2 )
 {
-    var_0 _meth_827A();
+    var_0 scriptmodelclearanim();
     var_3 = anglestoforward( var_0.angles );
     var_4 = var_0.origin + var_3 * var_1;
-    var_0 _meth_82AE( var_4, var_2, 1, 0 );
+    var_0 moveto( var_4, var_2, 1, 0 );
     return var_2;
 }
 
@@ -504,10 +504,10 @@ urbananimatedrones()
 urbanspawnautoloopingdrone( var_0, var_1 )
 {
     var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_2 _meth_80B1( "vehicle_urb_police_drone_01_group_anim" );
+    var_2 setmodel( "vehicle_urb_police_drone_01_group_anim" );
     wait 1;
-    var_2 _meth_8075( "drone_group_flyby" );
-    var_2 _meth_848B( var_1, var_0.origin, var_0.angles );
+    var_2 playloopsound( "drone_group_flyby" );
+    var_2 scriptmodelplayanimdeltamotionfrompos( var_1, var_0.origin, var_0.angles );
 }
 
 urbanspawnmanualloopingdrone( var_0, var_1 )
@@ -516,13 +516,13 @@ urbanspawnmanualloopingdrone( var_0, var_1 )
     var_3 = 30;
     var_4 = var_2 / var_3;
     var_5 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5 _meth_80B1( "vehicle_urb_police_drone_01_group_anim" );
+    var_5 setmodel( "vehicle_urb_police_drone_01_group_anim" );
     wait 1;
-    var_5 _meth_8075( "drone_group_flyby" );
+    var_5 playloopsound( "drone_group_flyby" );
 
     for (;;)
     {
-        var_5 _meth_848B( var_1, var_0.origin, var_0.angles );
+        var_5 scriptmodelplayanimdeltamotionfrompos( var_1, var_0.origin, var_0.angles );
         wait(var_4);
         wait(randomintrange( 0, 10 ));
     }
@@ -533,10 +533,10 @@ setuppolicelights()
     if ( getdvarint( "r_reflectionProbeGenerate" ) )
         return;
 
-    var_0 = _func_231( "police_light", "targetname" );
+    var_0 = getscriptablearray( "police_light", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( 0, 1 );
+        var_2 setscriptablepartstate( 0, 1 );
 }
 
 urbanruneffectsfloor()
@@ -583,7 +583,7 @@ playerassigneffectsent()
     }
 
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1.angles = ( -90, 0, 0 );
     level.urbflooreffectsents[level.urbflooreffectsents.size] = var_1;
     var_1.assigned = self;
@@ -608,7 +608,7 @@ playerruneffectsfloor( var_0 )
             continue;
         }
 
-        var_3 = self _meth_8341();
+        var_3 = self isonground();
 
         if ( !var_3 )
         {
@@ -624,7 +624,7 @@ playerruneffectsfloor( var_0 )
             continue;
         }
 
-        var_5 = self _meth_80A9( var_0 );
+        var_5 = self istouching( var_0 );
 
         if ( !var_5 )
         {
@@ -632,7 +632,7 @@ playerruneffectsfloor( var_0 )
             continue;
         }
 
-        self.urbflooreffectsent _meth_8092();
+        self.urbflooreffectsent dontinterpolate();
         self.urbflooreffectsent.origin = ( self.origin[0], self.origin[1], 2043.5 );
         self.urbflooreffectsent.angles = ( -90, self.angles[1], 0 );
         playfxontag( common_scripts\utility::getfx( "mp_ub_foot_digital" ), self.urbflooreffectsent, "tag_origin" );

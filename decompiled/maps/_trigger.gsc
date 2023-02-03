@@ -63,7 +63,7 @@ trigger_multiple_fx_watersheeting( var_0 )
 
         if ( isplayer( var_2 ) )
         {
-            var_2 _meth_8218( 1, var_1 );
+            var_2 setwatersheeting( 1, var_1 );
             wait(var_1 * 0.2);
         }
     }
@@ -322,7 +322,7 @@ trigger_flag_on_cleared( var_0 )
 
 found_toucher()
 {
-    var_0 = _func_0D6( "bad_guys" );
+    var_0 = getaiarray( "bad_guys" );
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
@@ -331,19 +331,19 @@ found_toucher()
         if ( !isalive( var_2 ) )
             continue;
 
-        if ( var_2 _meth_80A9( self ) )
+        if ( var_2 istouching( self ) )
             return 1;
 
         wait 0.1;
     }
 
-    var_0 = _func_0D6( "bad_guys" );
+    var_0 = getaiarray( "bad_guys" );
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
         var_2 = var_0[var_1];
 
-        if ( var_2 _meth_80A9( self ) )
+        if ( var_2 istouching( self ) )
             return 1;
     }
 
@@ -514,10 +514,10 @@ trigger_flag_set_touching( var_0 )
         var_0 waittill( "trigger", var_2 );
         var_0 maps\_utility::script_delay();
 
-        if ( isalive( var_2 ) && var_2 _meth_80A9( var_0 ) && isdefined( var_0 ) )
+        if ( isalive( var_2 ) && var_2 istouching( var_0 ) && isdefined( var_0 ) )
             common_scripts\utility::flag_set( var_1 );
 
-        while ( isalive( var_2 ) && var_2 _meth_80A9( var_0 ) && isdefined( var_0 ) )
+        while ( isalive( var_2 ) && var_2 istouching( var_0 ) && isdefined( var_0 ) )
             wait 0.25;
 
         common_scripts\utility::flag_clear( var_1 );
@@ -610,7 +610,7 @@ trigger_playerseek( var_0 )
 {
     var_1 = var_0.script_triggered_playerseek;
     var_0 waittill( "trigger" );
-    var_2 = _func_0D6();
+    var_2 = getaiarray();
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
@@ -620,7 +620,7 @@ trigger_playerseek( var_0 )
         if ( isdefined( var_2[var_3].script_triggered_playerseek ) && var_2[var_3].script_triggered_playerseek == var_1 )
         {
             var_2[var_3].goalradius = 800;
-            var_2[var_3] _meth_81A7( level.player );
+            var_2[var_3] setgoalentity( level.player );
             level thread maps\_spawner::delayed_player_seek_think( var_2[var_3] );
         }
     }
@@ -677,7 +677,7 @@ trigger_sun_off( var_0 )
         if ( getdvarint( "sm_sunenable" ) == 0 )
             continue;
 
-        _func_0D3( "sm_sunenable", 0 );
+        setsaveddvar( "sm_sunenable", 0 );
     }
 }
 
@@ -690,7 +690,7 @@ trigger_sun_on( var_0 )
         if ( getdvarint( "sm_sunenable" ) == 1 )
             continue;
 
-        _func_0D3( "sm_sunenable", 1 );
+        setsaveddvar( "sm_sunenable", 1 );
     }
 }
 
@@ -823,9 +823,9 @@ trigger_lookat_think( var_0, var_1 )
         var_0 waittill( "trigger", var_9 );
         var_10 = [];
 
-        while ( var_9 _meth_80A9( var_0 ) )
+        while ( var_9 istouching( var_0 ) )
         {
-            if ( var_8 && !sighttracepassed( var_9 _meth_80A8(), var_5, 0, undefined ) )
+            if ( var_8 && !sighttracepassed( var_9 geteye(), var_5, 0, undefined ) )
             {
                 if ( var_6 )
                     common_scripts\utility::flag_clear( var_7 );
@@ -904,7 +904,7 @@ trigger_cansee( var_0 )
 
         var_0 waittill( "trigger", var_8 );
 
-        while ( level.player _meth_80A9( var_0 ) )
+        while ( level.player istouching( var_0 ) )
         {
             if ( !var_8 cantraceto( var_2, var_7 ) )
             {
@@ -928,7 +928,7 @@ cantraceto( var_0, var_1 )
 {
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
-        if ( sighttracepassed( self _meth_80A8(), var_0 + var_1[var_2], 1, self ) )
+        if ( sighttracepassed( self geteye(), var_0 + var_1[var_2], 1, self ) )
             return 1;
     }
 
@@ -1003,7 +1003,7 @@ trigger_battlechatter( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        if ( var_3.team != level.player.team && level.player _meth_80A9( var_0 ) )
+        if ( var_3.team != level.player.team && level.player istouching( var_0 ) )
             var_4 = level.player animscripts\battlechatter::getclosestfriendlyspeaker( "custom" );
         else if ( var_3.team == level.player.team )
         {
@@ -1017,7 +1017,7 @@ trigger_battlechatter( var_0 )
 
             foreach ( var_8 in var_6 )
             {
-                if ( var_8 _meth_80A9( var_0 ) )
+                if ( var_8 istouching( var_0 ) )
                 {
                     var_4 = var_8;
 
@@ -1074,8 +1074,8 @@ trigger_dooropen( var_0 )
     foreach ( var_4 in var_1 )
     {
         var_5 = var_2[var_4.script_noteworthy];
-        var_4 _meth_8058();
-        var_4 _meth_82B7( var_5, 1, 0, 0.5 );
+        var_4 connectpaths();
+        var_4 rotateyaw( var_5, 1, 0, 0.5 );
     }
 }
 
@@ -1090,7 +1090,7 @@ trigger_glass_break( var_0 )
     {
         level waittill( "glass_break", var_2 );
 
-        if ( var_2 _meth_80A9( var_0 ) )
+        if ( var_2 istouching( var_0 ) )
         {
             var_3 = var_2.origin;
             wait 0.05;
@@ -1238,7 +1238,7 @@ touched_trigger_runs_func( var_0, var_1 )
     wait 1;
     self.ignoretriggers = 0;
 
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 1;
 
     [[ var_1 ]]( 0 );
@@ -1323,7 +1323,7 @@ trigger_multiple_visionset( var_0 )
             {
                 var_7 = 0;
 
-                while ( var_6 _meth_80A9( var_0 ) )
+                while ( var_6 istouching( var_0 ) )
                 {
                     var_7 = maps\_utility::get_progress( var_3, var_4, var_6.origin, var_2 );
                     var_7 = clamp( var_7, 0, 1 );
@@ -1475,7 +1475,7 @@ vision_set_fog_progress( var_0, var_1 )
     if ( var_0.script_visionset_start == var_0.script_visionset_end )
         return;
 
-    self _meth_80C4( var_0.script_visionset_start, var_0.script_visionset_end, var_1 );
+    self visionsetnakedforplayer_lerp( var_0.script_visionset_start, var_0.script_visionset_end, var_1 );
     var_2 = maps\_utility::get_vision_set_fog( var_0.script_visionset_start );
     var_3 = maps\_utility::get_vision_set_fog( var_0.script_visionset_end );
     var_4 = var_0.visionset_diff;
@@ -1596,7 +1596,7 @@ trigger_fog( var_0 )
         var_0 waittill( "trigger", var_10 );
         var_11 = 0;
 
-        while ( var_10 _meth_80A9( var_0 ) )
+        while ( var_10 istouching( var_0 ) )
         {
             var_11 = maps\_utility::get_progress( var_6, var_7, var_10.origin, var_9 );
             var_11 = clamp( var_11, 0, 1 );
@@ -1702,7 +1702,7 @@ slidetriggerplayerthink( var_0 )
 
     for (;;)
     {
-        if ( !self _meth_80A9( var_0 ) )
+        if ( !self istouching( var_0 ) )
             break;
 
         wait 0.05;
@@ -1787,7 +1787,7 @@ assign_fx_to_trigger( var_0, var_1, var_2 )
 
     var_2.origin = var_0.v["origin"];
 
-    if ( var_2 _meth_80A9( var_1 ) )
+    if ( var_2 istouching( var_1 ) )
         var_1.fx[var_1.fx.size] = var_0;
 }
 
@@ -1824,15 +1824,15 @@ no_crouch_or_prone_think_for_player( var_0 )
         if ( var_1 != self )
             continue;
 
-        while ( var_1 _meth_80A9( var_0 ) )
+        while ( var_1 istouching( var_0 ) )
         {
-            var_1 _meth_811A( 0 );
-            var_1 _meth_8119( 0 );
+            var_1 allowprone( 0 );
+            var_1 allowcrouch( 0 );
             wait 0.05;
         }
 
-        var_1 _meth_811A( 1 );
-        var_1 _meth_8119( 1 );
+        var_1 allowprone( 1 );
+        var_1 allowcrouch( 1 );
     }
 }
 
@@ -1853,13 +1853,13 @@ no_prone_for_player( var_0 )
         if ( var_1 != self )
             continue;
 
-        while ( var_1 _meth_80A9( var_0 ) )
+        while ( var_1 istouching( var_0 ) )
         {
-            var_1 _meth_811A( 0 );
+            var_1 allowprone( 0 );
             wait 0.05;
         }
 
-        var_1 _meth_811A( 1 );
+        var_1 allowprone( 1 );
     }
 }
 
@@ -1897,7 +1897,7 @@ volume_wakefx( var_0 )
 
     for (;;)
     {
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
         {
             if ( var_1 > 0 )
                 wait(max( 1 - var_1 / 120, 0.1 ));
@@ -1984,8 +1984,8 @@ trigger_fallingwatervolume_think( var_0 )
 volume_fallingwaterfx( var_0 )
 {
     self endon( "death" );
-    var_1 = var_0 _meth_8216( 1, 1, 0 );
-    var_2 = var_0 _meth_8216( -1, -1, 0 );
+    var_1 = var_0 getpointinbounds( 1, 1, 0 );
+    var_2 = var_0 getpointinbounds( -1, -1, 0 );
     var_3 = ( var_1[0] - var_2[0] ) * ( var_1[1] - var_2[1] );
     var_4 = 3;
 
@@ -2012,7 +2012,7 @@ volume_fallingwaterfx( var_0 )
 
     for (;;)
     {
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
         {
             if ( isai( self ) )
             {
@@ -2022,10 +2022,10 @@ volume_fallingwaterfx( var_0 )
                 {
                     if ( var_7 != "null" )
                     {
-                        var_11 = var_0 _meth_8216( randomfloat( 2 ) - 1, randomfloat( 2 ) - 1, 1 );
+                        var_11 = var_0 getpointinbounds( randomfloat( 2 ) - 1, randomfloat( 2 ) - 1, 1 );
                         var_12 = ( var_11[0], var_11[1], self.origin[2] );
 
-                        if ( _func_220( var_12, self.origin ) < 900 )
+                        if ( distance2dsquared( var_12, self.origin ) < 900 )
                         {
                             var_13 = bullettrace( var_11, var_12, 1, undefined, 0, 1 );
 
@@ -2050,7 +2050,7 @@ volume_fallingwaterfx( var_0 )
 
                 if ( var_9 > var_4 * 0.2 || var_9 < 0 )
                 {
-                    self _meth_8218( 1, var_4 );
+                    self setwatersheeting( 1, var_4 );
                     var_9 = 0;
                 }
 
@@ -2083,7 +2083,7 @@ spawneffectonplayerview( var_0, var_1, var_2 )
 
     var_3 = common_scripts\utility::getfx( var_0 );
     level.effectonplayerviewent = common_scripts\utility::spawn_tag_origin();
-    level.effectonplayerviewent _meth_80A6( level.player, "tag_origin", var_1, var_2, 1 );
+    level.effectonplayerviewent linktoplayerview( level.player, "tag_origin", var_1, var_2, 1 );
     level.effectonplayerview = playfxontag( var_3, level.effectonplayerviewent, "tag_origin" );
 }
 

@@ -21,26 +21,26 @@ main()
 
 confcenterprecache()
 {
-    precacheitem( "rpg_player" );
-    precacheitem( "stinger" );
-    precacheitem( "hms_kamikazedrone" );
+    precacheshellshock( "rpg_player" );
+    precacheshellshock( "stinger" );
+    precacheshellshock( "hms_kamikazedrone" );
     precachemodel( "vehicle_civ_full_size_technical_turret" );
     precacheturret( "50cal_turret_technical_lagos" );
     precachemodel( "viewhands_atlas_military" );
     precachemodel( "vb_civilian_mitchell" );
     precacheshellshock( "greece_drone_slowview" );
     precacheshellshock( "greece_drone_destroyed" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "iw5_sn6_sp_silencer01" );
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "iw5_sn6_sp_silencer01" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
     precachemodel( "weapon_parabolic_knife" );
     precachemodel( "npc_bal27_nocamo" );
     precachemodel( "greece_drone_control_pad" );
@@ -480,7 +480,7 @@ confcenterbegin()
     common_scripts\utility::flag_wait( "FlagConfCenterStart" );
 
     if ( level.currentgen )
-        _func_0D3( "r_znear", 30 );
+        setsaveddvar( "r_znear", 30 );
 
     confcenterobjectivesetup();
 }
@@ -491,21 +491,21 @@ playerinteractdronecontrol()
     thread droneusetrigger();
     common_scripts\utility::flag_wait( "FlagPlayerStartDroneInteract" );
     objective_position( maps\_utility::obj( "DroneSupport" ), ( 0, 0, 0 ) );
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1.origin = level.player.origin;
     var_1.angles = level.player.angles;
     wait 0.5;
     var_2 = maps\_utility::spawn_anim_model( "player_safehouse_rig", level.player.origin );
     var_3 = maps\_utility::spawn_anim_model( "drone_control_pad", level.player.origin );
-    level.player _meth_807C( var_2, "tag_player", 0, 0, 0, 0, 0 );
+    level.player playerlinkto( var_2, "tag_player", 0, 0, 0, 0, 0 );
     var_2.drone_control_pad = var_3;
     var_4 = [ var_2, var_3 ];
     var_1 thread maps\_anim::anim_single( var_4, "drone_launch_control_pad" );
     wait 1.25;
-    level.player _meth_8031( 40, 0.5 );
+    level.player lerpfov( 40, 0.5 );
     level.player setblurforplayer( 10, 0.5 );
     wait 0.25;
     maps\_hud_util::fade_out( 0.25, "white" );
@@ -513,10 +513,10 @@ playerinteractdronecontrol()
     if ( level.currentgen )
     {
         level notify( "tff_pre_intro_to_confcenter" );
-        _func_219( "greece_intro_tr" );
-        _func_218( "greece_confcenter_tr" );
+        unloadtransient( "greece_intro_tr" );
+        loadtransient( "greece_confcenter_tr" );
 
-        while ( !_func_21E( "greece_confcenter_tr" ) )
+        while ( !istransientloaded( "greece_confcenter_tr" ) )
             wait 0.05;
 
         level notify( "tff_post_intro_to_confcenter" );
@@ -539,7 +539,7 @@ droneusetrigger()
     level endon( "SafehouseAlerted" );
     var_0 = getent( "UseTriggerDroneControl", "targetname" );
     var_0 makeusable();
-    var_0 _meth_80DA( "HINT_NOICON" );
+    var_0 setcursorhint( "HINT_NOICON" );
     var_0 maps\_utility::addhinttrigger( &"GREECE_HINT_DRONE_USE", &"GREECE_HINT_DRONE_USE_KB" );
     var_0 waittill( "trigger", var_1 );
     var_0 delete();
@@ -557,7 +557,7 @@ dronecontrolobjdisplay()
 
     while ( !common_scripts\utility::flag( "FlagPlayerStartDroneInteract" ) )
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             objective_position( maps\_utility::obj( "DroneSupport" ), ( 0, 0, 0 ) );
         else
             objective_position( maps\_utility::obj( "DroneSupport" ), var_0.origin );
@@ -568,8 +568,8 @@ dronecontrolobjdisplay()
 
 dronecontrolpadscreentouch( var_0 )
 {
-    var_0.drone_control_pad _meth_80B1( "greece_drone_control_pad_touched" );
-    level.player _meth_80AD( "damage_light" );
+    var_0.drone_control_pad setmodel( "greece_drone_control_pad_touched" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 monitorstartdronecontrol( var_0, var_1 )
@@ -667,7 +667,7 @@ sniperdronedeathwatch( var_0 )
     common_scripts\utility::flag_set( "FlagSniperDroneAnimating" );
     soundscripts\_snd::snd_message( "start_wasp_death_explo" );
     thread maps\_controlled_sniperdrone::disabledronefiringduringcrash();
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player shellshock( "greece_drone_destroyed", 1.0 );
     var_1 = "death";
     var_0 = level.player.sniperdronelink;
@@ -679,8 +679,8 @@ sniperdronedeathwatch( var_0 )
     var_0.frameviewmodel maps\_utility::assign_animtree( "sniperdrone_outerparts" );
     var_0.barrelviewmodel.animname = "sniperdrone_barrel";
     var_0.barrelviewmodel maps\_utility::assign_animtree( "sniperdrone_barrel" );
-    var_0.frameviewmodel _meth_814B( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
-    var_0.barrelviewmodel _meth_814B( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.frameviewmodel setanim( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.barrelviewmodel setanim( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
     var_2 = getanimlength( var_0 maps\_utility::getanim( var_1 ) );
     var_2 -= 1.0;
     thread sniperdronedeathshowstatic( var_2 );
@@ -689,12 +689,12 @@ sniperdronedeathwatch( var_0 )
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_znear", 4 );
+        setsaveddvar( "r_znear", 4 );
         level notify( "tff_pre_confcenter_to_intro" );
-        _func_219( "greece_confcenter_tr" );
-        _func_218( "greece_intro_tr" );
+        unloadtransient( "greece_confcenter_tr" );
+        loadtransient( "greece_intro_tr" );
 
-        while ( !_func_21E( "greece_intro_tr" ) )
+        while ( !istransientloaded( "greece_intro_tr" ) )
             wait 0.05;
 
         level notify( "tff_post_confcenter_to_intro" );
@@ -724,7 +724,7 @@ sniperdroneflyin( var_0 )
     var_5 = [ var_0 ];
     var_4 maps\_anim::anim_first_frame_solo( var_0, "flyin" );
     level.player setangles( var_0.angles * ( 1, 1, 0 ) );
-    level.player _meth_807D( var_0, "tag_origin", 1, 10, 10, 5, 5, 1 );
+    level.player playerlinktodelta( var_0, "tag_origin", 1, 10, 10, 5, 5, 1 );
     var_0.frameviewmodel.animname = "sniperdrone_outerparts";
     var_0.frameviewmodel maps\_utility::assign_animtree( "sniperdrone_outerparts" );
     var_0.barrelviewmodel.animname = "sniperdrone_barrel";
@@ -732,13 +732,13 @@ sniperdroneflyin( var_0 )
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "greece_intro_tr" ) )
+        if ( istransientloaded( "greece_intro_tr" ) )
             maps\_utility::transient_unload( "greece_intro_tr" );
     }
 
     thread maps\greece_conf_center_fx::confcenterlightglowfx();
-    var_0.frameviewmodel _meth_814B( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
-    var_0.barrelviewmodel _meth_814B( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.frameviewmodel setanim( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.barrelviewmodel setanim( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
     var_4 maps\_anim::anim_single( var_5, var_1 );
     common_scripts\utility::flag_set( "FlagMonitorZoomOnHades" );
     thread monitorzoomonhades1();
@@ -749,14 +749,14 @@ sniperdroneflyin( var_0 )
         wait(var_6);
 
     var_4 notify( "end_loop" );
-    var_0 _meth_8141();
+    var_0 stopanimscripted();
     soundscripts\_snd::snd_message( "unmute_wasp_oneshots" );
     level notify( "audio_resume_moving_truck" );
     wait 0.05;
-    var_0.frameviewmodel _meth_814B( var_0.frameviewmodel maps\_utility::getanim( var_3 ) );
-    var_0.barrelviewmodel _meth_814B( var_0.barrelviewmodel maps\_utility::getanim( var_3 ) );
+    var_0.frameviewmodel setanim( var_0.frameviewmodel maps\_utility::getanim( var_3 ) );
+    var_0.barrelviewmodel setanim( var_0.barrelviewmodel maps\_utility::getanim( var_3 ) );
     var_4 maps\_anim::anim_single( var_5, var_3 );
-    var_0 _meth_8141();
+    var_0 stopanimscripted();
     common_scripts\utility::flag_set( "FlagPlayerEndDroneFlight" );
     thread autosavesniperdronestealth( "conf_center_fly_in" );
     maps\_utility::add_extra_autosave_check( "ConfCenterAutosaveStealthCheck", ::autosaveconfcenterstealthcheck, "Can't autosave during sniperdrone stealth!" );
@@ -773,7 +773,7 @@ truckdrivein( var_0 )
     soundscripts\_snd::snd_message( "start_veh_moving_truck", var_5 );
     var_6 = maps\_utility::get_living_ai( "InfiltratorBurke", "script_noteworthy" );
     var_7 = [ var_5 ];
-    var_5 _meth_83FA( 2 );
+    var_5 hudoutlineenable( 2 );
 
     if ( var_0 == 0 )
     {
@@ -790,7 +790,7 @@ truckdrivein( var_0 )
     var_10 = "bodystash_idle";
     var_4 thread maps\_anim::anim_loop_solo( var_6, var_10, "endBodystashIdle" );
     common_scripts\utility::flag_wait_any( "FlagBodyStashGuard1Killed", "FlagBodyStashGuard2Killed", "FlagBodyStashGuardsAlerted" );
-    var_5 _meth_83FB();
+    var_5 hudoutlinedisable();
 }
 
 sniperdroneflyintogglezoomnotetrack( var_0 )
@@ -800,9 +800,9 @@ sniperdroneflyintogglezoomnotetrack( var_0 )
     else
         common_scripts\utility::flag_set( "FlagForcePlayerADS" );
 
-    level.confhades _meth_83FA( 5, 0 );
+    level.confhades hudoutlineenable( 5, 0 );
     wait 3.0;
-    level.confhades _meth_83FB();
+    level.confhades hudoutlinedisable();
 }
 
 truckstartwalknotetrack( var_0 )
@@ -1079,7 +1079,7 @@ atriumboostjumpguy( var_0, var_1 )
 progressionkillhades()
 {
     common_scripts\utility::flag_wait( "FlagBeginConfCenterKill" );
-    level.confhades _meth_83FA( 5, 0 );
+    level.confhades hudoutlineenable( 5, 0 );
     alliesbreachconfroom();
     common_scripts\utility::flag_set( "FlagConfRoomAlliesExit" );
 }
@@ -1132,7 +1132,7 @@ setupplayertargets( var_0, var_1, var_2 )
 {
     var_3 = [];
     var_4 = [];
-    var_4 = _func_0D6( "axis" );
+    var_4 = getaiarray( "axis" );
 
     if ( !isdefined( var_1 ) )
         var_1 = 0;
@@ -1204,7 +1204,7 @@ objmarkerplayertarget( var_0 )
     objective_setpointertextoverride( maps\_utility::obj( "DroneSupport" ), " " );
     wait 0.05;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "TAG_EYE", ( 0, 0, 12 ), ( 0, 0, 0 ) );
+    var_1 linkto( self, "TAG_EYE", ( 0, 0, 12 ), ( 0, 0, 0 ) );
     objective_additionalentity( maps\_utility::obj( "DroneSupport" ), var_0, var_1 );
     common_scripts\utility::waittill_any( "death", "dying", "removeTargetObj" );
     objective_additionalposition( maps\_utility::obj( "DroneSupport" ), var_0, ( 0, 0, 0 ) );
@@ -1216,10 +1216,10 @@ removeplayertarget()
     self notify( "removeTargetObj" );
     level.playertargets common_scripts\utility::array_remove( level.playertargets, self );
 
-    if ( _func_0A3( self ) )
-        _func_09B( self );
+    if ( target_istarget( self ) )
+        target_remove( self );
 
-    self _meth_83FA( 1, 1 );
+    self hudoutlineenable( 1, 1 );
 }
 
 clearplayertargetlist()
@@ -1247,7 +1247,7 @@ objmarkervehicle( var_0, var_1, var_2 )
     thread objoutlinevehicle( var_2, var_0 );
     common_scripts\utility::flag_wait( var_0 );
     level notify( var_0 );
-    self _meth_83FB();
+    self hudoutlinedisable();
 
     if ( var_1 == 1 )
         objective_position( maps\_utility::obj( "DroneSupport" ), ( 0, 0, 0 ) );
@@ -1261,17 +1261,17 @@ objoutlinevehicle( var_0, var_1 )
         wait 20.0;
 
     if ( level.nextgen )
-        self _meth_83FA( 1, 1 );
+        self hudoutlineenable( 1, 1 );
     else
     {
         foreach ( var_3 in level.sniper_marked_cars )
-            var_3 _meth_83FA( 1, 1 );
+            var_3 hudoutlineenable( 1, 1 );
     }
 }
 
 spawnconfcenterai()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
     spawnallyinfiltrators();
     thread spawnhadesescapevehicle();
     var_0 = level.start_point;
@@ -1444,7 +1444,7 @@ spawnenemiesextra()
     {
         if ( var_2.script_noteworthy == "ExtraPlayerTarget3" )
         {
-            var_2 _meth_8052();
+            var_2 kill();
             continue;
         }
 
@@ -1479,14 +1479,14 @@ extraenemiescombat()
         maps\_utility::set_favoriteenemy( var_0 );
 
     var_1 = getent( "EnemyAmbushParkingVol", "targetname" );
-    self _meth_81A9( var_1 );
+    self setgoalvolumeauto( var_1 );
     common_scripts\utility::flag_wait_either( "FlagBeginConfCenterCombat", "FlagConfRoomAlliesRecover" );
     maps\greece_code::setalertoutline();
     markdronetargetenemy();
     thread maps\greece_code::clearalertoutline();
     common_scripts\utility::flag_wait( "FlagSomeAmbushSouthGuardsDead" );
     var_1 = getent( "EnemyAmbushEastFallbackVol", "targetname" );
-    self _meth_81A9( var_1 );
+    self setgoalvolumeauto( var_1 );
 }
 
 spawnenemystruggle()
@@ -1549,7 +1549,7 @@ enemyambushsouthopendoors()
             var_7 = -120;
 
         var_8 = randomfloatrange( 0.25, 0.45 );
-        var_6 _meth_82B5( var_6.angles + ( 0, var_7, 0 ), var_8, 0, 0.2 );
+        var_6 rotateto( var_6.angles + ( 0, var_7, 0 ), var_8, 0, 0.2 );
     }
 }
 
@@ -1560,17 +1560,17 @@ enemyambushsouthshiftvol()
     if ( self.script_noteworthy == "Low" )
     {
         var_0 = getent( "EnemyAmbushEastFallbackVol", "targetname" );
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
     }
     else if ( self.script_noteworthy == "Stairs" )
     {
         var_0 = getent( "EnemyAmbushBridgeVol", "targetname" );
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
     }
     else if ( self.script_noteworthy == "High" )
     {
         var_0 = getent( "EnemyAmbushSouthHighVol1", "targetname" );
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
     }
 
     self.health = 1;
@@ -1598,7 +1598,7 @@ spawnenemiesambusherseast()
 
     foreach ( var_8 in var_5 )
     {
-        var_8 _meth_81A9( var_6 );
+        var_8 setgoalvolumeauto( var_6 );
         var_8.health = 1;
     }
 }
@@ -1611,8 +1611,8 @@ enemyambusheastopendoors()
 
     foreach ( var_3 in var_1 )
     {
-        var_3 _meth_82B1( 1024, 0.1 );
-        var_3 _meth_8057();
+        var_3 movez( 1024, 0.1 );
+        var_3 disconnectpaths();
     }
 
     var_5 = getentarray( "EnemyAmbushEastDoor", "targetname" );
@@ -1625,7 +1625,7 @@ enemyambusheastopendoors()
             var_8 = 100;
 
         var_9 = randomfloatrange( 0.25, 0.45 );
-        var_7 _meth_82B5( var_7.angles + ( 0, var_8, 0 ), var_9, 0, 0.2 );
+        var_7 rotateto( var_7.angles + ( 0, var_8, 0 ), var_9, 0, 0.2 );
     }
 }
 
@@ -1665,7 +1665,7 @@ enemyvehicleguyfallback()
     self endon( "death" );
     common_scripts\utility::flag_wait( "FlagSpawnEnemyReinforcements" );
     var_0 = getent( "EnemyAmbushEastFallbackVol", "targetname" );
-    self _meth_81A9( var_0 );
+    self setgoalvolumeauto( var_0 );
     self.health = 1;
 }
 
@@ -1688,7 +1688,7 @@ enemyvehicleturretthread()
     self endon( "death" );
     level endon( "FlagAllAmbushEastGuardsDead" );
     var_0 = self.mgturret[0];
-    var_0 _meth_8135( "axis" );
+    var_0 setturretteam( "axis" );
     soundscripts\_snd::snd_message( "cc_technical_turret_fire", var_0 );
     var_1 = undefined;
 
@@ -1700,7 +1700,7 @@ enemyvehicleturretthread()
 
     var_1 endon( "death" );
     var_1.ignoreall = 1;
-    var_0 _meth_815C();
+    var_0 turretfiredisable();
     var_5 = undefined;
     var_6 = getentarray( "ParkingAlarmCar", "targetname" );
 
@@ -1713,9 +1713,9 @@ enemyvehicleturretthread()
     var_10 = getent( "AmbushVehicleTarget", "targetname" );
     common_scripts\utility::flag_wait( "FlagEnemyVehicleActivateTurret" );
     var_1.ignoreall = 0;
-    var_0 _meth_8179();
-    var_0 _meth_810B( 2 );
-    var_0 _meth_8133( 2 );
+    var_0 turretfireenable();
+    var_0 setaispread( 2 );
+    var_0 setconvergencetime( 2 );
     var_5 thread enemyturrettargetcar( var_0, var_10 );
     maps\_hms_utility::printlnscreenandconsole( "Enemy vehicle turret is now using normal AI" );
     thread enemyturretfire( var_0, var_1 );
@@ -1729,7 +1729,7 @@ enemyvehicleturretthread()
         if ( isdefined( var_12[0] ) )
         {
             var_1 maps\_utility::set_favoriteenemy( var_12[0] );
-            var_0 _meth_8106( var_12[0] );
+            var_0 settargetentity( var_12[0] );
         }
 
         wait(randomfloatrange( 3.0, 8.0 ));
@@ -1823,8 +1823,8 @@ enemyreinforcementsvehicleturretthread()
         level.allenemyambushers = common_scripts\utility::add_to_array( level.allenemyambushers, var_1 );
 
     var_3 = self.mgturret[0];
-    var_3 _meth_8135( "axis" );
-    var_3 _meth_815C();
+    var_3 setturretteam( "axis" );
+    var_3 turretfiredisable();
     soundscripts\_snd::snd_message( "cc_technical_turret_fire", var_3 );
     var_4 = undefined;
 
@@ -1839,9 +1839,9 @@ enemyreinforcementsvehicleturretthread()
     var_4.battlechatter = 0;
     maps\_utility::ent_flag_wait( "unloaded" );
     var_4.ignoreall = 0;
-    var_3 _meth_8179();
-    var_3 _meth_810B( 10 );
-    var_3 _meth_8133( 2 );
+    var_3 turretfireenable();
+    var_3 setaispread( 10 );
+    var_3 setconvergencetime( 2 );
     thread enemyturretfire( var_3, var_4 );
     var_7 = [];
     var_7 = level.allyinfiltrators;
@@ -1853,7 +1853,7 @@ enemyreinforcementsvehicleturretthread()
         if ( isdefined( var_8[0] ) )
         {
             var_4 maps\_utility::set_favoriteenemy( var_8[0] );
-            var_3 _meth_8106( var_8[0] );
+            var_3 settargetentity( var_8[0] );
         }
 
         wait(randomfloatrange( 3.0, 8.0 ));
@@ -1884,10 +1884,10 @@ spawnhadesescapevehicle()
     var_0 thread objmarkervehicle( "FlagSniperDroneHit", 1, 0 );
     var_0 markdronetargetvehicle();
     var_5 = getvehiclenode( var_4, "targetname" );
-    var_0 _meth_827D( var_5 );
-    var_0 _meth_827F( var_5 );
+    var_0 attachpath( var_5 );
+    var_0 startpath( var_5 );
     var_0 thread maps\_vehicle::vehicle_paths( var_5 );
-    var_0 _meth_8283( 20, 10, 15 );
+    var_0 vehicle_setspeed( 20, 10, 15 );
     common_scripts\utility::flag_wait( "FlagHadesVehicleDroneLaunch" );
     firekamikazedrones( var_0 );
 }
@@ -1926,19 +1926,19 @@ firekamikazedrones( var_0 )
 
 mangarocketparentupdate( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 {
-    var_8 = level.player _meth_80A8() - var_1;
+    var_8 = level.player geteye() - var_1;
     var_9 = vectornormalize( anglestoforward( level.player getangles() ) );
-    var_10 = level.player _meth_80A8() - level.player.origin;
+    var_10 = level.player geteye() - level.player.origin;
     var_10 /= 2;
     var_9 = common_scripts\utility::randomvectorincone( var_9, 30 ) * 100;
     var_11 = var_0.origin + ( 16, 0, 96 );
-    var_12 = level.player _meth_80A8() + var_9;
+    var_12 = level.player geteye() + var_9;
     var_13 = ( var_1[0], var_1[1], var_12[2] ) + ( 0, 0, 100 );
     var_14 = common_scripts\utility::spawn_tag_origin();
     var_14.origin = var_11;
     var_14.parentorigin = var_11;
     var_14.droneviewmodel = spawn( "script_model", var_11 );
-    var_14.droneviewmodel _meth_80B1( "vehicle_atlas_assault_drone" );
+    var_14.droneviewmodel setmodel( "vehicle_atlas_assault_drone" );
     playfx( common_scripts\utility::getfx( "kamikaze_drone_launch" ), var_11 );
     soundscripts\_snd::snd_message( "start_kdrone_launch", var_0 );
     playfxontag( common_scripts\utility::getfx( "kamikaze_drone_trail" ), var_14, "tag_origin" );
@@ -1952,7 +1952,7 @@ mangarocketparentupdate( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 
     while ( var_17 <= 1 )
     {
         wait 0.05;
-        var_12 = level.player _meth_80A8() + var_9;
+        var_12 = level.player geteye() + var_9;
         var_13 = ( var_1[0], var_1[1], var_12[2] ) + ( 0, 0, 100 );
         var_19 = squared( 1 - var_15 ) * var_11 + 2 * var_15 * ( 1 - var_15 ) * var_13 + squared( var_15 ) * var_12;
         var_14.parentorigin = var_19;
@@ -2042,7 +2042,7 @@ confroomsetup()
     level.confhades.disableexits = 1;
     level.confhades.neverenablecqb = 1;
     level.confhades.alwaysrunforward = 1;
-    level.confhades _meth_818F( "face default" );
+    level.confhades orientmode( "face default" );
     level.confhades.combatmode = "no_cover";
     level.confhades maps\_utility::gun_remove();
     level.confhades.grenadeammo = 0;
@@ -2371,7 +2371,7 @@ confroomragdoll( var_0 )
     if ( isalive( var_0 ) )
         var_0 maps\greece_code::kill_no_react();
 
-    var_0 _meth_8023();
+    var_0 startragdoll();
 }
 
 confroomexplosiondronereaction()
@@ -2385,8 +2385,8 @@ confroomexplosiondronereaction()
     var_0.frameviewmodel maps\_utility::assign_animtree( "sniperdrone_outerparts" );
     var_0.barrelviewmodel.animname = "sniperdrone_barrel";
     var_0.barrelviewmodel maps\_utility::assign_animtree( "sniperdrone_barrel" );
-    var_0.frameviewmodel _meth_814B( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
-    var_0.barrelviewmodel _meth_814B( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.frameviewmodel setanim( var_0.frameviewmodel maps\_utility::getanim( var_1 ) );
+    var_0.barrelviewmodel setanim( var_0.barrelviewmodel maps\_utility::getanim( var_1 ) );
     common_scripts\utility::flag_set( "FlagSniperDroneAnimating" );
     common_scripts\utility::flag_set( "FlagSniperDroneCloakOff" );
     soundscripts\_snd::snd_message( "wasp_cloak_off" );
@@ -2442,7 +2442,7 @@ initthinkpatrolenemy( var_0 )
     self.fovcosine = cos( 45 );
     maps\_utility::set_goal_radius( 64 );
     self.diequietly = 1;
-    self _meth_8166();
+    self clearenemy();
     thread maps\_utility::set_battlechatter( 0 );
     thread maps\greece_code::clearalertoutline();
     thread maps\_sniper_setup_ai::waitforplayerbulletwhizby();
@@ -2471,7 +2471,7 @@ thinkmeetingcivilian()
     maps\_utility::set_ignoreall( 1 );
     maps\_utility::set_ignoreme( 1 );
     var_0 = common_scripts\utility::getstruct( self.target, "targetname" );
-    self _meth_81C6( var_0.origin, var_0.angles );
+    self forceteleport( var_0.origin, var_0.angles );
     self.animname = "generic";
     var_1 = var_0.animation;
     var_0 thread maps\_anim::anim_generic_loop( self, var_1 );
@@ -2508,7 +2508,7 @@ thinkambushenemy()
             self.disablereactionanims = 1;
             self.no_pistol_switch = 1;
             self.dontmelee = 1;
-            self _meth_80B1( "kva_heavy_body" );
+            self setmodel( "kva_heavy_body" );
             thread codescripts\character::setheadmodel( "kva_heavy_head" );
         }
     }
@@ -2598,18 +2598,18 @@ bodystashguarddeath( var_0, var_1 )
 
             if ( var_1 == "bodystash_alt" )
             {
-                self _meth_83FB();
+                self hudoutlinedisable();
 
-                if ( _func_0A3( self ) )
-                    _func_09B( self );
+                if ( target_istarget( self ) )
+                    target_remove( self );
             }
         }
         else
         {
-            self _meth_83FB();
+            self hudoutlinedisable();
 
-            if ( _func_0A3( self ) )
-                _func_09B( self );
+            if ( target_istarget( self ) )
+                target_remove( self );
         }
 
         maps\_utility::set_ignoreme( 1 );
@@ -2630,8 +2630,8 @@ bodystashguarddeath( var_0, var_1 )
             self.allowdeath = 1;
             self.a.nodeath = 1;
             animscripts\notetracks::notetrackstartragdoll( "ragdoll" );
-            self _meth_8141();
-            self _meth_8052();
+            self stopanimscripted();
+            self kill();
         }
         else if ( self.script_noteworthy == "GatePlayerTarget2" )
         {
@@ -2646,7 +2646,7 @@ bodystashguarddeath( var_0, var_1 )
             self hide();
             self.a.nodeath = 1;
             animscripts\notetracks::notetrackstartragdoll( "ragdoll" );
-            self _meth_8052();
+            self kill();
         }
     }
 }
@@ -2702,7 +2702,7 @@ deliverytrucksetup()
     var_0.animname = "truck";
     var_0 maps\_utility::assign_animtree( "truck" );
     var_1 = getent( "delivery_truck_collision", "targetname" );
-    var_1 _meth_804D( var_0, "tag_origin" );
+    var_1 linkto( var_0, "tag_origin" );
     soundscripts\_snd::snd_message( "veh_moving_truck_chkpt", var_0 );
 }
 
@@ -2712,8 +2712,8 @@ guyragdollnotetrack( var_0 )
     var_0 maps\greece_code::kill_no_react();
     var_1 = ( 0.5, 0.5, 1 );
     var_2 = 100000;
-    var_0 _meth_8024( var_0.origin, var_1 * var_2 );
-    var_0 _meth_8023();
+    var_0 startragdollfromimpact( var_0.origin, var_1 * var_2 );
+    var_0 startragdoll();
 }
 
 guyextrabloodnotetrack( var_0 )
@@ -2750,7 +2750,7 @@ bodystashguardalertwatch()
     wait 0.1;
     common_scripts\utility::flag_set( "FlagBodyStashGuardsAlerted" );
     var_1 = getent( "delivery_truck", "targetname" );
-    self _meth_8167( var_1 );
+    self setentitytarget( var_1 );
 }
 
 bodystashguardkillwatch()
@@ -2893,7 +2893,7 @@ gatebreachvictimdie( var_0, var_1, var_2, var_3, var_4 )
 
         var_1.favoriteenemy = level.infiltratorburke;
         var_1 maps\_utility::set_ignoreme( 0 );
-        var_1 _meth_81EC( 512 );
+        var_1 findnearbycovernode( 512 );
         var_1.combatmode = "cover";
     }
 }
@@ -3280,7 +3280,7 @@ enemypatrolatriumthread( var_0 )
             var_12 = getent( var_11, "script_noteworthy" );
 
             if ( isdefined( var_12 ) )
-                var_5 _meth_81A9( var_12 );
+                var_5 setgoalvolumeauto( var_12 );
         }
     }
 }
@@ -3307,7 +3307,7 @@ enemyatriumflashbang( var_0 )
 
         if ( isdefined( self ) && isalive( self ) )
         {
-            self _meth_8141();
+            self stopanimscripted();
             thread markplayertarget( 1, 0 );
             maps\_utility::flashbangstart( var_1 );
         }
@@ -3422,7 +3422,7 @@ monitorparkinginvestigatorsneargoal( var_0 )
 
         foreach ( var_6 in var_2 )
         {
-            if ( var_6 _meth_80A9( var_3 ) )
+            if ( var_6 istouching( var_3 ) )
             {
                 var_2 = common_scripts\utility::array_remove( var_2, var_6 );
                 var_1++;
@@ -3493,7 +3493,7 @@ aimovetonewidlepos( var_0, var_1, var_2 )
         var_6 = self.idlepoint.animation;
 
         if ( var_1 == "teleport" )
-            self _meth_81C6( self.idlepoint.origin, self.idlepoint.angles );
+            self forceteleport( self.idlepoint.origin, self.idlepoint.angles );
         else
         {
             var_7 = var_6 + "_in";
@@ -3644,7 +3644,7 @@ aienabletotalcombat( var_0 )
     if ( isdefined( var_1 ) )
         maps\_utility::set_favoriteenemy( var_1 );
 
-    var_2 = self _meth_81EE();
+    var_2 = self findbestcovernode();
 
     if ( isdefined( var_2 ) )
     {
@@ -3674,7 +3674,7 @@ aienablestealthcombat()
         case "axis":
             maps\_utility::clear_generic_idle_anim();
             maps\_utility::clear_run_anim();
-            self _meth_81CA( "stand", "crouch", "prone" );
+            self allowedstances( "stand", "crouch", "prone" );
             self.enemyteam = "allies";
             maps\_utility::disable_long_death();
             thread aistealthcombatenemygotocover();
@@ -3699,11 +3699,11 @@ aistealthcombatenemygotocover()
         if ( var_1.size > 1 )
             var_1 = common_scripts\utility::array_randomize( var_1 );
 
-        self _meth_81A9( var_1[0] );
+        self setgoalvolumeauto( var_1[0] );
     }
     else
     {
-        var_2 = self _meth_81EE();
+        var_2 = self findbestcovernode();
 
         if ( isdefined( var_2 ) )
             maps\_utility::set_goal_node( var_2 );
@@ -3723,7 +3723,7 @@ aidisablestealthcombat()
         if ( isdefined( var_0.script_noteworthy ) )
             maps\_hms_utility::printlnscreenandconsole( self.script_noteworthy + " has enemy " + var_0.script_noteworthy );
 
-        self _meth_8166();
+        self clearenemy();
     }
 
     maps\_utility::enable_cqbwalk();
@@ -4105,7 +4105,7 @@ alertallpoolguards()
         var_2 maps\_utility::clear_generic_idle_anim();
         var_2 maps\_utility::clear_generic_run_anim();
         var_2 maps\_utility::set_ignoreme( 0 );
-        var_2 _meth_81EC( 512 );
+        var_2 findnearbycovernode( 512 );
         var_2.combatmode = "cover";
     }
 }
@@ -4181,7 +4181,7 @@ allyexithandlevictim( var_0, var_1, var_2 )
 alliesparkingsetup()
 {
     foreach ( var_1 in level.allyinfiltrators )
-        var_1 _meth_8166();
+        var_1 clearenemy();
 
     level endon( "ConfRoomSetupBreach" );
     wait 1.0;
@@ -4451,8 +4451,8 @@ atriumbreachidleinfiltrators( var_0 )
     {
         var_4 = getent( "AtriumBreachTeleport_Infiltrator1", "targetname" );
         var_5 = getent( "AtriumBreachTeleport_Infiltrator2", "targetname" );
-        var_2 _meth_81C6( var_4.origin, var_4.angles );
-        var_3 _meth_81C6( var_5.origin, var_5.angles );
+        var_2 forceteleport( var_4.origin, var_4.angles );
+        var_3 forceteleport( var_5.origin, var_5.angles );
     }
 
     thread atriumbreachidle( var_1, var_2, level.breach_charge, var_0 );
@@ -4470,7 +4470,7 @@ atriumbreachidleburke( var_0 )
     if ( var_0 )
     {
         var_3 = getent( "AtriumBreachTeleport_InfiltratorBurke", "targetname" );
-        var_2 _meth_81C6( var_3.origin, var_3.angles );
+        var_2 forceteleport( var_3.origin, var_3.angles );
     }
 
     thread atriumbreachidle( var_1, var_2, level.breach_charge_2, var_0 );
@@ -4480,7 +4480,7 @@ atriumbreachidle( var_0, var_1, var_2, var_3 )
 {
     var_4 = "mutebreach_setup";
     var_5 = "mutebreach_idle";
-    var_1 _meth_8166();
+    var_1 clearenemy();
     var_6 = [];
     var_6[0] = var_1;
     var_7 = [];
@@ -4538,8 +4538,8 @@ atriumbreachexplosionnotetrack( var_0 )
 {
     maps\greece_conf_center_fx::confcenteratriumflashcharge();
     soundscripts\_snd::snd_message( "start_atrium_fight" );
-    level.breach_charge _meth_8141();
-    level.breach_charge_2 _meth_8141();
+    level.breach_charge stopanimscripted();
+    level.breach_charge_2 stopanimscripted();
     level.breach_charge delete();
     level.breach_charge_2 delete();
     wait 1;
@@ -4575,8 +4575,8 @@ alliesbreachatrium()
     waitframe();
     var_13 = getdvarfloat( "ai_eventDistGunshot" );
     var_14 = getdvarfloat( "ai_eventDistGunshotTeam" );
-    _func_0D3( "ai_eventDistGunshot", 50 );
-    _func_0D3( "ai_eventDistGunshotTeam", 50 );
+    setsaveddvar( "ai_eventDistGunshot", 50 );
+    setsaveddvar( "ai_eventDistGunshotTeam", 50 );
     var_5 delete();
     var_3 delete();
     var_15 = [];
@@ -4605,8 +4605,8 @@ alliesbreachatrium()
     }
 
     common_scripts\utility::flag_wait( "FlagEndAtriumSetup" );
-    _func_0D3( "ai_eventDistGunshot", var_13 );
-    _func_0D3( "ai_eventDistGunshotTeam", var_14 );
+    setsaveddvar( "ai_eventDistGunshot", var_13 );
+    setsaveddvar( "ai_eventDistGunshotTeam", var_14 );
     disablealliescolor();
 
     foreach ( var_20 in level.allyinfiltrators )
@@ -4629,7 +4629,7 @@ atriumdoorbreachdamage()
     var_1 = maps\_utility::array_removedead_or_dying( var_1 );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_8052();
+        var_3 kill();
 }
 
 atriumdoorsopenonalarm()
@@ -4655,8 +4655,8 @@ atriumdoorsopen()
     var_2 = getent( "atrium_door_top_clip", "targetname" );
     var_3 = getent( "atrium_door_top_org", "targetname" );
     var_2 delete();
-    var_1 _meth_804D( var_3 );
-    var_3 _meth_82B5( var_3.angles + ( 0, 120, 0 ), 0.35, 0, 0.35 );
+    var_1 linkto( var_3 );
+    var_3 rotateto( var_3.angles + ( 0, 120, 0 ), 0.35, 0, 0.35 );
     var_4 = maps\_utility::get_closest_index( var_1.origin, var_0 );
 
     if ( isdefined( var_0[var_4] ) )
@@ -4664,23 +4664,23 @@ atriumdoorsopen()
         var_5 = var_0[var_4];
         var_0 = common_scripts\utility::array_remove( var_0, var_5 );
         var_6 = getent( "WalkwayTopVol", "targetname" );
-        var_5 _meth_81A9( var_6 );
+        var_5 setgoalvolumeauto( var_6 );
     }
 
     var_7 = getent( "atrium_door_bottom", "targetname" );
     var_8 = getent( "atrium_door_bottom_clip", "targetname" );
     var_9 = getent( "atrium_door_bottom_org", "targetname" );
     var_8 delete();
-    var_7 _meth_804D( var_9 );
-    var_9 _meth_82B5( var_9.angles + ( 0, 120, 0 ), 0.35, 0, 0.35 );
+    var_7 linkto( var_9 );
+    var_9 rotateto( var_9.angles + ( 0, 120, 0 ), 0.35, 0, 0.35 );
     var_10 = getent( "WalkwayBottomVol", "targetname" );
     var_11 = common_scripts\utility::get_array_of_closest( var_7.origin, var_0 );
 
     if ( isdefined( var_11[0] ) )
-        var_11[0] _meth_81A9( var_10 );
+        var_11[0] setgoalvolumeauto( var_10 );
 
     if ( isdefined( var_11[1] ) )
-        var_11[1] _meth_81A9( var_10 );
+        var_11[1] setgoalvolumeauto( var_10 );
 }
 
 alliesparkingdefend()
@@ -4732,14 +4732,14 @@ monitorzoomonburke()
 
 monitorzoomonhades1()
 {
-    level.confhades _meth_83FA( 5, 0 );
-    level.player _meth_8300( 1 );
+    level.confhades hudoutlineenable( 5, 0 );
+    level.player allowads( 1 );
     thread maps\_utility::hintdisplayhandler( "drone_zoom" );
     waittillplayerlookattarget( level.confhades, 5, 1 );
     common_scripts\utility::flag_set( "FlagPlayerZoomOnHades1" );
     wait 3.0;
     common_scripts\utility::flag_set( "FlagContinueDroneFlyin" );
-    level.confhades _meth_83FB();
+    level.confhades hudoutlinedisable();
     thread autosavesniperdronestealth( "conf_center_hades_zoom_1" );
 }
 
@@ -4785,7 +4785,7 @@ waittillplayerlookattarget( var_0, var_1, var_2 )
 
 drawplayerlookatdebug( var_0, var_1, var_2, var_3 )
 {
-    var_4 = level.player _meth_8036();
+    var_4 = level.player getgunangles();
     var_1 = level.player getangles();
     var_5 = anglestoforward( var_1 + ( 0, var_3, 0 ) );
     var_6 = anglestoforward( var_1 + ( 0, var_3 * -1, 0 ) );
@@ -4809,17 +4809,17 @@ monitorplayerlookat( var_0, var_1 )
         wait 0.05;
 
         if ( issentient( self ) )
-            var_2 = self _meth_80A8();
+            var_2 = self geteye();
         else
             var_2 = self.origin;
 
         if ( level.showdebugtoggle == 1 )
-            drawplayerlookatdebug( level.player _meth_80A8(), level.player _meth_8036(), var_2, var_0 );
+            drawplayerlookatdebug( level.player geteye(), level.player getgunangles(), var_2, var_0 );
 
         if ( var_1 == 1 && !level.player adsbuttonpressed() )
             continue;
 
-        if ( common_scripts\utility::within_fov( level.player _meth_80A8(), level.player _meth_8036(), var_2, var_3 ) == 1 )
+        if ( common_scripts\utility::within_fov( level.player geteye(), level.player getgunangles(), var_2, var_3 ) == 1 )
         {
             self notify( "PlayerLookAt" );
             return;
@@ -4938,10 +4938,10 @@ monitoratriumfighttimer()
     level.atriumtimer.alignx = "left";
     level.atriumtimer.horzalign = "center";
     level.atriumtimer.color = ( 0.95, 0.95, 1 );
-    level.atriumtimer _meth_80D4( level.atriumtimewindow );
+    level.atriumtimer settenthstimerstatic( level.atriumtimewindow );
     level.atriumtimer setpulsefx( 30, 900000, 700 );
     common_scripts\utility::flag_wait( "FlagAtriumEnemiesAllMarked" );
-    level.atriumtimer _meth_80D2( level.atriumtimewindow );
+    level.atriumtimer settenthstimer( level.atriumtimewindow );
     thread freezeatriumfighttimer();
     thread markatriumenemiesatwarning( var_2 );
     wait(level.atriumtimewindow);
@@ -4966,7 +4966,7 @@ markatriumenemiesatwarning( var_0 )
         var_2 = maps\_utility::array_removedead_or_dying( var_2 );
 
         foreach ( var_4 in var_2 )
-            var_4 _meth_84ED( "enhanceable" );
+            var_4 setthreatdetection( "enhanceable" );
     }
 }
 
@@ -4992,7 +4992,7 @@ freezeatriumfighttimer()
     var_1 = gettime();
     var_2 = ( var_1 - var_0 ) * 0.001;
     var_3 = level.atriumtimewindow - var_2;
-    level.atriumtimer _meth_80D4( var_3 );
+    level.atriumtimer settenthstimerstatic( var_3 );
     wait 5.0;
     destroyatriumfighttimer();
 }
@@ -5011,7 +5011,7 @@ monitorparkingcars()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "greece_confcenter_tr" ) )
+        if ( !istransientloaded( "greece_confcenter_tr" ) )
             level waittill( "tff_post_intro_to_confcenter" );
 
         var_0 = level.sniper_marked_cars;
@@ -5140,11 +5140,11 @@ enemiesignoreplayerdrone( var_0 )
     if ( var_0 == 1 )
     {
         createthreatbiasgroup( "player_drone" );
-        self _meth_8177( "player_drone" );
+        self setthreatbiasgroup( "player_drone" );
         setignoremegroup( "player_drone", "axis" );
     }
     else
-        self _meth_8177();
+        self setthreatbiasgroup();
 }
 
 monitorlevelalarm()
@@ -5495,7 +5495,7 @@ killallallies()
         if ( var_2.script_noteworthy == "InfiltratorBurke" )
             thread failallydeath();
 
-        var_2 _meth_8052();
+        var_2 kill();
     }
 }
 
@@ -5529,7 +5529,7 @@ markallies( var_0 )
     foreach ( var_2 in level.allyinfiltrators )
     {
         var_2 thread markdronetargetally();
-        var_2 _meth_83FA( 2 );
+        var_2 hudoutlineenable( 2 );
     }
 }
 
@@ -5565,7 +5565,7 @@ markallytargets( var_0 )
 {
     var_1 = [];
     var_2 = [];
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
     var_3 = var_0 + "AllyTarget";
 
     foreach ( var_5 in var_2 )
@@ -5602,8 +5602,8 @@ unmarkdronetarget()
     self endon( "dying" );
     common_scripts\utility::flag_wait( "FlagSniperDroneHit" );
 
-    if ( _func_0A3( self ) )
-        _func_09B( self );
+    if ( target_istarget( self ) )
+        target_remove( self );
 }
 
 unmarkandremoveoutline( var_0 )
@@ -5613,28 +5613,28 @@ unmarkandremoveoutline( var_0 )
         if ( isdefined( var_0 ) )
             wait(var_0);
 
-        self _meth_83FB();
+        self hudoutlinedisable();
 
-        if ( _func_0A3( self ) )
-            _func_09B( self );
+        if ( target_istarget( self ) )
+            target_remove( self );
     }
 }
 
 rumbleatriumbreach()
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     earthquake( 0.1, 0.2, level.player.origin, 100 );
 }
 
 rumblesniperdronenearexplosion()
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 1.5, level.player.origin, 100 );
 }
 
 rumbleplayerdistantexplosion()
 {
-    level.player _meth_80AD( "subtle_tank_rumble" );
+    level.player playrumbleonentity( "subtle_tank_rumble" );
     earthquake( 0.2, 0.5, level.player.origin, 100 );
 }
 
@@ -5700,9 +5700,9 @@ getclosestflat( var_0, var_1, var_2, var_3 )
 get_closest_ai_flat( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( isdefined( var_1 ) )
-        var_5 = _func_0D6( var_1 );
+        var_5 = getaiarray( var_1 );
     else
-        var_5 = _func_0D6();
+        var_5 = getaiarray();
 
     if ( var_5.size == 0 )
         return undefined;
@@ -5769,7 +5769,7 @@ burkecourtyardboostjump()
 
 tff_spawn_vehicles_conf_center()
 {
-    if ( !_func_21E( "greece_confcenter_tr" ) )
+    if ( !istransientloaded( "greece_confcenter_tr" ) )
         level waittill( "tff_post_intro_to_confcenter" );
 
     var_0 = getentarray( "ParkingAlarmCar", "targetname" );
@@ -5792,7 +5792,7 @@ tff_spawn_vehicles_conf_center()
     common_scripts\utility::flag_wait( "FlagUnMarkParkingCars" );
 
     foreach ( var_4 in level.sniper_marked_cars )
-        var_4 _meth_83FB();
+        var_4 hudoutlinedisable();
 }
 
 hinthadeszoomoff()

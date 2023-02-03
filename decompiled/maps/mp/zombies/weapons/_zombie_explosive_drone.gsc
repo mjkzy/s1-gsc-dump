@@ -55,11 +55,11 @@ watchforstick()
     self waittill( "missile_stuck", var_0 );
 
     if ( isdefined( var_0 ) )
-        self _meth_804D( var_0 );
+        self linkto( var_0 );
 
     self.explosive = spawn( "script_model", self.origin );
-    self.explosive _meth_80B1( "npc_drone_explosive_main" );
-    self.explosive _meth_804D( self, "tag_spike", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.explosive setmodel( "npc_drone_explosive_main" );
+    self.explosive linkto( self, "tag_spike", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.zed_active = common_scripts\utility::array_removeundefined( level.zed_active );
 
     if ( level.zed_active.size > 8 )
@@ -85,8 +85,8 @@ triggerthink()
     var_0 = 80;
     var_1 = spawn( "trigger_radius", self.origin - ( 0, 0, var_0 ), 0, var_0, 2 * var_0 );
     var_1 thread maps\mp\zombies\_util::delete_on_death_of( self );
-    var_1 _meth_8069();
-    var_1 _meth_804D( self );
+    var_1 enablelinkto();
+    var_1 linkto( self );
 
     for (;;)
     {
@@ -97,7 +97,7 @@ triggerthink()
 
         var_3 = anglestoup( self.angles );
 
-        if ( var_2 _meth_81D7( self.origin + var_3 * 10 ) == 0 )
+        if ( var_2 damageconetrace( self.origin + var_3 * 10 ) == 0 )
             continue;
 
         thread activategrenade();
@@ -112,14 +112,14 @@ activategrenade()
 
     self.activated = 1;
     var_0 = self.explosive;
-    self _meth_8438( "wpn_explosive_drone_open" );
+    self playsoundonmovingent( "wpn_explosive_drone_open" );
     maps\mp\zombies\_util::killfxontagnetwork( common_scripts\utility::getfx( "zed_beacon" ), var_0, "TAG_BEACON" );
     droneanimate();
     var_1 = var_0.origin + ( 0, 0, 5 );
-    var_0 _meth_80B1( "tag_origin" );
+    var_0 setmodel( "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "zed_explode" ), var_0, "tag_origin" );
-    var_0 _meth_8438( "wpn_explosive_drone_exp" );
-    self entityradiusdamage( var_1, 200, 200, 50, self.owner, "MOD_EXPLOSIVE", "explosive_drone_zombie_mp" );
+    var_0 playsoundonmovingent( "wpn_explosive_drone_exp" );
+    self radiusdamage( var_1, 200, 200, 50, self.owner, "MOD_EXPLOSIVE", "explosive_drone_zombie_mp" );
     self delete();
     wait 1;
     var_0 delete();
@@ -130,8 +130,8 @@ droneanimate()
     self.explosive endon( "death" );
     var_0 = 0.7;
     var_1 = anglestoup( self.angles );
-    self.explosive _meth_804F();
-    self.explosive _meth_82AE( self.origin + var_1 * 30, var_0, 0, var_0 );
+    self.explosive unlink();
+    self.explosive moveto( self.origin + var_1 * 30, var_0, 0, var_0 );
     wait(var_0);
 }
 
@@ -141,8 +141,8 @@ pickupthink()
     var_0 = spawn( "script_model", self.origin );
     var_0.owner = self.owner;
     var_0 makeusable();
-    var_0 _meth_80DB( &"ZOMBIES_PICKUP_EXPLOSIVE_DRONE" );
-    var_0 _meth_849B( 1 );
+    var_0 sethintstring( &"ZOMBIES_PICKUP_EXPLOSIVE_DRONE" );
+    var_0 sethintstringvisibleonlytoowner( 1 );
     var_0 thread maps\mp\zombies\_util::delete_on_death_of( self );
 
     for (;;)
@@ -153,9 +153,9 @@ pickupthink()
             continue;
 
         if ( var_1 maps\mp\zombies\_terminals::hasexosuit() )
-            var_1 _meth_82F7( "explosive_drone_zombie_mp", var_1 _meth_82F9( "explosive_drone_zombie_mp" ) + 1 );
+            var_1 setweaponammostock( "explosive_drone_zombie_mp", var_1 setweaponammostock( "explosive_drone_zombie_mp" ) + 1 );
         else
-            var_1 _meth_82F7( "explosive_drone_throw_zombie_mp", var_1 _meth_82F9( "explosive_drone_throw_zombie_mp" ) + 1 );
+            var_1 setweaponammostock( "explosive_drone_throw_zombie_mp", var_1 setweaponammostock( "explosive_drone_throw_zombie_mp" ) + 1 );
 
         if ( isdefined( self.explosive ) )
             self.explosive delete();

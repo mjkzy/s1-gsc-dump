@@ -21,7 +21,7 @@ mutatorarmor()
     self detachall();
     self.limbmodels = undefined;
     self.helmet_health = 50;
-    self _meth_80B1( "zom_mut_armor_body" );
+    self setmodel( "zom_mut_armor_body" );
     var_1 = [ "zombies_head_mutator_fire", "zombies_head_mutator_fire_cau_a", "zombies_head_mutator_fire_cau_b", "zombies_head_mutator_fire_cau_c" ];
     var_2 = randomint( var_1.size );
     self attach( var_1[var_2] );
@@ -37,8 +37,8 @@ mutatorarmor()
     var_5 = self gettagangles( var_0 );
     var_6 = spawn( "script_model", var_4 );
     var_6.angles = var_5;
-    var_6 _meth_80B1( "zombie_helmet" );
-    var_6 _meth_804D( self, var_0, ( -0.2, -0.45, -4.7 ), ( 0, 90, 0 ) );
+    var_6 setmodel( "zombie_helmet" );
+    var_6 linkto( self, var_0, ( -0.2, -0.45, -4.7 ), ( 0, 90, 0 ) );
     thread mutatorhelmetdetach( var_6 );
     self waittill( "death" );
     self.hashelmet = undefined;
@@ -65,9 +65,9 @@ mutatorhelmetdetach( var_0 )
     self.moverateroundmod += 5;
     playfx( common_scripts\utility::getfx( "mut_helmet_impact" ), var_0.origin );
     var_0 playsound( "zmb_mut_armor_helmet_ping" );
-    var_0 _meth_804F();
-    var_0 _meth_80B1( "zombie_helmet_collision" );
-    var_0 _meth_82C2( var_0.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
+    var_0 unlink();
+    var_0 setmodel( "zombie_helmet_collision" );
+    var_0 physicslaunchclient( var_0.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
     physicsexplosionsphere( var_0.origin - ( 0, 0, 2 ), 16, 1, 5 );
     thread mutatorhelmetcleanup( var_0 );
 }

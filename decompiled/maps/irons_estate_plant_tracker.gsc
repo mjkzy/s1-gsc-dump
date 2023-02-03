@@ -14,10 +14,10 @@ plant_tracker_start()
     thread stairwell_doors();
     thread landing_pad_lift_upper_static_setup();
     thread maps\irons_estate_track_irons::ambient_hangar_fan_blades_setup();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_pbwsingleshot_sp_silencerpistol" );
-    level.player _meth_830E( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
-    level.player _meth_8315( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_pbwsingleshot_sp_silencerpistol" );
+    level.player giveweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+    level.player switchtoweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
 }
 
 plant_tracker_main()
@@ -68,9 +68,9 @@ move_lift()
 {
     var_0 = getent( "landing_pad_lift", "targetname" );
     var_1 = var_0 common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( var_1, "tag_origin" );
+    var_0 linkto( var_1, "tag_origin" );
     var_2 = common_scripts\utility::getstruct( "lift_end_pos", "targetname" );
-    var_1 _meth_82AE( var_2.origin, 0.1 );
+    var_1 moveto( var_2.origin, 0.1 );
 }
 
 vtol_exhaust()
@@ -115,7 +115,7 @@ exfil_setup()
     level.exfil_arms hide();
     var_0[var_0.size] = level.exfil_arms;
     level.tracking_device = maps\_utility::spawn_anim_model( "tracking_device" );
-    level.tracking_device _meth_804D( level.exfil_arms, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.tracking_device linkto( level.exfil_arms, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.tracking_device hide();
     var_1 = maps\_utility::spawn_anim_model( "genericprop_x5" );
     var_1 hide();
@@ -143,7 +143,7 @@ pop_cormack_into_exfil_anim_to_match_player()
     level.allies[0].name = " ";
     level waittill( "stop_grapplesound" );
     level.allies[0] notify( "killgrapple" );
-    level.allies[0] _meth_804F();
+    level.allies[0] unlink();
     level.anim_struct_exfil thread maps\_anim::anim_single_solo( level.allies[0], "exfil" );
     wait 0.05;
     maps\_anim::anim_set_time( [ level.vtol, level.allies[0], level.exfil_arms ], "exfil", 0.26867 );
@@ -182,7 +182,7 @@ exfil_vtol()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     var_0 hide();
-    var_0 _meth_804D( self, "J_magnet_01", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "J_magnet_01", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     self waittillmatch( "single anim", "grapple_on" );
     level thread player_started_vtol_grapple_monitor();
     thread cloud_fx();
@@ -276,27 +276,27 @@ exfil_player()
 {
     level.player waittill( "grappled_to_vtol" );
     common_scripts\utility::flag_set( "player_grappled_to_vtol" );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     maps\_grapple::grapple_magnet_unregister( level.vtol, "J_magnet_01" );
     level.player maps\_grapple::grapple_take();
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_831F();
-    level.player _meth_8321();
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player maps\_tagging::tagging_set_enabled( 0 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
-    level.player _meth_807F( level.exfil_arms, "tag_player" );
+    level.player playerlinktoabsolute( level.exfil_arms, "tag_player" );
     wait 0.05;
-    level.player _meth_807D( level.exfil_arms, "tag_player", 1.0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( level.exfil_arms, "tag_player", 1.0, 0, 0, 0, 0, 1 );
     level.exfil_arms show();
 }
 
 exfil_cormack()
 {
-    level.allies[0] _meth_81CA( "stand" );
+    level.allies[0] allowedstances( "stand" );
     level.allies[0].badplaceawareness = 0;
     level.anim_struct_exfil maps\_anim::anim_reach_solo( level.allies[0], "exfil_enter" );
     level.anim_struct_exfil thread maps\_anim::anim_single_solo( level.allies[0], "exfil_enter" );
@@ -344,7 +344,7 @@ cormack_landing_pad_combat()
     maps\_utility::disable_surprise();
     maps\_utility::disable_pain();
     maps\_utility::disable_bulletwhizbyreaction();
-    self _meth_81CA( "stand", "crouch" );
+    self allowedstances( "stand", "crouch" );
     self.ignoreme = 0;
     self.ignoreall = 0;
     level notify( "wake_up_guys" );
@@ -378,8 +378,8 @@ exfil_enemies_setup()
     {
         if ( isdefined( level.jumper_clip_1 ) )
         {
-            level.jumper_clip_1 _meth_82BF();
-            level.jumper_clip_1 _meth_8058();
+            level.jumper_clip_1 notsolid();
+            level.jumper_clip_1 connectpaths();
             level.jumper_clip_1 delete();
         }
 
@@ -387,17 +387,17 @@ exfil_enemies_setup()
         maps\_utility::set_ignoreme( 1 );
         maps\_utility::set_ignoreall( 1 );
         var_0 = getent( "jumper_volume", "targetname" );
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
         common_scripts\utility::waittill_notify_or_timeout( "goal", 8 );
 
         if ( isdefined( level.jumper_clip_2 ) )
         {
-            level.jumper_clip_2 _meth_82BF();
-            level.jumper_clip_2 _meth_8058();
+            level.jumper_clip_2 notsolid();
+            level.jumper_clip_2 connectpaths();
             level.jumper_clip_2 delete();
         }
 
-        self _meth_81AB();
+        self cleargoalvolume();
         self.dontattackme = undefined;
         self.ignoreme = 0;
         self.ignoreall = 0;
@@ -416,7 +416,7 @@ exfil_enemies_setup()
     common_scripts\utility::flag_wait( "player_started_vtol_grapple" );
 
     if ( isdefined( self ) && isalive( self ) )
-        self _meth_8052();
+        self kill();
 }
 
 landing_pad_drones()
@@ -429,7 +429,7 @@ landing_pad_drones()
     common_scripts\utility::flag_wait( "player_started_vtol_grapple" );
 
     if ( isdefined( self ) && isalive( self ) )
-        self _meth_8052();
+        self kill();
 }
 
 #using_animtree("generic_human");
@@ -450,15 +450,15 @@ cormack_grapple_to_vtol()
     maps\_utility::set_fixednode_true();
     maps\_utility::set_goalradius( 64 );
     maps\_utility::enable_sprint();
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
     maps\_grapple_traverse::grapple_traverse( undefined, level.vtol, "J_magnet_02", %ie_exfil_impact_cormack );
     self waittill( "traverse_finish" );
-    self _meth_804F();
+    self unlink();
     level.anim_struct_exfil thread maps\_anim::anim_single_solo( self, "exfil" );
     wait 0.05;
-    var_1 = level.exfil_arms _meth_814F( level.exfil_arms maps\_utility::getanim( "exfil" ) );
-    self _meth_8117( maps\_utility::getanim( "exfil" ), var_1 );
+    var_1 = level.exfil_arms getanimtime( level.exfil_arms maps\_utility::getanim( "exfil" ) );
+    self setanimtime( maps\_utility::getanim( "exfil" ), var_1 );
 }
 
 exfil_workers()
@@ -483,7 +483,7 @@ worker_spawn_func()
     maps\_utility::set_goal_radius( 32 );
     maps\_utility::set_fixednode_true();
     maps\_utility::set_forcegoal();
-    self _meth_81A6( var_0.origin );
+    self setgoalpos( var_0.origin );
     self waittill( "goal" );
     maps\_anim::anim_loop_solo( self, "landing_pad_worker_cower_idle" );
 }
@@ -500,11 +500,11 @@ stairwell_doors()
     level.anim_struct_exfil maps\_anim::anim_first_frame( [ var_0, var_1 ], "upper_stairwell_doors" );
     wait 0.05;
     var_2 = getent( "lower_stairwell_door_clip", "targetname" );
-    var_2 _meth_804D( level.lower_stairwell_door, "tag_origin" );
+    var_2 linkto( level.lower_stairwell_door, "tag_origin" );
     var_3 = getent( "upper_stairwell_door_left_clip", "targetname" );
-    var_3 _meth_804D( var_0, "tag_origin" );
+    var_3 linkto( var_0, "tag_origin" );
     var_4 = getent( "upper_stairwell_door_right_clip", "targetname" );
-    var_4 _meth_804D( var_1, "tag_origin" );
+    var_4 linkto( var_1, "tag_origin" );
     level.allies[0] waittillmatch( "single anim", "door_open" );
     level.anim_struct_exfil maps\_anim::anim_single_solo( level.lower_stairwell_door, "lower_stairwell_door" );
     level.allies[0] waittillmatch( "single anim", "door_open" );
@@ -557,9 +557,9 @@ plant_tracker_vo()
 plant_tracker_waits()
 {
     level.exfil_arms waittillmatch( "single anim", "enable_movement" );
-    level.player _meth_80A2( 0.5, 0.25, 0.25, 10, 10, 10, 10 );
+    level.player lerpviewangleclamp( 0.5, 0.25, 0.25, 10, 10, 10, 10 );
     level.exfil_arms waittillmatch( "single anim", "disable_movement" );
-    level.player _meth_80A2( 1.0, 0.25, 0.25, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1.0, 0.25, 0.25, 0, 0, 0, 0 );
     level.exfil_arms waittillmatch( "single anim", "fade_start" );
     maps\_utility::nextmission();
 }
@@ -595,11 +595,11 @@ breathers()
     var_0 hide();
     level.anim_struct_exfil maps\_anim::anim_first_frame_solo( var_0, "exfil_breathers" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "udt_respirator_small" );
-    var_1 _meth_804D( var_0, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( "udt_respirator_small" );
+    var_1 linkto( var_0, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_2 _meth_80B1( "udt_respirator_small" );
-    var_2 _meth_804D( var_0, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 setmodel( "udt_respirator_small" );
+    var_2 linkto( var_0, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.vtol waittillmatch( "single anim", "ally_anim_start" );
     thread sentinel_team_vo();
     level.anim_struct_exfil maps\_anim::anim_single_solo( var_0, "exfil_breathers" );
@@ -607,14 +607,14 @@ breathers()
 
 detach_motion_blur_enable()
 {
-    _func_0D3( "r_mbEnable", 2 );
-    _func_0D3( "r_mbVelocityScalar", 4 );
+    setsaveddvar( "r_mbEnable", 2 );
+    setsaveddvar( "r_mbVelocityScalar", 4 );
 }
 
 detach_motion_blur_disable()
 {
-    _func_0D3( "r_mbEnable", 0 );
-    _func_0D3( "r_mbVelocityScalar", 1 );
+    setsaveddvar( "r_mbEnable", 0 );
+    setsaveddvar( "r_mbVelocityScalar", 1 );
 }
 
 running_up_the_stairs_fail()
@@ -669,11 +669,11 @@ landing_pad_lift_upper_static_setup()
 {
     var_0 = getent( "landing_pad_lift_upper_static", "targetname" );
     var_0 hide();
-    var_0 _meth_82BF();
+    var_0 notsolid();
     common_scripts\utility::flag_wait( "start_exfil_moment_final" );
     level.anim_struct_exfil maps\_anim::anim_first_frame_solo( level.lower_stairwell_door, "lower_stairwell_door" );
     var_0 show();
-    var_0 _meth_82BE();
+    var_0 solid();
     var_1 = getent( "landing_pad_lift", "targetname" );
     var_1 delete();
 }

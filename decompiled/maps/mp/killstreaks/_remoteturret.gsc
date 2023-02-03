@@ -73,7 +73,7 @@ tryuseremoteturret( var_0, var_1, var_2, var_3 )
 {
     if ( isdefined( self.turret ) )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_SENTRY_IN_USE" );
+        self iprintlnbold( &"KILLSTREAKS_SENTRY_IN_USE" );
         return 0;
     }
 
@@ -98,30 +98,30 @@ tryuseremoteturret( var_0, var_1, var_2, var_3 )
 setupheavyresistancemodel()
 {
     if ( self.heavyresistance )
-        self _meth_8048( "TAG_OPTIC_STANDARD" );
+        self hidepart( "TAG_OPTIC_STANDARD" );
     else
-        self _meth_8048( "TAG_OPTIC_RESISTANCE" );
+        self hidepart( "TAG_OPTIC_RESISTANCE" );
 }
 
 setuprippablemodel()
 {
     if ( !self.rippable )
-        self _meth_8048( "TAG_HANDLES" );
+        self hidepart( "TAG_HANDLES" );
 }
 
 setmodelturretbaseonly()
 {
     if ( isdefined( self.model ) && self.model != "" )
-        self _meth_804C();
+        self showallparts();
 
     if ( self.energyturret )
-        self _meth_80B1( "npc_sentry_energy_turret_empty_base" );
+        self setmodel( "npc_sentry_energy_turret_empty_base" );
     else if ( self.rocketturret )
-        self _meth_80B1( "npc_sentry_rocket_turret_empty_base" );
+        self setmodel( "npc_sentry_rocket_turret_empty_base" );
     else if ( self.disruptorturret )
-        self _meth_80B1( "npc_sentry_disruptor_turret_empty_base" );
+        self setmodel( "npc_sentry_disruptor_turret_empty_base" );
     else
-        self _meth_80B1( "npc_sentry_minigun_turret_empty_base" );
+        self setmodel( "npc_sentry_minigun_turret_empty_base" );
 
     setupheavyresistancemodel();
     setuprippablemodel();
@@ -130,16 +130,16 @@ setmodelturretbaseonly()
 setmodelremoteturret()
 {
     if ( isdefined( self.model ) && self.model != "" )
-        self _meth_804C();
+        self showallparts();
 
     if ( self.energyturret )
-        self _meth_80B1( "npc_sentry_energy_turret_base" );
+        self setmodel( "npc_sentry_energy_turret_base" );
     else if ( self.rocketturret )
-        self _meth_80B1( "npc_sentry_rocket_turret_base" );
+        self setmodel( "npc_sentry_rocket_turret_base" );
     else if ( self.disruptorturret )
-        self _meth_80B1( "npc_sentry_disruptor_turret_base" );
+        self setmodel( "npc_sentry_disruptor_turret_base" );
     else
-        self _meth_80B1( "npc_sentry_minigun_turret_base" );
+        self setmodel( "npc_sentry_minigun_turret_base" );
 
     setupheavyresistancemodel();
     setuprippablemodel();
@@ -148,16 +148,16 @@ setmodelremoteturret()
 setmodelturretplacementgood()
 {
     if ( isdefined( self.model ) && self.model != "" )
-        self _meth_804C();
+        self showallparts();
 
     if ( self.energyturret )
-        self _meth_80B1( "npc_sentry_energy_turret_base_yellow_obj" );
+        self setmodel( "npc_sentry_energy_turret_base_yellow_obj" );
     else if ( self.rocketturret )
-        self _meth_80B1( "npc_sentry_rocket_turret_base_yellow_obj" );
+        self setmodel( "npc_sentry_rocket_turret_base_yellow_obj" );
     else if ( self.disruptorturret )
-        self _meth_80B1( "npc_sentry_disruptor_turret_base_yellow_obj" );
+        self setmodel( "npc_sentry_disruptor_turret_base_yellow_obj" );
     else
-        self _meth_80B1( "npc_sentry_minigun_turret_base_yellow_obj" );
+        self setmodel( "npc_sentry_minigun_turret_base_yellow_obj" );
 
     setupheavyresistancemodel();
     setuprippablemodel();
@@ -166,16 +166,16 @@ setmodelturretplacementgood()
 setmodelturretplacementfailed()
 {
     if ( isdefined( self.model ) && self.model != "" )
-        self _meth_804C();
+        self showallparts();
 
     if ( self.energyturret )
-        self _meth_80B1( "npc_sentry_energy_turret_base_red_obj" );
+        self setmodel( "npc_sentry_energy_turret_base_red_obj" );
     else if ( self.rocketturret )
-        self _meth_80B1( "npc_sentry_rocket_turret_base_red_obj" );
+        self setmodel( "npc_sentry_rocket_turret_base_red_obj" );
     else if ( self.disruptorturret )
-        self _meth_80B1( "npc_sentry_disruptor_turret_base_red_obj" );
+        self setmodel( "npc_sentry_disruptor_turret_base_red_obj" );
     else
-        self _meth_80B1( "npc_sentry_minigun_turret_base_red_obj" );
+        self setmodel( "npc_sentry_minigun_turret_base_red_obj" );
 
     setupheavyresistancemodel();
     setuprippablemodel();
@@ -195,7 +195,7 @@ setcarryingturret( var_0, var_1 )
 
     var_0 turret_setcarried( self );
     var_2 = maps\mp\_utility::getkillstreakweapon( "remote_mg_sentry_turret" );
-    var_3 = self _meth_8312();
+    var_3 = self getcurrentprimaryweapon();
 
     if ( !maps\mp\gametypes\_weapons::isvalidlastweapon( var_3 ) || var_3 == "iw5_underwater_mp" )
         var_3 = common_scripts\utility::getlastweapon();
@@ -203,7 +203,7 @@ setcarryingturret( var_0, var_1 )
     if ( !var_1 )
     {
         maps\mp\_utility::_giveweapon( var_2, 0 );
-        self _meth_8315( var_2 );
+        self switchtoweapon( var_2 );
         self.water_last_weapon = var_2;
         common_scripts\utility::_disableweaponswitch();
     }
@@ -260,7 +260,7 @@ playerswitchawayfromholdingturret( var_0, var_1 )
     self endon( "disconnect" );
     maps\mp\_utility::switch_to_last_weapon( var_0 );
 
-    while ( self _meth_8312() != var_0 )
+    while ( self getcurrentprimaryweapon() != var_0 )
         waitframe();
 
     self.water_last_weapon = var_0;
@@ -271,16 +271,16 @@ setripoffturrethead( var_0 )
 {
     self endon( "death" );
     self endon( "disconnect" );
-    var_0 _meth_82C0( 0 );
+    var_0 setcandamage( 0 );
     var_0 setcontents( 0 );
-    var_0 _meth_813A();
+    var_0 freeentitysentient();
     var_0.carriedby = self;
     self.iscarrying = 0;
     var_0 turret_setinactive();
     var_0 setmodelturretbaseonly();
     var_0 notify( "carried" );
     var_0 notify( "ripped" );
-    var_0 _meth_8105( 0 );
+    var_0 setturretminimapvisible( 0 );
     var_0 thread deleteaftertime( 20 );
 
     if ( isdefined( var_0.remoteent ) )
@@ -355,9 +355,9 @@ turret_setplaced()
     setmodelremoteturret();
     thread sentry_attacktargets();
     thread sentry_disruptor();
-    self _meth_8104( undefined );
-    self _meth_82C0( 1 );
-    self.carriedby _meth_80DE();
+    self setsentrycarrier( undefined );
+    self setcandamage( 1 );
+    self.carriedby forceusehintoff();
     self.carriedby = undefined;
 
     if ( isdefined( self.owner ) )
@@ -378,7 +378,7 @@ turret_setplaced()
 
 turret_setcancelled()
 {
-    self.carriedby _meth_80DE();
+    self.carriedby forceusehintoff();
 
     if ( isdefined( self.owner ) )
         self.owner.iscarrying = 0;
@@ -389,11 +389,11 @@ turret_setcancelled()
 turret_setcarried( var_0 )
 {
     setmodelturretplacementgood();
-    self _meth_82C0( 0 );
-    self _meth_8104( var_0 );
+    self setcandamage( 0 );
+    self setsentrycarrier( var_0 );
     self setcontents( 0 );
-    self _meth_813A();
-    self _meth_804F();
+    self freeentitysentient();
+    self unlink();
     self.carriedby = var_0;
     var_0.iscarrying = 1;
     var_0 thread updateturretplacement( self );
@@ -401,7 +401,7 @@ turret_setcarried( var_0 )
     thread turret_oncarrierdisconnect( var_0 );
     thread turret_oncarrierchangedteam( var_0 );
     thread turret_ongameended();
-    self _meth_815A( -89.0 );
+    self setdefaultdroppitch( -89.0 );
     turret_setinactive();
     self notify( "carried" );
 }
@@ -419,10 +419,10 @@ updateturretplacement( var_0 )
 
     for (;;)
     {
-        var_2 = self _meth_82D2( 1 );
+        var_2 = self canplayerplacesentry( 1 );
         var_0.origin = var_2["origin"];
         var_0.angles = var_2["angles"];
-        var_0.canbeplaced = self _meth_8341() && var_2["result"] && ( abs( var_0.origin[2] - self.origin[2] ) < 10 && !var_0 istouchingwater() );
+        var_0.canbeplaced = self isonground() && var_2["result"] && ( abs( var_0.origin[2] - self.origin[2] ) < 10 && !var_0 istouchingwater() );
 
         if ( isdefined( var_2["entity"] ) )
             var_0.placementlinkentity = var_2["entity"];
@@ -434,12 +434,12 @@ updateturretplacement( var_0 )
             if ( var_0.canbeplaced )
             {
                 var_0 setmodelturretplacementgood();
-                self _meth_80DD( level.turretsettings[var_0.turrettype].placestring );
+                self forceusehinton( level.turretsettings[var_0.turrettype].placestring );
             }
             else
             {
                 var_0 setmodelturretplacementfailed();
-                self _meth_80DD( level.turretsettings[var_0.turrettype].cannotplacestring );
+                self forceusehinton( level.turretsettings[var_0.turrettype].cannotplacestring );
             }
         }
 
@@ -456,7 +456,7 @@ istouchingwater()
     {
         foreach ( var_1 in level.water_triggers )
         {
-            if ( self _meth_80A9( var_1 ) )
+            if ( self istouching( var_1 ) )
                 return 1;
         }
     }
@@ -538,37 +538,37 @@ createturretforplayer( var_0, var_1, var_2, var_3 )
 
     if ( var_5.rocketturret )
     {
-        var_5 _meth_815C();
+        var_5 turretfiredisable();
         var_5.weaponinfo = "killstreakmahem_mp";
     }
 
     if ( var_5.rocketturret || var_5.energyturret || var_5.disruptorturret )
-        var_5 _meth_8424( 0 );
+        var_5 turretsetbarrelspinenabled( 0 );
 
-    var_5 _meth_817A( 1 );
+    var_5 setturretmodechangewait( 1 );
     var_5 turret_setinactive();
-    var_5 _meth_8103( var_1 );
-    var_5 _meth_8105( 1, var_0 );
+    var_5 setsentryowner( var_1 );
+    var_5 setturretminimapvisible( 1, var_0 );
 
     if ( var_5.disruptorturret )
     {
-        var_5 _meth_8156( 0 );
-        var_5 _meth_8155( 0 );
+        var_5 setleftarc( 0 );
+        var_5 setrightarc( 0 );
     }
     else if ( var_5.is360 )
     {
-        var_5 _meth_8156( 180 );
-        var_5 _meth_8155( 180 );
+        var_5 setleftarc( 180 );
+        var_5 setrightarc( 180 );
     }
     else
     {
-        var_5 _meth_8156( 80 );
-        var_5 _meth_8155( 80 );
+        var_5 setleftarc( 80 );
+        var_5 setrightarc( 80 );
     }
 
-    var_5 _meth_8157( 50 );
-    var_5 _meth_8158( 30 );
-    var_5 _meth_815A( -89.0 );
+    var_5 settoparc( 50 );
+    var_5 setbottomarc( 30 );
+    var_5 setdefaultdroppitch( -89.0 );
     var_5 thread turret_handleownerdisconnect();
     var_1.turret = var_5;
     var_5.damagefade = 1.0;
@@ -582,13 +582,13 @@ turret_setactive()
     self endon( "death" );
     self.owner endon( "disconnect" );
     self makeunusable();
-    self _meth_8136();
+    self maketurretsolid();
 
     if ( !isdefined( self.owner ) )
         return;
 
     var_0 = self.owner;
-    level.turrets[self _meth_81B1()] = self;
+    level.turrets[self getentitynumber()] = self;
 
     if ( isdefined( var_0.remoteturretlist ) )
     {
@@ -604,7 +604,7 @@ turret_setactive()
         if ( !isdefined( self.remoteent ) )
         {
             self.remoteent = spawn( "script_model", self.origin + ( 0, 0, 1 ) );
-            self.remoteent _meth_80B1( "tag_origin" );
+            self.remoteent setmodel( "tag_origin" );
             self.remoteent.owner = var_0;
             self.remoteent maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", level.turretsettings[self.turrettype].hintenter, var_0 );
         }
@@ -620,7 +620,7 @@ turret_setactive()
     if ( level.teambased )
     {
         self.team = var_0.team;
-        self _meth_8135( var_0.team );
+        self setturretteam( var_0.team );
         maps\mp\_entityheadicons::setteamheadicon( self.team, ( 0, 0, 65 ), "tag_origin" );
     }
     else
@@ -628,7 +628,7 @@ turret_setactive()
 
     self.ownertrigger = spawn( "trigger_radius", self.origin + ( 0, 0, 1 ), 0, 32, 64 );
     self.pickupent = spawn( "script_model", self.origin + ( 0, 0, 1 ) );
-    self.pickupent _meth_80B1( "tag_origin" );
+    self.pickupent setmodel( "tag_origin" );
     self.pickupent.owner = var_0;
     var_0 thread player_handleturretpickup( self );
     var_0 thread player_handleturrethints( self );
@@ -682,7 +682,7 @@ turret_modifydamage( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( self.owner ) && var_4 > 0 )
     {
-        self.owner _meth_80AD( "damage_heavy" );
+        self.owner playrumbleonentity( "damage_heavy" );
         self.owner thread maps\mp\killstreaks\_aerial_utility::playershowstreakstaticfordamage();
     }
 
@@ -703,7 +703,7 @@ onturretdeath( var_0, var_1, var_2, var_3 )
     }
 
     maps\mp\gametypes\_damage::onkillstreakkilled( var_0, var_1, var_2, var_3, "sentry_gun_destroyed", undefined, undefined, 0 );
-    self _meth_80B3();
+    self laseroff();
 }
 
 playershowturretoverlay( var_0 )
@@ -720,15 +720,15 @@ playershowturretoverlay( var_0 )
     else if ( var_0.weaponinfo == "killstreakmahem_mp" )
         var_1 = 3;
 
-    self _meth_82FB( "ui_sentry_ammo_type", var_1 );
-    self _meth_82FB( "ui_sentry_toggle", 1 );
+    self setclientomnvar( "ui_sentry_ammo_type", var_1 );
+    self setclientomnvar( "ui_sentry_toggle", 1 );
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
 }
 
 playerhideturretoverlay()
 {
     self notify( "playerHideTurretOverlay" );
-    self _meth_82FB( "ui_sentry_toggle", 0 );
+    self setclientomnvar( "ui_sentry_toggle", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 }
 
@@ -740,7 +740,7 @@ playerwaittillweaponswitchover( var_0 )
     if ( var_0 != var_1 )
         return;
 
-    while ( self _meth_8337() )
+    while ( self isreloading() )
         waitframe();
 }
 
@@ -753,21 +753,21 @@ startusingremoteturret( var_0, var_1, var_2, var_3, var_4 )
 
     if ( !var_4 )
     {
-        var_5 _meth_807C( self.remoteent );
-        var_5 _meth_8081();
+        var_5 playerlinkto( self.remoteent );
+        var_5 playerlinkedoffsetenable();
         var_5 maps\mp\_utility::_giveweapon( level.turretsettings[self.turrettype].laptopinfo );
-        var_5 _meth_8315( level.turretsettings[self.turrettype].laptopinfo );
-        var_5 _meth_831F();
-        var_5 _meth_84BF();
+        var_5 switchtoweapon( level.turretsettings[self.turrettype].laptopinfo );
+        var_5 disableoffhandweapons();
+        var_5 disableoffhandsecondaryweapons();
         var_5 playerwaittillweaponswitchover( level.turretsettings[self.turrettype].laptopinfo );
-        var_6 = var_5 _meth_8311();
+        var_6 = var_5 getcurrentweapon();
 
         if ( var_6 != level.turretsettings[self.turrettype].laptopinfo )
         {
             var_5 takekillstreakweapons( self.turrettype );
-            var_5 _meth_8320();
-            var_5 _meth_84C0();
-            var_5 _meth_804F();
+            var_5 enableoffhandweapons();
+            var_5 enableoffhandsecondaryweapons();
+            var_5 unlink();
             return 0;
         }
     }
@@ -789,10 +789,10 @@ startusingremoteturret( var_0, var_1, var_2, var_3, var_4 )
     if ( getdvarint( "camera_thirdPerson" ) )
         var_5 maps\mp\_utility::setthirdpersondof( 0 );
 
-    var_5 _meth_807E( self, "tag_player", 0, var_0, var_1, var_2, var_3, 0 );
-    var_5 _meth_80A0( 0 );
-    var_5 _meth_80A1( 1 );
-    var_5 _meth_80E8( self );
+    var_5 playerlinkweaponviewtodelta( self, "tag_player", 0, var_0, var_1, var_2, var_3, 0 );
+    var_5 playerlinkedsetviewznear( 0 );
+    var_5 playerlinkedsetusebaseangleforviewclamp( 1 );
+    var_5 remotecontrolturret( self );
 
     if ( isdefined( self.remoteent ) )
         self.remoteent maps\mp\_utility::disablegloballyusablebytype();
@@ -834,8 +834,8 @@ stopusingremoteturret( var_0 )
     self notify( "remoteControlledUpdate" );
     var_1 = self.owner;
     var_1 takekillstreakweapons( self.turrettype );
-    var_1 _meth_8320();
-    var_1 _meth_84C0();
+    var_1 enableoffhandweapons();
+    var_1 enableoffhandsecondaryweapons();
     thread sentry_attacktargets();
     var_2 = maps\mp\_utility::getkillstreakweapon( level.turretsettings[self.turrettype].streakname );
     var_1 maps\mp\killstreaks\_killstreaks::takekillstreakweaponifnodupe( var_2 );
@@ -844,17 +844,17 @@ stopusingremoteturret( var_0 )
     if ( isdefined( var_1.underwater ) && var_1.underwater )
         var_3 = var_1 maps\mp\_utility::get_water_weapon();
 
-    var_1 _meth_8315( var_3 );
+    var_1 switchtoweapon( var_3 );
 
     if ( !isdefined( var_0 ) )
         var_0 = 1;
 
-    var_1 _meth_804F();
+    var_1 unlink();
 
     if ( var_1 maps\mp\_utility::isusingremote() )
     {
         var_1 setthermaloff();
-        var_1 _meth_80E9( self );
+        var_1 remotecontrolturretoff( self );
 
         if ( var_1 maps\mp\_utility::isusingremote() )
             var_1 maps\mp\_utility::clearusingremote();
@@ -969,8 +969,8 @@ watchenterandexit()
 
 player_shoulddisableremoteenter( var_0 )
 {
-    var_1 = self _meth_8311();
-    return var_0 turret_isstunned() || player_isusingkillstreak( var_0 ) || isdefined( self.underwater ) && self.underwater || self.using_remote_turret || var_1 == "none" || self _meth_80A9( var_0.ownertrigger ) || self _meth_8068() && !self.using_remote_turret || isdefined( self.empgrenaded ) && self.empgrenaded;
+    var_1 = self getcurrentweapon();
+    return var_0 turret_isstunned() || player_isusingkillstreak( var_0 ) || isdefined( self.underwater ) && self.underwater || self.using_remote_turret || var_1 == "none" || self istouching( var_0.ownertrigger ) || self islinked() && !self.using_remote_turret || isdefined( self.empgrenaded ) && self.empgrenaded;
 }
 
 watchenterandexitinput()
@@ -1047,13 +1047,13 @@ waittillremoteturretleavereturn()
 
 playercanuseturret( var_0 )
 {
-    if ( self _meth_82EE() || isdefined( self.throwinggrenade ) || self _meth_82EF() )
+    if ( self fragbuttonpressed() || isdefined( self.throwinggrenade ) || self secondaryoffhandbuttonpressed() )
         return 0;
 
-    if ( self _meth_8342() || !self _meth_8341() )
+    if ( self isusingturret() || !self isonground() )
         return 0;
 
-    if ( isdefined( var_0.ownertrigger ) && self _meth_80A9( var_0.ownertrigger ) )
+    if ( isdefined( var_0.ownertrigger ) && self istouching( var_0.ownertrigger ) )
         return 0;
 
     if ( isdefined( self.empgrenaded ) && self.empgrenaded )
@@ -1071,7 +1071,7 @@ playercanuseturret( var_0 )
     if ( !self.using_remote_turret && maps\mp\_utility::isusingremote() )
         return 0;
 
-    if ( self _meth_8068() && !self.using_remote_turret )
+    if ( self islinked() && !self.using_remote_turret )
         return 0;
 
     return 1;
@@ -1079,7 +1079,7 @@ playercanuseturret( var_0 )
 
 player_isusingkillstreak( var_0 )
 {
-    var_1 = self _meth_8311();
+    var_1 = self getcurrentweapon();
     return maps\mp\_utility::isjuggernaut() || maps\mp\_utility::isusingremote() || maps\mp\_utility::isinremotetransition() || maps\mp\_utility::iskillstreakweapon( var_1 ) && var_1 != "killstreak_remote_turret_mp" && var_1 != "sentry_minigun_mp" && var_1 != "remote_energy_turret_mp" && var_1 != level.turretsettings[var_0.turrettype].laptopinfo && var_1 != "none" && var_1 != "turretheadmg_mp" && var_1 != "turretheadenergy_mp" && var_1 != "turretheadrocket_mp";
 }
 
@@ -1119,8 +1119,8 @@ player_handleturrethints( var_0 )
 
 player_shouldclearturretpickuphints( var_0 )
 {
-    var_1 = self _meth_8311();
-    return var_0 turret_isstunned() || player_isusingkillstreak( var_0 ) || isdefined( self.underwater ) && self.underwater || self.using_remote_turret || var_1 == "none" || !self _meth_80A9( var_0.ownertrigger ) || !maps\mp\_utility::isreallyalive( self ) || !self _meth_8341() || isdefined( var_0.carriedby );
+    var_1 = self getcurrentweapon();
+    return var_0 turret_isstunned() || player_isusingkillstreak( var_0 ) || isdefined( self.underwater ) && self.underwater || self.using_remote_turret || var_1 == "none" || !self istouching( var_0.ownertrigger ) || !maps\mp\_utility::isreallyalive( self ) || !self isonground() || isdefined( var_0.carriedby );
 }
 
 player_handleturretpickup( var_0 )
@@ -1146,13 +1146,13 @@ player_handleturretpickup( var_0 )
             continue;
         }
 
-        if ( !self _meth_80A9( var_0.ownertrigger ) )
+        if ( !self istouching( var_0.ownertrigger ) )
         {
             waitframe();
             continue;
         }
 
-        if ( maps\mp\_utility::isreallyalive( self ) && self _meth_80A9( var_0.ownertrigger ) && !isdefined( var_0.carriedby ) && self _meth_8341() )
+        if ( maps\mp\_utility::isreallyalive( self ) && self istouching( var_0.ownertrigger ) && !isdefined( var_0.carriedby ) && self isonground() )
         {
             var_2 = 0;
 
@@ -1161,13 +1161,13 @@ player_handleturretpickup( var_0 )
                 if ( !maps\mp\_utility::isreallyalive( self ) )
                     break;
 
-                if ( !self _meth_80A9( var_0.ownertrigger ) )
+                if ( !self istouching( var_0.ownertrigger ) )
                     break;
 
-                if ( self _meth_82EE() || self _meth_82EF() || isdefined( self.throwinggrenade ) )
+                if ( self fragbuttonpressed() || self secondaryoffhandbuttonpressed() || isdefined( self.throwinggrenade ) )
                     break;
 
-                if ( self _meth_8068() || !self _meth_8341() || self _meth_8342() || maps\mp\_utility::isusingremote() )
+                if ( self islinked() || !self isonground() || self isusingturret() || maps\mp\_utility::isusingremote() )
                     break;
 
                 if ( isdefined( self.iscarrying ) && self.iscarrying )
@@ -1190,7 +1190,7 @@ player_handleturretpickup( var_0 )
                 if ( var_2 > 0.75 )
                 {
                     var_0 playsound( "sentry_gun_pick_up" );
-                    var_0 _meth_8065( level.turretsettings[var_0.turrettype].sentrymodeoff );
+                    var_0 setmode( level.turretsettings[var_0.turrettype].sentrymodeoff );
                     var_0 sentry_stopattackingtargets();
                     thread setcarryingturret( var_0, 0 );
                     var_0 turret_clearpickuphints();
@@ -1237,13 +1237,13 @@ player_handleturretrippable( var_0 )
             continue;
         }
 
-        if ( !self _meth_80A9( var_0.ownertrigger ) )
+        if ( !self istouching( var_0.ownertrigger ) )
         {
             wait 0.05;
             continue;
         }
 
-        if ( maps\mp\_utility::isreallyalive( self ) && self _meth_80A9( var_0.ownertrigger ) && !isdefined( var_0.carriedby ) && self _meth_8341() )
+        if ( maps\mp\_utility::isreallyalive( self ) && self istouching( var_0.ownertrigger ) && !isdefined( var_0.carriedby ) && self isonground() )
         {
             if ( self usebuttonpressed() )
             {
@@ -1281,7 +1281,7 @@ player_handleturretrippable( var_0 )
                 if ( isdefined( self.ball_carried ) )
                     continue;
 
-                var_0 _meth_8065( level.turretsettings[var_0.turrettype].sentrymodeoff );
+                var_0 setmode( level.turretsettings[var_0.turrettype].sentrymodeoff );
                 var_0 sentry_stopattackingtargets();
                 thread setripoffturrethead( var_0 );
                 var_0 turret_clearpickuphints();
@@ -1311,7 +1311,7 @@ turret_blinky_light()
 
 turret_setinactive()
 {
-    self _meth_8065( level.turretsettings[self.turrettype].sentrymodeoff );
+    self setmode( level.turretsettings[self.turrettype].sentrymodeoff );
     sentry_stopattackingtargets();
 
     if ( level.teambased )
@@ -1323,7 +1323,7 @@ turret_setinactive()
         return;
 
     var_0 = self.owner;
-    level.turrets[self _meth_81B1()] = undefined;
+    level.turrets[self getentitynumber()] = undefined;
 
     if ( isdefined( self.remoteent ) )
         self.remoteent maps\mp\_utility::disablegloballyusablebytype();
@@ -1332,14 +1332,14 @@ turret_setinactive()
     {
         var_0 thermalvisionoff();
         var_0 setthermaloff();
-        var_0 _meth_80E9( self );
-        var_0 _meth_804F();
+        var_0 remotecontrolturretoff( self );
+        var_0 unlink();
         var_1 = var_0 common_scripts\utility::getlastweapon();
 
         if ( isdefined( var_0.underwater ) && var_0.underwater )
             var_1 = var_0 maps\mp\_utility::get_water_weapon();
 
-        var_0 _meth_8315( var_1 );
+        var_0 switchtoweapon( var_1 );
 
         if ( var_0 maps\mp\_utility::isusingremote() )
             var_0 maps\mp\_utility::clearusingremote();
@@ -1398,7 +1398,7 @@ turret_timeout()
     if ( self.disruptorturret )
         var_0 += 30;
 
-    self.owner _meth_82FB( "ui_sentry_lifespan", var_0 );
+    self.owner setclientomnvar( "ui_sentry_lifespan", var_0 );
 
     while ( var_0 )
     {
@@ -1418,16 +1418,16 @@ turret_timeout()
 turret_handledeath()
 {
     self endon( "carried" );
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     maps\mp\killstreaks\_autosentry::addtoturretlist( var_0 );
     self waittill( "death", var_1, var_2, var_3 );
-    self _meth_8108();
+    self cleartargetentity();
     turret_deathsounds( var_1, var_3 );
     self.damagecallback = undefined;
-    self _meth_82C0( 0 );
-    self _meth_8495( 0 );
-    self _meth_813A();
-    self _meth_80B3();
+    self setcandamage( 0 );
+    self setdamagecallbackon( 0 );
+    self freeentitysentient();
+    self laseroff();
     self.dead = 1;
     maps\mp\killstreaks\_autosentry::removefromturretlist( var_0 );
 
@@ -1436,9 +1436,9 @@ turret_handledeath()
 
     turret_clearpickuphints();
     turret_setinactive();
-    self _meth_815A( 35 );
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setdefaultdroppitch( 35 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
 
     if ( isdefined( self.remoteent ) )
         self.remoteent maps\mp\_utility::makegloballyunusablebytype();
@@ -1453,14 +1453,14 @@ turret_handledeath()
         var_4 restoreperks();
         var_4 playerremovenotifycommands();
 
-        if ( var_4 _meth_8311() == "none" )
+        if ( var_4 getcurrentweapon() == "none" )
         {
             var_5 = var_4 common_scripts\utility::getlastweapon();
 
             if ( isdefined( var_4.underwater ) && var_4.underwater )
                 var_5 = var_4 maps\mp\_utility::get_water_weapon();
 
-            var_4 _meth_8315( var_5 );
+            var_4 switchtoweapon( var_5 );
         }
     }
 
@@ -1533,9 +1533,9 @@ turret_setpickuphints()
     self notify( "turretClearPickupHints" );
     self endon( "turretClearPickupHints" );
     self.pickupent makeusable();
-    self.pickupent _meth_80DB( level.turretsettings[self.turrettype].hintpickup );
-    self.pickupent _meth_80DA( "HINT_NOICON" );
-    self.pickupent _meth_849B( 1 );
+    self.pickupent sethintstring( level.turretsettings[self.turrettype].hintpickup );
+    self.pickupent setcursorhint( "HINT_NOICON" );
+    self.pickupent sethintstringvisibleonlytoowner( 1 );
 
     if ( self.rippable )
     {
@@ -1545,12 +1545,12 @@ turret_setpickuphints()
 
             if ( !var_0 && isdefined( self.owner ) && !self.owner maps\mp\killstreaks\_rippedturret::playerhasturretheadweapon() )
             {
-                self.pickupent _meth_80DC( level.turretsettings[self.turrettype].hintripoff );
+                self.pickupent setsecondaryhintstring( level.turretsettings[self.turrettype].hintripoff );
                 var_0 = 1;
             }
             else if ( var_0 )
             {
-                self.pickupent _meth_80DC( "" );
+                self.pickupent setsecondaryhintstring( "" );
                 var_0 = 0;
             }
 
@@ -1567,9 +1567,9 @@ turret_clearpickuphints()
         return;
 
     self.pickupent makeunusable();
-    self.pickupent _meth_80DB( "" );
-    self.pickupent _meth_80DC( "" );
-    self.pickupent _meth_849B( 0 );
+    self.pickupent sethintstring( "" );
+    self.pickupent setsecondaryhintstring( "" );
+    self.pickupent sethintstringvisibleonlytoowner( 0 );
 }
 
 sentry_stopattackingtargets()
@@ -1593,14 +1593,14 @@ sentry_attacktargets( var_0 )
     if ( !self.rocketturret )
         thread sentry_heatmonitor( "sentry_minigun_mp", 4.0, 0.1 );
 
-    self _meth_8065( level.turretsettings["mg_turret"].sentrymodeon );
+    self setmode( level.turretsettings["mg_turret"].sentrymodeon );
     self.firereadytime = gettime();
 
     for (;;)
     {
         common_scripts\utility::waittill_either( "turretstatechange", "cooled" );
 
-        if ( self _meth_80E4() )
+        if ( self isfiringturret() )
         {
             thread turret_startshooting( var_0 );
             continue;
@@ -1702,7 +1702,7 @@ sentry_burstfirestart( var_0 )
             if ( isdefined( var_0 ) )
                 self [[ var_0 ]]();
             else
-                self _meth_80EA();
+                self shootturret();
 
             self.heatlevel += var_1;
             wait(var_1);
@@ -1748,12 +1748,12 @@ turret_firerocket( var_0 )
     if ( isdefined( level.ishorde ) && level.ishorde )
         var_6 = isdefined( var_5 ) && isdefined( var_5.team ) && self.team != var_5.team;
     else
-        var_6 = isdefined( var_5 ) && isplayer( var_5 ) && !_func_285( self.owner, var_5 );
+        var_6 = isdefined( var_5 ) && isplayer( var_5 ) && !isalliedsentient( self.owner, var_5 );
 
     if ( !var_6 && var_0 )
         return;
 
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
     var_7 = magicbullet( "killstreakmahem_mp", var_1, var_3, self.owner );
 
     if ( var_0 )
@@ -1779,8 +1779,8 @@ turret_firerocket( var_0 )
 spawnmuzzleflashent( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_3 _meth_80B1( "tag_origin" );
-    var_3 _meth_804D( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( "tag_origin" );
+    var_3 linkto( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 hide();
 
     foreach ( var_5 in level.players )
@@ -1835,7 +1835,7 @@ sentry_heatmonitor( var_0, var_1, var_2 )
         if ( self.heatlevel > var_1 )
         {
             self.overheated = 1;
-            self _meth_8424( 0 );
+            self turretsetbarrelspinenabled( 0 );
             thread playheatfx();
 
             switch ( self.turrettype )
@@ -1853,7 +1853,7 @@ sentry_heatmonitor( var_0, var_1, var_2 )
                 wait 0.1;
             }
 
-            self _meth_8424( 1 );
+            self turretsetbarrelspinenabled( 1 );
             self.overheated = 0;
             self notify( "not_overheated" );
         }
@@ -1904,8 +1904,8 @@ turret_watchdisabled()
 
         if ( self.issentry )
         {
-            self _meth_815A( 35 );
-            self _meth_8065( level.turretsettings[self.turrettype].sentrymodeoff );
+            self setdefaultdroppitch( 35 );
+            self setmode( level.turretsettings[self.turrettype].sentrymodeoff );
         }
 
         if ( isdefined( self.remotecontrolled ) && self.remotecontrolled )
@@ -1916,8 +1916,8 @@ turret_watchdisabled()
 
         if ( self.issentry )
         {
-            self _meth_815A( 0 );
-            self _meth_8065( level.turretsettings[self.turrettype].sentrymodeon );
+            self setdefaultdroppitch( 0 );
+            self setmode( level.turretsettings[self.turrettype].sentrymodeon );
         }
 
         self.stunned = 0;
@@ -1946,9 +1946,9 @@ turret_handlelaser()
     if ( !self.issentry )
         return;
 
-    self _meth_80B2( "mp_sentry_turret" );
+    self laseron( "mp_sentry_turret" );
     self waittill( "carried" );
-    self _meth_80B3();
+    self laseroff();
 }
 
 turret_handlepitch()
@@ -1958,11 +1958,11 @@ turret_handlepitch()
 
     if ( self.issentry || self.disruptorturret )
     {
-        self _meth_815A( 0 );
+        self setdefaultdroppitch( 0 );
         return;
     }
     else
-        self _meth_815A( 35 );
+        self setdefaultdroppitch( 35 );
 
     for (;;)
     {
@@ -1970,11 +1970,11 @@ turret_handlepitch()
 
         if ( isdefined( self.remotecontrolled ) && self.remotecontrolled )
         {
-            self _meth_815A( 0 );
+            self setdefaultdroppitch( 0 );
             continue;
         }
 
-        self _meth_815A( 35 );
+        self setdefaultdroppitch( 35 );
     }
 }
 
@@ -2019,9 +2019,9 @@ turret_hordeshootdronesandturrets()
         }
 
         if ( isdefined( var_7 ) )
-            self _meth_8106( var_7, var_0 );
+            self settargetentity( var_7, var_0 );
         else if ( isdefined( var_2 ) )
-            self _meth_8106( var_2 );
+            self settargetentity( var_2 );
 
         waitframe();
     }
@@ -2029,44 +2029,44 @@ turret_hordeshootdronesandturrets()
 
 playeraddnotifycommands()
 {
-    self _meth_82DD( "turret_fire", "+attack" );
-    self _meth_82DD( "turret_fire", "+attack_akimbo_accessible" );
-    self _meth_82DD( "place_turret", "+attack" );
-    self _meth_82DD( "place_turret", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "turret_fire", "+attack" );
+    self notifyonplayercommand( "turret_fire", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "place_turret", "+attack" );
+    self notifyonplayercommand( "place_turret", "+attack_akimbo_accessible" );
 
     if ( !isbot( self ) )
     {
-        self _meth_82DD( "cancel_turret", "weapnext" );
-        self _meth_82DD( "cancel_turret", "+actionslot 4" );
+        self notifyonplayercommand( "cancel_turret", "weapnext" );
+        self notifyonplayercommand( "cancel_turret", "+actionslot 4" );
 
         if ( !level.console )
         {
-            self _meth_82DD( "cancel_turret", "+actionslot 5" );
-            self _meth_82DD( "cancel_turret", "+actionslot 6" );
-            self _meth_82DD( "cancel_turret", "+actionslot 7" );
-            self _meth_82DD( "cancel_turret", "+actionslot 8" );
+            self notifyonplayercommand( "cancel_turret", "+actionslot 5" );
+            self notifyonplayercommand( "cancel_turret", "+actionslot 6" );
+            self notifyonplayercommand( "cancel_turret", "+actionslot 7" );
+            self notifyonplayercommand( "cancel_turret", "+actionslot 8" );
         }
     }
 }
 
 playerremovenotifycommands()
 {
-    self _meth_849C( "turret_fire", "+attack" );
-    self _meth_849C( "turret_fire", "+attack_akimbo_accessible" );
-    self _meth_849C( "place_turret", "+attack" );
-    self _meth_849C( "place_turret", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "turret_fire", "+attack" );
+    self notifyonplayercommandremove( "turret_fire", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "place_turret", "+attack" );
+    self notifyonplayercommandremove( "place_turret", "+attack_akimbo_accessible" );
 
     if ( !isbot( self ) )
     {
-        self _meth_849C( "cancel_turret", "+actionslot 4" );
+        self notifyonplayercommandremove( "cancel_turret", "+actionslot 4" );
 
         if ( !level.console )
         {
-            self _meth_849C( "cancel_turret", "weapnext" );
-            self _meth_849C( "cancel_turret", "+actionslot 5" );
-            self _meth_849C( "cancel_turret", "+actionslot 6" );
-            self _meth_849C( "cancel_turret", "+actionslot 7" );
-            self _meth_849C( "cancel_turret", "+actionslot 8" );
+            self notifyonplayercommandremove( "cancel_turret", "weapnext" );
+            self notifyonplayercommandremove( "cancel_turret", "+actionslot 5" );
+            self notifyonplayercommandremove( "cancel_turret", "+actionslot 6" );
+            self notifyonplayercommandremove( "cancel_turret", "+actionslot 7" );
+            self notifyonplayercommandremove( "cancel_turret", "+actionslot 8" );
         }
     }
 }
@@ -2140,7 +2140,7 @@ turretdisruptorcanhurtplayer( var_0, var_1, var_2 )
     if ( var_6 < level.turretdisruptordetectdot )
         return 0;
 
-    var_7 = var_0 _meth_81D7( var_1, self );
+    var_7 = var_0 damageconetrace( var_1, self );
     return var_7 > 0;
 }
 
@@ -2177,7 +2177,7 @@ turretdisruptorhurtplayer( var_0 )
 
         if ( gettime() >= var_3 )
         {
-            var_0 _meth_8051( var_2, var_7, self.owner, self, "MOD_TRIGGER_HURT", "iw5_dlcgun12loot3_mp", "torso_upper" );
+            var_0 dodamage( var_2, var_7, self.owner, self, "MOD_TRIGGER_HURT", "iw5_dlcgun12loot3_mp", "torso_upper" );
             var_3 = gettime() + var_1 * 1000;
 
             if ( isalive( var_0 ) && !var_0 maps\mp\_utility::_hasperk( "specialty_empimmune" ) )
@@ -2206,14 +2206,14 @@ turretdisruptorvisualsaudio()
     var_0 = self gettagangles( "tag_flash" ) + ( 90, 0, 0 );
     var_1 = spawn( "script_model", self gettagorigin( "tag_flash" ) );
     var_1.angles = ( var_0[0], var_0[1], 0 );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "turret_distortion" ), var_1, "tag_origin" );
-    var_1 _meth_8438( "wpn_disruptor_snap_npc" );
-    var_1 _meth_8075( "wpn_disruptor_beam_hi_npc" );
+    var_1 playsoundonmovingent( "wpn_disruptor_snap_npc" );
+    var_1 playloopsound( "wpn_disruptor_beam_hi_npc" );
     common_scripts\utility::waittill_any( "death", "carried" );
     killfxontag( common_scripts\utility::getfx( "turret_distortion" ), var_1, "tag_origin" );
-    var_1 _meth_8438( "wpn_disruptor_off_blast_npc" );
-    var_1 _meth_80AB( "wpn_disruptor_beam_hi_npc" );
+    var_1 playsoundonmovingent( "wpn_disruptor_off_blast_npc" );
+    var_1 stoploopsound( "wpn_disruptor_beam_hi_npc" );
     wait 0.1;
     var_1 delete();
 }

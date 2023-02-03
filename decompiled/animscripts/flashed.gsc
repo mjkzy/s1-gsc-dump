@@ -33,7 +33,7 @@ getnextflashanim()
 flashbanganim( var_0 )
 {
     self endon( "killanimscript" );
-    self _meth_810F( "flashed_anim", var_0, %body, 0.2, randomfloatrange( 0.9, 1.1 ) );
+    self setflaggedanimknoball( "flashed_anim", var_0, %body, 0.2, randomfloatrange( 0.9, 1.1 ) );
     animscripts\shared::donotetracks( "flashed_anim" );
 }
 

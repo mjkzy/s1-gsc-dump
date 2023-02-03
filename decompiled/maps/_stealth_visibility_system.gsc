@@ -38,9 +38,9 @@ system_event_change( var_0 )
 
     foreach ( var_4, var_2 in level._stealth.logic.ai_event )
     {
-        _func_0D3( var_4, var_2[var_0] );
+        setsaveddvar( var_4, var_2[var_0] );
         var_3 = "ai_busyEvent" + getsubstr( var_4, 8 );
-        _func_0D3( var_3, var_2[var_0] );
+        setsaveddvar( var_3, var_2[var_0] );
     }
 }
 
@@ -162,7 +162,7 @@ stealth_shadow_ai_in_volume( var_0 )
     self endon( "death" );
     maps\_utility::ent_flag_set( "_stealth_in_shadow" );
 
-    while ( isdefined( var_0 ) && self _meth_80A9( var_0 ) )
+    while ( isdefined( var_0 ) && self istouching( var_0 ) )
         wait 0.05;
 
     maps\_utility::ent_flag_clear( "_stealth_in_shadow" );
@@ -188,7 +188,7 @@ system_handle_clipbrush()
         var_2 = maps\_stealth_shared_utilities::group_get_flagname_from_group( var_2, self.script_stealthgroup );
     }
 
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     maps\_utility::add_wait( maps\_utility::waittill_msg, "damage" );
     level maps\_utility::add_wait( common_scripts\utility::flag_wait, var_0 );
     level maps\_utility::add_wait( common_scripts\utility::flag_wait, var_1 );
@@ -196,7 +196,7 @@ system_handle_clipbrush()
     maps\_utility::do_wait_any();
 
     if ( self.spawnflags & 1 )
-        self _meth_8058();
+        self connectpaths();
 
     self delete();
 }

@@ -134,7 +134,7 @@ main()
     self notify( "anim entered pain" );
     self endon( "killanimscript" );
     animscripts\utility::initialize( "pain" );
-    self _meth_818E( "gravity" );
+    self animmode( "gravity" );
 
     if ( !isdefined( self.no_pain_sound ) )
         animscripts\face::saygenericdialogue( "pain" );
@@ -189,7 +189,7 @@ end_script()
         self.allowpain = 1;
     }
 
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
     self.facialanimidx = undefined;
 }
 
@@ -271,7 +271,7 @@ getpainanim()
     {
         var_1 = isdefined( self.node ) && distancesquared( self.origin, self.node.origin ) < 4096;
 
-        if ( !var_1 && self.a.movement == "run" && abs( self _meth_8190() ) < 60 )
+        if ( !var_1 && self.a.movement == "run" && abs( self getmotionangle() ) < 60 )
             return getrunningforwardpainanim();
 
         self.a.movement = "stop";
@@ -296,12 +296,12 @@ getrunningforwardpainanim()
     var_2 = 0;
     var_3 = 0;
 
-    if ( self _meth_81C3( self _meth_81B0( ( 300, 0, 0 ) ) ) )
+    if ( self maymovetopoint( self localtoworldcoords( ( 300, 0, 0 ) ) ) )
     {
         var_2 = 1;
         var_1 = 1;
     }
-    else if ( self _meth_81C3( self _meth_81B0( ( 200, 0, 0 ) ) ) )
+    else if ( self maymovetopoint( self localtoworldcoords( ( 200, 0, 0 ) ) ) )
         var_1 = 1;
 
     if ( isdefined( self.a.disablelongpain ) )
@@ -314,7 +314,7 @@ getrunningforwardpainanim()
         var_0 = animscripts\utility::lookupanim( "pain", "run_long" );
     else if ( var_1 )
         var_0 = animscripts\utility::lookupanim( "pain", "run_medium" );
-    else if ( self _meth_81C3( self _meth_81B0( ( 120, 0, 0 ) ) ) )
+    else if ( self maymovetopoint( self localtoworldcoords( ( 120, 0, 0 ) ) ) )
         var_0 = animscripts\utility::lookupanim( "pain", "run_short" );
 
     if ( !var_0.size )
@@ -456,7 +456,7 @@ playpainanim( var_0 )
     pain_setflaggedanimknoballrestart( "painanim", var_0, %body, 1, 0.1, var_1 );
 
     if ( self.a.pose == "prone" )
-        self _meth_81FB( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
+        self updateprone( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
 
     if ( animhasnotetrack( var_0, "start_aim" ) )
     {
@@ -742,8 +742,8 @@ iscrawldeltaallowed( var_0 )
         return 1;
 
     var_1 = getmovedelta( var_0, 0, 1 );
-    var_2 = self _meth_81B0( var_1 );
-    return self _meth_81C3( var_2 );
+    var_2 = self localtoworldcoords( var_1 );
+    return self maymovetopoint( var_2 );
 }
 
 crawlingpistol()
@@ -753,10 +753,10 @@ crawlingpistol()
     thread preventpainforashorttime( "crawling" );
     self.a.special = "none";
     self.specialdeathfunc = undefined;
-    self _meth_81FF();
+    self setlookatentity();
     thread paindeathnotify();
     level notify( "ai_crawling", self );
-    self _meth_8147( %dying, %body, 1, 0.1, 1 );
+    self setanimknoball( %dying, %body, 1, 0.1, 1 );
 
     if ( isdefined( self.a.stumblingpainanimseq ) )
     {
@@ -774,7 +774,7 @@ crawlingpistol()
     thread dyingcrawlbackaim();
 
     if ( isdefined( self.enemy ) )
-        self _meth_81FF( self.enemy );
+        self setlookatentity( self.enemy );
 
     decidenumcrawls();
 
@@ -832,8 +832,8 @@ crawlingpistol()
     }
 
     self notify( "end_dying_crawl_back_aim" );
-    self _meth_8142( %dying_back_aim_4_wrapper, 0.3 );
-    self _meth_8142( %dying_back_aim_6_wrapper, 0.3 );
+    self clearanim( %dying_back_aim_4_wrapper, 0.3 );
+    self clearanim( %dying_back_aim_6_wrapper, 0.3 );
     var_5 = animscripts\utility::lookupanim( "crawl_death", "back_death" );
     self.deathanim = var_5[randomint( var_5.size )];
     killwrapper();
@@ -898,7 +898,7 @@ shouldattemptstumblingpain( var_0 )
             return;
     }
 
-    if ( !self _meth_81C3( var_7 ) )
+    if ( !self maymovetopoint( var_7 ) )
         return;
 
     var_9 = animscripts\utility::lookupanim( "crawl_death", "longdeath" );
@@ -921,7 +921,7 @@ stumblingpain()
         var_3 = anglestoforward( self.angles );
         var_4 = self.origin + var_3 * var_0;
 
-        if ( !self _meth_81C3( var_4 ) )
+        if ( !self maymovetopoint( var_4 ) )
             break;
 
         pain_setflaggedanimknobrestart( "stumblingPain", self.a.stumblingpainanimseq[1] );
@@ -970,7 +970,7 @@ dyingcrawl()
             else if ( abs( self.damageyaw ) > 90 )
                 return 1;
         }
-        else if ( abs( self _meth_8190() ) > 90 )
+        else if ( abs( self getmotionangle() ) > 90 )
             return 1;
     }
 
@@ -1071,8 +1071,8 @@ dyingcrawlbackaim()
         return;
 
     self.dyingcrawlaiming = 1;
-    self _meth_814C( animscripts\utility::lookupanim( "crawl_death", "aim_4" ), 1, 0 );
-    self _meth_814C( animscripts\utility::lookupanim( "crawl_death", "aim_6" ), 1, 0 );
+    self setanimlimited( animscripts\utility::lookupanim( "crawl_death", "aim_4" ), 1, 0 );
+    self setanimlimited( animscripts\utility::lookupanim( "crawl_death", "aim_6" ), 1, 0 );
     var_0 = 0;
 
     for (;;)
@@ -1091,8 +1091,8 @@ dyingcrawlbackaim()
                 var_1 = -45.0;
 
             var_3 = var_1 / -45.0;
-            self _meth_814B( %dying_back_aim_4_wrapper, var_3, 0.05 );
-            self _meth_814B( %dying_back_aim_6_wrapper, 0, 0.05 );
+            self setanim( %dying_back_aim_4_wrapper, var_3, 0.05 );
+            self setanim( %dying_back_aim_6_wrapper, 0, 0.05 );
         }
         else
         {
@@ -1100,8 +1100,8 @@ dyingcrawlbackaim()
                 var_1 = 45.0;
 
             var_3 = var_1 / 45.0;
-            self _meth_814B( %dying_back_aim_6_wrapper, var_3, 0.05 );
-            self _meth_814B( %dying_back_aim_4_wrapper, 0, 0.05 );
+            self setanim( %dying_back_aim_6_wrapper, var_3, 0.05 );
+            self setanim( %dying_back_aim_4_wrapper, 0, 0.05 );
         }
 
         var_0 = var_1;
@@ -1144,15 +1144,15 @@ aimedsomewhatatenemy()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         var_0 = animscripts\combat_utility::get_last_known_shoot_pos( self.enemy );
     else
-        var_0 = self.enemy _meth_8097();
+        var_0 = self.enemy getshootatpos();
 
-    var_1 = self _meth_81B9();
-    var_2 = vectortoangles( var_0 - self _meth_81B8() );
+    var_1 = self getmuzzleangle();
+    var_2 = vectortoangles( var_0 - self getmuzzlepos() );
     var_3 = animscripts\utility::absangleclamp180( var_1[1] - var_2[1] );
 
     if ( var_3 > anim.painyawdifffartolerance )
     {
-        if ( distancesquared( self _meth_80A8(), var_0 ) > anim.painyawdiffclosedistsq || var_3 > anim.painyawdiffclosetolerance )
+        if ( distancesquared( self geteye(), var_0 ) > anim.painyawdiffclosedistsq || var_3 > anim.painyawdiffclosetolerance )
             return 0;
     }
 
@@ -1167,9 +1167,9 @@ enemyisingeneraldirection( var_0 )
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         var_1 = animscripts\combat_utility::get_last_known_shoot_pos( self.enemy );
     else
-        var_1 = self.enemy _meth_8097();
+        var_1 = self.enemy getshootatpos();
 
-    var_2 = vectornormalize( var_1 - self _meth_80A8() );
+    var_2 = vectornormalize( var_1 - self geteye() );
     return vectordot( var_2, var_0 ) > 0.5;
 }
 
@@ -1331,7 +1331,7 @@ cornerdeathreleasegrenade( var_0, var_1 )
 
     thread playsoundatpoint( "grenade_bounce_" + var_6, var_2 );
     self.grenadeweapon = "fraggrenade";
-    self _meth_8038( var_2, var_0, var_1 );
+    self magicgrenademanual( var_2, var_0, var_1 );
 }
 
 playsoundatpoint( var_0, var_1 )
@@ -1346,7 +1346,7 @@ killself()
 {
     self.a.nodeath = 1;
     killwrapper();
-    self _meth_8023();
+    self startragdoll();
     wait 0.1;
     self notify( "grenade_drop_done" );
 }
@@ -1354,9 +1354,9 @@ killself()
 killwrapper()
 {
     if ( isdefined( self.last_dmg_player ) )
-        self _meth_8052( self.origin, self.last_dmg_player );
+        self kill( self.origin, self.last_dmg_player );
     else
-        self _meth_8052();
+        self kill();
 }
 
 enemyisapproaching()
@@ -1393,7 +1393,7 @@ prematurecornergrenadedeath()
     var_3 = getweaponmodel( "fraggrenade" );
     self detach( var_3, "tag_inhand" );
     wait 0.05;
-    self _meth_8023();
+    self startragdoll();
     self waittillmatch( "corner_grenade_die", "end" );
 }
 
@@ -1470,11 +1470,11 @@ additive_pain( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         var_7 = var_8[randomint( var_8.size )];
     }
 
-    self _meth_814C( %add_pain, 1, 0.1, 1 );
-    self _meth_814C( var_7, 1, 0, 1 );
+    self setanimlimited( %add_pain, 1, 0.1, 1 );
+    self setanimlimited( var_7, 1, 0, 1 );
     wait 0.4;
-    self _meth_8142( var_7, 0.2 );
-    self _meth_8142( %add_pain, 0.2 );
+    self clearanim( var_7, 0.2 );
+    self clearanim( %add_pain, 0.2 );
     self.doingadditivepain = undefined;
 }
 
@@ -1489,7 +1489,7 @@ pain_setflaggedanimknob( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( var_4 ) )
         var_4 = 1;
 
-    self _meth_8152( var_0, var_1, var_2, var_3, var_4 );
+    self setflaggedanimknob( var_0, var_1, var_2, var_3, var_4 );
     self.facialanimidx = animscripts\face::playfacialanim( var_1, "pain", self.facialanimidx );
 }
 
@@ -1504,7 +1504,7 @@ pain_setflaggedanimknobrestart( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( var_4 ) )
         var_4 = 1;
 
-    self _meth_810D( var_0, var_1, var_2, var_3, var_4 );
+    self setflaggedanimknobrestart( var_0, var_1, var_2, var_3, var_4 );
     self.facialanimidx = animscripts\face::playfacialanim( var_1, "pain", self.facialanimidx );
 }
 
@@ -1519,6 +1519,6 @@ pain_setflaggedanimknoballrestart( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !isdefined( var_5 ) )
         var_5 = 1;
 
-    self _meth_8110( var_0, var_1, var_2, var_3, var_4, var_5 );
+    self setflaggedanimknoballrestart( var_0, var_1, var_2, var_3, var_4, var_5 );
     self.facialanimidx = animscripts\face::playfacialanim( var_1, "pain", self.facialanimidx );
 }

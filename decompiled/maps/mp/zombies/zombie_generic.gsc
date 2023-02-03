@@ -220,12 +220,12 @@ snd_play_linked_notify_on_ent( var_0, var_1, var_2 )
 snd_play_linked_notify_on_ent_thread( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", self.origin );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     var_3 playsound( var_0 );
     self waittill( var_1 );
-    var_3 _meth_806F( 0, var_2 );
+    var_3 scalevolume( 0, var_2 );
     wait(var_2);
-    var_3 _meth_80AC();
+    var_3 stopsounds();
     waitframe();
     var_3 delete();
 }

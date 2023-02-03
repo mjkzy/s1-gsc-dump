@@ -164,7 +164,7 @@ player_movespeed_calc_loop()
 
 friendly_getstance_player()
 {
-    return self _meth_817C();
+    return self getstance();
 }
 
 friendly_getangles_player()

@@ -69,7 +69,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
 
     if ( !isdefined( game["switchedsides"] ) )
         game["switchedsides"] = 0;
@@ -159,10 +159,10 @@ spawndogtags( var_0, var_1 )
     else
     {
         var_3[0] = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3[0] _meth_80B1( "prop_dogtags_future_enemy_animated" );
+        var_3[0] setmodel( "prop_dogtags_future_enemy_animated" );
         var_3[0] _meth_856C( 1 );
         var_3[1] = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3[1] _meth_80B1( "prop_dogtags_future_friend_animated" );
+        var_3[1] setmodel( "prop_dogtags_future_friend_animated" );
         var_3[1] _meth_856C( 1 );
         var_4 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
         level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0, 0, 16 ) );
@@ -195,10 +195,10 @@ spawndogtags( var_0, var_1 )
     level.dogtags[var_0.guid].attacker = var_1;
     objective_position( level.dogtags[var_0.guid].objid, var_5 );
     objective_state( level.dogtags[var_0.guid].objid, "active" );
-    objective_playerenemyteam( level.dogtags[var_0.guid].objid, var_0 _meth_81B1() );
+    objective_playerenemyteam( level.dogtags[var_0.guid].objid, var_0 getentitynumber() );
     playsoundatpos( var_5, "mp_killconfirm_tags_drop" );
-    level.dogtags[var_0.guid].visuals[0] _meth_8279( "mp_dogtag_spin" );
-    level.dogtags[var_0.guid].visuals[1] _meth_8279( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[0] scriptmodelplayanim( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[1] scriptmodelplayanim( "mp_dogtag_spin" );
 }
 
 showtoteam( var_0, var_1 )

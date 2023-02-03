@@ -26,9 +26,9 @@ main()
 ice_cracking_fx()
 {
     wait 0.1;
-    _func_222( 1 );
+    activateclientexploder( 1 );
     wait 1.3;
-    _func_222( 2 );
+    activateclientexploder( 2 );
     wait 0.6;
-    _func_222( 3 );
+    activateclientexploder( 3 );
 }

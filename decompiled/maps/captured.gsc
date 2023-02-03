@@ -50,8 +50,8 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     common_scripts\utility::flag_wait( "flag_end_escape_end" );
@@ -118,20 +118,20 @@ tff_blocker_incinerator()
     {
         var_3 = getent( "vol_incinerator_exit_door", "targetname" );
         var_1.origin += var_2;
-        level.ally _meth_81A3( 1 );
+        level.ally pushplayer( 1 );
         common_scripts\utility::flag_wait( "flag_incinerator_end" );
 
-        while ( !level.ally _meth_80A9( var_3 ) )
+        while ( !level.ally istouching( var_3 ) )
             wait 0.2;
 
-        var_0 _meth_82AE( var_0.origin + ( 0, -64, 0 ), 0.5 );
+        var_0 moveto( var_0.origin + ( 0, -64, 0 ), 0.5 );
         var_1.origin += ( 0, -64, 0 );
         soundscripts\_snd::snd_message( "aud_door", "post_incin", "open" );
         level waittill( "flag_tff_trans_incinerator_to_helipad" );
         soundscripts\_snd::snd_message( "aud_door", "post_incin", "close" );
-        var_0 _meth_82AE( var_0.origin + ( 0, 64, 0 ), 0.5 );
+        var_0 moveto( var_0.origin + ( 0, 64, 0 ), 0.5 );
         var_1.origin += ( 0, 64, 0 );
-        level.ally _meth_81A3( 0 );
+        level.ally pushplayer( 0 );
     }
 }
 
@@ -140,41 +140,41 @@ tff_blocker_incinerator_to_helipad()
     var_0 = getent( "tff_incinerator_to_helipad_door", "targetname" );
     var_1 = getent( "tff_incinerator_to_helipad_door_coll", "targetname" );
     var_2 = ( 0, 56, 0 );
-    var_1 _meth_8057();
+    var_1 disconnectpaths();
     level waittill( "tff_post_incinerator_to_helipad" );
     soundscripts\_snd::snd_message( "aud_door", "battle_to_heli", "open" );
-    var_0 _meth_82AE( var_0.origin + var_2, 0.5 );
-    var_1 _meth_8058();
-    var_1 _meth_82AE( var_1.origin + var_2, 0.5 );
+    var_0 moveto( var_0.origin + var_2, 0.5 );
+    var_1 connectpaths();
+    var_1 moveto( var_1.origin + var_2, 0.5 );
 }
 
 tff_transitions()
 {
-    if ( !_func_21E( "captured_s2walk_tr" ) )
+    if ( !istransientloaded( "captured_s2walk_tr" ) )
         thread tff_trans_intro_drive_to_s2walk();
 
-    if ( !_func_21E( "captured_interrogate_tr" ) )
+    if ( !istransientloaded( "captured_interrogate_tr" ) )
         thread tff_trans_s2walk_to_interrogate();
 
-    if ( !_func_21E( "captured_escape_tr" ) )
+    if ( !istransientloaded( "captured_escape_tr" ) )
         thread tff_trans_load_escape();
 
-    if ( !_func_21E( "captured_escape_tr" ) || _func_21E( "captured_interrogate_tr" ) )
+    if ( !istransientloaded( "captured_escape_tr" ) || istransientloaded( "captured_interrogate_tr" ) )
         thread tff_trans_unload_interrogate();
 
-    if ( !_func_21E( "captured_test_chamber_tr" ) )
+    if ( !istransientloaded( "captured_test_chamber_tr" ) )
         thread tff_trans_escape_to_test_chamber();
 
-    if ( !_func_21E( "captured_autopsy_halls_tr" ) )
+    if ( !istransientloaded( "captured_autopsy_halls_tr" ) )
         thread tff_trans_load_autopsy_halls();
 
-    if ( !_func_21E( "captured_autopsy_halls_tr" ) || _func_21E( "captured_test_chamber_tr" ) )
+    if ( !istransientloaded( "captured_autopsy_halls_tr" ) || istransientloaded( "captured_test_chamber_tr" ) )
         thread tff_trans_unload_test_chamber();
 
-    if ( !_func_21E( "captured_autopsy_tr" ) )
+    if ( !istransientloaded( "captured_autopsy_tr" ) )
         thread tff_trans_autopsy_halls_to_autopsy();
 
-    if ( !_func_21E( "captured_helipad_tr" ) )
+    if ( !istransientloaded( "captured_helipad_tr" ) )
         thread tff_trans_incinerator_to_helipad();
 }
 
@@ -182,10 +182,10 @@ tff_trans_intro_drive_to_s2walk()
 {
     common_scripts\utility::flag_wait( "flag_start_s1elevator" );
     level notify( "tff_pre_intro_drive_to_s2walk" );
-    _func_219( "captured_intro_drive_tr" );
-    _func_218( "captured_s2walk_tr" );
+    unloadtransient( "captured_intro_drive_tr" );
+    loadtransient( "captured_s2walk_tr" );
 
-    while ( !_func_21E( "captured_s2walk_tr" ) )
+    while ( !istransientloaded( "captured_s2walk_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_intro_drive_to_s2walk" );
@@ -195,10 +195,10 @@ tff_trans_s2walk_to_interrogate()
 {
     level waittill( "elevator_black" );
     level notify( "tff_pre_s2walk_to_interrogate" );
-    _func_219( "captured_s2walk_tr" );
-    _func_218( "captured_interrogate_tr" );
+    unloadtransient( "captured_s2walk_tr" );
+    loadtransient( "captured_interrogate_tr" );
 
-    while ( !_func_21E( "captured_interrogate_tr" ) )
+    while ( !istransientloaded( "captured_interrogate_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_s2walk_to_interrogate" );
@@ -207,9 +207,9 @@ tff_trans_s2walk_to_interrogate()
 tff_trans_load_escape()
 {
     common_scripts\utility::flag_wait( "flag_s3interrogate_end" );
-    _func_218( "captured_escape_tr" );
+    loadtransient( "captured_escape_tr" );
 
-    while ( !_func_21E( "captured_escape_tr" ) )
+    while ( !istransientloaded( "captured_escape_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_load_escape" );
@@ -219,17 +219,17 @@ tff_trans_unload_interrogate()
 {
     common_scripts\utility::flag_wait( "flag_tff_unload_interrogate" );
     level notify( "tff_pre_unload_interrogate" );
-    _func_219( "captured_interrogate_tr" );
+    unloadtransient( "captured_interrogate_tr" );
 }
 
 tff_trans_escape_to_test_chamber()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_escape_to_test_chamber" );
     level notify( "tff_pre_escape_to_test_chamber" );
-    _func_219( "captured_escape_tr" );
-    _func_218( "captured_test_chamber_tr" );
+    unloadtransient( "captured_escape_tr" );
+    loadtransient( "captured_test_chamber_tr" );
 
-    while ( !_func_21E( "captured_test_chamber_tr" ) )
+    while ( !istransientloaded( "captured_test_chamber_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_escape_to_test_chamber" );
@@ -238,9 +238,9 @@ tff_trans_escape_to_test_chamber()
 tff_trans_load_autopsy_halls()
 {
     common_scripts\utility::flag_wait( "flag_tff_load_autopsy_halls" );
-    _func_218( "captured_autopsy_halls_tr" );
+    loadtransient( "captured_autopsy_halls_tr" );
 
-    while ( !_func_21E( "captured_autopsy_halls_tr" ) )
+    while ( !istransientloaded( "captured_autopsy_halls_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_load_autopsy_halls" );
@@ -251,17 +251,17 @@ tff_trans_unload_test_chamber()
     common_scripts\utility::flag_wait( "flag_tff_unload_test_chamber" );
     level.tcah_node maps\_anim::anim_first_frame( level.tcah_doors, "tc_enter_test_exit_door" );
     level notify( "tff_pre_unload_test_chamber" );
-    _func_219( "captured_test_chamber_tr" );
+    unloadtransient( "captured_test_chamber_tr" );
 }
 
 tff_trans_autopsy_halls_to_autopsy()
 {
     common_scripts\utility::flag_wait( "tff_trans_autopsy_halls_to_autopsy" );
     level notify( "tff_pre_autopsy_halls_to_autopsy" );
-    _func_219( "captured_autopsy_halls_tr" );
-    _func_218( "captured_autopsy_tr" );
+    unloadtransient( "captured_autopsy_halls_tr" );
+    loadtransient( "captured_autopsy_tr" );
 
-    while ( !_func_21E( "captured_autopsy_tr" ) )
+    while ( !istransientloaded( "captured_autopsy_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_autopsy_halls_to_autopsy" );
@@ -271,10 +271,10 @@ tff_trans_incinerator_to_helipad()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_incinerator_to_helipad" );
     level notify( "tff_pre_incinerator_to_helipad" );
-    _func_219( "captured_incinerator_tr" );
-    _func_218( "captured_helipad_tr" );
+    unloadtransient( "captured_incinerator_tr" );
+    loadtransient( "captured_helipad_tr" );
 
-    while ( !_func_21E( "captured_helipad_tr" ) )
+    while ( !istransientloaded( "captured_helipad_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_incinerator_to_helipad" );
@@ -287,12 +287,12 @@ pre_load()
     maps\captured_precache::main();
     maps\captured_anim::main();
     maps\captured_vo::main();
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "iw5_mahem_sp" );
-    precacheitem( "iw5_mahemstraight_sp" );
-    precacheitem( "iw5_mahemcaptured" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "iw5_mahem_sp" );
+    precacheshellshock( "iw5_mahemstraight_sp" );
+    precacheshellshock( "iw5_mahemcaptured" );
     precachemodel( "s1_captured_handcuffs" );
     precachemodel( "s1_vm_handcuffs" );
     precachemodel( "cap_hanging_bodybag" );
@@ -315,14 +315,14 @@ pre_load()
     precachemodel( "cap_hanging_bodybag_02_b" );
     precachemodel( "cap_hanging_bodybag_02_c" );
     precachemodel( "cap_morgue_body_c" );
-    precacheitem( "iw5_kvahazmatknifeonearm_sp" );
-    precacheitem( "iw5_titan45onearmgundown_sp" );
-    precacheitem( "iw5_titan45onearm_sp" );
-    precacheitem( "iw5_titan45pickup_sp" );
-    precacheitem( "iw5_hmr9onearm_sp" );
-    precacheitem( "iw5_hmr9pickup_sp" );
-    precacheitem( "iw5_sn6onearm_sp" );
-    precacheitem( "iw5_sn6pickup_sp" );
+    precacheshellshock( "iw5_kvahazmatknifeonearm_sp" );
+    precacheshellshock( "iw5_titan45onearmgundown_sp" );
+    precacheshellshock( "iw5_titan45onearm_sp" );
+    precacheshellshock( "iw5_titan45pickup_sp" );
+    precacheshellshock( "iw5_hmr9onearm_sp" );
+    precacheshellshock( "iw5_hmr9pickup_sp" );
+    precacheshellshock( "iw5_sn6onearm_sp" );
+    precacheshellshock( "iw5_sn6pickup_sp" );
     precacherumble( "light_1s" );
     precacherumble( "light_2s" );
     precacherumble( "light_3s" );
@@ -349,7 +349,7 @@ pre_load()
     maps\captured_mech::pre_load();
     maps\captured_exit::pre_load();
     maps\captured_end_escape::pre_load();
-    _func_0D3( "use_new_sva_system", 1 );
+    setsaveddvar( "use_new_sva_system", 1 );
 }
 
 post_load()
@@ -383,7 +383,7 @@ post_load()
     createthreatbiasgroup( "playerseek" );
     createthreatbiasgroup( "civkill" );
     createthreatbiasgroup( "player" );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     level.friendlynamedist = getdvarint( "g_friendlyNameDist" );
     level.player.exclusive["exo_melee"] = 0;
     maps\captured_aud::main();
@@ -396,7 +396,7 @@ post_load()
     maps\captured_exit::post_load();
     maps\captured_end_escape::post_load();
     maps\captured_util::spawn_allies();
-    var_0 = _func_0DA( "axis" );
+    var_0 = getspawnerteamarray( "axis" );
     maps\_utility::array_spawn_function( var_0, maps\_utility::disable_long_death );
     level.nextgrenadedrop = 573000;
     thread objective_string_precache();

@@ -9,7 +9,7 @@ main( var_0, var_1, var_2 )
     precacheshader( "bls_ui_turret_targetlock" );
     precacheshader( "bls_ui_turret_targetlock_white" );
     precacheshader( "bls_ui_turret_targetacquired" );
-    precacheitem( "mobile_turret_missile" );
+    precacheshellshock( "mobile_turret_missile" );
     precacherumble( "heavy_1s" );
     precacheshader( "bls_ui_turret_overlay_sm" );
     precacheshader( "bls_ui_turret_overlay_vignette" );
@@ -70,7 +70,7 @@ register_fx()
 
 local_init()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     thread manage_player_using_mobile_turret();
     thread monitor_vehicle_mount();
     thread animation_think();
@@ -79,8 +79,8 @@ local_init()
     maps\_utility::ent_flag_init( "player_in_transition" );
     common_scripts\utility::flag_init( "player_in_x4walker" );
     waittillframeend;
-    self.mgturret[0] _meth_8136();
-    self.mgturret[0] _meth_8115( #animtree );
+    self.mgturret[0] maketurretsolid();
+    self.mgturret[0] useanimtree( #animtree );
     self notify( "stop_vehicle_shoot_shock" );
     vehicle_scripts\_x4walker_wheels_turret_aud::snd_init_x4_walker_wheels_turret();
 }
@@ -121,7 +121,7 @@ manage_player_using_mobile_turret()
     for ( var_0 = 0; var_0 < 3; var_0++ )
     {
         var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_1 _meth_80B1( "tag_origin" );
+        var_1 setmodel( "tag_origin" );
         var_1 hide();
         self.enter_use_tags[var_0] = var_1;
     }
@@ -140,15 +140,15 @@ manage_player_using_mobile_turret()
 
     foreach ( var_1 in self.enter_use_tags )
     {
-        var_1 _meth_804D( self );
-        var_1 _meth_80DB( &"_X4WALKER_WHEELS_ENTER" );
+        var_1 linkto( self );
+        var_1 sethintstring( &"_X4WALKER_WHEELS_ENTER" );
         var_1 makeusable();
         level.mt_use_tags[level.mt_use_tags.size] = var_1;
     }
 
     waittillframeend;
     self.tag_player_view = common_scripts\utility::spawn_tag_origin();
-    self.tag_player_view _meth_804D( self.mgturret[0], "tag_barrel", ( -38.9526, 6.01624, -46.3999 ), ( 0, 0, 0 ) );
+    self.tag_player_view linkto( self.mgturret[0], "tag_barrel", ( -38.9526, 6.01624, -46.3999 ), ( 0, 0, 0 ) );
     self.hint_button_locations = [];
     self.hint_button_locations[self.hint_button_locations.size] = common_scripts\utility::spawn_tag_origin();
     self.hint_button_locations[self.hint_button_locations.size - 1].origin = self.mgturret[0].origin + anglestoright( self.mgturret[0].angles ) * 60 + ( 0, 0, 10 );
@@ -160,8 +160,8 @@ manage_player_using_mobile_turret()
 
     foreach ( var_10 in self.hint_button_locations )
     {
-        var_10 _meth_8092();
-        var_10 _meth_804D( self.mgturret[0] );
+        var_10 dontinterpolate();
+        var_10 linkto( self.mgturret[0] );
         self.hint_buttons[self.hint_buttons.size] = var_10 maps\_shg_utility::hint_button_create( "x", "tag_origin", 50, 150 );
     }
 
@@ -181,7 +181,7 @@ manage_player_using_mobile_turret()
         level.player notify( "player_in_x4walker" );
         common_scripts\utility::flag_set( "player_in_x4walker" );
         disable_sonic_aoe();
-        _func_0D3( "ammoCounterHide", 1 );
+        setsaveddvar( "ammoCounterHide", 1 );
         var_13 = undefined;
 
         if ( common_scripts\utility::flag_exist( "seoul_player_can_exit_x4walker" ) )
@@ -213,8 +213,8 @@ manage_player_using_mobile_turret()
             var_13 destroy();
 
         maps\_utility::ent_flag_set( "player_in_transition" );
-        level.player _meth_80FF();
-        self.mgturret[0] _meth_8136();
+        level.player disableslowaim();
+        self.mgturret[0] maketurretsolid();
         thread maps\_utility::lerp_fov_overtime( 2, 65 );
 
         if ( isdefined( level.player.drivingvehicleandturret ) && isalive( level.player ) )
@@ -245,10 +245,10 @@ enable_sonic_aoe()
 rotate_player_to_facing_angles( var_0 )
 {
     var_1 = level.player common_scripts\utility::spawn_tag_origin();
-    level.player _meth_807F( var_1, "tag_origin" );
-    var_1 _meth_82B5( var_0.angles, 1 );
+    level.player playerlinktoabsolute( var_1, "tag_origin" );
+    var_1 rotateto( var_0.angles, 1 );
     wait 1;
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
 }
 
@@ -310,8 +310,8 @@ update_hud_text()
 
     for (;;)
     {
-        self.hud_text[0] settext( maps\_utility::round_float( self _meth_8289(), 1, 0 ) );
-        self.hud_text[1] settext( maps\_utility::round_float( self _meth_8286(), 1, 0 ) );
+        self.hud_text[0] settext( maps\_utility::round_float( self vehicle_getsteering(), 1, 0 ) );
+        self.hud_text[1] settext( maps\_utility::round_float( self vehicle_getspeed(), 1, 0 ) );
         waitframe();
     }
 }
@@ -359,7 +359,7 @@ turret_hud_elem_init_nofade( var_0 )
     {
         self.positioninworld = 1;
         self.relativeoffset = 1;
-        self _meth_80CD( var_0, "tag_aim_animated" );
+        self settargetent( var_0, "tag_aim_animated" );
     }
 }
 
@@ -388,15 +388,15 @@ hudoutline_toggle_target( var_0 )
         var_2 = 3;
 
     if ( var_0 )
-        var_1 _meth_83FA( var_2, 1 );
+        var_1 hudoutlineenable( var_2, 1 );
     else
-        var_1 _meth_83FB();
+        var_1 hudoutlinedisable();
 }
 
 hudoutline_toggle_all( var_0 )
 {
     var_1 = [];
-    var_1 = common_scripts\utility::array_combine( var_1, _func_0D6( "axis", "allies" ) );
+    var_1 = common_scripts\utility::array_combine( var_1, getaiarray( "axis", "allies" ) );
     var_1 = common_scripts\utility::array_combine( var_1, vehicle_getarray() );
 
     foreach ( var_3 in var_1 )
@@ -417,7 +417,7 @@ hudoutline_spawner_think()
 hudoutline_spawner_all()
 {
     var_0 = [];
-    var_0 = common_scripts\utility::array_combine( var_0, _func_0D8() );
+    var_0 = common_scripts\utility::array_combine( var_0, getspawnerarray() );
     var_0 = common_scripts\utility::array_combine( var_0, vehicle_getspawnerarray() );
 
     foreach ( var_2 in var_0 )
@@ -433,10 +433,10 @@ hudoutline_dvars_set()
     level.hudoutlinedvars["r_hudoutlinepostmode"] = getdvar( "r_hudoutlinepostmode", 0 );
     level.hudoutlinedvars["r_hudoutlinehalolumscale"] = getdvar( "r_hudoutlinehalolumscale", 0 );
     level.hudoutlinedvars["r_hudoutlinehaloblurradius"] = getdvar( "r_hudoutlinehaloblurradius", 0 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehalolumscale", 2 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.7 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 2 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.7 );
 }
 
 hudoutline_dvars_reset()
@@ -445,7 +445,7 @@ hudoutline_dvars_reset()
         return;
 
     foreach ( var_1 in getarraykeys( level.hudoutlinedvars ) )
-        _func_0D3( var_1, level.hudoutlinedvars[var_1] );
+        setsaveddvar( var_1, level.hudoutlinedvars[var_1] );
 }
 
 hudoutline_think()
@@ -476,7 +476,7 @@ player_show_turret_hud()
     var_11 = -22500;
     level.player endon( "death" );
     var_12 = getdvar( "hud_fade_ammodisplay" );
-    _func_0D3( "hud_fade_ammodisplay", 0.05 );
+    setsaveddvar( "hud_fade_ammodisplay", 0.05 );
     self.missiles = [];
 
     for ( var_13 = 0; var_13 < 4; var_13++ )
@@ -485,7 +485,7 @@ player_show_turret_hud()
             var_2 = var_3;
 
         self.missiles[var_13] = newhudelem();
-        self.missiles[var_13] _meth_80CC( "bls_ui_turret_missle", 48, 48 );
+        self.missiles[var_13] setshader( "bls_ui_turret_missle", 48, 48 );
         self.missiles[var_13] turret_hud_elem_init( self.mgturret[0] );
         self.missiles[var_13].x = var_0;
         self.missiles[var_13].y = var_2 + var_13 % 2 * var_4;
@@ -493,7 +493,7 @@ player_show_turret_hud()
     }
 
     var_14 = newhudelem();
-    var_14 _meth_80CC( "bls_ui_turret_overlay_sm", 1024, 512 );
+    var_14 setshader( "bls_ui_turret_overlay_sm", 1024, 512 );
     var_14 turret_hud_elem_init( self.mgturret[0] );
     var_14.sort = 2;
     var_14.x = var_0;
@@ -503,19 +503,19 @@ player_show_turret_hud()
     if ( level.x4walker_wheels_seoul_turret )
     {
         var_15 = newhudelem();
-        var_15 _meth_80CC( "bls_ui_turret_overlay_vignette", 640, 480 );
+        var_15 setshader( "bls_ui_turret_overlay_vignette", 640, 480 );
         var_15.horzalign = "fullscreen";
         var_15.vertalign = "fullscreen";
     }
 
     self.chevron = newhudelem();
-    self.chevron _meth_80CC( "bls_ui_turret_chevron", 32, 32 );
+    self.chevron setshader( "bls_ui_turret_chevron", 32, 32 );
     self.chevron turret_hud_elem_init( self.mgturret[0] );
     self.chevron.x = var_0;
     self.chevron.y = var_6;
     self.chevron.z = var_1;
     self.chevron_right = newhudelem();
-    self.chevron_right _meth_80CC( "bls_ui_turret_chevron_right", 32, 32 );
+    self.chevron_right setshader( "bls_ui_turret_chevron_right", 32, 32 );
     self.chevron_right turret_hud_elem_init( self.mgturret[0] );
     self.chevron_right.x = var_0;
     self.chevron_right.y = var_7;
@@ -526,7 +526,7 @@ player_show_turret_hud()
     self.compass_text.y = 0;
     self.compass_text.z = var_1 + var_10;
     self.hud_warning = newhudelem();
-    self.hud_warning _meth_80CC( "bls_ui_turret_warning", 90, 24 );
+    self.hud_warning setshader( "bls_ui_turret_warning", 90, 24 );
     self.hud_warning turret_hud_elem_init_nofade( self.mgturret[0] );
     self.hud_warning.alpha = 0;
     self.hud_warning.x = var_0;
@@ -565,7 +565,7 @@ player_show_turret_hud()
         var_17 turret_hud_elem_fadeout();
 
     common_scripts\utility::waittill_any( "player_exited_mobile_turret", "death" );
-    _func_0D3( "hud_fade_ammodisplay", var_12 );
+    setsaveddvar( "hud_fade_ammodisplay", var_12 );
     var_14 destroy();
 
     if ( isdefined( var_15 ) )
@@ -672,28 +672,28 @@ player_show_missile_reticle()
 
     self.reticle["tl"].x = 0 - var_0;
     self.reticle["tl"].y = 0 - var_1;
-    self.reticle["tl"] _meth_80CC( "bls_ui_turret_reticle_tl", 32, 32 );
+    self.reticle["tl"] setshader( "bls_ui_turret_reticle_tl", 32, 32 );
     self.reticle["tr"].x = var_0;
     self.reticle["tr"].y = 0 - var_1;
-    self.reticle["tr"] _meth_80CC( "bls_ui_turret_reticle_tr", 32, 32 );
+    self.reticle["tr"] setshader( "bls_ui_turret_reticle_tr", 32, 32 );
     self.reticle["br"].x = var_0;
     self.reticle["br"].y = var_1;
-    self.reticle["br"] _meth_80CC( "bls_ui_turret_reticle_br", 32, 32 );
+    self.reticle["br"] setshader( "bls_ui_turret_reticle_br", 32, 32 );
     self.reticle["bl"].x = 0 - var_0;
     self.reticle["bl"].y = var_1;
-    self.reticle["bl"] _meth_80CC( "bls_ui_turret_reticle_bl", 32, 32 );
+    self.reticle["bl"] setshader( "bls_ui_turret_reticle_bl", 32, 32 );
     self.reticle["cross_l"].x = 0 - var_0;
     self.reticle["cross_l"].y = 0;
-    self.reticle["cross_l"] _meth_80CC( "bls_ui_turret_reticule_hpip", 16, 16 );
+    self.reticle["cross_l"] setshader( "bls_ui_turret_reticule_hpip", 16, 16 );
     self.reticle["cross_r"].x = var_0;
     self.reticle["cross_r"].y = 0;
-    self.reticle["cross_r"] _meth_80CC( "bls_ui_turret_reticule_hpip", 16, 16 );
+    self.reticle["cross_r"] setshader( "bls_ui_turret_reticule_hpip", 16, 16 );
     self.reticle["cross_b"].x = 0;
     self.reticle["cross_b"].y = 0 - var_1;
-    self.reticle["cross_b"] _meth_80CC( "bls_ui_turret_reticule_vpip", 16, 16 );
+    self.reticle["cross_b"] setshader( "bls_ui_turret_reticule_vpip", 16, 16 );
     self.reticle["cross_t"].x = 0;
     self.reticle["cross_t"].y = var_1;
-    self.reticle["cross_t"] _meth_80CC( "bls_ui_turret_reticule_vpip", 16, 16 );
+    self.reticle["cross_t"] setshader( "bls_ui_turret_reticule_vpip", 16, 16 );
     self waittill( "dismount_vehicle_and_turret" );
 
     foreach ( var_3 in self.reticle )
@@ -713,7 +713,7 @@ player_enter_turret()
     if ( !isalive( level.player ) )
         return;
 
-    level.player _meth_80EC( 1 );
+    level.player enabledeathshield( 1 );
 
     foreach ( var_1 in self.enter_use_tags )
         var_1 makeunusable();
@@ -748,14 +748,14 @@ player_enter_turret()
 
     level.player notify( "player_starts_entering_mobile_turret" );
     maps\_anim::anim_first_frame_solo( var_6, var_11, "tag_body" );
-    level.player _meth_8080( var_6, "tag_player", 0.2, 0.1, 0.1 );
+    level.player playerlinktoblend( var_6, "tag_player", 0.2, 0.1, 0.1 );
     wait 0.2;
     thread maps\_utility::lerp_fov_overtime( 2, 55 );
     var_6 show();
-    var_6 _meth_808E();
+    var_6 dontcastshadows();
     var_6.vehicle_to_swap = self;
     maps\_anim::anim_single_solo( var_6, var_11, "tag_body" );
-    level.player _meth_804F();
+    level.player unlink();
     var_6 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
 
@@ -764,29 +764,29 @@ player_enter_turret()
 
     }
     else
-        level.player _meth_820B( self );
+        level.player drivevehicleandcontrolturret( self );
 
     self.mgturret[0] setcontents( 0 );
-    self.mgturret[0] _meth_8099( level.player );
+    self.mgturret[0] useby( level.player );
     self.mgturret[0] makeunusable();
-    level.player _meth_80F4();
+    level.player disableturretdismount();
 
     if ( level.x4walker_wheels_seoul_turret )
-        level.player _meth_807C( self.mgturret[0], "tag_guy", 0, 180, 180, 90, 2, 0 );
+        level.player playerlinkto( self.mgturret[0], "tag_guy", 0, 180, 180, 90, 2, 0 );
     else
-        level.player _meth_807C( self.mgturret[0], "tag_guy", 0, 180, 180, 11, 13, 0 );
+        level.player playerlinkto( self.mgturret[0], "tag_guy", 0, 180, 180, 11, 13, 0 );
 
     level.player.drivingvehicleandturret = self;
-    level.player _meth_8233();
+    level.player playerlinkedturretanglesenable();
 
     if ( level.x4walker_wheels_seoul_turret )
-        level.player _meth_80FE( 0.65, 0.65 );
+        level.player enableslowaim( 0.65, 0.65 );
     else
-        level.player _meth_80FE( 0.5, 0.35 );
+        level.player enableslowaim( 0.5, 0.35 );
 
     self.player_driver = level.player;
     thread camera_shake();
-    self.player_driver _meth_80AD( "damage_light" );
+    self.player_driver playrumbleonentity( "damage_light" );
     thread randomize_turret_spread();
     self notify( "driving_vehicle_and_turret" );
     self.player_driver notify( "player_enters_mobile_turret" );
@@ -795,8 +795,8 @@ player_enter_turret()
 
     if ( level.x4walker_player_invulnerability )
     {
-        level.player _meth_80EC( 0 );
-        level.player _meth_80EF();
+        level.player enabledeathshield( 0 );
+        level.player enableinvulnerability();
     }
 
     return var_11;
@@ -814,7 +814,7 @@ camera_shake()
 
     for (;;)
     {
-        if ( self _meth_8286() == 0 )
+        if ( self vehicle_getspeed() == 0 )
             var_4 = 0.08;
         else
             var_4 = 0.12;
@@ -833,7 +833,7 @@ randomize_turret_spread()
     for (;;)
     {
         var_0 = randomfloatrange( 0.2, 1 );
-        self.mgturret[0] _meth_810A( var_0 );
+        self.mgturret[0] setplayerspread( var_0 );
         wait 0.05;
     }
 }
@@ -859,7 +859,7 @@ find_best_exit_anim( var_0 )
         var_7 = var_3 maps\_utility::getanim( var_6 );
         maps\_anim::anim_first_frame_solo( var_3, var_6, "tag_body" );
         var_8 = getmovedelta( var_7, 0, 1 );
-        var_9 = var_3 _meth_81B0( var_8 );
+        var_9 = var_3 localtoworldcoords( var_8 );
         var_10 = var_9 + ( 0, 0, 15 );
         var_11 = playerphysicstrace( var_10, var_9 );
         var_12 = var_11[2] - var_9[2];
@@ -883,21 +883,21 @@ player_exit_turret( var_0 )
     if ( !isalive( level.player ) )
         return;
 
-    level.player _meth_80F0();
-    level.player _meth_80EC( 1 );
-    self.mgturret[0] _meth_8001( self.tag_player_view.origin );
-    self.mgturret[0] _meth_8099( level.player );
-    level.player _meth_807D( self.tag_player_view, "tag_origin", 1 );
+    level.player disableinvulnerability();
+    level.player enabledeathshield( 1 );
+    self.mgturret[0] setturretdismountorg( self.tag_player_view.origin );
+    self.mgturret[0] useby( level.player );
+    level.player playerlinktodelta( self.tag_player_view, "tag_origin", 1 );
     level.player maps\_shg_utility::setup_player_for_scene();
     wait_for_turret_reset();
-    level.player _meth_804F();
+    level.player unlink();
     var_1 = maps\_vehicle_shg::spawn_player_rig();
     var_1 hide();
     maps\_anim::anim_first_frame_solo( var_1, var_0, "tag_body" );
-    level.player _meth_8080( var_1, "tag_player", 0.2, 0.1, 0.1 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.2, 0.1, 0.1 );
     wait 0.2;
     var_1 show();
-    var_1 _meth_808E();
+    var_1 dontcastshadows();
     var_1.vehicle_to_swap = self;
     level.player.drivingvehicleandturret = undefined;
     self.player_driver = undefined;
@@ -905,7 +905,7 @@ player_exit_turret( var_0 )
     if ( !isdefined( self.burning ) )
     {
         if ( !level.x4walker_wheels_seoul_turret )
-            level.player _meth_820C( self );
+            level.player drivevehicleandcontrolturretoff( self );
     }
     else if ( isdefined( self.damage_fx ) )
     {
@@ -914,11 +914,11 @@ player_exit_turret( var_0 )
     }
 
     self notify( "dismount_vehicle_and_turret" );
-    level.player _meth_807D( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
     thread vehicle_scripts\_x4walker_wheels_turret_aud::snd_start_x4_walker_wheels_turret( "npc" );
     maps\_anim::anim_single_solo( var_1, var_0, "tag_body" );
-    level.player _meth_80AD( "damage_light" );
-    level.player _meth_804F();
+    level.player playrumbleonentity( "damage_light" );
+    level.player unlink();
     var_1 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     maps\_player_exo::player_exo_activate();
@@ -931,7 +931,7 @@ player_exit_turret( var_0 )
     foreach ( var_9 in self.hint_button_locations )
         self.hint_buttons[self.hint_buttons.size] = var_9 maps\_shg_utility::hint_button_create( "x", "tag_origin", 50, 150 );
 
-    level.player _meth_80EC( 0 );
+    level.player enabledeathshield( 0 );
     self notify( "player_exited_mobile_turret" );
     level.player notify( "player_exited_mobile_turret" );
 }
@@ -1033,7 +1033,7 @@ make_mobile_turret_unusable()
 monitor_vehicle_mount()
 {
     self endon( "death" );
-    self _meth_814B( maps\_vehicle_shg::get_vehicle_anim( "idle" ) );
+    self setanim( maps\_vehicle_shg::get_vehicle_anim( "idle" ) );
 
     for (;;)
     {
@@ -1063,7 +1063,7 @@ animation_think()
     {
         self waittill( "play_anim", var_0 );
         clear_anims();
-        self _meth_814B( maps\_vehicle_shg::get_vehicle_anim( var_0 ), 1.0, 0.2, 1.0 );
+        self setanim( maps\_vehicle_shg::get_vehicle_anim( var_0 ), 1.0, 0.2, 1.0 );
     }
 }
 
@@ -1071,7 +1071,7 @@ animation_think()
 
 clear_anims()
 {
-    self _meth_8142( %walker_wheels_turret, 0.2 );
+    self clearanim( %walker_wheels_turret, 0.2 );
 }
 
 monitor_turret_shoot()
@@ -1082,7 +1082,7 @@ monitor_turret_shoot()
     for (;;)
     {
         self.mgturret[0] waittill( "turret_fire" );
-        self.mgturret[0] _meth_814D( %x4walker_wheels_turret_cockpit_fire, 1, 0, 1 );
+        self.mgturret[0] setanimrestart( %x4walker_wheels_turret_cockpit_fire, 1, 0, 1 );
     }
 }
 
@@ -1095,7 +1095,7 @@ camera_shake_on_turret_fire()
     {
         self.mgturret[0] waittill( "turret_fire" );
         earthquake( 0.2, 0.1, self.player_driver.origin, 128 );
-        self.player_driver _meth_80AD( "heavy_1s" );
+        self.player_driver playrumbleonentity( "heavy_1s" );
     }
 }
 
@@ -1117,9 +1117,9 @@ rocket_think()
         {
             self notify( "disable_missile_input" );
             wait 2;
-            self.mgturret[0] _meth_8143( %x4walkersplit_cockpit_rockets_down, 1, 0.2, 1 );
+            self.mgturret[0] setanimknob( %x4walkersplit_cockpit_rockets_down, 1, 0.2, 1 );
             wait 0.5;
-            self.mgturret[0] _meth_8143( %x4walkersplit_cockpit_rockets_up, 1, 0.2, 1 );
+            self.mgturret[0] setanimknob( %x4walkersplit_cockpit_rockets_up, 1, 0.2, 1 );
             thread monitor_missile_input();
         }
     }
@@ -1150,14 +1150,14 @@ acquired_animation( var_0 )
     self endon( "death" );
     var_0 endon( "dismount_vehicle_and_turret" );
     wait 0.3;
-    _func_09C( self, "bls_ui_turret_targetlock_white" );
+    target_setshader( self, "bls_ui_turret_targetlock_white" );
 }
 
 add_target_on_los()
 {
     var_0 = anglestoforward( self.player_driver getangles() );
     var_0 = vectornormalize( var_0 );
-    var_1 = self.player_driver _meth_80A8();
+    var_1 = self.player_driver geteye();
     var_2 = bullettrace( var_1, var_1 + var_0 * 2048, 1, self );
     var_3 = var_2["entity"];
 
@@ -1166,8 +1166,8 @@ add_target_on_los()
         if ( !isdefined( var_3.target_marked ) || !var_3.target_marked )
         {
             var_3.target_marked = 1;
-            _func_09A( var_3, ( 0, 0, 20 ) );
-            _func_09C( var_3, "bls_ui_turret_targetacquired" );
+            target_set( var_3, ( 0, 0, 20 ) );
+            target_setshader( var_3, "bls_ui_turret_targetacquired" );
             var_3 thread acquired_animation( self );
             soundscripts\_snd::snd_message( "x4_walker_hud_target_aquired", var_3 );
             thread remove_target( var_3 );
@@ -1199,7 +1199,7 @@ add_target_on_dot()
 {
     var_0 = anglestoforward( self.player_driver getangles() );
     var_0 = vectornormalize( var_0 );
-    var_1 = self.player_driver _meth_80A8();
+    var_1 = self.player_driver geteye();
     var_2 = ( 0, 0, 32 );
     var_3 = get_all_valid_rocket_targets();
 
@@ -1217,7 +1217,7 @@ add_target_on_dot()
         var_6 = var_5.origin;
 
         if ( isai( var_5 ) )
-            var_6 = var_5 _meth_80A8();
+            var_6 = var_5 geteye();
 
         var_7 = var_6 - var_1;
         var_8 = length( var_7 );
@@ -1238,8 +1238,8 @@ add_target_on_dot()
             continue;
 
         var_5.target_marked = 1;
-        _func_09A( var_5, ( 0, 0, 20 ) );
-        _func_09C( var_5, "bls_ui_turret_targetacquired" );
+        target_set( var_5, ( 0, 0, 20 ) );
+        target_setshader( var_5, "bls_ui_turret_targetacquired" );
         var_5 thread acquired_animation( self );
         soundscripts\_snd::snd_message( "x4_walker_hud_target_aquired", var_5 );
         thread remove_target( var_5 );
@@ -1269,7 +1269,7 @@ get_missile_target_offset( var_0 )
 
 get_all_valid_rocket_targets()
 {
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_1 = getentarray( "script_vehicle", "code_classname" );
     var_2 = [];
 
@@ -1308,7 +1308,7 @@ remove_target( var_0 )
     if ( isdefined( var_0 ) )
     {
         var_0.target_marked = undefined;
-        _func_09B( var_0 );
+        target_remove( var_0 );
     }
 
     if ( isdefined( self ) && isdefined( self.rocket_targets ) )
@@ -1349,19 +1349,19 @@ monitor_missile_input()
     for (;;)
     {
         wait 0.05;
-        var_1 = self.player_driver _meth_82EE();
+        var_1 = self.player_driver fragbuttonpressed();
 
         if ( var_1 && !var_0 )
         {
             var_0 = 1;
-            _func_0D3( "cg_drawCrosshair", 0 );
+            setsaveddvar( "cg_drawCrosshair", 0 );
             self.reticle reticle_show();
             self notify( "target_missile_system" );
         }
         else if ( !var_1 && var_0 )
         {
             var_0 = 0;
-            _func_0D3( "cg_drawCrosshair", 1 );
+            setsaveddvar( "cg_drawCrosshair", 1 );
             self.reticle reticle_hide();
             self notify( "fire_missile_system" );
         }
@@ -1369,7 +1369,7 @@ monitor_missile_input()
         update_missile_hud();
     }
 
-    _func_0D3( "cg_drawCrosshair", 1 );
+    setsaveddvar( "cg_drawCrosshair", 1 );
 }
 
 fire_rockets()
@@ -1391,9 +1391,9 @@ fire_rockets()
         if ( !isdefined( var_2.target_marked ) )
             continue;
 
-        self.player_driver _meth_80AD( "heavy_1s" );
+        self.player_driver playrumbleonentity( "heavy_1s" );
         earthquake( 0.3, 1, self.player_driver.origin, 256 );
-        _func_09C( var_2, "bls_ui_turret_targetlock" );
+        target_setshader( var_2, "bls_ui_turret_targetlock" );
         soundscripts\_snd::snd_message( "x4_walker_hud_missile_launched", var_2 );
         thread fire_rocket_at( var_2, var_4 );
         var_4++;
@@ -1432,7 +1432,7 @@ fire_rocket_at( var_0, var_1 )
             break;
     }
 
-    self.mgturret[0] _meth_8143( var_4, 1, 0, 1 );
+    self.mgturret[0] setanimknob( var_4, 1, 0, 1 );
     var_5 = self.mgturret[0] gettagorigin( var_3 );
     var_6 = self.mgturret[0] gettagangles( var_3 );
     var_7 = var_5 + anglestoforward( var_6 ) * 512;
@@ -1444,8 +1444,8 @@ fire_rocket_at( var_0, var_1 )
         var_8 = magicbullet( "mobile_turret_missile", var_5, var_7 );
 
     var_8 soundscripts\_snd::snd_message( "x4_walker_fire_missile", var_0 );
-    var_8 _meth_81D9( var_0 );
-    var_8 _meth_81DC();
+    var_8 missile_settargetent( var_0 );
+    var_8 missile_setflightmodedirect();
     var_8 waittill( "death" );
 
     if ( isdefined( var_0 ) )
@@ -1484,9 +1484,9 @@ swap_cockpit_model( var_0 )
     if ( isdefined( var_0 ) && isdefined( var_0.vehicle_to_swap ) )
     {
         var_0.vehicle_to_swap notify( "enter_vehicle_dof" );
-        var_0.vehicle_to_swap _meth_80B1( "vehicle_vm_x4walkerSplit_wheels" );
-        var_0.vehicle_to_swap.mgturret[0] _meth_80B1( "vehicle_vm_x4walkerSplit_turret" );
-        var_0.vehicle_to_swap _meth_827C( var_0.vehicle_to_swap.origin, var_0.vehicle_to_swap.angles );
+        var_0.vehicle_to_swap setmodel( "vehicle_vm_x4walkerSplit_wheels" );
+        var_0.vehicle_to_swap.mgturret[0] setmodel( "vehicle_vm_x4walkerSplit_turret" );
+        var_0.vehicle_to_swap vehicle_teleport( var_0.vehicle_to_swap.origin, var_0.vehicle_to_swap.angles );
         var_0.vehicle_to_swap notify( "play_anim", "cockpit_idle" );
         level notify( "swapped_x4walker", var_0.vehicle_to_swap );
     }
@@ -1497,9 +1497,9 @@ swap_world_model( var_0 )
     if ( isdefined( var_0 ) && isdefined( var_0.vehicle_to_swap ) )
     {
         var_0.vehicle_to_swap notify( "exit_vehicle_dof" );
-        var_0.vehicle_to_swap _meth_80B1( "vehicle_npc_x4walkerSplit_wheels" );
-        var_0.vehicle_to_swap.mgturret[0] _meth_80B1( "vehicle_npc_x4walkerSplit_turret" );
-        var_0.vehicle_to_swap _meth_827C( var_0.vehicle_to_swap.origin, var_0.vehicle_to_swap.angles );
+        var_0.vehicle_to_swap setmodel( "vehicle_npc_x4walkerSplit_wheels" );
+        var_0.vehicle_to_swap.mgturret[0] setmodel( "vehicle_npc_x4walkerSplit_turret" );
+        var_0.vehicle_to_swap vehicle_teleport( var_0.vehicle_to_swap.origin, var_0.vehicle_to_swap.angles );
         var_0.vehicle_to_swap notify( "play_anim", "idle" );
     }
 }

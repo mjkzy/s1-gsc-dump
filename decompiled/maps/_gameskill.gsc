@@ -184,7 +184,7 @@ setskill( var_0 )
     level.difficultysettings["player_downed_buffer_time"]["hardened"] = 1.5;
     level.difficultysettings["player_downed_buffer_time"]["veteran"] = 0;
     level.lastplayersighted = 0;
-    _func_0D3( "player_meleeDamageMultiplier", 0.266667 );
+    setsaveddvar( "player_meleeDamageMultiplier", 0.266667 );
 
     if ( isdefined( level.custom_gameskill_func ) )
         [[ level.custom_gameskill_func ]]();
@@ -215,15 +215,15 @@ init_screeneffect_vars()
 
 coop_player_in_special_ops_survival()
 {
-    _func_0D3( "player_meleeDamageMultiplier", 0.26 );
+    setsaveddvar( "player_meleeDamageMultiplier", 0.26 );
 }
 
 solo_player_in_special_ops()
 {
     if ( !maps\_utility::is_survival() )
     {
-        _func_0D3( "player_deathInvulnerableToMelee", "1" );
-        _func_0D3( "ai_accuracy_attackercountDecrease", "0.6" );
+        setsaveddvar( "player_deathInvulnerableToMelee", "1" );
+        setsaveddvar( "ai_accuracy_attackercountDecrease", "0.6" );
     }
 
     level.difficultysettings["playerHealth_RegularRegenDelay"]["normal"] = 2000;
@@ -246,9 +246,9 @@ solo_player_in_special_ops()
     level.difficultysettings["playerDifficultyHealth"]["veteran"] = 205;
 
     if ( !maps\_utility::is_survival() )
-        _func_0D3( "player_meleeDamageMultiplier", 0.5 );
+        setsaveddvar( "player_meleeDamageMultiplier", 0.5 );
     else
-        _func_0D3( "player_meleeDamageMultiplier", 0.26 );
+        setsaveddvar( "player_meleeDamageMultiplier", 0.26 );
 }
 
 solo_player_in_coop_gameskill_settings()
@@ -293,7 +293,7 @@ setglobaldifficulty()
     level.explosiveplanttime = level.difficultysettings["explosivePlantTime"][var_1];
     anim.min_sniper_burst_delay_time = [[ var_0 ]]( "min_sniper_burst_delay_time", level.gameskill );
     anim.max_sniper_burst_delay_time = [[ var_0 ]]( "max_sniper_burst_delay_time", level.gameskill );
-    _func_0D3( "ai_accuracyDistScale", [[ var_0 ]]( "accuracyDistScale", level.gameskill ) );
+    setsaveddvar( "ai_accuracyDistScale", [[ var_0 ]]( "accuracyDistScale", level.gameskill ) );
 
     if ( maps\_utility::laststand_enabled() )
         level.player_downed_death_buffer_time = level.difficultysettings["player_downed_buffer_time"][var_1];
@@ -622,7 +622,7 @@ print3d_time( var_0, var_1, var_2, var_3 )
 
 resetmisstime()
 {
-    if ( !self _meth_813D() )
+    if ( !self isbadguy() )
         return;
 
     if ( self.weapon == "none" )
@@ -920,13 +920,13 @@ playerhealthregen()
 
                 if ( maps\_utility::ent_flag( "near_death_vision_enabled" ) )
                 {
-                    if ( _func_235() )
+                    if ( isusinghdr() )
                         thread blurview( 2, 2 );
                     else
                         thread blurview( 3.6, 2 );
 
                     thread soundscripts\_audio::set_deathsdoor();
-                    self _meth_823B();
+                    self painvisionon();
                 }
 
                 maps\_utility::ent_flag_set( "player_has_red_flashing_overlay" );
@@ -964,7 +964,7 @@ playerhealthregen()
             if ( var_6 <= 0 )
                 return;
 
-            self _meth_8050( var_6 );
+            self setnormalhealth( var_6 );
             var_0 = self.health / self.maxhealth;
             continue;
         }
@@ -979,7 +979,7 @@ playerhealthregen()
 
         if ( self.health <= 1 )
         {
-            self _meth_8050( 2 / self.maxhealth );
+            self setnormalhealth( 2 / self.maxhealth );
             var_11 = 1;
         }
 
@@ -988,7 +988,7 @@ playerhealthregen()
         var_1 = 0;
         var_5 = gettime();
 
-        if ( _func_235() )
+        if ( isusinghdr() )
             thread blurview( 2, 0.8 );
         else
             thread blurview( 3, 0.8 );
@@ -1024,12 +1024,12 @@ reducetakecoverwarnings()
 
     if ( isalive( self ) )
     {
-        var_0 = self _meth_820E( "takeCoverWarnings" );
+        var_0 = self getlocalplayerprofiledata( "takeCoverWarnings" );
 
         if ( var_0 > 0 )
         {
             var_0--;
-            self _meth_820F( "takeCoverWarnings", var_0 );
+            self setlocalplayerprofiledata( "takeCoverWarnings", var_0 );
         }
     }
 }
@@ -1057,7 +1057,7 @@ default_door_node_flashbang_frequency()
     if ( self.team == "allies" )
         self.doorflashchance = 0.6;
 
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
     {
         if ( level.gameskill >= 2 )
             self.doorflashchance = 0.8;
@@ -1074,7 +1074,7 @@ grenadeawareness()
         return;
     }
 
-    if ( self _meth_813D() )
+    if ( self isbadguy() )
     {
         if ( level.gameskill >= 2 )
         {
@@ -1149,13 +1149,13 @@ healthoverlay()
 
     if ( issplitscreen() )
     {
-        var_0 _meth_80CC( "fullscreen_lit_bloodsplat_01", 640, 960 );
+        var_0 setshader( "fullscreen_lit_bloodsplat_01", 640, 960 );
 
         if ( self == level.players[0] )
             var_0.y -= 120;
     }
     else
-        var_0 _meth_80CC( "fullscreen_lit_bloodsplat_01", 640, 480 );
+        var_0 setshader( "fullscreen_lit_bloodsplat_01", 640, 480 );
 
     var_0.splatter = 1;
     var_0.alignx = "left";
@@ -1220,13 +1220,13 @@ healthoverlaycg()
 
     if ( issplitscreen() )
     {
-        var_0 _meth_80CC( "vfx_blood_screen_overlay", 640, 960 );
+        var_0 setshader( "vfx_blood_screen_overlay", 640, 960 );
 
         if ( self == level.players[0] )
             var_0.y -= 120;
     }
     else
-        var_0 _meth_80CC( "vfx_blood_screen_overlay", 640, 480 );
+        var_0 setshader( "vfx_blood_screen_overlay", 640, 480 );
 
     var_0.splatter = 1;
     var_0.alignx = "left";
@@ -1306,9 +1306,9 @@ add_hudelm_position_internal( var_0 )
     self.background.vertalign = "middle";
 
     if ( level.console )
-        self.background _meth_80CC( "popmenu_bg", 650, 52 );
+        self.background setshader( "popmenu_bg", 650, 52 );
     else
-        self.background _meth_80CC( "popmenu_bg", 650, 42 );
+        self.background setshader( "popmenu_bg", 650, 42 );
 
     self.background.alpha = 0.5;
 }
@@ -1387,7 +1387,7 @@ fontscaler( var_0, var_1 )
     self endon( "death" );
     var_0 *= 2;
     var_2 = var_0 - self.fontscale;
-    self _meth_808B( var_1 );
+    self changefontscaleovertime( var_1 );
     self.fontscale += var_2;
 }
 
@@ -1467,7 +1467,7 @@ should_show_cover_warning()
     if ( !isalive( self ) )
         return 0;
 
-    if ( self _meth_8068() )
+    if ( self islinked() )
         return 0;
 
     if ( self.ignoreme )
@@ -1482,7 +1482,7 @@ should_show_cover_warning()
     if ( self.gameskill > 0 && !maps\_load::map_is_early_in_the_game() )
         return 0;
 
-    var_0 = self _meth_820E( "takeCoverWarnings" );
+    var_0 = self getlocalplayerprofiledata( "takeCoverWarnings" );
 
     if ( var_0 <= 3 )
         return 0;
@@ -1526,7 +1526,7 @@ player_recovers_from_red_flashing()
 
     if ( maps\_utility::ent_flag( "near_death_vision_enabled" ) )
     {
-        self _meth_823C();
+        self painvisionoff();
         thread soundscripts\_audio::restore_after_deathsdoor();
     }
 
@@ -1562,8 +1562,8 @@ init_take_cover_warnings()
 {
     var_0 = isdefined( level.ispregameplaylevel ) && level.ispregameplaylevel;
 
-    if ( self _meth_820E( "takeCoverWarnings" ) == -1 || var_0 )
-        self _meth_820F( "takeCoverWarnings", 9 );
+    if ( self getlocalplayerprofiledata( "takeCoverWarnings" ) == -1 || var_0 )
+        self setlocalplayerprofiledata( "takeCoverWarnings", 9 );
 }
 
 increment_take_cover_warnings_on_death()
@@ -1578,10 +1578,10 @@ increment_take_cover_warnings_on_death()
     if ( !take_cover_warnings_enabled() )
         return;
 
-    var_0 = self _meth_820E( "takeCoverWarnings" );
+    var_0 = self getlocalplayerprofiledata( "takeCoverWarnings" );
 
     if ( var_0 < 10 )
-        self _meth_820F( "takeCoverWarnings", var_0 + 1 );
+        self setlocalplayerprofiledata( "takeCoverWarnings", var_0 + 1 );
 }
 
 auto_adjust_difficulty_player_positioner()
@@ -1868,14 +1868,14 @@ aa_init_stats()
 
 command_used( var_0 )
 {
-    var_1 = _func_0DD( var_0 );
+    var_1 = getkeybinding( var_0 );
 
     if ( var_1["count"] <= 0 )
         return 0;
 
     for ( var_2 = 1; var_2 < var_1["count"] + 1; var_2++ )
     {
-        if ( self _meth_824C( var_1["key" + var_2] ) )
+        if ( self buttonpressed( var_1["key" + var_2] ) )
             return 1;
     }
 

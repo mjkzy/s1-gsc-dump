@@ -49,7 +49,7 @@ monitor_zone_control()
 
         if ( var_0 != "neutral" )
         {
-            var_1 = _func_202( self.origin );
+            var_1 = getzonenearest( self.origin );
 
             if ( isdefined( var_1 ) )
                 botzonesetteam( var_1, var_0 );
@@ -121,7 +121,7 @@ setup_bot_dom()
 
         }
 
-        var_3.nodes = _func_1FE( var_3 );
+        var_3.nodes = getnodesintrigger( var_3 );
         maps\mp\bots\_bots_gametype_common::bot_add_missing_nodes( var_3, var_3 );
         var_3.last_time_secured["allies"] = 0;
         var_3.last_time_secured["axis"] = 0;
@@ -142,7 +142,7 @@ bot_wait_for_event_flag_swap( var_0 )
 
     foreach ( var_2 in var_0 )
     {
-        var_2.nodes = _func_1FE( var_2 );
+        var_2.nodes = getnodesintrigger( var_2 );
         maps\mp\bots\_bots_gametype_common::bot_add_missing_nodes( var_2, var_2 );
     }
 
@@ -228,9 +228,9 @@ bot_dom_think()
     self.force_new_goal = 0;
     self.new_goal_time = 0;
     self.next_strat_level_check = 0;
-    self _meth_8351( "separation", 0 );
-    self _meth_8351( "grenade_objectives", 1 );
-    self _meth_8351( "use_obj_path_style", 1 );
+    self botsetflag( "separation", 0 );
+    self botsetflag( "grenade_objectives", 1 );
+    self botsetflag( "use_obj_path_style", 1 );
 
     for (;;)
     {
@@ -240,7 +240,7 @@ bot_dom_think()
         if ( var_0 > self.next_strat_level_check )
         {
             self.next_strat_level_check = gettime() + 10000;
-            self.strategy_level = self _meth_837B( "strategyLevel" );
+            self.strategy_level = self botgetdifficultysetting( "strategyLevel" );
         }
 
         if ( var_0 > self.new_goal_time || self.force_new_goal )
@@ -684,7 +684,7 @@ get_flag_protect_radius()
 {
     if ( !isdefined( level.protect_radius ) )
     {
-        var_0 = self _meth_835F();
+        var_0 = self botgetworldsize();
         var_1 = ( var_0[0] + var_0[1] ) / 2;
         level.protect_radius = min( 1000, var_1 / 3.5 );
     }
@@ -701,7 +701,7 @@ bot_dom_leader_dialog( var_0, var_1 )
 
         if ( bot_allow_to_capture_flag( var_3 ) )
         {
-            self _meth_8362( "known_enemy", undefined, var_3.origin );
+            self botmemoryevent( "known_enemy", undefined, var_3.origin );
 
             if ( !isdefined( self.last_losing_flag_react ) || gettime() - self.last_losing_flag_react > 10000 )
             {
@@ -784,16 +784,16 @@ monitor_flag_status( var_0 )
                 }
             }
 
-            if ( self _meth_80A9( var_0 ) && var_0.useobj.userate <= 0 )
+            if ( self istouching( var_0 ) && var_0.useobj.userate <= 0 )
             {
-                if ( self _meth_8365() )
+                if ( self bothasscriptgoal() )
                 {
-                    var_12 = self _meth_835A();
-                    var_13 = self _meth_835B();
+                    var_12 = self botgetscriptgoal();
+                    var_13 = self botgetscriptgoalradius();
 
                     if ( distancesquared( self.origin, var_12 ) < squared( var_13 ) )
                     {
-                        var_14 = self _meth_8387();
+                        var_14 = self getnearestnode();
 
                         if ( isdefined( var_14 ) )
                         {
@@ -801,7 +801,7 @@ monitor_flag_status( var_0 )
 
                             foreach ( var_17 in var_0.nodes )
                             {
-                                if ( !_func_1FF( var_17, var_14, 1 ) )
+                                if ( !nodesvisible( var_17, var_14, 1 ) )
                                 {
                                     var_15 = var_17.origin;
                                     break;
@@ -964,7 +964,7 @@ get_num_allies_capturing_flag( var_0, var_1 )
 
             if ( !isdefined( var_1 ) || !var_1 )
             {
-                if ( var_5 _meth_80A9( var_0 ) )
+                if ( var_5 istouching( var_0 ) )
                     var_2++;
             }
         }

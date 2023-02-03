@@ -196,7 +196,7 @@ fx_bombshakes( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( var_11 < 300 )
     {
         if ( isdefined( var_1 ) )
-            level.player _meth_80AD( var_1 );
+            level.player playrumbleonentity( var_1 );
 
         level thread screenshakefade( var_12, var_13, var_14, var_15 );
 
@@ -341,7 +341,7 @@ shg_spawn_tendrils( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
 
 check_zkey_press()
 {
-    if ( level.player _meth_824C( "z" ) == 1 )
+    if ( level.player buttonpressed( "z" ) == 1 )
         return 1;
     else
         return 0;
@@ -631,7 +631,7 @@ kill_oneshot( var_0 )
                 continue;
 
             if ( isdefined( var_3.looper ) )
-                setwinningteam( var_3.looper, 1 );
+                setfxkillondelete( var_3.looper, 1 );
 
             waitframe();
         }
@@ -816,7 +816,7 @@ setup_fx_chain( var_0 )
             var_7 = common_scripts\utility::spawn_tag_origin();
             var_7.origin = var_2;
             var_7.angles = vectortoangles( var_5 );
-            var_7 _meth_804D( var_0.v["ent"], var_0.v["bones"][var_1] );
+            var_7 linkto( var_0.v["ent"], var_0.v["bones"][var_1] );
             var_0.v["tags"][var_0.v["tags"].size] = var_7;
             var_0.v["tag_lens"][var_0.v["tag_lens"].size] = var_6;
         }
@@ -863,7 +863,7 @@ play_fx_attached_to_chain( var_0 )
             var_6 = var_0.v["tag_lens"][var_4];
             var_7 = anglestoforward( var_5.angles );
             var_8 = var_1[var_3];
-            var_8 _meth_804D( var_5, "tag_origin", var_7 * var_6 * randomfloat( 1.0 ), ( 0, 0, 0 ) );
+            var_8 linkto( var_5, "tag_origin", var_7 * var_6 * randomfloat( 1.0 ), ( 0, 0, 0 ) );
             playfxontag( var_0.v["fx"], var_8, "tag_origin" );
             var_3++;
         }
@@ -1128,7 +1128,7 @@ fx_flare_to_sun_flare( var_0, var_1 )
 
     for (;;)
     {
-        var_2 _meth_82AE( level.player.origin + get_sun_direction() * var_1, var_3 );
+        var_2 moveto( level.player.origin + get_sun_direction() * var_1, var_3 );
         wait(var_3);
     }
 }

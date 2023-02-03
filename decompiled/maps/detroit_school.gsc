@@ -24,12 +24,12 @@ cg_school_entrance_doors_init()
 {
     var_0 = getent( "det_school_entrance_door_r", "targetname" );
     var_0.coll = getent( "det_school_entrance_door_r_coll", "targetname" );
-    var_0.coll _meth_804D( var_0 );
+    var_0.coll linkto( var_0 );
     var_0.closed_angles = var_0.angles;
     var_0.open_angles = var_0.closed_angles + ( 0, 90, 0 );
     var_1 = getent( "det_school_entrance_door_l", "targetname" );
     var_1.coll = getent( "det_school_entrance_door_l_coll", "targetname" );
-    var_1.coll _meth_804D( var_1 );
+    var_1.coll linkto( var_1 );
     var_1.closed_angles = var_1.angles;
     var_1.open_angles = var_1.closed_angles - ( 0, 90, 0 );
 }
@@ -43,17 +43,17 @@ cg_open_close_school_entrance_doors( var_0 )
 
         if ( var_0 )
         {
-            var_1.coll _meth_8058();
-            var_1 _meth_82B5( var_1.open_angles, 1.0, 0.5, 0.25 );
-            var_2.coll _meth_8058();
-            var_2 _meth_82B5( var_2.open_angles, 1.0, 0.5, 0.25 );
+            var_1.coll connectpaths();
+            var_1 rotateto( var_1.open_angles, 1.0, 0.5, 0.25 );
+            var_2.coll connectpaths();
+            var_2 rotateto( var_2.open_angles, 1.0, 0.5, 0.25 );
         }
         else
         {
-            var_1 _meth_82B5( var_1.closed_angles, 1.0, 0.5, 0.25 );
-            var_1.coll _meth_8057();
-            var_2 _meth_82B5( var_2.closed_angles, 1.0, 0.5, 0.25 );
-            var_2.coll _meth_8057();
+            var_1 rotateto( var_1.closed_angles, 1.0, 0.5, 0.25 );
+            var_1.coll disconnectpaths();
+            var_2 rotateto( var_2.closed_angles, 1.0, 0.5, 0.25 );
+            var_2.coll disconnectpaths();
         }
     }
 }
@@ -70,15 +70,15 @@ transient_middle_add_school_interior_begin()
 {
     level notify( "tff_pre_middle_remove_gatetrans" );
 
-    if ( !_func_21E( "detroit_school_interior_tr" ) )
+    if ( !istransientloaded( "detroit_school_interior_tr" ) )
     {
-        _func_219( "detroit_gatetrans_tr" );
-        _func_218( "detroit_school_interior_tr" );
+        unloadtransient( "detroit_gatetrans_tr" );
+        loadtransient( "detroit_school_interior_tr" );
     }
 
     for (;;)
     {
-        if ( _func_21E( "detroit_school_interior_tr" ) )
+        if ( istransientloaded( "detroit_school_interior_tr" ) )
         {
             level notify( "tff_post_middle_add_school" );
             break;
@@ -94,11 +94,11 @@ transient_middle_remove_school_interior_begin()
 {
     maps\_utility::trigger_wait_targetname( "CG_UnloadSchoolInteriorTrigger" );
     level notify( "tff_pre_middle_remove_school" );
-    _func_219( "detroit_school_interior_tr" );
+    unloadtransient( "detroit_school_interior_tr" );
 
     for (;;)
     {
-        if ( !_func_21E( "detroit_school_interior_tr" ) )
+        if ( !istransientloaded( "detroit_school_interior_tr" ) )
         {
             level notify( "tff_post_middle_remove_school" );
             break;
@@ -112,11 +112,11 @@ transient_middle_remove_school_interior_begin()
 
 transient_middle_add_nighclub_interior_begin()
 {
-    _func_218( "detroit_nightclub_interior_tr" );
+    loadtransient( "detroit_nightclub_interior_tr" );
 
     for (;;)
     {
-        if ( _func_21E( "detroit_nightclub_interior_tr" ) )
+        if ( istransientloaded( "detroit_nightclub_interior_tr" ) )
         {
             var_0 = getent( "office_interior_model", "targetname" );
             var_0 setcontents( 0 );
@@ -141,8 +141,8 @@ school_animated_fences()
         var_0 thread maps\_anim::anim_first_frame_solo( level.bones_fence, "bike_dismount" );
         var_0 thread maps\_anim::anim_first_frame_solo( level.joker_fence, "bike_dismount" );
         var_1 = common_scripts\utility::getstruct( "school_origin_02", "targetname" );
-        level.bones_fence _meth_847B( var_1.origin );
-        level.joker_fence _meth_847B( var_1.origin );
+        level.bones_fence overridelightingorigin( var_1.origin );
+        level.joker_fence overridelightingorigin( var_1.origin );
     }
 }
 
@@ -217,7 +217,7 @@ play_garage_bike_dismount( var_0, var_1, var_2, var_3 )
     var_4 = [ var_0, var_1, var_2 ];
 
     foreach ( var_6 in var_4 )
-        var_6 _meth_822E();
+        var_6 vehphys_disablecrashing();
 
     thread burke_dismount( var_0, var_1, var_2 );
     thread bones_dismount( var_1 );
@@ -249,7 +249,7 @@ swap_bike_to_static()
     level notify( "stop_tracking_backtrack" );
     var_0 = spawn( "script_model", self.origin );
     var_0.angles = self.angles;
-    var_0 _meth_80B1( "vehicle_mil_hoverbike_parked_static" );
+    var_0 setmodel( "vehicle_mil_hoverbike_parked_static" );
     self delete();
     common_scripts\utility::flag_wait( "exit_drive_cinematic_start" );
     var_0 delete();
@@ -266,13 +266,13 @@ burke_dismount( var_0, var_1, var_2 )
     var_0.animname = "burke_bike";
     var_0 maps\detroit_jetbike::vehicle_rubberband_stop();
     vehicle_scripts\_jetbike::smooth_vehicle_animation_wait( var_0, var_3, "bike_dismount", 13.1695 );
-    level.burke _meth_804F();
+    level.burke unlink();
     level.burke maps\_vehicle_aianim::disassociate_guy_from_vehicle();
     var_0 maps\_utility::delaythread( 5, vehicle_scripts\_jetbike::jetbike_stop_hovering_now );
     maps\_utility::delaythread( 7.5, common_scripts\utility::flag_set, "school_trains" );
-    var_0 _meth_846D();
-    var_1 _meth_846D();
-    var_2 _meth_846D();
+    var_0 overridematerialreset();
+    var_1 overridematerialreset();
+    var_2 overridematerialreset();
     thread vehicle_scripts\_jetbike::smooth_vehicle_animation_play( var_0, var_3, "bike_dismount", [ level.burke ], 1, 2 );
     thread burke_dismount_timing_fix();
     wait(getanimlength( level.scr_anim["burke"]["bike_dismount"] ));
@@ -310,13 +310,13 @@ bones_dismount( var_0 )
     var_0.animname = "bones_bike";
     var_0 maps\detroit_jetbike::vehicle_rubberband_stop();
     vehicle_scripts\_jetbike::smooth_vehicle_animation_wait( var_0, var_1, "bike_dismount", 7.51324 );
-    level.bones _meth_804F();
+    level.bones unlink();
     level.bones maps\_vehicle_aianim::disassociate_guy_from_vehicle();
     var_0 maps\_utility::delaythread( 5, vehicle_scripts\_jetbike::jetbike_stop_hovering_now );
     vehicle_scripts\_jetbike::smooth_vehicle_animation_play( var_0, var_1, "bike_dismount", [ level.bones, level.bones_fence ], 1, 2 );
     var_0 thread swap_bike_to_static();
     var_2 = getnode( "bones_hide_spot", "targetname" );
-    level.bones _meth_81A5( var_2 );
+    level.bones setgoalnode( var_2 );
     level.bones.goalradius = 15;
     level.bones waittill( "goal" );
     level.bones delete();
@@ -330,13 +330,13 @@ joker_dismount( var_0 )
     var_0.animname = "joker_bike";
     var_0 maps\detroit_jetbike::vehicle_rubberband_stop();
     vehicle_scripts\_jetbike::smooth_vehicle_animation_wait( var_0, var_1, "bike_dismount", 12.7558 );
-    level.joker _meth_804F();
+    level.joker unlink();
     level.joker maps\_vehicle_aianim::disassociate_guy_from_vehicle();
     var_0 maps\_utility::delaythread( 5, vehicle_scripts\_jetbike::jetbike_stop_hovering_now );
     vehicle_scripts\_jetbike::smooth_vehicle_animation_play( var_0, var_1, "bike_dismount", [ level.joker, level.joker_fence ], 1, 2 );
     var_0 thread swap_bike_to_static();
     var_2 = getnode( "joker_hide_spot", "targetname" );
-    level.joker _meth_81A5( var_2 );
+    level.joker setgoalnode( var_2 );
     level.joker.goalradius = 15;
     level.joker waittill( "goal" );
     level.joker delete();
@@ -352,7 +352,7 @@ player_dismount()
     if ( isdefined( level.player_bike.world_body ) )
     {
         var_1 = level.player_bike.world_body;
-        var_1 _meth_804F();
+        var_1 unlink();
     }
     else
         var_1 = maps\_utility::spawn_anim_model( "world_body", level.player.origin );
@@ -364,10 +364,10 @@ player_dismount()
     common_scripts\utility::flag_set( "obj_check_school_give" );
     common_scripts\utility::flag_set( "ride_over" );
     var_1 delete();
-    level.player _meth_804F();
+    level.player unlink();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8440( "iw5_bal27_sp_silencer01_variablereddot", 1 );
-    _func_0D3( "ammoCounterHide", "0" );
+    level.player enablehybridsight( "iw5_bal27_sp_silencer01_variablereddot", 1 );
+    setsaveddvar( "ammoCounterHide", "0" );
     thread maps\_utility::autosave_by_name( "seeker" );
 
     if ( level.currentgen )
@@ -395,7 +395,7 @@ player_dismount_newbike( var_0 )
     if ( isdefined( var_0.world_body ) )
     {
         var_2 = var_0.world_body;
-        var_2 _meth_804F();
+        var_2 unlink();
     }
     else
         var_2 = maps\_utility::spawn_anim_model( "world_body", level.player.origin );
@@ -404,20 +404,20 @@ player_dismount_newbike( var_0 )
     thread rumble_killer( 7.6 );
     thread player_dismount_link_player_end_of_frame( var_2 );
     vehicle_scripts\_jetbike::smooth_vehicle_animation_play( var_0, var_1, "bike_dismount", [ var_2 ], 1, 2 );
-    var_0 _meth_80B1( "vehicle_mil_hoverbike_ai" );
+    var_0 setmodel( "vehicle_mil_hoverbike_ai" );
     level notify( "switch_bikes_to_ai" );
     common_scripts\utility::flag_set( "obj_check_school_give" );
     common_scripts\utility::flag_set( "vo_school_exterior" );
     common_scripts\utility::flag_set( "ride_over" );
     var_2 delete();
-    level.player _meth_804F();
+    level.player unlink();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level.player thread maps\detroit::give_regular_grenades();
     thread block_from_going_back();
-    level.player _meth_8440( "iw5_bal27_sp_silencer01_variablereddot", 1 );
-    _func_0D3( "ammoCounterHide", "0" );
+    level.player enablehybridsight( "iw5_bal27_sp_silencer01_variablereddot", 1 );
+    setsaveddvar( "ammoCounterHide", "0" );
     level.player thread maps\_player_exo::player_exo_activate();
-    level.player _meth_8320();
+    level.player enableoffhandweapons();
     thread maps\_utility::autosave_by_name( "seeker" );
 
     if ( level.currentgen )
@@ -446,16 +446,16 @@ block_from_going_back()
 player_school_disable_values()
 {
     maps\_utility::trigger_wait_targetname( "move_burke_ahead" );
-    level.player _meth_848D( 0 );
-    level.player _meth_8304( 0 );
+    level.player allowdodge( 0 );
+    level.player allowsprint( 0 );
 }
 
 player_dismount_link_player_end_of_frame( var_0 )
 {
     waittillframeend;
     level.player maps\_shg_utility::setup_player_for_scene( 0 );
-    level.player _meth_807D( var_0, "tag_player", 1, 70, 70, 60, 20, 1 );
-    level.player _meth_80A2( 2, 0, 0, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 70, 70, 60, 20, 1 );
+    level.player lerpviewangleclamp( 2, 0, 0, 0, 0, 0, 0 );
 }
 
 intro_dialogue()
@@ -807,7 +807,7 @@ basement_jump_awareness()
 
     for (;;)
     {
-        if ( level.player _meth_83B3() )
+        if ( level.player isjumping() )
         {
             if ( distance2d( self.origin, level.player.origin ) < 400 )
             {
@@ -845,13 +845,13 @@ bodies_gag_door_trigger()
 {
     common_scripts\utility::flag_wait( "burke_needs_to_idle" );
     var_0 = getent( "bodies_room_gag_used", "targetname" );
-    var_0 _meth_817B();
+    var_0 usetriggerrequirelookat();
     maps\_utility::enable_trigger_with_targetname( "bodies_room_gag_used" );
     objective_setpointertextoverride( maps\_utility::obj( "Follow Gideon" ), &"DETROIT_OPEN" );
     var_1 = getent( "bodies_room_gag_used", "targetname" ) maps\_shg_utility::hint_button_trigger( "use", 200 );
     common_scripts\utility::flag_set( "obj_check_school_pos_door" );
     level notify( "show_glowing_door" );
-    var_0 _meth_80DB( &"DETROIT_PROMPT_OPEN" );
+    var_0 sethintstring( &"DETROIT_PROMPT_OPEN" );
     maps\_utility::trigger_wait_targetname( "bodies_room_gag_used" );
     objective_setpointertextoverride( maps\_utility::obj( "Follow Gideon" ), &"DETROIT_FOLLOW" );
     objective_position( maps\_utility::obj( "Follow Gideon" ), ( 0, 0, 0 ) );
@@ -865,7 +865,7 @@ burke_path_through_school()
     common_scripts\utility::flag_wait( "flag_player_entering_school" );
     level.burke get_burke_to_deadroom();
     maps\_utility::trigger_wait_targetname( "start_kva_gag" );
-    level.player _meth_81E1( 0.6 );
+    level.player setmovespeedscale( 0.6 );
     level.burke.ignoreme = 1;
     level.player.ignoreme = 1;
     maps\_utility::trigger_wait_targetname( "player_fall_basement_trigger" );
@@ -889,14 +889,14 @@ school_fall_rumble()
     var_0 maps\_utility::delaythread( 14.64, maps\_utility::set_rumble_intensity, 0.54 );
     var_0 maps\_utility::delaythread( 15.24, maps\_utility::set_rumble_intensity, 0.01 );
     wait 17;
-    var_0 _meth_80AF( "steady_rumble" );
+    var_0 stoprumble( "steady_rumble" );
     var_0 delete();
 }
 
 stop_all_rumble_on_time( var_0, var_1 )
 {
     wait(var_0);
-    self _meth_80AF( var_1 );
+    self stoprumble( var_1 );
 }
 
 lightning_gag()
@@ -934,7 +934,7 @@ spawn_kva_downstairs()
         var_6 maps\detroit::set_patrol_anim_set( "active", 1 );
         var_7 = var_9 + 1;
         var_8 = getnode( "guy" + var_7 + "_goal", "targetname" );
-        var_6 _meth_81A5( var_8 );
+        var_6 setgoalnode( var_8 );
         var_6 thread stealth_delete_at_goal();
         var_6 thread alert_check_function();
         var_6 thread kill_me_on_notify();
@@ -995,10 +995,10 @@ enable_doorway_blocking()
     var_1 = getent( "door_blocker_2", "targetname" );
     var_2 = getent( "door_blocker_3", "targetname" );
     var_3 = getent( "door_blocker_4", "targetname" );
-    var_0 _meth_8058();
-    var_1 _meth_8058();
-    var_2 _meth_8058();
-    var_3 _meth_8058();
+    var_0 connectpaths();
+    var_1 connectpaths();
+    var_2 connectpaths();
+    var_3 connectpaths();
     var_0 delete();
     var_1 delete();
     var_2 delete();
@@ -1057,7 +1057,7 @@ exo_dodge_stealth_watcher()
     while ( level.player maps\_utility::ent_flag( "_stealth_enabled" ) )
     {
         level.player waittill( "exo_dodge" );
-        var_0 = maps\_utility::get_within_range( level.player.origin, _func_0D6( "axis" ), 500 );
+        var_0 = maps\_utility::get_within_range( level.player.origin, getaiarray( "axis" ), 500 );
 
         foreach ( var_2 in var_0 )
         {
@@ -1082,12 +1082,12 @@ call_in_assistance()
         var_1 = var_0 maps\_utility::spawn_ai( 1 );
         self.goalradius = 10;
         var_1.goalradius = 10;
-        var_1 _meth_81A7( level.player );
+        var_1 setgoalentity( level.player );
         var_1 notify( "alert" );
         var_1 notify( "player_spotted" );
         var_1 thread maps\_utility::player_seek();
         common_scripts\utility::flag_set( "dont_spawn_basement_troop_2" );
-        level.player _meth_8304( 1 );
+        level.player allowsprint( 1 );
     }
 }
 
@@ -1131,7 +1131,7 @@ walking_awareness()
 
             if ( var_1 > 80 )
             {
-                if ( level.player _meth_817C() == "stand" )
+                if ( level.player getstance() == "stand" )
                 {
                     wait 0.4;
                     self notify( "make_me_alert_now" );
@@ -1180,7 +1180,7 @@ notify_spotted_player()
 {
     self endon( "death" );
     self waittill( "spotted_player" );
-    self _meth_8141();
+    self stopanimscripted();
     maps\_utility::clear_run_anim();
     return;
 }
@@ -1210,7 +1210,7 @@ new_kva_basement_1()
     var_1 = getnode( "test_goal_node", "targetname" );
     var_2 = getent( "kva_check_3_org", "targetname" );
     var_2 thread break_me_out_if_player_found();
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     self waittill( "goal" );
 
     if ( !common_scripts\utility::flag( "player_basement_spotted" ) )
@@ -1266,7 +1266,7 @@ dont_animate_on_kva_death()
 {
     level endon( "too_late_to_close_door" );
     level waittill( "stop_animating_the_basement_door" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 basement_troop_2()
@@ -1318,7 +1318,7 @@ se_kva_basement_2( var_0 )
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "school_investigate" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_2, "school_investigate" );
     var_3 = getent( "kva_basement_gate_open", "targetname" );
-    var_3 _meth_804D( var_2, "tag_origin_animated" );
+    var_3 linkto( var_2, "tag_origin_animated" );
     var_0 thread maps\_anim::anim_loop_solo( self, "basement_flashlight_idle", "stop_searching_now" );
     common_scripts\utility::flag_wait( "steam_startle_flag" );
     self.fovcosine = cos( 60 );
@@ -1350,12 +1350,12 @@ basement_valve_and_door_stop_early( var_0, var_1, var_2, var_3 )
 
     if ( var_5 == "timeout" )
     {
-        var_2 _meth_8058();
+        var_2 connectpaths();
         return;
     }
 
     foreach ( var_7 in var_1 )
-        var_7 _meth_83C7( var_7 maps\_utility::getanim( var_3 ), 0 );
+        var_7 setanimrate( var_7 maps\_utility::getanim( var_3 ), 0 );
 
     maps\_utility::anim_stopanimscripted();
 }
@@ -1369,7 +1369,7 @@ seek_player_on_detection()
 
     for (;;)
     {
-        self _meth_81A7( level.player );
+        self setgoalentity( level.player );
         self.goalradius = 4;
         wait 0.5;
     }
@@ -1378,7 +1378,7 @@ seek_player_on_detection()
 stop_animating_when_kva2_dead()
 {
     level waittill( "stop_valve_animation" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 notify_valve_on_death()
@@ -1390,7 +1390,7 @@ notify_valve_on_death()
 valve_stop_animating()
 {
     level waittill( "stop_valve_animation" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 steam_burst_function()
@@ -1403,8 +1403,8 @@ alert_stop_animating( var_0 )
 {
     self endon( "death" );
     maps\_utility::ent_flag_wait( "_stealth_attack" );
-    self _meth_8141();
-    var_0 _meth_8141();
+    self stopanimscripted();
+    var_0 stopanimscripted();
     common_scripts\utility::flag_set( "kill_the_valve_anim" );
     self notify( "stop_searching_now" );
     var_0 notify( "stop_searching_now" );
@@ -1442,9 +1442,9 @@ stealth_guy_think()
         level notify( "stop_animating_the_basement_door" );
 
     self notify( "end_patrol" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "flashlight_off" );
-    var_0 = level.player _meth_82D1( "primary" );
+    var_0 = level.player getweaponslist( "primary" );
     var_1 = 0;
 
     if ( !isdefined( var_0 ) )
@@ -1536,9 +1536,9 @@ hall_troop_scare_moment()
         var_11 thread kill_me_if_player_escapes();
     }
 
-    var_3 _meth_81A5( var_6 );
-    var_4 _meth_81A5( var_7 );
-    var_5 _meth_81A5( var_8 );
+    var_3 setgoalnode( var_6 );
+    var_4 setgoalnode( var_7 );
+    var_5 setgoalnode( var_8 );
     wait 1;
 }
 
@@ -1602,7 +1602,7 @@ alert_when_another_is_hurt()
     if ( isalive( self ) )
     {
         self.ignoreall = 0;
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
     }
 
     maps\_utility::trigger_wait_targetname( "lightning_gag" );
@@ -1651,7 +1651,7 @@ remove_patrol_anim_set()
     self.script_animation = undefined;
     maps\_utility::clear_generic_run_anim();
     self.goalradius = 512;
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
     self.disablearrivals = 0;
     self.disableexits = 0;
     self.allowdeath = 1;
@@ -1723,7 +1723,7 @@ wait_for_success_press()
 {
     level endon( "player_grabbed_brick" );
     wait 1.0;
-    level.player _meth_8141();
+    level.player stopanimscripted();
     common_scripts\utility::flag_set( "player_failed_wall_grab_stop" );
     maps\_player_death::set_deadquote( &"DETROIT_QTE_FAIL" );
 }
@@ -1764,14 +1764,14 @@ wall_pull_animation()
     var_5.animname = "generic";
     var_6 = 0.05;
     var_7 = 0.2;
-    level.player _meth_817D( "stand" );
-    level.player _meth_8119( 0 );
+    level.player setstance( "stand" );
+    level.player allowcrouch( 0 );
     var_3 common_scripts\utility::delaycall( var_7, ::show );
-    level.player _meth_8080( var_3, "tag_player", var_6 );
-    level.player common_scripts\utility::delaycall( var_6, ::_meth_807D, var_3, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player playerlinktoblend( var_3, "tag_player", var_6 );
+    level.player common_scripts\utility::delaycall( var_6, ::playerlinktodelta, var_3, "tag_player", 0, 0, 0, 0, 0, 1 );
     var_4 = [ var_5, var_3, var_2 ];
     var_5 maps\_utility::gun_remove();
-    var_5 _meth_804C();
+    var_5 showallparts();
     var_5 thread helmet_swap_wait_function();
     thread wall_pull_animation_dialogue();
     thread maps\detroit_lighting::grab_lighting();
@@ -1782,18 +1782,18 @@ wall_pull_animation()
     var_1 maps\_anim::anim_single( var_4, "wall_pull" );
     level notify( "takedown_over" );
     var_8 = var_5 maps\_utility::getanim( "wall_pull" );
-    var_5 _meth_83C7( var_8, 0 );
-    var_5 _meth_8117( var_8, 0.99 );
-    level.player _meth_8119( 1 );
+    var_5 setanimrate( var_8, 0 );
+    var_5 setanimtime( var_8, 0.99 );
+    level.player allowcrouch( 1 );
     var_3 delete();
     common_scripts\utility::flag_set( "wall_grab_guy_dead" );
-    level.player _meth_804F();
-    level.player _meth_8332( "frag_grenade_var" );
-    level.player _meth_8332( "contact_grenade_var" );
-    level.player _meth_8332( "tracking_grenade_var" );
-    level.player _meth_8332( "flash_grenade_var" );
-    level.player _meth_8332( "emp_grenade_var" );
-    level.player _meth_8332( "paint_grenade_var" );
+    level.player unlink();
+    level.player givemaxammo( "frag_grenade_var" );
+    level.player givemaxammo( "contact_grenade_var" );
+    level.player givemaxammo( "tracking_grenade_var" );
+    level.player givemaxammo( "flash_grenade_var" );
+    level.player givemaxammo( "emp_grenade_var" );
+    level.player givemaxammo( "paint_grenade_var" );
     level.player maps\_shg_utility::setup_player_for_gameplay();
     thread kva_knife_takedown();
     thread window_hint();
@@ -1819,7 +1819,7 @@ stop_animating_player_rig_on_flag()
     level endon( "takedown_over" );
     var_0 = getent( "test_anim_death_origin", "targetname" );
     common_scripts\utility::flag_wait( "player_failed_wall_grab_stop" );
-    level.player _meth_807D( self, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( self, "tag_player", 0, 0, 0, 0, 0, 1 );
     var_0 thread maps\_anim::anim_single_solo( self, "det_hos_breach_fail_vm" );
     maps\_utility::missionfailedwrapper();
     thread maps\detroit_hospital::fade_out_use_hint( 0.1 );
@@ -1834,7 +1834,7 @@ kva_knife_takedown()
     var_2 thread maps\detroit_lighting::add_enemy_flashlight( "flashlight", "med" );
     var_2 thread maps\detroit::force_patrol_anim_set( "active_right" );
     var_2 thread stealth_guy_think();
-    var_2 _meth_81A6( var_0.origin );
+    var_2 setgoalpos( var_0.origin );
     var_2 thread last_burke_external_dialogue();
     var_2 thread remove_flashlight_on_goal();
     var_2 thread set_this_flag_when_im_dead( "last_school_guy_dead" );
@@ -1880,7 +1880,7 @@ school_wall_grab_rumble()
     var_0 maps\_utility::delaythread( 18.2, maps\_utility::set_rumble_intensity, 0.11 );
     var_0 maps\_utility::delaythread( 18.65, maps\_utility::set_rumble_intensity, 0.01 );
     wait 20;
-    var_0 _meth_80AF( "steady_rumble" );
+    var_0 stoprumble( "steady_rumble" );
     var_0 delete();
 }
 
@@ -1888,7 +1888,7 @@ remove_flashlight_on_goal()
 {
     self waittill( "goal" );
     self notify( "flashlight_off" );
-    self _meth_81A6( level.player.origin );
+    self setgoalpos( level.player.origin );
     thread maps\_utility::player_seek();
 }
 
@@ -1904,8 +1904,8 @@ take_knife_when_done()
 {
     self endon( "death" );
     self waittill( "weapon_switch_started" );
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
 }
 
 save_game_when_dead( var_0 )
@@ -1956,7 +1956,7 @@ burke_shimmey_setup()
     {
         for (;;)
         {
-            if ( _func_21E( "detroit_school_interior_tr" ) )
+            if ( istransientloaded( "detroit_school_interior_tr" ) )
                 break;
 
             wait 0.2;
@@ -2006,7 +2006,7 @@ beam_clip_disable_function()
     var_1 = getent( "placed_beam_clip_final", "targetname" );
     wait 2.45;
     var_0 delete();
-    var_1 _meth_82BE();
+    var_1 solid();
 }
 
 det_debris_falling()
@@ -2027,7 +2027,7 @@ setup_player_fall()
     {
         for (;;)
         {
-            if ( _func_21E( "detroit_school_interior_tr" ) )
+            if ( istransientloaded( "detroit_school_interior_tr" ) )
                 break;
 
             wait 0.2;
@@ -2041,8 +2041,8 @@ setup_player_fall()
     var_0 thread maps\_anim::anim_loop_solo( var_1, "det_school_fall_shuffle_pt0_idle_beams", "stop_player_shuffle_loop" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_2, "school_fall" );
     var_3 = getent( "basement_clip_block", "targetname" );
-    var_3 _meth_82BF();
-    var_3 _meth_8058();
+    var_3 notsolid();
+    var_3 connectpaths();
     common_scripts\utility::flag_wait( "flag_player_shimmy_start" );
     var_0 notify( "stop_player_shuffle_loop" );
     var_4 = maps\_utility::spawn_anim_model( "world_body" );
@@ -2050,12 +2050,12 @@ setup_player_fall()
     var_0 maps\_anim::anim_first_frame_solo( var_4, "school_fall_stand_2_shuffle" );
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     var_5 = 0.5;
-    level.player _meth_8141();
-    level.player _meth_8130( 0 );
-    level.player _meth_8080( var_4, "tag_player", var_5, var_5 / 3, var_5 / 3 );
+    level.player stopanimscripted();
+    level.player allowmelee( 0 );
+    level.player playerlinktoblend( var_4, "tag_player", var_5, var_5 / 3, var_5 / 3 );
     var_4 common_scripts\utility::delaycall( var_5, ::show );
     wait(var_5);
-    level.player _meth_807D( var_4, "tag_player", 1, 80, 20, 20, 20, 1 );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 80, 20, 20, 20, 1 );
     var_6 = distance2d( level.burke.origin, level.player.origin );
 
     if ( var_6 > 70 )
@@ -2095,7 +2095,7 @@ setup_player_fall()
     var_0 thread maps\_anim::anim_loop_solo( var_4, "school_fall_shuffle_pt3_idle", "stop_player_shuffle_loop" );
     waittill_player_tries_to_advance();
     var_0 notify( "stop_player_shuffle_loop" );
-    level.player _meth_80A4( 0, level.detroit_spring_cam_lerp_speed, level.detroit_spring_cam_release_speed );
+    level.player springcamenabled( 0, level.detroit_spring_cam_lerp_speed, level.detroit_spring_cam_release_speed );
     var_0 thread maps\_anim::anim_single_solo( var_1, "det_school_fall_shuffle_pt4_beams" );
     var_0 maps\_anim::anim_single_solo( var_4, "school_fall_shuffle_pt4" );
     var_0 thread maps\_anim::anim_loop_solo( var_1, "det_school_fall_shuffle_pt4_idle_beams", "stop_player_shuffle_loop" );
@@ -2107,7 +2107,7 @@ setup_player_fall()
     soundscripts\_snd::snd_message( "school_fall" );
     common_scripts\utility::flag_set( "obj_check_school_complete" );
     common_scripts\utility::flag_set( "vo_school_holdtight" );
-    level.player _meth_80A2( 1, 0.25, 0.25, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1, 0.25, 0.25, 0, 0, 0, 0 );
     var_7 = maps\_utility::spawn_anim_model( "gun" );
     var_0 thread maps\_anim::anim_single_solo( var_7, "school_fall" );
     thread cracked_floor_function();
@@ -2115,32 +2115,32 @@ setup_player_fall()
     var_0 thread maps\_anim::anim_single_solo( var_1, "det_school_fall_beams" );
     thread school_fall_frame_hide();
     var_0 thread maps\_anim::anim_single_solo( var_2, "school_fall" );
-    level.player _meth_807D( var_4, "tag_player", 1, 80, 20, 20, 20, 1 );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 80, 20, 20, 20, 1 );
     thread school_fall_rumble();
     var_0 maps\_anim::anim_single_solo( var_4, "school_fall" );
     level.player maps\_shg_utility::setup_player_for_gameplay();
     var_1 hide();
-    level.player _meth_804F();
+    level.player unlink();
     var_4 delete();
     var_7 delete();
     common_scripts\utility::flag_set( "obj_reunite_with_burke_give" );
-    level.player _meth_81E1( 0.7 );
-    level.player _meth_831E();
-    _func_0D3( "ammoCounterHide", 0 );
+    level.player setmovespeedscale( 0.7 );
+    level.player enableweapons();
+    setsaveddvar( "ammoCounterHide", 0 );
 
-    foreach ( var_9 in level.player _meth_830C() )
-        level.player _meth_830F( var_9 );
+    foreach ( var_9 in level.player getweaponslistprimaries() )
+        level.player takeweapon( var_9 );
 
-    foreach ( var_12 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_12, 0 );
+    foreach ( var_12 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_12, 0 );
 
-    level.player _meth_8304( 0 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_811A( 1 );
+    level.player allowsprint( 0 );
+    level.player allowcrouch( 1 );
+    level.player allowmelee( 1 );
+    level.player allowprone( 1 );
     level.player thread maps\detroit::handle_unarmed_viewbob();
-    level.player _meth_830E( "iw5_unarmeddetroit_nullattach" );
-    level.player _meth_8315( "iw5_unarmeddetroit_nullattach" );
+    level.player giveweapon( "iw5_unarmeddetroit_nullattach" );
+    level.player switchtoweapon( "iw5_unarmeddetroit_nullattach" );
     level.player thread remove_unarmed_when_pickup_new_wep();
     thread maps\_utility::autosave_by_name( "seeker" );
     common_scripts\utility::flag_wait( "basement_clear" );
@@ -2157,8 +2157,8 @@ remove_unarmed_when_pickup_new_wep()
 
         if ( var_0.size == 2 )
         {
-            level.player _meth_830F( "iw5_unarmeddetroit_nullattach" );
-            level.player _meth_8304( 1 );
+            level.player takeweapon( "iw5_unarmeddetroit_nullattach" );
+            level.player allowsprint( 1 );
             maps\_player_exo::player_exo_activate();
             level notify( "player_no_longer_unarmed" );
             return;
@@ -2232,16 +2232,16 @@ basement_door_clip_function()
 {
     var_0 = getent( "basement_door_ai_clip_extra", "targetname" );
     var_1 = getent( "basement_door_clip", "targetname" );
-    var_0 _meth_804D( self, "jo_door_l" );
-    var_1 _meth_804D( self, "jo_door_l" );
+    var_0 linkto( self, "jo_door_l" );
+    var_1 linkto( self, "jo_door_l" );
     common_scripts\utility::flag_wait( "connect_basement_door_clip" );
-    var_1 _meth_8058();
-    var_0 _meth_8058();
+    var_1 connectpaths();
+    var_0 connectpaths();
 }
 
 waittill_player_tries_to_advance()
 {
-    while ( level.player _meth_82F3()[1] > -0.25 || distance2d( level.player.origin, level.burke.origin ) < 64 )
+    while ( level.player getnormalizedmovement()[1] > -0.25 || distance2d( level.player.origin, level.burke.origin ) < 64 )
         waitframe();
 }
 
@@ -2252,13 +2252,13 @@ spawn_patroller_guide_floor2()
     maps\_shg_design_tools::waittill_trigger_with_name( "trigger_floor2_patroller_1" );
     common_scripts\utility::flag_set( "basement_clear" );
     var_2 = getent( "basement_clip_block", "targetname" );
-    var_2 _meth_82BE();
-    var_2 _meth_8057();
+    var_2 solid();
+    var_2 disconnectpaths();
     level.patroller = var_0 maps\_shg_design_tools::actual_spawn();
     level.patroller maps\_utility::disable_surprise();
     level.patroller maps\_utility::disable_pain();
     level.patroller.goalradius = 15;
-    level.patroller _meth_81A7( var_1 );
+    level.patroller setgoalentity( var_1 );
     level.patroller.animname = "kva";
     level.patroller thread make_me_alert();
     level.patroller thread bump_into_awareness();
@@ -2302,7 +2302,7 @@ pursue_player()
         var_0 = distance( self.origin, level.player.origin );
 
         if ( var_0 > 70 )
-            self _meth_81A6( level.player.origin );
+            self setgoalpos( level.player.origin );
     }
 }
 
@@ -2314,7 +2314,7 @@ make_me_alert( var_0 )
     if ( isdefined( var_0 ) )
         common_scripts\utility::flag_set( var_0 );
 
-    self _meth_81A6( level.player.origin );
+    self setgoalpos( level.player.origin );
     level notify( "stop_animating_the_basement_door" );
     self notify( "_stealth_spotted" );
     self notify( "end_patrol" );
@@ -2340,7 +2340,7 @@ damage_change_goal()
 {
     self endon( "death" );
     self waittill( "damage" );
-    self _meth_81A6( level.player.origin );
+    self setgoalpos( level.player.origin );
     thread maps\_utility::player_seek();
     maps\_utility::enable_pain();
 }
@@ -2359,7 +2359,7 @@ goal_and_interupt()
     self endon( "damage" );
     self endon( "_stealth_spotted" );
     var_0 = getnode( "node_searcher_goto1", "targetname" );
-    level.patroller _meth_81A5( var_0 );
+    level.patroller setgoalnode( var_0 );
     level.patroller waittill( "goal" );
     wait 1;
     level.patroller delete();
@@ -2410,7 +2410,7 @@ player_kill_function()
             for (;;)
             {
                 if ( level.player.health < var_1 )
-                    level.player _meth_8052();
+                    level.player kill();
 
                 wait 0.05;
             }
@@ -2434,14 +2434,14 @@ school_bodies_room_no_crouching()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
-            level.player _meth_811A( 0 );
-        else if ( level.player _meth_80A9( var_1 ) )
-            level.player _meth_811A( 0 );
-        else if ( level.player _meth_80A9( var_2 ) )
-            level.player _meth_811A( 0 );
+        if ( level.player istouching( var_0 ) )
+            level.player allowprone( 0 );
+        else if ( level.player istouching( var_1 ) )
+            level.player allowprone( 0 );
+        else if ( level.player istouching( var_2 ) )
+            level.player allowprone( 0 );
         else
-            level.player _meth_811A( 1 );
+            level.player allowprone( 1 );
 
         wait 0.05;
     }
@@ -2456,17 +2456,17 @@ player_leaving_bodyroom_gag()
     var_3 = spawn( "script_model", ( 0, 0, 0 ) );
     var_3.animname = var_2.animname;
     var_3 maps\_utility::assign_animtree();
-    var_3 _meth_80B1( "det_school_door_01_anim_obj" );
+    var_3 setmodel( "det_school_door_01_anim_obj" );
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "detroit_school_interior_tr" ) )
+        if ( !istransientloaded( "detroit_school_interior_tr" ) )
         {
             for (;;)
             {
                 wait 0.25;
 
-                if ( _func_21E( "detroit_school_interior_tr" ) )
+                if ( istransientloaded( "detroit_school_interior_tr" ) )
                     break;
             }
         }
@@ -2475,9 +2475,9 @@ player_leaving_bodyroom_gag()
     var_1 maps\_anim::anim_first_frame_solo( var_2, "body_room_exit" );
     var_1 maps\_anim::anim_first_frame_solo( var_3, "body_room_exit" );
     var_4 = getent( "bodies_room_door2_clip", "targetname" );
-    var_4 _meth_804D( var_2, "jo_door_l" );
-    var_2 _meth_804C();
-    var_3 _meth_804A();
+    var_4 linkto( var_2, "jo_door_l" );
+    var_2 showallparts();
+    var_3 hideallparts();
     var_5 = maps\_utility::spawn_anim_model( "world_hands" );
     var_5 hide();
     level waittill( "show_glowing_door" );
@@ -2486,15 +2486,15 @@ player_leaving_bodyroom_gag()
     common_scripts\_exploder::exploder( 5622 );
     common_scripts\utility::flag_set( "player_used_bodies_room_door" );
     var_0 makeunusable();
-    var_2 _meth_80B1( "det_school_door_01_anim" );
-    var_2 _meth_804C();
+    var_2 setmodel( "det_school_door_01_anim" );
+    var_2 showallparts();
     var_3 delete();
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     var_7 = 0.5;
     soundscripts\_snd::snd_message( "body_room_exit" );
     var_1 maps\_anim::anim_first_frame_solo( var_5, "body_room_exit" );
-    level.player _meth_8080( var_5, "tag_player", var_7 );
-    level.player common_scripts\utility::delaycall( var_7, ::_meth_807D, var_5, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player playerlinktoblend( var_5, "tag_player", var_7 );
+    level.player common_scripts\utility::delaycall( var_7, ::playerlinktodelta, var_5, "tag_player", 0, 0, 0, 0, 0, 1 );
     wait(var_7);
     level notify( "player_door_open" );
     level.burke notify( "stop_idling_in_deadroom" );
@@ -2508,10 +2508,10 @@ player_leaving_bodyroom_gag()
     var_9 = level.player common_scripts\utility::spawn_tag_origin();
     var_9.origin += ( 0, 0, 0.167 );
     level.player maps\_utility::teleport_player( var_9 );
-    level.player _meth_804F();
+    level.player unlink();
     var_5 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8304( 0 );
+    level.player allowsprint( 0 );
     maps\_player_exo::player_exo_deactivate();
 }
 
@@ -2556,7 +2556,7 @@ burke_deadroom_door()
     var_1 = maps\_utility::spawn_anim_model( "school_door", var_0.origin );
     var_0 maps\_anim::anim_first_frame_solo( var_1, "burke_school_door" );
     var_2 = getent( "bodies_room_door1_clip", "targetname" );
-    var_2 _meth_804D( var_1, "jo_door_l" );
+    var_2 linkto( var_1, "jo_door_l" );
     common_scripts\utility::flag_wait( "open_school_door" );
     wait 2.95;
     var_0 maps\_anim::anim_single_solo( var_1, "burke_school_door" );
@@ -2585,18 +2585,18 @@ get_burke_to_deadroom()
     if ( level.nextgen )
     {
         var_2 = getent( "school_deadbody_burke_look", "targetname" );
-        var_3 = var_2 _meth_803D();
+        var_3 = var_2 spawndrone();
         var_3 setcontents( 0 );
     }
     else
     {
         var_3 = spawn( "script_model", var_0.origin );
-        var_3 _meth_80B1( "civ_urban_male_dead_body_a" );
+        var_3 setmodel( "civ_urban_male_dead_body_a" );
         var_1 = "head_male_sp_siejak";
         var_3 attach( var_1, "", 1 );
     }
 
-    var_3 _meth_8115( #animtree );
+    var_3 useanimtree( #animtree );
     var_3.animname = "generic";
     var_0 thread maps\_anim::anim_first_frame_solo( var_3, "touch_dead_npc" );
     thread animate_dead_body( var_3, var_0 );
@@ -2638,8 +2638,8 @@ finish_bodies_room_burke()
     var_1 notify( "stop_stairs_inside_idle" );
     level.burke notify( "stop_stairs_inside_idle" );
     thread shit_blocked_upstairs();
-    level.burke _meth_8141();
-    var_1 _meth_8141();
+    level.burke stopanimscripted();
+    var_1 stopanimscripted();
     var_1 maps\_anim::anim_single_solo( level.burke, "school_stair_walk" );
     begin_the_shimmey_for_burke();
 }

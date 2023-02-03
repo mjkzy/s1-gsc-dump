@@ -29,9 +29,9 @@ init_sidequest()
     precachemodel( "dlc2_brg_bun" );
     precachemodel( "dlc2_brg_burger_bomb" );
     precachemodel( "dlc2_zom_gib_arm_pickup" );
-    map_restart( "mp_dogtag_spin" );
-    map_restart( "zom_mbot_activation_yumm" );
-    map_restart( "zom_mbot_activation_key" );
+    precachempanim( "mp_dogtag_spin" );
+    precachempanim( "zom_mbot_activation_yumm" );
+    precachempanim( "zom_mbot_activation_key" );
     precachestring( &"ZOMBIE_BRG_BOMB_THROW" );
     common_scripts\utility::flag_init( "sewermain_to_sewercave" );
     common_scripts\utility::flag_init( "sewer_to_burgertown" );
@@ -184,43 +184,43 @@ onanyplayerspawned()
         level waittill( "player_spawned", var_0 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasskilletgolden ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 4 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 4 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasskilletseasoned ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 2 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 2 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasmeat ) && var_0.hasmeat )
-            var_0 _meth_82FB( "ui_zm_ee_int", 1 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 1 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasbun ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 11 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 11 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasburgerinfected ) )
         {
-            var_0 _meth_82FB( "ui_zm_ee_int", 7 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 7 );
             var_0 thread stage8_infected_burger();
         }
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasburger ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 8 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 8 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasbatterydepleted ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 10 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 10 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasbatterycharged ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 9 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 9 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.haskey ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 12 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 12 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasarm ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 3 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 3 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasdriveencrypted ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 5 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 5 );
 
         if ( isdefined( var_0 ) && isdefined( var_0.hasdrivedecrypted ) )
-            var_0 _meth_82FB( "ui_zm_ee_int", 6 );
+            var_0 setclientomnvar( "ui_zm_ee_int", 6 );
     }
 }
 
@@ -236,7 +236,7 @@ onplayerconnected()
 playertakeitemondisconnect()
 {
     self waittill( "disconnect" );
-    self _meth_82FB( "ui_zm_ee_int", 0 );
+    self setclientomnvar( "ui_zm_ee_int", 0 );
 }
 
 initvo()
@@ -338,7 +338,7 @@ playbeaufordvo( var_0 )
 murderbot_animate( var_0 )
 {
     var_1 = getent( "murderbot_animscripted", "targetname" );
-    var_1 _meth_8279( var_0 );
+    var_1 scriptmodelplayanim( var_0 );
     var_1 playsound( "sq_burger_offering" );
 }
 
@@ -412,11 +412,11 @@ playergiveskillet( var_0 )
     switch ( var_0 )
     {
         case "unseasoned":
-            self _meth_82FB( "ui_zm_ee_int", 4 );
+            self setclientomnvar( "ui_zm_ee_int", 4 );
             self.hasskilletgolden = 1;
             break;
         case "seasoned":
-            self _meth_82FB( "ui_zm_ee_int", 2 );
+            self setclientomnvar( "ui_zm_ee_int", 2 );
             self.hasskilletseasoned = 1;
             break;
     }
@@ -461,7 +461,7 @@ playertakeitem( var_0 )
             break;
     }
 
-    self _meth_82FB( "ui_zm_ee_int", 0 );
+    self setclientomnvar( "ui_zm_ee_int", 0 );
 }
 
 stage2_init()
@@ -495,16 +495,16 @@ stage2_open_door()
 
     foreach ( var_2 in var_0 )
     {
-        var_2 _meth_82B1( -256, 0.5 );
-        var_2 _meth_8058();
+        var_2 movez( -256, 0.5 );
+        var_2 connectpaths();
     }
 
     var_4 = getentarray( "secret_cave_door", "targetname" );
 
     foreach ( var_2 in var_4 )
     {
-        var_2 _meth_82B0( -128, 3 );
-        var_2 _meth_8058();
+        var_2 movey( -128, 3 );
+        var_2 connectpaths();
         playsoundatpos( ( 3233, -2112, -329 ), "sq_door_stone_open" );
     }
 }
@@ -518,7 +518,7 @@ stage2_cave_valves()
         var_2 = common_scripts\utility::random( var_0 );
         var_0 = common_scripts\utility::array_remove( var_0, var_2 );
         var_3 = spawn( "script_model", var_2.origin );
-        var_3 _meth_80B1( "det_basement_valve_01_anim" );
+        var_3 setmodel( "det_basement_valve_01_anim" );
         var_3.origin = var_2.origin;
         var_3.angles = var_2.angles;
         var_3.target = var_2.target;
@@ -549,11 +549,11 @@ stage2_cave_triggers( var_0 )
     }
 
     playsoundatpos( self.origin, "sq_sewer_valve_turn" );
-    self _meth_82B8( -270, 2 );
+    self rotateroll( -270, 2 );
     wait 2;
     level.sewer_cave_valve_count++;
     triggerfx( var_1 );
-    self _meth_8075( "sq_sewer_valve_steam" );
+    self playloopsound( "sq_sewer_valve_steam" );
     maps\mp\zombies\_zombies_sidequests::sidequest_iprintlnbold( "I wonder what that did..." );
     level waittill( "sewer_cave_open" );
 
@@ -561,7 +561,7 @@ stage2_cave_triggers( var_0 )
         var_3 thread playerplaysqvo( 11 );
 
     wait 5;
-    self _meth_80AB();
+    self stoploopsound();
     var_1 delete();
 
     if ( level.currentgen )
@@ -589,20 +589,20 @@ stage3_logic()
         thread maps\mp\mp_zombie_brg::alterjumpexploit( var_1 );
 
     var_1 waittill( "placed", var_2 );
-    var_0 _meth_8438( "sq_skillet_put_down_altar" );
+    var_0 playsoundonmovingent( "sq_skillet_put_down_altar" );
     var_2 playertakeitem( "skillet_golden" );
     var_0 show();
     var_3 = getent( "golden_skillet_seasoned", "targetname" );
     var_4 = getent( "skillet_altar", "targetname" );
     var_5 = getent( "skillet_altar_coll", "targetname" );
-    var_3 _meth_804D( var_4 );
-    var_0 _meth_804D( var_4 );
+    var_3 linkto( var_4 );
+    var_0 linkto( var_4 );
     var_4 thread stage3_altar_move();
     var_5 thread stage3_altar_move();
     earthquake( 0.15, 3.0, var_4.origin, 200 );
     playrumbleonposition( "artillery_rumble", var_4.origin );
     var_5 waittill( "lowered" );
-    var_5 _meth_8058();
+    var_5 connectpaths();
     earthquake( 0.15, 3.0, var_4.origin, 200 );
     level.sacrificeactive = 1;
     thread stage3_sacrifice_setup();
@@ -626,7 +626,7 @@ stage3_playerenter()
     {
         foreach ( var_2 in level.players )
         {
-            if ( var_2 _meth_80A9( var_0 ) )
+            if ( var_2 istouching( var_0 ) )
             {
                 var_2 thread playerplaysqvo( 12 );
                 return;
@@ -639,13 +639,13 @@ stage3_playerenter()
 
 stage3_altar_move()
 {
-    self _meth_82B1( -32, 3 );
+    self movez( -32, 3 );
     self playsound( "sq_alter_lower" );
     playfx( common_scripts\utility::getfx( "brg_altar_dust" ), self.origin );
     wait 3;
     self notify( "lowered" );
     level waittill( "sq_raise_altar" );
-    self _meth_82B1( 32, 3 );
+    self movez( 32, 3 );
     self playsound( "sq_alter_raise" );
     playfx( common_scripts\utility::getfx( "brg_altar_dust" ), self.origin );
     wait 3;
@@ -682,7 +682,7 @@ stage3_sacrifice_trigmonitor( var_0 )
     self endon( "death" );
     level endon( "main_stage3_over" );
 
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.1;
 
     self notify( "ZombieLeftSacrificeArea" );
@@ -729,7 +729,7 @@ stage3_raise_blood()
         if ( level.sacrificekillcount > 0 && level.sacrificekillcount < 66 )
         {
             var_1 = level.sacrificekillcount * 2;
-            self _meth_82AE( var_0 + ( 0, 0, var_1 ), 2 );
+            self moveto( var_0 + ( 0, 0, var_1 ), 2 );
         }
     }
 }
@@ -773,7 +773,7 @@ stage4_logic()
     var_4 thread maps\mp\zombies\_zombies_sidequests::fake_use( "placed", ::playerhasskilletseasoned, undefined, "main_stage4_over" );
     var_4 waittill( "placed", var_2 );
     var_3 show();
-    var_3 _meth_8438( "sq_skillet_put_down_stove" );
+    var_3 playsoundonmovingent( "sq_skillet_put_down_stove" );
     var_2 playertakeitem( "skillet_seasoned" );
     maps\mp\zombies\_zombies_sidequests::stage_completed( "main", "stage4" );
 }
@@ -866,7 +866,7 @@ playerhasnomeat()
 
 playergivemeat()
 {
-    self _meth_82FB( "ui_zm_ee_int", 1 );
+    self setclientomnvar( "ui_zm_ee_int", 1 );
     self.hasmeat = 1;
 }
 
@@ -938,7 +938,7 @@ stage6_cookedpattyfx()
 {
     var_0 = spawnfx( common_scripts\utility::getfx( "brg_skillet_charbroil" ), self.origin );
     triggerfx( var_0 );
-    self _meth_8075( "sq_meat_patty_cook" );
+    self playloopsound( "sq_meat_patty_cook" );
     self waittill( "kill_cooked_fx" );
     var_0 delete();
 }
@@ -970,7 +970,7 @@ playerhasbun()
 
 playergivebun()
 {
-    self _meth_82FB( "ui_zm_ee_int", 11 );
+    self setclientomnvar( "ui_zm_ee_int", 11 );
     self.hasbun = 1;
 }
 
@@ -1008,8 +1008,8 @@ dropbun( var_0 )
     var_0 += ( 0, 0, 16 );
     var_1 = spawn( "script_model", var_0 );
     var_1.angles = ( 0, 0, 0 );
-    var_1 _meth_80B1( "dlc2_brg_bun" );
-    var_1 _meth_82BF();
+    var_1 setmodel( "dlc2_brg_bun" );
+    var_1 notsolid();
     var_2 = spawn( "trigger_radius", var_0, 0, 32, 32 );
     var_1.trigger = var_2;
     level.sq_droppedbuns[level.sq_droppedbuns.size] = var_1;
@@ -1020,7 +1020,7 @@ dropbun( var_0 )
 
 bunbounce()
 {
-    self _meth_827B( "mp_dogtag_spin" );
+    self scriptmodelplayanimdeltamotion( "mp_dogtag_spin" );
 }
 
 bunpickup()
@@ -1060,7 +1060,7 @@ bunstartflashing()
 
     for (;;)
     {
-        self _meth_8510();
+        self ghost();
         wait 0.25;
         self show();
         wait 0.25;
@@ -1093,7 +1093,7 @@ stage8_init()
 
 playergiveburgerinfected()
 {
-    self _meth_82FB( "ui_zm_ee_int", 7 );
+    self setclientomnvar( "ui_zm_ee_int", 7 );
     self.hasburgerinfected = 1;
     thread playerplaysqvo( 8, 0.5 );
 }
@@ -1107,7 +1107,7 @@ stage8_logic()
     var_2 waittill( "assembled", var_3 );
     var_3 thread playertakeitem( "bun" );
     var_0 notify( "kill_cooked_fx" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     var_0 delete();
     var_1 show();
     var_1 playsound( "sq_burger_created" );
@@ -1143,7 +1143,7 @@ stage9_init()
 
 playergiveburger()
 {
-    self _meth_82FB( "ui_zm_ee_int", 8 );
+    self setclientomnvar( "ui_zm_ee_int", 8 );
     self.hasburger = 1;
     self.hasburgerinfected = undefined;
     thread playerplaysqvo( 9, 1 );
@@ -1195,7 +1195,7 @@ stage9_end( var_0 )
 {
     maps\mp\zombies\_zombies_sidequests::sidequest_iprintlnbold( "Beauford enjoyed your offering!" );
     var_4 = getent( "battery_screen_on", "targetname" );
-    var_4 _meth_8075( "sq_screen_on_lp" );
+    var_4 playloopsound( "sq_screen_on_lp" );
     var_5 = getent( "battery_screen_off", "targetname" );
     var_5 hide();
     var_4 show();
@@ -1229,12 +1229,12 @@ playergivebattery( var_0 )
     switch ( var_0 )
     {
         case "depleted":
-            self _meth_82FB( "ui_zm_ee_int", 10 );
+            self setclientomnvar( "ui_zm_ee_int", 10 );
             self.hasbatterydepleted = 1;
             thread playerplaysqvo( 16, 0.5 );
             break;
         case "charged":
-            self _meth_82FB( "ui_zm_ee_int", 9 );
+            self setclientomnvar( "ui_zm_ee_int", 9 );
             self.hasbatterycharged = 1;
             thread playerplaysqvo( 17, 0.5 );
             break;
@@ -1257,9 +1257,9 @@ stage10_logic()
             foreach ( var_2 in level.players )
                 var_2.batteryisopen = 1;
 
-            var_1 _meth_82B1( 12, 0.25 );
+            var_1 movez( 12, 0.25 );
             wait 7;
-            var_1 _meth_82B1( -12, 0.25 );
+            var_1 movez( -12, 0.25 );
             var_1 playsound( "sq_battery_door_close" );
             wait 0.25;
 
@@ -1270,9 +1270,9 @@ stage10_logic()
         }
 
         wait 3;
-        var_1 _meth_82B1( 12, 0.25 );
+        var_1 movez( 12, 0.25 );
         wait 7;
-        var_1 _meth_82B1( -12, 0.25 );
+        var_1 movez( -12, 0.25 );
     }
 }
 
@@ -1327,10 +1327,10 @@ stage11_battery_setup()
     self show();
     self.charging = 1;
     self notify( "charging" );
-    self _meth_8139( "allies" );
-    self _meth_8177( "charging_battery" );
+    self makeentitysentient( "allies" );
+    self setthreatbiasgroup( "charging_battery" );
     setthreatbias( "zombies", "charging_battery", 1000 );
-    self _meth_8075( "sq_battery_charge" );
+    self playloopsound( "sq_battery_charge" );
     thread maps\mp\gametypes\_damage::setentitydamagecallback( 100000, undefined, ::stage11_onbatterydeath );
     thread stage11_monitor_battery_damage();
     thread stage11_knockout_battery();
@@ -1374,8 +1374,8 @@ stage11_knockout_battery()
         self waittill( "removed" );
         var_2 = spawnfx( common_scripts\utility::getfx( "spark_burst_runner_brg" ), var_0.origin );
         triggerfx( var_2 );
-        self _meth_80AB();
-        self _meth_813A();
+        self stoploopsound();
+        self freeentitysentient();
         self.damagetaken = 0;
         stage11_battery_move( var_0 );
         var_1 thread maps\mp\zombies\_zombies_sidequests::fake_use( "replaced", undefined, undefined, "main_stage11_over" );
@@ -1383,11 +1383,11 @@ stage11_knockout_battery()
         var_2 delete();
         var_0 hide();
         self show();
-        self _meth_8139( "allies" );
-        self _meth_8177( "charging_battery" );
+        self makeentitysentient( "allies" );
+        self setthreatbiasgroup( "charging_battery" );
         self.charging = 1;
         self notify( "charging" );
-        self _meth_8075( "sq_battery_charge" );
+        self playloopsound( "sq_battery_charge" );
     }
 }
 
@@ -1395,8 +1395,8 @@ stage11_battery_move( var_0 )
 {
     var_1 = self.origin;
     var_2 = self.angles;
-    self _meth_82AE( var_0.origin, 0.35 );
-    self _meth_82B5( var_0.angles, 0.35 );
+    self moveto( var_0.origin, 0.35 );
+    self rotateto( var_0.angles, 0.35 );
     wait 0.35;
     self hide();
     var_0 show();
@@ -1458,7 +1458,7 @@ stage11_swap_batteries()
     var_1 = getent( "battery_charged", "targetname" );
     var_2 = common_scripts\utility::getstruct( "battery_charge_use", "targetname" );
     self waittill( "charged" );
-    self _meth_80AB();
+    self stoploopsound();
     var_0 delete();
     var_1 show();
     var_1 playsound( "sq_battery_charged" );
@@ -1492,7 +1492,7 @@ playerhaskey()
 
 playergivekey()
 {
-    self _meth_82FB( "ui_zm_ee_int", 12 );
+    self setclientomnvar( "ui_zm_ee_int", 12 );
     self.haskey = 1;
     playerplaysqvo( 13, 1 );
 }
@@ -1520,7 +1520,7 @@ stage12_spawn_key()
     var_1 = getent( "burger_tower_key", "targetname" );
     wait 1.5;
     var_1 show();
-    var_1 _meth_827B( "mp_dogtag_spin" );
+    var_1 scriptmodelplayanimdeltamotion( "mp_dogtag_spin" );
     var_0 thread maps\mp\zombies\_zombies_sidequests::fake_use( "acquired", undefined, undefined, "main_stage12_over", 80 );
     var_0 waittill( "acquired", var_2 );
     var_1 playsound( "sq_key_receive" );
@@ -1568,11 +1568,11 @@ burger_room_valve_lock( var_0 )
     {
         case "locked":
             level.burgerislocked = 1;
-            var_1 _meth_82B5( ( 0, -90, 90 ), 0.2 );
+            var_1 rotateto( ( 0, -90, 90 ), 0.2 );
             break;
         case "unlocked":
             level.burgerislocked = 0;
-            var_1 _meth_82B5( ( 0, 0, 90 ), 0.2 );
+            var_1 rotateto( ( 0, 0, 90 ), 0.2 );
             break;
     }
 }
@@ -1654,7 +1654,7 @@ burger_room_lockdown()
 
     foreach ( var_3 in level.players )
     {
-        if ( var_3 _meth_80A9( var_1 ) )
+        if ( var_3 istouching( var_1 ) )
         {
             var_4 = common_scripts\utility::random( var_0 );
             var_3 thread burger_teleport( var_4.origin, var_4.angles );
@@ -1681,7 +1681,7 @@ burger_room_monitor()
     {
         wait 0.2;
 
-        if ( self _meth_80A9( var_1 ) )
+        if ( self istouching( var_1 ) )
             continue;
         else
             return;
@@ -1689,7 +1689,7 @@ burger_room_monitor()
 
     foreach ( var_4 in level.players )
     {
-        if ( var_4 _meth_80A9( var_1 ) )
+        if ( var_4 istouching( var_1 ) )
         {
             var_5 = common_scripts\utility::random( var_0 );
             var_4 thread burger_teleport( var_5.origin, var_5.angles );
@@ -1740,7 +1740,7 @@ playerhasarm()
 
 playergivearm()
 {
-    self _meth_82FB( "ui_zm_ee_int", 3 );
+    self setclientomnvar( "ui_zm_ee_int", 3 );
     self.hasarm = 1;
     thread playerplaysqvo( 19, 0.5 );
 }
@@ -1772,8 +1772,8 @@ stage13_spawn_arm()
     var_0 = common_scripts\utility::getstruct( "gator_water_level", "script_noteworthy" );
     var_1 = var_0.origin[2] - self.origin[2];
     var_2 = spawn( "script_model", self.origin + ( 0, 0, var_1 ) );
-    var_2 _meth_80B1( "dlc2_zom_gib_arm_pickup" );
-    var_2 _meth_827B( "mp_dogtag_spin" );
+    var_2 setmodel( "dlc2_zom_gib_arm_pickup" );
+    var_2 scriptmodelplayanimdeltamotion( "mp_dogtag_spin" );
     var_3 = spawn( "script_origin", var_2.origin );
     var_3 thread maps\mp\zombies\_zombies_sidequests::fake_use( "acquired", undefined, undefined, "main_stage13_over", 100 );
     var_3 waittill( "acquired", var_4 );
@@ -1801,7 +1801,7 @@ playerhasdriveencrypted()
 
 playergivedriveencrypted()
 {
-    self _meth_82FB( "ui_zm_ee_int", 5 );
+    self setclientomnvar( "ui_zm_ee_int", 5 );
     self.hasdriveencrypted = 1;
     var_0 = 20;
 
@@ -1822,14 +1822,14 @@ stage14_logic()
     var_3 = getent( "fingerprint_scanner", "targetname" );
 
     foreach ( var_5 in var_1 )
-        var_5 _meth_8446( var_0 );
+        var_5 vehicle_jetbikesethoverforcescale( var_0 );
 
     var_7 = common_scripts\utility::getstruct( "warehouse_safe_use", "targetname" );
     var_7 thread maps\mp\zombies\_zombies_sidequests::fake_use( "opened", ::playerhasarm, undefined, "main_stage14_over", 80 );
     var_7 waittill( "opened", var_8 );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_scanner_door_lock_pass" ), var_3, "tag_origin" );
     var_8 playertakeitem( "arm" );
-    var_0 _meth_82B7( -125, 1 );
+    var_0 rotateyaw( -125, 1 );
     var_0 playsound( "sq_safe_door_open" );
     var_9 = common_scripts\utility::getstruct( "thumb_drive_use", "targetname" );
     var_9 thread maps\mp\zombies\_zombies_sidequests::fake_use( "acquired", undefined, undefined, "main_stage14_over", 80 );
@@ -1867,7 +1867,7 @@ stage15_logic()
     thread burger_firing_event();
     thread burger_room_lockdown();
     level waittill( "drive_is_decrypted" );
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     var_1 playsound( "sq_drive_finished" );
 }
 
@@ -1875,7 +1875,7 @@ drive_decrypt_audio( var_0, var_1 )
 {
     var_0 playsound( "sq_drive_plugin" );
     wait 0.2;
-    var_1 _meth_8075( "sq_drive_decrypt" );
+    var_1 playloopsound( "sq_drive_decrypt" );
 }
 
 stage15_decryptiontimer()
@@ -1957,11 +1957,11 @@ burger_rocket_launch()
 
 rocket_attach( var_0, var_1 )
 {
-    var_0 _meth_8446( self );
+    var_0 vehicle_jetbikesethoverforcescale( self );
 
     if ( level.nextgen )
     {
-        var_1 _meth_8446( self );
+        var_1 vehicle_jetbikesethoverforcescale( self );
         wait 2;
         var_1 show();
     }
@@ -1979,9 +1979,9 @@ rocket_thruster_fx()
 {
     var_0 = getent( "burger_rocket_fx", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "dlc2_brg_burger_bomb" );
-    var_1 _meth_8446( self );
-    var_2 = _func_2C1( common_scripts\utility::getfx( "brg_rocket_thruster" ), var_1, "tag_fx" );
+    var_1 setmodel( "dlc2_brg_burger_bomb" );
+    var_1 vehicle_jetbikesethoverforcescale( self );
+    var_2 = spawnlinkedfx( common_scripts\utility::getfx( "brg_rocket_thruster" ), var_1, "tag_fx" );
     wait 2;
     triggerfx( var_2 );
     playsoundatpos( ( 1217, -3418, 459 ), "sq_rocket_launch" );
@@ -1992,7 +1992,7 @@ rocket_thruster_fx()
 
 rocket_move()
 {
-    self _meth_82B1( 11744, 20, 4 );
+    self movez( 11744, 20, 4 );
     wait 20;
     self notify( "finished" );
     maps\mp\zombies\_zombies_sidequests::stage_completed( "main", "stage15" );
@@ -2002,7 +2002,7 @@ rocket_static_hide()
 {
     foreach ( var_1 in self )
     {
-        var_1 _meth_82BF();
+        var_1 notsolid();
         var_1 delete();
     }
 
@@ -2040,7 +2040,7 @@ bombs_init()
     for ( var_0 = 0; var_0 < level.bomb_count_max; var_0++ )
     {
         var_1 = spawn( "script_model", ( 0, 0, -10 ) );
-        var_1 _meth_80B1( "dlc2_brg_burger_bomb" );
+        var_1 setmodel( "dlc2_brg_burger_bomb" );
         var_1 thread bomb_physics_impact_watch();
         var_2 = 24;
         var_3 = getent( "bomb_pickup_" + ( var_0 + 1 ), "targetname" );
@@ -2050,8 +2050,8 @@ bombs_init()
         else
             var_3 = spawn( "trigger_radius", var_1.origin - ( 0, 0, var_2 / 2 ), 0, var_2, var_2 );
 
-        var_3 _meth_8069();
-        var_3 _meth_804D( var_1 );
+        var_3 enablelinkto();
+        var_3 linkto( var_1 );
         var_3.no_moving_platfrom_unlink = 1;
         var_4 = [ var_1 ];
         var_5 = maps\mp\gametypes\_gameobjects::createcarryobject( "any", var_3, var_4, ( 0, 0, 32 ) );
@@ -2086,16 +2086,16 @@ bomb_fires( var_0 )
     var_1 = level.bomb_targets[var_0];
     var_2 = self.visuals[0];
     var_2 show();
-    var_2 _meth_8092();
+    var_2 dontinterpolate();
     self.bomb_fx_active = 0;
-    var_2 _meth_84E1();
+    var_2 physicsstop();
     var_2.origin = level.launch_point.origin;
     level.mines[level.mines.size] = var_2;
     var_3 = var_1.origin + ( randomfloatrange( -10, 10 ), randomfloatrange( -10, 10 ), randomfloatrange( -10, 10 ) );
     var_1.origin = ( var_1.origin[0], var_1.origin[1], var_2.origin[2] + 600 );
     var_4 = vectornormalize( var_1.origin - var_2.origin ) * randomintrange( 200, 300 );
     var_5 = ( 0, 0, 0 );
-    var_2 _meth_8276( var_2.origin + var_5, var_4 );
+    var_2 physicslaunchserver( var_2.origin + var_5, var_4 );
     aud_event_fire_bomb();
     thread bomb_fuse_default();
     level.bombsonstandby = common_scripts\utility::array_remove( level.bombsonstandby, self );
@@ -2122,7 +2122,7 @@ bomb_fuse_default()
         var_0 -= 1;
     }
 
-    _func_071( "iw5_dlc2burgerbomb_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
+    magicgrenademanual( "iw5_dlc2burgerbomb_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
     thread bomb_cleanup();
 }
 
@@ -2139,7 +2139,7 @@ bomb_fuse_short()
         wait 1;
     }
 
-    _func_071( "iw5_dlc2burgerbomb_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
+    magicgrenademanual( "iw5_dlc2burgerbomb_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
     thread bomb_cleanup();
 }
 
@@ -2157,13 +2157,13 @@ bomb_can_pickup( var_0 )
     if ( !var_0 common_scripts\utility::isweaponenabled() )
         return 0;
 
-    if ( var_0 _meth_8342() )
+    if ( var_0 isusingturret() )
         return 0;
 
     if ( isdefined( var_0.manuallyjoiningkillstreak ) && var_0.manuallyjoiningkillstreak )
         return 0;
 
-    var_1 = var_0 _meth_8311();
+    var_1 = var_0 getcurrentweapon();
 
     if ( isdefined( var_1 ) )
     {
@@ -2173,7 +2173,7 @@ bomb_can_pickup( var_0 )
 
     var_2 = var_0.changingweapon;
 
-    if ( isdefined( var_2 ) && var_0 _meth_8337() )
+    if ( isdefined( var_2 ) && var_0 isreloading() )
     {
         if ( !valid_bomb_pickup_weapon( var_2 ) )
             return 0;
@@ -2221,18 +2221,18 @@ bomb_on_pickup( var_0 )
     level.usestartspawns = 0;
     self notify( "pickup_object" );
     level.mines = common_scripts\utility::array_remove( level.mines, self.visuals[0] );
-    var_1 = self.visuals[0] _meth_83EC();
+    var_1 = self.visuals[0] getlinkedparent();
 
     if ( isdefined( var_1 ) )
-        self.visuals[0] _meth_804F();
+        self.visuals[0] unlink();
 
-    self.visuals[0] _meth_84E1();
+    self.visuals[0] physicsstop();
     self.visuals[0] maps\mp\_movers::notify_moving_platform_invalid();
     self.visuals[0] show();
-    self.visuals[0] _meth_8510();
+    self.visuals[0] ghost();
     self.trigger maps\mp\_movers::stop_handling_moving_platforms();
     bomb_fx_stop();
-    var_0 _meth_82F6( "iw5_dlc2burgergun_mp", 1 );
+    var_0 setweaponammoclip( "iw5_dlc2burgergun_mp", 1 );
     var_0 maps\mp\_utility::giveperk( "specialty_ballcarrier", 0 );
     var_0 thread display_bomb_prompt();
     thread bomb_last_stand( var_0 );
@@ -2267,8 +2267,8 @@ bomb_last_stand( var_0 )
 bomb_player_revived()
 {
     self waittill( "revive" );
-    var_0 = self _meth_830C();
-    self _meth_8316( var_0[0] );
+    var_0 = self getweaponslistprimaries();
+    self switchtoweaponimmediate( var_0[0] );
 }
 
 bomb_infected( var_0 )
@@ -2344,12 +2344,12 @@ bomb_throw_active()
     self endon( "death" );
     self endon( "disconnect" );
     self.pass_or_throw_active = 1;
-    self _meth_8130( 0 );
+    self allowmelee( 0 );
 
-    while ( "iw5_dlc2burgergun_mp" == self _meth_8311() )
+    while ( "iw5_dlc2burgergun_mp" == self getcurrentweapon() )
         waitframe();
 
-    self _meth_8130( 1 );
+    self allowmelee( 1 );
     self.pass_or_throw_active = 0;
 }
 
@@ -2367,8 +2367,8 @@ bomb_physics_launch( var_0, var_1 )
     var_2.origin_prev = undefined;
     bomb_cleanup();
     var_3 = anglestoforward( var_1 getangles() ) * 940 + anglestoup( var_1 getangles() ) * 120;
-    var_4 = var_1 _meth_80A8();
-    var_5 = _func_071( "iw5_dlc2burgerbomb_mp", var_4, var_3, 2, var_1 );
+    var_4 = var_1 geteye();
+    var_5 = magicgrenademanual( "iw5_dlc2burgerbomb_mp", var_4, var_3, 2, var_1 );
 }
 
 bomb_create_killcam_ent()
@@ -2377,9 +2377,9 @@ bomb_create_killcam_ent()
         self.killcament delete();
 
     self.killcament = spawn( "script_model", self.visuals[0].origin );
-    self.killcament _meth_804D( self.visuals[0] );
+    self.killcament linkto( self.visuals[0] );
     self.killcament setcontents( 0 );
-    self.killcament _meth_834D( "explosive" );
+    self.killcament setscriptmoverkillcam( "explosive" );
 }
 
 bomb_set_dropped( var_0 )
@@ -2400,7 +2400,7 @@ bomb_set_dropped( var_0 )
     var_3 = self.visuals[0];
     var_3.origin = var_2;
     var_3 show();
-    var_3 _meth_8276( var_3.origin + ( 0, 1, 0 ) );
+    var_3 physicslaunchserver( var_3.origin + ( 0, 1, 0 ) );
     level.mines[level.mines.size] = var_3;
     thread bomb_fuse_short();
     bomb_carrier_cleanup();
@@ -2422,7 +2422,7 @@ bomb_carrier_cleanup()
 
 bomb_dont_interpolate()
 {
-    self.visuals[0] _meth_8092();
+    self.visuals[0] dontinterpolate();
     self.bomb_fx_active = 0;
 }
 
@@ -2430,9 +2430,9 @@ bomb_cleanup()
 {
     self notify( "stop_fuse" );
     bomb_fx_stop();
-    self.visuals[0] _meth_8092();
+    self.visuals[0] dontinterpolate();
     self.bomb_fx_active = 0;
-    self.visuals[0] _meth_84E1();
+    self.visuals[0] physicsstop();
     self.visuals[0].origin = ( 0, 0, 0 );
     level.mines = common_scripts\utility::array_remove( level.mines, self.visuals[0] );
 
@@ -2449,7 +2449,7 @@ bomb_fx_start()
         var_0 = self.visuals[0];
         playfxontag( common_scripts\utility::getfx( "dlc_burger_bomb_trail" ), var_0, "body_animate_jnt" );
         playfxontag( common_scripts\utility::getfx( "ball_idle" ), var_0, "body_animate_jnt" );
-        var_0 _meth_83FA( 0, 0 );
+        var_0 hudoutlineenable( 0, 0 );
         self.bomb_fx_active = 1;
     }
 }
@@ -2462,8 +2462,8 @@ bomb_fx_stop()
         stopfxontag( common_scripts\utility::getfx( "dlc_burger_bomb_trail" ), var_0, "body_animate_jnt" );
         killfxontag( common_scripts\utility::getfx( "ball_idle" ), var_0, "body_animate_jnt" );
         killfxontag( common_scripts\utility::getfx( "burger_bomb_fuse" ), var_0, "tag_fx" );
-        var_0 _meth_83FB();
-        var_0 _meth_80AC();
+        var_0 hudoutlinedisable();
+        var_0 stopsounds();
     }
 
     self.bomb_fx_active = 0;
@@ -2505,7 +2505,7 @@ playerhasdrivedecrypted()
 
 playergivedrivedecrypted()
 {
-    self _meth_82FB( "ui_zm_ee_int", 6 );
+    self setclientomnvar( "ui_zm_ee_int", 6 );
     self.hasdrivedecrypted = 1;
     thread playerplaysqvo( 21, 0.5 );
 }
@@ -2558,10 +2558,10 @@ set_side_quest_coop_data_burgertown()
         if ( !isdefined( var_1.joinedround1 ) || !var_1.joinedround1 )
             continue;
 
-        var_2 = var_1 _meth_8554( "eggData" );
+        var_2 = var_1 getcoopplayerdatareservedint( "eggData" );
         var_2 |= 4;
         var_1.sidequest = 1;
-        var_1 _meth_8555( "eggData", var_2 );
+        var_1 setcoopplayerdatareservedint( "eggData", var_2 );
         setmatchdata( "players", var_1.clientid, "startPrestige", var_1.sidequest );
     }
 }
@@ -2649,8 +2649,8 @@ beauford_hit()
     var_0 = getent( "murderbot_static_thumbsup", "targetname" );
     var_0.health = 99999;
     var_0.maxhealth = 99999;
-    var_0 _meth_82C0( 1 );
-    var_0 _meth_8495( 1 );
+    var_0 setcandamage( 1 );
+    var_0 setdamagecallbackon( 1 );
     var_0.damagecallback = ::_beauford_hit_internal;
     level.zmbsqbeaufordnexthitvo = 0;
 }
@@ -2695,12 +2695,12 @@ spawn_murderbot( var_0 )
     var_2 = getent( "speaker_box", "targetname" );
     var_3 = getentarray( "speaker_box_coll", "targetname" );
     var_4 = getent( "bubby_clip", "targetname" );
-    var_4 _meth_82BF();
+    var_4 notsolid();
     var_4 delete();
 
     foreach ( var_6 in var_3 )
     {
-        var_6 _meth_82BF();
+        var_6 notsolid();
         var_6 delete();
     }
 
@@ -2711,7 +2711,7 @@ spawn_murderbot( var_0 )
     var_11 = var_10[0];
 
     if ( isdefined( var_11 ) )
-        var_11 _meth_804D( var_9, "j_head", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_11 linkto( var_9, "j_head", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     level thread spawn_murderbot_vo( var_0 );
 }
@@ -2768,7 +2768,7 @@ song_play( var_0 )
 
     if ( maps\mp\zombies\_util::is_true( level.sq_song_ent.playing ) )
     {
-        level.sq_song_ent _meth_80AC();
+        level.sq_song_ent stopsounds();
         level.sq_song_ent.playing = 0;
         wait 0.2;
     }
@@ -2780,19 +2780,19 @@ song_play( var_0 )
     else
         var_1 = "zmb_mus_ee_02_prvw";
 
-    level.sq_song_ent _meth_8438( var_1 );
+    level.sq_song_ent playsoundonmovingent( var_1 );
     level.sq_song_ent.playing = 1;
     wait(var_0);
-    level.sq_song_ent _meth_806F( 0, 0.2 );
+    level.sq_song_ent scalevolume( 0, 0.2 );
     wait 0.2;
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
-    level.sq_song_ent _meth_806F( 1 );
+    level.sq_song_ent scalevolume( 1 );
 }
 
 song_stop()
 {
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
     level notify( "sq_song_stop" );
 }

@@ -993,7 +993,7 @@ bot_loadout_valid_choice( var_0, var_1, var_2, var_3 )
         case "loadoutEquipment":
             var_4 = bot_loadout_item_allowed( "perk", var_3, "Lethal" );
             var_4 = var_4 && maps\mp\gametypes\_class::isvalidequipment( var_3, bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_dualtacticals" ) );
-            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self botgetdifficulty() );
             break;
         case "loadoutEquipment2":
             var_4 = var_3 == "specialty_null" || var_3 == var_1["loadoutEquipment"];
@@ -1001,7 +1001,7 @@ bot_loadout_valid_choice( var_0, var_1, var_2, var_3 )
         case "loadoutOffhand":
             var_4 = bot_loadout_item_allowed( "perk", var_3, "Tactical" );
             var_4 = var_4 && maps\mp\gametypes\_class::isvalidoffhand( var_3, bot_loadout_set_has_wildcard( var_1, "specialty_wildcard_duallethals" ) );
-            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self botgetdifficulty() );
             break;
         case "loadoutOffhand2":
             var_4 = var_3 == "specialty_null";
@@ -1076,7 +1076,7 @@ bot_loadout_valid_choice( var_0, var_1, var_2, var_3 )
         case "loadoutPerk4":
         case "loadoutPerk3":
             var_4 = var_3 == "specialty_null" || bot_validate_perk( var_3, var_2, var_1 );
-            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self _meth_836B() );
+            var_4 = var_4 && bot_loadout_item_valid_for_rank( var_0, var_3, self botgetdifficulty() );
             break;
         case "loadoutWildcard3":
         case "loadoutWildcard2":
@@ -1195,7 +1195,7 @@ bot_loadout_choose_values( var_0 )
         var_0[var_6] = var_4;
     }
 
-    if ( self _meth_836B() != "recruit" )
+    if ( self botgetdifficulty() != "recruit" )
     {
         var_7 = bot_get_pick_13_count( var_0 );
 
@@ -1391,12 +1391,12 @@ bot_get_pick_13_count( var_0 )
 
 bot_loadout_get_difficulty()
 {
-    var_0 = self _meth_836B();
+    var_0 = self botgetdifficulty();
 
     if ( var_0 == "default" )
     {
         maps\mp\bots\_bots_util::bot_set_difficulty( "default" );
-        var_0 = self _meth_836B();
+        var_0 = self botgetdifficulty();
     }
 
     return var_0;
@@ -1424,7 +1424,7 @@ bot_loadout_class_callback( var_0 )
     var_3 = [];
     var_4 = bot_loadout_get_difficulty();
     self.difficulty = var_4;
-    var_5 = self _meth_8366();
+    var_5 = self botgetpersonality();
 
     if ( !isdefined( self.bot_last_loadout_num ) )
         self.bot_cur_loadout_num = 0;
@@ -1492,7 +1492,7 @@ bot_loadout_class_callback( var_0 )
 
     if ( isdefined( self.respawn_with_launcher ) )
     {
-        var_12 = level.bot_respawn_launcher_name[self _meth_836B()];
+        var_12 = level.bot_respawn_launcher_name[self botgetdifficulty()];
 
         if ( bot_loadout_item_allowed( "weapon", var_12, undefined ) )
         {
@@ -1518,7 +1518,7 @@ bot_loadout_class_callback( var_0 )
 
 bot_setup_loadout_callback()
 {
-    var_0 = self _meth_8366();
+    var_0 = self botgetpersonality();
     var_1 = bot_loadout_get_difficulty();
     var_2 = bot_loadout_set( var_0, var_1, 0 );
 

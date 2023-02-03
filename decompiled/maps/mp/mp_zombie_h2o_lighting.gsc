@@ -9,12 +9,12 @@ main()
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 _meth_82FD( "r_tonemap", "1" );
+            var_0 setclientdvars( "r_tonemap", "1" );
         }
     }
 }

@@ -63,15 +63,15 @@ main()
     animscripts\traverse\shared::dotraverse( var_0 );
     var_8 = self.origin + ( 0, 0, 32 );
 
-    if ( isdefined( self _meth_819E() ) )
-        var_2 = ( var_8[0], var_8[1], self _meth_819E().origin[2] );
+    if ( isdefined( self getnegotiationendnode() ) )
+        var_2 = ( var_8[0], var_8[1], self getnegotiationendnode().origin[2] );
     else
         var_2 = physicstrace( var_8, self.origin + ( 0, 0, -5120 ) );
 
     var_9 = distance( var_8, var_2 );
     var_10 = var_9 - 32 - 0.5 + var_7;
     play_loop_until_drop_distance( var_1, var_10, var_7 );
-    self _meth_8110( "traverse_align", var_6, %body, 1, 0.2, 1 );
+    self setflaggedanimknoballrestart( "traverse_align", var_6, %body, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "traverse_align", animscripts\traverse\boost::handletraversenotetrackslandassist );
 }
 
@@ -79,8 +79,8 @@ play_loop_until_drop_distance( var_0, var_1, var_2 )
 {
     var_3 = self.origin[2];
     var_4 = animscripts\utility::get_trajectory_time_given_x( 0.0, var_1, self.velocity[2], getdvarfloat( "g_gravity" ) );
-    self _meth_8110( "idle", var_0, %body, 1, 0.1, 1 );
-    self _meth_818E( "gravity_noclip" );
+    self setflaggedanimknoballrestart( "idle", var_0, %body, 1, 0.1, 1 );
+    self animmode( "gravity_noclip" );
     var_5 = -1.0;
     var_6 = 0;
 
@@ -91,18 +91,18 @@ play_loop_until_drop_distance( var_0, var_1, var_2 )
         var_7 = animscripts\utility::get_trajectory_x_given_time( 0.0, self.velocity[2], -1.0 * getdvarfloat( "g_gravity" ), 0.05 );
 
         if ( var_7 < var_5 - var_1 )
-            self _meth_818E( "gravity" );
+            self animmode( "gravity" );
 
         if ( var_6 > var_4 + 1.0 )
         {
-            self _meth_81C6( self _meth_819E().origin + ( 0, 0, var_2 ) );
+            self forceteleport( self getnegotiationendnode().origin + ( 0, 0, var_2 ) );
             break;
         }
 
         wait 0.05;
     }
 
-    self _meth_8142( var_0, 0.2 );
+    self clearanim( var_0, 0.2 );
 }
 
 get_post_landing_dir( var_0, var_1 )
@@ -112,13 +112,13 @@ get_post_landing_dir( var_0, var_1 )
 
     if ( !isdefined( var_1 ) )
     {
-        var_2 = self _meth_819E().origin;
-        var_3 = self _meth_819F();
+        var_2 = self getnegotiationendnode().origin;
+        var_3 = self getnegotiationnextnode();
     }
     else
     {
         var_2 = var_1;
-        var_4 = _func_200( var_2, var_0.origin, 1, undefined, var_0 );
+        var_4 = getnodesonpath( var_2, var_0.origin, 1, undefined, var_0 );
         var_3 = undefined;
 
         foreach ( var_3 in var_4 )
@@ -145,7 +145,7 @@ get_post_landing_dir( var_0, var_1 )
 
 find_landing_node_along_path( var_0 )
 {
-    var_1 = _func_200( self.origin, var_0.origin );
+    var_1 = getnodesonpath( self.origin, var_0.origin );
     var_2 = undefined;
     var_3 = undefined;
 

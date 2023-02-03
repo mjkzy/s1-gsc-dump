@@ -939,7 +939,7 @@ heat_reload_anim()
 
     if ( isdefined( self.node ) )
     {
-        if ( self _meth_8163() )
+        if ( self nearclaimnodeandangle() )
         {
             var_0 = undefined;
 

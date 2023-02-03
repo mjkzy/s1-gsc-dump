@@ -112,12 +112,12 @@ do_into_idle_anim( var_0 )
         self._anime = var_0;
         self._animname = "generic";
         self._custom_anim_loop = 0;
-        self _meth_819A( animscripts\animmode::main );
+        self animcustom( animscripts\animmode::main );
         var_2 = 0.0;
 
         if ( isdefined( self.patrol_walk_anim ) && isdefined( level.scr_anim["generic"][self.patrol_walk_anim] ) )
         {
-            var_3 = self _meth_814F( level.scr_anim["generic"][self.patrol_walk_anim] );
+            var_3 = self getanimtime( level.scr_anim["generic"][self.patrol_walk_anim] );
 
             if ( var_3 > 0.666667 )
                 var_2 = 3 * ( var_3 - 0.666667 );
@@ -126,7 +126,7 @@ do_into_idle_anim( var_0 )
             else
                 var_2 = 3 * var_3;
 
-            self _meth_8117( var_1, var_2 );
+            self setanimtime( var_1, var_2 );
         }
 
         var_4 = getanimlength( var_1 );

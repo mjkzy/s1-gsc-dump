@@ -69,9 +69,9 @@ zombiestuckspotfix01()
     {
         var_0 waittill( "trigger", var_1 );
 
-        if ( isdefined( var_1 ) && !_func_294( var_1 ) && isalive( var_1 ) && isagent( var_1 ) && !isdefined( var_1.object_avoid ) && isdefined( var_1.team ) && var_1.team == level.enemyteam )
+        if ( isdefined( var_1 ) && !isremovedentity( var_1 ) && isalive( var_1 ) && isagent( var_1 ) && !isdefined( var_1.object_avoid ) && isdefined( var_1.team ) && var_1.team == level.enemyteam )
         {
-            var_1 _meth_8543( 1 );
+            var_1 scragentsetobstacleavoid( 1 );
             var_1.object_avoid = 1;
             var_1 thread resetavoidtimer();
         }
@@ -83,9 +83,9 @@ resetavoidtimer()
     level endon( "game_ended" );
     wait 4;
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
-        self _meth_8543( 0 );
+        self scragentsetobstacleavoid( 0 );
         self.object_avoid = undefined;
     }
 }
@@ -136,31 +136,31 @@ zombielabpatchshove( var_0, var_1 )
     if ( var_0 )
     {
         if ( self.currentzone == "military" && distancesquared( self.origin, ( -1845.12, 2704, 267.125 ) ) < 16 )
-            self _meth_82F1( ( 100, 0, 0 ) );
+            self setvelocity( ( 100, 0, 0 ) );
         else if ( self.currentzone == "experimentation" )
         {
             if ( abs( self.origin[2] - 300 ) < 5 && abs( self.origin[1] - 3187 ) < 5 )
             {
-                var_2 = self _meth_8387();
+                var_2 = self getnearestnode();
 
                 if ( isdefined( var_2 ) && self.origin[2] - var_2.origin[2] > 40 )
                 {
-                    self _meth_82F1( ( 0, -100, 0 ) );
+                    self setvelocity( ( 0, -100, 0 ) );
                     return;
                 }
             }
             else if ( distancesquared( self.origin, ( 376.846, 3177.79, 286.386 ) ) < 100 )
-                self _meth_82F1( ( 100, -100, 0 ) );
+                self setvelocity( ( 100, -100, 0 ) );
             else if ( distancesquared( self.origin, ( 375.539, 3164.19, 284.327 ) ) < 64 )
-                self _meth_82F1( ( 100, 0, 0 ) );
+                self setvelocity( ( 100, 0, 0 ) );
             else if ( distancesquared( self.origin, ( 375.551, 3156.28, 279.062 ) ) < 16 )
-                self _meth_82F1( ( 100, 0, 0 ) );
+                self setvelocity( ( 100, 0, 0 ) );
             else if ( distancesquared( self.origin, ( 375.59, 3144.32, 271.104 ) ) < 64 )
-                self _meth_82F1( ( 100, 0, 0 ) );
+                self setvelocity( ( 100, 0, 0 ) );
             else if ( distancesquared( self.origin, ( 378.329, 3131.99, 262.901 ) ) < 16 )
-                self _meth_82F1( ( 100, 0, 0 ) );
+                self setvelocity( ( 100, 0, 0 ) );
             else if ( distancesquared( self.origin, ( 375.024, 3115.55, 251.955 ) ) < 16 )
-                self _meth_82F1( ( 100, 0, 0 ) );
+                self setvelocity( ( 100, 0, 0 ) );
         }
     }
     else if ( var_1 )
@@ -172,11 +172,11 @@ zombielabpatchshove( var_0, var_1 )
 
             if ( abs( self.origin[2] - 200 ) < 14 )
             {
-                var_2 = self _meth_8387();
+                var_2 = self getnearestnode();
 
                 if ( isdefined( var_2 ) && self.origin[2] - var_2.origin[2] > 68 )
                 {
-                    self _meth_82F1( var_4 * 200 );
+                    self setvelocity( var_4 * 200 );
                     return;
                 }
 
@@ -185,13 +185,13 @@ zombielabpatchshove( var_0, var_1 )
 
             if ( distancesquared( self.origin, ( -60.1366, 1600.78, 248.625 ) ) < 100 )
             {
-                self _meth_82F1( var_4 * 200 );
+                self setvelocity( var_4 * 200 );
                 return;
             }
 
             if ( distancesquared( self.origin, ( -53.4371, 1619.16, 248.625 ) ) < 16 )
             {
-                self _meth_82F1( var_4 * 200 );
+                self setvelocity( var_4 * 200 );
                 return;
             }
 
@@ -200,12 +200,12 @@ zombielabpatchshove( var_0, var_1 )
         }
         else if ( self.currentzone == "experimentation" && distancesquared( self.origin, ( 265.649, 3985.21, 291.625 ) ) < 64 )
         {
-            var_2 = self _meth_8387();
+            var_2 = self getnearestnode();
 
             if ( isdefined( var_2 ) )
             {
                 var_5 = vectornormalize( ( var_2.origin - self.origin ) * ( 1, 1, 0 ) );
-                self _meth_82F1( var_5 * 100 );
+                self setvelocity( var_5 * 100 );
                 return;
             }
         }
@@ -214,7 +214,7 @@ zombielabpatchshove( var_0, var_1 )
             if ( self.origin[2] > 125 )
             {
                 if ( self.origin[0] > 1135 && self.origin[0] < 1382 && self.origin[1] > 1601 && self.origin[1] < 1638 )
-                    self _meth_82F1( ( 0, -200, 0 ) );
+                    self setvelocity( ( 0, -200, 0 ) );
             }
         }
     }
@@ -346,8 +346,8 @@ initcharactermodels()
 
 biochamber()
 {
-    map_restart( "dlc_lab_exo_cage_closed_idle" );
-    map_restart( "dlc_lab_exo_cage_open" );
+    precachempanim( "dlc_lab_exo_cage_closed_idle" );
+    precachempanim( "dlc_lab_exo_cage_open" );
     var_0 = getentarray( "biochamber_top", "targetname" );
 
     foreach ( var_2 in var_0 )
@@ -362,30 +362,30 @@ biochamber()
     var_9 = getent( "exo_cage", "targetname" );
 
     if ( isdefined( var_9 ) && isdefined( var_8 ) )
-        var_9 _meth_848B( "dlc_lab_exo_cage_closed_idle", var_8.origin, var_8.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( "dlc_lab_exo_cage_closed_idle", var_8.origin, var_8.angles );
 
-    _func_29C( 99 );
+    activatepersistentclientexploder( 99 );
     level waittill( "power_experimentation_01" );
-    _func_292( 99 );
+    stopclientexploder( 99 );
     common_scripts\_exploder::activate_clientside_exploder( 100 );
 
     if ( isdefined( var_9 ) && isdefined( var_8 ) )
-        var_9 _meth_848B( "dlc_lab_exo_cage_open", var_8.origin, var_8.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( "dlc_lab_exo_cage_open", var_8.origin, var_8.angles );
 
     foreach ( var_2 in var_0 )
     {
         if ( var_2 maps\mp\_movers::script_mover_is_dynamic_path() )
-            var_2 _meth_8058();
+            var_2 connectpaths();
 
-        var_2 _meth_82AE( var_2.origin + ( 0, 0, 132 ), 2 );
+        var_2 moveto( var_2.origin + ( 0, 0, 132 ), 2 );
     }
 
     foreach ( var_6 in var_4 )
     {
         if ( var_6 maps\mp\_movers::script_mover_is_dynamic_path() )
-            var_6 _meth_8058();
+            var_6 connectpaths();
 
-        var_6 _meth_82AE( var_6.origin - ( 0, 0, 132 ), 2 );
+        var_6 moveto( var_6.origin - ( 0, 0, 132 ), 2 );
     }
 
     wait 3.5;
@@ -423,7 +423,7 @@ playexosuitvoattractor()
 
             var_4++;
 
-            if ( _func_220( var_2.origin, var_6.origin ) > var_0 )
+            if ( distance2dsquared( var_2.origin, var_6.origin ) > var_0 )
                 continue;
 
             var_3[var_3.size] = var_6;
@@ -446,7 +446,7 @@ linktargetedents()
     var_0 = getentarray( self.target, "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
 }
 
 deleteexoterminallargetriggeronpower()
@@ -542,12 +542,12 @@ endgamestatic()
     level waittill( "spawning_intermission" );
 
     foreach ( var_1 in level.players )
-        var_1 _meth_82FB( "ui_zm_hud_static", 2 );
+        var_1 setclientomnvar( "ui_zm_hud_static", 2 );
 
     wait 0.5;
 
     foreach ( var_1 in level.players )
-        var_1 _meth_82FB( "ui_zm_hud_static", 1 );
+        var_1 setclientomnvar( "ui_zm_hud_static", 1 );
 }
 
 endgamedialog( var_0, var_1, var_2, var_3 )
@@ -588,12 +588,12 @@ endgamedialog( var_0, var_1, var_2, var_3 )
 crashhelianim()
 {
     var_0 = "dlc_heli_blade_loop";
-    map_restart( var_0 );
+    precachempanim( var_0 );
     var_1 = getent( "crashed_heli_blades", "targetname" );
     var_2 = common_scripts\utility::getstruct( "crashed_heli_node", "targetname" );
 
     if ( isdefined( var_1 ) && isdefined( var_2 ) )
-        var_1 _meth_8279( var_0 );
+        var_1 scriptmodelplayanim( var_0 );
 }
 
 cg_exploittriggermonitor()
@@ -619,7 +619,7 @@ cg_exploittriggermonitor()
                     if ( isdefined( var_5 ) )
                     {
                         var_6 = vectornormalize( ( var_5.origin - var_0.origin ) * ( 1, 1, 0 ) );
-                        var_0 _meth_82F1( var_6 * 100 );
+                        var_0 setvelocity( var_6 * 100 );
                     }
 
                     break;

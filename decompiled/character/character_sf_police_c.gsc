@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "sf_police_body" );
+    self setmodel( "sf_police_body" );
     self attach( "sf_police_head_c", "", 1 );
     self.headmodel = "sf_police_head_c";
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

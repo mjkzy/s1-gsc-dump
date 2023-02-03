@@ -98,7 +98,7 @@ onstartgametype()
         game["defenders"] = var_0;
     }
 
-    getteamplayersalive( "manual_change" );
+    setclientnamemode( "manual_change" );
     level._effect["bomb_explosion"] = loadfx( "vfx/explosion/mp_gametype_bomb" );
     level._effect["bomb_light_blinking"] = loadfx( "vfx/lights/light_sdbomb_blinking" );
     level._effect["bomb_light_planted"] = loadfx( "vfx/lights/light_beacon_sdbomb" );
@@ -170,9 +170,9 @@ onspawnplayer()
     if ( isplayer( self ) && !var_0 )
     {
         if ( level.multibomb && self.pers["team"] == game["attackers"] )
-            self _meth_82FB( "ui_carrying_bomb", 1 );
+            self setclientomnvar( "ui_carrying_bomb", 1 );
         else
-            self _meth_82FB( "ui_carrying_bomb", 0 );
+            self setclientomnvar( "ui_carrying_bomb", 0 );
     }
 
     maps\mp\_utility::setextrascore0( 0 );
@@ -192,7 +192,7 @@ onspawnplayer()
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
     if ( isplayer( self ) )
-        self _meth_82FB( "ui_carrying_bomb", 0 );
+        self setclientomnvar( "ui_carrying_bomb", 0 );
 
     thread maps\mp\gametypes\common_sd_sr::checkallowspectating();
 }

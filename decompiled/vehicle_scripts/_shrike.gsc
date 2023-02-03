@@ -104,7 +104,7 @@ add_contrail( var_0, var_1 )
     var_3.yaw = 0;
     var_3.pitch = 0;
     var_3 maps\_utility::translate_local();
-    var_2 _meth_804D( self, var_0 );
+    var_2 linkto( self, var_0 );
     return var_2;
 }
 

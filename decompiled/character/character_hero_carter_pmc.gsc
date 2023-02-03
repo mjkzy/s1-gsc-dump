@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "atlas_pmc_body" );
+    self setmodel( "atlas_pmc_body" );
     codescripts\character::attachhead( "alias_pmc_helmet_heads", xmodelalias\alias_pmc_helmet_heads::main() );
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

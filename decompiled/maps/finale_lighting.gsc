@@ -51,15 +51,15 @@ init_level_lighting_flags()
 set_level_lighting_values()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disableLightSets", 0 );
-        _func_0D3( "r_tonemapMinExposureAdjust", -7.4919 );
-        _func_0D3( "sm_usedSunCascadeCount", 2 );
-        _func_0D3( "sm_sunSampleSizeNear", 0.2 );
-        _func_0D3( "r_fog_ev_adjust", 1 );
+        setsaveddvar( "r_disableLightSets", 0 );
+        setsaveddvar( "r_tonemapMinExposureAdjust", -7.4919 );
+        setsaveddvar( "sm_usedSunCascadeCount", 2 );
+        setsaveddvar( "sm_sunSampleSizeNear", 0.2 );
+        setsaveddvar( "r_fog_ev_adjust", 1 );
     }
 }
 
@@ -102,22 +102,22 @@ lerp_angles_function( var_0, var_1, var_2 )
 enable_motion_blur()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 }
 
 enable_motion_blur_rotation()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 }
 
 disable_motion_blur()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 setup_dof_presets()
@@ -160,7 +160,7 @@ manage_dof()
 {
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
+        level.player enablephysicaldepthoffieldscripting();
         level.player_dof_aperture = 4.5;
         level.player_dof_distance = 30;
     }
@@ -180,16 +180,16 @@ canal_p1()
         if ( level.nextgen )
         {
             maps\_utility::vision_set_fog_changes( "finale_underwater", 3 );
-            level.player _meth_8490( "clut_finale_underwater", 0 );
-            level.player _meth_83C0( "underwater_lightset" );
+            level.player setclutforplayer( "clut_finale_underwater", 0 );
+            level.player lightsetforplayer( "underwater_lightset" );
         }
         else if ( level.currentgen )
         {
             maps\_utility::vision_set_fog_changes( "finale_underwater", 0.1 );
-            level.player _meth_83C0( "underwater_lightset" );
+            level.player lightsetforplayer( "underwater_lightset" );
         }
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -205,9 +205,9 @@ canal_p2()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "finale_underwater_darkfog", 3 );
-        level.player _meth_83C0( "canal_p2" );
+        level.player lightsetforplayer( "canal_p2" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -222,10 +222,10 @@ silo_p1()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "finale_silo_orange" );
+        level.player lightsetforplayer( "finale_silo_orange" );
         maps\_utility::vision_set_fog_changes( "finale_silo_orange", 0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -242,7 +242,7 @@ play_trigger_flashlight_off()
         self waittill( "trigger" );
         common_scripts\utility::flag_clear( "underwater_flashlight" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -257,11 +257,11 @@ play_finale_silo_orange_approach()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "clut_finale_orange_silo_approach_density", 2 );
-        level.player _meth_83C0( "finale_silo_orange" );
+        level.player setclutforplayer( "clut_finale_orange_silo_approach_density", 2 );
+        level.player lightsetforplayer( "finale_silo_orange" );
         maps\_utility::vision_set_fog_changes( "finale_silo_orange", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -276,11 +276,11 @@ play_finale_silo_orange()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "", 2 );
-        level.player _meth_83C0( "finale_silo_orange" );
+        level.player setclutforplayer( "", 2 );
+        level.player lightsetforplayer( "finale_silo_orange" );
         maps\_utility::vision_set_fog_changes( "finale_silo_orange", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -295,11 +295,11 @@ play_finale_silo_blue()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "clut_finale_silo_blue", 2 );
-        level.player _meth_83C0( "finale_silo_blue" );
+        level.player setclutforplayer( "clut_finale_silo_blue", 2 );
+        level.player lightsetforplayer( "finale_silo_blue" );
         maps\_utility::vision_set_fog_changes( "finale_silo_blue", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -314,11 +314,11 @@ play_finale_silo_yellow()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "", 2 );
-        level.player _meth_83C0( "finale_silo_orange" );
+        level.player setclutforplayer( "", 2 );
+        level.player lightsetforplayer( "finale_silo_orange" );
         maps\_utility::vision_set_fog_changes( "finale_silo_yellow", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -333,11 +333,11 @@ play_finale_silo_neutral()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "", 2 );
-        level.player _meth_83C0( "finale_silo_orange" );
+        level.player setclutforplayer( "", 2 );
+        level.player lightsetforplayer( "finale_silo_orange" );
         maps\_utility::vision_set_fog_changes( "finale_silo_neutral", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -352,11 +352,11 @@ play_finale_silo_round_tunnel()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "clut_finale_round_tunnel", 2 );
-        level.player _meth_83C0( "finale_silo_blue" );
+        level.player setclutforplayer( "clut_finale_round_tunnel", 2 );
+        level.player lightsetforplayer( "finale_silo_blue" );
         maps\_utility::vision_set_fog_changes( "finale_silo_blue", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -371,12 +371,12 @@ play_finale_silo_center()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_8490( "", 2 );
+        level.player setclutforplayer( "", 2 );
         setsunflareposition( ( -64.7, 29.9, 0 ) );
-        level.player _meth_83C0( "finale_silo_center" );
+        level.player lightsetforplayer( "finale_silo_center" );
         maps\_utility::vision_set_fog_changes( "finale_silo_center", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -392,7 +392,7 @@ play_vision_light_fog_normal()
     {
         self waittill( "trigger" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -412,9 +412,9 @@ science_room()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "finale_will_litend" );
+        level.player lightsetforplayer( "finale_will_litend" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -429,10 +429,10 @@ ending()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "finale_night" );
+        level.player lightsetforplayer( "finale_night" );
         level notify( "leave_will_room" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -447,9 +447,9 @@ ending2()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "finale_night2" );
+        level.player lightsetforplayer( "finale_night2" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -466,7 +466,7 @@ play_centroid_switch_floor3()
         self waittill( "trigger" );
         thread main_missle_lighting_floor3();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -483,7 +483,7 @@ play_centroid_switch_top()
         self waittill( "trigger" );
         thread main_missle_lighting_silotop();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -491,55 +491,55 @@ play_centroid_switch_top()
 debug_silo_approach_clut()
 {
     wait 0.05;
-    level.player _meth_8490( "clut_finale_orange_silo_approach_density", 1 );
+    level.player setclutforplayer( "clut_finale_orange_silo_approach_density", 1 );
 }
 
 debug_silo_floor_03_clut()
 {
     wait 0.05;
-    level.player _meth_8490( "clut_finale_silo_blue", 1 );
+    level.player setclutforplayer( "clut_finale_silo_blue", 1 );
 }
 
 debug_silo_door_kick_clut()
 {
     wait 0.05;
-    level.player _meth_8490( "", 2 );
+    level.player setclutforplayer( "", 2 );
 }
 
 debug_silo_exhaust_entrance_clut()
 {
     wait 0.05;
-    level.player _meth_8490( "clut_finale_round_tunnel", 1 );
+    level.player setclutforplayer( "clut_finale_round_tunnel", 1 );
 }
 
 hatch_lighting()
 {
     enable_motion_blur();
     thread hatch_dof();
-    level.player _meth_83C0( "finale_hatch" );
+    level.player lightsetforplayer( "finale_hatch" );
     maps\_utility::vision_set_fog_changes( "finale_hatch", 2 );
     common_scripts\_exploder::exploder( "4000" );
     wait 1.5;
-    level.player _meth_8490( "clut_finale_silo_shaft", 2 );
+    level.player setclutforplayer( "clut_finale_silo_shaft", 2 );
 }
 
 hatch_dof()
 {
     thread hatch_land_blur();
-    level.player _meth_84A9();
-    _func_0D3( "r_dof_physical_bokehEnable", 1 );
-    level.player _meth_84AB( 12, 33 );
+    level.player enablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+    level.player setphysicaldepthoffield( 12, 33 );
     wait 1;
-    level.player _meth_84AB( 1.5, 33, 1, 2 );
+    level.player setphysicaldepthoffield( 1.5, 33, 1, 2 );
 }
 
 hatch_land_blur()
 {
     common_scripts\utility::flag_wait( "flag_lighting_fall_blur" );
     wait 0.5;
-    _func_072( 40, 0.5 );
+    setblur( 40, 0.5 );
     wait 0.1;
-    _func_072( 0, 0.8 );
+    setblur( 0, 0.8 );
 }
 
 play_finale_low_burn()
@@ -547,27 +547,27 @@ play_finale_low_burn()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_84AB( 12, 33, 1, 2 );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        level.player setphysicaldepthoffield( 12, 33, 1, 2 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
         setsunflareposition( ( 0, 180, 0 ) );
-        level.player _meth_8490( "clut_finale_burn_pre", 4 );
+        level.player setclutforplayer( "clut_finale_burn_pre", 4 );
         var_0 = getent( "light_rocket_exhaust", "targetname" );
         maps\_lighting::set_spot_intensity( "light_rocket_exhaust", 4000 );
         maps\_lighting::set_spot_color( "light_rocket_exhaust", ( 0.156863, 0.313726, 0.847059 ) );
-        level.player _meth_83C0( "finale_low_burn" );
+        level.player lightsetforplayer( "finale_low_burn" );
         maps\_utility::vision_set_fog_changes( "finale_low_burn", 2 );
         var_1 = common_scripts\utility::getstruct( "struct_light_silo_cine_low_burn_rim", "targetname" );
         var_2 = getent( "light_rocket_rim", "targetname" );
         maps\_lighting::set_spot_intensity( "light_rocket_rim", 300000 );
         maps\_lighting::set_spot_color( "light_rocket_rim", ( 0.255, 0.376, 1 ) );
         var_2 maps\_lighting::lerp_light_fov_range( 30, 5, 30, 1, 0.05 );
-        var_2 _meth_8046( 285 );
+        var_2 setlightradius( 285 );
         wait 5;
         lerp_origin_function( var_2, 0.05, var_1.origin );
         lerp_angles_function( var_2, 0.05, var_1.angles );
         common_scripts\_exploder::kill_exploder( "4000" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -575,8 +575,8 @@ play_finale_low_burn()
 red_burn_lighting_fog()
 {
     var_0 = getent( "light_rocket_exhaust", "targetname" );
-    level.player _meth_8490( "clut_finale_burn_red", 2.6 );
-    level.player _meth_83C0( "finale_red_burn" );
+    level.player setclutforplayer( "clut_finale_burn_red", 2.6 );
+    level.player lightsetforplayer( "finale_red_burn" );
     maps\_utility::vision_set_fog_changes( "finale_red_burn", 2.6 );
     var_0 maps\_lighting::lerp_light_fov_range( 90, 60, 30, 5, 0.05 );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_red_burn_exhaust", "light_rocket_exhaust" );
@@ -585,8 +585,8 @@ red_burn_lighting_fog()
 
 cold_burn_lighting_fog()
 {
-    level.player _meth_8490( "", 1 );
-    level.player _meth_83C0( "finale_cold_burn" );
+    level.player setclutforplayer( "", 1 );
+    level.player lightsetforplayer( "finale_cold_burn" );
     maps\_utility::vision_set_fog_changes( "finale_cold_burn", 8 );
     maps\_lighting::stop_flickerlight( "firelight_motion_red_burn", "light_rocket_exhaust", 0 );
     maps\_lighting::stop_flickerlight( "firelight_motion_red_burn", "light_rocket_thrusters", 0 );
@@ -598,7 +598,7 @@ cold_burn_lighting_fog()
 rocket_success_lighting_pre_cine()
 {
     common_scripts\utility::flag_wait( "lighting_flag_obj_stop_missile_complete" );
-    level.player _meth_83C0( "finale_silo_end_cine" );
+    level.player lightsetforplayer( "finale_silo_end_cine" );
     maps\_utility::vision_set_fog_changes( "finale_silo_end_cine", 10 );
     maps\_lighting::pause_flickerlight( "firelight_motion_cold_burn", "light_rocket_exhaust" );
     maps\_lighting::pause_flickerlight( "firelight_motion_cold_burn", "light_rocket_thrusters" );
@@ -631,58 +631,58 @@ rocket_success_pt2_gideon_in_frame( var_0 )
 
 rocket_cine_dof( var_0 )
 {
-    level.player _meth_84A9();
-    _func_0D3( "r_dof_physical_bokehEnable", 1 );
+    level.player enablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_bokehEnable", 1 );
     enable_motion_blur_rotation();
-    level.player _meth_84AB( 12, 100 );
+    level.player setphysicaldepthoffield( 12, 100 );
     wait 2;
-    level.player _meth_84AB( 1.5, 36, 5, 2 );
+    level.player setphysicaldepthoffield( 1.5, 36, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 1.5, 500, 5, 2 );
+    level.player setphysicaldepthoffield( 1.5, 500, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 0.3, 72, 5, 2 );
+    level.player setphysicaldepthoffield( 0.3, 72, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 1.5, 600, 5, 2 );
+    level.player setphysicaldepthoffield( 1.5, 600, 5, 2 );
     wait 2.5;
-    level.player _meth_84AB( 0.5, 72, 5, 2 );
+    level.player setphysicaldepthoffield( 0.5, 72, 5, 2 );
     common_scripts\utility::flag_wait( "flag_dof_rocket_success_pt2_start" );
-    level.player _meth_84AB( 2.5, 22, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 22, 5, 2 );
     wait 3;
-    level.player _meth_84AB( 4, 85, 10, 10 );
+    level.player setphysicaldepthoffield( 4, 85, 10, 10 );
     wait 0.5;
-    level.player _meth_84AB( 1.5, 43, 2, 4 );
+    level.player setphysicaldepthoffield( 1.5, 43, 2, 4 );
     wait 1;
-    level.player _meth_84AB( 1, 21, 1, 2 );
+    level.player setphysicaldepthoffield( 1, 21, 1, 2 );
     wait 1;
-    level.player _meth_84AB( 2.5, 22, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 22, 5, 2 );
     wait 4.25;
-    level.player _meth_84AB( 2, 21.5, 5, 2 );
+    level.player setphysicaldepthoffield( 2, 21.5, 5, 2 );
     wait 1.25;
-    level.player _meth_84AB( 2.5, 23, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 23, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 2.5, 27.2, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 27.2, 5, 2 );
     wait 1.75;
-    level.player _meth_84AB( 2.5, 23.8, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 23.8, 5, 2 );
     wait 2;
-    level.player _meth_84AB( 2.5, 27.3, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 27.3, 5, 2 );
     wait 1;
-    level.player _meth_84AB( 2.5, 13.6, 5, 2 );
+    level.player setphysicaldepthoffield( 2.5, 13.6, 5, 2 );
     wait 4;
-    _func_0D3( "r_dof_physical_bokehEnable", 0 );
-    level.player _meth_84AA();
+    setsaveddvar( "r_dof_physical_bokehEnable", 0 );
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 }
 
 play_finale_silo_end_cine()
 {
-    level.player _meth_83C0( "finale_silo_end_cine" );
+    level.player lightsetforplayer( "finale_silo_end_cine" );
     maps\_utility::vision_set_fog_changes( "finale_silo_end_cine", 1 );
     var_0 = getent( "light_rocket_exhaust", "targetname" );
     var_1 = getent( "light_rocket_thrusters", "targetname" );
     var_2 = getent( "light_rocket_rim", "targetname" );
-    var_0 _meth_8498( "force_on" );
-    var_1 _meth_8498( "force_on" );
-    var_2 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
+    var_1 setlightshadowstate( "force_on" );
+    var_2 setlightshadowstate( "force_on" );
     var_3 = common_scripts\utility::getstruct( "struct_light_silo_cine_key_1", "targetname" );
     var_4 = common_scripts\utility::getstruct( "struct_light_silo_cine_key_2_alt3", "targetname" );
     var_5 = common_scripts\utility::getstruct( "struct_light_silo_cine_key_2", "targetname" );
@@ -693,7 +693,7 @@ play_finale_silo_end_cine()
     var_10 = common_scripts\utility::getstruct( "struct_light_silo_cine_rim_2", "targetname" );
     var_11 = common_scripts\utility::getstruct( "struct_light_silo_cine_rim_2_alt1", "targetname" );
     var_12 = common_scripts\utility::getstruct( "struct_light_silo_cine_rim_2_alt2", "targetname" );
-    level.player _meth_83C0( "finale_silo_end_cine" );
+    level.player lightsetforplayer( "finale_silo_end_cine" );
     maps\_utility::vision_set_fog_changes( "finale_silo_end_cine", 1 );
     maps\_lighting::stop_flickerlight( "firelight_motion_cold_burn", "light_rocket_thrusters", 0 );
     maps\_lighting::stop_flickerlight( "firelight_motion_cold_burn", "light_rocket_exhaust", 0 );
@@ -742,9 +742,9 @@ play_finale_silo_end_cine()
     thread maps\_lighting::lerp_spot_intensity( "light_rocket_exhaust", 0.3, 1500 );
     wait 2;
     wait 4;
-    var_0 _meth_8498( "normal" );
-    var_1 _meth_8498( "normal" );
-    var_2 _meth_8498( "normal" );
+    var_0 setlightshadowstate( "normal" );
+    var_1 setlightshadowstate( "normal" );
+    var_2 setlightshadowstate( "normal" );
 }
 
 rocket_fail_lighting()
@@ -808,22 +808,22 @@ manage_day_night()
 
     if ( common_scripts\utility::flag( "first_half_lighting" ) == 1 )
     {
-        _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-        _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( -702, -7842, 202 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( -702, -7842, 202 ) );
+        setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+        setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( -702, -7842, 202 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( -702, -7842, 202 ) );
         common_scripts\utility::flag_waitopen( "first_half_lighting" );
-        _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-        _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
+        setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+        setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
     }
     else
     {
-        _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-        _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
+        setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+        setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( 15286.3, -87020.1, 7820.69 ) );
     }
 }
 
@@ -853,7 +853,7 @@ turn_on_lab_lights_scriptable()
 {
     level.player thread maps\_lighting::screen_effect_base( 0, "ac130_overlay_pip_vignette", 0, 0, 1, 0, 0 );
     level.lighting_origin = getent( "tube_on", "targetname" );
-    _func_0D3( "r_adaptivesubdiv", 0 );
+    setsaveddvar( "r_adaptivesubdiv", 0 );
     var_0 = getentarray( "light_strips_on", "targetname" );
     var_1 = getentarray( "light_strips_off", "targetname" );
 
@@ -876,8 +876,8 @@ turn_on_lab_lights_scriptable()
     common_scripts\_exploder::exploder( "lighton" );
     wait 70;
     maps\_utility::vision_set_fog_changes( "finale_roof", 5 );
-    _func_0D3( "r_adaptivesubdiv", 1 );
-    level.player _meth_83C0( "finale_will_litend" );
+    setsaveddvar( "r_adaptivesubdiv", 1 );
+    level.player lightsetforplayer( "finale_will_litend" );
 }
 
 animated_lights( var_0 )
@@ -900,9 +900,9 @@ animated_lights( var_0 )
     thread maps\_lighting::lerp_spot_intensity( "will_fill_light", 1, 45000 );
     thread maps\_lighting::lerp_spot_color( "will_fill_light", 1, ( 0.68, 0.8, 1 ) );
     maps\_utility::vision_set_fog_changes( "finale_cinematic", 0 );
-    level.player _meth_83C0( "finale_will_lit_bright" );
+    level.player lightsetforplayer( "finale_will_lit_bright" );
     wait 0.05;
-    level.player _meth_83C0( "finale_will_lit" );
+    level.player lightsetforplayer( "finale_will_lit" );
     var_4 = maps\_lighting::setup_scriptable_primary_light( "will_key_light", 0, ( 93.6, -142.9, 24.08 ), ( 31.6, -8, 0 ), 5000, ( 1, 0.9, 0.85 ), 70, 120, level.lighting_origin, "tag_origin", 200 );
     var_5 = maps\_lighting::setup_scriptable_primary_light( "will_rim_light", 2, ( 136.95, -265.679, 54.899 ), ( 21.24, 82.3, 0 ), 60000.5, ( 1, 0.95, 0.95 ), 30, 80, level.lighting_origin, "tag_origin", 250 );
     var_6 = maps\_lighting::setup_scriptable_primary_light( "will_back_light", 3, ( 220.99, -112.189, -17.25 ), ( 13, -162, 0 ), 250700, ( 0.45, 0.6, 1 ), 30, 80, level.lighting_origin, "tag_origin", 150 );
@@ -926,15 +926,15 @@ turn_on_lab_lights()
 {
     wait 8;
     var_0 = getent( "will_key_light", "targetname" );
-    var_0 _meth_81DF( 100000 );
-    var_0 _meth_8044( ( 0.4, 0.7, 1 ) );
+    var_0 setlightintensity( 100000 );
+    var_0 setlightcolor( ( 0.4, 0.7, 1 ) );
     var_1 = getent( "will_fill_light", "targetname" );
-    var_1 _meth_81DF( 5000 );
-    var_1 _meth_8044( ( 0.4, 0.7, 1 ) );
+    var_1 setlightintensity( 5000 );
+    var_1 setlightcolor( ( 0.4, 0.7, 1 ) );
     var_2 = getent( "will_rim_light", "targetname" );
-    var_2 _meth_81DF( 100000 );
-    var_2 _meth_8044( ( 0.55, 0.8, 1 ) );
-    var_2 _meth_8046( 250 );
+    var_2 setlightintensity( 100000 );
+    var_2 setlightcolor( ( 0.55, 0.8, 1 ) );
+    var_2 setlightradius( 250 );
 
     for ( var_3 = 1; var_3 <= 9; var_3++ )
     {
@@ -1000,13 +1000,13 @@ motion_manage()
 
         if ( common_scripts\utility::flag( "flyin_mb" ) == 1 )
         {
-            _func_0D3( "r_mbEnable", "3" );
-            _func_0D3( "r_mbvelocityscalar", ".5" );
+            setsaveddvar( "r_mbEnable", "3" );
+            setsaveddvar( "r_mbvelocityscalar", ".5" );
             common_scripts\utility::flag_waitopen( "flyin_mb" );
-            _func_0D3( "r_mbEnable", "0" );
+            setsaveddvar( "r_mbEnable", "0" );
         }
         else
-            _func_0D3( "r_mbEnable", "0" );
+            setsaveddvar( "r_mbEnable", "0" );
     }
 }
 
@@ -1029,23 +1029,23 @@ disable_physical_dof()
 
 enable_physical_dof_hip()
 {
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 0.125 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.1 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 0.125 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.1 );
 }
 
 dof_intro()
 {
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 200 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 200 );
     common_scripts\utility::flag_wait( "flag_intro_flyin_done" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 dof_outro()
 {
-    level.player _meth_84A9();
-    level.player _meth_84AB( 0.5, 50 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 0.5, 50 );
 }
 
 light_ending_cinematic()
@@ -1061,43 +1061,43 @@ light_ending_cinematic()
 
 light_ending_cinematic_dof()
 {
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     wait 0.5;
-    level.player _meth_84AB( 4.5, 4 );
+    level.player setphysicaldepthoffield( 4.5, 4 );
     wait 0.5;
-    level.player _meth_84AB( 5.5, 60 );
+    level.player setphysicaldepthoffield( 5.5, 60 );
     wait 1;
-    level.player _meth_84AB( 2.5, 40 );
-    level.player _meth_83C0( "finale_night_cinematic" );
+    level.player setphysicaldepthoffield( 2.5, 40 );
+    level.player lightsetforplayer( "finale_night_cinematic" );
     wait 10.3;
 
     if ( level.nextgen )
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
 
     level waittill( "dof_look_down" );
 
     if ( level.nextgen )
-        level.player _meth_84A9();
+        level.player enablephysicaldepthoffieldscripting();
 
-    level.player _meth_84AB( 2.5, 40 );
+    level.player setphysicaldepthoffield( 2.5, 40 );
     common_scripts\utility::flag_wait( "arm_off" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbvelocityscalar", "3" );
-    level.player _meth_84AB( 4.5, 1290 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbvelocityscalar", "3" );
+    level.player setphysicaldepthoffield( 4.5, 1290 );
     level waittill( "irons_dead" );
-    _func_0D3( "r_mbEnable", "0" );
+    setsaveddvar( "r_mbEnable", "0" );
     wait 3.5;
-    level.player _meth_84AB( 8.5, 16.5 );
+    level.player setphysicaldepthoffield( 8.5, 16.5 );
     wait 5.5;
-    level.player _meth_84AB( 8.5, 16.5 );
+    level.player setphysicaldepthoffield( 8.5, 16.5 );
     wait 6;
-    level.player _meth_84AB( 4.5, 1290 );
+    level.player setphysicaldepthoffield( 4.5, 1290 );
     wait 4;
-    level.player _meth_84AB( 4.5, 1290 );
+    level.player setphysicaldepthoffield( 4.5, 1290 );
     wait 15.25;
-    level.player _meth_84AB( 8, 16 );
+    level.player setphysicaldepthoffield( 8, 16 );
     wait 3;
-    level.player _meth_84AB( 5, 300 );
+    level.player setphysicaldepthoffield( 5, 300 );
 }
 
 will_room_speech_end()
@@ -1126,7 +1126,7 @@ will_room_speech_end()
 
 lighting_will_reveal()
 {
-    level.player _meth_83C0( "finale_will" );
+    level.player lightsetforplayer( "finale_will" );
     maps\_utility::vision_set_fog_changes( "finale_cinematic_nofog", 2 );
     thread turn_on_lab_lights_scriptable();
 }
@@ -1137,7 +1137,7 @@ missle_lighting( var_0 )
     var_2 = getent( "script_origin_rocket_top", "targetname" );
 
     foreach ( var_4 in var_0 )
-        var_4 _meth_847B( var_1.origin );
+        var_4 overridelightingorigin( var_1.origin );
 }
 
 main_missle_lighting_silotop()
@@ -1148,10 +1148,10 @@ main_missle_lighting_silotop()
     var_3 = getent( "missile_mid_01", "targetname" );
     var_4 = getent( "missile_mid_02", "targetname" );
     var_5 = getent( "missile_bottom", "targetname" );
-    var_2 _meth_847B( var_1.origin );
-    var_3 _meth_847B( var_1.origin );
-    var_4 _meth_847B( var_1.origin );
-    var_5 _meth_847B( var_1.origin );
+    var_2 overridelightingorigin( var_1.origin );
+    var_3 overridelightingorigin( var_1.origin );
+    var_4 overridelightingorigin( var_1.origin );
+    var_5 overridelightingorigin( var_1.origin );
 }
 
 main_missle_lighting_floor3()
@@ -1162,10 +1162,10 @@ main_missle_lighting_floor3()
     var_3 = getent( "missile_mid_01", "targetname" );
     var_4 = getent( "missile_mid_02", "targetname" );
     var_5 = getent( "missile_bottom", "targetname" );
-    var_2 _meth_847B( var_0.origin );
-    var_3 _meth_847B( var_0.origin );
-    var_4 _meth_847B( var_0.origin );
-    var_5 _meth_847B( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_3 overridelightingorigin( var_0.origin );
+    var_4 overridelightingorigin( var_0.origin );
+    var_5 overridelightingorigin( var_0.origin );
 }
 
 s_flicker_catwalk_alarm()
@@ -1187,8 +1187,8 @@ setup_eye_highlights_gideon()
 {
     if ( level.nextgen )
     {
-        level.gideon _meth_846C( "mtl_gideon_eye_shader_l", "mc/mtl_gideon_eye_shader_end_l" );
-        level.gideon _meth_846C( "mtl_gideon_eye_shader_r", "mc/mtl_gideon_eye_shader_end_r" );
+        level.gideon overridematerial( "mtl_gideon_eye_shader_l", "mc/mtl_gideon_eye_shader_end_l" );
+        level.gideon overridematerial( "mtl_gideon_eye_shader_r", "mc/mtl_gideon_eye_shader_end_r" );
     }
 }
 
@@ -1196,8 +1196,8 @@ setup_eye_highlights_02()
 {
     if ( level.nextgen )
     {
-        level.irons _meth_846C( "mtl_irons_eye_shader_l", "mc/mtl_irons_eye_shader_finale_fire_l" );
-        level.irons _meth_846C( "mtl_irons_eye_shader_r", "mc/mtl_irons_eye_shader_finale_fire_r" );
+        level.irons overridematerial( "mtl_irons_eye_shader_l", "mc/mtl_irons_eye_shader_finale_fire_l" );
+        level.irons overridematerial( "mtl_irons_eye_shader_r", "mc/mtl_irons_eye_shader_finale_fire_r" );
     }
 }
 
@@ -1206,8 +1206,8 @@ setup_eye_highlights( var_0 )
     if ( level.nextgen )
     {
         wait 20;
-        var_0 _meth_846C( "mtl_irons_eye_shader_l", "mc/mtl_irons_eye_shader_finale_l" );
-        var_0 _meth_846C( "mtl_irons_eye_shader_r", "mc/mtl_irons_eye_shader_finale_r" );
+        var_0 overridematerial( "mtl_irons_eye_shader_l", "mc/mtl_irons_eye_shader_finale_l" );
+        var_0 overridematerial( "mtl_irons_eye_shader_r", "mc/mtl_irons_eye_shader_finale_r" );
     }
 }
 
@@ -1215,10 +1215,10 @@ mb_surprise()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbvelocityscalar", "3" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbvelocityscalar", "3" );
         wait 5;
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
     }
 }
 
@@ -1229,16 +1229,16 @@ mb_tackle()
         common_scripts\utility::flag_wait( "flag_balcony_tackle_success" );
         thread light_ending_cinematic();
         thread fire_ending_light();
-        _func_0D3( "r_adaptivesubdiv", 0 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbvelocityscalar", "5.5" );
+        setsaveddvar( "r_adaptivesubdiv", 0 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbvelocityscalar", "2.5" );
         wait 3.2;
         maps\_utility::vision_set_fog_changes( "finale_roof_hang", 1 );
-        level.player _meth_8490( "clut_finale_fire", 0.5 );
-        level.player _meth_83C0( "finale_night3" );
+        level.player setclutforplayer( "clut_finale_fire", 0.5 );
+        level.player lightsetforplayer( "finale_night3" );
         thread setup_eye_highlights_02();
-        wait 2.5;
-        _func_0D3( "r_mbvelocityscalar", ".5" );
+        wait 3;
+        setsaveddvar( "r_mbvelocityscalar", ".5" );
     }
 
     if ( level.currentgen )
@@ -1248,7 +1248,7 @@ mb_tackle()
         thread fire_ending_light();
         wait 3.2;
         maps\_utility::vision_set_fog_changes( "finale_roof_hang", 1 );
-        level.player _meth_83C0( "finale_night3" );
+        level.player lightsetforplayer( "finale_night3" );
         thread setup_eye_highlights_02();
         wait 3;
     }
@@ -1266,15 +1266,15 @@ dof_irons_meet( var_0 )
     {
         common_scripts\utility::flag_wait( "flag_sit_down" );
         var_1 = common_scripts\utility::spawn_tag_origin();
-        var_1 _meth_804D( var_0, "J_Head", ( 0, 3, 0 ), ( 0, 0, 0 ), 0 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 3.5, 60 );
+        var_1 linkto( var_0, "J_Head", ( 0, 3, 0 ), ( 0, 0, 0 ), 0 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 3.5, 60 );
         wait 2.5;
-        level.player _meth_84AB( 3.5, 15 );
+        level.player setphysicaldepthoffield( 3.5, 15 );
         wait 2;
-        level.player _meth_84AB( 0.5, 120 );
+        level.player setphysicaldepthoffield( 0.5, 120 );
         common_scripts\utility::flag_wait( "turn_on_lights" );
-        level.player _meth_8490( "clut_finale_chase", 0 );
+        level.player setclutforplayer( "clut_finale_chase", 0 );
         common_scripts\utility::flag_set( "lighting_target_dof" );
         thread lighting_target_dof_ender( level.player, var_1, 3.5 );
         thread autofocus_loop();
@@ -1312,7 +1312,7 @@ gideon_mech_light()
 
     var_0.light_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.light_tag;
-    var_1 _meth_804D( var_0, "J_Head", ( 0, 20, 0 ), ( 180, -105, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 0, 20, 0 ), ( 180, -105, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "fin_light_mech" ), var_1, "tag_origin" );
     wait 0.1;
     killfxontag( common_scripts\utility::getfx( "fin_light_mech" ), var_1, "tag_origin" );
@@ -1333,7 +1333,7 @@ gideon_mech_light()
 add_player_flashlight( var_0, var_1, var_2 )
 {
     var_3 = level.player common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_80A6( level.player, "tag_origin", ( 0, -10, 10 ), ( 0, 0, 0 ), 0 );
+    var_3 linktoplayerview( level.player, "tag_origin", ( 0, -10, 10 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "player_light_med2" ), var_3, "tag_origin" );
     level.player.tag_weapon = var_3;
     thread monitor_player_light_off();
@@ -1390,9 +1390,9 @@ atlas_sign_flicker()
     var_2 hide();
     level waittill( "irons_dead" );
     wait 3.9;
-    var_3 _meth_82AE( var_4.origin, 0.1, 0.05, 0.05 );
+    var_3 moveto( var_4.origin, 0.1, 0.05, 0.05 );
     wait 0.15;
-    level.player _meth_8490( "clut_finale_roof", 0 );
+    level.player setclutforplayer( "clut_finale_roof", 0 );
     thread maps\_utility::vision_set_fog_changes( "finale_roof_hang_end", 1 );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large_atlas", "fire_ending_shot" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_med_ending3", "light_spot_irons_rim_02" );
@@ -1439,7 +1439,7 @@ lighting_target_dof_ender( var_0, var_1, var_2 )
 
 autofocus_loop()
 {
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     var_0 = level.player_dof_aperture;
 
     while ( common_scripts\utility::flag( "flag_autofocus_on" ) == 0 )
@@ -1452,16 +1452,16 @@ autofocus_loop()
             var_0 += abs( 60 - var_1 ) * 0.1;
 
         if ( level.nextgen )
-            level.player _meth_84AB( var_0, var_1, 4, 2 );
+            level.player setphysicaldepthoffield( var_0, var_1, 4, 2 );
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 trace_distance()
 {
     var_0 = 4096;
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = level.player getangles();
 
     if ( isdefined( level.player.dof_ref_ent ) )
@@ -1476,22 +1476,22 @@ trace_distance()
 
 player_rig_lighting_org_willroom( var_0 )
 {
-    var_0 _meth_847C();
+    var_0 defaultlightingorigin();
     wait 0.05;
     var_1 = common_scripts\utility::getstruct( "will_room_lighting_origin", "targetname" );
-    var_0 _meth_847B( level.gideon.origin );
+    var_0 overridelightingorigin( level.gideon.origin );
     level.player waittill( "exo_released" );
-    var_0 _meth_847C();
+    var_0 defaultlightingorigin();
 }
 
 player_rig_lighting_org( var_0 )
 {
-    var_0 _meth_847C();
+    var_0 defaultlightingorigin();
     wait 0.05;
     var_1 = getent( "org_player_carried_lobby_03_lighting", "targetname" );
-    var_0 _meth_847B( level.irons.origin );
+    var_0 overridelightingorigin( level.irons.origin );
     level.player waittill( "exo_released" );
-    var_0 _meth_847C();
+    var_0 defaultlightingorigin();
 }
 
 clut_rotate()
@@ -1500,41 +1500,41 @@ clut_rotate()
 
     for (;;)
     {
-        level.player _meth_8490( "clut_finale_fire", 0 );
+        level.player setclutforplayer( "clut_finale_fire", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_intro", 0 );
+        level.player setclutforplayer( "clut_finale_intro", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_chase", 0 );
+        level.player setclutforplayer( "clut_finale_chase", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_irons", 0 );
+        level.player setclutforplayer( "clut_finale_irons", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_lobby", 0 );
+        level.player setclutforplayer( "clut_finale_lobby", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_roof", 0 );
+        level.player setclutforplayer( "clut_finale_roof", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_walkway", 0 );
+        level.player setclutforplayer( "clut_finale_walkway", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_burn_pre", 0 );
+        level.player setclutforplayer( "clut_finale_burn_pre", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_burn_red", 0 );
+        level.player setclutforplayer( "clut_finale_burn_red", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_orange_silo_approach", 0 );
+        level.player setclutforplayer( "clut_finale_orange_silo_approach", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_round_tunnel", 0 );
+        level.player setclutforplayer( "clut_finale_round_tunnel", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_silo_blue", 0 );
+        level.player setclutforplayer( "clut_finale_silo_blue", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_silo_center", 0 );
+        level.player setclutforplayer( "clut_finale_silo_center", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_silo_shaft", 0 );
+        level.player setclutforplayer( "clut_finale_silo_shaft", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_floor3_density", 0 );
+        level.player setclutforplayer( "clut_finale_floor3_density", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_orange_silo_approach_density", 0 );
+        level.player setclutforplayer( "clut_finale_orange_silo_approach_density", 0 );
         wait 1;
-        level.player _meth_8490( "clut_finale_round_tunnel", 0 );
+        level.player setclutforplayer( "clut_finale_round_tunnel", 0 );
         wait 1;
-        level.player _meth_8490( "", 0 );
+        level.player setclutforplayer( "", 0 );
     }
 }
 
@@ -1543,22 +1543,22 @@ balcony_lighting( var_0 )
     common_scripts\utility::flag_wait( "flag_balcony_tackle_success" );
     wait 3;
     var_1 = getent( "gideon_lighting_org", "targetname" );
-    var_0 _meth_847B( level.gideon.origin );
+    var_0 overridelightingorigin( level.gideon.origin );
 }
 
 sky_bridge_dof()
 {
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbvelocityscalar", "1" );
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
-    level.player _meth_84A9();
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbvelocityscalar", "1" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+    level.player enablephysicaldepthoffieldscripting();
     wait 5;
-    level.player _meth_84AB( 1.5, 30 );
+    level.player setphysicaldepthoffield( 1.5, 30 );
     wait 4;
-    level.player _meth_84AB( 2.5, 3000 );
+    level.player setphysicaldepthoffield( 2.5, 3000 );
     wait 10;
-    level.player _meth_84AB( 1.5, 30 );
+    level.player setphysicaldepthoffield( 1.5, 30 );
     wait 8;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 }

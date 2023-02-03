@@ -38,8 +38,8 @@ onplayerconnect()
             if ( var_2 < 0 )
                 var_2 = 0;
 
-            var_3 = var_0 _meth_8507() - var_2;
-            var_4 = var_0 _meth_8507();
+            var_3 = var_0 gettotalmpxp() - var_2;
+            var_4 = var_0 gettotalmpxp();
 
             if ( !maps\mp\_utility::invirtuallobby() && ( !isdefined( var_0.pers["gamesPlayedSet"] ) || !var_0.pers["gamesPlayedSet"] ) )
             {
@@ -75,7 +75,7 @@ onplayerconnect()
         var_0.xpupdatetotal = 0;
         var_0.postgamepromotion = 0;
         var_0.explosivekills[0] = 0;
-        var_0 _meth_82A1( var_5, var_1 );
+        var_0 setrank( var_5, var_1 );
         var_0 processprestigemastery( var_1, var_2 );
 
         if ( var_0.clientid < level.maxlogclients )
@@ -85,9 +85,9 @@ onplayerconnect()
         }
 
         if ( !isdefined( var_0.pers["postGameChallenges"] ) )
-            var_0 _meth_82FD( "ui_challenge_1_ref", "", "ui_challenge_2_ref", "", "ui_challenge_3_ref", "", "ui_challenge_4_ref", "", "ui_challenge_5_ref", "", "ui_challenge_6_ref", "", "ui_challenge_7_ref", "" );
+            var_0 setclientdvars( "ui_challenge_1_ref", "", "ui_challenge_2_ref", "", "ui_challenge_3_ref", "", "ui_challenge_4_ref", "", "ui_challenge_5_ref", "", "ui_challenge_6_ref", "", "ui_challenge_7_ref", "" );
 
-        var_0 _meth_82FC( "ui_promotion", 0 );
+        var_0 setclientdvar( "ui_promotion", 0 );
 
         if ( !isdefined( var_0.pers["summary"] ) )
         {
@@ -104,7 +104,7 @@ onplayerconnect()
 
         if ( getdvar( "virtualLobbyActive" ) != "1" )
         {
-            var_0 _meth_82FC( "ui_opensummary", 0 );
+            var_0 setclientdvar( "ui_opensummary", 0 );
             var_0 thread maps\mp\gametypes\_missions::updatechallenges();
         }
 
@@ -250,7 +250,7 @@ giverankxp( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( var_1 > 0 && !isdefined( self.lootplaytimevalidated ) )
     {
         self.lootplaytimevalidated = 1;
-        _func_2B2( self.xuid );
+        lootservicevalidateplaytime( self.xuid );
     }
 
     var_6 = var_1;
@@ -277,7 +277,7 @@ giverankxp( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( level.xpscale > 1 )
                 var_6 = int( var_6 * level.xpscale );
 
-            if ( self _meth_8223( "hasDoubleXPItem" ) )
+            if ( self getrankedplayerdata( "hasDoubleXPItem" ) )
                 var_6 = int( var_6 * 2 );
 
             if ( isdefined( level.nukedetonated ) && level.nukedetonated )
@@ -296,7 +296,7 @@ giverankxp( var_0, var_1, var_2, var_3, var_4, var_5 )
                 var_6 = var_9;
             }
 
-            var_7 = self _meth_853B();
+            var_7 = self getclanwarsbonus();
             break;
     }
 
@@ -311,11 +311,11 @@ giverankxp( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_12 = maps\mp\gametypes\_missions::isweaponchallenge( var_4 );
 
     if ( var_12 )
-        var_2 = self _meth_8311();
+        var_2 = self getcurrentweapon();
 
     if ( var_0 == "shield_damage" )
     {
-        var_2 = self _meth_8311();
+        var_2 = self getcurrentweapon();
         var_3 = "MOD_MELEE";
     }
 
@@ -351,7 +351,7 @@ updaterank( var_0 )
 
     var_2 = self.pers["rank"];
     self.pers["rank"] = var_1;
-    self _meth_82A1( var_1 );
+    self setrank( var_1 );
     return 1;
 }
 
@@ -384,7 +384,7 @@ updaterankannouncehud()
         if ( isdefined( var_6 ) && var_5 != self )
         {
             if ( var_6 == var_0 )
-                var_5 iclientprintln( &"RANK_PLAYER_WAS_PROMOTED", self, var_1 );
+                var_5 iprintln( &"RANK_PLAYER_WAS_PROMOTED", self, var_1 );
         }
     }
 }
@@ -401,7 +401,7 @@ xppointspopup( var_0, var_1 )
     self notify( "xpPointsPopup" );
     self endon( "xpPointsPopup" );
     self.xpupdatetotal += var_1;
-    self _meth_82FB( "ui_points_popup", self.xpupdatetotal );
+    self setclientomnvar( "ui_points_popup", self.xpupdatetotal );
     var_2 = tablelookuprownum( "mp/xp_event_table.csv", 0, var_0 );
 
     if ( !isdefined( var_2 ) || isdefined( var_2 ) && var_2 == -1 )
@@ -409,7 +409,7 @@ xppointspopup( var_0, var_1 )
 
     }
     else
-        self _meth_82FB( "ui_points_popup_event", var_2 );
+        self setclientomnvar( "ui_points_popup_event", var_2 );
 
     wait 1;
     self.xpupdatetotal = 0;
@@ -503,7 +503,7 @@ processprestigemastery( var_0, var_1 )
 
     if ( var_0 == level.masterprestige && var_1 >= var_2 && !isdefined( self.pers["prestigeMaster"] ) )
     {
-        self.pers["prestigeMaster"] = self _meth_854B();
+        self.pers["prestigeMaster"] = self setprestigemastery();
 
         if ( isdefined( self.pers["prestigeMaster"] ) )
             thread maps\mp\gametypes\_hud_message::splashnotifyurgent( "prestigeMaster" );
@@ -511,7 +511,7 @@ processprestigemastery( var_0, var_1 )
 
     if ( var_0 == level.grandmasterprestige && var_1 >= var_2 && !isdefined( self.pers["prestigeGrandMaster"] ) )
     {
-        self.pers["prestigeGrandMaster"] = self _meth_854B();
+        self.pers["prestigeGrandMaster"] = self setprestigemastery();
 
         if ( isdefined( self.pers["prestigeGrandMaster"] ) )
             thread maps\mp\gametypes\_hud_message::splashnotifyurgent( "prestigeGrandMaster" );

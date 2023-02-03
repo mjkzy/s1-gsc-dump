@@ -17,19 +17,19 @@ hud_precache()
 
 hud_start( var_0, var_1, var_2 )
 {
-    _func_0D3( "compass", "0" );
-    _func_0D3( "g_friendlynamedist", 0 );
-    _func_0D3( "ammoCounterHide", "1" );
-    _func_0D3( "hud_showStance", "0" );
+    setsaveddvar( "compass", "0" );
+    setsaveddvar( "g_friendlynamedist", 0 );
+    setsaveddvar( "ammoCounterHide", "1" );
+    setsaveddvar( "hud_showStance", "0" );
     hud_init( var_0, var_1, var_2 );
 }
 
 hud_end()
 {
-    _func_0D3( "compass", "1" );
-    _func_0D3( "g_friendlynamedist", 15000 );
-    _func_0D3( "ammoCounterHide", "0" );
-    _func_0D3( "hud_showStance", "1" );
+    setsaveddvar( "compass", "1" );
+    setsaveddvar( "g_friendlynamedist", 15000 );
+    setsaveddvar( "ammoCounterHide", "0" );
+    setsaveddvar( "hud_showStance", "1" );
 }
 
 hud_init( var_0, var_1, var_2 )
@@ -63,7 +63,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     if ( var_2 == 1 )
     {
         var_5 = newhudelem();
-        var_5 _meth_80CC( "sentinel_drone_cam_name_1", 256, 32 );
+        var_5 setshader( "sentinel_drone_cam_name_1", 256, 32 );
         var_5.horzalign = "left";
         var_5.vertalign = "top";
         var_5.alpha = var_4;
@@ -76,7 +76,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     else if ( var_2 == 2 )
     {
         var_5 = newhudelem();
-        var_5 _meth_80CC( "sentinel_drone_cam_name_2", 256, 32 );
+        var_5 setshader( "sentinel_drone_cam_name_2", 256, 32 );
         var_5.horzalign = "left";
         var_5.vertalign = "top";
         var_5.alpha = var_4;
@@ -88,7 +88,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     }
 
     var_6 = newhudelem();
-    var_6 _meth_80CC( "sentinel_drone_scanlines", 640, 480 );
+    var_6 setshader( "sentinel_drone_scanlines", 640, 480 );
     var_6.horzalign = "fullscreen";
     var_6.vertalign = "fullscreen";
     var_6.alpha = 0.1;
@@ -96,7 +96,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_6.sort = 2;
     level.dronehud["scanlines"] = var_6;
     var_7 = newhudelem();
-    var_7 _meth_80CC( "sentinel_drone_text_scroll", 128, 256 );
+    var_7 setshader( "sentinel_drone_text_scroll", 128, 256 );
     var_7.horzalign = "left";
     var_7.vertalign = "top";
     var_7.alpha = var_4;
@@ -106,7 +106,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_7.sort = -4;
     level.dronehud["text_scroll"] = var_7;
     var_8 = newhudelem();
-    var_8 _meth_80CC( "sentinel_drone_text_scroll", 128, 256 );
+    var_8 setshader( "sentinel_drone_text_scroll", 128, 256 );
     var_8.horzalign = "left";
     var_8.vertalign = "bottom";
     var_8.alpha = var_4;
@@ -128,7 +128,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     level.dronehud["timer"].glowcolor = ( 1, 1, 1 );
     level.dronehud["timer"].glowalpha = 1;
     var_9 = newhudelem();
-    var_9 _meth_80CC( "sentinel_drone_reticle", 512, 512 );
+    var_9 setshader( "sentinel_drone_reticle", 512, 512 );
     var_9.horzalign = "center";
     var_9.vertalign = "middle";
     var_9.alpha = var_4;
@@ -139,7 +139,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_10 = -128;
     var_11 = 0;
     var_12 = newhudelem();
-    var_12 _meth_80CC( "sentinel_drone_pip", 128, 256 );
+    var_12 setshader( "sentinel_drone_pip", 128, 256 );
     var_12.horzalign = "right";
     var_12.vertalign = "top";
     var_12.alpha = 0.5;
@@ -148,7 +148,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_12.sort = 1;
     level.dronehud["pip_movie_bg"] = var_12;
     var_13 = newhudelem();
-    var_13 _meth_80CC( "cinematic_screen", 128, 256 );
+    var_13 setshader( "cinematic_screen", 128, 256 );
     var_13.horzalign = "right";
     var_13.vertalign = "top";
     var_13.alpha = var_4;
@@ -157,7 +157,7 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_13.sort = 2;
     level.dronehud["pip_movie"] = var_13;
     var_14 = newhudelem();
-    var_14 _meth_80CC( "sentinel_drone_pip_overlay", 128, 256 );
+    var_14 setshader( "sentinel_drone_pip_overlay", 128, 256 );
     var_14.horzalign = "right";
     var_14.vertalign = "top";
     var_14.alpha = var_4;
@@ -165,8 +165,8 @@ create_hud_drone_overlay( var_0, var_1, var_2 )
     var_14.y = var_11;
     var_14.sort = 2;
     level.dronehud["pip_overlay"] = var_14;
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_05A( "sentinel_drone_pip_black_bg" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloopresident( "sentinel_drone_pip_black_bg" );
 }
 
 create_hud_drone_target( var_0 )
@@ -174,12 +174,12 @@ create_hud_drone_target( var_0 )
     self endon( "death" );
     var_1 = ( 0.25, 0.25, 0.25 );
     var_2 = newhudelem();
-    var_2 _meth_80CC( "sentinel_drone_target", 64, 64 );
+    var_2 setshader( "sentinel_drone_target", 64, 64 );
     var_2.color = var_1;
     var_2.alpha = 1;
     var_2.sort = 2;
-    var_2 _meth_80D8( 0, 0 );
-    var_2 _meth_80CD( self );
+    var_2 setwaypoint( 0, 0 );
+    var_2 settargetent( self );
     level.dronetarget[level.dronetarget.size + 1] = var_2;
     return;
 }
@@ -255,6 +255,6 @@ attachdistortionfx( var_0 )
     level.dronehudfx = common_scripts\utility::spawn_tag_origin();
     level.dronehudfx.origin = var_0.origin;
     level.dronehudfx.angles = var_0.angles;
-    level.dronehudfx _meth_804D( var_0 );
+    level.dronehudfx linkto( var_0 );
     playfxontag( common_scripts\utility::getfx( "drone_cam_distortion" ), level.dronehudfx, "tag_origin" );
 }

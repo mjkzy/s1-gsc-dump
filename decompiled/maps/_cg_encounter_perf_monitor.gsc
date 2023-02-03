@@ -20,7 +20,7 @@ cg_spawn_perf_monitor( var_0, var_1, var_2, var_3, var_4 )
     {
         wait 0.2;
         var_5 maps\_sarray::sarray_clear();
-        var_6 = _func_0D6();
+        var_6 = getaiarray();
 
         foreach ( var_8 in var_6 )
         {
@@ -52,7 +52,7 @@ cg_spawn_perf_monitor( var_0, var_1, var_2, var_3, var_4 )
                 if ( var_13.deleteme == 1 )
                     var_13 delete();
                 else
-                    var_13 _meth_8052();
+                    var_13 kill();
 
                 var_11--;
                 wait 0.05;
@@ -90,9 +90,9 @@ score_and_sort_current_spawns( var_0 )
         if ( !checktargetisinfrontofplayer( level.player, var_2 ) )
             var_2.killnowscore += 10;
 
-        var_3 = level.player _meth_80A8();
+        var_3 = level.player geteye();
 
-        if ( var_2 _meth_81D8( var_3 ) == 0 )
+        if ( var_2 sightconetrace( var_3 ) == 0 )
             var_2.killnowscore += 10;
         else
             var_2.killnowscore -= var_2.lifetimer;
@@ -125,9 +125,9 @@ trackkillordelete()
 
     for (;;)
     {
-        var_0 = level.player _meth_80A8();
+        var_0 = level.player geteye();
 
-        if ( self _meth_81D8( var_0 ) == 1 )
+        if ( self sightconetrace( var_0 ) == 1 )
         {
             self.deleteme = 0;
             return;
@@ -175,7 +175,7 @@ debug_draw_living_ai( var_0 )
     for (;;)
     {
         wait 0.05;
-        var_2 = _func_0D6();
+        var_2 = getaiarray();
         var_1 settext( "" + var_2.size );
 
         foreach ( var_4 in var_2 )

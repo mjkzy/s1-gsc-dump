@@ -14,7 +14,7 @@ anim_single_droppod_custom( var_0, var_1, var_2 )
     thread process_buttonmash( var_1 );
     wait(var_5 - var_4);
     level.player notify( "end_process_buttonmash" );
-    var_1 _meth_814C( %seo_pod_phase3_vm_root, 0.0, 0.5, 1 );
+    var_1 setanimlimited( %seo_pod_phase3_vm_root, 0.0, 0.5, 1 );
 
     if ( var_1.buttonmash_value >= 1.0 )
     {
@@ -33,11 +33,11 @@ process_buttonmash( var_0 )
     var_0.buttonmash_value = 0.0;
     var_0.buttonmash_add_per_press = 0.15;
     var_0.buttonmash_max = 1.2;
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "x_pressed", "+activate" );
-    var_0 _meth_814C( %seo_pod_phase3_vm_root, 0.01, 0, 1 );
-    var_0 _meth_814C( %seo_pod_phase3_vm_add, 1 );
-    var_0 _meth_8117( %seo_pod_phase3_vm_add, 1 );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "x_pressed", "+activate" );
+    var_0 setanimlimited( %seo_pod_phase3_vm_root, 0.01, 0, 1 );
+    var_0 setanimlimited( %seo_pod_phase3_vm_add, 1 );
+    var_0 setanimtime( %seo_pod_phase3_vm_add, 1 );
 
     if ( level.player common_scripts\utility::is_player_gamepad_enabled() )
         level.player thread maps\_shg_utility::button_mash_dynamic_hint( &"SEOUL_TAP_X_TO_PULL_LEVER", "+usereload", "end_process_buttonmash", "+activate" );
@@ -68,7 +68,7 @@ animation_process( var_0, var_1, var_2, var_3 )
     if ( var_0.buttonmash_value > 0.95 )
         var_5 = 1.0;
 
-    var_0 _meth_814C( %seo_pod_phase3_vm_root, var_5, var_4, 1 );
+    var_0 setanimlimited( %seo_pod_phase3_vm_root, var_5, var_4, 1 );
     wait(var_4);
 
     for (;;)
@@ -83,7 +83,7 @@ animation_process( var_0, var_1, var_2, var_3 )
         if ( var_0.buttonmash_value <= 0.0 )
             var_5 = 0.01;
 
-        var_0 _meth_814C( %seo_pod_phase3_vm_root, var_5, var_4, 1 );
+        var_0 setanimlimited( %seo_pod_phase3_vm_root, var_5, var_4, 1 );
         wait(var_4);
     }
 }

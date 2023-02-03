@@ -197,13 +197,13 @@ teleport_to_scriptstruct( var_0 )
     {
         if ( var_7 < var_6.size )
         {
-            var_2[var_7] _meth_81C6( var_6[var_7].origin, var_6[var_7].angles );
-            var_2[var_7] _meth_81A6( var_6[var_7].origin );
+            var_2[var_7] forceteleport( var_6[var_7].origin, var_6[var_7].angles );
+            var_2[var_7] setgoalpos( var_6[var_7].origin );
             continue;
         }
 
-        var_2[var_7] _meth_81C6( level.player.origin, level.player.angles );
-        var_2[var_7] _meth_81A6( level.player.origin );
+        var_2[var_7] forceteleport( level.player.origin, level.player.angles );
+        var_2[var_7] setgoalpos( level.player.origin );
     }
 }
 
@@ -247,8 +247,8 @@ warbird_shooting_think( var_0 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -272,7 +272,7 @@ warbird_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_4 = _func_0D6( "allies" );
+        var_4 = getaiarray( "allies" );
 
         if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
         {
@@ -306,7 +306,7 @@ warbird_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_12 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_13 = var_8 _meth_80A8();
+                var_13 = var_8 geteye();
                 var_14 = vectornormalize( var_13 - var_12 );
                 var_15 = var_13 + var_14 * 20;
 
@@ -320,24 +320,24 @@ warbird_fire( var_0 )
 
         if ( isdefined( var_10 ) )
         {
-            var_1 _meth_8106( var_10 );
-            var_2 _meth_8106( var_10 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_10 );
+            var_2 settargetentity( var_10 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_10, var_0 );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait(var_3);
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 wait_for_warbird_fire_target_done( var_0, var_1 )
@@ -361,7 +361,7 @@ wait_for_warbird_fire_target_done( var_0, var_1 )
         if ( isdefined( var_1 ) && var_1 )
         {
             var_4 = self.mgturret[0] gettagorigin( "tag_flash" );
-            var_5 = var_0 _meth_80A8();
+            var_5 = var_0 geteye();
             var_6 = vectornormalize( var_5 - var_4 );
             var_7 = var_4 + var_6 * 20;
 
@@ -402,22 +402,22 @@ cloak_on( var_0, var_1 )
         var_1 = 0.75;
 
     var_2 = 0;
-    self _meth_80B1( self.cloakedmodel );
+    self setmodel( self.cloakedmodel );
 
     if ( issubstr( self.model, "burke" ) || issubstr( self.model, "knox" ) )
     {
         wait 0.05;
-        self _meth_846C( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
     }
 
     if ( issubstr( self.model, "cormack" ) )
     {
         wait 0.05;
-        self _meth_846C( "mtl_cormack_sentinel_covert_headgear_a", "mc/mtl_cormack_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_cormack_sentinel_covert_headgear_a", "mc/mtl_cormack_sentinel_covert_headgear_a_cloak" );
     }
 
-    self _meth_8448();
-    self _meth_83A7( 0.0, var_1 );
+    self drawpostresolve();
+    self setmaterialscriptparam( 0.0, var_1 );
     soundscripts\_snd::snd_message( "npc_cloak_enable" );
 
     if ( var_0 )
@@ -443,14 +443,14 @@ turn_on_the_cloak_effect_wallclimb()
 
     if ( isdefined( level.player_rig ) )
     {
-        level.player_rig _meth_83A7( 1.0, 0.0 );
-        level.player_rig _meth_80B1( level.scr_model["player_rig"] );
+        level.player_rig setmaterialscriptparam( 1.0, 0.0 );
+        level.player_rig setmodel( level.scr_model["player_rig"] );
         wait 0.05;
-        level.player_rig _meth_8448();
-        level.player_rig _meth_83A7( 1.0, 0.0 );
+        level.player_rig drawpostresolve();
+        level.player_rig setmaterialscriptparam( 1.0, 0.0 );
         wait 0.05;
-        level.player_rig _meth_83A7( 0.0, 0.75 );
-        level.player_rig _meth_83FA( 0 );
+        level.player_rig setmaterialscriptparam( 0.0, 0.75 );
+        level.player_rig hudoutlineenable( 0 );
     }
 }
 
@@ -466,10 +466,10 @@ cloak_off( var_0 )
 
     var_1 = 0;
     soundscripts\_snd::snd_message( "npc_cloak_disable" );
-    self _meth_83A7( 1.0, var_0 );
+    self setmaterialscriptparam( 1.0, var_0 );
     wait(var_0);
-    self _meth_846D();
-    self _meth_8449();
+    self overridematerialreset();
+    self drawpostresolveoff();
 
     if ( issubstr( self.name, "Knox" ) )
     {
@@ -480,7 +480,7 @@ cloak_off( var_0 )
         }
     }
 
-    self _meth_80B1( self.defaultmodel );
+    self setmodel( self.defaultmodel );
     thread maps\_cloak::clearalertstencilstate();
     self.cloak = "off";
 }
@@ -490,9 +490,9 @@ cloak_off_rope( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 1.0;
 
-    self _meth_83A7( 1.0, var_0 );
-    self _meth_846D();
-    self _meth_8449();
+    self setmaterialscriptparam( 1.0, var_0 );
+    self overridematerialreset();
+    self drawpostresolveoff();
 }
 
 am_i_moving()
@@ -510,9 +510,9 @@ any_enemy_is_able_to_attack()
 {
     if ( common_scripts\utility::flag( "_stealth_spotted" ) )
     {
-        foreach ( var_1 in _func_0D7( "bad_guys", "all" ) )
+        foreach ( var_1 in getaispeciesarray( "bad_guys", "all" ) )
         {
-            if ( var_1.alertlevel == "combat" && isdefined( var_1.enemy ) && var_1 _meth_81BE( var_1.enemy ) )
+            if ( var_1.alertlevel == "combat" && isdefined( var_1.enemy ) && var_1 cansee( var_1.enemy ) )
                 return 1;
         }
     }
@@ -625,8 +625,8 @@ attach_fixed_scanner( var_0, var_1, var_2, var_3, var_4, var_5 )
     thread draw_scanner_cone_loop();
     thread maps\_shg_utility::make_emp_vulnerable();
     self.emp_death_function = ::scanner_monitor_emp_damage;
-    self _meth_8139( "axis" );
-    var_6 = _func_0D6( "allies" );
+    self makeentitysentient( "axis" );
+    var_6 = getaiarray( "allies" );
     var_6[var_6.size] = level.player;
 
     for (;;)
@@ -640,8 +640,8 @@ attach_fixed_scanner( var_0, var_1, var_2, var_3, var_4, var_5 )
                 continue;
             }
 
-            var_9 = var_8 _meth_81B1();
-            var_10 = var_8 _meth_8216( 0, 0, 0 );
+            var_9 = var_8 getentitynumber();
+            var_10 = var_8 getpointinbounds( 0, 0, 0 );
             var_11 = in_scanner_cone( var_10, self.scanner_origin, self.scanner_yaw, self.scanner_tilt, self.cone_length, self.horizontal_cone_range );
 
             if ( var_11 )
@@ -655,7 +655,7 @@ attach_fixed_scanner( var_0, var_1, var_2, var_3, var_4, var_5 )
             else if ( isdefined( self.scanner_cone_inside_ents[var_9] ) )
                 self.scanner_cone_inside_ents[var_9] = undefined;
 
-            if ( var_9 == level.player _meth_81B1() )
+            if ( var_9 == level.player getentitynumber() )
                 level.player_is_in_scanner_cone = var_11;
         }
 
@@ -671,7 +671,7 @@ scanner_monitor_emp_damage()
 
 handle_actor_enter_scanner( var_0 )
 {
-    if ( var_0 _meth_81B1() == level.player _meth_81B1() )
+    if ( var_0 getentitynumber() == level.player getentitynumber() )
     {
         maps\_cloak::cloak_device_hit_by_electro_magnetic_pulse();
         var_0 shellshock( "flashbang", 3 );
@@ -688,7 +688,7 @@ do_scanner_death( var_0 )
     self waittill( "death" );
 
     if ( issentient( self ) )
-        self _meth_813A();
+        self freeentitysentient();
 
     stopfxontag( common_scripts\utility::getfx( self.fx_target_none ), var_0, "tag_origin" );
     stopfxontag( common_scripts\utility::getfx( self.fx_target_locked ), var_0, "tag_origin" );
@@ -700,8 +700,8 @@ remove_dead_bodies_from_cone( var_0 )
 
     foreach ( var_3 in var_0 )
     {
-        if ( isdefined( self.scanner_cone_inside_ents[var_3 _meth_81B1()] ) )
-            var_1[var_3 _meth_81B1()] = 1;
+        if ( isdefined( self.scanner_cone_inside_ents[var_3 getentitynumber()] ) )
+            var_1[var_3 getentitynumber()] = 1;
     }
 
     self.scanner_cone_inside_ents = var_1;
@@ -722,39 +722,39 @@ do_tuning()
 {
     for (;;)
     {
-        if ( level.player _meth_824C( "DPAD_UP" ) )
+        if ( level.player buttonpressed( "DPAD_UP" ) )
             self.scanner_tilt -= 1.0;
 
-        if ( level.player _meth_824C( "DPAD_DOWN" ) )
+        if ( level.player buttonpressed( "DPAD_DOWN" ) )
             self.scanner_tilt += 1.0;
 
-        if ( level.player _meth_824C( "DPAD_LEFT" ) )
+        if ( level.player buttonpressed( "DPAD_LEFT" ) )
             self.scanner_yaw -= 1.0;
 
-        if ( level.player _meth_824C( "DPAD_RIGHT" ) )
+        if ( level.player buttonpressed( "DPAD_RIGHT" ) )
             self.scanner_yaw += 1.0;
 
-        if ( level.player _meth_824C( "BUTTON_X" ) )
+        if ( level.player buttonpressed( "BUTTON_X" ) )
         {
             self.horizontal_cone_range -= 0.1;
             self.vertical_cone_range -= 0.1;
         }
 
-        if ( level.player _meth_824C( "BUTTON_Y" ) )
+        if ( level.player buttonpressed( "BUTTON_Y" ) )
         {
             self.horizontal_cone_range += 0.1;
             self.vertical_cone_range += 0.1;
         }
 
-        if ( level.player _meth_824C( "BUTTON_LSTICK" ) )
+        if ( level.player buttonpressed( "BUTTON_LSTICK" ) )
             self.cone_length -= 10.0;
 
-        if ( level.player _meth_824C( "BUTTON_RSTICK" ) )
+        if ( level.player buttonpressed( "BUTTON_RSTICK" ) )
             self.cone_length += 10.0;
 
         var_0 = " tilt:" + self.scanner_tilt + " yaw:" + self.scanner_yaw + " range:" + self.horizontal_cone_range + " length:" + self.cone_length;
 
-        if ( level.player _meth_824C( "DPAD_UP" ) || level.player _meth_824C( "DPAD_DOWN" ) || level.player _meth_824C( "DPAD_LEFT" ) || level.player _meth_824C( "DPAD_RIGHT" ) || level.player _meth_824C( "BUTTON_X" ) || level.player _meth_824C( "BUTTON_Y" ) || level.player _meth_824C( "BUTTON_LSTICK" ) || level.player _meth_824C( "BUTTON_RSTICK" ) )
+        if ( level.player buttonpressed( "DPAD_UP" ) || level.player buttonpressed( "DPAD_DOWN" ) || level.player buttonpressed( "DPAD_LEFT" ) || level.player buttonpressed( "DPAD_RIGHT" ) || level.player buttonpressed( "BUTTON_X" ) || level.player buttonpressed( "BUTTON_Y" ) || level.player buttonpressed( "BUTTON_LSTICK" ) || level.player buttonpressed( "BUTTON_RSTICK" ) )
         {
 
         }
@@ -781,9 +781,9 @@ camera_scanner_think()
         var_0 = getent( self.target, "targetname" );
         var_0 enableaimassist();
         var_0.maxhealth = 1;
-        var_0 _meth_8050( var_0.maxhealth );
-        _func_09A( var_0, ( 0, 0, -80 ) );
-        _func_0A5( var_0, 1 );
+        var_0 setnormalhealth( var_0.maxhealth );
+        target_set( var_0, ( 0, 0, -80 ) );
+        target_setjavelinonly( var_0, 1 );
     }
 
     if ( !isdefined( self.scanner_cone_inside_ents ) )
@@ -817,28 +817,28 @@ do_vehicle_scanner_tuning()
 {
     for (;;)
     {
-        if ( level.player _meth_824C( "DPAD_UP" ) )
+        if ( level.player buttonpressed( "DPAD_UP" ) )
             self.scanner_tilt -= 1.0;
 
-        if ( level.player _meth_824C( "DPAD_DOWN" ) )
+        if ( level.player buttonpressed( "DPAD_DOWN" ) )
             self.scanner_tilt += 1.0;
 
-        if ( level.player _meth_824C( "BUTTON_LSTICK" ) )
+        if ( level.player buttonpressed( "BUTTON_LSTICK" ) )
             self.cone_length -= 10.0;
 
-        if ( level.player _meth_824C( "BUTTON_RSTICK" ) )
+        if ( level.player buttonpressed( "BUTTON_RSTICK" ) )
             self.cone_length += 10.0;
 
-        if ( level.player _meth_824C( "DPAD_LEFT" ) )
+        if ( level.player buttonpressed( "DPAD_LEFT" ) )
             self.scanner_offset_from_vehicle_facing -= 1.0;
 
-        if ( level.player _meth_824C( "DPAD_RIGHT" ) )
+        if ( level.player buttonpressed( "DPAD_RIGHT" ) )
             self.scanner_offset_from_vehicle_facing += 1.0;
 
-        if ( level.player _meth_824C( "BUTTON_X" ) )
+        if ( level.player buttonpressed( "BUTTON_X" ) )
             self.sweep_range -= 0.1;
 
-        if ( level.player _meth_824C( "BUTTON_Y" ) )
+        if ( level.player buttonpressed( "BUTTON_Y" ) )
             self.sweep_range += 0.1;
 
         var_0 = " tilt:" + self.scanner_tilt + " offset:" + self.scanner_offset_from_vehicle_facing + " range:" + self.sweep_range + " length:" + self.cone_length;
@@ -876,7 +876,7 @@ attach_scanner( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, v
     {
         var_15 = var_14 * anglestoforward( self.angles );
         self.scanner_origin = self.origin + ( 0, 0, var_13 ) + var_15;
-        var_20 = level.player _meth_8216( 0, 0, 0 );
+        var_20 = level.player getpointinbounds( 0, 0, 0 );
 
         if ( self.scanner_mode == 0 )
         {
@@ -969,8 +969,8 @@ attach_scanner_turret()
     var_7 = 0;
     var_8 = 0;
     var_9 = spawnturret( "misc_turret", ( 0, 0, 0 ), var_0 );
-    var_9 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, -1 * var_7, 0 ) );
-    var_9 _meth_80B1( var_2 );
+    var_9 linkto( self, var_1, ( 0, 0, 0 ), ( 0, -1 * var_7, 0 ) );
+    var_9 setmodel( var_2 );
     var_9.angles = self.angles;
     var_9.isvehicleattached = 1;
     var_9.ownervehicle = self;
@@ -982,41 +982,41 @@ attach_scanner_turret()
     var_9.script_fireondrones = var_8;
     var_9.deletedelay = var_5;
     var_9.maxrange = var_3;
-    var_9 _meth_815A( var_6 );
+    var_9 setdefaultdroppitch( var_6 );
     var_9 maps\_vehicle_code::turret_set_default_on_mode( var_4 );
-    var_9 _meth_8065( var_9.defaultonmode );
-    var_9 _meth_80E5();
+    var_9 setmode( var_9.defaultonmode );
+    var_9 startbarrelspin();
     var_10 = 1.5;
     var_11 = 0.1;
     var_12 = 2.0;
 
     for (;;)
     {
-        var_13 = var_9 _meth_8066();
+        var_13 = var_9 getmode();
 
         if ( level.player_is_in_scanner_cone == 1 )
         {
             if ( var_13 != "manual" )
             {
-                self _meth_8075( "seeker_alarm_lp" );
+                self playloopsound( "seeker_alarm_lp" );
                 wait(var_12);
-                self _meth_80AB( "seeker_alarm_lp" );
-                var_9 _meth_8065( "manual" );
-                var_9 _meth_8106( level.player );
+                self stoploopsound( "seeker_alarm_lp" );
+                var_9 setmode( "manual" );
+                var_9 settargetentity( level.player );
             }
 
             var_9 waittill( "turret_on_target" );
 
             for ( var_14 = var_10; var_14 > 0.0; var_14 -= var_11 )
             {
-                var_9 _meth_80EA();
+                var_9 shootturret();
                 wait(var_11);
             }
         }
         else if ( var_13 != "auto_ai" )
         {
-            var_9 _meth_8065( "auto_ai" );
-            var_9 _meth_8108( level.player );
+            var_9 setmode( "auto_ai" );
+            var_9 cleartargetentity( level.player );
         }
 
         wait 0.1;
@@ -1273,7 +1273,7 @@ player_looking_in_direction_2d( var_0, var_1, var_2, var_3 )
         var_1 = 0.8;
 
     var_4 = maps\_utility::get_player_from_self();
-    var_5 = var_4 _meth_80A8();
+    var_5 = var_4 geteye();
     var_6 = vectortoangles( var_0 - var_5 );
     var_7 = anglestoforward( var_6 );
     var_8 = var_4 getangles();
@@ -1322,7 +1322,7 @@ enable_takedown_hint( var_0, var_1, var_2 )
             return;
         }
 
-        var_4 = _func_220( var_0.origin, level.player.origin );
+        var_4 = distance2dsquared( var_0.origin, level.player.origin );
 
         if ( level.melee_hint_displayed )
         {
@@ -1334,7 +1334,7 @@ enable_takedown_hint( var_0, var_1, var_2 )
 
             if ( isdefined( var_2 ) && var_2 )
             {
-                var_5 = var_0 _meth_80A8();
+                var_5 = var_0 geteye();
                 var_6 = 0.9;
 
                 if ( !level.player player_looking_in_direction_2d( var_5, var_6, 1 ) )
@@ -1350,7 +1350,7 @@ enable_takedown_hint( var_0, var_1, var_2 )
 
             if ( isdefined( var_2 ) && var_2 )
             {
-                var_5 = var_0 _meth_80A8();
+                var_5 = var_0 geteye();
                 var_6 = 0.9;
 
                 if ( !level.player player_looking_in_direction_2d( var_5, var_6, 1 ) )
@@ -1361,7 +1361,7 @@ enable_takedown_hint( var_0, var_1, var_2 )
             {
                 level.should_display_melee_hint = 1;
                 level.melee_hint_displayed = 1;
-                level.player _meth_8130( 0 );
+                level.player allowmelee( 0 );
                 maps\_utility::display_hint_timeout( "takedown_hint", undefined );
             }
         }
@@ -1383,7 +1383,7 @@ display_takedown_world_prompt_on_enemy( var_0 )
 
     var_2 = common_scripts\utility::spawn_tag_origin();
     var_2.origin = self.origin + ( 0, 0, 52 );
-    var_2 _meth_804D( self, "tag_origin" );
+    var_2 linkto( self, "tag_origin" );
     var_2 thread activate_takedown_world_prompt_on_enemy( var_0 );
 }
 
@@ -1414,7 +1414,7 @@ takedown_hint_off()
     if ( !level.should_display_melee_hint )
     {
         if ( !isdefined( level.player.disable_melee ) )
-            level.player _meth_8130( 1 );
+            level.player allowmelee( 1 );
 
         var_0 = 1;
     }
@@ -1480,12 +1480,12 @@ bloody_death( var_0, var_1 )
 
         if ( isdefined( var_1 ) && isai( var_1 ) && isalive( var_1 ) )
         {
-            if ( !level.player _meth_8214( var_1.origin, var_3, 500 ) )
-                var_1 _meth_81E8();
+            if ( !level.player worldpointinreticle_circle( var_1.origin, var_3, 500 ) )
+                var_1 shootblank();
         }
     }
 
-    self _meth_8051( self.health + 50, self.origin );
+    self dodamage( self.health + 50, self.origin );
 }
 
 bloody_death_fx( var_0, var_1 )
@@ -1553,7 +1553,7 @@ activate_trigger_when_player_jumps()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) && !level.player _meth_8341() )
+        if ( level.player istouching( self ) && !level.player isonground() )
             self notify( "trigger" );
 
         wait 0.05;
@@ -1566,7 +1566,7 @@ spawn_metrics_init()
     level.spawn_metrics_death_count = [];
     maps\_utility::add_global_spawn_function( "axis", ::spawn_metrics_spawn_func );
 
-    foreach ( var_1 in _func_0D6( "axis" ) )
+    foreach ( var_1 in getaiarray( "axis" ) )
     {
         if ( !isspawner( var_1 ) && isalive( var_1 ) )
             var_1 spawn_metrics_spawn_func();
@@ -1733,7 +1733,7 @@ can_tip_think()
         var_12 = 0;
 
         if ( isdefined( level.player.driving_hovertank ) )
-            var_12 = level.player.driving_hovertank _meth_8287();
+            var_12 = level.player.driving_hovertank vehicle_getvelocity();
         else
             var_12 = level.player getvelocity();
 
@@ -1744,11 +1744,11 @@ can_tip_think()
         else if ( var_4 > var_7 )
             var_4 = var_7;
 
-        self _meth_804D( var_11 );
-        var_11 _meth_82B5( ( var_1, var_11.angles[1], var_11.angles[2] ), var_4 );
-        var_11 _meth_82B1( -1 * var_9, var_4 );
+        self linkto( var_11 );
+        var_11 rotateto( ( var_1, var_11.angles[1], var_11.angles[2] ), var_4 );
+        var_11 movez( -1 * var_9, var_4 );
         earthquake( 0.25, var_4, self.origin, 300 );
-        level.player _meth_80AD( "damage_heavy" );
+        level.player playrumbleonentity( "damage_heavy" );
         wait(var_4);
         var_11 delete();
         var_2 delete();
@@ -1760,7 +1760,7 @@ script_destructible_tree_think()
 {
     var_0 = self;
     self endon( "stop_thinking" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -1775,13 +1775,13 @@ script_destructible_tree_think()
     if ( isdefined( self.angles ) )
         var_0.angles = self.angles;
 
-    var_0 _meth_80B1( "lab_tank_battle_sequoia_02_1b" );
+    var_0 setmodel( "lab_tank_battle_sequoia_02_1b" );
     var_6 = spawn( "script_model", self.origin + ( 0, 0, 96 ) );
 
     if ( isdefined( self.angles ) )
         var_6.angles = self.angles;
 
-    var_6 _meth_80B1( "lab_tank_battle_sequoia_02_1t" );
+    var_6 setmodel( "lab_tank_battle_sequoia_02_1t" );
     var_7 = angleclamp360( var_4[1] - var_6.origin[1], var_4[0] - var_6.origin[0] ) + 180;
 
     if ( var_7 > 360 )
@@ -1801,12 +1801,12 @@ script_destructible_tree_think()
     var_18 = randomintrange( var_14 * -1, var_14 );
     var_19 = abs( var_17 ) + abs( var_18 );
     var_20 = var_19 / var_14 * 2 * ( var_16 - var_15 ) + var_15;
-    var_6 _meth_83DF( ( var_17, 0, var_18 ), var_20, 0, var_20 );
+    var_6 rotateby( ( var_17, 0, var_18 ), var_20, 0, var_20 );
 }
 
 log_pile_scripted_think()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     var_0 = 0;
 
     while ( !var_0 )
@@ -1821,14 +1821,14 @@ log_pile_scripted_think()
         var_0 = 1;
         var_10 = common_scripts\utility::get_target_ent();
 
-        foreach ( var_12 in _func_0D6( "axis" ) )
+        foreach ( var_12 in getaiarray( "axis" ) )
         {
-            var_12 _meth_8052();
-            var_12 _meth_8023();
+            var_12 kill();
+            var_12 startragdoll();
         }
 
         physicsexplosionsphere( self.origin, 200, 199, 50 );
-        _func_244( self.origin, 900 );
+        wakeupphysicssphere( self.origin, 900 );
     }
 
     self delete();
@@ -1836,7 +1836,7 @@ log_pile_scripted_think()
 
 destructible_trailer_collision_think()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     thread destructible_trailer_collision_destroy_when_player_close();
     var_0 = 0;
 
@@ -1850,7 +1850,7 @@ destructible_trailer_collision_think()
             break;
     }
 
-    _func_244( var_4, 80 );
+    wakeupphysicssphere( var_4, 80 );
     physicsexplosionsphere( var_4, 80, 79, 10 );
     soundscripts\_snd::snd_message( "tank_shack_destruct", var_4 );
     self delete();
@@ -1865,7 +1865,7 @@ destructible_trailer_collision_destroy_when_player_close()
     var_2 waittill( "trigger", var_3 );
     self notify( "damage", 50, var_3, var_3.origin - self.origin, self.origin, "MOD_EXPLOSIVE" );
     earthquake( 0.25, 0.25, var_3.origin, 300 );
-    var_3 _meth_80AD( "damage_heavy" );
+    var_3 playrumbleonentity( "damage_heavy" );
 }
 
 large_propane_tank_think()
@@ -1873,7 +1873,7 @@ large_propane_tank_think()
     var_0 = self.origin;
     self waittill( "death" );
     physicsexplosionsphere( var_0, 900, 850, 60 );
-    _func_244( var_0, 900 );
+    wakeupphysicssphere( var_0, 900 );
 }
 
 hovertank_enemy_outline( var_0 )
@@ -1900,12 +1900,12 @@ hovertank_enemy_outline_ai()
 {
     self endon( "death" );
 
-    while ( !_func_0A3( self ) )
+    while ( !target_istarget( self ) )
         wait 0.05;
 
     for (;;)
     {
-        if ( _func_09F( self, level.hovertank_player, 75, 60 ) )
+        if ( target_isincircle( self, level.hovertank_player, 75, 60 ) )
         {
             self.highlight = 1;
             self notify( "highlight_change" );
@@ -1947,7 +1947,7 @@ hovertank_enemy_outline_vehicle()
 
     for (;;)
     {
-        if ( level.player _meth_8214( self.origin + var_0, 75, 60 ) )
+        if ( level.player worldpointinreticle_circle( self.origin + var_0, 75, 60 ) )
         {
             self.highlight = 1;
             self notify( "highlight_change" );
@@ -2145,10 +2145,10 @@ hovertank_hint_vehicle_in_sights()
 {
     var_0 = hovertank_enemy_outline_offset();
 
-    if ( !level.player _meth_8214( self.origin + var_0, 75, level.player.hovertank_weapon_hint_data.vehicle_sights_radius ) )
+    if ( !level.player worldpointinreticle_circle( self.origin + var_0, 75, level.player.hovertank_weapon_hint_data.vehicle_sights_radius ) )
         return 0;
 
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = sighttracepassed( self.origin + var_0, var_1, 0, self, level.player );
     return var_2;
 }
@@ -2171,14 +2171,14 @@ manage_highlight( var_0 )
 
         if ( self.highlight || self.highlight_forced )
         {
-            self _meth_83FA( var_0, 1 );
+            self hudoutlineenable( var_0, 1 );
             continue;
         }
 
         if ( !self.highlight_forced )
         {
-            self _meth_83FB();
-            self _meth_83FA( 0, 0 );
+            self hudoutlinedisable();
+            self hudoutlineenable( 0, 0 );
         }
     }
 }
@@ -2226,20 +2226,20 @@ turn_on_highlight( var_0, var_1 )
 
         while ( var_2 < var_1 )
         {
-            self _meth_83FA( var_0, 1 );
+            self hudoutlineenable( var_0, 1 );
             self.highlight = 1;
             var_2 += var_3;
             wait(var_3);
         }
 
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
         self.highlight = 0;
         self.highlight_forced = 0;
     }
     else if ( !self.highlight )
     {
-        self _meth_83FA( var_0, 1 );
+        self hudoutlineenable( var_0, 1 );
         self.highlight = 1;
     }
 }
@@ -2248,8 +2248,8 @@ turn_off_highlight()
 {
     if ( self.highlight || self.highlight_forced )
     {
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
     }
 }
 
@@ -2259,8 +2259,8 @@ clear_enemy_outline_on_death()
 
     if ( isdefined( self ) )
     {
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
     }
 }
 
@@ -2268,8 +2268,8 @@ warbird_heavy_shooting_think( var_0 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -2302,7 +2302,7 @@ warbird_heavy_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_6 = _func_0D6( var_5 );
+        var_6 = getaiarray( var_5 );
 
         if ( isdefined( level.flying_attack_drones ) )
             var_7 = level.flying_attack_drones;
@@ -2340,7 +2340,7 @@ warbird_heavy_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_14 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_15 = var_10 _meth_80A8();
+                var_15 = var_10 geteye();
                 var_16 = vectornormalize( var_15 - var_14 );
                 var_17 = var_14 + var_16 * 20;
 
@@ -2354,26 +2354,26 @@ warbird_heavy_fire( var_0 )
 
         if ( isdefined( var_12 ) )
         {
-            var_1 _meth_8106( var_12 );
-            var_2 _meth_8106( var_12 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_12 );
+            var_2 settargetentity( var_12 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_12, var_0 );
             var_1 notify( "stop_firing" );
             var_2 notify( "stop_firing" );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait 0.05;
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 warbird_heavy_fire_monitor()
@@ -2398,7 +2398,7 @@ burst_fire_warbird( var_0, var_1 )
     {
         var_8 = ( var_6 - gettime() ) * 0.001;
 
-        if ( self _meth_80E4() && var_8 <= 0 )
+        if ( self isfiringturret() && var_8 <= 0 )
         {
             if ( var_7 != "fire" )
             {
@@ -2432,7 +2432,7 @@ doshoottuned( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_80EA();
+        self shootturret();
         wait(var_0);
     }
 }
@@ -2456,7 +2456,7 @@ destroy_self_when_nuked()
     for (;;)
     {
         if ( getdvar( "debug_nuke" ) == "on" )
-            self _meth_8051( self.health + 99999, ( 0, 0, -500 ), level.player );
+            self dodamage( self.health + 99999, ( 0, 0, -500 ), level.player );
 
         wait 0.05;
     }
@@ -2584,7 +2584,7 @@ right_swing_pressed()
     if ( !level.console && !level.player common_scripts\utility::is_player_gamepad_enabled() )
         return level.player adsbuttonpressed( 1 );
 
-    return level.player _meth_824C( var_0 );
+    return level.player buttonpressed( var_0 );
 }
 
 left_swing_pressed()
@@ -2594,7 +2594,7 @@ left_swing_pressed()
     if ( !level.console && !level.player common_scripts\utility::is_player_gamepad_enabled() )
         return level.player attackbuttonpressed();
 
-    return level.player _meth_824C( var_0 );
+    return level.player buttonpressed( var_0 );
 }
 
 break_left_climb_hint()
@@ -2629,12 +2629,12 @@ break_both_climb_hint()
 
 get_rt_button_info()
 {
-    if ( !level.player _meth_834E() )
+    if ( !level.player usinggamepad() )
         return "ads";
 
-    var_0 = _func_2C6();
+    var_0 = getbuttonsconfig();
 
-    if ( issubstr( _func_2C6(), "lefty" ) )
+    if ( issubstr( getbuttonsconfig(), "lefty" ) )
     {
         if ( level.ps3 || issubstr( var_0, "alt" ) )
             return "smoke";
@@ -2656,9 +2656,9 @@ get_rt_button_info()
 
 get_lt_button_info()
 {
-    var_0 = _func_2C6();
+    var_0 = getbuttonsconfig();
 
-    if ( !level.player _meth_834E() )
+    if ( !level.player usinggamepad() )
         return "attack";
 
     if ( issubstr( var_0, "lefty" ) )
@@ -2812,7 +2812,7 @@ set_helmet_open( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
 
-    self _meth_8145( %sentinel_covert_helmet_open_idle, 1, var_0 );
+    self setanimknobrestart( %sentinel_covert_helmet_open_idle, 1, var_0 );
 }
 
 set_helmet_closed( var_0 )
@@ -2820,7 +2820,7 @@ set_helmet_closed( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
 
-    self _meth_8145( %sentinel_covert_helmet_closed_idle, 1, var_0 );
+    self setanimknobrestart( %sentinel_covert_helmet_closed_idle, 1, var_0 );
 }
 
 clear_additive_helmet_anim( var_0 )
@@ -2828,13 +2828,13 @@ clear_additive_helmet_anim( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
 
-    self _meth_8142( %s1_helmet, 0 );
+    self clearanim( %s1_helmet, 0 );
 }
 
 prep_cinematic( var_0 )
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( var_0, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( var_0, 1 );
     level.current_cinematic = var_0;
 }
 
@@ -2846,22 +2846,22 @@ play_cinematic( var_0, var_1, var_2 )
     if ( isdefined( level.current_cinematic ) )
     {
         pausecinematicingame( 0 );
-        _func_0D3( "cg_cinematicFullScreen", "1" );
+        setsaveddvar( "cg_cinematicFullScreen", "1" );
         level.current_cinematic = undefined;
     }
     else
-        _func_057( var_0 );
+        cinematicingame( var_0 );
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "1" );
+        setsaveddvar( "cg_cinematicCanPause", "1" );
 
     wait 1;
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "0" );
+        setsaveddvar( "cg_cinematicCanPause", "0" );
 
     if ( !isdefined( var_1 ) )
         soundscripts\_audio::deprecated_aud_send_msg( "end_cinematic", var_0 );
@@ -2875,7 +2875,7 @@ ending_fade_out( var_0 )
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
     var_1.sort = -10;
-    var_1 _meth_80CC( "black", 640, 480 );
+    var_1 setshader( "black", 640, 480 );
 
     if ( isdefined( var_0 ) && var_0 > 0 )
     {
@@ -2890,7 +2890,7 @@ ending_fade_out( var_0 )
 
 destructible_boxtruck_think()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.health = 500;
 
     while ( self.health > 0 )
@@ -2901,7 +2901,7 @@ destructible_boxtruck_think()
             self.health += var_0;
     }
 
-    self _meth_80B1( "vehicle_civ_boxtruck_destroyed" );
+    self setmodel( "vehicle_civ_boxtruck_destroyed" );
     soundscripts\_snd::snd_message( "boxtruck_explode" );
     playfx( common_scripts\utility::getfx( "boxcar_explosion" ), self.origin );
 }
@@ -2983,7 +2983,7 @@ ai_kill_when_out_of_sight( var_0, var_1 )
         if ( maps\_utility::either_player_looking_at( var_0.origin + ( 0, 0, 48 ), var_2, 1 ) )
             continue;
 
-        var_0 _meth_8052();
+        var_0 kill();
     }
 }
 
@@ -2997,7 +2997,7 @@ detection_highlight_hud_effect( var_0, var_1, var_2 )
         var_3.color = ( 1, 0, 0 );
 
     var_3.alpha = 0.05;
-    var_3 _meth_83A4( var_1 );
+    var_3 setradarhighlight( var_1 );
     wait(var_1);
 
     if ( isdefined( var_3 ) )
@@ -3069,7 +3069,7 @@ monitor_out_of_bounds_areas( var_0 )
 
         foreach ( var_5 in var_2 )
         {
-            if ( level.player _meth_80A9( var_5 ) )
+            if ( level.player istouching( var_5 ) )
                 level.player_out_of_bounds_warning = 1;
 
             if ( var_0 )
@@ -3080,7 +3080,7 @@ monitor_out_of_bounds_areas( var_0 )
 
         foreach ( var_5 in var_3 )
         {
-            if ( level.player _meth_80A9( var_5 ) )
+            if ( level.player istouching( var_5 ) )
             {
                 level.player_out_of_bounds_mission_fail = 1;
                 setdvar( "ui_deadquote", &"LAB_DEADQUOTE_ABANDONED_BURKE" );
@@ -3167,7 +3167,7 @@ player_stance_monitor()
 
     for (;;)
     {
-        var_2 = level.player _meth_817C();
+        var_2 = level.player getstance();
 
         if ( var_2 == "prone" && var_2 != var_1 )
         {
@@ -3190,7 +3190,7 @@ player_stance_monitor()
             var_0 += 40;
         }
 
-        while ( level.player _meth_83B3() )
+        while ( level.player isjumping() )
         {
             if ( !var_3 )
             {
@@ -3233,14 +3233,14 @@ player_falling_to_death()
     level endon( "flag_rappel_start" );
     common_scripts\utility::flag_wait( "player_falling_to_death" );
     setdvar( "ui_deadquote", "" );
-    level.player _meth_8310();
+    level.player takeallweapons();
     var_0 = gettime() + 1000;
 
-    while ( !level.player _meth_8341() && gettime() < var_0 )
+    while ( !level.player isonground() && gettime() < var_0 )
         wait 0.05;
 
-    if ( level.player _meth_8341() )
-        level.player _meth_8052();
+    if ( level.player isonground() )
+        level.player kill();
     else
         maps\_utility::missionfailedwrapper();
 }
@@ -3307,42 +3307,42 @@ named_magic_bullet_strafe( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
 rumble_light()
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 rumble_light_1()
 {
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
 }
 
 rumble_light_2()
 {
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
 }
 
 rumble_light_3()
 {
-    level.player _meth_80AD( "light_3s" );
+    level.player playrumbleonentity( "light_3s" );
 }
 
 rumble_heavy()
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 rumble_heavy_1()
 {
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 }
 
 rumble_heavy_2()
 {
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
 }
 
 rumble_heavy_3()
 {
-    level.player _meth_80AD( "heavy_3s" );
+    level.player playrumbleonentity( "heavy_3s" );
 }
 
 setup_level_rumble_ent()
@@ -3362,5 +3362,5 @@ rumble_set_ent_rumble_intensity_for_time( var_0, var_1, var_2 )
 
 play_rumble_on_entity( var_0, var_1 )
 {
-    var_0 _meth_80AD( var_1 );
+    var_0 playrumbleonentity( var_1 );
 }

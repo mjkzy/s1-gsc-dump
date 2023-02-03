@@ -87,23 +87,23 @@ bigben2_callbackstartgametype()
 
 flickeringlights()
 {
-    var_0 = _func_231( "damaged", "targetname" );
+    var_0 = getscriptablearray( "damaged", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( 0, 1 );
+        var_2 setscriptablepartstate( 0, 1 );
 
-    var_4 = _func_231( "destroyed", "targetname" );
+    var_4 = getscriptablearray( "destroyed", "targetname" );
 
     foreach ( var_6 in var_4 )
-        var_6 _meth_83F6( 0, 4 );
+        var_6 setscriptablepartstate( 0, 4 );
 }
 
 brokensigns()
 {
-    var_0 = _func_231( "sign_damaged", "targetname" );
+    var_0 = getscriptablearray( "sign_damaged", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( 0, 1 );
+        var_2 setscriptablepartstate( 0, 1 );
 }
 
 start_radar_animations()
@@ -115,17 +115,17 @@ start_radar_animations()
     var_4 = getent( "radar_stick_3", "targetname" );
     var_5 = getent( "radar_stick_4", "targetname" );
     var_6 = getent( "radar_stick_5", "targetname" );
-    var_0 _meth_827B( "bbn_radar_dish_01_idle" );
-    var_1 _meth_827B( "bbn_radar_stick_02_idle" );
-    var_2 _meth_827B( "bbn_radar_stick_02_idle" );
+    var_0 scriptmodelplayanimdeltamotion( "bbn_radar_dish_01_idle" );
+    var_1 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
+    var_2 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
     wait 0.3;
-    var_3 _meth_827B( "bbn_radar_stick_02_idle" );
+    var_3 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
     wait 1;
-    var_4 _meth_827B( "bbn_radar_stick_02_idle" );
+    var_4 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
     wait 0.25;
-    var_5 _meth_827B( "bbn_radar_stick_02_idle" );
+    var_5 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
     wait 0.45;
-    var_6 _meth_827B( "bbn_radar_stick_02_idle" );
+    var_6 scriptmodelplayanimdeltamotion( "bbn_radar_stick_02_idle" );
 }
 
 resetuplinkballoutofbounds()
@@ -178,7 +178,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+        if ( !self.visuals[0] istouching( var_0[var_1] ) )
             continue;
 
         return 1;

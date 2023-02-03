@@ -43,7 +43,7 @@ activateunlimitedammo()
     setupammoforplayers();
 
     foreach ( var_1 in level.players )
-        var_1 _meth_82FB( "zm_unlimited_ammo", 1 );
+        var_1 setclientomnvar( "zm_unlimited_ammo", 1 );
 
     level thread onplayerspawnedunlimitedammo();
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 20 );
@@ -51,7 +51,7 @@ activateunlimitedammo()
 
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_82FB( "zm_unlimited_ammo", 0 );
+        var_1 setclientomnvar( "zm_unlimited_ammo", 0 );
         var_1 playlocalsound( "powerup_overcharge_end" );
     }
 
@@ -66,7 +66,7 @@ onplayerspawnedunlimitedammo()
     while ( maps\mp\_utility::gameflag( "unlimited_ammo" ) )
     {
         level waittill( "player_spawned", var_0 );
-        var_0 _meth_82FB( "zm_unlimited_ammo", 1 );
+        var_0 setclientomnvar( "zm_unlimited_ammo", 1 );
     }
 }
 
@@ -83,7 +83,7 @@ playergiveoneinclip()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
     var_1 = [];
 
     foreach ( var_3 in var_0 )
@@ -104,22 +104,22 @@ playergiveoneinclip()
         }
 
         var_5 = 0;
-        var_4 = self _meth_82F8( var_3, "right" );
+        var_4 = self getweaponammoclip( var_3, "right" );
 
         if ( var_4 == 0 )
         {
-            self _meth_82F6( var_3, 1, "right" );
+            self setweaponammoclip( var_3, 1, "right" );
             var_1[var_1.size] = var_3;
             var_5 = 1;
         }
 
         if ( issubstr( var_3, "akimbo" ) )
         {
-            var_4 = self _meth_82F8( var_3, "left" );
+            var_4 = self getweaponammoclip( var_3, "left" );
 
             if ( var_4 == 0 )
             {
-                self _meth_82F6( var_3, 1, "left" );
+                self setweaponammoclip( var_3, 1, "left" );
 
                 if ( !var_5 )
                     var_1[var_1.size] = var_3;
@@ -134,7 +134,7 @@ playergiveoneinclip()
 
     foreach ( var_3 in var_1 )
     {
-        if ( !self _meth_8314( var_3 ) )
+        if ( !self hasweapon( var_3 ) )
             continue;
 
         if ( issubstr( var_3, "em1" ) )
@@ -145,7 +145,7 @@ playergiveoneinclip()
             if ( var_4 == 1 )
             {
                 maps\mp\zombies\_util::playerrecordem1ammo( 0 );
-                var_8 = self _meth_8312();
+                var_8 = self getcurrentprimaryweapon();
 
                 if ( issubstr( var_8, "em1" ) )
                     maps\mp\zombies\_util::playerallowfire( 0, "em1" );
@@ -154,17 +154,17 @@ playergiveoneinclip()
             continue;
         }
 
-        var_4 = self _meth_82F8( var_3, "right" );
+        var_4 = self getweaponammoclip( var_3, "right" );
 
         if ( var_4 == 1 )
-            self _meth_82F6( var_3, 0, "right" );
+            self setweaponammoclip( var_3, 0, "right" );
 
         if ( issubstr( var_3, "akimbo" ) )
         {
-            var_4 = self _meth_82F8( var_3, "left" );
+            var_4 = self getweaponammoclip( var_3, "left" );
 
             if ( var_4 == 1 )
-                self _meth_82F6( var_3, 0, "left" );
+                self setweaponammoclip( var_3, 0, "left" );
         }
     }
 }
@@ -258,12 +258,12 @@ playerthirdpersonexplosivetoucheffects()
     if ( !isdefined( self.explosivetouchent ) )
     {
         self.explosivetouchent = spawn( "script_model", ( 0, 0, 0 ) );
-        self.explosivetouchent _meth_80B1( "genericprop_x5" );
+        self.explosivetouchent setmodel( "genericprop_x5" );
         waitframe();
-        self.explosivetouchent _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self.explosivetouchent vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         waitframe();
-        self.explosivetouchent _meth_8279( "dlc3_explosive_touch_prop_anim", "explosive_touch" );
-        self.explosivetouchent _meth_8559();
+        self.explosivetouchent scriptmodelplayanim( "dlc3_explosive_touch_prop_anim", "explosive_touch" );
+        self.explosivetouchent deleteonhostmigration();
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_orbiter" ), self.explosivetouchent, "j_prop_1" );
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_orbiter" ), self.explosivetouchent, "j_prop_2" );
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_orbiter" ), self.explosivetouchent, "j_prop_3" );
@@ -316,7 +316,7 @@ playerhandleeffectsdeath()
     updatefirstpersonfx();
     self waittill( "spawned_player" );
     self.explosivetouchent show();
-    self.explosivetouchent _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.explosivetouchent vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     updatefirstpersonfx();
 }
 
@@ -368,9 +368,9 @@ playerdoexplosivetouch()
 
             if ( var_4 < var_0 )
             {
-                var_3 _meth_8051( var_3.health, var_3.origin, self, undefined, "MOD_EXPLOSIVE", "explosive_touch_zombies_mp", "torso_upper" );
+                var_3 dodamage( var_3.health, var_3.origin, self, undefined, "MOD_EXPLOSIVE", "explosive_touch_zombies_mp", "torso_upper" );
                 earthquake( randomfloatrange( 0.35, 0.55 ), 1, self.origin, 200, self );
-                self _meth_80AD( "damage_heavy" );
+                self playrumbleonentity( "damage_heavy" );
                 self _meth_8569();
                 self.overchargekills++;
 
@@ -401,7 +401,7 @@ gettimedpickupstring( var_0, var_1, var_2 )
     }
 
     var_4.color = ( 1, 1, 1 );
-    var_4 _meth_80CF( var_1 );
+    var_4 settimer( var_1 );
     return var_4;
 }
 

@@ -105,7 +105,7 @@ penthouse_vo()
     common_scripts\utility::flag_wait( "overlook_obj_trigger" );
     level.play_ally_warning_vo = undefined;
     level.play_ally_callout_vo = undefined;
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     maps\_utility::smart_radio_dialogue( "ie_iln_inposition" );
     level.play_ally_warning_vo = 1;
@@ -113,7 +113,7 @@ penthouse_vo()
     thread pre_guesthouse_vo();
     thread guest_house_vo();
     common_scripts\utility::flag_wait( "penthouse_end_ready" );
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     var_0 = [];
     var_0[0] = spawnstruct();
@@ -140,7 +140,7 @@ pre_guesthouse_vo()
 
     level.play_ally_warning_vo = undefined;
     level.play_ally_callout_vo = undefined;
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     maps\_utility::smart_radio_dialogue( "ie_iln_shadows" );
     level.play_ally_warning_vo = 1;
@@ -238,9 +238,9 @@ tennis_court_player_brackets()
     for (;;)
     {
         var_0 waittill( "trigger" );
-        var_2 = _func_0D6( "axis" );
+        var_2 = getaiarray( "axis" );
         var_2 = common_scripts\utility::array_add( var_2, level.player );
-        var_3 = var_0 _meth_80AA( var_2 );
+        var_3 = var_0 getistouchingentities( var_2 );
 
         if ( isdefined( var_3 ) && var_3.size > 0 )
         {
@@ -274,7 +274,7 @@ tennis_court_player_brackets_internal( var_0, var_1, var_2 )
     playfxontag( level._effect[var_2], var_3, "tag_origin" );
     self.has_bracket = 1;
 
-    while ( self _meth_80A9( var_0 ) && isalive( self ) )
+    while ( self istouching( var_0 ) && isalive( self ) )
     {
         var_3.angles = ( var_3.angles[0], self.angles[1], var_3.angles[2] );
         var_3.origin = ( self.origin[0], self.origin[1], var_1.origin[2] + 0.1 );
@@ -296,15 +296,15 @@ tennis_court_ball_launcher()
     var_4 = var_0 gettagorigin( "tag_origin" );
     var_5 = common_scripts\utility::spawn_tag_origin();
     var_5.origin = var_4;
-    var_0 _meth_804D( var_5, "tag_origin" );
-    var_1 _meth_804D( var_5, "tag_origin" );
+    var_0 linkto( var_5, "tag_origin" );
+    var_1 linkto( var_5, "tag_origin" );
 
     foreach ( var_7 in var_2 )
-        var_7 _meth_804D( var_5, "tag_origin" );
+        var_7 linkto( var_5, "tag_origin" );
 
-    var_3 _meth_804D( var_5, "tag_origin" );
+    var_3 linkto( var_5, "tag_origin" );
     var_9 = getent( "tennis_ball_launcher_anim_origin_temp", "targetname" );
-    var_9 _meth_804D( var_5, "tag_origin" );
+    var_9 linkto( var_5, "tag_origin" );
     var_5 thread tennis_court_ball_launcher_logic( var_9 );
     common_scripts\utility::flag_wait( "bedroom_end" );
     var_0 delete();
@@ -360,13 +360,13 @@ tennis_court_ball_launcher_logic( var_0 )
                 var_5 += randomintrange( -10, 10 );
             }
 
-            self _meth_82B7( var_5, 0.3, 0, 0 );
+            self rotateyaw( var_5, 0.3, 0, 0 );
             wait 0.3;
             play_tennis_court_vo( "ie_cv_serving" );
             var_6 = spawn( "script_model", var_0.origin );
-            var_6 _meth_80B1( "base_tennis_ball_01" );
+            var_6 setmodel( "base_tennis_ball_01" );
             var_7 = anglestoforward( var_0.angles );
-            var_6 _meth_82C2( var_6.origin, var_7 * 850 );
+            var_6 physicslaunchclient( var_6.origin, var_7 * 850 );
             soundscripts\_snd_playsound::snd_play_at( "irons_tennis_ball_launch", ( -2664, -4892, 444 ) );
             var_6 thread tennis_court_ball_cleanup();
             wait 2;
@@ -426,7 +426,7 @@ touchtest()
 
     for (;;)
     {
-        if ( self _meth_80A9( var_1 ) )
+        if ( self istouching( var_1 ) )
         {
             if ( !isdefined( self.ball_touching_ground ) )
             {
@@ -477,13 +477,13 @@ tennis_court_nags()
     wait 2;
     var_1 = getent( "player_touching_tennis_court_floor_volume", "targetname" );
 
-    if ( level.player _meth_80A9( var_1 ) )
+    if ( level.player istouching( var_1 ) )
         thread maps\irons_estate_code::ally_vo_controller( var_0[0] );
 
     common_scripts\utility::flag_wait( "tennis_court_activated" );
     wait 2;
 
-    if ( level.player _meth_80A9( var_1 ) )
+    if ( level.player istouching( var_1 ) )
         thread maps\irons_estate_code::ally_vo_controller( var_0[1] );
 }
 
@@ -493,13 +493,13 @@ start_tennis_court_alert( var_0 )
     {
         level.play_ally_warning_vo = undefined;
         level.play_ally_callout_vo = undefined;
-        level.ally_vo_org _meth_80AC();
+        level.ally_vo_org stopsounds();
         wait 0.05;
         maps\_utility::smart_radio_dialogue( "ie_iln_tangoscoming" );
         level.play_ally_warning_vo = 1;
         level.play_ally_callout_vo = 1;
         wait 0.25;
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
         var_2 = common_scripts\utility::get_array_of_closest( level.tennis_court_origin.origin, var_1, undefined, undefined, 1024, undefined );
 
         if ( isdefined( var_2 ) )
@@ -599,7 +599,7 @@ alcove_clips()
         common_scripts\utility::flag_wait( "_stealth_spotted" );
 
     var_0 = getent( "garage_alcove_clip", "targetname" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
 }
 
 garage_balcony_enemy()
@@ -627,16 +627,16 @@ garage_balcony_door()
 {
     var_0 = getent( "garage_balcony_door", "targetname" );
     var_1 = getent( "garage_balcony_door_clip", "targetname" );
-    var_1 _meth_804D( var_0, "door_single_01_lod0" );
-    var_0 _meth_82B7( 90, 1 );
+    var_1 linkto( var_0, "door_single_01_lod0" );
+    var_0 rotateyaw( 90, 1 );
     var_2 = getent( "garage_balcony_door_light", "targetname" );
-    var_2 _meth_81DF( 15000 );
-    var_1 _meth_8058();
+    var_2 setlightintensity( 15000 );
+    var_1 connectpaths();
     common_scripts\utility::flag_wait_or_timeout( "garage_balcony_door_close", 5 );
-    var_0 _meth_82B7( -90, 1 );
-    var_1 _meth_8057();
+    var_0 rotateyaw( -90, 1 );
+    var_1 disconnectpaths();
     wait 1;
-    var_2 _meth_81DF( 1 );
+    var_2 setlightintensity( 1 );
 }
 
 garage_balcony_vo()

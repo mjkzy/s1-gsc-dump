@@ -89,7 +89,7 @@ guy_enter( var_0, var_1 )
 
     if ( isai( var_0 ) )
     {
-        var_0 _meth_81C5( var_7, var_8 );
+        var_0 teleport( var_7, var_8 );
         var_0.a.disablelongdeath_saved = var_0.a.disablelongdeath;
         var_0.a.disablelongdeath = 1;
 
@@ -214,7 +214,7 @@ load_ai_goddriver( var_0 )
 guy_death( var_0, var_1 )
 {
     waittillframeend;
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
     var_0 endon( "death" );
     var_0.allowdeath = 0;
     var_0.health = 10150;
@@ -244,9 +244,9 @@ guy_deathimate_me( var_0, var_1 )
     var_0 = convert_guy_to_drone( var_0 );
     [[ level.global_kill_func ]]( "MOD_RIFLE_BULLET", "torso_upper", var_4 );
     detach_models_with_substr( var_0, "weapon_" );
-    var_0 _meth_804D( self );
-    var_0 _meth_82BF();
-    var_0 _meth_814B( var_1.death );
+    var_0 linkto( self );
+    var_0 notsolid();
+    var_0 setanim( var_1.death );
 
     if ( isai( var_0 ) )
         var_0 animscripts\shared::dropallaiweapons();
@@ -255,8 +255,8 @@ guy_deathimate_me( var_0, var_1 )
 
     if ( isdefined( var_1.death_delayed_ragdoll ) )
     {
-        var_0 _meth_804F();
-        var_0 _meth_8023();
+        var_0 unlink();
+        var_0 startragdoll();
         wait(var_1.death_delayed_ragdoll);
         var_0 delete();
         return;
@@ -290,7 +290,7 @@ is_rider( var_0 )
 vehicle_get_riders()
 {
     var_0 = [];
-    var_1 = _func_0D6( self.script_team );
+    var_1 = getaiarray( self.script_team );
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -438,7 +438,7 @@ guy_runtovehicle( var_0, var_1, var_2, var_3 )
 
     if ( !isdefined( var_0.get_in_moving_vehicle ) )
     {
-        while ( var_1 _meth_8286() > 1 )
+        while ( var_1 vehicle_getspeed() > 1 )
             wait 0.05;
     }
 
@@ -479,7 +479,7 @@ guy_runtovehicle( var_0, var_1, var_2, var_3 )
     var_0 maps\_utility::set_forcegoal();
     var_0 maps\_utility::disable_arrivals();
     var_0.goalradius = 16;
-    var_0 _meth_81A6( var_8 );
+    var_0 setgoalpos( var_8 );
     var_0 waittill( "goal" );
     var_0 maps\_utility::enable_arrivals();
     var_0 maps\_utility::unset_forcegoal();
@@ -513,7 +513,7 @@ guy_runtovehicle( var_0, var_1, var_2, var_3 )
                 var_14 = isdefined( var_0.no_vehicle_getoutanim );
 
                 if ( !var_14 )
-                    var_1 _meth_8142( var_13.vehicle_getoutanim, 0 );
+                    var_1 clearanim( var_13.vehicle_getoutanim, 0 );
             }
 
             var_1 = var_1 getanimatemodel();
@@ -571,8 +571,8 @@ driverdead( var_0 )
 
     if ( isdefined( self.hasstarted ) && self.hasstarted )
     {
-        self _meth_8281( 0 );
-        self _meth_8283( 0, 10 );
+        self setwaitspeed( 0 );
+        self vehicle_setspeed( 0, 10 );
         self waittill( "reached_wait_speed" );
     }
 
@@ -582,11 +582,11 @@ driverdead( var_0 )
 copy_cat()
 {
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( self.model );
-    var_1 = self _meth_802C();
+    var_0 setmodel( self.model );
+    var_1 = self getattachsize();
 
     for ( var_2 = 0; var_2 < var_1; var_2++ )
-        var_0 attach( self _meth_802D( var_2 ) );
+        var_0 attach( self getattachmodelname( var_2 ) );
 
     return var_0;
 }
@@ -624,9 +624,9 @@ link_to_sittag( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_3 = 0;
 
     if ( var_3 && !isdefined( var_0.script_drone ) )
-        var_0 _meth_804E( var_6, var_1, 0 );
+        var_0 linktoblendtotag( var_6, var_1, 0 );
     else
-        var_0 _meth_804D( var_6, var_1, var_2, ( 0, 0, 0 ) );
+        var_0 linkto( var_6, var_1, var_2, ( 0, 0, 0 ) );
 }
 
 anim_pos( var_0, var_1 )
@@ -731,7 +731,7 @@ driver_idle_speed( var_0, var_1 )
 
     for (;;)
     {
-        if ( self _meth_8286() == 0 )
+        if ( self vehicle_getspeed() == 0 )
             var_0.vehicle_idle = var_2.idle_animstop;
         else
             var_0.vehicle_idle = var_2.idle_anim;
@@ -783,7 +783,7 @@ guy_turret_fire( var_0, var_1 )
     var_2 = anim_pos( self, var_1 );
 
     if ( isdefined( var_2.vehicle_turret_fire ) )
-        maps\_vehicle_code::_get_dummy() _meth_814D( var_2.vehicle_turret_fire );
+        maps\_vehicle_code::_get_dummy() setanimrestart( var_2.vehicle_turret_fire );
 
     if ( isdefined( var_2.turret_fire ) )
     {
@@ -1061,7 +1061,7 @@ getoutrig_model( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( self.crashing ) )
         animontag( var_1, var_2, var_3 );
 
-    var_1 _meth_804F();
+    var_1 unlink();
 
     if ( !isdefined( self ) )
     {
@@ -1132,7 +1132,7 @@ getoutrig_abort( var_0, var_1, var_2 )
 
     thread animontag( var_0, var_1, var_2 );
     waittillframeend;
-    var_0 _meth_8117( var_2, var_4 / var_3 );
+    var_0 setanimtime( var_2, var_4 / var_3 );
     var_6 = self;
 
     if ( isdefined( self.achievement_attacker ) )
@@ -1170,11 +1170,11 @@ setanimrestart_once( var_0, var_1 )
     var_2 = getanimlength( var_0 );
     var_3 = maps\_vehicle_code::_get_dummy();
     var_3 endon( "death" );
-    var_3 _meth_8113( "vehicle_anim_flag", var_0, 1, 0, 1 );
+    var_3 setflaggedanimrestart( "vehicle_anim_flag", var_0, 1, 0, 1 );
     wait(var_2);
 
     if ( var_1 && ( !isdefined( self.dont_clear_vehicle_anim ) || !self.dont_clear_vehicle_anim ) )
-        var_3 _meth_8142( var_0, 0 );
+        var_3 clearanim( var_0, 0 );
 }
 
 #using_animtree("generic_human");
@@ -1201,10 +1201,10 @@ getout_rigspawn( var_0, var_1, var_2 )
     var_8 = spawn( "script_model", var_6 );
     var_8.angles = var_7;
     var_8.origin = var_6;
-    var_8 _meth_80B1( level.vehicle_attachedmodels[var_3][var_4.fastroperig].model );
+    var_8 setmodel( level.vehicle_attachedmodels[var_3][var_4.fastroperig].model );
     self.fastroperig[var_4.fastroperig] = var_8;
-    var_8 _meth_8115( #animtree );
-    var_8 _meth_804D( var_0, level.vehicle_attachedmodels[var_3][var_4.fastroperig].tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_8 useanimtree( #animtree );
+    var_8 linkto( var_0, level.vehicle_attachedmodels[var_3][var_4.fastroperig].tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     thread getoutrig_model( var_4, var_8, level.vehicle_attachedmodels[var_3][var_4.fastroperig].tag, level.vehicle_attachedmodels[var_3][var_4.fastroperig].dropanim, var_2 );
     return var_8;
 }
@@ -1378,7 +1378,7 @@ guy_unload( var_0, var_1 )
     }
 
     if ( isai( var_0 ) )
-        var_0 _meth_81A3( 1 );
+        var_0 pushplayer( 1 );
 
     var_9 = 0;
 
@@ -1513,14 +1513,14 @@ guy_unload( var_0, var_1 )
             var_15 = spawn( "script_model", self gettagorigin( var_10 ) );
             var_15.angles = ( 0, self.angles[1] + self.angle_offset, 0 );
             self.angle_offset += 5;
-            var_15 _meth_80B1( "tag_origin" );
+            var_15 setmodel( "tag_origin" );
             var_16 = maps\_utility::groundpos( self.origin ) + ( 0, 0, self.unload_anim_height );
             var_15.origin = var_16 + ( randomintrange( 10, 20 ), randomintrange( 10, 20 ), 0 );
             var_17 = spawn( "script_model", var_15.origin );
             var_17.angles = var_15.angles;
-            var_17 _meth_80B1( self.unload_model );
+            var_17 setmodel( self.unload_model );
             var_17.animname = "parachute";
-            var_17 _meth_8115( level.scr_animtree["parachute"] );
+            var_17 useanimtree( level.scr_animtree["parachute"] );
             var_17 hide();
             var_17 maps\_utility::ent_flag_init( "parachute_open" );
 
@@ -1568,7 +1568,7 @@ guy_unload( var_0, var_1 )
         return;
     }
 
-    var_0 _meth_804F();
+    var_0 unlink();
 
     if ( !isdefined( var_0.magic_bullet_shield ) )
     {
@@ -1583,7 +1583,7 @@ guy_unload( var_0, var_1 )
             if ( isdefined( var_0.a.disablelongdeath_saved ) )
                 var_0.a.disablelongdeath = var_0.a.disablelongdeath_saved;
             else
-                var_0.a.disablelongdeath = !var_0 _meth_813D();
+                var_0.a.disablelongdeath = !var_0 isbadguy();
         }
 
         var_0.forced_startingposition = undefined;
@@ -1595,17 +1595,17 @@ guy_unload( var_0, var_1 )
             if ( isdefined( var_2.getoutstance ) )
             {
                 var_0.desired_anim_pose = var_2.getoutstance;
-                var_0 _meth_81CA( "crouch" );
+                var_0 allowedstances( "crouch" );
                 var_0 thread animscripts\utility::updateanimpose();
-                var_0 _meth_81CA( "stand", "crouch", "prone" );
+                var_0 allowedstances( "stand", "crouch", "prone" );
             }
 
-            var_0 _meth_81A3( 0 );
+            var_0 pushplayer( 0 );
 
             if ( guy_resets_goalpos( var_0 ) )
             {
                 var_0.goalradius = 600;
-                var_0 _meth_81A6( var_0.origin );
+                var_0 setgoalpos( var_0.origin );
             }
         }
     }
@@ -1621,25 +1621,25 @@ guy_unload( var_0, var_1 )
 
 parachute_unload( var_0, var_1, var_2, var_3, var_4 )
 {
-    var_0 _meth_804F();
+    var_0 unlink();
     var_5 = var_1 gettagorigin( "tag_driver" );
     var_6 = var_1 gettagangles( "tag_driver" );
-    var_0 _meth_81C6( var_5, var_6 );
-    var_0 _meth_804D( var_1, "tag_driver" );
-    var_1 _meth_813E( "parachute_unload", self.origin, self.angles, var_2 );
+    var_0 forceteleport( var_5, var_6 );
+    var_0 linkto( var_1, "tag_driver" );
+    var_1 animscripted( "parachute_unload", self.origin, self.angles, var_2 );
 
     if ( isdefined( var_4 ) )
         var_1 thread parachute_notetrack_logic( "parachute_unload", "show_parachute", var_4 );
     else
         var_1 thread parachute_notetrack_logic( "parachute_unload", "show_parachute" );
 
-    var_0 _meth_813E( "parachute_unload", var_0.origin, var_0.angles, var_3 );
+    var_0 animscripted( "parachute_unload", var_0.origin, var_0.angles, var_3 );
     level thread parachute_death_monitor( var_0, var_1 );
     var_1 waittillmatch( "parachute_unload", "end" );
     var_1 notify( "parachute_landed" );
 
     if ( isalive( var_0 ) )
-        var_0 _meth_804F();
+        var_0 unlink();
 }
 
 parachute_movement( var_0 )
@@ -1648,7 +1648,7 @@ parachute_movement( var_0 )
     var_2 = vectornormalize( common_scripts\utility::flat_angle( var_1 ) );
     var_3 = self.origin + var_2 * 10000;
     thread maps\_utility::draw_line_from_ent_for_time( self, var_3, 1, 0, 0, 10 );
-    self _meth_82AE( var_3, 1 );
+    self moveto( var_3, 1 );
 }
 
 parachute_death_monitor( var_0, var_1 )
@@ -1659,7 +1659,7 @@ parachute_death_monitor( var_0, var_1 )
         return;
 
     if ( !isai( var_0 ) )
-        var_0 _meth_82C0( 1 );
+        var_0 setcandamage( 1 );
 
     var_2 = undefined;
     var_3 = undefined;
@@ -1726,7 +1726,7 @@ guy_resets_goalpos( var_0 )
 
     if ( isdefined( var_2 ) && var_2.classname == "info_volume" )
     {
-        var_0 _meth_81A9( var_2 );
+        var_0 setgoalvolumeauto( var_2 );
         return 0;
     }
 
@@ -1760,7 +1760,7 @@ animontag( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( var_0.ragdoll_getout_death ) && !isdefined( var_0.no_vehicle_ragdoll ) )
         level thread animontag_ragdoll_death( var_0, self );
 
-    var_0 _meth_813E( var_5, var_7, var_8, var_2 );
+    var_0 animscripted( var_5, var_7, var_8, var_2 );
 
     if ( isai( var_0 ) )
         thread donotetracks( var_0, var_6, var_5 );
@@ -1773,7 +1773,7 @@ animontag( var_0, var_1, var_2, var_3, var_4, var_5 )
         if ( var_9 > 0 )
             wait(var_9);
 
-        var_0 _meth_8141();
+        var_0 stopanimscripted();
         var_0.interval = 0;
         var_0 thread recover_interval();
     }
@@ -1810,7 +1810,7 @@ animontag_ragdoll_death( var_0, var_1 )
         return;
 
     if ( !isai( var_0 ) )
-        var_0 _meth_82C0( 1 );
+        var_0 setcandamage( 1 );
 
     var_0 endon( "anim_on_tag_done" );
 
@@ -1865,7 +1865,7 @@ animontag_ragdoll_death_fall( var_0, var_1, var_2 )
         if ( abs( var_3[2] + 16 ) <= abs( var_5 ) )
         {
             var_0 thread maps\_utility::play_sound_on_entity( "generic_death_falling" );
-            var_0 _meth_813E( "fastrope_fall", var_0.origin, var_0.angles, var_0.ragdoll_fall_anim );
+            var_0 animscripted( "fastrope_fall", var_0.origin, var_0.angles, var_0.ragdoll_fall_anim );
             var_0 waittillmatch( "fastrope_fall", "start_ragdoll" );
         }
     }
@@ -1878,11 +1878,11 @@ animontag_ragdoll_death_fall( var_0, var_1, var_2 )
     var_0.anim_disablepain = 1;
     var_0 notify( "rope_death", var_2 );
     maps\_spawner::death_achievements_rappel( var_2 );
-    var_0 _meth_8052( var_2.origin, var_2 );
+    var_0 kill( var_2.origin, var_2 );
 
     if ( isdefined( var_0.script_stay_drone ) )
     {
-        var_0 _meth_82BF();
+        var_0 notsolid();
         var_6 = getweaponmodel( var_0.weapon );
         var_7 = var_0.weapon;
 
@@ -1908,21 +1908,21 @@ animontag_ragdoll_death_fall( var_0, var_1, var_2 )
             if ( isdefined( var_0.min_unload_frac_to_flop ) )
                 var_10 = var_0.min_unload_frac_to_flop;
 
-            var_11 = var_0 _meth_814F( var_0.get_out_anim );
+            var_11 = var_0 getanimtime( var_0.get_out_anim );
 
             if ( var_11 < var_10 )
                 wait(var_0.get_out_time * ( var_10 - var_11 ));
 
-            if ( _func_294( var_0 ) )
+            if ( isremovedentity( var_0 ) )
                 return;
         }
 
         var_12 = length( var_0.death_flop_dir );
-        var_13 = vectornormalize( var_1 _meth_81B0( var_0.death_flop_dir ) - var_0.origin ) * var_12;
-        var_0 _meth_8024( "torso_lower", var_13 );
+        var_13 = vectornormalize( var_1 localtoworldcoords( var_0.death_flop_dir ) - var_0.origin ) * var_12;
+        var_0 startragdollfromimpact( "torso_lower", var_13 );
     }
     else
-        var_0 _meth_8023();
+        var_0 startragdoll();
 }
 
 animontag_unloading_vehicle_explosion( var_0, var_1 )
@@ -1934,13 +1934,13 @@ animontag_unloading_vehicle_explosion( var_0, var_1 )
 
     if ( isdefined( var_0.min_unload_frac_to_flop ) )
     {
-        var_6 = var_0 _meth_814F( var_0.get_out_anim );
+        var_6 = var_0 getanimtime( var_0.get_out_anim );
 
         if ( var_6 < var_0.min_unload_frac_to_flop )
             var_5 = 1;
     }
 
-    if ( !_func_294( var_0 ) )
+    if ( !isremovedentity( var_0 ) )
     {
         if ( var_5 )
         {
@@ -1950,9 +1950,9 @@ animontag_unloading_vehicle_explosion( var_0, var_1 )
         }
 
         if ( isdefined( var_2 ) )
-            var_0 _meth_8052( var_0.origin, var_2 );
+            var_0 kill( var_0.origin, var_2 );
         else
-            var_0 _meth_8052();
+            var_0 kill();
     }
 }
 
@@ -1960,7 +1960,7 @@ delayed_exploded_guy_deletion()
 {
     waitframe();
 
-    if ( !_func_294( self ) )
+    if ( !isremovedentity( self ) )
         self delete();
 }
 
@@ -1974,7 +1974,7 @@ donotetracks( var_0, var_1, var_2 )
 
 animatemoveintoplace( var_0, var_1, var_2, var_3 )
 {
-    var_0 _meth_813E( "movetospot", var_1, var_2, var_3 );
+    var_0 animscripted( "movetospot", var_1, var_2, var_3 );
     var_0 waittillmatch( "movetospot", "end" );
 }
 
@@ -2025,7 +2025,7 @@ guy_vehicle_death( var_0, var_1, var_2 )
         if ( var_2 == "bm21_troops" )
         {
             var_0.allowdeath = 1;
-            var_0 _meth_8052();
+            var_0 kill();
             return;
         }
 
@@ -2136,11 +2136,11 @@ guy_man_turret( var_0, var_1, var_2 )
         [[ var_3.passenger_2_turret_func ]]( self, var_0, var_1, var_4 );
 
     maps\_vehicle_code::set_turret_team( var_4 );
-    var_4 _meth_815A( 0 );
+    var_4 setdefaultdroppitch( 0 );
     wait 0.1;
     var_0 endon( "guy_man_turret_stop" );
     level thread maps\_mgturret::mg42_setdifficulty( var_4, maps\_utility::getdifficulty() );
-    var_4 _meth_8067( 1 );
+    var_4 setturretignoregoals( 1 );
 
     if ( isdefined( var_3.sittag_on_turret ) && var_3.sittag_on_turret )
         var_4 thread maps\_mgturret_auto_nonai::main( var_0, var_3 );
@@ -2148,8 +2148,8 @@ guy_man_turret( var_0, var_1, var_2 )
     {
         for (;;)
         {
-            if ( !isdefined( var_0 _meth_8194() ) )
-                var_0 _meth_818A( var_4 );
+            if ( !isdefined( var_0 getturret() ) )
+                var_0 useturret( var_4 );
 
             wait 1;
         }
@@ -2162,7 +2162,7 @@ guy_unlink_on_death( var_0 )
     var_0 waittill( "death" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_804F();
+        var_0 unlink();
 }
 
 guy_blowup( var_0 )
@@ -2190,10 +2190,10 @@ guy_blowup( var_0 )
 
     var_0 = convert_guy_to_drone( var_0 );
     detach_models_with_substr( var_0, "weapon_" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     var_0.origin = var_4;
     var_0.angles = var_3;
-    var_0 _meth_813E( "deathanim", var_4, var_3, var_2.explosion_death );
+    var_0 animscripted( "deathanim", var_4, var_3, var_2.explosion_death );
     var_5 = 0.3;
 
     if ( isdefined( var_2.explosion_death_ragdollfraction ) )
@@ -2216,12 +2216,12 @@ guy_blowup( var_0 )
     else
         detach_models_with_substr( var_0, "weapon_" );
 
-    while ( !var_0 _meth_81E0() && gettime() < var_7 )
+    while ( !var_0 isragdoll() && gettime() < var_7 )
     {
         var_9 = var_0.origin;
         wait 0.05;
         var_8 = var_0.origin - var_9;
-        var_0 _meth_8023();
+        var_0 startragdoll();
     }
 
     wait 0.05;
@@ -2235,7 +2235,7 @@ guy_blowup( var_0 )
         wait 0.05;
     }
 
-    if ( !var_0 _meth_81E0() )
+    if ( !var_0 isragdoll() )
         var_0 delete();
 }
 
@@ -2249,13 +2249,13 @@ convert_guy_to_drone( var_0, var_1, var_2 )
 
     var_3 = spawn( "script_model", var_0.origin );
     var_3.angles = var_0.angles;
-    var_3 _meth_80B1( var_0.model );
-    var_4 = var_0 _meth_802C();
+    var_3 setmodel( var_0.model );
+    var_4 = var_0 getattachsize();
 
     for ( var_5 = 0; var_5 < var_4 && ( var_2 || var_5 < 1 ); var_5++ )
-        var_3 attach( var_0 _meth_802D( var_5 ), var_0 _meth_802E( var_5 ) );
+        var_3 attach( var_0 getattachmodelname( var_5 ), var_0 getattachtagname( var_5 ) );
 
-    var_3 _meth_8115( #animtree );
+    var_3 useanimtree( #animtree );
 
     if ( isdefined( var_0.team ) )
         var_3.team = var_0.team;
@@ -2263,14 +2263,14 @@ convert_guy_to_drone( var_0, var_1, var_2 )
     if ( !var_1 )
         var_0 delete();
 
-    var_3 _meth_803C();
+    var_3 makefakeai();
     return var_3;
 }
 
 vehicle_animate( var_0, var_1 )
 {
-    self _meth_8115( var_1 );
-    self _meth_814B( var_0 );
+    self useanimtree( var_1 );
+    self setanim( var_0 );
 }
 
 vehicle_getinstart( var_0 )
@@ -2347,15 +2347,15 @@ getanimatemodel()
 
 detach_models_with_substr( var_0, var_1 )
 {
-    var_2 = var_0 _meth_802C();
+    var_2 = var_0 getattachsize();
     var_3 = [];
     var_4 = [];
     var_5 = 0;
 
     for ( var_6 = 0; var_6 < var_2; var_6++ )
     {
-        var_7 = var_0 _meth_802D( var_6 );
-        var_8 = var_0 _meth_802E( var_6 );
+        var_7 = var_0 getattachmodelname( var_6 );
+        var_8 = var_0 getattachtagname( var_6 );
 
         if ( issubstr( var_7, var_1 ) )
         {
@@ -2445,7 +2445,7 @@ stable_unlink( var_0 )
     self waittill( "stable_for_unlink" );
 
     if ( isalive( var_0 ) )
-        var_0 _meth_804F();
+        var_0 unlink();
 }
 
 track_entered_vehicle()
@@ -2507,10 +2507,10 @@ guy_cleanup_vehiclevars()
 
 delete_corpses_around_vehicle()
 {
-    var_0 = self _meth_8096();
-    var_1 = self _meth_8216( 1, 0, 0 );
+    var_0 = self getcentroid();
+    var_1 = self getpointinbounds( 1, 0, 0 );
     var_2 = distance( var_1, var_0 );
-    var_3 = _func_0D9();
+    var_3 = getcorpsearray();
 
     foreach ( var_5 in var_3 )
     {

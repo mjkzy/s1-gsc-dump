@@ -8,13 +8,13 @@ cg_setup_civs_foodtruck()
     common_scripts\utility::flag_wait( "show_middle_civs_trigger" );
     var_0 = [];
     var_1 = getent( "org_foodtruck", "targetname" );
-    var_2 = getent( "atlas_guard_foodtruck2_spawner", "targetname" ) _meth_803D();
+    var_2 = getent( "atlas_guard_foodtruck2_spawner", "targetname" ) spawndrone();
     var_0[var_0.size] = var_2;
     var_2.animname = "drone_civs";
     var_2 maps\_anim::setanimtree();
     var_1 thread maps\_anim::anim_loop_solo( var_2, "foodtruck18" );
     var_3 = spawn( "script_model", var_1.origin );
-    var_3 _meth_80B1( "det_cargo_box_single_01" );
+    var_3 setmodel( "det_cargo_box_single_01" );
     var_3.animname = "foodtruck_mre";
     var_3 maps\_anim::setanimtree();
     var_0[var_0.size] = var_3;
@@ -33,7 +33,7 @@ cg_setup_civs_foodtruck()
 
         var_10 = common_scripts\utility::getstruct( var_6[var_9], "targetname" );
         var_8[var_9] = spawn( "script_model", var_10.origin );
-        var_8[var_9] _meth_80B1( var_4[var_9] );
+        var_8[var_9] setmodel( var_4[var_9] );
         var_8[var_9] attach( var_5[var_9] );
         var_8[var_9] setcontents( 0 );
         var_8[var_9].angles = var_10.angles;
@@ -44,7 +44,7 @@ cg_setup_civs_foodtruck()
         if ( var_9 == 0 )
         {
             wait 0.05;
-            var_8[var_9] _meth_8117( %det_camp_foodtruck_civ_11, 0.0331 );
+            var_8[var_9] setanimtime( %det_camp_foodtruck_civ_11, 0.0331 );
         }
 
         var_0[var_0.size] = var_8[var_9];
@@ -85,7 +85,7 @@ cg_setup_civs_infosign()
     {
         var_7 = common_scripts\utility::getstruct( var_3[var_6], "targetname" );
         var_5[var_6] = spawn( "script_model", var_7.origin );
-        var_5[var_6] _meth_80B1( var_1[var_6] );
+        var_5[var_6] setmodel( var_1[var_6] );
         var_5[var_6] attach( var_2[var_6] );
         var_5[var_6] setcontents( 0 );
         var_5[var_6].angles = var_7.angles;
@@ -123,7 +123,7 @@ cg_setup_civs_fence()
         {
             var_7 = common_scripts\utility::getstruct( var_3[var_6], "targetname" );
             var_5[var_6] = spawn( "script_model", var_7.origin );
-            var_5[var_6] _meth_80B1( var_1[var_6] );
+            var_5[var_6] setmodel( var_1[var_6] );
             var_5[var_6] attach( var_2[var_6] );
             var_5[var_6] setcontents( 0 );
             var_5[var_6].angles = var_7.angles;
@@ -156,7 +156,7 @@ cg_setup_civ_fence_special()
 {
     var_0 = common_scripts\utility::getstruct( "civ_fence9_spawner", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "civ_urban_male_body_c_mde" );
+    var_1 setmodel( "civ_urban_male_body_c_mde" );
     var_1 attach( "head_m_gen_mde_urena" );
     var_1 setcontents( 0 );
     var_1.angles = var_0.angles;
@@ -178,7 +178,7 @@ cg_setup_civ_fence_special()
         common_scripts\utility::flag_clear( "flag_camp_visibility_03a" );
         common_scripts\utility::flag_wait( "flag_camp_visibility_03a" );
         var_1 = spawn( "script_model", var_0.origin );
-        var_1 _meth_80B1( "civ_urban_male_body_c_mde" );
+        var_1 setmodel( "civ_urban_male_body_c_mde" );
         var_1 attach( "head_m_gen_mde_urena" );
         var_1 setcontents( 0 );
         var_1.angles = var_0.angles;
@@ -204,7 +204,7 @@ cg_setup_civs_baseball()
     {
         var_8 = common_scripts\utility::getstruct( var_4[var_7], "targetname" );
         var_6[var_7] = spawn( "script_model", var_8.origin );
-        var_6[var_7] _meth_80B1( var_2[var_7] );
+        var_6[var_7] setmodel( var_2[var_7] );
 
         if ( var_7 < 2 )
         {
@@ -261,7 +261,7 @@ cg_setup_social_groups()
         if ( var_12 >= var_3.size )
             var_12 = 0;
 
-        var_15 _meth_80B1( var_3[var_12] );
+        var_15 setmodel( var_3[var_12] );
         var_15 attach( var_4[var_12] );
         var_15 setcontents( 0 );
         var_15.origin = var_14.origin;
@@ -294,7 +294,7 @@ cg_setup_social_groups()
         if ( maps\_shg_design_tools::percentchance( 50 ) )
         {
             var_15 = spawn( "script_model", var_14.origin );
-            var_15 _meth_80B1( var_3[var_12] );
+            var_15 setmodel( var_3[var_12] );
             var_15 attach( var_4[var_12] );
             var_15 setcontents( 0 );
             var_15.origin = var_14.origin;
@@ -325,7 +325,7 @@ cg_setup_social_groups()
             if ( maps\_shg_design_tools::percentchance( 50 ) )
             {
                 var_15 = spawn( "script_model", var_14.origin );
-                var_15 _meth_80B1( var_3[var_12] );
+                var_15 setmodel( var_3[var_12] );
                 var_15 attach( var_4[var_12] );
                 var_15 setcontents( 0 );
                 var_15.origin = var_14.origin;
@@ -380,7 +380,7 @@ cg_civ_conversation_gag1()
     {
         var_5 = getent( "civ_" + var_4 + "_spawner", "targetname" );
         var_6 = spawn( "script_model", var_5.origin );
-        var_6 _meth_80B1( var_1[var_4 - 1] );
+        var_6 setmodel( var_1[var_4 - 1] );
         var_6 attach( var_2[var_4 - 1] );
         var_6 setcontents( 0 );
         var_6.angles = var_5.angles;
@@ -420,7 +420,7 @@ cg_civ_conversation_gag1()
 
 cg_spraypaint_gag()
 {
-    if ( !_func_21E( "detroit_intro_tr" ) )
+    if ( !istransientloaded( "detroit_intro_tr" ) )
         return;
 
     var_0 = [];
@@ -428,14 +428,14 @@ cg_spraypaint_gag()
     var_2 = getent( "sparaypaint_animspot", "targetname" );
     var_3 = common_scripts\utility::getstruct( "spraypaint_artist_spawner", "targetname" );
     var_4 = spawn( "script_model", var_3.origin );
-    var_4 _meth_80B1( "civ_urban_female_body_e_asi" );
+    var_4 setmodel( "civ_urban_female_body_e_asi" );
     var_4 attach( "head_f_gen_asi_lee_base" );
     var_4 setcontents( 0 );
     var_4 attach( "com_spray_can01", "tag_weapon_right" );
     var_1.origin = var_4.origin + ( 0, 0, 40 );
-    var_1 _meth_804D( var_4, "J_MainRoot" );
+    var_1 linkto( var_4, "J_MainRoot" );
     var_4.animname = "generic";
-    var_4 _meth_8115( #animtree );
+    var_4 useanimtree( #animtree );
     var_2 thread maps\_anim::anim_loop_solo( var_4, "spraypaint_idle" );
     var_0[var_0.size] = var_4;
     var_4.goalradius = 15;
@@ -491,7 +491,7 @@ cg_setup_refugee_stage_audience()
         if ( maps\_shg_design_tools::percentchance( 15 ) )
         {
             var_9 = spawn( "script_model", var_8.origin );
-            var_9 _meth_80B1( var_3[var_6] );
+            var_9 setmodel( var_3[var_6] );
             var_9 attach( var_4[var_6] );
             var_9 setcontents( 0 );
             var_9.angles = var_8.angles;
@@ -522,12 +522,12 @@ cg_setup_refugee_stage_speaker()
     common_scripts\utility::flag_wait( "flag_stage_dialogue_start_audio" );
     var_0 = getent( "refugee_stage_speaker", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "civ_urban_female_body_g_afr_light" );
+    var_1 setmodel( "civ_urban_female_body_g_afr_light" );
     var_1 attach( "head_f_gen_afr_rice" );
     var_1 setcontents( 0 );
     var_1.angles = var_0.angles;
     var_1.animname = "Atlas_Commander";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_0 = getent( "org_stage_speaker", "targetname" );
     var_0 maps\_anim::anim_single_solo( var_1, "det_camp_stagespeech_guy01" );
     var_1 delete();
@@ -538,10 +538,10 @@ cg_setup_hospital_bodies()
     maps\_utility::trigger_wait_targetname( "hospital_start" );
     var_0 = getent( "dead_spot", "targetname" );
     var_1 = spawn( "script_model", ( -4738, 7089, 39.5 ) );
-    var_1 _meth_80B1( "body_civ_sf_male_b" );
+    var_1 setmodel( "body_civ_sf_male_b" );
     var_1 attach( "head_civ_sf_male_b", "J_Spine4" );
     var_1.animname = "generic";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_0 maps\_anim::anim_first_frame_solo( var_1, "deadpose_1" );
 }
 

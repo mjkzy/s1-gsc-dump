@@ -60,17 +60,17 @@ main()
     maps\_car_door_shield::init_door_shield();
     setdvarifuninitialized( "demo_itiot", 0 );
     var_0 = getent( "armapshade", "targetname" );
-    var_0 _meth_83A7( 0.0, 0.0 );
+    var_0 setmaterialscriptparam( 0.0, 0.0 );
     setup_portal_scripting();
     common_scripts\_pipes::main();
 
     if ( level.currentgen )
-        _func_0D3( "ai_corpseCount", 8 );
+        setsaveddvar( "ai_corpseCount", 8 );
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 }
 
@@ -104,7 +104,7 @@ setup_precache()
     precacheshellshock( "slowview" );
     precacheshellshock( "fusion_slowview" );
     precacheshellshock( "zipline" );
-    _func_07F();
+    precachenightvisioncodeassets();
     precachestring( &"FUSION_HINT_FIRE_GUN" );
     precachestring( &"FUSION_HINT_FIRE_MISSILES" );
     precachemodel( "ind_streetlight_single_off_rig" );
@@ -127,15 +127,15 @@ setup_precache()
     precacherumble( "subtle_tank_rumble" );
     precacheshader( "dpad_icon_drone" );
     precacheshader( "dpad_icon_drone_off" );
-    _func_081();
+    precachesonarvisioncodeassets();
 
     if ( level.currentgen )
         precachemodel( "fus_tower_lower_panel_01_dark" );
 
-    precacheitem( "iw5_ak12_sp" );
-    precacheitem( "iw5_stingerm7_sp" );
-    precacheitem( "iw5_bal27_sp_variablereddot" );
-    precacheitem( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_ak12_sp" );
+    precacheshellshock( "iw5_stingerm7_sp" );
+    precacheshellshock( "iw5_bal27_sp_variablereddot" );
+    precacheshellshock( "iw5_hmr9_sp" );
     animscripts\traverse\boost::precache_boost_fx_npc();
 }
 
@@ -322,7 +322,7 @@ should_break_use_mt_fire()
 
 should_break_use_mt_missiles()
 {
-    if ( !isdefined( level.player.drivingvehicleandturret ) || level.player _meth_82EE() )
+    if ( !isdefined( level.player.drivingvehicleandturret ) || level.player fragbuttonpressed() )
     {
         common_scripts\utility::flag_set( "flag_hint_mt_control_fire_missiles_press" );
         return 1;
@@ -333,7 +333,7 @@ should_break_use_mt_missiles()
 
 should_break_release_mt_missiles()
 {
-    if ( !isdefined( level.player.drivingvehicleandturret ) || !level.player _meth_82EE() )
+    if ( !isdefined( level.player.drivingvehicleandturret ) || !level.player fragbuttonpressed() )
     {
         if ( isdefined( level.player.drivingvehicleandturret ) )
             wait 1.0;
@@ -383,14 +383,14 @@ start_intro_fly_in_part2()
     maps\fusion_code::spawn_intro_pilots();
     var_0 = maps\fusion_code::spawn_player_anim_rig();
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_807D( var_0, "tag_player", 0.75, 50, 30, 15, 45, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 0.75, 50, 30, 15, 45, 1 );
     var_1 = common_scripts\utility::getstruct( "org_flyin", "targetname" );
     var_1 maps\_anim::anim_first_frame_solo( level.warbird_a, "fly_in_part2" );
     var_2 = [ var_0, level.burke, level.joker, level.carter, level.copilot_intro, level.pilot_intro ];
     level.warbird_a maps\_anim::anim_first_frame( var_2, "fly_in_part2", "tag_guy0" );
 
     foreach ( var_4 in var_2 )
-        var_4 _meth_804D( level.warbird_a, "tag_guy0" );
+        var_4 linkto( level.warbird_a, "tag_guy0" );
 
     wait 2.5;
     thread maps\fusion_code::finish_fly_in_sequence( var_1, level.warbird_a, var_0 );
@@ -524,8 +524,8 @@ start_control_room()
     setup_allies( "control_room_player_start" );
     common_scripts\utility::flag_set( "interior_allies" );
     maps\_utility::vision_set_fog_changes( "fusion_control_room_dark", 0.5 );
-    _func_0D3( "r_disablelightsets", 0 );
-    level.player _meth_83C0( "fusion_screen_control_room_lightset" );
+    setsaveddvar( "r_disablelightsets", 0 );
+    level.player lightsetforplayer( "fusion_screen_control_room_lightset" );
     thread maps\fusion_code::control_room_scene_player( common_scripts\utility::getstruct( "control_room_burke_position", "targetname" ) );
     thread maps\fusion_code::control_room_scene();
     thread maps\fusion_code::control_room_screens();
@@ -648,10 +648,10 @@ deployable_cover_think()
     level.deployable_cover = spawn( "script_model", level.joker gettagorigin( "j_SpineUpper" ) + ( 0, 0, 0 ) );
     level.deployable_cover.angles = level.joker gettagangles( "j_SpineUpper" ) + ( 0, 0, 0 );
     level.deployable_cover.animname = "deployable_cover";
-    level.deployable_cover _meth_80B1( "deployable_cover" );
+    level.deployable_cover setmodel( "deployable_cover" );
     level.deployable_cover maps\_anim::setanimtree();
     level.deployable_cover maps\_anim::anim_first_frame_solo( level.deployable_cover, "deployable_cover_closed_idle" );
-    level.deployable_cover _meth_804D( level.joker, "j_SpineUpper" );
+    level.deployable_cover linkto( level.joker, "j_SpineUpper" );
     common_scripts\utility::flag_wait( "joker_placing_turbine_elevator_cover" );
     level.deployable_cover delete();
 }
@@ -812,12 +812,12 @@ handle_fusion_portal_groups_on( var_0, var_1, var_2, var_3 )
         level endon( var_2 );
 
     var_4 = getent( var_0, "targetname" );
-    var_4 _meth_8070( 0 );
+    var_4 enableportalgroup( 0 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_1 );
-        var_4 _meth_8070( 1 );
+        var_4 enableportalgroup( 1 );
         wait 0.05;
 
         if ( isdefined( var_2 ) )
@@ -830,15 +830,15 @@ handle_fusion_portal_groups_toggle( var_0, var_1, var_2 )
     level.player endon( "death" );
     level endon( "missionfailed" );
     var_3 = getent( var_0, "targetname" );
-    var_3 _meth_8070( 0 );
+    var_3 enableportalgroup( 0 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_1 );
-        var_3 _meth_8070( 1 );
+        var_3 enableportalgroup( 1 );
         wait 0.05;
         common_scripts\utility::flag_wait( var_2 );
-        var_3 _meth_8070( 0 );
+        var_3 enableportalgroup( 0 );
         wait 0.05;
     }
 }

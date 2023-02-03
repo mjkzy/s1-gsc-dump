@@ -45,7 +45,7 @@ zombiedistractiondrone()
                 if ( !checkdronetrapvalid( var_2 ) )
                     continue;
 
-                var_3 = _func_220( var_2.origin, self.origin );
+                var_3 = distance2dsquared( var_2.origin, self.origin );
                 var_4 = var_2 getdistractiondroneradiussqr();
 
                 if ( var_3 < var_4 )
@@ -188,7 +188,7 @@ dronethink()
 spawndronemodel()
 {
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "dlc_distraction_drone_01" );
+    var_0 setmodel( "dlc_distraction_drone_01" );
     var_0.owner = self.owner;
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "drone_distraction_scan_fx" ), var_0, "TAG_SIREN_FX" );
     var_0.fx = 1;
@@ -200,7 +200,7 @@ droneanimate()
 {
     self endon( "death" );
     thread dronerotate();
-    self _meth_82AE( self.origin + ( 0, 0, 70 ), 1, 0, 1 );
+    self moveto( self.origin + ( 0, 0, 70 ), 1, 0, 1 );
 }
 
 dronerotate()
@@ -210,7 +210,7 @@ dronerotate()
 
     for (;;)
     {
-        self _meth_82BD( ( 0, 60, 0 ), var_0 );
+        self rotatevelocity( ( 0, 60, 0 ), var_0 );
         wait(var_0);
     }
 }
@@ -219,11 +219,11 @@ droneaudio()
 {
     var_0 = spawn( "script_model", self.origin );
     self.soundandeffectsent = var_0;
-    var_0 _meth_80B1( "tag_origin" );
-    var_0 _meth_8446( self, "tag_weapon", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_0 _meth_8438( "distraction_drone_deploy" );
+    var_0 setmodel( "tag_origin" );
+    var_0 vehicle_jetbikesethoverforcescale( self, "tag_weapon", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 playsoundonmovingent( "distraction_drone_deploy" );
     wait 0.3;
-    self _meth_8075( "distraction_drone_alarm" );
+    self playloopsound( "distraction_drone_alarm" );
     self waittill( "death" );
     wait 3;
     var_0 delete();
@@ -258,16 +258,16 @@ destroydrone( var_0 )
     }
 
     playfxontag( common_scripts\utility::getfx( "zdd_explode" ), self.soundandeffectsent, "tag_origin" );
-    self.soundandeffectsent _meth_8438( "wpn_explosive_drone_exp" );
+    self.soundandeffectsent playsoundonmovingent( "wpn_explosive_drone_exp" );
     var_2 = self.origin;
     var_3 = self.owner;
 
-    if ( _func_294( var_3 ) )
+    if ( isremovedentity( var_3 ) )
         var_3 = undefined;
 
     if ( var_1 )
-        self entityradiusdamage( var_2, 100, 5000, 450, var_3, "MOD_EXPLOSIVE", "distraction_drone_zombie_mp" );
+        self radiusdamage( var_2, 100, 5000, 450, var_3, "MOD_EXPLOSIVE", "distraction_drone_zombie_mp" );
 
-    self _meth_80AB();
+    self stoploopsound();
     self delete();
 }

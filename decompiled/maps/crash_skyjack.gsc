@@ -23,7 +23,7 @@ precache_skyjack()
     common_scripts\utility::flag_init( "start_hud" );
     precachemodel( "viewbody_sentinel_arctic_mitchell" );
     precachemodel( "worldhands_sentinel_arctic_mitchell" );
-    precacheitem( "s1_unarmed" );
+    precacheshellshock( "s1_unarmed" );
     precachemodel( "laser_explosive_crate" );
     precachemodel( "laser_explosive_crate_obj" );
     precachemodel( "vehicle_skyjack_drone_pod_ai" );
@@ -62,16 +62,16 @@ crash_introscreen()
 {
     level.player freezecontrols( 1 );
     var_0 = newclienthudelem( level.player );
-    var_0 _meth_80CC( "black", 1280, 720 );
+    var_0 setshader( "black", 1280, 720 );
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
     var_0.alpha = 1;
     var_0.foreground = 0;
-    _func_0D3( "cg_cinematicfullscreen", "1" );
-    _func_057( "chyron_text_crash" );
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
+    cinematicingame( "chyron_text_crash" );
     wait 1;
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
     common_scripts\utility::flag_set( "display_chyron" );
@@ -87,7 +87,7 @@ begin_skyjack()
     thread maps\_high_speed_clouds::cloudfastinit( "none", ( 180, 0, 0 ) );
     level.skyjack_animnode = common_scripts\utility::getstruct( "skyjack_animnode", "targetname" );
     thread skyjack_player();
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     thread maps\_shg_utility::play_chyron_video( "chyron_text_crash", undefined, 1 );
     common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -125,7 +125,7 @@ begin_skyjack()
     level.player thread maps\crash_exo_temperature::set_external_temperature_over_time( level.temperature_high_alt, 3.8 );
     common_scripts\utility::flag_wait( "skyjack_done" );
     level.player thread maps\crash_exo_temperature::deactivate_heater();
-    level.player _meth_83D7( ( 0, 0, 0 ), 0 );
+    level.player pushplayervector( ( 0, 0, 0 ), 0 );
 }
 
 skyjack_plane()
@@ -140,7 +140,7 @@ skyjack_plane()
     thread skyjack_plane_debris();
     level.skyjack_animnode thread maps\_anim::anim_single_solo( var_0, "skyjack_explosion_plane" );
     var_0 waittillmatch( "single anim", "begin_explosion" );
-    var_0 _meth_80B1( "atlas_vtol_cargo_plane_ext_dstrypv" );
+    var_0 setmodel( "atlas_vtol_cargo_plane_ext_dstrypv" );
     thread maps\crash_fx::skyjack_wing_explosion();
     common_scripts\utility::flag_set( "actual_explosion" );
     wait 3;
@@ -160,15 +160,15 @@ skyjack_plane_debris()
     var_1 = spawn( "script_model", var_0 gettagorigin( "j_prop_1" ) );
     var_2 = spawn( "script_model", var_0 gettagorigin( "j_prop_2" ) );
     var_3 = spawn( "script_model", var_0 gettagorigin( "j_prop_3" ) );
-    var_1 _meth_80B1( "vfx_metal_scrap_debris_01" );
-    var_2 _meth_80B1( "vfx_metal_scrap_debris_03" );
-    var_3 _meth_80B1( "vfx_metal_scrap_debris_10" );
+    var_1 setmodel( "vfx_metal_scrap_debris_01" );
+    var_2 setmodel( "vfx_metal_scrap_debris_03" );
+    var_3 setmodel( "vfx_metal_scrap_debris_10" );
     var_1.angles = var_0 gettagangles( "j_prop_1" );
     var_2.angles = var_0 gettagangles( "j_prop_2" );
     var_3.angles = var_0 gettagangles( "j_prop_3" );
-    var_1 _meth_804D( var_0, "j_prop_1" );
-    var_2 _meth_804D( var_0, "j_prop_2" );
-    var_3 _meth_804D( var_0, "j_prop_3" );
+    var_1 linkto( var_0, "j_prop_1" );
+    var_2 linkto( var_0, "j_prop_2" );
+    var_3 linkto( var_0, "j_prop_3" );
     level.skyjack_animnode maps\_anim::anim_single_solo( var_0, "skyjack_explosion_debris" );
     var_1 delete();
     var_2 delete();
@@ -179,7 +179,7 @@ skyjack_plane_debris()
 skyjack_charges()
 {
     var_0 = maps\_utility::spawn_anim_model( "explosive" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     level.skyjack_animnode thread maps\_anim::anim_first_frame_solo( var_0, "skyjack_setcharge_explosive" );
     var_0 hide();
     common_scripts\utility::flag_wait( "skyjack_explosion" );
@@ -197,43 +197,43 @@ skyjack_charges()
 
 skyjack_player()
 {
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
     level.player_weapons = level.player maps\_utility::get_storable_weapons_list_all();
-    level.player _meth_8310();
-    level.player _meth_830E( "s1_unarmed" );
-    level.player _meth_8316( "s1_unarmed" );
-    level.player _meth_8321();
+    level.player takeallweapons();
+    level.player giveweapon( "s1_unarmed" );
+    level.player switchtoweaponimmediate( "s1_unarmed" );
+    level.player disableweaponswitch();
     var_0 = maps\_utility::spawn_anim_model( "rig" );
     var_1 = maps\_utility::spawn_anim_model( "rig" );
     level.skyjack_animnode thread maps\_anim::anim_first_frame_solo( var_1, "skyjack_wingland_player" );
     var_1 hide();
     level.skyjack_animnode thread maps\_anim::anim_first_frame_solo( var_0, "skyjack_wingland_player" );
-    level.player _meth_807D( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
     common_scripts\utility::flag_wait( "start_action" );
-    level.player _meth_80A2( 1.0, 0.5, 0.5, 10, 10, 5, 10 );
+    level.player lerpviewangleclamp( 1.0, 0.5, 0.5, 10, 10, 5, 10 );
     level.skyjack_animnode thread maps\_anim::anim_single_solo( var_1, "skyjack_wingland_player" );
     level.skyjack_animnode thread maps\_anim::anim_single_solo( var_0, "skyjack_wingland_player" );
-    var_0 _meth_814B( %crash_skyjack_wingland_player_l, 0.01, 0 );
-    var_0 _meth_814B( %crash_skyjack_wingland_player_r, 0.01, 0 );
+    var_0 setanim( %crash_skyjack_wingland_player_l, 0.01, 0 );
+    var_0 setanim( %crash_skyjack_wingland_player_r, 0.01, 0 );
     var_1 waittillmatch( "single anim", "start_player_control" );
     thread jetpack_fly_input_monitor();
     thread jetpack_fly_play_anims( var_0 );
     var_1 waittillmatch( "single anim", "end_player_control" );
     level.player notify( "lose_fly_controls" );
-    var_0 _meth_814B( %crash_skyjack_wingland_player, 1, 3 );
-    var_0 _meth_814B( %crash_skyjack_wingland_player_l, 0.01, 3 );
-    var_0 _meth_814B( %crash_skyjack_wingland_player_r, 0.01, 3 );
+    var_0 setanim( %crash_skyjack_wingland_player, 1, 3 );
+    var_0 setanim( %crash_skyjack_wingland_player_l, 0.01, 3 );
+    var_0 setanim( %crash_skyjack_wingland_player_r, 0.01, 3 );
     var_1 waittillmatch( "single anim", "end" );
     var_1 delete();
     common_scripts\utility::flag_set( "player_landed_on_plane" );
     var_2 = getent( "skyjack_fall_trigger", "targetname" );
     var_2 common_scripts\utility::trigger_on();
-    level.player _meth_8130( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8300( 0 );
-    level.player _meth_831E();
+    level.player allowmelee( 0 );
+    level.player allowsprint( 0 );
+    level.player allowads( 0 );
+    level.player enableweapons();
     level.player thread mag_glove_player_mount( var_0 );
     var_3 = getent( "skyjack_charge_trigger", "targetname" );
     var_3 maps\_utility::addhinttrigger( &"CRASH_SKYJACK_CHARGES", &"CRASH_SKYJACK_CHARGES_KEYBOARD" );
@@ -243,12 +243,12 @@ skyjack_player()
     var_5 = common_scripts\utility::spawn_tag_origin();
     var_5.origin = var_0.origin;
     var_5.angles = var_0.angles;
-    var_5 _meth_8092();
-    var_0 _meth_804D( var_5, "tag_origin" );
-    var_5 _meth_82AE( getstartorigin( level.skyjack_animnode.origin, level.skyjack_animnode.angles, maps\_utility::getanim_from_animname( "skyjack_explosion_player", "rig" ) ), 0.5, 0.25, 0.25 );
-    var_5 _meth_82B5( getstartangles( level.skyjack_animnode.origin, level.skyjack_animnode.angles, maps\_utility::getanim_from_animname( "skyjack_explosion_player", "rig" ) ), 0.5, 0.25, 0.25 );
+    var_5 dontinterpolate();
+    var_0 linkto( var_5, "tag_origin" );
+    var_5 moveto( getstartorigin( level.skyjack_animnode.origin, level.skyjack_animnode.angles, maps\_utility::getanim_from_animname( "skyjack_explosion_player", "rig" ) ), 0.5, 0.25, 0.25 );
+    var_5 rotateto( getstartangles( level.skyjack_animnode.origin, level.skyjack_animnode.angles, maps\_utility::getanim_from_animname( "skyjack_explosion_player", "rig" ) ), 0.5, 0.25, 0.25 );
     wait 0.5;
-    var_0 _meth_804F();
+    var_0 unlink();
     var_5 delete();
     var_0.animname = "rig";
     var_0 maps\_utility::assign_animtree();
@@ -256,21 +256,21 @@ skyjack_player()
     common_scripts\utility::flag_set( "skyjack_explosion_lighting" );
     var_2 delete();
     level.skyjack_animnode thread maps\_anim::anim_single_solo( var_0, "skyjack_explosion_player" );
-    level.player _meth_831D();
-    level.player _meth_80A2( 1.0, 0.5, 0.5, 0, 0, 0, 0 );
+    level.player disableweapons();
+    level.player lerpviewangleclamp( 1.0, 0.5, 0.5, 0, 0, 0, 0 );
     wait 0.5;
     wait 15.75;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 2.05;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 1.1;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     level.player thread play_fullscreen_dirt( 3, 0, 2, 0.85, 0, 0 );
     var_0 waittillmatch( "single anim", "player_control" );
-    level.player _meth_80A2( 0.5, 0.25, 0.25, 20, 20, 5, 25 );
+    level.player lerpviewangleclamp( 0.5, 0.25, 0.25, 20, 20, 5, 25 );
     thread maps\_high_speed_clouds::cloudsunreset();
     var_0 waittillmatch( "single anim", "no_control" );
-    level.player _meth_80A2( 1, 0.25, 0, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1, 0.25, 0, 0, 0, 0, 0 );
     var_0 waittillmatch( "single anim", "end" );
     common_scripts\utility::flag_wait( "skyjack_done" );
     wait 1;
@@ -296,7 +296,7 @@ skyjack_cormack()
     playfxontag( common_scripts\utility::getfx( "jetpack_exhaust_exhaust_npc" ), level.cormack, "tag_fx_engine_r_exhause" );
     level.skyjack_animnode maps\_anim::anim_first_frame_solo( self, "skyjack_intro_cormack" );
     var_0 = common_scripts\utility::spawn_tag_origin();
-    self _meth_804D( var_0, "tag_origin" );
+    self linkto( var_0, "tag_origin" );
     common_scripts\utility::flag_wait( "start_action" );
     level.skyjack_animnode thread maps\_anim::anim_single_solo( self, "skyjack_intro_cormack" );
     self waittillmatch( "single anim", "jets_off" );
@@ -305,7 +305,7 @@ skyjack_cormack()
     stopfxontag( common_scripts\utility::getfx( "jetpack_exhaust_exhaust_npc" ), level.cormack, "tag_fx_engine_r_exhause" );
     stopfxontag( common_scripts\utility::getfx( "jetpack_skyjack_trail" ), level.cormack, "tag_fx_engine_r_exhause" );
 
-    while ( !common_scripts\utility::flag( "skyjack_explosion" ) && self _meth_814F( maps\_utility::getanim( "skyjack_intro_cormack" ) ) < 0.99 )
+    while ( !common_scripts\utility::flag( "skyjack_explosion" ) && self getanimtime( maps\_utility::getanim( "skyjack_intro_cormack" ) ) < 0.99 )
         wait 0.05;
 
     if ( !common_scripts\utility::flag( "skyjack_explosion" ) )
@@ -334,7 +334,7 @@ skyjack_cormack()
     stopfxontag( common_scripts\utility::getfx( "jetpack_skyjack_trail" ), level.cormack, "tag_fx_engine_r_exhause" );
     common_scripts\utility::flag_set( "skyjack_white_fade_done" );
     common_scripts\utility::flag_set( "skyjack_done" );
-    self _meth_804F();
+    self unlink();
 }
 
 skyjack_drone_pod()
@@ -388,12 +388,12 @@ skyjack_dialogue()
 skyjack_objective()
 {
     var_0 = maps\_utility::spawn_anim_model( "explosive" );
-    var_0 _meth_80B1( "laser_explosive_crate_obj" );
-    var_0 _meth_82BF();
+    var_0 setmodel( "laser_explosive_crate_obj" );
+    var_0 notsolid();
     level.skyjack_animnode thread maps\_anim::anim_single_solo( var_0, "skyjack_setcharge_explosive" );
     waitframe();
-    var_0 _meth_8117( var_0 maps\_utility::getanim( "skyjack_setcharge_explosive" ), 0.225 );
-    var_0 _meth_83C7( var_0 maps\_utility::getanim( "skyjack_setcharge_explosive" ), 0 );
+    var_0 setanimtime( var_0 maps\_utility::getanim( "skyjack_setcharge_explosive" ), 0.225 );
+    var_0 setanimrate( var_0 maps\_utility::getanim( "skyjack_setcharge_explosive" ), 0 );
     var_0 hide();
     common_scripts\utility::flag_wait( "obj_start_plant_charges" );
     var_0 show();
@@ -437,7 +437,7 @@ play_fullscreen_dirt( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = newclienthudelem( self );
     var_6.x = var_4;
     var_6.y = var_5;
-    var_6 _meth_80CC( "fullscreen_dirt_left", 640, 480 );
+    var_6 setshader( "fullscreen_dirt_left", 640, 480 );
     var_6.splatter = 1;
     var_6.alignx = "left";
     var_6.aligny = "top";
@@ -552,7 +552,7 @@ jetpack_fly_input_monitor()
 
     for (;;)
     {
-        var_0 = level.player _meth_82F3();
+        var_0 = level.player getnormalizedmovement();
 
         if ( var_0[1] >= 0.35 )
         {
@@ -586,25 +586,25 @@ jetpack_fly_play_anims( var_0 )
     {
         if ( common_scripts\utility::flag( "left_pressed" ) )
         {
-            var_0 _meth_814B( %crash_skyjack_wingland_player_l, 1, var_1 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player, 0.01, var_1 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_r, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_l, 1, var_1 );
+            var_0 setanim( %crash_skyjack_wingland_player, 0.01, var_1 );
+            var_0 setanim( %crash_skyjack_wingland_player_r, 0.01, var_2 );
             common_scripts\utility::flag_waitopen( "left_pressed" );
-            var_0 _meth_814B( %crash_skyjack_wingland_player, 1, var_2 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_l, 0.01, var_2 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_r, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player, 1, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_l, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_r, 0.01, var_2 );
             continue;
         }
 
         if ( common_scripts\utility::flag( "right_pressed" ) )
         {
-            var_0 _meth_814B( %crash_skyjack_wingland_player_r, 1, var_1 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player, 0.01, var_1 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_l, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_r, 1, var_1 );
+            var_0 setanim( %crash_skyjack_wingland_player, 0.01, var_1 );
+            var_0 setanim( %crash_skyjack_wingland_player_l, 0.01, var_2 );
             common_scripts\utility::flag_waitopen( "right_pressed" );
-            var_0 _meth_814B( %crash_skyjack_wingland_player, 1, var_2 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_r, 0.01, var_2 );
-            var_0 _meth_814B( %crash_skyjack_wingland_player_l, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player, 1, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_r, 0.01, var_2 );
+            var_0 setanim( %crash_skyjack_wingland_player_l, 0.01, var_2 );
             continue;
         }
 
@@ -677,11 +677,11 @@ mag_glove_player_mount( var_0 )
     {
         level.exo_climb_player_center = spawn( "script_origin", level.exo_climb_rig.origin );
         level.exo_climb_player_center.angles = level.exo_climb_rig.angles;
-        level.exo_climb_player_center _meth_804D( level.exo_climb_rig, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.exo_climb_player_center linkto( level.exo_climb_rig, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
-    level.player _meth_80A2( 0.5, 0.25, 0.25, 15, 15, 15, 15 );
-    level.player _meth_80FE( 1.0, 0.6 );
+    level.player lerpviewangleclamp( 0.5, 0.25, 0.25, 15, 15, 15, 15 );
+    level.player enableslowaim( 1.0, 0.6 );
     level thread mag_glove_player_controller();
 }
 
@@ -719,7 +719,7 @@ mag_glove_player_controller()
 
 mag_glove_get_requested_move_direction( var_0 )
 {
-    var_1 = level.player _meth_82F3();
+    var_1 = level.player getnormalizedmovement();
 
     if ( length2d( var_1 ) <= 0.15 )
         return "";
@@ -753,17 +753,17 @@ mag_glove_orient_to_surface()
 
     for ( var_2 = 0.5; isdefined( level.exo_climb_rig ); var_2 = 0.1 )
     {
-        if ( level.exo_climb_rig _meth_8068() )
-            level.exo_climb_rig _meth_804F();
+        if ( level.exo_climb_rig islinked() )
+            level.exo_climb_rig unlink();
 
         var_0.origin = level.exo_climb_rig.origin;
         var_0.angles = level.exo_climb_rig.angles;
-        var_0 _meth_8092();
-        level.exo_climb_rig _meth_804D( var_0, "tag_origin" );
+        var_0 dontinterpolate();
+        level.exo_climb_rig linkto( var_0, "tag_origin" );
         var_3 = level.exo_climb_rig.origin + anglestoforward( level.exo_climb_rig.angles ) * 12.0;
         var_4 = bullettrace( var_3 + ( 0, 0, 200 ), var_3 - ( 0, 0, 10000 ), 0, level.player, 0, 0, 1 );
-        var_0 _meth_82AE( ( var_0.origin[0], var_0.origin[1], var_4["position"][2] - 2 ), var_2 );
-        var_0 _meth_82B5( ( 0, var_1, 0 ) - ( 90 + vectortoangles( var_4["normal"] )[0], 0, vectortoangles( var_4["normal"] )[2] ), var_2 );
+        var_0 moveto( ( var_0.origin[0], var_0.origin[1], var_4["position"][2] - 2 ), var_2 );
+        var_0 rotateto( ( 0, var_1, 0 ) - ( 90 + vectortoangles( var_4["normal"] )[0], 0, vectortoangles( var_4["normal"] )[2] ), var_2 );
         wait(var_2);
     }
 
@@ -773,19 +773,19 @@ mag_glove_orient_to_surface()
 stop_player_mag_gloves()
 {
     level.player notify( "stop_player_mag_gloves" );
-    level.exo_climb_player_center _meth_804F();
+    level.exo_climb_player_center unlink();
     level.exo_climb_player_center delete();
     level.exo_climb_player_center = undefined;
 
-    if ( level.exo_climb_rig _meth_8068() )
-        level.exo_climb_rig _meth_804F();
+    if ( level.exo_climb_rig islinked() )
+        level.exo_climb_rig unlink();
 
     maps\_exo_climb::climbing_animation_stop_idle();
     wait 0.05;
     maps\_exo_climb::restore_idle();
     wait 0.2;
     level.exo_climb_rig = undefined;
-    level.player _meth_80FF();
+    level.player disableslowaim();
 }
 
 adjust_angles_to_player( var_0 )
@@ -805,11 +805,11 @@ plodding_footsteps_ends()
 {
     level waittill( "stop_plodding_footsteps" );
     var_0 = 0.8;
-    level.ground_ref_ent _meth_82B5( ( 0, 0, 0 ), var_0, var_0 * 0.5, var_0 * 0.5 );
+    level.ground_ref_ent rotateto( ( 0, 0, 0 ), var_0, var_0 * 0.5, var_0 * 0.5 );
     level.player maps\_utility::blend_movespeedscale( 1.0, 0.8 );
     wait(var_0);
     level.ground_ref_ent delete();
-    level.player _meth_8091( undefined );
+    level.player playersetgroundreferenceent( undefined );
     level.player notify( "blend_movespeedscale" );
     level.player maps\_utility_code::movespeed_set_func( 1.0 );
 }
@@ -821,7 +821,7 @@ plodding_footsteps()
     level.player notify( "blend_movespeedscale" );
     level.player maps\_utility_code::movespeed_set_func( 0.45 );
     level.ground_ref_ent = spawn( "script_model", ( 0, 0, 0 ) );
-    level.player _meth_8091( level.ground_ref_ent );
+    level.player playersetgroundreferenceent( level.ground_ref_ent );
     var_0 = 4.0;
     var_1 = 3.0;
     var_2 = 4.5;
@@ -840,7 +840,7 @@ plodding_footsteps()
 
             if ( var_6 == 0.0 )
             {
-                level.ground_ref_ent _meth_82B5( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
+                level.ground_ref_ent rotateto( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
                 var_3 = level.ground_ref_ent.angles[0];
             }
             else
@@ -867,14 +867,14 @@ plodding_footsteps()
                 var_8 = sin( var_3 * -0.5 ) * var_1;
                 var_9 = sin( var_3 * 0.5 ) * var_2;
                 var_10 = adjust_angles_to_player( ( var_7, var_8, var_9 ) );
-                level.ground_ref_ent _meth_82B5( var_10, var_4, var_4 * 0.5, var_4 * 0.5 );
+                level.ground_ref_ent rotateto( var_10, var_4, var_4 * 0.5, var_4 * 0.5 );
             }
         }
         else
         {
             level.player notify( "blend_movespeedscale" );
             level.player maps\_utility_code::movespeed_set_func( 0.0 );
-            level.ground_ref_ent _meth_82B5( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
+            level.ground_ref_ent rotateto( ( 0, 0, 0 ), 0.25, 0.125, 0.125 );
             var_3 = level.ground_ref_ent.angles[0];
         }
 

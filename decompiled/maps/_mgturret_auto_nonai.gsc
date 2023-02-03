@@ -13,12 +13,12 @@ stop_turret_on_gunner_death( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         return;
 
-    if ( _func_294( var_0 ) )
+    if ( isremovedentity( var_0 ) )
         return;
 
-    var_0 _meth_8065( "manual" );
-    var_0 _meth_8108();
-    var_0 _meth_80E3();
+    var_0 setmode( "manual" );
+    var_0 cleartargetentity();
+    var_0 stopfiring();
 }
 
 keep_gunner_oriented_with_turret( var_0, var_1 )
@@ -28,7 +28,7 @@ keep_gunner_oriented_with_turret( var_0, var_1 )
     for (;;)
     {
         var_2 = var_0 gettagangles( "tag_aim_pivot" );
-        var_1 _meth_818F( "face angle", var_2[1] );
+        var_1 orientmode( "face angle", var_2[1] );
         wait 0.05;
     }
 }
@@ -37,8 +37,8 @@ set_up_auto_non_ai_turret( var_0, var_1, var_2 )
 {
     var_1 endon( "death" );
     var_0 endon( "death" );
-    var_0 _meth_8065( "auto_nonai" );
-    var_1 _meth_804D( var_0, var_2.sittag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 setmode( "auto_nonai" );
+    var_1 linkto( var_0, var_2.sittag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     thread stop_turret_on_gunner_death( var_0, var_1, var_2 );
     thread keep_gunner_oriented_with_turret( var_0, var_1 );
     var_3 = var_0 gettagorigin( var_2.sittag );

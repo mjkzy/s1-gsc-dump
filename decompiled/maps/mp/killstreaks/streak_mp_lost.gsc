@@ -4,7 +4,7 @@
 init()
 {
     level.mp_lost_killstreak_duration = 40;
-    precacheitem( "iw5_dlcgun12loot6_mp" );
+    precacheshellshock( "iw5_dlcgun12loot6_mp" );
     precacheshader( "dpad_killstreak_lost_static" );
     level.killstreakfuncs["mp_lost"] = ::tryusecleaningdrone;
     level.mapkillstreak = "mp_lost";
@@ -50,13 +50,13 @@ tryusecleaningdrone( var_0, var_1 )
 
     if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + var_2 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
     if ( level.mp_lost_inuse )
     {
-        self iclientprintlnbold( &"MP_LOST_IN_USE" );
+        self iprintlnbold( &"MP_LOST_IN_USE" );
         return 0;
     }
 
@@ -187,18 +187,18 @@ createcleaningdrone( var_0, var_1, var_2, var_3, var_4 )
         var_8 = level.player;
 
     var_9 = spawnhelicopter( var_8, var_5, var_6, level.cleaningdronesettings.vehicleinfo, level.cleaningdronesettings.modelbase );
-    var_9 _meth_80B1( "tag_origin" );
+    var_9 setmodel( "tag_origin" );
     var_9 hide();
     var_9.modelbase = spawn( "script_model", var_5 );
     var_9.modelbase.angles = ( 0, 0, 0 );
-    var_9.modelbase _meth_80B1( level.cleaningdronesettings.modelbase );
+    var_9.modelbase setmodel( level.cleaningdronesettings.modelbase );
     var_9 thread cleaningdrone_spawnanim( var_7 );
     var_9.owner = self;
     var_10 = spawn( "script_model", var_9.modelbase gettagorigin( "tag_origin" ) );
-    var_10 _meth_80B1( "tag_origin" );
-    var_10 _meth_8446( var_9.modelbase, "tag_origin", ( -40, 0, 10 ), ( 0, 0, 0 ) );
+    var_10 setmodel( "tag_origin" );
+    var_10 vehicle_jetbikesethoverforcescale( var_9.modelbase, "tag_origin", ( -40, 0, 10 ), ( 0, 0, 0 ) );
     var_9.killcament = var_10;
-    var_9.killcament _meth_834D( "rocket" );
+    var_9.killcament setscriptmoverkillcam( "rocket" );
 
     if ( !isdefined( var_9 ) )
         return;
@@ -210,11 +210,11 @@ createcleaningdrone( var_0, var_1, var_2, var_3, var_4 )
 
     var_9 common_scripts\utility::make_entity_sentient_mp( self.team );
     var_9 makeunusable();
-    var_9 _meth_8202( 23, 23, 23 );
+    var_9 makevehiclesolidcapsule( 23, 23, 23 );
     var_9 addtocleaningdronelist();
     var_9 thread removefromcleaningdronelistondeath();
-    var_9.modelbase _meth_82C0( 1 );
-    var_9.modelbase _meth_82C1( 1 );
+    var_9.modelbase setcandamage( 1 );
+    var_9.modelbase setcanradiusdamage( 1 );
     var_9.modelbase.health = level.cleaningdronesettings.health;
     var_9.modelbase.maxhealth = level.cleaningdronesettings.maxhealth;
     var_9.modelbase.damagetaken = 0;
@@ -222,10 +222,10 @@ createcleaningdrone( var_0, var_1, var_2, var_3, var_4 )
     var_9.followspeed = 20;
     var_9.owner = self;
     var_9.team = self.team;
-    var_9 _meth_8283( var_9.speed, 10, 10 );
-    var_9 _meth_8292( 120, 90 );
-    var_9 _meth_825A( 30 );
-    var_9 _meth_8253( 4, 5, 5 );
+    var_9 vehicle_setspeed( var_9.speed, 10, 10 );
+    var_9 setyawspeed( 120, 90 );
+    var_9 setneargoalnotifydist( 30 );
+    var_9 sethoverparams( 4, 5, 5 );
     var_9.fx_tag0 = undefined;
 
     if ( isdefined( var_9.type ) )
@@ -248,7 +248,7 @@ createcleaningdrone( var_0, var_1, var_2, var_3, var_4 )
     var_9.trackedplayer = undefined;
     var_11 = 45;
     var_12 = 45;
-    var_9 _meth_8294( var_11, var_12 );
+    var_9 setmaxpitchroll( var_11, var_12 );
     var_9.targetpos = var_5;
     var_9.attract_strength = 10000;
     var_9.attract_range = 500;
@@ -297,7 +297,7 @@ idletargetmover( var_0 )
         {
             var_1 = anglestoforward( self.angles );
             var_2 = self.origin + var_1 * -100 + ( 0, 0, 40 );
-            var_0 _meth_82AE( var_2, 0.5 );
+            var_0 moveto( var_2, 0.5 );
         }
 
         wait 0.5;
@@ -332,8 +332,8 @@ cleaningdrone_removelightfx()
 
     foreach ( var_1 in level.players )
     {
-        _func_2AD( level.cleaningdronesettings.fxid_enemy_light, self.modelbase, "tag_origin", var_1 );
-        _func_2AD( level.cleaningdronesettings.fxid_friendly_light, self.modelbase, "tag_origin", var_1 );
+        killfxontagforclient( level.cleaningdronesettings.fxid_enemy_light, self.modelbase, "tag_origin", var_1 );
+        killfxontagforclient( level.cleaningdronesettings.fxid_friendly_light, self.modelbase, "tag_origin", var_1 );
     }
 }
 
@@ -469,14 +469,14 @@ cleaningdrone_spawnanim( var_0 )
     self endon( "leaving" );
     thread aud_drone_launch();
     var_1 = common_scripts\utility::getclosest( var_0.origin, level.spawncratelocations );
-    var_1 _meth_8279( "lost_attack_drone_spawn_crate" );
+    var_1 scriptmodelplayanim( "lost_attack_drone_spawn_crate" );
     playfx( level.cleaningdronesettings.fxid_spawn, var_1.origin, anglestoforward( var_1.angles + ( 270, 0, 0 ) ) );
-    self.modelbase _meth_848B( "lost_attack_drone_spawn", var_0.origin, var_0.angles );
+    self.modelbase scriptmodelplayanimdeltamotionfrompos( "lost_attack_drone_spawn", var_0.origin, var_0.angles );
     wait 1.6;
-    self.modelbase _meth_827A();
-    self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
-    self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-    self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.modelbase scriptmodelclearanim();
+    self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
+    self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+    self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 }
 
 checkforexplosivegoal()
@@ -528,9 +528,9 @@ blowupdronesequence()
         playfx( level.cleaningdronesettings.fxid_lethalexplode, self.origin, var_3, var_2 );
 
         if ( isdefined( var_1 ) )
-            self entityradiusdamage( self.origin, 256, 1000, 25, var_1, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
+            self radiusdamage( self.origin, 256, 1000, 25, var_1, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
         else
-            self entityradiusdamage( self.origin, 256, 1000, 25, undefined, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
+            self radiusdamage( self.origin, 256, 1000, 25, undefined, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
 
         self notify( "death" );
     }
@@ -563,7 +563,7 @@ cleaningdrone_followtarget()
 
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
-    self _meth_8283( self.followspeed, 10, 10 );
+    self vehicle_setspeed( self.followspeed, 10, 10 );
     self.previoustrackedplayer = self.owner;
     self.trackedplayer = undefined;
     var_0 = [];
@@ -698,7 +698,7 @@ cleaningdrone_movetoplayer( var_0 )
         var_1 = 0;
         var_2 = 30;
 
-        switch ( var_0 _meth_817C() )
+        switch ( var_0 getstance() )
         {
             case "stand":
                 var_3 = 105;
@@ -716,7 +716,7 @@ cleaningdrone_movetoplayer( var_0 )
         var_1 = -65;
         var_2 = 0;
 
-        switch ( var_0 _meth_817C() )
+        switch ( var_0 getstance() )
         {
             case "stand":
                 var_3 = 65;
@@ -731,7 +731,7 @@ cleaningdrone_movetoplayer( var_0 )
     }
 
     var_4 = ( var_2, var_1, var_3 );
-    self _meth_83F9( var_0, var_4 );
+    self setdronegoalpos( var_0, var_4 );
     self.intransit = 1;
     thread cleaningdrone_watchforgoal();
     thread cleaningdrone_watchtargetdisconnect();
@@ -748,14 +748,14 @@ cleaningdrone_followowner()
     self notify( "cleaningDrone_moveToOwner" );
     self endon( "cleaningDrone_moveToOwner" );
     var_0 = ( randomintrange( 100, 300 ), randomintrange( 100, 300 ), 105 );
-    self _meth_83F9( self.owner, var_0 );
+    self setdronegoalpos( self.owner, var_0 );
     self.intransit = 1;
     thread cleaningdrone_watchforgoal();
 }
 
 cleaningdrone_stopmovement()
 {
-    self _meth_825B( self.origin, 1 );
+    self setvehgoalpos( self.origin, 1 );
     self.intransit = 0;
     self.inactive = 1;
 }
@@ -792,7 +792,7 @@ attack_anim_check( var_0, var_1 )
     var_3 = var_2 * 2;
     var_4 = self.origin;
     var_5 = var_4 + var_1 * var_0;
-    var_6 = self _meth_83E5( var_4, var_5, var_2, var_3, 1, 1 );
+    var_6 = self aiphysicstrace( var_4, var_5, var_2, var_3, 1, 1 );
     return var_6["fraction"] >= 1;
 }
 
@@ -800,11 +800,11 @@ do_stationary_attack()
 {
     thread cleaningdrone_removelightfx();
     waitframe();
-    self.modelbase _meth_804F();
+    self.modelbase unlink();
     var_0 = self.trackedplayer.origin + ( 0, 0, 40 ) - self.modelbase.origin;
     var_0 = vectornormalize( var_0 );
     var_1 = vectortoangles( var_0 );
-    self.modelbase _meth_848B( "lost_attack_drone_stationary_attack", self.modelbase.origin, var_1 );
+    self.modelbase scriptmodelplayanimdeltamotionfrompos( "lost_attack_drone_stationary_attack", self.modelbase.origin, var_1 );
     self.drone_anim_state = "lost_attack_drone_stationary_attack";
     childthread cleaningdrone_attack();
     childthread cleaningdrone_collide( self.trackedplayer );
@@ -814,14 +814,14 @@ do_stationary_attack()
 
     if ( isalive( self.trackedplayer ) )
     {
-        self.modelbase _meth_827A();
-        self.modelbase _meth_8279( "lost_attack_drone_spin_down" );
+        self.modelbase scriptmodelclearanim();
+        self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_down" );
         self.drone_anim_state = "lost_attack_drone_spin_down";
-        self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-        self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+        self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         wait 0.66;
         self notify( "damage_stop" );
-        self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+        self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
         self.drone_anim_state = "lost_attack_drone_spin_idle";
         self.modelbase thread drone_thrusterfx( 0 );
         thread cleaningdrone_enemy_lightfx();
@@ -829,14 +829,14 @@ do_stationary_attack()
     }
     else
     {
-        self.modelbase _meth_827A();
-        self.modelbase _meth_827B( "lost_attack_drone_react" );
+        self.modelbase scriptmodelclearanim();
+        self.modelbase scriptmodelplayanimdeltamotion( "lost_attack_drone_react" );
         self.drone_anim_state = "lost_attack_drone_spin_react";
         wait 2;
-        self.modelbase _meth_827A();
-        self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-        self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-        self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+        self.modelbase scriptmodelclearanim();
+        self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+        self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
         self.drone_anim_state = "lost_attack_drone_spin_idle";
         self.modelbase thread drone_thrusterfx( 0 );
         thread cleaningdrone_enemy_lightfx();
@@ -863,16 +863,16 @@ cleaningdroneattacktarget()
 
     for (;;)
     {
-        if ( isdefined( self.trackedplayer ) && self.trackedplayer != self.owner && distancesquared( self.origin, self.trackedplayer.origin ) < self.startattackrange * self.startattackrange && 0.8 < self _meth_81D8( self.trackedplayer.origin + ( 0, 0, 40 ), self.trackedplayer ) )
+        if ( isdefined( self.trackedplayer ) && self.trackedplayer != self.owner && distancesquared( self.origin, self.trackedplayer.origin ) < self.startattackrange * self.startattackrange && 0.8 < self sightconetrace( self.trackedplayer.origin + ( 0, 0, 40 ), self.trackedplayer ) )
         {
-            self.modelbase _meth_827A();
-            self.modelbase _meth_8279( "lost_attack_drone_spin_up" );
+            self.modelbase scriptmodelclearanim();
+            self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_up" );
             self.drone_anim_state = "lost_attack_drone_spin_up";
             wait 1;
 
             if ( isdefined( self.trackedplayer ) && self.trackedplayer != self.owner && isalive( self.trackedplayer ) )
             {
-                var_0 = 0.8 < self _meth_81D8( self.trackedplayer.origin + ( 0, 0, 40 ), self.trackedplayer );
+                var_0 = 0.8 < self sightconetrace( self.trackedplayer.origin + ( 0, 0, 40 ), self.trackedplayer );
 
                 if ( var_0 )
                 {
@@ -888,9 +888,9 @@ cleaningdroneattacktarget()
                         {
                             thread cleaningdrone_removelightfx();
                             waitframe();
-                            self.modelbase _meth_804F();
+                            self.modelbase unlink();
                             var_4 = vectortoangles( var_2 );
-                            self.modelbase _meth_848B( "lost_attack_drone_attack", self.modelbase.origin, var_4 );
+                            self.modelbase scriptmodelplayanimdeltamotionfrompos( "lost_attack_drone_attack", self.modelbase.origin, var_4 );
                             self.drone_anim_state = "lost_attack_drone_attack";
                             childthread cleaningdrone_attack();
                             childthread cleaningdrone_collide( self.trackedplayer );
@@ -900,14 +900,14 @@ cleaningdroneattacktarget()
 
                             if ( isalive( self.trackedplayer ) )
                             {
-                                self.modelbase _meth_827A();
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_down" );
+                                self.modelbase scriptmodelclearanim();
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_down" );
                                 self.drone_anim_state = "lost_attack_drone_spin_down";
-                                self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-                                self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                                self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+                                self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
                                 wait 0.66;
                                 self notify( "damage_stop" );
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
                                 self.drone_anim_state = "lost_attack_drone_spin_idle";
                                 self.modelbase thread drone_thrusterfx( 0 );
                                 thread cleaningdrone_enemy_lightfx();
@@ -915,14 +915,14 @@ cleaningdroneattacktarget()
                             }
                             else
                             {
-                                self.modelbase _meth_827A();
-                                self.modelbase _meth_827B( "lost_attack_drone_react" );
+                                self.modelbase scriptmodelclearanim();
+                                self.modelbase scriptmodelplayanimdeltamotion( "lost_attack_drone_react" );
                                 self.drone_anim_state = "lost_attack_drone_react";
                                 wait 2;
-                                self.modelbase _meth_827A();
-                                self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-                                self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+                                self.modelbase scriptmodelclearanim();
+                                self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+                                self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
                                 self.drone_anim_state = "lost_attack_drone_spin_idle";
                                 self.modelbase thread drone_thrusterfx( 0 );
                                 thread cleaningdrone_enemy_lightfx();
@@ -942,9 +942,9 @@ cleaningdroneattacktarget()
                         {
                             thread cleaningdrone_removelightfx();
                             waitframe();
-                            self.modelbase _meth_804F();
+                            self.modelbase unlink();
                             var_4 = vectortoangles( var_2 );
-                            self.modelbase _meth_848B( "lost_attack_drone_100_attack", self.modelbase.origin, var_4 );
+                            self.modelbase scriptmodelplayanimdeltamotionfrompos( "lost_attack_drone_100_attack", self.modelbase.origin, var_4 );
                             self.drone_anim_state = "lost_attack_drone_100_attack";
                             childthread cleaningdrone_attack();
                             childthread cleaningdrone_collide( self.trackedplayer );
@@ -954,14 +954,14 @@ cleaningdroneattacktarget()
 
                             if ( isalive( self.trackedplayer ) )
                             {
-                                self.modelbase _meth_827A();
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_down" );
+                                self.modelbase scriptmodelclearanim();
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_down" );
                                 self.drone_anim_state = "lost_attack_drone_spin_down";
-                                self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-                                self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                                self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+                                self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
                                 wait 0.66;
                                 self notify( "damage_stop" );
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
                                 self.drone_anim_state = "lost_attack_drone_spin_idle";
                                 self.modelbase thread drone_thrusterfx( 0 );
                                 thread cleaningdrone_enemy_lightfx();
@@ -969,14 +969,14 @@ cleaningdroneattacktarget()
                             }
                             else
                             {
-                                self.modelbase _meth_827A();
-                                self.modelbase _meth_827B( "lost_attack_drone_react" );
+                                self.modelbase scriptmodelclearanim();
+                                self.modelbase scriptmodelplayanimdeltamotion( "lost_attack_drone_react" );
                                 self.drone_anim_state = "lost_attack_drone_spin_react";
                                 wait 2;
-                                self.modelbase _meth_827A();
-                                self _meth_827C( self.modelbase.origin, self.modelbase.angles );
-                                self.modelbase _meth_8446( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-                                self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+                                self.modelbase scriptmodelclearanim();
+                                self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
+                                self.modelbase vehicle_jetbikesethoverforcescale( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
                                 self.drone_anim_state = "lost_attack_drone_spin_idle";
                                 self.modelbase thread drone_thrusterfx( 0 );
                                 thread cleaningdrone_enemy_lightfx();
@@ -992,13 +992,13 @@ cleaningdroneattacktarget()
             }
             else
             {
-                self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+                self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
                 self.drone_anim_state = "lost_attack_drone_spin_idle";
             }
         }
         else if ( self.drone_anim_state != "lost_attack_drone_spin_idle" )
         {
-            self.modelbase _meth_8279( "lost_attack_drone_spin_idle" );
+            self.modelbase scriptmodelplayanim( "lost_attack_drone_spin_idle" );
             self.drone_anim_state = "lost_attack_drone_spin_idle";
         }
 
@@ -1014,7 +1014,7 @@ cleaningdrone_attack()
     while ( isdefined( self.modelbase ) )
     {
         var_0 = 50;
-        self entityradiusdamage( self.modelbase.origin, var_0, 500, 100, self, "MOD_EXPLOSIVE", "iw5_dlcgun12loot6_mp" );
+        self radiusdamage( self.modelbase.origin, var_0, 500, 100, self, "MOD_EXPLOSIVE", "iw5_dlcgun12loot6_mp" );
         waitframe();
     }
 }
@@ -1025,7 +1025,7 @@ cleaningdrone_targetdead( var_0, var_1 )
     var_0 waittill( "death" );
     var_2 = var_0.body gettagorigin( "j_neck" );
     playfx( level.cleaningdronesettings.fxid_hit, var_2 );
-    announcement( var_2, var_2 - self.origin );
+    playimpactheadfatalfx( var_2, var_2 - self.origin );
     self notify( "target_dead" );
     self notify( "damage_stop" );
 }
@@ -1043,17 +1043,17 @@ stophighlightingplayer( var_0 )
 {
     if ( isdefined( self.lasertag ) )
     {
-        self.lasertag _meth_80B3();
+        self.lasertag laseroff();
         stopfxontag( level.cleaningdronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
     }
 
     if ( isdefined( var_0 ) )
     {
         if ( isdefined( level.cleaningdronesettings.sound_lock ) )
-            self _meth_80AB();
+            self stoploopsound();
 
-        if ( var_0 _meth_82A7( "specialty_radararrow", 1 ) )
-            var_0 _meth_82A9( "specialty_radararrow", 1 );
+        if ( var_0 hasperk( "specialty_radararrow", 1 ) )
+            var_0 unsetperk( "specialty_radararrow", 1 );
 
         var_0 notify( "player_not_tracked" );
         var_0.is_being_tracked = 0;
@@ -1271,18 +1271,18 @@ cleaningdroneexplode()
         self playsound( level.cleaningdronesettings.sound_explode );
 
     self notify( "explode" );
-    self.modelbase _meth_827A();
+    self.modelbase scriptmodelclearanim();
     thread cleaningdrone_removelightfx();
     waitframe();
-    self.modelbase _meth_804F();
-    self _meth_827C( self.modelbase.origin, self.modelbase.angles );
+    self.modelbase unlink();
+    self vehicle_teleport( self.modelbase.origin, self.modelbase.angles );
     self.modelbase delete();
     removecleaningdrone();
 }
 
 deletecleaningdrone()
 {
-    if ( !_func_294( self ) && isdefined( self ) )
+    if ( !isremovedentity( self ) && isdefined( self ) )
     {
         if ( isdefined( self.attractor ) )
             missile_deleteattractor( self.attractor );
@@ -1306,13 +1306,13 @@ removecleaningdrone()
 
 addtocleaningdronelist()
 {
-    level.cleaningdrones[self _meth_81B1()] = self;
+    level.cleaningdrones[self getentitynumber()] = self;
     return;
 }
 
 removefromcleaningdronelistondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death" );
     level.cleaningdrones[var_0] = undefined;
     level.cleaningdrones = common_scripts\utility::array_removeundefined( level.cleaningdrones );
@@ -1337,7 +1337,7 @@ destroy_cleaning_drone_in_water()
     {
         foreach ( var_1 in level.water_triggers )
         {
-            if ( self _meth_80A9( var_1 ) )
+            if ( self istouching( var_1 ) )
             {
                 if ( isdefined( level.cleaningdronesettings.fxid_explode ) )
                     playfx( level.cleaningdronesettings.fxid_explode, self.origin );
@@ -1360,7 +1360,7 @@ prevent_cleaning_drone_in_water( var_0 )
 
     foreach ( var_2 in level.water_triggers )
     {
-        if ( _func_22A( var_0, var_2 ) )
+        if ( ispointinvolume( var_0, var_2 ) )
             return 1;
     }
 
@@ -1377,7 +1377,7 @@ aud_drone_launch()
 
 aud_drone_start_jets()
 {
-    self _meth_8075( "veh_lost_tracking_drone_eng_low_lp" );
+    self playloopsound( "veh_lost_tracking_drone_eng_low_lp" );
 }
 
 aud_drone_thrusterattack()

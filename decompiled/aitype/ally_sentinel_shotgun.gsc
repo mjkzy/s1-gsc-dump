@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 3 ) )
@@ -39,15 +39,15 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_sentinel::precache();
-    precacheitem( "iw5_rhino_sp" );
-    precacheitem( "iw5_rhino_sp_opticsreddot" );
-    precacheitem( "iw5_rhino_sp_opticstargetenhancer" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_rhino_sp" );
+    precacheshellshock( "iw5_rhino_sp_opticsreddot" );
+    precacheshellshock( "iw5_rhino_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
 }

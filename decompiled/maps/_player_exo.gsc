@@ -34,7 +34,7 @@ player_exo_init( var_0, var_1 )
     level.player maps\_utility::playerallowalternatemelee( 0 );
     thread handle_weaponhud_visibility();
     maps\_sonicaoe::initsonicaoe();
-    _func_0D3( "high_jump_double_tap", "1" );
+    setsaveddvar( "high_jump_double_tap", "1" );
     thread maps\_player_high_jump::main();
 
     if ( !isdefined( level.player.exclusive ) )
@@ -254,9 +254,9 @@ player_exo_remove_array( var_0 )
 setshowgrenades()
 {
     maps\_utility::add_global_spawn_function( "axis", ::monitor_grenades );
-    common_scripts\utility::array_thread( _func_0D6( "axis" ), ::monitor_grenades );
+    common_scripts\utility::array_thread( getaiarray( "axis" ), ::monitor_grenades );
     maps\_utility::add_global_spawn_function( "allies", ::monitor_grenades );
-    common_scripts\utility::array_thread( _func_0D6( "allies" ), ::monitor_grenades );
+    common_scripts\utility::array_thread( getaiarray( "allies" ), ::monitor_grenades );
 
     foreach ( var_1 in level.players )
         var_1 thread monitor_grenades();
@@ -343,29 +343,29 @@ grenade_indicator_fx()
 
 setdefaulthudoutlinestyle()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehalolumscale", 1.5 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.35 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 1.5 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.35 );
 }
 
 setharmonicbreachhudoutlinestyle()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinecurvywidth", 1 );
-    _func_0D3( "r_hudoutlinecurvywhen", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 3 );
-    _func_0D3( "r_hudoutlinecurvylumscale", 2 );
-    _func_0D3( "r_hudoutlinecurvydarkenscale", 0.25 );
-    _func_0D3( "r_hudoutlinecurvyblurradius", 0.5 );
-    _func_0D3( "r_hudoutlinecurvydepth", 0.8 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinecurvywidth", 1 );
+    setsaveddvar( "r_hudoutlinecurvywhen", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 3 );
+    setsaveddvar( "r_hudoutlinecurvylumscale", 2 );
+    setsaveddvar( "r_hudoutlinecurvydarkenscale", 0.25 );
+    setsaveddvar( "r_hudoutlinecurvyblurradius", 0.5 );
+    setsaveddvar( "r_hudoutlinecurvydepth", 0.8 );
 }
 
 setfriendlydetection()
 {
     var_0 = 3;
-    common_scripts\utility::array_thread( _func_0D6( "allies" ), ::ai_detection, var_0 );
+    common_scripts\utility::array_thread( getaiarray( "allies" ), ::ai_detection, var_0 );
     maps\_utility::add_global_spawn_function( "allies", ::ai_detection, var_0 );
     setdefaulthudoutlinestyle();
     thread monitor_ai_detection();
@@ -380,7 +380,7 @@ unsetfriendlydetection()
 setenemydetection()
 {
     var_0 = 1;
-    common_scripts\utility::array_thread( _func_0D6( "axis" ), ::ai_detection, var_0 );
+    common_scripts\utility::array_thread( getaiarray( "axis" ), ::ai_detection, var_0 );
     maps\_utility::add_global_spawn_function( "axis", ::ai_detection, var_0 );
     setdefaulthudoutlinestyle();
     thread monitor_ai_detection();
@@ -409,9 +409,9 @@ ai_detection( var_0 )
                 if ( self.highlight_on != var_1 )
                 {
                     if ( self.highlight_on )
-                        self _meth_83FA( var_0, 1 );
+                        self hudoutlineenable( var_0, 1 );
                     else
-                        self _meth_83FB();
+                        self hudoutlinedisable();
 
                     var_1 = self.highlight_on;
                 }
@@ -431,7 +431,7 @@ clear_ai_detection_on_death()
         if ( ( !isdefined( self.cloak ) || self.cloak == "off" ) && ( !isdefined( self.subclass ) || self.subclass != "mech" ) )
         {
             self.highlight_on = 0;
-            self _meth_83FB();
+            self hudoutlinedisable();
         }
     }
 }
@@ -443,9 +443,9 @@ monitor_ai_detection()
 
     for (;;)
     {
-        if ( self _meth_8340() > 0.1 )
+        if ( self playerads() > 0.1 )
         {
-            var_1 = bullettrace( self _meth_80A8(), self _meth_80A8() + anglestoforward( self _meth_8036() ) * var_0, 1, self );
+            var_1 = bullettrace( self geteye(), self geteye() + anglestoforward( self getgunangles() ) * var_0, 1, self );
             var_2 = var_1["entity"];
 
             if ( isdefined( var_2 ) && isai( var_2 ) )
@@ -483,22 +483,22 @@ unsetmovespeedincrease()
 setjumpincrease()
 {
     self.exo_old_values["jump_height"] = getdvarint( "jump_height" );
-    _func_0D3( "jump_height", "60" );
+    setsaveddvar( "jump_height", "60" );
 }
 
 unsetjumpincrease()
 {
-    _func_0D3( "jump_height", self.exo_old_values["jump_height"] );
+    setsaveddvar( "jump_height", self.exo_old_values["jump_height"] );
 }
 
 setboostdash()
 {
-    level.player _meth_848D( 1 );
+    level.player allowdodge( 1 );
 }
 
 unsetboostdash()
 {
-    level.player _meth_848D( 0 );
+    level.player allowdodge( 0 );
 }
 
 boost_dash_track_player_movement()
@@ -514,7 +514,7 @@ boost_dash_track_player_movement()
 
     for (;;)
     {
-        var_0 = self _meth_82F3();
+        var_0 = self getnormalizedmovement();
         var_0 = ( var_0[0], var_0[1] * -1, 0 );
         var_1 = self.angles;
         var_2 = vectortoangles( var_0 );
@@ -556,7 +556,7 @@ boost_dash_think()
         waittill_dash_button_pressed();
         var_5 = 0;
 
-        if ( self _meth_8341() && !self adsbuttonpressed() && level.player _meth_817C() != "prone" )
+        if ( self isonground() && !self adsbuttonpressed() && level.player getstance() != "prone" )
         {
             if ( self.boost["stick_input"][0] > 0 )
             {
@@ -590,7 +590,7 @@ enable_boost_attack()
 
     for (;;)
     {
-        if ( self _meth_83BB() && self meleebuttonpressed() )
+        if ( self sprintbuttonpressed() && self meleebuttonpressed() )
         {
             if ( self.boost["stick_input"][1] > 315 || self.boost["stick_input"][1] < 45 )
             {
@@ -644,12 +644,12 @@ boost_dash( var_0, var_1, var_2, var_3, var_4, var_5 )
 
         for ( var_17 = var_16 / var_12; var_13 <= var_12; var_13++ )
         {
-            self _meth_82F1( var_14 + var_17 );
+            self setvelocity( var_14 + var_17 );
             wait 0.05;
         }
     }
 
-    self _meth_82F1( var_8 );
+    self setvelocity( var_8 );
 }
 
 boost_attack( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -693,29 +693,29 @@ boost_attack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
         for ( var_17 = var_16 / var_12; var_13 <= var_12; var_13++ )
         {
-            self _meth_82F1( var_14 + var_17 );
+            self setvelocity( var_14 + var_17 );
             wait 0.05;
         }
     }
 
-    self _meth_82F1( var_8 );
+    self setvelocity( var_8 );
 }
 
 boost_attack_deal_damage()
 {
-    while ( self _meth_8341() )
+    while ( self isonground() )
         wait 0.05;
 
-    while ( !self _meth_8341() )
+    while ( !self isonground() )
     {
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
 
         foreach ( var_2 in var_0 )
         {
             if ( isalive( var_2 ) )
             {
                 if ( distance2d( self.origin, var_2.origin ) < 40 )
-                    var_2 _meth_8051( var_2.health + 1, self.origin, self, self, "MOD_MELEE" );
+                    var_2 dodamage( var_2.health + 1, self.origin, self, self, "MOD_MELEE" );
             }
         }
 
@@ -727,7 +727,7 @@ waittill_dash_button_pressed()
 {
     self endon( "death" );
 
-    while ( !self _meth_83BB() )
+    while ( !self sprintbuttonpressed() )
         wait 0.05;
 
     return 1;
@@ -738,7 +738,7 @@ waittill_dash_button_released( var_0 )
     var_1 = gettime();
     self endon( "death" );
 
-    while ( self _meth_83BB() )
+    while ( self sprintbuttonpressed() )
         wait 0.05;
 
     if ( isdefined( var_0 ) )
@@ -765,7 +765,7 @@ setoverdrive()
 unsetoverdrive()
 {
     overdrive_disable();
-    level.player _meth_821B( "actionslot1", "dpad_icon_overdrive_off" );
+    level.player setweaponhudiconoverride( "actionslot1", "dpad_icon_overdrive_off" );
     setomnvar( "ui_overdrive_effects", 0 );
 }
 
@@ -851,7 +851,7 @@ overdrive_enable()
     if ( !maps\_utility::ent_flag( "overdrive_enabled" ) )
     {
         maps\_utility::ent_flag_set( "overdrive_enabled" );
-        self _meth_82DD( "overdrive_button_pressed", "+actionslot " + var_0.action_slot_num );
+        self notifyonplayercommand( "overdrive_button_pressed", "+actionslot " + var_0.action_slot_num );
     }
 }
 
@@ -876,7 +876,7 @@ overdrive_disable()
             self.exohuditem = common_scripts\utility::array_removeundefined( self.exohuditem );
 
         maps\_utility::deep_array_thread( self.exohuditem, maps\_hud_util::destroyelem );
-        self _meth_849C( "overdrive_button_pressed", "+actionslot " + var_0.action_slot_num );
+        self notifyonplayercommandremove( "overdrive_button_pressed", "+actionslot " + var_0.action_slot_num );
     }
 }
 
@@ -912,19 +912,19 @@ overdrive_start()
 
 overdrive_manage_fov( var_0, var_1 )
 {
-    level.player _meth_8032( var_1, var_0 );
-    level.player _meth_82DD( "ads_start", "+speed_throw" );
-    level.player _meth_82DD( "ads_stop", "-speed_throw" );
+    level.player lerpfovscale( var_1, var_0 );
+    level.player notifyonplayercommand( "ads_start", "+speed_throw" );
+    level.player notifyonplayercommand( "ads_stop", "-speed_throw" );
     var_2 = 0.2;
 
     for (;;)
     {
-        if ( !level.player _meth_8340() > 0.2 )
+        if ( !level.player playerads() > 0.2 )
             level.player waittill( "ads_start" );
 
-        level.player _meth_8032( 1, var_2 );
+        level.player lerpfovscale( 1, var_2 );
         level.player waittill( "ads_stop" );
-        level.player _meth_8032( var_1, var_2 );
+        level.player lerpfovscale( var_1, var_2 );
     }
 }
 
@@ -937,7 +937,7 @@ overdrive_effects_start()
     player_regen_scale( 4 );
     level.vision_default = getdvar( "vision_set_current" );
     level.specular_default = getdvarfloat( "r_specularcolorscale" );
-    _func_2D0( "wb_player_boost", var_0.kick_in_duration );
+    visionsetoverdrive( "wb_player_boost", var_0.kick_in_duration );
     soundscripts\_snd::snd_message( "overdrive_on" );
     maps\_utility::lerp_saveddvar( "r_specularcolorscale", 4.5, var_0.kick_in_duration );
     childthread overdrive_manage_fov( var_0.kick_in_duration, 1.15 );
@@ -946,8 +946,8 @@ overdrive_effects_start()
     settimescale( 0.5 );
     childthread player_heartbeat();
     self playerrecoilscaleon( 60 );
-    _func_0D3( "player_sprintUnlimited", 1 );
-    self _meth_8309( 0.5 );
+    setsaveddvar( "player_sprintUnlimited", 1 );
+    self setviewkickscale( 0.5 );
 }
 
 overdrive_effects_stop()
@@ -957,15 +957,15 @@ overdrive_effects_stop()
     level.player.exospeedscalars["overdrive"] = undefined;
     exo_move_speed_update();
     player_regen_restore();
-    _func_2D0( "", 1 );
+    visionsetoverdrive( "", 1 );
     soundscripts\_snd::snd_message( "overdrive_off" );
-    level.player _meth_8032( 1, var_0.kick_out_duration );
+    level.player lerpfovscale( 1, var_0.kick_out_duration );
     setomnvar( "ui_overdrive_effects_time", var_0.kick_out_duration );
     setomnvar( "ui_overdrive_effects_toggle", 0 );
     settimescale( 1 );
     self playerrecoilscaleoff();
-    _func_0D3( "player_sprintUnlimited", 0 );
-    self _meth_8309( 1 );
+    setsaveddvar( "player_sprintUnlimited", 0 );
+    self setviewkickscale( 1 );
     maps\_utility::lerp_saveddvar( "r_specularcolorscale", level.specular_default, 2.5 );
 }
 
@@ -1054,7 +1054,7 @@ player_heartbeat()
     while ( maps\_utility::ent_flag( "overdrive_on" ) )
     {
         wait 0.05;
-        self _meth_80AD( "damage_light" );
+        self playrumbleonentity( "damage_light" );
         wait(maps\_shg_utility::linear_map_clamp( ( gettime() - var_3 ) * 0.001, 0, var_2, var_0, var_1 ));
         wait(0 + randomfloat( 0.1 ));
     }
@@ -1084,27 +1084,27 @@ setstim()
     if ( isdefined( self.exo_stim_used ) )
         return;
 
-    self _meth_82DD( "stim_button_pressed", "+actionslot 4" );
-    self _meth_821B( "actionslot4", "dpad_icon_stim" );
+    self notifyonplayercommand( "stim_button_pressed", "+actionslot 4" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_icon_stim" );
     self waittill( "stim_button_pressed" );
     self.exo_stim_used = 1;
     self.health = self.maxhealth;
     thread exo_stim_activate();
-    self _meth_821B( "actionslot4", "dpad_icon_stim_off" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_icon_stim_off" );
 }
 
 unsetstim()
 {
     self notify( "stim_disabled" );
-    self _meth_849C( "stim_button_pressed", "+actionslot 4" );
-    self _meth_821B( "actionslot4", "dpad_icon_stim_off" );
+    self notifyonplayercommandremove( "stim_button_pressed", "+actionslot 4" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_icon_stim_off" );
 }
 
 exo_stim_activate()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0.origin = self _meth_80A8();
-    var_0 _meth_804D( level.player );
+    var_0.origin = self geteye();
+    var_0 linkto( level.player );
     playfxontag( common_scripts\utility::getfx( "exo_stim" ), var_0, "tag_origin" );
     soundscripts\_snd::snd_message( "exo_stim_on" );
     self.exo_stim_active = 1;
@@ -1130,7 +1130,7 @@ player_intel_mode_think()
 
     for (;;)
     {
-        var_1 = level.player _meth_82CE();
+        var_1 = level.player getweaponslistoffhands();
         var_2 = 0;
 
         foreach ( var_4 in var_1 )
@@ -1146,9 +1146,9 @@ player_intel_mode_think()
 
         if ( var_2 )
         {
-            var_6 += level.player _meth_82F9( "flash_grenade_var" );
-            var_6 += level.player _meth_82F9( "emp_grenade_var" );
-            var_6 += level.player _meth_82F9( "paint_grenade_var" );
+            var_6 += level.player setweaponammostock( "flash_grenade_var" );
+            var_6 += level.player setweaponammostock( "emp_grenade_var" );
+            var_6 += level.player setweaponammostock( "paint_grenade_var" );
             var_6 /= 3;
         }
 
@@ -1161,9 +1161,9 @@ player_intel_mode_think()
 
         if ( var_2 )
         {
-            var_7 += level.player _meth_82F9( "frag_grenade_var" );
-            var_7 += level.player _meth_82F9( "contact_grenade_var" );
-            var_7 += level.player _meth_82F9( "tracking_grenade_var" );
+            var_7 += level.player setweaponammostock( "frag_grenade_var" );
+            var_7 += level.player setweaponammostock( "contact_grenade_var" );
+            var_7 += level.player setweaponammostock( "tracking_grenade_var" );
             var_7 /= 3;
         }
 
@@ -1229,13 +1229,13 @@ player_intel_display_object( var_0, var_1 )
         self endon( "death" );
 
     self.highlight_on = 1;
-    self _meth_83FA( var_0, 1 );
+    self hudoutlineenable( var_0, 1 );
     common_scripts\utility::waittill_any_ents( level, var_1, self, "stop_highlight", self, "exploded" );
 
     if ( isdefined( self ) )
     {
         self.highlight_on = undefined;
-        self _meth_83FB();
+        self hudoutlinedisable();
     }
 }
 
@@ -1251,24 +1251,24 @@ unsetexomelee()
 
 setexoslide()
 {
-    level.player _meth_8485( 1 );
+    level.player allowpowerslide( 1 );
 }
 
 unsetexoslide()
 {
-    level.player _meth_8485( 0 );
+    level.player allowpowerslide( 0 );
 }
 
 setexoslam()
 {
-    level.player _meth_8486( 1 );
+    level.player allowhighjumpdrop( 1 );
     level.player thread monitorgroundslam();
     level.player thread monitorgroundslamhitplayer();
 }
 
 unsetexoslam()
 {
-    level.player _meth_8486( 0 );
+    level.player allowhighjumpdrop( 0 );
     level.player notify( "disallow_ground_slam" );
 }
 
@@ -1325,7 +1325,7 @@ getgroundslamragdolldirscale()
 init_ground_slam()
 {
     level._effect["exo_slam_kneeslide_fx"] = loadfx( "vfx/code/slam_jetpack_kneeslide" );
-    precacheitem( "boost_slam_sp" );
+    precacheshellshock( "boost_slam_sp" );
 }
 
 monitorgroundslamhitplayer()
@@ -1346,9 +1346,9 @@ monitorgroundslamhitplayer()
         var_5 = getdvarint( "high_jump_drop_crush_damage", getgroundslamcrushdamage() );
         var_6 = isalive( var_0 );
         var_0.slam_ragdoll_vel = ( var_2[0] * var_3, var_2[1] * var_3, var_2[2] * var_4 );
-        var_0 _meth_8051( var_5, self.origin, self, self, "MOD_CRUSH", "boost_slam_sp", "none" );
+        var_0 dodamage( var_5, self.origin, self, self, "MOD_CRUSH", "boost_slam_sp", "none" );
 
-        if ( var_6 && !isalive( var_0 ) && var_0 _meth_84FC() )
+        if ( var_6 && !isalive( var_0 ) && var_0 getstompbreakthrough() )
             var_0.deathfunction = ::groundslamcrushdeathfunction;
 
         var_0 setoldslam( var_1 );
@@ -1413,7 +1413,7 @@ monitorgroundslam()
         var_14 = ( var_6 - var_8 ) / ( var_9 - var_8 );
         var_14 = clamp( var_14, 0.0, 1.0 );
         var_15 = ( var_13 - var_12 ) * var_14 + var_12;
-        self entityradiusdamage( self.origin, var_15, var_11, var_10, self, "MOD_PROJECTILE_SPLASH", "boost_slam_sp" );
+        self radiusdamage( self.origin, var_15, var_11, var_10, self, "MOD_PROJECTILE_SPLASH", "boost_slam_sp" );
         maps\_sp_matchdata::register_boost_slam();
         physicsexplosionsphere( self.origin, var_15, 20, 0.9 );
     }
@@ -1527,7 +1527,7 @@ get_exo_battery_percent()
 
 exofailfx()
 {
-    var_0 = level.player _meth_80A8();
+    var_0 = level.player geteye();
     level.player playsound( "exo_power_not_ready" );
 }
 
@@ -1551,21 +1551,21 @@ show_weaponhud()
     level.player notify( "show_weaponhud_stop" );
     level.player endon( "show_weaponhud_stop" );
     setomnvar( "ui_exobattery", 1 );
-    _func_0D3( "actionSlotsHide", 0 );
+    setsaveddvar( "actionSlotsHide", 0 );
     wait 3;
     setomnvar( "ui_exobattery", 0 );
-    _func_0D3( "actionSlotsHide", 1 );
+    setsaveddvar( "actionSlotsHide", 1 );
 }
 
 handle_weaponhud_visibility()
 {
     level.player endon( "death" );
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "x_pressed", "+reload" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "x_pressed", "+reload" );
 
     for (;;)
     {
@@ -1623,17 +1623,17 @@ update_battery_ability_icons( var_0 )
 update_overdrive_icon( var_0 )
 {
     if ( isdefined( var_0 ) && !var_0 )
-        level.player _meth_821B( "actionslot1", "none" );
+        level.player setweaponhudiconoverride( "actionslot1", "none" );
     else if ( !player_exo_is_active() )
-        level.player _meth_821B( "actionslot1", "none" );
+        level.player setweaponhudiconoverride( "actionslot1", "none" );
     else
     {
         if ( get_exo_battery_percent() > 0 )
         {
-            level.player _meth_821B( "actionslot1", "dpad_icon_overdrive" );
+            level.player setweaponhudiconoverride( "actionslot1", "dpad_icon_overdrive" );
             return;
         }
 
-        level.player _meth_821B( "actionslot1", "dpad_icon_overdrive_off" );
+        level.player setweaponhudiconoverride( "actionslot1", "dpad_icon_overdrive_off" );
     }
 }

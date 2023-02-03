@@ -17,10 +17,10 @@ post_load()
 
 start()
 {
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8321();
-    _func_0D3( "g_friendlyNameDist", 0 );
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
+    setsaveddvar( "g_friendlyNameDist", 0 );
     thread maps\_utility::battlechatter_off( "allies" );
     thread maps\_utility::battlechatter_off( "axis" );
 
@@ -33,7 +33,7 @@ start()
 
         if ( isdefined( var_0 ) )
         {
-            var_0 _meth_82AE( var_0.origin - ( 0, 0, 594 ), 0.1 );
+            var_0 moveto( var_0.origin - ( 0, 0, 594 ), 0.1 );
             wait 0.2;
         }
 
@@ -50,7 +50,7 @@ main_s2walk()
 {
     wait 5.5;
     var_0 = getent( "brush_elevator_s1s2_bottomgate", "targetname" );
-    var_0 _meth_82AE( var_0.origin + ( 0, 0, 192 ), 2 );
+    var_0 moveto( var_0.origin + ( 0, 0, 192 ), 2 );
     thread s2walk_ambient_character_cleanup();
     level.cover_warnings_disabled = undefined;
     level notify( "s1_elevator_gate_open" );
@@ -132,15 +132,15 @@ scene_intro_walk( var_0, var_1, var_2 )
     var_3 maps\captured_anim::anim_single_to_loop( var_9, "s2walk_intro_start_third", "s2walk_wait_intro_loop_thrid", "s2walk_front_guard_wait_loop" );
     level waittill( "s1_elevator_gate_open" );
     wait 3.0;
-    level.player _meth_80FF();
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
+    level.player disableslowaim();
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
     player_hands_idle_start();
     level.player thread maps\_utility::blend_movespeedscale( 0.015 );
     level.player thread maps\_utility::blend_movespeedscale( 0.3, 20 );
-    level.player _meth_804F();
+    level.player unlink();
 
     if ( isdefined( var_1 ) )
         var_1 delete();
@@ -172,12 +172,12 @@ s2walk_player_push( var_0, var_1, var_2 )
     var_3 hide();
     var_5 = common_scripts\utility::array_add( var_1, var_3 );
     var_0 thread maps\_anim::anim_single( var_5, "s2walk_intro_grab" );
-    level.player common_scripts\utility::delaycall( 3.85, ::_meth_80AD, "heavy_1s" );
-    level.player _meth_8080( var_3, "tag_player", 0.5 );
+    level.player common_scripts\utility::delaycall( 3.85, ::playrumbleonentity, "heavy_1s" );
+    level.player playerlinktoblend( var_3, "tag_player", 0.5 );
     wait 0.5;
     var_4 show();
     var_3 show();
-    level.player _meth_807D( var_3, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_3, "tag_player", 1, 0, 0, 0, 0, 1 );
     wait(getanimlength( var_3 maps\_utility::getanim( "s2walk_intro_grab" ) ) - 0.5);
     var_3 delete();
     var_4 delete();
@@ -236,9 +236,9 @@ s2walk_cage_door_open()
     var_0 = getent( "s2walk_cage_door", "targetname" );
     wait 14.5;
     var_0 soundscripts\_snd::snd_message( "aud_s2walk_door_open" );
-    var_0 _meth_82B5( ( 0, 285, 0 ), 2.0, 1.0, 0.25 );
+    var_0 rotateto( ( 0, 285, 0 ), 2.0, 1.0, 0.25 );
     wait 16.5;
-    var_0 _meth_82B5( ( 0, -285, 0 ), 2.0, 1.0, 0.25 );
+    var_0 rotateto( ( 0, -285, 0 ), 2.0, 1.0, 0.25 );
     level waittill( "trolley_player_start" );
     var_0 delete();
 }
@@ -263,7 +263,7 @@ player_walk()
     self._walk = spawnstruct();
     self._walk.walk_node = maps\_utility::spawn_anim_model( "s2_walking_node" );
     self._walk.pushpoint = self._walk.walk_node common_scripts\utility::spawn_tag_origin();
-    self._walk.pushpoint _meth_804D( self._walk.walk_node );
+    self._walk.pushpoint linkto( self._walk.walk_node );
     self._walk.walk_speed = 60;
     self._walk.sprint_speed = 80;
     self._walk.player_move_mod = 0;
@@ -317,18 +317,18 @@ player_walk_end()
 {
     level notify( "stop_walk" );
     player_hands_idle_stop();
-    level.player _meth_804F();
+    level.player unlink();
     level.player.rig delete();
     level.player maps\_utility::player_speed_default();
 }
 
 spawn_player_prisoner_hands()
 {
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8321();
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
     level.player.rig = maps\_utility::spawn_anim_model( "player_arms", level.player.origin, level.player.angles );
-    level.player.rig _meth_8401( level.player, "tag_origin", ( -6, 0, -60 ), ( 0, -90, 0 ), 1, 0, 0, 1 );
+    level.player.rig linktoplayerviewignoreparentrot( level.player, "tag_origin", ( -6, 0, -60 ), ( 0, -90, 0 ), 1, 0, 0, 1 );
     level.player.rig attach( "s1_vm_handcuffs", "tag_weapon_left" );
     player_hands_idle_start();
 }
@@ -343,9 +343,9 @@ player_hands_idle_start()
 
     level.player.rig notify( "s2walk_idle_ender" );
     level.player.rig thread maps\_anim::anim_loop_solo( level.player.rig, "s2walk_idle", "s2walk_idle_ender" );
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_811A( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowprone( 0 );
 }
 
 player_hands_idle_stop( var_0 )
@@ -502,12 +502,12 @@ punishment()
 
         self freezecontrols( 1 );
         var_4 = var_0 * 20;
-        self _meth_8051( var_4, self.origin );
-        _func_234( self.origin, var_0, var_0, var_0, 1, 0, 1, 256, 8, 15, 12, 5.0 );
+        self dodamage( var_4, self.origin );
+        screenshake( self.origin, var_0, var_0, var_0, 1, 0, 1, 256, 8, 15, 12, 5.0 );
         soundscripts\_snd::snd_message( "aud_plr_hit" );
-        self _meth_8080( self._walk.pushpoint, "tag_origin", 0.5, 0, 0.5 );
+        self playerlinktoblend( self._walk.pushpoint, "tag_origin", 0.5, 0, 0.5 );
         wait 0.5;
-        self _meth_804F();
+        self unlink();
         self freezecontrols( 0 );
         self.punishment = undefined;
         common_scripts\utility::flag_clear( "flag_stop_mover" );
@@ -596,9 +596,9 @@ goal_mover( var_0, var_1 )
                 var_0 = undefined;
 
             if ( isdefined( var_1 ) )
-                self _meth_82B5( vectortoangles( var_1.origin - self.origin ), 1 );
+                self rotateto( vectortoangles( var_1.origin - self.origin ), 1 );
 
-            self _meth_82AE( self.origin + var_5 * var_7, 0.05 );
+            self moveto( self.origin + var_5 * var_7, 0.05 );
             wait 0.05;
         }
     }
@@ -627,12 +627,12 @@ s2elevator_trolley_intro_scene( var_0, var_1, var_2 )
     var_5 = var_4 thread maps\captured_util::captured_player_cuffs();
     var_5 hide();
     var_4 hide();
-    level.player common_scripts\utility::delaycall( 17.3, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 18.35, ::_meth_80AD, "light_3s" );
+    level.player common_scripts\utility::delaycall( 17.3, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 18.35, ::playrumbleonentity, "light_3s" );
     var_3 thread maps\_anim::anim_single_solo( var_4, "s2walk_intro_trolley" );
-    level.player _meth_8080( var_4, "tag_player", 0.5 );
+    level.player playerlinktoblend( var_4, "tag_player", 0.5 );
     wait 0.5;
-    level.player _meth_807D( var_4, "tag_player", 0.5, 30, 30, 20, 20, 1 );
+    level.player playerlinktodelta( var_4, "tag_player", 0.5, 30, 30, 20, 20, 1 );
     var_5 show();
     var_4 show();
     wait(getanimlength( var_4 maps\_utility::getanim( "s2walk_intro_trolley" ) ));
@@ -651,8 +651,8 @@ trolley_doors_function()
     var_3 = maps\_utility::spawn_anim_model( "trolley_gate" );
     var_0 maps\_anim::anim_first_frame_solo( var_3, "s2walk_intro_trolley" );
     var_4 = spawn( "script_model", ( 5372, -8116, -592 ) );
-    var_4 _meth_80B1( "tag_origin" );
-    var_3 _meth_83EF( var_4 );
+    var_4 setmodel( "tag_origin" );
+    var_3 retargetscriptmodellighting( var_4 );
     var_5 = [];
 
     for ( var_6 = 0; var_6 < 4; var_6++ )
@@ -737,7 +737,7 @@ s2elevator_fade_transition()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_interrogate_tr" ) )
+        if ( !istransientloaded( "captured_interrogate_tr" ) )
             level waittill( "tff_post_s2walk_to_interrogate" );
     }
 
@@ -753,14 +753,14 @@ helicopter_flyby()
     level notify( "s1_looping_prisoner" );
     var_0 = getent( "first_walk_helo", "script_noteworthy" );
     var_1 = var_0 maps\_vehicle::spawn_vehicle_and_gopath();
-    var_1 _meth_828B();
+    var_1 vehicle_turnengineoff();
     var_1 waittill( "reached_dynamic_path_end" );
     var_1 delete();
     level waittill( "start_helicopter_fly" );
     level thread maps\captured_fx::fx_walk_heli_flyby();
     var_0 = getent( "second_walk_helo", "script_noteworthy" );
     var_1 = var_0 maps\_vehicle::spawn_vehicle_and_gopath();
-    var_1 _meth_828B();
+    var_1 vehicle_turnengineoff();
     var_1 waittill( "reached_dynamic_path_end" );
     var_1 delete();
 }

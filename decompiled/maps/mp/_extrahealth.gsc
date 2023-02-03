@@ -11,7 +11,7 @@ watchextrahealthusage()
     self endon( "faux_spawn" );
     self endon( "exo_health_taken" );
 
-    if ( !self _meth_8314( "extra_health_mp" ) )
+    if ( !self hasweapon( "extra_health_mp" ) )
         return;
 
     extrahealthinit();
@@ -35,20 +35,20 @@ watchextrahealthusage()
 extrahealthinit()
 {
     self.exo_health_on = 0;
-    self _meth_84A6( "extra_health_mp", 1.0 );
-    var_0 = self _meth_84A5( "extra_health_mp" );
+    self batterysetdischargescale( "extra_health_mp", 1.0 );
+    var_0 = self batterygetsize( "extra_health_mp" );
 
-    if ( self _meth_831A() == "extra_health_mp" )
+    if ( self gettacticalweapon() == "extra_health_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req0", 0 );
-        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
-        self _meth_82FB( "ui_exo_battery_level0", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req0", 0 );
+        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
+        self setclientomnvar( "ui_exo_battery_level0", var_0 );
     }
-    else if ( self _meth_8345() == "extra_health_mp" )
+    else if ( self getlethalweapon() == "extra_health_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req1", 0 );
-        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
-        self _meth_82FB( "ui_exo_battery_level1", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req1", 0 );
+        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
+        self setclientomnvar( "ui_exo_battery_level1", var_0 );
     }
 
     if ( !isdefined( level.exo_health_le_inactive_vfx ) )
@@ -110,7 +110,7 @@ startextrahealth()
     self.ignoreregendelay = 1;
     self.healthregenlevel = 0.99;
     self notify( "damage" );
-    self _meth_849F( "extra_health_mp" );
+    self batterydischargebegin( "extra_health_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "extra_health_mp", "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( "extra_health_mp" );
     thread monitory_health_battery_charge();
@@ -123,8 +123,8 @@ startextrahealth()
 
     if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
     {
-        self.stim_fx_l = _func_2C1( level.exo_health_le_active_vfx, self, "J_Shoulder_LE" );
-        self.stim_fx_r = _func_2C1( level.exo_health_rt_active_vfx, self, "J_Shoulder_RI" );
+        self.stim_fx_l = spawnlinkedfx( level.exo_health_le_active_vfx, self, "J_Shoulder_LE" );
+        self.stim_fx_r = spawnlinkedfx( level.exo_health_rt_active_vfx, self, "J_Shoulder_RI" );
         triggerfx( self.stim_fx_l );
         triggerfx( self.stim_fx_r );
     }
@@ -158,7 +158,7 @@ stopextrahealth( var_0 )
         self.health = self.maxhealth;
 
     self.healthregenlevel = undefined;
-    self _meth_84A0( "extra_health_mp" );
+    self batterydischargeend( "extra_health_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "extra_health_mp", "ui_exo_battery_toggle", 0 );
     killstimfx();
 
@@ -169,8 +169,8 @@ stopextrahealth( var_0 )
 
         if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
         {
-            self.stim_fx_l = _func_2C1( level.exo_health_le_inactive_vfx, self, "J_Shoulder_LE" );
-            self.stim_fx_r = _func_2C1( level.exo_health_rt_inactive_vfx, self, "J_Shoulder_RI" );
+            self.stim_fx_l = spawnlinkedfx( level.exo_health_le_inactive_vfx, self, "J_Shoulder_LE" );
+            self.stim_fx_r = spawnlinkedfx( level.exo_health_rt_inactive_vfx, self, "J_Shoulder_RI" );
             triggerfx( self.stim_fx_l );
             triggerfx( self.stim_fx_r );
         }
@@ -196,7 +196,7 @@ monitory_health_battery_charge()
 
     while ( self.exo_health_on == 1 )
     {
-        if ( self _meth_84A2( "extra_health_mp" ) <= 0 )
+        if ( self batterygetcharge( "extra_health_mp" ) <= 0 )
             thread stopextrahealth( 1 );
 
         wait 0.05;
@@ -207,12 +207,12 @@ take_exo_health()
 {
     self notify( "kill_battery" );
     self notify( "exo_health_taken" );
-    self _meth_830F( "extra_health_mp" );
+    self takeweapon( "extra_health_mp" );
 }
 
 give_exo_health()
 {
-    self _meth_830E( "extra_health_mp" );
+    self giveweapon( "extra_health_mp" );
     thread watchextrahealthusage();
 }
 

@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 1250.0, 1024.0 );
-        self _meth_816D( 1600.0, 2400.0 );
+        self setengagementmindist( 1250.0, 1024.0 );
+        self setengagementmaxdist( 1600.0, 2400.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 5 ) )
@@ -45,18 +45,18 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_kva_ar::precache();
-    precacheitem( "iw5_m990_sp_m990scope" );
-    precacheitem( "iw5_m990_sp_m990scopevz" );
-    precacheitem( "iw5_m990_sp_m990stabilizer" );
-    precacheitem( "iw5_m990_sp_opticsacog2" );
-    precacheitem( "iw5_m990_sp_opticsthermal" );
-    precacheitem( "iw5_vbr_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_m990_sp_m990scope" );
+    precacheshellshock( "iw5_m990_sp_m990scopevz" );
+    precacheshellshock( "iw5_m990_sp_m990stabilizer" );
+    precacheshellshock( "iw5_m990_sp_opticsacog2" );
+    precacheshellshock( "iw5_m990_sp_opticsthermal" );
+    precacheshellshock( "iw5_vbr_sp" );
+    precacheshellshock( "fraggrenade" );
     maps\_sniper_glint::main();
 }

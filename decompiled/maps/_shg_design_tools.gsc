@@ -236,7 +236,7 @@ white_out( var_0, var_1, var_2 )
         var_2 = 1;
 
     var_4 = newclienthudelem( var_3 );
-    var_4 _meth_80CC( "white", 1280, 720 );
+    var_4 setshader( "white", 1280, 720 );
     var_4.horzalign = "fullscreen";
     var_4.vertalign = "fullscreen";
     var_4.alpha = var_2;
@@ -253,7 +253,7 @@ fade_to_black( var_0, var_1, var_2, var_3 )
         var_4 = level.player;
 
     var_4.auxillary_hud = newclienthudelem( var_4 );
-    var_4.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    var_4.auxillary_hud setshader( "black", 1280, 720 );
     var_4.auxillary_hud.horzalign = "fullscreen";
     var_4.auxillary_hud.vertalign = "fullscreen";
     var_4.auxillary_hud.alpha = var_2;
@@ -553,7 +553,7 @@ spawn_enemy_group( var_0, var_1, var_2 )
             continue;
 
         if ( isdefined( var_2 ) )
-            var_7 _meth_81A9( var_2 );
+            var_7 setgoalvolumeauto( var_2 );
 
         var_4[var_4.size] = var_7;
         wait 0.1;
@@ -627,7 +627,7 @@ impulse_wave( var_0, var_1, var_2, var_3 )
 
         if ( var_6 maps\_vehicle::isvehicle() )
         {
-            var_6 _meth_8051( var_6.health * 2, var_2 );
+            var_6 dodamage( var_6.health * 2, var_2 );
             continue;
         }
 
@@ -637,8 +637,8 @@ impulse_wave( var_0, var_1, var_2, var_3 )
         var_8 = var_6.origin;
         var_12 = vectornormalize( var_6 gettagorigin( "tag_eye" ) - var_2 );
         var_12 = vectornormalize( var_12 + ( 0, 0, 0.2 ) );
-        var_6 _meth_8024( "torso_lower", var_12 * 7000 );
-        var_6 thread common_scripts\utility::delaycall( 2, ::_meth_8052 );
+        var_6 startragdollfromimpact( "torso_lower", var_12 * 7000 );
+        var_6 thread common_scripts\utility::delaycall( 2, ::kill );
     }
 }
 
@@ -681,7 +681,7 @@ killonbadpath()
     self waittill( "bad_path" );
 
     if ( !isdefined( self.deletable_magic_bullet_shield ) || !self.deletable_magic_bullet_shield )
-        self _meth_8052();
+        self kill();
 }
 
 offset_position_from_tag( var_0, var_1, var_2 )

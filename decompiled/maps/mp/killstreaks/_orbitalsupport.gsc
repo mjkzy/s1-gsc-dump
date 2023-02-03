@@ -36,7 +36,7 @@ init()
         var_1 = level.orbitalsupportoverrides.spawnorigin;
 
     level.osprig = spawn( "script_model", var_1 );
-    level.osprig _meth_80B1( "c130_zoomrig" );
+    level.osprig setmodel( "c130_zoomrig" );
     level.osprig.angles = ( 0, 115, 0 );
     level.osprig hide();
     thread rotateplane( level.orbitalsupport_speed );
@@ -81,7 +81,7 @@ tryuseorbitalsupport( var_0, var_1 )
 {
     if ( isdefined( level.orbitalsupport_player ) || level.orbitalsupportinuse )
     {
-        self iclientprintlnbold( &"MP_ORBITALSUPPORT_IN_USE" );
+        self iprintlnbold( &"MP_ORBITALSUPPORT_IN_USE" );
         return 0;
     }
 
@@ -135,7 +135,7 @@ setorbitalsupportplayer( var_0, var_1 )
     level.orbitalsupport_planemodel.helitype = "osp";
     level.orbitalsupport_planemodel thread maps\mp\killstreaks\_aerial_utility::heli_flares_monitor( var_2 );
     thread maps\mp\_utility::teamplayercardsplash( "used_orbitalsupport", var_0 );
-    var_0 _meth_834A();
+    var_0 startac130();
     var_0 maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
     var_0 maps\mp\killstreaks\_killstreaks::playerwaittillridekillstreakcomplete();
     var_0 thread waitsetthermal( 1.0 );
@@ -161,8 +161,8 @@ setorbitalsupportplayer( var_0, var_1 )
     wait 1;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
     var_0 playersetavailableweaponshud();
-    var_0 _meth_82FB( "ui_osp_weapon", 1 );
-    var_0 _meth_82FB( "ui_osp_toggle", 1 );
+    var_0 setclientomnvar( "ui_osp_weapon", 1 );
+    var_0 setclientomnvar( "ui_osp_toggle", 1 );
     var_0 thread waitsetstatic( 0.1 );
     var_0 thread pulseorbitalsupportreloadtext();
     var_3 = level.orbitalsupport_use_duration;
@@ -171,9 +171,9 @@ setorbitalsupportplayer( var_0, var_1 )
         var_3 += 15;
 
     var_0.orbitalsupport_endtime = gettime() + var_3 * 1000;
-    var_0 _meth_82FB( "ui_warbird_countdown", var_0.orbitalsupport_endtime );
-    self _meth_82DD( "orbitalsupport_fire", "+attack" );
-    self _meth_82DD( "orbitalsupport_fire", "+attack_akimbo_accessible" );
+    var_0 setclientomnvar( "ui_warbird_countdown", var_0.orbitalsupport_endtime );
+    self notifyonplayercommand( "orbitalsupport_fire", "+attack" );
+    self notifyonplayercommand( "orbitalsupport_fire", "+attack_akimbo_accessible" );
     var_0 thread changeweapons();
     var_0 thread firebigorbitalsupportgun();
     var_0 thread firemediumorbitalsupportgun();
@@ -223,7 +223,7 @@ waitdisableshadows( var_0 )
     level endon( "orbitalsupport_player_removed" );
     self endon( "orbitalsupport_player_removed" );
     wait(var_0);
-    self _meth_851A( 0 );
+    self setshadowrendering( 0 );
 }
 
 setospvisionandlightsetpermap( var_0 )
@@ -233,18 +233,18 @@ setospvisionandlightsetpermap( var_0 )
     wait(var_0);
 
     if ( isdefined( level.ospvisionset ) )
-        self _meth_847A( level.ospvisionset, 0 );
+        self setclienttriggervisionset( level.ospvisionset, 0 );
 
     if ( isdefined( level.osplightset ) )
-        self _meth_83C0( level.osplightset );
+        self lightsetforplayer( level.osplightset );
 
     maps\mp\killstreaks\_aerial_utility::handle_player_starting_aerial_view();
 }
 
 removeospvisionandlightsetpermap( var_0 )
 {
-    self _meth_847A( "", var_0 );
-    self _meth_83C0( "" );
+    self setclienttriggervisionset( "", var_0 );
+    self lightsetforplayer( "" );
     maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
 }
 
@@ -338,27 +338,27 @@ removeorbitalsupportplayer( var_0, var_1 )
     if ( !var_1 )
     {
         var_0 playerresetospomnvars();
-        var_0 _meth_849C( "orbitalsupport_fire", "+attack" );
-        var_0 _meth_849C( "orbitalsupport_fire", "+attack_akimbo_accessible" );
+        var_0 notifyonplayercommandremove( "orbitalsupport_fire", "+attack" );
+        var_0 notifyonplayercommandremove( "orbitalsupport_fire", "+attack_akimbo_accessible" );
 
         if ( !isbot( var_0 ) && ( level.orbitalsupport_planemodel.hasrockets || level.orbitalsupport_planemodel.hasturret ) )
-            var_0 _meth_849C( "switch_orbitalsupport_turret", "weapnext" );
+            var_0 notifyonplayercommandremove( "switch_orbitalsupport_turret", "weapnext" );
 
-        var_0 _meth_80E9( level.orbitalsupport_big_turret );
+        var_0 remotecontrolturretoff( level.orbitalsupport_big_turret );
         level.orbitalsupport_big_turret hide();
-        var_0 _meth_804F();
+        var_0 unlink();
         var_2 = maps\mp\_utility::getkillstreakweapon( "orbitalsupport" );
-        var_0 _meth_830F( var_2 );
+        var_0 takeweapon( var_2 );
 
         if ( var_0 maps\mp\_utility::isusingremote() )
             var_0 maps\mp\_utility::clearusingremote();
 
         maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( var_0 );
-        var_0 _meth_851A( 1 );
+        var_0 setshadowrendering( 1 );
         var_0 thermalvisionfofoverlayoff();
         var_0 setblurforplayer( 0, 0 );
         var_0 removeospvisionandlightsetpermap( 1.5 );
-        var_0 _meth_834B();
+        var_0 stopac130();
 
         if ( getdvarint( "camera_thirdPerson" ) )
             var_0 maps\mp\_utility::setthirdpersondof( 1 );
@@ -380,14 +380,14 @@ removeorbitalsupportplayer( var_0, var_1 )
     }
 
     level.orbitalsupport_player = undefined;
-    level.orbitalsupport_planemodel _meth_80AB();
+    level.orbitalsupport_planemodel stoploopsound();
     level.orbitalsupport_planemodel playsound( "paladin_orbit_return" );
     level.orbitalsupport_planemodel orbitalsupportexit();
 }
 
 cleanupospents()
 {
-    level.orbitalsupport_planemodel _meth_80AB();
+    level.orbitalsupport_planemodel stoploopsound();
 
     if ( isdefined( level.orbitalsupport_targetent ) )
     {
@@ -400,13 +400,13 @@ cleanupospents()
 
     if ( isdefined( level.orbitalsupport_planemodel.farflightsound ) )
     {
-        level.orbitalsupport_planemodel.farflightsound _meth_80AB();
+        level.orbitalsupport_planemodel.farflightsound stoploopsound();
         level.orbitalsupport_planemodel.farflightsound delete();
     }
 
     if ( isdefined( level.orbitalsupport_planemodel.closeflightsound ) )
     {
-        level.orbitalsupport_planemodel.closeflightsound _meth_80AB();
+        level.orbitalsupport_planemodel.closeflightsound stoploopsound();
         level.orbitalsupport_planemodel.closeflightsound delete();
     }
 
@@ -433,14 +433,14 @@ orbitalsupport_spawn()
 
     level.orbitalsupport_planemodel = spawn( "script_model", var_1 );
     level.orbitalsupport_planemodel.angles = ( 0, 0, 0 );
-    level.orbitalsupport_planemodel _meth_80B1( "vehicle_mil_blimp_orbital_platform_ai" );
+    level.orbitalsupport_planemodel setmodel( "vehicle_mil_blimp_orbital_platform_ai" );
     level.orbitalsupport_planemodel.owner = self;
     level.orbitalsupport_planemodel common_scripts\utility::make_entity_sentient_mp( self.team );
     level.orbitalsupport_planemodel.minimapicon = spawnplane( self, "script_model", var_1, "compass_objpoint_ac130_friendly", "compass_objpoint_ac130_enemy" );
-    level.orbitalsupport_planemodel.minimapicon _meth_80B1( "tag_origin" );
-    level.orbitalsupport_planemodel.minimapicon _meth_8446( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    level.orbitalsupport_planemodel _meth_82C0( 1 );
-    level.orbitalsupport_planemodel _meth_82C1( 1 );
+    level.orbitalsupport_planemodel.minimapicon setmodel( "tag_origin" );
+    level.orbitalsupport_planemodel.minimapicon vehicle_jetbikesethoverforcescale( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.orbitalsupport_planemodel setcandamage( 1 );
+    level.orbitalsupport_planemodel setcanradiusdamage( 1 );
     level.orbitalsupport_planemodel.maxhealth = 2000;
     level.orbitalsupport_planemodel.health = level.orbitalsupport_planemodel.maxhealth;
     level.orbitalsupport_planemodel.showthreatmarker = 0;
@@ -454,18 +454,18 @@ spawnorbitalsupportturret( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawnturret( "misc_turret", level.orbitalsupport_planemodel gettagorigin( var_2 ), var_0, 0 );
     var_4.angles = level.orbitalsupport_planemodel gettagangles( var_2 );
-    var_4 _meth_80B1( var_1 );
-    var_4 _meth_815A( 45 );
-    var_4 _meth_804D( level.orbitalsupport_planemodel, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 setmodel( var_1 );
+    var_4 setdefaultdroppitch( 45 );
+    var_4 linkto( level.orbitalsupport_planemodel, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4.owner = undefined;
     var_4.health = 99999;
     var_4.maxhealth = 1000;
     var_4.damagetaken = 0;
     var_4.stunned = 0;
     var_4.stunnedtime = 0.0;
-    var_4 _meth_82C0( 0 );
-    var_4 _meth_82C1( 0 );
-    var_4 _meth_815C();
+    var_4 setcandamage( 0 );
+    var_4 setcanradiusdamage( 0 );
+    var_4 turretfiredisable();
 
     if ( var_3 )
         var_4 thread turretspawnsoundent( var_2 );
@@ -477,8 +477,8 @@ turretspawnsoundent( var_0 )
 {
     waitframe();
     self.soundent = spawn( "script_model", self.origin );
-    self.soundent _meth_80B1( "tag_origin" );
-    self.soundent _meth_804D( level.orbitalsupport_planemodel, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.soundent setmodel( "tag_origin" );
+    self.soundent linkto( level.orbitalsupport_planemodel, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
 }
 
 pulseorbitalsupportreloadtext()
@@ -486,7 +486,7 @@ pulseorbitalsupportreloadtext()
     level endon( "orbitalsupport_player_removed" );
     self endon( "orbitalsupport_player_removed" );
     self endon( "switch_orbitalsupport_turret" );
-    self _meth_82FB( "ui_osp_reload_bitfield", 0 );
+    self setclientomnvar( "ui_osp_reload_bitfield", 0 );
     var_0 = 1;
     var_1 = 2;
     var_2 = 4;
@@ -504,7 +504,7 @@ pulseorbitalsupportreloadtext()
         if ( self.reloading_rocket_orbitalsupport_gun )
             var_3 += var_2;
 
-        self _meth_82FB( "ui_osp_reload_bitfield", var_3 );
+        self setclientomnvar( "ui_osp_reload_bitfield", var_3 );
         wait 0.05;
     }
 }
@@ -522,9 +522,9 @@ changeweapons()
     if ( !var_0 && !var_1 )
         return;
 
-    self _meth_82DD( "switch_orbitalsupport_turret", "weapnext" );
+    self notifyonplayercommand( "switch_orbitalsupport_turret", "weapnext" );
     wait 0.05;
-    self _meth_82FB( "ui_osp_weapon", 1 );
+    self setclientomnvar( "ui_osp_weapon", 1 );
 
     for (;;)
     {
@@ -563,12 +563,12 @@ playersetavailableweaponshud()
     if ( var_0 )
         var_2 += 4;
 
-    self _meth_82FB( "ui_osp_avail_weapons", var_2 );
+    self setclientomnvar( "ui_osp_avail_weapons", var_2 );
 }
 
 playerswitchtoturret( var_0 )
 {
-    self _meth_804F();
+    self unlink();
     level thread handleturretsoundent( var_0 );
     var_1 = 25;
     var_2 = 25;
@@ -587,14 +587,14 @@ playerswitchtoturret( var_0 )
     if ( isdefined( level.orbitalsupportoverrides.bottomarc ) )
         var_4 = level.orbitalsupportoverrides.bottomarc;
 
-    self _meth_807E( var_0, "tag_player", 0, var_1, var_2, var_3, var_4, 1 );
-    self _meth_80A1( 1 );
+    self playerlinkweaponviewtodelta( var_0, "tag_player", 0, var_1, var_2, var_3, var_4, 1 );
+    self playerlinkedsetusebaseangleforviewclamp( 1 );
     var_5 = 45;
 
     if ( isdefined( level.orbitalsupportoverrides.turretpitch ) )
         var_5 = level.orbitalsupportoverrides.turretpitch;
 
-    self _meth_80E8( var_0, var_5 );
+    self remotecontrolturret( var_0, var_5 );
 }
 
 handleturretsoundent( var_0 )
@@ -627,7 +627,7 @@ handleturretsoundent( var_0 )
 playerswitchtobigturret()
 {
     self.controlled_orbitalsupport_turret = "big";
-    self _meth_82FB( "ui_osp_weapon", 0 );
+    self setclientomnvar( "ui_osp_weapon", 0 );
     thread pulseorbitalsupportreloadtext();
 
     if ( isdefined( level.orbitalsupport_targetent ) )
@@ -637,7 +637,7 @@ playerswitchtobigturret()
 playerswitchtorocketturret()
 {
     self.controlled_orbitalsupport_turret = "rocket";
-    self _meth_82FB( "ui_osp_weapon", 3 );
+    self setclientomnvar( "ui_osp_weapon", 3 );
     thread pulseorbitalsupportreloadtext();
 
     if ( isdefined( level.orbitalsupport_targetent ) )
@@ -647,7 +647,7 @@ playerswitchtorocketturret()
 playerswitchtomediumturret()
 {
     self.controlled_orbitalsupport_turret = "medium";
-    self _meth_82FB( "ui_osp_weapon", 1 );
+    self setclientomnvar( "ui_osp_weapon", 1 );
     thread pulseorbitalsupportreloadtext();
 
     if ( isdefined( level.orbitalsupport_targetent ) )
@@ -690,7 +690,7 @@ firebigorbitalsupportgun()
             var_3.vehicle_fired_from = level.orbitalsupport_planemodel;
             level.orbitalsupport_planemodel playsound( "paladin_cannon_snap" );
             var_3 playsound( "orbitalsupport_105mm_proj_travel" );
-            self _meth_80AD( "ac130_105mm_fire" );
+            self playrumbleonentity( "ac130_105mm_fire" );
             self playlocalsound( "paladin_cannon_reload" );
             earthquake( 0.3, 1, level.orbitalsupport_planemodel.origin, 1000, self );
             self.reloading_big_orbitalsupport_gun = 1;
@@ -805,21 +805,21 @@ firemediumorbitalsupportvolley( var_0, var_1 )
     var_4 = randomfloat( 400 ) - 200;
     var_5 = magicbullet( var_1, var_2, ( var_0[0] + var_3, var_0[1] + var_4, var_0[2] ), self, 1 );
     var_5.vehicle_fired_from = level.orbitalsupport_planemodel;
-    self _meth_80AD( "ac130_25mm_fire" );
+    self playrumbleonentity( "ac130_25mm_fire" );
     wait 0.05;
     var_2 = level.orbitalsupport_planemodel gettagorigin( "tag_orbitalsupport_mediumgun0" );
     var_3 = randomfloat( 400 ) - 200;
     var_4 = randomfloat( 400 ) - 200;
     var_5 = magicbullet( var_1, var_2, ( var_0[0] + var_3, var_0[1] + var_4, var_0[2] ), self, 1 );
     var_5.vehicle_fired_from = level.orbitalsupport_planemodel;
-    self _meth_80AD( "ac130_25mm_fire" );
+    self playrumbleonentity( "ac130_25mm_fire" );
     wait 0.05;
     var_2 = level.orbitalsupport_planemodel gettagorigin( "tag_orbitalsupport_mediumgun3" );
     var_3 = randomfloat( 400 ) - 200;
     var_4 = randomfloat( 400 ) - 200;
     var_5 = magicbullet( var_1, var_2, ( var_0[0] + var_3, var_0[1] + var_4, var_0[2] ), self, 1 );
     var_5.vehicle_fired_from = level.orbitalsupport_planemodel;
-    self _meth_80AD( "ac130_25mm_fire" );
+    self playrumbleonentity( "ac130_25mm_fire" );
     wait 0.05;
 }
 
@@ -833,7 +833,7 @@ firerocketorbitalsupportgun()
     self endon( "orbitalsupport_player_removed" );
     var_0 = 3;
     var_1 = var_0;
-    self _meth_82FB( "ui_osp_rockets", var_1 );
+    self setclientomnvar( "ui_osp_rockets", var_1 );
 
     if ( !level.orbitalsupport_planemodel.ammofeeder )
         var_2 = 6;
@@ -862,14 +862,14 @@ firerocketorbitalsupportgun()
                 var_8 = magicbullet( "orbitalsupport_missile_mp", var_3, var_3 + var_7, self );
                 var_8.vehicle_fired_from = level.orbitalsupport_planemodel;
                 self playlocalsound( "paladin_missile_shot_2d" );
-                self _meth_80AD( "ac130_40mm_fire" );
-                var_8 _meth_81D9( level.orbitalsupport_targetent );
-                var_8 _meth_81DC();
+                self playrumbleonentity( "ac130_40mm_fire" );
+                var_8 missile_settargetent( level.orbitalsupport_targetent );
+                var_8 missile_setflightmodedirect();
                 wait 0.1;
             }
 
             var_1--;
-            self _meth_82FB( "ui_osp_rockets", var_1 );
+            self setclientomnvar( "ui_osp_rockets", var_1 );
 
             if ( var_1 == 0 )
             {
@@ -877,7 +877,7 @@ firerocketorbitalsupportgun()
                 thread rocketreloadsound( var_2 );
                 wait(var_2);
                 var_1 = var_0;
-                self _meth_82FB( "ui_osp_rockets", var_1 );
+                self setclientomnvar( "ui_osp_rockets", var_1 );
                 self notify( "rocketReloadComplete" );
                 continue;
             }
@@ -893,8 +893,8 @@ updateshootinglocation()
 {
     self endon( "orbitalsupport_player_removed" );
     level.orbitalsupport_targetent = spawn( "script_model", ( 0, 0, 0 ) );
-    level.orbitalsupport_targetent _meth_80B1( "tag_origin" );
-    level.orbitalsupport_big_turret _meth_8508( level.orbitalsupport_targetent );
+    level.orbitalsupport_targetent setmodel( "tag_origin" );
+    level.orbitalsupport_big_turret turretsetgroundaimentity( level.orbitalsupport_targetent );
 
     for (;;)
     {
@@ -963,7 +963,7 @@ crashplane( var_0, var_1, var_2, var_3 )
     level.orbitalsupport_planemodel.crashed = 1;
     level.orbitalsupport_planemodel maps\mp\gametypes\_damage::onkillstreakkilled( var_0, var_1, var_2, var_3, "paladin_destroyed", undefined, "callout_destroyed_orbitalsupport", 1 );
     thread crashfx();
-    level.orbitalsupport_planemodel _meth_80AC();
+    level.orbitalsupport_planemodel stopsounds();
     playsoundatpos( level.orbitalsupport_planemodel.origin, "paladin_ground_death" );
     waitframe();
     cleanupospents();
@@ -1076,7 +1076,7 @@ setorbitalsupportbuddy( var_0 )
         return;
 
     maps\mp\_utility::setusingremote( "orbitalsupport" );
-    self _meth_834A();
+    self startac130();
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
     playerswitchtoturret( level.orbitalsupport_buddy_turret );
     thread waitsetstatic( 0.1 );
@@ -1091,15 +1091,15 @@ setorbitalsupportbuddy( var_0 )
 
     if ( isdefined( level.orbitalsupport_planemodel ) && level.orbitalsupport_planemodel.coopoffensive )
     {
-        self _meth_82FB( "ui_osp_avail_weapons", 1 );
-        self _meth_82FB( "ui_osp_weapon", 1 );
+        self setclientomnvar( "ui_osp_avail_weapons", 1 );
+        self setclientomnvar( "ui_osp_weapon", 1 );
         thread firebuddymediumorbitalsupportgun();
     }
     else
     {
-        self _meth_82DD( "orbitalsupport_fire", "+attack" );
-        self _meth_82DD( "orbitalsupport_fire", "+attack_akimbo_accessible" );
-        self _meth_82FB( "ui_osp_weapon", 4 );
+        self notifyonplayercommand( "orbitalsupport_fire", "+attack" );
+        self notifyonplayercommand( "orbitalsupport_fire", "+attack_akimbo_accessible" );
+        self setclientomnvar( "ui_osp_weapon", 4 );
         thread firebuddythreatgrenades();
     }
 
@@ -1112,10 +1112,10 @@ setorbitalsupportbuddy( var_0 )
 
     wait 0.5;
     level.orbitalsupport_buddy.joined = 1;
-    self _meth_82FB( "ui_osp_toggle", 2 );
-    self _meth_82FB( "ui_warbird_countdown", var_0.orbitalsupport_endtime );
-    var_2 = var_0 _meth_81B1();
-    self _meth_82FB( "ui_coop_primary_num", var_2 );
+    self setclientomnvar( "ui_osp_toggle", 2 );
+    self setclientomnvar( "ui_warbird_countdown", var_0.orbitalsupport_endtime );
+    var_2 = var_0 getentitynumber();
+    self setclientomnvar( "ui_coop_primary_num", var_2 );
 }
 
 playerdoridekillstreak()
@@ -1142,26 +1142,26 @@ removeorbitalsupportbuddy( var_0 )
         playerresetospomnvars();
         thread removeospvisionandlightsetpermap( 0.5 );
         maps\mp\_utility::revertvisionsetforplayer( 0 );
-        self _meth_849C( "ExitButtonDown", "+activate" );
-        self _meth_849C( "ExitButtonUp", "-activate" );
-        self _meth_849C( "ExitButtonDown", "+usereload" );
-        self _meth_849C( "ExitButtonUp", "-usereload" );
+        self notifyonplayercommandremove( "ExitButtonDown", "+activate" );
+        self notifyonplayercommandremove( "ExitButtonUp", "-activate" );
+        self notifyonplayercommandremove( "ExitButtonDown", "+usereload" );
+        self notifyonplayercommandremove( "ExitButtonUp", "-usereload" );
 
         if ( !isdefined( level.orbitalsupport_planemodel ) || !level.orbitalsupport_planemodel.coopoffensive )
         {
-            self _meth_849C( "orbitalsupport_fire", "+attack" );
-            self _meth_849C( "orbitalsupport_fire", "+attack_akimbo_accessible" );
+            self notifyonplayercommandremove( "orbitalsupport_fire", "+attack" );
+            self notifyonplayercommandremove( "orbitalsupport_fire", "+attack_akimbo_accessible" );
         }
 
-        self _meth_80E9( level.orbitalsupport_buddy_turret );
-        self _meth_804F();
+        self remotecontrolturretoff( level.orbitalsupport_buddy_turret );
+        self unlink();
         level.orbitalsupport_buddy_turret hide();
         maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( self );
-        self _meth_851A( 1 );
+        self setshadowrendering( 1 );
         self thermalvisionfofoverlayoff();
         self setblurforplayer( 0, 0 );
         maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
-        self _meth_834B();
+        self stopac130();
 
         if ( getdvarint( "camera_thirdPerson" ) )
             maps\mp\_utility::setthirdpersondof( 1 );
@@ -1209,10 +1209,10 @@ removeorbitalsupportbuddyonspectate()
 removeorbitalsupportbuddyoncommand()
 {
     self endon( "orbitalsupport_player_removed" );
-    self _meth_82DD( "ExitButtonDown", "+activate" );
-    self _meth_82DD( "ExitButtonUp", "-activate" );
-    self _meth_82DD( "ExitButtonDown", "+usereload" );
-    self _meth_82DD( "ExitButtonUp", "-usereload" );
+    self notifyonplayercommand( "ExitButtonDown", "+activate" );
+    self notifyonplayercommand( "ExitButtonUp", "-activate" );
+    self notifyonplayercommand( "ExitButtonDown", "+usereload" );
+    self notifyonplayercommand( "ExitButtonUp", "-usereload" );
 
     for (;;)
     {
@@ -1279,7 +1279,7 @@ moveorbitalsupporttodestination( var_0 )
     thread rotateplane( 1, "off" );
     level.orbitalsupport_planemodel thread playjetfx();
     thread playentrysounddelayed();
-    level.orbitalsupport_planemodel _meth_827B( "paladin_ks_callin", "paladin_notetrack" );
+    level.orbitalsupport_planemodel scriptmodelplayanimdeltamotion( "paladin_ks_callin", "paladin_notetrack" );
 
     if ( isdefined( level.orbitalsupport_planemodel.owner ) )
         level.orbitalsupport_planemodel.owner thread playerdelayrumble( 1.5 );
@@ -1289,8 +1289,8 @@ moveorbitalsupporttodestination( var_0 )
 
     if ( isdefined( level.orbitalsupport_planemodel.owner ) )
     {
-        level.orbitalsupport_planemodel.owner _meth_80AF( "orbital_laser_charge" );
-        level.orbitalsupport_planemodel.owner _meth_80AD( "ac130_105mm_fire" );
+        level.orbitalsupport_planemodel.owner stoprumble( "orbital_laser_charge" );
+        level.orbitalsupport_planemodel.owner playrumbleonentity( "ac130_105mm_fire" );
         earthquake( 0.2, 2, level.orbitalsupport_planemodel.destination2.origin, 1000 );
     }
 
@@ -1298,24 +1298,24 @@ moveorbitalsupporttodestination( var_0 )
 
     if ( var_0 )
     {
-        level.orbitalsupport_planemodel _meth_8446( level.osprig, "tag_player" );
+        level.orbitalsupport_planemodel vehicle_jetbikesethoverforcescale( level.osprig, "tag_player" );
         thread rotateplane( level.orbitalsupport_speed );
     }
 
     level.orbitalsupport_planemodel waittillmatch( "paladin_notetrack", "end" );
-    level.orbitalsupport_planemodel _meth_827A();
-    level.orbitalsupport_planemodel _meth_8279( "paladin_ks_loop", "paladin_notetrack" );
+    level.orbitalsupport_planemodel scriptmodelclearanim();
+    level.orbitalsupport_planemodel scriptmodelplayanim( "paladin_ks_loop", "paladin_notetrack" );
 
     if ( isdefined( level.orbitalsupport_planemodel.owner ) )
     {
         level.orbitalsupport_planemodel.closeflightsound = spawn( "script_origin", ( 0, 0, 0 ) );
-        level.orbitalsupport_planemodel.closeflightsound _meth_8446( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-        level.orbitalsupport_planemodel.closeflightsound _meth_8075( "paladin_flight_loop_near" );
+        level.orbitalsupport_planemodel.closeflightsound vehicle_jetbikesethoverforcescale( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.orbitalsupport_planemodel.closeflightsound playloopsound( "paladin_flight_loop_near" );
     }
 
     level.orbitalsupport_planemodel.farflightsound = spawn( "script_origin", ( 0, 0, 0 ) );
-    level.orbitalsupport_planemodel.farflightsound _meth_8446( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    level.orbitalsupport_planemodel.farflightsound _meth_8075( "paladin_flight_loop_dist" );
+    level.orbitalsupport_planemodel.farflightsound vehicle_jetbikesethoverforcescale( level.orbitalsupport_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.orbitalsupport_planemodel.farflightsound playloopsound( "paladin_flight_loop_dist" );
     setupflightsounds();
     level.orbitalsupport_planemodel.paladinflying = 1;
 }
@@ -1358,7 +1358,7 @@ playerdelayrumble( var_0 )
     self endon( "disconnect" );
     self endon( "orbitalsupport_player_removed" );
     wait(var_0);
-    self _meth_80AD( "orbital_laser_charge" );
+    self playrumbleonentity( "orbital_laser_charge" );
 }
 
 playjetfx()
@@ -1417,8 +1417,8 @@ orbitalsupportexit()
 {
     level.orbitalsupport_planemodel endon( "crashing" );
     level.orbitalsupport_planemodel notify( "leaving" );
-    level.orbitalsupport_planemodel _meth_804F();
-    level.orbitalsupport_planemodel _meth_827B( "paladin_ks_exit", "paladin_notetrack" );
+    level.orbitalsupport_planemodel unlink();
+    level.orbitalsupport_planemodel scriptmodelplayanimdeltamotion( "paladin_ks_exit", "paladin_notetrack" );
     stopfxontag( common_scripts\utility::getfx( "vehicle_osp_jet" ), level.orbitalsupport_planemodel, "TAG_FX_ENGINE_L_1" );
     stopfxontag( common_scripts\utility::getfx( "vehicle_osp_jet" ), level.orbitalsupport_planemodel, "TAG_FX_ENGINE_L_2" );
     stopfxontag( common_scripts\utility::getfx( "vehicle_osp_jet" ), level.orbitalsupport_planemodel, "TAG_FX_ENGINE_R_1" );
@@ -1537,13 +1537,13 @@ turretdeletesoundent()
 
 playerresetospomnvars()
 {
-    self _meth_82FB( "ui_killstreak_optic", 0 );
-    self _meth_82FB( "ui_osp_rockets", 0 );
-    self _meth_82FB( "ui_osp_avail_weapons", 0 );
-    self _meth_82FB( "ui_osp_weapon", 0 );
-    self _meth_82FB( "ui_osp_reload_bitfield", 0 );
-    self _meth_82FB( "ui_osp_toggle", 0 );
-    self _meth_82FB( "ui_coop_primary_num", 0 );
+    self setclientomnvar( "ui_killstreak_optic", 0 );
+    self setclientomnvar( "ui_osp_rockets", 0 );
+    self setclientomnvar( "ui_osp_avail_weapons", 0 );
+    self setclientomnvar( "ui_osp_weapon", 0 );
+    self setclientomnvar( "ui_osp_reload_bitfield", 0 );
+    self setclientomnvar( "ui_osp_toggle", 0 );
+    self setclientomnvar( "ui_coop_primary_num", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 }
 
@@ -1557,12 +1557,12 @@ rotateplane( var_0, var_1 )
 
     if ( var_1 == "on" )
     {
-        level.osprig _meth_82B7( 360, var_0, 0.5 );
+        level.osprig rotateyaw( 360, var_0, 0.5 );
         wait(var_0);
 
         for (;;)
         {
-            level.osprig _meth_82B7( 360, var_0 );
+            level.osprig rotateyaw( 360, var_0 );
             wait(var_0);
         }
     }
@@ -1570,15 +1570,15 @@ rotateplane( var_0, var_1 )
     {
         var_2 = 10;
         var_3 = var_0 / 360 * var_2;
-        level.osprig _meth_82B7( level.osprig.angles[2] + var_2, var_3, 0, var_3 );
+        level.osprig rotateyaw( level.osprig.angles[2] + var_2, var_3, 0, var_3 );
     }
 }
 
 spawnmuzzleflashent( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_3 _meth_80B1( "tag_origin" );
-    var_3 _meth_804D( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( "tag_origin" );
+    var_3 linkto( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 hide();
 
     foreach ( var_5 in level.players )

@@ -31,7 +31,7 @@ setupdogstate()
     self.meleeradiusbasesq = squared( self.meleeradiusbase );
     maps\mp\zombies\_util::setmeleeradius( self.meleeradiusbase );
     self.defaultgoalradius = self.radius + 5;
-    self _meth_8394( self.defaultgoalradius );
+    self scragentsetgoalradius( self.defaultgoalradius );
     self.meleedot = 0.85;
     self.lastmeleefinishtime = 0;
     self.meleedebouncetime = 1.0;

@@ -61,7 +61,7 @@ copy_script_model( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin );
     var_1 maps\_utility::assign_animtree( var_0.animname );
-    var_1 _meth_80B1( var_0.model );
+    var_1 setmodel( var_0.model );
     return var_1;
 }
 
@@ -74,9 +74,9 @@ fastzip_turret_think( var_0, var_1, var_2, var_3 )
     var_5 = getentarray( "valid_landing", "targetname" );
     wait_for_player_switch_to_turret();
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
-    level.player _meth_8301( 0 );
+    level.player allowjump( 0 );
     var_6 = getdvarint( "turret_adsEnabled", 1 );
-    _func_0D3( "turret_adsEnabled", 0 );
+    setsaveddvar( "turret_adsEnabled", 0 );
     waittillframeend;
     self notify( "using_zip" );
     var_7 = var_0.zipline_gun_model[var_1];
@@ -86,22 +86,22 @@ fastzip_turret_think( var_0, var_1, var_2, var_3 )
     var_8 show();
     var_4 hide();
     var_8 makeusable();
-    var_8 _meth_8065( "manual" );
-    var_9 _meth_8065( "manual" );
-    var_8 _meth_8099( self );
-    var_8 _meth_815C();
-    self _meth_80F4();
+    var_8 setmode( "manual" );
+    var_9 setmode( "manual" );
+    var_8 useby( self );
+    var_8 turretfiredisable();
+    self disableturretdismount();
     var_8 makeunusable();
     var_8.ground_target = common_scripts\utility::spawn_tag_origin();
-    var_9 _meth_8106( var_8.ground_target, ( 0, 0, 0 ) );
+    var_9 settargetentity( var_8.ground_target, ( 0, 0, 0 ) );
     thread fire_hint_display();
     wait_to_fire_rope( var_0, var_8, var_5 );
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
     var_10 = var_9 fire_rope( var_8, var_8.ground_target.origin, var_7 );
     var_8 set_landing_target_fx( undefined );
-    var_8 _meth_8099( self );
-    var_8 _meth_8106( var_8.ground_target );
-    _func_0D3( "turret_adsEnabled", var_6 );
+    var_8 useby( self );
+    var_8 settargetentity( var_8.ground_target );
+    setsaveddvar( "turret_adsEnabled", var_6 );
     fastzip_turret_putaway( var_0, var_1, var_4, var_8, var_7 );
     thread player_fastzip( var_9, var_8.ground_target.origin, var_4, var_3 );
     var_11 = maps\_utility::get_rumble_ent( "steady_rumble" );
@@ -110,7 +110,7 @@ fastzip_turret_think( var_0, var_1, var_2, var_3 )
     stopallrumbles();
     self waittill( "fastzip_landed" );
     var_4 delete();
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
     wait 0.5;
     var_9 retract_rope( var_10, "left" );
     var_9 delete();
@@ -120,7 +120,7 @@ fastzip_turret_think( var_0, var_1, var_2, var_3 )
 
 fastzip_turret_pullout( var_0, var_1, var_2, var_3 )
 {
-    var_2 _meth_804D( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_0, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4 = [];
     var_4[0] = var_2;
     var_4[1] = var_3;
@@ -128,21 +128,21 @@ fastzip_turret_pullout( var_0, var_1, var_2, var_3 )
     soundscripts\_snd::snd_message( "fastzip_turret_switch_to" );
     var_0 maps\_anim::anim_first_frame( var_4, "fastzip_pullout", var_1 );
     var_5 = 0.15;
-    level.player _meth_8080( var_2, "tag_player", var_5 );
-    level.player common_scripts\utility::delaycall( var_5, ::_meth_807D, var_2, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktoblend( var_2, "tag_player", var_5 );
+    level.player common_scripts\utility::delaycall( var_5, ::playerlinktodelta, var_2, "tag_player", 1, 0, 0, 0, 0, 1 );
     var_2 common_scripts\utility::delaycall( var_5, ::show );
     maps\_utility::delaythread( 1.2, maps\_utility::lerp_fov_overtime, 2, 55 );
     var_0 maps\_anim::anim_single( var_4, "fastzip_pullout", var_1 );
     var_2 maps\_utility::anim_stopanimscripted();
-    var_2 _meth_814B( level.scr_anim["_player_arms_fastzip"]["fastzip_ads"], 1, 0, 1 );
-    var_2 _meth_804F();
+    var_2 setanim( level.scr_anim["_player_arms_fastzip"]["fastzip_ads"], 1, 0, 1 );
+    var_2 unlink();
     var_3 hide();
 
     if ( isdefined( var_3.attachment ) )
         var_3.attachment hide();
 
     soundscripts\_snd::snd_message( "fastzip_turret_switch_complete" );
-    self _meth_804F();
+    self unlink();
 }
 
 set_landing_target_fx( var_0 )
@@ -195,7 +195,7 @@ wait_to_fire_rope( var_0, var_1, var_2 )
 
             foreach ( var_11 in var_2 )
             {
-                if ( var_1.ground_target _meth_80A9( var_11 ) )
+                if ( var_1.ground_target istouching( var_11 ) )
                 {
                     var_8 = 1;
                     var_1 set_landing_target_fx( "landing_target_valid" );
@@ -240,15 +240,15 @@ fire_rope( var_0, var_1, var_2 )
     var_9 = %fastzip_launcher_fire_left;
     var_10 = getanimlength( var_9 );
     var_11 = var_10 / var_5 * var_8;
-    self _meth_8143( var_9, 1, 0.2, var_5 );
-    var_0 _meth_8143( var_9, 1, 0.2, 1 );
+    self setanimknob( var_9, 1, 0.2, var_5 );
+    var_0 setanimknob( var_9, 1, 0.2, 1 );
     var_11 -= 0.05;
 
     if ( var_11 > 0.05 )
         wait(var_11);
 
-    self _meth_814B( var_9, 1, 0, 0 );
-    self _meth_8117( var_9, var_8 );
+    self setanim( var_9, 1, 0, 0 );
+    self setanimtime( var_9, var_8 );
     return var_7;
 }
 
@@ -266,7 +266,7 @@ fastzip_turret_putaway( var_0, var_1, var_2, var_3, var_4 )
     var_5[1] = var_4;
     var_3 clear_script_model_anim( 0.2 );
     var_0 maps\_anim::anim_first_frame( var_5, "fastzip_putaway", var_1 );
-    self _meth_807D( var_2, "tag_player", 1, 0, 0, 0, 0, 1 );
+    self playerlinktodelta( var_2, "tag_player", 1, 0, 0, 0, 0, 1 );
     soundscripts\_snd::snd_message( "fastzip_turret_putaway" );
     self setangles( self getangles() );
     wait 0.2;
@@ -274,7 +274,7 @@ fastzip_turret_putaway( var_0, var_1, var_2, var_3, var_4 )
     var_0 maps\_anim::anim_single( var_5, "fastzip_putaway", var_1 );
     var_4 maps\_utility::anim_stopanimscripted();
     var_4 clear_script_model_anim( 0 );
-    var_4 _meth_814B( %fastzip_launcher_folded_idle_left, 1, 0, 1 );
+    var_4 setanim( %fastzip_launcher_folded_idle_left, 1, 0, 1 );
 }
 
 player_fastzip( var_0, var_1, var_2, var_3 )
@@ -282,9 +282,9 @@ player_fastzip( var_0, var_1, var_2, var_3 )
     thread player_camera_shake();
     self notify( "fastzip_start" );
     var_4 = %fastzip_launcher_slidedown_left;
-    var_0 _meth_814C( %add_slide, 1, 0, 1 );
-    var_0 _meth_814C( var_4, 1, 0, 1 );
-    self _meth_807D( var_0, "TAG_PLAYER_ATTACH", 1, 20, 20, 20, 20, 1 );
+    var_0 setanimlimited( %add_slide, 1, 0, 1 );
+    var_0 setanimlimited( var_4, 1, 0, 1 );
+    self playerlinktodelta( var_0, "TAG_PLAYER_ATTACH", 1, 20, 20, 20, 20, 1 );
     soundscripts\_snd::snd_message( "fastzip_rappel" );
 
     if ( isdefined( var_3 ) )
@@ -305,21 +305,21 @@ player_fastzip( var_0, var_1, var_2, var_3 )
         var_6 = bullettrace( var_9, var_9 + var_7, 0, self );
     }
 
-    self _meth_804F();
+    self unlink();
     self notify( "kill_camera_shake" );
     thread player_fastzip_land( var_8, var_2 );
     self notify( "fastzip_arrived" );
-    var_0 _meth_814C( var_4, 1, 0, 0 );
+    var_0 setanimlimited( var_4, 1, 0, 0 );
 }
 
 player_fastzip_land( var_0, var_1 )
 {
     var_2 = var_0 * 20;
-    self _meth_82F1( var_2 );
+    self setvelocity( var_2 );
     thread prevent_look_until_notify( "fastzip_hit_the_ground" );
     var_3 = undefined;
 
-    while ( !self _meth_8341() )
+    while ( !self isonground() )
     {
         var_3 = self getvelocity();
         wait 0.05;
@@ -333,14 +333,14 @@ player_fastzip_land( var_0, var_1 )
     var_5.angles = ( 0, var_4[1] + 90, 0 );
     var_5 maps\_anim::anim_first_frame_solo( var_1, "fastzip_land" );
     var_6 = getmovedelta( var_1 maps\_utility::getanim( "fastzip_land" ), 0, 1 );
-    var_7 = var_1 _meth_81B0( var_6 );
+    var_7 = var_1 localtoworldcoords( var_6 );
     var_8 = var_7 + ( 0, 0, 24 );
-    var_9 = _func_238( var_7, var_8 );
+    var_9 = playerphysicstraceinfo( var_7, var_8 );
 
     if ( var_9["fraction"] > 0 )
         var_8 = var_9["position"] - ( 0, 0, 1 );
 
-    var_9 = _func_238( var_8, var_8 - ( 0, 0, 36 ) );
+    var_9 = playerphysicstraceinfo( var_8, var_8 - ( 0, 0, 36 ) );
 
     if ( var_9["fraction"] > 0 )
     {
@@ -351,9 +351,9 @@ player_fastzip_land( var_0, var_1 )
             var_5.origin += var_11;
         }
 
-        self _meth_807D( var_1, "tag_player", 1, 20, 20, 20, 20, 1 );
+        self playerlinktodelta( var_1, "tag_player", 1, 20, 20, 20, 20, 1 );
         var_5 maps\_anim::anim_single_solo( var_1, "fastzip_land" );
-        self _meth_804F();
+        self unlink();
     }
     else
     {
@@ -361,7 +361,7 @@ player_fastzip_land( var_0, var_1 )
     }
 
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8301( 1 );
+    level.player allowjump( 1 );
     self notify( "fastzip_landed" );
 }
 
@@ -371,15 +371,15 @@ prevent_look_until_notify( var_0 )
     var_2 = getdvarint( "aim_turnrate_pitch_ads" );
     var_3 = getdvarint( "aim_turnrate_yaw" );
     var_4 = getdvarint( "aim_turnrate_yaw_ads" );
-    _func_0D3( "aim_turnrate_pitch", 0 );
-    _func_0D3( "aim_turnrate_pitch_ads", 0 );
-    _func_0D3( "aim_turnrate_yaw", 0 );
-    _func_0D3( "aim_turnrate_yaw_ads", 0 );
+    setsaveddvar( "aim_turnrate_pitch", 0 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 0 );
+    setsaveddvar( "aim_turnrate_yaw", 0 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 0 );
     self waittill( var_0 );
-    _func_0D3( "aim_turnrate_pitch", var_1 );
-    _func_0D3( "aim_turnrate_pitch_ads", var_2 );
-    _func_0D3( "aim_turnrate_yaw", var_3 );
-    _func_0D3( "aim_turnrate_yaw_ads", var_4 );
+    setsaveddvar( "aim_turnrate_pitch", var_1 );
+    setsaveddvar( "aim_turnrate_pitch_ads", var_2 );
+    setsaveddvar( "aim_turnrate_yaw", var_3 );
+    setsaveddvar( "aim_turnrate_yaw_ads", var_4 );
 }
 
 player_camera_shake()
@@ -430,27 +430,27 @@ retract_rope( var_0, var_1 )
     if ( var_1 == "right" )
         var_6 = %fastzip_launcher_retract_right;
 
-    self _meth_8143( var_6, 1, 0.2, var_5 );
-    self _meth_8117( var_6, var_3 );
+    self setanimknob( var_6, 1, 0.2, var_5 );
+    self setanimtime( var_6, var_3 );
     var_7 = var_4 * ( 1 - var_3 ) / 30 * var_5;
     wait(var_7 + 0.05);
 }
 
 clear_script_model_anim( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 #using_animtree("player");
 
 clear_player_anim()
 {
-    self _meth_8142( %root, 0 );
+    self clearanim( %root, 0 );
 }
 
 wait_for_player_to_complete_reloading()
 {
-    while ( level.player _meth_8336() )
+    while ( level.player isreloading() )
         waitframe();
 }
 

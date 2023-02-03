@@ -19,79 +19,11 @@ main()
     level.dronevisionset = "mp_instinct_osp";
     level.dronelightset = "mp_prison_drone";
     thread ambientanimation();
-    thread patchportalblockers();
-    thread patchclip();
-}
-
-patchclip()
-{
-    thread cliptower01();
-    thread clipvents();
-    thread parkinglotroofledge();
-    thread entrancecornerledge();
-}
-
-parkinglotroofledge()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3643, 1173, 1065 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3643, 1160, 1065 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( -3630, 1160, 1065 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1161 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1289 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1417 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1545 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -3611, 1192, 1673 ), ( 0, 0, 0 ) );
-}
-
-entrancecornerledge()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 715.5 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 843.5 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 917.5 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4929, 1083.5, 1099.5 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 715.5 ), ( 0, 315, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 843.5 ), ( 0, 315, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 917.5 ), ( 0, 315, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_128_128_128", ( -4902.5, 1147.5, 1099.5 ), ( 0, 315, 0 ) );
-}
-
-clipvents()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -3063, 1546, 718 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -953, 530, 712 ), ( 90, 0, 0 ) );
-}
-
-cliptower01()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1134 ), ( 0, 300, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1390 ), ( 0, 300, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1104, 2736, 1646 ), ( 0, 300, 0 ) );
-}
-
-patchportalblockers()
-{
-    thread spawnportalblocker( ( -1117, 1493, 678 ), ( 0, 120, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -964, 1102, 698 ), ( 0, 90, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -968, 1228, 834 ), ( 0, 0, 90 ), "blastdoor_floortrack" );
-    thread spawnportalblocker( ( -1123, 1505.5, 579 ), ( 0, 300, 0 ), "blastdoor_door_prison" );
-    thread spawnportalblocker( ( -1067, 1410, 579 ), ( 0, 120, 0 ), "blastdoor_door_prison" );
-    thread spawnportalblocker( ( -2889, -179.5, 530 ), ( 0, 270, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -2889, -287.5, 530 ), ( 0, 90, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -3572, -57.5, 522.5 ), ( 0, 0, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -3460.5, -57, 522.5 ), ( 0, 180, 0 ), "blastdoor_door_short" );
-    thread spawnportalblocker( ( -1175, 1593.5, 694.5 ), ( 0, 300, 0 ), "blastdoor_door_short" );
-}
-
-spawnportalblocker( var_0, var_1, var_2 )
-{
-    var_3 = spawn( "script_model", var_0 );
-    var_3.angles = var_1;
-    var_3 _meth_80B1( var_2 );
 }
 
 goliathvolumes()
 {
-
+    level.goliath_bad_landing_volumes = getentarray( "goliath_bad_landing_volume", "targetname" );
 }
 
 prisoncustomkillstreakfunc()
@@ -101,12 +33,12 @@ prisoncustomkillstreakfunc()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 _meth_82FD( "r_tonemap", "1", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
+            var_0 setclientdvars( "r_tonemap", "1", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
         }
     }
 }
@@ -136,7 +68,7 @@ rotateradar()
 
     for (;;)
     {
-        self _meth_82BD( ( 0, -100, 0 ), level.rotatetime );
+        self rotatevelocity( ( 0, -100, 0 ), level.rotatetime );
         wait(level.rotatetime);
     }
 }
@@ -145,7 +77,7 @@ setupriotsuppresionsystem()
 {
     precachelocationselector( "map_artillery_selector" );
     precachestring( &"KILLSTREAKS_MP_PRISON" );
-    precacheitem( "mp_prison_gas" );
+    precacheshellshock( "mp_prison_gas" );
     level.gasedvisionset = "mp_prison_gas";
     level.gas_alarm_sfx_alias = "mp_prison_gas_on_siren";
     level.gate_spark_fx = "gate_sparks";
@@ -280,7 +212,7 @@ gasvisualswarningstart()
     foreach ( var_1 in level.mp_prison_killstreak.gas_warning_light_tags )
         var_1 thread playloopingsoundonorigin();
 
-    _func_222( 10 );
+    activateclientexploder( 10 );
 }
 
 setupgates()
@@ -301,11 +233,11 @@ setupgates()
         var_6 = common_scripts\utility::getstruct( var_5.target, "targetname" );
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 _meth_804D( var_2 );
+        var_7 linkto( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 _meth_804D( var_2 );
+        var_9 linkto( var_2 );
         var_3.sparks = [ var_7, var_9 ];
         level.mp_prison_killstreak.gates[level.mp_prison_killstreak.gates.size] = var_3;
     }
@@ -329,11 +261,11 @@ setupgates()
         var_6 = common_scripts\utility::getstruct( var_5.target, "targetname" );
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 _meth_804D( var_2 );
+        var_7 linkto( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 _meth_804D( var_2 );
+        var_9 linkto( var_2 );
         var_3.sparks = [ var_7, var_9 ];
 
         if ( isdefined( var_8.target ) )
@@ -364,7 +296,7 @@ setupgates()
 
         var_7 = var_6 common_scripts\utility::spawn_tag_origin();
         var_7 show();
-        var_7 _meth_804D( var_2 );
+        var_7 linkto( var_2 );
         var_8 = common_scripts\utility::getstruct( var_6.target, "targetname" );
 
         if ( !isdefined( var_8 ) )
@@ -375,7 +307,7 @@ setupgates()
 
         var_9 = var_8 common_scripts\utility::spawn_tag_origin();
         var_9 show();
-        var_9 _meth_804D( var_2 );
+        var_9 linkto( var_2 );
         var_3.sparks = [ var_7, var_9 ];
         level.mp_prison_killstreak.rotating_gate_constant[level.mp_prison_killstreak.rotating_gate_constant.size] = var_3;
     }
@@ -387,8 +319,8 @@ movegates()
 
     foreach ( var_2 in level.mp_prison_killstreak.gates )
     {
-        var_2.gate _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
-        var_2.collision _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.gate moveto( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.collision moveto( var_2.dest.origin, var_0, 0.1, 0.2 );
         var_2 thread bouncegate( var_0 );
     }
 }
@@ -400,10 +332,10 @@ rotategates()
     foreach ( var_2 in level.mp_prison_killstreak.rotating_gates )
     {
         var_2 thread gatefxon();
-        var_2.gate _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
-        var_2.gate _meth_82B5( var_2.dest.angles, var_0, 0.1, 0.2 );
-        var_2.collision _meth_82B5( var_2.dest.angles - ( 0, 90, 0 ), var_0, 0.1, 0.2 );
-        var_2.collision _meth_82AE( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.gate moveto( var_2.dest.origin, var_0, 0.1, 0.2 );
+        var_2.gate rotateto( var_2.dest.angles, var_0, 0.1, 0.2 );
+        var_2.collision rotateto( var_2.dest.angles - ( 0, 90, 0 ), var_0, 0.1, 0.2 );
+        var_2.collision moveto( var_2.dest.origin, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
@@ -426,11 +358,11 @@ rotategatebounce()
     {
         var_0 = randomfloatrange( 0.1, 0.5 );
         thread gatefxon();
-        self.gate _meth_82AE( self.dest.origin, var_0, 0.05, 0.05 );
-        self.gate _meth_82B5( self.dest.angles, var_0, 0.05, 0.05 );
+        self.gate moveto( self.dest.origin, var_0, 0.05, 0.05 );
+        self.gate rotateto( self.dest.angles, var_0, 0.05, 0.05 );
         wait(var_0);
-        self.gate _meth_82AE( self.gate.originalpos, var_0, 0.05, 0.05 );
-        self.gate _meth_82B5( self.gate.originalrot, var_0, 0.05, 0.05 );
+        self.gate moveto( self.gate.originalpos, var_0, 0.05, 0.05 );
+        self.gate rotateto( self.gate.originalrot, var_0, 0.05, 0.05 );
         thread gatefxoff();
         wait(randomfloatrange( 0.1, 1 ));
     }
@@ -448,8 +380,8 @@ resetrotategateconstant()
     foreach ( var_2 in level.mp_prison_killstreak.rotating_gate_constant )
     {
         var_2 thread gatefxon();
-        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.05, 0.05 );
-        var_2.gate _meth_82B5( var_2.gate.originalrot, var_0, 0.05, 0.05 );
+        var_2.gate moveto( var_2.gate.originalpos, var_0, 0.05, 0.05 );
+        var_2.gate rotateto( var_2.gate.originalrot, var_0, 0.05, 0.05 );
     }
 
     wait(var_0);
@@ -469,10 +401,10 @@ resetrotategates()
         if ( isdefined( var_2.kill_vol ) )
             var_2.kill_vol common_scripts\utility::trigger_on_proc();
 
-        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.1, 0.2 );
-        var_2.gate _meth_82B5( var_2.gate.originalrot, var_0, 0.1, 0.2 );
-        var_2.collision _meth_82B5( var_2.collision.originalrot, var_0, 0.1, 0.2 );
-        var_2.collision _meth_82AE( var_2.collision.originalpos, var_0, 0.1, 0.2 );
+        var_2.gate moveto( var_2.gate.originalpos, var_0, 0.1, 0.2 );
+        var_2.gate rotateto( var_2.gate.originalrot, var_0, 0.1, 0.2 );
+        var_2.collision rotateto( var_2.collision.originalrot, var_0, 0.1, 0.2 );
+        var_2.collision moveto( var_2.collision.originalpos, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
@@ -498,8 +430,8 @@ resetgates()
     foreach ( var_2 in level.mp_prison_killstreak.gates )
     {
         var_2 thread gatefxon();
-        var_2.gate _meth_82AE( var_2.gate.originalpos, var_0, 0.1, 0.2 );
-        var_2.collision _meth_82AE( var_2.collision.originalpos, var_0, 0.1, 0.2 );
+        var_2.gate moveto( var_2.gate.originalpos, var_0, 0.1, 0.2 );
+        var_2.collision moveto( var_2.collision.originalpos, var_0, 0.1, 0.2 );
     }
 
     wait(var_0);
@@ -522,9 +454,9 @@ bouncegate( var_0 )
         var_3 = randomfloatrange( 0.1, 0.5 );
         var_4 = randomfloatrange( 0.1, 0.5 );
         thread gatefxon();
-        self.gate _meth_82AE( self.gate.origin + var_2, var_3, 0.05, 0.05 );
+        self.gate moveto( self.gate.origin + var_2, var_3, 0.05, 0.05 );
         wait(var_3);
-        self.gate _meth_82AE( self.dest.origin, var_4, 0.05, 0.05 );
+        self.gate moveto( self.dest.origin, var_4, 0.05, 0.05 );
         wait(var_4);
         thread gatefxoff();
         wait(randomfloat( 2 ));
@@ -554,7 +486,7 @@ gatefxoff()
 
 gasvisualsstart()
 {
-    _func_222( 20 );
+    activateclientexploder( 20 );
 }
 
 gasvisualsend()
@@ -618,7 +550,7 @@ gasfieldsoff()
 soundwatcher( var_0 )
 {
     common_scripts\utility::waittill_any( "death", "leftTrigger" );
-    self _meth_80AB();
+    self stoploopsound();
 }
 
 gaseffect()
@@ -637,27 +569,27 @@ gaseffect()
         switch ( self.poison )
         {
             case 1:
-                self _meth_81AF( 1, self.origin );
+                self viewkick( 1, self.origin );
                 break;
             case 3:
                 self shellshock( "mp_prison_gas", 4 );
-                self _meth_81AF( 3, self.origin );
+                self viewkick( 3, self.origin );
                 dogasdamage( 25 );
                 break;
             case 4:
                 self shellshock( "mp_prison_gas", 5 );
-                self _meth_81AF( 15, self.origin );
+                self viewkick( 15, self.origin );
                 thread blackout();
                 dogasdamage( 45 );
                 break;
             case 6:
                 self shellshock( "mp_prison_gas", 5 );
-                self _meth_81AF( 75, self.origin );
+                self viewkick( 75, self.origin );
                 dogasdamage( 80 );
                 break;
             case 8:
                 self shellshock( "mp_prison_gas", 5 );
-                self _meth_81AF( 127, self.origin );
+                self viewkick( 127, self.origin );
                 dogasdamage( 175 );
                 break;
         }
@@ -680,7 +612,7 @@ blackout()
         self.gasoverlay = newclienthudelem( self );
         self.gasoverlay.x = 0;
         self.gasoverlay.y = 0;
-        self.gasoverlay _meth_80CC( "black", 640, 480 );
+        self.gasoverlay setshader( "black", 640, 480 );
         self.gasoverlay.alignx = "left";
         self.gasoverlay.aligny = "top";
         self.gasoverlay.horzalign = "fullscreen";

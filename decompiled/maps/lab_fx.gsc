@@ -190,8 +190,8 @@ precachefx()
 
 set_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", 2 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", 2 );
 }
 
 treadfx_override()
@@ -668,7 +668,7 @@ vfx_htank_thruster_light_flicker( var_0 )
     playfxontag( common_scripts\utility::getfx( "hovertank_exhaust_light_flicker_dual" ), var_0, "tag_origin" );
     wait 25;
     common_scripts\utility::flag_waitopen( "thruster_big" );
-    var_1 _meth_8498( "force_on" );
+    var_1 setlightshadowstate( "force_on" );
     stopfxontag( common_scripts\utility::getfx( "hovertank_exhaust_light_flicker_dual" ), var_0, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "hovertank_exhaust_light_flicker_dualSM" ), var_0, "tag_origin" );
 }
@@ -676,7 +676,7 @@ vfx_htank_thruster_light_flicker( var_0 )
 vfx_htank_thruster_light_flicker_off( var_0, var_1 )
 {
     level waittill( "msg_vfx_player_in_tank" );
-    var_1 _meth_8498( "normal" );
+    var_1 setlightshadowstate( "normal" );
     stopfxontag( common_scripts\utility::getfx( "hovertank_exhaust_light_flicker_dualSM" ), var_0, "tag_origin" );
 }
 
@@ -736,7 +736,7 @@ vfx_htank_explosion( var_0 )
     playfxontag( common_scripts\utility::getfx( "hovertank_death_explosion" ), level.hovertank_exterior_model, "TAG_DEATH_FX" );
 
     if ( isdefined( level.hovertank_exterior_model ) )
-        level.hovertank_exterior_model common_scripts\utility::delaycall( 0.5, ::_meth_80B1, "vehicle_mil_hovertank_dstrypv" );
+        level.hovertank_exterior_model common_scripts\utility::delaycall( 0.5, ::setmodel, "vehicle_mil_hovertank_dstrypv" );
 
     soundscripts\_snd::snd_message( "tank_exfil_detonate" );
     maps\_utility::delaythread( 2.7, common_scripts\_exploder::exploder, 10001 );

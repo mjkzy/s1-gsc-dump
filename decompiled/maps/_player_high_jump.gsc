@@ -13,14 +13,14 @@ enable_high_jump()
 {
     if ( !isdefined( self.high_jump_enabled ) || self.high_jump_enabled == 0 )
     {
-        self _meth_83B2( 1 );
+        self allowhighjump( 1 );
         thread apply_jump_fx();
         self.high_jump_enabled = 1;
         soundscripts\_snd::snd_message( "boost_jump_enable" );
         self.bg_falldamageminheight_old = getdvarint( "bg_fallDamageMinHeight", 200 );
         self.bg_falldamagemaxheight_old = getdvarint( "bg_fallDamageMaxHeight", 350 );
-        _func_0D3( "bg_fallDamageMinHeight", getdvarint( "bg_highJumpFallDamageMinHeight", 490 ) );
-        _func_0D3( "bg_fallDamageMaxHeight", getdvarint( "bg_highJumpFallDamageMaxHeight", 640 ) );
+        setsaveddvar( "bg_fallDamageMinHeight", getdvarint( "bg_highJumpFallDamageMinHeight", 490 ) );
+        setsaveddvar( "bg_fallDamageMaxHeight", getdvarint( "bg_highJumpFallDamageMaxHeight", 640 ) );
     }
 }
 
@@ -28,26 +28,26 @@ disable_high_jump()
 {
     if ( isdefined( self.high_jump_enabled ) && self.high_jump_enabled )
     {
-        self _meth_83B2( 0 );
+        self allowhighjump( 0 );
         self notify( "disable_high_jump" );
         self.high_jump_enabled = 0;
         soundscripts\_snd::snd_message( "boost_jump_disable" );
-        _func_0D3( "bg_fallDamageMinHeight", self.bg_falldamageminheight_old );
-        _func_0D3( "bg_fallDamageMaxHeight", self.bg_falldamagemaxheight_old );
+        setsaveddvar( "bg_fallDamageMinHeight", self.bg_falldamageminheight_old );
+        setsaveddvar( "bg_fallDamageMaxHeight", self.bg_falldamagemaxheight_old );
     }
 }
 
 enable_boost_jump()
 {
     enable_high_jump();
-    self _meth_849E( 1 );
+    self allowboostjump( 1 );
     self.boost_jump_enabled = 1;
 }
 
 disable_boost_jump()
 {
     disable_high_jump();
-    self _meth_849E( 0 );
+    self allowboostjump( 0 );
     self.boost_jump_enabled = 0;
 }
 
@@ -58,7 +58,7 @@ apply_jump_fx()
     var_0 = 0;
     var_1 = 0;
     var_2 = 0;
-    var_3 = self _meth_83B4();
+    var_3 = self ishighjumping();
     var_4 = 0.2;
     var_5 = 0;
     var_6 = 1;
@@ -66,7 +66,7 @@ apply_jump_fx()
 
     for (;;)
     {
-        var_8 = self _meth_83B4();
+        var_8 = self ishighjumping();
 
         if ( isdefined( self.grapple ) && self.grapple["connected"] )
             var_8 = 0;
@@ -90,7 +90,7 @@ apply_jump_fx()
 
             if ( isdefined( self.high_jump_enabled ) && self.high_jump_enabled )
             {
-                var_6 = var_6 && self _meth_83DE();
+                var_6 = var_6 && self jumpbuttonpressed();
 
                 if ( var_6 && !var_7 )
                 {
@@ -98,7 +98,7 @@ apply_jump_fx()
                     soundscripts\_snd::snd_message( "boost_jump_player" );
                     maps\_sp_matchdata::register_boost_jump();
                     earthquake( 0.15, 0.3, self.origin, 300 );
-                    level.player _meth_80AD( "damage_light" );
+                    level.player playrumbleonentity( "damage_light" );
                     thread newhandlespawngroundimpact();
                     var_7 = 1;
                     var_5 += 0.05;
@@ -106,7 +106,7 @@ apply_jump_fx()
             }
         }
 
-        if ( !self _meth_8341() )
+        if ( !self isonground() )
         {
             if ( var_0 == 0 )
                 var_1 = self.origin[2];
@@ -127,9 +127,9 @@ apply_jump_fx()
                     earthquake( var_10, 0.6, self.origin, 300 );
 
                     if ( var_10 > 0.2 )
-                        level.player _meth_80AD( "damage_heavy" );
+                        level.player playrumbleonentity( "damage_heavy" );
                     else
-                        level.player _meth_80AD( "damage_light" );
+                        level.player playrumbleonentity( "damage_light" );
 
                     self notify( "player_boost_land" );
                     var_7 = 0;
@@ -140,7 +140,7 @@ apply_jump_fx()
                     var_10 = var_9 / 500;
                     var_10 = clamp( var_10, 0.2, 0.4 );
                     earthquake( var_10, 0.6, self.origin, 300 );
-                    level.player _meth_80AD( "damage_heavy" );
+                    level.player playrumbleonentity( "damage_heavy" );
                 }
             }
 
@@ -159,18 +159,18 @@ mb_on()
     {
         var_0 = getdvar( "r_mbenable" );
         var_1 = getdvar( "r_mbVelocityScalar" );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
         wait 0.5;
-        _func_0D3( "r_mbenable", var_0 );
-        _func_0D3( "r_mbVelocityScalar", var_1 );
+        setsaveddvar( "r_mbenable", var_0 );
+        setsaveddvar( "r_mbVelocityScalar", var_1 );
     }
 }
 
 mb_off()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 newhandlespawngroundimpact()

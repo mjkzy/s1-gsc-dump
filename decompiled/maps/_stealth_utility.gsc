@@ -594,7 +594,7 @@ stealth_get_group()
 enable_stealth_system()
 {
     common_scripts\utility::flag_set( "_stealth_enabled" );
-    var_0 = _func_0D7( "all", "all" );
+    var_0 = getaispeciesarray( "all", "all" );
 
     foreach ( var_3, var_2 in var_0 )
         var_2 enable_stealth_for_ai();
@@ -613,7 +613,7 @@ enable_stealth_system()
 disable_stealth_system()
 {
     common_scripts\utility::flag_clear( "_stealth_enabled" );
-    var_0 = _func_0D7( "all", "all" );
+    var_0 = getaispeciesarray( "all", "all" );
 
     foreach ( var_3, var_2 in var_0 )
         var_2 disable_stealth_for_ai();

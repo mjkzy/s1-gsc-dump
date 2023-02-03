@@ -3,7 +3,7 @@
 
 main( var_0, var_1 )
 {
-    _func_0D3( "use_new_sva_system", 1 );
+    setsaveddvar( "use_new_sva_system", 1 );
 
     if ( !isdefined( var_0 ) )
         var_0 = "viewbody_generic_s1";
@@ -26,16 +26,16 @@ grapple_give( var_0, var_1 )
     self.grapple["grappling"] = 0;
 
     if ( isdefined( var_0 ) )
-        self.grapple["model_body"] _meth_80B1( var_0 );
+        self.grapple["model_body"] setmodel( var_0 );
     else if ( isdefined( level.grapple_defaultscriptedbodymodel ) )
-        self.grapple["model_body"] _meth_80B1( level.grapple_defaultscriptedbodymodel );
+        self.grapple["model_body"] setmodel( level.grapple_defaultscriptedbodymodel );
 
     if ( isdefined( var_1 ) )
-        self.grapple["model_hands"] _meth_80B1( var_1 );
+        self.grapple["model_hands"] setmodel( var_1 );
     else if ( isdefined( level.grapple_defaultviewhandsmodel ) )
-        self.grapple["model_hands"] _meth_80B1( level.grapple_defaultviewhandsmodel );
+        self.grapple["model_hands"] setmodel( level.grapple_defaultviewhandsmodel );
 
-    self _meth_84BF();
+    self disableoffhandsecondaryweapons();
     thread grapple_enabled_listener();
 }
 
@@ -46,12 +46,12 @@ grapple_take()
     self.grapple["enabled"] = 0;
     grapple_set_hint( "" );
     grapple_update_preview( 0, 0 );
-    self _meth_84C0();
+    self enableoffhandsecondaryweapons();
 }
 
 grapple_switch( var_0, var_1, var_2 )
 {
-    var_3 = self _meth_8311();
+    var_3 = self getcurrentweapon();
     var_4 = var_3;
 
     if ( !isdefined( var_2 ) )
@@ -62,18 +62,18 @@ grapple_switch( var_0, var_1, var_2 )
         if ( var_3 != "none" && var_3 != self.grapple["weapon"] )
             return;
 
-        if ( isdefined( self.grapple["weapon_prev"] ) && self _meth_8314( self.grapple["weapon_prev"] ) )
+        if ( isdefined( self.grapple["weapon_prev"] ) && self hasweapon( self.grapple["weapon_prev"] ) )
             var_4 = self.grapple["weapon_prev"];
         else
         {
-            var_5 = self _meth_830C();
+            var_5 = self getweaponslistprimaries();
             var_6 = var_4;
 
             foreach ( var_8 in var_5 )
             {
                 if ( var_8 != self.grapple["weapon"] )
                 {
-                    if ( self _meth_82F8( var_8 ) > 0 )
+                    if ( self getweaponammoclip( var_8 ) > 0 )
                     {
                         var_4 = var_8;
                         break;
@@ -96,7 +96,7 @@ grapple_switch( var_0, var_1, var_2 )
             return;
 
         self.grapple["weapon_prev"] = var_3;
-        self _meth_830E( self.grapple["weapon"] );
+        self giveweapon( self.grapple["weapon"] );
         var_4 = self.grapple["weapon"];
         self.grapple["ready_time"] = max( gettime() + 250, self.grapple["ready_time"] );
         self.grapple["switching_to_grapple"] = 1;
@@ -107,12 +107,12 @@ grapple_switch( var_0, var_1, var_2 )
         if ( var_4 == self.grapple["weapon"] )
         {
             self.grapple["ammoCounterHide"] = 1;
-            _func_0D3( "ammoCounterHide", 1 );
-            self _meth_8300( 0 );
-            self _meth_8304( 0 );
-            self _meth_832A();
+            setsaveddvar( "ammoCounterHide", 1 );
+            self allowads( 0 );
+            self allowsprint( 0 );
+            self disableusability();
             self.grapple["useReticle"] = var_2;
-            _func_0D3( "cg_drawCrosshair", var_2 );
+            setsaveddvar( "cg_drawCrosshair", var_2 );
 
             if ( isdefined( self.exo_active ) && self.exo_active )
             {
@@ -124,7 +124,7 @@ grapple_switch( var_0, var_1, var_2 )
         {
             self.grapple["ammoCounterHide"] = 0;
             self.grapple["useReticle"] = 1;
-            self _meth_832B();
+            self enableusability();
 
             if ( self.grapple["exo_deactivated"] )
             {
@@ -137,9 +137,9 @@ grapple_switch( var_0, var_1, var_2 )
         }
 
         if ( isdefined( var_1 ) && var_1 )
-            self _meth_8316( var_4 );
+            self switchtoweaponimmediate( var_4 );
         else
-            self _meth_8315( var_4 );
+            self switchtoweapon( var_4 );
     }
 }
 
@@ -294,7 +294,7 @@ grapple_init()
                 var_1.grapple_initialized = 1;
             }
 
-            var_2 = _func_085();
+            var_2 = issaverecentlyloaded();
 
             if ( var_2 && !var_1.grapple["recent_load_reset"] )
             {
@@ -344,7 +344,7 @@ grapple_magnet_actor_monitor()
     for (;;)
     {
         wait 0.5;
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
 
         foreach ( var_2 in var_0 )
         {
@@ -402,8 +402,8 @@ grapple_precache()
     grapple_model_precache( "model_rope_idle", "grapple_rope_stretch" );
     grapple_model_precache( "model_hands", "grapple_hands" );
     grapple_model_precache( "model_body", "grapple_body" );
-    precacheitem( "s1_grapple" );
-    precacheitem( "s1_grapple_impact" );
+    precacheshellshock( "s1_grapple" );
+    precacheshellshock( "s1_grapple_impact" );
     precacherumble( "subtle_tank_rumble" );
     precacherumble( "heavygun_fire" );
     precacherumble( "falling_land" );
@@ -471,12 +471,12 @@ snd_play_linked_notify_on_ent( var_0, var_1, var_2 )
 snd_play_linked_notify_on_ent_thread( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", self.origin );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     var_3 playsound( var_0 );
     self waittill( var_1 );
-    var_3 _meth_806F( 0, var_2 );
+    var_3 scalevolume( 0, var_2 );
     wait(var_2);
-    var_3 _meth_80AC();
+    var_3 stopsounds();
     waitframe();
     var_3 delete();
 }
@@ -491,29 +491,29 @@ grapple_after_land_anim()
         grapple_setup_rope_attached_player( self, self, 0 );
         grapple_rope_state( 2 );
         var_2 = self.grapple["model_body"];
-        var_2 _meth_804F();
-        var_2 _meth_804D( var_0.land_entity, var_0.land_magnet.tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
-        var_2 _meth_8092();
+        var_2 unlink();
+        var_2 linkto( var_0.land_entity, var_0.land_magnet.tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 dontinterpolate();
         var_3 = var_0.land_entity gettagorigin( var_0.land_magnet.tag );
         var_4 = var_0.land_entity gettagangles( var_0.land_magnet.tag );
         var_2 show();
-        var_2 _meth_813E( "grapple_after_land_anim", var_3, var_4, var_1, undefined, undefined, 0.2 );
-        self _meth_804F();
-        self _meth_8080( var_2, "tag_player", 0.2 );
+        var_2 animscripted( "grapple_after_land_anim", var_3, var_4, var_1, undefined, undefined, 0.2 );
+        self unlink();
+        self playerlinktoblend( var_2, "tag_player", 0.2 );
         grapple_disable_weapon();
         self notify( "grapple_land_anim" );
         wait(getanimlength( var_1 ));
         var_2 hide();
         var_5 = self.grapple["model_player_from"];
-        var_5 _meth_804F();
+        var_5 unlink();
         var_5.origin = self.origin;
 
         if ( isdefined( var_5.land_entity ) )
         {
             if ( isdefined( var_5.land_magnet ) && var_5.land_magnet.tag != "" )
-                var_5 _meth_804D( var_5.land_entity, var_5.land_magnet.tag );
+                var_5 linkto( var_5.land_entity, var_5.land_magnet.tag );
             else
-                var_5 _meth_804D( var_5.land_entity );
+                var_5 linkto( var_5.land_entity );
         }
 
         return 1;
@@ -538,9 +538,9 @@ grapple_rope_length_thread( var_0, var_1, var_2 )
         var_2 = 0.0;
 
     var_3 = 2000.0;
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     var_4 = %vm_grapple_idle_rope;
-    self _meth_814B( var_4, 1, 0, 0 );
+    self setanim( var_4, 1, 0, 0 );
 
     while ( isdefined( var_0 ) && isdefined( self ) )
     {
@@ -551,7 +551,7 @@ grapple_rope_length_thread( var_0, var_1, var_2 )
 
         var_5 += var_2;
         var_6 = clamp( var_5 / var_3, 0.00001, 0.99999 );
-        self _meth_8117( var_4, var_6 );
+        self setanimtime( var_4, var_6 );
         wait 0.05;
     }
 }
@@ -569,42 +569,42 @@ grapple_rope_state( var_0, var_1, var_2 )
     {
         case 0:
             var_3 hide();
-            var_3 _meth_848C( undefined );
+            var_3 drawfacingentity( undefined );
             var_4 hide();
-            var_4 _meth_848C( undefined );
+            var_4 drawfacingentity( undefined );
             var_4 notify( "grapple_rope_length_thread" );
             break;
         case 1:
             var_3 show();
-            var_3 _meth_8092();
+            var_3 dontinterpolate();
             var_3.angles = self getangles();
 
             if ( var_2 )
-                var_3 _meth_848C( undefined );
+                var_3 drawfacingentity( undefined );
             else
-                var_3 _meth_848C( self.grapple["model_rope_attach_world"] );
+                var_3 drawfacingentity( self.grapple["model_rope_attach_world"] );
 
             var_4 show();
             var_4.angles = vectortoangles( self.grapple["model_rope_attach_player"].origin - var_3.origin );
 
             if ( var_2 )
-                var_4 _meth_848C( undefined );
+                var_4 drawfacingentity( undefined );
             else
-                var_4 _meth_848C( self.grapple["model_rope_attach_player"] );
+                var_4 drawfacingentity( self.grapple["model_rope_attach_player"] );
 
             var_4 thread grapple_rope_length_thread( self.grapple["model_rope_attach_player"], var_0, var_1 );
             break;
         case 2:
             var_3 hide();
-            var_3 _meth_848C( undefined );
+            var_3 drawfacingentity( undefined );
             var_4 show();
-            var_4 _meth_8092();
+            var_4 dontinterpolate();
             var_4.angles = vectortoangles( self.grapple["model_rope_attach_player"].origin - var_4.origin );
 
             if ( var_2 )
-                var_4 _meth_848C( undefined );
+                var_4 drawfacingentity( undefined );
             else
-                var_4 _meth_848C( self.grapple["model_rope_attach_player"] );
+                var_4 drawfacingentity( self.grapple["model_rope_attach_player"] );
 
             var_4 thread grapple_rope_length_thread( self.grapple["model_rope_attach_player"], var_0, var_1 );
             break;
@@ -740,10 +740,10 @@ grapple_init_player()
     thread grapple_start_listener();
     thread grapple_projectile_listener();
     thread grapple_death_listener();
-    self.grapple["model_hands"] _meth_808E();
-    self.grapple["model_body"] _meth_808E();
-    self.grapple["model_rope_fire"] _meth_808E();
-    self.grapple["model_rope_idle"] _meth_808E();
+    self.grapple["model_hands"] dontcastshadows();
+    self.grapple["model_body"] dontcastshadows();
+    self.grapple["model_rope_fire"] dontcastshadows();
+    self.grapple["model_rope_idle"] dontcastshadows();
     grapple_give();
 }
 
@@ -807,7 +807,7 @@ grapple_autosave_grappling_check()
 grapple_setup_rope_attached_player( var_0, var_1, var_2, var_3 )
 {
     var_4 = self.grapple["model_rope_attach_player"];
-    var_4 _meth_804F();
+    var_4 unlink();
     var_5 = ( -3, 6, -2 );
 
     if ( isdefined( var_2 ) && var_2 )
@@ -830,16 +830,16 @@ grapple_setup_rope_attached_player( var_0, var_1, var_2, var_3 )
     }
 
     if ( isdefined( var_3 ) )
-        var_4 _meth_804D( var_0, var_3, var_5 + ( 0, 0, 60 ), ( 0, 0, 0 ) );
+        var_4 linkto( var_0, var_3, var_5 + ( 0, 0, 60 ), ( 0, 0, 0 ) );
     else
     {
         var_4.origin += rotatevector( var_5, var_4.angles );
-        var_4 _meth_804D( var_0 );
+        var_4 linkto( var_0 );
     }
 
-    var_4 _meth_8092();
+    var_4 dontinterpolate();
     var_6 = self.grapple["model_rope_idle"];
-    var_6 _meth_8092();
+    var_6 dontinterpolate();
 }
 
 grapple_setup_rope_attached( var_0 )
@@ -853,25 +853,25 @@ grapple_setup_rope_attached( var_0 )
     var_4 = self.grapple["model_rope_idle"];
     var_5 = self.grapple["model_player_move_tag"];
     var_6 = self.grapple["model_player_move_lerp"];
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2.origin = var_1.origin + rotatevector( ( 0, 0, 0 ), var_1.angles );
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1 );
+    var_2 linkto( var_1 );
     var_5.origin = self.origin;
     var_5.angles = self.angles;
     var_6.origin = var_5.origin;
     var_6.angles = var_5.angles;
-    var_6 _meth_8092();
-    var_6 _meth_804D( var_5 );
+    var_6 dontinterpolate();
+    var_6 linkto( var_5 );
     grapple_setup_rope_attached_player( var_6, self, var_0 );
-    var_4 _meth_804F();
+    var_4 unlink();
     var_4.origin = var_2.origin;
     var_4.angles = var_2.angles;
-    var_4 _meth_804D( var_2 );
+    var_4 linkto( var_2 );
     var_4 thread grapple_rope_length_thread( var_3, self.grapple["rope_state"] );
-    var_4 _meth_8092();
-    var_5 _meth_8092();
-    var_2 _meth_8092();
+    var_4 dontinterpolate();
+    var_5 dontinterpolate();
+    var_2 dontinterpolate();
 }
 
 grapple_setup_rope_fire()
@@ -880,15 +880,15 @@ grapple_setup_rope_fire()
     var_1 = self.grapple["model_rope_fire"];
     var_2 = self.grapple["model_player_move_tag"];
     var_3 = self.grapple["model_player_move_lerp"];
-    var_1 _meth_804F();
+    var_1 unlink();
     var_2.origin = self.origin;
     var_2.angles = self.angles;
     var_1.origin = self.origin + ( 0, 0, 60 );
     var_1.origin += rotatevector( ( 0, 0, 0 ), self getangles() );
     var_1.angles = self getangles();
-    var_1 _meth_804D( var_3 );
-    var_1 _meth_8092();
-    var_2 _meth_8092();
+    var_1 linkto( var_3 );
+    var_1 dontinterpolate();
+    var_2 dontinterpolate();
 }
 
 grapple_models_init_player()
@@ -904,12 +904,12 @@ grapple_models_init_player()
             var_2 = spawn( "script_model", ( 0, 0, 0 ) );
 
             if ( isdefined( var_2 ) )
-                var_2 _meth_80B1( var_1 );
+                var_2 setmodel( var_1 );
         }
 
         if ( isdefined( var_2 ) )
         {
-            var_2 _meth_82BF();
+            var_2 notsolid();
             var_2 setcontents( 0 );
             var_2 hide();
         }
@@ -963,7 +963,7 @@ grapple_shutdown_player()
         self.grapple_victim_landanim = undefined;
     }
 
-    self _meth_8131( 1 );
+    self allowfire( 1 );
 }
 
 grapple_weapon_listener()
@@ -974,7 +974,7 @@ grapple_weapon_listener()
 
     for (;;)
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
         var_1 = var_0 == self.grapple["weapon"];
 
         if ( !var_1 || var_1 != self.grapple["ready_weapon"] )
@@ -985,7 +985,7 @@ grapple_weapon_listener()
 
         self.grapple["ready_weapon"] = var_1;
 
-        if ( !var_1 && var_0 != "none" && self _meth_8314( self.grapple["weapon"] ) && !self _meth_8337() )
+        if ( !var_1 && var_0 != "none" && self hasweapon( self.grapple["weapon"] ) && !self isreloading() )
         {
             if ( !isdefined( self.grapple["switching_to_grapple"] ) || !self.grapple["switching_to_grapple"] )
                 grapple_take_weapon();
@@ -998,19 +998,19 @@ grapple_weapon_listener()
         }
 
         if ( !var_1 && var_0 != "none" )
-            _func_0D3( "cg_drawCrosshair", self.grapple["useReticle"] && !self.grapple["grappling"] );
+            setsaveddvar( "cg_drawCrosshair", self.grapple["useReticle"] && !self.grapple["grappling"] );
 
         if ( var_1 )
         {
             self.grapple["switching_to_grapple"] = 0;
-            self _meth_8131( 0 );
+            self allowfire( 0 );
         }
         else
         {
-            self _meth_8131( 1 );
-            _func_0D3( "ammoCounterHide", self.grapple["ammoCounterHide"] );
-            self _meth_8300( !self.grapple["ammoCounterHide"] );
-            self _meth_8304( !self.grapple["ammoCounterHide"] );
+            self allowfire( 1 );
+            setsaveddvar( "ammoCounterHide", self.grapple["ammoCounterHide"] );
+            self allowads( !self.grapple["ammoCounterHide"] );
+            self allowsprint( !self.grapple["ammoCounterHide"] );
         }
 
         self.grapple["kill_obstructed_clear"] = 0;
@@ -1051,16 +1051,16 @@ grapple_enabled()
     if ( isdefined( self.using_ammo_cache ) && self.using_ammo_cache )
         return 0;
 
-    if ( self _meth_812E() )
+    if ( self ismeleeing() )
         return 0;
 
-    if ( self _meth_812C() || self _meth_83AD() )
+    if ( self isthrowinggrenade() || self isholdinggrenade() )
         return 0;
 
     if ( self ismantling() )
         return 0;
 
-    var_0 = weaponclass( self _meth_8311() );
+    var_0 = weaponclass( self getcurrentweapon() );
 
     if ( var_0 == "item" || var_0 == "shield" )
         return 0;
@@ -1071,7 +1071,7 @@ grapple_enabled()
     if ( common_scripts\utility::flag_exist( "player_pulling_cardoor" ) && common_scripts\utility::flag( "player_pulling_cardoor" ) )
         return 0;
 
-    if ( !self.grapple["grapple_while_falling"] && !self _meth_8068() && !self _meth_8341() )
+    if ( !self.grapple["grapple_while_falling"] && !self islinked() && !self isonground() )
         return 0;
 
     if ( isdefined( self.underwater ) )
@@ -1188,7 +1188,7 @@ grapple_set_hint( var_0 )
     {
         if ( isdefined( level.grapple_hints[var_0] ) )
         {
-            if ( self _meth_834E() )
+            if ( self usinggamepad() )
                 maps\_utility::display_hint( var_0 + "_gamepad" );
             else
                 maps\_utility::display_hint( var_0 + "_pc" );
@@ -1338,7 +1338,7 @@ grapple_commit_status()
     var_0 = "";
     var_3 = var_0 + "_" + var_1 + "_" + var_2;
     var_4 = undefined;
-    var_5 = self.grapple["weapon_enabled"] && self _meth_8311() == self.grapple["weapon"];
+    var_5 = self.grapple["weapon_enabled"] && self getcurrentweapon() == self.grapple["weapon"];
 
     if ( getdvarint( "grapple_hint_always" ) == 0 )
         grapple_commit_reticles( ( 1, 0, 0 ), var_0 != "" );
@@ -1419,7 +1419,7 @@ grapple_commit_reticles( var_0, var_1 )
             var_6.horzalign = "center";
             var_6.vertalign = "middle";
             var_6.hidewheninmenu = 1;
-            var_6 _meth_80CC( var_5, 128, 128 );
+            var_6 setshader( var_5, 128, 128 );
             self.grapple[var_5] = var_6;
         }
         else if ( !var_3[var_7] && isdefined( self.grapple[var_5] ) )
@@ -1490,9 +1490,9 @@ grapple_update_preview( var_0, var_1 )
                 var_4.alpha = 1;
                 var_4.vistime = gettime();
                 var_4.hidewheninmenu = 1;
-                self.grapple["model_preview"] _meth_8092();
-                self.grapple["model_preview_hint"] _meth_8092();
-                var_4 _meth_80CD( self.grapple["model_preview_hint"], "tag_origin" );
+                self.grapple["model_preview"] dontinterpolate();
+                self.grapple["model_preview_hint"] dontinterpolate();
+                var_4 settargetent( self.grapple["model_preview_hint"], "tag_origin" );
                 self.grapple["quick_hint_text"] = var_4;
             }
         }
@@ -1519,8 +1519,8 @@ grapple_update_preview( var_0, var_1 )
             var_4.vertalign = "middle";
             var_4.positioninworld = 1;
             var_4.hidewheninmenu = 1;
-            self.grapple["model_preview"] _meth_8092();
-            var_4 _meth_80CD( self.grapple["model_preview_hint"], "tag_origin" );
+            self.grapple["model_preview"] dontinterpolate();
+            var_4 settargetent( self.grapple["model_preview_hint"], "tag_origin" );
             self.grapple["quick_hint_icon"] = var_4;
         }
 
@@ -1532,13 +1532,13 @@ grapple_update_preview( var_0, var_1 )
 
         if ( self.grapple["magnet_current"].valid )
         {
-            self.grapple["quick_hint_icon"] _meth_80CC( "grapple_reticle_indicator_small", 32, 32 );
+            self.grapple["quick_hint_icon"] setshader( "grapple_reticle_indicator_small", 32, 32 );
             self.grapple["quick_hint_icon"].positioninworld = 1;
-            self.grapple["quick_hint_icon"] _meth_80CD( self.grapple["model_preview_hint"], "tag_origin" );
+            self.grapple["quick_hint_icon"] settargetent( self.grapple["model_preview_hint"], "tag_origin" );
         }
         else
         {
-            self.grapple["quick_hint_icon"] _meth_80CC( "grapple_reticle_indicator", 128, 128 );
+            self.grapple["quick_hint_icon"] setshader( "grapple_reticle_indicator", 128, 128 );
             self.grapple["quick_hint_icon"].positioninworld = 0;
         }
 
@@ -1591,7 +1591,7 @@ grapple_update_preview_position( var_0, var_1, var_2 )
     if ( isdefined( var_3.linked_entity ) && isdefined( var_2.land_entity ) && isdefined( var_3.linked_magnet ) && isdefined( var_2.land_magnet ) && var_3.linked_entity == var_2.land_entity && var_3.linked_magnet == var_2.land_magnet && !isdefined( var_2.land_magnet.next ) )
         return;
 
-    var_3 _meth_804F();
+    var_3 unlink();
     var_3.linked_entity = undefined;
     var_3.linked_magnet = undefined;
     var_3.origin = var_0;
@@ -1604,10 +1604,10 @@ grapple_update_preview_position( var_0, var_1, var_2 )
             var_3.origin = var_2.land_magnet.object gettagorigin( var_2.land_magnet.tag );
             var_3.angles = var_2.land_magnet.object gettagangles( var_2.land_magnet.tag );
             var_3.origin += rotatevector( var_2.land_magnet.tag_offset, self.angles );
-            var_3 _meth_804D( var_2.land_entity, var_2.land_magnet.tag );
+            var_3 linkto( var_2.land_entity, var_2.land_magnet.tag );
         }
         else
-            var_3 _meth_804D( var_2.land_entity );
+            var_3 linkto( var_2.land_entity );
 
         var_3.linked_entity = var_2.land_entity;
         var_3.linked_magnet = var_2.land_magnet;
@@ -1622,14 +1622,14 @@ grapple_update_preview_position( var_0, var_1, var_2 )
 
         var_5 = grapple_special_indicator_offset();
         var_4.origin += var_5;
-        var_4 _meth_804D( var_3 );
+        var_4 linkto( var_3 );
     }
     else
     {
         var_4.origin = var_3 gettagorigin( "tag_origin" );
         var_5 = grapple_special_indicator_offset();
         var_4.origin += var_5;
-        var_4 _meth_804D( var_3 );
+        var_4 linkto( var_3 );
     }
 }
 
@@ -1641,8 +1641,8 @@ grapple_quick_fire_listener()
     self endon( "grapple_take" );
     self endon( "grapple_quick_fire_listener" );
     self.grapple["quick_fire_action"] = "smoke";
-    self _meth_82DD( "quickFireDown", "+" + self.grapple["quick_fire_action"] );
-    self _meth_82DD( "quickFireUp", "-" + self.grapple["quick_fire_action"] );
+    self notifyonplayercommand( "quickFireDown", "+" + self.grapple["quick_fire_action"] );
+    self notifyonplayercommand( "quickFireUp", "-" + self.grapple["quick_fire_action"] );
     childthread grapple_quick_fire_wait_and_set( "quickFireDown", "quick_fire_button_down", 1, 0 );
     childthread grapple_quick_fire_wait_and_set( "quickFireUp", "quick_fire_button_up", 1, 1 );
     self.grapple["quick_fire_down"] = 0;
@@ -1668,13 +1668,13 @@ grapple_quick_fire_listener()
                 self.grapple["quick_fire_up"] = 1;
                 self.grapple["quick_firing"] = 1;
 
-                if ( self _meth_8311() == self.grapple["weapon"] )
+                if ( self getcurrentweapon() == self.grapple["weapon"] )
                     self.grapple["quick_fire_trace"] = undefined;
 
-                while ( self.grapple["allowed"] && self _meth_8311() != self.grapple["weapon"] )
+                while ( self.grapple["allowed"] && self getcurrentweapon() != self.grapple["weapon"] )
                     wait 0.05;
 
-                self _meth_8322();
+                self enableweaponswitch();
 
                 if ( self.grapple["allowed"] )
                     grapple_start( "grapple_quick" );
@@ -1693,7 +1693,7 @@ grapple_quick_fire_listener()
 
         if ( !self.grapple["quick_fire_down"] && self.grapple["quick_fire_button_down"] )
         {
-            if ( self _meth_8311() != self.grapple["weapon"] && getdvarint( "grapple_hint_always" ) && ( !self.grapple["allowed"] || maps\_utility::isads() ) )
+            if ( self getcurrentweapon() != self.grapple["weapon"] && getdvarint( "grapple_hint_always" ) && ( !self.grapple["allowed"] || maps\_utility::isads() ) )
             {
                 thread grapple_status_text_show( 1000, "reason", 0, 90 );
                 wait 0.05;
@@ -1708,9 +1708,9 @@ grapple_quick_fire_listener()
 
             self.grapple["quick_fire_button_down"] = 0;
 
-            if ( self _meth_8311() == self.grapple["weapon"] || !self _meth_82EE() )
+            if ( self getcurrentweapon() == self.grapple["weapon"] || !self fragbuttonpressed() )
             {
-                if ( self _meth_8311() != self.grapple["weapon"] )
+                if ( self getcurrentweapon() != self.grapple["weapon"] )
                 {
                     var_1 = self.grapple["model_player_to"];
 
@@ -1724,7 +1724,7 @@ grapple_quick_fire_listener()
                         self.grapple["quick_fire_down"] = 1;
                         self.grapple["quick_firing"] = 1;
                         var_2 = grapple_trace_parms();
-                        self.grapple["quick_fire_trace"] = _func_291( var_2["start"], var_2["end"], self );
+                        self.grapple["quick_fire_trace"] = grappletrace( var_2["start"], var_2["end"], self );
 
                         if ( isdefined( self.grapple["quick_fire_trace"]["entity"] ) )
                         {
@@ -1736,7 +1736,7 @@ grapple_quick_fire_listener()
 
                         var_0 = 0;
                         grapple_switch( 1, 1 );
-                        self _meth_8321();
+                        self disableweaponswitch();
                     }
                 }
                 else
@@ -1827,7 +1827,7 @@ grapple_enabled_listener()
         else if ( !getdvarint( "grapple_magnet_required" ) )
         {
             var_7 = grapple_trace_parms();
-            var_8 = _func_291( var_7["start"], var_7["end"], self, 0 );
+            var_8 = grappletrace( var_7["start"], var_7["end"], self, 0 );
             var_6 = grapple_trace_validate( var_8, var_7["dist"], var_7["forward"], var_7["angles"] );
         }
 
@@ -1846,7 +1846,7 @@ grapple_enabled_listener()
 
         var_0.land_entity = undefined;
         var_0.land_tag = undefined;
-        var_0 _meth_804F();
+        var_0 unlink();
         self.grapple["allowed"] = var_6["allowed"];
         self.grapple["style"] = var_6["style"];
         self.grapple["in_range_max"] = var_6["in_range_max"];
@@ -1869,12 +1869,12 @@ grapple_enabled_listener()
         if ( isdefined( var_0.land_entity ) )
         {
             if ( isdefined( var_0.land_magnet ) && var_0.land_magnet.tag != "" )
-                var_0 _meth_804D( var_0.land_entity, var_0.land_magnet.tag );
+                var_0 linkto( var_0.land_entity, var_0.land_magnet.tag );
             else
-                var_0 _meth_804D( var_0.land_entity );
+                var_0 linkto( var_0.land_entity );
         }
 
-        var_0 _meth_8092();
+        var_0 dontinterpolate();
         var_11 = self.grapple["model_preview"];
         var_12 = var_6["surface_trace"]["normal"];
         var_13 = vectordot( var_12, ( 0, 0, 1 ) );
@@ -1921,7 +1921,7 @@ grapple_enabled_listener()
             var_1 = "grapple_valid";
             self.grapple["allowed"] = self.grapple["in_range_max"];
         }
-        else if ( self _meth_817C() == "prone" )
+        else if ( self getstance() == "prone" )
         {
             var_1 = "grapple_invalid";
             var_3 = &"GRAPPLE_NO_FOOTING";
@@ -1944,7 +1944,7 @@ grapple_trace_validate( var_0, var_1, var_2, var_3, var_4 )
     var_5["surface_trace"] = var_0;
     var_5["valid_surface"] = grapple_check_surface_type( var_0, var_4 );
     var_5["deathstyle"] = undefined;
-    var_6 = self _meth_80A8();
+    var_6 = self geteye();
     var_7 = distancesquared( ( var_0["position"][0], var_0["position"][1], 0 ), ( var_6[0], var_6[1], 0 ) );
     var_8 = var_0["fraction"] * var_1;
     var_9 = var_0["normal"];
@@ -2028,12 +2028,12 @@ grapple_trace_validate( var_0, var_1, var_2, var_3, var_4 )
             {
                 if ( var_12 == "" )
                 {
-                    var_20 = _func_238( var_5["tag_origin"] + var_9 * 50, var_13 + var_9 * -50, self );
+                    var_20 = playerphysicstraceinfo( var_5["tag_origin"] + var_9 * 50, var_13 + var_9 * -50, self );
                     var_5["tag_origin"] = var_20["position"] + var_9;
                     var_5["tag_angles"] = ( 0, var_5["tag_angles"][1], 0 );
                 }
 
-                var_21 = _func_238( var_5["tag_origin"], var_5["tag_origin"] + var_9 * 0.1, self );
+                var_21 = playerphysicstraceinfo( var_5["tag_origin"], var_5["tag_origin"] + var_9 * 0.1, self );
                 var_5["reason"] = &"GRAPPLE_NO_SPACE";
 
                 if ( var_12 != "" )
@@ -2054,10 +2054,10 @@ grapple_trace_validate( var_0, var_1, var_2, var_3, var_4 )
                     if ( var_12 != "" && isdefined( var_10.afterlandanim ) && isdefined( var_5["land_entity"] ) )
                     {
                         var_22 = self.grapple["model_body"];
-                        var_22 _meth_804F();
-                        var_22 _meth_804D( var_5["land_entity"], var_12, ( 0, 0, 0 ), ( 0, 0, 0 ) );
-                        var_22 _meth_8092();
-                        var_22 _meth_8145( var_10.afterlandanim, 1, 0, 0 );
+                        var_22 unlink();
+                        var_22 linkto( var_5["land_entity"], var_12, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                        var_22 dontinterpolate();
+                        var_22 setanimknobrestart( var_10.afterlandanim, 1, 0, 0 );
                         var_5["tag_origin"] = var_22 gettagorigin( "tag_player" );
                         var_5["tag_angles"] = var_22 gettagangles( "tag_player" );
                     }
@@ -2099,14 +2099,14 @@ grapple_trace_validate_mantle( var_0, var_1 )
 
     if ( var_0["style"] == "wall" && var_3 == "" )
     {
-        var_4 = self _meth_849D( var_0["tag_origin"], var_0["tag_angles"], 0, getdvarint( "grapple_mantle_reach" ), 1 );
+        var_4 = self canmantleex( var_0["tag_origin"], var_0["tag_angles"], 0, getdvarint( "grapple_mantle_reach" ), 1 );
 
         if ( isdefined( var_4["valid"] ) && var_4["valid"] )
         {
             var_4["victim"] = grapple_mantle_find_victim( var_4 );
             var_5 = self.grapple["model_player_to"];
-            var_4["position_local"] = _func_24D( var_4["position"] - var_5.origin, var_5.angles );
-            var_4["ledge_local"] = _func_24D( var_4["ledge"] - var_5.origin, var_5.angles );
+            var_4["position_local"] = rotatevectorinverted( var_4["position"] - var_5.origin, var_5.angles );
+            var_4["ledge_local"] = rotatevectorinverted( var_4["ledge"] - var_5.origin, var_5.angles );
             var_0["mantle"] = var_4;
 
             if ( isdefined( var_4["over"] ) && var_4["over"] )
@@ -2127,7 +2127,7 @@ grapple_mantle_find_victim( var_0 )
     if ( self.grapple["mantle_kills"] )
     {
         var_2 = var_0["position"];
-        var_3 = _func_0D6( "axis" );
+        var_3 = getaiarray( "axis" );
 
         foreach ( var_5 in var_3 )
         {
@@ -2176,7 +2176,7 @@ grapple_mantle_victim( var_0, var_1 )
     self.grapple_death_rig thread grapple_mantle_victim_rig_cleanup( self );
     self.grapple_death_rig.origin = var_1.grapple["mantle"]["position"];
     self.grapple_death_rig.angles = var_1.grapple["model_player_to"].angles;
-    self.grapple_death_rig _meth_8092();
+    self.grapple_death_rig dontinterpolate();
     var_1.grapple_victim_landanim = var_3;
     self.grapple_death_rig thread maps\_anim::anim_reach_solo( self, var_3 );
     self waittill( "grapple_landing_anim" );
@@ -2226,12 +2226,12 @@ grapple_trace_parms()
     var_0 = [];
     var_0["dist"] = self.grapple["dist_max"];
     var_0["angles"] = self getangles();
-    var_0["start"] = self _meth_80A8();
+    var_0["start"] = self geteye();
 
     if ( self.grapple["magnet_current"].valid )
     {
         var_1 = self.grapple["magnet_current"].origin;
-        var_0["angles"] = vectortoangles( var_1 - self _meth_80A8() );
+        var_0["angles"] = vectortoangles( var_1 - self geteye() );
     }
     else if ( self.grapple["quick_fire_up"] && isdefined( self.grapple["quick_fire_trace"] ) && self.grapple["quick_fire_trace"]["fraction"] < 1.0 )
     {
@@ -2245,7 +2245,7 @@ grapple_trace_parms()
             var_1 = var_2.origin + var_1;
         }
 
-        var_0["angles"] = vectortoangles( var_1 - self _meth_80A8() );
+        var_0["angles"] = vectortoangles( var_1 - self geteye() );
     }
 
     var_0["forward"] = anglestoforward( var_0["angles"] );
@@ -2294,7 +2294,7 @@ grapple_magnets_dynamic( var_0, var_1, var_2, var_3, var_4 )
             if ( var_15 > 0 )
                 var_14 = min( 0.5, 16.0 / var_15 );
 
-            var_16 = _func_293( var_10, var_11, var_12, var_13 );
+            var_16 = closestpointstwosegs( var_10, var_11, var_12, var_13 );
             var_10 = vectorlerp( var_10, var_11, clamp( var_16[0], var_14, 1.0 - var_14 ) );
         }
 
@@ -2310,7 +2310,7 @@ grapple_magnets_dynamic( var_0, var_1, var_2, var_3, var_4 )
 
             if ( !issubstr( var_19, "callback" ) && !isdefined( grapple_death_style( var_9.object ) ) )
                 var_17 = 2;
-            else if ( self _meth_812B( var_9.object ) )
+            else if ( self islookingat( var_9.object ) )
                 var_18 = 1;
             else
             {
@@ -2389,7 +2389,7 @@ grapple_magnet_validate_current( var_0 )
 
         if ( !isdefined( var_0 ) )
         {
-            var_3 = self _meth_80A8();
+            var_3 = self geteye();
             var_4 = anglestoforward( self getangles() );
             var_5 = self.grapple["dist_max"];
             var_6 = getdvarfloat( "grapple_magnet_fov" );
@@ -2418,7 +2418,7 @@ grapple_magnet_update()
     if ( !getdvarint( "grapple_magnet_enabled" ) )
         return;
 
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
     var_1 = anglestoforward( self getangles() );
     var_2 = self.grapple["dist_max"];
     var_3 = getdvarfloat( "grapple_magnet_fov" );
@@ -2431,7 +2431,7 @@ grapple_magnet_update()
     foreach ( var_10 in var_8 )
         var_7 = grapple_magnet_evaluate( var_10, var_10.grapple_origin, var_0, var_1, var_7 );
 
-    var_12 = _func_29A( var_0, var_1, var_2, var_3 );
+    var_12 = grapplegetmagnets( var_0, var_1, var_2, var_3 );
 
     foreach ( var_14 in var_12 )
         var_7 = grapple_magnet_evaluate( undefined, var_14, var_0, var_1, var_7 );
@@ -2447,7 +2447,7 @@ grapple_magnet_evaluate( var_0, var_1, var_2, var_3, var_4 )
     var_8 = var_5.dot;
     var_9 = var_6.dot;
 
-    if ( !var_7 && isdefined( var_6.magnet ) && isai( var_6.magnet.object ) && self _meth_812B( var_6.magnet.object ) )
+    if ( !var_7 && isdefined( var_6.magnet ) && isai( var_6.magnet.object ) && self islookingat( var_6.magnet.object ) )
     {
         var_7 = 1;
         var_4 = var_6.magnet.object;
@@ -2650,7 +2650,7 @@ grapple_magnet_trace_validate( var_0, var_1, var_2, var_3 )
         if ( isdefined( var_0.magnet ) && isdefined( var_0.magnet.object ) && var_0.magnet.tag != "" )
             var_10 = 1;
 
-        var_9 = _func_291( var_6, var_7, self, 0, var_10 );
+        var_9 = grappletrace( var_6, var_7, self, 0, var_10 );
     }
 
     if ( var_9["fraction"] < 1 )
@@ -2720,7 +2720,7 @@ grapple_check_surface_type( var_0, var_1 )
 grapple_break_glass()
 {
     var_0 = grapple_trace_parms();
-    _func_291( var_0["start"], var_0["end"], self, 1 );
+    grappletrace( var_0["start"], var_0["end"], self, 1 );
 }
 
 grapple_death_listener()
@@ -2748,7 +2748,7 @@ grapple_projectile_listener()
     {
         self waittill( "missile_fire", var_0 );
 
-        if ( self _meth_8311() == self.grapple["weapon"] )
+        if ( self getcurrentweapon() == self.grapple["weapon"] )
             var_0 delete();
     }
 }
@@ -2791,7 +2791,7 @@ grapple_start( var_0 )
     self.grapple["landing_view_anim"] = undefined;
     self.grapple["no_enable_weapon"] = 0;
     self.grapple["no_disable_invulnerability"] = 0;
-    self.grapple["start_stance"] = self _meth_817C();
+    self.grapple["start_stance"] = self getstance();
     var_1 = self.grapple["model_player_to"];
 
     if ( !grapple_enabled() || self.grapple["ready_time"] > gettime() || !isdefined( self.grapple["surface_trace"] ) || !grapple_magnet_validate_ground( var_1.land_magnet ) )
@@ -2820,7 +2820,7 @@ grapple_start( var_0 )
     if ( self.grapple["allowed"] )
         thread grapple_break_glass();
 
-    self _meth_80EF();
+    self enableinvulnerability();
 
     if ( self.grapple["allowed"] && isdefined( var_2 ) )
     {
@@ -2833,7 +2833,7 @@ grapple_start( var_0 )
             grapple_quick_fire_switch_back( 0 );
 
         if ( !self.grapple["no_disable_invulnerability"] )
-            self _meth_80F0();
+            self disableinvulnerability();
 
         return;
     }
@@ -2847,7 +2847,7 @@ grapple_start( var_0 )
         thread grapple_enabled_listener();
 
         if ( !self.grapple["no_disable_invulnerability"] )
-            self _meth_80F0();
+            self disableinvulnerability();
 
         return;
     }
@@ -2861,7 +2861,7 @@ grapple_start( var_0 )
     self.grapple["connected"] = 0;
     grapple_enable_normal_mantle_hint( 0 );
     var_3 = self.grapple["model_attach_world"];
-    var_3 _meth_804F();
+    var_3 unlink();
 
     if ( isdefined( self.grapple["mantle"] ) )
     {
@@ -2885,10 +2885,10 @@ grapple_start( var_0 )
         {
             var_5 = self.grapple["model_player_move_tag"];
             var_6 = self.grapple["model_player_from"];
-            var_5 _meth_804F();
+            var_5 unlink();
             var_5.origin = self.origin;
             var_5.angles = ( 0, self.angles[1], 0 );
-            var_5 _meth_804D( var_6 );
+            var_5 linkto( var_6 );
         }
     }
 
@@ -2902,13 +2902,13 @@ grapple_start( var_0 )
 
     if ( isdefined( self.grapple["quick_fire_executed"] ) && self.grapple["quick_fire_executed"] )
     {
-        if ( self _meth_8336() || self ismantling() )
+        if ( self isreloading() || self ismantling() )
             grapple_quick_fire_switch_back( 1 );
         else
             grapple_quick_fire_switch_back( 0 );
     }
     else if ( !isdefined( self.grapple["mantle"] ) )
-        self _meth_80F3( self _meth_8311(), "raise" );
+        self forceviewmodelanimation( self getcurrentweapon(), "raise" );
 
     wait 0.25;
     grapple_set_grappling( 0 );
@@ -2920,13 +2920,13 @@ grapple_start( var_0 )
     thread grapple_enabled_listener();
 
     if ( !self.grapple["no_disable_invulnerability"] )
-        self _meth_80F0();
+        self disableinvulnerability();
 }
 
 grapple_death_style( var_0 )
 {
-    var_1 = self _meth_80A8();
-    var_2 = clamp( var_1[2], var_0.origin[2] + 30, var_0 _meth_80A8()[2] );
+    var_1 = self geteye();
+    var_2 = clamp( var_1[2], var_0.origin[2] + 30, var_0 geteye()[2] );
     var_3 = ( var_0.origin[0], var_0.origin[1], var_2 );
     var_4 = vectornormalize( var_3 - var_1 );
     var_5 = undefined;
@@ -2983,7 +2983,7 @@ grapple_kill( var_0, var_1 )
         return;
 
     maps\_upgrade_challenge::give_player_challenge_kill( 1 );
-    var_0 _meth_804F();
+    var_0 unlink();
     var_0 notify( "tagged_death" );
 
     while ( isdefined( var_0.grapple_magnets ) && var_0.grapple_magnets.size > 0 )
@@ -3002,12 +3002,12 @@ grapple_kill( var_0, var_1 )
 
     if ( !var_1 && !isdefined( var_0.grapple_ragdolled ) )
     {
-        var_0 _meth_8023();
+        var_0 startragdoll();
         var_0.grapple_ragdolled = 1;
     }
 
     grapple_kills_increment();
-    var_0 _meth_8052( var_0.origin, var_0, var_0 );
+    var_0 kill( var_0.origin, var_0, var_0 );
 }
 
 grapple_kills_increment()
@@ -3026,7 +3026,7 @@ grapple_death_valid_standard( var_0 )
     if ( !isplayer( self ) )
         return 0;
 
-    if ( !self _meth_8341() && !self _meth_8068() )
+    if ( !self isonground() && !self islinked() )
         return 0;
 
     return 1;
@@ -3037,15 +3037,15 @@ grapple_death_handler_standard( var_0, var_1, var_2 )
     grapple_fire_rope( "grapple_death" );
     var_2 grapple_ai_prep_for_kill();
     var_2 soundscripts\_snd_playsound::snd_play_linked( common_scripts\utility::random( level.grapple_snd_pain ) );
-    grapple_notify_closest_ai( "witness_kill", var_2 _meth_80A8(), 300, 1 );
+    grapple_notify_closest_ai( "witness_kill", var_2 geteye(), 300, 1 );
     var_3 = anglestoforward( var_1 getangles() );
     var_4 = ( var_0.normal[0], var_0.normal[1], 0 );
 
     if ( length2dsquared( var_4 ) > 0 )
     {
         var_5 = ( var_3[0], var_3[1], 0 );
-        var_6 = vectortoangles( _func_24D( var_5, vectortoangles( var_4 ) ) );
-        var_2 _meth_81C6( var_2.origin, var_6 );
+        var_6 = vectortoangles( rotatevectorinverted( var_5, vectortoangles( var_4 ) ) );
+        var_2 forceteleport( var_2.origin, var_6 );
     }
 
     var_2 maps\_utility::set_deathanim( var_0.name );
@@ -3058,8 +3058,8 @@ grapple_death_handler_standard( var_0, var_1, var_2 )
         var_2 soundscripts\_snd_playsound::snd_play_linked( common_scripts\utility::random( level.grapple_snd_death ) );
 
     var_1 thread maps\_utility::play_sound_on_entity( "rappel_clipout" );
-    var_1 _meth_80AD( "heavygun_fire" );
-    var_1 _meth_83FE( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
+    var_1 playrumbleonentity( "heavygun_fire" );
+    var_1 screenshakeonentity( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
 }
 
 grapple_death_valid_pull_concealed_obs( var_0 )
@@ -3128,10 +3128,10 @@ grapple_death_valid_pull( var_0 )
     if ( !isplayer( self ) )
         return 0;
 
-    if ( self _meth_8068() )
+    if ( self islinked() )
         return 0;
 
-    if ( !self _meth_8341() )
+    if ( !self isonground() )
         return 0;
 
     if ( !isdefined( var_0 ) )
@@ -3156,7 +3156,7 @@ grapple_ai_prep_for_kill( var_0 )
     maps\_utility::anim_stopanimscripted();
     self notify( "stop_animmode" );
     self notify( "stop_sound" );
-    self _meth_80AC();
+    self stopsounds();
 }
 
 grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
@@ -3176,8 +3176,8 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
 
     if ( isdefined( level._stealth ) )
     {
-        var_1 grapple_notify_closest_ai( "witness_kill", var_2 _meth_80A8(), 300, 1 );
-        var_1 grapple_notify_ai_capsule( "gunshot_teammate", level.player _meth_80A8(), var_2 _meth_80A8(), 100, 1 );
+        var_1 grapple_notify_closest_ai( "witness_kill", var_2 geteye(), 300, 1 );
+        var_1 grapple_notify_ai_capsule( "gunshot_teammate", level.player geteye(), var_2 geteye(), 100, 1 );
     }
 
     var_2 notify( "tagged_death" );
@@ -3190,8 +3190,8 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
         if ( length2dsquared( var_9 ) > 0 )
         {
             var_10 = ( var_8[0], var_8[1], 0 );
-            var_11 = vectortoangles( _func_24D( var_10, vectortoangles( var_9 ) ) );
-            var_2 _meth_81C6( var_2.origin, var_11 );
+            var_11 = vectortoangles( rotatevectorinverted( var_10, vectortoangles( var_9 ) ) );
+            var_2 forceteleport( var_2.origin, var_11 );
         }
 
         var_2 thread maps\_anim::anim_single_solo( var_2, var_4 );
@@ -3207,14 +3207,14 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
     var_12 = var_2 common_scripts\utility::waittill_any_timeout( getanimlength( level.scr_anim["generic"][var_4] ), "pull" );
     var_1 grapple_rope_state( 1 );
     var_2 soundscripts\_snd_playsound::snd_play_linked( "ie_as1_quietyank1" );
-    var_1 _meth_80AD( "heavygun_fire" );
-    var_1 _meth_83FE( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
+    var_1 playrumbleonentity( "heavygun_fire" );
+    var_1 screenshakeonentity( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
     var_13 = self.grapple["model_body"];
-    var_13 _meth_804F();
+    var_13 unlink();
     var_13 hide();
     var_13.origin = var_1.origin;
     var_13.angles = var_1.angles;
-    var_13 _meth_8092();
+    var_13 dontinterpolate();
     var_13.end_anim_name = "grapple_pull_death_end" + var_3;
     var_14 = common_scripts\utility::random( level.grapple_death_pull_suffixes );
     var_13.end_anim_name += var_14;
@@ -3224,21 +3224,21 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
     var_2.loopanims = [];
     var_2.loops = 0;
     var_2 thread maps\_anim::anim_loop_solo( var_2, "grapple_pull_death_loop" + var_3 );
-    var_7 _meth_804F();
+    var_7 unlink();
     var_7.origin = var_2 gettagorigin( "tag_origin" );
     var_7.angles = var_2 gettagangles( "tag_origin" );
-    var_2 _meth_804D( var_7 );
+    var_2 linkto( var_7 );
     var_17 = getdvarfloat( "grapple_pull_speed" );
     var_18 = distance( var_15, var_2.origin );
     var_19 = var_18 / var_17;
-    var_1 _meth_80AE( "subtle_tank_rumble" );
+    var_1 playrumblelooponentity( "subtle_tank_rumble" );
 
     if ( var_19 >= 0.1 )
-        var_1 _meth_83FE( 2.0, 2.0, 1.0, var_19, 0, min( var_19 - 0.05, 0.25 ), 128, 3, 3, 3, 1 );
+        var_1 screenshakeonentity( 2.0, 2.0, 1.0, var_19, 0, min( var_19 - 0.05, 0.25 ), 128, 3, 3, 3, 1 );
 
     var_7 childthread grapple_rope_pull_lerp( var_15, var_19 );
     var_20 = min( 0.1, var_19 );
-    var_7 _meth_82B5( var_16, var_20, min( var_20, 0.05 ), 0 );
+    var_7 rotateto( var_16, var_20, min( var_20, 0.05 ), 0 );
     var_21 = 0.2;
     var_22 = var_19 - var_21;
 
@@ -3250,15 +3250,15 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
     var_1 notify( "grapple_loop_viewmodel_anim" );
     var_1 thread maps\_utility::play_sound_on_entity( "rappel_clipout" );
     var_1 grapple_switch( 0, 1 );
-    var_1 _meth_83FE( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
-    var_1 _meth_8080( var_13, "tag_player", var_21 );
+    var_1 screenshakeonentity( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
+    var_1 playerlinktoblend( var_13, "tag_player", var_21 );
 
     if ( var_21 > 0 )
         wait(var_21);
 
-    var_1 _meth_80AF( "subtle_tank_rumble" );
-    var_1 _meth_80AD( "heavygun_fire" );
-    var_2 _meth_804F();
+    var_1 stoprumble( "subtle_tank_rumble" );
+    var_1 playrumbleonentity( "heavygun_fire" );
+    var_2 unlink();
     var_13 show();
     var_23 = [ var_2, var_13 ];
     var_24 = undefined;
@@ -3287,7 +3287,7 @@ grapple_death_pull( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_24 ) )
         var_24 delete();
 
-    var_1 _meth_804F();
+    var_1 unlink();
     var_1 grapple_unlock_stances();
     var_1 notify( "grapple_death_pull_complete" );
     var_1.grapple["grappling"] = 0;
@@ -3383,10 +3383,10 @@ grapple_death_pull_event( var_0, var_1, var_2, var_3, var_4 )
             if ( !isdefined( self.end_anim_name ) || !isdefined( level.scr_anim["grapple_rope"][self.end_anim_name] ) )
                 var_1 grapple_rope_state( 0 );
 
-            var_1 _meth_80AD( "heavygun_fire" );
+            var_1 playrumbleonentity( "heavygun_fire" );
             break;
         case "impact":
-            var_1 _meth_80AD( "heavygun_fire" );
+            var_1 playrumbleonentity( "heavygun_fire" );
 
             if ( isdefined( var_2 ) )
                 var_2 soundscripts\_snd_playsound::snd_play_linked( common_scripts\utility::random( level.grapple_snd_death ) );
@@ -3404,11 +3404,11 @@ grapple_death_pull_event( var_0, var_1, var_2, var_3, var_4 )
         case "start_ragdoll":
             if ( isdefined( var_2 ) )
             {
-                var_2 _meth_804F();
+                var_2 unlink();
 
                 if ( !isdefined( var_2.grapple_ragdolled ) )
                 {
-                    var_2 _meth_8023();
+                    var_2 startragdoll();
                     var_2.grapple_ragdolled = 1;
                 }
 
@@ -3424,10 +3424,10 @@ grapple_death_pull_event( var_0, var_1, var_2, var_3, var_4 )
                 {
                     var_2 maps\_utility::anim_stopanimscripted();
                     var_7 = self.origin + ( 0, 0, 30 );
-                    var_8 = var_2 _meth_83E5( var_7, var_7 + anglestoforward( self.angles ) * -60 );
-                    var_9 = var_2 _meth_83E5( var_8, var_8 - ( 0, 0, 60 ) );
-                    var_2 _meth_804F();
-                    var_2 _meth_81C6( ( var_9[0], var_9[1], var_9[2] + 30 ), var_2.angles, 1000 );
+                    var_8 = var_2 aiphysicstrace( var_7, var_7 + anglestoforward( self.angles ) * -60 );
+                    var_9 = var_2 aiphysicstrace( var_8, var_8 - ( 0, 0, 60 ) );
+                    var_2 unlink();
+                    var_2 forceteleport( ( var_9[0], var_9[1], var_9[2] + 30 ), var_2.angles, 1000 );
                 }
 
                 var_1 grapple_kill( var_2, 0 );
@@ -3474,13 +3474,13 @@ grapple_view_model_hands_hide_show( var_0 )
     if ( isdefined( var_0 ) )
         self waittill( var_0 );
 
-    self _meth_8482();
+    self hideviewmodel();
 
     for (;;)
     {
-        if ( self _meth_8311() != self.grapple["weapon"] )
+        if ( self getcurrentweapon() != self.grapple["weapon"] )
         {
-            self _meth_8481();
+            self showviewmodel();
             return;
         }
 
@@ -3502,7 +3502,7 @@ grapple_loop_viewmodel_anim( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_84B5( level.scr_viewanim[var_1] );
+        self setviewmodelanim( level.scr_viewanim[var_1] );
         var_2 = 0.0;
 
         if ( isarray( level.scr_anim[var_0][var_1] ) )
@@ -3561,7 +3561,7 @@ grapple_entity( var_0 )
         if ( isdefined( self.grapple["quick_fire_executed"] ) && self.grapple["quick_fire_executed"] )
             grapple_quick_fire_switch_back( 1 );
         else if ( !isdefined( self.grapple["mantle"] ) )
-            self _meth_80F3( self _meth_8311(), "raise" );
+            self forceviewmodelanimation( self getcurrentweapon(), "raise" );
 
         thread grapple_enabled_listener();
     }
@@ -3585,8 +3585,8 @@ grapple_entity_style( var_0, var_1 )
 
 grapple_take_weapon()
 {
-    self _meth_8499();
-    self _meth_830F( self.grapple["weapon"] );
+    self forceviewmodelanimationclear();
+    self takeweapon( self.grapple["weapon"] );
 }
 
 grapple_disconnect()
@@ -3595,7 +3595,7 @@ grapple_disconnect()
     grapple_set_hint( "" );
     grapple_rope_state( 0 );
     thread maps\_utility::play_sound_on_entity( "rappel_clipout" );
-    self _meth_80AF( "subtle_tank_rumble" );
+    self stoprumble( "subtle_tank_rumble" );
     grapple_take_weapon();
     self freezecontrols( 0 );
     grapple_unlock_stances();
@@ -3614,9 +3614,9 @@ grapple_sync_attach_rotation()
 
     for (;;)
     {
-        var_0 _meth_804F();
+        var_0 unlink();
         var_0.angles = ( 0, self.angles[1], 0 );
-        var_0 _meth_804D( var_1 );
+        var_0 linkto( var_1 );
         wait 0.05;
     }
 }
@@ -3664,12 +3664,12 @@ grapple_velocity_monitor()
 
 grapple_abort_trace_passed( var_0 )
 {
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     var_2 = var_0 + ( 0, 0, var_1[2] - self.origin[2] );
     var_3 = vectornormalize( var_2 - var_1 );
     var_1 += var_3 * 30;
     var_2 -= var_3 * 30;
-    var_4 = _func_291( var_1, var_2, self, 0 );
+    var_4 = grappletrace( var_1, var_2, self, 0 );
 
     if ( isdefined( var_4["fraction"] ) && var_4["fraction"] < 1.0 )
     {
@@ -3734,29 +3734,29 @@ grapple_abort( var_0 )
     self notify( "grapple_abort" );
     grapple_disconnect();
     killfxontag( level._effect["grapple_cam"], self.grapple["model_player_to"], "tag_origin" );
-    self _meth_804F();
+    self unlink();
     grapple_enable_normal_mantle_hint( 1 );
     var_1 = self.grapple["poll_velocity"];
     self setorigin( self.grapple["last_valid_origin"] );
     self.origin = self.grapple["last_valid_origin"];
-    self _meth_82F1( var_1 );
-    self _meth_83FE( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
-    self _meth_80AD( "damage_light" );
-    self _meth_8031( 65, 0.2 );
+    self setvelocity( var_1 );
+    self screenshakeonentity( 5.0, 5.0, 3.0, 0.5, 0, 0.25, 128, 3, 3, 3, 1 );
+    self playrumbleonentity( "damage_light" );
+    self lerpfov( 65, 0.2 );
 
     if ( common_scripts\utility::issp() )
         level notify( "stop_grapplesound" );
     else
-        self.grapple["model_player_move_tag"] _meth_80AC();
+        self.grapple["model_player_move_tag"] stopsounds();
 
-    self _meth_80F0();
+    self disableinvulnerability();
 }
 
 grapple_complete_player_move( var_0 )
 {
     var_1 = self.grapple["model_player_from"];
     var_2 = self.grapple["model_player_to"];
-    var_1 _meth_804F();
+    var_1 unlink();
     var_1.origin = var_2.origin;
     var_1.angles = var_2.angles;
     var_1.style = var_2.style;
@@ -3768,21 +3768,21 @@ grapple_complete_player_move( var_0 )
         var_1.land_entity = var_2.land_entity;
 
         if ( isdefined( var_2.land_magnet ) && var_2.land_magnet.tag != "" )
-            var_1 _meth_804D( var_2.land_entity, var_2.land_magnet.tag );
+            var_1 linkto( var_2.land_entity, var_2.land_magnet.tag );
         else
-            var_1 _meth_804D( var_2.land_entity );
+            var_1 linkto( var_2.land_entity );
 
         if ( isdefined( var_2.land_magnet ) )
             var_1.land_magnet = var_2.land_magnet;
     }
 
-    var_1 _meth_8092();
+    var_1 dontinterpolate();
 
     if ( !isdefined( self.grapple["mantle"] ) && !isdefined( grapple_special_landing_anims() ) )
     {
-        self _meth_804F();
+        self unlink();
         self setorigin( var_2.origin );
-        self _meth_807D( var_2, "tag_origin", 1.0, 45, 45, 45, 45, 0 );
+        self playerlinktodelta( var_2, "tag_origin", 1.0, 45, 45, 45, 45, 0 );
     }
 
     grapple_enable_weapon();
@@ -3811,13 +3811,13 @@ grapple_to_position( var_0 )
 
     thread grapple_abort_monitor( var_2, var_0 );
     grapple_stand_and_lock_stances();
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2.angles = self getangles();
-    var_2.origin = self _meth_80A8() - anglestoup( var_2.angles ) * 60;
-    var_2 _meth_8092();
+    var_2.origin = self geteye() - anglestoup( var_2.angles ) * 60;
+    var_2 dontinterpolate();
     self.grapple["landingParms"] = grapple_landing_prep();
     childthread grapple_lerp_velocity_to_linked( var_2 );
-    self _meth_80AE( "subtle_tank_rumble" );
+    self playrumblelooponentity( "subtle_tank_rumble" );
 
     if ( common_scripts\utility::issp() )
     {
@@ -3830,7 +3830,7 @@ grapple_to_position( var_0 )
         var_2 playsound( "linelauncher_move_player" );
 
     var_4 = var_2 grapple_move( self, var_0 );
-    self _meth_80AF( "subtle_tank_rumble" );
+    self stoprumble( "subtle_tank_rumble" );
 
     if ( self.grapple["style"] == "ceiling" )
     {
@@ -3838,7 +3838,7 @@ grapple_to_position( var_0 )
         wait(max( 0.05, var_4 ));
         grapple_complete_player_move( 1 );
         grapple_rope_state( 2 );
-        self _meth_807D( var_3, "tag_origin", 1.0, 180, 180, 180, 180, 0 );
+        self playerlinktodelta( var_3, "tag_origin", 1.0, 180, 180, 180, 180, 0 );
     }
     else if ( self.grapple["style"] == "wall" )
     {
@@ -3847,22 +3847,22 @@ grapple_to_position( var_0 )
 
         if ( isdefined( self.grapple["mantle"] ) || isdefined( grapple_special_landing_anims() ) )
         {
-            self _meth_8499();
+            self forceviewmodelanimationclear();
             grapple_disconnect();
-            self _meth_804F();
+            self unlink();
         }
         else
         {
             var_1 = 1;
             grapple_rope_state( 2 );
-            self _meth_807D( var_3, "tag_origin", 1.0, 180, 180, 180, 180, 1 );
+            self playerlinktodelta( var_3, "tag_origin", 1.0, 180, 180, 180, 180, 1 );
         }
     }
     else if ( self.grapple["style"] == "floor" )
     {
         wait(max( 0.05, var_4 ));
         grapple_complete_player_move();
-        self _meth_804F();
+        self unlink();
         grapple_disconnect();
         var_1 = 0;
     }
@@ -3875,12 +3875,12 @@ grapple_to_position( var_0 )
 
         if ( !isdefined( var_5 ) || !isdefined( var_5.specialstruct ) || !isdefined( var_5.specialstruct.afterlandanimconnected ) || !var_5.specialstruct.afterlandanimconnected )
         {
-            self _meth_804F();
+            self unlink();
             grapple_disconnect();
             var_1 = 0;
         }
         else
-            self _meth_807D( var_3, undefined, 1.0, 180, 180, 180, 180, 0 );
+            self playerlinktodelta( var_3, undefined, 1.0, 180, 180, 180, 180, 0 );
     }
 
     return var_1;
@@ -3894,11 +3894,11 @@ grapple_lerp_velocity_to_linked( var_0 )
     var_2 = self.grapple["velocity_when_fired"];
     var_3 = length( var_2 );
     var_4 = self.grapple["model_player_move_lerp"];
-    var_4 _meth_804F();
+    var_4 unlink();
     var_4.origin = var_0.origin + var_2 * 0.05;
     var_4.angles = var_0.angles;
-    var_4 _meth_8092();
-    self _meth_807D( var_4, "tag_origin", 1.0, 0, 0, 0, 0, 0 );
+    var_4 dontinterpolate();
+    self playerlinktodelta( var_4, "tag_origin", 1.0, 0, 0, 0, 0, 0 );
     self.grapple["velocity_lerping"] = 0;
 
     if ( getdvarint( "grapple_lerp_velocity" ) && var_3 > 0 )
@@ -3915,7 +3915,7 @@ grapple_lerp_velocity_to_linked( var_0 )
     }
 
     var_4.origin = var_0.origin;
-    var_4 _meth_804D( var_0 );
+    var_4 linkto( var_0 );
 }
 
 grapple_move_time( var_0 )
@@ -3947,7 +3947,7 @@ grapple_move( var_0, var_1 )
     var_4 = var_2 * 0.9;
     var_5 = var_2 * 0.05;
     var_6 = gettime();
-    self _meth_82AE( var_1.origin, var_2, var_4, var_5, var_1 );
+    self moveto( var_1.origin, var_2, var_4, var_5, var_1 );
 
     if ( var_0 grapple_special() == "weapon" )
         var_0 thread grapple_with_weapon_travel( var_1.land_magnet.specialstruct );
@@ -3959,10 +3959,10 @@ grapple_move( var_0, var_1 )
         grapple_motion_blur_enable();
 
         if ( var_0 grapple_special() != "weapon" )
-            var_0 _meth_8031( 85, var_2 * 0.3 );
+            var_0 lerpfov( 85, var_2 * 0.3 );
     }
 
-    var_0 _meth_83FE( 1.5, 1.0, 1.0, var_2, var_2 * 0.8, 0, 128, 3, 1, 1 );
+    var_0 screenshakeonentity( 1.5, 1.0, 1.0, var_2, var_2 * 0.8, 0, 128, 3, 1, 1 );
     var_7 = var_0.grapple["landingParms"];
     var_8 = 0;
     var_0 notify( "grapple_moving", var_0.grapple["magnet_current"].magnet );
@@ -3994,7 +3994,7 @@ grapple_move( var_0, var_1 )
             var_0 notify( "grapple_landing_fov_started" );
 
             if ( var_0 grapple_special() != "weapon" )
-                var_0 _meth_8031( 65, var_7["fov_lerp_time"] );
+                var_0 lerpfov( 65, var_7["fov_lerp_time"] );
 
             var_7["fov_lerp_started"] = 1;
         }
@@ -4146,7 +4146,7 @@ grapple_landing_prep()
 
         if ( isdefined( var_11["body"] ) )
         {
-            var_11["body"] = _func_24D( var_11["body"] - var_19.origin, var_19.angles );
+            var_11["body"] = rotatevectorinverted( var_11["body"] - var_19.origin, var_19.angles );
             var_12["body"] -= var_19.angles;
         }
 
@@ -4158,22 +4158,22 @@ grapple_landing_prep()
 
     if ( isdefined( var_10["hands"] ) && !self.grapple["linked_hands"] )
     {
-        var_8["hands"] _meth_80A6( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+        var_8["hands"] linktoplayerview( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
         self.grapple["linked_hands"] = 1;
     }
 
     if ( isdefined( var_8["hands"] ) && isdefined( var_10["hands"] ) && isdefined( var_9["hands"] ) )
     {
-        var_8["hands"] _meth_8115( var_9["hands"] );
-        var_8["hands"] _meth_814B( var_10["hands"], 1.0, 0.0, 0.0 );
-        var_8["hands"] _meth_8117( var_10["hands"], 0.0 );
+        var_8["hands"] useanimtree( var_9["hands"] );
+        var_8["hands"] setanim( var_10["hands"], 1.0, 0.0, 0.0 );
+        var_8["hands"] setanimtime( var_10["hands"], 0.0 );
     }
 
     if ( isdefined( var_8["body"] ) && isdefined( var_10["body"] ) && isdefined( var_9["body"] ) )
     {
-        var_8["body"] _meth_8115( var_9["body"] );
-        var_8["body"] _meth_814B( var_10["body"], 1.0, 0.0, 0.0 );
-        var_8["body"] _meth_8117( var_10["body"], 0.0 );
+        var_8["body"] useanimtree( var_9["body"] );
+        var_8["body"] setanim( var_10["body"], 1.0, 0.0, 0.0 );
+        var_8["body"] setanimtime( var_10["body"], 0.0 );
     }
 
     var_21 = [];
@@ -4218,7 +4218,7 @@ grapple_landing_anim( var_0 )
         if ( isdefined( var_0["anim_ents_origin"][var_11] ) )
         {
             var_8 = 0;
-            var_5 _meth_804F();
+            var_5 unlink();
             var_5.origin = var_3.origin + rotatevector( var_0["anim_ents_origin"][var_11], var_3.angles );
             var_6 = var_5.origin;
 
@@ -4229,7 +4229,7 @@ grapple_landing_anim( var_0 )
             }
 
             if ( isdefined( self.grapple["model_player_to"].land_entity ) )
-                var_5 _meth_804D( self.grapple["model_player_to"].land_entity );
+                var_5 linkto( self.grapple["model_player_to"].land_entity );
 
             var_1 = max( var_1, var_0["anim_ents_time"][var_11] );
         }
@@ -4245,13 +4245,13 @@ grapple_landing_anim( var_0 )
         if ( isdefined( var_0["anim_ents_view_anim"][var_11] ) )
         {
             self.grapple["landing_view_anim"] = var_0["anim_ents_view_anim"][var_11];
-            self _meth_84B5( level.scr_viewanim[var_0["anim_ents_view_anim"][var_11]] );
+            self setviewmodelanim( level.scr_viewanim[var_0["anim_ents_view_anim"][var_11]] );
         }
         else if ( isdefined( var_0["anim_ents_anim"][var_11] ) && isdefined( var_0["anim_ents_tree"][var_11] ) )
         {
             var_9 = var_0["anim_ents_anim"][var_11];
-            var_5 _meth_8115( var_0["anim_ents_tree"][var_11] );
-            var_5 _meth_813E( "grapple_landing_anim", var_6, var_7, var_9, undefined, undefined, 0.1 );
+            var_5 useanimtree( var_0["anim_ents_tree"][var_11] );
+            var_5 animscripted( "grapple_landing_anim", var_6, var_7, var_9, undefined, undefined, 0.1 );
 
             if ( isdefined( var_0["anim_ents_origin"][var_11] ) )
             {
@@ -4267,7 +4267,7 @@ grapple_landing_anim( var_0 )
                 thread grapple_view_model_hands_hide_show();
         }
 
-        var_5 _meth_8092();
+        var_5 dontinterpolate();
     }
 
     return var_1;
@@ -4292,7 +4292,7 @@ grapple_landing_trans( var_0, var_1 )
     var_9 = self.grapple["model_player_trans"];
     var_9.origin = self.origin;
     var_9.angles = self getangles();
-    var_9 _meth_8092();
+    var_9 dontinterpolate();
 
     if ( grapple_special_land_hide_rope() )
         grapple_rope_state( 0, 0 );
@@ -4303,12 +4303,12 @@ grapple_landing_trans( var_0, var_1 )
     {
         grapple_setup_rope_attached_player( self, self, 0 );
         var_10 = var_0["anim_ents"]["body"];
-        self _meth_8080( var_10, "tag_player", var_3, var_7, var_8 );
+        self playerlinktoblend( var_10, "tag_player", var_3, var_7, var_8 );
         wait(var_3);
         grapple_landing_landed( undefined, undefined, undefined, undefined );
         wait 0.05;
-        self _meth_807D( var_10, "tag_player", 1, 0, 0, 0, 0, 1 );
-        self _meth_80F3( self.grapple["weapon"], level.grapple_weapon_anim["travel"] );
+        self playerlinktodelta( var_10, "tag_player", 1, 0, 0, 0, 0, 1 );
+        self forceviewmodelanimation( self.grapple["weapon"], level.grapple_weapon_anim["travel"] );
         grapple_disable_weapon();
         var_10 show();
         self.grapple["model_hands"] hide();
@@ -4319,10 +4319,10 @@ grapple_landing_trans( var_0, var_1 )
         var_11 = var_3 * 0.75;
         var_12 = var_3 - var_11;
         var_13 = undefined;
-        self _meth_807C( var_9, "tag_player", 1, 0, 0, 0, 0 );
+        self playerlinkto( var_9, "tag_player", 1, 0, 0, 0, 0 );
         var_14 = var_1.origin + vectornormalize( self.grapple["poll_velocity"] ) * 10;
         var_13 = var_1.origin;
-        var_9 _meth_82B5( var_6, var_3, var_7, var_8 );
+        var_9 rotateto( var_6, var_3, var_7, var_8 );
         var_9 grapple_decelerate_move_to( self.grapple["poll_velocity"], var_14, var_1.land_entity, undefined, var_11, var_11 * 0.75, 0 );
         grapple_landing_landed( var_9, var_13, var_12, var_1 );
     }
@@ -4331,17 +4331,17 @@ grapple_landing_trans( var_0, var_1 )
 grapple_landing_landed( var_0, var_1, var_2, var_3 )
 {
     if ( !common_scripts\utility::issp() )
-        self.grapple["model_player_move_tag"] _meth_80AC();
+        self.grapple["model_player_move_tag"] stopsounds();
     else
         level notify( "stop_grapplesound" );
 
     grapple_landing_sound( self.grapple["surface_trace"]["surfacetype"] );
     grapple_notify_closest_ai( "grapple_impact", self.origin, 250 );
-    self _meth_80AD( "falling_land" );
-    self _meth_83FE( 2.0, 1.0, 2.0, 0.5, 0, 0.1, 128, 3, 3, 3 );
+    self playrumbleonentity( "falling_land" );
+    self screenshakeonentity( 2.0, 1.0, 2.0, 0.5, 0, 0.1, 128, 3, 3, 3 );
 
     if ( isdefined( var_1 ) && isdefined( var_0 ) && isdefined( var_2 ) )
-        var_0 _meth_82AE( var_1, var_2, var_2 * 0.25, var_2 * 0.25, var_3 );
+        var_0 moveto( var_1, var_2, var_2 * 0.25, var_2 * 0.25, var_3 );
 
     var_4 = self.grapple["model_rope_idle"];
     var_4 hide();
@@ -4395,8 +4395,8 @@ grapple_motion_blur_enable()
 {
     if ( common_scripts\utility::issp() && level.nextgen )
     {
-        _func_0D3( "r_mbEnable", 2 );
-        _func_0D3( "r_mbVelocityScalar", 4 );
+        setsaveddvar( "r_mbEnable", 2 );
+        setsaveddvar( "r_mbVelocityScalar", 4 );
     }
 }
 
@@ -4404,8 +4404,8 @@ grapple_motion_blur_disable()
 {
     if ( common_scripts\utility::issp() && level.nextgen )
     {
-        _func_0D3( "r_mbEnable", 0 );
-        _func_0D3( "r_mbVelocityScalar", 1 );
+        setsaveddvar( "r_mbEnable", 0 );
+        setsaveddvar( "r_mbVelocityScalar", 1 );
     }
 }
 
@@ -4495,7 +4495,7 @@ grapple_special_no_abort()
 
 grapple_magnet_validate_ground( var_0 )
 {
-    if ( isdefined( var_0 ) && isdefined( var_0.specialstruct ) && isdefined( var_0.specialstruct.requireonground ) && var_0.specialstruct.requireonground && !self _meth_8341() )
+    if ( isdefined( var_0 ) && isdefined( var_0.specialstruct ) && isdefined( var_0.specialstruct.requireonground ) && var_0.specialstruct.requireonground && !self isonground() )
         return 0;
 
     return 1;
@@ -4506,7 +4506,7 @@ grapple_notify_closest_ai( var_0, var_1, var_2, var_3 )
     if ( !common_scripts\utility::issp() )
         return;
 
-    var_4 = _func_0D6( "axis" );
+    var_4 = getaiarray( "axis" );
     var_4 = common_scripts\utility::get_array_of_closest( var_1, var_4, undefined, undefined, var_2, undefined );
 
     foreach ( var_6 in var_4 )
@@ -4529,7 +4529,7 @@ grapple_notify_ai_capsule( var_0, var_1, var_2, var_3, var_4 )
     var_5 = var_2 - var_1;
     var_6 = vectornormalize( var_5 );
     var_7 = length( var_5 );
-    var_8 = _func_0D6( "axis" );
+    var_8 = getaiarray( "axis" );
     var_8 = common_scripts\utility::get_array_of_closest( var_2, var_8, undefined, undefined, var_7 + var_3 * 2, undefined );
 
     foreach ( var_10 in var_8 )
@@ -4540,7 +4540,7 @@ grapple_notify_ai_capsule( var_0, var_1, var_2, var_3, var_4 )
         if ( !isalive( var_10 ) )
             continue;
 
-        var_11 = var_10 _meth_80A8();
+        var_11 = var_10 geteye();
         var_12 = var_11 - var_1;
         var_13 = vectordot( var_12, var_6 );
 
@@ -4575,7 +4575,7 @@ grapple_decelerate_move_to( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var
     if ( isdefined( var_2 ) && !isdefined( var_3 ) && isdefined( var_1 ) )
     {
         var_1 -= var_2.origin;
-        var_1 = _func_24D( var_1, var_2.angles );
+        var_1 = rotatevectorinverted( var_1, var_2.angles );
     }
 
     while ( gettime() - var_12 < var_13 )
@@ -4629,8 +4629,8 @@ grapple_fire_rope( var_0, var_1 )
     self endon( "death" );
     self endon( "grapple_disconnect" );
     self notify( "grapple_fire_rope" );
-    self _meth_80AD( "heavygun_fire" );
-    self _meth_83FE( 2.0, 1.0, 1.0, 0.5, 0, 0.5, 128, 2, 1, 1 );
+    self playrumbleonentity( "heavygun_fire" );
+    self screenshakeonentity( 2.0, 1.0, 1.0, 0.5, 0, 0.5, 128, 2, 1, 1 );
     soundscripts\_snd::snd_message( "aud_grapple_launch" );
     var_2 = anglestoup( self.grapple["model_preview"].angles );
     self.grapple["landing_prep_started"] = 0;
@@ -4641,23 +4641,23 @@ grapple_fire_rope( var_0, var_1 )
     var_6 = self.grapple["model_player_move_tag"];
     var_7 = self.grapple["model_player_from"];
     self freezecontrols( 1 );
-    self setangles( vectortoangles( var_5.origin - self _meth_80A8() ) );
+    self setangles( vectortoangles( var_5.origin - self geteye() ) );
     self.angles = ( 0, self getangles()[1], 0 );
     grapple_setup_rope_attached();
     grapple_setup_rope_fire();
-    var_6 _meth_804F();
+    var_6 unlink();
     var_6.origin = self.origin;
     var_6.angles = self.angles;
-    var_6 _meth_8092();
+    var_6 dontinterpolate();
 
-    if ( self _meth_8068() && isdefined( var_7 ) )
-        var_6 _meth_804D( var_7 );
-    else if ( self _meth_8341() )
+    if ( self islinked() && isdefined( var_7 ) )
+        var_6 linkto( var_7 );
+    else if ( self isonground() )
     {
-        var_8 = _func_238( self.origin, self.origin + ( 0, 0, -10 ) );
+        var_8 = playerphysicstraceinfo( self.origin, self.origin + ( 0, 0, -10 ) );
 
         if ( isdefined( var_8["entity"] ) )
-            var_6 _meth_804D( var_8["entity"] );
+            var_6 linkto( var_8["entity"] );
     }
     else
         var_6.velocity = self getvelocity();
@@ -4666,11 +4666,11 @@ grapple_fire_rope( var_0, var_1 )
 
     if ( isdefined( var_0 ) )
     {
-        self _meth_84B5( level.scr_viewanim[var_0] );
+        self setviewmodelanim( level.scr_viewanim[var_0] );
         var_9 = var_0;
     }
     else
-        self _meth_80F3( self.grapple["weapon"], level.grapple_weapon_anim["fire"] );
+        self forceviewmodelanimation( self.grapple["weapon"], level.grapple_weapon_anim["fire"] );
 
     var_10 = grapple_anim_length( "grapple_rope", var_9 );
     var_3 thread maps\_anim::anim_single_solo( var_3, var_9 );
@@ -4736,9 +4736,9 @@ grapple_fire_finished()
 
         if ( !var_1 )
         {
-            self _meth_84B5( level.scr_viewanim["grapple_fire_end"] );
+            self setviewmodelanim( level.scr_viewanim["grapple_fire_end"] );
             wait(getanimlength( level.scr_anim["grapple_hands"]["grapple_fire_end"] ) - 0.05);
-            self _meth_80F3( self.grapple["weapon"], level.grapple_weapon_anim["travel"] );
+            self forceviewmodelanimation( self.grapple["weapon"], level.grapple_weapon_anim["travel"] );
         }
     }
 }
@@ -4746,52 +4746,52 @@ grapple_fire_finished()
 grapple_attach_bolt( var_0, var_1 )
 {
     var_2 = self.grapple["model_attach_world"];
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2 hide();
 
     if ( var_0 == self.grapple["model_preview"] )
     {
         var_2.origin = self.grapple["model_preview"].origin;
-        var_3 = vectortoangles( vectornormalize( var_2.origin - self _meth_80A8() ) );
+        var_3 = vectortoangles( vectornormalize( var_2.origin - self geteye() ) );
         var_2.angles = var_3;
 
         if ( isdefined( self.grapple["model_player_to"].land_entity ) )
         {
             if ( isdefined( self.grapple["model_player_to"].land_magnet ) && self.grapple["model_player_to"].land_magnet.tag != "" )
-                var_2 _meth_804D( self.grapple["model_player_to"].land_entity, self.grapple["model_player_to"].land_magnet.tag );
+                var_2 linkto( self.grapple["model_player_to"].land_entity, self.grapple["model_player_to"].land_magnet.tag );
             else
-                var_2 _meth_804D( self.grapple["model_player_to"].land_entity );
+                var_2 linkto( self.grapple["model_player_to"].land_entity );
         }
     }
     else if ( isdefined( var_0 ) )
     {
         var_2.origin = var_0 gettagorigin( var_1 );
-        var_3 = vectortoangles( vectornormalize( var_2.origin - self _meth_80A8() ) );
+        var_3 = vectortoangles( vectornormalize( var_2.origin - self geteye() ) );
         var_2.angles = var_3;
-        var_2 _meth_804D( var_0, var_1 );
+        var_2 linkto( var_0, var_1 );
     }
 
-    var_2 _meth_8092();
+    var_2 dontinterpolate();
     return var_2;
 }
 
 grapple_stand_and_lock_stances()
 {
-    self _meth_8321();
+    self disableweaponswitch();
     maps\_utility::playerallowweaponpickup( 0 );
-    self _meth_811A( 0 );
-    self _meth_8119( 0 );
-    self _meth_8130( 0 );
-    self _meth_817D( "stand" );
+    self allowprone( 0 );
+    self allowcrouch( 0 );
+    self allowmelee( 0 );
+    self setstance( "stand" );
 }
 
 grapple_unlock_stances()
 {
-    self _meth_8322();
+    self enableweaponswitch();
     maps\_utility::playerallowweaponpickup( 1 );
-    self _meth_811A( 1 );
-    self _meth_8119( 1 );
-    self _meth_8130( 1 );
+    self allowprone( 1 );
+    self allowcrouch( 1 );
+    self allowmelee( 1 );
     grapple_enable_weapon();
     grapple_motion_blur_disable();
 }
@@ -4803,52 +4803,52 @@ grapple_enable_weapon()
     if ( self.grapple["no_enable_weapon"] )
         return;
 
-    self _meth_831E();
+    self enableweapons();
 }
 
 grapple_disable_weapon()
 {
     self.grapple["weapon_enabled"] = 0;
-    self _meth_831D();
+    self disableweapons();
 }
 
 grapple_quick_fire_switch_back( var_0 )
 {
     self endon( "death" );
 
-    while ( !var_0 && self.grapple["weapon_enabled"] && self _meth_8337() )
+    while ( !var_0 && self.grapple["weapon_enabled"] && self isreloading() )
         wait 0.05;
 
     grapple_switch( 0, var_0 );
     self.grapple["ready_time"] = gettime() + 3000;
     self.grapple["quick_fire_executed"] = 0;
 
-    while ( self _meth_8311() == self.grapple["weapon"] || self _meth_8311() == "none" )
+    while ( self getcurrentweapon() == self.grapple["weapon"] || self getcurrentweapon() == "none" )
         wait 0.05;
 }
 
 grapple_enable_normal_mantle_hint( var_0 )
 {
     if ( var_0 )
-        _func_0D3( "cg_drawMantleHint", "1" );
+        setsaveddvar( "cg_drawMantleHint", "1" );
     else
-        _func_0D3( "cg_drawMantleHint", "0" );
+        setsaveddvar( "cg_drawMantleHint", "0" );
 }
 
 grapple_with_weapon_start( var_0 )
 {
     wait 0.4;
     var_1 = self.grapple["model_player_move_lerp"];
-    self _meth_807D( var_1, "tag_origin", 1.0, var_0.anglelimit, var_0.anglelimit, var_0.anglelimit, var_0.anglelimit, 0 );
-    self _meth_8499();
+    self playerlinktodelta( var_1, "tag_origin", 1.0, var_0.anglelimit, var_0.anglelimit, var_0.anglelimit, var_0.anglelimit, 0 );
+    self forceviewmodelanimationclear();
     grapple_setup_rope_attached( 0 );
     grapple_rope_state( 1 );
     thread grapple_with_weapon_turnrates( "end_grapple_with_weapon" );
     thread grapple_with_weapon_infinite_ammo( "end_grapple_with_weapon" );
-    self _meth_80EF();
+    self enableinvulnerability();
     grapple_enable_weapon();
-    self _meth_8316( var_0.weapon );
-    self _meth_8321();
+    self switchtoweaponimmediate( var_0.weapon );
+    self disableweaponswitch();
     wait 0.6;
 }
 
@@ -4862,8 +4862,8 @@ grapple_with_weapon_travel( var_0 )
 
     setslowmotion( 1, var_0.slowmospeed, var_0.slowmodelta );
     common_scripts\utility::waittill_any( "grapple_landing_trans_started", "grapple_abort", var_0.slowmostop );
-    self _meth_8322();
-    self _meth_80F0();
+    self enableweaponswitch();
+    self disableinvulnerability();
     setslowmotion( var_0.slowmospeed, 1, 0.25 );
     self notify( "end_grapple_with_weapon" );
 }
@@ -4875,17 +4875,17 @@ grapple_with_weapon_turnrates( var_0 )
     self.aim_turnrate_yaw = getdvarint( "aim_turnrate_yaw" );
     self.aim_turnrate_yaw_ads = getdvarint( "aim_turnrate_yaw_ads" );
     self.aim_accel_turnrate_lerp = getdvarint( "aim_accel_turnrate_lerp" );
-    _func_0D3( "aim_turnrate_pitch", 180 );
-    _func_0D3( "aim_turnrate_pitch_ads", 110 );
-    _func_0D3( "aim_turnrate_yaw", 500 );
-    _func_0D3( "aim_turnrate_yaw_ads", 250 );
-    _func_0D3( "aim_accel_turnrate_lerp", 1200 );
+    setsaveddvar( "aim_turnrate_pitch", 180 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 110 );
+    setsaveddvar( "aim_turnrate_yaw", 500 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 250 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 1200 );
     self waittill( var_0 );
-    _func_0D3( "aim_turnrate_pitch", self.aim_turnrate_pitch );
-    _func_0D3( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
-    _func_0D3( "aim_turnrate_yaw", self.aim_turnrate_yaw );
-    _func_0D3( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
-    _func_0D3( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
+    setsaveddvar( "aim_turnrate_pitch", self.aim_turnrate_pitch );
+    setsaveddvar( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
+    setsaveddvar( "aim_turnrate_yaw", self.aim_turnrate_yaw );
+    setsaveddvar( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
+    setsaveddvar( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
 }
 
 grapple_with_weapon_infinite_ammo( var_0 )

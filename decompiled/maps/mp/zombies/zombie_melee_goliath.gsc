@@ -65,8 +65,8 @@ meleegoliathroundcandroppickups( var_0 )
 onzombiemeleegoliathspawn( var_0, var_1, var_2 )
 {
     maps\mp\zombies\_util::onspawnscriptagenthumanoid( var_0, var_1, var_2 );
-    self _meth_853C( "mech" );
-    self _meth_853D( 1 );
+    self scragentsetspecies( "mech" );
+    self scragentallowboost( 1 );
     level.meleegoliathspawned++;
 
     if ( maps\mp\zombies\_util::is_true( self.enhanced ) )
@@ -112,7 +112,7 @@ getmeleegoliathroundspawntype( var_0, var_1 )
 meleegoliathmutator( var_0 )
 {
     var_0 attachgoliathweapons();
-    var_0 _meth_8399( "agent" );
+    var_0 scragentsetclipmode( "agent" );
 }
 
 attachgoliathweapons()
@@ -124,26 +124,26 @@ attachgoliathweapons()
     var_1.angles = self gettagangles( "TAG_WEAPON_RIGHT" );
 
     if ( maps\mp\zombies\_util::is_true( self.enhanced ) )
-        var_1 _meth_80B1( "goliath_melee_anchor" );
+        var_1 setmodel( "goliath_melee_anchor" );
     else
     {
         var_2 = level.meleegoliathweaponindex;
         level.meleegoliathweaponindex = common_scripts\utility::mod( level.meleegoliathweaponindex + 1, 3 );
-        var_1 _meth_80B1( var_0[var_2] );
+        var_1 setmodel( var_0[var_2] );
     }
 
-    var_1 _meth_804D( self, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( self, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "zombie_melee_goliath_electric" ), var_1, "tag_fx" );
     self.goliathweapon = var_1;
     var_3 = spawn( "script_model", self gettagorigin( "TAG_WEAPON_LEFT" ) );
     var_3.angles = self gettagangles( "TAG_WEAPON_LEFT" );
 
     if ( maps\mp\zombies\_util::is_true( self.enhanced ) )
-        var_3 _meth_80B1( "dlc_ark_riot_shield" );
+        var_3 setmodel( "dlc_ark_riot_shield" );
     else
-        var_3 _meth_80B1( "dlc_bruiser_riot_shield" );
+        var_3 setmodel( "dlc_bruiser_riot_shield" );
 
-    var_3 _meth_804D( self, "TAG_WEAPON_LEFT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( self, "TAG_WEAPON_LEFT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     self.goliathshield = var_3;
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "goliath_shield_light" ), var_3, "TAG_SHIELD_SPARKS" );
 }
@@ -170,7 +170,7 @@ setupmeleegoliathstate()
     self.meleeradiusbasesq = squared( self.meleeradiusbase );
     maps\mp\zombies\_util::setmeleeradius( self.meleeradiusbase );
     self.defaultgoalradius = self.radius + 1;
-    self _meth_8394( self.defaultgoalradius );
+    self scragentsetgoalradius( self.defaultgoalradius );
     self.meleedot = 0.5;
     self.ignoreexpiretime = 1;
     self.ignorezombierecycling = 1;
@@ -328,7 +328,7 @@ goliath_begin_special_attack()
     if ( var_0 > squared( 500 ) )
         return 0;
 
-    self _meth_839C( self.curmeleetarget );
+    self scragentbeginmelee( self.curmeleetarget );
     return 1;
 }
 
@@ -373,7 +373,7 @@ goliath_begin_melee()
     if ( !isdefined( self.lastmeleepos ) || distancesquared( self.lastmeleepos, self.origin ) > 256 )
         self.meleemovemode = self.movemode;
 
-    self _meth_839C( self.curmeleetarget );
+    self scragentbeginmelee( self.curmeleetarget );
     return 1;
 }
 
@@ -400,7 +400,7 @@ goliath_destroy_distraction_drone()
         return 0;
 
     self.curmeleetarget = self.distractiondrone;
-    self _meth_839C( self.distractiondrone );
+    self scragentbeginmelee( self.distractiondrone );
     return 1;
 }
 
@@ -536,8 +536,8 @@ meleegoliathdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     self.lastmeleefailedmypos = undefined;
     self.lastmeleefailedpos = undefined;
-    var_6 = randomint( self _meth_83D6( var_2 ) );
-    var_7 = self _meth_83D3( var_2, var_6 );
+    var_6 = randomint( self getanimentrycount( var_2 ) );
+    var_7 = self getanimentry( var_2, var_6 );
     var_8 = getanimlength( var_7 );
     var_9 = getnotetracktimes( var_7, "hit_left" );
     var_10 = getnotetracktimes( var_7, "hit_right" );
@@ -545,14 +545,14 @@ meleegoliathdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_12 = gethittime( var_8, var_5, var_9, undefined );
     var_12 = gethittime( var_8, var_5, var_10, var_12 );
     var_12 = gethittime( var_8, var_5, var_11, var_12 );
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
 
     if ( var_4 )
-        self _meth_8396( "face enemy" );
+        self scragentsetorientmode( "face enemy" );
     else
-        self _meth_8396( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_2, var_6, var_5 );
     thread goliathmeleecomplete( var_2, var_8 );
     var_13 = undefined;
@@ -562,13 +562,13 @@ meleegoliathdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     if ( var_3 )
     {
-        self _meth_8395( 0, 1 );
-        self _meth_839F( self.origin, var_1, var_12 );
+        self scragentsetanimscale( 0, 1 );
+        self scragentdoanimlerp( self.origin, var_1, var_12 );
         childthread updatemeleegoliathlerppos( var_0, var_12, 1, var_13 );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoAttack" );
     }
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
     if ( var_11.size > 0 )
         childthread empblast( var_12 );
@@ -580,8 +580,8 @@ meleegoliathdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     wait(var_12);
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -593,8 +593,8 @@ meleegoliathdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
         maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "attack_anim", "end", var_14 );
 
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -671,8 +671,8 @@ updatemeleegoliathlerppos( var_0, var_1, var_2, var_3 )
                 var_7 = var_4 + vectornormalize( var_9 ) * var_8;
         }
 
-        self _meth_8396( "face enemy" );
-        self _meth_839F( self.origin, var_7, var_5 );
+        self scragentsetorientmode( "face enemy" );
+        self scragentdoanimlerp( self.origin, var_7, var_5 );
     }
 }
 
@@ -719,7 +719,7 @@ checkmeleesweeperhit( var_0, var_1 )
         if ( maps\mp\zombies\_util::isplayerinlaststand( var_6 ) )
             continue;
 
-        if ( _func_285( var_6, self ) )
+        if ( isalliedsentient( var_6, self ) )
             continue;
 
         checkmeleesweeperhittarget( var_6, var_2, var_3, var_4, self.meleedamage );
@@ -756,7 +756,7 @@ checkmeleeheight( var_0, var_1 )
     var_2 = self.origin[2] + 80;
     var_3 = max( var_2, var_1 );
     var_4 = self.origin[2];
-    var_5 = var_0 _meth_80A8()[2];
+    var_5 = var_0 geteye()[2];
     var_6 = var_0.origin[2];
 
     if ( var_5 >= var_4 && var_5 <= var_3 )
@@ -943,7 +943,7 @@ onmeleegoliathkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
 meleegoliathdeath( var_0, var_1, var_2 )
 {
-    var_3 = self _meth_83D3();
+    var_3 = self getanimentry();
     var_4 = getanimlength( var_3 );
     var_5 = 1;
     var_6 = getnotetracktimes( var_3, "explode" );
@@ -982,7 +982,7 @@ playmeleezombiekilledfx()
     earthquake( randomfloatrange( 0.75, 1.25 ), 0.35, var_2, 256 );
     self playsound( "zmb_goliath_death_destruct" );
     self hide();
-    self _meth_804A();
+    self hideallparts();
 }
 
 spawngibparts()
@@ -1021,12 +1021,12 @@ spawngibparts()
 spawngib( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawn( "script_model", var_1 );
-    var_4 _meth_80B1( var_0 );
+    var_4 setmodel( var_0 );
     var_4.angles = var_2;
     var_5 = ( randomfloatrange( -2000, 2000 ), randomfloatrange( -2000, 2000 ), randomfloatrange( -2000, 2000 ) );
     var_6 = vectornormalize( common_scripts\utility::randomvectorincone( ( 0, 0, 1.75 ) + var_3, 15 ) );
-    var_4 _meth_83C3( var_6 * 4000, var_5 );
-    var_4 _meth_8559();
+    var_4 physicslaunchclientwithimpulse( var_6 * 4000, var_5 );
+    var_4 deleteonhostmigration();
 
     if ( level.nextdismemberedbodypartindex < level.dismemberedbodyparts.size )
         level.dismemberedbodyparts[level.nextdismemberedbodypartindex] delete();
@@ -1120,7 +1120,7 @@ recycleagent( var_0 )
 ragdollagent( var_0, var_1, var_2, var_3, var_4 )
 {
     var_0.ragdollimmediately = 1;
-    var_0 _meth_8051( var_0.health + 1000, var_0 _meth_80A8(), self, undefined, var_2, "meleeGoliathFriendlyFire", "none" );
+    var_0 dodamage( var_0.health + 1000, var_0 geteye(), self, undefined, var_2, "meleeGoliathFriendlyFire", "none" );
     var_5 = self.origin - var_1 + ( 0, 0, 8 );
     wait 0.1;
     var_6 = randomfloatrange( 3, 5 );
@@ -1180,7 +1180,7 @@ updateweaponready()
 
 missilestartlocation()
 {
-    return self _meth_80A8() + ( 0, 0, 45 );
+    return self geteye() + ( 0, 0, 45 );
 }
 
 firemissile( var_0 )
@@ -1189,9 +1189,9 @@ firemissile( var_0 )
     self weaponlockstart( var_0 );
     var_2 = missilestartlocation();
     var_3 = ( randomintrange( -1 * var_1, var_1 ), randomintrange( -1 * var_1, var_1 ), randomintrange( -1 * var_1, var_1 ) );
-    var_4 = var_0 _meth_80A8() + var_3;
+    var_4 = var_0 geteye() + var_3;
     var_5 = magicbullet( "goliath_rocket_mp", var_2, var_4, self );
-    var_5 _meth_81D9( var_0, ( 0, 0, 32 ) );
+    var_5 missile_settargetent( var_0, ( 0, 0, 32 ) );
     var_5.owner = self;
     var_5 thread empmissile();
 }
@@ -1215,7 +1215,7 @@ empmissile()
         if ( maps\mp\zombies\_util::isplayerinlaststand( var_3 ) )
             continue;
 
-        if ( _func_285( var_3, self.owner ) )
+        if ( isalliedsentient( var_3, self.owner ) )
             continue;
 
         if ( isdefined( var_3.exosuitonline ) && var_3.exosuitonline )
@@ -1316,10 +1316,10 @@ evaluate_threat_valid_threat( var_0 )
     if ( isdefined( var_0.ignoreme ) && var_0.ignoreme == 1 )
         return -1;
 
-    if ( var_0 _meth_8546() )
+    if ( var_0 isnotarget() )
         return -1;
 
-    if ( _func_285( var_0, self ) )
+    if ( isalliedsentient( var_0, self ) )
         return -1;
 
     if ( maps\mp\zombies\_util::shouldignoreent( var_0 ) )
@@ -1336,7 +1336,7 @@ evaluate_threat_behavior( var_0 )
     if ( isdefined( var_0.empgrenaded ) && var_0.empgrenaded == 1 )
         return -1;
 
-    if ( !var_0 _meth_83B3() && _func_220( self.origin, var_0.origin ) < 250000 )
+    if ( !var_0 isjumping() && distance2dsquared( self.origin, var_0.origin ) < 250000 )
         return -1;
 
     return 1;
@@ -1359,7 +1359,7 @@ evaluate_threat_los( var_0 )
 
 trace_to_enemy( var_0, var_1, var_2 )
 {
-    var_3 = bullettrace( var_0, var_1 _meth_80A8(), 0, self.goliathshield, 0, 0, 0, 0, 0 );
+    var_3 = bullettrace( var_0, var_1 geteye(), 0, self.goliathshield, 0, 0, 0, 0, 0 );
     return var_3["fraction"] == 1;
 }
 

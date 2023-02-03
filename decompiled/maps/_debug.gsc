@@ -30,7 +30,7 @@ debugchains()
                 }
             }
 
-            var_5 = _func_0D6( "allies" );
+            var_5 = getaiarray( "allies" );
 
             for ( var_3 = 0; var_3 < var_5.size; var_3++ )
             {
@@ -49,11 +49,11 @@ debugchains()
 
 debug_enemypos( var_0 )
 {
-    var_1 = _func_0D6();
+    var_1 = getaiarray();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
-        if ( var_1[var_2] _meth_81B1() != var_0 )
+        if ( var_1[var_2] getentitynumber() != var_0 )
             continue;
 
         var_1[var_2] thread debug_enemyposproc();
@@ -63,11 +63,11 @@ debug_enemypos( var_0 )
 
 debug_stopenemypos( var_0 )
 {
-    var_1 = _func_0D6();
+    var_1 = getaiarray();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
-        if ( var_1[var_2] _meth_81B1() != var_0 )
+        if ( var_1[var_2] getentitynumber() != var_0 )
             continue;
 
         var_1[var_2] notify( "stop_drawing_enemy_pos" );
@@ -98,7 +98,7 @@ debug_enemyposproc()
 
 debug_enemyposreplay()
 {
-    var_0 = _func_0D6();
+    var_0 = getaiarray();
     var_1 = undefined;
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
@@ -115,7 +115,7 @@ debug_enemyposreplay()
 
         if ( isdefined( var_1.goodshootpos ) )
         {
-            if ( var_1 _meth_813D() )
+            if ( var_1 isbadguy() )
                 var_3 = ( 1, 0, 0 );
             else
                 var_3 = ( 0, 0, 1 );
@@ -323,7 +323,7 @@ viewtag( var_0, var_1 )
 {
     if ( var_0 == "ai" )
     {
-        var_2 = _func_0D6();
+        var_2 = getaiarray();
 
         for ( var_3 = 0; var_3 < var_2.size; var_3++ )
             var_2[var_3] drawtag( var_1 );
@@ -345,12 +345,12 @@ debug_corner()
             var_1[var_1.size] = var_0[var_2];
     }
 
-    var_3 = _func_0D6();
+    var_3 = getaiarray();
 
     for ( var_2 = 0; var_2 < var_3.size; var_2++ )
         var_3[var_2] delete();
 
-    level.debugspawners = _func_0D8();
+    level.debugspawners = getspawnerarray();
     level.activenodes = [];
     level.completednodes = [];
 
@@ -431,7 +431,7 @@ coversetupanim()
             var_1.origin = self.origin;
             var_1.angles = self.angles;
             var_1.count = 1;
-            var_0 = var_1 _meth_8094();
+            var_0 = var_1 stalingradspawn();
 
             if ( maps\_utility::spawn_failed( var_0 ) )
             {
@@ -452,7 +452,7 @@ coversetupanim()
     {
         var_0.ignoreme = 1;
         var_0.team = "neutral";
-        var_0 _meth_81A6( var_0.origin );
+        var_0 setgoalpos( var_0.origin );
         thread createline( self.origin );
         var_0 thread maps\_utility::debugorigin();
         thread createlineconstantly( var_0 );
@@ -833,7 +833,7 @@ showdebugtrace()
             var_2 = level.tracestart;
 
         if ( !isdefined( var_1 ) )
-            var_3 = level.player _meth_80A8();
+            var_3 = level.player geteye();
 
         var_4 = bullettrace( var_2, var_3, 0, undefined );
     }
@@ -908,13 +908,13 @@ debug_character_count()
         }
 
         var_7 = getentarray( "drone", "targetname" ).size;
-        var_0 _meth_80D7( var_7 );
-        var_8 = _func_0D6( "allies" ).size;
-        var_1 _meth_80D7( var_8 );
-        var_9 = _func_0D6( "bad_guys" ).size;
-        var_2 _meth_80D7( var_9 );
-        var_3 _meth_80D7( getentarray( "script_vehicle", "classname" ).size );
-        var_4 _meth_80D7( var_7 + var_8 + var_9 );
+        var_0 setvalue( var_7 );
+        var_8 = getaiarray( "allies" ).size;
+        var_1 setvalue( var_8 );
+        var_9 = getaiarray( "bad_guys" ).size;
+        var_2 setvalue( var_9 );
+        var_3 setvalue( getentarray( "script_vehicle", "classname" ).size );
+        var_4 setvalue( var_7 + var_8 + var_9 );
         wait 0.25;
     }
 }
@@ -922,7 +922,7 @@ debug_character_count()
 nuke()
 {
     if ( !self.damageshield )
-        self _meth_8052( ( 0, 0, -500 ), level.player, level.player );
+        self kill( ( 0, 0, -500 ), level.player, level.player );
 }
 
 debug_nuke()
@@ -944,7 +944,7 @@ camera()
 
     for (;;)
     {
-        var_3 = _func_0D6( "axis" );
+        var_3 = getaiarray( "axis" );
 
         if ( !var_3.size )
         {
@@ -1068,7 +1068,7 @@ lastsightposwatch()
 
 watchminimap()
 {
-    precacheitem( "defaultweapon" );
+    precacheshellshock( "defaultweapon" );
 
     for (;;)
     {
@@ -1100,7 +1100,7 @@ updateminimapsetting()
     {
         if ( isdefined( level.minimaporigin ) )
         {
-            level.minimapplayer _meth_804F();
+            level.minimapplayer unlink();
             level.minimaporigin delete();
             level notify( "end_draw_map_bounds" );
         }
@@ -1192,11 +1192,11 @@ updateminimapsetting()
                 if ( var_21 > 10000 )
                     var_21 = 10000;
 
-                var_3 _meth_807F( var_9 );
+                var_3 playerlinktoabsolute( var_9 );
                 var_9.origin = var_5 + ( 0, 0, -62 );
                 var_9.angles = ( 90, getnorthyaw(), 0 );
-                var_3 _meth_830E( "defaultweapon" );
-                _func_0D3( "cg_fov", var_20 );
+                var_3 giveweapon( "defaultweapon" );
+                setsaveddvar( "cg_fov", var_20 );
                 level.minimapplayer = var_3;
                 level.minimaporigin = var_9;
                 thread drawminimapbounds( var_5, var_7, var_6 );
@@ -1288,8 +1288,8 @@ drawminimapbounds( var_0, var_1, var_2 )
 
 islookingatorigin( var_0 )
 {
-    var_1 = vectornormalize( var_0 - self _meth_8097() );
-    var_2 = vectornormalize( var_0 - ( 0, 0, 24 ) - self _meth_8097() );
+    var_1 = vectornormalize( var_0 - self getshootatpos() );
+    var_2 = vectornormalize( var_0 - ( 0, 0, 24 ) - self getshootatpos() );
     var_3 = vectordot( var_1, var_2 );
     var_4 = anglestoforward( self getangles() );
     var_5 = vectordot( var_4, var_1 );
@@ -1303,7 +1303,7 @@ islookingatorigin( var_0 )
 debug_colornodes()
 {
     wait 0.05;
-    var_0 = _func_0D6();
+    var_0 = getaiarray();
     var_1 = [];
     var_1["axis"] = [];
     var_1["allies"] = [];
@@ -1370,7 +1370,7 @@ get_team_substr()
         if ( isdefined( self.node ) && isdefined( self.node.script_color_allies ) )
             return self.node.script_color_allies;
 
-        var_0 = self _meth_81AA();
+        var_0 = self getgoalvolume();
 
         if ( isdefined( var_0 ) && isdefined( var_0.script_color_allies ) )
             return var_0.script_color_allies;
@@ -1381,7 +1381,7 @@ get_team_substr()
         if ( isdefined( self.node ) && isdefined( self.node.script_color_axis ) )
             return self.node.script_color_axis;
 
-        var_0 = self _meth_81AA();
+        var_0 = self getgoalvolume();
 
         if ( isdefined( var_0 ) && isdefined( var_0.script_color_axis ) )
             return var_0.script_color_axis;
@@ -1394,9 +1394,9 @@ try_to_draw_line_to_node()
 
     if ( isdefined( self.node ) )
         var_0 = self.node.origin;
-    else if ( isdefined( self _meth_81AA() ) )
+    else if ( isdefined( self getgoalvolume() ) )
     {
-        var_1 = self _meth_81AA();
+        var_1 = self getgoalvolume();
         var_0 = var_1.origin;
     }
     else
@@ -1451,7 +1451,7 @@ displaythreat( var_0, var_1 )
 
     if ( isdefined( var_1 ) )
     {
-        var_4 = self _meth_8178();
+        var_4 = self getthreatbiasgroup();
 
         if ( isdefined( var_4 ) )
         {
@@ -1547,7 +1547,7 @@ draw_color_friendlies()
             var_11 = newhudelem();
             var_11.x = var_6 + 25 * var_10;
             var_11.y = var_7;
-            var_11 _meth_80CC( "white", 16, 16 );
+            var_11 setshader( "white", 16, 16 );
             var_11.alignx = "left";
             var_11.aligny = "bottom";
             var_11.alpha = 1;
@@ -1582,7 +1582,7 @@ debuggoalpos()
 {
     for (;;)
     {
-        var_0 = _func_0D6();
+        var_0 = getaiarray();
         common_scripts\utility::array_thread( var_0, ::view_goal_pos );
         wait 0.05;
     }
@@ -1793,10 +1793,10 @@ chasecam_onent( var_0 )
     level notify( "new_chasecam" );
     level endon( "new_chasecam" );
     var_0 endon( "death" );
-    level.player _meth_804F();
-    level.player _meth_8080( level.chase_cam_ent, "tag_origin", 2, 0.5, 0.5 );
+    level.player unlink();
+    level.player playerlinktoblend( level.chase_cam_ent, "tag_origin", 2, 0.5, 0.5 );
     wait 2;
-    level.player _meth_807D( level.chase_cam_ent, "tag_origin", 1, 180, 180, 180, 180 );
+    level.player playerlinktodelta( level.chase_cam_ent, "tag_origin", 1, 180, 180, 180, 180 );
 
     for (;;)
     {
@@ -1813,7 +1813,7 @@ chasecam_onent( var_0 )
         var_2 = level.player getangles();
         var_3 = anglestoforward( var_2 );
         var_3 *= -200;
-        level.chase_cam_ent _meth_82AE( var_1 + var_3, 0.2 );
+        level.chase_cam_ent moveto( var_1 + var_3, 0.2 );
     }
 }
 
@@ -1861,8 +1861,8 @@ draw_dot_for_guy()
 {
     var_0 = level.player getangles();
     var_1 = anglestoforward( var_0 );
-    var_2 = level.player _meth_80A8();
-    var_3 = self _meth_80A8();
+    var_2 = level.player geteye();
+    var_3 = self geteye();
     var_4 = vectortoangles( var_3 - var_2 );
     var_5 = anglestoforward( var_4 );
     var_6 = vectordot( var_5, var_1 );
@@ -1881,7 +1881,7 @@ interactive_warnings()
         var_2.destructible_type = "explodable_barrel";
         var_3 = var_2.model + "2";
         precachemodel( var_3 );
-        var_2 _meth_80B1( var_3 );
+        var_2 setmodel( var_3 );
 
         if ( isdefined( var_2.target ) )
         {

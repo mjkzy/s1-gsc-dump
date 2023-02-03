@@ -840,7 +840,7 @@ play_training_s1_joker_patrol_approaching()
     level.joker maps\_utility::dialogue_queue( "rec_jkr_patrolapproachinggetdown" );
     wait 4;
 
-    if ( level.player _meth_817C() != "prone" )
+    if ( level.player getstance() != "prone" )
         level.joker maps\_utility::dialogue_queue( "rec_jkr_hitthedeck" );
 }
 
@@ -1217,7 +1217,7 @@ play_shooting_range_dialog1()
 play_shooting_range_dialog2()
 {
     common_scripts\utility::flag_wait( "flag_vo_shooting_range_02" );
-    var_0 = level.player _meth_830C();
+    var_0 = level.player getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
@@ -1832,7 +1832,7 @@ play_training_s2_gideon_smart_grenades()
     common_scripts\utility::flag_wait( "flag_vo_training_s2_gideon_smart_grenades" );
     wait 1;
 
-    if ( level.player _meth_82F9( level.player _meth_82CE()[1] ) > 0 )
+    if ( level.player setweaponammostock( level.player getweaponslistoffhands()[1] ) > 0 )
         level.gideon maps\_utility::dialogue_queue( "rec_gdn_useyoursmartgrenades" );
 }
 

@@ -34,14 +34,6 @@ main()
 scriptpatchclip()
 {
     thread treepatchclip();
-    thread rockpillarpatchclip();
-    thread rocklumppatchclip();
-}
-
-rocklumppatchclip()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 102, -933, 1093 ), ( 0, 326.6, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 102, -933, 1349 ), ( 0, 326.6, 0 ) );
 }
 
 treepatchclip()
@@ -57,24 +49,6 @@ treepatchclip()
     }
 }
 
-rockpillarpatchclip()
-{
-    stackclip( ( 0, 10, 0 ), ( 264, -1428, 1092 ), 256, "patchclip_player_16_256_256", 3 );
-    stackclip( ( 0, 330, 0 ), ( 64, -1396, 1092 ), 256, "patchclip_player_16_256_256", 3 );
-    stackclip( ( 0, 80, 0 ), ( 184, -1300, 1028 ), 128, "patchclip_player_16_128_128", 6 );
-}
-
-stackclip( var_0, var_1, var_2, var_3, var_4 )
-{
-    var_5 = 0;
-
-    for ( var_6 = 0; var_6 < var_4; var_6++ )
-    {
-        maps\mp\_utility::spawnpatchclip( var_3, var_1 + ( 0, 0, var_5 ), var_0 );
-        var_5 += var_2;
-    }
-}
-
 instinctcustomospfunc()
 {
     level.orbitalsupportoverrides.spawnheight = 9615;
@@ -85,12 +59,12 @@ instinctcustomospfunc()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 _meth_82FD( "r_tonemap", "2", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
+            var_0 setclientdvars( "r_tonemap", "2", "r_tonemapLockAutoExposureAdjust", "0", "r_tonemapAutoExposureAdjust", "0" );
         }
     }
 }
@@ -108,10 +82,10 @@ river_drilling_animation()
     var_2 show();
     var_3 show();
     wait 0.4;
-    var_0 _meth_804D( self, "poundee", ( 75, 0, 400 ), ( 0, 0, 0 ) );
-    var_1 _meth_804D( self, "poundee", ( 75, 0, 400 ), ( 90, 0, 90 ) );
-    var_2 _meth_804D( self, "tag_origin", ( 0, 0, 100 ), ( 0, 0, 0 ) );
-    var_3 _meth_804D( self, "tag_origin", ( 0, 0, -100 ), ( 270, 180, 90 ) );
+    var_0 linkto( self, "poundee", ( 75, 0, 400 ), ( 0, 0, 0 ) );
+    var_1 linkto( self, "poundee", ( 75, 0, 400 ), ( 90, 0, 90 ) );
+    var_2 linkto( self, "tag_origin", ( 0, 0, 100 ), ( 0, 0, 0 ) );
+    var_3 linkto( self, "tag_origin", ( 0, 0, -100 ), ( 270, 180, 90 ) );
     common_scripts\utility::noself_delaycall( 1, ::playfxontag, common_scripts\utility::getfx( "diesel_drill_smk_loop" ), var_0, "tag_origin" );
     wait 0.1;
 
@@ -180,5 +154,5 @@ generator_fans()
     var_0 = getentarray( "generator_fans", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8279( "ins_generator_fan" );
+        var_2 scriptmodelplayanim( "ins_generator_fan" );
 }

@@ -507,7 +507,7 @@ init_pcap_vo()
         init_pcap_vo_outro();
         init_pcap_vo_bigm();
     }
-    else if ( _func_21E( "sanfran_intro_tr" ) )
+    else if ( istransientloaded( "sanfran_intro_tr" ) )
     {
         init_pcap_vo_intro();
         level waittill( "tff_transition_intro_to_outro" );
@@ -515,7 +515,7 @@ init_pcap_vo()
         level waittill( "tff_transition_outro_to_bigm" );
         init_pcap_vo_bigm();
     }
-    else if ( _func_21E( "sanfran_outro_tr" ) )
+    else if ( istransientloaded( "sanfran_outro_tr" ) )
     {
         if ( level.start_point == "intro" )
         {
@@ -528,7 +528,7 @@ init_pcap_vo()
         level waittill( "tff_transition_outro_to_bigm" );
         init_pcap_vo_bigm();
     }
-    else if ( _func_21E( "sanfran_bigm_tr" ) )
+    else if ( istransientloaded( "sanfran_bigm_tr" ) )
         init_pcap_vo_bigm();
 }
 

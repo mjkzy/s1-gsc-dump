@@ -67,11 +67,11 @@ add_agents_to_game()
 {
     level endon( "game_ended" );
     level waittill( "connected", var_0 );
-    var_1 = _func_1FB();
+    var_1 = getmaxagents();
 
     while ( level.agentarray.size < var_1 )
     {
-        var_2 = _func_16C();
+        var_2 = addagent();
 
         if ( !isdefined( var_2 ) )
         {

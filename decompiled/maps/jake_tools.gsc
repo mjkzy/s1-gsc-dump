@@ -6,7 +6,7 @@ create_overlay_element( var_0, var_1 )
     var_2 = newhudelem();
     var_2.x = 0;
     var_2.y = 0;
-    var_2 _meth_80CC( var_0, 640, 480 );
+    var_2 setshader( var_0, 640, 480 );
     var_2.alignx = "left";
     var_2.aligny = "top";
     var_2.sort = 1;
@@ -20,10 +20,10 @@ create_overlay_element( var_0, var_1 )
 hide_geo()
 {
     self hide();
-    self _meth_82BF();
+    self notsolid();
 
     if ( self.spawnflags & 1 )
-        self _meth_8058();
+        self connectpaths();
 }
 
 hideall( var_0 )
@@ -45,10 +45,10 @@ hideall( var_0 )
                 break;
             case "script_brushmodel":
                 var_2 hide();
-                var_2 _meth_82BF();
+                var_2 notsolid();
 
                 if ( var_2.spawnflags & 1 )
-                    var_2 _meth_8058();
+                    var_2 connectpaths();
 
                 break;
             case "trigger_multiple_flag_looking":
@@ -130,9 +130,9 @@ wait_for_level_notify_or_timeout( var_0, var_1 )
 get_ai_within_radius( var_0, var_1, var_2 )
 {
     if ( isdefined( var_2 ) )
-        var_3 = _func_0D6( var_2 );
+        var_3 = getaiarray( var_2 );
     else
-        var_3 = _func_0D6();
+        var_3 = getaiarray();
 
     var_4 = [];
 
@@ -155,9 +155,9 @@ ai_stun( var_0 )
 
 start_teleport( var_0 )
 {
-    self _meth_81C6( var_0.origin, var_0.angles );
-    self _meth_81A6( self.origin );
-    self _meth_81A5( var_0 );
+    self forceteleport( var_0.origin, var_0.angles );
+    self setgoalpos( self.origin );
+    self setgoalnode( var_0 );
 }
 
 waittill_player_in_range( var_0, var_1 )
@@ -192,9 +192,9 @@ vehicle_go_to_end_and_delete( var_0, var_1 )
     if ( var_1 == "truck" )
         var_4 truck_headlights_on();
 
-    var_4 _meth_827D( var_2 );
-    var_4 _meth_827F();
-    var_4 _meth_8283( 23, 20 );
+    var_4 attachpath( var_2 );
+    var_4 startpath();
+    var_4 vehicle_setspeed( 23, 20 );
     var_4 waittill( "reached_end_node" );
     var_4 delete();
 }
@@ -214,23 +214,23 @@ set_goalvolume( var_0, var_1 )
 
     var_2 = getnode( var_1.target, "targetname" );
     self.goalvolume = var_1;
-    self _meth_81A5( var_2 );
+    self setgoalnode( var_2 );
     self.goalradius = var_2.radius;
-    self _meth_81A8( var_1 );
+    self setgoalvolume( var_1 );
 }
 
 waittill_touching_entity( var_0 )
 {
     self endon( "death" );
 
-    while ( !self _meth_80A9( var_0 ) )
+    while ( !self istouching( var_0 ) )
         wait 0.05;
 }
 
 reset_goalvolume()
 {
     self endon( "death" );
-    self _meth_81A6( self.origin );
+    self setgoalpos( self.origin );
     self.goalvolume = undefined;
 }
 
@@ -281,7 +281,7 @@ smoke_detect()
         {
             if ( var_0[var_1].model == "projectile_us_smoke_grenade" )
             {
-                if ( var_0[var_1] _meth_80A9( self ) )
+                if ( var_0[var_1] istouching( self ) )
                 {
                     self.smokethrown = 1;
                     self notify( "smoke_has_been_thrown" );
@@ -355,7 +355,7 @@ aa_ai_functions()
 look_at_position( var_0 )
 {
     var_1 = vectortoangles( self.origin - var_0.origin );
-    self _meth_8169( var_1[1] );
+    self setpotentialthreat( var_1[1] );
 }
 
 set_threatbias( var_0 )
@@ -445,7 +445,7 @@ set_threatbiasgroup( var_0 )
         self.old_threatbiasgroupname = self.threatbiasgroupname;
 
     self.threatbiasgroupname = var_0;
-    self _meth_8177( var_0 );
+    self setthreatbiasgroup( var_0 );
 }
 
 reset_threatbiasgroup()
@@ -453,7 +453,7 @@ reset_threatbiasgroup()
     if ( isdefined( self.old_threatbiasgroupname ) )
     {
         self.threatbiasgroupname = self.old_threatbiasgroupname;
-        self _meth_8177( self.old_threatbiasgroupname );
+        self setthreatbiasgroup( self.old_threatbiasgroupname );
 
         if ( !threatbiasgroupexists( self.old_threatbiasgroupname ) )
         {
@@ -463,7 +463,7 @@ reset_threatbiasgroup()
     else
     {
         self.threatbiasgroupname = undefined;
-        self _meth_8177();
+        self setthreatbiasgroup();
     }
 
     self.old_threatbiasgroupname = undefined;
@@ -547,7 +547,7 @@ groupwarp( var_0, var_1 )
     for ( var_3 = 0; var_3 < var_0.size; var_3++ )
     {
         if ( isdefined( var_2[var_3] ) )
-            var_0[var_3] _meth_81C5( var_2[var_3].origin );
+            var_0[var_3] teleport( var_2[var_3].origin );
     }
 }
 
@@ -557,15 +557,15 @@ getaiarraytouchingvolume( var_0, var_1, var_2 )
         var_2 = getent( var_1, "targetname" );
 
     if ( var_0 == "all" )
-        var_3 = _func_0D6();
+        var_3 = getaiarray();
     else
-        var_3 = _func_0D6( var_0 );
+        var_3 = getaiarray( var_0 );
 
     var_4 = [];
 
     for ( var_5 = 0; var_5 < var_3.size; var_5++ )
     {
-        if ( var_3[var_5] _meth_80A9( var_2 ) )
+        if ( var_3[var_5] istouching( var_2 ) )
             var_4[var_4.size] = var_3[var_5];
     }
 
@@ -588,9 +588,9 @@ npcdelete( var_0, var_1, var_2, var_3 )
     var_5 = undefined;
 
     if ( var_1 == "all" )
-        var_5 = _func_0D6();
+        var_5 = getaiarray();
     else
-        var_5 = _func_0D6( var_1 );
+        var_5 = getaiarray( var_1 );
 
     if ( isdefined( var_3 ) )
     {
@@ -603,13 +603,13 @@ npcdelete( var_0, var_1, var_2, var_3 )
 
     for ( var_6 = 0; var_6 < var_5.size; var_6++ )
     {
-        if ( var_5[var_6] _meth_80A9( var_4 ) )
+        if ( var_5[var_6] istouching( var_4 ) )
         {
             var_5[var_6] invulnerable( 0 );
 
             if ( var_2 == 1 )
             {
-                var_5[var_6] _meth_8052( ( 0, 0, 0 ) );
+                var_5[var_6] kill( ( 0, 0, 0 ) );
                 continue;
             }
 
@@ -659,7 +659,7 @@ gotonode( var_0 )
     self endon( "death" );
     var_1 = getnode( var_0, "targetname" );
     setgoalradius( var_1.radius );
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     self waittill( "goal" );
     resetgoalradius();
 }
@@ -674,7 +674,7 @@ gotonodeanddelete( var_0 )
 
     self endon( "death" );
     var_1 = getnode( var_0, "targetname" );
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     setgoalradius( var_1.radius );
     self waittill( "goal" );
     self delete();
@@ -690,7 +690,7 @@ gotonodeandwait( var_0 )
 
     self endon( "death" );
     var_1 = getnode( var_0, "targetname" );
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     setgoalradius( var_1.radius );
     self waittill( "goal" );
     set_animname( "guy" );
@@ -702,19 +702,19 @@ forcetonode( var_0 )
 {
     self endon( "death" );
     var_1 = getnode( var_0, "targetname" );
-    self _meth_81A3( 1 );
-    self _meth_81A5( var_1 );
+    self pushplayer( 1 );
+    self setgoalnode( var_1 );
     self waittill( "goal" );
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     resetgoalradius();
 }
 
 setposture( var_0 )
 {
     if ( var_0 == "all" )
-        self _meth_81CA( "stand", "crouch", "prone" );
+        self allowedstances( "stand", "crouch", "prone" );
     else
-        self _meth_81CA( var_0 );
+        self allowedstances( var_0 );
 }
 
 invulnerable( var_0 )
@@ -742,7 +742,7 @@ killentity()
 
     self.allowdeath = 1;
     invulnerable( 0 );
-    self _meth_8052();
+    self kill();
 }
 
 gotovolume( var_0 )
@@ -750,8 +750,8 @@ gotovolume( var_0 )
     self endon( "death" );
     var_1 = getent( var_0, "targetname" );
     var_2 = getnode( var_1.target, "targetname" );
-    self _meth_81A5( var_2 );
-    self _meth_81A8( var_1 );
+    self setgoalnode( var_2 );
+    self setgoalvolume( var_1 );
     self.goalradius = var_2.radius;
 }
 
@@ -794,7 +794,7 @@ door_open( var_0, var_1, var_2 )
             radiusdamage( self.origin, 56, level.maxdetpackdamage, level.mindetpackdamage );
             break;
         case "kicked":
-            self _meth_82B7( -175, 0.5 );
+            self rotateyaw( -175, 0.5 );
             door_connectpaths( var_2 );
             break;
         case "kicked_down":
@@ -802,7 +802,7 @@ door_open( var_0, var_1, var_2 )
             door_connectpaths( var_2 );
             break;
         default:
-            self _meth_82B7( -175, 0.5 );
+            self rotateyaw( -175, 0.5 );
             door_connectpaths();
             break;
     }
@@ -814,13 +814,13 @@ door_open( var_0, var_1, var_2 )
 door_connectpaths( var_0 )
 {
     if ( self.classname == "script_brushmodel" )
-        self _meth_8058();
+        self connectpaths();
     else
     {
         var_1 = getent( self.target, "targetname" );
         var_1 hide();
-        var_1 _meth_82BF();
-        var_1 _meth_8058();
+        var_1 notsolid();
+        var_1 connectpaths();
     }
 }
 
@@ -828,12 +828,12 @@ door_fall_over()
 {
     var_0 = anglestoforward( self.angles );
     var_1 = ( var_0[0] * 20, var_0[1] * 20, var_0[2] * 20 );
-    self _meth_82AE( self.origin + var_1, 0.5, 0, 0.5 );
-    self _meth_82B6( 90, 0.45, 0.4 );
+    self moveto( self.origin + var_1, 0.5, 0, 0.5 );
+    self rotatepitch( 90, 0.45, 0.4 );
     wait 0.449;
-    self _meth_82B6( -4, 0.2, 0, 0.2 );
+    self rotatepitch( -4, 0.2, 0, 0.2 );
     wait 0.2;
-    self _meth_82B6( 4, 0.15, 0.15 );
+    self rotatepitch( 4, 0.15, 0.15 );
 }
 
 debug_circle( var_0, var_1, var_2, var_3, var_4, var_5 )

@@ -1087,10 +1087,10 @@ aud_gun_throw_logic( var_0 )
 {
     level notify( "stop_mumbling" );
     var_1 = soundscripts\_snd_playsound::snd_play_at( "scn_autopsy_doc_gun", ( 6853, -14726, -1551 ) );
-    var_1 _meth_82AE( ( 6564, -14805, -1567 ), 0.8 );
+    var_1 moveto( ( 6564, -14805, -1567 ), 0.8 );
     var_2 = soundscripts\_snd_playsound::snd_play_at( "scn_autopsy_doc_gun_2", ( 6445, -14871, -1626 ) );
     wait 0.541;
-    var_2 _meth_82AE( ( 6162, -14851, -1612 ), 1.5 );
+    var_2 moveto( ( 6162, -14851, -1612 ), 1.5 );
     wait 4;
     thread start_autopsy_alarm();
 }
@@ -1217,19 +1217,19 @@ aud_incin_cart_push()
 {
     if ( isdefined( level.aud.cart_first_time ) && level.aud.cart_first_time == 1 )
     {
-        level.aud.cart_push2 _meth_806F( 1, 0 );
+        level.aud.cart_push2 scalevolume( 1, 0 );
         level.aud.cart_push soundscripts\_snd_playsound::snd_play_linked( "scn_incin_cart_start" );
         level.aud.cart_push2 soundscripts\_snd_playsound::snd_play_loop( "scn_incin_cart_start_middle" );
         level.aud.cart_first_time = 0;
     }
     else
-        level.aud.cart_push2 _meth_806F( 1, 0 );
+        level.aud.cart_push2 scalevolume( 1, 0 );
 }
 
 aud_incin_cart_push_stop()
 {
     if ( isdefined( level.aud.cart_push2 ) )
-        level.aud.cart_push2 _meth_806F( 0, 0 );
+        level.aud.cart_push2 scalevolume( 0, 0 );
 }
 
 aud_incin_cart_done()
@@ -1243,10 +1243,10 @@ aud_incin_cart_done()
 aud_stop_sound_logic()
 {
     wait 0.4;
-    level.aud.cart_push2 _meth_806F( 0, 1 );
+    level.aud.cart_push2 scalevolume( 0, 1 );
     level.aud.cart soundscripts\_snd_playsound::snd_play_2d( "scn_incin_cart_end" );
     wait 1.4;
-    level.aud.cart_push2 _meth_80AB();
+    level.aud.cart_push2 stoploopsound();
     wait 0.1;
     level.aud.cart_push2 delete();
 }
@@ -1264,13 +1264,13 @@ incineration_escape_logic()
 
 snd_scalevo_flame_logic()
 {
-    level.aud.incin_burst _meth_806F( 0, 5 );
+    level.aud.incin_burst scalevolume( 0, 5 );
     wait 1;
-    level.aud.incin_burst _meth_80AC();
+    level.aud.incin_burst stopsounds();
     soundscripts\_audio_zone_manager::azm_start_zone( "incinerator_underground", 0.5 );
-    level.aud.incin_close _meth_806F( 0, 1 );
+    level.aud.incin_close scalevolume( 0, 1 );
     wait 1;
-    level.aud.incin_close _meth_80AB();
+    level.aud.incin_close stoploopsound();
     wait 0.1;
     level.aud.incin_close delete();
 }
@@ -1278,7 +1278,7 @@ snd_scalevo_flame_logic()
 aud_incin_flame_loop_2()
 {
     level.aud.incin_burst2 soundscripts\_snd_playsound::snd_play_linked( "incineration_burst_escape_end" );
-    level.aud.incin_burst2 _meth_806F( 0, 0 );
+    level.aud.incin_burst2 scalevolume( 0, 0 );
     thread aud_incin_flame_logic_first_burst();
 
     while ( level.aud.flame_loop2 == 0 )
@@ -1293,7 +1293,7 @@ aud_incin_flame_loop_2()
 aud_incin_flame_logic_first_burst()
 {
     wait 0.8;
-    level.aud.incin_burst2 _meth_806F( 1, 2 );
+    level.aud.incin_burst2 scalevolume( 1, 2 );
 }
 
 aud_incin_pipe_grab()
@@ -1311,9 +1311,9 @@ aud_incin_pipe_grab()
 scale_flame_sound_logic2()
 {
     wait 1;
-    level.aud.incin_burst2 _meth_806F( 0, 2 );
+    level.aud.incin_burst2 scalevolume( 0, 2 );
     wait 2;
-    level.aud.incin_burst2 _meth_80AC();
+    level.aud.incin_burst2 stopsounds();
 }
 
 aud_incin_pipe_burst()
@@ -1325,7 +1325,7 @@ aud_incin_pipe_burst()
 
 aud_incin_amb_kill()
 {
-    level.incin_amb _meth_80AB();
+    level.incin_amb stoploopsound();
     wait 0.1;
     level.incin_amb delete();
 }
@@ -1359,7 +1359,7 @@ aud_engine_wait()
 aud_heli_battle_flyover()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     wait 1.6;
     var_0 thread soundscripts\_snd_playsound::snd_play_linked( "scn_cap_bh_heli_flyover" );
     wait 11.0;
@@ -1369,7 +1369,7 @@ aud_heli_battle_flyover()
 aud_heli_manticore_flyover()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 thread soundscripts\_snd_playsound::snd_play_linked( "scn_cap_manticore_heli_flyover" );
     soundscripts\_snd_playsound::snd_play_at( "scn_cap_manticore_flyover_rattle_r", ( 11884, -13713, -1808 ) );
     soundscripts\_snd_playsound::snd_play_at( "scn_cap_manticore_flyover_rattle_l", ( 11846, -13514, -1808 ) );
@@ -1391,7 +1391,7 @@ aud_cap_escape_to_heli_truck_1()
             if ( !isdefined( var_1 ) )
                 return;
 
-            if ( _func_294( var_1 ) )
+            if ( isremovedentity( var_1 ) )
                 return;
 
             if ( var_1 maps\_vehicle::isvehicle() )
@@ -1417,7 +1417,7 @@ aud_cap_escape_to_heli_truck_2()
             if ( !isdefined( var_1 ) )
                 return;
 
-            if ( _func_294( var_1 ) )
+            if ( isremovedentity( var_1 ) )
                 return;
 
             if ( var_1 maps\_vehicle::isvehicle() )
@@ -2581,7 +2581,7 @@ alarm_start_loops()
     foreach ( var_5 in var_0.loops )
     {
         var_5.ent = spawn( "script_origin", var_0.emitter_origin );
-        var_5.ent _meth_806F( var_3, 0 );
+        var_5.ent scalevolume( var_3, 0 );
         var_5.ent soundscripts\_snd_playsound::snd_play_loop( var_5.alias );
     }
 
@@ -2601,7 +2601,7 @@ alarm_stop_loops()
 
         if ( isdefined( var_4 ) )
         {
-            var_4 _meth_806F( 0, var_0.loop_fade_time );
+            var_4 scalevolume( 0, var_0.loop_fade_time );
             var_1[var_1.size] = var_4;
         }
     }
@@ -2628,8 +2628,8 @@ alarm_update_loops()
         {
             if ( isdefined( var_2.ent ) )
             {
-                var_3 = _func_246( var_0.curr_dist, var_2.env );
-                var_2.ent _meth_806F( var_3 * var_0.volume, var_0.update_rate );
+                var_3 = piecewiselinearlookup( var_0.curr_dist, var_2.env );
+                var_2.ent scalevolume( var_3 * var_0.volume, var_0.update_rate );
             }
         }
     }

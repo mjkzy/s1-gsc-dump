@@ -106,7 +106,7 @@ killedplayer( var_0, var_1, var_2, var_3, var_4 )
                 self.modifiers["cooking"] = 1;
         }
 
-        if ( _func_1DF( var_2 ) == "primary" )
+        if ( weaponinventorytype( var_2 ) == "primary" )
         {
             self.segments["killDistanceTotal"] += distance2d( self.origin, var_1.origin );
             self.segments["killDistanceCount"]++;
@@ -395,7 +395,7 @@ practiceroundkillevent( var_0, var_1, var_2, var_3 )
     var_4 = 0.5;
 
     if ( !isdefined( self.best_pr_kills ) )
-        self.best_pr_kills = self _meth_8226( "bests", "kills" );
+        self.best_pr_kills = self getcommonplayerdata( "bests", "kills" );
 
     if ( self.best_pr_kills > 0 && self.kills > self.best_pr_kills )
     {
@@ -529,12 +529,12 @@ checkhighjumpevents( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_4 ) && isdefined( var_4.ch_crossbow_player_jumping ) )
         var_5 = var_4.ch_crossbow_player_jumping;
     else
-        var_5 = self _meth_83B4();
+        var_5 = self ishighjumping();
 
     if ( isdefined( var_4 ) && isdefined( var_4.ch_crossbow_victim_jumping ) )
         var_6 = var_4.ch_crossbow_victim_jumping;
     else
-        var_6 = var_0 _meth_83B4();
+        var_6 = var_0 ishighjumping();
 
     if ( var_5 && var_6 )
         airtoairevent( var_1, var_2, var_3 );
@@ -1543,7 +1543,7 @@ updaterecentkills( var_0, var_1 )
     self.recentkillcount++;
     var_2 = 0;
 
-    if ( self _meth_8340() >= 0.2 )
+    if ( self playerads() >= 0.2 )
         var_2 = 1;
 
     wait 2.0;

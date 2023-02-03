@@ -397,7 +397,7 @@ confroombodyscan( var_0 )
 confroomexplosivetrap( var_0 )
 {
     common_scripts\utility::flag_set( "FlagConfRoomExplosion" );
-    level.player _meth_8300( 0 );
+    level.player allowads( 0 );
     var_1 = maps\_utility::get_living_ai( "Infiltrator1", "script_noteworthy" );
 
     if ( isdefined( var_1 ) )
@@ -440,7 +440,7 @@ confroomexplosivetrap( var_0 )
     level.player shellshock( "greece_drone_slowview", 0.5 );
     maps\greece_conf_center::rumblesniperdronenearexplosion();
     maps\greece_conf_center::confroomexplosiondronereaction();
-    level.player _meth_8300( 1 );
+    level.player allowads( 1 );
     common_scripts\utility::flag_clear( "FlagConfRoomExplosion" );
 }
 
@@ -453,8 +453,8 @@ stealthkillvictim( var_0 )
 {
     var_0 maps\greece_code::setalertoutline();
 
-    if ( _func_0A3( var_0 ) )
-        _func_09B( var_0 );
+    if ( target_istarget( var_0 ) )
+        target_remove( var_0 );
 }
 
 removetruckguardoutline( var_0 )
@@ -465,7 +465,7 @@ removetruckguardoutline( var_0 )
         var_1 = maps\_utility::get_living_ai( "GatePlayerTarget2", "script_noteworthy" );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_83FB();
+        var_1 hudoutlinedisable();
 }
 
 gatebreachkill1( var_0 )
@@ -487,7 +487,7 @@ gatebreachkill1( var_0 )
     if ( isdefined( var_1 ) )
     {
         var_1.bistargeted = 1;
-        var_1 _meth_8052();
+        var_1 kill();
     }
 }
 
@@ -510,7 +510,7 @@ gatebreachkill2( var_0 )
     if ( isdefined( var_1 ) )
     {
         var_1.bistargeted = 1;
-        var_1 _meth_8052();
+        var_1 kill();
     }
 }
 
@@ -533,7 +533,7 @@ gatebreachkillburke( var_0 )
     if ( isdefined( var_1 ) )
     {
         var_1.bistargeted = 1;
-        var_1 _meth_8052();
+        var_1 kill();
     }
 }
 
@@ -551,7 +551,7 @@ truckstashweaponswap( var_0 )
 {
     var_1 = common_scripts\utility::getstruct( "gunSpot", "targetname" );
     var_2 = spawn( "script_model", var_1.origin );
-    var_2 _meth_80B1( "npc_bal27_nocamo" );
+    var_2 setmodel( "npc_bal27_nocamo" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
     var_0 = maps\_utility::get_living_ai( "GatePlayerTarget2", "script_noteworthy" );

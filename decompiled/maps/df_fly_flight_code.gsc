@@ -14,9 +14,9 @@ flight_code_main()
     level.default_player_dist = 2000;
     level.flares_active = 0;
     level.friend_jets = [];
-    precacheitem( "s19_cannon_player_test" );
-    precacheitem( "s19_cannon_AI" );
-    precacheitem( "sidewinder_atlas_jet" );
+    precacheshellshock( "s19_cannon_player_test" );
+    precacheshellshock( "s19_cannon_AI" );
+    precacheshellshock( "sidewinder_atlas_jet" );
     precachemodel( "vehicle_s19" );
     precachemodel( "vfx_atlas_fighter_jet_dest_body_01" );
     precachemodel( "vfx_atlas_fighter_jet_dest_wing_lt" );
@@ -100,7 +100,7 @@ flight_code_main()
     precacheshader( "hud_plane_mg_button" );
     precacheshader( "hud_plane_missile_button" );
     precacheshader( "hud_plane_thrust_button" );
-    _func_080();
+    precachedigitaldistortcodeassets();
 }
 
 change_optimal_flight_distance( var_0 )
@@ -122,9 +122,9 @@ set_optimal_flight_dist( var_0, var_1 )
 
 steering_hack()
 {
-    _func_0D3( "vehPlanePathAllowance", 45 );
+    setsaveddvar( "vehPlanePathAllowance", 45 );
     common_scripts\utility::flag_wait( "go_wide" );
-    _func_0D3( "vehPlanePathAllowance", 60.0 );
+    setsaveddvar( "vehPlanePathAllowance", 60.0 );
 }
 
 flight_code_start( var_0, var_1 )
@@ -132,13 +132,13 @@ flight_code_start( var_0, var_1 )
     if ( !isdefined( var_0 ) )
         var_0 = "player_mig";
 
-    _func_0D3( "vehPlanePathAllowance", 60.0 );
+    setsaveddvar( "vehPlanePathAllowance", 60.0 );
     level.plane = getent( var_0, "targetname" );
     level.plane maps\_vehicle::godon();
     level.plane maps\_utility::ent_flag_clear( "engineeffects" );
     level.plane.lock_targets = [];
     level.plane.bomb_tag = level.plane common_scripts\utility::spawn_tag_origin();
-    level.plane.bomb_tag _meth_804D( level.plane, "tag_origin" );
+    level.plane.bomb_tag linkto( level.plane, "tag_origin" );
     thread init_jet_crash_points();
     var_2 = getentarray( "player_vehicle", "script_noteworthy" );
 
@@ -174,7 +174,7 @@ target_cycleshader( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         var_3 = 0.5;
 
-    while ( _func_0A3( var_0 ) )
+    while ( target_istarget( var_0 ) )
     {
         target_setshadersafe( var_0, var_1 );
         wait(var_3);
@@ -319,28 +319,28 @@ physics_crash( var_0 )
 
     var_1 = spawn( "script_model", var_0["org"] );
     var_1.angles = var_0["ang"];
-    var_1 _meth_80B1( "vehicle_mig29" );
+    var_1 setmodel( "vehicle_mig29" );
     var_1 thread add_damage_fx();
     var_2 = 10;
     var_3 = var_0["velocity"] * var_2;
     var_4 = vectorlerp( var_0["org"], var_0["point"], 0.5 );
-    var_1 _meth_8276( var_4, var_3 );
+    var_1 physicslaunchserver( var_4, var_3 );
     delete_on_crash( var_1 );
 }
 
 burn_and_crash( var_0 )
 {
-    if ( !isdefined( self ) || _func_294( self ) )
+    if ( !isdefined( self ) || isremovedentity( self ) )
         return;
 
-    if ( _func_0A3( self ) )
-        _func_09B( self );
+    if ( target_istarget( self ) )
+        target_remove( self );
 
     level.enemy_units = common_scripts\utility::array_remove( level.enemy_units, self );
     var_1 = vectornormalize( self.origin - var_0["point"] );
     var_2 = var_1 * 50 * 17.6;
     var_3 = ( 0, 0, 100 );
-    self _meth_83B6( var_2, var_3 );
+    self vehicle_addvelocity( var_2, var_3 );
     var_4 = choose_crash_path();
     var_5 = 0;
     maps\_utility::ent_flag_clear( "engineeffects" );
@@ -351,7 +351,7 @@ burn_and_crash( var_0 )
         playfx( common_scripts\utility::getfx( "missile_explode" ), self.origin, anglestoforward( self.angles ) * -1 );
         var_4.claimed = 1;
         self notify( "newpath" );
-        self _meth_8229( var_4.origin, self.veh_pathspeed );
+        self vehicledriveto( var_4.origin, self.veh_pathspeed );
 
         if ( isdefined( var_4.target ) )
             follow_crash_path( var_4 );
@@ -413,11 +413,11 @@ follow_crash_path( var_0 )
             if ( isdefined( var_0.script_noteworthy ) && var_0.script_noteworthy == "drag" && !is_true( self.dragging ) )
             {
                 self.dragging = 1;
-                self _meth_8444();
+                self cancelaimove();
                 self hide();
                 var_1 = spawn( "script_model", self.origin );
                 var_1.angles = self.angles;
-                var_1 _meth_80B1( self.model );
+                var_1 setmodel( self.model );
                 var_1 show();
                 stopfxontag( common_scripts\utility::getfx( "bagh_aircraft_damage_fire_trail" ), self, "tag_origin" );
                 playfx( common_scripts\utility::getfx( "canyon_jet_impact" ), var_1.origin, anglestoforward( var_1.angles ) * -1 );
@@ -428,8 +428,8 @@ follow_crash_path( var_0 )
                 {
                     var_0 = getvehiclenode( var_0.target, "targetname" );
                     var_3 = distance( var_1.origin, var_0.origin ) / var_2 * 17.6;
-                    var_1 _meth_82AE( var_0.origin, var_3 );
-                    var_1 _meth_82B5( var_0.angles, var_3 );
+                    var_1 moveto( var_0.origin, var_3 );
+                    var_1 rotateto( var_0.angles, var_3 );
                     wait(var_3);
                 }
 
@@ -445,7 +445,7 @@ follow_crash_path( var_0 )
             var_0 = getvehiclenode( var_0.target, "targetname" );
 
             if ( isdefined( var_0 ) )
-                self _meth_8229( var_0.origin, self.veh_pathspeed );
+                self vehicledriveto( var_0.origin, self.veh_pathspeed );
             else
                 break;
         }
@@ -504,7 +504,7 @@ check_health( var_0 )
     var_1 = [];
     var_1["org"] = self.origin;
     var_1["ang"] = self.angles;
-    var_1["velocity"] = self _meth_8287();
+    var_1["velocity"] = self vehicle_getvelocity();
     var_1["point"] = self.origin;
     var_1["direction_vec"] = self.angles;
     var_2 = 0;
@@ -525,9 +525,9 @@ check_health( var_0 )
             if ( var_8 == level.player )
             {
                 if ( var_11 == "MOD_EXPLOSIVE" )
-                    self _meth_8051( var_7, var_10, var_8 );
+                    self dodamage( var_7, var_10, var_8 );
                 else
-                    self _meth_8051( self.maxhealth / 100, var_10, var_8 );
+                    self dodamage( self.maxhealth / 100, var_10, var_8 );
 
                 self playsound( "enemy_jet_mid_air_damage" );
             }
@@ -536,7 +536,7 @@ check_health( var_0 )
             var_1["point"] = var_10;
             var_1["org"] = self.origin;
             var_1["ang"] = self.angles;
-            var_1["velocity"] = self _meth_8287();
+            var_1["velocity"] = self vehicle_getvelocity();
 
             if ( !var_2 && self.health > self.healthbuffer )
             {
@@ -618,8 +618,8 @@ fly_think_constrained( var_0, var_1, var_2 )
 
     if ( self.default_player_dist != 0 )
     {
-        var_3 = level.plane _meth_8286();
-        self _meth_8284( var_3 * 0.75, 100, 50 );
+        var_3 = level.plane vehicle_getspeed();
+        self vehicle_setspeedimmediate( var_3 * 0.75, 100, 50 );
     }
 
     for (;;)
@@ -644,7 +644,7 @@ fly_think_constrained( var_0, var_1, var_2 )
         else
             var_8 = var_7 - self.default_player_dist;
 
-        var_3 = var_0 _meth_8286();
+        var_3 = var_0 vehicle_getspeed();
         var_3 += randomfloatrange( -5.0, 5.0 );
         var_9 = 1.0;
         var_10 = 1.0;
@@ -701,7 +701,7 @@ fly_think_constrained( var_0, var_1, var_2 )
         }
 
         var_3 = clamp( var_3, 300, 800 );
-        self _meth_8283( var_3, 100, 50 );
+        self vehicle_setspeed( var_3, 100, 50 );
         wait 0.25;
     }
 }
@@ -718,9 +718,9 @@ fly_think_autopilot( var_0, var_1, var_2 )
         return;
     }
 
-    _func_0D3( "vehPlaneAiRollResponseRate", 0.1 );
-    _func_0D3( "vehPlaneAiPitchResponseRate", 0.1 );
-    _func_0D3( "vehPlaneAiYawResponseRate", 0.2 );
+    setsaveddvar( "vehPlaneAiRollResponseRate", 0.1 );
+    setsaveddvar( "vehPlaneAiPitchResponseRate", 0.1 );
+    setsaveddvar( "vehPlaneAiYawResponseRate", 0.2 );
     var_3 = 1;
     var_4 = 1;
     var_5 = getvehiclenode( self.target, "targetname" );
@@ -768,8 +768,8 @@ fly_think_autopilot( var_0, var_1, var_2 )
                     var_15 = vectornormalize( var_7 - self.origin );
                     var_16 = vectortoangles( var_15 );
                     var_16 = ( var_16[0], var_16[1], var_5.angles[2] );
-                    self _meth_827C( self.origin, var_16 );
-                    self _meth_83B5( var_15 * var_12.speed, ( 0, 0, 0 ) );
+                    self vehicle_teleport( self.origin, var_16 );
+                    self vehicle_setvelocity( var_15 * var_12.speed, ( 0, 0, 0 ) );
                     var_3 = 0;
                 }
 
@@ -782,15 +782,15 @@ fly_think_autopilot( var_0, var_1, var_2 )
                 else
                     var_20 = 55;
 
-                var_21 = var_0 _meth_8286() + var_20;
+                var_21 = var_0 vehicle_getspeed() + var_20;
                 var_21 = clamp( var_21, 50, 800 );
                 var_22 = var_9;
                 var_9 = var_7 + vectornormalize( var_9 - var_7 ) * var_13;
-                var_23 = project_perpendicular( var_9 - self.origin, self _meth_8287() );
+                var_23 = project_perpendicular( var_9 - self.origin, self vehicle_getvelocity() );
                 var_24 = var_23 * 2;
                 var_25 = var_7;
                 var_26 = vectorlerp( anglestoup( var_5.angles ), anglestoup( var_12.angles ), var_6 );
-                self _meth_8229( var_25, var_21, var_26 );
+                self vehicledriveto( var_25, var_21, var_26 );
                 waitframe();
             }
         }
@@ -854,7 +854,7 @@ debug_graph_draw( var_0 )
             var_6 = anglestoforward( var_5 );
             var_7 = anglestoright( var_5 ) * var_1 * 0.01;
             var_8 = anglestoup( var_5 ) * var_1 * 0.25;
-            var_9 = level.player _meth_80A8() + var_6 * var_1;
+            var_9 = level.player geteye() + var_6 * var_1;
         }
     }
 }
@@ -863,9 +863,9 @@ fly_think_autopilot_player( var_0 )
 {
     level endon( "end_canyon" );
     self endon( "death" );
-    _func_0D3( "vehPlaneAiRollResponseRate", 0.05 );
-    _func_0D3( "vehPlaneAiPitchResponseRate", 0.05 );
-    _func_0D3( "vehPlaneAiYawResponseRate", 0.1 );
+    setsaveddvar( "vehPlaneAiRollResponseRate", 0.05 );
+    setsaveddvar( "vehPlaneAiPitchResponseRate", 0.05 );
+    setsaveddvar( "vehPlaneAiYawResponseRate", 0.1 );
     var_1 = self;
     var_2 = 0;
     var_3 = self.origin;
@@ -878,7 +878,7 @@ fly_think_autopilot_player( var_0 )
             break;
 
         var_2 = 0;
-        var_6 = var_4 * self _meth_8286() * 17.6;
+        var_6 = var_4 * self vehicle_getspeed() * 17.6;
         var_6 = clamp( var_6, 1950, 7800 );
 
         while ( var_2 < 1 )
@@ -897,7 +897,7 @@ fly_think_autopilot_player( var_0 )
             if ( var_2 < 1 )
             {
                 var_8 = var_0;
-                self _meth_8229( var_3, var_8 );
+                self vehicledriveto( var_3, var_8 );
                 waitframe();
             }
         }
@@ -908,14 +908,14 @@ fly_think_formation( var_0 )
 {
     level endon( "end_canyon" );
     self endon( "death" );
-    _func_0D3( "vehPlaneAiRollResponseRate", 0.05 );
-    _func_0D3( "vehPlaneAiPitchResponseRate", 0.05 );
-    _func_0D3( "vehPlaneAiYawResponseRate", 0.1 );
+    setsaveddvar( "vehPlaneAiRollResponseRate", 0.05 );
+    setsaveddvar( "vehPlaneAiPitchResponseRate", 0.05 );
+    setsaveddvar( "vehPlaneAiYawResponseRate", 0.1 );
     var_1 = self.formation_pos;
 
     for (;;)
     {
-        var_2 = level.plane _meth_8286();
+        var_2 = level.plane vehicle_getspeed();
         var_3 = distance( var_1.origin, self.origin );
 
         if ( target_is_in_front( var_1 ) && var_3 > 1000 )
@@ -937,7 +937,7 @@ fly_think_formation( var_0 )
         else if ( !target_is_in_front( var_1 ) && var_3 < 500 )
             var_2 = var_2;
 
-        self _meth_8229( var_1.origin, var_2 );
+        self vehicledriveto( var_1.origin, var_2 );
         wait 0.1;
     }
 }
@@ -959,7 +959,7 @@ target_is_in_front( var_0, var_1 )
 
 is_in_lockon_bounds( var_0 )
 {
-    if ( _func_0A3( var_0 ) && _func_09F( var_0, level.player, 65, level.plane.lockon_fov ) )
+    if ( target_istarget( var_0 ) && target_isincircle( var_0, level.player, 65, level.plane.lockon_fov ) )
         return 1;
 
     return 0;
@@ -984,7 +984,7 @@ try_to_lock_on( var_0 )
     {
         var_5 = maps\_utility::get_dot( level.player.eye_origin, vectortoangles( level.player.reticle_origin - level.player.eye_origin ), var_0.origin );
 
-        if ( _func_0A3( var_0 ) && distancesquared( var_0.origin, level.player.origin ) <= 1600000000 && var_5 > var_2 )
+        if ( target_istarget( var_0 ) && distancesquared( var_0.origin, level.player.origin ) <= 1600000000 && var_5 > var_2 )
         {
             wait 0.05;
             continue;
@@ -1005,7 +1005,7 @@ try_to_dogfight( var_0 )
 
         if ( var_1 <= 150 )
         {
-            if ( _func_0A3( var_0 ) && _func_09F( var_0, level.player, 65, 130 ) )
+            if ( target_istarget( var_0 ) && target_isincircle( var_0, level.player, 65, 130 ) )
             {
                 var_2 = gettime();
 
@@ -1041,7 +1041,7 @@ switch_node_now( var_0, var_1 )
     var_0.attachedpath = undefined;
     var_0 notify( "newpath" );
     var_0 thread maps\_vehicle::vehicle_paths( var_1 );
-    var_0 _meth_827F( var_1 );
+    var_0 startpath( var_1 );
 }
 
 has_los( var_0 )
@@ -1049,7 +1049,7 @@ has_los( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0;
 
-    if ( bullettracepassed( level.player _meth_80A8() + anglestoforward( level.player _meth_8036() ) * 100, self.origin + ( 0, 0, var_0 ), 0, self ) )
+    if ( bullettracepassed( level.player geteye() + anglestoforward( level.player getgunangles() ) * 100, self.origin + ( 0, 0, var_0 ), 0, self ) )
         return 1;
 
     return 0;
@@ -1085,7 +1085,7 @@ player_targeting_think()
             else
                 var_5 = var_1;
 
-            if ( isdefined( var_5 ) && !_func_294( var_5 ) )
+            if ( isdefined( var_5 ) && !isremovedentity( var_5 ) )
             {
                 var_6 = try_to_lock_on( var_5 );
 
@@ -1171,24 +1171,24 @@ hud_target_think( var_0 )
             if ( !var_1 )
             {
                 target_setsafe( self );
-                _func_0A6( self, level.player );
+                target_hidefromplayer( self, level.player );
                 var_1 = 1;
             }
 
-            if ( _func_0A3( self ) )
+            if ( target_istarget( self ) )
             {
                 if ( var_2 )
-                    _func_0A7( self, level.player );
+                    target_showtoplayer( self, level.player );
 
                 target_setshadersafe( self, var_4 );
             }
         }
         else
         {
-            if ( _func_0A3( self ) )
+            if ( target_istarget( self ) )
             {
-                _func_0A6( self, level.player );
-                _func_09B( self );
+                target_hidefromplayer( self, level.player );
+                target_remove( self );
                 var_1 = 0;
                 var_2 = 0;
             }
@@ -1242,27 +1242,27 @@ plane_init()
     var_3 = var_2 + var_1 * 1500;
     self.missile_target = common_scripts\utility::spawn_tag_origin();
     self.missile_target.origin = var_3;
-    self.missile_target _meth_804D( self, "tag_origin" );
+    self.missile_target linkto( self, "tag_origin" );
     var_3 = var_2 + var_1 * 5000;
     self.fake_missile_target = common_scripts\utility::spawn_tag_origin();
     self.fake_missile_target.origin = var_3;
-    self.fake_missile_target _meth_804D( self, "tag_origin" );
+    self.fake_missile_target linkto( self, "tag_origin" );
     var_3 = var_2 + var_1 * -3000;
     self.fake_enemy_missile_spawn = common_scripts\utility::spawn_tag_origin();
     self.fake_enemy_missile_spawn.origin = var_3;
-    self.fake_enemy_missile_spawn _meth_804D( self, "tag_origin" );
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "a_pressed", "+gostand" );
-    level.player _meth_82DD( "b_pressed", "+stance" );
-    level.player _meth_82DD( "b_pressed", "+prone" );
-    level.player _meth_82DD( "b_pressed", "toggleprone" );
-    level.player _meth_82DD( "y_pressed", "weapnext" );
-    level.player _meth_82DD( "fire_guns", "+speed_throw" );
-    level.player _meth_82DD( "fire_guns", "+toggleads_throw" );
-    level.player _meth_82DD( "fire_guns", "+ads_akimbo_accessible" );
+    self.fake_enemy_missile_spawn linkto( self, "tag_origin" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "b_pressed", "+stance" );
+    level.player notifyonplayercommand( "b_pressed", "+prone" );
+    level.player notifyonplayercommand( "b_pressed", "toggleprone" );
+    level.player notifyonplayercommand( "y_pressed", "weapnext" );
+    level.player notifyonplayercommand( "fire_guns", "+speed_throw" );
+    level.player notifyonplayercommand( "fire_guns", "+toggleads_throw" );
+    level.player notifyonplayercommand( "fire_guns", "+ads_akimbo_accessible" );
 }
 
 debug_enemy_jets_die()
@@ -1272,7 +1272,7 @@ debug_enemy_jets_die()
 
 handle_evasive_controls()
 {
-    level.player _meth_82DD( "pop_flares", "+smoke" );
+    level.player notifyonplayercommand( "pop_flares", "+smoke" );
     waitframe();
 
     for (;;)
@@ -1321,13 +1321,13 @@ monitor_player_shooting()
         if ( common_scripts\utility::flag( "canyon_finished" ) )
             return;
 
-        level.player _meth_80AE( "damage_light" );
+        level.player playrumblelooponentity( "damage_light" );
         level.player.jethud["weapon_boresight"].alpha = 0.8;
 
         while ( level.player adsbuttonpressed( 1 ) && !common_scripts\utility::flag( "canyon_finished" ) )
             wait 0.05;
 
-        level.player _meth_80AF( "damage_light" );
+        level.player stoprumble( "damage_light" );
     }
 }
 
@@ -1453,8 +1453,8 @@ player_shooting_logic( var_0 )
 player_missile_firing_logic( var_0 )
 {
     level endon( "finale" );
-    var_0 _meth_82DD( "fire_missile", "+attack" );
-    var_0 _meth_82DD( "fire_missile", "+attack_akimbo_accessible" );
+    var_0 notifyonplayercommand( "fire_missile", "+attack" );
+    var_0 notifyonplayercommand( "fire_missile", "+attack_akimbo_accessible" );
 
     for (;;)
     {
@@ -1507,11 +1507,11 @@ re_target( var_0 )
 gun_sound()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.plane playsound( "s19_mgun_trigger_plr" );
-    var_0 _meth_8075( "s19_mgun_shot_lp_plr" );
+    var_0 playloopsound( "s19_mgun_shot_lp_plr" );
     common_scripts\utility::waittill_any( "gun_sound_stop", "finale" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
 
     if ( isdefined( level.plane ) )
         level.plane playsound( "s19_mgun_shot_lp_end_plr" );
@@ -1536,7 +1536,7 @@ print_distance_on_ent( var_0 )
         var_0.is_objective = 1;
         var_0.hudelements[0] = newclienthudelem( self );
         var_0.hudelements[0].positioninworld = 1;
-        var_0.hudelements[0] _meth_80CD( var_0 );
+        var_0.hudelements[0] settargetent( var_0 );
         var_0.hudelements[0].color = var_1;
         var_0.hudelements[0].alpha = var_2;
         var_0.hudelements[0].alignx = "center";
@@ -1544,7 +1544,7 @@ print_distance_on_ent( var_0 )
         var_0.hudelements[0].fontscale = var_3;
         var_0.hudelements[1] = newclienthudelem( self );
         var_0.hudelements[1].positioninworld = 1;
-        var_0.hudelements[1] _meth_80CD( var_0 );
+        var_0.hudelements[1] settargetent( var_0 );
         var_0.hudelements[1].color = var_1;
         var_0.hudelements[1].alpha = var_2;
         var_0.hudelements[1].alignx = "center";
@@ -1613,7 +1613,7 @@ monitor_missile_target( var_0 )
         wait 0.05;
 
     if ( isdefined( self ) && isdefined( var_0 ) )
-        self _meth_81D9( var_0 );
+        self missile_settargetent( var_0 );
 }
 
 offset_debug( var_0, var_1 )
@@ -1628,9 +1628,9 @@ offset_debug( var_0, var_1 )
     var_0.tags[1].origin = var_0 offset_position_from_tag( "up", "tag_origin", 256 );
     var_0.tags[2].origin = var_0 offset_position_from_tag( "down", "tag_origin", 256 );
     var_0.tags[3].origin = var_0 offset_position_from_tag( "left", "tag_origin", 256 );
-    var_0.tags[1] _meth_804D( var_0.tags[0], "tag_origin" );
-    var_0.tags[2] _meth_804D( var_0.tags[0], "tag_origin" );
-    var_0.tags[3] _meth_804D( var_0.tags[0], "tag_origin" );
+    var_0.tags[1] linkto( var_0.tags[0], "tag_origin" );
+    var_0.tags[2] linkto( var_0.tags[0], "tag_origin" );
+    var_0.tags[3] linkto( var_0.tags[0], "tag_origin" );
     var_0 thread rotate_missile_targets();
     return var_0;
 }
@@ -1669,7 +1669,7 @@ move_target_for_squirly_effect( var_0 )
     var_1 = var_0 common_scripts\utility::spawn_tag_origin();
     self.tag_targ = var_1;
     self.bomb_target = var_0;
-    self _meth_81D9( var_1 );
+    self missile_settargetent( var_1 );
     thread make_squirly_path( var_1, var_0 );
     var_2 = ( var_0.origin[0], var_0.origin[1], level.player.origin[2] );
     var_3 = var_0.origin;
@@ -1701,7 +1701,7 @@ make_squirly_path( var_0, var_1 )
         var_8 = randomfloatrange( var_7 * ( var_5 * -1 ), var_7 * var_5 );
         var_9 = randomfloatrange( var_7 * ( var_5 * -1 ), var_7 * var_5 );
         var_10 = randomfloatrange( var_7 * ( var_5 * -1 ), var_7 * var_5 );
-        var_0 _meth_82AE( var_3 + ( var_8, var_9, var_10 ), 0.25 );
+        var_0 moveto( var_3 + ( var_8, var_9, var_10 ), 0.25 );
         var_7 = distance( self.origin, var_3 );
         wait 0.25;
     }
@@ -1816,9 +1816,9 @@ spawn_cbdr_missile( var_0, var_1, var_2 )
 
     var_3.origin -= ( 0, 0, 50 );
     var_3.angles = get_plane_gun_angles();
-    var_3.velocity = self _meth_8287();
+    var_3.velocity = self vehicle_getvelocity();
     var_3.target_entity = var_0;
-    var_3 _meth_80B1( "projectile_sidewinder_missile" );
+    var_3 setmodel( "projectile_sidewinder_missile" );
     playfxontag( common_scripts\utility::getfx( "missile_trail" ), var_3, "tag_origin" );
     var_3 thread cbdr_missile_think( var_1 );
     thread reload_ammo( var_2, 3 );
@@ -2045,16 +2045,16 @@ monitor_plane_speed()
 
     for (;;)
     {
-        var_2 = self _meth_8286();
-        _func_0D3( "vehPlaneControlForceReferenceSpeed", var_2 );
-        _func_0D3( "vehPlaneMaxControlForceScale", 150 );
-        _func_0D3( "vehPlaneMaxControlForcePitch", 0.8 );
-        _func_0D3( "vehPlaneMaxControlForceRoll", 1 );
-        _func_0D3( "vehPlaneMaxControlForceYaw", 0.8 );
+        var_2 = self vehicle_getspeed();
+        setsaveddvar( "vehPlaneControlForceReferenceSpeed", var_2 );
+        setsaveddvar( "vehPlaneMaxControlForceScale", 150 );
+        setsaveddvar( "vehPlaneMaxControlForcePitch", 0.8 );
+        setsaveddvar( "vehPlaneMaxControlForceRoll", 1 );
+        setsaveddvar( "vehPlaneMaxControlForceYaw", 0.8 );
         var_3 = var_0 + var_2 / 50;
         var_4 = var_1 + var_2 / 50;
-        _func_0D3( "vehPlaneWingLoading", var_3 );
-        _func_0D3( "vehPlaneFuselageLoading", var_1 );
+        setsaveddvar( "vehPlaneWingLoading", var_3 );
+        setsaveddvar( "vehPlaneFuselageLoading", var_1 );
         wait 0.1;
     }
 }
@@ -2065,145 +2065,145 @@ standard_plane_controls()
 
     if ( getdvarint( "vehPlaneControlScheme" ) >= 2 )
     {
-        self _meth_8284( 333, 10 );
+        self vehicle_setspeedimmediate( 333, 10 );
         arcade_plane_controls();
     }
     else if ( level.mini_version )
     {
-        self _meth_8284( 500, 50 );
+        self vehicle_setspeedimmediate( 500, 50 );
         mini_plane_controls();
     }
     else
     {
-        self _meth_8284( 500, 50 );
+        self vehicle_setspeedimmediate( 500, 50 );
         regular_plane_controls();
     }
 }
 
 regular_plane_controls()
 {
-    _func_0D3( "vehPlaneGravity", 386 );
-    _func_0D3( "vehPlaneMass", 15000 );
-    _func_0D3( "vehPlaneWingLoading", 85 );
-    _func_0D3( "vehPlaneFuselageLoading", 105 );
-    _func_0D3( "vehPlaneThrustToWeightRatio", 2.5 );
-    _func_0D3( "vehPlaneParasiticDragCoeff", 0.03 );
-    _func_0D3( "vehPlaneMaxControlForceScale", 40 );
-    _func_0D3( "vehPlaneMaxControlForceRoll", 1.0 );
-    _func_0D3( "vehPlaneMaxControlForcePitch", 0.5 );
-    _func_0D3( "vehPlaneMaxControlForceYaw", 0.5 );
-    _func_0D3( "vehPlaneControlForceReferenceSpeed", 200 );
-    _func_0D3( "vehPlaneMaxRightingForceScale", 3 );
-    _func_0D3( "vehPlaneRightingForceReferenceSpeed", 450 );
-    _func_0D3( "vehPlaneDihedralCoeff", 3 );
-    _func_0D3( "vehPlaneDampingRoll", 0.15 );
-    _func_0D3( "vehPlaneDampingYaw", 0.4 );
-    _func_0D3( "vehPlaneDampingPitch", 0.2 );
-    _func_0D3( "vehPlaneControlSquaring", 0.1 );
-    _func_0D3( "vehPlaneControlExponent", 1.5 );
-    _func_0D3( "vehPlaneControlYawRollCoupling", 0 );
-    _func_0D3( "vehPlaneControlRollYawCoupling", 0.2 );
-    _func_0D3( "vehPlaneControlLowpassCoeff", 0 );
-    _func_0D3( "vehPlaneTurbulenceStrength", 0 );
-    _func_0D3( "vehPlaneWingLeveling", 0.15 );
+    setsaveddvar( "vehPlaneGravity", 386 );
+    setsaveddvar( "vehPlaneMass", 15000 );
+    setsaveddvar( "vehPlaneWingLoading", 85 );
+    setsaveddvar( "vehPlaneFuselageLoading", 105 );
+    setsaveddvar( "vehPlaneThrustToWeightRatio", 2.5 );
+    setsaveddvar( "vehPlaneParasiticDragCoeff", 0.03 );
+    setsaveddvar( "vehPlaneMaxControlForceScale", 40 );
+    setsaveddvar( "vehPlaneMaxControlForceRoll", 1.0 );
+    setsaveddvar( "vehPlaneMaxControlForcePitch", 0.5 );
+    setsaveddvar( "vehPlaneMaxControlForceYaw", 0.5 );
+    setsaveddvar( "vehPlaneControlForceReferenceSpeed", 200 );
+    setsaveddvar( "vehPlaneMaxRightingForceScale", 3 );
+    setsaveddvar( "vehPlaneRightingForceReferenceSpeed", 450 );
+    setsaveddvar( "vehPlaneDihedralCoeff", 3 );
+    setsaveddvar( "vehPlaneDampingRoll", 0.15 );
+    setsaveddvar( "vehPlaneDampingYaw", 0.4 );
+    setsaveddvar( "vehPlaneDampingPitch", 0.2 );
+    setsaveddvar( "vehPlaneControlSquaring", 0.1 );
+    setsaveddvar( "vehPlaneControlExponent", 1.5 );
+    setsaveddvar( "vehPlaneControlYawRollCoupling", 0 );
+    setsaveddvar( "vehPlaneControlRollYawCoupling", 0.2 );
+    setsaveddvar( "vehPlaneControlLowpassCoeff", 0 );
+    setsaveddvar( "vehPlaneTurbulenceStrength", 0 );
+    setsaveddvar( "vehPlaneWingLeveling", 0.15 );
 }
 
 mini_plane_controls()
 {
-    _func_0D3( "vehPlaneGravity", 77 );
-    _func_0D3( "vehPlaneMass", 3000 );
-    _func_0D3( "vehPlaneWingLoading", 17 );
-    _func_0D3( "vehPlaneFuselageLoading", 20 );
-    _func_0D3( "vehPlaneThrustToWeightRatio", 3.0 );
-    _func_0D3( "vehPlaneParasiticDragCoeff", 0.03 );
-    _func_0D3( "vehPlaneMaxControlForceScale", 20 );
-    _func_0D3( "vehPlaneMaxControlForceRoll", 1.0 );
-    _func_0D3( "vehPlaneMaxControlForcePitch", 1.0 );
-    _func_0D3( "vehPlaneMaxControlForceYaw", 0.5 );
-    _func_0D3( "vehPlaneControlForceReferenceSpeed", 40 );
-    _func_0D3( "vehPlaneMaxRightingForceScale", 3 );
-    _func_0D3( "vehPlaneRightingForceReferenceSpeed", 200 );
-    _func_0D3( "vehPlaneDihedralCoeff", 3 );
-    _func_0D3( "vehPlaneDampingRoll", 0.15 );
-    _func_0D3( "vehPlaneDampingYaw", 0.4 );
-    _func_0D3( "vehPlaneDampingPitch", 0.2 );
-    _func_0D3( "vehPlaneControlSquaring", 0.1 );
-    _func_0D3( "vehPlaneControlExponent", 1.5 );
-    _func_0D3( "vehPlaneControlYawRollCoupling", 0 );
-    _func_0D3( "vehPlaneControlRollYawCoupling", 0.2 );
-    _func_0D3( "vehPlaneControlLowpassCoeff", 0 );
-    _func_0D3( "vehPlaneTurbulenceStrength", 0 );
-    _func_0D3( "vehPlaneWingLeveling", 0.15 );
+    setsaveddvar( "vehPlaneGravity", 77 );
+    setsaveddvar( "vehPlaneMass", 3000 );
+    setsaveddvar( "vehPlaneWingLoading", 17 );
+    setsaveddvar( "vehPlaneFuselageLoading", 20 );
+    setsaveddvar( "vehPlaneThrustToWeightRatio", 3.0 );
+    setsaveddvar( "vehPlaneParasiticDragCoeff", 0.03 );
+    setsaveddvar( "vehPlaneMaxControlForceScale", 20 );
+    setsaveddvar( "vehPlaneMaxControlForceRoll", 1.0 );
+    setsaveddvar( "vehPlaneMaxControlForcePitch", 1.0 );
+    setsaveddvar( "vehPlaneMaxControlForceYaw", 0.5 );
+    setsaveddvar( "vehPlaneControlForceReferenceSpeed", 40 );
+    setsaveddvar( "vehPlaneMaxRightingForceScale", 3 );
+    setsaveddvar( "vehPlaneRightingForceReferenceSpeed", 200 );
+    setsaveddvar( "vehPlaneDihedralCoeff", 3 );
+    setsaveddvar( "vehPlaneDampingRoll", 0.15 );
+    setsaveddvar( "vehPlaneDampingYaw", 0.4 );
+    setsaveddvar( "vehPlaneDampingPitch", 0.2 );
+    setsaveddvar( "vehPlaneControlSquaring", 0.1 );
+    setsaveddvar( "vehPlaneControlExponent", 1.5 );
+    setsaveddvar( "vehPlaneControlYawRollCoupling", 0 );
+    setsaveddvar( "vehPlaneControlRollYawCoupling", 0.2 );
+    setsaveddvar( "vehPlaneControlLowpassCoeff", 0 );
+    setsaveddvar( "vehPlaneTurbulenceStrength", 0 );
+    setsaveddvar( "vehPlaneWingLeveling", 0.15 );
 }
 
 boost_plane_controls()
 {
-    _func_0D3( "vehPlaneGravity", 386 );
-    _func_0D3( "vehPlaneMass", 15000 );
-    _func_0D3( "vehPlaneWingLoading", 105 );
-    _func_0D3( "vehPlaneFuselageLoading", 125 );
-    _func_0D3( "vehPlaneThrustToWeightRatio", 8.5 );
-    _func_0D3( "vehPlaneParasiticDragCoeff", 0.03 );
-    _func_0D3( "vehPlaneMaxControlForceScale", 50 );
-    _func_0D3( "vehPlaneMaxControlForceRoll", 1.0 );
-    _func_0D3( "vehPlaneMaxControlForcePitch", 0.5 );
-    _func_0D3( "vehPlaneMaxControlForceYaw", 0.5 );
-    _func_0D3( "vehPlaneControlForceReferenceSpeed", 800 );
-    _func_0D3( "vehPlaneMaxRightingForceScale", 3 );
-    _func_0D3( "vehPlaneRightingForceReferenceSpeed", 650 );
-    _func_0D3( "vehPlaneDihedralCoeff", 3 );
-    _func_0D3( "vehPlaneDampingRoll", 0.15 );
-    _func_0D3( "vehPlaneDampingYaw", 0.4 );
-    _func_0D3( "vehPlaneDampingPitch", 0.2 );
-    _func_0D3( "vehPlaneControlSquaring", 0.1 );
-    _func_0D3( "vehPlaneControlExponent", 1.5 );
-    _func_0D3( "vehPlaneControlYawRollCoupling", 0 );
-    _func_0D3( "vehPlaneControlRollYawCoupling", 0.2 );
-    _func_0D3( "vehPlaneControlLowpassCoeff", 0 );
-    _func_0D3( "vehPlaneTurbulenceStrength", 0 );
-    _func_0D3( "vehPlaneWingLeveling", 0.15 );
+    setsaveddvar( "vehPlaneGravity", 386 );
+    setsaveddvar( "vehPlaneMass", 15000 );
+    setsaveddvar( "vehPlaneWingLoading", 105 );
+    setsaveddvar( "vehPlaneFuselageLoading", 125 );
+    setsaveddvar( "vehPlaneThrustToWeightRatio", 8.5 );
+    setsaveddvar( "vehPlaneParasiticDragCoeff", 0.03 );
+    setsaveddvar( "vehPlaneMaxControlForceScale", 50 );
+    setsaveddvar( "vehPlaneMaxControlForceRoll", 1.0 );
+    setsaveddvar( "vehPlaneMaxControlForcePitch", 0.5 );
+    setsaveddvar( "vehPlaneMaxControlForceYaw", 0.5 );
+    setsaveddvar( "vehPlaneControlForceReferenceSpeed", 800 );
+    setsaveddvar( "vehPlaneMaxRightingForceScale", 3 );
+    setsaveddvar( "vehPlaneRightingForceReferenceSpeed", 650 );
+    setsaveddvar( "vehPlaneDihedralCoeff", 3 );
+    setsaveddvar( "vehPlaneDampingRoll", 0.15 );
+    setsaveddvar( "vehPlaneDampingYaw", 0.4 );
+    setsaveddvar( "vehPlaneDampingPitch", 0.2 );
+    setsaveddvar( "vehPlaneControlSquaring", 0.1 );
+    setsaveddvar( "vehPlaneControlExponent", 1.5 );
+    setsaveddvar( "vehPlaneControlYawRollCoupling", 0 );
+    setsaveddvar( "vehPlaneControlRollYawCoupling", 0.2 );
+    setsaveddvar( "vehPlaneControlLowpassCoeff", 0 );
+    setsaveddvar( "vehPlaneTurbulenceStrength", 0 );
+    setsaveddvar( "vehPlaneWingLeveling", 0.15 );
 }
 
 slow_plane_controls()
 {
-    _func_0D3( "vehPlaneGravity", 386 );
-    _func_0D3( "vehPlaneMass", 15000 );
-    _func_0D3( "vehPlaneWingLoading", 65 );
-    _func_0D3( "vehPlaneFuselageLoading", 105 );
-    _func_0D3( "vehPlaneThrustToWeightRatio", 1.3 );
-    _func_0D3( "vehPlaneParasiticDragCoeff", 0.03 );
-    _func_0D3( "vehPlaneMaxControlForceScale", 40 );
-    _func_0D3( "vehPlaneMaxControlForceRoll", 1.0 );
-    _func_0D3( "vehPlaneMaxControlForcePitch", 0.5 );
-    _func_0D3( "vehPlaneMaxControlForceYaw", 0.5 );
-    _func_0D3( "vehPlaneControlForceReferenceSpeed", 160 );
-    _func_0D3( "vehPlaneMaxRightingForceScale", 3 );
-    _func_0D3( "vehPlaneRightingForceReferenceSpeed", 300 );
-    _func_0D3( "vehPlaneDihedralCoeff", 3 );
-    _func_0D3( "vehPlaneDampingRoll", 0.15 );
-    _func_0D3( "vehPlaneDampingYaw", 0.4 );
-    _func_0D3( "vehPlaneDampingPitch", 0.2 );
-    _func_0D3( "vehPlaneControlSquaring", 0.1 );
-    _func_0D3( "vehPlaneControlExponent", 1.5 );
-    _func_0D3( "vehPlaneControlYawRollCoupling", 0 );
-    _func_0D3( "vehPlaneControlRollYawCoupling", 0.2 );
-    _func_0D3( "vehPlaneControlLowpassCoeff", 0 );
-    _func_0D3( "vehPlaneTurbulenceStrength", 0 );
-    _func_0D3( "vehPlaneWingLeveling", 0.15 );
+    setsaveddvar( "vehPlaneGravity", 386 );
+    setsaveddvar( "vehPlaneMass", 15000 );
+    setsaveddvar( "vehPlaneWingLoading", 65 );
+    setsaveddvar( "vehPlaneFuselageLoading", 105 );
+    setsaveddvar( "vehPlaneThrustToWeightRatio", 1.3 );
+    setsaveddvar( "vehPlaneParasiticDragCoeff", 0.03 );
+    setsaveddvar( "vehPlaneMaxControlForceScale", 40 );
+    setsaveddvar( "vehPlaneMaxControlForceRoll", 1.0 );
+    setsaveddvar( "vehPlaneMaxControlForcePitch", 0.5 );
+    setsaveddvar( "vehPlaneMaxControlForceYaw", 0.5 );
+    setsaveddvar( "vehPlaneControlForceReferenceSpeed", 160 );
+    setsaveddvar( "vehPlaneMaxRightingForceScale", 3 );
+    setsaveddvar( "vehPlaneRightingForceReferenceSpeed", 300 );
+    setsaveddvar( "vehPlaneDihedralCoeff", 3 );
+    setsaveddvar( "vehPlaneDampingRoll", 0.15 );
+    setsaveddvar( "vehPlaneDampingYaw", 0.4 );
+    setsaveddvar( "vehPlaneDampingPitch", 0.2 );
+    setsaveddvar( "vehPlaneControlSquaring", 0.1 );
+    setsaveddvar( "vehPlaneControlExponent", 1.5 );
+    setsaveddvar( "vehPlaneControlYawRollCoupling", 0 );
+    setsaveddvar( "vehPlaneControlRollYawCoupling", 0.2 );
+    setsaveddvar( "vehPlaneControlLowpassCoeff", 0 );
+    setsaveddvar( "vehPlaneTurbulenceStrength", 0 );
+    setsaveddvar( "vehPlaneWingLeveling", 0.15 );
 }
 
 arcade_plane_controls()
 {
-    _func_0D3( "vehPlaneControlSquaring", 0.1 );
-    _func_0D3( "vehPlaneControlYawRollCoupling", 0.0 );
-    _func_0D3( "vehPlaneControlRollYawCoupling", 0.0 );
-    _func_0D3( "vehPlaneControlLowpassCoeff", 0.8 );
-    _func_0D3( "vehPlanePitchDeadZoneWhileRolling", 0.3 );
-    _func_0D3( "vehPlaneRollLerpRate", 0.1 );
-    _func_0D3( "vehPlaneControlExponent", 3.0 );
-    _func_0D3( "vehPlaneMaxYawRatePerSec", 330 );
-    _func_0D3( "vehPlaneMaxPitchDiffPerSec", 45 );
-    _func_0D3( "vehPlaneCollisionLookAheadTime", 0 );
+    setsaveddvar( "vehPlaneControlSquaring", 0.1 );
+    setsaveddvar( "vehPlaneControlYawRollCoupling", 0.0 );
+    setsaveddvar( "vehPlaneControlRollYawCoupling", 0.0 );
+    setsaveddvar( "vehPlaneControlLowpassCoeff", 0.8 );
+    setsaveddvar( "vehPlanePitchDeadZoneWhileRolling", 0.3 );
+    setsaveddvar( "vehPlaneRollLerpRate", 0.1 );
+    setsaveddvar( "vehPlaneControlExponent", 3.0 );
+    setsaveddvar( "vehPlaneMaxYawRatePerSec", 330 );
+    setsaveddvar( "vehPlaneMaxPitchDiffPerSec", 45 );
+    setsaveddvar( "vehPlaneCollisionLookAheadTime", 0 );
 }
 
 plane_test( var_0, var_1, var_2 )
@@ -2213,10 +2213,10 @@ plane_test( var_0, var_1, var_2 )
 
     level notify( "reset_plane_monitoring" );
     common_scripts\utility::flag_set( "playerPlaneNoDeath" );
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     level.fake_plane = maps\_utility::spawn_anim_model( "cockpit" );
-    level.fake_plane _meth_8048( "TAG_SCREEN_JOINT_LOAD" );
-    level.fake_plane _meth_8048( "TAG_TRANSFER_AR" );
+    level.fake_plane hidepart( "TAG_SCREEN_JOINT_LOAD" );
+    level.fake_plane hidepart( "TAG_TRANSFER_AR" );
     thread maps\_anim::anim_loop_solo( level.fake_plane, "idle" );
     self.healthbuffer = 0;
     self.maxhealth = 100000;
@@ -2226,9 +2226,9 @@ plane_test( var_0, var_1, var_2 )
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", 2 );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", 2 );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 
     if ( !isdefined( self.plane_intialized ) || isdefined( self.plane_intialized ) && !self.plane_intialized )
@@ -2245,9 +2245,9 @@ plane_test( var_0, var_1, var_2 )
     if ( var_1 )
     {
         self makeunusable();
-        level.player _meth_80FC( self );
-        _func_0D3( "vehCam_mode", "1" );
-        _func_0D3( "sv_znear", "16" );
+        level.player mountvehicle( self );
+        setsaveddvar( "vehCam_mode", "1" );
+        setsaveddvar( "sv_znear", "16" );
     }
 
     setomnvar( "ui_playerplane_hud", 1 );
@@ -2263,19 +2263,19 @@ plane_test( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         var_0 = 333;
 
-    self _meth_8284( var_0, 10 );
+    self vehicle_setspeedimmediate( var_0, 10 );
 
     if ( is_true( level.old_controls ) )
-        _func_0D3( "vehPlaneControlScheme", 1 );
+        setsaveddvar( "vehPlaneControlScheme", 1 );
     else
-        _func_0D3( "vehPlaneControlScheme", 3 );
+        setsaveddvar( "vehPlaneControlScheme", 3 );
 
     standard_plane_controls();
 }
 
 handle_chase_cam_toggle()
 {
-    self _meth_82DD( "toggle_chase_cam", "+actionslot 1" );
+    self notifyonplayercommand( "toggle_chase_cam", "+actionslot 1" );
 
     for (;;)
     {
@@ -2293,25 +2293,25 @@ toggle_chase_cam()
 
     if ( level.plane_chase_cam )
     {
-        _func_0D3( "vehCam_mode", "1" );
+        setsaveddvar( "vehCam_mode", "1" );
         level.fake_plane show();
         level.plane hide();
-        _func_0D3( "vehPlaneRollLerpRate", 0.1 );
+        setsaveddvar( "vehPlaneRollLerpRate", 0.1 );
         thread fighter_jet_handle_cockpit( level.player, level.plane );
     }
     else
     {
-        _func_0D3( "vehCam_mode", "3" );
+        setsaveddvar( "vehCam_mode", "3" );
         level.fake_plane hide();
         level.plane show();
-        _func_0D3( "vehPlaneRollLerpRate", 0.25 );
+        setsaveddvar( "vehPlaneRollLerpRate", 0.25 );
         var_0 = getdvarvector( "vehCam_chaseOffset" );
         var_0 += anglestoforward( getdvarvector( "vehCam_chaseAngleOffset" ) ) * 10000;
     }
 
-    level.player.jethud["hud_tag"] _meth_804F();
-    level.player.jethud["hud_tag"] _meth_804D( level.plane, "tag_origin", var_0, ( 0, 0, 0 ) );
-    level.player.jethud["hud_tag"] _meth_8092();
+    level.player.jethud["hud_tag"] unlink();
+    level.player.jethud["hud_tag"] linkto( level.plane, "tag_origin", var_0, ( 0, 0, 0 ) );
+    level.player.jethud["hud_tag"] dontinterpolate();
     level.plane_chase_cam = !level.plane_chase_cam;
 }
 
@@ -2331,7 +2331,7 @@ fighter_jet_max_altitude( var_0, var_1 )
         if ( var_8 < var_3 )
         {
             var_9 = maps\_shg_utility::linear_map_clamp( var_8, var_3, 0 - var_3, 0, 2 );
-            var_10 = var_1 _meth_8287();
+            var_10 = var_1 vehicle_getvelocity();
             var_11 = vectornormalize( var_10 );
             var_12 = vectordot( var_11, var_6 );
 
@@ -2340,7 +2340,7 @@ fighter_jet_max_altitude( var_0, var_1 )
                 var_13 = length( var_10 );
                 var_14 = vectordot( var_10, var_6 ) * var_9 - var_4 * var_13;
                 var_15 = vectornormalize( var_10 - var_14 * var_6 ) * var_13;
-                var_1 _meth_83B5( var_15 );
+                var_1 vehicle_setvelocity( var_15 );
             }
         }
 
@@ -2352,10 +2352,10 @@ fighter_jet_handle_cockpit( var_0, var_1 )
 {
     var_1 hide();
     var_2 = level.fake_plane;
-    var_2 _meth_82BF();
+    var_2 notsolid();
     var_3 = getdvarvector( "cockpit_offset" );
     var_4 = getdvarvector( "cockpit_angles" );
-    var_2 _meth_80A6( var_0, "tag_origin", var_3, var_4, 1 );
+    var_2 linktoplayerview( var_0, "tag_origin", var_3, var_4, 1 );
     fighter_jet_handle_cockpit_motion( var_0, var_1, var_2, var_3, var_4 );
 }
 
@@ -2363,7 +2363,7 @@ remove_cockpit_from_view( var_0, var_1, var_2 )
 {
     level endon( "finale" );
     level.player common_scripts\utility::waittill_any( "player_eject", "toggle_chase_cam" );
-    var_2 _meth_80A7( var_0 );
+    var_2 unlinkfromplayerview( var_0 );
 }
 
 fighter_jet_set_shake( var_0, var_1 )
@@ -2441,8 +2441,8 @@ fighter_jet_handle_cockpit_motion( var_0, var_1, var_2, var_3, var_4 )
                 var_31 += common_scripts\utility::randomvector( level.jet_shake );
 
             var_33 = transformmove( var_31, var_32, ( 0, 0, 0 ), ( 0, 0, 0 ), var_3, var_4 );
-            var_2 _meth_80A7( var_0 );
-            var_2 _meth_80A6( var_0, "tag_origin", var_33["origin"], var_33["angles"], 1 );
+            var_2 unlinkfromplayerview( var_0 );
+            var_2 linktoplayerview( var_0, "tag_origin", var_33["origin"], var_33["angles"], 1 );
         }
 
         waitframe();
@@ -2454,21 +2454,21 @@ fighter_jet_handle_throttle( var_0, var_1, var_2 )
     var_1 endon( "death" );
 
     if ( !isdefined( var_2 ) )
-        var_1 _meth_83BC( level.current_median_speed );
+        var_1 vehicle_planethrottleoverride( level.current_median_speed );
     else
     {
         for ( var_3 = 0; var_3 < level.current_median_speed; var_3 += 0.05 )
         {
-            var_1 _meth_83BC( var_3 );
+            var_1 vehicle_planethrottleoverride( var_3 );
             wait 0.2;
         }
     }
 
-    var_0 _meth_82DD( "boost_start", "+gostand" );
-    var_0 _meth_82DD( "boost_stop", "-gostand" );
-    var_0 _meth_82DD( "brake_click", "+stance" );
-    var_0 _meth_82DD( "brake_click", "+prone" );
-    var_0 _meth_82DD( "brake_click", "toggleprone" );
+    var_0 notifyonplayercommand( "boost_start", "+gostand" );
+    var_0 notifyonplayercommand( "boost_stop", "-gostand" );
+    var_0 notifyonplayercommand( "brake_click", "+stance" );
+    var_0 notifyonplayercommand( "brake_click", "+prone" );
+    var_0 notifyonplayercommand( "brake_click", "toggleprone" );
     thread handle_jet_brake( var_0, var_1 );
     thread handle_jet_boost( var_0, var_1 );
 }
@@ -2500,7 +2500,7 @@ process_flight_path( var_0 )
     var_6 = var_2[var_3 + 1].origin - var_2[var_3].origin;
     var_6 = ( var_6[0], var_6[1], 0 );
     var_7 = vectortoangles( var_6 )[1];
-    _func_0D3( "vehPlanePathAngle", var_7 );
+    setsaveddvar( "vehPlanePathAngle", var_7 );
 
     if ( var_3 + 2 < var_2.size )
         var_4 = var_2[var_3 + 2].origin - var_2[var_3 + 1].origin;
@@ -2523,7 +2523,7 @@ process_flight_path( var_0 )
             var_6 = var_4;
             var_6 = ( var_6[0], var_6[1], 0 );
             var_7 = vectortoangles( var_6 )[1];
-            _func_0D3( "vehPlanePathAngle", var_7 );
+            setsaveddvar( "vehPlanePathAngle", var_7 );
 
             if ( var_3 + 2 < var_2.size )
                 var_4 = var_2[var_3 + 2].origin - var_2[var_3 + 1].origin;
@@ -2535,8 +2535,8 @@ process_flight_path( var_0 )
             break;
     }
 
-    _func_0D3( "vehPlanePathAngle", -1.0 );
-    _func_0D3( "vehPlanePathAllowance", 0.0 );
+    setsaveddvar( "vehPlanePathAngle", -1.0 );
+    setsaveddvar( "vehPlanePathAllowance", 0.0 );
 }
 
 handle_jet_brake( var_0, var_1 )
@@ -2555,14 +2555,14 @@ handle_jet_brake( var_0, var_1 )
         var_1 playsound( "plr_jet_airbrake" );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbVelocityScalar", 1.1 );
+            setsaveddvar( "r_mbVelocityScalar", 1.1 );
 
-        var_1 _meth_83BC( 0.01 );
+        var_1 vehicle_planethrottleoverride( 0.01 );
         level.player_braking = 1;
-        var_0 _meth_80AE( "damage_heavy" );
+        var_0 playrumblelooponentity( "damage_heavy" );
 
         if ( !level.player.ads_on )
-            var_0 _meth_8031( 60, 1 );
+            var_0 lerpfov( 60, 1 );
 
         if ( level.player_boosting )
         {
@@ -2571,18 +2571,18 @@ handle_jet_brake( var_0, var_1 )
         }
 
         var_0 common_scripts\utility::waittill_notify_or_timeout( "brake_abort", 2 );
-        var_1 _meth_83BC( 0.25 );
+        var_1 vehicle_planethrottleoverride( 0.25 );
         common_scripts\utility::flag_waitopen( "player_braking" );
         level.player_braking = 0;
-        var_0 _meth_80AF( "damage_heavy" );
+        var_0 stoprumble( "damage_heavy" );
 
         if ( !level.player.ads_on )
-            var_0 _meth_8031( 65, 1 );
+            var_0 lerpfov( 65, 1 );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbVelocityScalar", 2 );
+            setsaveddvar( "r_mbVelocityScalar", 2 );
 
-        var_1 _meth_83BC( level.current_median_speed );
+        var_1 vehicle_planethrottleoverride( level.current_median_speed );
         wait 0;
         waitframe();
     }
@@ -2592,7 +2592,7 @@ handle_jet_boost( var_0, var_1 )
 {
     level endon( "death" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     while ( !common_scripts\utility::flag( "canyon_finished" ) )
     {
@@ -2605,22 +2605,22 @@ handle_jet_boost( var_0, var_1 )
 
         if ( level.nextgen )
         {
-            _func_0D3( "r_mbEnable", "2" );
-            _func_0D3( "r_mbVelocityScalar", 10 );
-            _func_0D3( "r_mbCameraRotationInfluence", "0" );
+            setsaveddvar( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbVelocityScalar", 10 );
+            setsaveddvar( "r_mbCameraRotationInfluence", "0" );
         }
 
-        var_1 _meth_83BC( 1 );
+        var_1 vehicle_planethrottleoverride( 1 );
         level.player_boosting = 1;
         level.player_boost_time = gettime();
         level notify( "player_boost_start" );
-        var_0 _meth_80AE( "damage_heavy" );
+        var_0 playrumblelooponentity( "damage_heavy" );
         earthquake( 0.5, 1.0, level.player.origin, 512 );
 
         if ( !level.player.ads_on )
-            var_0 _meth_8031( 75, 1 );
+            var_0 lerpfov( 75, 1 );
 
-        var_2 _meth_8075( "plr_jet_boost_loop" );
+        var_2 playloopsound( "plr_jet_boost_loop" );
 
         if ( level.player_braking )
         {
@@ -2628,23 +2628,23 @@ handle_jet_boost( var_0, var_1 )
             waitframe();
         }
 
-        while ( level.player _meth_83DE() && !common_scripts\utility::flag( "canyon_finished" ) )
+        while ( level.player jumpbuttonpressed() && !common_scripts\utility::flag( "canyon_finished" ) )
         {
             thread fighter_jet_set_shake( 0.25, 0.25 );
             wait 0.05;
         }
 
         level.player_boosting = 0;
-        var_0 _meth_80AF( "damage_heavy" );
+        var_0 stoprumble( "damage_heavy" );
 
         if ( !level.player.ads_on )
-            var_0 _meth_8031( 65, 1 );
+            var_0 lerpfov( 65, 1 );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbVelocityScalar", 2 );
+            setsaveddvar( "r_mbVelocityScalar", 2 );
 
-        var_1 _meth_83BC( level.current_median_speed );
-        var_2 _meth_80AB();
+        var_1 vehicle_planethrottleoverride( level.current_median_speed );
+        var_2 stoploopsound();
         var_1 playsound( "plr_jet_boost_stop" );
         waitframe();
     }
@@ -2677,7 +2677,7 @@ handle_ads()
         }
 
         if ( isdefined( var_1 ) )
-            level.player _meth_8031( var_1, 0.25 );
+            level.player lerpfov( var_1, 0.25 );
 
         wait 0.05;
     }
@@ -2756,17 +2756,17 @@ fighter_jet_hud( var_0, var_1 )
     }
 
     var_0.jethud["hud_tag"] = common_scripts\utility::spawn_tag_origin();
-    var_0.jethud["hud_tag"] _meth_804D( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
+    var_0.jethud["hud_tag"] linkto( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
     var_0.jethud["weapon_bore_tag"] = common_scripts\utility::spawn_tag_origin();
-    var_0.jethud["weapon_bore_tag"] _meth_804D( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
+    var_0.jethud["weapon_bore_tag"] linkto( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
     var_0.jethud["weapon_reticle_tag"] = common_scripts\utility::spawn_tag_origin();
-    var_0.jethud["weapon_reticle_tag"] _meth_804D( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
+    var_0.jethud["weapon_reticle_tag"] linkto( var_1, "tag_origin", var_17, ( 0, 0, 0 ) );
     var_0.jethud["boresight"] = newclienthudelem( var_0 );
     var_0.jethud["boresight"].positioninworld = 1;
-    var_0.jethud["boresight"] _meth_80CD( var_0.jethud["hud_tag"] );
+    var_0.jethud["boresight"] settargetent( var_0.jethud["hud_tag"] );
     var_0.jethud["boresight"].alignx = "center";
     var_0.jethud["boresight"].aligny = "middle";
-    var_0.jethud["boresight"] _meth_80CC( "hud_plane_reticle", 40, 40 );
+    var_0.jethud["boresight"] setshader( "hud_plane_reticle", 40, 40 );
     var_0.jethud["boresight"].alpha = var_5;
     var_0.jethud["lockon_warning"] = newclienthudelem( var_0 );
     var_0.jethud["lockon_warning"].hidewheninmenu = 1;
@@ -2781,7 +2781,7 @@ fighter_jet_hud( var_0, var_1 )
     var_0.jethud["lockon_warning"].fontscale = 3;
     var_0.jethud["speed_indicator"] = newclienthudelem( var_0 );
     var_0.jethud["speed_indicator"].positioninworld = 1;
-    var_0.jethud["speed_indicator"] _meth_80CD( var_0.jethud["hud_tag"] );
+    var_0.jethud["speed_indicator"] settargetent( var_0.jethud["hud_tag"] );
     var_0.jethud["speed_indicator"].alignx = "right";
     var_0.jethud["speed_indicator"].aligny = "middle";
     var_0.jethud["speed_indicator"].x = -300;
@@ -2791,7 +2791,7 @@ fighter_jet_hud( var_0, var_1 )
     var_0.jethud["speed_indicator"].fontscale = var_6;
     var_0.jethud["jetWeapons"] = newclienthudelem( var_0 );
     var_0.jethud["jetWeapons"].positioninworld = 1;
-    var_0.jethud["jetWeapons"] _meth_80CD( var_0.jethud["hud_tag"] );
+    var_0.jethud["jetWeapons"] settargetent( var_0.jethud["hud_tag"] );
     var_0.jethud["jetWeapons"].alignx = "center";
     var_0.jethud["jetWeapons"].aligny = "top";
     var_0.jethud["jetWeapons"].y = -50;
@@ -2801,24 +2801,24 @@ fighter_jet_hud( var_0, var_1 )
     var_0.jethud["jetWeapons"].fontscale = var_6;
     var_0.jethud["weaponOverlay"] = newclienthudelem( var_0 );
     var_0.jethud["weaponOverlay"].positioninworld = 1;
-    var_0.jethud["weaponOverlay"] _meth_80CD( var_0.jethud["hud_tag"] );
-    var_0.jethud["weaponOverlay"] _meth_80CC( "jet_hud_overlay_cannon_1", 640, 480 );
+    var_0.jethud["weaponOverlay"] settargetent( var_0.jethud["hud_tag"] );
+    var_0.jethud["weaponOverlay"] setshader( "jet_hud_overlay_cannon_1", 640, 480 );
     var_0.jethud["weaponOverlay"].alignx = "center";
     var_0.jethud["weaponOverlay"].aligny = "middle";
     var_0.jethud["weaponOverlay"].alpha = 0.35;
     var_0.jethud["weaponOverlay"].fontscale = var_6;
     var_0.jethud["weapon_boresight"] = newclienthudelem( var_0 );
     var_0.jethud["weapon_boresight"].positioninworld = 1;
-    var_0.jethud["weapon_boresight"] _meth_80CD( var_0.jethud["weapon_bore_tag"] );
-    var_0.jethud["weapon_boresight"] _meth_80CC( "jet_hud_overlay_cannon_boresight", 640, 480 );
+    var_0.jethud["weapon_boresight"] settargetent( var_0.jethud["weapon_bore_tag"] );
+    var_0.jethud["weapon_boresight"] setshader( "jet_hud_overlay_cannon_boresight", 640, 480 );
     var_0.jethud["weapon_boresight"].alignx = "center";
     var_0.jethud["weapon_boresight"].aligny = "middle";
     var_0.jethud["weapon_boresight"].alpha = 0.8;
     var_0.jethud["weapon_boresight"].fontscale = var_6;
     var_0.jethud["weapon_reticle"] = newclienthudelem( var_0 );
     var_0.jethud["weapon_reticle"].positioninworld = 1;
-    var_0.jethud["weapon_reticle"] _meth_80CD( var_0.jethud["weapon_reticle_tag"] );
-    var_0.jethud["weapon_reticle"] _meth_80CC( "jet_hud_overlay_cannon_boresight", 640, 480 );
+    var_0.jethud["weapon_reticle"] settargetent( var_0.jethud["weapon_reticle_tag"] );
+    var_0.jethud["weapon_reticle"] setshader( "jet_hud_overlay_cannon_boresight", 640, 480 );
     var_0.jethud["weapon_reticle"].alignx = "center";
     var_0.jethud["weapon_reticle"].aligny = "middle";
     var_0.jethud["weapon_reticle"].alpha = 0.8;
@@ -2834,21 +2834,21 @@ fighter_jet_hud( var_0, var_1 )
     var_0.jethud["missile_ammo"] = array_combine_all( var_23[0], var_23[1] );
     var_0.jethud["weapon_bore"] = newclienthudelem( var_0 );
     var_0.jethud["weapon_bore"].positioninworld = 1;
-    var_0.jethud["weapon_bore"] _meth_80CD( var_0.jethud["weapon_bore_tag"] );
+    var_0.jethud["weapon_bore"] settargetent( var_0.jethud["weapon_bore_tag"] );
     var_0.jethud["weapon_bore"].alignx = "center";
     var_0.jethud["weapon_bore"].aligny = "middle";
     var_0.jethud["weapon_bore"].alpha = 0;
     var_0.jethud["weapon_bore"].fontscale = var_6;
     var_0.jethud["LockOn_Overlay"] = newclienthudelem( var_0 );
     var_0.jethud["LockOn_Overlay"].positioninworld = 1;
-    var_0.jethud["LockOn_Overlay"] _meth_80CD( var_0.jethud["weapon_bore_tag"] );
+    var_0.jethud["LockOn_Overlay"] settargetent( var_0.jethud["weapon_bore_tag"] );
     var_0.jethud["LockOn_Overlay"].alignx = "center";
     var_0.jethud["LockOn_Overlay"].aligny = "middle";
     var_0.jethud["LockOn_Overlay"].alpha = 0;
     var_0.jethud["LockOn_Overlay"].fontscale = var_6;
     var_0.jethud["altitude_indicator"] = newclienthudelem( var_0 );
     var_0.jethud["altitude_indicator"].positioninworld = 1;
-    var_0.jethud["altitude_indicator"] _meth_80CD( var_0.jethud["hud_tag"] );
+    var_0.jethud["altitude_indicator"] settargetent( var_0.jethud["hud_tag"] );
     var_0.jethud["altitude_indicator"].alignx = "left";
     var_0.jethud["altitude_indicator"].aligny = "middle";
     var_0.jethud["altitude_indicator"].x = 300;
@@ -2867,9 +2867,9 @@ fighter_jet_hud( var_0, var_1 )
         if ( !isdefined( var_1 ) )
             break;
 
-        var_25 = var_1 _meth_8287();
+        var_25 = var_1 vehicle_getvelocity();
         var_26 = transformmove( ( 0, 0, 0 ), ( 0, 0, 0 ), ( 0, 0, 0 ), var_1.angles, var_25, ( 0, 0, 0 ) )["origin"];
-        var_27 = var_1 _meth_8286();
+        var_27 = var_1 vehicle_getspeed();
 
         if ( level.mini_version )
             var_27 *= 5;
@@ -2908,29 +2908,29 @@ fighter_jet_sounds( var_0, var_1 )
     thread missile_lock_sounds( var_0, var_1 );
     thread gun_lock_sounds( var_0, var_1 );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_2 _meth_8075( "dogfight_player_plane_low" );
+    var_2 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 playloopsound( "dogfight_player_plane_low" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_3 _meth_8075( "dogfight_player_plane_turbulence" );
+    var_3 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 playloopsound( "dogfight_player_plane_turbulence" );
     var_4 = 2;
     var_5 = 0.05 / var_4;
     var_6 = 0;
 
     while ( isalive( var_0 ) && isdefined( var_1 ) )
     {
-        var_7 = var_1 _meth_828A();
+        var_7 = var_1 vehicle_getthrottle();
         var_6 = clamp( var_7, var_6 - var_5, var_6 + var_5 );
         var_8 = vectordot( var_1 maps\_shg_utility::get_differentiated_acceleration() + ( 0, 0, 384 ), anglestoup( var_1.angles ) ) / 384;
-        var_2 _meth_806D( maps\_shg_utility::linear_map_clamp( var_6, 0, 1, 0.8, 1.2 ), 0.05 );
-        var_2 _meth_806F( maps\_shg_utility::linear_map_clamp( var_7, 0, 1, 0.5, 1 ), 0.05 );
+        var_2 scalepitch( maps\_shg_utility::linear_map_clamp( var_6, 0, 1, 0.8, 1.2 ), 0.05 );
+        var_2 scalevolume( maps\_shg_utility::linear_map_clamp( var_7, 0, 1, 0.5, 1 ), 0.05 );
         var_9 = maps\_shg_utility::linear_map_clamp( abs( var_8 ), 0, 8, 0.2, 1 );
-        var_3 _meth_806F( var_9, 0.05 );
+        var_3 scalevolume( var_9, 0.05 );
         waitframe();
     }
 
-    var_2 _meth_80AB();
-    var_3 _meth_80AB();
+    var_2 stoploopsound();
+    var_3 stoploopsound();
     level.player playsound( "dogfight_player_plane_death" );
 }
 
@@ -2938,10 +2938,10 @@ missile_lock_sounds( var_0, var_1 )
 {
     level endon( "finale" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 = 0;
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_5 = 0;
     var_6 = var_1.lock_targets.size;
 
@@ -3021,7 +3021,7 @@ canyon_whizby_sound( var_0, var_1, var_2 )
 {
     level endon( "end_canyon" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_8075( "dogfight_player_plane_canyon_reflection" );
+    var_3 playloopsound( "dogfight_player_plane_canyon_reflection" );
     var_4 = 3000;
     var_5 = 0.1;
     var_6 = var_4;
@@ -3037,7 +3037,7 @@ canyon_whizby_sound( var_0, var_1, var_2 )
             var_3.origin = var_10["position"];
 
         var_11 = soundscripts\_audio_vehicle_manager::avm_compute_doppler_pitch( var_3.origin, ( 0, 0, 0 ), var_0.origin, var_0 maps\_shg_utility::get_differentiated_velocity(), 1, 1 );
-        var_3 _meth_806D( var_11, 0.05 );
+        var_3 scalepitch( var_11, 0.05 );
         waitframe();
     }
 }
@@ -3093,7 +3093,7 @@ fighter_jet_crash_detection( var_0, var_1 )
         }
 
         var_1 waittill( "veh_collision", var_17, var_18, var_19 );
-        var_20 = vectordot( vectornormalize( var_17 ), vectornormalize( var_1 _meth_8287() ) );
+        var_20 = vectordot( vectornormalize( var_17 ), vectornormalize( var_1 vehicle_getvelocity() ) );
         var_21 = 0;
         var_22 = var_20 < var_16;
         var_23 = gettime();
@@ -3166,20 +3166,20 @@ fighter_jet_crash_detection( var_0, var_1 )
         if ( var_21 )
         {
             thread common_scripts\utility::play_sound_in_space( "plr_jet_crash_hit", level.player.origin );
-            level.player _meth_8064( 1, 1 );
+            level.player digitaldistortsetparams( 1, 1 );
             thread fadeupstatic( 0.05, 1 );
             level notify( "kill_player_targeting_think" );
-            var_28 = _func_0A2();
+            var_28 = target_getarray();
 
             foreach ( var_30 in var_28 )
             {
-                _func_0A6( var_30, level.player );
-                _func_09B( var_30 );
+                target_hidefromplayer( var_30, level.player );
+                target_remove( var_30 );
             }
 
             level.plane.lock_targets = [];
             wait 0.05;
-            var_0 _meth_80FD();
+            var_0 dismountvehicle();
             wait 0.25;
             setdvar( "ui_deadquote", &"PLAYERPLANE_YOU_CRASHED" );
             maps\_utility::missionfailedwrapper();
@@ -3198,9 +3198,9 @@ reversegravity( var_0 )
     if ( !isdefined( level.old_gravity ) )
         level.old_gravity = getdvarfloat( "vehPlaneGravityVelocity" );
 
-    _func_0D3( "vehPlaneGravityVelocity", level.old_gravity * -0.5 );
+    setsaveddvar( "vehPlaneGravityVelocity", level.old_gravity * -0.5 );
     wait(var_0);
-    _func_0D3( "vehPlaneGravityVelocity", level.old_gravity );
+    setsaveddvar( "vehPlaneGravityVelocity", level.old_gravity );
 }
 
 gettimeallowancebasedondifficulty()
@@ -3253,10 +3253,10 @@ monitor_missile_firing()
 
         if ( self.salvo_idx == var_0 && self.missile_idx == var_1 )
         {
-            self _meth_80CC( "jet_hud_ammo_missile_0", self.dimensionsx, self.dimensionsy );
+            self setshader( "jet_hud_ammo_missile_0", self.dimensionsx, self.dimensionsy );
             self.depleted = 1;
             wait 12;
-            self _meth_80CC( "jet_hud_ammo_missile_1", self.dimensionsx, self.dimensionsy );
+            self setshader( "jet_hud_ammo_missile_1", self.dimensionsx, self.dimensionsy );
             self.depleted = 0;
         }
     }
@@ -3295,8 +3295,8 @@ make_missile_ammo_hud( var_0, var_1, var_2, var_3, var_4 )
     {
         var_9 = newclienthudelem( level.player );
         var_9.positioninworld = 1;
-        var_9 _meth_80CD( var_4 );
-        var_9 _meth_80CC( "jet_hud_ammo_missile_1", var_7, var_6 );
+        var_9 settargetent( var_4 );
+        var_9 setshader( "jet_hud_ammo_missile_1", var_7, var_6 );
         var_9.alignx = "center";
         var_9.aligny = "middle";
         var_9.x = var_2;
@@ -3340,7 +3340,7 @@ fighter_jet_gun_hud()
     while ( isdefined( level.plane ) )
     {
         var_13 = get_plane_gun_origin();
-        var_14 = level.player _meth_80A8();
+        var_14 = level.player geteye();
         level.player.eye_origin = var_14;
         var_15 = get_plane_gun_angles();
         var_16 = anglestoforward( var_15 );
@@ -3385,17 +3385,17 @@ fighter_jet_gun_hud()
                 var_28 = 1;
         }
 
-        level.player.jethud["weapon_reticle"] _meth_80CC( "jet_hud_overlay_cannon_reticle_lockon", 640, 480 );
+        level.player.jethud["weapon_reticle"] setshader( "jet_hud_overlay_cannon_reticle_lockon", 640, 480 );
         level.plane.lock_target = var_22;
         var_29 = var_14 + var_12 * var_7;
-        level.player.jethud["weapon_bore_tag"] _meth_804F();
+        level.player.jethud["weapon_bore_tag"] unlink();
         level.player.jethud["weapon_bore_tag"].origin = var_29;
-        level.player.jethud["weapon_bore_tag"] _meth_804D( level.plane, "tag_player" );
+        level.player.jethud["weapon_bore_tag"] linkto( level.plane, "tag_player" );
         var_30 = var_14 + var_11 * var_7;
         level.player.reticle_origin = var_30;
-        level.player.jethud["weapon_reticle_tag"] _meth_804F();
+        level.player.jethud["weapon_reticle_tag"] unlink();
         level.player.jethud["weapon_reticle_tag"].origin = var_30;
-        level.player.jethud["weapon_reticle_tag"] _meth_804D( level.plane, "tag_player" );
+        level.player.jethud["weapon_reticle_tag"] linkto( level.plane, "tag_player" );
         waitframe();
     }
 }
@@ -3541,7 +3541,7 @@ target_setsafe( var_0, var_1 )
 
     foreach ( var_7 in var_2 )
     {
-        if ( _func_0A3( var_7 ) )
+        if ( target_istarget( var_7 ) )
         {
             var_3++;
             var_5[var_5.size] = var_7;
@@ -3549,7 +3549,7 @@ target_setsafe( var_0, var_1 )
     }
 
     if ( var_3 < var_4 )
-        _func_09A( var_0 );
+        target_set( var_0 );
     else if ( var_1 )
     {
         var_5 = sortbydistanceauto( var_5, var_0.origin );
@@ -3560,8 +3560,8 @@ target_setsafe( var_0, var_1 )
         {
             if ( !isdefined( var_10.forcetarget ) || !var_10.forcetarget )
             {
-                _func_09B( var_10 );
-                _func_09A( var_0 );
+                target_remove( var_10 );
+                target_set( var_0 );
                 break;
             }
         }
@@ -3596,8 +3596,8 @@ notify_on_use_trigger( var_0, var_1 )
 
 target_setshadersafe( var_0, var_1 )
 {
-    if ( _func_0A3( var_0 ) )
-        _func_09C( var_0, var_1 );
+    if ( target_istarget( var_0 ) )
+        target_setshader( var_0, var_1 );
 }
 
 offset_position_from_tag( var_0, var_1, var_2 )
@@ -3689,7 +3689,7 @@ ai_shoot_missile( var_0 )
     var_1 = offset_position_from_tag( "forward", "tag_origin", 1000 );
     self playsound( "canyon_missile_fire_npc" );
     var_2 = magicbullet( "sidewinder_atlas_jet", var_1, var_0.origin );
-    var_2 _meth_81D9( var_0 );
+    var_2 missile_settargetent( var_0 );
     var_2 thread monitor_missile_death( 1, self, undefined, var_0 );
     return var_2;
 }
@@ -3778,7 +3778,7 @@ rake_with_bullets( var_0, var_1, var_2 )
     var_3 = gettime();
     var_4 = var_3 + randomfloatrange( var_1, var_2 ) * 1000;
     var_5 = maps\_utility::get_dot( self.origin, self.angles, var_0.origin );
-    self _meth_8075( "s19_mgun_shot_lp_npc" );
+    self playloopsound( "s19_mgun_shot_lp_npc" );
 
     while ( var_3 < var_4 && var_5 > 0 && isdefined( var_0 ) && isalive( var_0 ) )
     {
@@ -3804,7 +3804,7 @@ rake_with_bullets( var_0, var_1, var_2 )
         }
     }
 
-    self _meth_80AB( "s19_mgun_shot_lp_npc" );
+    self stoploopsound( "s19_mgun_shot_lp_npc" );
     self playsound( "s19_mgun_shot_lp_end_npc" );
     wait(randomfloatrange( 0.3, 1.0 ));
 }
@@ -3814,12 +3814,12 @@ lock_on_warning( var_0 )
     level.player.jethud["lockon_warning"].color = ( 1, 0.2, 0.2 );
     level.player.jethud["lockon_warning"] settext( "ENEMY LOCK" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( self, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.player.jethud["lockon_warning"].alpha = 1;
-    var_1 _meth_8075( "dogfight_player_missile_locked_lp" );
+    var_1 playloopsound( "dogfight_player_missile_locked_lp" );
     var_0 common_scripts\utility::waittill_any( "stop_lock_on_warning", "death" );
     level.player.jethud["lockon_warning"].alpha = 0;
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     waitframe();
     var_1 delete();
 }
@@ -3863,11 +3863,11 @@ lock_on_to_player()
                 {
                     level.player playsound( "plr_jet_hit_by_missile_lyr1" );
                     var_2 = magicbullet( "sidewinder_atlas_jet", level.plane.fake_enemy_missile_spawn.origin, level.plane.missile_target.origin );
-                    var_2 _meth_81D9( level.plane.missile_target );
+                    var_2 missile_settargetent( level.plane.missile_target );
                     wait 0.25;
                     playfxontag( level._effect["explosion"], level.plane, "tag_origin" );
-                    level.plane _meth_8051( 10, level.plane.origin, self, self, "MOD_EXPLOSIVE", "sidewinder_atlas_jet" );
-                    level.plane _meth_827C( level.plane.origin, level.plane.angles + ( 0, 0, 45 ) );
+                    level.plane dodamage( 10, level.plane.origin, self, self, "MOD_EXPLOSIVE", "sidewinder_atlas_jet" );
+                    level.plane vehicle_teleport( level.plane.origin, level.plane.angles + ( 0, 0, 45 ) );
                 }
             }
         }
@@ -3935,7 +3935,7 @@ enemy_jet_shoot_think()
 
         foreach ( var_8 in var_6 )
         {
-            if ( _func_294( var_8 ) )
+            if ( isremovedentity( var_8 ) )
             {
                 level.friend_jets = common_scripts\utility::array_remove( level.friend_jets, var_8 );
                 wait 0.1;
@@ -4099,8 +4099,8 @@ plane_health_monitor()
             self.current_hit_count = 0;
 
         earthquake( 0.5, 1.0, self.origin, 512 );
-        level.player _meth_80AD( "damage_heavy" );
-        level.player _meth_81AF( 1, var_3 );
+        level.player playrumbleonentity( "damage_heavy" );
+        level.player viewkick( 1, var_3 );
         self.lasthit = var_6;
 
         if ( self.current_hit_count >= self.max_hit_count )
@@ -4112,10 +4112,10 @@ plane_health_monitor()
             }
 
             self makeusable();
-            self _meth_8099( level.player );
-            level.player _meth_80F0();
-            level.player _meth_8052();
-            self _meth_8052();
+            self useby( level.player );
+            level.player disableinvulnerability();
+            level.player kill();
+            self kill();
             return;
         }
     }
@@ -4161,16 +4161,16 @@ fake_damage_indicator( var_0, var_1, var_2, var_3, var_4 )
         var_6 = anglestoforward( self.angles ) + var_0 * var_5;
         var_6 = vectortoangles( var_6 );
         var_6 = self.angles + ( 0, 0, var_6[2] );
-        level.plane _meth_827C( level.plane.origin, var_6 );
+        level.plane vehicle_teleport( level.plane.origin, var_6 );
     }
 
     earthquake( 0.5, 1.0, self.origin, 512 );
-    level.player _meth_80AD( "damage_heavy" );
-    level.player _meth_81AF( 1, level.player.origin );
-    level.player _meth_8064( var_3, 1.5 );
+    level.player playrumbleonentity( "damage_heavy" );
+    level.player viewkick( 1, level.player.origin );
+    level.player digitaldistortsetparams( var_3, 1.5 );
     thread chromo_anim2( var_1, 0.5 );
     wait(var_1);
-    level.player _meth_8064( 0, 1 );
+    level.player digitaldistortsetparams( 0, 1 );
     wait(var_2);
     self.showing_damage = 0;
 }
@@ -4179,13 +4179,13 @@ chromo_anim2( var_0, var_1 )
 {
     level notify( "chromo_anim" );
     level endon( "chromo_anim" );
-    _func_0D3( "r_chromaticAberrationTweaks", 1 );
+    setsaveddvar( "r_chromaticAberrationTweaks", 1 );
     var_2 = 1.0;
 
     if ( var_1 )
         var_2 = var_1;
 
-    _func_0D3( "r_chromaticAberration", 1 );
+    setsaveddvar( "r_chromaticAberration", 1 );
     var_3 = var_0 * 20;
     var_4 = 0;
     level.chromo_offset = 20 * var_2;
@@ -4195,14 +4195,14 @@ chromo_anim2( var_0, var_1 )
     {
         var_6 = 1.0 / var_3 * var_5;
         level.chromo_offset -= var_6;
-        _func_0D3( "r_chromaticSeparationG", level.chromo_offset * -1 );
-        _func_0D3( "r_chromaticSeparationR", level.chromo_offset );
+        setsaveddvar( "r_chromaticSeparationG", level.chromo_offset * -1 );
+        setsaveddvar( "r_chromaticSeparationR", level.chromo_offset );
         wait 0.05;
     }
 
     level.chromo_offset = 0;
-    _func_0D3( "r_chromaticSeparationG", 0 );
-    _func_0D3( "r_chromaticSeparationR", 0 );
+    setsaveddvar( "r_chromaticSeparationG", 0 );
+    setsaveddvar( "r_chromaticSeparationR", 0 );
 }
 
 plane_health_regen()
@@ -4226,7 +4226,7 @@ plane_health_regen()
         }
 
         var_1 = clamp( self.current_hit_count / self.max_hit_count, 0.0, 0.5 );
-        level.player _meth_8064( var_1, 1.5 );
+        level.player digitaldistortsetparams( var_1, 1.5 );
 
         if ( var_1 >= 0.5 && !self.almost_dead )
         {
@@ -4238,13 +4238,13 @@ plane_health_regen()
         if ( var_1 == 0 && self.almost_dead )
         {
             thread fadedownstatic( 1 );
-            level.player _meth_8064( 0, 1 );
+            level.player digitaldistortsetparams( 0, 1 );
             self.current_hit_count = 0;
             self.almost_dead = 0;
         }
     }
 
-    level.player _meth_823C();
+    level.player painvisionoff();
 }
 
 fadeupstatic( var_0, var_1 )
@@ -4261,7 +4261,7 @@ fadeupstatic( var_0, var_1 )
         level.overlaystatic.horzalign = "fullscreen";
         level.overlaystatic.vertalign = "fullscreen";
         level.overlaystatic.sort = 4;
-        level.overlaystatic _meth_80CC( "overlay_static_digital", 640, 480 );
+        level.overlaystatic setshader( "overlay_static_digital", 640, 480 );
         var_2 = var_1 / ( var_0 / 0.05 );
 
         while ( level.overlaystatic.alpha < var_1 )
@@ -4368,10 +4368,10 @@ jet_crash_move( var_0, var_1, var_2 )
         wait 0.05;
 
     var_6 = 700;
-    self _meth_825A( var_0.radius );
+    self setneargoalnotifydist( var_0.radius );
     thread maps\_vehicle::vehicle_paths( var_0 );
-    self _meth_827F( var_0 );
-    self _meth_8283( var_6, 50, 50 );
+    self startpath( var_0 );
+    self vehicle_setspeed( var_6, 50, 50 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     jet_crash_path( var_0 );
     var_0.claimed = undefined;
@@ -4391,17 +4391,17 @@ jet_crash_path( var_0 )
         if ( isdefined( var_0.radius ) )
             var_1 = var_0.radius;
 
-        var_2 = self _meth_8286();
+        var_2 = self vehicle_getspeed();
 
         if ( isdefined( var_0.script_parameters ) )
         {
-            self _meth_8283( var_0.script_parameters, 50, 60 );
+            self vehicle_setspeed( var_0.script_parameters, 50, 60 );
             var_2 = var_0.script_parameters;
         }
 
-        self _meth_825A( var_1 );
+        self setneargoalnotifydist( var_1 );
         thread maps\_vehicle::vehicle_paths( var_0 );
-        self _meth_827F( var_0 );
+        self startpath( var_0 );
         common_scripts\utility::waittill_any( "goal", "near_goal" );
     }
 }

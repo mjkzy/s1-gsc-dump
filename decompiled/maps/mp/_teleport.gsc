@@ -62,9 +62,9 @@ teleport_init()
         level.teleport_nodes_in_zone[var_2.name][level.teleport_nodes_in_zone[var_2.name].size] = var_6;
     }
 
-    for ( var_8 = 0; var_8 < _func_201(); var_8++ )
+    for ( var_8 = 0; var_8 < getzonecount(); var_8++ )
     {
-        var_2 = teleport_closest_zone( _func_205( var_8 ) );
+        var_2 = teleport_closest_zone( getzoneorigin( var_8 ) );
         level.teleport_pathnode_zones[var_2.name][level.teleport_pathnode_zones[var_2.name].size] = var_8;
     }
 
@@ -600,12 +600,12 @@ teleport_onteleportball( var_0 )
     }
 
     bot_setup_ball_jump_nodes();
-    var_10 = _func_202( level.ball_goals["allies"].origin );
+    var_10 = getzonenearest( level.ball_goals["allies"].origin );
 
     if ( isdefined( var_10 ) )
         botzonesetteam( var_10, "allies" );
 
-    var_10 = _func_202( level.ball_goals["axis"].origin );
+    var_10 = getzonenearest( level.ball_goals["axis"].origin );
 
     if ( isdefined( var_10 ) )
         botzonesetteam( var_10, "axis" );
@@ -663,7 +663,7 @@ bot_setup_ball_jump_nodes()
 
         foreach ( var_7 in var_4.ball_jump_nodes )
         {
-            var_11 = _func_220( var_7.origin, var_4.origin );
+            var_11 = distance2dsquared( var_7.origin, var_4.origin );
 
             if ( var_11 < var_9 )
             {
@@ -877,7 +877,7 @@ teleport_filter_spawn_point( var_0, var_1 )
     foreach ( var_4 in var_0 )
     {
         if ( !isdefined( var_4.teleport_label ) )
-            var_4.teleport_label = "ent_" + var_4 _meth_81B1();
+            var_4.teleport_label = "ent_" + var_4 getentitynumber();
 
         if ( !isdefined( level.teleport_spawn_info[var_4.teleport_label] ) )
             teleport_init_spawn_info( var_4 );
@@ -892,7 +892,7 @@ teleport_filter_spawn_point( var_0, var_1 )
 teleport_init_spawn_info( var_0 )
 {
     if ( !isdefined( var_0.teleport_label ) )
-        var_0.teleport_label = "ent_" + var_0 _meth_81B1();
+        var_0.teleport_label = "ent_" + var_0 getentitynumber();
 
     if ( isdefined( level.teleport_spawn_info[var_0.teleport_label] ) )
         return;
@@ -993,7 +993,7 @@ teleport_to_zone_character( var_0, var_1 )
         var_5 = getentarray( "mp_global_intermission", "classname" );
         var_5 = teleport_filter_spawn_point( var_5, var_0 );
         var_6 = var_5[0];
-        var_1 _meth_8092();
+        var_1 dontinterpolate();
         var_1 setorigin( var_6.origin );
         var_1 setangles( var_6.angles );
     }
@@ -1039,7 +1039,7 @@ teleport_to_zone_character( var_0, var_1 )
 
         if ( !isdefined( var_7 ) && level.teleport_to_offset )
         {
-            if ( precachestatusicon( var_19 ) && !getstarttime( var_19 ) )
+            if ( canspawn( var_19 ) && !positionwouldtelefrag( var_19 ) )
                 var_7 = var_19;
         }
 
@@ -1056,7 +1056,7 @@ teleport_to_zone_character( var_0, var_1 )
 
                 var_12 = var_22.origin;
 
-                if ( precachestatusicon( var_12 ) && !getstarttime( var_12 ) )
+                if ( canspawn( var_12 ) && !positionwouldtelefrag( var_12 ) )
                 {
                     var_22.last_teleport_time = var_4;
                     var_7 = var_12;
@@ -1071,8 +1071,8 @@ teleport_to_zone_character( var_0, var_1 )
             return;
         }
 
-        var_1 _meth_8439();
-        var_1 _meth_8092();
+        var_1 cancelmantle();
+        var_1 dontinterpolate();
         var_1 setorigin( var_7 );
         var_1 setangles( var_8 );
         thread teleport_validate_success( var_1 );

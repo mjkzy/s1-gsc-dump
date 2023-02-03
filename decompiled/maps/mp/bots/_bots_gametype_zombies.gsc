@@ -28,7 +28,7 @@ bot_zombies_think()
 
     for (;;)
     {
-        if ( self _meth_8366() != "run_and_gun" )
+        if ( self botgetpersonality() != "run_and_gun" )
             maps\mp\bots\_bots_util::bot_set_personality( "run_and_gun" );
 
         if ( !isdefined( self.bot_defend_player_guarding ) )

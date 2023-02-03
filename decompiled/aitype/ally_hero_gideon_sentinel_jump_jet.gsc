@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "iw5_hbra3_sp_variablereddot";
@@ -27,13 +27,13 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_hero_gideon_sentinel_jetpack::precache();
-    precacheitem( "iw5_hbra3_sp_variablereddot" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_hbra3_sp_variablereddot" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
 }

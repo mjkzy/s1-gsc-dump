@@ -200,15 +200,15 @@ traffic_path_all_cars_set_command_single_lane( var_0, var_1, var_2 )
             {
                 if ( var_1 )
                 {
-                    var_3.vehicle _meth_8454();
-                    var_3.vehicle _meth_82C0( 1 );
-                    var_3.vehicle _meth_822F();
+                    var_3.vehicle vehicle_assignbrushmodelcollision();
+                    var_3.vehicle setcandamage( 1 );
+                    var_3.vehicle vehphys_enablecrashing();
                 }
                 else
                 {
-                    var_3.vehicle _meth_8455();
-                    var_3.vehicle _meth_82C0( 0 );
-                    var_3.vehicle _meth_822E();
+                    var_3.vehicle vehicle_removebrushmodelcollision();
+                    var_3.vehicle setcandamage( 0 );
+                    var_3.vehicle vehphys_disablecrashing();
                 }
 
                 continue;
@@ -225,7 +225,7 @@ traffic_path_all_cars_set_command_single_lane( var_0, var_1, var_2 )
             if ( var_2 == 9 )
             {
                 if ( var_3 vehicle_getcurrentnode_a().targetname == var_1 )
-                    var_3.vehicle _meth_8057();
+                    var_3.vehicle disconnectpaths();
             }
         }
     }
@@ -647,11 +647,11 @@ get_closest_neighbors( var_0, var_1, var_2 )
             if ( !isdefined( var_5 ) )
             {
                 var_5 = var_1[var_7];
-                var_6 = _func_220( var_0.origin, var_1[var_7].origin );
+                var_6 = distance2dsquared( var_0.origin, var_1[var_7].origin );
             }
             else
             {
-                var_10 = _func_220( var_0.origin, var_1[var_7].origin );
+                var_10 = distance2dsquared( var_0.origin, var_1[var_7].origin );
 
                 if ( var_10 < var_6 )
                 {
@@ -666,11 +666,11 @@ get_closest_neighbors( var_0, var_1, var_2 )
         if ( !isdefined( var_3 ) )
         {
             var_3 = var_1[var_7];
-            var_4 = _func_220( var_0.origin, var_1[var_7].origin );
+            var_4 = distance2dsquared( var_0.origin, var_1[var_7].origin );
             continue;
         }
 
-        var_10 = _func_220( var_0.origin, var_1[var_7].origin );
+        var_10 = distance2dsquared( var_0.origin, var_1[var_7].origin );
 
         if ( var_10 < var_4 )
         {
@@ -946,7 +946,7 @@ spawn_route_full_with_traffic_at( var_0, var_1, var_2, var_3 )
                 return [ var_4, var_5 ];
         }
 
-        if ( isdefined( var_0.lane_start_node ) && isdefined( var_0.lane_start_node.nospawn ) && var_0.lane_start_node.nospawn || isdefined( var_2 ) && _func_220( var_8, var_2.origin ) > var_12 || isdefined( var_0.script_noteworthy ) && ( var_0.script_noteworthy == "traffic_lane_split" || var_0.script_noteworthy == "traffic_lane_exit" ) )
+        if ( isdefined( var_0.lane_start_node ) && isdefined( var_0.lane_start_node.nospawn ) && var_0.lane_start_node.nospawn || isdefined( var_2 ) && distance2dsquared( var_8, var_2.origin ) > var_12 || isdefined( var_0.script_noteworthy ) && ( var_0.script_noteworthy == "traffic_lane_split" || var_0.script_noteworthy == "traffic_lane_exit" ) )
             continue;
 
         if ( randomint( 100 ) < get_spawn_chance( var_0 ) )
@@ -1037,7 +1037,7 @@ fill_new_traffic_entity_near_player( var_0, var_1 )
                 var_18 = find_closest_car( var_5, var_5.origin );
 
                 if ( isdefined( var_18 ) )
-                    var_17 = _func_220( var_18.vehicle.origin, var_5.origin );
+                    var_17 = distance2dsquared( var_18.vehicle.origin, var_5.origin );
 
                 if ( !isdefined( var_17 ) || var_17 > level.traffic_tune_single_spawn_dist_between_cars_sq )
                 {
@@ -1134,7 +1134,7 @@ spawn_new_traffic_vehicle( var_0, var_1, var_2, var_3 )
 
     foreach ( var_5 in vehicle_getarray() )
     {
-        if ( abs( var_5.origin[2] - var_0[2] ) < 50.0 && _func_220( var_5.origin, var_0 ) < level.traffic_tune_extreme_near_car_dist_sq )
+        if ( abs( var_5.origin[2] - var_0[2] ) < 50.0 && distance2dsquared( var_5.origin, var_0 ) < level.traffic_tune_extreme_near_car_dist_sq )
             return undefined;
     }
 
@@ -1155,20 +1155,20 @@ spawn_new_traffic_vehicle( var_0, var_1, var_2, var_3 )
             {
                 var_7 = var_8 maps\_utility::spawn_ai( 1 );
                 var_5 maps\_utility::guy_enter_vehicle( var_7 );
-                var_7 _meth_82C0( 0 );
+                var_7 setcandamage( 0 );
             }
         }
 
         var_5 thread clean_up_on_parent_death( self );
-        var_5 _meth_8284( model_speed_to_mph( self.traffic_speed ), 15, 15 );
+        var_5 vehicle_setspeedimmediate( model_speed_to_mph( self.traffic_speed ), 15, 15 );
 
         if ( isdefined( self.currentnode.lane_start_node.vehicle_notsolid ) && self.currentnode.lane_start_node.vehicle_notsolid )
         {
             if ( isdefined( var_7 ) )
-                var_7 _meth_82BF();
+                var_7 notsolid();
 
-            var_5 _meth_8455();
-            var_5 _meth_822E();
+            var_5 vehicle_removebrushmodelcollision();
+            var_5 vehphys_disablecrashing();
         }
 
         if ( isdefined( self.currentnode.lane_start_node.no_crash_handling ) && !self.currentnode.lane_start_node.no_crash_handling )
@@ -1177,12 +1177,12 @@ spawn_new_traffic_vehicle( var_0, var_1, var_2, var_3 )
         if ( islagostraversesetting( var_5 ) )
         {
             if ( isdefined( var_7 ) )
-                var_7 _meth_82BF();
+                var_7 notsolid();
         }
 
         var_5 thread setup_vehicle_for_damage();
         thread sync_entity_damage( var_5 );
-        var_5 _meth_827C( var_0, var_1, 1 );
+        var_5 vehicle_teleport( var_0, var_1, 1 );
         var_5 thread traffic_drive_vehicle( var_2 );
         var_5 thread handle_brake_lights();
         var_5 thread detect_being_pushed( ::force_vehicle_delete );
@@ -1206,19 +1206,19 @@ spawn_new_traffic_model( var_0, var_1, var_2, var_3 )
 
     var_4 = spawn( "script_model", var_0 );
     var_4.angles = var_1;
-    var_4 _meth_80B1( var_3["model"] );
+    var_4 setmodel( var_3["model"] );
 
     if ( var_2.lane_start_node.traffic_force_script_models_only && isdefined( level.vehicle_deathmodel ) && isdefined( level.vehicle_deathmodel[var_4.model] ) && var_2.lane_start_node.vehicle_collision_enabled )
     {
-        var_4 _meth_8454();
-        var_4 _meth_82C0( 1 );
+        var_4 vehicle_assignbrushmodelcollision();
+        var_4 setcandamage( 1 );
         var_4 thread monitor_script_model_damage();
     }
     else
     {
-        var_4 _meth_8455();
-        var_4 _meth_82BF();
-        var_4 _meth_842D( 1 );
+        var_4 vehicle_removebrushmodelcollision();
+        var_4 notsolid();
+        var_4 removefrommovingplatformsystem( 1 );
     }
 
     var_4 thread clean_up_on_parent_death( self );
@@ -1256,7 +1256,7 @@ clear_cars_around_pos( var_0, var_1, var_2 )
                 continue;
         }
 
-        var_7 = _func_220( var_6.vehicle.origin, var_0 );
+        var_7 = distance2dsquared( var_6.vehicle.origin, var_0 );
 
         if ( var_7 < var_3 )
             var_6 notify( "reached_end_node" );
@@ -1320,7 +1320,7 @@ mark_adjacent_script_cars()
 
                 foreach ( var_8 in var_6 )
                 {
-                    if ( _func_220( self.origin, var_8 ) < var_0 )
+                    if ( distance2dsquared( self.origin, var_8 ) < var_0 )
                     {
                         var_3 = 1;
                         var_9 = self.origin + ( 0, 0, 25 );
@@ -1379,7 +1379,7 @@ check_if_intersecting_any_script_car( var_0, var_1 )
 
         foreach ( var_7 in var_5 )
         {
-            if ( _func_220( var_7, var_0 ) < var_2 )
+            if ( distance2dsquared( var_7, var_0 ) < var_2 )
                 return 1;
         }
     }
@@ -1414,7 +1414,7 @@ traffic_drive_vehicle( var_0 )
         var_4 = var_2.origin - self.origin;
         var_4 = vectornormalize( var_4 );
         var_5 = vectordot( var_3, var_4 );
-        var_6 = _func_220( var_0.origin, self.origin );
+        var_6 = distance2dsquared( var_0.origin, self.origin );
 
         if ( var_6 < level.traffic_tune_extreme_near_car_dist_sq || var_5 < 0 )
         {
@@ -1461,7 +1461,7 @@ traffic_drive_vehicle( var_0 )
             var_0 = var_7;
 
         thread maps\_vehicle_code::_vehicle_paths( var_0 );
-        self _meth_827F( var_0 );
+        self startpath( var_0 );
         self waittill( "reached_end_node" );
         self.parent_ent notify( "reached_end_node" );
     }
@@ -1515,7 +1515,7 @@ script_vehicle_move_to_node( var_0 )
 
     for (;;)
     {
-        var_1 = _func_220( var_0.origin, self.origin );
+        var_1 = distance2dsquared( var_0.origin, self.origin );
 
         if ( var_1 < level.traffic_tune_extreme_near_car_dist_sq )
         {
@@ -1541,8 +1541,8 @@ set_zero_speed( var_0 )
     }
 
     var_2 = self.origin;
-    self _meth_82AE( var_2, 0.15, 0, 0.15 );
-    self _meth_82B5( self.angles, 0.1, 0, 0.1 );
+    self moveto( var_2, 0.15, 0, 0.15 );
+    self rotateto( self.angles, 0.1, 0, 0.1 );
 }
 
 path_to_node_at_current_speed( var_0, var_1 )
@@ -1561,8 +1561,8 @@ path_to_node_at_current_speed( var_0, var_1 )
     var_7 = maps\_utility::round_float( var_6, 1, 0 );
     var_8 = var_7 * 0.5;
     self.parent_ent.currentnode = var_1;
-    self _meth_82AE( var_1.origin - ( 0, 0, 27 ), var_8 + 0.05, 0, 0 );
-    self _meth_82B5( var_1.angles, var_5, 0, 0 );
+    self moveto( var_1.origin - ( 0, 0, 27 ), var_8 + 0.05, 0, 0 );
+    self rotateto( var_1.angles, var_5, 0, 0 );
     wait(var_8);
 }
 
@@ -1621,7 +1621,7 @@ traffic_type_swap()
                         self.vehicle delete();
                         self.vehicle = var_1;
                         self.vehicle.parent_ent = self;
-                        var_1 _meth_8284( model_speed_to_mph( self.traffic_speed ), 15, 15 );
+                        var_1 vehicle_setspeedimmediate( model_speed_to_mph( self.traffic_speed ), 15, 15 );
                         self notify( "swap_to_real_vehicle" );
                     }
                     else
@@ -1675,7 +1675,7 @@ scale_vehicle_speed( var_0 )
     self.traffic_speed *= var_0;
 
     if ( self.vehicle.classname != "script_model" )
-        self.vehicle _meth_8283( model_speed_to_mph( self.traffic_speed ), 15, 15 );
+        self.vehicle vehicle_setspeed( model_speed_to_mph( self.traffic_speed ), 15, 15 );
     else
         self.vehicle notify( "traffic_speed_changed" );
 }
@@ -1690,7 +1690,7 @@ set_vehicle_speed( var_0 )
         self.traffic_speed = var_0;
 
         if ( self.vehicle.classname != "script_model" )
-            self.vehicle _meth_8283( model_speed_to_mph( self.traffic_speed ), 15, 15 );
+            self.vehicle vehicle_setspeed( model_speed_to_mph( self.traffic_speed ), 15, 15 );
         else
             self.vehicle notify( "traffic_speed_changed" );
     }
@@ -1726,7 +1726,7 @@ monitor_vehicle_speed()
             if ( isdefined( self.traffic_leader ) && self.traffic_leader != self )
             {
                 var_1 = 1;
-                var_0 = _func_220( self.vehicle.origin, self.traffic_leader.vehicle.origin );
+                var_0 = distance2dsquared( self.vehicle.origin, self.traffic_leader.vehicle.origin );
             }
 
             if ( var_0 < level.traffic_tune_extreme_near_car_dist_sq )
@@ -1786,7 +1786,7 @@ monitor_vehicle_speed()
                 restore_vehicle_speed();
 
                 if ( self.vehicle.classname != "script_model" )
-                    self.vehicle _meth_8291( 15 );
+                    self.vehicle resumespeed( 15 );
 
                 self.traffic_speed_status = 0;
             }
@@ -1812,7 +1812,7 @@ process_traffic_leader_pending_due_to_lane_split()
             var_2 = vectornormalize( var_1 );
             var_3 = self.traffic_leader.vehicle.origin - self.vehicle.origin;
             var_4 = vectordot( var_3, var_2 ) * var_2;
-            var_5 = _func_220( var_3, var_4 );
+            var_5 = distance2dsquared( var_3, var_4 );
 
             if ( var_5 > 8100 )
             {
@@ -1851,7 +1851,7 @@ handle_brake_lights()
 
     for (;;)
     {
-        var_3 = self _meth_8286();
+        var_3 = self vehicle_getspeed();
 
         if ( var_3 < var_2 && !var_1 )
         {
@@ -2049,7 +2049,7 @@ vehicle_getcurrentnode_a()
 
     if ( self.code_classname == "script_vehicle" )
     {
-        var_0 = self _meth_84BB();
+        var_0 = self vehicle_getcurrentnode();
 
         if ( isdefined( var_0 ) && isdefined( var_0.target ) )
             var_0 = getvehiclenode( var_0.target, "targetname" );
@@ -2093,7 +2093,7 @@ change_lane_too_close()
             if ( !isdefined( var_2 ) )
                 continue;
 
-            var_3 = var_2 _meth_8286();
+            var_3 = var_2 vehicle_getspeed();
 
             if ( var_3 < 1 )
                 continue;
@@ -2121,7 +2121,7 @@ change_lane_too_close()
 
                 var_11 = var_3 - var_8;
                 var_12 = squared( var_11 * 4 );
-                var_13 = _func_220( self.vehicle.origin, var_2 get_adjusted_script_car_origin( 1 ) );
+                var_13 = distance2dsquared( self.vehicle.origin, var_2 get_adjusted_script_car_origin( 1 ) );
 
                 if ( ( var_11 > 0 || var_11 > -80 && var_13 < level.traffic_tune_min_stop_dist_sq ) && var_13 < var_12 )
                 {
@@ -2163,7 +2163,7 @@ change_lane_too_close()
 
                                 if ( var_43 )
                                 {
-                                    var_48 = _func_220( self.vehicle.origin, var_41 );
+                                    var_48 = distance2dsquared( self.vehicle.origin, var_41 );
 
                                     if ( var_48 > var_23 )
                                     {
@@ -2280,7 +2280,7 @@ get_farthest_car( var_0 )
 
     foreach ( var_4 in var_0 )
     {
-        var_5 = _func_220( var_4.origin, self.vehicle.origin );
+        var_5 = distance2dsquared( var_4.origin, self.vehicle.origin );
 
         if ( var_5 > var_1 )
         {
@@ -2400,7 +2400,7 @@ is_neighboring_lane_clear( var_0, var_1 )
 
     if ( isdefined( var_5 ) && var_5 != self )
     {
-        var_6 = _func_220( var_5.vehicle.origin, self.vehicle.origin );
+        var_6 = distance2dsquared( var_5.vehicle.origin, self.vehicle.origin );
 
         if ( var_6 < 65536 )
             var_2 = 0;
@@ -2532,14 +2532,14 @@ change_lane( var_0, var_1 )
                 if ( abs( vectordot( var_17, var_18 ) ) > level.traffic_tune_lane_change_cosangle )
                     var_2 = getvehiclenode( var_2.target, "targetname" );
 
-                if ( _func_220( self.vehicle.origin, var_2.origin ) > var_16 * var_16 )
+                if ( distance2dsquared( self.vehicle.origin, var_2.origin ) > var_16 * var_16 )
                 {
                     var_19 = getvehiclenode( var_2.targetname, "target" );
 
                     if ( isdefined( var_19 ) )
                     {
                         var_20 = get_goal_pos_on_segment( var_2.origin, var_19.origin, self.vehicle.origin, var_16 );
-                        self.vehicle _meth_8229( var_20, self.vehicle _meth_8286() );
+                        self.vehicle vehicledriveto( var_20, self.vehicle vehicle_getspeed() );
                     }
                 }
             }
@@ -2609,7 +2609,7 @@ islagostraversesetting( var_0 )
 vehicle_getspeed_a()
 {
     if ( self.code_classname == "script_vehicle" )
-        return self _meth_8286();
+        return self vehicle_getspeed();
     else if ( isdefined( self.vehicle ) )
         return self.vehicle.parent_ent.traffic_speed;
     else
@@ -2752,7 +2752,7 @@ dodge_behavior()
             var_4 = update_dodge( var_2, var_3, 2.5 );
             self.dodging = undefined;
 
-            if ( _func_220( self.vehicle.origin, level.player.origin ) > 342225 || self.vehicle _meth_8286() > 0 )
+            if ( distance2dsquared( self.vehicle.origin, level.player.origin ) > 342225 || self.vehicle vehicle_getspeed() > 0 )
                 resume_driving_from_dodge( var_4 );
             else
                 thread do_crash();
@@ -2779,7 +2779,7 @@ startpath_with_currentnode_update( var_0 )
 {
     var_1 = get_closest_node_in_front_of_given_car( var_0, self );
     thread maps\_vehicle::vehicle_paths( var_1 );
-    self _meth_827F( var_1 );
+    self startpath( var_1 );
 }
 
 get_closest_node_in_front_of_given_car( var_0, var_1 )
@@ -2796,7 +2796,7 @@ get_closest_node_in_front_of_given_car( var_0, var_1 )
         if ( !isdefined( var_2.target ) )
             break;
 
-        var_5 = _func_220( var_2.origin, var_1.origin );
+        var_5 = distance2dsquared( var_2.origin, var_1.origin );
 
         if ( var_5 < var_3 && !vehicle_in_front_of_node( var_1, var_2 ) )
         {
@@ -2882,7 +2882,7 @@ resume_driving_from_dodge( var_0 )
     if ( isdefined( var_1 ) )
     {
         if ( isdefined( self.vehicle ) && self.vehicle.classname == "script_vehicle" )
-            self.vehicle _meth_8229( var_1.origin, var_1.speed * 0.5 );
+            self.vehicle vehicledriveto( var_1.origin, var_1.speed * 0.5 );
 
         var_2 = undefined;
 
@@ -2936,7 +2936,7 @@ update_dodge( var_0, var_1, var_2 )
             if ( islagostraversesetting( self.vehicle ) )
                 var_10 *= 2;
 
-            var_11 = self.vehicle _meth_8287();
+            var_11 = self.vehicle vehicle_getvelocity();
             var_12 = length( var_11 );
             var_13 = vectornormalize( var_11 );
             var_14 = var_7 get_adjusted_script_car_origin();
@@ -2998,7 +2998,7 @@ update_dodge( var_0, var_1, var_2 )
             foreach ( var_32 in var_18 )
             {
                 var_27++;
-                [var_34, var_35] = time_and_distance_of_closest_approach( self.vehicle.origin, var_32, var_14, var_7 _meth_8287(), 0.1, 136.5, 1 );
+                [var_34, var_35] = time_and_distance_of_closest_approach( self.vehicle.origin, var_32, var_14, var_7 vehicle_getvelocity(), 0.1, 136.5, 1 );
 
                 if ( var_34 > 1.8 )
                 {
@@ -3021,7 +3021,7 @@ update_dodge( var_0, var_1, var_2 )
                 }
             }
 
-            if ( _func_220( self.vehicle.origin, level.player.origin ) < 38025 && vectordot( var_24, anglestoforward( level.player.angles ) ) < 0 )
+            if ( distance2dsquared( self.vehicle.origin, level.player.origin ) < 38025 && vectordot( var_24, anglestoforward( level.player.angles ) ) < 0 )
                 var_24 = ( 0, 0, 0 );
 
             if ( var_26 > -1 )
@@ -3033,7 +3033,7 @@ update_dodge( var_0, var_1, var_2 )
             }
 
             var_38 = self.vehicle.origin + var_24 * 10;
-            self.vehicle _meth_8229( var_38, model_speed_to_mph( length( var_24 ) ) );
+            self.vehicle vehicledriveto( var_38, model_speed_to_mph( length( var_24 ) ) );
         }
         else if ( var_3 > 0.3 )
             return var_4;
@@ -3085,7 +3085,7 @@ most_threatening_car( var_0 )
     var_3 = undefined;
     var_4 = undefined;
     var_5 = self.vehicle.origin;
-    var_6 = self.vehicle _meth_8287();
+    var_6 = self.vehicle vehicle_getvelocity();
 
     foreach ( var_8 in level.script_cars )
     {
@@ -3094,10 +3094,10 @@ most_threatening_car( var_0 )
 
         var_9 = var_8 get_adjusted_script_car_origin();
 
-        if ( _func_220( var_5, var_9 ) > 60840000 )
+        if ( distance2dsquared( var_5, var_9 ) > 60840000 )
             continue;
 
-        [var_11, var_12] = time_and_distance_of_closest_approach( var_5, var_6, var_9, var_8 _meth_8287(), 0.1, 136.5 );
+        [var_11, var_12] = time_and_distance_of_closest_approach( var_5, var_6, var_9, var_8 vehicle_getvelocity(), 0.1, 136.5 );
 
         if ( var_11 > 1.8 )
             continue;
@@ -3247,7 +3247,7 @@ telefrag_behavior()
     {
         level waittill( "new_script_car", var_0 );
 
-        if ( _func_220( var_0.origin, self.vehicle.origin ) < 24336 )
+        if ( distance2dsquared( var_0.origin, self.vehicle.origin ) < 24336 )
             self notify( "reached_end_node" );
     }
 }
@@ -3283,7 +3283,7 @@ find_closest_car( var_0, var_1 )
         var_5 = var_2.traffic_tail.traffic_leader;
         var_6 = var_5;
         var_3 = var_5;
-        var_7 = _func_220( var_5.vehicle.origin, var_1 );
+        var_7 = distance2dsquared( var_5.vehicle.origin, var_1 );
         var_8 = [];
         var_9 = var_5;
 
@@ -3304,7 +3304,7 @@ find_closest_car( var_0, var_1 )
             if ( !isdefined( var_5 ) )
                 break;
 
-            var_10 = _func_220( var_5.vehicle.origin, var_1 );
+            var_10 = distance2dsquared( var_5.vehicle.origin, var_1 );
 
             if ( var_10 < var_7 )
             {
@@ -3713,7 +3713,7 @@ crash_is_fatal( var_0 )
     else
     {
         var_3 = undefined;
-        var_3 = self _meth_84BB().lane_start_node;
+        var_3 = self vehicle_getcurrentnode().lane_start_node;
 
         if ( isdefined( var_3 ) && isdefined( var_3.vehicle_easy_crash_die ) && var_3.vehicle_easy_crash_die )
             return var_2 > 100;
@@ -3732,8 +3732,8 @@ sync_entity_damage( var_0 )
         {
             if ( var_2 )
             {
-                var_0 _meth_8048( var_3 );
-                var_0 _meth_804B( var_3 + "_D" );
+                var_0 hidepart( var_3 );
+                var_0 showpart( var_3 + "_D" );
             }
         }
     }
@@ -3777,8 +3777,8 @@ monitor_life()
     {
         foreach ( var_4 in var_2 )
         {
-            self _meth_8048( var_4 );
-            self _meth_804B( var_4 + "_D" );
+            self hidepart( var_4 );
+            self showpart( var_4 + "_D" );
 
             if ( isdefined( self.parent_ent ) )
             {
@@ -3821,7 +3821,7 @@ hide_damaged_parts()
         foreach ( var_2 in var_0 )
         {
             foreach ( var_4 in var_2 )
-                self _meth_8048( var_4 + "_D" );
+                self hidepart( var_4 + "_D" );
         }
     }
 }
@@ -3883,8 +3883,8 @@ damage_part_area( var_0, var_1 )
 
     foreach ( var_4 in var_2 )
     {
-        self _meth_8048( var_4 );
-        self _meth_804B( var_4 + "_D" );
+        self hidepart( var_4 );
+        self showpart( var_4 + "_D" );
 
         if ( isdefined( self.parent_ent ) )
         {
@@ -3918,11 +3918,11 @@ handle_crashing()
             self.parent_ent.crashed = 1;
             var_0 = get_crashed_vehicle_index();
             level.traffic_crashed_vehicles[var_0] = self;
-            self _meth_8229( self.origin + anglestoright( self.angles ) * 10000 + anglestoforward( self.angles ) * 10000, 0 );
-            self _meth_8283( 0, 25, 25 );
+            self vehicledriveto( self.origin + anglestoright( self.angles ) * 10000 + anglestoforward( self.angles ) * 10000, 0 );
+            self vehicle_setspeed( 0, 25, 25 );
             self.parent_ent thread safe_vehicle_delete();
             wait 0.2;
-            self crash( 0 );
+            self vehphys_crash( 0 );
             return;
         }
     }
@@ -3943,7 +3943,7 @@ get_crashed_vehicle_index()
             if ( !isdefined( level.traffic_crashed_vehicles[var_3] ) )
                 return var_3;
 
-            var_4 = _func_220( level.traffic_crashed_vehicles[var_3].origin, level.player.origin );
+            var_4 = distance2dsquared( level.traffic_crashed_vehicles[var_3].origin, level.player.origin );
 
             if ( !isdefined( var_0 ) || var_0 < var_4 )
             {
@@ -3984,7 +3984,7 @@ force_vehicle_delete()
 
     if ( var_0 player_can_see_vehicle() )
     {
-        self _meth_8051( 1000000000, self.origin );
+        self dodamage( 1000000000, self.origin );
         wait 0.3;
     }
 
@@ -4016,7 +4016,7 @@ should_be_vehicle( var_0, var_1 )
     if ( isdefined( var_1 ) && var_1 != "script_model" )
         var_5 += var_4;
 
-    if ( _func_220( var_0, level.player.origin ) < var_5 )
+    if ( distance2dsquared( var_0, level.player.origin ) < var_5 )
         return 1;
 
     var_5 = 1048576;
@@ -4026,7 +4026,7 @@ should_be_vehicle( var_0, var_1 )
 
     foreach ( var_7 in level.script_cars )
     {
-        if ( isdefined( var_7 ) && _func_220( var_0, var_7.origin ) < var_5 )
+        if ( isdefined( var_7 ) && distance2dsquared( var_0, var_7.origin ) < var_5 )
             return 1;
     }
 
@@ -4052,7 +4052,7 @@ too_close_to_leader( var_0 )
 
     if ( isdefined( self.traffic_leader ) )
     {
-        if ( _func_220( self.vehicle.origin, self.traffic_leader.vehicle.origin ) < var_1 )
+        if ( distance2dsquared( self.vehicle.origin, self.traffic_leader.vehicle.origin ) < var_1 )
             return 1;
     }
 
@@ -4068,7 +4068,7 @@ far_enough_from_leader( var_0 )
 
     if ( isdefined( self.traffic_leader ) )
     {
-        if ( _func_220( self.vehicle.origin, self.traffic_leader.vehicle.origin ) > var_1 )
+        if ( distance2dsquared( self.vehicle.origin, self.traffic_leader.vehicle.origin ) > var_1 )
             return 1;
     }
     else
@@ -4125,10 +4125,10 @@ handle_wakeup_sphere_global()
             if ( length2dsquared( var_7 ) > var_0 )
                 break;
 
-            if ( vectordot( anglestoforward( level.player _meth_8036() ), vectornormalize( var_7 ) ) > var_1 )
+            if ( vectordot( anglestoforward( level.player getgunangles() ), vectornormalize( var_7 ) ) > var_1 )
             {
                 var_4++;
-                _func_244( var_6.origin, var_2 );
+                wakeupphysicssphere( var_6.origin, var_2 );
             }
 
             if ( var_4 >= var_3 )
@@ -4160,7 +4160,7 @@ detect_dropping()
 detect_being_pushed( var_0 )
 {
     var_1 = 2;
-    var_2 = self _meth_84BB().lane_start_node;
+    var_2 = self vehicle_getcurrentnode().lane_start_node;
 
     if ( isdefined( var_2 ) && isdefined( var_2.vehicle_easy_crash_die ) && var_2.vehicle_easy_crash_die )
         var_1 = 0.6;
@@ -4174,14 +4174,14 @@ detect_being_pushed( var_0 )
 
     while ( isdefined( self ) )
     {
-        var_5 = self _meth_8286() > 5 && ( !any_wheel_on_ground() || some_wheels_slipping() );
+        var_5 = self vehicle_getspeed() > 5 && ( !any_wheel_on_ground() || some_wheels_slipping() );
 
         if ( var_5 )
             var_3 += 0.05;
         else
             var_3 -= 0.1;
 
-        if ( self _meth_8287()[2] > 700 )
+        if ( self vehicle_getvelocity()[2] > 700 )
             var_3 += 3.0;
 
         var_3 = max( var_3, 0 );
@@ -4202,7 +4202,7 @@ some_wheels_slipping()
 
     foreach ( var_2 in [ "front_left", "front_right", "back_left", "back_right" ] )
     {
-        if ( self _meth_83C5( var_2 ) )
+        if ( self iswheelslipping( var_2 ) )
             var_0++;
     }
 
@@ -4213,7 +4213,7 @@ any_wheel_on_ground()
 {
     foreach ( var_1 in [ "front_left", "front_right", "back_left", "back_right" ] )
     {
-        if ( self _meth_8256( var_1 ) != "none" )
+        if ( self getwheelsurface( var_1 ) != "none" )
             return 1;
     }
 
@@ -4229,10 +4229,10 @@ is_inside_radius_of_closest_point_of_segment( var_0, var_1, var_2 )
     else
         var_3 = var_0;
 
-    if ( _func_220( var_0.origin, var_1 ) < var_2 )
+    if ( distance2dsquared( var_0.origin, var_1 ) < var_2 )
         return 1;
 
-    if ( _func_220( var_3.origin, var_1 ) < var_2 )
+    if ( distance2dsquared( var_3.origin, var_1 ) < var_2 )
         return 1;
 
     [var_5, var_6, var_7] = get_closest_point_from_segment_to_segment( var_0.origin, var_3.origin, var_1, var_1 );
@@ -4365,7 +4365,7 @@ mark_nodes_near_spawnnodes_and_startnodes( var_0 )
 
             foreach ( var_17 in var_5 )
             {
-                if ( _func_220( var_14.origin, var_17.origin ) < var_2 && is_inside_radius_of_closest_point_of_segment( var_14, var_17.origin, var_1 ) )
+                if ( distance2dsquared( var_14.origin, var_17.origin ) < var_2 && is_inside_radius_of_closest_point_of_segment( var_14, var_17.origin, var_1 ) )
                 {
                     var_14.nospawn = var_17;
                     var_14 = getvehiclenode( var_14.target, "targetname" );
@@ -4376,7 +4376,7 @@ mark_nodes_near_spawnnodes_and_startnodes( var_0 )
 
             foreach ( var_20 in var_10 )
             {
-                if ( _func_220( var_14.origin, var_20.origin ) < var_2 && is_inside_radius_of_closest_point_of_segment( var_14, var_20.origin, var_1 ) )
+                if ( distance2dsquared( var_14.origin, var_20.origin ) < var_2 && is_inside_radius_of_closest_point_of_segment( var_14, var_20.origin, var_1 ) )
                 {
                     var_14.nospawn = var_20;
                     var_14 = getvehiclenode( var_14.target, "targetname" );

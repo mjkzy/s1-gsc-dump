@@ -124,9 +124,9 @@ init_color_grouping( var_0 )
     level.arrays_color_spawners = [];
     level.arrays_color_spawners["allies"] = [];
     level.arrays_color_spawners["axis"] = [];
-    var_15 = _func_0DA( "allies" );
-    var_16 = _func_0DA( "team3" );
-    var_16 = common_scripts\utility::array_combine( _func_0DA( "axis" ), var_16 );
+    var_15 = getspawnerteamarray( "allies" );
+    var_16 = getspawnerteamarray( "team3" );
+    var_16 = common_scripts\utility::array_combine( getspawnerteamarray( "axis" ), var_16 );
 
     foreach ( var_18 in var_15 )
     {
@@ -464,14 +464,14 @@ ai_sets_goal( var_0 )
         var_1 = level.arrays_of_colorcoded_volumes[get_team()][self.currentcolorcode];
 
         if ( isdefined( var_1 ) )
-            self _meth_81AC( var_1 );
+            self setfixednodesafevolume( var_1 );
         else
-            self _meth_815E();
+            self clearfixednodesafevolume();
 
         thread careful_logic( var_0, var_1 );
     }
     else
-        self _meth_815E();
+        self clearfixednodesafevolume();
 }
 
 set_color_goal_node( var_0 )
@@ -494,7 +494,7 @@ set_color_goal_node( var_0 )
     }
     else
     {
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
         thread color_node_arrival_notifies( var_0 );
     }
 
@@ -586,11 +586,11 @@ send_ai_to_colorvolume( var_0, var_1 )
         var_2 = getnode( var_0.target, "targetname" );
 
         if ( isdefined( var_2 ) )
-            self _meth_81A5( var_2 );
+            self setgoalnode( var_2 );
     }
 
     self.fixednode = 0;
-    self _meth_81A9( var_0 );
+    self setgoalvolumeauto( var_0 );
 }
 
 clear_color_order_from_team( var_0, var_1 )
@@ -688,10 +688,10 @@ wait_until_an_enemy_is_in_safe_area( var_0, var_1 )
 {
     for (;;)
     {
-        if ( self _meth_816E( var_0.origin, self.fixednodesaferadius ) )
+        if ( self isknownenemyinradius( var_0.origin, self.fixednodesaferadius ) )
             return;
 
-        if ( isdefined( var_1 ) && self _meth_816F( var_1 ) )
+        if ( isdefined( var_1 ) && self isknownenemyinvolume( var_1 ) )
             return;
 
         wait 1;
@@ -700,7 +700,7 @@ wait_until_an_enemy_is_in_safe_area( var_0, var_1 )
 
 use_big_goal_until_goal_is_safe( var_0, var_1 )
 {
-    self _meth_81A6( self.origin );
+    self setgoalpos( self.origin );
 
     if ( isdefined( level.default_goalradius ) )
         self.goalradius = level.default_goalradius;
@@ -713,10 +713,10 @@ use_big_goal_until_goal_is_safe( var_0, var_1 )
     {
         wait 1;
 
-        if ( self _meth_816E( var_0.origin, self.fixednodesaferadius ) )
+        if ( self isknownenemyinradius( var_0.origin, self.fixednodesaferadius ) )
             continue;
 
-        if ( isdefined( var_1 ) && self _meth_816F( var_1 ) )
+        if ( isdefined( var_1 ) && self isknownenemyinvolume( var_1 ) )
             continue;
 
         return;
@@ -978,7 +978,7 @@ ai_go_to_goal_before_colors( var_0 )
     self endon( "death" );
     var_1 = self.goalradius;
     self.goalradius = 128;
-    self _meth_81A6( var_0 );
+    self setgoalpos( var_0 );
     self waittill( "goal" );
     self.goalradius = var_1;
     thread goto_current_colorindex();
@@ -1225,7 +1225,7 @@ spawn_hidden_reinforcement( var_0, var_1, var_2, var_3 )
             var_5.script_forcecolor = undefined;
         }
 
-        var_4 = var_5 _meth_8094();
+        var_4 = var_5 stalingradspawn();
         var_5.script_forcecolor = var_7;
         var_5.origin = var_6;
 
@@ -1320,10 +1320,10 @@ spawner_vision_checker( var_0 )
 
         if ( var_5 > 0.2 )
         {
-            var_6 = !sighttracepassed( level.player _meth_80A8(), level.respawn_spawner_org[var_0], 0, level.player );
+            var_6 = !sighttracepassed( level.player geteye(), level.respawn_spawner_org[var_0], 0, level.player );
 
             if ( var_6 )
-                var_6 = !sighttracepassed( level.player _meth_80A8(), level.respawn_spawner_org[var_0] + ( 0, 0, 96 ), 0, level.player );
+                var_6 = !sighttracepassed( level.player geteye(), level.respawn_spawner_org[var_0] + ( 0, 0, 96 ), 0, level.player );
 
             if ( !var_6 )
             {
@@ -1411,7 +1411,7 @@ colornode_replace_on_death()
     if ( isalive( self ) )
         self waittill( "death" );
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     var_0 = self.classname;
@@ -1509,7 +1509,7 @@ kill_color_replacements()
     common_scripts\utility::flag_clear( "friendly_spawner_locked" );
     common_scripts\utility::flag_clear( "enemy_spawner_locked" );
     level notify( "kill_color_replacements" );
-    var_0 = _func_0D6();
+    var_0 = getaiarray();
     common_scripts\utility::array_thread( var_0, ::remove_replace_on_death );
 }
 

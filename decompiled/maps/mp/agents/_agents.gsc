@@ -90,7 +90,7 @@ spawn_agent_player( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( distancesquared( var_11, var_9 ) > 1 )
         var_6 = var_11;
 
-    self _meth_838A( var_6, var_7 );
+    self spawnagent( var_6, var_7 );
 
     if ( isdefined( var_5 ) )
         self.agent_override_difficulty = var_5;
@@ -98,12 +98,12 @@ spawn_agent_player( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( self.agent_override_difficulty ) )
     {
         if ( self.agent_override_difficulty == "follow_code_and_dev_dvar" )
-            maps\mp\bots\_bots_util::bot_set_difficulty( self _meth_836B(), 1 );
+            maps\mp\bots\_bots_util::bot_set_difficulty( self botgetdifficulty(), 1 );
         else
             maps\mp\bots\_bots_util::bot_set_difficulty( var_5 );
     }
     else
-        maps\mp\bots\_bots_util::bot_set_difficulty( self _meth_836B() );
+        maps\mp\bots\_bots_util::bot_set_difficulty( self botgetdifficulty() );
 
     if ( isdefined( var_3 ) && var_3 )
         self.use_randomized_personality = 1;
@@ -112,7 +112,7 @@ spawn_agent_player( var_0, var_1, var_2, var_3, var_4, var_5 )
     {
         if ( !self.hasdied )
         {
-            var_12 = self _meth_837B( "advancedPersonality" );
+            var_12 = self botgetdifficultysetting( "advancedPersonality" );
 
             if ( isdefined( var_12 ) && var_12 != 0 )
                 maps\mp\bots\_bots_personality::bot_balance_personality();
@@ -136,7 +136,7 @@ spawn_agent_player( var_0, var_1, var_2, var_3, var_4, var_5 )
         thread destroyonownerdisconnect( self.owner );
 
     thread maps\mp\_flashgrenades::monitorflash();
-    self _meth_83D1( 0 );
+    self enableanimstate( 0 );
     self [[ level.onspawnplayer ]]();
     maps\mp\gametypes\_class::giveandapplyloadout( self.team, self.class, 1 );
     thread maps\mp\bots\_bots::bot_think_watch_enemy( 1 );
@@ -163,7 +163,7 @@ spawn_agent_player( var_0, var_1, var_2, var_3, var_4, var_5 )
     thread maps\mp\gametypes\_healthoverlay::playerhealthregen();
 
     if ( isdefined( self.use_randomized_personality ) && self.use_randomized_personality && isdefined( self.respawn_on_death ) && self.respawn_on_death )
-        self _meth_852D( 1 );
+        self setagentcostumeindex( 1 );
 
     level notify( "spawned_agent_player", self );
     level notify( "spawned_agent", self );
@@ -180,7 +180,7 @@ destroyonownerdisconnect( var_0 )
     if ( maps\mp\gametypes\_hostmigration::waittillhostmigrationdone() )
         wait 0.05;
 
-    self _meth_826B();
+    self suicide();
 }
 
 agent_damage_finished( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
@@ -204,15 +204,15 @@ agent_damage_finished( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, v
             if ( level.teambased )
             {
                 if ( isdefined( var_1.team ) && var_1.team != self.team )
-                    self _meth_838C( var_1 );
+                    self setagentattacker( var_1 );
             }
             else
-                self _meth_838C( var_1 );
+                self setagentattacker( var_1 );
         }
     }
 
     var_10 = maps\mp\gametypes\_damage::shouldplayblastimpact( var_3, var_4, var_5 );
-    var_11 = self _meth_838B( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, 0.0, var_10 );
+    var_11 = self finishagentdamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, 0.0, var_10 );
 
     if ( isdefined( var_11 ) )
         thread finishagentdamage_impactfxwrapper( var_11[0], var_11[1], var_11[2], var_11[3], var_11[4], var_11[5], var_11[6] );
@@ -230,7 +230,7 @@ finishagentdamage_impactfxwrapper( var_0, var_1, var_2, var_3, var_4, var_5, var
     if ( !isdefined( self ) || !isdefined( var_0 ) )
         return;
 
-    self _meth_8540( var_0, var_1, var_2, var_3, var_4, var_5, var_6 );
+    self finishagentdamage_impactfx( var_0, var_1, var_2, var_3, var_4, var_5, var_6 );
 }
 
 on_agent_generic_damaged( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
@@ -366,7 +366,7 @@ on_humanoid_agent_killed_common( var_0, var_1, var_2, var_3, var_4, var_5, var_6
 
         if ( !var_9 )
         {
-            var_10 = self _meth_8250( self _meth_8311() );
+            var_10 = self dropitem( self getcurrentweapon() );
 
             if ( isdefined( var_10 ) )
             {
@@ -383,13 +383,13 @@ on_humanoid_agent_killed_common( var_0, var_1, var_2, var_3, var_4, var_5, var_6
 
     if ( !isdefined( self.bypassagentcorpse ) || !self.bypassagentcorpse )
     {
-        self.body = self _meth_838D( var_8 );
+        self.body = self finishagentdamage( var_8 );
 
         if ( isdefined( level.agentshouldragdollimmediatelyfunc ) && [[ level.agentshouldragdollimmediatelyfunc ]]( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 ) )
         {
-            self.body _meth_8023();
+            self.body startragdoll();
 
-            if ( !self.body _meth_81E0() )
+            if ( !self.body isragdoll() )
                 thread maps\mp\gametypes\_damage::delaystartragdoll( self.body, var_6, var_5, var_4, var_0, var_3 );
         }
         else

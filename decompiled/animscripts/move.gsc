@@ -146,7 +146,7 @@ end_script()
     if ( self.swimmer )
         animscripts\swim::swim_moveend();
 
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
     self.facialidx = undefined;
 }
 
@@ -168,16 +168,16 @@ getupifprone()
 
         if ( var_0 != "prone" )
         {
-            self _meth_818F( "face current" );
-            self _meth_818E( "zonly_physics", 0 );
+            self orientmode( "face current" );
+            self animmode( "zonly_physics", 0 );
             var_1 = 1;
 
             if ( isdefined( self.grenade ) )
                 var_1 = 2;
 
             animscripts\cover_prone::proneto( var_0, var_1 );
-            self _meth_818E( "none", 0 );
-            self _meth_818F( "face default" );
+            self animmode( "none", 0 );
+            self orientmode( "face default" );
         }
     }
 }
@@ -262,7 +262,7 @@ movemainloopinternal( var_0 )
 {
     self endon( "killanimscript" );
     self endon( "move_interrupt" );
-    var_1 = self _meth_814F( %walk_and_run_loops );
+    var_1 = self getanimtime( %walk_and_run_loops );
     self.a.runloopcount = randomint( 10000 );
     self.prevmovemode = "none";
     self.prevmovearchetype = "none";
@@ -270,7 +270,7 @@ movemainloopinternal( var_0 )
 
     for (;;)
     {
-        var_2 = self _meth_814F( %walk_and_run_loops );
+        var_2 = self getanimtime( %walk_and_run_loops );
 
         if ( var_2 < var_1 )
             self.a.runloopcount++;
@@ -392,7 +392,7 @@ shootwhilemoving()
         }
 
         animscripts\combat_utility::shootuntilshootbehaviorchange();
-        self _meth_8142( %exposed_aiming, 0.2 );
+        self clearanim( %exposed_aiming, 0.2 );
     }
 }
 
@@ -433,9 +433,9 @@ restartmoveloop( var_0 )
         animscripts\exit_node::startmovetransition();
 
     self.ignorepathchange = undefined;
-    self _meth_8142( %animscript_root, 0.1 );
-    self _meth_818F( "face default" );
-    self _meth_818E( "none", 0 );
+    self clearanim( %animscript_root, 0.1 );
+    self orientmode( "face default" );
+    self animmode( "none", 0 );
     self.requestarrivalnotify = 1;
     movemainloop( !var_0 );
 }
@@ -583,16 +583,16 @@ pathchange_candoturnanim( var_0 )
     var_1 = getnotetracktimes( var_0, "code_move" );
     var_2 = var_1[0];
     var_3 = getmovedelta( var_0, 0, var_2 );
-    var_4 = self _meth_81B0( var_3 );
+    var_4 = self localtoworldcoords( var_3 );
 
     if ( isdefined( self.arrivalstartdist ) && squared( self.arrivalstartdist ) > distancesquared( self.pathgoalpos, var_4 ) )
         return 0;
 
     var_3 = getmovedelta( var_0, 0, 1 );
-    var_5 = self _meth_81B0( var_3 );
+    var_5 = self localtoworldcoords( var_3 );
     var_5 = var_4 + vectornormalize( var_5 - var_4 ) * 20;
     var_6 = !self.swimmer;
-    var_7 = self _meth_81C4( var_4, var_5, var_6, 1 );
+    var_7 = self maymovefrompointtopoint( var_4, var_5, var_6, 1 );
     return var_7;
 }
 
@@ -606,16 +606,16 @@ pathchange_doturnanim()
         return;
 
     if ( self.swimmer )
-        self _meth_818E( "nogravity", 0 );
+        self animmode( "nogravity", 0 );
     else
-        self _meth_818E( "zonly_physics", 0 );
+        self animmode( "zonly_physics", 0 );
 
     var_1 = 0.1;
 
     if ( isdefined( self.pathturnanimblendtime ) )
         var_1 = self.pathturnanimblendtime;
 
-    self _meth_8142( %body, var_1 );
+    self clearanim( %body, var_1 );
     self.moveloopcleanupfunc = ::pathchange_cleanupturnanim;
     self.ignorepathchange = 1;
     var_1 = 0.05;
@@ -624,27 +624,27 @@ pathchange_doturnanim()
         var_1 = self.pathturnanimblendtime;
 
     self notify( "turn_start" );
-    self _meth_8113( "turnAnim", var_0, 1, var_1, self.moveplaybackrate );
+    self setflaggedanimrestart( "turnAnim", var_0, 1, var_1, self.moveplaybackrate );
 
     if ( animscripts\utility::isspaceai() )
-        self _meth_818F( "face angle 3d", self.angles );
+        self orientmode( "face angle 3d", self.angles );
     else
-        self _meth_818F( "face angle", self.angles[1] );
+        self orientmode( "face angle", self.angles[1] );
 
     if ( isdefined( self.dynamicturnscaling ) )
         childthread manage_turn( var_0, 1, "code_move" );
 
     animscripts\shared::donotetracks( "turnAnim" );
     self.ignorepathchange = undefined;
-    self _meth_818F( "face motion" );
-    self _meth_818E( "none", 0 );
+    self orientmode( "face motion" );
+    self animmode( "none", 0 );
     animscripts\shared::donotetracks( "turnAnim" );
     self notify( "turn_end" );
 }
 
 getcurrentforwardmovementanimation()
 {
-    var_0 = self _meth_84F4();
+    var_0 = self getactiveanimations();
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
@@ -689,7 +689,7 @@ manage_turn( var_0, var_1, var_2 )
             break;
 
         var_14 = getmovedelta( var_0, 0, var_12 );
-        var_15 = _func_221( var_0, 0, var_12 );
+        var_15 = getangledelta3d( var_0, 0, var_12 );
         var_16 = transformmove( var_5, var_6, ( 0, 0, 0 ), ( 0, 0, 0 ), var_14, var_15 );
         var_17 = var_16["origin"];
         var_18 = var_16["angles"];
@@ -700,7 +700,7 @@ manage_turn( var_0, var_1, var_2 )
         var_23 = var_22 * var_13;
         var_23 = abs( clamp( var_23, -1 * var_3, var_3 ) );
         var_19 = vectorlerp( anglestoforward( var_18 ), self.lookaheaddir, var_23 / var_3 * var_13 );
-        self _meth_818F( "face direction", var_19 );
+        self orientmode( "face direction", var_19 );
         waitframe();
     }
 }
@@ -708,9 +708,9 @@ manage_turn( var_0, var_1, var_2 )
 pathchange_cleanupturnanim()
 {
     self.ignorepathchange = undefined;
-    self _meth_818F( "face default" );
-    self _meth_8142( %animscript_root, 0.1 );
-    self _meth_818E( "none", 0 );
+    self orientmode( "face default" );
+    self clearanim( %animscript_root, 0.1 );
+    self animmode( "none", 0 );
 
     if ( self.swimmer )
         animscripts\swim::swim_cleanupturnanim();
@@ -718,19 +718,19 @@ pathchange_cleanupturnanim()
 
 dodgemoveloopoverride()
 {
-    self _meth_81A3( 1 );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "dodgeAnim", self.currentdodgeanim, 1, 0.2, 1 );
+    self pushplayer( 1 );
+    self animmode( "zonly_physics", 0 );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "dodgeAnim", self.currentdodgeanim, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "dodgeAnim" );
-    self _meth_818E( "none", 0 );
-    self _meth_818F( "face default" );
+    self animmode( "none", 0 );
+    self orientmode( "face default" );
 
     if ( animhasnotetrack( self.currentdodgeanim, "code_move" ) )
         animscripts\shared::donotetracks( "dodgeAnim" );
 
-    self _meth_8142( %civilian_dodge, 0.2 );
-    self _meth_81A3( 0 );
+    self clearanim( %civilian_dodge, 0.2 );
+    self pushplayer( 0 );
     self.currentdodgeanim = undefined;
     self.moveloopoverridefunc = undefined;
     return 1;
@@ -742,9 +742,9 @@ trydodgewithanim( var_0, var_1 )
     var_3 = self.lookaheaddir * var_1[0];
     var_4 = var_2 * var_1[1];
     var_5 = self.origin + var_3 - var_4;
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
 
-    if ( self _meth_81C3( var_5 ) )
+    if ( self maymovetopoint( var_5 ) )
     {
         self.currentdodgeanim = var_0;
         self.moveloopoverridefunc = ::dodgemoveloopoverride;
@@ -752,7 +752,7 @@ trydodgewithanim( var_0, var_1 )
         return 1;
     }
 
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     return 0;
 }
 
@@ -835,7 +835,7 @@ meleeattackcheck_whilemoving()
     {
         if ( isdefined( self.enemy ) && ( isai( self.enemy ) || isdefined( self.meleeplayerwhilemoving ) ) )
         {
-            if ( abs( self _meth_8190() ) <= 135 )
+            if ( abs( self getmotionangle() ) <= 135 )
                 animscripts\melee::melee_tryexecuting();
         }
 
@@ -863,7 +863,7 @@ bulletwhizbycheck_whilemoving()
         if ( !isdefined( self.enemy ) && !self.ignoreall && isdefined( var_0.team ) && isenemyteam( self.team, var_0.team ) )
         {
             self.whizbyenemy = var_0;
-            self _meth_819A( animscripts\reactions::bulletwhizbyreaction );
+            self animcustom( animscripts\reactions::bulletwhizbyreaction );
             continue;
         }
 
@@ -1015,8 +1015,8 @@ movecovertocover()
         var_6 = 0.4;
 
     setup_shuffle_anim_array( var_5, var_1, var_2 );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_8142( %body, var_6 );
+    self animmode( "zonly_physics", 0 );
+    self clearanim( %body, var_6 );
     var_7 = animscripts\utility::animarray( "shuffle_start" );
     var_8 = animscripts\utility::animarray( "shuffle" );
     var_9 = animscripts\utility::animarray( "shuffle_end" );
@@ -1033,15 +1033,15 @@ movecovertocover()
 
     if ( var_14 > var_11 )
     {
-        self _meth_818F( "face angle", animscripts\utility::getnodeforwardyaw( var_1 ) );
-        self _meth_8113( "shuffle_start", var_7, 1, var_6 );
+        self orientmode( "face angle", animscripts\utility::getnodeforwardyaw( var_1 ) );
+        self setflaggedanimrestart( "shuffle_start", var_7, 1, var_6 );
         animscripts\shared::donotetracks( "shuffle_start" );
-        self _meth_8142( var_7, 0.2 );
+        self clearanim( var_7, 0.2 );
         var_14 -= var_11;
         var_6 = 0.2;
     }
     else
-        self _meth_818F( "face angle", var_2.angles[1] );
+        self orientmode( "face angle", var_2.angles[1] );
 
     var_15 = 0;
 
@@ -1054,7 +1054,7 @@ movecovertocover()
     var_16 = getanimlength( var_8 );
     var_17 = var_16 * var_14 / var_12 * 0.9;
     var_17 = floor( var_17 * 20 ) * 0.05;
-    self _meth_8111( "shuffle", var_8, 1, var_6 );
+    self setflaggedanim( "shuffle", var_8, 1, var_6 );
     animscripts\notetracks::donotetracksfortime( var_17, "shuffle" );
 
     for ( var_18 = 0; var_18 < 2; var_18++ )
@@ -1083,13 +1083,13 @@ movecovertocover()
         else
             var_6 = 0.4;
 
-        self _meth_8142( var_8, var_6 );
-        self _meth_8111( "shuffle_end", var_9, 1, var_6 );
+        self clearanim( var_8, var_6 );
+        self setflaggedanim( "shuffle_end", var_9, 1, var_6 );
         animscripts\shared::donotetracks( "shuffle_end" );
     }
 
-    self _meth_81C7( var_2.origin );
-    self _meth_818E( "normal" );
+    self safeteleport( var_2.origin );
+    self animmode( "normal" );
     self.shufflemoveinterrupted = undefined;
 }
 
@@ -1097,15 +1097,15 @@ movecovertocoverfinish()
 {
     if ( isdefined( self.shufflemoveinterrupted ) )
     {
-        self _meth_8142( %cover_shuffle, 0.2 );
+        self clearanim( %cover_shuffle, 0.2 );
         self.shufflemoveinterrupted = undefined;
-        self _meth_818E( "none", 0 );
-        self _meth_818F( "face default" );
+        self animmode( "none", 0 );
+        self orientmode( "face default" );
     }
     else
     {
         wait 0.2;
-        self _meth_8142( %cover_shuffle, 0.2 );
+        self clearanim( %cover_shuffle, 0.2 );
     }
 }
 
@@ -1121,11 +1121,11 @@ movedoorsidetoside( var_0, var_1, var_2 )
     if ( !isdefined( var_3 ) )
         return 0;
 
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face current" );
-    self _meth_8113( "sideToSide", var_3, 1, 0.2 );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face current" );
+    self setflaggedanimrestart( "sideToSide", var_3, 1, 0.2 );
     animscripts\shared::donotetracks( "sideToSide", ::handlesidetosidenotetracks );
-    var_4 = self _meth_814F( var_3 );
+    var_4 = self getanimtime( var_3 );
     var_5 = var_2.origin - var_1.origin;
     var_5 = vectornormalize( ( var_5[0], var_5[1], 0 ) );
     var_6 = getmovedelta( var_3, var_4, 1 );
@@ -1143,9 +1143,9 @@ movedoorsidetoside( var_0, var_1, var_2 )
     }
 
     animscripts\shared::donotetracks( "sideToSide" );
-    self _meth_81C7( var_2.origin );
-    self _meth_818E( "none" );
-    self _meth_818F( "face default" );
+    self safeteleport( var_2.origin );
+    self animmode( "none" );
+    self orientmode( "face default" );
     self.shufflemoveinterrupted = undefined;
     wait 0.2;
     return 1;
@@ -1164,7 +1164,7 @@ slidefortime( var_0, var_1 )
 
     while ( var_1 > 0 )
     {
-        self _meth_81C7( self.origin + var_0 );
+        self safeteleport( self.origin + var_0 );
         var_1--;
         wait 0.05;
     }
@@ -1173,8 +1173,8 @@ slidefortime( var_0, var_1 )
 movestand_moveoverride( var_0, var_1 )
 {
     self endon( "movemode" );
-    self _meth_8142( %combatrun, 0.6 );
-    self _meth_8147( %combatrun, %body, 1, 0.5, self.moveplaybackrate );
+    self clearanim( %combatrun, 0.6 );
+    self setanimknoball( %combatrun, %body, 1, 0.5, self.moveplaybackrate );
 
     if ( isdefined( self.requestreacttobullet ) && gettime() - self.requestreacttobullet < 100 && isdefined( self.run_overridebulletreact ) && randomfloat( 1 ) < self.a.reacttobulletchance )
     {
@@ -1189,7 +1189,7 @@ movestand_moveoverride( var_0, var_1 )
         if ( animscripts\run::move_checkstairstransition() )
             return;
 
-        self _meth_8142( %stair_transitions, 0.1 );
+        self clearanim( %stair_transitions, 0.1 );
 
         if ( self.stairsstate == "up" )
             var_2 = animscripts\utility::getmoveanim( "stairs_up" );
@@ -1210,7 +1210,7 @@ movestand_moveoverride( var_0, var_1 )
             var_2 = var_0;
     }
 
-    self _meth_8152( "moveanim", var_2, 1, 0.2, self.moveplaybackrate );
+    self setflaggedanimknob( "moveanim", var_2, 1, 0.2, self.moveplaybackrate );
     animscripts\shared::donotetracks( "moveanim" );
 }
 

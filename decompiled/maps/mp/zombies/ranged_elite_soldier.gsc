@@ -185,12 +185,12 @@ soldierroundupdatespawnpoints()
         {
             if ( isalive( var_13 ) )
             {
-                var_14 = var_13 _meth_8387();
+                var_14 = var_13 getnearestnode();
 
                 if ( isdefined( var_14 ) )
                 {
                     var_10[var_10.size] = var_14;
-                    var_11[var_11.size] = _func_2D1( var_14 );
+                    var_11[var_11.size] = nodegetsplitgroup( var_14 );
                 }
             }
         }
@@ -209,7 +209,7 @@ soldierroundupdatespawnpoints()
 
             foreach ( var_19 in var_10 )
             {
-                if ( _func_1FF( level.soldierspawn, var_19, 1 ) )
+                if ( nodesvisible( level.soldierspawn, var_19, 1 ) )
                 {
                     var_16 = 1;
                     break;
@@ -232,9 +232,9 @@ soldierroundupdatespawnpoints()
 
         foreach ( var_3 in var_1 )
         {
-            if ( !var_3 _meth_8386() )
+            if ( !var_3 nodeisdisconnected() )
             {
-                var_23 = _func_2D1( var_3 );
+                var_23 = nodegetsplitgroup( var_3 );
 
                 if ( common_scripts\utility::array_contains( var_11, var_23 ) )
                     var_21[var_21.size] = var_3;
@@ -252,7 +252,7 @@ soldierroundupdatespawnpoints()
 
             foreach ( var_19 in var_10 )
             {
-                if ( _func_1FF( var_3, var_19, 1 ) )
+                if ( nodesvisible( var_3, var_19, 1 ) )
                 {
                     var_29 = 0;
                     break;
@@ -306,7 +306,7 @@ soldierroundupdatespawnpoints()
 
 comparenodedistances( var_0, var_1 )
 {
-    return level.nodedistances[var_0 _meth_8381()] <= level.nodedistances[var_1 _meth_8381()];
+    return level.nodedistances[var_0 getnodenumber()] <= level.nodedistances[var_1 getnodenumber()];
 }
 
 soldiergetrandomspawnpoint()
@@ -495,8 +495,8 @@ onspawnfinished( var_0 )
     level endon( "game_ended" );
     self waittill( "applyLoadout" );
     setsoldierbotsettings();
-    self _meth_8548( 1 );
-    self _meth_8351( "no_enemy_search", 1 );
+    self agentusescragentclipmask( 1 );
+    self botsetflag( "no_enemy_search", 1 );
     self.pers["numberOfTimesCloakingUsed"] = 0;
     self.pers["numberOfTimesShieldUsed"] = 0;
     var_1 = self.overridebodymodel;
@@ -514,7 +514,7 @@ onspawnfinished( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        self _meth_80B1( var_1 );
+        self setmodel( var_1 );
 
         if ( isdefined( self.headmodel ) )
             self detach( self.headmodel, "" );
@@ -529,7 +529,7 @@ onspawnfinished( var_0 )
 playersetjuggexomodelzm( var_0 )
 {
     self detachall();
-    self _meth_80B1( "npc_exo_armor_mp_base" );
+    self setmodel( "npc_exo_armor_mp_base" );
     self attach( "head_hero_cormack_sentinel_halo" );
 
     if ( isdefined( var_0 ) && !var_0.hasmaniac || isdefined( level.ishorde ) )
@@ -545,13 +545,13 @@ onspawnfinishedgoliath()
 {
     onspawnfinished();
     playersetjuggexomodelzm();
-    self _meth_8494( 1 );
-    self _meth_8352( "stand" );
-    self _meth_8301( 0 );
-    self _meth_8302( 0 );
-    self _meth_8303( 0 );
-    self _meth_8119( 0 );
-    self _meth_811A( 0 );
+    self setplayermech( 1 );
+    self botsetstance( "stand" );
+    self allowjump( 0 );
+    self allowladder( 0 );
+    self allowmantle( 0 );
+    self allowcrouch( 0 );
+    self allowprone( 0 );
     maps\mp\_utility::playerallowhighjump( 0, "class" );
     maps\mp\_utility::playerallowdodge( 0, "class" );
     mechattachminigunbarrel();
@@ -562,11 +562,11 @@ onspawnfinishedgoliath()
 mechattachminigunbarrel()
 {
     self.barrellinker = spawn( "script_model", self gettagorigin( "tag_barrel" ) );
-    self.barrellinker _meth_80B1( "generic_prop_raven" );
-    self.barrellinker _meth_8446( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
+    self.barrellinker setmodel( "generic_prop_raven" );
+    self.barrellinker vehicle_jetbikesethoverforcescale( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
     self.barrel = spawn( "script_model", self.barrellinker gettagorigin( "j_prop_1" ) );
-    self.barrel _meth_80B1( "npc_exo_armor_minigun_barrel" );
-    self.barrel _meth_8446( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    self.barrel setmodel( "npc_exo_armor_minigun_barrel" );
+    self.barrel vehicle_jetbikesethoverforcescale( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
 }
 
 setsoldierpersonalityanddifficulty()
@@ -580,34 +580,34 @@ setsoldierpersonalityanddifficulty()
     else
         maps\mp\bots\_bots_util::bot_set_difficulty( "regular" );
 
-    self.difficulty = self _meth_836B();
+    self.difficulty = self botgetdifficulty();
 }
 
 setsoldierbotsettings()
 {
     if ( !issoldierally() )
     {
-        self _meth_837A( "quickPistolSwitch", 1 );
-        self _meth_837A( "diveChance", 0.2 );
-        self _meth_837A( "diveDelay", 300 );
-        self _meth_837A( "slideChance", 0.6 );
-        self _meth_837A( "cornerFireChance", 1.0 );
-        self _meth_837A( "cornerJumpChance", 1.0 );
-        self _meth_837A( "throwKnifeChance", 1.0 );
-        self _meth_837A( "meleeDist", 100 );
-        self _meth_837A( "meleeChargeDist", 160 );
-        self _meth_837A( "grenadeCookPrecision", 100 );
-        self _meth_837A( "grenadeDoubleTapChance", 1.0 );
-        self _meth_837A( "strategyLevel", 3 );
-        self _meth_837A( "intelligentSprintLevel", 2 );
-        self _meth_837A( "holdBreathChance", 1.0 );
-        self _meth_837A( "intelligentReload", 1.0 );
-        self _meth_837A( "dodgeChance", 0.5 );
-        self _meth_837A( "dodgeIntelligence", 0.8 );
-        self _meth_837A( "boostSlamChance", 0.35 );
-        self _meth_837A( "boostLookAroundChance", 1.0 );
-        self _meth_837A( "diveDelay", 300 );
-        self _meth_837A( "diveDelay", 300 );
+        self botsetdifficultysetting( "quickPistolSwitch", 1 );
+        self botsetdifficultysetting( "diveChance", 0.2 );
+        self botsetdifficultysetting( "diveDelay", 300 );
+        self botsetdifficultysetting( "slideChance", 0.6 );
+        self botsetdifficultysetting( "cornerFireChance", 1.0 );
+        self botsetdifficultysetting( "cornerJumpChance", 1.0 );
+        self botsetdifficultysetting( "throwKnifeChance", 1.0 );
+        self botsetdifficultysetting( "meleeDist", 100 );
+        self botsetdifficultysetting( "meleeChargeDist", 160 );
+        self botsetdifficultysetting( "grenadeCookPrecision", 100 );
+        self botsetdifficultysetting( "grenadeDoubleTapChance", 1.0 );
+        self botsetdifficultysetting( "strategyLevel", 3 );
+        self botsetdifficultysetting( "intelligentSprintLevel", 2 );
+        self botsetdifficultysetting( "holdBreathChance", 1.0 );
+        self botsetdifficultysetting( "intelligentReload", 1.0 );
+        self botsetdifficultysetting( "dodgeChance", 0.5 );
+        self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
+        self botsetdifficultysetting( "boostSlamChance", 0.35 );
+        self botsetdifficultysetting( "boostLookAroundChance", 1.0 );
+        self botsetdifficultysetting( "diveDelay", 300 );
+        self botsetdifficultysetting( "diveDelay", 300 );
     }
 }
 
@@ -618,7 +618,7 @@ ammorefillprimary()
 
     for (;;)
     {
-        self _meth_8332( self.primaryweapon );
+        self givemaxammo( self.primaryweapon );
         wait 12;
     }
 }
@@ -630,7 +630,7 @@ ammorefillsecondary()
 
     for (;;)
     {
-        self _meth_8332( self.secondaryweapon );
+        self givemaxammo( self.secondaryweapon );
         wait 8;
     }
 }

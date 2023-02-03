@@ -414,18 +414,18 @@ notetrackhide( var_0 )
 
 notetrackdelete( var_0 )
 {
-    var_0 _meth_8141();
+    var_0 stopanimscripted();
     var_0 delete();
 }
 
 notetrackshoot( var_0 )
 {
-    var_0 _meth_81E7();
+    var_0 shoot();
 }
 
 notetrackgatebash( var_0 )
 {
-    var_0 _meth_8241();
+    var_0 startscriptedanim();
 }
 
 safehousebagdroprumblelight( var_0 )
@@ -433,7 +433,7 @@ safehousebagdroprumblelight( var_0 )
     var_1 = randomfloatrange( 0.1, 0.3 );
     var_2 = randomfloatrange( 0.1, 0.3 );
     earthquake( var_1, var_2, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 marketkvafollowtargetdrawgun( var_0 )

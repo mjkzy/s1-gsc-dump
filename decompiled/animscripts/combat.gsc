@@ -37,7 +37,7 @@ main()
     animscripts\utility::initialize( "combat" );
     self.a.arrivaltype = undefined;
 
-    if ( isdefined( self.node ) && self.node.type == "Ambush" && self _meth_8161( self.node ) )
+    if ( isdefined( self.node ) && self.node.type == "Ambush" && self nearnode( self.node ) )
         self.ambushnode = self.node;
 
     if ( isdefined( self.team ) )
@@ -65,7 +65,7 @@ dofriendlyfirereaction()
     if ( self.team != "allies" )
         return;
 
-    if ( self _meth_81CE() && self.prevscript == "move" && self.a.pose == "stand" && !isdefined( self.disablefriendlyfirereaction ) )
+    if ( self ismovesuppressed() && self.prevscript == "move" && self.a.pose == "stand" && !isdefined( self.disablefriendlyfirereaction ) )
     {
         if ( isdefined( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) < squared( 128 ) )
             return;
@@ -86,7 +86,7 @@ dofriendlyfirereaction()
             var_0 = animscripts\utility::lookupanim( "combat", "surprise_stop" );
 
         resetanimmode();
-        self _meth_8110( "react", var_0, %animscript_root, 1, 0.2, self.animplaybackrate );
+        self setflaggedanimknoballrestart( "react", var_0, %animscript_root, 1, 0.2, self.animplaybackrate );
         combat_playfacialanim( var_0, "run" );
         animscripts\shared::donotetracks( "react" );
     }
@@ -107,17 +107,17 @@ transitiontocombat()
             if ( self.prevscript == "cover_right" )
             {
                 resetanimmode();
-                self _meth_818F( "face current" );
+                self orientmode( "face current" );
                 var_0 = animscripts\utility::lookupanim( "combat", "trans_from_crouch_r" );
-                self _meth_8110( "transition", var_0, %animscript_root, 1, 0.2, 1 );
+                self setflaggedanimknoballrestart( "transition", var_0, %animscript_root, 1, 0.2, 1 );
                 wait(getanimlength( var_0 ));
             }
             else if ( self.prevscript == "cover_left" )
             {
                 resetanimmode();
-                self _meth_818F( "face current" );
+                self orientmode( "face current" );
                 var_0 = animscripts\utility::lookupanim( "combat", "trans_from_crouch_l" );
-                self _meth_8110( "transition", var_0, %animscript_root, 1, 0.2, 1 );
+                self setflaggedanimknoballrestart( "transition", var_0, %animscript_root, 1, 0.2, 1 );
                 wait(getanimlength( var_0 ));
             }
         }
@@ -136,7 +136,7 @@ transitiontocombat()
         else
             var_0 = animscripts\utility::lookupanim( "combat", "trans_to_combat" );
 
-        self _meth_8110( "transition", var_0, %animscript_root, 1, 0.2, 1.2 * self.animplaybackrate );
+        self setflaggedanimknoballrestart( "transition", var_0, %animscript_root, 1, 0.2, 1.2 * self.animplaybackrate );
         combat_playfacialanim( var_0, "run" );
         animscripts\shared::donotetracks( "transition" );
     }
@@ -158,14 +158,14 @@ setup_anim_array()
 
 setup()
 {
-    if ( animscripts\utility::usingsidearm() && self _meth_81CB( "stand" ) )
+    if ( animscripts\utility::usingsidearm() && self isstanceallowed( "stand" ) )
         transitionto( "stand" );
 
     setup_anim_array();
     set_aim_and_turn_limits();
     thread stopshortly();
     self.previouspitchdelta = 0.0;
-    self _meth_8142( %animscript_root, 0.2 );
+    self clearanim( %animscript_root, 0.2 );
     var_0 = 0.2;
 
     if ( isdefined( self.aimsetupblendtime ) )
@@ -206,9 +206,9 @@ set_default_swimmer_aim_limits()
 set_default_aim_limits( var_0 )
 {
     if ( isdefined( var_0 ) )
-        self _meth_8173( var_0 );
+        self setdefaultaimlimits( var_0 );
     else
-        self _meth_8173();
+        self setdefaultaimlimits();
 
     set_default_swimmer_aim_limits();
 }
@@ -255,7 +255,7 @@ exposedcombatstopusingrpgcheck( var_0 )
         else
             animscripts\shared::throwdownweapon( animscripts\utility::lookupanim( "combat", "drop_rpg_crouch" ) );
 
-        self _meth_8142( %animscript_root, 0.2 );
+        self clearanim( %animscript_root, 0.2 );
         animscripts\combat_utility::endfireandanimidlethread();
         setup_anim_array();
         animscripts\combat_utility::startfireandaimidlethread();
@@ -267,7 +267,7 @@ exposedcombatstopusingrpgcheck( var_0 )
 
 exposedcombatcheckstance( var_0 )
 {
-    if ( self.a.pose != "stand" && self _meth_81CB( "stand" ) )
+    if ( self.a.pose != "stand" && self isstanceallowed( "stand" ) )
     {
         if ( var_0 < 81225 )
         {
@@ -279,7 +279,7 @@ exposedcombatcheckstance( var_0 )
             return 1;
     }
 
-    if ( var_0 > 262144 && self.a.pose != "crouch" && self _meth_81CB( "crouch" ) && !self.swimmer && !animscripts\utility::usingsidearm() && !isdefined( self.heat ) && gettime() >= self.a.dontcrouchtime && lengthsquared( self.shootentvelocity ) < 10000 )
+    if ( var_0 > 262144 && self.a.pose != "crouch" && self isstanceallowed( "crouch" ) && !self.swimmer && !animscripts\utility::usingsidearm() && !isdefined( self.heat ) && gettime() >= self.a.dontcrouchtime && lengthsquared( self.shootentvelocity ) < 10000 )
     {
         if ( !isdefined( self.shootpos ) || sighttracepassed( self.origin + ( 0, 0, 36 ), self.shootpos, 0, undefined ) )
         {
@@ -310,7 +310,7 @@ exposedcombatcheckreloadorusepistol( var_0 )
 
     if ( animscripts\combat_utility::needtoreload( 0 ) )
     {
-        if ( !animscripts\utility::usingsidearm() && common_scripts\utility::cointoss() && !animscripts\utility::usingrocketlauncher() && animscripts\utility::usingprimary() && var_0 < 167772.0 && self _meth_81CB( "stand" ) )
+        if ( !animscripts\utility::usingsidearm() && common_scripts\utility::cointoss() && !animscripts\utility::usingrocketlauncher() && animscripts\utility::usingprimary() && var_0 < 167772.0 && self isstanceallowed( "stand" ) )
         {
             if ( self.a.pose != "stand" )
             {
@@ -333,15 +333,15 @@ exposedcombatcheckputawaypistol( var_0 )
 {
     if ( animscripts\utility::usingsidearm() && self.a.pose == "stand" && !isdefined( self.forcesidearm ) )
     {
-        if ( var_0 > 262144 || self.combatmode == "ambush_nodes_only" && ( !isdefined( self.enemy ) || !self _meth_81BE( self.enemy ) ) )
+        if ( var_0 > 262144 || self.combatmode == "ambush_nodes_only" && ( !isdefined( self.enemy ) || !self cansee( self.enemy ) ) )
             switchtolastweapon( animscripts\utility::lookupanim( "combat", "pistol_to_primary" ) );
     }
 }
 
 exposedcombatpositionadjust()
 {
-    if ( isdefined( self.heat ) && self _meth_8163() )
-        self _meth_81C7( self.nodeoffsetpos, self.node.angles );
+    if ( isdefined( self.heat ) && self nearclaimnodeandangle() )
+        self safeteleport( self.nodeoffsetpos, self.node.angles );
 }
 
 exposedcombatneedtoturn()
@@ -371,10 +371,10 @@ exposedcombatmainloop()
     if ( animscripts\utility::isspaceai() )
     {
         var_0 = ( 0, self.angles[1], 0 );
-        self _meth_818F( "face angle 3d", var_0 );
+        self orientmode( "face angle 3d", var_0 );
     }
     else
-        self _meth_818F( "face angle", self.angles[1] );
+        self orientmode( "face angle", self.angles[1] );
 
     for (;;)
     {
@@ -434,7 +434,7 @@ exposedcombatmainloop()
 
 exposedwait()
 {
-    if ( !isdefined( self.enemy ) || !self _meth_81BE( self.enemy ) )
+    if ( !isdefined( self.enemy ) || !self cansee( self.enemy ) )
     {
         self endon( "enemy" );
         self endon( "shoot_behavior_change" );
@@ -447,7 +447,7 @@ exposedwait()
 
 standifmakesenemyvisible()
 {
-    if ( isdefined( self.enemy ) && ( !self _meth_81BE( self.enemy ) || !self _meth_81BD() ) && sighttracepassed( self.origin + ( 0, 0, 64 ), self.enemy _meth_8097(), 0, undefined ) )
+    if ( isdefined( self.enemy ) && ( !self cansee( self.enemy ) || !self canshootenemy() ) && sighttracepassed( self.origin + ( 0, 0, 64 ), self.enemy getshootatpos(), 0, undefined ) )
     {
         self.a.dontcrouchtime = gettime() + 3000;
         transitionto( "stand" );
@@ -491,7 +491,7 @@ waitforstancechange()
     if ( var_0 == "stand" && isdefined( self.heat ) )
         return 0;
 
-    if ( !self _meth_81CB( var_0 ) )
+    if ( !self isstanceallowed( var_0 ) )
     {
         var_1 = "crouch";
 
@@ -506,7 +506,7 @@ waitforstancechange()
             var_2 = "crouch";
         }
 
-        if ( self _meth_81CB( var_1 ) )
+        if ( self isstanceallowed( var_1 ) )
         {
             if ( var_0 == "stand" && animscripts\utility::usingsidearm() )
                 return 0;
@@ -514,7 +514,7 @@ waitforstancechange()
             transitionto( var_1 );
             return 1;
         }
-        else if ( self _meth_81CB( var_2 ) )
+        else if ( self isstanceallowed( var_2 ) )
         {
             if ( var_0 == "stand" && animscripts\utility::usingsidearm() )
                 return 0;
@@ -533,7 +533,7 @@ waitforstancechange()
 
 cantseeenemybehavior()
 {
-    if ( self.a.pose != "stand" && self _meth_81CB( "stand" ) && standifmakesenemyvisible() )
+    if ( self.a.pose != "stand" && self isstanceallowed( "stand" ) && standifmakesenemyvisible() )
         return 1;
 
     var_0 = gettime();
@@ -554,10 +554,10 @@ cantseeenemybehavior()
         if ( turntofacerelativeyaw( var_1 ) )
             return 1;
     }
-    else if ( isdefined( self.enemy ) && self _meth_81BF( self.enemy, 2 ) || var_0 > self.a.scriptstarttime + 1200 )
+    else if ( isdefined( self.enemy ) && self seerecently( self.enemy, 2 ) || var_0 > self.a.scriptstarttime + 1200 )
     {
         var_1 = undefined;
-        var_2 = self _meth_8192();
+        var_2 = self getanglestolikelyenemypath();
 
         if ( isdefined( var_2 ) )
             var_1 = angleclamp180( self.angles[1] - var_2[1] );
@@ -565,14 +565,14 @@ cantseeenemybehavior()
             var_1 = angleclamp180( self.angles[1] - self.node.angles[1] );
         else if ( isdefined( self.enemy ) )
         {
-            var_2 = vectortoangles( self _meth_81C1( self.enemy ) - self.origin );
+            var_2 = vectortoangles( self lastknownpos( self.enemy ) - self.origin );
             var_1 = angleclamp180( self.angles[1] - var_2[1] );
         }
 
         if ( isdefined( var_1 ) && turntofacerelativeyaw( var_1 ) )
             return 1;
     }
-    else if ( isdefined( self.heat ) && self _meth_8162() )
+    else if ( isdefined( self.heat ) && self nearclaimnode() )
     {
         var_1 = angleclamp180( self.angles[1] - self.node.angles[1] );
 
@@ -704,26 +704,26 @@ faceenemyimmediately()
         if ( abs( var_1 ) > var_0 )
             var_1 = var_0 * common_scripts\utility::sign( var_1 );
 
-        self _meth_818F( "face angle", self.angles[1] + var_1 );
+        self orientmode( "face angle", self.angles[1] + var_1 );
         wait 0.05;
     }
 
-    self _meth_818F( "face current" );
+    self orientmode( "face current" );
     self notify( "can_stop_turning" );
 }
 
 isdeltaallowed( var_0 )
 {
     var_1 = getmovedelta( var_0, 0, 1 );
-    var_2 = self _meth_81B0( var_1 );
-    return self _meth_815F( var_2 ) && self _meth_81C3( var_2 );
+    var_2 = self localtoworldcoords( var_1 );
+    return self isingoal( var_2 ) && self maymovetopoint( var_2 );
 }
 
 isanimdeltaingoal( var_0 )
 {
     var_1 = getmovedelta( var_0, 0, 1 );
-    var_2 = self _meth_81B0( var_1 );
-    return self _meth_815F( var_2 );
+    var_2 = self localtoworldcoords( var_1 );
+    return self isingoal( var_2 );
 }
 
 doturn( var_0, var_1 )
@@ -731,7 +731,7 @@ doturn( var_0, var_1 )
     var_2 = isdefined( self.shootpos );
     var_3 = 1;
     var_4 = 0.2;
-    var_5 = isdefined( self.enemy ) && !isdefined( self.turntomatchnode ) && self _meth_81BF( self.enemy, 2 ) && distancesquared( self.enemy.origin, self.origin ) < 262144;
+    var_5 = isdefined( self.enemy ) && !isdefined( self.turntomatchnode ) && self seerecently( self.enemy, 2 ) && distancesquared( self.enemy.origin, self.origin ) < 262144;
 
     if ( self.a.scriptstarttime + 500 > gettime() )
     {
@@ -768,27 +768,27 @@ doturn( var_0, var_1 )
     var_9 = animscripts\utility::animarray( var_8 );
 
     if ( isdefined( self.turntomatchnode ) )
-        self _meth_818E( "angle deltas", 0 );
+        self animmode( "angle deltas", 0 );
     else if ( isdefined( self.node ) && isdefined( anim.iscombatpathnode[self.node.type] ) && distancesquared( self.origin, self.node.origin ) < 256 )
-        self _meth_818E( "angle deltas", 0 );
+        self animmode( "angle deltas", 0 );
     else if ( isanimdeltaingoal( var_9 ) )
         resetanimmode();
     else
-        self _meth_818E( "angle deltas", 0 );
+        self animmode( "angle deltas", 0 );
 
-    self _meth_8147( %exposed_aiming, %body, 1, var_4 );
+    self setanimknoball( %exposed_aiming, %body, 1, var_4 );
 
     if ( !isdefined( self.turntomatchnode ) )
         turningaimingon( var_4 );
 
-    self _meth_814C( %turn, 1, var_4 );
+    self setanimlimited( %turn, 1, var_4 );
 
     if ( isdefined( self.heat ) )
         var_3 = min( 1.0, var_3 );
     else if ( isdefined( self.turntomatchnode ) )
         var_3 = max( 1.5, var_3 );
 
-    self _meth_810E( "turn", var_9, 1, var_4, var_3 );
+    self setflaggedanimknoblimitedrestart( "turn", var_9, 1, var_4, var_3 );
     combat_playfacialanim( var_9, "aim" );
     self notify( "turning" );
 
@@ -796,18 +796,18 @@ doturn( var_0, var_1 )
         thread shootwhileturning();
 
     doturnnotetracks();
-    self _meth_814C( %turn, 0, 0.2 );
+    self setanimlimited( %turn, 0, 0.2 );
 
     if ( !isdefined( self.turntomatchnode ) )
         turningaimingoff( 0.2 );
 
     if ( !isdefined( self.turntomatchnode ) )
     {
-        self _meth_8142( %turn, 0.2 );
-        self _meth_8143( %exposed_aiming, 1, 0.2, 1 );
+        self clearanim( %turn, 0.2 );
+        self setanimknob( %exposed_aiming, 1, 0.2, 1 );
     }
     else
-        self _meth_8142( %exposed_modern, 0.3 );
+        self clearanim( %exposed_modern, 0.3 );
 
     if ( isdefined( self.turnlastresort ) )
     {
@@ -841,17 +841,17 @@ makesureturnworks()
 
 turningaimingon( var_0 )
 {
-    self _meth_814C( animscripts\utility::animarray( "straight_level" ), 0, var_0 );
-    self _meth_814B( %add_idle, 0, var_0 );
+    self setanimlimited( animscripts\utility::animarray( "straight_level" ), 0, var_0 );
+    self setanim( %add_idle, 0, var_0 );
 
     if ( !animscripts\utility::weapon_pump_action_shotgun() )
-        self _meth_8142( %add_fire, 0.2 );
+        self clearanim( %add_fire, 0.2 );
 }
 
 turningaimingoff( var_0 )
 {
-    self _meth_814C( animscripts\utility::animarray( "straight_level" ), 1, var_0 );
-    self _meth_814B( %add_idle, 1, var_0 );
+    self setanimlimited( animscripts\utility::animarray( "straight_level" ), 1, var_0 );
+    self setanim( %add_idle, 1, var_0 );
 }
 
 shootwhileturning()
@@ -863,7 +863,7 @@ shootwhileturning()
         return;
 
     animscripts\combat_utility::shootuntilshootbehaviorchange();
-    self _meth_8142( %add_fire, 0.2 );
+    self clearanim( %add_fire, 0.2 );
 }
 
 shootuntilneedtoturn()
@@ -927,13 +927,13 @@ tryexposedthrowgrenade( var_0, var_1 )
 
     var_3 = var_0.origin;
 
-    if ( !self _meth_81BE( var_0 ) )
+    if ( !self cansee( var_0 ) )
     {
         if ( isdefined( self.enemy ) && var_0 == self.enemy && isdefined( self.shootpos ) )
             var_3 = self.shootpos;
     }
 
-    if ( !self _meth_81BE( var_0 ) )
+    if ( !self cansee( var_0 ) )
         var_1 = 100;
 
     if ( distancesquared( self.origin, var_3 ) > var_1 * var_1 && self.a.pose == self.a.grenadethrowpose )
@@ -957,12 +957,12 @@ tryexposedthrowgrenade( var_0, var_1 )
 
             if ( var_5.size > 0 )
             {
-                self _meth_814B( %exposed_aiming, 0, 0.1 );
+                self setanim( %exposed_aiming, 0, 0.1 );
                 combat_clearfacialanim();
-                self _meth_818E( "zonly_physics" );
+                self animmode( "zonly_physics" );
                 animscripts\track::setanimaimweight( 0, 0 );
                 var_2 = animscripts\combat_utility::trygrenade( var_0, var_5[randomint( var_5.size )] );
-                self _meth_814B( %exposed_aiming, 1, 0.1 );
+                self setanim( %exposed_aiming, 1, 0.1 );
                 combat_playfacialanim( undefined, "aim" );
 
                 if ( var_2 )
@@ -994,7 +994,7 @@ transitionto( var_0 )
     if ( !isdefined( var_2 ) )
         return;
 
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
     animscripts\combat_utility::endfireandanimidlethread();
 
     if ( var_0 == "stand" )
@@ -1007,7 +1007,7 @@ transitionto( var_0 )
 
     }
 
-    self _meth_8110( "trans", var_2, %body, 1, 0.2, var_3 );
+    self setflaggedanimknoballrestart( "trans", var_2, %body, 1, 0.2, var_3 );
     combat_playfacialanim( var_2, "run" );
     var_4 = getanimlength( var_2 ) / var_3;
     var_5 = var_4 - 0.3;
@@ -1088,16 +1088,16 @@ exposedreload( var_0 )
         self.finishedreload = 0;
 
         if ( weaponclass( self.weapon ) == "pistol" )
-            self _meth_818F( "face default" );
+            self orientmode( "face default" );
 
         doreloadanim( var_1, var_0 > 0.05 );
         self notify( "abort_reload" );
-        self _meth_818F( "face current" );
+        self orientmode( "face current" );
 
         if ( self.finishedreload )
             animscripts\weaponlist::refillclip();
 
-        self _meth_8142( %reload, 0.2 );
+        self clearanim( %reload, 0.2 );
         self.keepclaimednode = 0;
         self notify( "stop_trying_to_melee" );
         self.a.exposedreloading = 0;
@@ -1119,12 +1119,12 @@ doreloadanim( var_0, var_1 )
 
     var_2 = 1;
 
-    if ( !animscripts\utility::usingsidearm() && !animscripts\utility::isshotgun( self.weapon ) && isdefined( self.enemy ) && self _meth_81BE( self.enemy ) && distancesquared( self.enemy.origin, self.origin ) < 1048576 )
+    if ( !animscripts\utility::usingsidearm() && !animscripts\utility::isshotgun( self.weapon ) && isdefined( self.enemy ) && self cansee( self.enemy ) && distancesquared( self.enemy.origin, self.origin ) < 1048576 )
         var_2 = 1.2;
 
     var_3 = "reload_" + animscripts\combat_utility::getuniqueflagnameindex();
-    self _meth_8142( %animscript_root, 0.2 );
-    self _meth_8113( var_3, var_0, 1, 0.2, var_2 );
+    self clearanim( %animscript_root, 0.2 );
+    self setflaggedanimrestart( var_3, var_0, 1, 0.2, var_2 );
     combat_playfacialanim( var_0, "run" );
     thread notifyonstartaim( "abort_reload", var_3 );
     self endon( "start_aim" );
@@ -1139,7 +1139,7 @@ abortreloadwhencanshoot()
 
     for (;;)
     {
-        if ( isdefined( self.shootent ) && self _meth_81BE( self.shootent ) )
+        if ( isdefined( self.shootent ) && self cansee( self.shootent ) )
             break;
 
         wait 0.05;
@@ -1195,10 +1195,10 @@ switchtosidearm( var_0 )
     thread animscripts\combat_utility::putgunbackinhandonkillanimscript();
     animscripts\combat_utility::endfireandanimidlethread();
     self.swapanim = var_0;
-    self _meth_8110( "weapon swap", var_0, %body, 1, 0.2, animscripts\combat_utility::fasteranimspeed() );
+    self setflaggedanimknoballrestart( "weapon swap", var_0, %body, 1, 0.2, animscripts\combat_utility::fasteranimspeed() );
     combat_playfacialanim( var_0, "run" );
     donotetrackspostcallbackwithendon( "weapon swap", ::handlepickup, "end_weapon_swap" );
-    self _meth_8142( self.swapanim, 0.2 );
+    self clearanim( self.swapanim, 0.2 );
     self notify( "facing_enemy_immediately" );
     self notify( "switched_to_sidearm" );
     maps\_gameskill::didsomethingotherthanshooting();
@@ -1221,7 +1221,7 @@ handlepickup( var_0 )
 {
     if ( var_0 == "pistol_pickup" )
     {
-        self _meth_8142( animscripts\utility::animarray( "straight_level" ), 0 );
+        self clearanim( animscripts\utility::animarray( "straight_level" ), 0 );
         animscripts\animset::set_animarray_standing();
         thread faceenemydelay( 0.25 );
     }
@@ -1243,7 +1243,7 @@ switchtolastweapon( var_0, var_1 )
 
     animscripts\combat_utility::endfireandanimidlethread();
     self.swapanim = var_0;
-    self _meth_8110( "weapon swap", var_0, %body, 1, 0.1, 1 );
+    self setflaggedanimknoballrestart( "weapon swap", var_0, %body, 1, 0.1, 1 );
     combat_playfacialanim( var_0, "run" );
 
     if ( isdefined( var_1 ) )
@@ -1251,7 +1251,7 @@ switchtolastweapon( var_0, var_1 )
     else
         donotetrackspostcallbackwithendon( "weapon swap", ::handleputaway, "end_weapon_swap" );
 
-    self _meth_8142( self.swapanim, 0.2 );
+    self clearanim( self.swapanim, 0.2 );
     self notify( "switched_to_lastweapon" );
     maps\_gameskill::didsomethingotherthanshooting();
     return 1;
@@ -1261,7 +1261,7 @@ handleputaway( var_0 )
 {
     if ( var_0 == "pistol_putaway" )
     {
-        self _meth_8142( animscripts\utility::animarray( "straight_level" ), 0 );
+        self clearanim( animscripts\utility::animarray( "straight_level" ), 0 );
         animscripts\animset::set_animarray_standing();
         thread animscripts\combat_utility::putgunbackinhandonkillanimscript();
     }
@@ -1292,7 +1292,7 @@ rpgdeath()
     else
         var_0 = animscripts\utility::lookupanim( "combat", "rpg_death_stagger" );
 
-    self _meth_810F( "deathanim", var_0, %animscript_root, 1, 0.05, 1 );
+    self setflaggedanimknoball( "deathanim", var_0, %animscript_root, 1, 0.05, 1 );
     combat_playfacialanim( var_0, "death" );
     animscripts\shared::donotetracks( "deathanim" );
     animscripts\shared::dropallaiweapons();
@@ -1308,7 +1308,7 @@ reacquirewhennecessary()
     {
         wait 0.2;
 
-        if ( isdefined( self.enemy ) && !self _meth_81BF( self.enemy, 2 ) )
+        if ( isdefined( self.enemy ) && !self seerecently( self.enemy, 2 ) )
         {
             if ( self.combatmode == "ambush" || self.combatmode == "ambush_nodes_only" )
                 continue;
@@ -1344,7 +1344,7 @@ tryexposedreacquire()
 
     self.prevenemy = self.enemy;
 
-    if ( self _meth_81BE( self.enemy ) && self _meth_81BD() )
+    if ( self cansee( self.enemy ) && self canshootenemy() )
     {
         self.reacquire_state = 0;
         return;
@@ -1380,12 +1380,12 @@ tryexposedreacquire()
     switch ( self.reacquire_state )
     {
         case 0:
-            if ( self _meth_81F2( 32 ) )
+            if ( self reacquirestep( 32 ) )
                 return;
 
             break;
         case 1:
-            if ( self _meth_81F2( 64 ) )
+            if ( self reacquirestep( 64 ) )
             {
                 self.reacquire_state = 0;
                 return;
@@ -1393,7 +1393,7 @@ tryexposedreacquire()
 
             break;
         case 2:
-            if ( self _meth_81F2( 96 ) )
+            if ( self reacquirestep( 96 ) )
             {
                 self.reacquire_state = 0;
                 return;
@@ -1409,8 +1409,8 @@ tryexposedreacquire()
 
             break;
         case 4:
-            if ( !self _meth_81BE( self.enemy ) || !self _meth_81BD() )
-                self _meth_81F7();
+            if ( !self cansee( self.enemy ) || !self canshootenemy() )
+                self flagenemyunattackable();
 
             break;
         default:
@@ -1434,9 +1434,9 @@ resetanimmode( var_0 )
         var_1 = 1;
 
     if ( self.swimmer )
-        self _meth_818E( "nogravity", var_1 );
+        self animmode( "nogravity", var_1 );
     else
-        self _meth_818E( "zonly_physics", var_1 );
+        self animmode( "zonly_physics", var_1 );
 }
 
 combat_playfacialanim( var_0, var_1 )
@@ -1447,5 +1447,5 @@ combat_playfacialanim( var_0, var_1 )
 combat_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

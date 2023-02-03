@@ -15,7 +15,7 @@ main()
     game["attackers"] = "allies";
     game["defenders"] = "axis";
 
-    if ( level.nextgen || _func_27A() && getdvar( "g_gametype" ) != "ball" )
+    if ( level.nextgen || isdedicatedserver() && getdvar( "g_gametype" ) != "ball" )
         thread torqued_avalanche_setup();
     else
         thread torqued_avalanche_disable();
@@ -35,48 +35,48 @@ main()
 
     if ( level.nextgen )
     {
-        map_restart( "trq_gondola_car_swing_01" );
-        map_restart( "trq_gondola_car_swing_02" );
-        map_restart( "trq_gondola_car_swing_03" );
-        map_restart( "trq_gondola_car_swinghard_01" );
-        map_restart( "trq_avalanche_pine_tree01" );
-        map_restart( "trq_avalanche_pine_tree02" );
+        precachempanim( "trq_gondola_car_swing_01" );
+        precachempanim( "trq_gondola_car_swing_02" );
+        precachempanim( "trq_gondola_car_swing_03" );
+        precachempanim( "trq_gondola_car_swinghard_01" );
+        precachempanim( "trq_avalanche_pine_tree01" );
+        precachempanim( "trq_avalanche_pine_tree02" );
     }
 
-    map_restart( "trq_hanglights_02_swing_calm_light00" );
-    map_restart( "trq_hanglights_02_swing_calm_light01" );
-    map_restart( "trq_hanglights_02_swing_calm_light02" );
-    map_restart( "trq_hanglights_02_swing_calm_light03" );
-    map_restart( "trq_hanglights_02_swing_calm_light04" );
-    map_restart( "trq_hanglights_02_swing_calm_light05" );
-    map_restart( "trq_hanglights_02_swing_calm_light06" );
-    map_restart( "trq_hanglights_02_swing_hard_light00" );
-    map_restart( "trq_hanglights_02_swing_hard_light01" );
-    map_restart( "trq_hanglights_02_swing_hard_light02" );
-    map_restart( "trq_hanglights_02_swing_hard_light03" );
-    map_restart( "trq_hanglights_02_swing_hard_light04" );
-    map_restart( "trq_hanglights_02_swing_hard_light05" );
-    map_restart( "trq_hanglights_02_swing_hard_light06" );
-    map_restart( "trq_hanglights_03_swing_calm_light00" );
-    map_restart( "trq_hanglights_03_swing_calm_light01" );
-    map_restart( "trq_hanglights_03_swing_calm_light02" );
-    map_restart( "trq_hanglights_03_swing_calm_light03" );
-    map_restart( "trq_hanglights_03_swing_hard_light00" );
-    map_restart( "trq_hanglights_03_swing_hard_light01" );
-    map_restart( "trq_hanglights_03_swing_hard_light02" );
-    map_restart( "trq_hanglights_03_swing_hard_light03" );
-    map_restart( "trq_hanglights_04_swing_calm_light00" );
-    map_restart( "trq_hanglights_04_swing_calm_light01" );
-    map_restart( "trq_hanglights_04_swing_calm_light02" );
-    map_restart( "trq_hanglights_04_swing_calm_light03" );
-    map_restart( "trq_hanglights_04_swing_calm_light04" );
-    map_restart( "trq_hanglights_04_swing_calm_light05" );
-    map_restart( "trq_hanglights_04_swing_hard_light00" );
-    map_restart( "trq_hanglights_04_swing_hard_light01" );
-    map_restart( "trq_hanglights_04_swing_hard_light02" );
-    map_restart( "trq_hanglights_04_swing_hard_light03" );
-    map_restart( "trq_hanglights_04_swing_hard_light04" );
-    map_restart( "trq_hanglights_04_swing_hard_light05" );
+    precachempanim( "trq_hanglights_02_swing_calm_light00" );
+    precachempanim( "trq_hanglights_02_swing_calm_light01" );
+    precachempanim( "trq_hanglights_02_swing_calm_light02" );
+    precachempanim( "trq_hanglights_02_swing_calm_light03" );
+    precachempanim( "trq_hanglights_02_swing_calm_light04" );
+    precachempanim( "trq_hanglights_02_swing_calm_light05" );
+    precachempanim( "trq_hanglights_02_swing_calm_light06" );
+    precachempanim( "trq_hanglights_02_swing_hard_light00" );
+    precachempanim( "trq_hanglights_02_swing_hard_light01" );
+    precachempanim( "trq_hanglights_02_swing_hard_light02" );
+    precachempanim( "trq_hanglights_02_swing_hard_light03" );
+    precachempanim( "trq_hanglights_02_swing_hard_light04" );
+    precachempanim( "trq_hanglights_02_swing_hard_light05" );
+    precachempanim( "trq_hanglights_02_swing_hard_light06" );
+    precachempanim( "trq_hanglights_03_swing_calm_light00" );
+    precachempanim( "trq_hanglights_03_swing_calm_light01" );
+    precachempanim( "trq_hanglights_03_swing_calm_light02" );
+    precachempanim( "trq_hanglights_03_swing_calm_light03" );
+    precachempanim( "trq_hanglights_03_swing_hard_light00" );
+    precachempanim( "trq_hanglights_03_swing_hard_light01" );
+    precachempanim( "trq_hanglights_03_swing_hard_light02" );
+    precachempanim( "trq_hanglights_03_swing_hard_light03" );
+    precachempanim( "trq_hanglights_04_swing_calm_light00" );
+    precachempanim( "trq_hanglights_04_swing_calm_light01" );
+    precachempanim( "trq_hanglights_04_swing_calm_light02" );
+    precachempanim( "trq_hanglights_04_swing_calm_light03" );
+    precachempanim( "trq_hanglights_04_swing_calm_light04" );
+    precachempanim( "trq_hanglights_04_swing_calm_light05" );
+    precachempanim( "trq_hanglights_04_swing_hard_light00" );
+    precachempanim( "trq_hanglights_04_swing_hard_light01" );
+    precachempanim( "trq_hanglights_04_swing_hard_light02" );
+    precachempanim( "trq_hanglights_04_swing_hard_light03" );
+    precachempanim( "trq_hanglights_04_swing_hard_light04" );
+    precachempanim( "trq_hanglights_04_swing_hard_light05" );
     level.orbitalsupportoverridefunc = ::torquedpaladinoverrides;
     thread torquedairstrieoverrides();
     thread scriptpatchclip();
@@ -91,7 +91,7 @@ main()
     }
     else
     {
-        if ( _func_27A() )
+        if ( isdedicatedserver() )
             thread merry_go_round_setup();
         else
             thread merry_go_round_disable();
@@ -133,7 +133,7 @@ spawnkilltriggerthink( var_0, var_1, var_2 )
         if ( isdefined( var_4 ) && isdefined( var_4.health ) )
         {
             if ( isplayer( var_4 ) || isbot( var_4 ) )
-                var_4 _meth_8051( var_4.health + 999, var_3.origin );
+                var_4 dodamage( var_4.health + 999, var_3.origin );
         }
     }
 }
@@ -193,7 +193,7 @@ christmas_light_anims()
     foreach ( var_9 in var_1 )
     {
         var_10 = "trq_hanglights_02_swing_calm_light0" + var_5;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_5++;
         wait 0.15;
     }
@@ -201,7 +201,7 @@ christmas_light_anims()
     foreach ( var_9 in var_2 )
     {
         var_10 = "trq_hanglights_03_swing_calm_light0" + var_6;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_6++;
         wait 0.15;
     }
@@ -209,7 +209,7 @@ christmas_light_anims()
     foreach ( var_9 in var_3 )
     {
         var_10 = "trq_hanglights_04_swing_calm_light0" + var_7;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_7++;
         wait 0.15;
     }
@@ -218,7 +218,7 @@ christmas_light_anims()
 
     foreach ( var_9 in var_4 )
     {
-        var_9 _meth_827A();
+        var_9 scriptmodelclearanim();
         waitframe();
     }
 
@@ -229,7 +229,7 @@ christmas_light_anims()
     foreach ( var_9 in var_1 )
     {
         var_10 = "trq_hanglights_02_swing_hard_light0" + var_5;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_5++;
         wait 0.15;
     }
@@ -237,7 +237,7 @@ christmas_light_anims()
     foreach ( var_9 in var_2 )
     {
         var_10 = "trq_hanglights_03_swing_hard_light0" + var_6;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_6++;
         wait 0.15;
     }
@@ -245,7 +245,7 @@ christmas_light_anims()
     foreach ( var_9 in var_3 )
     {
         var_10 = "trq_hanglights_04_swing_hard_light0" + var_7;
-        var_9 _meth_848B( var_10, var_0.origin, var_0.angles );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_10, var_0.origin, var_0.angles );
         var_7++;
         wait 0.15;
     }
@@ -254,7 +254,7 @@ christmas_light_anims()
 
     foreach ( var_9 in var_4 )
     {
-        var_9 _meth_827A();
+        var_9 scriptmodelclearanim();
         waitframe();
         var_9 delete();
     }
@@ -266,10 +266,10 @@ tree_anims_disable()
     var_1 = getentarray( "tree_ent_02", "targetname" );
 
     foreach ( var_3 in var_0 )
-        var_3 _meth_8560();
+        var_3 setstatic();
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_8560();
+        var_3 setstatic();
 }
 
 tree_anims()
@@ -291,7 +291,7 @@ tree_anims()
     foreach ( var_4 in var_2 )
     {
         wait 0.15;
-        var_4 _meth_8279( var_4.anim_event );
+        var_4 scriptmodelplayanim( var_4.anim_event );
     }
 }
 
@@ -300,7 +300,7 @@ gondola_anims_disable()
     var_0 = getentarray( "gondola_swing", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8560();
+        var_2 setstatic();
 }
 
 gondola_anims()
@@ -316,7 +316,7 @@ swinggondola()
     var_0 = [ "trq_gondola_car_swing_01", "trq_gondola_car_swing_02", "trq_gondola_car_swing_03" ];
     wait(randomfloat( 2.5 ));
     var_1 = randomint( 3 );
-    self _meth_8279( var_0[var_1] );
+    self scriptmodelplayanim( var_0[var_1] );
 }
 
 setup_audio()
@@ -359,8 +359,8 @@ torqued_avalanche_setup()
     level.dyneventavalanche.quakesmallarray = common_scripts\utility::getstructarray( "rumble_quake_small01", "targetname" );
     level.dyneventavalanche.snowmesh01 = getent( "snow_ground01", "targetname" );
     level.dyneventavalanche.snowmesh02 = getent( "snow_ground02", "targetname" );
-    level.dyneventavalanche.preeventscriptables = _func_231( "pre_event_scriptable", "targetname" );
-    level.dyneventavalanche.posteventscriptables = _func_231( "post_event_scriptable", "targetname" );
+    level.dyneventavalanche.preeventscriptables = getscriptablearray( "pre_event_scriptable", "targetname" );
+    level.dyneventavalanche.posteventscriptables = getscriptablearray( "post_event_scriptable", "targetname" );
     level.dyneventavalanche.preeventdynents = getentarray( "pre_event_dynent", "targetname" );
     level.dyneventavalanche.posteventdynents = getentarray( "post_event_dynent", "targetname" );
     level.dyneventavalanche.soundlocations = common_scripts\utility::getstructarray( "avalanche_sound01", "targetname" );
@@ -378,32 +378,32 @@ torqued_avalanche_disable()
     var_2 = getent( "snow_ground01", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_8560();
+        var_2 setstatic();
 
     var_2 = getent( "snow_ground02", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_8560();
+        var_2 setstatic();
 
-    var_0 = _func_231( "pre_event_scriptable", "targetname" );
+    var_0 = getscriptablearray( "pre_event_scriptable", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8560();
+        var_2 setstatic();
 
     var_0 = getentarray( "pre_event_scriptable", "targetname" );
 
     foreach ( var_2 in var_0 )
     {
         if ( var_2.model != "trq_giant_holiday_tree_01" && var_2.model != "trq_giant_holiday_tree_02" && var_2.model != "trq_wooden_door_01" && var_2.model != "rec_safehouse_door_wood_cgdlc1" && var_2.model != "greece_cafepastrydisplay_01" )
-            var_2 _meth_8560();
+            var_2 setstatic();
     }
 
     var_0 = getentarray( "pre_event_dynent", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8560();
+        var_2 setstatic();
 
-    var_0 = _func_231( "post_event_scriptable", "targetname" );
+    var_0 = getscriptablearray( "post_event_scriptable", "targetname" );
 
     foreach ( var_2 in var_0 )
         var_2 delete();
@@ -461,7 +461,7 @@ getavalanchespawns()
 hidepostdestructibles()
 {
     foreach ( var_1 in level.dyneventavalanche.posteventscriptables )
-        var_1 _meth_83F6( "root_part", "hidden_state" );
+        var_1 setscriptablepartstate( "root_part", "hidden_state" );
 
     foreach ( var_4 in level.dyneventavalanche.posteventdynents )
         var_4 hide();
@@ -470,13 +470,13 @@ hidepostdestructibles()
 swapdestructibles()
 {
     foreach ( var_1 in level.dyneventavalanche.preeventscriptables )
-        var_1 _meth_83F6( "root_part", "hidden_state" );
+        var_1 setscriptablepartstate( "root_part", "hidden_state" );
 
     foreach ( var_4 in level.dyneventavalanche.preeventdynents )
         var_4 hide();
 
     foreach ( var_1 in level.dyneventavalanche.posteventscriptables )
-        var_1 _meth_83F6( "root_part", "intact_state_01" );
+        var_1 setscriptablepartstate( "root_part", "intact_state_01" );
 
     foreach ( var_4 in level.dyneventavalanche.posteventdynents )
         var_4 show();
@@ -484,29 +484,29 @@ swapdestructibles()
 
 scriptablelightstatechange()
 {
-    var_0 = _func_231( "destroy_light", "targetname" );
+    var_0 = getscriptablearray( "destroy_light", "targetname" );
 
     foreach ( var_2 in var_0 )
     {
-        var_2 _meth_83F6( 0, 1 );
+        var_2 setscriptablepartstate( 0, 1 );
         wait 5;
-        var_2 _meth_83F6( 0, 3 );
+        var_2 setscriptablepartstate( 0, 3 );
     }
 
-    var_4 = _func_231( "damaged_light", "targetname" );
+    var_4 = getscriptablearray( "damaged_light", "targetname" );
 
     foreach ( var_6 in var_4 )
-        var_6 _meth_83F6( 0, 1 );
+        var_6 setscriptablepartstate( 0, 1 );
 
-    var_8 = _func_231( "damaged_light_2", "targetname" );
+    var_8 = getscriptablearray( "damaged_light_2", "targetname" );
 
     foreach ( var_10 in var_8 )
-        var_10 _meth_83F6( 0, 1 );
+        var_10 setscriptablepartstate( 0, 1 );
 
-    var_12 = _func_231( "light_fixture_damaged", "targetname" );
+    var_12 = getscriptablearray( "light_fixture_damaged", "targetname" );
 
     foreach ( var_14 in var_12 )
-        var_14 _meth_83F6( 0, 1 );
+        var_14 setscriptablepartstate( 0, 1 );
 }
 
 dropavalanchespawnpointstonewground()
@@ -535,7 +535,7 @@ torqued_show_solid()
     {
         if ( isdefined( self.original_origin ) )
         {
-            self _meth_8092();
+            self dontinterpolate();
             self.origin = self.original_origin;
         }
     }
@@ -548,7 +548,7 @@ torqued_hide_notsolid()
     if ( !isdefined( self.oldcontents ) )
     {
         self.oldcontents = self setcontents( 0 );
-        self _meth_8092();
+        self dontinterpolate();
         self.original_origin = self.origin;
         self.origin += ( 0, 0, -2000 );
     }
@@ -573,7 +573,7 @@ torqued_set_lighting_state_patched( var_0, var_1 )
                 if ( var_4.lightingstate == var_0 )
                 {
                     var_4 torqued_show_solid();
-                    var_4 _meth_855F();
+                    var_4 allowriotshieldplant();
                     continue;
                 }
 
@@ -681,7 +681,7 @@ avalanchescreenfade()
 
         foreach ( var_6 in var_0 )
         {
-            if ( var_3 _meth_80A9( var_6 ) )
+            if ( var_3 istouching( var_6 ) )
             {
                 var_4 = 1;
                 break;
@@ -691,7 +691,7 @@ avalanchescreenfade()
         if ( var_4 )
         {
             var_8 = 0;
-            var_9 = var_3 _meth_845C();
+            var_9 = var_3 getvieworigin();
             var_10 = anglestoforward( var_3 getangles() );
 
             foreach ( var_12 in var_1 )
@@ -707,14 +707,14 @@ avalanchescreenfade()
 
             if ( var_8 )
             {
-                var_3 _meth_821F( 0, 350, 0.363177, 0.458081, 0.54287, 9, 0.8, 1.0 );
+                var_3 playersetexpfog( 0, 350, 0.363177, 0.458081, 0.54287, 9, 0.8, 1.0 );
                 var_3 thread avalanchescreenfade_shellshock( 0.75 );
             }
         }
     }
 
     wait 2.25;
-    _func_232( 1.5 );
+    clearfog( 1.5 );
 }
 
 avalanchescreenfade_shellshock( var_0 )
@@ -744,9 +744,9 @@ playavalanchesound()
 
 movesnowmesh( var_0, var_1 )
 {
-    self _meth_82B1( var_1 * 0.5, var_0 * 0.25 );
+    self movez( var_1 * 0.5, var_0 * 0.25 );
     self waittill( "movedone" );
-    self _meth_82B1( var_1 * 0.5, var_0 * 0.75 );
+    self movez( var_1 * 0.5, var_0 * 0.75 );
     self waittill( "movedone" );
 }
 
@@ -761,32 +761,32 @@ hordeavalanchekilleverything( var_0 )
         {
             if ( isdefined( var_6.turret ) && !var_6.iscarrying && isdefined( var_6.turret.damagetaken ) && var_6.turret.damagetaken < var_6.turret.maxhealth )
             {
-                if ( var_6.turret _meth_80A9( var_4 ) )
+                if ( var_6.turret istouching( var_4 ) )
                     hordeavalanchekillobject( var_6.turret, var_2 );
             }
 
             if ( isdefined( var_6.aerialassaultdrone ) )
             {
-                if ( var_6.aerialassaultdrone _meth_80A9( var_4 ) )
-                    var_6.aerialassaultdrone _meth_8051( 10000, var_6.aerialassaultdrone.origin, var_6, var_6, "MOD_EXPLOSIVE", "killstreak_emp_mp" );
+                if ( var_6.aerialassaultdrone istouching( var_4 ) )
+                    var_6.aerialassaultdrone dodamage( 10000, var_6.aerialassaultdrone.origin, var_6, var_6, "MOD_EXPLOSIVE", "killstreak_emp_mp" );
             }
         }
 
         foreach ( var_9 in level.participants )
         {
-            if ( var_9 _meth_80A9( var_4 ) )
+            if ( var_9 istouching( var_4 ) )
                 hordeavalanchekillobject( var_9, var_2 );
         }
 
         foreach ( var_12 in level.flying_attack_drones )
         {
-            if ( var_12 _meth_80A9( var_4 ) )
+            if ( var_12 istouching( var_4 ) )
                 hordeavalanchekillobject( var_12, var_2 );
         }
 
         foreach ( var_15 in level.hordesentryarray )
         {
-            if ( var_15 _meth_80A9( var_4 ) )
+            if ( var_15 istouching( var_4 ) )
                 hordeavalanchekillobject( var_15, var_2 );
         }
 
@@ -794,7 +794,7 @@ hordeavalanchekilleverything( var_0 )
         {
             foreach ( var_18 in level.carepackages )
             {
-                if ( _func_22A( var_18.origin, var_4 ) )
+                if ( ispointinvolume( var_18.origin, var_4 ) )
                 {
                     if ( var_18.cratetype == "juggernaut" )
                         var_18 maps\mp\killstreaks\_juggernaut::deletegoliathpod();
@@ -810,7 +810,7 @@ hordeavalanchekilleverything( var_0 )
 
 hordeavalanchekillobject( var_0, var_1 )
 {
-    var_0 _meth_8051( 10000, var_0.origin, var_1, var_1, "MOD_TRIGGER_HURT", "none" );
+    var_0 dodamage( 10000, var_0.origin, var_1, var_1, "MOD_TRIGGER_HURT", "none" );
 }
 
 killvolumethink( var_0 )
@@ -845,15 +845,15 @@ volumekill()
 
         foreach ( var_3 in level.participants )
         {
-            if ( var_3 _meth_80A9( self ) )
+            if ( var_3 istouching( self ) )
             {
-                var_3 _meth_8051( var_0, var_3.origin );
+                var_3 dodamage( var_0, var_3.origin );
 
                 if ( isplayer( var_3 ) )
                     var_3 shellshock( "default", 2 );
 
                 if ( common_scripts\utility::flag( "event_fatal_damage" ) )
-                    var_3 _meth_8051( 10000, var_3.origin );
+                    var_3 dodamage( 10000, var_3.origin );
             }
         }
 
@@ -918,7 +918,7 @@ startquakerumble( var_0, var_1 )
     foreach ( var_5 in level.players )
     {
         var_5 thread quake_for_player( var_0, var_1 );
-        var_5 _meth_80AE( var_3 );
+        var_5 playrumblelooponentity( var_3 );
         var_5 thread onplayerspawned( var_3 );
     }
 
@@ -1017,7 +1017,7 @@ onplayerspawned( var_0 )
     for (;;)
     {
         self waittill( "spawned_player" );
-        self _meth_80AE( var_0 );
+        self playrumblelooponentity( var_0 );
         wait 0.05;
     }
 }
@@ -1056,14 +1056,14 @@ torqued_floor()
 
     var_1 = 0.2;
     var_2 = 40;
-    var_0 _meth_82B8( var_2, var_1 );
+    var_0 rotateroll( var_2, var_1 );
     wait(var_1);
-    var_0 _meth_82BF();
+    var_0 notsolid();
     var_0 hide();
     level waittill( "rocks_reset" );
-    var_0 _meth_82BE();
+    var_0 solid();
     var_0 show();
-    var_0 _meth_82B8( -1 * var_2, 0.1 );
+    var_0 rotateroll( -1 * var_2, 0.1 );
 }
 
 torquedpaladinoverrides()
@@ -1114,16 +1114,16 @@ merry_go_round_setup()
     var_4 = 10;
 
     foreach ( var_6 in var_1 )
-        var_6 _meth_804D( var_0 );
+        var_6 linkto( var_0 );
 
     foreach ( var_6 in var_2 )
-        var_6 _meth_804D( var_0 );
+        var_6 linkto( var_0 );
 
-    var_3 _meth_804D( var_0 );
+    var_3 linkto( var_0 );
 
     for (;;)
     {
-        var_0 _meth_82BD( ( 0, -10, 0 ), var_4 );
+        var_0 rotatevelocity( ( 0, -10, 0 ), var_4 );
         wait(var_4);
     }
 }
@@ -1136,13 +1136,13 @@ event_path_swap()
 
     foreach ( var_3 in var_1 )
     {
-        var_3 _meth_8059();
+        var_3 disconnectnode();
         waitframe();
     }
 
     foreach ( var_3 in var_0 )
     {
-        var_3 _meth_805A();
+        var_3 connectnode();
         waitframe();
     }
 
@@ -1150,7 +1150,7 @@ event_path_swap()
 
     foreach ( var_3 in var_1 )
     {
-        var_3 _meth_805A();
+        var_3 connectnode();
         waitframe();
     }
 }
@@ -1183,7 +1183,7 @@ killobjectsundersnow()
         {
             foreach ( var_1 in level.turrets )
             {
-                if ( var_1 _meth_80A9( self ) )
+                if ( var_1 istouching( self ) )
                     var_1 notify( "death" );
             }
         }
@@ -1192,7 +1192,7 @@ killobjectsundersnow()
         {
             foreach ( var_4 in level.carepackages )
             {
-                if ( isdefined( var_4 ) && !_func_294( var_4 ) && _func_22A( var_4.origin, self ) )
+                if ( isdefined( var_4 ) && !isremovedentity( var_4 ) && ispointinvolume( var_4.origin, self ) )
                 {
                     if ( isdefined( var_4.cratetype ) && var_4.cratetype != "juggernaut" )
                     {
@@ -1222,8 +1222,8 @@ resetspectatorsundersnow()
     {
         foreach ( var_2 in level.players )
         {
-            if ( isdefined( var_2.team ) && var_2.team == "spectator" && _func_22A( var_2.origin, self ) )
-                var_2 _meth_826F( var_0.origin, var_0.angles );
+            if ( isdefined( var_2.team ) && var_2.team == "spectator" && ispointinvolume( var_2.origin, self ) )
+                var_2 spawn( var_0.origin, var_0.angles );
         }
 
         wait 0.05;
@@ -1237,13 +1237,13 @@ aud_avalanche_setup()
     var_0 = thread maps\mp\_audio::snd_play_loop_in_space( "mp_torqued_rumble_lp", ( 532, 2030, 1881 ), "aud_avalanche_stop" );
     var_1 = thread maps\mp\_audio::snd_play_in_space( "mp_torqued_avalance_main", ( 532, 2030, 1881 ) );
     var_2 = thread maps\mp\_audio::snd_play_in_space( "mp_torqued_avalanche_bg", ( 532, 2030, 1881 ) );
-    var_0 _meth_806F( 0, 0.05 );
-    var_1 _meth_806F( 0, 0.05 );
-    var_2 _meth_806F( 0, 0.05 );
+    var_0 scalevolume( 0, 0.05 );
+    var_1 scalevolume( 0, 0.05 );
+    var_2 scalevolume( 0, 0.05 );
     wait 0.05;
-    var_0 _meth_806F( 0.8, 10 );
-    var_1 _meth_806F( 0.8, 5 );
-    var_2 _meth_806F( 0.8, 5 );
+    var_0 scalevolume( 0.8, 10 );
+    var_1 scalevolume( 0.8, 5 );
+    var_2 scalevolume( 0.8, 5 );
     level waittill( "avalanche_stop" );
     thread maps\mp\_audio::snd_play_in_space( "mp_torqued_avalanche_wall_crash_01", ( 532, 2030, 1881 ) );
     thread maps\mp\_audio::snd_play_in_space( "mp_torqued_avalanche_rockslide_02", ( 532, 2030, 1881 ) );
@@ -1342,7 +1342,7 @@ spawngift( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_model", var_1 );
     var_3.angles = var_2;
-    var_3 _meth_80B1( var_0 );
+    var_3 setmodel( var_0 );
 }
 
 recondronepushplayersthroughwall()
@@ -1380,7 +1380,7 @@ vehicleclipdoors()
 addpropforbadtreeclip()
 {
     var_0 = spawn( "script_model", ( -594, 547, 1061 ) );
-    var_0 _meth_80B1( "trq_holiday_gift_boxes_01_snow_red" );
+    var_0 setmodel( "trq_holiday_gift_boxes_01_snow_red" );
     maps\mp\_utility::spawnpatchclip( "patchclip_nosight_32_32_32", ( -594, 549, 1077 ), ( 0, 0, 0 ) );
     maps\mp\_utility::spawnpatchclip( "patchclip_item_16_64_64", ( -604, 533, 1064 ), ( 0, 0, 0 ) );
     maps\mp\_utility::spawnpatchclip( "patchclip_item_16_64_64", ( -585, 533, 1064 ), ( 0, 0, 0 ) );

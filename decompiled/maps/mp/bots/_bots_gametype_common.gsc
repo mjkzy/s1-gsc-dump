@@ -78,7 +78,7 @@ bot_cache_entrances( var_0, var_1, var_2, var_3 )
     for ( var_11 = 0; var_11 < var_0.size; var_11++ )
     {
         var_12 = var_1[var_11];
-        var_10[var_12] = _func_20D( var_0[var_11] );
+        var_10[var_12] = findentrances( var_0[var_11] );
         wait 0.05;
 
         for ( var_13 = 0; var_13 < var_10[var_12].size; var_13++ )
@@ -148,14 +148,14 @@ bot_add_missing_nodes( var_0, var_1 )
     }
     else if ( var_1.classname == "trigger_multiple" || var_1.classname == "trigger_use_touch" )
     {
-        var_4[0] = var_1 _meth_8216( 1, 1, 1 );
-        var_4[1] = var_1 _meth_8216( 1, 1, -1 );
-        var_4[2] = var_1 _meth_8216( 1, -1, 1 );
-        var_4[3] = var_1 _meth_8216( 1, -1, -1 );
-        var_4[4] = var_1 _meth_8216( -1, 1, 1 );
-        var_4[5] = var_1 _meth_8216( -1, 1, -1 );
-        var_4[6] = var_1 _meth_8216( -1, -1, 1 );
-        var_4[7] = var_1 _meth_8216( -1, -1, -1 );
+        var_4[0] = var_1 getpointinbounds( 1, 1, 1 );
+        var_4[1] = var_1 getpointinbounds( 1, 1, -1 );
+        var_4[2] = var_1 getpointinbounds( 1, -1, 1 );
+        var_4[3] = var_1 getpointinbounds( 1, -1, -1 );
+        var_4[4] = var_1 getpointinbounds( -1, 1, 1 );
+        var_4[5] = var_1 getpointinbounds( -1, 1, -1 );
+        var_4[6] = var_1 getpointinbounds( -1, -1, 1 );
+        var_4[7] = var_1 getpointinbounds( -1, -1, -1 );
         var_5 = 0;
 
         foreach ( var_7 in var_4 )
@@ -170,9 +170,9 @@ bot_add_missing_nodes( var_0, var_1 )
 
         foreach ( var_11 in var_2 )
         {
-            if ( !_func_22A( var_11.origin, var_1 ) )
+            if ( !ispointinvolume( var_11.origin, var_1 ) )
             {
-                if ( _func_22A( var_11.origin + ( 0, 0, 40 ), var_1 ) || _func_22A( var_11.origin + ( 0, 0, 80 ), var_1 ) || _func_22A( var_11.origin + ( 0, 0, 120 ), var_1 ) )
+                if ( ispointinvolume( var_11.origin + ( 0, 0, 40 ), var_1 ) || ispointinvolume( var_11.origin + ( 0, 0, 80 ), var_1 ) || ispointinvolume( var_11.origin + ( 0, 0, 120 ), var_1 ) )
                     var_0.nodes = common_scripts\utility::array_add( var_0.nodes, var_11 );
             }
         }
@@ -193,11 +193,11 @@ bot_setup_bot_targets( var_0 )
         if ( !isdefined( var_2.bottargets ) )
         {
             var_2.bottargets = [];
-            var_3 = _func_1FE( var_2.trigger );
+            var_3 = getnodesintrigger( var_2.trigger );
 
             foreach ( var_5 in var_3 )
             {
-                if ( !var_5 _meth_8386() )
+                if ( !var_5 nodeisdisconnected() )
                     var_2.bottargets = common_scripts\utility::array_add( var_2.bottargets, var_5 );
             }
 
@@ -257,7 +257,7 @@ bot_gametype_get_allied_defenders_for_team( var_0, var_1, var_2 )
 bot_gametype_set_role( var_0 )
 {
     self.role = var_0;
-    self _meth_8356();
+    self botclearscriptgoal();
     maps\mp\bots\_bots_strategy::bot_defend_stop();
 }
 

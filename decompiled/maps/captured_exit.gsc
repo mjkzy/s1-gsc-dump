@@ -26,7 +26,7 @@ post_load()
         if ( maps\captured_util::start_point_is_before( "gatedoor" ) )
         {
             level._exit.node maps\_anim::anim_first_frame( [ level._exit.gate_inner, level._exit.lock ], "anim_exit_gateclose" );
-            level._exit.gate_inner.col _meth_8058();
+            level._exit.gate_inner.col connectpaths();
         }
         else if ( level.start_point == "gatedoor" )
             level._exit.node maps\_anim::anim_first_frame( [ level._exit.gate_inner, level._exit.lock ], "anim_exit_gatelift_intro" );
@@ -42,10 +42,10 @@ start( var_0, var_1 )
     level.allies maps\captured_util::warp_allies( var_1, 1 );
     level.player thread maps\captured_mech_code::init_mech_actions();
     level.civ_run_nodes = level._mb.exit_run_nodes2;
-    level._exit.gate_inner.col _meth_8058();
-    level._exit.gate_inner.col _meth_82BF();
+    level._exit.gate_inner.col connectpaths();
+    level._exit.gate_inner.col notsolid();
     maps\_playermech_code::playermech_start( "base" );
-    level.allies[0] _meth_83FA( 3, 1 );
+    level.allies[0] hudoutlineenable( 3, 1 );
 }
 
 main_gd()
@@ -60,7 +60,7 @@ main_gd()
     level.player waittill( "exit_anim_start" );
     thread ai_gd();
     level.player waittill( "exit_anim_done" );
-    level.allies[0] _meth_83FB();
+    level.allies[0] hudoutlinedisable();
 }
 
 ai_gd()
@@ -100,7 +100,7 @@ gd_player_lifts_gate()
     var_3.object maps\_utility::addhinttrigger( &"CAPTURED_HINT_BREAK_CONSOLE", &"CAPTURED_HINT_BREAK_PC" );
     maps\captured_util::waittill_entity_activate_looking_at( var_3.object, undefined, undefined, 90, undefined, 0 );
     level notify( "lgt_dof_mechdoor" );
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     common_scripts\utility::flag_set( "flag_exit_lock_broken" );
     var_3 maps\_shg_utility::hint_button_clear();
     level.player thread playerlinktodeltablend();
@@ -111,8 +111,8 @@ gd_player_lifts_gate()
     common_scripts\utility::flag_set( "flag_force_hud_ready" );
     level.player thread maps\captured_mech_code::mech_obj_move( var_2, 1 );
     level.player waittill( "exit_anim_start" );
-    level._exit.gate_inner.col _meth_8058();
-    level._exit.gate_inner.col _meth_82BF();
+    level._exit.gate_inner.col connectpaths();
+    level._exit.gate_inner.col notsolid();
     level notify( "dialogue_gatedoor_hold" );
     self notify( "notify_stop_mash_detection" );
     common_scripts\utility::flag_clear( "hint_mash_button" );
@@ -122,40 +122,40 @@ gd_player_lifts_gate()
 
 playerlinktodeltablend()
 {
-    self _meth_8080( self.rig, "tag_player", 0.2 );
+    self playerlinktoblend( self.rig, "tag_player", 0.2 );
     wait 0.2;
-    self _meth_807D( self.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+    self playerlinktodelta( self.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
     wait 0.05;
     self.rig show();
-    self _meth_8482();
-    maps\_utility::spawn_anim_model( "mech_gun", level.player.origin ) _meth_804D( self.rig, "tag_weapon", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self hideviewmodel();
+    maps\_utility::spawn_anim_model( "mech_gun", level.player.origin ) linkto( self.rig, "tag_weapon", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 }
 
 event_exit_player_knockback()
 {
-    self _meth_80EC( 1 );
+    self enabledeathshield( 1 );
     var_0 = maps\_utility::array_spawn_noteworthy( "enemy_exit" );
     common_scripts\utility::array_thread( var_0, ::exit_enemy );
     var_1 = maps\_utility::spawn_script_noteworthy( "enemy_exit_mech" );
     var_1 thread exit_mech_rocket_fire();
     thread maps\captured_mech::smart_radio_dialogue_mb( "cap_sri_enemymechdetected" );
     var_2 = getent( "model_exit_swinggate", "targetname" );
-    var_2 _meth_8058();
-    var_2 _meth_82AE( var_2.origin + ( 0, 0, 128 ), 1 );
+    var_2 connectpaths();
+    var_2 moveto( var_2.origin + ( 0, 0, 128 ), 1 );
     level.player waittill( "notify_fire_rocket_2" );
-    level.player common_scripts\utility::delaycall( 1.25, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 5.65, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 1.25, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 5.65, ::playrumbleonentity, "heavy_1s" );
     common_scripts\utility::flag_set( "flag_gatedoor_end" );
     self notify( "stop_quake" );
     level.player freezecontrols( 1 );
     thread maps\captured_fx::fx_mech_explode_amb_fx();
     maps\_playermech_code::set_mech_state( "outro" );
-    level.player _meth_82FB( "ui_hide_hud", 1 );
+    level.player setclientomnvar( "ui_hide_hud", 1 );
     level.player.rig thread maps\captured_fx::fx_mech_cockpit_damage();
     thread maps\captured_fx::fx_stop_mech_door_lift_fx();
-    level.player _meth_80EC( 0 );
-    level._exit.gate_inner.col _meth_8057();
-    level._exit.gate_inner.col _meth_82BE();
+    level.player enabledeathshield( 0 );
+    level._exit.gate_inner.col disconnectpaths();
+    level._exit.gate_inner.col solid();
 }
 
 event_mechsuit_swap()
@@ -209,7 +209,7 @@ deathfunc_rocket( var_0, var_1, var_2, var_3 )
 {
     self waittill( "death" );
     playfx( common_scripts\utility::getfx( var_2 ), var_0, anglestoforward( var_1 ), anglestoup( var_1 ) );
-    level.player _meth_80AD( var_3 );
+    level.player playrumbleonentity( var_3 );
 }
 
 waittill_nt( var_0, var_1, var_2, var_3 )

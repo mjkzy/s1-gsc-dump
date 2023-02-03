@@ -10,7 +10,7 @@ precacheassets()
     precacheshader( "ugv_vignette_overlay" );
     precacheshader( "remote_chopper_overlay_scratches" );
     precacheshader( "wasp_screencrack" );
-    precacheitem( "hms_sniperdrone" );
+    precacheshellshock( "hms_sniperdrone" );
     precacheshellshock( "barrett" );
     precachestring( &"sniper_drone_hud" );
     precachestring( &"sniper_drone_hud_update" );
@@ -62,26 +62,26 @@ alerthighlighthudeffect( var_0 )
     var_1 = newclienthudelem( level.player );
     var_1.color = ( 1, 0.05, 0.025 );
     var_1.alpha = 1.0;
-    var_1 _meth_83A4( var_0 );
+    var_1 setradarhighlight( var_0 );
     return var_1;
 }
 
 initdroneflyinturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", 30 );
-    _func_0D3( "aim_turnrate_pitch_ads", 25 );
-    _func_0D3( "aim_turnrate_yaw", 60 );
-    _func_0D3( "aim_turnrate_yaw_ads", 40 );
-    _func_0D3( "aim_accel_turnrate_lerp", 300 );
+    setsaveddvar( "aim_turnrate_pitch", 30 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 25 );
+    setsaveddvar( "aim_turnrate_yaw", 60 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 40 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 300 );
 }
 
 initdroneturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", 70 );
-    _func_0D3( "aim_turnrate_pitch_ads", 55 );
-    _func_0D3( "aim_turnrate_yaw", 125 );
-    _func_0D3( "aim_turnrate_yaw_ads", 90 );
-    _func_0D3( "aim_accel_turnrate_lerp", 600 );
+    setsaveddvar( "aim_turnrate_pitch", 70 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 55 );
+    setsaveddvar( "aim_turnrate_yaw", 125 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 90 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 600 );
 }
 
 savedefaultturnrate()
@@ -95,11 +95,11 @@ savedefaultturnrate()
 
 restoredefaultturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", self.aim_turnrate_pitch );
-    _func_0D3( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
-    _func_0D3( "aim_turnrate_yaw", self.aim_turnrate_yaw );
-    _func_0D3( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
-    _func_0D3( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
+    setsaveddvar( "aim_turnrate_pitch", self.aim_turnrate_pitch );
+    setsaveddvar( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
+    setsaveddvar( "aim_turnrate_yaw", self.aim_turnrate_yaw );
+    setsaveddvar( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
+    setsaveddvar( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
 }
 
 #using_animtree("vehicles");
@@ -109,16 +109,16 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = getdvarfloat( "g_friendlyNameDist" );
     setomnvar( "ui_sniperdrone", 1 );
     maps\_shg_utility::hide_player_hud();
-    _func_0D3( "compass", "1" );
+    setsaveddvar( "compass", "1" );
     common_scripts\utility::create_dvar( "SniperDrone_Hide", 0 );
-    var_7 = level.player _meth_8311();
+    var_7 = level.player getcurrentweapon();
     var_8 = getdvarint( "cg_fov", 65 ) * getdvarfloat( "cg_playerFovScale0", 1 );
     var_9 = distance2d( var_0.origin, var_1.origin );
     var_10 = vectortoangles( var_1.origin - var_0.origin );
-    level.player _meth_8482();
-    level.player _meth_8321();
-    level.player _meth_831F();
-    level.player _meth_8119( 0 );
+    level.player hideviewmodel();
+    level.player disableweaponswitch();
+    level.player disableoffhandweapons();
+    level.player allowcrouch( 0 );
     var_11 = initializesniperdronedata();
     var_12 = common_scripts\utility::spawn_tag_origin();
     level.player.sniperdronelink = var_12;
@@ -126,19 +126,19 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
     initorbitlowerbounds( var_0.origin, var_5 );
     soundscripts\_snd::snd_message( "start_sniper_drone" );
     level.droneweapon = "hms_sniperdrone";
-    level.player _meth_830E( level.droneweapon );
-    level.player _meth_8316( level.droneweapon );
+    level.player giveweapon( level.droneweapon );
+    level.player switchtoweaponimmediate( level.droneweapon );
     level.variable_scope_weapons = [ "hms_sniperdrone" ];
     maps\_hms_utility::printlnscreenandconsole( "Drone is now armed with " + level.droneweapon );
     var_11.frameviewmodel = spawn( "script_model", var_12.origin );
-    var_11.frameviewmodel _meth_80B1( "vehicle_sniper_drone_outerparts_cloak" );
-    var_11.frameviewmodel _meth_80A6( level.player, "tag_origin", ( 13, 0, -3 ), ( 0, 0, 0 ), 1 );
+    var_11.frameviewmodel setmodel( "vehicle_sniper_drone_outerparts_cloak" );
+    var_11.frameviewmodel linktoplayerview( level.player, "tag_origin", ( 13, 0, -3 ), ( 0, 0, 0 ), 1 );
     var_12.frameviewmodel = var_11.frameviewmodel;
     var_11.frameviewmodel childthread viewmodelanimupdate( %sniper_drone_outerparts_idle, %sniper_drone_outerparts_fire );
     var_11.frameviewmodel thread sniperdronecloak();
     var_11.barrelviewmodel = spawn( "script_model", var_12.origin );
-    var_11.barrelviewmodel _meth_80B1( "vehicle_vm_sniper_drone_cloak" );
-    var_11.barrelviewmodel _meth_80A6( level.player, "tag_origin", ( -1, 0, -1.75 ), ( 0, 0, 0 ), 1 );
+    var_11.barrelviewmodel setmodel( "vehicle_vm_sniper_drone_cloak" );
+    var_11.barrelviewmodel linktoplayerview( level.player, "tag_origin", ( -1, 0, -1.75 ), ( 0, 0, 0 ), 1 );
     var_12.barrelviewmodel = var_11.barrelviewmodel;
     var_11.barrelviewmodel childthread viewmodelanimupdate( %sniper_drone_vm_idle, %sniper_drone_vm_fire );
     var_11.barrelviewmodel thread sniperdronecloak();
@@ -146,18 +146,18 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !level.currentgen )
     {
         var_11.lensviewmodel = spawn( "script_model", var_12.origin );
-        var_11.lensviewmodel _meth_80B1( "vehicle_sniper_drone_hud_glass" );
-        var_11.lensviewmodel _meth_80A6( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
+        var_11.lensviewmodel setmodel( "vehicle_sniper_drone_hud_glass" );
+        var_11.lensviewmodel linktoplayerview( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
         childthread sniperdronelensdamaged();
     }
 
     playfxontag( common_scripts\utility::getfx( "sniper_drone_thruster_view" ), var_11.barrelviewmodel, "TAG_ORIGIN" );
     playfxontag( common_scripts\utility::getfx( "sniper_drone_wind_marker" ), var_11.barrelviewmodel, "TAG_ORIGIN" );
-    _func_0D3( "cg_drawBreathHint", 0 );
+    setsaveddvar( "cg_drawBreathHint", 0 );
     var_13 = sniperdroneoverlays();
     var_14 = alerthighlighthudeffect( 3600 );
-    level.player _meth_831E();
-    level.player _meth_80EF();
+    level.player enableweapons();
+    level.player enableinvulnerability();
     childthread dofiringeffects();
     childthread doadsblur( var_4 );
     childthread adjustfov( var_4, var_13["black_sides"], var_13["tech"] );
@@ -175,7 +175,7 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
     {
         var_12 initdroneflyinturnrate();
         maps\greece_conf_center::sniperdroneflyin( var_12 );
-        level.player _meth_807D( var_12, "tag_origin", 0, 90, 90, 20, 60, 1 );
+        level.player playerlinktodelta( var_12, "tag_origin", 0, 90, 90, 20, 60, 1 );
         var_15 = var_12.angles;
         var_16 = vectortoangles( var_0.origin - var_1.origin ) * ( 0, 1, 0 );
 
@@ -198,11 +198,11 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     initdroneturnrate();
     calculateinitialposition( var_1.origin, var_0, var_10, var_9 );
-    level.player _meth_807D( var_12, "tag_origin", 1, 90, 90, 20, 60, 1 );
+    level.player playerlinktodelta( var_12, "tag_origin", 1, 90, 90, 20, 60, 1 );
     var_20 = var_12.origin;
     var_21 = 0;
     var_22 = 0;
-    _func_0D3( "g_friendlyNameDist", 15000 );
+    setsaveddvar( "g_friendlyNameDist", 15000 );
 
     while ( isdefined( level.player.sniperdronelink ) )
     {
@@ -240,47 +240,47 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_22 = var_25;
     }
 
-    _func_0D3( "sm_sunShadowCenter", "0 0 0" );
-    _func_0D3( "sm_lightScore_eyeProjectDist", 64 );
-    _func_0D3( "sv_znear", "0" );
+    setsaveddvar( "sm_sunShadowCenter", "0 0 0" );
+    setsaveddvar( "sm_lightScore_eyeProjectDist", 64 );
+    setsaveddvar( "sv_znear", "0" );
     common_scripts\utility::flag_set( "init_safehouse_outro_start_lighting" );
-    level.player _meth_80F0();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_8300( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_830F( level.droneweapon );
+    level.player disableinvulnerability();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player allowads( 1 );
+    level.player allowcrouch( 1 );
+    level.player takeweapon( level.droneweapon );
     maps\_shg_utility::show_player_hud();
 
     foreach ( var_33 in var_13 )
         var_33 destroy();
 
     var_14 destroy();
-    var_11.frameviewmodel _meth_80A7( level.player );
-    var_11.barrelviewmodel _meth_80A7( level.player );
+    var_11.frameviewmodel unlinkfromplayerview( level.player );
+    var_11.barrelviewmodel unlinkfromplayerview( level.player );
 
     if ( !level.currentgen )
-        var_11.damagedlensviewmodel _meth_80A7( level.player );
+        var_11.damagedlensviewmodel unlinkfromplayerview( level.player );
 
-    level.player _meth_804F();
+    level.player unlink();
     maps\_utility::teleport_player( common_scripts\utility::getstruct( "PlayerStartConfCenter", "targetname" ) );
-    level.player _meth_8481();
-    level.player _meth_8031( var_8, 0.5 );
-    level.player _meth_8347( 2.0 );
-    level.player _meth_8349( 1.0 );
-    _func_0D3( "cg_drawBreathHint", 1 );
-    _func_0D3( "g_friendlyNameDist", var_6 );
+    level.player showviewmodel();
+    level.player lerpfov( var_8, 0.5 );
+    level.player disablefocus( 2.0 );
+    level.player disableaudiozoom( 1.0 );
+    setsaveddvar( "cg_drawBreathHint", 1 );
+    setsaveddvar( "g_friendlyNameDist", var_6 );
     soundscripts\_snd::snd_message( "stop_sniper_drone" );
-    level.player _meth_8316( var_7 );
+    level.player switchtoweaponimmediate( var_7 );
 }
 
 sniperdronecloak()
 {
-    self _meth_8448();
-    self _meth_83A7( 0.0, 0.0 );
+    self drawpostresolve();
+    self setmaterialscriptparam( 0.0, 0.0 );
     common_scripts\utility::flag_wait( "FlagSniperDroneCloakOff" );
-    self _meth_8449();
-    self _meth_83A7( 1.0, 1.0 );
+    self drawpostresolveoff();
+    self setmaterialscriptparam( 1.0, 1.0 );
 }
 
 sniperdroneoverlays()
@@ -305,7 +305,7 @@ sniperdroneoverlays()
 
 viewmodelanimupdate( var_0, var_1 )
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     var_2 = getanimlength( var_1 );
     var_3 = 0;
 
@@ -313,11 +313,11 @@ viewmodelanimupdate( var_0, var_1 )
     {
         if ( !var_3 )
         {
-            self _meth_8143( var_0 );
+            self setanimknob( var_0 );
             level.player waittill( "weapon_fired" );
         }
 
-        self _meth_8145( var_1 );
+        self setanimknobrestart( var_1 );
         var_3 = 0;
 
         if ( !isdefined( waittillplayerfireortime( var_2 ) ) )
@@ -334,7 +334,7 @@ waittillplayerfireortime( var_0 )
 
 disabledronefiringatstart( var_0 )
 {
-    level.player _meth_8131( 0 );
+    level.player allowfire( 0 );
 
     if ( var_0 == 1 )
         common_scripts\utility::flag_wait( "FlagPlayerEndDroneFlight" );
@@ -344,7 +344,7 @@ disabledronefiringatstart( var_0 )
     hintsniperdronemove();
     common_scripts\utility::flag_wait( "FlagOkayToShootDrone" );
     level notify( "SniperdroneSafetyOff" );
-    level.player _meth_8131( 1 );
+    level.player allowfire( 1 );
     wait 0.05;
     thread maps\greece_code::warning_fade();
     hintsniperdroneshoot();
@@ -352,19 +352,19 @@ disabledronefiringatstart( var_0 )
 
 disabledronefiringafterkill()
 {
-    level.player _meth_8131( 0 );
+    level.player allowfire( 0 );
     thread sniperdronedryfire( "FlagConfRoomAlliesRecover" );
     common_scripts\utility::flag_wait( "FlagConfRoomAlliesRecover" );
     level notify( "SniperdroneSafetyOff" );
-    level.player _meth_8131( 1 );
+    level.player allowfire( 1 );
     wait 0.05;
     thread maps\greece_code::warning_fade();
 }
 
 disabledronefiringduringcrash()
 {
-    level.player _meth_8131( 0 );
-    level.player _meth_8300( 0 );
+    level.player allowfire( 0 );
+    level.player allowads( 0 );
     thread sniperdronebadfire();
 }
 
@@ -527,7 +527,7 @@ cameralookatescapevehicle( var_0, var_1, var_2 )
     common_scripts\utility::flag_wait( "FlagHadesVehicleDroneLaunch" );
     var_3 = getvehiclenode( "HadesEscapeVehicleStart", "targetname" );
     common_scripts\utility::flag_set( "FlagSniperDroneLookAt" );
-    level.player _meth_8300( 0 );
+    level.player allowads( 0 );
     var_4 = ( 0, 0, 0 );
 
     foreach ( var_6 in level.allenemyvehicles )
@@ -556,17 +556,17 @@ updateflyinscopeoverlay( var_0, var_1 )
         var_4 = var_2[1] - level.player.sniperdronelink.angles[1];
         var_4 = clamp( var_4, -1, 1 );
         updatescopeoverlayalpha( 0, var_0 );
-        _func_23F( &"sniper_drone_hud_update", 8, int( maps\_utility::round_float( var_4 * 100, 0, 0 ) ), 0, int( var_3 ), 0, 0, int( var_0.alpha * 10 ), 0, gettime() );
+        luinotifyevent( &"sniper_drone_hud_update", 8, int( maps\_utility::round_float( var_4 * 100, 0, 0 ) ), 0, int( var_3 ), 0, 0, int( var_0.alpha * 10 ), 0, gettime() );
         var_5 = level.player.sniperdronelink.angles[0];
 
         if ( common_scripts\utility::flag( "FlagSniperDroneLookAt" ) )
             var_5 = getlookpitch();
 
         updateviewmodelpitchoffset( var_5 );
-        level.player.sniperdronedata.frameviewmodel _meth_80A7( level.player );
-        level.player.sniperdronedata.frameviewmodel _meth_80A6( level.player, "tag_origin", level.player.sniperdronedata.frameviewmodeloffset, ( 0, 0, 0 ), 1 );
-        level.player.sniperdronedata.barrelviewmodel _meth_80A7( level.player );
-        level.player.sniperdronedata.barrelviewmodel _meth_80A6( level.player, "tag_origin", level.player.sniperdronedata.barrelviewmodeloffset, ( 0, 0, 0 ), 1 );
+        level.player.sniperdronedata.frameviewmodel unlinkfromplayerview( level.player );
+        level.player.sniperdronedata.frameviewmodel linktoplayerview( level.player, "tag_origin", level.player.sniperdronedata.frameviewmodeloffset, ( 0, 0, 0 ), 1 );
+        level.player.sniperdronedata.barrelviewmodel unlinkfromplayerview( level.player );
+        level.player.sniperdronedata.barrelviewmodel linktoplayerview( level.player, "tag_origin", level.player.sniperdronedata.barrelviewmodeloffset, ( 0, 0, 0 ), 1 );
     }
 }
 
@@ -590,7 +590,7 @@ notifyonplayermovingsniperdrone()
 {
     for (;;)
     {
-        var_0 = level.player _meth_82F3();
+        var_0 = level.player getnormalizedmovement();
 
         if ( length( var_0 ) != 0 )
         {
@@ -619,27 +619,27 @@ dofiringeffects()
     var_0 = common_scripts\utility::getfx( "sniper_drone_flash_view" );
     var_1 = common_scripts\utility::getfx( "sniper_drone_tracer" );
     var_2 = level.player common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_80A6( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
+    var_2 linktoplayerview( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
 
     while ( level.droneweapon == "hms_sniperdrone" )
     {
         level.player waittill( "weapon_fired" );
         level.player shellshock( "barrett", 0.3 );
-        level.player.sniperdronedata.recoildirection = anglestoforward( level.player _meth_8036() ) * -1;
+        level.player.sniperdronedata.recoildirection = anglestoforward( level.player getgunangles() ) * -1;
         level.player.sniperdronedata.calculatenewhoverdestination = 1;
         level.player.sniperdronedata.lastrecoiloffset = ( 0, 0, 0 );
 
         if ( level.player adsbuttonpressed() )
         {
-            var_3 = level.player _meth_80A8();
-            var_4 = anglestoforward( level.player _meth_8036() );
+            var_3 = level.player geteye();
+            var_4 = anglestoforward( level.player getgunangles() );
             var_5 = var_3 + var_4 * 100;
             var_6 = var_3 + var_4 * 5000;
             var_7 = bullettrace( var_5, var_6, 1, undefined, 0, 1 );
             var_8 = var_3 - ( 0, 0, 5 );
             var_9 = var_7["position"] - var_8;
             playfx( var_1, var_8, var_9, ( 0, 0, 1 ) );
-            _func_234( level.player.origin, 0.25, 0, 0, 0.2, 0.1, 0.1, 0, 0.5 );
+            screenshake( level.player.origin, 0.25, 0, 0, 0.2, 0.1, 0.1, 0, 0.5 );
             continue;
         }
 
@@ -716,8 +716,8 @@ adjustfov( var_0, var_1, var_2 )
     var_4 = 7.5;
     var_5 = 0;
     var_6 = 0;
-    level.player _meth_8031( var_3, 0.5 );
-    level.player _meth_8346( var_4 / 2.0, var_4, 1.0, 0.0 );
+    level.player lerpfov( var_3, 0.5 );
+    level.player enablefocus( var_4 / 2.0, var_4, 1.0, 0.0 );
 
     while ( isdefined( level.player.sniperdronelink ) )
     {
@@ -726,21 +726,21 @@ adjustfov( var_0, var_1, var_2 )
         if ( !isdefined( level.player.sniperdronelink ) )
             break;
 
-        if ( _func_085() && !var_6 )
+        if ( issaverecentlyloaded() && !var_6 )
         {
             var_5 = 1;
             var_6 = 1;
         }
-        else if ( !_func_085() )
+        else if ( !issaverecentlyloaded() )
             var_6 = 0;
 
         if ( isadsenabled( var_0 ) && level.player adsbuttonpressed() || common_scripts\utility::flag( "FlagForcePlayerADS" ) )
         {
             if ( !var_5 )
             {
-                level.player _meth_8031( var_4, 0.25 );
-                level.player _meth_8346( 7.5, 20, 0.125, 1.0 );
-                level.player _meth_8348( 2.0, 1.0 );
+                level.player lerpfov( var_4, 0.25 );
+                level.player enablefocus( 7.5, 20, 0.125, 1.0 );
+                level.player enableaudiozoom( 2.0, 1.0 );
                 var_5 = 1;
             }
 
@@ -749,9 +749,9 @@ adjustfov( var_0, var_1, var_2 )
 
         if ( var_5 )
         {
-            level.player _meth_8031( var_3, 0.5 );
-            level.player _meth_8346( 7.5, 20, 1.0, 1.0 );
-            level.player _meth_8349( 1.0 );
+            level.player lerpfov( var_3, 0.5 );
+            level.player enablefocus( 7.5, 20, 1.0, 1.0 );
+            level.player disableaudiozoom( 1.0 );
             var_5 = 0;
         }
     }
@@ -759,9 +759,9 @@ adjustfov( var_0, var_1, var_2 )
 
 updatesunshadowcenter( var_0, var_1 )
 {
-    var_2 = anglestoforward( level.player _meth_8036() );
+    var_2 = anglestoforward( level.player getgunangles() );
     var_3 = var_1;
-    var_4 = level.player _meth_80A8() + var_2 * 100;
+    var_4 = level.player geteye() + var_2 * 100;
     var_5 = level.player.origin + var_2 * 5000;
     var_6 = bullettrace( var_4, var_5, 1, level.player );
 
@@ -771,7 +771,7 @@ updatesunshadowcenter( var_0, var_1 )
         var_3 = var_0.origin + var_2 * var_7 * 0.9;
     }
 
-    _func_0D3( "sm_sunShadowCenter", var_3 );
+    setsaveddvar( "sm_sunShadowCenter", var_3 );
 }
 
 adjustshadowcenter( var_0 )
@@ -794,7 +794,7 @@ adjustshadowcenter( var_0 )
 
             if ( !var_1 )
             {
-                level.player _meth_83C0( "confcenter_drone_zoom" );
+                level.player lightsetforplayer( "confcenter_drone_zoom" );
                 var_1 = 1;
             }
 
@@ -803,8 +803,8 @@ adjustshadowcenter( var_0 )
 
         if ( var_1 )
         {
-            _func_0D3( "sm_sunShadowCenter", "0 0 0" );
-            level.player _meth_83C0( "confcenter_start" );
+            setsaveddvar( "sm_sunShadowCenter", "0 0 0" );
+            level.player lightsetforplayer( "confcenter_start" );
             var_1 = 0;
         }
     }
@@ -877,12 +877,12 @@ adjustmissileoverlay( var_0, var_1, var_2 )
 sniperdronelensdamaged()
 {
     level.player waittill( "kamikaze_damaged_lens" );
-    level.player.sniperdronedata.lensviewmodel _meth_80A7( level.player );
+    level.player.sniperdronedata.lensviewmodel unlinkfromplayerview( level.player );
     level.player.sniperdronedata.lensviewmodel hide();
     level.player.sniperdronedata.lensviewmodel delete();
     level.player.sniperdronedata.damagedlensviewmodel = spawn( "script_model", level.player.sniperdronelink.origin );
-    level.player.sniperdronedata.damagedlensviewmodel _meth_80B1( "vehicle_sniper_drone_hud_glass_break" );
-    level.player.sniperdronedata.damagedlensviewmodel _meth_80A6( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
+    level.player.sniperdronedata.damagedlensviewmodel setmodel( "vehicle_sniper_drone_hud_glass_break" );
+    level.player.sniperdronedata.damagedlensviewmodel linktoplayerview( level.player, "tag_origin", ( 9, 0, 0 ), ( 0, 0, 0 ), 1 );
 }
 
 enddronecontrol()
@@ -915,7 +915,7 @@ createoverlay( var_0, var_1 )
     var_2.aligny = "top";
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
-    var_2 _meth_80CC( var_0, 640, 480 );
+    var_2 setshader( var_0, 640, 480 );
     var_2.alpha = var_1;
     var_2.sort = -3;
     return var_2;
@@ -929,7 +929,7 @@ createmissileoverlay( var_0, var_1 )
     var_2.sort = 0;
     var_2.alignx = "center";
     var_2.aligny = "middle";
-    var_2 _meth_80CC( var_0, 256, 64 );
+    var_2 setshader( var_0, 256, 64 );
     var_2.alpha = 0;
     return var_2;
 }
@@ -950,10 +950,10 @@ updatescopeoverlayalpha( var_0, var_1 )
 
 updatescopeoverlay( var_0, var_1, var_2 )
 {
-    var_3 = level.player _meth_82F3();
-    var_4 = level.player _meth_830D();
+    var_3 = level.player getnormalizedmovement();
+    var_4 = level.player getnormalizedcameramovements();
     updatescopeoverlayalpha( var_2, var_0 );
-    _func_23F( &"sniper_drone_hud_update", 8, int( maps\_utility::round_float( var_3[1] * 100, 0, 0 ) ), int( maps\_utility::round_float( var_4[1] * 100, 0, 0 ) ), int( var_1 ), int( getlookpitch() ), int( getlookyaw() ), int( var_0.alpha * 10 ), int( level.player.sniperdronedata.droneangularvelocity ), gettime() );
+    luinotifyevent( &"sniper_drone_hud_update", 8, int( maps\_utility::round_float( var_3[1] * 100, 0, 0 ) ), int( maps\_utility::round_float( var_4[1] * 100, 0, 0 ) ), int( var_1 ), int( getlookpitch() ), int( getlookyaw() ), int( var_0.alpha * 10 ), int( level.player.sniperdronedata.droneangularvelocity ), gettime() );
 }
 
 updatedronesattackspeedmultiplier()
@@ -1060,7 +1060,7 @@ scalevelocity( var_0 )
     if ( common_scripts\utility::flag( "FlagHadesVehicleDriveStart" ) || common_scripts\utility::flag( "FlagForcePlayerSlowMovement" ) )
         var_0 *= level.player.sniperdronedata.dronesattackspeedmultiplier;
 
-    if ( level.player adsbuttonpressed() && level.player _meth_8471() )
+    if ( level.player adsbuttonpressed() && level.player enemyincrosshairs() )
         var_0 *= 0.85;
 
     return var_0;
@@ -1209,7 +1209,7 @@ updateviewmodellookoffset( var_0 )
         return;
     }
 
-    var_1 = level.player _meth_830D();
+    var_1 = level.player getnormalizedcameramovements();
     var_2 = 0;
 
     if ( var_1[1] > 0 )
@@ -1288,11 +1288,11 @@ updatebodyroll( var_0 )
     updateviewmodelpitchoffset( getlookpitch() );
     var_13 = getviewmodelstrafeoffset();
     var_13 = ( 0, var_13[1] + var_1.horizontaloffsetlook, var_13[2] + var_1.verticaloffsetlook );
-    var_1.frameviewmodel _meth_80A7( level.player );
-    var_1.frameviewmodel _meth_80A6( level.player, "tag_origin", var_1.frameviewmodeloffset + var_13, var_12 * ( 0, 0, 1 ), 1 );
+    var_1.frameviewmodel unlinkfromplayerview( level.player );
+    var_1.frameviewmodel linktoplayerview( level.player, "tag_origin", var_1.frameviewmodeloffset + var_13, var_12 * ( 0, 0, 1 ), 1 );
     var_14 = getviewmodelrotation( var_1.barrelrollacceleration, var_6, var_9, 0.125 );
-    var_1.barrelviewmodel _meth_80A7( level.player );
-    var_1.barrelviewmodel _meth_80A6( level.player, "tag_origin", var_1.barrelviewmodeloffset + var_13 * 0.5, var_14 * ( 0, 0, 1 ), 1 );
+    var_1.barrelviewmodel unlinkfromplayerview( level.player );
+    var_1.barrelviewmodel linktoplayerview( level.player, "tag_origin", var_1.barrelviewmodeloffset + var_13 * 0.5, var_14 * ( 0, 0, 1 ), 1 );
     return var_11;
 }
 
@@ -1308,12 +1308,12 @@ euler_lerp( var_0, var_1, var_2 )
 
 rumblesniperdronefire()
 {
-    level.player _meth_80AD( "heavygun_fire" );
+    level.player playrumbleonentity( "heavygun_fire" );
     earthquake( 0.1, 0.1, level.player.origin, 100 );
 }
 
 rumblesniperdronetakenout()
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.5, 1.0, level.player.origin, 100 );
 }

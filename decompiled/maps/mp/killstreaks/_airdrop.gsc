@@ -324,7 +324,7 @@ getcratetypefordroptype( var_0, var_1 )
 
 deleteonownerdeath( var_0 )
 {
-    self _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_0 waittill( "death" );
     self delete();
 }
@@ -479,23 +479,23 @@ createairdropcrate( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     if ( var_7.team == "any" )
     {
-        var_7 _meth_80B1( "orbital_carepackage_pod_01_ai" );
+        var_7 setmodel( "orbital_carepackage_pod_01_ai" );
         var_7.friendlymodel = spawn( "script_model", var_7.origin );
-        var_7.friendlymodel _meth_80B1( "tag_origin" );
+        var_7.friendlymodel setmodel( "tag_origin" );
         var_7.friendlymodel thread deleteonownerdeath( var_7 );
     }
     else if ( isdefined( level.iszombiegame ) && level.iszombiegame )
     {
-        var_7 _meth_80B1( "orbital_carepackage_pod_01_logo_atlas" );
+        var_7 setmodel( "orbital_carepackage_pod_01_logo_atlas" );
         var_7.friendlymodel = spawn( "script_model", var_7.origin );
-        var_7.friendlymodel _meth_80B1( "orbital_carepackage_pod_01_ai" );
+        var_7.friendlymodel setmodel( "orbital_carepackage_pod_01_ai" );
         var_7.friendlymodel.parentcrate = var_7;
-        var_7.friendlymodel _meth_82BF();
+        var_7.friendlymodel notsolid();
         var_7.friendlymodel thread deleteonownerdeath( var_7 );
     }
     else
     {
-        var_7 _meth_80B1( maps\mp\gametypes\_teams::getteamcratemodel( var_7.team ) );
+        var_7 setmodel( maps\mp\gametypes\_teams::getteamcratemodel( var_7.team ) );
         var_7 thread crateteammodelupdater();
         var_8 = "orbital_carepackage_pod_01_ai";
         var_9 = "orbital_carepackage_pod_01_clr_01_ai";
@@ -509,13 +509,13 @@ createairdropcrate( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
             var_7 thread trap_createbombsquadmodel();
 
         var_7.friendlymodel = spawn( "script_model", var_3 );
-        var_7.friendlymodel _meth_80B1( var_8 );
+        var_7.friendlymodel setmodel( var_8 );
         var_7.friendlymodel.parentcrate = var_7;
-        var_7.friendlymodel _meth_82BF();
+        var_7.friendlymodel notsolid();
         var_7.enemymodel = spawn( "script_model", var_3 );
-        var_7.enemymodel _meth_80B1( var_9 );
+        var_7.enemymodel setmodel( var_9 );
         var_7.enemymodel.parentcrate = var_7;
-        var_7.enemymodel _meth_82BF();
+        var_7.enemymodel notsolid();
         var_7.friendlymodel thread deleteonownerdeath( var_7 );
 
         if ( level.teambased )
@@ -534,12 +534,12 @@ createairdropcrate( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7.inuse = 0;
 
     if ( var_6 )
-        var_7 _meth_8278( level.airdropcratecollision );
+        var_7 clonebrushmodeltoscriptmodel( level.airdropcratecollision );
 
     var_7.killcament = spawn( "script_model", var_7.origin + ( 0, 0, -200 ) );
-    var_7.killcament _meth_834D( "explosive" );
+    var_7.killcament setscriptmoverkillcam( "explosive" );
     var_7.killcament setcontents( 0 );
-    var_7.killcament _meth_804D( var_7 );
+    var_7.killcament linkto( var_7 );
     level.numdropcrates++;
     return var_7;
 }
@@ -550,8 +550,8 @@ trap_createbombsquadmodel()
     var_0.angles = self.angles;
     var_0 hide();
     var_0 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( self.owner );
-    var_0 _meth_80B1( "orbital_carepackage_pod_01_ai_bombsquad" );
-    var_0 _meth_804D( self );
+    var_0 setmodel( "orbital_carepackage_pod_01_ai_bombsquad" );
+    var_0 linkto( self );
     var_0 setcontents( 0 );
     self waittill( "death" );
     var_0 delete();
@@ -562,17 +562,17 @@ cratesetuphintstrings( var_0, var_1 )
     if ( isdefined( var_1 ) && isdefined( self.owner ) )
     {
         self.ownerstringent = spawn( "script_model", self.origin + ( 0, 0, 60 ) );
-        self.ownerstringent _meth_80DA( "HINT_NOICON" );
-        self.ownerstringent _meth_80DB( var_0 );
-        self.ownerstringent _meth_80DC( var_1 );
+        self.ownerstringent setcursorhint( "HINT_NOICON" );
+        self.ownerstringent sethintstring( var_0 );
+        self.ownerstringent setsecondaryhintstring( var_1 );
         self.otherstringent = spawn( "script_model", self.origin + ( 0, 0, 60 ) );
-        self.otherstringent _meth_80DA( "HINT_NOICON" );
-        self.otherstringent _meth_80DB( var_0 );
+        self.otherstringent setcursorhint( "HINT_NOICON" );
+        self.otherstringent sethintstring( var_0 );
     }
     else
     {
-        self _meth_80DA( "HINT_NOICON" );
-        self _meth_80DB( var_0 );
+        self setcursorhint( "HINT_NOICON" );
+        self sethintstring( var_0 );
     }
 }
 
@@ -654,7 +654,7 @@ cratesetupforuse( var_0, var_1 )
             objective_icon( var_5, var_6 );
 
             if ( !level.teambased && isdefined( self.owner ) )
-                objective_playerteam( var_5, self.owner _meth_81B1() );
+                objective_playerteam( var_5, self.owner getentitynumber() );
             else
                 objective_team( var_5, self.team );
 
@@ -672,7 +672,7 @@ cratesetupforuse( var_0, var_1 )
                 objective_icon( var_5, "compass_objpoint_ammo_enemy" );
 
                 if ( !level.teambased && isdefined( self.owner ) )
-                    objective_playerenemyteam( var_5, self.owner _meth_81B1() );
+                    objective_playerenemyteam( var_5, self.owner getentitynumber() );
                 else
                     objective_team( var_5, level.otherteam[self.team] );
 
@@ -785,7 +785,7 @@ physicswaiter( var_0, var_1 )
 
     foreach ( var_4 in var_2 )
     {
-        if ( self.friendlymodel _meth_80A9( var_4 ) )
+        if ( self.friendlymodel istouching( var_4 ) )
         {
             deletecrate();
             return;
@@ -799,9 +799,9 @@ physicswaiter( var_0, var_1 )
     }
 
     if ( isdefined( level.iszombiegame ) && level.iszombiegame )
-        self _meth_8057();
+        self disconnectpaths();
     else if ( isdefined( level.ishorde ) && level.ishorde )
-        self _meth_8057();
+        self disconnectpaths();
 
     var_6 = spawnstruct();
     var_6.deathoverridecallback = ::movingplatformdeathfunc;
@@ -873,10 +873,10 @@ crateothercapturethink( var_0 )
         if ( isdefined( self.owner ) && var_2 == self.owner )
             continue;
 
-        if ( var_2 _meth_83B3() || isdefined( var_2.exo_hover_on ) && var_2.exo_hover_on )
+        if ( var_2 isjumping() || isdefined( var_2.exo_hover_on ) && var_2.exo_hover_on )
             continue;
 
-        if ( !var_2 _meth_8341() && !waitplayerstuckoncarepackagereturn( var_2 ) )
+        if ( !var_2 isonground() && !waitplayerstuckoncarepackagereturn( var_2 ) )
             continue;
 
         if ( !validateopenconditions( var_2 ) )
@@ -942,10 +942,10 @@ crateownercapturethink( var_0 )
         if ( isdefined( self.owner ) && var_3 != self.owner )
             continue;
 
-        if ( var_3 _meth_83B3() || isdefined( var_3.exo_hover_on ) && var_3.exo_hover_on )
+        if ( var_3 isjumping() || isdefined( var_3.exo_hover_on ) && var_3.exo_hover_on )
             continue;
 
-        if ( !var_3 _meth_8341() && !waitplayerstuckoncarepackagereturn( var_3 ) )
+        if ( !var_3 isonground() && !waitplayerstuckoncarepackagereturn( var_3 ) )
             continue;
 
         if ( !validateopenconditions( var_3 ) )
@@ -976,14 +976,14 @@ crateownercapturethink( var_0 )
 
 waitplayerstuckoncarepackagereturn( var_0 )
 {
-    if ( var_0 _meth_8341() )
+    if ( var_0 isonground() )
         return 0;
 
     var_1 = 200;
     var_2 = var_0.origin;
     var_3 = gettime();
 
-    while ( isdefined( var_0 ) && maps\mp\_utility::isreallyalive( var_0 ) && !var_0 _meth_8341() && var_2 == var_0.origin && var_0 usebuttonpressed() )
+    while ( isdefined( var_0 ) && maps\mp\_utility::isreallyalive( var_0 ) && !var_0 isonground() && var_2 == var_0.origin && var_0 usebuttonpressed() )
     {
         var_4 = gettime() - var_3;
 
@@ -998,7 +998,7 @@ waitplayerstuckoncarepackagereturn( var_0 )
 
 validateopenconditions( var_0 )
 {
-    var_1 = var_0 _meth_8312();
+    var_1 = var_0 getcurrentprimaryweapon();
 
     if ( issubstr( var_1, "turrethead" ) )
         return 1;
@@ -1091,10 +1091,10 @@ killstreakcratethink( var_0 )
             var_8 = 0;
 
             if ( isdefined( var_12.friendlymodel ) )
-                var_12.friendlymodel _meth_82BE();
+                var_12.friendlymodel solid();
 
             if ( isdefined( var_12.enemymodel ) )
-                var_12.enemymodel _meth_82BE();
+                var_12.enemymodel solid();
         }
 
         deletecrate( var_8 );
@@ -1118,15 +1118,15 @@ detonatetrap( var_0, var_1 )
     thread common_scripts\utility::play_sound_in_space( "orbital_pkg_trap_detonate", var_2 );
 
     if ( isdefined( var_0.friendlymodel ) )
-        var_0.friendlymodel _meth_82BF();
+        var_0.friendlymodel notsolid();
 
     if ( isdefined( var_0.enemymodel ) )
-        var_0.enemymodel _meth_82BF();
+        var_0.enemymodel notsolid();
 
     if ( isdefined( var_1 ) )
-        var_0.trapkillcament entityradiusdamage( var_2, 400, 300, 50, var_1, "MOD_EXPLOSIVE", "airdrop_trap_explosive_mp" );
+        var_0.trapkillcament radiusdamage( var_2, 400, 300, 50, var_1, "MOD_EXPLOSIVE", "airdrop_trap_explosive_mp" );
     else
-        var_0.trapkillcament entityradiusdamage( var_2, 400, 300, 50, undefined, "MOD_EXPLOSIVE", "airdrop_trap_explosive_mp" );
+        var_0.trapkillcament radiusdamage( var_2, 400, 300, 50, undefined, "MOD_EXPLOSIVE", "airdrop_trap_explosive_mp" );
 
     var_0 deletecrate();
 }
@@ -1178,11 +1178,11 @@ deletecrate( var_0, var_1 )
 useholdthink( var_0, var_1, var_2 )
 {
     if ( isplayer( var_0 ) )
-        var_0 _meth_807C( self );
+        var_0 playerlinkto( self );
     else
-        var_0 _meth_804D( self );
+        var_0 linkto( self );
 
-    var_0 _meth_8081();
+    var_0 playerlinkedoffsetenable();
 
     if ( !var_0 maps\mp\_utility::isjuggernaut() )
         var_0 common_scripts\utility::_disableweapon();
@@ -1234,8 +1234,8 @@ useholdthinkplayerreset( var_0 )
         if ( !var_0 maps\mp\_utility::isjuggernaut() )
             var_0 common_scripts\utility::_enableweapon();
 
-        if ( var_0 _meth_8068() )
-            var_0 _meth_804F();
+        if ( var_0 islinked() )
+            var_0 unlink();
     }
 }
 
@@ -1246,8 +1246,8 @@ personalusebar( var_0, var_1 )
     if ( isdefined( var_1 ) )
         iprintlnbold( "Fixme @agersant " + var_1 );
 
-    self _meth_82FB( "ui_use_bar_text", 1 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
+    self setclientomnvar( "ui_use_bar_text", 1 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
     var_2 = -1;
 
     while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0 ) && var_0.inuse && !level.gameended )
@@ -1262,7 +1262,7 @@ personalusebar( var_0, var_1 )
                 var_3 = gettime();
                 var_4 = var_0.curprogress / var_0.usetime;
                 var_5 = var_3 + ( 1 - var_4 ) * var_0.usetime / var_0.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_5 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_5 ) );
             }
 
             var_2 = var_0.userate;
@@ -1271,7 +1271,7 @@ personalusebar( var_0, var_1 )
         wait 0.05;
     }
 
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
 }
 
 ishordelaststand( var_0 )
@@ -1363,14 +1363,14 @@ crateownerdoubletapthink()
 
                         if ( isdefined( self.ownerstringent ) )
                         {
-                            self.ownerstringent _meth_80DB( var_4 );
-                            self.otherstringent _meth_80DB( var_4 );
-                            self.ownerstringent _meth_80DC( "" );
+                            self.ownerstringent sethintstring( var_4 );
+                            self.otherstringent sethintstring( var_4 );
+                            self.ownerstringent setsecondaryhintstring( "" );
                         }
                         else
                         {
-                            self _meth_80DB( var_4 );
-                            self _meth_80DC( "" );
+                            self sethintstring( var_4 );
+                            self setsecondaryhintstring( "" );
                         }
 
                         if ( level.teambased )
@@ -1435,7 +1435,7 @@ cratetrapsetupkillcam( var_0 )
     var_1 = bullettrace( self.origin, self.origin + ( 0, 0, 90 ), 0, self );
     self.trapkillcament = spawn( "script_model", var_1["position"] );
     self.trapkillcament setcontents( 0 );
-    self.trapkillcament _meth_834D( "large explosive" );
+    self.trapkillcament setscriptmoverkillcam( "large explosive" );
 }
 
 tryusereinforcementcommon( var_0, var_1, var_2 )
@@ -1480,7 +1480,7 @@ reinforcementcratespecialtythink( var_0 )
         var_5 = getsecondaryperkhintfromperkref( var_2 );
 
         if ( isdefined( var_4 ) && isdefined( var_5 ) )
-            self _meth_8515( var_4, var_5 );
+            self setreinforcementhintstrings( var_4, var_5 );
         else
             cratesetuphintstrings( &"MP_PERK_PICKUP_GENERIC_MULTIPLE" );
 
@@ -1500,7 +1500,7 @@ reinforcementcratespecialtythink( var_0 )
         var_4 = game["strings"][var_0 + self.cratetype + "_hint"];
 
         if ( isdefined( var_4 ) )
-            self _meth_8515( var_4 );
+            self setreinforcementhintstrings( var_4 );
         else
             cratesetuphintstrings( &"MP_PERK_PICKUP_GENERIC" );
 
@@ -1532,16 +1532,16 @@ reinforcementcratespecialtythink( var_0 )
         var_6 playlocalsound( "orbital_pkg_use" );
         var_6 apply_reinforcement_perk( var_1 );
         var_7 = int( tablelookuprownum( "mp/perktable.csv", 1, var_1 ) );
-        var_6 _meth_82FB( "ui_reinforcement_active_perk_1", var_7 );
+        var_6 setclientomnvar( "ui_reinforcement_active_perk_1", var_7 );
 
         if ( isdefined( var_2 ) )
         {
             var_6 apply_reinforcement_perk( var_2 );
             var_7 = int( tablelookuprownum( "mp/perktable.csv", 1, var_2 ) );
-            var_6 _meth_82FB( "ui_reinforcement_active_perk_2", var_7 );
+            var_6 setclientomnvar( "ui_reinforcement_active_perk_2", var_7 );
         }
         else
-            var_6 _meth_82FB( "ui_reinforcement_active_perk_2", -1 );
+            var_6 setclientomnvar( "ui_reinforcement_active_perk_2", -1 );
 
         deletecrate( 1 );
     }
@@ -1684,7 +1684,7 @@ apply_reinforcement_perk( var_0 )
 
     if ( var_0 == "specialty_class_toughness" )
     {
-        self _meth_8309( 0.2 );
+        self setviewkickscale( 0.2 );
         return;
     }
 

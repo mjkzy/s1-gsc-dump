@@ -52,8 +52,8 @@ cleanup_bobbing()
     self.org_origin = self.origin;
     self waittill( "stop_bobbing" );
     waittillframeend;
-    self _meth_82B5( self.org_angles, 1, 0, 0 );
-    self _meth_82AE( self.org_origin, 1, 0, 0 );
+    self rotateto( self.org_angles, 1, 0, 0 );
+    self moveto( self.org_origin, 1, 0, 0 );
 }
 
 start_bobbing_single( var_0 )
@@ -266,22 +266,22 @@ bobobjectparam( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
             switch ( var_0 )
             {
                 case 0:
-                    self _meth_82B6( var_12, var_9, var_10, var_11 );
+                    self rotatepitch( var_12, var_9, var_10, var_11 );
                     break;
                 case 1:
-                    self _meth_82B7( var_12, var_9, var_10, var_11 );
+                    self rotateyaw( var_12, var_9, var_10, var_11 );
                     break;
                 case 2:
-                    self _meth_82B8( var_12, var_9, var_10, var_11 );
+                    self rotateroll( var_12, var_9, var_10, var_11 );
                     break;
                 case 3:
-                    self _meth_82AF( var_8 - self.origin[0], var_9, var_10, var_11 );
+                    self movex( var_8 - self.origin[0], var_9, var_10, var_11 );
                     break;
                 case 4:
-                    self _meth_82B0( var_8 - self.origin[1], var_9, var_10, var_11 );
+                    self movey( var_8 - self.origin[1], var_9, var_10, var_11 );
                     break;
                 case 5:
-                    self _meth_82B1( var_8 - self.origin[2], var_9, var_10, var_11 );
+                    self movez( var_8 - self.origin[2], var_9, var_10, var_11 );
                     break;
             }
 
@@ -330,7 +330,7 @@ bobbingbuoyangles()
         var_11 = calcrockingangles( self.org_angles, var_6, 4.0, 3.0, 60.0 );
         var_12 = var_11["angles"];
         var_6 = var_11["result"];
-        self _meth_82B5( var_12, 0.4, 0, 0 );
+        self rotateto( var_12, 0.4, 0, 0 );
         wait 0.2;
     }
 }
@@ -344,10 +344,10 @@ bobobjectto( var_0 )
     {
         var_1 = ( self.tgt_values[3], self.tgt_values[4], self.tgt_values[5] );
         var_2 = ( self.tgt_values[0], self.tgt_values[1], self.tgt_values[2] );
-        self _meth_82AE( var_1, 0.1, 0.0, 0.0 );
+        self moveto( var_1, 0.1, 0.0, 0.0 );
 
         if ( !var_0 )
-            self _meth_82B5( var_2, 0.1, 0.0, 0.0 );
+            self rotateto( var_2, 0.1, 0.0, 0.0 );
 
         wait 0.05;
     }

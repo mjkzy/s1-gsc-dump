@@ -3,7 +3,7 @@
 
 streak_init()
 {
-    precacheitem( "iw5_dlcgun12loot2_mp" );
+    precacheshellshock( "iw5_dlcgun12loot2_mp" );
     level.killstreakfuncs["mp_seoul2"] = ::tryusempswarm;
     level.mapkillstreak = "mp_seoul2";
     level.mapkillstreakpickupstring = &"MP_SEOUL2_MAP_KILLSTREAK_PICKUP";
@@ -17,7 +17,7 @@ streak_init()
         var_1 = maps\mp\gametypes\_spawnlogic::findboxcenter( var_0[0].origin, var_0[1].origin );
 
     level.swarmrig = spawn( "script_model", var_1 );
-    level.swarmrig _meth_80B1( "c130_zoomrig" );
+    level.swarmrig setmodel( "c130_zoomrig" );
     level.swarmrig.angles = ( 0, 115, 0 );
     level.swarmrig hide();
     thread rotateswarm( level.swarm_speed );
@@ -41,7 +41,7 @@ tryusempswarm( var_0, var_1 )
 
     if ( isdefined( level.swarm_player ) || level.swarminuse )
     {
-        self iclientprintlnbold( &"MP_SEOUL2_SWARM_IN_USE" );
+        self iprintlnbold( &"MP_SEOUL2_SWARM_IN_USE" );
         return 0;
     }
 
@@ -78,7 +78,7 @@ setswarmplayer( var_0 )
     level.swarm_planemodel.vehicletype = "paladin";
     level.swarm_planemodel.player = var_0;
     level.swarm_planemodel.helitype = "osp";
-    var_0 _meth_834A();
+    var_0 startac130();
     var_0 maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
     var_0 maps\mp\killstreaks\_killstreaks::playerwaittillridekillstreakcomplete();
     var_0 thread waitsetthermal( 1.0 );
@@ -98,13 +98,13 @@ setswarmplayer( var_0 )
     var_0 thread removeswarmplayeronsystemhack();
     wait 1;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
-    var_0 _meth_82FB( "ui_solar_beam", 1 );
+    var_0 setclientomnvar( "ui_solar_beam", 1 );
     var_0 thread waitsetstatic( 0.1 );
     var_1 = level.swarm_use_duration;
     var_0.swarm_endtime = gettime() + var_1 * 1000;
-    var_0 _meth_82FB( "ui_warbird_countdown", var_0.swarm_endtime );
-    self _meth_82DD( "swarm_fire", "+attack" );
-    self _meth_82DD( "swarm_fire", "+attack_akimbo_accessible" );
+    var_0 setclientomnvar( "ui_warbird_countdown", var_0.swarm_endtime );
+    self notifyonplayercommand( "swarm_fire", "+attack" );
+    self notifyonplayercommand( "swarm_fire", "+attack_akimbo_accessible" );
     var_0 thread firerocketswarmgun();
 
     if ( isdefined( level.swarm_targetent ) )
@@ -149,7 +149,7 @@ waitdisableshadows( var_0 )
     level endon( "swarm_player_removed" );
     self endon( "swarm_player_removed" );
     wait(var_0);
-    self _meth_851A( 0 );
+    self setshadowrendering( 0 );
 }
 
 setswarmvisionandlightsetpermap( var_0 )
@@ -159,18 +159,18 @@ setswarmvisionandlightsetpermap( var_0 )
     wait(var_0);
 
     if ( isdefined( level.swarmvisionset ) )
-        self _meth_847A( level.swarmvisionset, 0 );
+        self setclienttriggervisionset( level.swarmvisionset, 0 );
 
     if ( isdefined( level.swarmlightset ) )
-        self _meth_83C0( level.swarmlightset );
+        self lightsetforplayer( level.swarmlightset );
 
     maps\mp\killstreaks\_aerial_utility::handle_player_starting_aerial_view();
 }
 
 removeswarmvisionandlightsetpermap( var_0 )
 {
-    self _meth_847A( "", var_0 );
-    self _meth_83C0( "" );
+    self setclienttriggervisionset( "", var_0 );
+    self lightsetforplayer( "" );
     maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
 }
 
@@ -257,23 +257,23 @@ removeswarmplayer( var_0, var_1 )
     if ( !var_1 )
     {
         var_0 playerresetswarmomnvars();
-        var_0 _meth_849C( "swarm_fire", "+attack" );
-        var_0 _meth_849C( "swarm_fire", "+attack_akimbo_accessible" );
-        var_0 _meth_80E9( level.swarm_big_turret );
+        var_0 notifyonplayercommandremove( "swarm_fire", "+attack" );
+        var_0 notifyonplayercommandremove( "swarm_fire", "+attack_akimbo_accessible" );
+        var_0 remotecontrolturretoff( level.swarm_big_turret );
         level.swarm_big_turret hide();
-        var_0 _meth_804F();
+        var_0 unlink();
         var_2 = maps\mp\_utility::getkillstreakweapon( "orbitalsupport" );
-        var_0 _meth_830F( var_2 );
+        var_0 takeweapon( var_2 );
 
         if ( var_0 maps\mp\_utility::isusingremote() )
             var_0 maps\mp\_utility::clearusingremote();
 
         maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( var_0 );
-        var_0 _meth_851A( 1 );
+        var_0 setshadowrendering( 1 );
         var_0 thermalvisionfofoverlayoff();
         var_0 setblurforplayer( 0, 0 );
         var_0 removeswarmvisionandlightsetpermap( 1.5 );
-        var_0 _meth_834B();
+        var_0 stopac130();
 
         if ( getdvarint( "camera_thirdPerson" ) )
             var_0 maps\mp\_utility::setthirdpersondof( 1 );
@@ -292,23 +292,23 @@ removeswarmplayer( var_0, var_1 )
     }
 
     level.swarm_player = undefined;
-    level.swarm_planemodel _meth_80AB();
+    level.swarm_planemodel stoploopsound();
     level.swarm_planemodel playsound( "paladin_orbit_return" );
 }
 
 cleanupswarments()
 {
-    level.swarm_planemodel _meth_80AB();
+    level.swarm_planemodel stoploopsound();
 
     if ( isdefined( level.swarm_planemodel.farflightsound ) )
     {
-        level.swarm_planemodel.farflightsound _meth_80AB();
+        level.swarm_planemodel.farflightsound stoploopsound();
         level.swarm_planemodel.farflightsound delete();
     }
 
     if ( isdefined( level.swarm_planemodel.closeflightsound ) )
     {
-        level.swarm_planemodel.closeflightsound _meth_80AB();
+        level.swarm_planemodel.closeflightsound stoploopsound();
         level.swarm_planemodel.closeflightsound delete();
     }
 
@@ -329,18 +329,18 @@ swarm_spawn()
 
     level.swarm_planemodel = spawn( "script_model", var_1 );
     level.swarm_planemodel.angles = ( 0, 0, 0 );
-    level.swarm_planemodel _meth_80B1( "vehicle_mp_seoul2_killstreak_osp_rig" );
+    level.swarm_planemodel setmodel( "vehicle_mp_seoul2_killstreak_osp_rig" );
     level.swarm_planemodel.owner = self;
     level.swarm_planemodel common_scripts\utility::make_entity_sentient_mp( self.team );
     level.swarm_planemodel.minimapicon = spawnplane( self, "script_model", var_1, "compass_objpoint_seoul2_swarm_friendly", "compass_objpoint_seoul2_swarm_enemy" );
-    level.swarm_planemodel.minimapicon _meth_80B1( "tag_origin" );
-    level.swarm_planemodel.minimapicon _meth_8446( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.swarm_planemodel.minimapicon setmodel( "tag_origin" );
+    level.swarm_planemodel.minimapicon vehicle_jetbikesethoverforcescale( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.swarm_planemodel.fxent = level.swarm_planemodel common_scripts\utility::spawn_tag_origin();
-    level.swarm_planemodel.fxent _meth_8446( level.swarm_planemodel, "tag_origin", ( 0, 0, -800 ), ( 0, 0, 0 ) );
+    level.swarm_planemodel.fxent vehicle_jetbikesethoverforcescale( level.swarm_planemodel, "tag_origin", ( 0, 0, -800 ), ( 0, 0, 0 ) );
     level.swarm_planemodel.fxent show();
     playfxontag( common_scripts\utility::getfx( "drone_swarm_loop" ), level.swarm_planemodel.fxent, "tag_origin" );
-    level.swarm_planemodel _meth_82C0( 1 );
-    level.swarm_planemodel _meth_82C1( 1 );
+    level.swarm_planemodel setcandamage( 1 );
+    level.swarm_planemodel setcanradiusdamage( 1 );
     level.swarm_planemodel.showthreatmarker = 0;
     level.swarm_planemodel setrandomswarmstartposition();
     level.swarm_big_turret = spawnswarmturret( "orbitalsupport_medium_turret_mp", "orbitalsupport_big_turret", "tag_orbitalsupport_biggun" );
@@ -351,18 +351,18 @@ spawnswarmturret( var_0, var_1, var_2 )
 {
     var_3 = spawnturret( "misc_turret", level.swarm_planemodel gettagorigin( var_2 ), var_0, 0 );
     var_3.angles = level.swarm_planemodel gettagangles( var_2 );
-    var_3 _meth_80B1( var_1 );
-    var_3 _meth_815A( 45 );
-    var_3 _meth_804D( level.swarm_planemodel, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( var_1 );
+    var_3 setdefaultdroppitch( 45 );
+    var_3 linkto( level.swarm_planemodel, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3.owner = undefined;
     var_3.health = 99999;
     var_3.maxhealth = 1000;
     var_3.damagetaken = 0;
     var_3.stunned = 0;
     var_3.stunnedtime = 0.0;
-    var_3 _meth_82C0( 0 );
-    var_3 _meth_82C1( 0 );
-    var_3 _meth_815C();
+    var_3 setcandamage( 0 );
+    var_3 setcanradiusdamage( 0 );
+    var_3 turretfiredisable();
     return var_3;
 }
 
@@ -370,15 +370,15 @@ swarmturretspawnsoundent( var_0 )
 {
     waitframe();
     self.soundent = spawn( "script_model", self.origin );
-    self.soundent _meth_80B1( "tag_origin" );
-    self.soundent _meth_804D( level.swarm_planemodel, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.soundent setmodel( "tag_origin" );
+    self.soundent linkto( level.swarm_planemodel, var_0, ( 0, 0, 0 ), ( 0, 0, 0 ) );
 }
 
 pulseswarmreloadtext()
 {
     level endon( "swarm_player_removed" );
     self endon( "swarm_player_removed" );
-    self _meth_82FB( "ui_osp_reload_bitfield", 0 );
+    self setclientomnvar( "ui_osp_reload_bitfield", 0 );
     var_0 = 4;
 
     for (;;)
@@ -388,23 +388,23 @@ pulseswarmreloadtext()
         if ( self.reloading_rocket_swarm_gun )
             var_1 += var_0;
 
-        self _meth_82FB( "ui_osp_reload_bitfield", var_1 );
+        self setclientomnvar( "ui_osp_reload_bitfield", var_1 );
         wait 0.05;
     }
 }
 
 playerswitchtoturret( var_0 )
 {
-    self _meth_804F();
+    self unlink();
     level thread handleturretsoundent( var_0 );
     var_1 = 75;
     var_2 = 75;
     var_3 = -30;
     var_4 = 360;
-    self _meth_807E( var_0, "tag_player", 0, var_1, var_2, var_3, var_4, 1 );
-    self _meth_80A1( 1 );
+    self playerlinkweaponviewtodelta( var_0, "tag_player", 0, var_1, var_2, var_3, var_4, 1 );
+    self playerlinkedsetusebaseangleforviewclamp( 1 );
     var_5 = 45;
-    self _meth_80E8( var_0, var_5 );
+    self remotecontrolturret( var_0, var_5 );
 }
 
 handleturretsoundent( var_0 )
@@ -466,29 +466,29 @@ firerocketswarmgun()
                 var_7 = magicbullet( "iw5_dlcgun12loot2_mp", var_1, var_1 + var_5, self );
                 var_8 = var_7 common_scripts\utility::spawn_tag_origin();
                 var_8 show();
-                var_8 _meth_8446( var_7, "tag_fx" );
+                var_8 vehicle_jetbikesethoverforcescale( var_7, "tag_fx" );
                 var_9 = [];
 
                 foreach ( var_11 in level.players )
                 {
                     if ( var_11 != self )
-                        var_9[var_9.size] = _func_2C2( common_scripts\utility::getfx( "drone_swarm_trail" ), var_8, "tag_origin", var_11 );
+                        var_9[var_9.size] = spawnlinkedfxforclient( common_scripts\utility::getfx( "drone_swarm_trail" ), var_8, "tag_origin", var_11 );
                 }
 
-                var_9[var_9.size] = _func_2C2( common_scripts\utility::getfx( "drone_swarm_trail_inair" ), var_8, "tag_origin", self );
+                var_9[var_9.size] = spawnlinkedfxforclient( common_scripts\utility::getfx( "drone_swarm_trail_inair" ), var_8, "tag_origin", self );
 
                 foreach ( var_14 in var_9 )
                 {
-                    setwinningteam( var_14, 1 );
+                    setfxkillondelete( var_14, 1 );
                     triggerfx( var_14 );
                 }
 
                 thread cleanupdronemissilefx( var_7, var_8, var_9 );
                 var_7.vehicle_fired_from = level.swarm_planemodel;
                 self playlocalsound( "paladin_missile_shot_2d" );
-                self _meth_80AD( "ac130_40mm_fire" );
-                var_7 _meth_81D9( level.swarm_targetent );
-                var_7 _meth_81DC();
+                self playrumbleonentity( "ac130_40mm_fire" );
+                var_7 missile_settargetent( level.swarm_targetent );
+                var_7 missile_setflightmodedirect();
                 wait 0.1;
             }
 
@@ -516,8 +516,8 @@ updateshootinglocation()
 {
     self endon( "swarm_player_removed" );
     level.swarm_targetent = spawn( "script_model", ( 0, 0, 0 ) );
-    level.swarm_targetent _meth_80B1( "tag_origin" );
-    level.swarm_big_turret _meth_8508( level.swarm_targetent );
+    level.swarm_targetent setmodel( "tag_origin" );
+    level.swarm_big_turret turretsetgroundaimentity( level.swarm_targetent );
 
     for (;;)
     {
@@ -579,30 +579,30 @@ moveswarmtodestination( var_0 )
 
     thread rotateswarm( 1, "off" );
     thread playentrysounddelayed();
-    level.swarm_planemodel _meth_827B( "mp_seoul2_ks_callin", "paladin_notetrack" );
+    level.swarm_planemodel scriptmodelplayanimdeltamotion( "mp_seoul2_ks_callin", "paladin_notetrack" );
     level.swarm_planemodel waittillmatch( "paladin_notetrack", "engines_full" );
     level.swarm_planemodel waittillmatch( "paladin_notetrack", "downward_stop" );
 
     if ( var_0 )
     {
-        level.swarm_planemodel _meth_8446( level.swarmrig, "tag_player" );
+        level.swarm_planemodel vehicle_jetbikesethoverforcescale( level.swarmrig, "tag_player" );
         thread rotateswarm( level.swarm_speed );
     }
 
     level.swarm_planemodel waittillmatch( "paladin_notetrack", "end" );
-    level.swarm_planemodel _meth_827A();
-    level.swarm_planemodel _meth_8279( "paladin_ks_loop", "paladin_notetrack" );
+    level.swarm_planemodel scriptmodelclearanim();
+    level.swarm_planemodel scriptmodelplayanim( "paladin_ks_loop", "paladin_notetrack" );
 
     if ( isdefined( level.swarm_planemodel.owner ) )
     {
         level.swarm_planemodel.closeflightsound = spawn( "script_origin", ( 0, 0, 0 ) );
-        level.swarm_planemodel.closeflightsound _meth_8446( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-        level.swarm_planemodel.closeflightsound _meth_8075( "paladin_flight_loop_near" );
+        level.swarm_planemodel.closeflightsound vehicle_jetbikesethoverforcescale( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.swarm_planemodel.closeflightsound playloopsound( "paladin_flight_loop_near" );
     }
 
     level.swarm_planemodel.farflightsound = spawn( "script_origin", ( 0, 0, 0 ) );
-    level.swarm_planemodel.farflightsound _meth_8446( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    level.swarm_planemodel.farflightsound _meth_8075( "paladin_flight_loop_dist" );
+    level.swarm_planemodel.farflightsound vehicle_jetbikesethoverforcescale( level.swarm_planemodel, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.swarm_planemodel.farflightsound playloopsound( "paladin_flight_loop_dist" );
     setupflightsounds();
     level.swarm_planemodel.swarmflying = 1;
 }
@@ -642,7 +642,7 @@ playerdelayrumble( var_0 )
     self endon( "disconnect" );
     self endon( "swarm_player_removed" );
     wait(var_0);
-    self _meth_80AD( "orbital_laser_charge" );
+    self playrumbleonentity( "orbital_laser_charge" );
 }
 
 playentrysounddelayed()
@@ -660,9 +660,9 @@ swarmexit( var_0 )
     level.swarm_planemodel endon( "crashing" );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_0 );
     level.swarm_planemodel notify( "leaving" );
-    level.swarm_planemodel _meth_804F();
-    level.swarm_planemodel.fxent _meth_804F();
-    level.swarm_planemodel _meth_827B( "paladin_ks_exit", "paladin_notetrack" );
+    level.swarm_planemodel unlink();
+    level.swarm_planemodel.fxent unlink();
+    level.swarm_planemodel scriptmodelplayanimdeltamotion( "paladin_ks_exit", "paladin_notetrack" );
     wait 4.8;
     cleanupswarments();
     level.swarm_planemodel delete();
@@ -713,9 +713,9 @@ turretdeletesoundent()
 
 playerresetswarmomnvars()
 {
-    self _meth_82FB( "ui_killstreak_optic", 0 );
-    self _meth_82FB( "ui_osp_reload_bitfield", 0 );
-    self _meth_82FB( "ui_solar_beam", 0 );
+    self setclientomnvar( "ui_killstreak_optic", 0 );
+    self setclientomnvar( "ui_osp_reload_bitfield", 0 );
+    self setclientomnvar( "ui_solar_beam", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 }
 
@@ -729,12 +729,12 @@ rotateswarm( var_0, var_1 )
 
     if ( var_1 == "on" )
     {
-        level.swarmrig _meth_82B7( 360, var_0, 0.5 );
+        level.swarmrig rotateyaw( 360, var_0, 0.5 );
         wait(var_0);
 
         for (;;)
         {
-            level.swarmrig _meth_82B7( 360, var_0 );
+            level.swarmrig rotateyaw( 360, var_0 );
             wait(var_0);
         }
     }
@@ -742,6 +742,6 @@ rotateswarm( var_0, var_1 )
     {
         var_2 = 10;
         var_3 = var_0 / 360 * var_2;
-        level.swarmrig _meth_82B7( level.swarmrig.angles[2] + var_2, var_3, 0, var_3 );
+        level.swarmrig rotateyaw( level.swarmrig.angles[2] + var_2, var_3, 0, var_3 );
     }
 }

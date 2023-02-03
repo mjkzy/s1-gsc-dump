@@ -108,7 +108,7 @@ cover_wall_think( var_0 )
     }
 
     self.a.aimidlethread = undefined;
-    self _meth_818F( "face angle", self.covernode.angles[1] );
+    self orientmode( "face angle", self.covernode.angles[1] );
 
     if ( isdefined( self.weapon ) && animscripts\utility::usingmg() && isdefined( self.node ) && isdefined( self.node.turretinfo ) && canspawnturret() )
     {
@@ -134,7 +134,7 @@ cover_wall_think( var_0 )
     else if ( isdefined( self.node ) && isdefined( self.node.turret ) )
         usestationaryturret();
 
-    self _meth_818E( "normal" );
+    self animmode( "normal" );
 
     if ( var_0 == "crouch" && self.a.pose == "stand" )
     {
@@ -144,7 +144,7 @@ cover_wall_think( var_0 )
             var_3 = animscripts\utility::animarray( "smg_stand_2_hide" );
 
         var_4 = getanimlength( var_3 );
-        self _meth_8149( var_3, %body, 1, 0.2, animscripts\combat_utility::fasteranimspeed() );
+        self setanimknoballrestart( var_3, %body, 1, 0.2, animscripts\combat_utility::fasteranimspeed() );
         thread animscripts\shared::movetonodeovertime( self.covernode, var_4 );
         wait(var_4);
         self.a.covermode = "hide";
@@ -309,7 +309,7 @@ shootastold()
             break;
 
         shootuntilshootbehaviorchange_coverwall();
-        self _meth_8142( %add_fire, 0.2 );
+        self clearanim( %add_fire, 0.2 );
     }
 }
 
@@ -346,7 +346,7 @@ rambo()
     var_2 = anglestoforward( self.angles );
     var_3 = self.origin + var_2 * -16;
 
-    if ( !self _meth_81C3( var_3 ) )
+    if ( !self maymovetopoint( var_3 ) )
         return 0;
 
     self.coverposestablishedtime = gettime();
@@ -357,7 +357,7 @@ rambo()
     self.changingcoverpos = 1;
     thread animscripts\shared::ramboaim( 0 );
     var_4 = animscripts\utility::animarraypickrandom( var_0 );
-    self _meth_8110( "rambo", var_4, %body, 1, 0.2, 1 );
+    self setflaggedanimknoballrestart( "rambo", var_4, %body, 1, 0.2, 1 );
     cover_playfacialanim( var_4 );
     animscripts\shared::donotetracks( "rambo" );
     self notify( "rambo_aim_end" );
@@ -394,7 +394,7 @@ flinch()
     var_0 = anglestoforward( self.angles );
     var_1 = self.origin + var_0 * -16;
 
-    if ( !self _meth_81C3( var_1, !self.swimmer ) )
+    if ( !self maymovetopoint( var_1, !self.swimmer ) )
         return 0;
 
     setdefaultwallanimmode();
@@ -408,9 +408,9 @@ flinch()
 playidleanimation( var_0, var_1 )
 {
     if ( var_1 )
-        self _meth_8110( "idle", var_0, %body, 1, 0.25, 1 );
+        self setflaggedanimknoballrestart( "idle", var_0, %body, 1, 0.25, 1 );
     else
-        self _meth_810F( "idle", var_0, %body, 1, 0.25, 1 );
+        self setflaggedanimknoball( "idle", var_0, %body, 1, 0.25, 1 );
 
     cover_playfacialanim( var_0 );
     self.a.covermode = "hide";
@@ -433,7 +433,7 @@ look( var_0 )
     else
         var_1 = animscripts\utility::animarray( "look_to_hide" );
 
-    self _meth_8110( "looking_end", var_1, %body, 1, 0.1 );
+    self setflaggedanimknoballrestart( "looking_end", var_1, %body, 1, 0.1 );
     cover_playfacialanim( var_1 );
     animscripts\shared::donotetracks( "looking_end" );
     return 1;
@@ -445,7 +445,7 @@ peekout()
         return 0;
 
     var_0 = animscripts\utility::animarray( "hide_to_look" );
-    self _meth_810F( "looking_start", var_0, %body, 1, 0.2 );
+    self setflaggedanimknoball( "looking_start", var_0, %body, 1, 0.2 );
     cover_playfacialanim( var_0 );
     animscripts\shared::donotetracks( "looking_start" );
     return 1;
@@ -454,7 +454,7 @@ peekout()
 fastlook()
 {
     var_0 = animscripts\utility::animarraypickrandom( "look" );
-    self _meth_8110( "look", var_0, %body, 1, 0.1 );
+    self setflaggedanimknoballrestart( "look", var_0, %body, 1, 0.1 );
     cover_playfacialanim( var_0 );
     animscripts\shared::donotetracks( "look" );
     return 1;
@@ -475,7 +475,7 @@ pop_up()
     var_2 = animscripts\utility::animarray( "hide_2_" + var_0 );
     var_3 = !self.swimmer;
 
-    if ( !self _meth_81C3( animscripts\utility::getanimendpos( var_2 ), var_3 ) )
+    if ( !self maymovetopoint( animscripts\utility::getanimendpos( var_2 ), var_3 ) )
         return 0;
 
     if ( self.script == "cover_crouch" && var_0 == "lean" )
@@ -503,13 +503,13 @@ pop_up()
     self notify( "done_changing_cover_pos" );
     setdefaultwallanimmode();
     var_4 = pop_up_and_hide_speed();
-    self _meth_8110( "pop_up", var_2, %body, 1, 0.1, var_4 );
+    self setflaggedanimknoballrestart( "pop_up", var_2, %body, 1, 0.1, var_4 );
     thread donotetracksforpopup( "pop_up" );
 
     if ( animhasnotetrack( var_2, "start_aim" ) )
     {
         self waittillmatch( "pop_up", "start_aim" );
-        var_1 = getanimlength( var_2 ) / var_4 * ( 1 - self _meth_814F( var_2 ) );
+        var_1 = getanimlength( var_2 ) / var_4 * ( 1 - self getanimtime( var_2 ) );
     }
     else
     {
@@ -517,7 +517,7 @@ pop_up()
         var_1 = 0.1;
     }
 
-    self _meth_8142( var_2, var_1 + 0.05 );
+    self clearanim( var_2, var_1 + 0.05 );
     self.a.covermode = var_0;
     self.a.prevattack = var_0;
     setup_additive_aim( var_1 );
@@ -547,42 +547,42 @@ setup_additive_aim( var_0 )
     else
         var_1 = self.a.covermode;
 
-    self _meth_8147( animscripts\utility::animarray( var_1 + "_aim" ), %body, 1, var_0 );
+    self setanimknoball( animscripts\utility::animarray( var_1 + "_aim" ), %body, 1, var_0 );
 
     if ( var_1 == "crouch" )
     {
-        self _meth_814C( animscripts\utility::lookupanim( "cover_crouch", "add_aim_down" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_crouch", "add_aim_left" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_crouch", "add_aim_up" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_crouch", "add_aim_right" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_crouch", "add_aim_down" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_crouch", "add_aim_left" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_crouch", "add_aim_up" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_crouch", "add_aim_right" ), 1, 0 );
     }
     else if ( var_1 == "stand" )
     {
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_down" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_left" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_up" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_right" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_down" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_left" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_up" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_right" ), 1, 0 );
     }
     else if ( var_1 == "stand_tall" )
     {
-        self _meth_814C( animscripts\utility::lookupanim( "old_default_stand", "add_aim_down" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "old_default_stand", "add_aim_left" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "old_default_stand", "add_aim_up" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "old_default_stand", "add_aim_right" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "old_default_stand", "add_aim_down" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "old_default_stand", "add_aim_left" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "old_default_stand", "add_aim_up" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "old_default_stand", "add_aim_right" ), 1, 0 );
     }
     else if ( var_1 == "lean" )
     {
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_down" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_left" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_up" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "default_stand", "add_aim_right" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_down" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_left" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_up" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "default_stand", "add_aim_right" ), 1, 0 );
     }
     else if ( var_1 == "over" )
     {
-        self _meth_814C( animscripts\utility::lookupanim( "cover_stand", "add_aim_down" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_stand", "add_aim_left" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_stand", "add_aim_up" ), 1, 0 );
-        self _meth_814C( animscripts\utility::lookupanim( "cover_stand", "add_aim_right" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_stand", "add_aim_down" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_stand", "add_aim_left" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_stand", "add_aim_up" ), 1, 0 );
+        self setanimlimited( animscripts\utility::lookupanim( "cover_stand", "add_aim_right" ), 1, 0 );
     }
 }
 
@@ -593,8 +593,8 @@ go_to_hide()
     self notify( "done_changing_cover_pos" );
     animscripts\combat_utility::endaimidlethread();
     var_0 = pop_up_and_hide_speed();
-    self _meth_810F( "go_to_hide", animscripts\utility::animarray( self.a.covermode + "_2_hide" ), %body, 1, 0.2, var_0 );
-    self _meth_8142( %exposed_modern, 0.2 );
+    self setflaggedanimknoball( "go_to_hide", animscripts\utility::animarray( self.a.covermode + "_2_hide" ), %body, 1, 0.2, var_0 );
+    self clearanim( %exposed_modern, 0.2 );
     animscripts\shared::donotetracks( "go_to_hide" );
     self.a.covermode = "hide";
 
@@ -639,7 +639,7 @@ blindfire()
 
     setdefaultwallanimmode();
     self.keepclaimednodeifvalid = 1;
-    self _meth_8110( "blindfire", animscripts\utility::animarraypickrandom( "blind_fire" ), %body, 1, 0.2, 1 );
+    self setflaggedanimknoballrestart( "blindfire", animscripts\utility::animarraypickrandom( "blind_fire" ), %body, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "blindfire" );
     self.keepclaimednodeifvalid = 0;
     return 1;
@@ -650,9 +650,9 @@ createturret( var_0, var_1, var_2 )
     var_3 = spawnturret( "misc_turret", var_0.origin, var_1 );
     var_3.angles = var_0.angles;
     var_3.aiowner = self;
-    var_3 _meth_80B1( var_2 );
+    var_3 setmodel( var_2 );
     var_3 makeusable();
-    var_3 _meth_815A( 0 );
+    var_3 setdefaultdroppitch( 0 );
 
     if ( isdefined( var_0.leftarc ) )
         var_3.leftarc = var_0.leftarc;
@@ -685,7 +685,7 @@ useselfplacedturret( var_0, var_1 )
 {
     var_2 = createturret( self.node.turretinfo, var_0, var_1 );
 
-    if ( self _meth_818A( var_2 ) )
+    if ( self useturret( var_2 ) )
     {
         var_2 thread deleteifnotused( self );
 
@@ -785,7 +785,7 @@ loophide( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.1;
 
-    self _meth_8149( animscripts\utility::animarray( "hide_idle" ), %body, 1, var_0 );
+    self setanimknoballrestart( animscripts\utility::animarray( "hide_idle" ), %body, 1, var_0 );
     self.a.covermode = "hide";
 }
 
@@ -812,7 +812,7 @@ needtochangecovermode()
     if ( self.covertype != "crouch" )
         return 0;
 
-    var_0 = getshootpospitch( self _meth_80A8() );
+    var_0 = getshootpospitch( self geteye() );
 
     if ( self.a.covermode == "lean" )
         return var_0 < 10;
@@ -828,12 +828,12 @@ getbestcovermode()
     {
         if ( !self.covernode.lowstandisok && ( isdefined( self.animarchetype ) && self.animarchetype == "s1_soldier" ) )
         {
-            var_0 = self.covernode _meth_8033();
+            var_0 = self.covernode getvalidcoverpeekouts();
             var_0[var_0.size] = "stand_tall";
         }
         else
         {
-            var_0 = self.covernode _meth_8033();
+            var_0 = self.covernode getvalidcoverpeekouts();
 
             if ( isdefined( self.animarchetype ) && self.animarchetype == "s1_soldier" )
                 var_0[var_0.size] = "over";
@@ -851,7 +851,7 @@ getbestcovermode()
         if ( var_1 > 15 || !self.covernode.crouchingisok )
             return "stand";
 
-        var_0 = self.covernode _meth_8033();
+        var_0 = self.covernode getvalidcoverpeekouts();
         var_0[var_0.size] = "crouch";
     }
 
@@ -881,9 +881,9 @@ getshootpospitch( var_0 )
 setdefaultwallanimmode()
 {
     if ( self.swimmer )
-        self _meth_818E( "nogravity" );
+        self animmode( "nogravity" );
     else
-        self _meth_818E( "zonly_physics" );
+        self animmode( "zonly_physics" );
 }
 
 cover_playfacialanim( var_0, var_1 )
@@ -897,5 +897,5 @@ cover_playfacialanim( var_0, var_1 )
 cover_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

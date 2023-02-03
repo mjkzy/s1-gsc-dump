@@ -68,17 +68,9 @@ register_snd_messages()
     soundscripts\_snd::snd_register_message( "irons_reveal_exit_door_open", ::irons_reveal_exit_door_open );
     soundscripts\_snd::snd_register_message( "irons_keypad_door_open", ::irons_keypad_door_open );
     soundscripts\_snd::snd_register_message( "irons_chase_door_close", ::irons_chase_door_close );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_pre_shake", ::aud_fin_ending_pre_shake );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_shake_01", ::aud_fin_ending_shake_01 );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_shake_02", ::aud_fin_ending_shake_02 );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_rooftop_shake", ::aud_fin_ending_rooftop_shake );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_roof_explosion", ::aud_fin_ending_roof_explosion );
     soundscripts\_snd::snd_register_message( "fin_skybridge_takedown_start", ::fin_skybridge_takedown_start );
     soundscripts\_snd::snd_register_message( "fin_skybridge_slo_mo_start", ::fin_skybridge_slo_mo_start );
     soundscripts\_snd::snd_register_message( "fin_skybridge_slo_mo_stop", ::fin_skybridge_slo_mo_stop );
-    soundscripts\_snd::snd_register_message( "fin_skybridge_takedown_guy_fall", ::fin_skybridge_takedown_guy_fall );
-    soundscripts\_snd::snd_register_message( "fin_skybridge_incoming_initial", ::fin_skybridge_incoming_initial );
-    soundscripts\_snd::snd_register_message( "fin_skybridge_incoming", ::fin_skybridge_incoming );
     soundscripts\_snd::snd_register_message( "fin_skybridge_glass_explo", ::fin_skybridge_glass_explo );
     soundscripts\_snd::snd_register_message( "fin_irons_takedown_start", ::fin_irons_takedown_start );
     soundscripts\_snd::snd_register_message( "fin_irons_tackle", ::fin_irons_tackle );
@@ -92,8 +84,6 @@ register_snd_messages()
     soundscripts\_snd::snd_register_message( "finale_ending_buttonmash_fail", ::finale_ending_buttonmash_fail );
     soundscripts\_snd::snd_register_message( "finale_ending_qte2_success", ::finale_ending_qte2_success );
     soundscripts\_snd::snd_register_message( "finale_ending_qte2_timeout", ::finale_ending_qte2_timeout );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_last_rpg_01", ::aud_fin_ending_last_rpg_01 );
-    soundscripts\_snd::snd_register_message( "aud_fin_ending_last_rpg_02", ::aud_fin_ending_last_rpg_02 );
 }
 
 init_notetracks()
@@ -243,7 +233,6 @@ music_handler( var_0, var_1 )
         case "ast_combat_begin":
             soundscripts\_audio::aud_set_music_submix( 1.0, 0 );
             level.aud.ast_mus_on = 0;
-            level endon( "dofpart5" );
 
             for (;;)
             {
@@ -753,7 +742,7 @@ shaft_descent_speed_update( var_0 )
 {
     var_0 = abs( var_0 );
     var_1 = soundscripts\_snd::snd_map( var_0, level.aud.envs["speed_to_volume"] );
-    level.aud.wind_lp _meth_806F( var_1, 0.05 );
+    level.aud.wind_lp scalevolume( var_1, 0.05 );
 }
 
 shaft_descent_end()
@@ -1143,26 +1132,6 @@ irons_chase_door_close( var_0 )
     soundscripts\_audio_mix_manager::mm_clear_submix( "fin_irons_reveal" );
 }
 
-aud_fin_ending_pre_shake()
-{
-    soundscripts\_snd_playsound::snd_play_delayed_2d( "fin_end_shake_bomb", 0.0 );
-}
-
-aud_fin_ending_shake_01()
-{
-    soundscripts\_snd_playsound::snd_play_delayed_2d( "fin_end_shake_bomb", 0.0 );
-}
-
-aud_fin_ending_shake_02()
-{
-    soundscripts\_snd_playsound::snd_play_delayed_2d( "fin_end_shake_bomb", 0.0 );
-}
-
-aud_fin_ending_rooftop_shake()
-{
-
-}
-
 fin_skybridge_takedown_start()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "skybridge_takedown", 1 );
@@ -1183,12 +1152,6 @@ fin_skybridge_slo_mo_stop()
     soundscripts\_snd_timescale::snd_set_timescale( "all_on" );
 }
 
-fin_skybridge_takedown_guy_fall()
-{
-    var_0 = self;
-    var_0 soundscripts\_snd_playsound::snd_play_linked( "fin_skybridge_takedown_fall" );
-}
-
 bridge_takedown_success()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "skybridge_knife" );
@@ -1201,39 +1164,14 @@ bridge_takedown_fail()
     soundscripts\_snd_playsound::snd_play_2d( "fin_skybridge_takedown_fail" );
 }
 
-fin_skybridge_incoming_initial()
-{
-    var_0 = self;
-    var_0 soundscripts\_snd_playsound::snd_play_linked( "fin_skybridge_explo_incoming" );
-}
-
-fin_skybridge_incoming()
-{
-    var_0 = self;
-    var_0 soundscripts\_snd_playsound::snd_play_linked( "fin_skybridge_explo_incoming_2" );
-}
-
 fin_skybridge_glass_explo()
 {
-    soundscripts\_snd_playsound::snd_play_2d( "fin_end_explo_low" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_exp_grnd_zero" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_end_shake_bomb" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_exp_debris_structure_collapse" );
-    wait 0.1;
-    soundscripts\_snd_playsound::snd_play_2d( "exp_generic_explo_shot_13" );
+    soundscripts\_snd_playsound::snd_play_2d( "fin_skybridge_explo" );
+    soundscripts\_snd_playsound::snd_play_2d( "exp_generic_explo_shot_22" );
     soundscripts\_snd_playsound::snd_play_2d( "glass_pane_blowout" );
-    wait 0.1;
     soundscripts\_snd_playsound::snd_play_2d( "exp_debris_glass" );
     wait 3;
     soundscripts\_audio_mix_manager::mm_clear_submix( "skybridge_knife" );
-}
-
-aud_fin_ending_roof_explosion()
-{
-    soundscripts\_snd_playsound::snd_play_2d( "fin_end_explo_low" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_exp_grnd_zero" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_exp_generic_explo_tail" );
-    soundscripts\_snd_playsound::snd_play_2d( "fin_exp_debris_structure_collapse" );
 }
 
 fin_irons_takedown_start()
@@ -1249,9 +1187,7 @@ fin_irons_tackle()
     var_0 = ( 16596, -86850, 6998 );
     soundscripts\_snd_playsound::snd_play_loop_at( "fin_ending_fire_loop", var_0, undefined, 2 );
     soundscripts\_snd_playsound::snd_play_2d( "fin_balcony_irons_tackle" );
-    wait 3.87;
-    soundscripts\_snd_playsound::snd_play_2d( "fin_ending_dangle_vo" );
-    wait 2.3;
+    wait 6;
     soundscripts\_audio_mix_manager::mm_clear_submix( "fin_irons_tackle", 1 );
 }
 
@@ -1285,7 +1221,6 @@ finale_ending_buttonmash_start()
 finale_ending_buttonmash_fail()
 {
     soundscripts\_snd_playsound::snd_play_2d( "fin_ending_qte_fail_fall" );
-    soundscripts\_audio_mix_manager::mm_add_submix( "fin_end_qte_fail" );
 }
 
 finale_ending_qte2_success()
@@ -1305,29 +1240,6 @@ fin_ending_qte_stab( var_0 )
 finale_ending_qte2_timeout()
 {
     soundscripts\_snd::snd_slate( "finale_ending_qte2_timeout" );
-    soundscripts\_audio_mix_manager::mm_add_submix( "fin_end_qte_fail" );
-}
-
-aud_fin_ending_last_rpg_01()
-{
-    soundscripts\_snd_playsound::snd_play_delayed_2d( "fin_end_incoming_01", 0.5, undefined, "aud_fin_kill_last_rpg_01", 0.0, 0.25 );
-    wait 1;
-    level notify( "aud_fin_kill_last_rpg_01" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_ground_zero" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "fin_exp_generic_explo_shot_01" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_generic_explo_tail" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_debris_structure_collapse" );
-}
-
-aud_fin_ending_last_rpg_02()
-{
-    soundscripts\_snd_playsound::snd_play_delayed_2d( "fin_end_incoming_02", 0.5, undefined, "aud_fin_kill_last_rpg_02", 0.0, 0.25 );
-    wait 1;
-    level notify( "aud_fin_kill_last_rpg_02" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_ground_zero" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "fin_exp_generic_explo_shot_02" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_generic_explo_tail" );
-    level.player soundscripts\_snd_playsound::snd_play_delayed_linked( "exp_debris_structure_collapse" );
 }
 
 fin_ending_knife_drop( var_0 )
@@ -1346,7 +1258,7 @@ fin_ending_plr_foley_2( var_0 )
 {
     var_1 = soundscripts\_snd_playsound::snd_play_2d( "fin_ending_gid_rescue_foley_2" );
     wait 7.25;
-    var_1 _meth_806F( 0, 13 );
+    var_1 scalevolume( 0, 13 );
 }
 
 fin_ending_gideon_foley_1( var_0 )

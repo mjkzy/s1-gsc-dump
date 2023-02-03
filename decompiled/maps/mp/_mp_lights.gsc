@@ -74,7 +74,7 @@ initplayer()
     self.spotlimit = level.spotlimit;
     self.sunsamplesizenear = level.sunsamplesizenear;
     self.qualityspotshadow = level.qualityspotshadow;
-    self _meth_82FD( "sm_sunenable", self.sunenable, "sm_sunshadowscale", self.sunshadowscale, "sm_spotlimit", self.spotlimit, "sm_qualityspotshadow", self.qualityspotshadow, "sm_sunSampleSizeNear", self.sunsamplesizenear );
+    self setclientdvars( "sm_sunenable", self.sunenable, "sm_sunshadowscale", self.sunshadowscale, "sm_spotlimit", self.spotlimit, "sm_qualityspotshadow", self.qualityspotshadow, "sm_sunSampleSizeNear", self.sunsamplesizenear );
 }
 
 monitordeath()
@@ -122,7 +122,7 @@ set_sun_shadow_params( var_0, var_1 )
     if ( isdefined( self.script_qualityspotshadow ) )
         var_6 = self.script_qualityspotshadow;
 
-    var_1 _meth_82FD( "sm_sunenable", var_2, "sm_sunshadowscale", var_3, "sm_spotlimit", var_4, "sm_qualityspotshadow", var_6 );
+    var_1 setclientdvars( "sm_sunenable", var_2, "sm_sunshadowscale", var_3, "sm_spotlimit", var_4, "sm_qualityspotshadow", var_6 );
     var_1.sunenable = var_2;
     var_1.sunshadowscale = var_3;
     var_1.spotlimit = var_4;
@@ -152,13 +152,13 @@ lerp_sunsamplesizenear_overtime( var_0, var_1, var_2, var_3 )
         for ( var_9 = 0; var_9 < var_6; var_9++ )
         {
             var_8 += var_7;
-            var_3 _meth_82FC( "sm_sunSampleSizeNear", var_8 );
+            var_3 setclientdvar( "sm_sunSampleSizeNear", var_8 );
             var_3.sunsamplesizenear = var_8;
             wait(var_5);
         }
     }
 
-    var_3 _meth_82FC( "sm_sunSampleSizeNear", var_0 );
+    var_3 setclientdvar( "sm_sunSampleSizeNear", var_0 );
     var_3.sunsamplesizenear = var_0;
 }
 
@@ -215,7 +215,7 @@ play_flickerlight_preset( var_0, var_1, var_2 )
         var_4.intensity = var_2;
     }
 
-    var_3 _meth_81DF( var_4.intensity );
+    var_3 setlightintensity( var_4.intensity );
     var_3.islightflickering = 1;
     var_3.islightflickerpaused = 0;
     var_3 thread dyn_flickerlight( var_4.color0, var_4.color1, var_4.mindelay, var_4.maxdelay );
@@ -238,7 +238,7 @@ stop_flickerlight( var_0, var_1, var_2 )
             var_2 = 0;
     }
 
-    var_3 _meth_81DF( var_2 );
+    var_3 setlightintensity( var_2 );
     var_3 notify( "kill_flicker" );
     var_3.islightflickering = undefined;
 }
@@ -296,7 +296,7 @@ dyn_flickerlight( var_0, var_1, var_2, var_3 )
 
         for ( var_7 = ( var_6 - var_4 ) * 1 / var_5; var_5 > 0 && !self.islightflickerpaused; var_5 -= 0.05 )
         {
-            self _meth_8044( var_4 + var_7 * var_5 );
+            self setlightcolor( var_4 + var_7 * var_5 );
             wait 0.05;
         }
     }

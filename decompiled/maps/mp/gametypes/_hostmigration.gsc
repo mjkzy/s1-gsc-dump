@@ -25,7 +25,7 @@ callback_hostmigration()
         var_2 thread hostmigrationtimerthink();
 
         if ( isplayer( var_2 ) )
-            var_2 _meth_82FB( "ui_session_state", var_2.sessionstate );
+            var_2 setclientomnvar( "ui_session_state", var_2.sessionstate );
     }
 
     setdvar( "ui_game_state", game["state"] );

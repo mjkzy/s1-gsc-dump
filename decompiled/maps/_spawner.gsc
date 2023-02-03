@@ -14,7 +14,7 @@ main()
     maps\_anim::addnotetrack_customfunction( "generic", "ps_rappel_clipout_npc", maps\_utility::disable_achievement_harder_they_fall_guy );
 
     foreach ( var_1 in level.players )
-        var_1 _meth_8177( "allies" );
+        var_1 setthreatbiasgroup( "allies" );
 
     level._nextcoverprint = 0;
     level._ai_group = [];
@@ -56,11 +56,11 @@ main()
         level.maxfriendlies = 11;
 
     level._max_script_health = 0;
-    var_3 = _func_0D7();
+    var_3 = getaispeciesarray();
     common_scripts\utility::array_thread( var_3, ::living_ai_prethink );
     level.ai_classname_in_level = [];
     level.drone_paths = [];
-    var_4 = _func_0D8();
+    var_4 = getspawnerarray();
 
     for ( var_5 = 0; var_5 < var_4.size; var_5++ )
         var_4[var_5] thread spawn_prethink();
@@ -75,8 +75,8 @@ main()
         if ( !issubstr( tolower( level.ai_classname_in_level_keys[var_5] ), "rpg" ) )
             continue;
 
-        precacheitem( "rpg_player" );
-        precacheitem( "iw5_mahemplayer_sp" );
+        precacheshellshock( "rpg_player" );
+        precacheshellshock( "iw5_mahemplayer_sp" );
         break;
     }
 
@@ -399,7 +399,7 @@ get_spawner_from_pool( var_0, var_1 )
 
 create_new_spawner_pool( var_0 )
 {
-    var_1 = _func_0D8();
+    var_1 = getspawnerarray();
     var_2 = spawnstruct();
     var_3 = [];
 
@@ -438,9 +438,9 @@ trigger_spawner_spawns_guys()
     var_1 = isdefined( self.script_stealth ) && common_scripts\utility::flag( "_stealth_enabled" ) && !common_scripts\utility::flag( "_stealth_spotted" );
 
     if ( isdefined( self.script_forcespawn ) )
-        var_0 = self _meth_8094( var_1 );
+        var_0 = self stalingradspawn( var_1 );
     else
-        var_0 = self _meth_8093( var_1 );
+        var_0 = self dospawn( var_1 );
 
     if ( !maps\_utility::spawn_failed( var_0 ) )
     {
@@ -694,7 +694,7 @@ cull_spawners_from_killspawner( var_0 )
 
 killspawner( var_0 )
 {
-    var_1 = _func_0D8();
+    var_1 = getspawnerarray();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -717,7 +717,7 @@ empty_spawner( var_0 )
 {
     var_1 = var_0.script_emptyspawner;
     var_0 waittill( "trigger" );
-    var_2 = _func_0D8();
+    var_2 = getspawnerarray();
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
@@ -739,7 +739,7 @@ empty_spawner( var_0 )
 
 kill_spawnernum( var_0 )
 {
-    var_1 = _func_0D8();
+    var_1 = getspawnerarray();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -826,7 +826,7 @@ drop_gear()
 spawn_grenade_bag( var_0, var_1, var_2 )
 {
     var_3 = spawn_grenade( var_0, var_2 );
-    var_3 _meth_80B1( "drop_pouch" );
+    var_3 setmodel( "drop_pouch" );
     var_3.angles = var_1;
     var_3 hide();
     wait 0.7;
@@ -1106,7 +1106,7 @@ multikill_monitor()
     if ( !isdefined( self ) )
         return;
 
-    if ( !self _meth_813D() )
+    if ( !self isbadguy() )
         return;
 
     if ( !isdefined( var_0 ) )
@@ -1192,8 +1192,8 @@ deathfunctions()
 
             if ( isplayer( var_0 ) && isdefined( self.isinsonicstun ) )
             {
-                var_4 = var_0 _meth_820E( "ach_loudEnoughForYou" ) + 1;
-                var_0 _meth_820F( "ach_loudEnoughForYou", var_4 );
+                var_4 = var_0 getlocalplayerprofiledata( "ach_loudEnoughForYou" ) + 1;
+                var_0 setlocalplayerprofiledata( "ach_loudEnoughForYou", var_4 );
 
                 if ( var_4 == 10 )
                     maps\_utility::giveachievement_wrapper( "SONIC_KILL" );
@@ -1201,8 +1201,8 @@ deathfunctions()
 
             if ( isplayer( var_0 ) && isdefined( var_0.linked_to_cover ) )
             {
-                var_5 = var_0 _meth_820E( "ach_riotControl" ) + 1;
-                var_0 _meth_820F( "ach_riotControl", var_5 );
+                var_5 = var_0 getlocalplayerprofiledata( "ach_riotControl" ) + 1;
+                var_0 setlocalplayerprofiledata( "ach_riotControl", var_5 );
 
                 if ( var_5 == 20 )
                     maps\_utility::giveachievement_wrapper( "COVER_DRONE_KILL" );
@@ -1210,8 +1210,8 @@ deathfunctions()
 
             if ( isplayer( var_0 ) && ( var_0 maps\_utility::ent_flag_exist( "overdrive_on" ) && var_0 maps\_utility::ent_flag( "overdrive_on" ) ) )
             {
-                var_6 = var_0 _meth_820E( "ach_maximumOverdrive" ) + 1;
-                var_0 _meth_820F( "ach_maximumOverdrive", var_6 );
+                var_6 = var_0 getlocalplayerprofiledata( "ach_maximumOverdrive" ) + 1;
+                var_0 setlocalplayerprofiledata( "ach_maximumOverdrive", var_6 );
 
                 if ( var_6 == 50 )
                     maps\_utility::giveachievement_wrapper( "OVERDRIVE_KILL" );
@@ -1271,7 +1271,7 @@ ai_damage_think()
 
         if ( isdefined( var_1 ) && isplayer( var_1 ) )
         {
-            var_7 = var_1 _meth_8311();
+            var_7 = var_1 getcurrentweapon();
 
             if ( isdefined( var_7 ) && maps\_utility::isprimaryweapon( var_7 ) && isdefined( var_4 ) && ( var_4 == "MOD_PISTOL_BULLET" || var_4 == "MOD_RIFLE_BULLET" ) )
                 var_1 thread maps\_player_stats::register_shot_hit();
@@ -1353,7 +1353,7 @@ subclass_elite()
     self.custom_laser_function = ::spawner_force_laser_on;
 
     if ( isdefined( self.weapon ) && weaponclass( self.weapon ) != "rocketlauncher" )
-        self _meth_80B2();
+        self laseron();
 }
 
 spawner_force_laser_on()
@@ -1366,7 +1366,7 @@ spawner_force_laser_on()
         return;
 
     if ( isdefined( var_0 ) && weaponclass( var_0 ) != "rocketlauncher" )
-        self _meth_80B2();
+        self laseron();
 }
 
 subclass_regular()
@@ -1424,13 +1424,13 @@ ai_lasers()
     if ( self.health <= 1 )
         return;
 
-    self _meth_80B2();
+    self laseron();
     self waittill( "death" );
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_80B3();
+    self laseroff();
 }
 
 spawn_think_script_inits()
@@ -1494,11 +1494,11 @@ spawn_think_script_inits()
         thread set_goal_volume();
 
     if ( isdefined( self.script_threatbiasgroup ) )
-        self _meth_8177( self.script_threatbiasgroup );
+        self setthreatbiasgroup( self.script_threatbiasgroup );
     else if ( self.team == "neutral" )
-        self _meth_8177( "civilian" );
+        self setthreatbiasgroup( "civilian" );
     else
-        self _meth_8177( self.team );
+        self setthreatbiasgroup( self.team );
 
     if ( isdefined( self.script_bcdialog ) )
         maps\_utility::set_battlechatter( self.script_bcdialog );
@@ -1515,7 +1515,7 @@ spawn_think_script_inits()
     if ( isdefined( self.script_ignoreall ) )
     {
         self.ignoreall = 1;
-        self _meth_8166();
+        self clearenemy();
     }
 
     if ( isdefined( self.script_sightrange ) )
@@ -1566,7 +1566,7 @@ spawn_think_action( var_0 )
     thread specops_think();
 
     if ( !isdefined( level.ai_dont_glow_in_thermal ) )
-        self _meth_8029();
+        self thermaldrawenable();
 
     self.spawner_number = undefined;
 
@@ -1590,7 +1590,7 @@ spawn_think_action( var_0 )
 
     if ( isdefined( self.script_playerseek ) )
     {
-        self _meth_81A7( level.player );
+        self setgoalentity( level.player );
         return;
     }
 
@@ -1628,7 +1628,7 @@ spawn_think_action( var_0 )
         if ( !isdefined( self.script_radius ) )
             self.goalradius = 800;
 
-        self _meth_81A7( level.player );
+        self setgoalentity( level.player );
         level thread delayed_player_seek_think( self );
         return;
     }
@@ -1639,7 +1639,7 @@ spawn_think_action( var_0 )
     if ( isdefined( self.script_moveoverride ) && self.script_moveoverride == 1 )
     {
         set_goal_from_settings();
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         return;
     }
 
@@ -1673,9 +1673,9 @@ init_reset_ai()
 scrub_guy()
 {
     if ( self.team == "neutral" )
-        self _meth_8177( "civilian" );
+        self setthreatbiasgroup( "civilian" );
     else
-        self _meth_8177( self.team );
+        self setthreatbiasgroup( self.team );
 
     init_reset_ai();
     self.baseaccuracy = 1;
@@ -1699,7 +1699,7 @@ scrub_guy()
     self.goalradius = level.default_goalradius;
     self.goalheight = level.default_goalheight;
     self.ignoresuppression = 0;
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
 
     if ( isdefined( self.magic_bullet_shield ) && self.magic_bullet_shield )
         maps\_utility::stop_magic_bullet_shield();
@@ -1765,17 +1765,17 @@ set_goal_volume()
         if ( isdefined( var_1 ) )
         {
             var_4 = var_1;
-            self _meth_81A5( var_4 );
+            self setgoalnode( var_4 );
         }
         else if ( isdefined( var_2 ) )
         {
             var_4 = var_2;
-            self _meth_81A6( var_4.origin );
+            self setgoalpos( var_4.origin );
         }
         else if ( isdefined( var_3 ) )
         {
             var_4 = var_3;
-            self _meth_81A6( var_4.origin );
+            self setgoalpos( var_4.origin );
         }
 
         if ( isdefined( var_4.radius ) && var_4.radius != 0 )
@@ -1786,9 +1786,9 @@ set_goal_volume()
     }
 
     if ( isdefined( self.target ) )
-        self _meth_81A8( var_0 );
+        self setgoalvolume( var_0 );
     else
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
 }
 
 get_target_ents( var_0 )
@@ -1968,8 +1968,8 @@ go_to_node_using_funcs( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( self.script_forcegoal ) )
         return;
 
-    if ( isdefined( self _meth_81AA() ) )
-        self _meth_81A9( self _meth_81AA() );
+    if ( isdefined( self getgoalvolume() ) )
+        self setgoalvolumeauto( self getgoalvolume() );
     else
         self.goalradius = level.default_goalradius;
 }
@@ -2022,7 +2022,7 @@ go_to_node_set_goal_ent( var_0 )
 {
     if ( var_0.classname == "info_volume" )
     {
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
         self notify( "go_to_node_new_goal" );
         return;
     }
@@ -2187,7 +2187,7 @@ set_goal_from_settings( var_0 )
         }
     }
 
-    if ( !isdefined( self _meth_81AA() ) )
+    if ( !isdefined( self getgoalvolume() ) )
     {
         if ( self.type == "civilian" )
             self.goalradius = 128;
@@ -2200,7 +2200,7 @@ autotarget( var_0 )
 {
     for (;;)
     {
-        var_1 = self _meth_80EB();
+        var_1 = self getturretowner();
 
         if ( !isalive( var_1 ) )
         {
@@ -2210,9 +2210,9 @@ autotarget( var_0 )
 
         if ( !isdefined( var_1.enemy ) )
         {
-            self _meth_8106( common_scripts\utility::random( var_0 ) );
+            self settargetentity( common_scripts\utility::random( var_0 ) );
             self notify( "startfiring" );
-            self _meth_80E2();
+            self startfiring();
         }
 
         wait(2 + randomfloat( 1 ));
@@ -2223,22 +2223,22 @@ manualtarget( var_0 )
 {
     for (;;)
     {
-        self _meth_8106( common_scripts\utility::random( var_0 ) );
+        self settargetentity( common_scripts\utility::random( var_0 ) );
         self notify( "startfiring" );
-        self _meth_80E2();
+        self startfiring();
         wait(2 + randomfloat( 1 ));
     }
 }
 
 use_a_turret( var_0 )
 {
-    if ( self _meth_813D() && self.health == 150 )
+    if ( self isbadguy() && self.health == 150 )
     {
         self.health = 100;
         self.a.disablelongdeath = 1;
     }
 
-    self _meth_818A( var_0 );
+    self useturret( var_0 );
 
     if ( isdefined( var_0.target ) && var_0.target != var_0.targetname )
     {
@@ -2255,7 +2255,7 @@ use_a_turret( var_0 )
             var_0 thread autotarget( var_2 );
         else if ( isdefined( var_0.script_manualtarget ) )
         {
-            var_0 _meth_8065( "manual_ai" );
+            var_0 setmode( "manual_ai" );
             var_0 thread manualtarget( var_2 );
         }
         else if ( var_2.size > 0 )
@@ -2263,7 +2263,7 @@ use_a_turret( var_0 )
             if ( var_2.size == 1 )
             {
                 var_0.manual_target = var_2[0];
-                var_0 _meth_8106( var_2[0] );
+                var_0 settargetentity( var_2[0] );
                 thread maps\_mgturret::manual_think( var_0 );
             }
             else
@@ -2351,9 +2351,9 @@ fallback_goal()
 fallback_ai( var_0, var_1 )
 {
     self notify( "stop_going_to_node" );
-    self _meth_818B();
+    self stopuseturret();
     self.ignoresuppression = 1;
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
 
     if ( node_has_radius( var_1 ) )
         self.goalradius = var_1.radius;
@@ -2394,7 +2394,7 @@ newfallback_overmind( var_0, var_1 )
     level.current_fallbackers[var_0] = 0;
     level.spawner_fallbackers[var_0] = 0;
     level.fallback_initiated[var_0] = 0;
-    var_6 = _func_0D8();
+    var_6 = getspawnerarray();
 
     for ( var_7 = 0; var_7 < var_6.size; var_7++ )
     {
@@ -2408,7 +2408,7 @@ newfallback_overmind( var_0, var_1 )
         }
     }
 
-    var_8 = _func_0D6();
+    var_8 = getaiarray();
 
     for ( var_7 = 0; var_7 < var_8.size; var_7++ )
     {
@@ -2431,7 +2431,7 @@ newfallback_overmind( var_0, var_1 )
 
     level.fallback_initiated[var_0] = 1;
     var_9 = undefined;
-    var_8 = _func_0D6();
+    var_8 = getaiarray();
 
     for ( var_7 = 0; var_7 < var_8.size; var_7++ )
     {
@@ -2485,7 +2485,7 @@ fallback_wait( var_0, var_1 )
 
     }
 
-    var_3 = _func_0D6();
+    var_3 = getaiarray();
 
     for ( var_2 = 0; var_2 < var_3.size; var_2++ )
     {
@@ -2566,7 +2566,7 @@ fallback()
 {
     var_0 = getnode( self.target, "targetname" );
     self.coverpoint = var_0;
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
 
     if ( isdefined( self.script_seekgoal ) )
         thread arrive( var_0 );
@@ -2588,7 +2588,7 @@ fallback()
         {
             var_0 = getnode( var_0.target, "targetname" );
             self.coverpoint = var_0;
-            self _meth_81A5( var_0 );
+            self setgoalnode( var_0 );
             thread fallback_goal();
 
             if ( node_has_radius( var_0 ) )
@@ -2711,9 +2711,9 @@ friendly_wave_masterthread()
                 var_6 = isdefined( var_3[var_4].script_stealth ) && common_scripts\utility::flag( "_stealth_enabled" ) && !common_scripts\utility::flag( "_stealth_spotted" );
 
                 if ( isdefined( var_3[var_4].script_forcespawn ) )
-                    var_7 = var_3[var_4] _meth_8094( var_6 );
+                    var_7 = var_3[var_4] stalingradspawn( var_6 );
                 else
-                    var_7 = var_3[var_4] _meth_8093( var_6 );
+                    var_7 = var_3[var_4] dospawn( var_6 );
 
                 var_3[var_4] maps\_utility::set_count( 0 );
 
@@ -2735,7 +2735,7 @@ friendly_wave_masterthread()
                 if ( isdefined( level.friendlywave_thread ) )
                     level thread [[ level.friendlywave_thread ]]( var_7 );
                 else
-                    var_7 _meth_81A7( level.player );
+                    var_7 setgoalentity( level.player );
 
                 if ( var_5 )
                 {
@@ -2760,8 +2760,8 @@ friendly_mgturret( var_0 )
 {
     var_1 = getnode( var_0.target, "targetname" );
     var_2 = getent( var_1.target, "targetname" );
-    var_2 _meth_8065( "auto_ai" );
-    var_2 _meth_8108();
+    var_2 setmode( "auto_ai" );
+    var_2 cleartargetentity();
     var_3 = 0;
 
     for (;;)
@@ -2804,12 +2804,12 @@ friendly_mg42_wait_for_use( var_0 )
 {
     var_0 endon( "friendly_finished_using_mg42" );
     self.useable = 1;
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( &"PLATFORM_USEAIONMG42" );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( &"PLATFORM_USEAIONMG42" );
     self waittill( "trigger" );
     self.useable = 0;
-    self _meth_80DB( "" );
-    self _meth_818B();
+    self sethintstring( "" );
+    self stopuseturret();
     self notify( "stopped_use_turret" );
     var_0 notify( "friendly_finished_using_mg42" );
 }
@@ -2861,7 +2861,7 @@ friendly_mg42_think( var_0, var_1 )
     self.oldradius = self.goalradius;
     self.goalradius = 28;
     thread nofour();
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     self.ignoresuppression = 1;
     self waittill( "goal" );
     self.goalradius = self.oldradius;
@@ -2881,7 +2881,7 @@ friendly_mg42_think( var_0, var_1 )
     self.friendly_mg42 = var_0;
     thread friendly_mg42_wait_for_use( var_0 );
     thread friendly_mg42_cleanup( var_0 );
-    self _meth_818A( var_0 );
+    self useturret( var_0 );
 
     if ( isdefined( var_0.target ) )
     {
@@ -2894,7 +2894,7 @@ friendly_mg42_think( var_0, var_1 )
     for (;;)
     {
         if ( distance( self.origin, var_1.origin ) < 32 )
-            self _meth_818A( var_0 );
+            self useturret( var_0 );
         else
             break;
 
@@ -2916,7 +2916,7 @@ friendly_mg42_doneusingturret()
     self endon( "death" );
     var_0 = self.friendly_mg42;
     self.friendly_mg42 = undefined;
-    self _meth_818B();
+    self stopuseturret();
     self notify( "stopped_use_turret" );
     self.useable = 0;
     self.goalradius = self.oldradius;
@@ -2930,7 +2930,7 @@ friendly_mg42_doneusingturret()
     var_1 = getnode( var_0.target, "targetname" );
     var_2 = self.goalradius;
     self.goalradius = 8;
-    self _meth_81A5( var_1 );
+    self setgoalnode( var_1 );
     wait 2;
     self.goalradius = 384;
     return;
@@ -2944,7 +2944,7 @@ friendly_mg42_doneusingturret()
             var_1 = getnode( var_1.target, "targetname" );
 
         if ( isdefined( var_1 ) )
-            self _meth_81A5( var_1 );
+            self setgoalnode( var_1 );
     }
 
     self.goalradius = var_2;
@@ -2979,7 +2979,7 @@ tanksquish_damage_check( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         return;
 
     if ( !isdefined( self.noragdoll ) )
-        self _meth_8023();
+        self startragdoll();
 
     if ( !isdefined( self ) )
         return;
@@ -3003,8 +3003,8 @@ panzer_target( var_0, var_1, var_2, var_3, var_4 )
     else
         var_0.panzer_pos = var_2;
 
-    var_0 _meth_81A6( var_0.origin );
-    var_0 _meth_81A5( var_1 );
+    var_0 setgoalpos( var_0.origin );
+    var_0 setgoalnode( var_1 );
     var_0.goalradius = 12;
     var_0 waittill( "goal" );
     var_0.goalradius = 28;
@@ -3027,9 +3027,9 @@ spawnwaypointfriendlies()
     maps\_utility::set_count( 1 );
 
     if ( isdefined( self.script_forcespawn ) )
-        var_0 = self _meth_8094();
+        var_0 = self stalingradspawn();
     else
-        var_0 = self _meth_8093();
+        var_0 = self dospawn();
 
     if ( maps\_utility::spawn_failed( var_0 ) )
         return;
@@ -3101,7 +3101,7 @@ flood_and_secure( var_0 )
             maps\_utility::script_delay();
         }
 
-        if ( self _meth_80A9( level.player ) )
+        if ( self istouching( level.player ) )
             var_2 = 1;
         else
         {
@@ -3261,9 +3261,9 @@ flood_and_secure_spawner_think( var_0, var_1, var_2 )
         var_6 = isdefined( self.script_stealth ) && common_scripts\utility::flag( "_stealth_enabled" ) && !common_scripts\utility::flag( "_stealth_spotted" );
 
         if ( isdefined( self.script_forcespawn ) )
-            var_7 = self _meth_8094( var_6 );
+            var_7 = self stalingradspawn( var_6 );
         else
-            var_7 = self _meth_8093( var_6 );
+            var_7 = self dospawn( var_6 );
 
         if ( maps\_utility::spawn_failed( var_7 ) )
         {
@@ -3384,7 +3384,7 @@ playerwasnearby( var_0, var_1 )
     if ( distance( level.player.origin, var_2 ) < 700 )
         return 1;
 
-    return bullettracepassed( level.player _meth_80A8(), var_1 _meth_80A8(), 0, undefined );
+    return bullettracepassed( level.player geteye(), var_1 geteye(), 0, undefined );
 }
 
 waittillrestartordistance( var_0 )
@@ -3418,13 +3418,13 @@ flood_and_secure_spawn_goal()
     var_0 = getnode( self.target, "targetname" );
 
     if ( isdefined( var_0 ) )
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
     else
     {
         var_0 = getent( self.target, "targetname" );
 
         if ( isdefined( var_0 ) )
-            self _meth_81A6( var_0.origin );
+            self setgoalpos( var_0.origin );
     }
 
     if ( isdefined( level.fightdist ) )
@@ -3449,7 +3449,7 @@ flood_and_secure_spawn_goal()
         else
             break;
 
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
 
         if ( node_has_radius( var_0 ) )
             self.goalradius = var_0.radius;
@@ -3463,7 +3463,7 @@ flood_and_secure_spawn_goal()
     {
         if ( self.script_noteworthy == "delete" )
         {
-            self _meth_8052();
+            self kill();
             return;
         }
     }
@@ -3474,7 +3474,7 @@ flood_and_secure_spawn_goal()
 
         if ( isdefined( var_2 ) && ( var_2.code_classname == "misc_mgturret" || var_2.code_classname == "misc_turret" ) )
         {
-            self _meth_81A5( var_0 );
+            self setgoalnode( var_0 );
             self.goalradius = 4;
             self waittill( "goal" );
 
@@ -3500,7 +3500,7 @@ flood_and_secure_spawn_goal()
         }
     }
 
-    if ( !isdefined( self.script_forcegoal ) && !isdefined( self _meth_81AA() ) )
+    if ( !isdefined( self.script_forcegoal ) && !isdefined( self getgoalvolume() ) )
         self.goalradius = level.default_goalradius;
 }
 
@@ -3550,7 +3550,7 @@ friendlychain()
     {
         self waittill( "trigger" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.05;
 
         if ( !objectiveisallowed() )
@@ -3650,7 +3650,7 @@ deathchainspawnerlogic()
 friendlychain_ondeath()
 {
     var_0 = getentarray( "friendly_chain_on_death", "targetname" );
-    var_1 = _func_0D8();
+    var_1 = getspawnerarray();
     level.deathspawner = [];
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
@@ -3753,7 +3753,7 @@ delayedplayergoal()
     self endon( "death" );
     self endon( "leaveSquad" );
     wait 0.5;
-    self _meth_81A7( level.player );
+    self setgoalentity( level.player );
 }
 
 spawnwavestoptrigger( var_0 )
@@ -3987,7 +3987,7 @@ move_when_enemy_hides( var_0 )
                 for (;;)
                 {
                     self.goalradius = 180;
-                    self _meth_81A6( level.player.origin );
+                    self setgoalpos( level.player.origin );
                     wait 1;
                 }
 
@@ -3997,7 +3997,7 @@ move_when_enemy_hides( var_0 )
 
         if ( var_1 )
         {
-            if ( self _meth_81BE( self.enemy ) )
+            if ( self cansee( self.enemy ) )
             {
                 wait 0.05;
                 continue;
@@ -4007,7 +4007,7 @@ move_when_enemy_hides( var_0 )
         }
         else
         {
-            if ( self _meth_81BE( self.enemy ) )
+            if ( self cansee( self.enemy ) )
                 var_1 = 1;
 
             wait 0.05;
@@ -4029,7 +4029,7 @@ move_when_enemy_hides( var_0 )
 
 claim_a_node( var_0, var_1 )
 {
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self.claimed_node = var_0;
     var_0.claimed = 1;
 
@@ -4123,7 +4123,7 @@ flood_spawner_think( var_0 )
 
     while ( self.count > 0 )
     {
-        while ( var_1 && !level.player _meth_80A9( var_0 ) )
+        while ( var_1 && !level.player istouching( var_0 ) )
             wait 0.5;
 
         var_2 = isdefined( self.script_stealth ) && common_scripts\utility::flag( "_stealth_enabled" ) && !common_scripts\utility::flag( "_stealth_spotted" );
@@ -4136,9 +4136,9 @@ flood_spawner_think( var_0 )
         }
 
         if ( isdefined( self.script_forcespawn ) )
-            var_4 = var_3 _meth_8094( var_2 );
+            var_4 = var_3 stalingradspawn( var_2 );
         else
-            var_4 = var_3 _meth_8093( var_2 );
+            var_4 = var_3 dospawn( var_2 );
 
         if ( maps\_utility::spawn_failed( var_4 ) )
         {
@@ -4221,7 +4221,7 @@ player_saw_kill( var_0, var_1 )
     if ( distance( var_0.origin, level.player.origin ) < 200 )
         return 1;
 
-    return bullettracepassed( level.player _meth_80A8(), var_0 _meth_80A8(), 0, undefined );
+    return bullettracepassed( level.player geteye(), var_0 geteye(), 0, undefined );
 }
 
 is_pyramid_spawner()
@@ -4251,7 +4251,7 @@ pyramid_spawn( var_0 )
 
     if ( var_1 )
     {
-        while ( !level.player _meth_80A9( var_0 ) )
+        while ( !level.player istouching( var_0 ) )
             wait 0.05;
     }
 
@@ -4432,7 +4432,7 @@ blowout_goalradius_on_pathend()
     self endon( "death" );
     self waittill( "reached_path_end" );
 
-    if ( !isdefined( self _meth_81AA() ) )
+    if ( !isdefined( self getgoalvolume() ) )
         self.goalradius = level.default_goalradius;
 }
 
@@ -4471,8 +4471,8 @@ ai_array()
 
 spawner_dronespawn( var_0 )
 {
-    var_1 = var_0 _meth_803D();
-    var_1 _meth_8115( #animtree );
+    var_1 = var_0 spawndrone();
+    var_1 useanimtree( #animtree );
 
     if ( var_1.weapon != "none" )
     {
@@ -4501,23 +4501,23 @@ spawner_swap_drone_to_ai( var_0 )
     var_3 = var_1.angles;
     var_1.origin = var_0.origin;
     var_1.angles = var_0.angles;
-    var_4 = var_1 _meth_8094();
+    var_4 = var_1 stalingradspawn();
     var_5 = maps\_utility::spawn_failed( var_4 );
 
     if ( var_5 )
     {
         wait 0.05;
-        var_4 = var_1 _meth_8094();
+        var_4 = var_1 stalingradspawn();
     }
 
     var_4.spawner = var_1;
-    var_4 _meth_80B1( var_0.model );
+    var_4 setmodel( var_0.model );
     var_4 codescripts\character::setheadmodel( var_0.headmodel );
     var_4.vehicle_idling = var_0.vehicle_idling;
     var_4.vehicle_position = var_0.vehicle_position;
     var_4.standing = var_0.standing;
     var_4.forcecolor = var_0.forcecolor;
-    var_4 _meth_83BF( var_0 );
+    var_4 copyanimtreestate( var_0 );
     var_1.origin = var_2;
     var_1.angles = var_3;
     var_0 delete();
@@ -4539,13 +4539,13 @@ spawner_swap_ai_to_drone( var_0 )
 
     }
 
-    var_4 _meth_80B1( var_0.model );
+    var_4 setmodel( var_0.model );
     var_4 codescripts\character::setheadmodel( var_0.headmodel );
     var_4.vehicle_idling = var_0.vehicle_idling;
     var_4.vehicle_position = var_0.vehicle_position;
     var_4.standing = var_0.standing;
     var_4.forcecolor = var_0.forcecolor;
-    var_4 _meth_83BF( var_0 );
+    var_4 copyanimtreestate( var_0 );
     var_1.origin = var_2;
     var_1.angles = var_3;
     var_0 delete();
@@ -4560,7 +4560,7 @@ death_achievements()
     if ( !isdefined( self ) )
         return;
 
-    if ( !self _meth_813D() )
+    if ( !self isbadguy() )
         return;
 
     if ( !isdefined( var_0 ) )
@@ -4619,5 +4619,5 @@ deathtime()
     self endon( "death" );
     wait(self.script_deathtime);
     wait(randomfloat( 10 ));
-    self _meth_8052();
+    self kill();
 }

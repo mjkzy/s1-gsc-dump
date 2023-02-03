@@ -21,8 +21,6 @@ main()
     common_scripts\utility::flag_init( "flag_bridge_takedown_jump_complete" );
     common_scripts\utility::flag_init( "flag_balcony_tackle_success" );
     common_scripts\utility::flag_init( "flag_countdown_complete_mission_fail" );
-    common_scripts\utility::flag_init( "flag_irons_start_running_01" );
-    common_scripts\utility::flag_init( "flag_player_passed_door" );
     thread maps\_shg_fx::fx_zone_watcher( 500, "msg_fx_zone500_Underwater" );
     thread maps\_shg_fx::fx_zone_watcher( 800, "msg_fx_zone800_silo_intro" );
     thread maps\_shg_fx::fx_zone_watcher( 1000, "msg_fx_zone1000_inside_silo_area" );
@@ -48,14 +46,12 @@ main()
     thread grand_finale_fx();
     thread rocket_fail_smoke();
     thread player_rocket();
-    thread irons_chase_window_explosion();
-    thread irons_chase_slide_explosion();
 }
 
 set_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", 2 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", 2 );
 }
 
 precachefx()
@@ -192,14 +188,12 @@ precachefx()
     level._effect["fin_roof_hang_fire_wide"] = loadfx( "vfx/map/finale/fin_roof_hang_fire_wide" );
     level._effect["fin_roof_hang_fire_xlrg"] = loadfx( "vfx/map/finale/fin_roof_hang_fire_xlrg" );
     level._effect["fin_roof_hang_fire_sm"] = loadfx( "vfx/map/finale/fin_roof_hang_fire_sm" );
-    level._effect["fin_roof_hang_fire_smk_transition"] = loadfx( "vfx/map/finale/fin_roof_hang_fire_smk_transition" );
     level._effect["func_glass_shatter_64x64"] = loadfx( "vfx/code/func_glass_shatter_64x64" );
     level._effect["glass_shatter_xlarge"] = loadfx( "vfx/glass/glass_shatter_xlarge" );
     level._effect["fin_falling_debris_01_lrg"] = loadfx( "vfx/map/finale/fin_falling_debris_01_lrg" );
     level._effect["fin_falling_debris_01_sml"] = loadfx( "vfx/map/finale/fin_falling_debris_01_sml" );
     level._effect["fin_irons_vector_field_lp"] = loadfx( "vfx/map/finale/fin_irons_vector_field_lp" );
     level._effect["embers_lp_lrg_vf"] = loadfx( "vfx/fire/embers_lp_lrg_vf" );
-    level._effect["fin_roof_hang_fall_explosion"] = loadfx( "vfx/map/finale/fin_roof_hang_fall_explosion" );
     level._effect["fin_player_arm_cut_sparks"] = loadfx( "vfx/map/finale/fin_player_arm_cut_sparks" );
     level._effect["fin_player_arm_cut_sparks_trail"] = loadfx( "vfx/map/finale/fin_player_arm_cut_sparks_trail" );
     level._effect["fin_player_arm_cut_spark_burst_single"] = loadfx( "vfx/map/finale/fin_player_arm_cut_spark_burst_single" );
@@ -207,11 +201,6 @@ precachefx()
     level._effect["ambient_explosion_fireball_a_no_decal"] = loadfx( "vfx/explosion/ambient_explosion_fireball_a_no_decal" );
     level._effect["paper_sheet_explosion_blown_1"] = loadfx( "vfx/wind/paper_sheet_explosion_blown_1" );
     level._effect["paper_burst"] = loadfx( "vfx/props/paper_burst" );
-    level._effect["fin_ambient_building_explosion"] = loadfx( "vfx/map/finale/fin_ambient_building_explosion" );
-    level._effect["fin_ambient_building_explosion_smk_linger"] = loadfx( "vfx/map/finale/fin_ambient_building_explosion_smk_linger" );
-    level._effect["fin_iron_fall_rocket_explosion"] = loadfx( "vfx/map/finale/fin_iron_fall_rocket_explosion" );
-    level._effect["fin_smoketrail_missile_finale"] = loadfx( "vfx/map/finale/fin_smoketrail_missile_finale" );
-    level._effect["fin_embers_close_up_fast"] = loadfx( "vfx/map/finale/fin_embers_close_up_fast" );
     level._effect["paper_sheet_01_blowing"] = loadfx( "vfx/wind/paper_sheet_01_blowing" );
     level._effect["paper_scrap_windblown_runner_light"] = loadfx( "vfx/wind/paper_scrap_windblown_runner_light" );
     level._effect["fin_multi2_white_godray"] = loadfx( "vfx/lights/finale/fin_multi2_white_godray" );
@@ -297,7 +286,7 @@ player_canal_drop( var_0 )
     soundscripts\_snd::snd_message( "fin_flyin_splash" );
     common_scripts\_exploder::exploder( "mech_drop_canal_splash" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_80A6( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
+    var_1 linktoplayerview( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
     playfxontag( common_scripts\utility::getfx( "underwater_bubble_vm_transition_fast" ), var_1, "tag_origin" );
     wait 1.85;
     playfxontag( common_scripts\utility::getfx( "fin_vm_underwater_hit_bottom" ), var_1, "tag_origin" );
@@ -329,13 +318,13 @@ gideon_water_splash_cg( var_0 )
     soundscripts\_snd::snd_message( "fin_flyin_gideon_splash" );
     common_scripts\_exploder::exploder( "gideon_water_splash" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "j_SpineUpper" );
+    var_1 linkto( var_0, "j_SpineUpper" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "J_ankle_ri" );
+    var_2 linkto( var_0, "J_ankle_ri" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "j_elbow_le" );
+    var_3 linkto( var_0, "j_elbow_le" );
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( var_0, "j_elbow_ri" );
+    var_4 linkto( var_0, "j_elbow_ri" );
     playfxontag( common_scripts\utility::getfx( "bubble_trail_runner_lp" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "bubble_geotrail_thick_med" ), var_2, "tag_origin" );
     waitframe();
@@ -757,16 +746,16 @@ gideon_bubble_trail()
 gideon_bubble_trail_cg()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( self, "J_Neck" );
+    var_0 linkto( self, "J_Neck" );
     self.neck_org = var_0;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "J_Knee_LE" );
+    var_1 linkto( self, "J_Knee_LE" );
     self.knee_l_org = var_1;
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( self, "J_Elbow_LE" );
+    var_2 linkto( self, "J_Elbow_LE" );
     self.elbow_l_org = var_2;
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( self, "J_Elbow_RI" );
+    var_3 linkto( self, "J_Elbow_RI" );
     self.elbow_r_org = var_3;
     playfxontag( common_scripts\utility::getfx( "bubble_trail_mech_runner_lp" ), var_0, "tag_origin" );
     waitframe();
@@ -888,7 +877,7 @@ exhaust_hatch_open( var_0 )
 exhaust_hatch_land_player( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 270, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 270, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "fin_hatch_exhaust_mech_land" ), var_1, "tag_origin" );
     wait 2;
     var_1 delete();
@@ -897,7 +886,7 @@ exhaust_hatch_land_player( var_0 )
 exhaust_hatch_land_gideon( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 270, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 270, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "fin_hatch_exhaust_mech_land" ), var_1, "tag_origin" );
     wait 3;
     var_1 delete();
@@ -1037,7 +1026,7 @@ silo_rocket_blowup()
 view_clamping_unlock()
 {
     wait 5;
-    level.player _meth_807D( self, "tag_player", 1, 20, 20, 20, 20, 1 );
+    level.player playerlinktodelta( self, "tag_player", 1, 20, 20, 20, 20, 1 );
 }
 
 vfx_gideon_mech_sparks( var_0 )
@@ -1137,25 +1126,25 @@ skybridge_ambient_aa_explosions()
 
 vfx_irons_reveal_scene()
 {
-    level.player common_scripts\utility::delaycall( 57.5, ::_meth_80AD, "artillery_rumble" );
+    level.player common_scripts\utility::delaycall( 57.5, ::playrumbleonentity, "artillery_rumble" );
     wait 57;
     common_scripts\_exploder::exploder( "falling_dust_irons" );
     wait 0.55;
 
     for ( var_0 = 0; var_0 < 3; var_0++ )
     {
-        level.player _meth_83C0( "finale_will_lit_dark" );
+        level.player lightsetforplayer( "finale_will_lit_dark" );
         common_scripts\_exploder::kill_exploder( "lighton" );
         wait(randomfloatrange( 0.05, 0.1 ));
         common_scripts\_exploder::exploder( "lighton" );
-        level.player _meth_83C0( "finale_will_lit" );
+        level.player lightsetforplayer( "finale_will_lit" );
         wait(randomfloatrange( 0.05, 0.1 ));
     }
 }
 
 vfx_explosion_rumble_dust( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
     common_scripts\_exploder::exploder( "falling_dust_irons" );
     wait 0.5;
     common_scripts\_exploder::exploder( "falling_dust_irons_2" );
@@ -1173,31 +1162,6 @@ exo_release_gideon_error_glow()
     playfxontag( common_scripts\utility::getfx( "fin_exo_exit_glow_gideon" ), self, "J_Elbow_LE" );
 }
 
-irons_chase_window_explosion()
-{
-    common_scripts\utility::flag_wait( "flag_irons_start_running_01" );
-    wait 2;
-    soundscripts\_snd::snd_message( "aud_fin_ending_pre_shake" );
-    earthquake( 0.6, 1.7, level.player.origin, 1000 );
-    common_scripts\_exploder::exploder( "irons_window_explosion" );
-    common_scripts\_exploder::exploder( "irons_window_embers" );
-    common_scripts\_exploder::exploder( "iron_window_dust" );
-    soundscripts\_snd::snd_message( "aud_fin_ending_shake_01" );
-    level.player playsound( "exp_amb_mid_air" );
-    wait 2;
-    maps\_utility::stop_exploder( "irons_window_embers" );
-}
-
-irons_chase_slide_explosion()
-{
-    common_scripts\utility::flag_wait( "flag_player_passed_door" );
-    thread rooftop_bombshakes_lightflicker_nodelay();
-    common_scripts\_exploder::exploder( "irons_slide_explosion" );
-    earthquake( 0.6, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_shake_02" );
-    level.player playsound( "exp_amb_mid_air" );
-}
-
 rooftop_bombshakes()
 {
     common_scripts\utility::flag_wait( "msg_fx_zone2000_finale_roof" );
@@ -1210,8 +1174,6 @@ rooftop_bombshakes()
         level.bombshake_interval = 3;
         level.bombshake_interval_rand = 2;
     }
-
-    thread rooftop_bombshakes_lightflicker();
 
     for (;;)
     {
@@ -1226,42 +1188,13 @@ rooftop_bombshakes()
 
             if ( var_3 < 200 )
             {
-                soundscripts\_snd::snd_message( "aud_fin_ending_rooftop_shake" );
                 maps\_shg_fx::fx_bombshakes( "dust_falling_light_sml_01", "viewmodel_medium", 0.127, 2, 0.3, 0.53 );
-                level.player _meth_80AD( "artillery_rumble" );
+                level.player playrumbleonentity( "artillery_rumble" );
             }
         }
 
         var_4 = randomfloatrange( level.bombshake_interval_rand * -1, level.bombshake_interval_rand ) + level.bombshake_interval;
         wait(var_4);
-    }
-}
-
-rooftop_bombshakes_lightflicker()
-{
-    wait 1;
-
-    for ( var_0 = 0; var_0 < 3; var_0++ )
-    {
-        level.player _meth_83C0( "finale_night_dark" );
-        common_scripts\_exploder::kill_exploder( "lighton" );
-        wait(randomfloatrange( 0.05, 0.15 ));
-        common_scripts\_exploder::exploder( "lighton" );
-        level.player _meth_83C0( "finale_night" );
-        wait(randomfloatrange( 0.05, 0.15 ));
-    }
-}
-
-rooftop_bombshakes_lightflicker_nodelay()
-{
-    for ( var_0 = 0; var_0 < 3; var_0++ )
-    {
-        level.player _meth_83C0( "finale_night_dark" );
-        common_scripts\_exploder::kill_exploder( "lighton" );
-        wait(randomfloatrange( 0.05, 0.15 ));
-        common_scripts\_exploder::exploder( "lighton" );
-        level.player _meth_83C0( "finale_night" );
-        wait(randomfloatrange( 0.05, 0.15 ));
     }
 }
 
@@ -1333,9 +1266,6 @@ grand_finale_fx()
 grand_finale_rooftop_explode()
 {
     level waittill( "vfx_rooftop_glass_explode" );
-    level.player _meth_83C0( "finale_night2_bright" );
-    wait 0.15;
-    level.player _meth_83C0( "finale_night2" );
     var_0 = randomfloatrange( 0.05, 0.15 );
     wait(var_0);
     common_scripts\_exploder::exploder( "roof_glass_shatter" );
@@ -1354,111 +1284,15 @@ grand_fianle_paper_blowing()
     common_scripts\_exploder::exploder( "roofhang_paper_blowing_1" );
     wait 1;
     common_scripts\_exploder::exploder( "roofhang_paper_blowing_2" );
-    earthquake( 0.3, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
 }
 
 grand_finale_building_window_explosion_roofhang()
 {
     level waittill( "balcony_break_through_complete" );
-    thread grand_finale_roofhang_explosion_between_lines();
-    thread grand_finale_roofhang_explosion_drag_start();
-    thread grand_finale_roofhang_explosion_drag_complete();
-    wait 1.5;
-    common_scripts\_exploder::exploder( "explosion_tackle" );
-    thread exposure_change_explosions();
-    common_scripts\_exploder::exploder( "embers_hero_shot" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 1.5;
-    common_scripts\_exploder::exploder( "explosion_tackle_2" );
-    earthquake( 0.3, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 3.3;
+    wait 5.8;
     common_scripts\_exploder::exploder( "roofhang_window_explo_1" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 0.1;
-    level.player _meth_83C0( "finale_night3" );
     wait 2.5;
     common_scripts\_exploder::exploder( "roofhang_window_explo_2" );
-    thread exposure_change_explosions();
-    earthquake( 0.3, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 0.1;
-    level.player _meth_83C0( "finale_night3" );
-    level waittill( "kill_lp_roofhang_effects" );
-    maps\_utility::pauseexploder( "embers_hero_shot" );
-}
-
-exposure_change_explosions()
-{
-    level.player _meth_83C0( "finale_night3_dark" );
-    wait 0.1;
-    level.player _meth_83C0( "finale_night3_bright" );
-    wait 0.1;
-    level.player _meth_83C0( "finale_night3" );
-}
-
-grand_finale_roofhang_explosion_between_lines()
-{
-    level waittill( "dofpart3" );
-    wait 5;
-    common_scripts\_exploder::exploder( "building_explosion_close_lt" );
-    common_scripts\_exploder::exploder( "building_explosion_close_lt_linger" );
-    thread exposure_change_explosions();
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 0.5;
-    common_scripts\_exploder::exploder( "explosion_between_lines" );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 1.2;
-}
-
-grand_finale_roofhang_explosion_drag_start()
-{
-    common_scripts\utility::flag_wait( "flag_xbutton_mash_start" );
-    wait 0.15;
-    common_scripts\_exploder::exploder( "building_explosion_close_rt" );
-    common_scripts\_exploder::exploder( "building_explosion_close_rt_linger" );
-    thread exposure_change_explosions();
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 0.25;
-    common_scripts\_exploder::exploder( "building_explosion_far_lt" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 1;
-    wait 5;
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    common_scripts\_exploder::exploder( "window_explosion_lt" );
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-}
-
-grand_finale_roofhang_explosion_drag_complete()
-{
-    common_scripts\utility::flag_wait( "flag_xbutton_mash_end" );
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    common_scripts\_exploder::exploder( "building_explosion_close_rt" );
-    common_scripts\_exploder::exploder( "building_explosion_close_rt_linger" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 1;
-    common_scripts\_exploder::exploder( "building_explosion_far_lt" );
-    common_scripts\_exploder::exploder( "building_explosion_far_lt_linger" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 0.75;
-    earthquake( 0.6, 1.5, level.player.origin, 1000 );
-    common_scripts\_exploder::exploder( "building_explosion_close_lt" );
-    common_scripts\_exploder::exploder( "building_explosion_close_lt_linger" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
-    wait 2.5;
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    common_scripts\_exploder::exploder( "window_explosion_lt" );
-    thread exposure_change_explosions();
-    soundscripts\_snd::snd_message( "aud_fin_ending_roof_explosion" );
 }
 
 grand_finale_fire_pool_fx()
@@ -1469,7 +1303,6 @@ grand_finale_fire_pool_fx()
 vfx_irons_fail_fall()
 {
     common_scripts\_exploder::exploder( "fail_falling_debris" );
-    common_scripts\_exploder::exploder( "fire_fail_fall" );
     playfxontag( common_scripts\utility::getfx( "fin_irons_vector_field_lp" ), level.irons, "j_SpineUpper" );
     wait 4;
     common_scripts\_exploder::kill_exploder( "fail_falling_debris" );
@@ -1479,58 +1312,21 @@ vfx_irons_fail_fall()
 grand_finale_iron_head_skin_override()
 {
     common_scripts\utility::flag_wait( "flag_balcony_tackle_success" );
-    level.irons _meth_846C( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_finalehang_tns" );
+    level.irons overridematerial( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_finalehang_tns" );
 }
 
 grand_finale_ambientfx_atlas_logo()
 {
     common_scripts\utility::flag_wait( "flag_balcony_tackle_success" );
     common_scripts\_exploder::exploder( "3510" );
-    level notify( "kill_lp_embers" );
 }
 
 vfx_vm_arm_stab( var_0 )
 {
     wait 0.1;
-    level.player _meth_84AB( 4.5, 15, 100, 100 );
-    earthquake( 0.4, 0.5, level.player.origin, 1000 );
-    _func_072( 2, 0.1 );
     playfxontag( common_scripts\utility::getfx( "fin_player_arm_cut_sparks" ), var_0, "J_Elbow_LE" );
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang_desat", 0 );
-    level.player _meth_83C0( "finale_night3_black" );
-    wait 0.05;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang", 0 );
-    level.player _meth_83C0( "finale_night3_q" );
-    wait 0.1;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang_desat", 0 );
-    level.player _meth_83C0( "finale_night3_black" );
-    wait 0.05;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang", 0 );
-    level.player _meth_83C0( "finale_night3_q" );
-    wait 0.1;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang_desat", 0 );
-    level.player _meth_83C0( "finale_night3_black" );
-    wait 0.05;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang", 0 );
-    level.player _meth_83C0( "finale_night3_q" );
-    wait 0.1;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang_desat", 0 );
-    level.player _meth_83C0( "finale_night3_black" );
-    wait 0.05;
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang", 0 );
-    level.player _meth_83C0( "finale_night3_q" );
-    wait 0.1;
-    _func_072( 0, 1 );
-    wait 0.15;
-    level.player _meth_83C0( "finale_night3" );
     level waittill( "kill_looping_arm_fx" );
     stopfxontag( common_scripts\utility::getfx( "fin_player_arm_cut_sparks" ), var_0, "J_Elbow_LE" );
-    common_scripts\utility::flag_wait( "arm_off" );
-    level.player _meth_83C0( "finale_night3_brighter" );
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang_desat", 0 );
-    wait 0.1;
-    level.player _meth_83C0( "finale_night3" );
-    maps\_utility::vision_set_fog_changes( "finale_roof_hang", 0.1 );
 }
 
 vfx_vm_arm_sever( var_0 )
@@ -1542,7 +1338,6 @@ vfx_arm_piece_fall( var_0 )
 {
     level notify( "kill_looping_arm_fx" );
     playfxontag( common_scripts\utility::getfx( "fin_player_arm_cut_sparks_trail" ), var_0, "J_Elbow_LE" );
-    thread iron_death_fall_explosion();
     wait 2;
     stopfxontag( common_scripts\utility::getfx( "fin_player_arm_cut_sparks_trail" ), var_0, "J_Elbow_LE" );
 }
@@ -1550,20 +1345,4 @@ vfx_arm_piece_fall( var_0 )
 vfx_irons_fall_death( var_0 )
 {
 
-}
-
-iron_death_fall_explosion()
-{
-    wait 1;
-    soundscripts\_snd::snd_message( "aud_fin_ending_last_rpg_01" );
-    common_scripts\_exploder::exploder( "iron_fall_explosion" );
-    wait 0.5;
-    common_scripts\_exploder::exploder( "iron_fall_explosion_1" );
-    soundscripts\_snd::snd_message( "aud_fin_ending_last_rpg_02" );
-    wait 0.5;
-    earthquake( 0.4, 1.5, level.player.origin, 1000 );
-    level notify( "kill_lp_roofhang_effects" );
-    common_scripts\_exploder::exploder( "embers_hero_shot_end" );
-    level waittill( "kill_lp_embers" );
-    common_scripts\_exploder::kill_exploder( "embers_hero_shot_end" );
 }

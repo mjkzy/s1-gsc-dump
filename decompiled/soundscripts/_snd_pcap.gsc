@@ -46,8 +46,8 @@ sndx_pcap_play_vo_thread( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_5 = soundscripts\_audio::aud_get_optional_param( 0.1, var_5 );
     sndx_pcap_wait( var_1, var_3 );
     var_7 = spawn( "script_origin", var_6.origin );
-    var_7 _meth_804D( var_6 );
-    var_7 _meth_806F( 1.0, 0.0 );
+    var_7 linkto( var_6 );
+    var_7 scalevolume( 1.0, 0.0 );
     var_7 soundscripts\_snd_playsound::snd_play( var_0, "sound_done" );
     var_7 endon( "death" );
 
@@ -79,7 +79,7 @@ sndx_pcap_play_vo_fade_delete( var_0 )
     {
         if ( isdefined( var_0 ) )
         {
-            var_1 _meth_806F( 0, var_0 );
+            var_1 scalevolume( 0, var_0 );
             wait(var_0);
             waittillframeend;
         }

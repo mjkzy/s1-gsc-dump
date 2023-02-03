@@ -6,22 +6,22 @@ transition_unload_then_load_safely( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_3 ) )
         level notify( var_3 );
 
-    if ( _func_21E( var_0 ) )
-        _func_219( var_0 );
+    if ( istransientloaded( var_0 ) )
+        unloadtransient( var_0 );
 
     for (;;)
     {
-        if ( !_func_21E( var_0 ) )
+        if ( !istransientloaded( var_0 ) )
             break;
 
         wait 0.1;
     }
 
-    _func_218( var_1 );
+    loadtransient( var_1 );
 
     for (;;)
     {
-        if ( _func_21E( var_1 ) )
+        if ( istransientloaded( var_1 ) )
             break;
 
         wait 0.1;
@@ -66,34 +66,34 @@ setup_level_transient_zone_variable()
 {
     level.transient_zone = "";
 
-    if ( _func_21E( "seoul_intro_building_descend_tr" ) )
+    if ( istransientloaded( "seoul_intro_building_descend_tr" ) )
         level.transient_zone = "intro";
 
-    if ( _func_21E( "seoul_fob_tr" ) )
+    if ( istransientloaded( "seoul_fob_tr" ) )
         level.transient_zone += "_fob";
 
-    if ( _func_21E( "seoul_drone_swarm_one_tr" ) )
+    if ( istransientloaded( "seoul_drone_swarm_one_tr" ) )
         level.transient_zone += "_droneswarm1";
 
-    if ( _func_21E( "seoul_truck_push_trans_tr" ) )
+    if ( istransientloaded( "seoul_truck_push_trans_tr" ) )
         level.transient_zone += "_truckpush";
 
-    if ( _func_21E( "seoul_mall_offices_tr" ) )
+    if ( istransientloaded( "seoul_mall_offices_tr" ) )
         level.transient_zone += "_offices";
 
-    if ( _func_21E( "seoul_sinkhole_subway_tr" ) )
+    if ( istransientloaded( "seoul_sinkhole_subway_tr" ) )
         level.transient_zone += "_sinkhole";
 
-    if ( _func_21E( "seoul_subway_trans_tr" ) )
+    if ( istransientloaded( "seoul_subway_trans_tr" ) )
         level.transient_zone += "_subway";
 
-    if ( _func_21E( "seoul_shopping_dist_tr" ) )
+    if ( istransientloaded( "seoul_shopping_dist_tr" ) )
         level.transient_zone += "_shopping";
 
-    if ( _func_21E( "seoul_canal_overlook_bar_tr" ) )
+    if ( istransientloaded( "seoul_canal_overlook_bar_tr" ) )
         level.transient_zone += "_overlookbar";
 
-    if ( _func_21E( "seoul_riverwalk_tr" ) )
+    if ( istransientloaded( "seoul_riverwalk_tr" ) )
         level.transient_zone += "_riverwalk";
 
     if ( level.transient_zone == "intro" )
@@ -123,29 +123,29 @@ cg_tff_set_up_transient_meshes()
 
         if ( var_5.classname == "script_brushmodel" )
         {
-            var_5 _meth_82BF();
-            var_5 _meth_8058();
+            var_5 notsolid();
+            var_5 connectpaths();
         }
     }
 
     foreach ( var_8 in var_3 )
     {
-        var_8 _meth_82BF();
-        var_8 _meth_8058();
+        var_8 notsolid();
+        var_8 connectpaths();
     }
 
     var_10 = getentarray( "hotel_zipline_panel", "targetname" );
 
     for ( var_1 = 0; var_1 < var_10.size; var_1++ )
-        var_10[var_1] _meth_8057();
+        var_10[var_1] disconnectpaths();
 
     common_scripts\utility::flag_init( "enable_regression_conference_death" );
     var_11 = getent( "cg_subway_doors_clip", "targetname" );
 
     if ( level.transient_zone != "_subway" )
     {
-        var_11 _meth_82BF();
-        var_11 _meth_8058();
+        var_11 notsolid();
+        var_11 connectpaths();
     }
 
     var_12 = getent( "trans_subway_door_mesh", "targetname" );
@@ -161,21 +161,21 @@ cg_tff_set_up_transient_meshes()
 
     if ( level.transient_zone != "_overlookbar_riverwalk" )
     {
-        var_16 _meth_82AE( var_16.origin + ( 0, 0, -340 ), 0.25 );
+        var_16 moveto( var_16.origin + ( 0, 0, -340 ), 0.25 );
 
         for ( var_1 = 0; var_1 < var_15.size; var_1++ )
         {
             var_15[var_1] hide();
-            var_15[var_1] _meth_82AE( var_15[var_1].origin + ( 0, 0, -340 ), 0.25 );
+            var_15[var_1] moveto( var_15[var_1].origin + ( 0, 0, -340 ), 0.25 );
         }
 
         for ( var_1 = 0; var_1 < var_15.size; var_1++ )
         {
             if ( var_15[var_1].classname != "script_model" )
-                var_15[var_1] _meth_8058();
+                var_15[var_1] connectpaths();
         }
 
-        var_16 _meth_8058();
+        var_16 connectpaths();
     }
 }
 
@@ -192,8 +192,8 @@ cg_tff_transition_eastview_blocker()
     var_0 = getent( "cg_trans_hotel_door", "targetname" );
     var_0.angles = ( 0, 0, 0 );
     var_1 = getent( "cg_trans_hotel_door_clip", "targetname" );
-    var_1 _meth_82AE( var_1.origin + ( -105, 0, 0 ), 0.25 );
-    var_1 _meth_8057();
+    var_1 moveto( var_1.origin + ( -105, 0, 0 ), 0.25 );
+    var_1 disconnectpaths();
 }
 
 cg_tff_transition_fob_to_droneswarmone()
@@ -202,7 +202,7 @@ cg_tff_transition_fob_to_droneswarmone()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             break;
 
         waitframe();
@@ -215,7 +215,7 @@ cg_tff_transition_fob_to_droneswarmone()
     for ( var_3 = 0; var_3 < var_1.size; var_3++ )
         var_1[var_3] show();
 
-    var_2 _meth_82AE( var_2.origin + ( 0, 0, 340 ), 0.25 );
+    var_2 moveto( var_2.origin + ( 0, 0, 340 ), 0.25 );
 }
 
 cg_tff_transition_droneswarmone_to_mall()
@@ -239,16 +239,16 @@ cg_tff_transition_droneswarmone_blocker()
         var_5.angles = var_3[var_4];
     }
 
-    var_0[0] _meth_82AE( var_0[0].origin + ( 0, 0, -250 ), 0.25 );
-    var_0[1] _meth_82AE( var_0[1].origin + ( 0, 0, -250 ), 0.25 );
-    var_1 _meth_82AE( var_1.origin + ( 0, 0, 250 ), 0.25 );
+    var_0[0] moveto( var_0[0].origin + ( 0, 0, -250 ), 0.25 );
+    var_0[1] moveto( var_0[1].origin + ( 0, 0, -250 ), 0.25 );
+    var_1 moveto( var_1.origin + ( 0, 0, 250 ), 0.25 );
 }
 
 cg_tff_transition_fob_to_truckpush()
 {
     level waittill( "end_cherry_picker" );
     var_0 = [ "marines_body_smg", "marines_body_shotgun", "vehicle_ft101_tank" ];
-    var_1 = _func_0D6();
+    var_1 = getaiarray();
 
     foreach ( var_3 in var_1 )
     {
@@ -271,15 +271,15 @@ cg_tff_transition_fob_to_truckpush()
 
         if ( var_11.classname == "script_brushmodel" )
         {
-            var_11 _meth_82BE();
-            var_11 _meth_8057();
+            var_11 solid();
+            var_11 disconnectpaths();
         }
     }
 
     foreach ( var_14 in var_9 )
     {
-        var_14 _meth_82BE();
-        var_14 _meth_8057();
+        var_14 solid();
+        var_14 disconnectpaths();
     }
 
     transition_unload_then_load_safely( "seoul_fob_tr", "seoul_truck_push_trans_tr", "transients_drone_seq_one_to_truck_push", "pre_transients_drone_seq_one_to_trusk_push" );
@@ -305,8 +305,8 @@ cg_tff_transition_shinkhole_to_subway()
     foreach ( var_7 in var_1 )
         var_7.origin += ( 0, 43, 0 );
 
-    var_2 _meth_82BE();
-    var_2 _meth_8057();
+    var_2 solid();
+    var_2 disconnectpaths();
     transition_unload_then_load_safely( "seoul_mall_offices_tr", "seoul_subway_trans_tr", "transients_sinkhole_subway_to_subway", "pre_transients_sinkhole_subway_to_subway" );
 }
 
@@ -334,8 +334,8 @@ cg_subway_turnstyle_open()
 
     subway_open_all_cg_doors( var_1 );
     subway_open_all_cg_doors( var_2 );
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
 }
 
 subway_open_all_cg_doors( var_0 )
@@ -350,9 +350,9 @@ cg_tff_transition_shopping_to_canaloverlook()
     var_0 = getent( "subway_doors_closed_clip", "targetname" );
     var_1 = [ "subway_door_01", "subway_door_02", "subway_door_03", "subway_door_04" ];
     var_2 = [ ( 0, 90, 0 ), ( 0, 90, 0 ), ( 0, 90, 0 ), ( 0, 90, 0 ) ];
-    var_0 _meth_82AE( var_0.origin + ( 0, 0, 250 ), 0.25 );
+    var_0 moveto( var_0.origin + ( 0, 0, 250 ), 0.25 );
     var_3 = getent( "subway_doors_opaque_shutter", "targetname" );
-    var_3 _meth_82AE( var_3.origin + ( 0, 0, 350 ), 0.01 );
+    var_3 moveto( var_3.origin + ( 0, 0, 350 ), 0.01 );
     var_3 show();
     transition_unload_then_load_safely( "seoul_subway_trans_tr", "seoul_canal_overlook_bar_tr", "transients_shopping_dist_to_canal_overlook", "pre_transients_shopping_dist_to_canal_overlook" );
 }
@@ -366,18 +366,18 @@ cg_tff_transition_canaloverlook_to_riverwalk()
     {
         var_0 = getentarray( "trans_bar_door_mesh", "targetname" );
         var_1 = getent( "trans_bar_door_clip", "targetname" );
-        var_1 _meth_82AE( var_1.origin + ( 0, 0, 340 ), 0.25 );
+        var_1 moveto( var_1.origin + ( 0, 0, 340 ), 0.25 );
 
         for ( var_2 = 0; var_2 < var_0.size; var_2++ )
         {
             var_0[var_2] show();
-            var_0[var_2] _meth_82AE( var_0[var_2].origin + ( 0, 0, 340 ), 0.25 );
+            var_0[var_2] moveto( var_0[var_2].origin + ( 0, 0, 340 ), 0.25 );
         }
 
         for ( var_2 = 0; var_2 < var_0.size; var_2++ )
         {
             if ( var_0[var_2].classname != "script_model" )
-                var_0[var_2] _meth_8057();
+                var_0[var_2] disconnectpaths();
         }
     }
 }
@@ -396,7 +396,7 @@ cg_swap_tank_treads_mat()
         level waittill( "transients_intro_to_fob" );
 
     var_0 = getent( "tanks_no_tread_roll", "targetname" );
-    var_0 _meth_846C( "mtl_bigtank_tread", "mq/mtl_bigtank_tread_static" );
+    var_0 overridematerial( "mtl_bigtank_tread", "mq/mtl_bigtank_tread_static" );
 }
 
 #using_animtree("generic_human");
@@ -414,14 +414,14 @@ subway_setup_dead_civilians_cg()
             var_3 = 0;
 
         var_5 = spawn( "script_model", var_0[var_3].origin );
-        var_5 _meth_80B1( var_2[var_3] );
+        var_5 setmodel( var_2[var_3] );
         var_5 attach( var_1[var_3] );
         var_5 setcontents( 0 );
         var_5.angles = var_0[var_3].angles;
-        var_5 _meth_8115( #animtree );
+        var_5 useanimtree( #animtree );
         var_5.animname = "generic";
         var_0[var_4] thread maps\_anim::anim_loop_solo( var_5, var_0[var_3].animation );
-        var_5 _meth_808F();
+        var_5 castshadows();
         thread cg_kill_entity_on_transition( var_5, "pre_transients_subway_to_shopping_dist" );
         var_3 += 1;
     }
@@ -443,65 +443,65 @@ subway_setup_civilians_cg()
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
     {
         var_5 = spawn( "script_model", var_3[var_4].origin );
-        var_5 _meth_80B1( var_0[var_4] );
+        var_5 setmodel( var_0[var_4] );
         var_5 attach( var_1[var_4] );
 
         if ( var_2[var_4] == "civilian_texting_sitting" || var_2[var_4] == "civilian_texting_standing" )
         {
             var_6 = spawn( "script_model", var_3[var_4].origin );
-            var_6 _meth_80B1( "cellphone_kit_05" );
+            var_6 setmodel( "cellphone_kit_05" );
 
             if ( var_2[var_4] == "civilian_texting_sitting" )
             {
                 var_6.origin = var_5 gettagorigin( "J_Wrist_RI" );
                 var_6.angles = var_5 gettagangles( "J_Wrist_RI" );
-                var_6 _meth_804D( var_5, "J_Wrist_RI", ( -3.9, -1.8, -0.7 ), ( -30, 30, -10 ) );
+                var_6 linkto( var_5, "J_Wrist_RI", ( -3.9, -1.8, -0.7 ), ( -30, 30, -10 ) );
             }
 
             if ( var_2[var_4] == "civilian_texting_standing" )
             {
                 var_6.origin = var_5 gettagorigin( "J_Wrist_LE" );
                 var_6.angles = var_5 gettagangles( "J_Wrist_LE" );
-                var_6 _meth_804D( var_5, "J_Wrist_LE", ( 3.5, 0.9, 0.6 ), ( -180, 200, 0 ) );
+                var_6 linkto( var_5, "J_Wrist_LE", ( 3.5, 0.9, 0.6 ), ( -180, 200, 0 ) );
             }
         }
 
         if ( var_2[var_4] == "civilian_reader_1" || var_2[var_4] == "civilian_reader_2" )
         {
             var_7 = spawn( "script_model", var_3[var_4].origin );
-            var_7 _meth_80B1( "newspaper_folded" );
+            var_7 setmodel( "newspaper_folded" );
 
             if ( var_2[var_4] == "civilian_reader_1" )
             {
                 var_7.origin = var_5 gettagorigin( "J_Wrist_LE" );
                 var_7.angles = var_5 gettagangles( "J_Wrist_LE" );
-                var_7 _meth_804D( var_5, "J_Wrist_LE", ( 5.5, 2.66, -2 ), ( -13.3, 59.4, 41 ) );
+                var_7 linkto( var_5, "J_Wrist_LE", ( 5.5, 2.66, -2 ), ( -13.3, 59.4, 41 ) );
             }
 
             if ( var_2[var_4] == "civilian_reader_2" )
             {
                 var_7.origin = var_5 gettagorigin( "J_Wrist_RI" );
                 var_7.angles = var_5 gettagangles( "J_Wrist_RI" );
-                var_7 _meth_804D( var_5, "J_Wrist_RI", ( -4.75, -3.5, 0.6 ), ( 0, 60, -90 ) );
+                var_7 linkto( var_5, "J_Wrist_RI", ( -4.75, -3.5, 0.6 ), ( 0, 60, -90 ) );
             }
         }
 
         if ( var_2[var_4] == "parabolic_leaning_guy_smoking_idle" )
         {
             var_8 = spawn( "script_model", var_3[var_4].origin );
-            var_8 _meth_80B1( "prop_cigarette" );
+            var_8 setmodel( "prop_cigarette" );
             var_8.origin = var_5 gettagorigin( "J_Wrist_RI" );
             var_8.angles = var_5 gettagangles( "J_Wrist_RI" );
-            var_8 _meth_804D( var_5, "J_Wrist_RI", ( -5.5, -0.5, 1.55 ), ( 90, -30, 110 ) );
+            var_8 linkto( var_5, "J_Wrist_RI", ( -5.5, -0.5, 1.55 ), ( 90, -30, 110 ) );
             playfxontag( common_scripts\utility::getfx( "cigarette_smk" ), var_5, "tag_inhand" );
         }
 
         var_5 setcontents( 0 );
         var_5.angles = var_3[var_4].angles;
-        var_5 _meth_8115( #animtree );
+        var_5 useanimtree( #animtree );
         var_5.animname = "generic";
         var_3[var_4] thread maps\_anim::anim_loop_solo( var_5, var_2[var_4] );
-        var_5 _meth_808F();
+        var_5 castshadows();
         thread cg_kill_entity_on_transition( var_5, "pre_transients_subway_to_shopping_dist" );
     }
 }
@@ -530,26 +530,26 @@ subway_civ_speaking_groups_setup_cg()
     for ( var_5 = 0; var_5 < var_0.size; var_5++ )
     {
         var_8[var_5] = spawn( "script_model", var_2[var_5] );
-        var_8[var_5] _meth_80B1( var_0[var_5] );
+        var_8[var_5] setmodel( var_0[var_5] );
         var_8[var_5] attach( var_1[var_5] );
 
         if ( var_7[var_5] == "civilian_smoking_b" )
         {
             var_9 = spawn( "script_model", var_2[var_5] );
-            var_9 _meth_80B1( "prop_cigarette" );
+            var_9 setmodel( "prop_cigarette" );
             var_9.origin = var_8[var_5] gettagorigin( "J_Wrist_RI" );
             var_9.angles = var_8[var_5] gettagangles( "J_Wrist_RI" );
-            var_9 _meth_804D( var_8[var_5], "J_Wrist_RI", ( -5.5, -0.5, 1 ), ( 70, -30, 90 ) );
+            var_9 linkto( var_8[var_5], "J_Wrist_RI", ( -5.5, -0.5, 1 ), ( 70, -30, 90 ) );
             playfxontag( common_scripts\utility::getfx( "cigarette_smk" ), var_8[var_5], "tag_inhand" );
         }
 
         var_8[var_5] setcontents( 0 );
         var_8[var_5].angles = var_3[var_5];
-        var_8[var_5] _meth_8115( #animtree );
+        var_8[var_5] useanimtree( #animtree );
         var_8[var_5].animname = "generic";
         var_10 = common_scripts\utility::getstruct( var_4[var_5], "targetname" );
         var_10 thread maps\_anim::anim_loop_solo( var_8[var_5], var_7[var_5] );
-        var_8[var_5] _meth_808F();
+        var_8[var_5] castshadows();
         thread cg_kill_entity_on_transition( var_8[var_5], "pre_transients_subway_to_shopping_dist" );
     }
 
@@ -583,7 +583,7 @@ subway_execution_scene_cg()
     foreach ( var_12 in var_4 )
     {
         var_13 = spawn( "script_model", var_12.origin );
-        var_13 _meth_80B1( var_7[var_9] );
+        var_13 setmodel( var_7[var_9] );
         var_13 attach( var_8[var_9] );
         var_13.animation = var_12.animation;
         var_10[var_10.size] = var_13;
@@ -631,13 +631,13 @@ seo_meet_atlas_civ_scriptmodel_cg()
 {
     var_0 = common_scripts\utility::getstruct( "civ_vip1_cg", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "civ_urban_male_body_e" );
+    var_1 setmodel( "civ_urban_male_body_e" );
     var_1 attach( "civ_seoul_male_head_c" );
     var_1 setcontents( 0 );
     var_1.angles = var_0.angles;
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_1.animname = "vip";
-    var_1 _meth_808F();
+    var_1 castshadows();
     return var_1;
 }
 
@@ -645,7 +645,7 @@ seo_get_vip_away_cg( var_0 )
 {
     level.vip1.origin = var_0.origin;
     level.vip1.angles = var_0.angles;
-    level.vip1 _meth_8115( #animtree );
+    level.vip1 useanimtree( #animtree );
     level.vip1.animname = "vip";
     var_0 thread maps\_anim::anim_single_solo( level.vip1, "seo_post_meet_atlas_walk" );
 }
@@ -692,7 +692,7 @@ tff_ally_check( var_0, var_1 )
 
 tff_trans_ally_check_touching( var_0 )
 {
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.05;
 
     level.tff_trans_ally_check_count--;

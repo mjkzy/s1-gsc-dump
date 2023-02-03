@@ -22,7 +22,7 @@ tryusezombiesquadmate( var_0, var_1 )
 
     if ( maps\mp\agents\_agent_utility::getnumactiveagents( "zm_squadmate" ) >= 1 || isdefined( level.zm_squadmate_waiting_spawn ) )
     {
-        self iclientprintlnbold( &"ZOMBIE_SQUADMATE_AGENT_MAX" );
+        self iprintlnbold( &"ZOMBIE_SQUADMATE_AGENT_MAX" );
         return 0;
     }
 
@@ -37,7 +37,7 @@ tryusezombiesquadmate( var_0, var_1 )
 
     level.zm_squadmate_waiting_spawn = 1;
     thread resetvarsondeath();
-    self iclientprintlnbold( &"ZOMBIE_SQUADMATE_SQUADMATE_REQUEST" );
+    self iprintlnbold( &"ZOMBIE_SQUADMATE_SQUADMATE_REQUEST" );
     var_2 = 0;
     var_3 = [];
     var_4 = 0;
@@ -63,7 +63,7 @@ tryusezombiesquadmate( var_0, var_1 )
         for ( var_3 = common_scripts\utility::array_randomize( var_3 ); var_2 > 0; var_2-- )
         {
             var_7 = var_3[var_2 - 1];
-            var_7 _meth_826B();
+            var_7 suicide();
         }
     }
 
@@ -147,7 +147,7 @@ destroyonownerdisconnect( var_0 )
     if ( maps\mp\gametypes\_hostmigration::waittillhostmigrationdone() )
         wait 0.05;
 
-    self _meth_826B();
+    self suicide();
 }
 
 squadmate_agent_think()
@@ -245,7 +245,7 @@ squadmate_agent_think()
         wait 0.05;
     }
 
-    self _meth_826B();
+    self suicide();
 }
 
 stay_in_playspace()
@@ -282,7 +282,7 @@ monitorteleporttraversals()
     for (;;)
     {
         var_0 = undefined;
-        var_1 = self _meth_8370();
+        var_1 = self botgetnodesonpath();
 
         for ( var_2 = 0; var_2 < var_1.size - 1; var_2++ )
         {
@@ -341,7 +341,7 @@ defuse_bomb( var_0 )
 
 stop_defusing( var_0 )
 {
-    self _meth_8356();
+    self botclearscriptgoal();
 }
 
 getvalidspawnnodesforsquadmate( var_0 )
@@ -349,7 +349,7 @@ getvalidspawnnodesforsquadmate( var_0 )
     var_1 = self.origin;
 
     if ( isplayer( self ) )
-        var_2 = self _meth_8387();
+        var_2 = self getnearestnode();
     else
         var_2 = getclosestnodeinsight( var_1 );
 
@@ -388,17 +388,17 @@ getvalidspawnnodesforsquadmate( var_0 )
         return [];
 
     var_7 = [];
-    var_8 = _func_2D1( var_2 );
+    var_8 = nodegetsplitgroup( var_2 );
 
     foreach ( var_10 in var_5 )
     {
-        if ( !var_10 _meth_8035( "stand" ) )
+        if ( !var_10 doesnodeallowstance( "stand" ) )
             continue;
 
         if ( maps\mp\zombies\_util::is_true( var_10.nosoldierspawn ) )
             continue;
 
-        var_11 = _func_2D1( var_10 );
+        var_11 = nodegetsplitgroup( var_10 );
 
         if ( var_8 != var_11 )
             continue;
@@ -428,7 +428,7 @@ getvalidspawnnodesforsquadmate( var_0 )
         {
             var_18 = var_17[var_6];
 
-            if ( !self _meth_83E6( var_18.origin + var_14, var_18.origin, 24, 80, 1 ) )
+            if ( !self aiphysicstracepassed( var_18.origin + var_14, var_18.origin, 24, 80, 1 ) )
             {
                 var_18.nosoldierspawn = 1;
                 continue;

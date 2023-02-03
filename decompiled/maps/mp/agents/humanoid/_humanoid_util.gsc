@@ -9,7 +9,7 @@ canhumanoidmovepointtopoint( var_0, var_1, var_2 )
     var_3 = ( 0, 0, 1 ) * var_2;
     var_4 = var_0 + var_3;
     var_5 = var_1 + var_3;
-    return _func_2AB( var_4, self.radius, self.height - var_2, self, 1, 0, 0, var_5 );
+    return capsuletracepassed( var_4, self.radius, self.height - var_2, self, 1, 0, 0, var_5 );
 }
 
 getnummeleesectors()
@@ -70,7 +70,7 @@ getoriginformeleesectors( var_0 )
                 var_1 = var_2.origin;
         }
     }
-    else if ( isplayer( var_0 ) && ( var_0 _meth_83B3() || var_0 _meth_83B4() ) )
+    else if ( isplayer( var_0 ) && ( var_0 isjumping() || var_0 ishighjumping() ) )
     {
         if ( !isdefined( var_0.playergroundpostime ) )
             var_0.playergroundpostime = 0;
@@ -104,11 +104,11 @@ hasvalidmeleesectorsfortype( var_0, var_1 )
 
 calculatenearestnodetounreachabledrone()
 {
-    var_0 = self _meth_8387();
+    var_0 = self getnearestnode();
 
     if ( isdefined( var_0 ) )
     {
-        var_1 = _func_2D1( var_0 );
+        var_1 = nodegetsplitgroup( var_0 );
 
         if ( !isdefined( self.distractiondrone.nearestnodeforgroup ) )
             self.distractiondrone.nearestnodeforgroup = [];
@@ -130,9 +130,9 @@ calculatenearestnodetounreachabledrone()
 
             foreach ( var_9 in var_6 )
             {
-                if ( _func_2D1( var_9 ) == var_1 )
+                if ( nodegetsplitgroup( var_9 ) == var_1 )
                 {
-                    if ( !isdefined( var_7 ) || _func_1FF( var_9, var_7, 1 ) )
+                    if ( !isdefined( var_7 ) || nodesvisible( var_9, var_7, 1 ) )
                     {
                         var_4 = var_9;
                         break;
@@ -156,11 +156,11 @@ calculatenearestnodetounreachabledrone()
 
 hascalculatednearestnodetounreachabledrone()
 {
-    var_0 = self _meth_8387();
+    var_0 = self getnearestnode();
 
     if ( isdefined( var_0 ) && isdefined( self.distractiondrone.nearestnodeforgroup ) )
     {
-        var_1 = self.distractiondrone.nearestnodeforgroup[_func_2D1( var_0 )];
+        var_1 = self.distractiondrone.nearestnodeforgroup[nodegetsplitgroup( var_0 )];
 
         if ( isdefined( var_1 ) )
             return 1;
@@ -171,10 +171,10 @@ hascalculatednearestnodetounreachabledrone()
 
 getnearestnodetounreachabledrone()
 {
-    var_0 = self _meth_8387();
-    var_1 = self.distractiondrone.nearestnodeforgroup[_func_2D1( var_0 )];
+    var_0 = self getnearestnode();
+    var_1 = self.distractiondrone.nearestnodeforgroup[nodegetsplitgroup( var_0 )];
 
-    if ( !_func_2BA( var_1 ) )
+    if ( !isnumber( var_1 ) )
         return var_1;
     else
         return undefined;
@@ -225,7 +225,7 @@ getmeleetargetpoint( var_0, var_1 )
         }
 
         if ( var_7 < 0 )
-            var_7 = self _meth_81B1() % getnummeleesectors();
+            var_7 = self getentitynumber() % getnummeleesectors();
 
         var_10 = var_7;
     }
@@ -334,7 +334,7 @@ dropsectorpostoground( var_0, var_1, var_2, var_3 )
 
     var_4 = var_0 + ( 0, 0, var_3 );
     var_5 = var_0 + ( 0, 0, var_3 * -1 );
-    var_6 = self _meth_83E5( var_4, var_5, var_1, var_2, 1 );
+    var_6 = self aiphysicstrace( var_4, var_5, var_1, var_2, 1 );
 
     if ( abs( var_6[2] - var_4[2] ) < 0.1 )
         return undefined;
@@ -474,17 +474,17 @@ leapdisable()
 changeanimclass( var_0, var_1 )
 {
     self endon( "death" );
-    self _meth_839D( 1 );
+    self scragentsetscripted( 1 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "ChangeAnimClass" );
     self.inpain = 1;
-    self _meth_8396( "face angle abs", ( 0, self.angles[1], 0 ) );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
-    maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( var_1, randomint( self _meth_83D6( var_1 ) ), "change_anim_class" );
-    self _meth_83D0( var_0 );
+    self scragentsetorientmode( "face angle abs", ( 0, self.angles[1], 0 ) );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
+    maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( var_1, randomint( self getanimentrycount( var_1 ) ), "change_anim_class" );
+    self setanimclass( var_0 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "ChangeAnimClass" );
     self.inpain = 0;
-    self _meth_839D( 0 );
+    self scragentsetscripted( 0 );
 }
 
 scriptedanimation( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -494,22 +494,22 @@ scriptedanimation( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !isdefined( var_5 ) )
         var_5 = 0;
 
-    var_6 = self _meth_83D6( var_2 );
+    var_6 = self getanimentrycount( var_2 );
     var_3 = isdefined( var_3 ) && var_3;
 
     if ( isdefined( var_6 ) && var_6 > 0 )
     {
-        self _meth_839D( 1 );
+        self scragentsetscripted( 1 );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "ScriptedAnimation" );
 
         if ( var_3 )
             self.inspawnanim = 1;
 
-        self _meth_8397( "anim deltas" );
-        self _meth_8396( "face angle abs", var_1 );
-        self _meth_8395( 1, 1 );
-        self _meth_8398( "noclip" );
-        var_6 = self _meth_83D6( var_2 );
+        self scragentsetanimmode( "anim deltas" );
+        self scragentsetorientmode( "face angle abs", var_1 );
+        self scragentsetanimscale( 1, 1 );
+        self scragentsetphysicsmode( "noclip" );
+        var_6 = self getanimentrycount( var_2 );
         var_7 = randomint( var_6 );
 
         if ( !var_5 )
@@ -526,14 +526,14 @@ scriptedanimation( var_0, var_1, var_2, var_3, var_4, var_5 )
             self.hastraversed = 1;
         }
 
-        self _meth_839D( 0 );
+        self scragentsetscripted( 0 );
     }
 }
 
 lerptoendonground( var_0, var_1 )
 {
     var_2 = 2;
-    var_3 = self _meth_83D3( var_0, var_1 );
+    var_3 = self getanimentry( var_0, var_1 );
     var_4 = getlerptime( var_3 );
     var_5 = getposinspaceatanimtime( var_3, var_4 );
     var_6 = getverticaldeltatogroundatanimend( var_3 );
@@ -550,7 +550,7 @@ getverticaldeltatogroundatanimend( var_0 )
     var_4 = rotatevector( var_4, self.angles );
     var_5 = self.origin + var_4;
     var_6 = ( 0, 0, var_1 );
-    var_7 = self _meth_83E5( var_5 + var_6, var_5 - var_6, var_2, var_3 );
+    var_7 = self aiphysicstrace( var_5 + var_6, var_5 - var_6, var_2, var_3 );
     var_8 = var_7 - var_5;
     return var_8[2];
 }
@@ -575,9 +575,9 @@ performlerp( var_0, var_1 )
 {
     self endon( "death" );
     level endon( "game_ended" );
-    self _meth_839F( self.origin, var_0, var_1 );
+    self scragentdoanimlerp( self.origin, var_0, var_1 );
     wait(var_1);
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
 }
 
 getpainangleindexvariable( var_0, var_1 )
@@ -626,7 +626,7 @@ isentstandingonme( var_0 )
     var_5 = self.radius + var_4;
     var_5 *= var_5;
 
-    if ( _func_220( self.origin, var_0.origin ) > var_5 )
+    if ( distance2dsquared( self.origin, var_0.origin ) > var_5 )
         return 0;
 
     return 1;
@@ -635,7 +635,7 @@ isentstandingonme( var_0 )
 setfavoriteenemy( var_0 )
 {
     self.favoriteenemy = var_0;
-    self _meth_854C( var_0 );
+    self agentsetfavoriteenemy( var_0 );
 }
 
 damagehitangle( var_0, var_1 )
@@ -691,12 +691,12 @@ has_humanoid_exo_abilities()
 
 enable_humanoid_exo_traverse()
 {
-    self _meth_853D( 1 );
+    self scragentallowboost( 1 );
 }
 
 disable_humanoid_exo_traverse()
 {
-    self _meth_853D( 0 );
+    self scragentallowboost( 0 );
 }
 
 setup_humanoid_exo_combat()
@@ -784,7 +784,7 @@ withinmeleeradiusbase()
 
     if ( !var_0 && ( isplayer( self.curmeleetarget ) || isagent( self.curmeleetarget ) ) && isalive( self.curmeleetarget ) )
     {
-        var_1 = self.curmeleetarget _meth_8557();
+        var_1 = self.curmeleetarget getgroundentity();
 
         if ( isdefined( var_1 ) && isdefined( var_1.targetname ) && var_1.targetname == "care_package" )
             var_0 = distancesquared( self.origin, self.curmeleetarget.origin ) <= self.meleeradiusbasesq * 4;

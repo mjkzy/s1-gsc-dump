@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "npc_exo_armor_base" );
+    self setmodel( "npc_exo_armor_base" );
     self attach( "npc_exo_armor_atlas_head", "", 1 );
     self.headmodel = "npc_exo_armor_atlas_head";
     self.voice = "atlas";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

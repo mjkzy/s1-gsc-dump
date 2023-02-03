@@ -57,7 +57,7 @@ detect_enemies()
     level endon( "end_sonar_threads" );
     level.player endon( "death" );
     level.player endon( "sonar_vision_off" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
 
     foreach ( var_2 in var_0 )
     {
@@ -75,7 +75,7 @@ detection_highlight_hud_effect( var_0 )
     var_1.color = ( 0.025, 0.05, 1 );
     var_1.alpha = 0.01;
     var_2 = 5;
-    var_1 _meth_83A4( var_2 );
+    var_1 setradarhighlight( var_2 );
     var_1 thread destroy_radar_hud_elem_early();
     wait(var_2);
     var_1 destroy();
@@ -95,7 +95,7 @@ detection_grenade_hud_effect( var_0 )
     var_2 = 2;
     var_3 = 5000;
     var_4 = 1500;
-    var_1 _meth_83A3( int( var_3 + var_4 / 2 ), int( var_4 ), var_2 + 0.05 );
+    var_1 setradarping( int( var_3 + var_4 / 2 ), int( var_4 ), var_2 + 0.05 );
     var_1 thread destroy_radar_hud_elem_early();
     wait(var_2);
     var_1 destroy();
@@ -118,7 +118,7 @@ create_nvg_overlay( var_0, var_1, var_2 )
     var_3.horzalign = "fullscreen";
     var_3.vertalign = "fullscreen";
     var_3.alpha = var_2;
-    var_3 _meth_80CC( var_0, 640, 480 );
+    var_3 setshader( var_0, 640, 480 );
     return var_3;
 }
 

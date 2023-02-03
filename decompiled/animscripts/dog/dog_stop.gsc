@@ -15,8 +15,8 @@ main()
     }
 
     self endon( "killanimscript" );
-    self _meth_8142( %body, 0.2 );
-    self _meth_814B( %dog_idle_knob );
+    self clearanim( %body, 0.2 );
+    self setanim( %dog_idle_knob );
     thread waitforstatechange();
     self.dognextidletwitchtime = getdognexttwitchtime();
     self.moveanimtype = "walk";
@@ -24,7 +24,7 @@ main()
 
     for (;;)
     {
-        if ( self _meth_83CD() )
+        if ( self isdogbeingdriven() )
         {
             dodrivenidle();
             continue;
@@ -38,7 +38,7 @@ main()
 
         var_0 = dogstop_getnode();
 
-        if ( !self _meth_83CD() && ( !isdefined( self.bidlelooking ) || !self.bidlelooking ) )
+        if ( !self isdogbeingdriven() && ( !isdefined( self.bidlelooking ) || !self.bidlelooking ) )
         {
             var_1 = 262144;
             var_2 = self.doghandler;
@@ -66,7 +66,7 @@ main()
                     }
                 }
             }
-            else if ( ( !isdefined( var_0 ) || !issubstr( var_0.type, "Cover" ) || isdefined( self.favoriteenemy ) ) && isdefined( self.enemy ) && isalive( self.enemy ) && ( self _meth_81BF( self.enemy, 5 ) || distancesquared( self.origin, self.enemy.origin ) < var_1 ) )
+            else if ( ( !isdefined( var_0 ) || !issubstr( var_0.type, "Cover" ) || isdefined( self.favoriteenemy ) ) && isdefined( self.enemy ) && isalive( self.enemy ) && ( self seerecently( self.enemy, 5 ) || distancesquared( self.origin, self.enemy.origin ) < var_1 ) )
             {
                 var_8 = self.enemy.origin - self.origin;
                 turntoangle( vectortoyaw( var_8 ) );
@@ -74,7 +74,7 @@ main()
             else if ( isdefined( var_0 ) && shouldfacenodedir( var_0 ) )
                 turntoangle( var_0.angles[1] );
 
-            self _meth_818F( "face angle", self.angles[1] );
+            self orientmode( "face angle", self.angles[1] );
         }
 
         if ( isdefined( self.customidleanimset ) )
@@ -104,7 +104,7 @@ main()
             {
                 stopidlesound();
                 stoplookatidle();
-                var_10 = !isdefined( self.enemy ) || _func_220( self.origin, self.enemy.origin ) > 589824;
+                var_10 = !isdefined( self.enemy ) || distance2dsquared( self.origin, self.enemy.origin ) > 589824;
 
                 if ( var_10 && gettime() > self.dognextidletwitchtime )
                 {
@@ -152,7 +152,7 @@ playidleanim( var_0, var_1, var_2, var_3, var_4 )
 
         if ( isdefined( var_5 ) )
         {
-            self _meth_810D( "dog_idle_transition", var_5, 1, 0.2, self.animplaybackrate );
+            self setflaggedanimknobrestart( "dog_idle_transition", var_5, 1, 0.2, self.animplaybackrate );
             animscripts\shared::donotetracks( "dog_idle_transition" );
             var_3 = 0.2;
         }
@@ -161,9 +161,9 @@ playidleanim( var_0, var_1, var_2, var_3, var_4 )
     self.idleanimtype = var_0;
 
     if ( var_2 )
-        self _meth_810D( "dog_idle", var_1, 1, var_3, self.animplaybackrate );
+        self setflaggedanimknobrestart( "dog_idle", var_1, 1, var_3, self.animplaybackrate );
     else
-        self _meth_8152( "dog_idle", var_1, 1, var_3, self.animplaybackrate );
+        self setflaggedanimknob( "dog_idle", var_1, 1, var_3, self.animplaybackrate );
 
     if ( var_4 > 0 )
         animscripts\notetracks::donotetracksfortime( var_4, "dog_idle" );
@@ -174,18 +174,18 @@ playidleanim( var_0, var_1, var_2, var_3, var_4 )
 waitforstatechange()
 {
     self endon( "killanimscript" );
-    var_0 = self _meth_83CD();
+    var_0 = self isdogbeingdriven();
     var_1 = self.defaultidlestateoverride;
 
     for (;;)
     {
-        var_2 = self _meth_83CD();
+        var_2 = self isdogbeingdriven();
 
         if ( var_2 != var_0 )
         {
             killidleanim();
             var_0 = var_2;
-            self _meth_818F( "face angle", self.angles[1] );
+            self orientmode( "face angle", self.angles[1] );
         }
         else if ( animscripts\dog\dog_move::aredifferent( self.defaultidlestateoverride, var_1 ) )
         {
@@ -238,7 +238,7 @@ handledogturnnotetracks( var_0 )
         self.prevturnrate = self.turnrate;
         self.turnrate = self.dogturnrate;
         self.dogturnrate = undefined;
-        self _meth_818F( "face angle", var_1 );
+        self orientmode( "face angle", var_1 );
     }
     else if ( var_0 == "turn_end" )
     {
@@ -272,12 +272,12 @@ turntoangle( var_0, var_1 )
         var_7 = 0.05;
 
     if ( isdefined( var_1 ) && var_1 )
-        self _meth_818E( "zonly_physics" );
+        self animmode( "zonly_physics" );
     else
-        self _meth_818E( "angle deltas" );
+        self animmode( "angle deltas" );
 
-    self _meth_814B( %dog_idle_knob, 1, var_7 );
-    self _meth_810D( "dog_turn", var_4, 1, var_7 );
+    self setanim( %dog_idle_knob, 1, var_7 );
+    self setflaggedanimknobrestart( "dog_turn", var_4, 1, var_7 );
 
     if ( animhasnotetrack( var_4, "turn_begin" ) && animhasnotetrack( var_4, "turn_end" ) )
     {
@@ -286,26 +286,26 @@ turntoangle( var_0, var_1 )
         var_10 = ( var_9[0] - var_8[0] ) * var_5;
         self.dogturnadjust = angleclamp180( var_3 - var_6 );
         self.dogturnrate = max( abs( self.dogturnadjust ) / var_10 / 1000, 0.01 );
-        self _meth_818F( "face angle", self.angles[1] );
+        self orientmode( "face angle", self.angles[1] );
         animscripts\shared::donotetracks( "dog_turn", ::handledogturnnotetracks );
     }
     else
     {
         self.prevturnrate = self.turnrate;
         self.turnrate = max( abs( angleclamp180( var_3 - var_6 ) ) / var_5 / 1000, 0.01 );
-        self _meth_818F( "face angle", angleclamp180( var_0 - var_6 ) );
+        self orientmode( "face angle", angleclamp180( var_0 - var_6 ) );
         animscripts\shared::donotetracks( "dog_turn" );
         self.turnrate = self.prevturnrate;
         self.prevturnrate = undefined;
     }
 
-    self _meth_8142( var_4, 0.2 );
-    self _meth_818E( "none" );
+    self clearanim( var_4, 0.2 );
+    self animmode( "none" );
 }
 
 rotatetoangle( var_0, var_1 )
 {
-    self _meth_818F( "face angle", var_0 );
+    self orientmode( "face angle", var_0 );
 
     while ( abs( angleclamp180( var_0 - self.angles[1] ) ) > var_1 )
         wait 0.1;
@@ -402,10 +402,10 @@ stoplookatidle()
     self.bidlelooking = undefined;
     self.idletrackloop = undefined;
     self notify( "endIdleLookAt" );
-    self _meth_8142( %look_2, 1 );
-    self _meth_8142( %look_4, 1 );
-    self _meth_8142( %look_6, 1 );
-    self _meth_8142( %look_8, 1 );
+    self clearanim( %look_2, 1 );
+    self clearanim( %look_4, 1 );
+    self clearanim( %look_6, 1 );
+    self clearanim( %look_8, 1 );
 }
 
 lookatidleupdate()
@@ -472,7 +472,7 @@ getlookattarget( var_0 )
                 break;
         }
 
-        var_9 = _func_220( self.origin, var_3[var_7].origin );
+        var_9 = distance2dsquared( self.origin, var_3[var_7].origin );
         var_4[var_7] = 1 / var_9;
         var_5 += var_4[var_7];
     }
@@ -494,12 +494,12 @@ idletrackloop()
     self endon( "killanimscript" );
     self endon( "endIdleLookAt" );
     self.idletrackloop = 1;
-    self _meth_8142( %dog_idle_knob, 0.2 );
-    self _meth_8143( getdogstopanimbase(), 1, 0.5 );
-    self _meth_8144( getdogstopanimlook( "2" ), 1, 0 );
-    self _meth_8144( getdogstopanimlook( "4" ), 1, 0 );
-    self _meth_8144( getdogstopanimlook( "6" ), 1, 0 );
-    self _meth_8144( getdogstopanimlook( "8" ), 1, 0 );
+    self clearanim( %dog_idle_knob, 0.2 );
+    self setanimknob( getdogstopanimbase(), 1, 0.5 );
+    self setanimknoblimited( getdogstopanimlook( "2" ), 1, 0 );
+    self setanimknoblimited( getdogstopanimlook( "4" ), 1, 0 );
+    self setanimknoblimited( getdogstopanimlook( "6" ), 1, 0 );
+    self setanimknoblimited( getdogstopanimlook( "8" ), 1, 0 );
     var_0 = 90;
     var_1 = -100;
     var_2 = -25;
@@ -509,11 +509,11 @@ idletrackloop()
 
     for (;;)
     {
-        var_4 = self _meth_80A8();
+        var_4 = self geteye();
 
         if ( isdefined( self.lookattarget ) )
         {
-            var_5 = self.lookattarget _meth_80A8();
+            var_5 = self.lookattarget geteye();
             var_6 = var_5 - var_4;
             var_7 = vectortoangles( var_6 );
         }
@@ -528,7 +528,7 @@ idletrackloop()
             self.currenttrackingyaw = 0;
             self.currenttrackingyawspeed = 0;
             turntoangle( self.angles[1] + var_8 * 0.75 );
-            self _meth_8143( getdogstopanimbase(), 1, 0.1 );
+            self setanimknob( getdogstopanimbase(), 1, 0.1 );
             continue;
         }
 
@@ -549,10 +549,10 @@ idletrackloop()
         else
             var_14 = clamp( var_9 / var_3, 0, 1 );
 
-        self _meth_814C( %look_2, var_14, 1 );
-        self _meth_814C( %look_4, var_11, 0.1 );
-        self _meth_814C( %look_6, var_12, 0.1 );
-        self _meth_814C( %look_8, var_13, 1 );
+        self setanimlimited( %look_2, var_14, 1 );
+        self setanimlimited( %look_4, var_11, 0.1 );
+        self setanimlimited( %look_6, var_12, 0.1 );
+        self setanimlimited( %look_8, var_13, 1 );
         wait 0.05;
     }
 }
@@ -630,7 +630,7 @@ getdefaultidlestate( var_0 )
         return self.defaultidlestateoverride;
 
     var_1 = isdefined( self.enemy ) && isalive( self.enemy );
-    var_2 = var_1 && distancesquared( self.origin, self.enemy.origin ) < 1000000 && ( isdefined( self.favoriteenemy ) || self _meth_81BF( self.enemy, 5 ) );
+    var_2 = var_1 && distancesquared( self.origin, self.enemy.origin ) < 1000000 && ( isdefined( self.favoriteenemy ) || self seerecently( self.enemy, 5 ) );
     var_3 = dogstop_getnode();
 
     if ( isdefined( self.aggresivelookat ) )
@@ -679,24 +679,24 @@ should_growl()
     if ( !isalive( self.enemy ) )
         return 1;
 
-    return !self _meth_81BE( self.enemy );
+    return !self cansee( self.enemy );
 }
 
 lookattarget( var_0 )
 {
     self endon( "killanimscript" );
     self endon( "stop tracking" );
-    self _meth_8142( %german_shepherd_look_2, 0 );
-    self _meth_8142( %german_shepherd_look_4, 0 );
-    self _meth_8142( %german_shepherd_look_6, 0 );
-    self _meth_8142( %german_shepherd_look_8, 0 );
-    self _meth_8173();
+    self clearanim( %german_shepherd_look_2, 0 );
+    self clearanim( %german_shepherd_look_4, 0 );
+    self clearanim( %german_shepherd_look_6, 0 );
+    self clearanim( %german_shepherd_look_8, 0 );
+    self setdefaultaimlimits();
     self.rightaimlimit = 90;
     self.leftaimlimit = -90;
-    self _meth_814C( anim.doglookpose[var_0][2], 1, 0 );
-    self _meth_814C( anim.doglookpose[var_0][4], 1, 0 );
-    self _meth_814C( anim.doglookpose[var_0][6], 1, 0 );
-    self _meth_814C( anim.doglookpose[var_0][8], 1, 0 );
+    self setanimlimited( anim.doglookpose[var_0][2], 1, 0 );
+    self setanimlimited( anim.doglookpose[var_0][4], 1, 0 );
+    self setanimlimited( anim.doglookpose[var_0][6], 1, 0 );
+    self setanimlimited( anim.doglookpose[var_0][8], 1, 0 );
     animscripts\track::setanimaimweight( 1, 0.2 );
     animscripts\track::trackloop( %german_shepherd_look_2, %german_shepherd_look_4, %german_shepherd_look_6, %german_shepherd_look_8 );
 }
@@ -717,7 +717,7 @@ loopidlesound( var_0 )
     self endon( "killanimscript" );
     var_1 = spawn( "script_origin", self.origin );
     var_1.angles = self.angles;
-    var_1 _meth_804D( self );
+    var_1 linkto( self );
     self.idlesoundorigin = var_1;
     self.idlesound = var_0;
 
@@ -743,9 +743,9 @@ stopidlesound()
 {
     if ( isdefined( self.idlesoundorigin ) )
     {
-        if ( self.idlesoundorigin _meth_8079() )
+        if ( self.idlesoundorigin iswaitingonsound() )
         {
-            self.idlesoundorigin _meth_80AC();
+            self.idlesoundorigin stopsounds();
             wait 0.05;
         }
 

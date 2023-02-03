@@ -70,9 +70,9 @@ handleicewaterdamagetrigger()
 
     for (;;)
     {
-        while ( isalive( self ) && self _meth_80A9( var_0 ) )
+        while ( isalive( self ) && self istouching( var_0 ) )
         {
-            self _meth_8051( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
+            self dodamage( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
             wait 0.1;
             maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
         }
@@ -167,7 +167,7 @@ setupicebergbonelist()
 setupiceberglane()
 {
     level.iceberglanemodel = spawn( "script_model", ( 0, 0, 0 ) );
-    level.iceberglanemodel _meth_80B1( "cgo_iceberg_lane" );
+    level.iceberglanemodel setmodel( "cgo_iceberg_lane" );
     level.iceberglanemodel.angles = ( 0, -90, 0 );
     level.iceberglanemodel hide();
 
@@ -190,10 +190,10 @@ prepareiceberganimation( var_0 )
     if ( isdefined( level.endstateinit ) )
         return;
 
-    var_0.animproxy _meth_827B( var_0.animname );
-    var_0.animproxy _meth_84BD( 1 );
+    var_0.animproxy scriptmodelplayanimdeltamotion( var_0.animname );
+    var_0.animproxy scriptmodelpauseanim( 1 );
     level waittill( "icebergAnimStart" );
-    var_0.animproxy _meth_84BD( 0 );
+    var_0.animproxy scriptmodelpauseanim( 0 );
 }
 
 setupiceberglanebadvolume()
@@ -223,12 +223,12 @@ setupbonestruct( var_0, var_1, var_2 )
 setupicebergeventshake()
 {
     var_0 = [];
-    var_0["A"] = _func_231( "crack_event_A", "targetname" )[0];
-    var_0["B"] = _func_231( "crack_event_B", "targetname" )[0];
-    var_0["C"] = _func_231( "crack_event_C", "targetname" )[0];
-    var_0["D"] = _func_231( "crack_event_D", "targetname" )[0];
-    var_0["E"] = _func_231( "crack_event_E", "targetname" )[0];
-    var_0["start"] = _func_231( "start_event", "targetname" )[0];
+    var_0["A"] = getscriptablearray( "crack_event_A", "targetname" )[0];
+    var_0["B"] = getscriptablearray( "crack_event_B", "targetname" )[0];
+    var_0["C"] = getscriptablearray( "crack_event_C", "targetname" )[0];
+    var_0["D"] = getscriptablearray( "crack_event_D", "targetname" )[0];
+    var_0["E"] = getscriptablearray( "crack_event_E", "targetname" )[0];
+    var_0["start"] = getscriptablearray( "start_event", "targetname" )[0];
     level.icebergeventscriptables = var_0;
     var_1 = [];
     var_1["A"] = getentarray( "event_shake_trigger_A", "targetname" );
@@ -345,7 +345,7 @@ playicebergchunks1()
     triggerfx( var_0 );
     wait 3;
     level.icebergchunks1 show();
-    level.icebergchunks1 _meth_827B( "vfx_cgo_iceberg_breakup_1" );
+    level.icebergchunks1 scriptmodelplayanimdeltamotion( "vfx_cgo_iceberg_breakup_1" );
     wait 55;
     var_0 delete();
 }
@@ -359,7 +359,7 @@ playicebergchunks2()
     triggerfx( var_0 );
     wait 4;
     level.icebergchunks2 show();
-    level.icebergchunks2 _meth_827B( "vfx_cgo_iceberg_breakup_2" );
+    level.icebergchunks2 scriptmodelplayanimdeltamotion( "vfx_cgo_iceberg_breakup_2" );
     wait 55;
     var_0 delete();
 }
@@ -373,7 +373,7 @@ playicebergchunks3()
     triggerfx( var_0 );
     wait 3;
     level.icebergchunks3 show();
-    level.icebergchunks3 _meth_827B( "vfx_cgo_iceberg_breakup_3" );
+    level.icebergchunks3 scriptmodelplayanimdeltamotion( "vfx_cgo_iceberg_breakup_3" );
     wait 55;
     var_0 delete();
 }
@@ -466,9 +466,9 @@ executeicebergeventshakesection( var_0 )
 
 executeicebergeventscriptable( var_0 )
 {
-    var_0 _meth_83F6( 0, 1 );
+    var_0 setscriptablepartstate( 0, 1 );
     wait 0.1;
-    var_0 _meth_83F6( 0, 0 );
+    var_0 setscriptablepartstate( 0, 0 );
 }
 
 activateicebergshaketriggerlists( var_0 )
@@ -522,7 +522,7 @@ icebergtriggershakethink()
 
     for (;;)
     {
-        while ( !self _meth_8341() || !isdefined( self _meth_83ED() ) )
+        while ( !self isonground() || !isdefined( self getmovingplatformparent() ) )
             waitframe();
 
         thread icebergtriggershake();
@@ -539,13 +539,13 @@ icebergtriggershake()
 
     if ( !isdefined( self.icebergtriggerrumbling ) )
     {
-        self _meth_80AE( level.icebergcontinuingrumble );
+        self playrumblelooponentity( level.icebergcontinuingrumble );
         self.icebergtriggerrumbling = 1;
     }
 
     earthquake( 0.075, 0.5, self.origin, 63360, self );
     wait 0.5;
-    self _meth_80AF( level.icebergcontinuingrumble );
+    self stoprumble( level.icebergcontinuingrumble );
     self.icebergtriggerrumbling = undefined;
 }
 
@@ -564,7 +564,7 @@ setupanimproxy( var_0 )
     var_1 = level.iceberglanemodel gettagorigin( var_0.jointname );
     var_2 = level.iceberglanemodel gettagangles( var_0.jointname );
     var_3 = spawn( "script_model", var_1 );
-    var_3 _meth_80B1( var_0.xmodelname );
+    var_3 setmodel( var_0.xmodelname );
     var_3.angles = var_2;
     return var_3;
 }
@@ -580,7 +580,7 @@ connectenttoanimproxy( var_0, var_1 )
 
     foreach ( var_4 in var_2 )
     {
-        var_4 _meth_8446( var_0.animproxy );
+        var_4 vehicle_jetbikesethoverforcescale( var_0.animproxy );
 
         if ( isdefined( var_1 ) )
             wait(var_1);
@@ -598,7 +598,7 @@ disconnectentfromanimproxyanddelete( var_0, var_1, var_2 )
 
     foreach ( var_5 in var_3 )
     {
-        var_5 _meth_804F();
+        var_5 unlink();
         var_5 delete();
 
         if ( isdefined( var_2 ) )
@@ -727,7 +727,7 @@ disconnectnodes( var_0, var_1 )
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
-        var_2[var_3] _meth_8059();
+        var_2[var_3] disconnectnode();
 
         if ( isdefined( var_1 ) && var_1 && var_3 % 20 == 0 )
             waitframe();
@@ -740,7 +740,7 @@ disconnectnodes( var_0, var_1 )
 
     for ( var_3 = 0; var_3 < var_4.size; var_3++ )
     {
-        var_4[var_3] _meth_8059();
+        var_4[var_3] disconnectnode();
 
         if ( isdefined( var_1 ) && var_1 && var_3 % 20 == 0 )
             waitframe();
@@ -764,7 +764,7 @@ connectnodes( var_0, var_1 )
 
     foreach ( var_5 in var_3 )
     {
-        var_5 _meth_805A();
+        var_5 connectnode();
         reconnectnodepairs( var_5 );
         var_2++;
 
@@ -776,7 +776,7 @@ connectnodes( var_0, var_1 )
 
     foreach ( var_9 in var_7 )
     {
-        var_9 _meth_805A();
+        var_9 connectnode();
         reconnectnodepairs( var_9 );
         var_2++;
 
@@ -866,7 +866,7 @@ onicebergdeath_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7,
     self.prekilledfunc = undefined;
     waittillframeend;
 
-    if ( !isdefined( self.body ) || _func_294( self.body ) || isdefined( self.prev_body ) && self.prev_body == self.body )
+    if ( !isdefined( self.body ) || isremovedentity( self.body ) || isdefined( self.prev_body ) && self.prev_body == self.body )
         return;
 
     var_11 = undefined;
@@ -875,17 +875,17 @@ onicebergdeath_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7,
     {
         if ( isexplosivedamagemod( var_4 ) )
             var_11 = 0.5;
-        else if ( var_4 == "MOD_MELEE_ALT" && var_2 _meth_817C() != "prone" )
+        else if ( var_4 == "MOD_MELEE_ALT" && var_2 getstance() != "prone" )
             var_11 = 0.5;
     }
 
     if ( isdefined( var_11 ) )
         wait(var_11);
 
-    if ( !isdefined( self.body ) || _func_294( self.body ) )
+    if ( !isdefined( self.body ) || isremovedentity( self.body ) )
         return;
 
-    self.body _meth_8023();
+    self.body startragdoll();
     self notify( "doneIcebergDeath" );
 }
 

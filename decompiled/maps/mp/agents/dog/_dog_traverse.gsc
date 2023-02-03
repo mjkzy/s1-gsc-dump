@@ -8,8 +8,8 @@ main()
     if ( !isdefined( level.dogtraverseanims ) )
         initdogtraverseanims();
 
-    var_0 = self _meth_819D();
-    var_1 = self _meth_819E();
+    var_0 = self getnegotiationstartnode();
+    var_1 = self getnegotiationendnode();
 
     if ( var_0.animscript == "bot_walk_forward" )
     {
@@ -17,9 +17,9 @@ main()
         var_3 = length( var_2 ) / 256;
         var_4 = ( var_2[0], var_2[1], 0 );
         var_5 = vectortoangles( var_4 );
-        self _meth_8396( "face angle abs", var_5 );
-        self _meth_839F( var_0.origin, var_1.origin, var_3 );
-        self _meth_8398( "noclip" );
+        self scragentsetorientmode( "face angle abs", var_5 );
+        self scragentdoanimlerp( var_0.origin, var_1.origin, var_3 );
+        self scragentsetphysicsmode( "noclip" );
         maps\mp\agents\_scriptedagents::playanimfortime( "run", var_3 );
     }
     else
@@ -34,9 +34,9 @@ main()
         var_2 = var_1.origin - var_0.origin;
         var_4 = ( var_2[0], var_2[1], 0 );
         var_5 = vectortoangles( var_4 );
-        self _meth_8396( "face angle abs", var_5 );
-        self _meth_8397( "anim deltas" );
-        var_7 = self _meth_83D3( var_6, 0 );
+        self scragentsetorientmode( "face angle abs", var_5 );
+        self scragentsetanimmode( "anim deltas" );
+        var_7 = self getanimentry( var_6, 0 );
         var_8 = getnotetracktimes( var_7, "code_move" );
 
         if ( var_8.size > 0 )
@@ -45,7 +45,7 @@ main()
             var_9 = getmovedelta( var_7, 0, 1 );
 
         var_10 = maps\mp\agents\_scriptedagents::getanimscalefactors( var_2, var_9 );
-        self _meth_8398( "noclip" );
+        self scragentsetphysicsmode( "noclip" );
 
         if ( var_2[2] > 0 )
         {
@@ -64,7 +64,7 @@ main()
                     if ( var_2[2] < 0.75 * var_9[2] )
                         var_13 = 0.5;
 
-                    self _meth_8395( var_12, var_13 );
+                    self scragentsetanimscale( var_12, var_13 );
                     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse", "traverse_jump_start" );
                     var_14 = getnotetracktimes( var_7, "traverse_jump_end" );
                     var_15 = getmovedelta( var_7, 0, var_11[0] );
@@ -88,14 +88,14 @@ main()
                     var_24 = rotatevector( var_23, var_5 );
                     var_25 = var_22 - self.origin;
                     var_10 = maps\mp\agents\_scriptedagents::getanimscalefactors( var_25, var_24, 1 );
-                    self _meth_8395( var_10.xy, var_10.z );
+                    self scragentsetanimscale( var_10.xy, var_10.z );
                     maps\mp\agents\_scriptedagents::waituntilnotetrack( "traverse", "traverse_jump_end" );
-                    self _meth_8395( var_12, var_13 );
+                    self scragentsetanimscale( var_12, var_13 );
                     maps\mp\agents\_scriptedagents::waituntilnotetrack( "traverse", "code_move" );
                     return;
                 }
 
-                self _meth_8395( var_10.xy, var_10.z );
+                self scragentsetanimscale( var_10.xy, var_10.z );
                 maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse" );
                 return;
                 return;
@@ -113,18 +113,18 @@ main()
                     var_29 = var_1.origin - var_27;
                     var_30 = getmovedelta( var_7, 0, var_26[0] );
                     var_10 = maps\mp\agents\_scriptedagents::getanimscalefactors( var_28, var_30 );
-                    self _meth_8395( var_10.xy, var_10.z );
+                    self scragentsetanimscale( var_10.xy, var_10.z );
                     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse", "gravity on" );
                     var_31 = getmovedelta( var_7, var_26[0], 1 );
                     var_10 = maps\mp\agents\_scriptedagents::getanimscalefactors( var_29, var_31 );
-                    self _meth_8395( var_10.xy, var_10.z );
+                    self scragentsetanimscale( var_10.xy, var_10.z );
                     maps\mp\agents\_scriptedagents::waituntilnotetrack( "traverse", "code_move" );
                     return;
                 }
             }
 
             var_32 = getanimlength( var_7 );
-            self _meth_839F( var_0.origin, var_1.origin, var_32 );
+            self scragentdoanimlerp( var_0.origin, var_1.origin, var_32 );
             maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse" );
             return;
             return;
@@ -134,7 +134,7 @@ main()
 
         if ( var_26.size > 0 )
         {
-            self _meth_8395( var_10.xy, 1 );
+            self scragentsetanimscale( var_10.xy, 1 );
             maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse", "gravity on" );
             var_33 = getmovedelta( var_7, 0, var_26[0] );
             var_34 = var_33[2] - var_9[2];
@@ -143,17 +143,17 @@ main()
             {
                 var_35 = self.origin[2] - var_1.origin[2];
                 var_13 = var_35 / var_34;
-                self _meth_8395( var_10.xy, var_13 );
+                self scragentsetanimscale( var_10.xy, var_13 );
                 var_36 = clamp( 2 / var_13, 0.5, 1 );
                 var_37 = var_6 + "_norestart";
-                self _meth_83D2( var_37, 0, var_36 );
+                self setanimstate( var_37, 0, var_36 );
             }
 
             maps\mp\agents\_scriptedagents::waituntilnotetrack( "traverse", "code_move" );
         }
         else
         {
-            self _meth_8395( var_10.xy, var_10.z );
+            self scragentsetanimscale( var_10.xy, var_10.z );
             var_36 = clamp( 2 / var_10.z, 0.5, 1 );
             var_14 = getnotetracktimes( var_7, "traverse_jump_end" );
 
@@ -161,20 +161,20 @@ main()
             {
                 maps\mp\agents\_scriptedagents::playanimnatrateuntilnotetrack( var_6, 0, var_36, "traverse", "traverse_jump_end" );
                 var_37 = var_6 + "_norestart";
-                self _meth_83D2( var_37, 0, 1 );
+                self setanimstate( var_37, 0, 1 );
                 maps\mp\agents\_scriptedagents::waituntilnotetrack( "traverse", "code_move" );
             }
             else
                 maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_6, 0, "traverse" );
         }
 
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
     }
 }
 
 end_script()
 {
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
     self.blockgoalpos = 0;
 }
 

@@ -109,7 +109,7 @@ vehicle_rubberband_think()
         var_12 -= var_9 / var_10;
         var_12 = max( var_12, self.rubberband_settings.min_speed_ips );
         var_13 = var_12 / 17.6;
-        self _meth_8283( var_13, 60, 60 );
+        self vehicle_setspeed( var_13, 60, 60 );
 
         if ( isdefined( self.rubberband_settings.fail_range ) )
         {

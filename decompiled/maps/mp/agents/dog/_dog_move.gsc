@@ -5,7 +5,7 @@ main()
 {
     self endon( "killanimscript" );
     self.blockgoalpos = 0;
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
     startmove();
     continuemovement();
 }
@@ -14,7 +14,7 @@ end_script()
 {
     self.blockgoalpos = 0;
     cancelallbut( undefined );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
 }
 
 setupmovement()
@@ -27,15 +27,15 @@ setupmovement()
 continuemovement()
 {
     setupmovement();
-    self _meth_8397( "code_move" );
-    self _meth_8396( "face motion" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "code_move" );
+    self scragentsetorientmode( "face motion" );
+    self scragentsetanimscale( 1, 1 );
     setmoveanim( self.movemode );
 }
 
 setmoveanim( var_0 )
 {
-    self _meth_83D2( var_0 );
+    self setanimstate( var_0 );
 }
 
 waitforrunwalkchange()
@@ -68,10 +68,10 @@ dosharpturn( var_0 )
     }
 
     var_4 = "sharp_turn";
-    var_5 = self _meth_83D3( var_4, var_3 );
+    var_5 = self getanimentry( var_4, var_3 );
     var_6 = getangledelta( var_5 );
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", ( 0, angleclamp180( var_1[1] - var_6 ), 0 ) );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", ( 0, angleclamp180( var_1[1] - var_6 ), 0 ) );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_4, var_3, "sharp_turn" );
     continuemovement();
 }
@@ -96,10 +96,10 @@ waitforstop()
     }
 
     var_0 = getstopanimstate();
-    var_1 = self _meth_83D3( var_0.state, var_0.index );
+    var_1 = self getanimentry( var_0.state, var_0.index );
     var_2 = getmovedelta( var_1 );
     var_3 = getangledelta( var_1 );
-    var_4 = self _meth_83E1();
+    var_4 = self getpathgoalpos();
     var_5 = var_4 - self.origin;
 
     if ( length( var_5 ) + 12 < length( var_2 ) )
@@ -130,7 +130,7 @@ waitforstop()
 
     if ( distancesquared( var_7, self.origin ) > 4 )
     {
-        self _meth_838F( var_7 );
+        self scragentsetwaypoint( var_7 );
         thread waitforblockedwhilestopping();
         self waittill( "waypoint_reached" );
         self notify( "dogmove_endwait_blockedwhilestopping" );
@@ -140,20 +140,20 @@ waitforstop()
     var_10 = vectortoangles( var_9 );
     var_11 = ( 0, var_10[1] - var_3, 0 );
     var_12 = maps\mp\agents\_scriptedagents::getanimscalefactors( var_4 - self.origin, var_2 );
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", var_11, ( 0, var_10[1], 0 ) );
-    self _meth_8395( var_12.xy, var_12.z );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", var_11, ( 0, var_10[1], 0 ) );
+    self scragentsetanimscale( var_12.xy, var_12.z );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_0.state, var_0.index, "move_stop" );
-    self _meth_8390( self.origin );
+    self scragentsetgoalpos( self.origin );
 }
 
 waitforpathsetwhilestopping()
 {
     self endon( "killanimscript" );
     self endon( "dogmove_endwait_pathsetwhilestopping" );
-    var_0 = self _meth_8391();
+    var_0 = self scragentgetgoalpos();
     self waittill( "path_set" );
-    var_1 = self _meth_8391();
+    var_1 = self scragentgetgoalpos();
 
     if ( distancesquared( var_0, var_1 ) < 1 )
     {
@@ -182,14 +182,14 @@ waitforblockedwhilestopping()
     self endon( "dogmove_endwait_blockedwhilestopping" );
     self waittill( "path_blocked" );
     self notify( "dogmove_endwait_stop" );
-    self _meth_838F( undefined );
+    self scragentsetwaypoint( undefined );
 }
 
 waitforstopearly()
 {
     self endon( "killanimscript" );
     self endon( "dogmove_endwait_stopearly" );
-    var_0 = self _meth_83D3( "move_stop_4", 0 );
+    var_0 = self getanimentry( "move_stop_4", 0 );
     var_1 = getmovedelta( var_0 );
     var_2 = length( var_1 );
     var_3 = self.preferredoffsetfromowner + var_2;
@@ -205,8 +205,8 @@ waitforstopearly()
 
         if ( distancesquared( self.origin, self.owner.origin ) < var_4 )
         {
-            var_5 = self _meth_81B0( var_1 );
-            self _meth_8390( var_5 );
+            var_5 = self localtoworldcoords( var_1 );
+            self scragentsetgoalpos( var_5 );
             break;
         }
 
@@ -230,17 +230,17 @@ cancelallbut( var_0 )
 
 startmove()
 {
-    var_0 = self _meth_819D();
+    var_0 = self getnegotiationstartnode();
 
     if ( isdefined( var_0 ) )
         var_1 = var_0.origin;
     else
-        var_1 = self _meth_83E1();
+        var_1 = self getpathgoalpos();
 
     if ( distancesquared( var_1, self.origin ) < 10000 )
         return;
 
-    var_2 = self _meth_83E0();
+    var_2 = self getlookaheaddir();
     var_3 = vectortoangles( var_2 );
     var_4 = self getvelocity();
 
@@ -254,20 +254,20 @@ startmove()
 
     var_5 = angleclamp180( var_3[1] - self.angles[1] );
     var_6 = maps\mp\agents\_scriptedagents::getangleindex( var_5 );
-    var_7 = self _meth_83D3( "move_start", var_6 );
+    var_7 = self getanimentry( "move_start", var_6 );
     var_8 = getmovedelta( var_7 );
     var_9 = rotatevector( var_8, self.angles ) + self.origin;
 
     if ( !maps\mp\agents\_scriptedagents::canmovepointtopoint( self.origin, var_9 ) )
         return;
 
-    var_10 = _func_221( var_7 );
-    self _meth_8397( "anim deltas" );
+    var_10 = getangledelta3d( var_7 );
+    self scragentsetanimmode( "anim deltas" );
 
     if ( 3 <= var_6 && var_6 <= 5 )
-        self _meth_8396( "face angle abs", ( 0, angleclamp180( var_3[1] - var_10[1] ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, angleclamp180( var_3[1] - var_10[1] ), 0 ) );
     else
-        self _meth_8396( "face angle abs", self.angles );
+        self scragentsetorientmode( "face angle abs", self.angles );
 
     self.blockgoalpos = 1;
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( "move_start", var_6, "move_start" );
@@ -285,9 +285,9 @@ getstopdata()
     }
     else
     {
-        var_1 = self _meth_83E1();
+        var_1 = self getpathgoalpos();
         var_0.pos = var_1;
-        var_0.angles = vectortoangles( self _meth_83E0() );
+        var_0.angles = vectortoangles( self getlookaheaddir() );
     }
 
     return var_0;
@@ -372,7 +372,7 @@ handlefootstepnotetracks( var_0, var_1, var_2, var_3 )
             else
                 var_5 = "run";
 
-            self _meth_8438( "dogstep_" + var_5 + "_" + var_4 );
+            self playsoundonmovingent( "dogstep_" + var_5 + "_" + var_4 );
 
             if ( issubstr( var_0, "front_left" ) )
             {
@@ -384,8 +384,8 @@ handlefootstepnotetracks( var_0, var_1, var_2, var_3 )
                 else
                     var_8 = "_run_npc";
 
-                self _meth_8438( var_6 + var_8 );
-                self _meth_8438( var_7 + var_8 );
+                self playsoundonmovingent( var_6 + var_8 );
+                self playsoundonmovingent( var_7 + var_8 );
             }
 
             return 1;
@@ -406,8 +406,8 @@ dohitreaction( var_0 )
     else
         var_2 = 0;
 
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", self.angles );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( "run_pain", var_2, "run_pain" );
     self.blockgoalpos = 0;
     self.statelocked = 0;

@@ -41,12 +41,12 @@ tilt_boat( var_0 )
     if ( !isdefined( var_0 ) || !var_0 )
     {
         var_1.angles = ( 0, 0, 0 );
-        var_1 _meth_82B5( ( -5, 0, 5 ), 2 );
+        var_1 rotateto( ( -5, 0, 5 ), 2 );
     }
     else
         var_1.angles = ( -5, 0, 5 );
 
-    level.player _meth_8091( var_1 );
+    level.player playersetgroundreferenceent( var_1 );
     level.ground_ref_ent = var_1;
     thread adjust_gravity();
     level.waves = 0;
@@ -80,7 +80,7 @@ adjust_gravity()
 close_interior_door()
 {
     var_0 = getent( "interior_exit_clip", "targetname" );
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     level.interior_door = maps\_utility::spawn_anim_model( "interior_bulkhead" );
     var_1 = common_scripts\utility::getstruct( "org_squad_enter_mob", "targetname" );
     var_1 maps\_anim::anim_first_frame_solo( level.interior_door, "ripopen_bulkhead" );
@@ -91,12 +91,12 @@ mob_enter_player_clip()
     var_0 = getent( "player_enter_mob_clip", "targetname" );
     var_0.old_origin = var_0.origin;
     var_0.origin = ( 0, 0, 0 );
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     common_scripts\utility::flag_wait( "flag_obj_marker_enter_ship" );
     var_0.origin = var_0.old_origin;
     common_scripts\utility::flag_wait( "flag_player_entered_interior" );
     var_0 common_scripts\utility::delaycall( 0.5, ::delete );
-    var_0 common_scripts\utility::delaycall( 0.55, ::_meth_8058 );
+    var_0 common_scripts\utility::delaycall( 0.55, ::connectpaths );
 }
 
 intro_scene()
@@ -131,20 +131,20 @@ intro_scene()
         maps\_utility::delaythread( 6, maps\_utility::vision_set_fog_changes, "sanfran_b_exterior_dark_fog", 1 );
     }
 
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_831D();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player disableweapons();
     soundscripts\_snd::snd_message( "sfb_intro_burke_foley" );
     soundscripts\_snd::snd_message( "sfb_intro_car_explode" );
     var_0 = maps\_utility::spawn_anim_model( "player_arms" );
-    level.player _meth_807D( var_0, "tag_player", 1, 8, 8, 4, 4 );
-    level.player common_scripts\utility::delaycall( 0.1, ::_meth_807D, var_0, "tag_player", 1, 12, 12, 10, 4 );
-    level.player _meth_80FE();
+    level.player playerlinktodelta( var_0, "tag_player", 1, 8, 8, 4, 4 );
+    level.player common_scripts\utility::delaycall( 0.1, ::playerlinktodelta, var_0, "tag_player", 1, 12, 12, 10, 4 );
+    level.player enableslowaim();
     var_1 = maps\_vehicle::spawn_vehicle_from_targetname( "littlebird_intro" );
     var_1.animname = "littlebird";
 
     if ( level.nextgen )
-        _func_0D3( "r_dynamicSpotLightShadows", 0 );
+        setsaveddvar( "r_dynamicSpotLightShadows", 0 );
 
     maps\_utility::delaythread( 8, common_scripts\_exploder::exploder, 4222 );
     maps\_utility::delaythread( 8, common_scripts\_exploder::exploder, 1999 );
@@ -168,17 +168,17 @@ intro_scene()
     level.cormack soundscripts\_snd::snd_message( "pcap_vo_sf_b_intro", "cormack" );
     var_5 thread maps\_anim::anim_single( var_4, "intro" );
     level waittill( "intro_scene_artillery_rumble" );
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
     common_scripts\utility::flag_wait( "intro_anim_finished" );
     soundscripts\_snd::snd_message( "intro_scene_done" );
     level notify( "player_control_enabled" );
     maps\_utility::battlechatter_on( "allies" );
     maps\_utility::battlechatter_on( "axis" );
-    level.player _meth_804F();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_80FF();
-    _func_0D3( "ammoCounterHide", "0" );
+    level.player unlink();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player disableslowaim();
+    setsaveddvar( "ammoCounterHide", "0" );
 
     if ( level.currentgen )
         maps\_utility::vision_set_fog_changes( "sanfran_b_exterior_dark_fog", 1 );
@@ -195,8 +195,8 @@ intro_scene()
     var_1 delete();
     maps\_utility::stop_exploder( 4222 );
     maps\_utility::stop_exploder( 4225 );
-    _func_0D3( "r_dynamicSpotLightShadows", 1 );
-    _func_0D3( "r_fog_ev_adjust", 1.5 );
+    setsaveddvar( "r_dynamicSpotLightShadows", 1 );
+    setsaveddvar( "r_fog_ev_adjust", 1.5 );
 
     if ( level.nextgen )
     {
@@ -226,11 +226,11 @@ ambient_deck()
     var_1 soundscripts\_snd::snd_message( "warbird_circling_perimeter" );
     waittillframeend;
     var_1 maps\_vehicle::godon();
-    var_1 _meth_83AB( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
     var_1 thread maps\sanfran_b_util::ambient_warbird_shooting_think( 0 );
     var_1 thread maps\sanfran_b_util::ambient_warbird_wait_to_fire();
     var_1 thread delete_ambient();
-    var_1 _meth_8294( 10, 60 );
+    var_1 setmaxpitchroll( 10, 60 );
     var_1.ignoreme = 1;
     var_2 = getentarray( "ambient_drone_swarm_1", "script_noteworthy" );
 
@@ -253,11 +253,11 @@ warbird_strafe_run()
     var_0 = getent( "refl_probe_heli_open", "targetname" );
     var_1 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "warbird_strafe_1" );
     var_1 soundscripts\_snd::snd_message( "warbird_strafe_01" );
-    var_1 _meth_83AB( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
     waittillframeend;
     var_1 thread maps\sanfran_b_util::ambient_warbird_shooting_think( 0 );
     var_1 thread maps\sanfran_b_util::ambient_warbird_wait_to_fire();
-    var_1 _meth_8294( 10, 60 );
+    var_1 setmaxpitchroll( 10, 60 );
 }
 
 ambient_shrike_flyby()
@@ -268,7 +268,7 @@ ambient_shrike_flyby()
     var_1 soundscripts\_snd::snd_message( "shrike_flyby_pair_01" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_83AB( var_0.origin );
+        var_3 overridereflectionprobe( var_0.origin );
 
     common_scripts\utility::array_thread( var_1, maps\_vehicle::gopath );
 }
@@ -312,7 +312,7 @@ enemy_reinforcements()
 
     for (;;)
     {
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
 
         if ( var_0.size <= 2 )
         {
@@ -370,7 +370,7 @@ deck_reinforcement_modify_accuracy()
     createthreatbiasgroup( "deck_reinforcements_in_front_of_player" );
     setthreatbias( "player", "deck_reinforcements_behind_player", -20000 );
     setthreatbias( "player", "deck_reinforcements_in_front_of_player", 0 );
-    self _meth_8177( "deck_reinforcements_behind_player" );
+    self setthreatbiasgroup( "deck_reinforcements_behind_player" );
 
     for (;;)
     {
@@ -378,9 +378,9 @@ deck_reinforcement_modify_accuracy()
         var_3 = vectornormalize( self.origin - level.player.origin );
 
         if ( vectordot( var_2, var_3 ) < var_1 )
-            self _meth_8177( "deck_reinforcements_behind_player" );
+            self setthreatbiasgroup( "deck_reinforcements_behind_player" );
         else
-            self _meth_8177( "deck_reinforcements_in_front_of_player" );
+            self setthreatbiasgroup( "deck_reinforcements_in_front_of_player" );
 
         wait 0.05;
     }
@@ -407,8 +407,8 @@ cargo_ship_missiles()
         var_4 = common_scripts\utility::getstruct( var_2.target, "targetname" ).origin;
         var_5 = vectortoangles( var_3.origin - var_2.origin );
         var_6 = magicbullet( "cargo_ship_missile", var_2.origin, var_4 );
-        var_6 _meth_81D9( var_3 );
-        var_6 _meth_81DC();
+        var_6 missile_settargetent( var_3 );
+        var_6 missile_setflightmodedirect();
         playfx( common_scripts\utility::getfx( "missile_launch_smoke" ), var_2.origin, anglestoforward( var_5 ), anglestoup( var_5 ) );
         wait(randomfloatrange( 5, 10 ));
     }
@@ -450,7 +450,7 @@ shrike_takeoff()
     var_2 = maps\_vehicle::spawn_vehicle_from_targetname( "heli_takeoff_pod_2" );
     var_2.animname = "shrike_2";
     var_2 maps\_vehicle::godon();
-    var_2 _meth_8455();
+    var_2 vehicle_removebrushmodelcollision();
     var_3 = common_scripts\utility::getstruct( "org_shrike_takeoff", "targetname" );
     var_4 = [ var_2, var_1 ];
     var_3 thread maps\_anim::anim_first_frame( var_4, "shrike_takeoff" );
@@ -494,20 +494,20 @@ move_initial_enemies()
     var_2 = getent( "vol_first_helipad", "targetname" );
     var_3 = getent( "vol_second_helipad", "targetname" );
     var_4 = getent( "vol_tall_helipad", "targetname" );
-    var_5 = _func_0D6( "axis" );
+    var_5 = getaiarray( "axis" );
     var_6 = var_3;
 
     if ( isdefined( var_5 ) && var_5.size > 0 )
     {
         foreach ( var_1 in var_5 )
         {
-            if ( !var_1 _meth_80A9( var_2 ) )
+            if ( !var_1 istouching( var_2 ) )
                 continue;
 
             var_1 maps\sanfran_b_util::disable_awareness();
             var_1 thread become_aware_on_goal();
             var_1 thread become_aware_when_player_is_in_volume();
-            var_1 _meth_81A9( var_6 );
+            var_1 setgoalvolumeauto( var_6 );
             var_1 thread detect_when_player_is_in_volume( var_6 );
 
             if ( var_6 == var_3 )
@@ -532,7 +532,7 @@ become_aware_on_goal()
     self endon( "player_touching_volume" );
     self waittill( "goal" );
     maps\sanfran_b_util::enable_awareness();
-    self _meth_81AB();
+    self cleargoalvolume();
     self notify( "guys_aware_on_goal" );
 }
 
@@ -542,14 +542,14 @@ become_aware_when_player_is_in_volume()
     self endon( "guys_aware_on_goal" );
     self waittill( "player_touching_volume" );
     maps\sanfran_b_util::enable_awareness();
-    self _meth_81AB();
+    self cleargoalvolume();
 }
 
 detect_when_player_is_in_volume( var_0 )
 {
     level.player endon( "death" );
 
-    while ( !level.player _meth_80A9( var_0 ) )
+    while ( !level.player istouching( var_0 ) )
         wait 0.05;
 
     self notify( "player_touching_volume" );
@@ -598,7 +598,7 @@ manage_deck_combat()
         if ( isdefined( var_7 ) && isalive( var_7 ) )
         {
             var_7 maps\_vehicle::vehicle_set_health( 1 );
-            var_7 _meth_8051( 9999, var_7.origin );
+            var_7 dodamage( 9999, var_7.origin );
         }
     }
 
@@ -609,19 +609,19 @@ manage_deck_combat()
     var_9 = getent( "refl_probe_heli_open", "targetname" );
     var_10 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "heli_left_1" );
     var_10 soundscripts\_snd::snd_message( "warbird_dropoff_01" );
-    var_10 _meth_8294( 15, 60 );
+    var_10 setmaxpitchroll( 15, 60 );
     var_10 thread setup_deck_deploy_warbird();
     var_10 maps\_utility::ent_flag_init( "dont_shoot_player" );
     var_10 maps\_utility::ent_flag_set( "dont_shoot_player" );
-    var_10 _meth_83AB( var_9.origin );
+    var_10 overridereflectionprobe( var_9.origin );
     wait 1;
     var_11 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "heli_left_2" );
     var_11 soundscripts\_snd::snd_message( "warbird_dropoff_02" );
-    var_11 _meth_8294( 15, 60 );
+    var_11 setmaxpitchroll( 15, 60 );
     var_11 thread setup_deck_deploy_warbird();
     var_11 maps\_utility::ent_flag_init( "dont_shoot_player" );
     var_11 maps\_utility::ent_flag_set( "dont_shoot_player" );
-    var_11 _meth_83AB( var_9.origin );
+    var_11 overridereflectionprobe( var_9.origin );
     common_scripts\utility::flag_set( "deck_warbird_vo" );
     maps\_utility::trigger_wait_targetname( "trig_jammer_2_drones" );
     var_12 = deck_drones( "right" );
@@ -637,7 +637,7 @@ manage_deck_combat()
         if ( isdefined( var_7 ) && isalive( var_7 ) )
         {
             var_7 maps\_vehicle::vehicle_set_health( 1 );
-            var_7 _meth_8051( 9999, var_7.origin );
+            var_7 dodamage( 9999, var_7.origin );
         }
     }
 
@@ -651,23 +651,23 @@ manage_deck_combat()
     maps\_utility::delaythread( 3, ::deck_enemies_cleared );
     var_15 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "heli_back_2" );
     var_15 soundscripts\_snd::snd_message( "warbird_dropoff_03" );
-    var_15 _meth_8294( 10, 60 );
+    var_15 setmaxpitchroll( 10, 60 );
     var_15 thread setup_deck_deploy_warbird();
-    var_15 _meth_83AB( var_9.origin );
+    var_15 overridereflectionprobe( var_9.origin );
     var_16 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "heli_back_1" );
     var_16 soundscripts\_snd::snd_message( "warbird_dropoff_04" );
-    var_16 _meth_8294( 10, 60 );
+    var_16 setmaxpitchroll( 10, 60 );
     var_16 thread setup_deck_deploy_warbird();
-    var_16 _meth_83AB( var_9.origin );
+    var_16 overridereflectionprobe( var_9.origin );
     var_17 = getent( "warbird_slide_trigger", "targetname" );
-    var_17 _meth_8069();
-    var_17 _meth_804D( var_16 );
+    var_17 enablelinkto();
+    var_17 linkto( var_16 );
     thread wait_for_all_deck_warbirds_to_unload();
     var_15 thread hangar_heli_wait_for_unload( "deck_warbird_3_unloaded" );
     var_16 thread hangar_heli_wait_for_unload( "deck_warbird_4_unloaded" );
     thread jammer_3_shrike_flyby( var_16 );
     common_scripts\utility::flag_wait( "all_deck_warbirds_deployed" );
-    var_18 = _func_0D6( "axis" );
+    var_18 = getaiarray( "axis" );
 
     while ( var_18.size > 2 )
     {
@@ -683,13 +683,13 @@ manage_deck_combat()
 
         foreach ( var_3 in level.heroes )
         {
-            var_3 _meth_81AB();
+            var_3 cleargoalvolume();
             var_3.fixednode = 1;
         }
 
         common_scripts\utility::flag_wait( "all_jammers_deactivated" );
         wait 0.25;
-        var_18 = _func_0D6( "axis" );
+        var_18 = getaiarray( "axis" );
 
         if ( var_18.size > 0 )
         {
@@ -734,7 +734,7 @@ move_squad_into_ship()
         common_scripts\utility::array_thread( level.heroes, maps\_utility::set_ignoreme, 1 );
         common_scripts\utility::array_thread( level.heroes, maps\_utility::set_ignoreall, 1 );
         common_scripts\utility::array_thread( level.heroes, maps\_utility::disable_pain );
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
 
         if ( var_0.size > 0 )
         {
@@ -780,8 +780,8 @@ jammer_enemies_hint()
     level endon( "jammer_guards_dead" );
     var_0 = getent( self.target, "targetname" );
     var_0 common_scripts\utility::trigger_on();
-    var_0 _meth_817B();
-    var_0 _meth_80DB( &"SANFRAN_B_GUARD_HINT" );
+    var_0 usetriggerrequirelookat();
+    var_0 sethintstring( &"SANFRAN_B_GUARD_HINT" );
 }
 
 jammer_enemies_spawn()
@@ -800,7 +800,7 @@ jammer_enemy_1_think()
 
     while ( isalive( self ) )
     {
-        if ( !self _meth_80A9( var_0 ) )
+        if ( !self istouching( var_0 ) )
             break;
 
         wait 0.5;
@@ -815,7 +815,7 @@ jammer_enemy_2_think()
 
     while ( isalive( self ) )
     {
-        if ( !self _meth_80A9( var_0 ) )
+        if ( !self istouching( var_0 ) )
             break;
 
         wait 0.5;
@@ -840,10 +840,10 @@ jammer_think()
         level notify( "jammer_guards_dead" );
         var_0 = getent( self.target, "targetname" );
         var_0 common_scripts\utility::trigger_on();
-        var_0 _meth_817B();
-        var_0 _meth_80DB( &"SANFRAN_B_DEACTIVATE_JAMMER" );
+        var_0 usetriggerrequirelookat();
+        var_0 sethintstring( &"SANFRAN_B_DEACTIVATE_JAMMER" );
         var_1 = var_0 maps\_shg_utility::hint_button_trigger( "x", 512 );
-        self _meth_80B1( "vm_jamming_device_obj" );
+        self setmodel( "vm_jamming_device_obj" );
         self show();
         var_0 waittill( "trigger" );
         var_0 common_scripts\utility::trigger_off();
@@ -857,10 +857,10 @@ jammer_think()
         common_scripts\utility::flag_wait( "planting_jammer_1" );
         var_0 = getent( self.target, "targetname" );
         var_0 common_scripts\utility::trigger_on();
-        var_0 _meth_817B();
-        var_0 _meth_80DB( &"SANFRAN_B_DEACTIVATE_JAMMER" );
+        var_0 usetriggerrequirelookat();
+        var_0 sethintstring( &"SANFRAN_B_DEACTIVATE_JAMMER" );
         var_1 = var_0 maps\_shg_utility::hint_button_trigger( "x", 512 );
-        self _meth_80B1( "vm_jamming_device_obj" );
+        self setmodel( "vm_jamming_device_obj" );
         self show();
         var_0 waittill( "trigger" );
         var_0 common_scripts\utility::trigger_off();
@@ -877,7 +877,7 @@ jammer_think()
 play_jammer_1_anim()
 {
     var_0 = common_scripts\utility::getstruct( "org_jammer_1", "targetname" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
         var_3 thread maps\sanfran_b_util::bloody_death();
@@ -893,24 +893,24 @@ play_jammer_1_anim()
     var_6 = maps\_utility::spawn_anim_model( "jammer" );
     var_6 soundscripts\_snd::snd_message( "jammer_plant" );
     var_1 = [ var_5, var_6 ];
-    level.player _meth_8080( var_5, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_5, "tag_player", 0.4 );
     wait 0.4;
     var_5 show();
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     maps\_utility::delaythread( 0.5, common_scripts\utility::flag_set, "boost_incoming_vo" );
     thread deck_jammer_rumbles();
     var_0 maps\_anim::anim_single( var_1, "jammerplant_1" );
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     var_5 delete();
-    level.player _meth_804F();
+    level.player unlink();
 }
 
 play_jammer_2_anim()
 {
     soundscripts\_snd::snd_message( "jammer_plant" );
     var_0 = common_scripts\utility::getstruct( "org_jammer_2", "targetname" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
         var_3 thread maps\sanfran_b_util::bloody_death();
@@ -926,16 +926,16 @@ play_jammer_2_anim()
     var_0 maps\_anim::anim_first_frame_solo( var_5, "jammerplant_2" );
     var_6 = maps\_utility::spawn_anim_model( "jammer" );
     var_1 = [ var_5, var_6 ];
-    level.player _meth_8080( var_5, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_5, "tag_player", 0.4 );
     wait 0.4;
     var_5 show();
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     thread deck_jammer_rumbles();
     var_0 maps\_anim::anim_single( var_1, "jammerplant_2" );
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     var_5 delete();
-    level.player _meth_804F();
+    level.player unlink();
 }
 
 deck_jammer_rumbles()
@@ -953,8 +953,8 @@ player_jammer_movie()
 {
     level endon( "stop_jammer_movie" );
     level endon( "boosters_off_anim_finished" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( "jammer_UI_loop", 0, 1, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( "jammer_UI_loop", 0, 1, 1 );
     thread stop_jammer_movie();
 }
 
@@ -962,7 +962,7 @@ stop_jammer_movie()
 {
     level endon( "boosters_off_anim_finished" );
     level waittill( "stop_jammer_movie" );
-    _func_05C();
+    stopcinematicingame();
 }
 
 jammer_1_defenders_logic()
@@ -1049,19 +1049,19 @@ mobile_cover_anim()
     var_2.animname = "guy2";
     var_2 maps\_utility::deletable_magic_bullet_shield();
     var_3 = spawn( "script_model", var_0.origin );
-    var_3 _meth_80B1( "vehicle_mobile_cover" );
+    var_3 setmodel( "vehicle_mobile_cover" );
     var_3.animname = "mobile_cover";
     var_3 maps\_utility::assign_animtree( "mobile_cover" );
     var_3 thread mobile_cover_badplace();
     var_4 = [ var_1, var_2, var_3 ];
     var_0 maps\_anim::anim_single_run( var_4, "deck_mobile_cover" );
     var_2 maps\_utility::stop_magic_bullet_shield();
-    var_2 _meth_8052();
-    var_2 _meth_8023();
+    var_2 kill();
+    var_2 startragdoll();
     var_5 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_5.origin = var_3.origin;
     var_6 = var_3.angles + ( -90, 90, 0 );
-    var_3 _meth_80B1( "vehicle_mobile_cover_dstrypv" );
+    var_3 setmodel( "vehicle_mobile_cover_dstrypv" );
     var_3 notify( "stop_mobile_cover_badplace" );
     earthquake( 1, 1.6, var_5.origin, 625 );
     radiusdamage( var_5.origin, 200, 200, 100, undefined, "MOD_EXPLOSIVE" );
@@ -1179,7 +1179,7 @@ deck_enemies_cleared()
 {
     for (;;)
     {
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
         level.deck_drones = maps\_utility::array_removedead( level.deck_drones );
 
         if ( var_0.size == 0 && level.deck_drones.size == 0 )
@@ -1188,7 +1188,7 @@ deck_enemies_cleared()
         waitframe();
     }
 
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     foreach ( var_2 in var_0 )
     {
@@ -1248,7 +1248,7 @@ missile_turrets_on()
             return;
 
         foreach ( var_4 in var_2.missile_starts )
-            var_4 _meth_804D( var_2 );
+            var_4 linkto( var_2 );
 
         var_2 thread missile_turret_think();
     }
@@ -1260,7 +1260,7 @@ missile_turret_think()
 
     for (;;)
     {
-        self _meth_82B5( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
+        self rotateto( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
         wait 1.5;
 
         foreach ( var_1 in self.missile_starts )
@@ -1273,7 +1273,7 @@ missile_turret_think()
             if ( distance( self.origin, level.player.origin ) <= 512 )
             {
                 earthquake( 0.3, 1, self.origin, 1024 );
-                level.player _meth_80AD( "heavy_1s" );
+                level.player playrumbleonentity( "heavy_1s" );
             }
         }
 
@@ -1313,7 +1313,7 @@ boosters_off_anim( var_0 )
     level.maddox maps\_utility::ent_flag_wait( "at_boosters_off" );
     common_scripts\utility::flag_wait( "flag_player_entered_interior" );
     common_scripts\utility::flag_set( "flag_cleanup_deck_drones" );
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
 
     if ( var_2.size > 0 )
     {
@@ -1368,35 +1368,35 @@ squad_move_interior()
 crouch_until_door_open()
 {
     self waittill( "goal" );
-    self _meth_81CA( "crouch" );
+    self allowedstances( "crouch" );
     self waittill( "door_open" );
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
 }
 
 crouch_until_path_to_door( var_0 )
 {
     var_0 waittill( "boosters_off" );
-    self _meth_81CA( "crouch" );
+    self allowedstances( "crouch" );
     self waittill( "path_to_door" );
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
 }
 
 cqb_test()
 {
     level.player endon( "end_cqb" );
-    level.player _meth_830E( "iw5_m160cqb_sp_cqbreddot" );
-    level.player _meth_830E( "iw5_m160_sp_deam160_variablereddot" );
-    level.player _meth_8316( "iw5_m160cqb_sp_cqbreddot" );
-    level.player _meth_817D( "crouch" );
+    level.player giveweapon( "iw5_m160cqb_sp_cqbreddot" );
+    level.player giveweapon( "iw5_m160_sp_deam160_variablereddot" );
+    level.player switchtoweaponimmediate( "iw5_m160cqb_sp_cqbreddot" );
+    level.player setstance( "crouch" );
     thread player_cqb_on();
-    level.player _meth_82DD( "stance_switched", "+stance" );
+    level.player notifyonplayercommand( "stance_switched", "+stance" );
 
     for (;;)
     {
         level.player waittill( "stance_switched" );
         wait 0.5;
 
-        if ( level.player _meth_817C() == "crouch" )
+        if ( level.player getstance() == "crouch" )
         {
             thread player_cqb_on();
             continue;
@@ -1416,14 +1416,14 @@ rock_the_boat()
         while ( level.waves == 1 )
         {
             var_1 = getdvar( "phys_gravityChangeWakeupRadius" );
-            _func_0D3( "phys_gravityChangeWakeupRadius", 2000 );
-            level.ground_ref_ent _meth_82B5( ( -1, 0, 0 ), var_0, 1, 1 );
+            setsaveddvar( "phys_gravityChangeWakeupRadius", 2000 );
+            level.ground_ref_ent rotateto( ( -1, 0, 0 ), var_0, 1, 1 );
             soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
             wait 3.1;
-            level.ground_ref_ent _meth_82B5( ( -5, 0, 5 ), var_0, 1, 1 );
+            level.ground_ref_ent rotateto( ( -5, 0, 5 ), var_0, 1, 1 );
             soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
             wait 3.3;
-            _func_0D3( "phys_gravityChangeWakeupRadius", var_1 );
+            setsaveddvar( "phys_gravityChangeWakeupRadius", var_1 );
         }
 
         wait 0.05;
@@ -1583,15 +1583,15 @@ end_cqb()
     maps\_utility::trigger_wait_targetname( "trig_spawn_navy_allies_hangar" );
     thread player_cqb_off();
     level.player notify( "end_cqb" );
-    level.player _meth_830F( "iw5_m160cqb_sp_cqbreddot" );
-    level.player _meth_8316( "iw5_m160_sp_deam160_variablereddot" );
+    level.player takeweapon( "iw5_m160cqb_sp_cqbreddot" );
+    level.player switchtoweaponimmediate( "iw5_m160_sp_deam160_variablereddot" );
 }
 
 player_cqb_on()
 {
     level.player notify( "cqb_mode_toggled" );
     level.player.cqb_mode = 1;
-    level.player _meth_81E1( 1.25 );
+    level.player setmovespeedscale( 1.25 );
     thread maps\_utility::lerp_fov_overtime( 0.15, 60 );
 
     if ( level.nextgen )
@@ -1602,7 +1602,7 @@ player_cqb_off()
 {
     level.player notify( "cqb_mode_toggled" );
     level.player.cqb_mode = undefined;
-    level.player _meth_81E1( 1 );
+    level.player setmovespeedscale( 1 );
     thread maps\_utility::lerp_fov_overtime( 0.15, 65 );
 
     if ( level.nextgen )
@@ -1656,7 +1656,7 @@ open_door_anim()
     var_0 maps\_anim::anim_reach_solo( level.cormack, "ripopen_bulkhead" );
     level.cormack soundscripts\_snd::snd_message( "aud_burke_open_door" );
     var_2 = getent( "door_open_clip", "targetname" );
-    var_2 _meth_804D( level.interior_door, "doorhinge" );
+    var_2 linkto( level.interior_door, "doorhinge" );
     var_0 thread maps\_anim::anim_single_solo_run( level.cormack, "ripopen_bulkhead" );
     maps\_utility::activate_trigger_with_targetname( "trig_cormack_move_interior_post_door" );
 
@@ -1666,24 +1666,24 @@ open_door_anim()
     var_0 maps\_anim::anim_single_solo( level.interior_door, "ripopen_bulkhead" );
     soundscripts\_snd::snd_message( "interior_door1_done" );
     var_3 = getent( "interior_exit_clip", "targetname" );
-    var_3 _meth_8058();
+    var_3 connectpaths();
     var_3 delete();
-    var_2 _meth_8058();
+    var_2 connectpaths();
     maps\_utility::autosave_by_name();
 }
 
 transient_intro_to_middle()
 {
     level notify( "tff_pre_transition_intro_to_outro" );
-    _func_218( "sanfran_b_outro_tr" );
+    loadtransient( "sanfran_b_outro_tr" );
 
-    while ( !_func_21E( "sanfran_b_outro_tr" ) )
+    while ( !istransientloaded( "sanfran_b_outro_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_transition_intro_to_outro" );
     maps\_utility::trigger_wait_targetname( "unload_intro_transient" );
-    _func_219( "sanfran_b_intro_tr" );
-    level.interior_door _meth_8142( level.interior_door maps\_utility::getanim( "ripopen_bulkhead" ), 1.0 );
+    unloadtransient( "sanfran_b_intro_tr" );
+    level.interior_door clearanim( level.interior_door maps\_utility::getanim( "ripopen_bulkhead" ), 1.0 );
 }
 
 exo_takedown()
@@ -1720,7 +1720,7 @@ exo_takedown()
     }
 
     level.cormack thread hand_signal_to_cafeteria();
-    var_3 = _func_0D6( "allies" );
+    var_3 = getaiarray( "allies" );
 
     foreach ( var_5 in var_3 )
     {
@@ -1738,18 +1738,18 @@ exo_takedown()
 interior_shake_1()
 {
     var_0 = getdvar( "phys_gravityChangeWakeupRadius" );
-    _func_0D3( "phys_gravityChangeWakeupRadius", 2000 );
+    setsaveddvar( "phys_gravityChangeWakeupRadius", 2000 );
     maps\_utility::trigger_wait_targetname( "trig_interior_shake_1" );
     soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
     soundscripts\_snd::snd_message( "power_outage_audio" );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     earthquake( 0.3, 2, level.player.origin, 1024 );
     wait 2.5;
     soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     earthquake( 0.3, 2, level.player.origin, 1024 );
     wait 3;
-    _func_0D3( "phys_gravityChangeWakeupRadius", var_0 );
+    setsaveddvar( "phys_gravityChangeWakeupRadius", var_0 );
 }
 
 hangar_jet_flyby()
@@ -1765,8 +1765,8 @@ hangar_jet_flyby()
 give_night_vision()
 {
     level endon( "flag_end_sonar_vision" );
-    level.player _meth_821B( "actionslot1", "dpad_icon_nvg" );
-    level.player _meth_82DD( "sonar_vision", "+actionslot 1" );
+    level.player setweaponhudiconoverride( "actionslot1", "dpad_icon_nvg" );
+    level.player notifyonplayercommand( "sonar_vision", "+actionslot 1" );
     level.player thread thermal_with_nvg();
 }
 
@@ -1827,7 +1827,7 @@ table_pulldown_distance_check()
     {
         if ( distancesquared( self.origin, level.player.origin ) < 250000 )
         {
-            self _meth_8052();
+            self kill();
             return;
         }
 
@@ -1843,7 +1843,7 @@ cafeteria_reinforcements()
 
     for (;;)
     {
-        var_0 = _func_0D5( "axis" );
+        var_0 = getaicount( "axis" );
 
         if ( var_0 > 4 )
         {
@@ -1860,12 +1860,12 @@ cafeteria_reinforcements()
 
 cafeteria_squad_pressure()
 {
-    var_0 = _func_0D5( "axis" );
+    var_0 = getaicount( "axis" );
     var_1 = 0;
 
     while ( var_1 == 0 )
     {
-        var_2 = _func_0D5( "axis" );
+        var_2 = getaicount( "axis" );
         var_3 = getnode( "red6ix", "targetname" );
         var_4 = getnode( "macros", "targetname" );
         var_5 = level.cormack;
@@ -1896,7 +1896,7 @@ move_to_hangar()
     maps\_utility::trigger_wait_targetname( "trig_interior_vo_3" );
     common_scripts\utility::flag_set( "player_exit_cafeteria" );
     maps\_utility::trigger_wait_targetname( "trig_cleanup_cafe" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
 
     foreach ( var_2 in var_0 )
     {
@@ -1946,15 +1946,15 @@ mark_enemies()
 
     for (;;)
     {
-        foreach ( var_1 in _func_0D6( "axis" ) )
+        foreach ( var_1 in getaiarray( "axis" ) )
         {
-            var_1 _meth_83FA( 1, 1, 0 );
+            var_1 hudoutlineenable( 1, 1, 0 );
             var_1.hudoutlineenabledbysonarvision = 1;
         }
 
-        foreach ( var_4 in _func_0D6( "allies" ) )
+        foreach ( var_4 in getaiarray( "allies" ) )
         {
-            var_4 _meth_83FA( 2, 1, 0 );
+            var_4 hudoutlineenable( 2, 1, 0 );
             var_4.hudoutlineenabledbysonarvision = 1;
         }
 
@@ -1964,9 +1964,9 @@ mark_enemies()
 
 is_sonar_vision_allowed()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
 
-    if ( _func_1E6( var_0 ) && level.player _meth_8340() > 0 )
+    if ( weaponhasthermalscope( var_0 ) && level.player playerads() > 0 )
         return 0;
 
     return 1;
@@ -2022,25 +2022,25 @@ sonar_save_and_set_dvars()
     level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] = getdvarfloat( "r_hudoutlinehaloblurradius", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] = getdvarfloat( "r_hudoutlinehalolumscale", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] = getdvar( "r_hudoutlinehalowhen", 1 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.7 );
-    _func_0D3( "r_hudoutlinehalolumscale", 2 );
-    _func_0D3( "r_hudoutlinehalowhen", 0 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.7 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 2 );
+    setsaveddvar( "r_hudoutlinehalowhen", 0 );
     level.player.sonarvisionsaveddvars["r_ssrBlendScale"] = getdvarfloat( "r_ssrBlendScale", 1.0 );
-    _func_0D3( "r_ssrBlendScale", 0.0 );
+    setsaveddvar( "r_ssrBlendScale", 0.0 );
 }
 
 sonar_reset_dvars()
 {
     if ( isdefined( level.player.sonarvisionsaveddvars ) )
     {
-        _func_0D3( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
-        _func_0D3( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
-        _func_0D3( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
-        _func_0D3( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
-        _func_0D3( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
-        _func_0D3( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
+        setsaveddvar( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
+        setsaveddvar( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
+        setsaveddvar( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
+        setsaveddvar( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
+        setsaveddvar( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
+        setsaveddvar( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
     }
 }
 
@@ -2054,8 +2054,8 @@ sonar_on()
     if ( level.currentgen )
         var_0 = 0;
 
-    level.player _meth_83C1( "sanfran_b_sonar_vision", var_0 );
-    level.player _meth_8491( "clut_sonar", var_0 );
+    level.player lightsetoverrideenableforplayer( "sanfran_b_sonar_vision", var_0 );
+    level.player setclutoverrideenableforplayer( "clut_sonar", var_0 );
     soundscripts\_snd::snd_message( "aud_sonar_vision_on" );
     level.player.sonar_vision = 1;
     level notify( "sonar_update" );
@@ -2068,8 +2068,8 @@ sonar_off()
     if ( level.currentgen )
         var_0 = 0;
 
-    level.player _meth_83C2( var_0 );
-    level.player _meth_8492( var_0 );
+    level.player lightsetoverrideenableforplayer( var_0 );
+    level.player setclutoverridedisableforplayer( var_0 );
     soundscripts\_snd::snd_message( "aud_sonar_vision_off" );
     level.player.sonar_vision = 0;
     level notify( "sonar_update" );
@@ -2085,11 +2085,11 @@ sonar_off()
 
     sonar_reset_dvars();
 
-    foreach ( var_2 in _func_0D6( "axis", "allies" ) )
+    foreach ( var_2 in getaiarray( "axis", "allies" ) )
     {
         if ( isdefined( var_2.hudoutlineenabledbysonarvision ) )
         {
-            var_2 _meth_83FB();
+            var_2 hudoutlinedisable();
             var_2.hudoutlineenabledbysonarvision = undefined;
         }
     }
@@ -2106,7 +2106,7 @@ create_hud_nvg_overlay( var_0, var_1, var_2 )
     var_3.horzalign = "fullscreen";
     var_3.vertalign = "fullscreen";
     var_3.alpha = var_2;
-    var_3 _meth_80CC( var_0, 640, 480 );
+    var_3 setshader( var_0, 640, 480 );
     return var_3;
 }
 
@@ -2125,7 +2125,7 @@ create_hud_sonar_overlay( var_0, var_1 )
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
     var_2.alpha = var_1;
-    var_2 _meth_83A5( 10 );
+    var_2 setsonarvision( 10 );
     return var_2;
 }
 
@@ -2139,7 +2139,7 @@ create_hud_threat_overlay( var_0, var_1 )
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
     var_2.alpha = var_1;
-    var_2 _meth_83A4( -1 );
+    var_2 setradarhighlight( -1 );
     return var_2;
 }
 
@@ -2148,16 +2148,16 @@ boat_rocking_hangar()
     maps\_utility::trigger_wait_targetname( "trig_boat_rock_to_hangar" );
     thread maps\sanfran_b_lighting::lerp_sun_01();
     var_0 = getdvar( "phys_gravityChangeWakeupRadius" );
-    _func_0D3( "phys_gravityChangeWakeupRadius", 2000 );
-    level.player _meth_80AD( "heavy_2s" );
+    setsaveddvar( "phys_gravityChangeWakeupRadius", 2000 );
+    level.player playrumbleonentity( "heavy_2s" );
     earthquake( 0.3, 2, level.player.origin, 1024 );
     soundscripts\_snd::snd_message( "pre_hangar_hall_explosion" );
     wait 2.5;
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     earthquake( 0.3, 2, level.player.origin, 1024 );
     soundscripts\_snd::snd_message( "pre_hangar_hall_explosion" );
     wait 3;
-    _func_0D3( "phys_gravityChangeWakeupRadius", var_0 );
+    setsaveddvar( "phys_gravityChangeWakeupRadius", var_0 );
 }
 
 boat_rocking_jet_moment()
@@ -2169,7 +2169,7 @@ jet_moment( var_0, var_1, var_2 )
 {
     var_1 thread jet_badplace();
     var_0 maps\_anim::anim_single_solo( var_1, "shrike_slide" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     var_2 delete();
 }
 
@@ -2227,8 +2227,8 @@ hangar_combat()
     var_0 = getent( "refl_probe_heli_open", "targetname" );
     var_1 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( "mi17_hangar_1" );
     var_1 soundscripts\_snd::snd_message( "warbird_hanger_dropoff" );
-    var_1 _meth_8294( 25, 60 );
-    var_1 _meth_83AB( var_0.origin );
+    var_1 setmaxpitchroll( 25, 60 );
+    var_1 overridereflectionprobe( var_0.origin );
     var_1 thread maps\sanfran_b_util::warbird_shooting_think( 1 );
     var_1 maps\_vehicle::godon();
     var_1 thread hangar_heli_wait_for_unload( "hangar_fastzip_1" );
@@ -2237,7 +2237,7 @@ hangar_combat()
     waittillframeend;
     var_1 thread hanger_warbird_think();
     var_1 notify( "warbird_fire" );
-    var_1 _meth_8455();
+    var_1 vehicle_removebrushmodelcollision();
     common_scripts\utility::flag_wait( "hangar_fastzip_1" );
     var_1 notify( "warbird_stop_firing" );
     maps\_utility::trigger_wait_targetname( "trig_move_to_hangar_exit_door" );
@@ -2254,7 +2254,7 @@ hangar_combat()
             var_4 maps\_utility::deletable_magic_bullet_shield();
 
         if ( var_4.vehicle_position == 6 || var_4.vehicle_position == 5 )
-            var_4 _meth_80B2();
+            var_4 laseron();
     }
 }
 
@@ -2263,7 +2263,7 @@ hanger_warbird_clip_think( var_0 )
     var_1 = getent( "hanger_warbird_clip", "targetname" );
     common_scripts\utility::flag_wait( var_0 );
     wait 2;
-    var_1 _meth_82BF();
+    var_1 notsolid();
 }
 
 hanger_warbird_think()
@@ -2309,10 +2309,10 @@ hangar_combat_reinforcements()
     var_7 = [ var_0, var_3 ];
     var_8 = var_3.origin;
     soundscripts\_snd::snd_message( "hangar_doors_open", var_7, var_6, var_8 );
-    var_0 _meth_82AE( var_2.origin, var_6, 0.05, 0.15 );
-    var_1 _meth_82AE( var_2.origin, var_6, 0.05, 0.15 );
-    var_3 _meth_82AE( var_5.origin, var_6, 0.05, 0.15 );
-    var_4 _meth_82AE( var_5.origin, var_6, 0.05, 0.15 );
+    var_0 moveto( var_2.origin, var_6, 0.05, 0.15 );
+    var_1 moveto( var_2.origin, var_6, 0.05, 0.15 );
+    var_3 moveto( var_5.origin, var_6, 0.05, 0.15 );
+    var_4 moveto( var_5.origin, var_6, 0.05, 0.15 );
     maps\_utility::activate_trigger_with_targetname( "trig_move_allies_for_hangar_reinforcements" );
     maps\_utility::array_spawn_noteworthy( "hangar_enemy_reinforcements_1", 1, 1 );
     var_9 = getent( "hangar_enemy_reinforcements_1_mech", "script_noteworthy" ) maps\_utility::spawn_ai( 1 );
@@ -2320,8 +2320,8 @@ hangar_combat_reinforcements()
     level notify( "hangar_reinforcements_spawned" );
     maps\_utility::enable_trigger_with_targetname( "cine_copter_trigger" );
     wait 2;
-    var_1 _meth_8058();
-    var_4 _meth_8058();
+    var_1 connectpaths();
+    var_4 connectpaths();
     wait 5;
     common_scripts\utility::flag_set( "ast_vo" );
 }
@@ -2330,12 +2330,12 @@ hanger_mech_think()
 {
     self endon( "death" );
     maps\_mech::mech_start_reduced_nonplayer_damage();
-    self _meth_81A7( level.player );
+    self setgoalentity( level.player );
     self.favoriteenemy = level.player;
     createthreatbiasgroup( "player" );
     createthreatbiasgroup( "mech" );
-    level.player _meth_8177( "player" );
-    self _meth_8177( "mech" );
+    level.player setthreatbiasgroup( "player" );
+    self setthreatbiasgroup( "mech" );
     setthreatbias( "player", "mech", 900000 );
     maps\_mech::mech_start_rockets();
     maps\_mech::mech_start_hunting();
@@ -2360,7 +2360,7 @@ hangar_exit_door()
     var_0 maps\_anim::anim_first_frame_solo( var_1, "hangar_exit" );
     level waittill( "hangar_reinforcements_spawned" );
     maps\sanfran_b_util::wait_for_number_enemies_alive( 2 );
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
 
     foreach ( var_4 in var_2 )
     {
@@ -2388,7 +2388,7 @@ send_cormack()
 {
     wait 3.24;
     var_0 = getent( "hangar_door_clip", "targetname" );
-    var_0 _meth_8058();
+    var_0 connectpaths();
     var_0 delete();
     maps\_utility::activate_trigger_with_targetname( "cormack_move_fast" );
     common_scripts\utility::flag_set( "through_door_vo" );
@@ -2450,7 +2450,7 @@ destroy_cine_helicopter()
     var_0.missle_starts = getentarray( var_0.target, "targetname" );
 
     foreach ( var_2 in var_0.missle_starts )
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
 
     thread beginning_idle_cine_turret();
     common_scripts\utility::flag_wait( "DestroyCineCopter" );
@@ -2491,7 +2491,7 @@ turret_targeting()
 
     var_5 = common_scripts\utility::getstruct( "helicopter_crash_location", "targetname" );
     earthquake( 0.5, 1.5, level.player.origin, 1024 );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     start_idle_shooting();
 }
 
@@ -2503,12 +2503,12 @@ shootcineturrets()
     foreach ( var_2 in var_0.missle_starts )
     {
         var_3 = magicbullet( "mob_missile", var_2.origin, level.spawncopter.origin );
-        var_3 _meth_81D9( level.spawncopter );
+        var_3 missile_settargetent( level.spawncopter );
         wait 0.05;
     }
 
     earthquake( 0.3, 1.5, level.player.origin, 1024 );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
 }
 
 start_idle_shooting()
@@ -2519,7 +2519,7 @@ start_idle_shooting()
 
     for (;;)
     {
-        var_0 _meth_82B5( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
+        var_0 rotateto( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
         wait 1.5;
 
         foreach ( var_2 in var_0.missle_starts )
@@ -2542,7 +2542,7 @@ beginning_idle_cine_turret()
 
     for (;;)
     {
-        var_0 _meth_82B5( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
+        var_0 rotateto( ( 0, randomintrange( 180, 360 ), 0 ), 1.5, 0.25, 0.25 );
         wait 1.5;
 
         foreach ( var_2 in var_0.missle_starts )
@@ -2562,12 +2562,12 @@ door_takedown()
     common_scripts\utility::flag_wait( "flag_door_takedown" );
     var_0 = getent( "door_takedown_corner_clip", "targetname" );
     var_1 = getent( "door_takedown_initial_clip", "targetname" );
-    var_1 _meth_804D( level.takedown_door, "doorhinge" );
+    var_1 linkto( level.takedown_door, "doorhinge" );
     var_2 = common_scripts\utility::getstruct( "org_bulkhead_takedown", "targetname" );
     var_3 = getent( "door_takedown_guy2", "targetname" );
 
     if ( level.currentgen )
-        _func_218( "sanfran_b_intro_tr" );
+        loadtransient( "sanfran_b_intro_tr" );
 
     if ( common_scripts\utility::flag( "flag_door_takedown_cormack_ahead" ) == 1 )
     {
@@ -2589,10 +2589,10 @@ door_takedown()
         maps\_utility::activate_trigger_with_targetname( "trig_move_cormack_after_takedown" );
         var_2 maps\_anim::anim_single( var_5, "door_takedown" );
         var_4 maps\_utility::stop_magic_bullet_shield();
-        var_4 _meth_8052();
-        var_4 _meth_8023();
-        var_1 _meth_8058();
-        var_0 _meth_8058();
+        var_4 kill();
+        var_4 startragdoll();
+        var_1 connectpaths();
+        var_0 connectpaths();
         var_0 delete();
         level.cormack thread maps\_utility::place_weapon_on( level.cormack.primaryweapon, "right" );
         level.cormack.moveplaybackrate = 1;
@@ -2614,8 +2614,8 @@ door_takedown()
         var_5 = [ level.takedown_door, var_4 ];
         var_2 maps\_anim::anim_single( var_5, "door_ambush" );
         var_4.ignoreme = 0;
-        var_1 _meth_8058();
-        var_0 _meth_8058();
+        var_1 connectpaths();
+        var_0 connectpaths();
         var_0 delete();
         level waittill( "surprise_enemy_dead" );
         maps\_utility::activate_trigger_with_targetname( "trig_move_cormack_after_takedown" );
@@ -2663,7 +2663,7 @@ information_center_combat()
 information_center_enemies_charge()
 {
     level endon( "information_center_cleared" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_0 = maps\_utility::remove_dead_from_array( var_0 );
 
     while ( var_0.size > 2 )
@@ -2694,23 +2694,23 @@ player_los_check()
 
     for (;;)
     {
-        if ( self _meth_81BE( level.player ) )
+        if ( self cansee( level.player ) )
         {
             wait 0.05;
             continue;
         }
 
-        self _meth_81EB();
+        self findshufflecovernode();
         wait 0.05;
     }
 }
 
 straighten_ship()
 {
-    level.ground_ref_ent _meth_82B6( 5, 2 );
+    level.ground_ref_ent rotatepitch( 5, 2 );
     soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
     wait 2;
-    level.ground_ref_ent _meth_82B8( -7, 2 );
+    level.ground_ref_ent rotateroll( -7, 2 );
     soundscripts\_snd::snd_message( "if_the_boat_is_a_rockin_dont_come_a_knockin", "interior" );
 }
 
@@ -2760,7 +2760,7 @@ console_guy()
     var_1 maps\_utility::anim_stopanimscripted();
     var_1 thread play_blood_fx_when_shot();
     var_3 maps\_anim::anim_single_solo( var_1, "guy_control_to_fire" );
-    var_1 _meth_81CA( "stand" );
+    var_1 allowedstances( "stand" );
     var_1.goalradius = 4;
     var_1 maps\_utility::set_goal_pos( var_1.origin );
     var_1.dontmelee = 1;
@@ -2824,10 +2824,10 @@ control_room_anims()
     var_6 = getent( "console_04a", "targetname" );
     var_7 = spawn( "script_model", var_5.origin );
     var_7.angles = var_5.angles;
-    var_7 _meth_80B1( "mob_bridge_console_04b_obj" );
+    var_7 setmodel( "mob_bridge_console_04b_obj" );
     var_8 = spawn( "script_model", var_6.origin );
     var_8.angles = var_6.angles;
-    var_8 _meth_80B1( "mob_bridge_console_04a_obj" );
+    var_8 setmodel( "mob_bridge_console_04a_obj" );
     var_3 thread maps\_anim::anim_loop_solo( level.console_guy, "guy_control_dead_idle", "never" );
     var_3 thread maps\_anim::anim_loop_solo( level.cormack, "console_idle", "stop_operate_loop" );
     level.player waittill( "laser_off" );
@@ -2837,14 +2837,14 @@ control_room_anims()
     foreach ( var_10 in level.heroes )
         var_10 maps\_utility::enable_dontevershoot();
 
-    var_4 = _func_0D6( "axis" );
+    var_4 = getaiarray( "axis" );
 
     foreach ( var_13 in var_4 )
     {
         if ( !isdefined( var_13.magic_bullet_shield ) )
         {
             var_13.diequietly = 1;
-            var_13 _meth_8052();
+            var_13 kill();
         }
     }
 
@@ -2855,7 +2855,7 @@ control_room_anims()
             if ( isdefined( var_16 ) && isalive( var_16 ) )
             {
                 var_16 maps\_vehicle::vehicle_set_health( 1 );
-                var_16 _meth_8051( 99999, var_16.origin );
+                var_16 dodamage( 99999, var_16.origin );
             }
         }
     }
@@ -2870,7 +2870,7 @@ control_room_anims()
     level.burke maps\_utility::anim_stopanimscripted();
     var_18 = maps\_utility::spawn_anim_model( "player_rig" );
     var_3 maps\_anim::anim_first_frame_solo( var_18, "sf_b_bridge_dialog" );
-    level.player _meth_807D( var_18, "tag_player", 1, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_18, "tag_player", 1, 0, 0, 0, 0 );
     var_4 = [ var_18, level.burke, level.cormack, level.maddox ];
     var_3 thread maps\_anim::anim_single( var_4, "sf_b_bridge_dialog" );
     var_18 common_scripts\utility::delaycall( 1.0, ::hide );
@@ -2882,22 +2882,22 @@ play_cinematic( var_0, var_1, var_2 )
     if ( isdefined( level.current_cinematic ) )
     {
         pausecinematicingame( 0 );
-        _func_0D3( "cg_cinematicFullScreen", "1" );
+        setsaveddvar( "cg_cinematicFullScreen", "1" );
         level.current_cinematic = undefined;
     }
     else
-        _func_057( var_0 );
+        cinematicingame( var_0 );
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "1" );
+        setsaveddvar( "cg_cinematicCanPause", "1" );
 
     wait 1;
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "0" );
+        setsaveddvar( "cg_cinematicCanPause", "0" );
 }
 
 setup_mob_turret_targets()
@@ -2938,7 +2938,7 @@ cargo_ship_fights_back()
 detect_cargo_ship_damage()
 {
     self endon( "death" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     var_0 = undefined;
     var_1 = undefined;
     var_2 = 2000;
@@ -2956,7 +2956,7 @@ detect_cargo_ship_damage()
         {
             var_0 = 1;
             self.animname = "cargo_ship_1";
-            self _meth_8115( #animtree );
+            self useanimtree( #animtree );
             thread maps\_anim::anim_loop_solo( self, "cargo_ship_idle_large" );
         }
 
@@ -2964,7 +2964,7 @@ detect_cargo_ship_damage()
         {
             var_0 = 2;
             self.animname = "cargo_ship_2";
-            self _meth_8115( #animtree );
+            self useanimtree( #animtree );
             thread maps\_anim::anim_loop_solo( self, "cargo_ship_idle_large" );
         }
     }
@@ -2980,7 +2980,7 @@ detect_cargo_ship_damage()
         if ( isdefined( var_7 ) && var_7 == level.player && isdefined( var_9 ) && isdefined( var_10 ) || var_10 == "projectile" )
         {
             physicsexplosionsphere( var_9, 2048, 1024, var_2 );
-            _func_244( var_9, 8000 );
+            wakeupphysicssphere( var_9, 8000 );
             var_4++;
 
             if ( var_0 == 1 )
@@ -3014,7 +3014,7 @@ detect_cargo_ship_damage()
 
                     var_20 = getent( "vol_crater_1", "targetname" );
 
-                    if ( var_11 _meth_80A9( var_20 ) )
+                    if ( var_11 istouching( var_20 ) )
                         var_11 thread spawn_cargo_crater( self, 1 );
                 }
 
@@ -3057,7 +3057,7 @@ detect_cargo_ship_damage()
 
                     var_20 = getent( "vol_crater_2", "targetname" );
 
-                    if ( var_11 _meth_80A9( var_20 ) )
+                    if ( var_11 istouching( var_20 ) )
                         var_11 thread spawn_cargo_crater( self, 0 );
                 }
 
@@ -3097,14 +3097,14 @@ deleteboat()
 spawn_cargo_crater( var_0, var_1 )
 {
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_80B1( "vehicle_atlas_cargo_container_dmg_k" );
-    var_2 _meth_804D( var_0 );
+    var_2 setmodel( "vehicle_atlas_cargo_container_dmg_k" );
+    var_2 linkto( var_0 );
     var_2.angles = self.angles;
 
     if ( isdefined( var_1 ) && var_1 )
         self.angles = ( 0, 180, 0 );
 
-    self _meth_804D( var_0 );
+    self linkto( var_0 );
     playfxontag( common_scripts\utility::getfx( "fire_lp_l_blacksmk_thick_nonlit" ), self, "tag_origin" );
     var_0 waittill( "ship_destroyed" );
     wait 2;
@@ -3121,19 +3121,19 @@ cargo_ship_rocking( var_0, var_1 )
     var_2 = 0;
 
     if ( isdefined( var_1 ) && var_1 )
-        self _meth_82AE( self.origin + ( 0, 0, -256 ), 2 );
+        self moveto( self.origin + ( 0, 0, -256 ), 2 );
 
     var_3 = 3;
 
     while ( isdefined( self ) )
     {
-        self _meth_82B8( var_0, var_3, 0.05, 0.05 );
+        self rotateroll( var_0, var_3, 0.05, 0.05 );
         wait(var_3);
-        self _meth_82B8( var_0 * -1, var_3, 0.15, 1.5 );
+        self rotateroll( var_0 * -1, var_3, 0.15, 1.5 );
 
         if ( isdefined( var_1 ) && var_1 && !var_2 )
         {
-            self _meth_82AE( self.origin + ( 0, 0, 256 ), 4 );
+            self moveto( self.origin + ( 0, 0, 256 ), 4 );
             var_2 = 1;
         }
 
@@ -3153,16 +3153,16 @@ cargo_ship_death_fx( var_0 )
 
 ship_explosion_rumble( var_0 )
 {
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     earthquake( var_0, 1.75, level.player.origin, 1024 );
 }
 
 ship_explosion_screenblur()
 {
     wait 0.15;
-    _func_072( 1, 0.01 );
+    setblur( 1, 0.01 );
     wait 0.05;
-    _func_072( 0, 0.05 );
+    setblur( 0, 0.05 );
 }
 
 detect_cargo_ship_death()
@@ -3227,7 +3227,7 @@ handle_mob_turret()
     level.maddox.ignoreme = 1;
     thread railgun_cargo_ship_missiles();
     thread railgun_minigun_1();
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     maps\_utility::delaythread( 0.5, maps\_utility::autosave_by_name );
     thread maps\sanfran_b_mob_turret::setup_mob_turret();
     var_1 = getent( "trig_use_console", "targetname" );
@@ -3237,12 +3237,12 @@ handle_mob_turret()
     thread railgun_enemies();
     thread static_overlay();
     wait 0.5;
-    _func_0D3( "cg_fov", "75" );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehalolumscale", 0.75 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.35 );
+    setsaveddvar( "cg_fov", "75" );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 0.75 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.35 );
 }
 
 railgun_cargo_ship_missiles()
@@ -3263,13 +3263,13 @@ railgun_cargo_ship_missiles()
             var_0[0] = getent( "railgun_cargo_ship_missiles_1", "targetname" );
 
             if ( isdefined( var_1 ) )
-                var_0[0] _meth_804D( var_1 );
+                var_0[0] linkto( var_1 );
 
             var_2 = getentarray( "railgun_cargo_missile_targets_1", "targetname" );
             var_0[1] = getent( "railgun_cargo_ship_missiles_2", "targetname" );
 
             if ( isdefined( var_1 ) )
-                var_0[1] _meth_804D( var_1 );
+                var_0[1] linkto( var_1 );
 
             var_2 = getentarray( "railgun_cargo_missile_targets_2", "targetname" );
         }
@@ -3278,7 +3278,7 @@ railgun_cargo_ship_missiles()
             var_0[1] = getent( "railgun_cargo_ship_missiles_2", "targetname" );
 
             if ( isdefined( var_1 ) )
-                var_0[1] _meth_804D( var_1 );
+                var_0[1] linkto( var_1 );
 
             var_2 = getentarray( "railgun_cargo_missile_targets_2", "targetname" );
         }
@@ -3287,8 +3287,8 @@ railgun_cargo_ship_missiles()
         var_4 = var_2[randomint( var_2.size )];
         var_5 = vectortoangles( var_4.origin - var_3.origin );
         var_6 = magicbullet( "cargo_ship_missile_railgun", var_3.origin, var_4.origin );
-        var_6 _meth_81D9( var_4 );
-        var_6 _meth_81DC();
+        var_6 missile_settargetent( var_4 );
+        var_6 missile_setflightmodedirect();
         var_6 thread railgun_missile_impact();
         playfx( common_scripts\utility::getfx( "missile_launch_smoke" ), var_3.origin, anglestoforward( var_5 ), anglestoup( var_5 ) );
         wait(randomfloatrange( 4.0, 8.0 ));
@@ -3382,12 +3382,12 @@ railgun_enemies()
 
 railgun_warbird_think()
 {
-    self _meth_8294( 20, 40 );
+    self setmaxpitchroll( 20, 40 );
     self.emp_hits = 1;
     maps\_utility::add_damage_function( ::rail_gun_warbird_damage_function );
     thread maps\sanfran_b_util::warbird_heavy_shooting_think( 1 );
-    self _meth_8253( 1000, 45, 45 );
-    self _meth_83FA( 1, 1 );
+    self sethoverparams( 1000, 45, 45 );
+    self hudoutlineenable( 1, 1 );
 
     if ( !isdefined( self.ent_flag["warbird_open_fire"] ) )
         maps\_utility::ent_flag_init( "warbird_open_fire" );
@@ -3402,7 +3402,7 @@ rail_gun_warbird_damage_function( var_0, var_1, var_2, var_3, var_4, var_5, var_
 {
     if ( var_1 == level.player && var_4 == "MOD_PROJECTILE" )
     {
-        self _meth_8052();
+        self kill();
         wait 0.05;
 
         if ( isdefined( self ) )
@@ -3429,7 +3429,7 @@ railgun_minigun_fire( var_0 )
     if ( var_0 == 2 )
         var_1 = getent( "cargo_ship_2", "targetname" );
 
-    self _meth_804D( var_1 );
+    self linkto( var_1 );
 
     for (;;)
     {
@@ -3467,7 +3467,7 @@ create_hud_laser_crosshair()
     var_0.sort = -5;
     var_0.horzalign = "center";
     var_0.vertalign = "middle";
-    var_0 _meth_80CC( "reticle_center_cross", 32, 32 );
+    var_0 setshader( "reticle_center_cross", 32, 32 );
     var_0.alpha = 1;
     return var_0;
 }
@@ -3480,8 +3480,8 @@ static_overlay( var_0 )
 
 create_hud_static_overlay()
 {
-    _func_0D3( "cg_cinematicFullScreen", "1" );
-    _func_057( "glitch_short" );
+    setsaveddvar( "cg_cinematicFullScreen", "1" );
+    cinematicingame( "glitch_short" );
 }
 
 dismount_console()
@@ -3489,8 +3489,8 @@ dismount_console()
     static_overlay( 1 );
     var_0 = getent( "trig_use_console", "targetname" );
     var_0 common_scripts\utility::trigger_off();
-    _func_0D3( "cg_fov", "65" );
-    level.player _meth_804F();
+    setsaveddvar( "cg_fov", "65" );
+    level.player unlink();
     level.player notify( "laser_off" );
 }
 
@@ -3581,12 +3581,12 @@ disable_ir_in_nightvision()
 
 server_room_lasers()
 {
-    self _meth_80B2();
+    self laseron();
 }
 
 enable_my_thermal()
 {
-    self _meth_8029();
+    self thermaldrawenable();
 }
 
 disable_my_thermal()

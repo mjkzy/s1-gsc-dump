@@ -7,10 +7,10 @@ main()
     settimeofnextsound();
     self.timeofnextsound += 2000;
     self.bidlehitreaction = 0;
-    self _meth_8390( self.origin );
-    self _meth_8396( "face angle abs", self.angles );
-    self _meth_8397( "anim deltas" );
-    self _meth_8398( "gravity" );
+    self scragentsetgoalpos( self.origin );
+    self scragentsetorientmode( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetphysicsmode( "gravity" );
     updatestate();
 }
 
@@ -18,7 +18,7 @@ end_script()
 {
     if ( isdefined( self.prevturnrate ) )
     {
-        self _meth_839A( self.prevturnrate );
+        self scragentsetmaxturnspeed( self.prevturnrate );
         self.prevturnrate = undefined;
     }
 }
@@ -79,7 +79,7 @@ exitstate( var_0 )
 {
     if ( isdefined( self.prevturnrate ) )
     {
-        self _meth_839A( self.prevturnrate );
+        self scragentsetmaxturnspeed( self.prevturnrate );
         self.prevturnrate = undefined;
     }
 }
@@ -87,9 +87,9 @@ exitstate( var_0 )
 playidleanim()
 {
     if ( self.animsubstate == "idle_combat" )
-        self _meth_83D2( "attack_idle" );
+        self setanimstate( "attack_idle" );
     else
-        self _meth_83D2( "casual_idle" );
+        self setanimstate( "casual_idle" );
 }
 
 updateangle()
@@ -150,10 +150,10 @@ turntoangle( var_0 )
     }
 
     var_3 = getturnanimstate( var_2 );
-    var_4 = self _meth_83D3( var_3, 0 );
+    var_4 = self getanimentry( var_3, 0 );
     var_5 = getanimlength( var_4 );
-    var_6 = _func_221( var_4 );
-    self _meth_8397( "anim angle delta" );
+    var_6 = getangledelta3d( var_4 );
+    self scragentsetanimmode( "anim angle delta" );
 
     if ( animhasnotetrack( var_4, "turn_begin" ) && animhasnotetrack( var_4, "turn_end" ) )
     {
@@ -165,28 +165,28 @@ turntoangle( var_0 )
         var_11 = abs( var_10 ) / var_9 / 20;
         var_11 = var_11 * 3.14159 / 180;
         var_12 = ( 0, angleclamp180( self.angles[1] + var_10 ), 0 );
-        self.prevturnrate = self _meth_839B();
-        self _meth_839A( var_11 );
-        self _meth_8396( "face angle abs", var_12 );
+        self.prevturnrate = self scragentgetmaxturnspeed();
+        self scragentsetmaxturnspeed( var_11 );
+        self scragentsetorientmode( "face angle abs", var_12 );
         maps\mp\agents\_scriptedagents::waituntilnotetrack( "turn_in_place", "turn_end" );
-        self _meth_839A( self.prevturnrate );
+        self scragentsetmaxturnspeed( self.prevturnrate );
         self.prevturnrate = undefined;
         maps\mp\agents\_scriptedagents::waituntilnotetrack( "turn_in_place", "end" );
     }
     else
     {
-        self.prevturnrate = self _meth_839B();
+        self.prevturnrate = self scragentgetmaxturnspeed();
         var_11 = abs( angleclamp180( var_2 - var_6[1] ) ) / var_5 / 20;
         var_11 = var_11 * 3.14159 / 180;
-        self _meth_839A( var_11 );
+        self scragentsetmaxturnspeed( var_11 );
         var_12 = ( 0, angleclamp180( var_0 - var_6[1] ), 0 );
-        self _meth_8396( "face angle abs", var_12 );
+        self scragentsetorientmode( "face angle abs", var_12 );
         maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_3, 0, "turn_in_place" );
-        self _meth_839A( self.prevturnrate );
+        self scragentsetmaxturnspeed( self.prevturnrate );
         self.prevturnrate = undefined;
     }
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     playidleanim();
 }
 
@@ -196,7 +196,7 @@ rotatetoangle( var_0, var_1 )
         return;
 
     var_2 = ( 0, var_0, 0 );
-    self _meth_8396( "face angle abs", var_2 );
+    self scragentsetorientmode( "face angle abs", var_2 );
 
     while ( angleclamp180( var_0 - self.angles[1] ) > var_1 )
         wait 0.1;
@@ -220,13 +220,13 @@ dohitreaction( var_0 )
         var_2 = 0;
 
     self notify( "cancelidleloop" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", self.angles );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( "stand_pain", var_2, "stand_pain" );
     self.blockgoalpos = 0;
     self.statelocked = 0;
     self.bidlehitreaction = 0;
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetorientmode( "face angle abs", self.angles );
     self.animsubstate = "none";
     thread updatestate();
 }

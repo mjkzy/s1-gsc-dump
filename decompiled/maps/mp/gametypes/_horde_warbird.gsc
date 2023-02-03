@@ -95,10 +95,10 @@ hordecreatewarbird()
     thread maps\mp\killstreaks\_warbird::setupcloaking( var_7 );
     var_9 = 3;
     maps\mp\_utility::delaythread( var_9, maps\mp\killstreaks\_warbird::cloakingtransition, var_7, 0 );
-    var_7 common_scripts\utility::delaycall( var_9, ::_meth_83FA, level.enemyoutlinecolor, 1 );
-    var_7.warbirdturret common_scripts\utility::delaycall( var_9, ::_meth_83FA, level.enemyoutlinecolor, 1 );
+    var_7 common_scripts\utility::delaycall( var_9, ::hudoutlineenable, level.enemyoutlinecolor, 1 );
+    var_7.warbirdturret common_scripts\utility::delaycall( var_9, ::hudoutlineenable, level.enemyoutlinecolor, 1 );
     var_7.ispossessed = 0;
-    var_7.warbirdturret _meth_8065( "auto_nonai" );
+    var_7.warbirdturret setmode( "auto_nonai" );
     var_7.getstingertargetposfunc = ::hordewarbird_stinger_target_pos;
     waittillframeend;
     var_7 thread hordewarbirdaiattack( var_7 );
@@ -124,10 +124,10 @@ hordewarbird_watchdeath()
     common_scripts\utility::waittill_any( "crashing", "death" );
 
     if ( isdefined( self ) )
-        self _meth_83FB();
+        self hudoutlinedisable();
 
     if ( isdefined( self.warbirdturret ) )
-        self.warbirdturret _meth_83FB();
+        self.warbirdturret hudoutlinedisable();
 
     var_0 = self.lasttododamage;
     thread hordewarbirddestroyed( var_0 );
@@ -182,8 +182,8 @@ hordewarbirdmovetoattackpoint( var_0 )
         level.warbirdhordeneargoal = 100;
 
     var_1 = level.warbirdhordebasespeed;
-    var_0 _meth_8283( var_1, var_1 / 4, var_1 / 4 );
-    var_0 _meth_825A( level.warbirdhordeneargoal );
+    var_0 vehicle_setspeed( var_1, var_1 / 4, var_1 / 4 );
+    var_0 setneargoalnotifydist( level.warbirdhordeneargoal );
     var_2 = var_0.currentnode;
 
     if ( !isdefined( var_2 ) )
@@ -234,7 +234,7 @@ hordewarbirdmovetoattackpoint( var_0 )
     for (;;)
     {
         var_13 = var_0.horde_approach_next_node_slow;
-        var_0 _meth_825B( var_2.origin, var_13 );
+        var_0 setvehgoalpos( var_2.origin, var_13 );
         var_0.ismoving = 1;
         var_0 waittill( "near_goal" );
         var_0.currentnode = var_2;
@@ -288,7 +288,7 @@ hordewarbirdlookatenemy( var_0 )
         if ( isdefined( var_0.enemy_target ) )
         {
             hordemonitorlookatent( var_0 );
-            var_0.warbirdturret _meth_8108();
+            var_0.warbirdturret cleartargetentity();
         }
 
         waitframe();
@@ -299,12 +299,12 @@ hordemonitorlookatent( var_0 )
 {
     var_0 endon( "death" );
     var_0 endon( "pickNewTarget" );
-    var_0 _meth_8265( var_0.enemy_target );
+    var_0 setlookatent( var_0.enemy_target );
 
     if ( isdefined( var_0.enemy_target.isaerialassaultdrone ) && var_0.enemy_target.isaerialassaultdrone )
-        var_0.warbirdturret _meth_8106( var_0.enemy_target, ( 0, 0, 50 ) );
+        var_0.warbirdturret settargetentity( var_0.enemy_target, ( 0, 0, 50 ) );
     else
-        var_0.warbirdturret _meth_8106( var_0.enemy_target );
+        var_0.warbirdturret settargetentity( var_0.enemy_target );
 
     var_0.enemy_target common_scripts\utility::waittill_any_timeout( randomfloatrange( 3, 5 ), "death", "disconnect" );
     var_0.picknewtarget = 1;
@@ -396,7 +396,7 @@ hordewarbirdfireai( var_0 )
                 thread hordewarbirdfireairocket( var_0 );
         }
 
-        var_0.warbirdturret _meth_80EA();
+        var_0.warbirdturret shootturret();
     }
 }
 
@@ -404,12 +404,12 @@ hordewarbirdfireairocket( var_0 )
 {
     var_1 = var_0 gettagorigin( "tag_missile_right" );
     var_2 = vectornormalize( anglestoforward( var_0.angles ) );
-    var_3 = var_0 _meth_8287();
-    var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self _meth_80A8() + var_3 + var_2 * 1000 );
+    var_3 = var_0 vehicle_getvelocity();
+    var_4 = magicbullet( "warbird_missile_mp", var_1 + var_3 / 10, self geteye() + var_3 + var_2 * 1000 );
     var_4.killcament = var_0;
     playfxontag( level.chopper_fx["rocketlaunch"]["warbird"], var_0, "tag_missile_right" );
-    var_4 _meth_81D9( var_0.enemy_target );
-    var_4 _meth_81DC();
+    var_4 missile_settargetent( var_0.enemy_target );
+    var_4 missile_setflightmodedirect();
     var_0.remainingrocketshots--;
 
     if ( var_0.remainingrocketshots <= 0 )
@@ -449,7 +449,7 @@ checkhordewarbirdtargetlos( var_0 )
         if ( isdefined( var_0.enemy_target.issentry ) && var_0.enemy_target.issentry )
             var_2 = var_0.enemy_target.origin + ( 0, 0, 40 );
         else
-            var_2 = var_0.enemy_target _meth_80A8();
+            var_2 = var_0.enemy_target geteye();
 
         var_3 = vectornormalize( var_2 - var_1 );
         var_4 = var_1 + var_3 * 20;
@@ -458,8 +458,8 @@ checkhordewarbirdtargetlos( var_0 )
         if ( isdefined( var_0.enemy_target.isspectator ) && var_0.enemy_target.isspectator || isdefined( var_0.enemy_target.inlaststand ) && var_0.enemy_target.inlaststand || var_5["fraction"] < 0.99 )
         {
             var_0.enemy_target = undefined;
-            var_0 _meth_8266();
-            var_0.warbirdturret _meth_8108();
+            var_0 clearlookatent();
+            var_0.warbirdturret cleartargetentity();
             var_0.lineofsight = 0;
             var_0.picknewtarget = 1;
             var_0 notify( "pickNewTarget" );

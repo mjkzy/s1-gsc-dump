@@ -281,7 +281,7 @@ bot_killstreak_drop( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_2 ) && !self [[ var_2 ]]( var_0 ) )
         return 0;
 
-    var_5 = self _meth_82F8( var_0.weapon ) + self _meth_82F9( var_0.weapon );
+    var_5 = self getweaponammoclip( var_0.weapon ) + self setweaponammostock( var_0.weapon );
 
     if ( var_5 == 0 )
     {
@@ -304,7 +304,7 @@ bot_killstreak_drop( var_0, var_1, var_2, var_3, var_4 )
 
         foreach ( var_13 in var_11 )
         {
-            if ( _func_20C( var_13 ) )
+            if ( nodeexposedtosky( var_13 ) )
                 var_10 = common_scripts\utility::array_add( var_10, var_13 );
         }
 
@@ -321,7 +321,7 @@ bot_killstreak_drop( var_0, var_1, var_2, var_3, var_4 )
     else if ( var_4 == "hidden" )
     {
         var_16 = getnodesinradius( self.origin, 256, 0, 40 );
-        var_17 = self _meth_8387();
+        var_17 = self getnearestnode();
 
         if ( isdefined( var_17 ) )
         {
@@ -329,27 +329,27 @@ bot_killstreak_drop( var_0, var_1, var_2, var_3, var_4 )
 
             foreach ( var_13 in var_16 )
             {
-                if ( _func_1FF( var_17, var_13, 1 ) )
+                if ( nodesvisible( var_17, var_13, 1 ) )
                     var_18 = common_scripts\utility::array_add( var_18, var_13 );
             }
 
-            var_9 = self _meth_8364( var_18, 1, "node_hide" );
+            var_9 = self botnodepick( var_18, 1, "node_hide" );
         }
     }
 
     if ( isdefined( var_9 ) || var_4 == "anywhere" )
     {
-        self _meth_8351( "disable_movement", 1 );
+        self botsetflag( "disable_movement", 1 );
 
         if ( isdefined( var_9 ) )
-            self _meth_836D( var_9.origin, 2.45, "script_forced" );
+            self botlookatpoint( var_9.origin, 2.45, "script_forced" );
 
         bot_switch_to_killstreak_weapon( var_0, var_1, var_0.weapon );
         wait 2.0;
-        self _meth_837E( "attack" );
+        self botpressbutton( "attack" );
         wait 1.5;
-        self _meth_8315( "none" );
-        self _meth_8351( "disable_movement", 0 );
+        self switchtoweapon( "none" );
+        self botsetflag( "disable_movement", 0 );
     }
 
     return 1;
@@ -359,7 +359,7 @@ bot_switch_to_killstreak_weapon( var_0, var_1, var_2 )
 {
     bot_notify_streak_used( var_0, var_1 );
     wait 0.05;
-    self _meth_8315( var_2 );
+    self switchtoweapon( var_2 );
 }
 
 bot_notify_streak_used( var_0, var_1 )
@@ -388,12 +388,12 @@ bot_killstreak_choose_loc_enemies( var_0, var_1, var_2, var_3 )
     if ( !maps\mp\bots\_bots_util::bot_allowed_to_use_killstreaks() )
         return;
 
-    var_4 = _func_202( self.origin );
+    var_4 = getzonenearest( self.origin );
 
     if ( !isdefined( var_4 ) )
         return;
 
-    self _meth_8351( "disable_movement", 1 );
+    self botsetflag( "disable_movement", 1 );
     bot_switch_to_killstreak_weapon( var_0, var_1, var_0.weapon );
     wait 2;
 
@@ -428,11 +428,11 @@ bot_killstreak_choose_loc_enemies( var_0, var_1, var_2, var_3 )
     }
 
     if ( var_6 >= 0 )
-        var_13 = _func_205( var_6 );
+        var_13 = getzoneorigin( var_6 );
     else if ( var_8.size > 0 )
-        var_13 = _func_205( common_scripts\utility::random( var_8 ) );
+        var_13 = getzoneorigin( common_scripts\utility::random( var_8 ) );
     else
-        var_13 = _func_205( randomint( level.zonecount ) );
+        var_13 = getzoneorigin( randomint( level.zonecount ) );
 
     var_14 = ( randomfloatrange( -500, 500 ), randomfloatrange( -500, 500 ), 0 );
     var_15 = 1;
@@ -452,7 +452,7 @@ bot_killstreak_choose_loc_enemies( var_0, var_1, var_2, var_3 )
     }
 
     wait 1.0;
-    self _meth_8351( "disable_movement", 0 );
+    self botsetflag( "disable_movement", 0 );
 }
 
 bot_think_watch_aerial_killstreak()
@@ -489,7 +489,7 @@ bot_think_watch_aerial_killstreak()
         if ( maps\mp\bots\_bots_util::bot_is_remote_or_linked() )
             continue;
 
-        if ( self _meth_837B( "strategyLevel" ) == 0 )
+        if ( self botgetdifficultysetting( "strategyLevel" ) == 0 )
             continue;
 
         var_2 = 0;
@@ -532,13 +532,13 @@ bot_think_watch_aerial_killstreak()
         if ( !var_0 && var_2 )
         {
             var_0 = 1;
-            self _meth_8351( "hide_indoors", 1 );
+            self botsetflag( "hide_indoors", 1 );
         }
 
         if ( var_0 && !var_2 )
         {
             var_0 = 0;
-            self _meth_8351( "hide_indoors", 0 );
+            self botsetflag( "hide_indoors", 0 );
         }
 
         level.aerial_danger_exists_for[self.team] = var_2;

@@ -41,7 +41,7 @@ dronegetspawnpoint( var_0 )
     {
         var_13 = var_4 + ( 0, 0, var_3 * -0.5 );
         var_7 += ( 0, 0, var_3 * -0.5 );
-        var_12 = self _meth_83E5( var_13, var_7, var_2, var_3, 0, 1 );
+        var_12 = self aiphysicstrace( var_13, var_7, var_2, var_3, 0, 1 );
 
         if ( var_12["fraction"] < 1 )
             var_10 = 0;
@@ -92,7 +92,7 @@ touchingwatertriggers( var_0, var_1 )
     {
         var_3 = var_1[var_2];
 
-        if ( var_0 _meth_80A9( var_3 ) )
+        if ( var_0 istouching( var_3 ) )
             return 1;
     }
 
@@ -126,10 +126,10 @@ dronesetupcloaking( var_0, var_1 )
     if ( isdefined( var_1 ) && var_1 )
     {
         thread dronemonitordamagewhilecloaking( var_0 );
-        self _meth_82FB( "ui_drone_cloak", 2 );
+        self setclientomnvar( "ui_drone_cloak", 2 );
         var_2 = 10000;
         var_3 = gettime() + var_2;
-        self _meth_82FB( "ui_drone_cloak_time", var_3 );
+        self setclientomnvar( "ui_drone_cloak_time", var_3 );
         var_0.cloakcooldown = 5;
         thread cloakcooldown( var_0 );
         thread dronecloakwaitforexit( var_0 );
@@ -158,18 +158,18 @@ dronecloakready( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_82FB( "ui_drone_cloak", 1 );
+        self setclientomnvar( "ui_drone_cloak", 1 );
         thread dronecloakactivated( var_0 );
         thread dronecloakcooldown( var_0 );
 
         if ( var_0.cloakcooldown != 0 )
         {
-            self _meth_82FB( "ui_drone_cloak", 3 );
+            self setclientomnvar( "ui_drone_cloak", 3 );
             wait(var_0.cloakcooldown);
         }
 
         if ( var_0.hascloak )
-            self _meth_82FB( "ui_drone_cloak", 1 );
+            self setclientomnvar( "ui_drone_cloak", 1 );
 
         var_0 waittill( "Cloak" );
         var_0 notify( "ActivateCloak" );
@@ -186,8 +186,8 @@ dronecloakactivated( var_0 )
     thread dronemonitordamagewhilecloaking( var_0 );
     var_1 = 10000;
     var_2 = gettime() + var_1;
-    self _meth_82FB( "ui_drone_cloak_time", var_2 );
-    self _meth_82FB( "ui_drone_cloak", 2 );
+    self setclientomnvar( "ui_drone_cloak_time", var_2 );
+    self setclientomnvar( "ui_drone_cloak", 2 );
     var_0.cloakcooldown = 5;
     thread cloakcooldown( var_0 );
     thread dronecloakwaitforexit( var_0 );
@@ -199,7 +199,7 @@ dronecloakcooldown( var_0 )
     self waittill( "UnCloak" );
     var_0 playsound( "recon_drn_cloak_deactivate" );
     thread dronecloakingtransition( var_0, 0 );
-    self _meth_82FB( "ui_drone_cloak", 3 );
+    self setclientomnvar( "ui_drone_cloak", 3 );
     thread dronecloakdeactivateddialog( var_0 );
 }
 
@@ -227,7 +227,7 @@ dronecloakwaitforexit( var_0 )
     var_3 = max( var_2 - var_1, 5000 );
     var_0.cloakcooldown = var_3 / 1000;
     var_4 = gettime() + var_3;
-    self _meth_82FB( "ui_drone_cloak_cooldown", var_4 );
+    self setclientomnvar( "ui_drone_cloak_cooldown", var_4 );
     self notify( "UnCloak" );
 }
 
@@ -243,12 +243,12 @@ dronecloakingtransition( var_0, var_1, var_2 )
             return;
 
         var_0.cloakstate = -1;
-        var_0 _meth_844B();
+        var_0 cloakingenable();
 
         if ( isdefined( var_0.mgturret ) )
-            var_0.mgturret _meth_844B();
+            var_0.mgturret cloakingenable();
 
-        var_0 _meth_848F( 0 );
+        var_0 vehicle_setminimapvisible( 0 );
 
         if ( !isdefined( var_2 ) || !var_2 )
             wait 2.2;
@@ -268,11 +268,11 @@ dronecloakingtransition( var_0, var_1, var_2 )
             return;
 
         var_0.cloakstate = 1;
-        var_0 _meth_844C();
-        var_0 _meth_848F( 1 );
+        var_0 cloakingdisable();
+        var_0 vehicle_setminimapvisible( 1 );
 
         if ( isdefined( var_0.mgturret ) )
-            var_0.mgturret _meth_844C();
+            var_0.mgturret cloakingdisable();
 
         wait 2.2;
         var_0.cloakstate = 2;
@@ -307,16 +307,16 @@ updateshootinglocation( var_0, var_1, var_2 )
     self endon( "disconnect" );
     var_0 endon( "stopShootLocationUpdate" );
     var_0.targetent = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0.targetent _meth_80B1( "tag_origin" );
+    var_0.targetent setmodel( "tag_origin" );
     var_0.targetent.angles = ( -90, 0, 0 );
 
     if ( isdefined( var_0.mgturret ) && ( !isdefined( var_2 ) || !var_2 ) )
     {
-        var_0.mgturret _meth_8106( var_0.targetent );
-        var_0.mgturret _meth_8508( var_0.targetent );
+        var_0.mgturret settargetentity( var_0.targetent );
+        var_0.mgturret turretsetgroundaimentity( var_0.targetent );
     }
     else
-        var_0 _meth_8383( var_0.targetent );
+        var_0 setotherent( var_0.targetent );
 
     thread _cleanupshootinglocationondeath( var_0, var_1 );
 
@@ -328,7 +328,7 @@ updateshootinglocation( var_0, var_1, var_2 )
 
     for (;;)
     {
-        var_3 = self _meth_845C();
+        var_3 = self getvieworigin();
         var_4 = self getangles();
         var_5 = anglestoforward( var_4 );
         var_6 = var_3 + var_5 * 8000;
@@ -393,16 +393,16 @@ setdronevisionandlightsetpermap( var_0, var_1 )
     wait(var_0);
 
     if ( isdefined( level.dronevisionset ) )
-        self _meth_847A( level.dronevisionset, 0 );
+        self setclienttriggervisionset( level.dronevisionset, 0 );
 
     if ( isdefined( level.dronelightset ) )
-        self _meth_83C0( level.dronelightset );
+        self lightsetforplayer( level.dronelightset );
 }
 
 removedronevisionandlightsetpermap( var_0 )
 {
-    self _meth_847A( "", var_0 );
-    self _meth_83C0( "" );
+    self setclienttriggervisionset( "", var_0 );
+    self lightsetforplayer( "" );
 }
 
 playerwatchfordroneemp( var_0 )

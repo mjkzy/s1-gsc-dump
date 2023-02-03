@@ -65,7 +65,7 @@ aud_level_fadein()
     if ( common_scripts\utility::flag_exist( "chyron_video_done" ) )
         common_scripts\utility::flag_wait( "chyron_video_done" );
 
-    _func_07E( 1, level._audio.level_fade_time );
+    levelsoundfade( 1, level._audio.level_fade_time );
 }
 
 aud_is_specops()
@@ -114,7 +114,7 @@ aud_play_line_emitter( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_8.label = var_0;
     var_8 thread audx_play_line_emitter_internal();
     level waittill( var_0 + "_line_emitter_stop" );
-    var_8 _meth_806F( 0, var_7 );
+    var_8 scalevolume( 0, var_7 );
     wait(var_7);
     var_8 soundscripts\_snd_playsound::snd_stop_sound();
     wait 0.05;
@@ -140,13 +140,13 @@ audx_play_line_emitter_internal()
         {
             self.origin = var_6;
             soundscripts\_snd_playsound::snd_play_loop( self.alias );
-            self _meth_806F( 0 );
+            self scalevolume( 0 );
             wait 0.05;
-            self _meth_806F( 1.0, self.fade_in );
+            self scalevolume( 1.0, self.fade_in );
             self.is_playing = 1;
         }
         else
-            self _meth_82AE( var_6, var_3 );
+            self moveto( var_6, var_3 );
 
         wait(var_3);
     }
@@ -171,7 +171,7 @@ aud_set_point_source_loop_volume( var_0, var_1, var_2 )
 {
     var_1 = clamp( var_1, 0, 1.0 );
     var_3 = aud_get_optional_param( 1.0, var_2 );
-    var_0 _meth_806F( var_1, var_3 );
+    var_0 scalevolume( var_1, var_3 );
 }
 
 aud_set_music_submix( var_0, var_1 )
@@ -467,7 +467,7 @@ trigger_multiple_audio_trigger( var_0 )
         var_14 = -1;
         var_11 = -1;
 
-        while ( var_2 _meth_80A9( self ) )
+        while ( var_2 istouching( self ) )
         {
             if ( isdefined( self.script_audio_point_func ) )
             {
@@ -735,8 +735,8 @@ aud_play_dynamic_explosion( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_13 = spawn( "script_origin", var_7.origin );
         var_12 soundscripts\_snd_playsound::snd_play( var_1 );
         var_13 soundscripts\_snd_playsound::snd_play( var_2 );
-        var_12 _meth_82AE( var_9[0], var_11, 0, 0 );
-        var_13 _meth_82AE( var_9[1], var_11, 0, 0 );
+        var_12 moveto( var_9[0], var_11, 0, 0 );
+        var_13 moveto( var_9[1], var_11, 0, 0 );
     }
 }
 
@@ -853,16 +853,16 @@ isundefined( var_0 )
 
 aud_fade_out_and_delete( var_0, var_1 )
 {
-    var_0 _meth_806F( 0.0, var_1 );
-    var_0 common_scripts\utility::delaycall( var_1 + 0.05, ::_meth_80AC );
+    var_0 scalevolume( 0.0, var_1 );
+    var_0 common_scripts\utility::delaycall( var_1 + 0.05, ::stopsounds );
     var_0 common_scripts\utility::delaycall( var_1 + 0.1, ::delete );
 }
 
 aud_fade_loop_out_and_delete( var_0, var_1 )
 {
-    var_0 _meth_806F( 0.0, var_1 );
+    var_0 scalevolume( 0.0, var_1 );
     wait(var_1 + 0.05);
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     wait 0.05;
     var_0 delete();
 }
@@ -1023,13 +1023,13 @@ aud_percent_chance( var_0 )
 aud_start_slow_mo_gunshot_callback( var_0, var_1 )
 {
     level endon( "aud_stop_slow_mo_gunshot" );
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
 
     foreach ( var_4 in var_2 )
         var_4 thread aud_impact_monitor( var_1 );
 
     var_6 = 0;
-    var_7 = level.player _meth_8311();
+    var_7 = level.player getcurrentweapon();
 
     for (;;)
     {
@@ -1051,7 +1051,7 @@ aud_start_slow_mo_gunshot_callback( var_0, var_1 )
 aud_impact_monitor( var_0 )
 {
     level endon( "aud_stop_slow_mo_gunshot" );
-    var_1 = level.player _meth_8311();
+    var_1 = level.player getcurrentweapon();
 
     for (;;)
     {
@@ -1216,8 +1216,8 @@ restore_after_deathsdoor()
         soundscripts\_audio_zone_manager::azm_set_filter_bypass( 0 );
         soundscripts\_snd_common::snd_disable_soundcontextoverride( "deathsdoor" );
         level notify( "kill_deaths_door_audio" );
-        level.player _meth_8493( 0 );
-        level.player _meth_832F( "snd_enveffectsprio_level", 1 );
+        level.player setpainvisioneq( 0 );
+        level.player deactivatereverb( "snd_enveffectsprio_level", 1 );
         soundscripts\_audio_zone_manager::azm_set_reverb_bypass( 0 );
         soundscripts\_snd_playsound::snd_play_2d( "deaths_door_exit" );
     }
@@ -1237,13 +1237,13 @@ set_deathsdoor()
     {
         soundscripts\_audio_zone_manager::azm_set_filter_bypass( 1 );
         soundscripts\_audio_zone_manager::azm_set_reverb_bypass( 1 );
-        level.player _meth_832E( "snd_enveffectsprio_level", "sewer", 1, 0.7, 1 );
+        level.player setreverb( "snd_enveffectsprio_level", "sewer", 1, 0.7, 1 );
         soundscripts\_audio_mix_manager::mm_add_submix( "deaths_door", 0.05 );
         soundscripts\_snd_filters::snd_fade_in_filter( "deathsdoor", 0.5 );
         soundscripts\_snd_common::snd_enable_soundcontextoverride( "deathsdoor" );
         soundscripts\_snd_playsound::snd_play_2d( "deaths_door_breaths", "kill_deaths_door_audio", undefined, 0.25 );
         soundscripts\_snd_playsound::snd_play_loop_2d( "deaths_door_loop", "kill_deaths_door_audio", 0.05, 1 );
-        level.player _meth_8493( 1 );
+        level.player setpainvisioneq( 1 );
     }
 }
 
@@ -1385,7 +1385,7 @@ aud_get_threat_level( var_0, var_1, var_2 )
 
         var_8 = 36 * var_7;
         var_9 = 36 * var_6;
-        var_10 = _func_0D6( "bad_guys" );
+        var_10 = getaiarray( "bad_guys" );
         var_11 = 0;
         var_12 = 0;
 
@@ -1441,7 +1441,7 @@ aud_num_alive_enemies( var_0 )
     if ( isdefined( var_0 ) )
         var_2 = 36 * var_0;
 
-    var_3 = _func_0D6( "bad_guys" );
+    var_3 = getaiarray( "bad_guys" );
 
     foreach ( var_5 in var_3 )
     {
@@ -1471,25 +1471,25 @@ deprecated_aud_fade_sound_in( var_0, var_1, var_2, var_3, var_4 )
     else
         var_0 soundscripts\_snd_playsound::snd_play( var_1 );
 
-    var_0 _meth_806F( 0.0 );
-    var_0 common_scripts\utility::delaycall( 0.05, ::_meth_806F, var_2, var_3 );
+    var_0 scalevolume( 0.0 );
+    var_0 common_scripts\utility::delaycall( 0.05, ::scalevolume, var_2, var_3 );
 }
 
 deprecated_aud_map2( var_0, var_1 )
 {
-    return _func_246( var_0, var_1 );
+    return piecewiselinearlookup( var_0, var_1 );
 }
 
 deprecated_aud_map( var_0, var_1 )
 {
-    return _func_246( var_0, var_1 );
+    return piecewiselinearlookup( var_0, var_1 );
 }
 
 deprecated_aud_map_range( var_0, var_1, var_2, var_3 )
 {
     var_4 = ( var_0 - var_1 ) / ( var_2 - var_1 );
     var_4 = clamp( var_4, 0.0, 1.0 );
-    return _func_246( var_4, var_3 );
+    return piecewiselinearlookup( var_4, var_3 );
 }
 
 deprecated_aud_register_msg_handler( var_0 )
@@ -1597,7 +1597,7 @@ deprecated_audx_play_linked_sound_internal( var_0, var_1, var_2, var_3, var_4 )
         {
             if ( isdefined( var_4 ) )
             {
-                self _meth_806F( 0, var_4 );
+                self scalevolume( 0, var_4 );
                 wait(var_4);
             }
 
@@ -1611,7 +1611,7 @@ deprecated_audx_play_linked_sound_internal( var_0, var_1, var_2, var_3, var_4 )
         soundscripts\_snd_playsound::snd_play( var_1, "sounddone" );
 
         if ( isdefined( var_3 ) )
-            self _meth_806F( var_3, 0 );
+            self scalevolume( var_3, 0 );
 
         self waittill( "sounddone" );
 
@@ -1633,7 +1633,7 @@ deprecated_audx_monitor_linked_entity_health( var_0, var_1, var_2 )
     {
         if ( isdefined( var_2 ) )
         {
-            var_0 _meth_806F( 0, var_2 );
+            var_0 scalevolume( 0, var_2 );
             wait(var_2);
         }
 
@@ -1658,9 +1658,9 @@ deprecated_aud_play_linked_sound( var_0, var_1, var_2, var_3, var_4, var_5, var_
     var_10 = spawn( "script_origin", var_9 );
 
     if ( isdefined( var_4 ) )
-        var_10 _meth_804D( var_1, "tag_origin", var_4, ( 0, 0, 0 ) );
+        var_10 linkto( var_1, "tag_origin", var_4, ( 0, 0, 0 ) );
     else
-        var_10 _meth_804D( var_1 );
+        var_10 linkto( var_1 );
 
     if ( var_8 == "loop" )
         var_1 thread deprecated_audx_monitor_linked_entity_health( var_10, var_3, var_7 );
@@ -1676,7 +1676,7 @@ deprecated_aud_play_sound_at_internal( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) )
     {
         wait(var_2);
-        self _meth_80AC();
+        self stopsounds();
     }
     else
         self waittill( "sounddone" );
@@ -1818,7 +1818,7 @@ deprecated_aud_play_conversation( var_0, var_1 )
             wait(var_6.delay);
 
         var_7 = spawn( "script_origin", ( 0, 0, 0 ) );
-        var_7 _meth_804D( var_6.ent, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_7 linkto( var_6.ent, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_7 soundscripts\_snd_playsound::snd_play( var_6.sound, "sounddone" );
         var_7 waittill( "sounddone" );
         wait 0.05;

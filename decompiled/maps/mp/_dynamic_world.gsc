@@ -181,7 +181,7 @@ jet_flyby()
     foreach ( var_6 in self.engine_fxs )
     {
         var_7 = spawn( "script_model", var_6.origin );
-        var_7 _meth_80B1( "tag_origin" );
+        var_7 setmodel( "tag_origin" );
         var_7.angles = var_6.angles;
         var_3[var_3.size] = var_7;
     }
@@ -189,7 +189,7 @@ jet_flyby()
     foreach ( var_10 in self.flash_fxs )
     {
         var_11 = spawn( "script_model", var_10.origin );
-        var_11 _meth_80B1( "tag_origin" );
+        var_11 setmodel( "tag_origin" );
         var_11.color = var_10.script_noteworthy;
         var_11.angles = var_10.angles;
         var_4[var_4.size] = var_11;
@@ -219,13 +219,13 @@ jet_flyby()
     }
 
     foreach ( var_1 in self.jet_parts )
-        var_1 _meth_82AE( var_1.origin + self.jet_fly_vec, self.jet_flight_time );
+        var_1 moveto( var_1.origin + self.jet_fly_vec, self.jet_flight_time );
 
     foreach ( var_7 in var_3 )
-        var_7 _meth_82AE( var_7.origin + self.jet_fly_vec, self.jet_flight_time );
+        var_7 moveto( var_7.origin + self.jet_fly_vec, self.jet_flight_time );
 
     foreach ( var_11 in var_4 )
-        var_11 _meth_82AE( var_11.origin + self.jet_fly_vec, self.jet_flight_time );
+        var_11 moveto( var_11.origin + self.jet_fly_vec, self.jet_flight_time );
 
     wait(self.jet_flight_time + 1);
 
@@ -272,7 +272,7 @@ playsound_float( var_0, var_1, var_2 )
     var_3.origin = var_1;
 
     if ( isdefined( var_2 ) && var_2 )
-        var_3 _meth_8074( var_0 );
+        var_3 playsoundasmaster( var_0 );
     else
         var_3 playsound( var_0 );
 
@@ -291,18 +291,18 @@ playsound_loop_on_ent( var_0, var_1 )
     {
         var_2.origin = self.origin + var_1;
         var_2.angles = self.angles;
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
     }
     else
     {
         var_2.origin = self.origin;
         var_2.angles = self.angles;
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
     }
 
-    var_2 _meth_8075( var_0 );
+    var_2 playloopsound( var_0 );
     self waittill( "stop sound" + var_0 );
-    var_2 _meth_80AB( var_0 );
+    var_2 stoploopsound( var_0 );
     var_2 delete();
 }
 
@@ -342,7 +342,7 @@ vending_machine()
 {
     level endon( "game_ended" );
     self endon( "death" );
-    self _meth_80DA( "HINT_ACTIVATE" );
+    self setcursorhint( "HINT_ACTIVATE" );
     self.vm_normal = getent( self.target, "targetname" );
     var_0 = getent( self.vm_normal.target, "targetname" );
     var_1 = getent( var_0.target, "targetname" );
@@ -354,7 +354,7 @@ vending_machine()
     if ( isdefined( var_3.target ) )
         self.vm_fx_loc = getent( var_3.target, "targetname" ).origin;
 
-    self.vm_normal _meth_82C0( 1 );
+    self.vm_normal setcandamage( 1 );
     self.vm_normal_model = self.vm_normal.model;
     self.vm_damaged_model = self.vm_normal.script_noteworthy;
     self.vm_soda_model = var_0.model;
@@ -372,7 +372,7 @@ vending_machine()
     self.soda_slot = undefined;
     self.hp = 400;
     thread vending_machine_damage_monitor( self.vm_normal );
-    self _meth_8075( "vending_machine_hum" );
+    self playloopsound( "vending_machine_hum" );
 
     for (;;)
     {
@@ -424,7 +424,7 @@ vending_machine_damage_monitor( var_0 )
                 var_8 = self.vm_fx_loc;
 
             playfx( var_2, var_8 );
-            self.vm_normal _meth_80B1( self.vm_damaged_model );
+            self.vm_normal setmodel( self.vm_damaged_model );
 
             while ( self.soda_count > 0 )
             {
@@ -435,7 +435,7 @@ vending_machine_damage_monitor( var_0 )
                 wait 0.05;
             }
 
-            self _meth_80AB( "vending_machine_hum" );
+            self stoploopsound( "vending_machine_hum" );
             return;
         }
     }
@@ -444,7 +444,7 @@ vending_machine_damage_monitor( var_0 )
 spawn_soda()
 {
     var_0 = spawn( "script_model", self.vm_soda_start_pos );
-    var_0 _meth_80B1( self.vm_soda_model );
+    var_0 setmodel( self.vm_soda_model );
     var_0.origin = self.vm_soda_start_pos;
     var_0.angles = self.vm_soda_start_angle;
     return var_0;
@@ -452,7 +452,7 @@ spawn_soda()
 
 soda_can_drop( var_0 )
 {
-    var_0 _meth_82AE( self.vm_soda_stop_pos, 0.2 );
+    var_0 moveto( self.vm_soda_stop_pos, 0.2 );
     var_0 playsound( "vending_machine_soda_drop" );
     wait 0.2;
     self.soda_slot = var_0;
@@ -472,7 +472,7 @@ soda_can_eject()
     var_3 = ( int( var_2 / 2 ), int( var_2 / 2 ), 0 ) - ( randomint( var_2 ), randomint( var_2 ), 0 );
     var_4 = vectornormalize( self.vm_launch_to - self.vm_launch_from + var_3 );
     var_5 = var_4 * randomfloatrange( var_1, var_0 );
-    self.soda_slot _meth_82C2( self.vm_launch_from, var_5 );
+    self.soda_slot physicslaunchclient( self.vm_launch_from, var_5 );
     self.soda_slot.ejected = 1;
 }
 
@@ -480,19 +480,19 @@ freefall()
 {
     level endon( "game_ended" );
     var_0 = "briefcase_bomb_mp";
-    precacheitem( var_0 );
+    precacheshellshock( var_0 );
 
     for (;;)
     {
         self waittill( "trigger_enter", var_1 );
 
-        if ( !var_1 _meth_8314( var_0 ) )
+        if ( !var_1 hasweapon( var_0 ) )
         {
             var_1 playsound( "freefall_death" );
-            var_1 _meth_830E( var_0 );
-            var_1 _meth_82F7( var_0, 0 );
-            var_1 _meth_82F6( var_0, 0 );
-            var_1 _meth_8315( var_0 );
+            var_1 giveweapon( var_0 );
+            var_1 setweaponammostock( var_0, 0 );
+            var_1 setweaponammoclip( var_0, 0 );
+            var_1 switchtoweapon( var_0 );
         }
     }
 }
@@ -501,7 +501,7 @@ metal_detector()
 {
     level endon( "game_ended" );
     var_0 = getent( self.target, "targetname" );
-    var_0 _meth_81B3();
+    var_0 enablegrenadetouchdamage();
     var_1 = getent( var_0.target, "targetname" );
     var_2 = getent( var_1.target, "targetname" );
     var_3 = getent( var_2.target, "targetname" );
@@ -786,12 +786,12 @@ motion_light()
 
                     foreach ( var_2 in var_0 )
                     {
-                        var_2 _meth_81DF( 1.0 );
+                        var_2 setlightintensity( 1.0 );
 
                         if ( isdefined( var_2.lightrigs ) )
                         {
                             foreach ( var_11 in var_2.lightrigs )
-                                var_11 _meth_80B1( "com_two_light_fixture_on" );
+                                var_11 setmodel( "com_two_light_fixture_on" );
                         }
                     }
                 }
@@ -812,12 +812,12 @@ motion_light_timeout( var_0, var_1 )
 
     foreach ( var_3 in var_0 )
     {
-        var_3 _meth_81DF( 0 );
+        var_3 setlightintensity( 0 );
 
         if ( isdefined( var_3.lightrigs ) )
         {
             foreach ( var_5 in var_3.lightrigs )
-                var_5 _meth_80B1( "com_two_light_fixture_off" );
+                var_5 setmodel( "com_two_light_fixture_off" );
         }
     }
 
@@ -857,12 +857,12 @@ outdoor_motion_dlight()
                 {
                     self.lightson = 1;
                     var_0 playsound( "switch_auto_lights_on" );
-                    var_0 _meth_80B1( "com_two_light_fixture_on" );
+                    var_0 setmodel( "com_two_light_fixture_on" );
 
                     foreach ( var_7 in var_1 )
                     {
                         var_7.lightent = spawn( "script_model", var_7.origin );
-                        var_7.lightent _meth_80B1( "tag_origin" );
+                        var_7.lightent setmodel( "tag_origin" );
                         playfxontag( level.outdoor_motion_light, var_7.lightent, "tag_origin" );
                     }
                 }
@@ -885,7 +885,7 @@ outdoor_motion_dlight_timeout( var_0, var_1, var_2 )
         var_4.lightent delete();
 
     var_0 playsound( "switch_auto_lights_off" );
-    var_0 _meth_80B1( "com_two_light_fixture_off" );
+    var_0 setmodel( "com_two_light_fixture_off" );
     self.lightson = 0;
 }
 
@@ -949,9 +949,9 @@ trigger_door()
 dooropen( var_0, var_1 )
 {
     if ( var_1 )
-        self _meth_82B5( ( 0, self.baseyaw + 90, 1 ), var_0, 0.1, 0.75 );
+        self rotateto( ( 0, self.baseyaw + 90, 1 ), var_0, 0.1, 0.75 );
     else
-        self _meth_82B5( ( 0, self.baseyaw - 90, 1 ), var_0, 0.1, 0.75 );
+        self rotateto( ( 0, self.baseyaw - 90, 1 ), var_0, 0.1, 0.75 );
 
     self playsound( "door_generic_house_open" );
     wait(var_0 + 0.05);
@@ -959,7 +959,7 @@ dooropen( var_0, var_1 )
 
 doorclose( var_0 )
 {
-    self _meth_82B5( ( 0, self.baseyaw, 1 ), var_0 );
+    self rotateto( ( 0, self.baseyaw, 1 ), var_0 );
     self playsound( "door_generic_house_close" );
     wait(var_0 + 0.05);
 }
@@ -983,7 +983,7 @@ use_toggle()
     self.lightson = 1;
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 1.5 * self.lightson );
+        var_2 setlightintensity( 1.5 * self.lightson );
 
     for (;;)
     {
@@ -993,14 +993,14 @@ use_toggle()
         if ( self.lightson )
         {
             foreach ( var_2 in var_0 )
-                var_2 _meth_81DF( 1.5 );
+                var_2 setlightintensity( 1.5 );
 
             self playsound( "switch_auto_lights_on" );
             continue;
         }
 
         foreach ( var_2 in var_0 )
-            var_2 _meth_81DF( 0 );
+            var_2 setlightintensity( 0 );
 
         self playsound( "switch_auto_lights_off" );
     }
@@ -1025,8 +1025,8 @@ photo_copier_init( var_0 )
 
             if ( isdefined( var_2 ) )
             {
-                var_2.intensity = var_2 _meth_81DE();
-                var_2 _meth_81DF( 0 );
+                var_2.intensity = var_2 getlightintensity();
+                var_2 setlightintensity( 0 );
                 var_0.copy_bar = var_1;
                 var_0.start_pos = var_1.origin;
                 var_0.light = var_2;
@@ -1059,7 +1059,7 @@ get_photo_copier( var_0 )
         var_2 = getent( var_0.target, "targetname" );
 
         if ( isdefined( var_2 ) )
-            var_2 _meth_82C0( 1 );
+            var_2 setcandamage( 1 );
     }
 
     return var_2;
@@ -1127,8 +1127,8 @@ photo_copier_no_light()
 
 reset_copier( var_0 )
 {
-    var_0.copy_bar _meth_82AE( var_0.start_pos, 0.2 );
-    var_0.light _meth_81DF( 0 );
+    var_0.copy_bar moveto( var_0.start_pos, 0.2 );
+    var_0.light setlightintensity( 0 );
 }
 
 photo_copier_copy_bar_goes()
@@ -1139,9 +1139,9 @@ photo_copier_copy_bar_goes()
     self.copier endon( "death" );
     var_0 = self.copy_bar;
     wait 2.0;
-    var_0 _meth_82AE( self.end_pos, 1.6 );
+    var_0 moveto( self.end_pos, 1.6 );
     wait 1.8;
-    var_0 _meth_82AE( self.start_pos, 1.6 );
+    var_0 moveto( self.start_pos, 1.6 );
     wait 1.6;
     var_1 = self.light;
     var_2 = 0.2;
@@ -1154,7 +1154,7 @@ photo_copier_copy_bar_goes()
         var_5 = 1 - var_5 * var_1.intensity;
 
         if ( var_5 > 0 )
-            var_1 _meth_81DF( var_5 );
+            var_1 setlightintensity( var_5 );
 
         wait 0.05;
     }
@@ -1174,7 +1174,7 @@ photo_copier_light_on()
     {
         var_4 = var_3 * 0.05;
         var_4 /= var_1;
-        var_0 _meth_81DF( var_4 * var_0.intensity );
+        var_0 setlightintensity( var_4 * var_0.intensity );
         wait 0.05;
     }
 
@@ -1190,15 +1190,15 @@ photo_copier_stop()
 
 photo_light_flicker( var_0 )
 {
-    var_0 _meth_81DF( 1 );
+    var_0 setlightintensity( 1 );
     wait 0.05;
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
     wait 0.1;
-    var_0 _meth_81DF( 1 );
+    var_0 setlightintensity( 1 );
     wait 0.05;
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
     wait 0.1;
-    var_0 _meth_81DF( 1 );
+    var_0 setlightintensity( 1 );
 }
 
 fan_blade_rotate( var_0 )
@@ -1245,13 +1245,13 @@ fan_blade_rotate( var_0 )
         var_8 = abs( vectordot( var_5, ( 0, 0, 1 ) ) );
 
         if ( var_6 > 0.9 )
-            self _meth_82BD( ( var_1, 0, 0 ), var_2 );
+            self rotatevelocity( ( var_1, 0, 0 ), var_2 );
         else if ( var_7 > 0.9 )
-            self _meth_82BD( ( var_1, 0, 0 ), var_2 );
+            self rotatevelocity( ( var_1, 0, 0 ), var_2 );
         else if ( var_8 > 0.9 )
-            self _meth_82BD( ( 0, var_1, 0 ), var_2 );
+            self rotatevelocity( ( 0, var_1, 0 ), var_2 );
         else
-            self _meth_82BD( ( 0, var_1, 0 ), var_2 );
+            self rotatevelocity( ( 0, var_1, 0 ), var_2 );
 
         wait(var_2);
     }
@@ -1261,7 +1261,7 @@ triggertouchthink( var_0, var_1 )
 {
     level endon( "game_ended" );
     self endon( "deleted" );
-    self.entnum = self _meth_81B1();
+    self.entnum = self getentitynumber();
 
     for (;;)
     {
@@ -1303,7 +1303,7 @@ playertouchtriggerthink( var_0, var_1, var_2 )
 
     self.touchtriggers[var_0.entnum] = var_0;
 
-    while ( isalive( self ) && self _meth_80A9( var_0 ) && ( common_scripts\utility::issp() || !level.gameended ) )
+    while ( isalive( self ) && self istouching( var_0 ) && ( common_scripts\utility::issp() || !level.gameended ) )
         wait 0.05;
 
     if ( isdefined( self ) )
@@ -1384,7 +1384,7 @@ interactive_tv()
 
 tv_logic()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.damagemodel = undefined;
     self.offmodel = undefined;
     self.damagemodel = "com_tv2_d";
@@ -1409,8 +1409,8 @@ tv_logic()
         else
         {
             self.usetrig = getent( self.target, "targetname" );
-            self.usetrig _meth_817B();
-            self.usetrig _meth_80DA( "HINT_NOICON" );
+            self.usetrig usetriggerrequirelookat();
+            self.usetrig setcursorhint( "HINT_NOICON" );
         }
     }
 
@@ -1420,7 +1420,7 @@ tv_logic()
     {
         self.lite = var_1[0];
         level.tv_lite_array = common_scripts\utility::array_remove( level.tv_lite_array, self.lite );
-        self.liteintensity = self.lite _meth_81DE();
+        self.liteintensity = self.lite getlightintensity();
     }
 
     thread tv_damage();
@@ -1441,18 +1441,18 @@ tv_off()
 
         if ( self.model == self.offmodel )
         {
-            self _meth_80B1( self.onmodel );
+            self setmodel( self.onmodel );
 
             if ( isdefined( self.lite ) )
-                self.lite _meth_81DF( self.liteintensity );
+                self.lite setlightintensity( self.liteintensity );
 
             continue;
         }
 
-        self _meth_80B1( self.offmodel );
+        self setmodel( self.offmodel );
 
         if ( isdefined( self.lite ) )
-            self.lite _meth_81DF( 0 );
+            self.lite setlightintensity( 0 );
     }
 }
 
@@ -1464,10 +1464,10 @@ tv_damage()
     if ( isdefined( self.usetrig ) )
         self.usetrig notify( "death" );
 
-    self _meth_80B1( self.damagemodel );
+    self setmodel( self.damagemodel );
 
     if ( isdefined( self.lite ) )
-        self.lite _meth_81DF( 0 );
+        self.lite setlightintensity( 0 );
 
     playfxontag( level.breakables_fx["tv_explode"], self, "tag_fx" );
     self playsound( "tv_shot_burst" );
@@ -1514,7 +1514,7 @@ sliding_door()
             if ( isdefined( var_9.team ) && var_9.team == "spectator" || isdefined( var_9.sessionstate ) && var_9.sessionstate == "spectator" )
                 continue;
 
-            if ( var_9 _meth_80A9( self ) )
+            if ( var_9 istouching( self ) )
             {
                 var_7++;
                 break;
@@ -1561,7 +1561,7 @@ open_door()
     if ( var_0 < 0.05 )
         var_0 = 0.05;
 
-    self _meth_82AE( self.open_position, var_0 );
+    self moveto( self.open_position, var_0 );
     self playsound( "glass_door_open" );
     wait(var_0);
     self.sliding_door_state = "open";
@@ -1574,7 +1574,7 @@ close_all_doors( var_0, var_1 )
         if ( var_3.sliding_door_state == "closed" || var_3.sliding_door_state == "opening" )
             continue;
 
-        var_3 _meth_82AE( var_3.start_position, var_1 );
+        var_3 moveto( var_3.start_position, var_1 );
         self playsound( "glass_door_close" );
         var_3.sliding_door_state = "closed";
     }

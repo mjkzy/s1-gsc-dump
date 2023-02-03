@@ -42,7 +42,7 @@ enemy_state_hidden()
         return;
 
     self.diequietly = 1;
-    self _meth_8166();
+    self clearenemy();
 }
 
 enemy_state_spotted( var_0 )
@@ -85,7 +85,7 @@ enemy_state_spotted( var_0 )
         var_1 = level._stealth.group.spotted_enemy[self.script_stealthgroup];
 
         if ( isdefined( var_1 ) )
-            self _meth_8165( var_1 );
+            self getenemyinfo( var_1 );
     }
 }
 
@@ -114,7 +114,7 @@ enemy_init()
 enemy_dog_init()
 {
     if ( threatbiasgroupexists( "dog" ) )
-        self _meth_8177( "dog" );
+        self setthreatbiasgroup( "dog" );
 
     if ( isdefined( self.enemy ) || isdefined( self.favoriteenemy ) )
         return;

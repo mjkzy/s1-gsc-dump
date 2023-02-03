@@ -64,7 +64,7 @@ enemy_event_reaction_flashbang( var_0 )
     if ( common_scripts\utility::isflashed() && self.script == "<custom>" )
     {
         wait 0.05;
-        self _meth_816B( 1 );
+        self setflashbanged( 1 );
     }
 
     wait 0.05;
@@ -145,7 +145,7 @@ stealth_event_mod( var_0, var_1, var_2, var_3 )
     thread maps\_stealth_visibility_enemy::enemy_event_awareness( var_0 );
 
     if ( var_3 )
-        self _meth_8041( var_0 );
+        self addaieventlistener( var_0 );
 
     switch ( var_0 )
     {

@@ -130,7 +130,7 @@ setuptrophycase()
 
 playershowtrophies( var_0 )
 {
-    var_1 = self _meth_8554( "eggData" );
+    var_1 = self getcoopplayerdatareservedint( "eggData" );
 
     if ( var_1 & 1 )
         showtrophyforplayer( var_0, "1a", self );
@@ -208,9 +208,9 @@ setuphardmode()
 {
     if ( maps\mp\zombies\_util::iszombieshardmode() )
     {
-        _func_25F( 1 );
+        setnojipscore( 1 );
         setomnvar( "ui_zm_hard_mode", 1 );
-        _func_280( level.zombiehardmodevisionset, 0 );
+        visionsetpostapply( level.zombiehardmodevisionset, 0 );
         setmatchdata( "gameLengthSeconds", 0 );
         setmatchdata( "lifeCount", 0 );
         setmatchdata( "eventCount", 0 );
@@ -239,7 +239,7 @@ setuphardmode()
     {
         level thread handlehardmodebutton();
         waittillstarthardmode();
-        _func_25F( 1 );
+        setnojipscore( 1 );
         level.zombiegamepaused = 1;
         maps\mp\zombies\_util::writezombiestats();
         level thread endgametohardmode( level.playerteam, game["end_reason"]["zombies_hard_mode"] );
@@ -282,7 +282,7 @@ handlehardmodebutton()
                 iprintlnbold( &"ZOMBIE_H2O_HARD_MODE_VOTE", numplayersvotedforhardmode(), level.players.size );
             }
             else
-                var_3 iclientprintlnbold( &"ZOMBIE_H2O_HARD_MODE_VOTE", numplayersvotedforhardmode(), level.players.size );
+                var_3 iprintlnbold( &"ZOMBIE_H2O_HARD_MODE_VOTE", numplayersvotedforhardmode(), level.players.size );
 
             if ( checkstarthardmode() )
                 return;
@@ -344,8 +344,8 @@ playershowhardmodebutton( var_0, var_1 )
     if ( playerhashardmode() && !maps\mp\zombies\_util::is_true( var_0.enabled ) )
     {
         var_0.origin += ( 0, 0, -1000 );
-        var_0 _meth_80DA( "HINT_NOICON" );
-        var_0 _meth_80DB( &"ZOMBIE_H2O_START_HARD_MODE" );
+        var_0 setcursorhint( "HINT_NOICON" );
+        var_0 sethintstring( &"ZOMBIE_H2O_START_HARD_MODE" );
         var_0.enabled = 1;
         var_1 show();
     }
@@ -365,9 +365,9 @@ sethardmodebosscoopdatah2o()
         if ( !isdefined( var_1.joinedround1 ) || !var_1.joinedround1 )
             continue;
 
-        var_2 = var_1 _meth_8554( "eggData" );
+        var_2 = var_1 getcoopplayerdatareservedint( "eggData" );
         var_2 |= 64;
-        var_1 _meth_8555( "eggData", var_2 );
+        var_1 setcoopplayerdatareservedint( "eggData", var_2 );
     }
 
     level notify( "sq_update_trophies" );
@@ -409,10 +409,10 @@ setsidequestcoopdatah2o()
         if ( !isdefined( var_1.joinedround1 ) || !var_1.joinedround1 )
             continue;
 
-        var_2 = var_1 _meth_8554( "eggData" );
+        var_2 = var_1 getcoopplayerdatareservedint( "eggData" );
         var_2 |= 32;
         var_1.sidequest = 1;
-        var_1 _meth_8555( "eggData", var_2 );
+        var_1 setcoopplayerdatareservedint( "eggData", var_2 );
         setmatchdata( "players", var_1.clientid, "startPrestige", var_1.sidequest );
     }
 
@@ -421,14 +421,14 @@ setsidequestcoopdatah2o()
 
 playersethardmodecoopdatah2o()
 {
-    var_0 = self _meth_8554( "eggData" );
+    var_0 = self getcoopplayerdatareservedint( "eggData" );
     var_0 |= 128;
-    self _meth_8555( "eggData", var_0 );
+    self setcoopplayerdatareservedint( "eggData", var_0 );
 }
 
 playerhashardmode()
 {
-    var_0 = self _meth_8554( "eggData" );
+    var_0 = self getcoopplayerdatareservedint( "eggData" );
     return var_0 & 128;
 }
 
@@ -510,7 +510,7 @@ endgametohardmode( var_0, var_1, var_2 )
 
     foreach ( var_5 in level.players )
     {
-        var_5 _meth_82FC( "ui_opensummary", 1 );
+        var_5 setclientdvar( "ui_opensummary", 1 );
 
         if ( maps\mp\_utility::wasonlyround() || maps\mp\_utility::waslastround() )
             var_5 maps\mp\killstreaks\_killstreaks::clearkillstreaks( 1 );
@@ -550,7 +550,7 @@ endgametohardmode( var_0, var_1, var_2 )
             level notify( "restarting" );
             game["state"] = "playing";
             setdvar( "ui_game_state", "playing" );
-            _func_169( 1 );
+            map_restart( 1 );
             return;
         }
 
@@ -580,7 +580,7 @@ endgametohardmode( var_0, var_1, var_2 )
     maps\mp\gametypes\_gamelogic::displaygameend( var_0, var_1 );
 
     foreach ( var_5 in level.players )
-        var_5 _meth_82FB( "ui_round_end_reason", var_1 );
+        var_5 setclientomnvar( "ui_round_end_reason", var_1 );
 
     var_13 = gettime();
 
@@ -599,8 +599,8 @@ endgametohardmode( var_0, var_1, var_2 )
 
     foreach ( var_5 in level.players )
     {
-        var_5 _meth_8325();
-        var_5 _meth_826C();
+        var_5 closepopupmenu();
+        var_5 closeingamemenu();
         var_5 notify( "reset_outcome" );
         var_5 thread maps\mp\gametypes\_playerlogic::spawnintermission();
     }
@@ -619,7 +619,7 @@ endgametohardmode( var_0, var_1, var_2 )
 
         setmatchdata( "alliesScore", game["teamScores"]["allies"] );
         setmatchdata( "axisScore", game["teamScores"]["axis"] );
-        _func_242( var_0 );
+        tournamentreportwinningteam( var_0 );
     }
     else
         setmatchdata( "victor", "none" );
@@ -638,9 +638,9 @@ endgametohardmode( var_0, var_1, var_2 )
 
     if ( maps\mp\_utility::matchmakinggame() )
     {
-        setmatchdata( "playlistVersion", _func_27B() );
-        setmatchdata( "playlistID", _func_27C() );
-        setmatchdata( "isDedicated", _func_27A() );
+        setmatchdata( "playlistVersion", getplaylistversion() );
+        setmatchdata( "playlistID", getplaylistid() );
+        setmatchdata( "isDedicated", isdedicatedserver() );
     }
 
     setmatchdata( "levelMaxClients", level.maxclients );
@@ -652,7 +652,7 @@ endgametohardmode( var_0, var_1, var_2 )
         var_5.pers["segments"] = var_5.segments;
     }
 
-    _func_243();
+    tournamentreportendofgame();
     var_22 = 0;
 
     if ( maps\mp\_utility::practiceroundgame() )
@@ -816,7 +816,7 @@ endgametohardmode( var_0, var_1, var_2 )
         var_5.pers["segments"] = var_5.segments;
         var_5.pers["team"] = undefined;
         var_5 sendleaderboards();
-        var_5 _meth_82FB( "ui_round_end", 0 );
+        var_5 setclientomnvar( "ui_round_end", 0 );
     }
 
     setomnvar( "ui_zm_hard_mode", 1 );
@@ -827,7 +827,7 @@ endgametohardmode( var_0, var_1, var_2 )
     game["start_in_zmb_hard_mode"] = 1;
     game["gamestarted"] = undefined;
     setdvar( "ui_game_state", "playing" );
-    _func_169( 1 );
+    map_restart( 1 );
 }
 
 initvo()
@@ -952,13 +952,13 @@ valvesetup()
     self.firstturn = 0;
     self.halfway = 0;
     self.damagecallback = ::valvedamagecallback;
-    self _meth_8495( 1 );
-    self _meth_82C0( 1 );
+    self setdamagecallbackon( 1 );
+    self setcandamage( 1 );
     self waittill( "turn_complete" );
     level.zmbsqnumvalvescomplete++;
     thread maps\mp\mp_zombie_h2o_aud::sndvalvelight( self.origin );
     level notify( "zmb_sq_valve_complete" );
-    _func_222( self.script_index );
+    activateclientexploder( self.script_index );
 }
 
 assignexplodernumberstovalves( var_0 )
@@ -1006,7 +1006,7 @@ valvedamagecallback( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
 
     if ( self.degreesturned >= 360 )
     {
-        self _meth_8495( 0 );
+        self setdamagecallbackon( 0 );
         self.damagecallback = undefined;
         self notify( "turn_complete" );
     }
@@ -1033,7 +1033,7 @@ opendoors()
     {
         var_4.openpos = common_scripts\utility::getstruct( var_4.target, "targetname" );
         var_5 = getent( var_4.target, "targetname" );
-        var_5 _meth_8446( var_4 );
+        var_5 vehicle_jetbikesethoverforcescale( var_4 );
 
         if ( !common_scripts\utility::array_contains( var_2, var_4.origin ) )
             var_2[var_2.size] = var_4.origin;
@@ -1042,7 +1042,7 @@ opendoors()
     var_7 = 1.0;
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_82AE( var_4.openpos.origin, var_7 );
+        var_4 moveto( var_4.openpos.origin, var_7 );
 
     foreach ( var_11 in var_2 )
         playsoundatpos( var_11, "interact_door" );
@@ -1174,7 +1174,7 @@ stage2_end( var_0 )
 stage3_init()
 {
     var_0 = common_scripts\utility::getstruct( "sqWaterValveLight", "targetname" );
-    _func_222( 70 );
+    activateclientexploder( 70 );
     var_1 = getent( "sq_underwater_switch_off", "targetname" );
 
     if ( isdefined( var_1 ) )
@@ -1196,11 +1196,11 @@ stage3_logic()
     {
         var_2 waittill( "trigger", var_4 );
 
-        if ( !var_4 _meth_8341() )
+        if ( !var_4 isonground() )
             continue;
 
         thread maps\mp\mp_zombie_h2o_aud::snddepressurizeloopstart( var_1 );
-        _func_222( 30 );
+        activateclientexploder( 30 );
         level.zmbhighpriorityenemy = var_4;
 
         if ( !var_3 )
@@ -1211,7 +1211,7 @@ stage3_logic()
 
         var_5 = var_1 useholdthink( var_4, 0, 45000 );
         thread maps\mp\mp_zombie_h2o_aud::snddepressurizeloopend( var_1 );
-        _func_292( 30 );
+        stopclientexploder( 30 );
 
         if ( var_5 )
         {
@@ -1230,8 +1230,8 @@ stage3_logic()
 
 useholdthink( var_0, var_1, var_2 )
 {
-    var_0 _meth_807C( self );
-    var_0 _meth_8081();
+    var_0 playerlinkto( self );
+    var_0 playerlinkedoffsetenable();
 
     if ( !isdefined( self.curprogress ) )
     {
@@ -1241,7 +1241,7 @@ useholdthink( var_0, var_1, var_2 )
 
     self.inuse = 1;
     self.userate = 0;
-    var_0 _meth_831D();
+    var_0 disableweapons();
     var_0 thread personalusebar( self );
     var_3 = useholdthinkloop( var_0 );
 
@@ -1252,13 +1252,13 @@ useholdthink( var_0, var_1, var_2 )
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_831E();
-        var_0 _meth_82FB( "ui_use_bar_text", 0 );
-        var_0 _meth_82FB( "ui_use_bar_end_time", 0 );
-        var_0 _meth_82FB( "ui_use_bar_start_time", 0 );
+        var_0 enableweapons();
+        var_0 setclientomnvar( "ui_use_bar_text", 0 );
+        var_0 setclientomnvar( "ui_use_bar_end_time", 0 );
+        var_0 setclientomnvar( "ui_use_bar_start_time", 0 );
 
-        if ( var_0 _meth_8068() )
-            var_0 _meth_804F();
+        if ( var_0 islinked() )
+            var_0 unlink();
     }
 
     self notify( "zombieUseHoldThinkComplete" );
@@ -1271,8 +1271,8 @@ personalusebar( var_0 )
     self endon( "death" );
     self endon( "enter_last_stand" );
     self endon( "stop_useHoldThinkLoop" );
-    self _meth_82FB( "ui_use_bar_text", 6 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() - var_0.curprogress ) );
+    self setclientomnvar( "ui_use_bar_text", 6 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() - var_0.curprogress ) );
     var_1 = -1;
 
     while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0 ) && var_0.inuse && !level.gameended )
@@ -1287,7 +1287,7 @@ personalusebar( var_0 )
                 var_2 = gettime();
                 var_3 = var_0.curprogress / var_0.usetime;
                 var_4 = var_2 + ( 1 - var_3 ) * var_0.usetime / var_0.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_4 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_4 ) );
             }
 
             var_1 = var_0.userate;
@@ -1457,13 +1457,13 @@ dofloaterzombie()
         var_0.angles = ( 0, 0, 0 );
 
     level.sqfloater = spawn( "script_model", ( 0, 0, 0 ) );
-    level.sqfloater _meth_80B1( "zom_host_fullbody" );
-    level.sqfloater _meth_848B( "zom_h2o_floater_enter", var_0.origin, var_0.angles, "floater_notetrack" );
+    level.sqfloater setmodel( "zom_host_fullbody" );
+    level.sqfloater scriptmodelplayanimdeltamotionfrompos( "zom_h2o_floater_enter", var_0.origin, var_0.angles, "floater_notetrack" );
     level.sqfloater waittillmatch( "floater_notetrack", "end" );
     level.sqfloater thread floaterzombiedetecthit();
-    level.sqfloater _meth_848B( "zom_h2o_floater_loop", var_0.origin, var_0.angles, "floater_notetrack", 1 );
+    level.sqfloater scriptmodelplayanimdeltamotionfrompos( "zom_h2o_floater_loop", var_0.origin, var_0.angles, "floater_notetrack", 1 );
     level.sqfloater common_scripts\utility::waittill_any_return_no_endon_death( "hit_floater", "main_stage4_over" );
-    level.sqfloater _meth_848B( "zom_h2o_floater_exit", var_0.origin, var_0.angles, "floater_notetrack", 1 );
+    level.sqfloater scriptmodelplayanimdeltamotionfrompos( "zom_h2o_floater_exit", var_0.origin, var_0.angles, "floater_notetrack", 1 );
 
     if ( isdefined( var_1 ) )
         var_1 delete();
@@ -1482,9 +1482,9 @@ floaterzombiedetecthit()
     {
         foreach ( var_3 in level.players )
         {
-            if ( var_3 maps\mp\_utility::isjuggernaut() && var_3 _meth_812E() )
+            if ( var_3 maps\mp\_utility::isjuggernaut() && var_3 ismeleeing() )
             {
-                var_4 = _func_220( var_3.origin, self.origin );
+                var_4 = distance2dsquared( var_3.origin, self.origin );
 
                 if ( var_4 <= var_0 )
                 {
@@ -1520,7 +1520,7 @@ fillairlockwithwater()
     }
 
     thread maps\mp\mp_zombie_h2o_aud::sndfillwithwater();
-    var_0 _meth_82AE( var_0.filledpos, 2, 0.1, 0.1 );
+    var_0 moveto( var_0.filledpos, 2, 0.1, 0.1 );
     wait 1.3;
 }
 
@@ -1532,7 +1532,7 @@ emptywaterfromairlock()
         return;
 
     thread maps\mp\mp_zombie_h2o_aud::snddrainwater();
-    var_0 _meth_82AE( var_0.emptypos, 2, 0.1, 0.1 );
+    var_0 moveto( var_0.emptypos, 2, 0.1, 0.1 );
     wait 1.3;
 }
 
@@ -1553,13 +1553,13 @@ playergoliathsetwater( var_0 )
         self.underwatermotiontype = "deep";
         maps\mp\zombies\_util::playerallowfire( 0, "sq" );
         common_scripts\utility::_disableoffhandweapons();
-        self _meth_84BF();
+        self disableoffhandsecondaryweapons();
         self.oldmovescaler = self.movespeedscaler;
         self.movespeedscaler *= 0.75;
         maps\mp\gametypes\_weapons::updatemovespeedscale();
         maps\mp\mp_zombie_h2o_aud::sndunderwaterenter( self );
         playfxontag( common_scripts\utility::getfx( "sq_bubbles" ), self, "j_shoulder_ri" );
-        self.bubblesfx = _func_272( common_scripts\utility::getfx( "sq_bubbles_first_person" ), self.origin, self );
+        self.bubblesfx = spawnfxforclient( common_scripts\utility::getfx( "sq_bubbles_first_person" ), self.origin, self );
         triggerfx( self.bubblesfx );
         self.bubblesfx thread playergoliathcleanupbubblesondisconnect( self );
         playfxontagforclients( common_scripts\utility::getfx( "sq_plunge" ), self, "tag_origin", self );
@@ -1574,7 +1574,7 @@ playergoliathsetwater( var_0 )
         self stopshellshock();
         self.underwatermotiontype = undefined;
         common_scripts\utility::_enableoffhandweapons();
-        self _meth_84C0();
+        self enableoffhandsecondaryweapons();
         self.movespeedscaler = self.oldmovescaler;
         self.oldmovescaler = undefined;
         maps\mp\gametypes\_weapons::updatemovespeedscale();
@@ -1649,7 +1649,7 @@ monitorplayersinairlock( var_0, var_1 )
     {
         foreach ( var_3 in level.players )
         {
-            if ( var_3 _meth_80A9( var_0 ) || var_3 _meth_80A9( var_1 ) || var_3 maps\mp\_utility::isjuggernaut() && isdefined( var_3.underwatermotiontype ) )
+            if ( var_3 istouching( var_0 ) || var_3 istouching( var_1 ) || var_3 maps\mp\_utility::isjuggernaut() && isdefined( var_3.underwatermotiontype ) )
             {
                 var_3.inairlock = 1;
                 var_3.disabletombstonedropinarea = 1;
@@ -1670,8 +1670,8 @@ createairlockdoor( var_0 )
     var_2 = var_1[0];
     var_2.closedpos = var_2.origin;
     var_2.openpos = var_2.origin + ( 0, 0, 100 );
-    var_1[1] _meth_8446( var_2 );
-    var_0 _meth_8446( var_2 );
+    var_1[1] vehicle_jetbikesethoverforcescale( var_2 );
+    var_0 vehicle_jetbikesethoverforcescale( var_2 );
     return var_2;
 }
 
@@ -1689,8 +1689,8 @@ waittillactivatedwatervalve( var_0 )
     var_1 maps\mp\zombies\_zombies_sidequests::fake_use( "water_valve_used", undefined, undefined, "main_stage4_over" );
     maps\mp\mp_zombie_h2o_aud::sndunderwaterpanelaccessed( var_1.origin );
     level thread announcerglobalplaysqvo( 5, 1 );
-    _func_292( 70 );
-    _func_222( 71 );
+    stopclientexploder( 70 );
+    activateclientexploder( 71 );
 
     if ( isdefined( var_2 ) )
         var_2 delete();
@@ -1708,7 +1708,7 @@ canplayercontinuestage4( var_0 )
 
 isplayerinairlock( var_0, var_1, var_2 )
 {
-    return var_0 _meth_80A9( var_2 ) && !var_0 _meth_80A9( var_1 );
+    return var_0 istouching( var_2 ) && !var_0 istouching( var_1 );
 }
 
 waittillplayernotinairlock( var_0, var_1, var_2, var_3 )
@@ -1720,7 +1720,7 @@ waittillplayernotinairlock( var_0, var_1, var_2, var_3 )
 
     for (;;)
     {
-        if ( !var_0 _meth_80A9( var_2 ) && !var_0 _meth_80A9( var_1 ) )
+        if ( !var_0 istouching( var_2 ) && !var_0 istouching( var_1 ) )
             break;
 
         if ( var_3 && gettime() > var_4 )
@@ -1756,14 +1756,14 @@ waittillplayerinairlock( var_0, var_1, var_2, var_3 )
 closeairlockdoor( var_0 )
 {
     playsoundatpos( var_0.origin, "trap_security_door_slam" );
-    var_0 _meth_82AE( var_0.closedpos, 0.1, 0.1 );
+    var_0 moveto( var_0.closedpos, 0.1, 0.1 );
     wait 0.2;
 }
 
 openairlockdoor( var_0 )
 {
     playsoundatpos( var_0.origin, "interact_door" );
-    var_0 _meth_82AE( var_0.openpos, 1.0 );
+    var_0 moveto( var_0.openpos, 1.0 );
     wait 2.1;
 }
 
@@ -2101,11 +2101,11 @@ capacitormetersinit()
 launchcover( var_0, var_1 )
 {
     var_2 = anglestoforward( var_1.angles ) * 2000;
-    var_0 _meth_82C2( var_0.origin, var_2 );
+    var_0 physicslaunchclient( var_0.origin, var_2 );
     playfx( common_scripts\utility::getfx( "sq_capacitor_cover_blown_off" ), var_1.origin );
     maps\mp\mp_zombie_h2o_aud::sndcapacitorcoverblownoff( var_1.origin );
     var_0 common_scripts\utility::waittill_notify_or_timeout( "physics_finished", 4 );
-    var_0 _meth_84E1();
+    var_0 physicsstop();
     wait 20;
     var_0 delete();
 }
@@ -2115,7 +2115,7 @@ runchargecapacitorlogic( var_0, var_1, var_2 )
     var_3 = 32400;
     var_4 = 15;
     var_5 = 0;
-    _func_29C( 85 );
+    activatepersistentclientexploder( 85 );
 
     while ( var_4 > 0 )
     {
@@ -2125,14 +2125,14 @@ runchargecapacitorlogic( var_0, var_1, var_2 )
         if ( var_9 < var_3 )
         {
             playfx( common_scripts\utility::getfx( "sq_emz_explode" ), var_6.origin + ( 0, 0, 30 ) );
-            _func_222( 51 );
+            activateclientexploder( 51 );
 
             if ( isalive( var_6 ) )
             {
-                if ( _func_2D9( var_6 ) && !var_6 maps\mp\agents\humanoid\_humanoid_util::iscrawling() && isdefined( var_6.agent_type ) && var_6.agent_type != "zombie_dog" )
+                if ( isscriptedagent( var_6 ) && !var_6 maps\mp\agents\humanoid\_humanoid_util::iscrawling() && isdefined( var_6.agent_type ) && var_6.agent_type != "zombie_dog" )
                     level thread electrocutezombie( var_6, var_0 );
                 else
-                    var_6 _meth_8051( var_6.health, var_6.origin );
+                    var_6 dodamage( var_6.health, var_6.origin );
             }
 
             if ( !var_5 )
@@ -2148,14 +2148,14 @@ runchargecapacitorlogic( var_0, var_1, var_2 )
             {
                 var_12 = ( 15 - var_4 ) / 15;
                 var_13 = ( var_11.end - var_11.start ) * var_12 + var_11.start;
-                var_11 _meth_82AE( var_13, 0.1 );
+                var_11 moveto( var_13, 0.1 );
             }
         }
     }
 
     wait 1;
-    _func_292( 85 );
-    _func_222( 50 );
+    stopclientexploder( 85 );
+    activateclientexploder( 50 );
     thread maps\mp\mp_zombie_h2o_aud::sndcapacitorchargedsuccess( var_1 );
     announcerglobalplaysqvowaittilldone( 15, 1 );
     announcerglobalplaysqvowaittilldone( 6, 0.5 );
@@ -2164,12 +2164,12 @@ runchargecapacitorlogic( var_0, var_1, var_2 )
 electrocutezombie( var_0, var_1 )
 {
     var_0 endon( "death" );
-    var_0 _meth_8397( "anim deltas" );
-    var_0 _meth_8395( 1, 1 );
-    var_0 _meth_8398( "no_gravity" );
-    var_0 _meth_8396( "face angle abs", var_0.angles );
+    var_0 scragentsetanimmode( "anim deltas" );
+    var_0 scragentsetanimscale( 1, 1 );
+    var_0 scragentsetphysicsmode( "no_gravity" );
+    var_0 scragentsetorientmode( "face angle abs", var_0.angles );
     var_2 = "sq_electrocute";
-    var_3 = var_0 _meth_83D6( var_2 );
+    var_3 = var_0 getanimentrycount( var_2 );
     var_4 = angleclamp180( var_0.angles[1] - var_1.angles[1] );
     var_5 = 1;
 
@@ -2185,15 +2185,15 @@ electrocutezombie( var_0, var_1 )
     var_0.godmode = 1;
 
     if ( isdefined( var_0.swapbody ) )
-        var_0 _meth_80B1( var_0.swapbody );
+        var_0 setmodel( var_0.swapbody );
 
     var_0 notify( "humanoidPendingDeath" );
-    var_0 _meth_839D( 1 );
+    var_0 scragentsetscripted( 1 );
     var_0 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "sq_electrocute" );
     var_0 thread maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_2, var_5, 1.0, "scripted_anim" );
     wait 1.5;
     var_0.godmode = 0;
-    var_0 _meth_8051( var_0.health, var_0.origin );
+    var_0 dodamage( var_0.health, var_0.origin );
 }
 
 stage7_end( var_0 )
@@ -2223,7 +2223,7 @@ stage8_logic()
     level thread onplayerconnectstage8();
     level thread handlefeaturesstage8();
     waituntilnextround();
-    var_3 = worldentnumber( level.playerteam );
+    var_3 = getteamplayersalive( level.playerteam );
 
     if ( var_3 > 0 )
         maps\mp\zombies\_zombies_sidequests::stage_completed( "main", "stage8" );
@@ -2256,7 +2256,7 @@ playerhandleweaponsstage8()
 
     if ( maps\mp\_utility::isjuggernaut() )
     {
-        self _meth_8051( self.mechhealth, self.origin );
+        self dodamage( self.mechhealth, self.origin );
         wait 1;
     }
 
@@ -2274,19 +2274,19 @@ playerhandleweaponsstage8()
 playerinfinitegrenadesstage8()
 {
     level endon( "main_stage8_over" );
-    var_0 = self _meth_82CE();
+    var_0 = self getweaponslistoffhands();
 
     foreach ( var_2 in var_0 )
     {
-        var_3 = _func_1E1( var_2 );
-        self _meth_82F6( var_2, var_3 );
+        var_3 = weaponmaxammo( var_2 );
+        self setweaponammoclip( var_2, var_3 );
     }
 
     for (;;)
     {
         self waittill( "grenade_fire", var_5, var_2 );
-        var_3 = _func_1E1( var_2 );
-        self _meth_82F6( var_2, var_3 );
+        var_3 = weaponmaxammo( var_2 );
+        self setweaponammoclip( var_2, var_3 );
     }
 }
 
@@ -2312,7 +2312,7 @@ removeweaponsstage8()
 {
     playergivecontactgrenade();
     maps\mp\zombies\_util::playerallowfire( 0, "sq" );
-    self _meth_84BF();
+    self disableoffhandsecondaryweapons();
     common_scripts\utility::_disableweaponswitch();
 }
 
@@ -2331,7 +2331,7 @@ playergivecontactgrenade()
 
 playergetcontactgrenade()
 {
-    var_0 = self _meth_82CE();
+    var_0 = self getweaponslistoffhands();
 
     foreach ( var_2 in var_0 )
     {
@@ -2359,7 +2359,7 @@ restoreweaponsstage8()
 {
     playertakecontactgrenade();
     maps\mp\zombies\_util::playerallowfire( 1, "sq" );
-    self _meth_84C0();
+    self enableoffhandsecondaryweapons();
 
     if ( !isweaponswitchenabled_duplicate() )
         common_scripts\utility::_enableweaponswitch();
@@ -2458,7 +2458,7 @@ jumpquest_initplatforms()
 
         foreach ( var_3 in var_1.visuals )
         {
-            var_3 _meth_804D( var_1 );
+            var_3 linkto( var_1 );
             var_3.noteleportgrenade = 1;
         }
 
@@ -2483,28 +2483,28 @@ jumpquest_platformplayertouch()
         var_0 = level.jumpquest.platformstandtime / 3;
 
         foreach ( var_2 in self.visuals )
-            var_2 _meth_83FA( 1, 1 );
+            var_2 hudoutlineenable( 1, 1 );
 
         wait(var_0);
 
         foreach ( var_2 in self.visuals )
-            var_2 _meth_83FA( 4, 1 );
+            var_2 hudoutlineenable( 4, 1 );
 
         wait(var_0);
 
         foreach ( var_2 in self.visuals )
-            var_2 _meth_83FA( 0, 1 );
+            var_2 hudoutlineenable( 0, 1 );
 
         wait(var_0);
     }
     else
         wait(level.jumpquest.platformstandtime);
 
-    self _meth_82BF();
-    self _meth_8510();
+    self notsolid();
+    self ghost();
 
     foreach ( var_2 in self.visuals )
-        var_2 _meth_8510();
+        var_2 ghost();
 
     wait(level.jumpquest.platformresettime);
 
@@ -2520,12 +2520,12 @@ jumpquest_platformwatch()
             waitframe();
 
         jumpquest_platformplayertouch();
-        self _meth_82BE();
+        self solid();
         self show();
 
         foreach ( var_1 in self.visuals )
         {
-            var_1 _meth_83FB();
+            var_1 hudoutlinedisable();
             var_1 show();
         }
     }
@@ -2538,7 +2538,7 @@ jumpquest_allplayersoffplatforms()
         if ( !maps\mp\_utility::isreallyalive( var_1 ) )
             continue;
 
-        var_2 = var_1 _meth_8557();
+        var_2 = var_1 getgroundentity();
 
         if ( !isdefined( var_2 ) )
             return 0;
@@ -2563,7 +2563,7 @@ jumpquest_anyplayeronplatform( var_0 )
         if ( !maps\mp\_utility::isreallyalive( var_2 ) )
             continue;
 
-        var_3 = var_2 _meth_8557();
+        var_3 = var_2 getgroundentity();
 
         if ( isdefined( var_3 ) && var_3 == var_0 )
             return 1;
@@ -2582,8 +2582,8 @@ jumpquest_moveplatform( var_0, var_1, var_2 )
 
     if ( var_5 != var_0.origin )
     {
-        var_6 = _func_223( var_0.origin, var_5, var_3, var_2 );
-        var_0 _meth_82B2( var_6, var_2 );
+        var_6 = trajectorycalculateinitialvelocity( var_0.origin, var_5, var_3, var_2 );
+        var_0 movegravity( var_6, var_2 );
         var_4 = 1;
     }
 
@@ -2595,7 +2595,7 @@ jumpquest_moveplatform( var_0, var_1, var_2 )
         var_9 = randomintrange( -2, 2 ) * 360 + angleclamp180( var_7[1] - var_0.angles[1] );
         var_10 = randomintrange( -2, 2 ) * 360 + angleclamp180( var_7[2] - var_0.angles[2] );
         var_11 = 2 * ( var_8, var_9, var_10 ) / var_2;
-        var_0 _meth_82BD( var_11, var_2, 0, var_2 );
+        var_0 rotatevelocity( var_11, var_2, 0, var_2 );
         var_4 = 1;
     }
 
@@ -2759,7 +2759,7 @@ jumpquest_run()
         wait(var_0 + 0.05);
         var_2 = spawnfx( common_scripts\utility::getfx( "jump_quest_goal" ), level.jumpquest.goal.origin, anglestoup( level.jumpquest.goal.angles ), anglestoright( level.jumpquest.goal.angles ) );
         triggerfx( var_2 );
-        setwinningteam( var_2, 1 );
+        setfxkillondelete( var_2, 1 );
         var_3 = jumpquest_waitforgoal();
 
         if ( isdefined( var_3 ) )
@@ -2847,10 +2847,10 @@ jumpquest_reset_clip( var_0 )
     for (;;)
     {
         if ( level.jumpquest.stagecurrent <= 0 )
-            var_0 _meth_82BF();
+            var_0 notsolid();
         else
         {
-            var_0 _meth_82BE();
+            var_0 solid();
             var_0 setcontents( var_1 );
         }
 
@@ -2890,24 +2890,24 @@ jumpquest_resetplayer( var_0, var_1 )
 
 jumpquest_bounceresetplayer( var_0 )
 {
-    if ( var_0 _meth_8068() )
+    if ( var_0 islinked() )
         return;
 
     var_0 thread maps\mp\mp_zombie_h2o_aud::sndjumpingpuzzleplayerwhoosh();
     var_1 = jumpquest_getresetloc( var_0 );
     var_2 = distance2d( var_0.origin, var_1.origin );
     var_3 = clamp( var_2 / 1500, 0, 1 ) * 1.5 + 1;
-    var_4 = _func_223( var_0.origin, var_1.origin, ( 0, 0, -800 ), var_3 );
+    var_4 = trajectorycalculateinitialvelocity( var_0.origin, var_1.origin, ( 0, 0, -800 ), var_3 );
     var_5 = spawn( "script_model", var_0.origin );
-    var_5 _meth_80B1( "tag_origin" );
-    var_0 _meth_807C( var_5, "tag_origin" );
-    var_5 _meth_82B2( var_4, var_3 );
+    var_5 setmodel( "tag_origin" );
+    var_0 playerlinkto( var_5, "tag_origin" );
+    var_5 movegravity( var_4, var_3 );
     wait(var_3);
     var_5.origin = var_1.origin;
     waitframe();
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_804F();
+        var_0 unlink();
 
     var_5 delete();
 }
@@ -2970,7 +2970,7 @@ stage14_logic()
     level thread onplayerconnectstage14();
     level thread handlefeaturesstage14();
     waituntilnextround();
-    var_3 = worldentnumber( level.playerteam );
+    var_3 = getteamplayersalive( level.playerteam );
 
     if ( var_3 > 0 )
         maps\mp\zombies\_zombies_sidequests::stage_completed( "main", "stage14" );
@@ -3003,7 +3003,7 @@ handlefeaturesstage14()
 
 stage14customreplaceweaponfunc( var_0 )
 {
-    var_1 = var_0 _meth_830C();
+    var_1 = var_0 getweaponslistprimaries();
 
     if ( var_1.size > 2 )
     {
@@ -3028,7 +3028,7 @@ playerhandleweaponsstage14()
 
     if ( maps\mp\_utility::isjuggernaut() )
     {
-        self _meth_8051( self.mechhealth, self.origin );
+        self dodamage( self.mechhealth, self.origin );
         wait 1;
     }
 
@@ -3065,12 +3065,12 @@ playerinfiniterocketsstage14()
 {
     level endon( "main_stage14_over" );
     var_0 = playergetmahem();
-    var_1 = _func_1E1( var_0 );
+    var_1 = weaponmaxammo( var_0 );
 
     for (;;)
     {
         self waittill( "reload" );
-        self _meth_82F7( var_0, var_1 );
+        self setweaponammostock( var_0, var_1 );
     }
 }
 
@@ -3096,7 +3096,7 @@ removeweaponsstage14()
 {
     playergivemahem();
     common_scripts\utility::_disableoffhandweapons();
-    self _meth_84BF();
+    self disableoffhandsecondaryweapons();
     common_scripts\utility::_disableweaponswitch();
 }
 
@@ -3110,7 +3110,7 @@ playergivemahem()
     if ( isdefined( var_0 ) )
     {
         self.hadmahem = 1;
-        self _meth_8315( var_0 );
+        self switchtoweapon( var_0 );
 
         if ( isdefined( self.weaponstate["iw5_mahemzm_mp"]["level"] ) && self.weaponstate["iw5_mahemzm_mp"]["level"] < 10 )
         {
@@ -3130,14 +3130,14 @@ givezombieweaponallowthird( var_0, var_1 )
 {
     maps\mp\gametypes\zombies::createzombieweaponstate( var_0, var_1 );
     var_0 maps\mp\_utility::_giveweapon( var_1 );
-    var_0 _meth_8332( var_1 );
+    var_0 givemaxammo( var_1 );
     var_0 maps\mp\zombies\_wall_buys::givemaxscriptedammo( var_1 );
-    var_0 _meth_8316( var_1 );
+    var_0 switchtoweaponimmediate( var_1 );
 }
 
 setweaponlevelallowthird( var_0, var_1, var_2 )
 {
-    var_0 _meth_830F( var_1 );
+    var_0 takeweapon( var_1 );
     var_3 = getweaponbasename( var_1 );
     var_0.weaponstate[var_3]["level"] = var_2;
     var_4 = maps\mp\zombies\_wall_buys::getupgradeweaponname( var_0, var_3 );
@@ -3152,7 +3152,7 @@ setweaponlevelallowthird( var_0, var_1, var_2 )
 
 playergetmahem()
 {
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
@@ -3165,7 +3165,7 @@ playergetmahem()
 
 playertakemahem()
 {
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
@@ -3181,11 +3181,11 @@ playertakemahem()
             else
             {
                 self.weaponstate[var_3]["level"] = 1;
-                self _meth_830F( var_2 );
-                var_0 = self _meth_830C();
+                self takeweapon( var_2 );
+                var_0 = self getweaponslistprimaries();
 
                 if ( var_0.size > 0 )
-                    self _meth_8315( var_0[0] );
+                    self switchtoweapon( var_0[0] );
             }
 
             break;
@@ -3210,7 +3210,7 @@ restoreweaponsstage14()
     if ( !common_scripts\utility::isoffhandweaponenabled() )
         common_scripts\utility::_enableoffhandweapons();
 
-    self _meth_84C0();
+    self enableoffhandsecondaryweapons();
 
     if ( !isweaponswitchenabled_duplicate() )
         common_scripts\utility::_enableweaponswitch();
@@ -3464,7 +3464,7 @@ stage12_logic()
     foreach ( var_1 in level.players )
     {
         if ( var_1 maps\mp\_utility::isjuggernaut() )
-            var_1 _meth_8051( var_1.mechhealth, var_1.origin );
+            var_1 dodamage( var_1.mechhealth, var_1.origin );
 
         if ( isalive( var_1 ) )
             var_1 notify( "stop_useHoldThinkLoop" );
@@ -3474,7 +3474,7 @@ stage12_logic()
     level thread spawncharactersstage12();
     level thread runprizelogic();
     waituntilnextround();
-    var_3 = worldentnumber( level.playerteam );
+    var_3 = getteamplayersalive( level.playerteam );
     level thread announcerglobalplaysqvo( 13 );
 
     if ( var_3 > 0 )
@@ -3506,9 +3506,9 @@ runprizelogic()
 playerhandleicon()
 {
     var_0 = newteamhudelem( level.playerteam );
-    var_0 _meth_80CC( "hud_upgrade_reward", 14, 14 );
-    var_0 _meth_80D8( 1, 1 );
-    var_0 _meth_80CD( self );
+    var_0 setshader( "hud_upgrade_reward", 14, 14 );
+    var_0 setwaypoint( 1, 1 );
+    var_0 settargetent( self );
     waittillstage12overordeath( self );
 
     if ( isdefined( var_0 ) )
@@ -3570,7 +3570,7 @@ dokillplayerozvo()
     else
     {
         var_1 = level.players.size;
-        var_2 = worldentnumber( level.playerteam );
+        var_2 = getteamplayersalive( level.playerteam );
         var_3 = var_1 - var_2;
 
         if ( var_1 == 4 && var_3 == 1 )
@@ -3755,33 +3755,33 @@ onspawnfinishedsqcharacter( var_0 )
     }
 
     setcharacterbotsettings();
-    self _meth_8548( 1 );
+    self agentusescragentclipmask( 1 );
     self.pers["numberOfTimesCloakingUsed"] = 0;
     self.pers["numberOfTimesShieldUsed"] = 0;
 }
 
 setcharacterbotsettings()
 {
-    self _meth_837A( "meleeReactAllowed", 0 );
-    self _meth_837A( "quickPistolSwitch", 1 );
-    self _meth_837A( "diveChance", 0 );
-    self _meth_837A( "diveDelay", 300 );
-    self _meth_837A( "slideChance", 0.6 );
-    self _meth_837A( "cornerFireChance", 1.0 );
-    self _meth_837A( "cornerJumpChance", 1.0 );
-    self _meth_837A( "throwKnifeChance", 1.0 );
-    self _meth_837A( "meleeDist", 100 );
-    self _meth_837A( "meleeChargeDist", 160 );
-    self _meth_837A( "grenadeCookPrecision", 100 );
-    self _meth_837A( "grenadeDoubleTapChance", 1.0 );
-    self _meth_837A( "strategyLevel", 3 );
-    self _meth_837A( "intelligentSprintLevel", 2 );
-    self _meth_837A( "holdBreathChance", 1.0 );
-    self _meth_837A( "intelligentReload", 1.0 );
-    self _meth_837A( "dodgeChance", 0.5 );
-    self _meth_837A( "dodgeIntelligence", 0.8 );
-    self _meth_837A( "boostSlamChance", 0.35 );
-    self _meth_837A( "boostLookAroundChance", 1.0 );
+    self botsetdifficultysetting( "meleeReactAllowed", 0 );
+    self botsetdifficultysetting( "quickPistolSwitch", 1 );
+    self botsetdifficultysetting( "diveChance", 0 );
+    self botsetdifficultysetting( "diveDelay", 300 );
+    self botsetdifficultysetting( "slideChance", 0.6 );
+    self botsetdifficultysetting( "cornerFireChance", 1.0 );
+    self botsetdifficultysetting( "cornerJumpChance", 1.0 );
+    self botsetdifficultysetting( "throwKnifeChance", 1.0 );
+    self botsetdifficultysetting( "meleeDist", 100 );
+    self botsetdifficultysetting( "meleeChargeDist", 160 );
+    self botsetdifficultysetting( "grenadeCookPrecision", 100 );
+    self botsetdifficultysetting( "grenadeDoubleTapChance", 1.0 );
+    self botsetdifficultysetting( "strategyLevel", 3 );
+    self botsetdifficultysetting( "intelligentSprintLevel", 2 );
+    self botsetdifficultysetting( "holdBreathChance", 1.0 );
+    self botsetdifficultysetting( "intelligentReload", 1.0 );
+    self botsetdifficultysetting( "dodgeChance", 0.5 );
+    self botsetdifficultysetting( "dodgeIntelligence", 0.8 );
+    self botsetdifficultysetting( "boostSlamChance", 0.35 );
+    self botsetdifficultysetting( "boostLookAroundChance", 1.0 );
 }
 
 sqcharactergetloadout()
@@ -3854,7 +3854,7 @@ characterthink()
 despawncharacters()
 {
     foreach ( var_1 in level.zmbsqcharacters )
-        var_1 _meth_826B();
+        var_1 suicide();
 }
 
 docharacterspawn()
@@ -3948,7 +3948,7 @@ spawncharacters( var_0, var_1, var_2, var_3 )
             var_11[var_12] = var_5[var_12];
 
         foreach ( var_14 in var_11 )
-            var_14 _meth_826B();
+            var_14 suicide();
 
         wait 0.5;
     }
@@ -4021,12 +4021,12 @@ getnodesforenemycharacters( var_0, var_1 )
     foreach ( var_7 in var_3 )
     {
         var_10 = var_7.volumes[randomint( var_7.volumes.size )];
-        var_11 = _func_1FE( var_10 );
+        var_11 = getnodesintrigger( var_10 );
         var_12 = [];
 
         foreach ( var_14 in var_11 )
         {
-            if ( !var_14 _meth_8386() && isdefined( var_14.zombieszone ) )
+            if ( !var_14 nodeisdisconnected() && isdefined( var_14.zombieszone ) )
                 var_12[var_12.size] = var_14;
         }
 
@@ -4227,13 +4227,13 @@ playermonitorjumps()
 
     for (;;)
     {
-        while ( !self _meth_83B3() )
+        while ( !self isjumping() )
             waitframe();
 
         level.zmbsqplayerjumps++;
         level notify( "sq_player_jumped" );
 
-        while ( !self _meth_8341() )
+        while ( !self isonground() )
             waitframe();
 
         waitframe();
@@ -4402,7 +4402,7 @@ setcounterdigit( var_0, var_1, var_2, var_3 )
     }
 
     var_0.digits[var_1] = var_2;
-    var_0.digitmodels[var_1] _meth_80B1( var_4 );
+    var_0.digitmodels[var_1] setmodel( var_4 );
     maps\mp\mp_zombie_h2o_aud::sndcounterdigitflip( var_0.digitmodels[var_1].origin );
 }
 
@@ -4445,7 +4445,7 @@ stage10_logic()
     setomnvar( "ui_zm_zone_identifier", 3 );
     level thread runmovementiscostly();
     waituntilnextround();
-    var_0 = worldentnumber( level.playerteam );
+    var_0 = getteamplayersalive( level.playerteam );
 
     if ( var_0 > 0 )
     {
@@ -4555,7 +4555,7 @@ playertravelcosts()
             }
         }
 
-        if ( !var_12 && self _meth_8341() && !self _meth_8068() )
+        if ( !var_12 && self isonground() && !self islinked() )
         {
             if ( var_8 < gettime() )
             {
@@ -4571,15 +4571,15 @@ playertravelcosts()
                 }
             }
 
-            self _meth_807C( level.zmbsqlinkent );
-            self _meth_8081();
+            self playerlinkto( level.zmbsqlinkent );
+            self playerlinkedoffsetenable();
             var_1 = 1;
             continue;
         }
 
         if ( var_12 && var_1 )
         {
-            self _meth_804F();
+            self unlink();
             var_1 = 0;
         }
     }
@@ -4610,7 +4610,7 @@ stage15_logic()
     if ( isdefined( var_1 ) )
     {
         var_0 = spawn( "script_model", var_1.origin );
-        var_0 _meth_80B1( "tag_origin" );
+        var_0 setmodel( "tag_origin" );
         var_0.angles = var_1.angles;
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "sq_memory_machine_off" ), var_0, "tag_origin" );
     }
@@ -4678,7 +4678,7 @@ stage15_logic()
     foreach ( var_4 in level.players )
     {
         if ( var_4 maps\mp\_utility::isjuggernaut() )
-            var_4 _meth_8051( var_4.mechhealth, var_4.origin );
+            var_4 dodamage( var_4.mechhealth, var_4.origin );
 
         if ( isalive( var_4 ) )
             var_4 notify( "stop_useHoldThinkLoop" );
@@ -4783,7 +4783,7 @@ busroundcomplete()
     var_5 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
 
     foreach ( var_7 in var_5 )
-        var_7 _meth_8051( var_7.health + 1, var_7.origin );
+        var_7 dodamage( var_7.health + 1, var_7.origin );
 
     level.zone_data.zones["bus"].is_enabled = 0;
     maps\mp\zombies\_util::pausezombiespawning( 0 );
@@ -4907,7 +4907,7 @@ getcharacterbyprefixstage15( var_0 )
 
 applyzombiemutatorbusround( var_0 )
 {
-    if ( !_func_2D9( var_0 ) )
+    if ( !isscriptedagent( var_0 ) )
         return;
 
     var_1 = var_0 maps\mp\zombies\zombies_spawn_manager::specialmutatorshouldapply( level.zmbsqbusroundnum );
@@ -5155,7 +5155,7 @@ teleportplayerstobuszone()
     var_0 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8051( var_2.health + 500000, var_2.origin );
+        var_2 dodamage( var_2.health + 500000, var_2.origin );
 
     var_4 = common_scripts\utility::getstructarray( "sqBusPlayerSpawner", "targetname" );
 
@@ -5175,14 +5175,14 @@ teleportplayerstobuszone()
         level.players[var_6] thread playerteleporttobuszone( var_4[var_6] );
 
     level thread maps\mp\mp_zombie_h2o_aud::sndbusmusic();
-    _func_292( 60 );
+    stopclientexploder( 60 );
 }
 
 playerteleporttobuszone( var_0 )
 {
     if ( !isdefined( self.memorytunnelfx ) )
     {
-        self.memorytunnelfx = _func_272( common_scripts\utility::getfx( "sq_memory_tunnel_player" ), self.origin, self );
+        self.memorytunnelfx = spawnfxforclient( common_scripts\utility::getfx( "sq_memory_tunnel_player" ), self.origin, self );
         self.memorytunnelfx thread teleportfxdelete( self );
     }
 
@@ -5193,7 +5193,7 @@ playerteleporttobuszone( var_0 )
     thread maps\mp\zombies\_teleport::reset_teleport_flag_after_time( [ self ], 0.75 );
     self setorigin( var_0.origin, 1 );
     self setangles( var_0.angles );
-    self _meth_82FB( "ui_zm_ee_bool2", 1 );
+    self setclientomnvar( "ui_zm_ee_bool2", 1 );
     self.inbuszone = 1;
     level notify( "sq_player_teleport_to_bus_zone" );
     thread maps\mp\mp_zombie_h2o_aud::sndteleporttobuszone();
@@ -5225,14 +5225,14 @@ teleportplayersback()
     for ( var_2 = 0; var_2 < level.players.size; var_2++ )
         level.players[var_2] thread playerteleportback( var_0[var_2] );
 
-    _func_29C( 60 );
+    activatepersistentclientexploder( 60 );
 }
 
 playerteleportback( var_0 )
 {
     if ( !isdefined( self.memorytunnelfx ) )
     {
-        self.memorytunnelfx = _func_272( common_scripts\utility::getfx( "sq_memory_tunnel_player" ), self.origin, self );
+        self.memorytunnelfx = spawnfxforclient( common_scripts\utility::getfx( "sq_memory_tunnel_player" ), self.origin, self );
         self.memorytunnelfx thread teleportfxdelete( self );
     }
 
@@ -5241,7 +5241,7 @@ playerteleportback( var_0 )
     thread maps\mp\zombies\_teleport::reset_teleport_flag_after_time( [ self ], 0.75 );
     self setorigin( var_0.origin, 1 );
     self setangles( var_0.angles );
-    self _meth_82FB( "ui_zm_ee_bool2", 0 );
+    self setclientomnvar( "ui_zm_ee_bool2", 0 );
     self.inbuszone = undefined;
     level notify( "sq_teleport_players_back" );
     self.disabletombstonedropinarea = undefined;
@@ -5334,7 +5334,7 @@ song_play( var_0 )
 
     if ( maps\mp\zombies\_util::is_true( level.sq_song_ent.playing ) )
     {
-        level.sq_song_ent _meth_80AC();
+        level.sq_song_ent stopsounds();
         level.sq_song_ent.playing = 0;
         wait 0.2;
     }
@@ -5346,16 +5346,16 @@ song_play( var_0 )
     else
         var_1 = "zmb_mus_ee_05_prvw";
 
-    level.sq_song_ent _meth_8438( var_1 );
+    level.sq_song_ent playsoundonmovingent( var_1 );
     level.sq_song_ent.playing = 1;
     wait(var_0);
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
 }
 
 song_stop()
 {
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
     level notify( "sq_song_stop" );
 }

@@ -79,7 +79,7 @@ monitorgroundslam()
         var_14 = ( var_12 - var_11 ) * var_13 + var_11;
         var_15 = var_14 + 60;
         var_16 = var_15 * var_15;
-        self entityradiusdamage( self.origin, var_14, var_10, var_9, self, "MOD_TRIGGER_HURT", "boost_slam_mp" );
+        self radiusdamage( self.origin, var_14, var_10, var_9, self, "MOD_TRIGGER_HURT", "boost_slam_mp" );
 
         if ( maps\mp\_utility::_hasperk( "specialty_exo_slamboots" ) )
         {
@@ -138,15 +138,15 @@ monitorgroundslamhitplayer()
         if ( isdefined( level.groundslamhitplayer ) && self [[ level.groundslamhitplayer ]]( var_0 ) )
             continue;
 
-        var_0 _meth_8051( var_0.health, self.origin, self, self, "MOD_CRUSH", "boost_slam_mp" );
+        var_0 dodamage( var_0.health, self.origin, self, self, "MOD_CRUSH", "boost_slam_mp" );
     }
 }
 
 exo_power_cooldown( var_0 )
 {
     var_1 = int( var_0 * 1000 );
-    self _meth_82FB( "ui_exo_cooldown_time", var_1 );
+    self setclientomnvar( "ui_exo_cooldown_time", var_1 );
     wait(var_0);
-    self _meth_82FB( "ui_exo_cooldown_time", 0 );
+    self setclientomnvar( "ui_exo_cooldown_time", 0 );
     self playlocalsound( "exo_power_recharged" );
 }

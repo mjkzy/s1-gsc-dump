@@ -54,14 +54,14 @@ manage_laser_beams( var_0, var_1 )
     var_4 = common_scripts\utility::spawn_tag_origin();
     var_4.origin = var_0.origin;
     var_4.angles = ( 0, 0, 0 );
-    var_4 _meth_804D( var_0 );
+    var_4 linkto( var_0 );
     var_5 = 360 / var_3;
     var_6 = 0;
 
     for ( var_7 = []; var_6 < var_3; var_6++ )
     {
         var_8 = common_scripts\utility::spawn_tag_origin();
-        var_8 _meth_804D( var_4 );
+        var_8 linkto( var_4 );
         var_9 = var_6 * var_5;
         var_4.angles = ( 0, var_9, 0 );
         var_8.origin = var_4.origin + vectornormalize( anglestoforward( var_4.angles ) ) * var_2;
@@ -121,7 +121,7 @@ create_hud_static_overlay( var_0, var_1, var_2 )
     var_3.horzalign = "fullscreen";
     var_3.vertalign = "fullscreen";
     var_3.alpha = var_2;
-    var_3 _meth_80CC( var_0, 640, 480 );
+    var_3 setshader( var_0, 640, 480 );
     return var_3;
 }
 
@@ -135,7 +135,7 @@ manage_aim_cursor()
 
     for (;;)
     {
-        var_1 = level.player _meth_80A8();
+        var_1 = level.player geteye();
         var_2 = var_1 + anglestoforward( level.player getangles() ) * 50000;
         var_3 = bullettrace( var_1, var_2, 1, level.player, 1 );
 
@@ -149,7 +149,7 @@ manage_aim_cursor()
             else
                 var_4 = vectortoangles( ( 0, 0, 1 ) );
 
-            var_0 _meth_82B5( var_4, 0.2 );
+            var_0 rotateto( var_4, 0.2 );
         }
 
         wait 0.05;

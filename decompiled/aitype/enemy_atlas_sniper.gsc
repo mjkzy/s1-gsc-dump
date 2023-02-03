@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 768.0, 700.0 );
-        self _meth_816D( 1450.0, 2100.0 );
+        self setengagementmindist( 768.0, 700.0 );
+        self setengagementmaxdist( 1450.0, 2100.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 3 ) )
@@ -39,16 +39,16 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_atlas_smg::precache();
-    precacheitem( "iw5_thor_sp_thorscope" );
-    precacheitem( "iw5_thor_sp_thorscopevz" );
-    precacheitem( "iw5_thor_sp_thorstabilizer" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_thor_sp_thorscope" );
+    precacheshellshock( "iw5_thor_sp_thorscopevz" );
+    precacheshellshock( "iw5_thor_sp_thorstabilizer" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
     maps\_sniper_glint::main();
 }

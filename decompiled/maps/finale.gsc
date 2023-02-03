@@ -55,10 +55,10 @@ main()
     precachemodel( "fin_silo_floor_hatch_piston_l" );
     precachemodel( "fin_silo_floor_hatch_piston_r" );
     precachemodel( "fin_silo_floor_hatch" );
-    precacheitem( "iw5_titan45finalelobby_sp_xmags" );
-    precacheitem( "iw5_unarmedfinale_nullattach" );
-    precacheitem( "iw5_unarmedfinaleknife" );
-    precacheitem( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_titan45finalelobby_sp_xmags" );
+    precacheshellshock( "iw5_unarmedfinale_nullattach" );
+    precacheshellshock( "iw5_unarmedfinaleknife" );
+    precacheshellshock( "iw5_hbra3_sp" );
     precachemodel( "genericprop" );
     precachemodel( "npc_exo_armor_bigfin" );
     precachemodel( "fin_body_scanner_door" );
@@ -68,9 +68,9 @@ main()
     precachemodel( "viewbody_sentinel_pilot_mitchell_nub_fullarm" );
     precachemodel( "viewbody_sentinel_pilot_mitchell_nub" );
     precachemodel( "viewbody_sentinel_mitchell_egress_custom" );
-    precacheitem( "playermech_auto_cannon_finale_exhaust" );
-    precacheitem( "playermech_rocket_swarm_finale_exhaust" );
-    precacheitem( "playermech_rocket_finale_exhaust" );
+    precacheshellshock( "playermech_auto_cannon_finale_exhaust" );
+    precacheshellshock( "playermech_rocket_swarm_finale_exhaust" );
+    precacheshellshock( "playermech_rocket_finale_exhaust" );
     precachemodel( "fin_side_missile_02" );
     precachemodel( "fin_side_missile_white_panel_top_r_01" );
     precachemodel( "fin_side_missile_white_panel_top_l_01" );
@@ -184,7 +184,7 @@ main()
     level.friendlyfire_damage_modifier = 0.05;
     maps\finale_vo::main();
     maps\finale_utility::spawn_metrics_init();
-    level.player _meth_84F2();
+    level.player enablealternatemelee();
     animscripts\traverse\boost::precache_boost_fx_npc();
     level.underwater_lightset = "underwater_lightset";
     level.visionset_default = "finale_interior";
@@ -195,8 +195,8 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     common_scripts\utility::flag_wait( "flag_balcony_finale_success" );
@@ -204,7 +204,7 @@ main()
     maps\_credits::playcredits();
     post_credits_still_image();
     maps\_utility::nextmission();
-    _func_053( "", 0 );
+    changelevel( "", 0 );
 }
 
 post_credits_still_image()
@@ -274,14 +274,14 @@ load_outro_transient()
 
 unload_load_transients( var_0, var_1, var_2 )
 {
-    if ( _func_21E( var_0 ) )
-        _func_219( var_0 );
+    if ( istransientloaded( var_0 ) )
+        unloadtransient( var_0 );
 
-    _func_218( var_1 );
+    loadtransient( var_1 );
 
     for (;;)
     {
-        if ( _func_21E( var_1 ) )
+        if ( istransientloaded( var_1 ) )
         {
             if ( common_scripts\utility::flag_exist( var_2 ) )
                 common_scripts\utility::flag_set( var_2 );
@@ -403,10 +403,10 @@ dont_tread_on_me()
 
     for (;;)
     {
-        foreach ( var_2 in _func_0D6( "axis" ) )
+        foreach ( var_2 in getaiarray( "axis" ) )
         {
             if ( distancesquared( var_2.origin, self.origin ) < var_0 )
-                var_2 _meth_8051( 999999999, self.origin, self, self, "MOD_MELEE" );
+                var_2 dodamage( 999999999, self.origin, self, self, "MOD_MELEE" );
         }
 
         waitframe();
@@ -449,16 +449,16 @@ debug_start_intro()
     thread maps\finale_code::setup_combat();
     thread maps\finale_code::setup_se();
     thread obj_init();
-    level.player _meth_83C0( "finale" );
+    level.player lightsetforplayer( "finale" );
     maps\_utility::vision_set_fog_changes( "finale", 0 );
-    level.player _meth_8490( "clut_finale_intro", 0 );
+    level.player setclutforplayer( "clut_finale_intro", 0 );
 }
 
 intro_logic()
 {
     common_scripts\utility::flag_set( "flag_intro_flyin_start" );
     common_scripts\utility::flag_set( "flyin_mb" );
-    level.player _meth_8490( "clut_finale_intro", 0 );
+    level.player setclutforplayer( "clut_finale_intro", 0 );
 }
 
 debug_canal_start()
@@ -475,7 +475,7 @@ debug_canal_start()
     level.player maps\finale_utility::mech_enable( undefined, 1 );
     level.player thread maps\finale_code::threat_bias_silo_think();
     maps\_utility::vision_set_fog_changes( "finale_underwater", 0 );
-    level.player _meth_8490( "clut_finale_underwater", 0 );
+    level.player setclutforplayer( "clut_finale_underwater", 0 );
     wait 0.05;
     level.player.inwater = 1;
     var_0 = getent( "trigger_underwater", "targetname" );
@@ -503,7 +503,7 @@ debug_canal_breach_start()
     level.player maps\finale_utility::mech_enable( undefined, 1 );
     level.player thread maps\finale_code::threat_bias_canal_think();
     maps\_utility::vision_set_fog_changes( "finale_underwater", 0 );
-    level.player _meth_8490( "clut_finale_underwater", 0 );
+    level.player setclutforplayer( "clut_finale_underwater", 0 );
     wait 0.05;
     level.player.inwater = 1;
     var_0 = getent( "trigger_underwater", "targetname" );
@@ -522,7 +522,7 @@ debug_silo_approach_start()
     soundscripts\_snd::snd_message( "start_silo_approach" );
     common_scripts\utility::flag_set( "first_half_lighting" );
     thread maps\finale_lighting::debug_silo_approach_clut();
-    level.player _meth_83C0( "finale_silo_orange" );
+    level.player lightsetforplayer( "finale_silo_orange" );
     maps\_utility::vision_set_fog_changes( "finale_silo_orange", 0 );
     set_completed_flags();
     spawn_gideon_mech();
@@ -546,7 +546,7 @@ debug_silo_floor_03_start()
     soundscripts\_snd::snd_message( "start_silo_floor_03" );
     common_scripts\utility::flag_set( "first_half_lighting" );
     thread maps\finale_lighting::debug_silo_floor_03_clut();
-    level.player _meth_83C0( "finale_silo_blue" );
+    level.player lightsetforplayer( "finale_silo_blue" );
     maps\_utility::vision_set_fog_changes( "finale_silo_blue", 1 );
     set_completed_flags();
     spawn_gideon_mech();
@@ -571,7 +571,7 @@ debug_door_kick_start()
     soundscripts\_snd::snd_message( "start_silo_floor_03" );
     common_scripts\utility::flag_set( "first_half_lighting" );
     thread maps\finale_lighting::debug_silo_door_kick_clut();
-    level.player _meth_83C0( "finale_silo_orange" );
+    level.player lightsetforplayer( "finale_silo_orange" );
     maps\_utility::vision_set_fog_changes( "finale_silo_orange", 0 );
     set_completed_flags();
     spawn_gideon_mech();
@@ -593,7 +593,7 @@ debug_silo_exhaust_entrance_start()
 {
     soundscripts\_snd::snd_message( "start_silo_exhaust_entrance" );
     common_scripts\utility::flag_set( "first_half_lighting" );
-    level.player _meth_83C0( "finale_silo_blue" );
+    level.player lightsetforplayer( "finale_silo_blue" );
     maps\_utility::vision_set_fog_changes( "finale_silo_blue", 0 );
     thread maps\finale_lighting::debug_silo_exhaust_entrance_clut();
     set_completed_flags();
@@ -617,11 +617,11 @@ debug_lobby_start()
 {
     soundscripts\_snd::snd_message( "start_lobby" );
     common_scripts\utility::flag_set( "second_half_lighting" );
-    level.player _meth_83C0( "finale_lobby_2" );
+    level.player lightsetforplayer( "finale_lobby_2" );
     maps\_utility::vision_set_fog_changes( "finale_lobby", 0 );
     set_completed_flags();
     spawn_gideon();
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     thread maps\finale_code::setup_combat();
     thread maps\finale_code::setup_se();
     thread obj_init();
@@ -642,14 +642,14 @@ debug_sky_bridge_start()
 {
     soundscripts\_snd::snd_message( "start_sky_bridge" );
     common_scripts\utility::flag_set( "second_half_lighting" );
-    level.player _meth_83C0( "finale_lobby" );
+    level.player lightsetforplayer( "finale_lobby" );
     maps\_utility::vision_set_fog_changes( "finale_sky_bridge", 0 );
     set_completed_flags();
     spawn_gideon();
     thread maps\finale_code::setup_combat();
     thread maps\finale_code::setup_se();
     thread obj_init();
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     maps\finale_utility::teleport_to_scriptstruct( "checkpoint_sky_bridge" );
 }
 
@@ -662,15 +662,15 @@ debug_will_room_start()
 {
     soundscripts\_snd::snd_message( "start_will_room" );
     common_scripts\utility::flag_set( "second_half_lighting" );
-    level.player _meth_83C0( "finale_will" );
+    level.player lightsetforplayer( "finale_will" );
     maps\_utility::vision_set_fog_changes( "finale_cinematic_nofog", 0 );
-    level.player _meth_8490( "clut_finale_irons", 0 );
+    level.player setclutforplayer( "clut_finale_irons", 0 );
     set_completed_flags();
     spawn_gideon();
     thread maps\finale_code::setup_combat();
     thread maps\finale_code::setup_se();
     thread obj_init();
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     maps\finale_utility::teleport_to_scriptstruct( "checkpoint_will_room_start" );
 }
 
@@ -683,9 +683,9 @@ debug_irons_chase()
 {
     soundscripts\_snd::snd_message( "start_roof" );
     common_scripts\utility::flag_set( "second_half_lighting" );
-    level.player _meth_83C0( "finale_night" );
+    level.player lightsetforplayer( "finale_night" );
     maps\_utility::vision_set_fog_changes( "finale_roof", 0 );
-    level.player _meth_8490( "clut_finale_roof", 0 );
+    level.player setclutforplayer( "clut_finale_roof", 0 );
     thread maps\finale_lighting::light_strip_checkpoint();
     set_completed_flags();
     spawn_gideon();
@@ -693,14 +693,14 @@ debug_irons_chase()
     thread maps\finale_code::setup_se();
     thread obj_init();
     level.gideon maps\_utility::enable_cqbwalk();
-    _func_0D3( "ai_friendlyFireBlockDuration", 0 );
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "ai_friendlyFireBlockDuration", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     maps\finale_utility::teleport_to_scriptstruct( "checkpoint_chase_start" );
     maps\_utility::battlechatter_off( "allies" );
     maps\_utility::battlechatter_off( "axis" );
     thread maps\finale_lighting::setup_final_lighting();
-    _func_0D3( "player_sprintSpeedScale", 1.6 );
-    level.player _meth_8343( "viewhands_noexo_mitchell_prosthetic_smashed" );
+    setsaveddvar( "player_sprintSpeedScale", 1.6 );
+    level.player setviewmodel( "viewhands_noexo_mitchell_prosthetic_smashed" );
 }
 
 irons_chase_logic()
@@ -714,23 +714,23 @@ debug_roof_start()
     soundscripts\_snd::snd_message( "start_roof" );
     common_scripts\utility::flag_set( "second_half_lighting" );
     maps\_utility::vision_set_fog_changes( "finale_roof", 0 );
-    level.player _meth_8490( "clut_finale_roof", 0 );
-    level.player _meth_83C0( "finale_will_litend" );
+    level.player setclutforplayer( "clut_finale_roof", 0 );
+    level.player lightsetforplayer( "finale_will_litend" );
     set_completed_flags();
     spawn_gideon();
     thread maps\finale_code::setup_combat();
     thread maps\finale_code::setup_se();
     thread obj_init();
     level.gideon maps\_utility::enable_cqbwalk();
-    _func_0D3( "ai_friendlyFireBlockDuration", 0 );
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "ai_friendlyFireBlockDuration", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     maps\finale_utility::teleport_to_scriptstruct( "checkpoint_roof_start" );
     maps\_utility::battlechatter_off( "allies" );
     maps\_utility::battlechatter_off( "axis" );
-    level.player _meth_8130( 0 );
+    level.player allowmelee( 0 );
     thread maps\finale_lighting::setup_final_lighting();
-    _func_0D3( "player_sprintSpeedScale", 1.6 );
-    level.player _meth_8343( "viewhands_noexo_mitchell_prosthetic_smashed" );
+    setsaveddvar( "player_sprintSpeedScale", 1.6 );
+    level.player setviewmodel( "viewhands_noexo_mitchell_prosthetic_smashed" );
 
     while ( !isdefined( level.irons ) )
         waitframe();
@@ -757,7 +757,7 @@ obj_enter_atlas_silo()
     objective_add( 1, "current", &"FINALE_OBJ_REACH_ATLAS" );
     var_0 = getent( "obj_canal_breach", "targetname" );
     common_scripts\utility::flag_wait( "flag_intro_flyin_release" );
-    level.player _meth_8490( "", 2 );
+    level.player setclutforplayer( "", 2 );
     objective_position( 1, var_0.origin );
     common_scripts\utility::flag_wait( "flag_obj_enter_silo_update" );
     objective_onentity( 1, level.gideon );
@@ -777,14 +777,14 @@ obj_stop_missile_launch()
     objective_position( 2, var_0.origin );
     common_scripts\utility::flag_wait( "flag_obj_exhaust_hatch_open" );
 
-    if ( level.player _meth_834E() )
-        var_1 _meth_80DB( &"FINALE_PISTON_HINT" );
+    if ( level.player usinggamepad() )
+        var_1 sethintstring( &"FINALE_PISTON_HINT" );
     else
-        var_1 _meth_80DB( &"FINALE_PISTON_HINT_PC" );
+        var_1 sethintstring( &"FINALE_PISTON_HINT_PC" );
 
     var_2 = var_1 maps\_shg_utility::hint_button_trigger( "x" );
     common_scripts\utility::flag_wait( "flag_exhaust_hatch_grab" );
-    var_1 _meth_80DB( "" );
+    var_1 sethintstring( "" );
     var_2 maps\_shg_utility::hint_button_clear();
     objective_position( 2, ( 0, 0, 0 ) );
     common_scripts\utility::flag_wait( "flag_exhaust_hatch_open" );
@@ -821,7 +821,7 @@ ending_on_off_think()
 
     for (;;)
     {
-        if ( self _meth_824C( "BUTTON_Y" ) )
+        if ( self buttonpressed( "BUTTON_Y" ) )
         {
             var_0 += 0.05;
             wait 0.05;

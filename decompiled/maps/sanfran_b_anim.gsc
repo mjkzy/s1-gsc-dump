@@ -7,9 +7,9 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "sanfran_b_intro_tr" ) )
+        if ( istransientloaded( "sanfran_b_intro_tr" ) )
             level.transient_zone = "intro";
-        else if ( _func_21E( "sanfran_b_outro_tr" ) )
+        else if ( istransientloaded( "sanfran_b_outro_tr" ) )
             level.transient_zone = "outro";
     }
 
@@ -178,7 +178,7 @@ intro_shake_cam( var_0 )
 
 intro_enable_weapons( var_0 )
 {
-    level.player _meth_831E();
+    level.player enableweapons();
 }
 
 intro_end_anim( var_0 )

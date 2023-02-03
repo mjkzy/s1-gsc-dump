@@ -14,7 +14,7 @@ monitor_microdrone_launch()
         self waittill( "missile_fire", var_0, var_1 );
 
         if ( issubstr( var_1, "iw5_microdronelauncher_mp" ) )
-            var_0 _meth_8383( self );
+            var_0 setotherent( self );
     }
 }
 
@@ -51,7 +51,7 @@ determine_sticky_position( var_0 )
     if ( var_5["fraction"] < 1 && isdefined( var_5["position"] ) )
     {
         var_6 = spawn( "script_model", var_5["position"] );
-        var_6 _meth_80B1( "projectile_semtex_grenade" );
+        var_6 setmodel( "projectile_semtex_grenade" );
 
         if ( isdefined( var_5["entity"] ) )
         {
@@ -61,7 +61,7 @@ determine_sticky_position( var_0 )
                 var_5["entity"] thread show_stuck_fanfare();
             }
 
-            var_6 _meth_804D( var_5["entity"] );
+            var_6 linkto( var_5["entity"] );
         }
 
         var_6 thread sticky_timer( var_0 );
@@ -191,7 +191,7 @@ microdrone_think( var_0 )
 
             if ( isdefined( var_6 ) )
             {
-                self _meth_81D9( var_6, microdrone_get_target_offset( var_6 ) );
+                self missile_settargetent( var_6, microdrone_get_target_offset( var_6 ) );
                 var_5 = 1;
                 var_3 = var_4;
             }
@@ -204,7 +204,7 @@ microdrone_think( var_0 )
         if ( !var_5 )
         {
             var_7 = vectornormalize( var_3 + ( 0, 0, -400.0 * squared( var_2 ) ) );
-            self _meth_81DA( self.origin + var_7 * 10000 );
+            self missile_settargetpos( self.origin + var_7 * 10000 );
         }
 
         wait 0.05;
@@ -257,7 +257,7 @@ is_enemy_target( var_0, var_1 )
 
 microdrone_get_target_pos( var_0 )
 {
-    return var_0 _meth_8216( 0, 0, 0 );
+    return var_0 getpointinbounds( 0, 0, 0 );
 }
 
 microdrone_get_target_offset( var_0 )

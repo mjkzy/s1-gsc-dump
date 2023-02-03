@@ -38,7 +38,7 @@ menuclass( var_0 )
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
 
     if ( !isdefined( game["switchedsides"] ) )
         game["switchedsides"] = 0;

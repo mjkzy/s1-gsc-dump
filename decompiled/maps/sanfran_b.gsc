@@ -20,15 +20,15 @@ main()
     precachestring( &"SANFRAN_B_LASER_HINT" );
     precachestring( &"SANFRAN_B_ALIGN_HINT" );
     precachestring( &"railgun_hud_update" );
-    precacheitem( "iw5_m160_sp_deam160_variablereddot" );
-    precacheitem( "iw5_m160cqb_sp_cqbreddot" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "mob_missile" );
-    precacheitem( "rpg_player" );
-    precacheitem( "mob_turret_missile" );
-    precacheitem( "cargo_ship_missile" );
-    precacheitem( "cargo_ship_missile_railgun" );
-    precacheitem( "iw5_maul_sp" );
+    precacheshellshock( "iw5_m160_sp_deam160_variablereddot" );
+    precacheshellshock( "iw5_m160cqb_sp_cqbreddot" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "mob_missile" );
+    precacheshellshock( "rpg_player" );
+    precacheshellshock( "mob_turret_missile" );
+    precacheshellshock( "cargo_ship_missile" );
+    precacheshellshock( "cargo_ship_missile_railgun" );
+    precacheshellshock( "iw5_maul_sp" );
     precacheturret( "warbird_turret" );
     precacheturret( "cargoship_turret" );
     precachemodel( "worldhands_player_sentinel" );
@@ -60,16 +60,16 @@ main()
     precacherumble( "steady_rumble" );
     level.cosine = [];
     level.cosine["45"] = cos( 45 );
-    _func_081();
+    precachesonarvisioncodeassets();
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "0.95" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.95" );
+        setsaveddvar( "r_gunSightColorEntityScale", "0.95" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.95" );
         maps\_utility::tff_sync_setup();
     }
 
-    _func_0D3( "high_jump_double_tap", "1" );
+    setsaveddvar( "high_jump_double_tap", "1" );
     common_scripts\utility::flag_init( "flag_obj_marker_enter_ship" );
     common_scripts\utility::flag_init( "show_enter_ship_obj_marker" );
     common_scripts\utility::flag_init( "deck_reinforcement_1" );
@@ -164,7 +164,7 @@ main()
     maps\_load::main();
     thread maps\_player_exo::main( "assault", 1 );
     maps\sanfran_b_anim::main();
-    level.player _meth_8343( "viewhands_player_sentinel" );
+    level.player setviewmodel( "viewhands_player_sentinel" );
     thread maps\sanfran_b_lighting::main();
     maps\sanfran_b_aud::main();
     maps\_player_high_jump::main();
@@ -183,22 +183,22 @@ main()
     setup();
     setup_portal_scripting();
     common_scripts\utility::run_thread_on_targetname( "fail_jumped_off_boat", maps\sanfran_b_util::fall_fail );
-    _func_0D3( "bg_fallDamageMinHeight", 490 );
-    _func_0D3( "bg_fallDamageMaxHeight", 640 );
+    setsaveddvar( "bg_fallDamageMinHeight", 490 );
+    setsaveddvar( "bg_fallDamageMaxHeight", 640 );
     var_1 = getdvarint( "demo_itiot", 0 );
 
     if ( var_1 )
     {
         soundscripts\_snd::snd_message( "e3_demo_fade_in" );
         level.player.auxillary_hud = newclienthudelem( level.player );
-        level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+        level.player.auxillary_hud setshader( "black", 1280, 720 );
         level.player.auxillary_hud.horzalign = "fullscreen";
         level.player.auxillary_hud.vertalign = "fullscreen";
         level.player.auxillary_hud.alpha = 1;
         level.player.auxillary_hud fadeovertime( 0.5 );
         level.player.auxillary_hud.alpha = 0;
         level.player.auxillary_hud.foreground = 1;
-        _func_0D3( "objectiveHide", "0" );
+        setsaveddvar( "objectiveHide", "0" );
     }
 }
 
@@ -206,7 +206,7 @@ armada_intro_screen()
 {
     if ( !isdefined( level.start_point ) || level.start_point == "deck" )
     {
-        level.player _meth_831D();
+        level.player disableweapons();
         level.player freezecontrols( 1 );
         thread maps\_shg_utility::play_chyron_video( "chyron_text_sanfran_b", 1, 1 );
         common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -222,14 +222,14 @@ start_deck()
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "sanfran_b_intro" );
-        level.player _meth_8490( "clut_sanfran_b_fire", 0 );
+        level.player lightsetforplayer( "sanfran_b_intro" );
+        level.player setclutforplayer( "clut_sanfran_b_fire", 0 );
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_exterior_dark_fog", 0 );
     }
     else
     {
-        level.player _meth_83C0( "sanfran_b_intro" );
+        level.player lightsetforplayer( "sanfran_b_intro" );
         maps\_utility::vision_set_fog_changes( "sanfran_b_exterior_dark_fog", 0 );
     }
 }
@@ -267,16 +267,16 @@ deck()
     common_scripts\utility::flag_set( "intro_radio_vo" );
 
     if ( level.nextgen )
-        _func_0D3( "r_fog_ev_adjust", 0.5 );
+        setsaveddvar( "r_fog_ev_adjust", 0.5 );
 
-    level.player _meth_83C0( "sanfran_b_intro" );
+    level.player lightsetforplayer( "sanfran_b_intro" );
 
     if ( level.currentgen )
         maps\_utility::vision_set_fog_changes( "sanfran_b_exterior_dark_fog", 0 );
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_b_fire", 0 );
+        level.player setclutforplayer( "clut_sanfran_b_fire", 0 );
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_exterior_dark_fog", 0 );
     }
@@ -284,7 +284,7 @@ deck()
 
 sanfran_b_dim()
 {
-    level.player _meth_83C0( "sanfran_b_interior" );
+    level.player lightsetforplayer( "sanfran_b_interior" );
 }
 
 start_interior()
@@ -298,13 +298,13 @@ start_interior()
     {
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_interior", 0 );
-        level.player _meth_8490( "", 0 );
+        level.player setclutforplayer( "", 0 );
     }
 
     if ( level.nextgen )
         thread maps\sanfran_b_lighting::interior_dof_blend();
 
-    level.player _meth_83C0( "sanfran_b_dim" );
+    level.player lightsetforplayer( "sanfran_b_dim" );
     maps\_utility::delaythread( 8, ::sanfran_b_dim );
     common_scripts\utility::flag_set( "intro_anim_finished" );
     common_scripts\utility::flag_set( "flag_move_gideon_into_interior" );
@@ -332,7 +332,7 @@ interior()
     if ( level.nextgen )
         thread maps\sanfran_b_lighting::play_flickering_interior_light();
 
-    _func_0D3( "sm_sunSampleSizeNear", 0.1 );
+    setsaveddvar( "sm_sunSampleSizeNear", 0.1 );
 
     if ( getdvar( "player_cqb" ) == "1" )
         thread maps\sanfran_b_code::cqb_test();
@@ -349,7 +349,7 @@ interior()
     thread maps\sanfran_b_code::hand_signal_to_hangar();
     thread maps\sanfran_b_code::end_squad_cqb();
     maps\sanfran_b_code::give_night_vision();
-    _func_0D3( "r_fog_ev_adjust", 1.5 );
+    setsaveddvar( "r_fog_ev_adjust", 1.5 );
 }
 
 start_hangar()
@@ -361,12 +361,12 @@ start_hangar()
         maps\_utility::vision_set_fog_changes( "sanfran_b_interior_dark", 0 );
     else
     {
-        level.player _meth_8490( "", 0 );
+        level.player setclutforplayer( "", 0 );
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_interior_dark", 0 );
     }
 
-    level.player _meth_83C0( "sanfran_b_darker" );
+    level.player lightsetforplayer( "sanfran_b_darker" );
     common_scripts\utility::flag_set( "flag_player_entered_interior" );
     common_scripts\utility::flag_set( "intro_anim_finished" );
     thread maps\sanfran_b_code::tilt_boat( 1 );
@@ -416,7 +416,7 @@ hangar()
     thread maps\sanfran_b_code::ambient_combat();
     thread maps\sanfran_b_code::door_takedown_door();
     thread maps\sanfran_b_lighting::flip_spot_light();
-    _func_0D3( "r_fog_ev_adjust", 1.5 );
+    setsaveddvar( "r_fog_ev_adjust", 1.5 );
 }
 
 start_information_center()
@@ -428,7 +428,7 @@ start_information_center()
         maps\_utility::vision_set_fog_changes( "sanfran_b_hanger_top", 0 );
     else
     {
-        level.player _meth_8490( "", 0 );
+        level.player setclutforplayer( "", 0 );
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_hanger_top", 0 );
     }
@@ -471,7 +471,7 @@ information_center()
     thread maps\sanfran_b_lighting::flip_spot_light();
     thread maps\sanfran_b_obj::enable_cormack_follow();
     thread maps\sanfran_b_lighting::sundark_call();
-    level.player _meth_83C0( "sanfran_b" );
+    level.player lightsetforplayer( "sanfran_b" );
 }
 
 start_bridge()
@@ -483,12 +483,12 @@ start_bridge()
         maps\_utility::vision_set_fog_changes( "sanfran_b_interior_dark", 0 );
     else
     {
-        level.player _meth_8490( "", 0 );
+        level.player setclutforplayer( "", 0 );
         thread maps\_utility::vision_set_changes( "sfb_neutral", 0 );
         thread maps\_utility::fog_set_changes( "sanfran_b_interior_dark", 0 );
     }
 
-    level.player _meth_83C0( "sanfran_b_darker" );
+    level.player lightsetforplayer( "sanfran_b_darker" );
     thread maps\sanfran_b_fx::setup_window_explosion_wait();
     thread maps\sanfran_b_lighting::play_flickering_info_light();
     common_scripts\utility::flag_set( "flag_player_entered_interior" );
@@ -542,7 +542,7 @@ bridge()
     thread maps\sanfran_b_code::cargo_ship_fights_back();
     var_0 = getent( "trig_use_console", "targetname" );
     var_0 common_scripts\utility::trigger_off();
-    _func_0D3( "r_fog_ev_adjust", 1.5 );
+    setsaveddvar( "r_fog_ev_adjust", 1.5 );
 }
 
 start_demo_with_itiot()
@@ -575,10 +575,10 @@ refill_starting_weapons()
 {
     if ( !isdefined( level.start_point ) || level.start_point == "deck" )
     {
-        var_0 = level.player _meth_830B();
+        var_0 = level.player getweaponslistall();
 
         foreach ( var_2 in var_0 )
-            level.player _meth_8331( var_2 );
+            level.player givestartammo( var_2 );
     }
 }
 
@@ -610,7 +610,7 @@ spawn_functions()
 setup_threat_bias_groups()
 {
     createthreatbiasgroup( "player" );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
 }
 
 setup_portal_scripting()
@@ -624,14 +624,14 @@ handle_sfb_portal_groups_toggle( var_0, var_1 )
     level.player endon( "death" );
     level endon( "missionfailed" );
     var_2 = getentarray( var_0, "targetname" );
-    var_2[0] _meth_8070( 1 );
+    var_2[0] enableportalgroup( 1 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_1 );
-        var_2[0] _meth_8070( 0 );
+        var_2[0] enableportalgroup( 0 );
         common_scripts\utility::flag_waitopen( var_1 );
-        var_2[0] _meth_8070( 1 );
+        var_2[0] enableportalgroup( 1 );
     }
 }
 
@@ -641,14 +641,14 @@ itiot_logic( var_0, var_1 )
     setdvar( "demo_itiot", "1" );
     soundscripts\_snd::snd_message( "e3_demo_fade_out" );
     level.player.auxillary_hud = newclienthudelem( level.player );
-    level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    level.player.auxillary_hud setshader( "black", 1280, 720 );
     level.player.auxillary_hud.horzalign = "fullscreen";
     level.player.auxillary_hud.vertalign = "fullscreen";
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud fadeovertime( 0.5 );
     level.player.auxillary_hud.alpha = 1;
     level.player.auxillary_hud.foreground = 1;
-    _func_0D3( "objectiveHide", "1" );
+    setsaveddvar( "objectiveHide", "1" );
     wait 0.5;
     level.player.auxillary_hud.foreground = 0;
     wait 7;

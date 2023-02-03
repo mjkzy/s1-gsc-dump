@@ -9,7 +9,7 @@ init()
     for ( var_1 = 0; var_1 < var_0; var_1++ )
     {
         level.zmmusicents[var_1] = spawn( "script_model", ( 0, 0, 0 ) );
-        level.zmmusicents[var_1] _meth_806F( 0 );
+        level.zmmusicents[var_1] scalevolume( 0 );
         level.zmmusicents[var_1].index = var_1;
     }
 
@@ -79,15 +79,15 @@ changezombiemusic( var_0, var_1 )
 dimmallmusicforplayer()
 {
     self endon( "disconnect" );
-    self _meth_84D7( "h2o_dim_mall_music", 2 );
+    self clientaddsoundsubmix( "h2o_dim_mall_music", 2 );
     wait 20;
-    self _meth_84D8( "h2o_dim_mall_music", 5 );
+    self clientclearsoundsubmix( "h2o_dim_mall_music", 5 );
 }
 
 dimmallmusic( var_0, var_1 )
 {
     if ( var_0 == "player_died" )
-        var_1 _meth_84D7( "h2o_dim_mall_music", 2 );
+        var_1 clientaddsoundsubmix( "h2o_dim_mall_music", 2 );
     else
     {
         foreach ( var_1 in level.players )
@@ -137,12 +137,12 @@ _playmusic( var_0, var_1 )
             return;
 
         var_2 = level.zmmusicents[var_0.ent_num];
-        var_2 _meth_8075( var_0.alias );
-        var_2 _meth_806F( 1, 0.5 );
+        var_2 playloopsound( var_0.alias );
+        var_2 scalevolume( 1, 0.5 );
         wait 10;
-        var_2 _meth_806F( 0, 5 );
+        var_2 scalevolume( 0, 5 );
         wait 5;
-        var_2 _meth_80AB();
+        var_2 stoploopsound();
     }
     else if ( var_0.is_looping )
     {
@@ -163,8 +163,8 @@ _playmusic( var_0, var_1 )
         if ( !aliasisdefined( var_3 ) )
             return;
 
-        var_2 _meth_8075( var_3 );
-        var_2 _meth_806F( 1 );
+        var_2 playloopsound( var_3 );
+        var_2 scalevolume( 1 );
         thread _stoponroundend( var_2, var_0 );
 
         if ( level.roundtype == "normal" )
@@ -186,8 +186,8 @@ _playmusic( var_0, var_1 )
             return;
 
         var_2 = level.zmmusicents[var_0.ent_num];
-        var_2 _meth_8438( var_0.alias );
-        var_2 _meth_806F( 1 );
+        var_2 playsoundonmovingent( var_0.alias );
+        var_2 scalevolume( 1 );
     }
 }
 
@@ -199,19 +199,19 @@ _stoponroundend( var_0, var_1 )
     if ( isdefined( var_1.stop_wait ) && var_1.stop_wait > 0 )
         wait(var_1.stop_wait);
 
-    var_0 _meth_806F( 0, 2 );
+    var_0 scalevolume( 0, 2 );
     wait 2;
-    var_0 _meth_80AB();
-    var_0 _meth_806F( 1 );
+    var_0 stoploopsound();
+    var_0 scalevolume( 1 );
 }
 
 _stopontimeelapsed( var_0, var_1 )
 {
     level endon( "zombie_wave_ended" );
     wait 20;
-    var_0 _meth_806F( 0, 20 );
+    var_0 scalevolume( 0, 20 );
     wait 20;
-    var_0 _meth_80AB();
-    var_0 _meth_806F( 1 );
+    var_0 stoploopsound();
+    var_0 scalevolume( 1 );
     level notify( "zombie_stopOnTimeElapsed" );
 }

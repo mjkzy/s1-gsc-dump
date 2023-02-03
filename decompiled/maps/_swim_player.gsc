@@ -69,42 +69,42 @@ player_set_swimming( var_0, var_1, var_2, var_3, var_4 )
             if ( !var_4 )
             {
                 self.swimming = var_0;
-                _func_0D3( "cg_footsteps", 0 );
-                _func_0D3( "cg_equipmentSounds", 0 );
-                _func_0D3( "cg_landingSounds", 0 );
+                setsaveddvar( "cg_footsteps", 0 );
+                setsaveddvar( "cg_equipmentSounds", 0 );
+                setsaveddvar( "cg_landingSounds", 0 );
                 thread viewmodel_swim_animations( "swimming_end", 0, var_0 == "surface" );
-                self _meth_811C( 1 );
+                self allowswim( 1 );
 
                 if ( isdefined( var_3 ) )
                 {
-                    _func_0D3( "player_swimWaterSurfaceEnabled", 1 );
-                    _func_0D3( "player_swimWaterSurface", var_3 );
+                    setsaveddvar( "player_swimWaterSurfaceEnabled", 1 );
+                    setsaveddvar( "player_swimWaterSurface", var_3 );
                 }
                 else
                 {
-                    _func_0D3( "player_swimWaterSurfaceEnabled", 0 );
-                    _func_0D3( "player_swimWaterSurface", 0 );
+                    setsaveddvar( "player_swimWaterSurfaceEnabled", 0 );
+                    setsaveddvar( "player_swimWaterSurface", 0 );
                 }
             }
 
             var_5 = getdvarfloat( "underwater_aim_speed_scale" );
-            self _meth_80FE( var_5, var_5 );
+            self enableslowaim( var_5, var_5 );
 
             if ( !var_4 )
             {
                 level.water_current = ( 0, 0, 0 );
                 thread player_swimming_moving_water();
-                self _meth_817D( "stand" );
+                self setstance( "stand" );
             }
             else
             {
-                self _meth_81E1( getdvarfloat( "underwater_walk_speed_scale" ) );
+                self setmovespeedscale( getdvarfloat( "underwater_walk_speed_scale" ) );
 
                 if ( !isdefined( level.origgravity ) )
                     level.origgravity = self getgravity();
 
                 var_6 = getdvarfloat( "underwater_gravity_scale" ) * level.origgravity;
-                self _meth_84CB( int( var_6 ) );
+                self setgravityoverride( int( var_6 ) );
 
                 if ( !isdefined( level.origacceleration ) )
                     level.origacceleration = getdvarfloat( "mechAcceleration" );
@@ -112,7 +112,7 @@ player_set_swimming( var_0, var_1, var_2, var_3, var_4 )
                 if ( 100.0 != level.origacceleration )
                 {
                     if ( isdefined( self.mechdata ) && self.mechdata.active )
-                        _func_0D3( "mechAcceleration", 100.0 );
+                        setsaveddvar( "mechAcceleration", 100.0 );
                     else
                     {
 
@@ -125,7 +125,7 @@ player_set_swimming( var_0, var_1, var_2, var_3, var_4 )
                 if ( 0.1 != level.origairacceleration )
                 {
                     if ( isdefined( self.mechdata ) && self.mechdata.active )
-                        _func_0D3( "mechAirAcceleration", 0.1 );
+                        setsaveddvar( "mechAirAcceleration", 0.1 );
                     else
                     {
 
@@ -141,28 +141,28 @@ player_set_swimming( var_0, var_1, var_2, var_3, var_4 )
             {
                 self.swimming = undefined;
                 level notify( "stop_player_swimming" );
-                _func_0D3( "cg_footsteps", 1 );
-                _func_0D3( "cg_equipmentSounds", 1 );
-                _func_0D3( "cg_landingSounds", 1 );
-                _func_0D3( "player_swimWaterCurrent", ( 0, 0, 0 ) );
+                setsaveddvar( "cg_footsteps", 1 );
+                setsaveddvar( "cg_equipmentSounds", 1 );
+                setsaveddvar( "cg_landingSounds", 1 );
+                setsaveddvar( "player_swimWaterCurrent", ( 0, 0, 0 ) );
                 self notify( "swimming_end" );
-                self _meth_811C( 0 );
+                self allowswim( 0 );
             }
             else
             {
                 self.underwater_walk = undefined;
-                self _meth_81E1( 1.0 );
-                self _meth_80FE( 1.0, 1.0 );
-                self _meth_84CC();
+                self setmovespeedscale( 1.0 );
+                self enableslowaim( 1.0, 1.0 );
+                self resetgravityoverride();
                 level.origgravity = undefined;
-                _func_0D3( "mechAcceleration", level.origacceleration );
+                setsaveddvar( "mechAcceleration", level.origacceleration );
                 level.origacceleration = undefined;
-                _func_0D3( "mechAirAcceleration", level.origairacceleration );
+                setsaveddvar( "mechAirAcceleration", level.origairacceleration );
                 level.origairacceleration = undefined;
                 enable_fall_damage();
             }
 
-            self _meth_80FF();
+            self disableslowaim();
             level.water_current = ( 0, 0, 0 );
             break;
     }
@@ -183,14 +183,14 @@ disable_fall_damage()
 {
     self.bg_falldamageminheight_orig = getdvarint( "bg_fallDamageMinHeight" );
     self.bg_falldamagemaxheight_orig = getdvarint( "bg_fallDamageMaxHeight" );
-    _func_0D3( "bg_fallDamageMinHeight", 2000 );
-    _func_0D3( "bg_fallDamageMaxHeight", 3500 );
+    setsaveddvar( "bg_fallDamageMinHeight", 2000 );
+    setsaveddvar( "bg_fallDamageMaxHeight", 3500 );
 }
 
 enable_fall_damage()
 {
-    _func_0D3( "bg_fallDamageMinHeight", self.bg_falldamageminheight_orig );
-    _func_0D3( "bg_fallDamageMaxHeight", self.bg_falldamagemaxheight_orig );
+    setsaveddvar( "bg_fallDamageMinHeight", self.bg_falldamageminheight_orig );
+    setsaveddvar( "bg_fallDamageMaxHeight", self.bg_falldamagemaxheight_orig );
 }
 
 viewmodel_swim_handle_notetracks()
@@ -225,7 +225,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
     {
         for (;;)
         {
-            var_3 = self _meth_82F3();
+            var_3 = self getnormalizedmovement();
 
             if ( abs( var_3[0] ) > 0.25 || abs( var_3[1] ) > 0.25 )
             {
@@ -276,8 +276,8 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
     var_15 = 3;
     var_16 = 4;
     var_17 = var_13;
-    var_0 _meth_8152( "swim_notes", var_8, 1, 0.0 );
-    var_0 _meth_8152( "swim_notes", var_4, 1, 0.5 );
+    var_0 setflaggedanimknob( "swim_notes", var_8, 1, 0.0 );
+    var_0 setflaggedanimknob( "swim_notes", var_4, 1, 0.5 );
     self.swimming_gravity_vel = ( 0, 0, 0 );
     var_18 = 0.0;
 
@@ -289,8 +289,8 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
         if ( self ismantling() )
             return;
 
-        var_19 = self _meth_82F3();
-        var_20 = self _meth_830D();
+        var_19 = self getnormalizedmovement();
+        var_20 = self getnormalizedcameramovements();
 
         if ( maps\_utility::ent_flag( "water_trigger_paused" ) )
         {
@@ -322,7 +322,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
         {
             if ( var_17 == var_15 )
             {
-                var_25 = var_0 _meth_814F( var_6 );
+                var_25 = var_0 getanimtime( var_6 );
 
                 foreach ( var_27 in var_9 )
                 {
@@ -360,7 +360,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
             }
             else
             {
-                var_25 = var_0 _meth_814F( var_6 );
+                var_25 = var_0 getanimtime( var_6 );
 
                 foreach ( var_27 in var_9 )
                 {
@@ -375,19 +375,19 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2 )
             if ( var_17 == var_13 )
             {
                 if ( var_22 == var_15 || var_22 == var_14 )
-                    var_0 _meth_810D( "swim_notes", var_4, 1, 1.0 );
+                    var_0 setflaggedanimknobrestart( "swim_notes", var_4, 1, 1.0 );
                 else
-                    var_0 _meth_810D( "swim_notes", var_4 );
+                    var_0 setflaggedanimknobrestart( "swim_notes", var_4 );
             }
             else if ( var_17 == var_14 )
             {
                 var_0 notify( "swim_notes", "lagos_swimming_into_stroke" );
-                var_0 _meth_810D( "swim_notes", var_5 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_5 );
             }
             else if ( var_17 == var_15 )
-                var_0 _meth_810D( "swim_notes", var_6 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_6 );
             else if ( var_17 == var_16 )
-                var_0 _meth_810D( "swim_notes", var_7, 1, 0.75 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_7, 1, 0.75 );
 
             var_18 = 0.05;
         }
@@ -401,8 +401,8 @@ viewmodel_swim_animations( var_0, var_1, var_2 )
 {
     self notify( "viewmodel_swim_animations" );
     self endon( "viewmodel_swim_animations" );
-    self _meth_831D();
-    self _meth_8482();
+    self disableweapons();
+    self hideviewmodel();
 
     if ( isdefined( self.swimming_arms ) )
         self.swimming_arms hide();
@@ -415,11 +415,11 @@ viewmodel_swim_animations( var_0, var_1, var_2 )
         if ( !isdefined( self.swimming_arms ) || self.swimming_arms.model != level.swim_arms_model )
         {
             var_3 = spawn( "script_model", self.origin );
-            var_3 _meth_80B1( level.swim_arms_model );
-            var_3 _meth_808E();
+            var_3 setmodel( level.swim_arms_model );
+            var_3 dontcastshadows();
             var_3 setcontents( 0 );
-            var_3 _meth_8115( #animtree );
-            var_3 _meth_80A6( self, "tag_origin", ( 0, 0, -60 ), ( 0, 0, 0 ), 1 );
+            var_3 useanimtree( #animtree );
+            var_3 linktoplayerview( self, "tag_origin", ( 0, 0, -60 ), ( 0, 0, 0 ), 1 );
             self.swimming_arms = var_3;
         }
 
@@ -432,7 +432,7 @@ viewmodel_swim_animations( var_0, var_1, var_2 )
 
     if ( !common_scripts\utility::flag( "missionfailed" ) && isdefined( self.swimming_arms ) && !self ismantling() )
     {
-        self.swimming_arms _meth_810D( "swim_notes", %wm_unarmed_underwater_swim_arms_off_screen );
+        self.swimming_arms setflaggedanimknobrestart( "swim_notes", %wm_unarmed_underwater_swim_arms_off_screen );
         var_4 = getanimlength( %wm_unarmed_underwater_swim_arms_off_screen );
 
         if ( !isdefined( level.swim_end_hide_viewarms ) )
@@ -443,10 +443,10 @@ viewmodel_swim_animations( var_0, var_1, var_2 )
         self.swimming_arms hide();
 
     self notify( "viewmodel_swim_animations_loop" );
-    self _meth_831E();
+    self enableweapons();
 
     if ( !isdefined( level.swim_end_hide_viewarms ) )
-        self _meth_8481();
+        self showviewmodel();
 }
 
 player_swimming_moving_water()
@@ -483,7 +483,7 @@ move_swimming_player_with_current()
     {
         if ( !isdefined( var_0 ) || level.water_current != var_0 )
         {
-            _func_0D3( "player_swimWaterCurrent", level.water_current );
+            setsaveddvar( "player_swimWaterCurrent", level.water_current );
             var_0 = level.water_current;
         }
 
@@ -509,7 +509,7 @@ player_dynamic_dof( var_0 )
             continue;
         }
 
-        var_1 = self _meth_8340();
+        var_1 = self playerads();
 
         if ( var_1 > 0.0 )
             continue;
@@ -521,7 +521,7 @@ player_dynamic_dof( var_0 )
         var_6 = getdvarfloat( "ads_dof_farEndScale", 3 );
         var_7 = getdvarfloat( "ads_dof_nearBlur", 4 );
         var_8 = getdvarfloat( "ads_dof_farBlur", 2.5 );
-        var_9 = self _meth_80A8();
+        var_9 = self geteye();
         var_10 = self getangles();
 
         if ( isdefined( self.dof_ref_ent ) )
@@ -531,7 +531,7 @@ player_dynamic_dof( var_0 )
 
         var_12 = vectornormalize( anglestoforward( var_11 ) );
         var_13 = bullettrace( var_9, var_9 + var_12 * var_2, 1, self, 1 );
-        var_14 = _func_0D6( "axis" );
+        var_14 = getaiarray( "axis" );
 
         if ( var_13["fraction"] == 1 )
         {

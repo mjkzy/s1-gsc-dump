@@ -100,7 +100,7 @@ waitabit()
             if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
                 self.shootpos = animscripts\combat_utility::get_last_known_shoot_pos( self.shootent );
             else
-                self.shootpos = self.shootent _meth_8097();
+                self.shootpos = self.shootent getshootatpos();
 
             wait 0.05;
         }
@@ -127,7 +127,7 @@ shouldshootenemyent()
     if ( !animscripts\utility::canseeenemy() )
         return 0;
 
-    if ( !isdefined( self.covernode ) && !self _meth_81BD() )
+    if ( !isdefined( self.covernode ) && !self canshootenemy() )
         return 0;
 
     return 1;
@@ -219,13 +219,13 @@ rifleshootobjectiveambush( var_0 )
 
 getambushshootpos()
 {
-    if ( isdefined( self.enemy ) && self _meth_81BE( self.enemy ) )
+    if ( isdefined( self.enemy ) && self cansee( self.enemy ) )
     {
         setshootenttoenemy();
         return;
     }
 
-    var_0 = self _meth_8192();
+    var_0 = self getanglestolikelyenemypath();
 
     if ( !isdefined( var_0 ) )
     {
@@ -234,7 +234,7 @@ getambushshootpos()
         else if ( isdefined( self.ambushnode ) )
             var_0 = self.ambushnode.angles;
         else if ( isdefined( self.enemy ) )
-            var_0 = vectortoangles( self _meth_81C1( self.enemy ) - self.origin );
+            var_0 = vectortoangles( self lastknownpos( self.enemy ) - self.origin );
         else
             var_0 = self.angles;
     }
@@ -244,7 +244,7 @@ getambushshootpos()
     if ( isdefined( self.enemy ) )
         var_1 = distance( self.origin, self.enemy.origin );
 
-    var_2 = self _meth_80A8() + anglestoforward( var_0 ) * var_1;
+    var_2 = self geteye() + anglestoforward( var_0 ) * var_1;
 
     if ( !isdefined( self.shootpos ) || distancesquared( var_2, self.shootpos ) > 25 )
         self.shootpos = var_2;
@@ -281,7 +281,7 @@ shouldstopambushing()
 {
     if ( !isdefined( self.ambushendtime ) )
     {
-        if ( self _meth_813D() )
+        if ( self isbadguy() )
             self.ambushendtime = gettime() + randomintrange( 10000, 60000 );
         else
             self.ambushendtime = gettime() + randomintrange( 4000, 10000 );
@@ -400,7 +400,7 @@ readytoreturntocover()
     if ( self.changingcoverpos )
         return 0;
 
-    if ( !isdefined( self.enemy ) || !self _meth_81BE( self.enemy ) )
+    if ( !isdefined( self.enemy ) || !self cansee( self.enemy ) )
         return 1;
 
     if ( gettime() < self.coverposestablishedtime + 800 )
@@ -441,12 +441,12 @@ setshootenttoenemy()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
     {
         if ( isdefined( self.enemy_who_surprised_me ) && self.enemy_who_surprised_me == self.enemy )
-            self.shootpos = self.shootent _meth_8097();
+            self.shootpos = self.shootent getshootatpos();
         else
             self.shootpos = animscripts\combat_utility::get_last_known_shoot_pos( self.shootent );
     }
     else
-        self.shootpos = self.shootent _meth_8097();
+        self.shootpos = self.shootent getshootatpos();
 }
 
 havenothingtoshoot()
@@ -495,7 +495,7 @@ setshootstyleforvisibleenemy()
     if ( isdefined( self.juggernaut ) && self.juggernaut || isdefined( self.mech ) && self.mech )
         return setshootstyle( "full", 1 );
 
-    var_0 = distancesquared( self _meth_8097(), self.shootpos );
+    var_0 = distancesquared( self getshootatpos(), self.shootpos );
     var_1 = weaponclass( self.weapon ) == "mg";
 
     if ( self.providecoveringfire && var_1 )
@@ -528,7 +528,7 @@ setshootstyleforvisibleenemy()
 
 setshootstyleforsuppression()
 {
-    var_0 = distancesquared( self _meth_8097(), self.shootpos );
+    var_0 = distancesquared( self getshootatpos(), self.shootpos );
 
     if ( weaponissemiauto( self.weapon ) )
     {

@@ -222,6 +222,6 @@ lightning_bolt_fx()
     {
         wait(randomfloatrange( 2, 6 ));
         var_0 = 220 + randomint( 8 );
-        _func_222( var_0 );
+        activateclientexploder( var_0 );
     }
 }

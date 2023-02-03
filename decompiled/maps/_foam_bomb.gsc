@@ -3,7 +3,7 @@
 
 main()
 {
-    precacheitem( "foam_bomb" );
+    precacheshellshock( "foam_bomb" );
     precachemodel( "weapon_c4" );
     precachemodel( "weapon_c4_obj" );
     level.player thread place_foam_bomb();
@@ -32,14 +32,14 @@ place_foam_bomb()
 monitor_place_foam_bomb()
 {
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "weapon_c4_obj" );
+    var_0 setmodel( "weapon_c4_obj" );
     var_0.angles = self.angles;
     var_0 makeusable();
-    var_0 _meth_80DB( "Press ^3 &&1 ^7to Plant Foam" );
+    var_0 sethintstring( "Press ^3 &&1 ^7to Plant Foam" );
     var_0 waittill( "trigger" );
-    level.player _meth_830E( "foam_bomb" );
-    level.player _meth_8308( 2, "weapon", "foam_bomb" );
-    var_0 _meth_80B1( "weapon_c4" );
+    level.player giveweapon( "foam_bomb" );
+    level.player setactionslot( 2, "weapon", "foam_bomb" );
+    var_0 setmodel( "weapon_c4" );
     var_0 playc4effects();
     level.player thread handle_detonator();
     level.player waittill( "detonate" );
@@ -51,9 +51,9 @@ handle_detonator()
     var_0 = undefined;
 
     if ( !isdefined( self.old_weapon ) )
-        self.old_weapon = self _meth_8311();
+        self.old_weapon = self getcurrentweapon();
 
-    var_1 = self _meth_830B();
+    var_1 = self getweaponslistall();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -65,28 +65,28 @@ handle_detonator()
 
     if ( !isdefined( var_0 ) )
     {
-        self _meth_830E( level.c4_weaponname );
-        self _meth_82F6( level.c4_weaponname, 0 );
-        self _meth_8308( 2, "weapon", level.c4_weaponname );
+        self giveweapon( level.c4_weaponname );
+        self setweaponammoclip( level.c4_weaponname, 0 );
+        self setactionslot( 2, "weapon", level.c4_weaponname );
     }
 
-    _func_0D3( "actionSlotsHide", 1 );
-    self _meth_8321();
-    self _meth_831F();
-    self _meth_82CB();
-    self _meth_8130( 0 );
-    self _meth_8315( level.c4_weaponname );
+    setsaveddvar( "actionSlotsHide", 1 );
+    self disableweaponswitch();
+    self disableoffhandweapons();
+    self disableweaponpickup();
+    self allowmelee( 0 );
+    self switchtoweapon( level.c4_weaponname );
     self waittill( "detonate" );
     wait 0.15;
-    self _meth_8322();
-    self _meth_8320();
-    self _meth_82CC();
-    self _meth_8130( 1 );
-    self _meth_8315( self.old_weapon );
-    self _meth_830F( level.c4_weaponname );
+    self enableweaponswitch();
+    self enableoffhandweapons();
+    self enableweaponpickup();
+    self allowmelee( 1 );
+    self switchtoweapon( self.old_weapon );
+    self takeweapon( level.c4_weaponname );
     self waittill( "weapon_change" );
     wait 1;
-    _func_0D3( "actionSlotsHide", 0 );
+    setsaveddvar( "actionSlotsHide", 0 );
 }
 
 handle_foam_behavior()
@@ -144,7 +144,7 @@ expand_foam( var_0, var_1, var_2 )
     }
 
     var_6 = spawn( "script_model", var_0 + ( 0, 0, -18 ) );
-    var_6 _meth_82AE( self.origin, var_5, var_5 / 10, var_5 / 2 );
+    var_6 moveto( self.origin, var_5, var_5 / 10, var_5 / 2 );
     level.spawnedfoamglobs[level.spawnedfoamglobs.size] = var_6;
     wait(var_5);
     level notify( "new_foam_glob", self.layer, self.ring, self );

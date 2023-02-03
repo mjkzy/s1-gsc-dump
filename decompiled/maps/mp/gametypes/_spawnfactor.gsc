@@ -147,11 +147,11 @@ avoidtelefrag( var_0 )
     if ( isdefined( self.allowtelefrag ) )
         return 100;
 
-    if ( getstarttime( var_0.origin ) )
+    if ( positionwouldtelefrag( var_0.origin ) )
     {
         foreach ( var_2 in var_0.alternates )
         {
-            if ( !getstarttime( var_2 ) )
+            if ( !positionwouldtelefrag( var_2 ) )
                 break;
         }
 

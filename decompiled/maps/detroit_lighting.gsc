@@ -48,21 +48,21 @@ main2()
 set_level_lighting_values()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disableLightSets", 0 );
-        _func_0D3( "r_tonemapMinExposureAdjust", -7.4919 );
-        _func_0D3( "sm_usedSunCascadeCount", 2 );
-        _func_0D3( "sm_sunSampleSizeNear", 0.2 );
-        _func_0D3( "r_fog_ev_adjust", 1 );
+        setsaveddvar( "r_disableLightSets", 0 );
+        setsaveddvar( "r_tonemapMinExposureAdjust", -7.4919 );
+        setsaveddvar( "sm_usedSunCascadeCount", 2 );
+        setsaveddvar( "sm_sunSampleSizeNear", 0.2 );
+        setsaveddvar( "r_fog_ev_adjust", 1 );
 
         if ( level.nextgen )
         {
-            _func_0D3( "r_dynamicOpl", 1 );
-            _func_0D3( "r_gunSightColorEntityScale", 0.3 );
-            _func_0D3( "r_gunSightColorNoneScale", 0.3 );
+            setsaveddvar( "r_dynamicOpl", 1 );
+            setsaveddvar( "r_gunSightColorEntityScale", 0.3 );
+            setsaveddvar( "r_gunSightColorNoneScale", 0.3 );
         }
     }
 }
@@ -172,17 +172,17 @@ hallway_light_scare()
     wait 0.05;
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 4000000 );
+        var_0 setlightintensity( 4000000 );
 
-    var_1 _meth_81DF( 500000 );
+    var_1 setlightintensity( 500000 );
     common_scripts\_exploder::exploder( 2321 );
     wait 0.1;
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 0 );
+        var_0 setlightintensity( 0 );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_81DF( 0 );
+        var_1 setlightintensity( 0 );
 
     wait 0.15;
     common_scripts\_exploder::kill_exploder( 2321 );
@@ -194,7 +194,7 @@ burke_walk_lighting()
     var_0 = getent( "burke_walk_light", "targetname" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 0 );
+        var_0 setlightintensity( 0 );
 }
 
 player_fall_lighting()
@@ -204,30 +204,30 @@ player_fall_lighting()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
     wait 4;
     common_scripts\_exploder::exploder( 1669 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
-    _func_072( 10, 0.5 );
+    setblur( 10, 0.5 );
     wait 0.5;
-    _func_072( 0, 1 );
+    setblur( 0, 1 );
     wait 10;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 
     wait 2;
     common_scripts\_exploder::exploder( 1670 );
     maps\_utility::set_blur( 2, 0.3 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
     maps\_utility::set_blur( 8, 0.2 );
     maps\_utility::set_blur( 0, 2 );
@@ -245,32 +245,32 @@ toogle_burke_fall_light()
         var_3 = getent( "burke_fall_light3", "targetname" );
         common_scripts\utility::flag_wait( "school_player_falling" );
         var_4 = getent( "burke_fx_footdrop", "targetname" );
-        level.burke _meth_847B( var_4.origin );
+        level.burke overridelightingorigin( var_4.origin );
         wait 1;
         maps\_utility::vision_set_fog_changes( "detroit_school_walk_nofog", 0.5 );
 
         if ( isdefined( var_0 ) )
-            var_0 _meth_81DF( 50 );
+            var_0 setlightintensity( 50 );
 
-        var_0 _meth_8044( ( 0.2, 0.4, 0.8 ) );
+        var_0 setlightcolor( ( 0.2, 0.4, 0.8 ) );
 
         if ( isdefined( var_1 ) )
-            var_1 _meth_81DF( 80 );
+            var_1 setlightintensity( 80 );
 
-        var_1 _meth_8044( ( 0.2, 0.4, 0.8 ) );
+        var_1 setlightcolor( ( 0.2, 0.4, 0.8 ) );
 
         if ( isdefined( var_3 ) )
-            var_3 _meth_81DF( 5 );
+            var_3 setlightintensity( 5 );
 
-        var_3 _meth_8044( ( 0.2, 0.4, 0.8 ) );
+        var_3 setlightcolor( ( 0.2, 0.4, 0.8 ) );
         wait 3.1;
 
         if ( isdefined( var_2 ) )
-            var_2 _meth_81DF( 700 );
+            var_2 setlightintensity( 700 );
 
-        var_2 _meth_8044( ( 0.2, 0.4, 0.8 ) );
+        var_2 setlightcolor( ( 0.2, 0.4, 0.8 ) );
         wait 10;
-        level.burke _meth_847C();
+        level.burke defaultlightingorigin();
     }
 }
 
@@ -291,11 +291,11 @@ toggle_school_exterior_light_on()
     {
         if ( level.nextgen )
         {
-            var_2 _meth_81DF( 5000 );
+            var_2 setlightintensity( 5000 );
             continue;
         }
 
-        var_2 _meth_81DF( 10000 );
+        var_2 setlightintensity( 10000 );
     }
 
     common_scripts\_exploder::exploder( 2663 );
@@ -309,7 +309,7 @@ toggle_school_exterior_light_off()
     var_0 = getent( "toggle_school_exterior_light", "targetname" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 0.01 );
+        var_0 setlightintensity( 0.01 );
     else
         return;
 }
@@ -321,13 +321,13 @@ intro_lighting()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1.25" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1.25" );
     }
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_lightgridenabletweaks", 1 );
+        setsaveddvar( "r_lightgridenabletweaks", 1 );
         maps\_utility::lerp_saveddvar( "r_lightgridintensity", 0.2, 0.1 );
     }
 
@@ -338,48 +338,48 @@ intro_lighting()
         thread intro_lerp_sun();
 
     wait 2.3;
-    level.player _meth_83C0( "detroit_intro_2" );
+    level.player lightsetforplayer( "detroit_intro_2" );
 
     if ( level.nextgen )
     {
         wait 13.5;
-        level.player _meth_83C0( "detroit_intro_1" );
+        level.player lightsetforplayer( "detroit_intro_1" );
         wait 3;
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
         maps\_utility::lerp_saveddvar( "r_lightgridintensity", 1, 2 );
-        level.player _meth_8490( "clut_detroit_camp", 20 );
+        level.player setclutforplayer( "clut_detroit_camp", 20 );
     }
     else
     {
         wait 11;
-        level.player _meth_83C0( "detroit_intro_1" );
+        level.player lightsetforplayer( "detroit_intro_1" );
         wait 3;
-        level.player _meth_83C0( "detroit_camp" );
+        level.player lightsetforplayer( "detroit_camp" );
     }
 }
 
 intro_dof_physically_based()
 {
     common_scripts\utility::flag_wait( "level_intro_cinematic_complete_real" );
-    level.player _meth_84BC( 9, 25 );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 4.0, 35 );
+    level.player setphysicalviewmodeldepthoffield( 9, 25 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 4.0, 35 );
     wait 17;
-    level.player _meth_84AB( 4.0, 25 );
+    level.player setphysicaldepthoffield( 4.0, 25 );
 
     if ( level.nextgen )
     {
         wait 4.5;
-        level.player _meth_84AB( 4.5, 16 );
+        level.player setphysicaldepthoffield( 4.5, 16 );
         wait 1.5;
-        level.player _meth_84AB( 9.0, 80 );
+        level.player setphysicaldepthoffield( 9.0, 80 );
     }
     else
     {
         wait 4.5;
-        level.player _meth_84AB( 2.375, 18.5 );
+        level.player setphysicaldepthoffield( 2.375, 18.5 );
         wait 1.5;
-        level.player _meth_84AB( 9.0, 80, 2.5, 3.5 );
+        level.player setphysicaldepthoffield( 9.0, 80, 2.5, 3.5 );
     }
 
     wait 3;
@@ -400,40 +400,40 @@ autofocus_hipenable()
 
     }
 
-    level.player _meth_84AA();
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 3.5 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 3.5 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
     common_scripts\utility::flag_waitopen( "flag_autofocus_on" );
-    _func_0D3( "r_dof_physical_hipEnable", 0 );
+    setsaveddvar( "r_dof_physical_hipEnable", 0 );
     thread mount_bike_dof();
 }
 
 mount_bike_dof()
 {
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 40, 30, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 40, 30, 30 );
     wait 2.5;
-    level.player _meth_84AB( 1.5, 77, 30, 30 );
+    level.player setphysicaldepthoffield( 1.5, 77, 30, 30 );
     wait 2.8;
-    level.player _meth_84AB( 1.5, 20, 30, 30 );
+    level.player setphysicaldepthoffield( 1.5, 20, 30, 30 );
     wait 3;
-    level.player _meth_84AB( 5, 200, 30, 30 );
+    level.player setphysicaldepthoffield( 5, 200, 30, 30 );
     wait 2;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     wait 3;
-    level.player _meth_8490( "clut_detroit_exterior_drive_1", 3 );
+    level.player setclutforplayer( "clut_detroit_exterior_drive_1", 3 );
 }
 
 autofocus_hipenable_bike()
 {
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_hipFstop", 3.5 );
+        setsaveddvar( "r_dof_physical_hipFstop", 3.5 );
     else
-        _func_0D3( "r_dof_physical_hipFstop", 5.5 );
+        setsaveddvar( "r_dof_physical_hipFstop", 5.5 );
 }
 
 bike_mount_dof()
@@ -449,7 +449,7 @@ bike_mount_dof()
 
         var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
         var_1 = var_0.helmet_tag;
-        var_1 _meth_804D( var_0, "J_Head", ( 3, 10, 0 ), ( 0, 0, 0 ), 0 );
+        var_1 linkto( var_0, "J_Head", ( 3, 10, 0 ), ( 0, 0, 0 ), 0 );
         playfxontag( common_scripts\utility::getfx( "intro_point_rim" ), var_1, "tag_origin" );
         wait 1;
         wait 5;
@@ -458,14 +458,14 @@ bike_mount_dof()
 
         if ( level.nextgen )
         {
-            _func_0D3( "r_mbEnable", "2" );
-            _func_0D3( "r_mbVelocityScalar", "1" );
+            setsaveddvar( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbVelocityScalar", "1" );
         }
 
         var_2 = getentarray( "gate_top_lights1", "targetname" );
 
         foreach ( var_4 in var_2 )
-            var_4 _meth_81DF( 0 );
+            var_4 setlightintensity( 0 );
 
         stopfxontag( common_scripts\utility::getfx( "intro_point_rim" ), var_1, "tag_origin" );
 
@@ -473,9 +473,9 @@ bike_mount_dof()
             var_0.helmet_tag delete();
 
         wait 4;
-        level.player _meth_8490( "clut_detroit_exterior_drive_1", 2 );
+        level.player setclutforplayer( "clut_detroit_exterior_drive_1", 2 );
         wait 14;
-        level.player _meth_8490( "", 2 );
+        level.player setclutforplayer( "", 2 );
     }
     else
         common_scripts\utility::flag_set( "bike_mount_dof_cg" );
@@ -483,7 +483,7 @@ bike_mount_dof()
 
 jetbike_dismount_red_light()
 {
-    level.player _meth_8490( "clut_detroit_exterior", 3 );
+    level.player setclutforplayer( "clut_detroit_exterior", 3 );
 
     if ( level.currentgen )
     {
@@ -497,7 +497,7 @@ jetbike_dismount_red_light()
     wait 7;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
     wait 0.05;
 }
@@ -509,13 +509,13 @@ hospital_breach_dof()
     else
         maps\_utility::vision_set_fog_changes( "detroit_hospital_capture", 2 );
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     wait 0.5;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1.5" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1.5" );
     }
 }
 
@@ -557,20 +557,20 @@ gate_lights_on()
 {
     var_0 = getent( "door_right_rigged", "targetname" );
     var_1 = common_scripts\utility::getstruct( "door_right_rigged_origin", "targetname" );
-    var_0 _meth_847B( var_1.origin );
+    var_0 overridelightingorigin( var_1.origin );
     common_scripts\_exploder::exploder( 1124 );
     wait 2;
-    level.player _meth_83C0( "jetbike_gate" );
+    level.player lightsetforplayer( "jetbike_gate" );
     var_2 = getent( "door_lights_script2", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_81DF( 1118200 );
+        var_2 setlightintensity( 1118200 );
 
     wait 0.05;
     var_3 = getent( "door_lights_script1", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_3 _meth_81DF( 422000 );
+        var_3 setlightintensity( 422000 );
 
     wait 0.05;
     wait 0.05;
@@ -598,11 +598,11 @@ gate_lights_off_toggle_on( var_0 )
     wait 0.05;
     wait 0.05;
     wait 0.05;
-    level.player _meth_83C0( "detroit_intro_dark" );
+    level.player lightsetforplayer( "detroit_intro_dark" );
     wait 11;
     common_scripts\utility::flag_set( "open_massive_door" );
     common_scripts\utility::flag_set( "vo_drive_in" );
-    level.player _meth_8490( "clut_detroit_exterior_drive_2", 3 );
+    level.player setclutforplayer( "clut_detroit_exterior_drive_2", 3 );
 }
 
 gate_pulse_on()
@@ -636,7 +636,7 @@ gate_pulse_on()
     }
 
     if ( level.nextgen )
-        _func_0D3( "r_mbVelocityScalar", "1.5" );
+        setsaveddvar( "r_mbVelocityScalar", "1.5" );
 
     maps\_utility::stop_exploder( 1125 );
 }
@@ -649,17 +649,17 @@ gate_model_spin()
 
     foreach ( var_4 in var_1 )
     {
-        var_4 _meth_81DF( 3000000 );
-        var_4 _meth_8044( ( 1, 1, 1 ) );
+        var_4 setlightintensity( 3000000 );
+        var_4 setlightcolor( ( 1, 1, 1 ) );
     }
 
     while ( var_2 < 15 )
     {
         foreach ( var_7 in var_0 )
-            var_7 _meth_83DF( ( 360, 0, 0 ), 1.0 );
+            var_7 rotateby( ( 360, 0, 0 ), 1.0 );
 
         foreach ( var_4 in var_1 )
-            var_4 _meth_83DF( ( 360, 0, 0 ), 1.0 );
+            var_4 rotateby( ( 360, 0, 0 ), 1.0 );
 
         wait 1;
         var_2++;
@@ -692,7 +692,7 @@ turn_on_helmet_light_bright()
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_80A6( var_0, "tag_origin", ( 0, 0, 2 ), ( 0, 0, 0 ), 0 );
+    var_1 linktoplayerview( var_0, "tag_origin", ( 0, 0, 2 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "player_light_bright" ), var_1, "tag_origin" );
 }
 
@@ -719,7 +719,7 @@ turn_on_helmet_light()
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_80A6( var_0, "tag_origin", ( 0, 0, 2 ), ( 0, 0, 0 ), 0 );
+    var_1 linktoplayerview( var_0, "tag_origin", ( 0, 0, 2 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "player_light" ), var_1, "tag_origin" );
 }
 
@@ -746,7 +746,7 @@ turn_on_weapon_light()
 
     var_0.flashlight_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.flashlight_tag;
-    var_1 _meth_80A6( var_0, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
+    var_1 linktoplayerview( var_0, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "player_light2" ), var_1, "tag_origin" );
 }
 
@@ -763,7 +763,7 @@ train_bridge_light_on()
     var_0 = getent( "train_bridge_light", "targetname" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 100000000 );
+        var_0 setlightintensity( 100000000 );
 }
 
 lightning_call( var_0, var_1, var_2 )
@@ -779,7 +779,7 @@ lightning_call_single( var_0, var_1, var_2, var_3 )
     {
         maps\_shg_design_tools::waittill_trigger_with_name( "lightning_single" );
         thread toggle_lighting_spot01_lightning();
-        level.player _meth_80AD( "heavy_1s" );
+        level.player playrumbleonentity( "heavy_1s" );
         var_4 = getdvar( "vision_set_current" );
         var_5 = getmapsundirection();
         setsundirection( var_5 );
@@ -792,7 +792,7 @@ lightning_call_single( var_0, var_1, var_2, var_3 )
         setsundirection( var_9 );
         setsunlight( 0.05, 0.05, 0.05 );
         wait 0.05;
-        _func_072( 0.5, var_1 );
+        setblur( 0.5, var_1 );
 
         if ( isdefined( var_3 ) )
             common_scripts\_exploder::exploder( var_3 );
@@ -800,7 +800,7 @@ lightning_call_single( var_0, var_1, var_2, var_3 )
         wait(randomfloatrange( 0.1, 0.4 ));
         resetsunlight();
         resetsundirection();
-        _func_072( 0, var_2 );
+        setblur( 0, var_2 );
         wait 40;
     }
 }
@@ -819,7 +819,7 @@ lightning_call_gate( var_0, var_1, var_2, var_3 )
     setsundirection( var_9 );
     setsunlight( 0.05, 0.05, 0.05 );
     wait 0.05;
-    _func_072( 0.3, var_1 );
+    setblur( 0.3, var_1 );
 
     if ( isdefined( var_3 ) )
         common_scripts\_exploder::exploder( var_3 );
@@ -831,7 +831,7 @@ lightning_call_gate( var_0, var_1, var_2, var_3 )
 
     resetsunlight();
     resetsundirection();
-    _func_072( 0, var_2 );
+    setblur( 0, var_2 );
     wait 40;
 }
 
@@ -854,7 +854,7 @@ lightning_call_traversal( var_0, var_1, var_2, var_3 )
             var_9 = anglestoforward( var_8 );
             setsundirection( var_9 );
             setsunlight( 0.05, 0.05, 0.05 );
-            _func_072( 0.1, var_1 );
+            setblur( 0.1, var_1 );
 
             if ( isdefined( var_3 ) )
                 common_scripts\_exploder::exploder( var_3 );
@@ -866,7 +866,7 @@ lightning_call_traversal( var_0, var_1, var_2, var_3 )
 
             resetsunlight();
             resetsundirection();
-            _func_072( 0, var_2 );
+            setblur( 0, var_2 );
             wait 8;
         }
     }
@@ -881,11 +881,11 @@ toggle_lighting_spot01_on()
         common_scripts\utility::flag_wait( "flag_player_shimmy_start" );
 
         if ( isdefined( var_0 ) )
-            var_0 _meth_81DF( 2000 );
+            var_0 setlightintensity( 2000 );
 
-        var_0 _meth_8044( ( 0.8, 0.9, 1 ) );
-        var_1 _meth_81DF( 800 );
-        var_1 _meth_8044( ( 0.8, 0.9, 1 ) );
+        var_0 setlightcolor( ( 0.8, 0.9, 1 ) );
+        var_1 setlightintensity( 800 );
+        var_1 setlightcolor( ( 0.8, 0.9, 1 ) );
     }
     else
     {
@@ -894,8 +894,8 @@ toggle_lighting_spot01_on()
 
         if ( isdefined( var_0 ) )
         {
-            var_0 _meth_81DF( 1 );
-            var_0 _meth_8044( ( 0.8, 0.9, 1 ) );
+            var_0 setlightintensity( 1 );
+            var_0 setlightcolor( ( 0.8, 0.9, 1 ) );
         }
     }
 }
@@ -908,11 +908,11 @@ toggle_lighting_spot01_on_checkpoint()
         var_1 = getent( "lightning_spot_02", "targetname" );
 
         if ( isdefined( var_0 ) )
-            var_0 _meth_81DF( 2000 );
+            var_0 setlightintensity( 2000 );
 
-        var_0 _meth_8044( ( 0.5, 0.7, 1 ) );
-        var_1 _meth_81DF( 800 );
-        var_1 _meth_8044( ( 0.5, 0.7, 1 ) );
+        var_0 setlightcolor( ( 0.5, 0.7, 1 ) );
+        var_1 setlightintensity( 800 );
+        var_1 setlightcolor( ( 0.5, 0.7, 1 ) );
     }
     else
     {
@@ -920,8 +920,8 @@ toggle_lighting_spot01_on_checkpoint()
 
         if ( isdefined( var_0 ) )
         {
-            var_0 _meth_81DF( 1 );
-            var_0 _meth_8044( ( 0.5, 0.7, 1 ) );
+            var_0 setlightintensity( 1 );
+            var_0 setlightcolor( ( 0.5, 0.7, 1 ) );
         }
     }
 }
@@ -941,15 +941,15 @@ toggle_lighting_spot01_lightning()
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_81DF( randomfloatrange( 10055, 50050 ) );
+        var_0 setlightintensity( randomfloatrange( 10055, 50050 ) );
         var_0.origin = var_2.origin;
         var_0 soundscripts\_snd::snd_message( "lightning_strike" );
         wait 1;
 
         if ( level.nextgen )
-            var_0 _meth_81DF( 1000 );
+            var_0 setlightintensity( 1000 );
         else
-            var_0 _meth_81DF( 1 );
+            var_0 setlightintensity( 1 );
 
         var_0.origin = var_1.origin;
     }
@@ -971,8 +971,8 @@ burke_intro_lighting()
     var_1 = var_0.helmet_tag;
     var_0.helmet_tag2 = common_scripts\utility::spawn_tag_origin();
     var_2 = var_0.helmet_tag2;
-    var_1 _meth_804D( var_0, "TAG_ORIGIN", ( -9, 5, 65 ), ( 0, 0, 0 ), 0 );
-    var_2 _meth_804D( var_0, "J_Head", ( 0, 20, 0 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "TAG_ORIGIN", ( -9, 5, 65 ), ( 0, 0, 0 ), 0 );
+    var_2 linkto( var_0, "J_Head", ( 0, 20, 0 ), ( 0, 0, 0 ), 0 );
     level waittill( "end_burke_intro_talk" );
 }
 
@@ -1011,57 +1011,57 @@ train_spotlight_lerp()
     var_3.origin = var_0.origin;
     var_3.angles = var_0.angles;
     maps\_shg_design_tools::waittill_trigger_with_name( "train_scare" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
     soundscripts\_snd::snd_message( "train_scare" );
     thread train_rumble();
     earthquake( 0.05, 1.0, level.player.origin, 1600 );
     wait 0.5;
     earthquake( 0.12, 1.0, level.player.origin, 1600 );
-    var_0 _meth_82AE( var_2.origin, 0.15, 0.05, 0.05 );
+    var_0 moveto( var_2.origin, 0.15, 0.05, 0.05 );
     wait 0.5;
     earthquake( 0.2, 5.0, level.player.origin, 1600 );
-    var_0 _meth_81DF( 8000 );
+    var_0 setlightintensity( 8000 );
     thread lerp_origin_function( var_0, 9, var_1.origin );
-    var_3 _meth_804D( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     wait 1;
     earthquake( 0.12, 4.0, level.player.origin, 1600 );
     wait 2;
     earthquake( 0.05, 4.0, level.player.origin, 1600 );
     thread maps\_lighting::lerp_spot_intensity( "lerp_light", 2, 1 );
     wait 6.5;
-    var_0 _meth_8498( "force_off" );
+    var_0 setlightshadowstate( "force_off" );
 }
 
 train_rumble()
 {
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 0.5;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 0.5;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 0.5;
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     wait 0.5;
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     wait 0.5;
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     wait 0.5;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 0.5;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 0.5;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
 }
 
 gate_rumble()
 {
-    level.player _meth_80AD( "light_3s" );
+    level.player playrumbleonentity( "light_3s" );
     wait 1;
-    level.player _meth_80AD( "light_3s" );
+    level.player playrumbleonentity( "light_3s" );
     wait 1;
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     wait 2;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 }
 
 train_radiosity()
@@ -1085,7 +1085,7 @@ player_school_flashlight()
 add_player_flashlight( var_0, var_1, var_2 )
 {
     var_3 = level.player common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_80A6( level.player, "tag_flash", ( 0, -10, 10 ), ( 0, 0, 0 ), 0 );
+    var_3 linktoplayerview( level.player, "tag_flash", ( 0, -10, 10 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "player_light_med2" ), var_3, "tag_origin" );
     level.player.tag_weapon = var_3;
     thread monitor_player_light_off();
@@ -1097,7 +1097,7 @@ player_spotlight( var_0, var_1, var_2, var_3 )
     self endon( "flashlight_off" );
     thread monitor_player_light_off();
     self.roaming_light = var_0 common_scripts\utility::spawn_tag_origin();
-    _func_09A( self.roaming_light );
+    target_set( self.roaming_light );
     playfxontag( common_scripts\utility::getfx( "player_light_med2" ), self.roaming_light, "tag_origin" );
 
     while ( isalive( self ) )
@@ -1129,7 +1129,7 @@ attach_light_to_face( var_0, var_1 )
 
     var_2 = maps\_shg_design_tools::offset_position_from_tag( "forward", "tag_eye", 20 );
     self.facelight.origin = var_2;
-    self.facelight _meth_804D( self, "tag_eye" );
+    self.facelight linkto( self, "tag_eye" );
     common_scripts\utility::waittill_any( "death", "facelight_off" );
 
     if ( isdefined( self ) && isdefined( self.facelight ) )
@@ -1174,14 +1174,14 @@ cheap_flashlight_setup( var_0, var_1, var_2, var_3 )
         var_6 = self gettagorigin( "tag_inhand" );
         var_7 = self gettagangles( "tag_inhand" );
         self.flashlight = spawn( "script_model", var_6 );
-        self.flashlight _meth_80B1( "com_flashlight_on_physics" );
+        self.flashlight setmodel( "com_flashlight_on_physics" );
 
         if ( isdefined( var_3 ) )
             self.flashlight.angles = anglestoforward( var_7 ) * var_3;
         else
             self.flashlight.angles = var_7;
 
-        self.flashlight _meth_804D( self, "tag_inhand" );
+        self.flashlight linkto( self, "tag_inhand" );
         var_4 = self.flashlight;
         var_5 = "tag_light";
         thread flashlight_off_think();
@@ -1200,9 +1200,9 @@ basement_enemy_flashlight_setup( var_0, var_1, var_2 )
         var_5 = self gettagorigin( "tag_inhand" );
         var_6 = self gettagangles( "tag_inhand" );
         self.flashlight = spawn( "script_model", var_5 );
-        self.flashlight _meth_80B1( "com_flashlight_on_physics" );
+        self.flashlight setmodel( "com_flashlight_on_physics" );
         self.flashlight.angles = var_6;
-        self.flashlight _meth_804D( self, "tag_inhand" );
+        self.flashlight linkto( self, "tag_inhand" );
         var_3 = self.flashlight;
         var_4 = "tag_weapon_left";
         thread flashlight_off_think();
@@ -1460,8 +1460,8 @@ grab_lighting()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", ".5" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", ".5" );
     }
 
     common_scripts\_exploder::exploder( 1685 );
@@ -1469,7 +1469,7 @@ grab_lighting()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
         common_scripts\_exploder::kill_exploder( 1685 );
     }
 }
@@ -1489,7 +1489,7 @@ burke_red_arm_light()
     maps\_shg_design_tools::waittill_trigger_with_name( "move_burke_ahead" );
     level.burke.red_point = common_scripts\utility::spawn_tag_origin();
     var_0 = level.burke.red_point;
-    var_0 _meth_804D( level.burke, "J_Elbow_LE", ( 4, -6, 0 ), ( 0, 0, 0 ), 0 );
+    var_0 linkto( level.burke, "J_Elbow_LE", ( 4, -6, 0 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "red_point" ), var_0, "tag_origin" );
 }
 
@@ -1497,7 +1497,7 @@ burke_red_arm_light_checkpoint()
 {
     level.burke.red_point = common_scripts\utility::spawn_tag_origin();
     var_0 = level.burke.red_point;
-    var_0 _meth_804D( level.burke, "J_Elbow_LE", ( 4, -6, 0 ), ( 160, 90, 90 ), 0 );
+    var_0 linkto( level.burke, "J_Elbow_LE", ( 4, -6, 0 ), ( 160, 90, 90 ), 0 );
 
     if ( common_scripts\utility::flag( "red_dim" ) == 1 )
         playfxontag( common_scripts\utility::getfx( "red_point_dim" ), var_0, "tag_origin" );
@@ -1514,7 +1514,7 @@ joker_red_arm_light_checkpoint()
 {
     level.joker.red_point = common_scripts\utility::spawn_tag_origin();
     var_0 = level.joker.red_point;
-    var_0 _meth_804D( level.joker, "J_Elbow_LE", ( 4, -6, 0 ), ( 160, 90, 90 ), 0 );
+    var_0 linkto( level.joker, "J_Elbow_LE", ( 4, -6, 0 ), ( 160, 90, 90 ), 0 );
     playfxontag( common_scripts\utility::getfx( "red_point_dim" ), var_0, "tag_origin" );
     level waittill( "kill_joker_red_light" );
 
@@ -1616,7 +1616,7 @@ kill_spotlight()
 trigger_chopper_spotlight_straight( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "tag_light_nose", ( 0, 0, 0 ), ( 28, 0, 0 ) );
+    var_1 linkto( self, "tag_light_nose", ( 0, 0, 0 ), ( 28, 0, 0 ) );
     var_1 thread handle_spotlight_fx( var_0 );
 }
 
@@ -1706,8 +1706,8 @@ exit_drive_jetbike_lights_player()
     {
         if ( level.nextgen )
         {
-            _func_0D3( "r_mbEnable", "2" );
-            _func_0D3( "r_mbVelocityScalar", "1.25" );
+            setsaveddvar( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbVelocityScalar", "1.25" );
         }
 
         common_scripts\utility::flag_wait( "exitdrive_lights_on" );
@@ -1717,7 +1717,7 @@ exit_drive_jetbike_lights_player()
         maps\_shg_utility::kill_fx_with_handle( var_0 );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbEnable", "0" );
+            setsaveddvar( "r_mbEnable", "0" );
 
         wait 0.05;
     }
@@ -1749,21 +1749,21 @@ ending_mech_lighting()
     if ( isdefined( var_10 ) )
     {
         var_10.origin = var_8.origin;
-        var_10 _meth_81DF( 320000 );
-        var_10 _meth_8044( ( 1, 1, 1 ) );
-        var_10 _meth_83DF( ( 0, -45, 0 ), 0.1 );
+        var_10 setlightintensity( 320000 );
+        var_10 setlightcolor( ( 1, 1, 1 ) );
+        var_10 rotateby( ( 0, -45, 0 ), 0.1 );
     }
 
     if ( isdefined( var_11 ) )
     {
-        var_11 _meth_81DF( 600000 );
-        var_11 _meth_8044( ( 1, 0.5, 0.25 ) );
+        var_11 setlightintensity( 600000 );
+        var_11 setlightcolor( ( 1, 0.5, 0.25 ) );
     }
 
     if ( isdefined( var_12 ) )
     {
-        var_12 _meth_81DF( 190000 );
-        var_12 _meth_8044( ( 1, 0.5, 0.25 ) );
+        var_12 setlightintensity( 190000 );
+        var_12 setlightcolor( ( 1, 0.5, 0.25 ) );
     }
 }
 
@@ -1781,28 +1781,28 @@ final_chopper_lighting( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_81DF( 28200000 );
-        var_1 _meth_8044( ( 1, 0.9, 0.6 ) );
+        var_1 setlightintensity( 28200000 );
+        var_1 setlightcolor( ( 1, 0.9, 0.6 ) );
     }
 
     level.bones_bike maps\detroit_jetbike::intro_drive_jetbike_lights_friendlies();
     level.joker_bike maps\detroit_jetbike::intro_drive_jetbike_lights_friendlies();
-    level.player _meth_84A9();
-    level.player _meth_84AB( 15.5, 400 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 15.5, 400 );
 
     if ( level.nextgen )
     {
         maps\_utility::lerp_saveddvar( "r_mbVelocityScalar", 1, 1 );
         wait 5;
         var_2 = getent( "reflection_white_bottom", "targetname" );
-        var_0 _meth_83AB( var_2.origin );
+        var_0 overridereflectionprobe( var_2.origin );
     }
     else
         wait 5;
 
     maps\_utility::vision_set_fog_changes( "detroit_jetbike_end", 2 );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "tag_light_nose", ( 60, 40, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "tag_light_nose", ( 60, 40, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "aircraft_light_wingtip_red_med" ), var_0, "tag_light_nose" );
     wait 5;
 
@@ -1821,16 +1821,16 @@ final_chopper_lighting( var_0 )
     maps\_utility::vision_set_fog_changes( "detroit_jetbike_end_fire", 0.1 );
     wait 1.5;
     maps\_utility::vision_set_fog_changes( "detroit_jetbike_end", 1.5 );
-    level.player _meth_84AB( 2.5, 50 );
+    level.player setphysicaldepthoffield( 2.5, 50 );
     wait 10;
-    level.player _meth_84AB( 2.5, 60 );
+    level.player setphysicaldepthoffield( 2.5, 60 );
 }
 
 gate_origin_change()
 {
     var_0 = getent( "gate_lighting_origin", "targetname" );
     var_1 = getent( "detroit_entrance_gate", "targetname" );
-    var_1 _meth_847B( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
 }
 
 jetbike_exit_pre_mount_lighting()
@@ -1841,7 +1841,7 @@ jetbike_exit_pre_mount_lighting()
     foreach ( var_2 in var_0 )
     {
         if ( level.nextgen )
-            var_2 _meth_81DF( 10000 );
+            var_2 setlightintensity( 10000 );
     }
 
     common_scripts\utility::flag_wait( "player_on_exitdrive_jetbike" );
@@ -1852,28 +1852,28 @@ jetbike_exit_pre_mount_lighting()
 sentinel_reveal_lighting()
 {
     common_scripts\utility::flag_wait( "reveal_the_sentinels" );
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 300 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 300 );
     wait 1;
-    _func_072( 1, 1 );
+    setblur( 1, 1 );
 
     if ( level.nextgen )
         maps\_utility::vision_set_fog_changes( "detroit_sentinal", 3 );
 
     wait 2;
-    _func_072( 0, 1 );
-    level.player _meth_84AB( 5, 300 );
+    setblur( 0, 1 );
+    level.player setphysicaldepthoffield( 5, 300 );
     thread maps\_lighting::lerp_spot_intensity( "sent_reveal_spot_blue", 4, 10000 );
 
     if ( level.nextgen )
         thread maps\_lighting::lerp_spot_intensity( "sentkeylight", 4, 1000 );
 
-    _func_072( 0, 3 );
+    setblur( 0, 3 );
 
     if ( level.nextgen )
     {
         var_0 = getent( "sentkeylight", "targetname" );
-        var_0 _meth_8020( 60, 50 );
+        var_0 setlightfovrange( 60, 50 );
     }
 
     wait 10;
@@ -1889,12 +1889,12 @@ sentinel_reveal_lighting()
     wait 2;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
     wait 2;
-    level.player _meth_84AB( 3, 32 );
+    level.player setphysicaldepthoffield( 3, 32 );
     wait 4;
-    level.player _meth_84AB( 3, 38 );
+    level.player setphysicaldepthoffield( 3, 38 );
     wait 2;
     thread maps\_lighting::lerp_spot_intensity( "sent_reveal_spot_blue", 4, 50000 );
 
@@ -1908,26 +1908,26 @@ sentinel_reveal_lighting()
         thread maps\_lighting::lerp_spot_intensity( "sentkeylight", 2.5, 0 );
 
     maps\_utility::vision_set_fog_changes( "detroit_city", 5 );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 sentinel_reveal_lighting_origins( var_0 )
 {
     var_1 = getent( "new_grenade_org", "targetname" );
-    var_0 _meth_847B( var_1.origin );
+    var_0 overridelightingorigin( var_1.origin );
 }
 
 outerspacelighting()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_useLightGridDefaultFXLightingLookup", 1 );
-        _func_0D3( "r_useLightGridDefaultModelLightingLookup", 1 );
-        _func_0D3( "r_lightGridDefaultFXLightingLookup", ( -1493.99, 7192.58, -96.875 ) );
-        _func_0D3( "r_lightGridDefaultModelLightingLookup", ( -1493.99, 7192.58, -96.875 ) );
+        setsaveddvar( "r_useLightGridDefaultFXLightingLookup", 1 );
+        setsaveddvar( "r_useLightGridDefaultModelLightingLookup", 1 );
+        setsaveddvar( "r_lightGridDefaultFXLightingLookup", ( -1493.99, 7192.58, -96.875 ) );
+        setsaveddvar( "r_lightGridDefaultModelLightingLookup", ( -1493.99, 7192.58, -96.875 ) );
     }
 }
 
@@ -1938,7 +1938,7 @@ mech_intro_gate_lighting( var_0 )
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_804D( var_0, "J_Head", ( 0, 5, -5 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 0, 5, -5 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "det_point_rim_lrg" ), var_1, "tag_origin" );
     wait 20;
     wait 4;
@@ -1952,7 +1952,7 @@ mech_exit_gate_lighting( var_0 )
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_804D( var_0, "J_Head", ( 0, 5, -5 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 0, 5, -5 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "det_point_rim_lrg" ), var_1, "tag_origin" );
 
     if ( level.nextgen )
@@ -1977,9 +1977,9 @@ main_camp_spot()
         for (;;)
         {
             common_scripts\utility::flag_wait( "main_camp_spot_on" );
-            var_0 _meth_8498( "force_on" );
+            var_0 setlightshadowstate( "force_on" );
             common_scripts\utility::flag_waitopen( "main_camp_spot_on" );
-            var_0 _meth_8498( "force_off" );
+            var_0 setlightshadowstate( "force_off" );
         }
     }
 }
@@ -1988,7 +1988,7 @@ warbird_intro_lighting( var_0 )
 {
     var_0.interior_light = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.interior_light;
-    var_1 _meth_804D( var_0, "TAG_burke_key_light", ( 0, 0, -35 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "TAG_burke_key_light", ( 0, 0, -35 ), ( 0, 0, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "point_white_med" ), var_1, "tag_origin" );
     wait 8;
     killfxontag( common_scripts\utility::getfx( "point_white_med" ), var_1, "tag_origin" );
@@ -2005,7 +2005,7 @@ turn_off_gold_light()
 {
     var_0 = getent( "turn_off_gold_light", "targetname" );
     wait 8.75;
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
 }
 
 school_jeep_light_tgl()
@@ -2013,14 +2013,14 @@ school_jeep_light_tgl()
     common_scripts\_exploder::exploder( 4123 );
     var_0 = getent( "car_light", "targetname" );
     common_scripts\utility::flag_wait( "school_player_falling" );
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
     common_scripts\_exploder::kill_exploder( 4123 );
 }
 
 turn_off_jeep_light()
 {
     var_0 = getent( "car_light", "targetname" );
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
 }
 
 intro_lerp_sun()
@@ -2057,14 +2057,14 @@ capture_lighting()
     }
 
     wait 1;
-    level.player _meth_84A9();
-    level.player _meth_84AB( 5.6, 100 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 5.6, 100 );
     wait 1.2;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "2.5" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "2.5" );
     }
 
     if ( level.nextgen )
@@ -2078,7 +2078,7 @@ capture_lighting()
     wait 2.2;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
     wait 15;
     maps\_utility::lerp_saveddvar( "r_ssaoStrength", 0.45, 1 );
@@ -2094,7 +2094,7 @@ capture_lighting()
     level notify( "kill_burke_red_light" );
     level notify( "kill_joker_red_light" );
     maps\_utility::lerp_saveddvar( "r_ssaoStrength", 0.45, 1 );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     maps\_utility::vision_set_fog_changes( "detroit_hospital_top", 4 );
 }
 
@@ -2126,9 +2126,9 @@ clut_manage()
     for (;;)
     {
         common_scripts\utility::flag_wait( "lightning_on" );
-        level.player _meth_8490( "clut_detroit_exterior", 1 );
+        level.player setclutforplayer( "clut_detroit_exterior", 1 );
         common_scripts\utility::flag_waitopen( "lightning_on" );
-        level.player _meth_8490( "clut_detroit_interior", 1 );
+        level.player setclutforplayer( "clut_detroit_interior", 1 );
     }
 }
 
@@ -2137,9 +2137,9 @@ clut_manage_school()
     for (;;)
     {
         common_scripts\utility::flag_wait( "lightning_on_school" );
-        level.player _meth_8490( "clut_detroit_exterior", 1 );
+        level.player setclutforplayer( "clut_detroit_exterior", 1 );
         common_scripts\utility::flag_waitopen( "lightning_on_school" );
-        level.player _meth_8490( "clut_detroit_interior", 1 );
+        level.player setclutforplayer( "clut_detroit_interior", 1 );
     }
 }
 
@@ -2147,13 +2147,13 @@ butress_origin_fix()
 {
     var_0 = common_scripts\utility::getstruct( "low_walls_origin", "targetname" );
     var_1 = getent( "butress2", "targetname" );
-    var_1 _meth_847B( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
 }
 
 blockage_lighting( var_0 )
 {
     var_1 = getent( "burke_third_floor_corner_check_wait", "targetname" );
-    var_0 _meth_847B( var_1.origin );
+    var_0 overridelightingorigin( var_1.origin );
 }
 
 det_vignette()
@@ -2168,7 +2168,7 @@ cg_car_light_shadowstate_reset()
     for (;;)
     {
         level maps\_utility::wait_for_targetname_trigger( "car_light_ssoff" );
-        var_0 _meth_8498( "normal" );
+        var_0 setlightshadowstate( "normal" );
     }
 }
 
@@ -2179,6 +2179,6 @@ cg_car_light_shadowstate_on()
     for (;;)
     {
         level maps\_utility::wait_for_targetname_trigger( "car_light_ssoon" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
     }
 }

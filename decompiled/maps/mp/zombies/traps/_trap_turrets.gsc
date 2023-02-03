@@ -88,22 +88,22 @@ trapturrettimer( var_0 )
 
 sentry_setactive()
 {
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
 }
 
 sentry_initsentry( var_0 )
 {
     self.sentrytype = var_0;
-    self _meth_8156( 180 );
-    self _meth_8155( 180 );
-    self _meth_8157( 89 );
-    self _meth_8158( 89 );
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
-    self _meth_8138();
-    self _meth_815A( 0 );
-    self _meth_82C0( 0 );
-    self _meth_82C1( 0 );
-    self _meth_817A( 1 );
+    self setleftarc( 180 );
+    self setrightarc( 180 );
+    self settoparc( 89 );
+    self setbottomarc( 89 );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
+    self maketurretinoperable();
+    self setdefaultdroppitch( 0 );
+    self setcandamage( 0 );
+    self setcanradiusdamage( 0 );
+    self setturretmodechangewait( 1 );
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
     thread sentry_attacktargets();
 }
@@ -120,7 +120,7 @@ sentry_attacktargets()
     {
         common_scripts\utility::waittill_either( "turretstatechange", "cooled" );
 
-        if ( self _meth_80E4() )
+        if ( self isfiringturret() )
         {
             thread maps\mp\killstreaks\_autosentry::sentry_burstfirestart();
             continue;
@@ -139,15 +139,15 @@ sentry_handlecomplete()
         return;
 
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
 }
 
 sentry_setowner( var_0 )
 {
     self.owner = var_0;
-    self _meth_8103( self.owner );
-    self _meth_8105( 1, self.sentrytype );
+    self setsentryowner( self.owner );
+    self setturretminimapvisible( 1, self.sentrytype );
     self.team = self.owner.team;
-    self _meth_8135( self.team );
+    self setturretteam( self.team );
 }

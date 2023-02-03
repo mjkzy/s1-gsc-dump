@@ -24,7 +24,7 @@ rocket_jump_human( var_0, var_1, var_2 )
     if ( isdefined( self ) && isalive( self ) && isdefined( var_1 ) && var_1 )
     {
         soundscripts\_snd::snd_message( "boost_land_npc" );
-        self _meth_8110( "boostJumpLand", %boost_jump_land_2_run_b, %body, 1, 0.2, 1 );
+        self setflaggedanimknoballrestart( "boostJumpLand", %boost_jump_land_2_run_b, %body, 1, 0.2, 1 );
         animscripts\shared::donotetracks( "boostJumpLand", ::newhandletraversenotetracks );
     }
 

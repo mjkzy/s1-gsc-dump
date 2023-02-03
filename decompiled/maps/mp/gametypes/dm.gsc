@@ -34,7 +34,7 @@ main()
     if ( level.matchrules_damagemultiplier || level.matchrules_vampirism )
         level.modifyplayerdamage = maps\mp\gametypes\_damage::gamemodemodifyplayerdamage;
 
-    setteamscore( "ffa" );
+    setteammode( "ffa" );
     game["dialog"]["gametype"] = "ffa_intro";
     game["dialog"]["defense_obj"] = "gbl_start";
     game["dialog"]["offense_obj"] = "gbl_start";
@@ -59,7 +59,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
     maps\mp\_utility::setobjectivetext( "allies", &"OBJECTIVES_DM" );
     maps\mp\_utility::setobjectivetext( "axis", &"OBJECTIVES_DM" );
 

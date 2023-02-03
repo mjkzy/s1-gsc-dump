@@ -3,7 +3,7 @@
 
 setmodelfromarray( var_0 )
 {
-    self _meth_80B1( var_0[randomint( var_0.size )] );
+    self setmodel( var_0[randomint( var_0.size )] );
 }
 
 precachemodelarray( var_0 )
@@ -78,12 +78,12 @@ save()
 
     }
 
-    var_1 = self _meth_802C();
+    var_1 = self getattachsize();
 
     for ( var_2 = 0; var_2 < var_1; var_2++ )
     {
-        var_0["attach"][var_2]["model"] = self _meth_802D( var_2 );
-        var_0["attach"][var_2]["tag"] = self _meth_802E( var_2 );
+        var_0["attach"][var_2]["model"] = self getattachmodelname( var_2 );
+        var_0["attach"][var_2]["tag"] = self getattachtagname( var_2 );
     }
 
     return var_0;
@@ -94,7 +94,7 @@ load( var_0 )
     self detachall();
     self.anim_gunhand = var_0["gunHand"];
     self.anim_guninhand = var_0["gunInHand"];
-    self _meth_80B1( var_0["model"] );
+    self setmodel( var_0["model"] );
     self.hatmodel = var_0["hatModel"];
 
     if ( isdefined( var_0["name"] ) )

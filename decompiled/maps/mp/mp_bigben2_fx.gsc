@@ -142,7 +142,7 @@ water_explosions_bow()
     wait 1;
     level thread water_explosion_earthquake_bow();
     wait 5;
-    _func_292( 4 );
+    stopclientexploder( 4 );
 }
 
 water_explosion_earthquake_bow()
@@ -156,7 +156,7 @@ water_explosion_earthquake_bow()
         if ( !( isdefined( var_3.team ) && var_3.team == "spectator" ) )
         {
             if ( distancesquared( var_3.origin, var_1 ) < var_0 * var_0 )
-                var_3 _meth_80AD( "heavygun_fire" );
+                var_3 playrumbleonentity( "heavygun_fire" );
         }
     }
 }
@@ -167,7 +167,7 @@ water_explosions_stern()
     wait 1;
     level thread water_explosion_earthquake_stern();
     wait 5;
-    _func_292( 3 );
+    stopclientexploder( 3 );
 }
 
 water_explosion_earthquake_stern()
@@ -181,7 +181,7 @@ water_explosion_earthquake_stern()
         if ( !( isdefined( var_3.team ) && var_3.team == "spectator" ) )
         {
             if ( distancesquared( var_3.origin, var_1 ) < var_0 * var_0 )
-                var_3 _meth_80AD( "heavygun_fire" );
+                var_3 playrumbleonentity( "heavygun_fire" );
         }
     }
 }
@@ -230,10 +230,10 @@ bus_explosion()
 bridge_explosion( var_0 )
 {
     level thread common_scripts\_exploder::activate_clientside_exploder( 23, var_0 );
-    var_1 = _func_231( "fiyah", "targetname" );
+    var_1 = getscriptablearray( "fiyah", "targetname" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_83F6( 0, 1 );
+        var_3 setscriptablepartstate( 0, 1 );
 }
 
 car_explosion_bridge()
@@ -276,11 +276,11 @@ stop_vista_vfx()
     wait 0.1;
     level thread killstreak_exhaust_smoke();
     wait 0.1;
-    _func_292( 5 );
-    _func_292( 31 );
+    stopclientexploder( 5 );
+    stopclientexploder( 31 );
     wait 0.1;
-    _func_292( 32 );
-    _func_292( 33 );
+    stopclientexploder( 32 );
+    stopclientexploder( 33 );
     wait 40;
     waittillframeend;
 
@@ -305,7 +305,7 @@ killstreak_exhaust_smoke()
 {
     level thread common_scripts\_exploder::activate_clientside_exploder( 30 );
     wait 2;
-    _func_292( 30 );
+    stopclientexploder( 30 );
 }
 
 start_fx_exploder()

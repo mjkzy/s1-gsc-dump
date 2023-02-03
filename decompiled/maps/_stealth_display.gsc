@@ -116,7 +116,7 @@ stealth_display_thread()
             }
             else if ( isdefined( var_8.hud_elem ) && var_8.state != var_8.state_last )
             {
-                var_8.hud_elem _meth_80CC( "stealth_eq_0" + var_8.state, var_1, var_2 );
+                var_8.hud_elem setshader( "stealth_eq_0" + var_8.state, var_1, var_2 );
                 level.stealth_display_count++;
             }
 

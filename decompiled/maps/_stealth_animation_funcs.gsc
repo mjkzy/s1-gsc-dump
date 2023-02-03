@@ -5,7 +5,7 @@
 
 clear_animation( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 enemy_animation_attack( var_0 )

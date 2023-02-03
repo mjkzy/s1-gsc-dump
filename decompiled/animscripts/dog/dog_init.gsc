@@ -14,7 +14,7 @@ main()
         }
     }
 
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     initdoganimations();
     initdogarchetype();
     animscripts\init::firstinit();
@@ -37,7 +37,7 @@ main()
     self.turnrate = 0.2;
     thread animscripts\combat_utility::monitorflash();
     self.pathenemyfightdist = 512;
-    self _meth_8170( "dog" );
+    self settalktospecies( "dog" );
     self.health = int( anim.dog_health * self.health );
 }
 

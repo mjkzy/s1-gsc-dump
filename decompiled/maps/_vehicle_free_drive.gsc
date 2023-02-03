@@ -78,7 +78,7 @@ clean_up_vehicle_free_path( var_0 )
     {
         foreach ( var_2 in level.enemy_free_vehicles )
         {
-            if ( !_func_294( var_2 ) )
+            if ( !isremovedentity( var_2 ) )
                 var_2 delete();
         }
     }
@@ -139,7 +139,7 @@ spawn_vehicle_and_attach_to_free_path( var_0, var_1, var_2, var_3 )
     var_12 thread maps\_vehicle_code::vehicle_becomes_crashable();
 
     if ( isdefined( var_0 ) )
-        var_12 _meth_8230( var_0 );
+        var_12 vehphys_setspeed( var_0 );
 
     if ( var_1 )
     {
@@ -648,7 +648,7 @@ vehicle_drives_free_path( var_0, var_1 )
 
     if ( var_0.has_riders && !var_0.riders.size )
     {
-        var_0 crash();
+        var_0 vehphys_crash();
         return;
     }
 
@@ -657,7 +657,7 @@ vehicle_drives_free_path( var_0, var_1 )
     if ( isdefined( var_1 ) )
         var_0.starting_speed = var_1;
     else
-        var_0.starting_speed = var_0 _meth_8286();
+        var_0.starting_speed = var_0 vehicle_getspeed();
 
     var_0.wipeout = 0;
     var_0.progress_node = var_2;
@@ -677,15 +677,15 @@ vehicle_drives_free_path( var_0, var_1 )
 
         if ( var_0.wipeout )
         {
-            var_0 crash();
+            var_0 vehphys_crash();
 
             foreach ( var_4 in var_0.riders )
             {
                 if ( isalive( var_4 ) )
-                    var_4 _meth_8052();
+                    var_4 kill();
             }
 
-            var_0 _meth_8052();
+            var_0 kill();
             wait 5;
 
             if ( isdefined( var_0 ) )
@@ -695,7 +695,7 @@ vehicle_drives_free_path( var_0, var_1 )
             return;
         }
 
-        if ( !var_0.wipeout && var_0 _meth_8286() < 2 )
+        if ( !var_0.wipeout && var_0 vehicle_getspeed() < 2 )
         {
             var_0.move_fails++;
 
@@ -780,7 +780,7 @@ set_vehicle_goal_position()
         var_17 = 0.1;
 
     var_18 = max( var_0.starting_speed * var_17, level.freedrive_vehicle_min_allowed_speed );
-    var_0 _meth_8229( var_0.endpos, var_18 );
+    var_0 vehicledriveto( var_0.endpos, var_18 );
 
     if ( isdefined( level.player.drivingvehicle ) )
         var_0 match_player_speed( var_17 );
@@ -947,7 +947,7 @@ get_total_distance2d_on_path()
 
 distance2d_to_player()
 {
-    return _func_220( self.origin, level.player.origin );
+    return distance2dsquared( self.origin, level.player.origin );
 }
 
 vehicle_death_watcher()
@@ -1025,12 +1025,12 @@ match_player_speed( var_0 )
         return;
 
     var_6 = get_multiplier( var_5 );
-    var_7 = max( level.player.drivingvehicle _meth_8286() * var_6, level.freedrive_vehicle_min_allowed_speed );
+    var_7 = max( level.player.drivingvehicle vehicle_getspeed() * var_6, level.freedrive_vehicle_min_allowed_speed );
 
-    if ( self _meth_822B() )
-        self _meth_8230( var_7 );
+    if ( self vehicle_isphysveh() )
+        self vehphys_setspeed( var_7 );
     else
-        self _meth_8283( var_7 );
+        self vehicle_setspeed( var_7 );
 }
 
 get_multiplier( var_0 )

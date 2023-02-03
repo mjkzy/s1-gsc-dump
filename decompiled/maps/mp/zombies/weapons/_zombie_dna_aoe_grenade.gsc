@@ -40,7 +40,7 @@ onplayerspawn()
 addaoecloud( var_0, var_1 )
 {
     var_2 = spawn( "script_model", var_0 );
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     level.zombie_dna_grenades_active[level.zombie_dna_grenades_active.size] = var_2;
     level.zombie_dna_grenades_active = common_scripts\utility::array_removeundefined( level.zombie_dna_grenades_active );
 
@@ -51,10 +51,10 @@ addaoecloud( var_0, var_1 )
     }
 
     waitframe();
-    var_2 _meth_8075( "dna_grenade_front_lp" );
+    var_2 playloopsound( "dna_grenade_front_lp" );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dna_aoe" ), var_2, "tag_origin" );
     var_2 updateaoe( var_1, self );
-    var_2 _meth_80AB();
+    var_2 stoploopsound();
     var_2 playsound( "dna_grenade_front_end" );
     maps\mp\zombies\_util::killfxontagnetwork( common_scripts\utility::getfx( "dna_aoe" ), var_2, "tag_origin" );
     wait 0.05;
@@ -119,10 +119,10 @@ updatednabuff( var_0 )
 {
     var_1 = var_0.player;
 
-    if ( _func_294( var_1 ) )
+    if ( isremovedentity( var_1 ) )
         var_1 = undefined;
 
-    self _meth_8051( var_0.damageperstep, self.origin, var_1, undefined, "MOD_TRIGGER_HURT", "dna_aoe_grenade_zombie_mp", "none" );
+    self dodamage( var_0.damageperstep, self.origin, var_1, undefined, "MOD_TRIGGER_HURT", "dna_aoe_grenade_zombie_mp", "none" );
 }
 
 removednabuff( var_0 )

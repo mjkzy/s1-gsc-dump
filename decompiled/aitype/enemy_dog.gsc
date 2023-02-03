@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "dog_bite";
@@ -27,14 +27,14 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_sp_doberman_dog::precache();
-    precacheitem( "dog_bite" );
-    precacheitem( "dog_bite" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "dog_bite" );
+    precacheshellshock( "dog_bite" );
+    precacheshellshock( "fraggrenade" );
     animscripts\dog\dog_init::initdoganimations();
 }

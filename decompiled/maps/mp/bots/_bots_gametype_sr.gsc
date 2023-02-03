@@ -81,7 +81,7 @@ sr_pick_up_tag( var_0 )
     self.suspend_sd_role = 1;
     childthread notify_when_tag_picked_up_or_unavailable( var_0, "tag_picked_up" );
     var_1 = var_0.curorigin;
-    self _meth_8354( var_1, 0, "tactical" );
+    self botsetscriptgoal( var_1, 0, "tactical" );
     childthread watch_tag_destination( var_0 );
     var_2 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "tag_picked_up", "new_role" );
     self notify( "stop_watch_tag_destination" );
@@ -89,7 +89,7 @@ sr_pick_up_tag( var_0 )
     if ( var_2 == "no_path" )
     {
         var_1 += ( 16 * rand_pos_or_neg(), 16 * rand_pos_or_neg(), 0 );
-        self _meth_8354( var_1, 0, "tactical" );
+        self botsetscriptgoal( var_1, 0, "tactical" );
         var_2 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "tag_picked_up", "new_role" );
 
         if ( var_2 == "no_path" )
@@ -98,7 +98,7 @@ sr_pick_up_tag( var_0 )
 
             if ( isdefined( var_1 ) )
             {
-                self _meth_8354( var_1, 0, "tactical" );
+                self botsetscriptgoal( var_1, 0, "tactical" );
                 var_2 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "tag_picked_up", "new_role" );
             }
         }
@@ -110,7 +110,7 @@ sr_pick_up_tag( var_0 )
         if ( var_3.size > 0 )
         {
             var_4 = ( var_0.curorigin[0], var_0.curorigin[1], ( var_3[0].origin[2] + var_0.curorigin[2] ) * 0.5 );
-            self _meth_8354( var_4, 0, "tactical" );
+            self botsetscriptgoal( var_4, 0, "tactical" );
             var_2 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "tag_picked_up", "new_role" );
         }
     }
@@ -118,12 +118,12 @@ sr_pick_up_tag( var_0 )
     if ( var_2 == "goal" && var_0 maps\mp\gametypes\_gameobjects::caninteractwith( self.team ) )
         wait 3.0;
 
-    if ( self _meth_8365() && isdefined( var_1 ) )
+    if ( self bothasscriptgoal() && isdefined( var_1 ) )
     {
-        var_5 = self _meth_835A();
+        var_5 = self botgetscriptgoal();
 
         if ( maps\mp\bots\_bots_util::bot_vectors_are_equal( var_5, var_1 ) )
-            self _meth_8356();
+            self botclearscriptgoal();
     }
 
     self notify( "stop_tag_watcher" );
@@ -140,7 +140,7 @@ watch_tag_destination( var_0 )
         if ( !var_0 maps\mp\gametypes\_gameobjects::caninteractwith( self.team ) )
             wait 0.05;
 
-        var_1 = self _meth_835A();
+        var_1 = self botgetscriptgoal();
         wait 0.05;
     }
 }
@@ -223,7 +223,7 @@ sr_camp_tag( var_0 )
     }
 
     self notify( "stop_camping_tag" );
-    self _meth_8356();
+    self botclearscriptgoal();
     var_0.bot_camping[self.team] = undefined;
     self.suspend_sd_role = undefined;
 }

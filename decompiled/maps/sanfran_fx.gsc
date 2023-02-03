@@ -29,7 +29,7 @@ main()
 
 set_reactive_motion_values()
 {
-    _func_0D3( "r_reactiveMotionWindAmplitudeScale", "0.3" );
+    setsaveddvar( "r_reactiveMotionWindAmplitudeScale", "0.3" );
 }
 
 precachefx()
@@ -405,7 +405,7 @@ atlas_suv_impact_fx( var_0 )
 {
     common_scripts\utility::noself_delaycall( 0.1, ::playfxontag, common_scripts\utility::getfx( "atlas_suv_wheel_smk" ), var_0, "tag_wheel_front_left" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_body", ( 144, -24, 10 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "tag_body", ( 144, -24, 10 ), ( 0, 0, 0 ) );
     common_scripts\utility::noself_delaycall( 0.95, ::playfxontag, common_scripts\utility::getfx( "pitbull_suv_impact_concrete" ), var_1, "tag_origin" );
     soundscripts\_snd::snd_message( "aud_median_impact" );
     common_scripts\utility::noself_delaycall( 1.0, ::earthquake, 0.8, 0.9, level.player.origin, 1000 );
@@ -423,14 +423,14 @@ atlas_suv_impact_fx( var_0 )
 pitbull_crash_impact_fx( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_wheel_front_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "tag_wheel_front_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "atlas_suv_wheel_smk2" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "pitbull_suv_impact2" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "tag_wheel_front_right", ( 104, 0, 12 ), ( 0, -20, 0 ) );
+    var_2 linkto( var_0, "tag_wheel_front_right", ( 104, 0, 12 ), ( 0, -20, 0 ) );
     common_scripts\utility::noself_delaycall( 2.1, ::playfxontag, common_scripts\utility::getfx( "pitbull_suv_impact2" ), var_2, "tag_origin" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "tag_wheel_back_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "tag_wheel_back_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "atlas_suv_wheel_smk2" ), var_3, "tag_origin" );
     wait 5.0;
     var_1 delete();
@@ -502,8 +502,8 @@ vfx_pitbull_roof_impact( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "body_animate_jnt", ( 29, -19, 50 ), ( 180, 0, 90 ) );
-    var_2 _meth_804D( var_0, "body_animate_jnt", ( 29, 19, 50 ), ( 180, 0, 90 ) );
+    var_1 linkto( var_0, "body_animate_jnt", ( 29, -19, 50 ), ( 180, 0, 90 ) );
+    var_2 linkto( var_0, "body_animate_jnt", ( 29, 19, 50 ), ( 180, 0, 90 ) );
     playfxontag( common_scripts\utility::getfx( "car_window_shatter_01" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "car_window_shatter_01" ), var_2, "tag_origin" );
     wait 1.0;
@@ -514,7 +514,7 @@ vfx_pitbull_roof_impact( var_0 )
 vfx_pitbull_slide_sparks_start( var_0 )
 {
     level.sparks1 = common_scripts\utility::spawn_tag_origin();
-    level.sparks1 _meth_804D( var_0, "tag_body", ( 26, 30, 60 ), ( 0, 0, 180 ) );
+    level.sparks1 linkto( var_0, "tag_body", ( 26, 30, 60 ), ( 0, 0, 180 ) );
     playfxontag( common_scripts\utility::getfx( "pitbull_skid_sparks" ), level.sparks1, "tag_origin" );
     earthquake( 0.5, 2, level.player.origin, 1500 );
     common_scripts\utility::noself_delaycall( 1.0, ::earthquake, 0.35, 0.75, level.player.origin, 1000 );
@@ -815,12 +815,12 @@ vfx_bridge_crack_start( var_0 )
 lingering_grnd_smoke_attached( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "jnt_segment_1_piece_67", ( 0, 0, -50 ), ( -90, -90, 0 ) );
+    var_1 linkto( var_0, "jnt_segment_1_piece_67", ( 0, 0, -50 ), ( -90, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sfa_bigm_smk_grnd_linger" ), var_1, "tag_origin" );
     wait 7;
     stopfxontag( common_scripts\utility::getfx( "sfa_bigm_smk_grnd_linger" ), var_1, "tag_origin" );
     wait 0.1;
-    var_1 _meth_804D( var_0, "jnt_segment_1_piece_67", ( 400, 0, -10 ), ( -90, 90, 0 ) );
+    var_1 linkto( var_0, "jnt_segment_1_piece_67", ( 400, 0, -10 ), ( -90, 90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "dust_rolling_pebbles_runner_lrg" ), var_1, "tag_origin" );
     level waittill( "vfx_boost_jump_start" );
     stopfxontag( common_scripts\utility::getfx( "dust_rolling_pebbles_runner_lrg" ), var_1, "tag_origin" );
@@ -853,10 +853,10 @@ vfx_player_rolling_pebbles( var_0 )
 vfx_bridge_chunk_f_piece5_fall( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "jnt_segment_5_piece_1", ( 0, 0, 0 ), ( -90, -90, 0 ) );
+    var_1 linkto( var_0, "jnt_segment_5_piece_1", ( 0, 0, 0 ), ( -90, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sfa_bigm_debrisfall_onchunk_lrg" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "jnt_segment_5_piece_5", ( 0, 0, 0 ), ( -90, -90, 0 ) );
+    var_2 linkto( var_0, "jnt_segment_5_piece_5", ( 0, 0, 0 ), ( -90, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sfa_bigm_debrisfall_onchunk_sm" ), var_2, "tag_origin" );
     level waittill( "vfx_boost_jump_start" );
     stopfxontag( common_scripts\utility::getfx( "sfa_bigm_debrisfall_onchunk_lrg" ), var_1, "tag_origin" );
@@ -902,7 +902,7 @@ vfx_bus_slide_spark( var_0 )
 {
     soundscripts\_snd::snd_message( "gg_start_bus_sliding" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 160, -50, 120 ), ( -90, 0, -45 ) );
+    var_1 linkto( var_0, "tag_origin", ( 160, -50, 120 ), ( -90, 0, -45 ) );
     playfxontag( common_scripts\utility::getfx( "sfa_bigm_bus_slide" ), var_1, "tag_origin" );
     wait 2.45;
     common_scripts\_exploder::exploder( 10511 );
@@ -957,7 +957,7 @@ attach_wakefx()
         self.fxtagside = common_scripts\utility::spawn_tag_origin();
         self.fxtagside.origin = self.origin;
         self.fxtagside.angles = self.angles;
-        self.fxtagside _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        self.fxtagside linkto( self, "tag_origin", ( 0, 0, 0 ), ( 0, 90, 0 ) );
         playfxontag( common_scripts\utility::getfx( "boat_wake_" + self.model + "_side" ), self.fxtagside, "tag_origin" );
     }
 }

@@ -43,7 +43,7 @@ addairexplosion( var_0, var_1 )
 
 addtohelilist()
 {
-    level.helis[self _meth_81B1()] = self;
+    level.helis[self getentitynumber()] = self;
 }
 
 removefromhelilist( var_0 )
@@ -53,12 +53,12 @@ removefromhelilist( var_0 )
 
 addtolittlebirdlist( var_0 )
 {
-    level.littlebirds[self _meth_81B1()] = self;
+    level.littlebirds[self getentitynumber()] = self;
 }
 
 removefromlittlebirdlistondeath( var_0 )
 {
-    var_1 = self _meth_81B1();
+    var_1 = self getentitynumber();
     self waittill( "death" );
     level.littlebirds[var_1] = undefined;
 }
@@ -125,7 +125,7 @@ heli_leave( var_0 )
 {
     self notify( "leaving" );
     self.isleaving = 1;
-    self _meth_8266();
+    self clearlookatent();
     var_1 = undefined;
 
     if ( !isdefined( var_0 ) )
@@ -138,12 +138,12 @@ heli_leave( var_0 )
 
     if ( isdefined( var_2 ) )
     {
-        self _meth_8265( var_2 );
+        self setlookatent( var_2 );
         var_2 thread wait_and_delete( 3.0 );
     }
 
     heli_reset();
-    self _meth_8283( 100, 45 );
+    self vehicle_setspeed( 100, 45 );
 
     if ( isdefined( var_1 ) )
     {
@@ -225,13 +225,13 @@ deleteaftertime( var_0 )
 
 heli_reset()
 {
-    self _meth_825F();
-    self _meth_825D();
-    self _meth_8283( 60, 25 );
-    self _meth_8292( 100, 45, 45 );
-    self _meth_8294( 30, 30 );
-    self _meth_825A( 100 );
-    self _meth_8296( 1.0 );
+    self cleartargetyaw();
+    self cleargoalyaw();
+    self vehicle_setspeed( 60, 25 );
+    self setyawspeed( 100, 45, 45 );
+    self setmaxpitchroll( 30, 30 );
+    self setneargoalnotifydist( 100 );
+    self setturningability( 1.0 );
 }
 
 _setvehgoalpos( var_0, var_1 )
@@ -239,7 +239,7 @@ _setvehgoalpos( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = 0;
 
-    self _meth_825B( var_0, var_1 );
+    self setvehgoalpos( var_0, var_1 );
 }
 
 heli_flares_monitor( var_0 )
@@ -303,7 +303,7 @@ missilewatchproximity( var_0, var_1, var_2 )
         if ( !isdefined( var_2 ) )
             break;
 
-        var_5 = var_2 _meth_8216( 0, 0, 0 );
+        var_5 = var_2 getpointinbounds( 0, 0, 0 );
         var_6 = distance( self.origin, var_5 );
 
         if ( isdefined( var_2.player ) )
@@ -316,9 +316,9 @@ missilewatchproximity( var_0, var_1, var_2 )
                 if ( isdefined( var_2.owner ) && iswarbird( var_2 ) )
                 {
                     if ( var_2.numflares == 2 )
-                        var_2.owner _meth_82FB( "ui_warbird_flares", 1 );
+                        var_2.owner setclientomnvar( "ui_warbird_flares", 1 );
                     else if ( var_2.numflares == 1 )
-                        var_2.owner _meth_82FB( "ui_warbird_flares", 2 );
+                        var_2.owner setclientomnvar( "ui_warbird_flares", 2 );
 
                     var_2.owner playlocalsound( "paladin_deploy_flares" );
                 }
@@ -332,7 +332,7 @@ missilewatchproximity( var_0, var_1, var_2 )
                     level thread handleflarestimer( var_2, var_7, var_3 );
                 }
 
-                self _meth_81D9( var_7 );
+                self missile_settargetent( var_7 );
                 return;
             }
         }
@@ -345,7 +345,7 @@ deployflares( var_0 )
 {
     var_1 = self gettagorigin( "tag_origin" ) + ( 0, 0, -50 );
     var_2 = spawn( "script_model", var_1 );
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_2.angles = self.angles;
 
     if ( !isdefined( self.flaresdeployedyaw ) )
@@ -355,7 +355,7 @@ deployflares( var_0 )
 
     var_3 = anglestoforward( ( self.angles[0], self.flaresdeployedyaw, self.angles[2] ) );
     var_3 = vehiclemodifyflarevector( var_3 );
-    var_2 _meth_82B2( var_3, var_0 );
+    var_2 movegravity( var_3, var_0 );
     var_2 thread deleteaftertime( var_0 );
     return var_2;
 }
@@ -378,7 +378,7 @@ handleflarestimer( var_0, var_1, var_2 )
     var_0.flarestarget = undefined;
 
     if ( isdefined( var_0.owner ) && iswarbird( var_0 ) )
-        var_0.owner _meth_82FB( "ui_warbird_flares", 0 );
+        var_0.owner setclientomnvar( "ui_warbird_flares", 0 );
 }
 
 hastag( var_0, var_1 )
@@ -407,7 +407,7 @@ doproximityalarm( var_0, var_1 )
         return;
 
     if ( iswarbird( var_1 ) )
-        self _meth_82FB( "ui_warbird_flares", 3 );
+        self setclientomnvar( "ui_warbird_flares", 3 );
 
     self playlocalsound( "mp_aerial_enemy_locked" );
     var_1.incomingmissilesound = 1;
@@ -429,15 +429,15 @@ playerfakeshootpaintmissile( var_0 )
 {
     var_1 = vectornormalize( anglestoforward( self getangles() ) );
     var_2 = vectornormalize( anglestoright( self getangles() ) );
-    var_3 = self _meth_80A8() + var_1 * 100;
+    var_3 = self geteye() + var_1 * 100;
     var_4 = var_3 + var_1 * 20000;
     var_5 = bullettrace( var_3, var_4, 0 );
 
     if ( var_5["fraction"] == 1 )
         return;
 
-    earthquake( 0.1, 1, self _meth_80A8(), 500, self );
-    var_3 = self _meth_80A8() + var_2 * -1 * 50;
+    earthquake( 0.1, 1, self geteye(), 500, self );
+    var_3 = self geteye() + var_2 * -1 * 50;
     var_4 = var_5["position"];
     var_6 = magicbullet( "paint_missile_killstreak_mp", var_3, var_4, self );
     var_6.owner = self;
@@ -448,32 +448,32 @@ playerfakeshootpaintmissile( var_0 )
 playerfakeshootpaintgrenadeattarget( var_0, var_1, var_2, var_3, var_4 )
 {
     var_5 = 5000;
-    earthquake( 0.2, 1, self _meth_845C(), 300 );
+    earthquake( 0.2, 1, self getvieworigin(), 300 );
     var_6 = vectornormalize( var_2 - var_1 );
     var_7 = var_6 * var_5;
-    var_8 = _func_071( "paint_grenade_killstreak_mp", var_1, var_7, 2, self );
+    var_8 = magicgrenademanual( "paint_grenade_killstreak_mp", var_1, var_7, 2, self );
     var_8.owner = self;
     var_8 thread watchpaintgrenade( var_3, var_4 );
     thread playerfiresounds( var_0, "recon_drn_launcher_shot_plr", "recon_drn_launcher_shot_npc" );
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
 }
 
 playerfakeshootempgrenadeattarget( var_0, var_1, var_2 )
 {
     var_3 = 5000;
-    earthquake( 0.2, 1, self _meth_845C(), 300 );
+    earthquake( 0.2, 1, self getvieworigin(), 300 );
     var_4 = vectornormalize( var_2 - var_1 );
     var_5 = var_4 * var_3;
-    var_6 = _func_071( "emp_grenade_killstreak_mp", var_1, var_5, 2, self );
+    var_6 = magicgrenademanual( "emp_grenade_killstreak_mp", var_1, var_5, 2, self );
     var_6.owner = self;
     thread playerfiresounds( var_0, "recon_drn_launcher_shot_plr", "recon_drn_launcher_shot_npc" );
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
 }
 
 playerfiresounds( var_0, var_1, var_2 )
 {
     if ( isdefined( var_2 ) )
-        var_0 _meth_8438( var_2 );
+        var_0 playsoundonmovingent( var_2 );
 
     if ( isdefined( var_1 ) )
         self playlocalsound( var_1 );
@@ -502,7 +502,7 @@ detectiongrenadethink( var_0, var_1, var_2, var_3 )
 
     foreach ( var_5 in level.players )
     {
-        if ( !isdefined( var_5 ) || !maps\mp\_utility::isreallyalive( var_5 ) || !_func_285( var_1, var_5 ) )
+        if ( !isdefined( var_5 ) || !maps\mp\_utility::isreallyalive( var_5 ) || !isalliedsentient( var_1, var_5 ) )
             continue;
 
         thread maps\mp\_threatdetection::detection_grenade_hud_effect( var_5, var_0, 1.0, 400 );
@@ -513,7 +513,7 @@ detectiongrenadethink( var_0, var_1, var_2, var_3 )
 
     foreach ( var_5 in level.participants )
     {
-        if ( !isdefined( var_5 ) || !maps\mp\_utility::isreallyalive( var_5 ) || _func_285( var_1, var_5 ) || var_5 maps\mp\_utility::_hasperk( "specialty_coldblooded" ) )
+        if ( !isdefined( var_5 ) || !maps\mp\_utility::isreallyalive( var_5 ) || isalliedsentient( var_1, var_5 ) || var_5 maps\mp\_utility::_hasperk( "specialty_coldblooded" ) )
             continue;
 
         if ( distance( var_5.origin, var_0 ) < 400 )
@@ -543,11 +543,11 @@ detectiongrenadewatch( var_0, var_1 )
         if ( !isdefined( level.ishorde ) )
             var_0 thread maps\mp\_events::killstreaktagevent();
 
-        var_0 _meth_80AD( "damage_heavy" );
+        var_0 playrumbleonentity( "damage_heavy" );
     }
 
     if ( !isagent( self ) )
-        self _meth_849A( 1 );
+        self designatefoftarget( 1 );
 
     self.tagmarkedby = var_0;
     common_scripts\utility::waittill_any_timeout( var_1, "death", "disconnect" );
@@ -555,7 +555,7 @@ detectiongrenadewatch( var_0, var_1 )
     if ( isdefined( self ) )
     {
         if ( !isagent( self ) )
-            self _meth_849A( 0 );
+            self designatefoftarget( 0 );
 
         self.tagmarkedby = undefined;
     }
@@ -631,7 +631,7 @@ heli_empgrenaded()
 
 heli_existance()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     common_scripts\utility::waittill_any( "death", "crashing", "leaving" );
     removefromhelilist( var_0 );
     self notify( "helicopter_done" );
@@ -640,8 +640,8 @@ heli_existance()
 heli_crash()
 {
     self notify( "crashing" );
-    self _meth_8438( "orbital_pkg_self_destruct" );
-    self _meth_8266();
+    self playsoundonmovingent( "orbital_pkg_self_destruct" );
+    self clearlookatent();
     self.iscrashing = 1;
     var_0 = heli_pick_fly_node( level.heli_crash_nodes );
 
@@ -653,7 +653,7 @@ heli_crash()
 
     thread heli_spin( 180 );
     thread heli_secondary_explosions();
-    self _meth_8283( 100, 45 );
+    self vehicle_setspeed( 100, 45 );
 
     if ( isdefined( var_0.target ) )
         heli_fly_simple_path( var_0 );
@@ -691,11 +691,11 @@ heli_spin( var_0 )
     var_1 = self.team;
     self playsound( level.heli_sound[var_1]["hit"] );
     thread spinsoundshortly();
-    self _meth_8292( var_0, var_0, var_0 );
+    self setyawspeed( var_0, var_0, var_0 );
 
     while ( isdefined( self ) )
     {
-        self _meth_825E( self.angles[1] + var_0 * 0.9 );
+        self settargetyaw( self.angles[1] + var_0 * 0.9 );
         wait 1;
     }
 }
@@ -705,13 +705,13 @@ spinsoundshortly()
     self endon( "death" );
     wait 0.25;
     var_0 = self.team;
-    self _meth_80AB();
+    self stoploopsound();
     wait 0.05;
-    self _meth_8075( level.heli_sound[var_0]["spinloop"] );
+    self playloopsound( level.heli_sound[var_0]["spinloop"] );
     wait 0.05;
 
     if ( isdefined( level.heli_sound[var_0]["spinstart"] ) )
-        self _meth_8075( level.heli_sound[var_0]["spinstart"] );
+        self playloopsound( level.heli_sound[var_0]["spinstart"] );
 }
 
 heli_explode( var_0 )
@@ -777,7 +777,7 @@ heli_fly_simple_path( var_0 )
             continue;
         }
 
-        self _meth_8283( var_3, var_4 );
+        self vehicle_setspeed( var_3, var_4 );
 
         if ( !isdefined( var_2.target ) )
         {
@@ -788,7 +788,7 @@ heli_fly_simple_path( var_0 )
         {
             _setvehgoalpos( var_2.origin + self.zoffset, 0 );
             self waittill( "near_goal" );
-            self _meth_825C( var_2.angles[1] );
+            self setgoalyaw( var_2.angles[1] );
             self waittillmatch( "goal" );
         }
 
@@ -887,7 +887,7 @@ vehicletouchinganytrigger( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        if ( self _meth_80A9( var_2 ) )
+        if ( self istouching( var_2 ) )
             return 1;
     }
 
@@ -1006,33 +1006,33 @@ playerhandleboundarystaticradius( var_0, var_1, var_2 )
 playerenablestreakstatic()
 {
     self notify( "playerUpdateStreakStatic" );
-    self _meth_82FB( "ui_streak_overlay_state", 1 );
+    self setclientomnvar( "ui_streak_overlay_state", 1 );
 }
 
 playerdisablestreakstatic()
 {
     self notify( "playerUpdateStreakStatic" );
-    self _meth_82FB( "ui_streak_overlay_state", 0 );
+    self setclientomnvar( "ui_streak_overlay_state", 0 );
 }
 
 playershowfullstatic()
 {
     self notify( "playerUpdateStreakStatic" );
-    self _meth_82FB( "ui_streak_overlay_state", 7 );
+    self setclientomnvar( "ui_streak_overlay_state", 7 );
 }
 
 playershowstreakstaticfordamage()
 {
     self endon( "disconnect" );
 
-    if ( self _meth_8447( "ui_streak_overlay_state" ) != 1 )
+    if ( self getclientomnvar( "ui_streak_overlay_state" ) != 1 )
         return;
 
     self notify( "playerUpdateStreakStatic" );
     self endon( "playerUpdateStreakStatic" );
-    self _meth_82FB( "ui_streak_overlay_state", 2 );
+    self setclientomnvar( "ui_streak_overlay_state", 2 );
     wait 1;
-    self _meth_82FB( "ui_streak_overlay_state", 1 );
+    self setclientomnvar( "ui_streak_overlay_state", 1 );
 }
 
 playershowstreakstaticforrange( var_0 )
@@ -1060,7 +1060,7 @@ playershowstreakstaticforrange( var_0 )
     }
 
     self notify( "playerUpdateStreakStatic" );
-    self _meth_82FB( "ui_streak_overlay_state", var_1 );
+    self setclientomnvar( "ui_streak_overlay_state", var_1 );
 }
 
 getentorstruct( var_0, var_1 )
@@ -1146,13 +1146,13 @@ thermalvision( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     self endon( var_0 );
     var_7 = 0;
     disableorbitalthermal( self );
-    self _meth_82D7( "default", 0.25 );
-    self _meth_82FB( "ui_killstreak_optic", 0 );
+    self visionsetthermalforplayer( "default", 0.25 );
+    self setclientomnvar( "ui_killstreak_optic", 0 );
 
     if ( isbot( self ) )
         return;
 
-    self _meth_82DD( "switch thermal", "+actionslot 1" );
+    self notifyonplayercommand( "switch thermal", "+actionslot 1" );
     thread playercleanupthermalvisioncommands( var_0 );
 
     for (;;)
@@ -1162,13 +1162,13 @@ thermalvision( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         if ( !var_7 )
         {
             enableorbitalthermal( self, var_0, var_1, var_2, var_3, var_4, var_5, var_6 );
-            self _meth_82FB( "ui_killstreak_optic", 1 );
+            self setclientomnvar( "ui_killstreak_optic", 1 );
             self playlocalsound( "paladin_toggle_flir_plr" );
         }
         else
         {
             disableorbitalthermal( self );
-            self _meth_82FB( "ui_killstreak_optic", 0 );
+            self setclientomnvar( "ui_killstreak_optic", 0 );
             self playlocalsound( "paladin_toggle_flir_plr" );
         }
 
@@ -1180,14 +1180,14 @@ playercleanupthermalvisioncommands( var_0 )
 {
     self endon( "disconnect" );
     self waittill( var_0 );
-    self _meth_849C( "switch thermal", "+actionslot 1" );
+    self notifyonplayercommandremove( "switch thermal", "+actionslot 1" );
 }
 
 disableorbitalthermal( var_0 )
 {
     var_0 thermalvisionoff();
     var_0 notify( "thermal_vision_off" );
-    var_0 _meth_84AA();
+    var_0 disablephysicaldepthoffieldscripting();
     var_0.orbitalthermalmode = 0;
 }
 
@@ -1210,7 +1210,7 @@ enableorbitalthermal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
         wait 0.05;
 
     var_0 thermalvisionon();
-    var_0 _meth_84A9( 3 );
+    var_0 enablephysicaldepthoffieldscripting( 3 );
     var_0 thread setthermaldof( var_1, var_2, var_3, var_4, var_5, var_6, var_7 );
 }
 
@@ -1222,10 +1222,10 @@ setthermaldof( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     for (;;)
     {
-        var_7 = self _meth_8340();
+        var_7 = self playerads();
         var_8 = float_lerp( var_3, var_1, var_7 );
         var_9 = float_lerp( var_4, var_2, var_7 );
-        self _meth_84AB( var_8, var_9, var_5, var_6 );
+        self setphysicaldepthoffield( var_8, var_9, var_5, var_6 );
         wait 0.1;
     }
 }

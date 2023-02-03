@@ -11,7 +11,7 @@ init( var_0 )
     else
         level.stinger_weapon = "iw5_stingerm7_sp";
 
-    precacheitem( level.stinger_weapon );
+    precacheshellshock( level.stinger_weapon );
     precacheshader( "bls_ui_turret_targetacquired" );
     precacheshader( "bls_ui_turret_targetacquired_range" );
     precacheshader( "bls_ui_turret_targetlock_white" );
@@ -66,7 +66,7 @@ stingerm7_targeting()
         var_0 = self.stingerm7_info.locking_target;
         var_1 = level.stingerm7_lock_range;
 
-        if ( self _meth_8311() == level.stinger_weapon && self _meth_8340() > 0.99 )
+        if ( self getcurrentweapon() == level.stinger_weapon && self playerads() > 0.99 )
         {
             self.stingerm7_info.locked_targets = stingerm7_targeting_remove_dead( self.stingerm7_info.locked_targets );
 
@@ -74,7 +74,7 @@ stingerm7_targeting()
             {
                 if ( !target_still_valid( var_0 ) )
                 {
-                    _func_09B( var_0.trackent );
+                    target_remove( var_0.trackent );
                     var_0.trackent delete();
                     var_0.trackent = undefined;
                     self.stingerm7_info.locking_target = undefined;
@@ -98,17 +98,17 @@ stingerm7_targeting()
                             var_0.trackent = common_scripts\utility::spawn_tag_origin();
 
                             if ( isdefined( var_2 ) )
-                                var_0.trackent _meth_804D( var_0.ent, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                                var_0.trackent linkto( var_0.ent, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
                             else
                             {
                                 var_0.trackent.origin = stingerm7_get_target_pos( var_0 );
-                                var_0.trackent _meth_804D( var_0.ent );
+                                var_0.trackent linkto( var_0.ent );
                             }
 
                             var_0.trackent thread stinger_track_ent_cleanup( var_0.ent );
                         }
 
-                        _func_09A( var_0.trackent );
+                        target_set( var_0.trackent );
                     }
                 }
             }
@@ -117,12 +117,12 @@ stingerm7_targeting()
 
             if ( isdefined( var_0 ) )
             {
-                var_3 = var_1 < 0 || distancesquared( stingerm7_get_target_pos( var_0 ), level.player _meth_80A8() ) < var_1 * var_1;
+                var_3 = var_1 < 0 || distancesquared( stingerm7_get_target_pos( var_0 ), level.player geteye() ) < var_1 * var_1;
 
                 if ( !var_3 )
                 {
                     if ( isdefined( var_0.trackent ) )
-                        _func_09C( var_0.trackent, "bls_ui_turret_targetacquired_range" );
+                        target_setshader( var_0.trackent, "bls_ui_turret_targetacquired_range" );
 
                     self.stingerm7_info.locking_time = 0;
                 }
@@ -136,7 +136,7 @@ stingerm7_targeting()
                             var_0.trackent.sound_played = 1;
                         }
 
-                        _func_09C( var_0.trackent, "bls_ui_turret_targetacquired" );
+                        target_setshader( var_0.trackent, "bls_ui_turret_targetacquired" );
                     }
 
                     self.stingerm7_info.locking_time += 0.05;
@@ -147,7 +147,7 @@ stingerm7_targeting()
             {
                 self.stingerm7_info.locked_targets[self.stingerm7_info.locked_targets.size] = var_0;
                 soundscripts\_snd_playsound::snd_play_2d( "wpn_stingerm7_locked" );
-                _func_09C( var_0.trackent, "bls_ui_turret_targetlock_white" );
+                target_setshader( var_0.trackent, "bls_ui_turret_targetlock_white" );
                 self.stingerm7_info.locking_target = undefined;
             }
 
@@ -162,7 +162,7 @@ stingerm7_targeting()
             {
                 if ( isdefined( var_5.trackent ) )
                 {
-                    _func_09B( var_5.trackent );
+                    target_remove( var_5.trackent );
                     var_5.trackent delete();
                     var_5.trackent = undefined;
                 }
@@ -172,7 +172,7 @@ stingerm7_targeting()
             {
                 if ( isdefined( var_5.trackent ) )
                 {
-                    _func_09B( var_5.trackent );
+                    target_remove( var_5.trackent );
                     var_5.trackent delete();
                     var_5.trackent = undefined;
                 }
@@ -237,13 +237,13 @@ stinger_fire( var_0, var_1 )
                 var_6 = common_scripts\utility::random( var_4 );
 
             var_7 = var_0 getangles();
-            var_8 = var_0 _meth_80A8();
+            var_8 = var_0 geteye();
             var_9 = anglestoforward( var_7 );
             var_9 = rotatevector( var_9, ( randomfloatrange( -10, 10 ), randomfloatrange( -10, 10 ), 0 ) );
             var_10 = var_8 + rotatevector( var_3, var_7 ) + var_9 * 10;
             var_11 = magicbullet( level.stinger_weapon, var_10, var_10 + var_9 * 1000, var_0 );
             soundscripts\_snd_playsound::snd_play_2d( "wpn_stingerm7_plr" );
-            var_0 _meth_80AD( "heavy_1s" );
+            var_0 playrumbleonentity( "heavy_1s" );
 
             if ( isdefined( var_11 ) )
             {
@@ -256,10 +256,10 @@ stinger_fire( var_0, var_1 )
         }
 
         level notify( "stinger_fired", var_0, var_2 );
-        var_0 _meth_82F6( level.stinger_weapon, 0 );
+        var_0 setweaponammoclip( level.stinger_weapon, 0 );
     }
     else
-        var_0 _meth_82F6( level.stinger_weapon, 4 );
+        var_0 setweaponammoclip( level.stinger_weapon, 4 );
 }
 
 stinger_delayed_lock( var_0, var_1 )
@@ -271,7 +271,7 @@ stinger_delayed_lock( var_0, var_1 )
     wait(var_0);
 
     if ( isdefined( self.delayedlocktargetent ) )
-        self _meth_81D9( self.delayedlocktargetent, stingerm7_get_target_offset( undefined, self.delayedlocktargetent, self.delayedlocktargettag ) );
+        self missile_settargetent( self.delayedlocktargetent, stingerm7_get_target_offset( undefined, self.delayedlocktargetent, self.delayedlocktargettag ) );
 
     self.delayedlocktargetent = undefined;
     self.delayedlocktargettag = undefined;
@@ -293,15 +293,15 @@ get_best_locking_target()
     if ( isdefined( level.stinger_no_ai ) && level.stinger_no_ai )
         var_0 = vehicle_getarray();
     else
-        var_0 = common_scripts\utility::array_combine( _func_0D6( "axis" ), vehicle_getarray() );
+        var_0 = common_scripts\utility::array_combine( getaiarray( "axis" ), vehicle_getarray() );
 
     if ( isdefined( level.scripttargets ) )
         level.stinger_targets = common_scripts\utility::array_combine( var_0, level.scripttargets );
     else
         level.stinger_targets = var_0;
 
-    var_1 = self _meth_80A8();
-    var_2 = anglestoforward( self _meth_8036() );
+    var_1 = self geteye();
+    var_2 = anglestoforward( self getgunangles() );
     var_3 = undefined;
     var_4 = cos( 3 );
 
@@ -373,8 +373,8 @@ target_still_valid( var_0 )
     if ( stingerm7_get_target_ignore( var_0 ) )
         return 0;
 
-    var_1 = self _meth_80A8();
-    var_2 = anglestoforward( self _meth_8036() );
+    var_1 = self geteye();
+    var_2 = anglestoforward( self getgunangles() );
     var_3 = stingerm7_get_target_pos( var_0 );
 
     if ( vectordot( vectornormalize( var_3 - var_1 ), var_2 ) > cos( 3 ) )
@@ -440,7 +440,7 @@ stingerm7_get_target_pos( var_0, var_1, var_2 )
     if ( isdefined( var_4 ) )
         return var_3 gettagorigin( var_4 );
 
-    return var_3 _meth_8216( 0, 0, 0 );
+    return var_3 getpointinbounds( 0, 0, 0 );
 }
 
 stingerm7_get_target_offset( var_0, var_1, var_2 )

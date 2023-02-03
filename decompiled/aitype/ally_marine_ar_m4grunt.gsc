@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "m4_grunt";
@@ -51,7 +51,7 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
@@ -63,8 +63,8 @@ precache()
     character\character_sp_usmc_sami_goggles::precache();
     character\character_sp_usmc_zach::precache();
     character\character_sp_usmc_zach_goggles::precache();
-    precacheitem( "m4_grunt" );
-    precacheitem( "colt45" );
-    precacheitem( "colt45" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "m4_grunt" );
+    precacheshellshock( "colt45" );
+    precacheshellshock( "colt45" );
+    precacheshellshock( "fraggrenade" );
 }

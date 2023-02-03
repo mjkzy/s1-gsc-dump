@@ -57,7 +57,7 @@ getrunanim()
 
     if ( !self.facemotion )
     {
-        if ( self.stairsstate == "none" || abs( self _meth_8190() ) > 45 )
+        if ( self.stairsstate == "none" || abs( self getmotionangle() ) > 45 )
             return animscripts\utility::getmoveanim( "move_f" );
     }
 
@@ -103,7 +103,7 @@ getcrouchrunanim()
 pronecrawl()
 {
     self.a.movement = "run";
-    self _meth_8152( "runanim", animscripts\utility::getmoveanim( "prone" ), 1, 0.3, self.moveplaybackrate );
+    self setflaggedanimknob( "runanim", animscripts\utility::getmoveanim( "prone" ), 1, 0.3, self.moveplaybackrate );
     run_clearfacialanim();
     animscripts\notetracks::donotetracksfortime( 0.25, "runanim" );
 }
@@ -116,13 +116,13 @@ initrunngun()
     {
         self notify( "stop_move_anim_update" );
         self.update_move_anim_type = undefined;
-        self _meth_8142( %combatrun_backward, 0.2 );
-        self _meth_8142( %combatrun_right, 0.2 );
-        self _meth_8142( %combatrun_left, 0.2 );
-        self _meth_8142( %w_aim_2, 0.2 );
-        self _meth_8142( %w_aim_4, 0.2 );
-        self _meth_8142( %w_aim_6, 0.2 );
-        self _meth_8142( %w_aim_8, 0.2 );
+        self clearanim( %combatrun_backward, 0.2 );
+        self clearanim( %combatrun_right, 0.2 );
+        self clearanim( %combatrun_left, 0.2 );
+        self clearanim( %w_aim_2, 0.2 );
+        self clearanim( %w_aim_4, 0.2 );
+        self clearanim( %w_aim_6, 0.2 );
+        self clearanim( %w_aim_8, 0.2 );
         self.runngun = 1;
     }
 }
@@ -131,7 +131,7 @@ stoprunngun()
 {
     if ( isdefined( self.runngun ) )
     {
-        self _meth_8142( %run_n_gun, 0.2 );
+        self clearanim( %run_n_gun, 0.2 );
         self.runngun = undefined;
     }
 
@@ -158,7 +158,7 @@ runngun( var_0 )
 
     if ( !var_0 || squared( var_1 ) > var_4 * var_4 )
     {
-        self _meth_8142( %add_fire, 0 );
+        self clearanim( %add_fire, 0 );
 
         if ( squared( self.runngunweight ) < var_6 * var_6 )
         {
@@ -192,32 +192,32 @@ runngun( var_0 )
     {
         var_11 = ( var_9 - var_5 ) / var_5;
         var_11 = clamp( var_11, 0, 1 );
-        self _meth_8142( var_10["F"], 0.2 );
-        self _meth_814C( var_10["L"], ( 1.0 - var_11 ) * var_2, 0.2 );
-        self _meth_814C( var_10["R"], ( 1.0 - var_11 ) * var_3, 0.2 );
-        self _meth_814C( var_10["LB"], var_11 * var_2, 0.2 );
-        self _meth_814C( var_10["RB"], var_11 * var_3, 0.2 );
+        self clearanim( var_10["F"], 0.2 );
+        self setanimlimited( var_10["L"], ( 1.0 - var_11 ) * var_2, 0.2 );
+        self setanimlimited( var_10["R"], ( 1.0 - var_11 ) * var_3, 0.2 );
+        self setanimlimited( var_10["LB"], var_11 * var_2, 0.2 );
+        self setanimlimited( var_10["RB"], var_11 * var_3, 0.2 );
     }
     else
     {
         var_11 = clamp( var_9 / var_5, 0, 1 );
-        self _meth_814C( var_10["F"], 1.0 - var_11, 0.2 );
-        self _meth_814C( var_10["L"], var_11 * var_2, 0.2 );
-        self _meth_814C( var_10["R"], var_11 * var_3, 0.2 );
+        self setanimlimited( var_10["F"], 1.0 - var_11, 0.2 );
+        self setanimlimited( var_10["L"], var_11 * var_2, 0.2 );
+        self setanimlimited( var_10["R"], var_11 * var_3, 0.2 );
 
         if ( var_5 < 1 )
         {
-            self _meth_8142( var_10["LB"], 0.2 );
-            self _meth_8142( var_10["RB"], 0.2 );
+            self clearanim( var_10["LB"], 0.2 );
+            self clearanim( var_10["RB"], 0.2 );
         }
     }
 
-    self _meth_8152( "runanim", %run_n_gun, 1, 0.3, 0.8 );
+    self setflaggedanimknob( "runanim", %run_n_gun, 1, 0.3, 0.8 );
     run_playfacialanim( undefined );
     self.a.allowedpartialreloadontheruntime = gettime() + 500;
 
     if ( var_0 && isplayer( self.enemy ) )
-        self _meth_81EA();
+        self updateplayersightaccuracy();
 
     return 1;
 }
@@ -226,14 +226,14 @@ runngun_backward()
 {
     initrunngun();
     var_0 = animscripts\utility::lookupanim( "run_n_gun", "move_back" );
-    self _meth_8152( "runanim", var_0, 1, 0.3, 0.8 );
+    self setflaggedanimknob( "runanim", var_0, 1, 0.3, 0.8 );
     run_playfacialanim( var_0 );
 
     if ( isplayer( self.enemy ) )
-        self _meth_81EA();
+        self updateplayersightaccuracy();
 
     animscripts\notetracks::donotetracksfortime( 0.2, "runanim" );
-    self _meth_8142( var_0, 0.2 );
+    self clearanim( var_0, 0.2 );
 }
 
 reacttobulletsinterruptcheck()
@@ -258,7 +258,7 @@ reacttobulletsinterruptcheck()
 
 endrunningreacttobullets()
 {
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
     self.reactingtobullet = undefined;
     self.requestreacttobullet = undefined;
 }
@@ -271,7 +271,7 @@ runningreacttobullets()
     endfaceenemyaimtracking();
     self endon( "interrupt_react_to_bullet" );
     self.reactingtobullet = 1;
-    self _meth_818F( "face motion" );
+    self orientmode( "face motion" );
     var_0 = animscripts\utility::lookupanimarray( "running_react_to_bullets" );
     var_1 = randomint( var_0.size );
 
@@ -280,7 +280,7 @@ runningreacttobullets()
 
     anim.lastrunningreactanim = var_1;
     var_2 = var_0[var_1];
-    self _meth_810D( "reactanim", var_2, 1, 0.5, self.moveplaybackrate );
+    self setflaggedanimknobrestart( "reactanim", var_2, 1, 0.5, self.moveplaybackrate );
     run_playfacialanim( var_2 );
     thread reacttobulletsinterruptcheck();
     animscripts\shared::donotetracks( "reactanim" );
@@ -291,10 +291,10 @@ customrunningreacttobullets()
 {
     endfaceenemyaimtracking();
     self.reactingtobullet = 1;
-    self _meth_818F( "face motion" );
+    self orientmode( "face motion" );
     var_0 = randomint( self.run_overridebulletreact.size );
     var_1 = self.run_overridebulletreact[var_0];
-    self _meth_810D( "reactanim", var_1, 1, 0.5, self.moveplaybackrate );
+    self setflaggedanimknobrestart( "reactanim", var_1, 1, 0.5, self.moveplaybackrate );
     run_playfacialanim( var_1 );
     thread reacttobulletsinterruptcheck();
     animscripts\shared::donotetracks( "reactanim" );
@@ -347,7 +347,7 @@ shouldsprintforvariation()
     if ( !isdefined( self.enemy ) || !issentient( self.enemy ) )
         return 0;
 
-    if ( randomint( 100 ) < 25 && self _meth_81C0( self.enemy ) + 2000 > var_0 )
+    if ( randomint( 100 ) < 25 && self lastknowntime( self.enemy ) + 2000 > var_0 )
     {
         self.dangersprinttime = var_0 + 2000 + randomint( 1000 );
         return 1;
@@ -369,7 +369,7 @@ getmoveplaybackrate()
 standrun_combatnormal()
 {
     var_0 = getmoveplaybackrate();
-    self _meth_8143( %combatrun, 1.0, 0.5, var_0 );
+    self setanimknob( %combatrun, 1.0, 0.5, var_0 );
     var_1 = 0;
     var_2 = isdefined( self.requestreacttobullet ) && gettime() - self.requestreacttobullet < 100;
 
@@ -384,7 +384,7 @@ standrun_combatnormal()
     if ( shouldsprint() )
     {
         var_3 = getsprintanim();
-        self _meth_8152( "runanim", var_3, 1, 0.5, self.moveplaybackrate );
+        self setflaggedanimknob( "runanim", var_3, 1, 0.5, self.moveplaybackrate );
         run_playfacialanim( var_3 );
         setshootwhilemoving( 0 );
         var_1 = 1;
@@ -431,14 +431,14 @@ standrun_combatnormal()
         if ( move_checkstairstransition() )
             return;
 
-        self _meth_8142( %stair_transitions, 0.1 );
+        self clearanim( %stair_transitions, 0.1 );
 
         if ( shouldsprintforvariation() )
             var_4 = animscripts\utility::getmoveanim( "sprint_short" );
         else
             var_4 = getrunanim();
 
-        self _meth_8153( "runanim", var_4, 1, 0.1, self.moveplaybackrate, 1 );
+        self setflaggedanimknoblimited( "runanim", var_4, 1, 0.1, self.moveplaybackrate, 1 );
         run_playfacialanim( var_4 );
         setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ), self.sidesteprate );
         thread setcombatstandmoveanimweights( "run" );
@@ -473,15 +473,15 @@ faceenemyaimtracking()
     self.aim_while_moving_thread = 1;
     self endon( "killanimscript" );
     self endon( "end_face_enemy_tracking" );
-    self _meth_8173();
+    self setdefaultaimlimits();
     var_0 = undefined;
 
     if ( isdefined( self.combatstandanims ) && isdefined( self.combatstandanims["walk_aims"] ) )
     {
-        self _meth_814C( self.combatstandanims["walk_aims"]["walk_aim_2"] );
-        self _meth_814C( self.combatstandanims["walk_aims"]["walk_aim_4"] );
-        self _meth_814C( self.combatstandanims["walk_aims"]["walk_aim_6"] );
-        self _meth_814C( self.combatstandanims["walk_aims"]["walk_aim_8"] );
+        self setanimlimited( self.combatstandanims["walk_aims"]["walk_aim_2"] );
+        self setanimlimited( self.combatstandanims["walk_aims"]["walk_aim_4"] );
+        self setanimlimited( self.combatstandanims["walk_aims"]["walk_aim_6"] );
+        self setanimlimited( self.combatstandanims["walk_aims"]["walk_aim_8"] );
     }
     else
     {
@@ -491,14 +491,14 @@ faceenemyaimtracking()
             var_1 = "cqb";
 
         var_2 = animscripts\utility::lookupanimarray( var_1 );
-        self _meth_814C( var_2["aim_2"] );
-        self _meth_814C( var_2["aim_4"] );
-        self _meth_814C( var_2["aim_6"] );
-        self _meth_814C( var_2["aim_8"] );
+        self setanimlimited( var_2["aim_2"] );
+        self setanimlimited( var_2["aim_4"] );
+        self setanimlimited( var_2["aim_6"] );
+        self setanimlimited( var_2["aim_8"] );
 
         if ( isdefined( var_2["aim_5"] ) )
         {
-            self _meth_814C( var_2["aim_5"] );
+            self setanimlimited( var_2["aim_5"] );
             var_0 = %w_aim_5;
         }
     }
@@ -560,10 +560,10 @@ aimedsomewhatatenemy()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         var_0 = animscripts\combat_utility::get_last_known_shoot_pos( self.enemy );
     else
-        var_0 = self.enemy _meth_8097();
+        var_0 = self.enemy getshootatpos();
 
-    var_1 = self _meth_81B9();
-    var_2 = vectortoangles( var_0 - self _meth_81B8() );
+    var_1 = self getmuzzleangle();
+    var_2 = vectortoangles( var_0 - self getmuzzlepos() );
 
     if ( animscripts\utility::absangleclamp180( var_1[1] - var_2[1] ) > 15 )
         return 0;
@@ -573,7 +573,7 @@ aimedsomewhatatenemy()
 
 canshootwhilerunningforward()
 {
-    if ( ( !isdefined( self.runngunweight ) || self.runngunweight == 0 ) && abs( self _meth_8190() ) > self.maxrunngunangle )
+    if ( ( !isdefined( self.runngunweight ) || self.runngunweight == 0 ) && abs( self getmotionangle() ) > self.maxrunngunangle )
         return 0;
 
     return 1;
@@ -581,7 +581,7 @@ canshootwhilerunningforward()
 
 canshootwhilerunningbackward()
 {
-    if ( 180 - abs( self _meth_8190() ) >= 45 )
+    if ( 180 - abs( self getmotionangle() ) >= 45 )
         return 0;
 
     var_0 = getpredictedyawtoenemy( 0.2 );
@@ -600,7 +600,7 @@ canshootwhilerunning()
 getpredictedyawtoenemy( var_0 )
 {
     var_1 = self.origin;
-    var_2 = self.angles[1] + self _meth_8190();
+    var_2 = self.angles[1] + self getmotionangle();
     var_1 += ( cos( var_2 ), sin( var_2 ), 0 ) * length( self.velocity ) * var_0;
     var_3 = self.angles[1] - vectortoyaw( self.enemy.origin - var_1 );
     var_3 = angleclamp180( var_3 );
@@ -622,7 +622,7 @@ move_checkstairstransition()
         var_3 = self.origin + ( 0, 0, 6 );
         var_4 = vectornormalize( ( self.lookaheaddir[0], self.lookaheaddir[1], 0 ) );
         var_5 = var_3 + var_2 * var_4;
-        var_6 = self _meth_83E5( var_3, var_5, 15, 48, 1, 1 );
+        var_6 = self aiphysicstrace( var_3, var_5, 15, 48, 1, 1 );
 
         if ( var_6["fraction"] < 1 )
         {
@@ -636,7 +636,7 @@ move_checkstairstransition()
             var_7 = 18;
             var_8 = var_5 + ( 0, 0, var_7 );
             var_9 = var_5 - ( 0, 0, var_7 );
-            var_6 = self _meth_83E5( var_8, var_9, 15, 48, 1, 1 );
+            var_6 = self aiphysicstrace( var_8, var_9, 15, 48, 1, 1 );
 
             if ( var_6["fraction"] >= 1 )
                 return 0;
@@ -654,7 +654,7 @@ move_checkstairstransition()
         var_5 = self.origin + var_2 * self.lookaheaddir;
         var_8 = var_5 + ( 0, 0, var_7 );
         var_9 = var_5 - ( 0, 0, var_7 );
-        var_6 = self _meth_83E5( var_8, var_9, 15, 48, 1, 1 );
+        var_6 = self aiphysicstrace( var_8, var_9, 15, 48, 1, 1 );
 
         if ( var_6["fraction"] <= 0 || var_6["fraction"] >= 1 )
             return 0;
@@ -671,7 +671,7 @@ move_checkstairstransition()
         var_5 = self.origin + var_2 * self.lookaheaddir;
         var_8 = var_5 + ( 0, 0, var_7 );
         var_9 = var_5 - ( 0, 0, var_7 );
-        var_6 = self _meth_83E5( var_8, var_9, 15, 48, 1, 1 );
+        var_6 = self aiphysicstrace( var_8, var_9, 15, 48, 1, 1 );
 
         if ( var_6["fraction"] <= 0 || var_6["fraction"] >= 1 )
             return 0;
@@ -687,7 +687,7 @@ move_checkstairstransition()
 
     self notify( "stop_move_anim_update" );
     self.update_move_anim_type = undefined;
-    self _meth_8110( "runanim", var_1, %body, 1, 0.1, self.moveplaybackrate );
+    self setflaggedanimknoballrestart( "runanim", var_1, %body, 1, 0.1, self.moveplaybackrate );
     run_playfacialanim( var_1 );
     animscripts\shared::donotetracks( "runanim" );
     return 1;
@@ -696,14 +696,14 @@ move_checkstairstransition()
 standrun_noncombatnormal()
 {
     self endon( "movemode" );
-    self _meth_8142( %combatrun, 0.6 );
+    self clearanim( %combatrun, 0.6 );
     var_0 = getmoveplaybackrate();
 
     if ( move_checkstairstransition() )
         return;
 
-    self _meth_8142( %stair_transitions, 0.1 );
-    self _meth_8147( %combatrun, %body, 1, 0.2, var_0 );
+    self clearanim( %stair_transitions, 0.1 );
+    self setanimknoball( %combatrun, %body, 1, 0.2, var_0 );
 
     if ( shouldsprint() )
         var_1 = getsprintanim();
@@ -715,7 +715,7 @@ standrun_noncombatnormal()
     else
         var_2 = 0.1;
 
-    self _meth_8152( "runanim", var_1, 1, var_2, self.moveplaybackrate, 1 );
+    self setflaggedanimknob( "runanim", var_1, 1, var_2, self.moveplaybackrate, 1 );
     run_playfacialanim( var_1 );
     setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ) );
     thread setcombatstandmoveanimweights( "run" );
@@ -733,7 +733,7 @@ standrun_noncombatnormal()
 crouchrun_runoverride()
 {
     self endon( "movemode" );
-    self _meth_810F( "runanim", self.crouchrun_combatanim, %body, 1, 0.4, self.moveplaybackrate );
+    self setflaggedanimknoball( "runanim", self.crouchrun_combatanim, %body, 1, 0.4, self.moveplaybackrate );
     run_playfacialanim( self.crouchrun_combatanim );
     animscripts\shared::donotetracks( "runanim" );
 }
@@ -742,14 +742,14 @@ crouchrun_runnormal()
 {
     self endon( "movemode" );
     var_0 = getcrouchrunanim();
-    self _meth_8143( var_0, 1, 0.4 );
+    self setanimknob( var_0, 1, 0.4 );
     var_1 = "run";
 
     if ( animscripts\utility::usingsmg() )
         var_1 = "smg_crouch_run";
 
     thread updatemoveanimweights( "crouchrun", var_0, animscripts\utility::lookupanim( var_1, "crouch_b" ), animscripts\utility::lookupanim( var_1, "crouch_l" ), animscripts\utility::lookupanim( var_1, "crouch_r" ) );
-    self _meth_810F( "runanim", %crouchrun, %body, 1, 0.2, self.moveplaybackrate );
+    self setflaggedanimknoball( "runanim", %crouchrun, %body, 1, 0.2, self.moveplaybackrate );
     run_playfacialanim( undefined );
     animscripts\notetracks::donotetracksfortime( 0.2, "runanim" );
 }
@@ -782,7 +782,7 @@ standrun_checkreload()
     if ( !isdefined( self.pathgoalpos ) || distancesquared( self.origin, self.pathgoalpos ) < 65536 )
         return 0;
 
-    var_1 = angleclamp180( self _meth_8190() );
+    var_1 = angleclamp180( self getmotionangle() );
 
     if ( abs( var_1 ) > 25 )
         return 0;
@@ -799,21 +799,21 @@ standrun_checkreload()
         standrun_reloadinternal();
 
     self notify( "abort_reload" );
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
     return 1;
 }
 
 standrun_reloadinternal()
 {
     self endon( "movemode" );
-    self _meth_818F( "face motion" );
+    self orientmode( "face motion" );
     var_0 = "reload_" + animscripts\combat_utility::getuniqueflagnameindex();
     var_1 = animscripts\utility::lookupanim( "run", "reload" );
 
     if ( isarray( var_1 ) )
         var_1 = var_1[randomint( var_1.size )];
 
-    self _meth_8110( var_0, var_1, %body, 1, 0.25 );
+    self setflaggedanimknoballrestart( var_0, var_1, %body, 1, 0.25 );
     run_playfacialanim( var_1 );
     self.update_move_front_bias = 1;
     setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ) );
@@ -824,7 +824,7 @@ standrun_reloadinternal()
 
 runloopisnearbeginning()
 {
-    var_0 = self _meth_814F( %walk_and_run_loops );
+    var_0 = self getanimtime( %walk_and_run_loops );
     var_1 = getanimlength( animscripts\utility::lookupanim( "run", "straight" ) ) / 3.0;
     var_0 *= 3.0;
 
@@ -847,9 +847,9 @@ setmovenonforwardanims( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         var_3 = 1;
 
-    self _meth_8144( var_0, 1, 0.1, var_3, 1 );
-    self _meth_8144( var_1, 1, 0.1, var_3, 1 );
-    self _meth_8144( var_2, 1, 0.1, var_3, 1 );
+    self setanimknoblimited( var_0, 1, 0.1, var_3, 1 );
+    self setanimknoblimited( var_1, 1, 0.1, var_3, 1 );
+    self setanimknoblimited( var_2, 1, 0.1, var_3, 1 );
 }
 
 setcombatstandmoveanimweights( var_0 )
@@ -889,16 +889,16 @@ updaterunweightsonce( var_0, var_1, var_2, var_3 )
             if ( isdefined( self.strafeblendtimes ) )
                 var_4 = self.strafeblendtimes;
 
-            self _meth_814B( var_0, 1, var_4, 1, 1 );
-            self _meth_814B( var_1, 0, var_4, 1, 1 );
-            self _meth_814B( var_2, 0, var_4, 1, 1 );
-            self _meth_814B( var_3, 0, var_4, 1, 1 );
+            self setanim( var_0, 1, var_4, 1, 1 );
+            self setanim( var_1, 0, var_4, 1, 1 );
+            self setanim( var_2, 0, var_4, 1, 1 );
+            self setanim( var_3, 0, var_4, 1, 1 );
         }
     }
     else
     {
         self.wasfacingmotion = undefined;
-        var_5 = animscripts\utility::quadrantanimweights( self _meth_8190() );
+        var_5 = animscripts\utility::quadrantanimweights( self getmotionangle() );
 
         if ( isdefined( self.update_move_front_bias ) )
         {
@@ -918,10 +918,10 @@ updaterunweightsonce( var_0, var_1, var_2, var_3 )
         if ( var_6 < 0.001 )
             var_6 = 0.001;
 
-        self _meth_814B( var_0, var_6, var_4, 1, 1 );
-        self _meth_814B( var_1, var_5["back"], var_4, 1, 1 );
-        self _meth_814B( var_2, var_5["left"], var_4, 1, 1 );
-        self _meth_814B( var_3, var_5["right"], var_4, 1, 1 );
+        self setanim( var_0, var_6, var_4, 1, 1 );
+        self setanim( var_1, var_5["back"], var_4, 1, 1 );
+        self setanim( var_2, var_5["left"], var_4, 1, 1 );
+        self setanim( var_3, var_5["right"], var_4, 1, 1 );
     }
 }
 
@@ -956,7 +956,7 @@ standrun_checkchangeweapon()
             return 0;
     }
 
-    var_2 = angleclamp180( self _meth_8190() );
+    var_2 = angleclamp180( self getmotionangle() );
 
     if ( abs( var_2 ) > 25 )
         return 0;
@@ -976,7 +976,7 @@ standrun_checkchangeweapon()
 shotgunswitchstandruninternal( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     self endon( "movemode" );
-    self _meth_8110( var_0, var_1, %body, 1, 0.25 );
+    self setflaggedanimknoballrestart( var_0, var_1, %body, 1, 0.25 );
     run_playfacialanim( var_1 );
     self.update_move_front_bias = 1;
     setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ) );
@@ -1021,5 +1021,5 @@ run_playfacialanim( var_0 )
 run_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

@@ -62,31 +62,31 @@ setup_crash_light_motions()
 
 crash_set_level_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_disableLightSets", 0 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_disableLightSets", 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 }
 
 crash_lighting_skyjack_setup()
 {
     common_scripts\utility::flag_wait( "start_action" );
-    level.player _meth_83C0( "crash_skyjack" );
+    level.player lightsetforplayer( "crash_skyjack" );
     maps\_utility::vision_set_fog_changes( "crash_skyjack", 2 );
-    level.player _meth_8490( "clut_crash_crash_site", 2 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "3" );
+    level.player setclutforplayer( "clut_crash_crash_site", 2 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "3" );
     setsunflareposition( ( -2.3, -44.1, 0 ) );
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
     common_scripts\utility::flag_wait( "crash_lighting_screen_dof" );
-    level.player _meth_84AB( 9.0, 6.5, 1, 1 );
+    level.player setphysicaldepthoffield( 9.0, 6.5, 1, 1 );
     wait 6;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 crash_lighting_engine_lighting()
@@ -100,37 +100,37 @@ crash_lighting_crash_site()
 {
     common_scripts\utility::flag_wait( "begin_crash_site_lighting" );
     setsunflareposition( ( -10.08, -87.9, 0 ) );
-    level.player _meth_83C0( "crash_hud" );
+    level.player lightsetforplayer( "crash_hud" );
     maps\_utility::vision_set_fog_changes( "crash_skyjack", 3 );
 
     if ( level.start_point == "crash_site" )
     {
-        level.player _meth_8490( "clut_crash_crash_site", 2 );
+        level.player setclutforplayer( "clut_crash_crash_site", 2 );
         maps\_utility::vision_set_fog_changes( "crash_crash_site_cinematic", 2 );
-        level.player _meth_83C0( "crash_crash_site" );
+        level.player lightsetforplayer( "crash_crash_site" );
     }
 
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "2" );
-    level.player _meth_84A9();
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "2" );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 6.0, 50, 1, 1 );
+    level.player setphysicaldepthoffield( 6.0, 50, 1, 1 );
     common_scripts\utility::flag_wait( "crash_dof_fly_in" );
     wait 9;
-    level.player _meth_84AB( 3.7, 45, 6, 6 );
+    level.player setphysicaldepthoffield( 3.7, 45, 6, 6 );
     wait 11;
     maps\_lighting::lerp_spot_intensity( "crash_crash_site_rim_1", 2, 0 );
     wait 1;
-    level.player _meth_84AB( 2.26, 80, 1, 1 );
+    level.player setphysicaldepthoffield( 2.26, 80, 1, 1 );
     common_scripts\utility::flag_wait( "crash_lighting_cinema_end" );
-    level.player _meth_84AA();
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
     maps\_lighting::lerp_spot_intensity( "crash_crash_site_key_1", 1, 0 );
     maps\_lighting::lerp_spot_intensity( "crash_crash_site_fill_1", 1, 0 );
-    _func_0D3( "r_mbEnable", "0" );
+    setsaveddvar( "r_mbEnable", "0" );
     maps\_utility::vision_set_fog_changes( "crash_crash_site", 4 );
 }
 
@@ -144,91 +144,91 @@ crash_lighting_plane_fire()
 crash_lighting_crash_site_dof()
 {
     common_scripts\utility::flag_wait( "lighting_loading_cargo" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "2" );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "2" );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 5.6, 25.8, 1, 1 );
+    level.player setphysicaldepthoffield( 5.6, 25.8, 1, 1 );
     common_scripts\utility::flag_wait( "lighting_razorback_loaded" );
     wait 2;
-    _func_0D3( "r_mbEnable", "0" );
-    level.player _meth_84AA();
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    setsaveddvar( "r_mbEnable", "0" );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_entry()
 {
     common_scripts\utility::flag_wait( "csh_lighting_entry_debug" );
     setsunflareposition( ( -10.08, -87.9, 0 ) );
-    level.player _meth_83C0( "crash_crash_site" );
+    level.player lightsetforplayer( "crash_crash_site" );
     maps\_utility::vision_set_fog_changes( "crash_crash_site", 0 );
-    level.player _meth_8490( "clut_crash_crash_site", 0 );
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    level.player setclutforplayer( "clut_crash_crash_site", 0 );
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_entry_dof()
 {
     common_scripts\utility::flag_wait( "cave_entry_anim_start" );
     wait 0.25;
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "5" );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "5" );
     maps\_lighting::stop_flickerlight( "fire_crash_site_plane", "fire_plane_crash", 0 );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 0.75, 51, 2, 2 );
+    level.player setphysicaldepthoffield( 0.75, 51, 2, 2 );
     wait 3;
-    level.player _meth_84AB( 0.3, 20, 2, 2 );
+    level.player setphysicaldepthoffield( 0.3, 20, 2, 2 );
 }
 
 crash_lighting_drone_hall()
 {
     common_scripts\utility::flag_wait( "csh_lighting_ice_caves_transition" );
-    level.player _meth_83C0( "crash_prometheus" );
+    level.player lightsetforplayer( "crash_prometheus" );
     maps\_utility::vision_set_fog_changes( "crash_ice_caves_prometheus", 2 );
-    level.player _meth_8490( "clut_crash_prometheus", 2 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "2" );
+    level.player setclutforplayer( "clut_crash_prometheus", 2 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "2" );
     thread crash_lighting_entry_dof_scripted();
 }
 
 crash_lighting_entry_dof_scripted()
 {
     common_scripts\utility::flag_wait( "blur_player_vision" );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        level.player enablephysicaldepthoffieldscripting();
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
     }
 
     wait 1;
-    level.player _meth_84AB( 0.41, 24, 1, 1 );
+    level.player setphysicaldepthoffield( 0.41, 24, 1, 1 );
     wait 5;
     maps\_utility::vision_set_fog_changes( "crash_ice_caves_prometheus", 5 );
-    level.player _meth_84AB( 1.6, 47, 3, 3 );
+    level.player setphysicaldepthoffield( 1.6, 47, 3, 3 );
     wait 1;
-    level.player _meth_84AA();
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_ice_caves_01()
 {
     common_scripts\utility::flag_wait( "csh_lighting_ice_caves_01" );
-    level.player _meth_83C0( "crash_ice_caves_01" );
+    level.player lightsetforplayer( "crash_ice_caves_01" );
     maps\_utility::vision_set_fog_changes( "crash_ice_caves_01", 4 );
-    level.player _meth_8490( "clut_crash_ice_caves", 4 );
+    level.player setclutforplayer( "clut_crash_ice_caves", 4 );
     thread crash_lighting_ice_caves_01_flare();
-    _func_0D3( "r_mbEnable", "0" );
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    setsaveddvar( "r_mbEnable", "0" );
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_ice_caves_01_flare()
@@ -239,50 +239,50 @@ crash_lighting_ice_caves_01_flare()
 crash_lighting_goliath_dof()
 {
     common_scripts\utility::flag_wait( "goliath_change_anim" );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "2" );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "2" );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 10.9, 17.15, 1, 1 );
+    level.player setphysicaldepthoffield( 10.9, 17.15, 1, 1 );
     wait 7;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 crash_lighting_post_goliath_fall()
 {
     common_scripts\utility::flag_wait( "csh_lighting_post_goliath_fall" );
     maps\_lighting::stop_flickerlight( "big_cave_flare", "lighting_big_cave_flare", 0 );
-    level.player _meth_83C0( "crash_post_goliath" );
+    level.player lightsetforplayer( "crash_post_goliath" );
     maps\_utility::vision_set_fog_changes( "crash_post_goliath", 3 );
-    level.player _meth_8490( "clut_crash_ice_caves", 4 );
+    level.player setclutforplayer( "clut_crash_ice_caves", 4 );
     level.visionset_default = "crash_post_goliath";
-    _func_0D3( "r_dof_physical_hipenable", 0 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_dof_physical_hipenable", 0 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 1.1, 68, 1, 1 );
+    level.player setphysicaldepthoffield( 1.1, 68, 1, 1 );
     common_scripts\utility::flag_wait( "crash_lighting_goliath_pit" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_ice_caves_02()
 {
     common_scripts\utility::flag_wait( "csh_lighting_ice_caves_02" );
     setsunflareposition( ( -27, -116, 0 ) );
-    _func_0D3( "r_mbEnable", "0" );
+    setsaveddvar( "r_mbEnable", "0" );
     level.lightset_previous = "crash_ice_caves_02";
     level.visionset_default = "crash_ice_caves_02";
     maps\_lighting::stop_flickerlight( "goliath_flare_flash", "goliath_suit_flicker", 8000 );
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
 }
 
 ice_caves_02_trigger()
@@ -295,12 +295,12 @@ ice_caves_02_sets()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "crash_ice_caves_02" );
+        level.player lightsetforplayer( "crash_ice_caves_02" );
         maps\_utility::vision_set_fog_changes( "crash_ice_caves_02", 2 );
-        level.player _meth_8490( "clut_crash_overlook", 2 );
-        _func_0D3( "r_mbEnable", "0" );
+        level.player setclutforplayer( "clut_crash_overlook", 2 );
+        setsaveddvar( "r_mbEnable", "0" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -315,12 +315,12 @@ ice_caves_03_sets()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "crash_ice_caves_03" );
+        level.player lightsetforplayer( "crash_ice_caves_03" );
         maps\_utility::vision_set_fog_changes( "crash_ice_caves_02_ground_fog", 2 );
-        level.player _meth_8490( "clut_crash_overlook", 2 );
-        _func_0D3( "r_mbEnable", "0" );
+        level.player setclutforplayer( "clut_crash_overlook", 2 );
+        setsaveddvar( "r_mbEnable", "0" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -328,12 +328,12 @@ ice_caves_03_sets()
 crash_lighting_overlook()
 {
     common_scripts\utility::flag_wait( "csh_lighting_overlook" );
-    level.player _meth_83C0( "crash_overlook" );
+    level.player lightsetforplayer( "crash_overlook" );
     maps\_utility::vision_set_fog_changes( "crash_overlook", 2 );
-    level.player _meth_8490( "clut_crash_overlook", 2 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    level.player setclutforplayer( "clut_crash_overlook", 2 );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_overlook_trigger()
@@ -346,13 +346,13 @@ ice_overlook_sets()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "crash_overlook" );
+        level.player lightsetforplayer( "crash_overlook" );
         maps\_utility::vision_set_fog_changes( "crash_overlook", 2 );
-        level.player _meth_8490( "clut_crash_overlook", 2 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        level.player setclutforplayer( "clut_crash_overlook", 2 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -369,7 +369,7 @@ crash_overlook_trigger_sunflare()
         self waittill( "trigger" );
         setsunflareposition( ( -13.9, -125.7, 0 ) );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -377,14 +377,14 @@ crash_overlook_trigger_sunflare()
 crash_lighting_underground_lake()
 {
     common_scripts\utility::flag_wait( "csh_lighting_overlook_exit" );
-    level.player _meth_83C0( "crash_avalanche" );
+    level.player lightsetforplayer( "crash_avalanche" );
     maps\_utility::vision_set_fog_changes( "crash_avalanche", 2 );
-    level.player _meth_8490( "clut_crash_overlook", 2 );
-    _func_0D3( "r_mbEnable", "0" );
+    level.player setclutforplayer( "clut_crash_overlook", 2 );
+    setsaveddvar( "r_mbEnable", "0" );
     setsunflareposition( ( -10.39, -112.7, 0 ) );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large_lake", "fire_razorback_lake" );
     maps\_lighting::play_flickerlight_motion_preset( "firelight_motion_large_lake_02", "fire_razorback_lake_02" );
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 crash_lighting_lake_cinema()
@@ -392,32 +392,32 @@ crash_lighting_lake_cinema()
     common_scripts\utility::flag_wait( "lake_underwater_lighting" );
     wait 2;
     level.player maps\_utility::vision_set_fog_changes( "crash_lake_underwater", 2 );
-    level.player _meth_8490( "clut_crash_underwater", 2 );
-    level.player _meth_83C0( "crash_lake_fallin_02" );
+    level.player setclutforplayer( "clut_crash_underwater", 2 );
+    level.player lightsetforplayer( "crash_lake_fallin_02" );
     setsunflareposition( ( -31, -169, 0 ) );
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
-    level.player _meth_84AB( 4.32, 40.9, 1, 1 );
+    level.player setphysicaldepthoffield( 4.32, 40.9, 1, 1 );
     common_scripts\utility::flag_wait( "go_lighting_gideon" );
-    level.player _meth_83C0( "crash_avalanche" );
+    level.player lightsetforplayer( "crash_avalanche" );
     maps\_utility::vision_set_fog_changes( "crash_avalanche_cinematic", 2 );
     setsunflareposition( ( -10.39, -112.7, 0 ) );
-    level.player _meth_8490( "clut_crash_overlook", 2 );
-    _func_0D3( "r_mbEnable", "0" );
+    level.player setclutforplayer( "clut_crash_overlook", 2 );
+    setsaveddvar( "r_mbEnable", "0" );
     wait 2;
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehSharpness", 0.2 );
+        setsaveddvar( "r_dof_physical_bokehSharpness", 0.2 );
 
     wait 3.5;
-    level.player _meth_84AB( 2.0, 86, 1, 1 );
+    level.player setphysicaldepthoffield( 2.0, 86, 1, 1 );
     common_scripts\utility::flag_wait( "gideon_lighting_unlock" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     wait 15;
     maps\_lighting::lerp_spot_intensity( "crash_lake_cinema_cormack_rim", 3, 0 );
     wait 16;

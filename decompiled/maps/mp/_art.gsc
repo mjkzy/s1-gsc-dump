@@ -220,7 +220,7 @@ _clearalltextafterhudelem()
         return;
 
     level._clearalltextafterhudelem = 1;
-    self _meth_80CB();
+    self clearalltextafterhudelem();
     wait 0.05;
     level._clearalltextafterhudelem = 0;
 }
@@ -276,10 +276,10 @@ vision_set_fog_changes_mp( var_0, var_1 )
 {
     foreach ( var_3 in level.players )
     {
-        var_3 _meth_82D4( var_0, var_1 );
-        var_3 _meth_8323( "dev_vision_exec" );
+        var_3 visionsetnakedforplayer( var_0, var_1 );
+        var_3 openpopupmenu( "dev_vision_exec" );
         wait 0.05;
-        var_3 _meth_8325( "dev_vision_exec" );
+        var_3 closepopupmenu( "dev_vision_exec" );
     }
 
     set_fog( var_0, var_1 );
@@ -370,10 +370,10 @@ playerinit()
 
 button_down( var_0, var_1 )
 {
-    var_2 = level.player _meth_824C( var_0 );
+    var_2 = level.player buttonpressed( var_0 );
 
     if ( !var_2 )
-        var_2 = level.player _meth_824C( var_1 );
+        var_2 = level.player buttonpressed( var_1 );
 
     if ( !isdefined( level.buttons[var_0] ) )
         level.buttons[var_0] = 0;
@@ -419,7 +419,7 @@ artfxprintlnfog()
     common_scripts\utility::fileprint_launcher( "" );
     common_scripts\utility::fileprint_launcher( "\\t/$" );
 
-    if ( _func_235() )
+    if ( isusinghdr() )
         common_scripts\utility::fileprint_launcher( "\\tlevel._art_fog_setup = maps\\createart\\" + level.script + "_fog_hdr::main;" );
     else
         common_scripts\utility::fileprint_launcher( "\\tlevel._art_fog_setup = maps\\createart\\" + level.script + "_fog::main;" );

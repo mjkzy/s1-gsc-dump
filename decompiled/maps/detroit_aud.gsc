@@ -825,7 +825,7 @@ mus_auto_submixer_thread( var_0, var_1, var_2, var_3 )
                     var_11 = var_7;
 
                 var_8 += var_11 * ( var_10 - var_8 );
-                var_12 = _func_246( var_8, var_5 );
+                var_12 = piecewiselinearlookup( var_8, var_5 );
                 var_12 *= var_1;
                 soundscripts\_audio::aud_set_music_submix( var_12, var_4 );
                 wait(var_4);
@@ -844,7 +844,7 @@ mus_auto_submixer_thread( var_0, var_1, var_2, var_3 )
             for (;;)
             {
                 var_15 = 0;
-                var_16 = _func_0D6( "bad_guys" );
+                var_16 = getaiarray( "bad_guys" );
 
                 foreach ( var_18 in var_16 )
                 {
@@ -861,7 +861,7 @@ mus_auto_submixer_thread( var_0, var_1, var_2, var_3 )
                     var_11 = var_7;
 
                 var_14 += var_11 * ( var_15 - var_14 );
-                var_12 = _func_246( var_14, var_13 );
+                var_12 = piecewiselinearlookup( var_14, var_13 );
                 var_12 *= var_1;
                 soundscripts\_audio::aud_set_music_submix( var_12, var_4 );
                 wait(var_4);
@@ -906,7 +906,7 @@ mus_get_combat_count()
 {
     var_0 = 0;
     var_1 = 0;
-    var_2 = _func_0D6( "bad_guys" );
+    var_2 = getaiarray( "bad_guys" );
 
     foreach ( var_4 in var_2 )
     {
@@ -1079,7 +1079,7 @@ monitor_pa_dist( var_0 )
     {
         var_2 = distance2d( var_0, level.player.origin );
         var_3 = soundscripts\_snd::snd_map( var_2, var_1 );
-        self _meth_806F( var_3 );
+        self scalevolume( var_3 );
         wait 0.2;
     }
 }
@@ -1118,10 +1118,10 @@ scanner_forward( var_0 )
     var_2 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_front_right", ( -12403, 7214, -34 ) );
     var_3 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_rear_left", ( -12302, 7445, -34 ) );
     var_4 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_rear_right", ( -12405, 7452, -34 ) );
-    var_1 _meth_82AE( ( -12301, 7308, -34 ), 3, 0.5, 0.5 );
-    var_2 _meth_82AE( ( -12403, 7302, -34 ), 3, 0.5, 0.5 );
-    var_3 _meth_82AE( ( -12302, 7353, -34 ), 3, 0.5, 0.5 );
-    var_4 _meth_82AE( ( -12403, 7356, -34 ), 3, 0.5, 0.5 );
+    var_1 moveto( ( -12301, 7308, -34 ), 3, 0.5, 0.5 );
+    var_2 moveto( ( -12403, 7302, -34 ), 3, 0.5, 0.5 );
+    var_3 moveto( ( -12302, 7353, -34 ), 3, 0.5, 0.5 );
+    var_4 moveto( ( -12403, 7356, -34 ), 3, 0.5, 0.5 );
 }
 
 scanner_return( var_0 )
@@ -1130,25 +1130,25 @@ scanner_return( var_0 )
     var_2 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_front_right_return", ( -12403, 7302, -34 ) );
     var_3 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_rear_left_return", ( -12302, 7353, -34 ) );
     var_4 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_device_rear_right_return", ( -12403, 7356, -34 ) );
-    var_1 _meth_82AE( ( -12301, 7215, -34 ), 3, 0.5, 0.5 );
-    var_2 _meth_82AE( ( -12403, 7214, -34 ), 3, 0.5, 0.5 );
-    var_3 _meth_82AE( ( -12302, 7445, -34 ), 3, 0.5, 0.5 );
-    var_4 _meth_82AE( ( -12405, 7452, -34 ), 3, 0.5, 0.5 );
+    var_1 moveto( ( -12301, 7215, -34 ), 3, 0.5, 0.5 );
+    var_2 moveto( ( -12403, 7214, -34 ), 3, 0.5, 0.5 );
+    var_3 moveto( ( -12302, 7445, -34 ), 3, 0.5, 0.5 );
+    var_4 moveto( ( -12405, 7452, -34 ), 3, 0.5, 0.5 );
 }
 
 scanner_beam()
 {
     var_0 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_beam", ( -12354, 7213, -34 ) );
     var_1 = soundscripts\_snd_playsound::snd_play_at( "decon_scanner_beam", ( -12352, 7444, -34 ) );
-    var_0 _meth_82AE( ( -12354, 7310, -34 ), 3.2, 0.5, 0.5 );
-    var_1 _meth_82AE( ( -12352, 7358, -34 ), 3.2, 0.5, 0.5 );
+    var_0 moveto( ( -12354, 7310, -34 ), 3.2, 0.5, 0.5 );
+    var_1 moveto( ( -12352, 7358, -34 ), 3.2, 0.5, 0.5 );
     wait 3.21;
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_82AE( ( -12354, 7213, -34 ), 3.2, 0.5, 0.5 );
+        var_0 moveto( ( -12354, 7213, -34 ), 3.2, 0.5, 0.5 );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_82AE( ( -12352, 7444, -34 ), 3.2, 0.5, 0.5 );
+        var_1 moveto( ( -12352, 7444, -34 ), 3.2, 0.5, 0.5 );
 }
 
 scanner_front_door_open( var_0 )
@@ -1342,7 +1342,7 @@ setup_gideon_intro_foley()
     {
         for (;;)
         {
-            if ( _func_21E( "detroit_introa_tr" ) )
+            if ( istransientloaded( "detroit_introa_tr" ) )
                 break;
 
             wait 0.25;
@@ -1707,8 +1707,8 @@ dopplerize_train( var_0 )
 
     while ( isdefined( var_0 ) && isdefined( var_1 ) )
     {
-        var_5 = _func_245( var_1.origin, var_1 maps\_shg_utility::get_differentiated_velocity(), level.player.origin, level.player maps\_shg_utility::get_differentiated_velocity(), var_3, var_4 );
-        var_0 _meth_806D( var_5, var_2 );
+        var_5 = dopplerpitch( var_1.origin, var_1 maps\_shg_utility::get_differentiated_velocity(), level.player.origin, level.player maps\_shg_utility::get_differentiated_velocity(), var_3, var_4 );
+        var_0 scalepitch( var_5, var_2 );
         wait(var_2);
         waittillframeend;
     }
@@ -1724,9 +1724,9 @@ start_fuorescent_light_hum( var_0 )
     var_1 = spawn( "script_origin", var_0 );
     var_1 soundscripts\_snd_playsound::snd_play_loop( "school_fluorescent_hum" );
     common_scripts\utility::flag_wait( "aud_horror_fluorescent_break" );
-    var_1 _meth_806F( 0, 0.25 );
+    var_1 scalevolume( 0, 0.25 );
     wait 0.25;
-    var_1 _meth_80AC();
+    var_1 stopsounds();
     var_1 delete();
 }
 
@@ -1793,15 +1793,15 @@ horror_burk_opens_bodies_room_door_mus()
 {
     var_0 = 8.75;
     var_1 = spawn( "script_origin", ( 0, 0, 0 ) );
-    var_1 _meth_806F( 0, 0 );
+    var_1 scalevolume( 0, 0 );
     var_1 soundscripts\_snd_playsound::snd_play_loop( "det_mus_horror_lp_02" );
-    var_1 _meth_806F( 0.75, var_0 );
+    var_1 scalevolume( 0.75, var_0 );
     wait(var_0);
     music( "horror_burk_door_open_end" );
     level notify( "horror_burk_door_open_end" );
-    var_1 _meth_806F( 0, 5 );
+    var_1 scalevolume( 0, 5 );
     wait 5;
-    var_1 _meth_80AC();
+    var_1 stopsounds();
     var_1 delete();
 }
 
@@ -2230,8 +2230,8 @@ hospital_breach_gun_away()
 hostpital_breach_start()
 {
     soundscripts\_snd_timescale::snd_set_timescale( "detroit_breach" );
-    level.player _meth_8518();
-    _func_289( "slomo" );
+    level.player enablecustomweaponcontext();
+    enablesoundcontextoverride( "slomo" );
     soundscripts\_snd_playsound::snd_play_2d( "det_breach_door" );
     wait 1;
     soundscripts\_audio_mix_manager::mm_add_submix( "det_hospital_breach", 1 );
@@ -2242,8 +2242,8 @@ breach_slo_mo_exit()
 {
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_exit" );
     soundscripts\_snd_timescale::snd_set_timescale( "detroit_default" );
-    _func_28A( "slomo" );
-    level.player _meth_8519();
+    disablesoundcontextoverride( "slomo" );
+    level.player disablecustomweaponcontext();
     level notify( "kill_breach_loop" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "det_hospital_breach", 2 );
 }
@@ -2282,7 +2282,7 @@ office_skylights_breakable( var_0 )
 
 begin_exo_push()
 {
-    _func_2B5( 0, 0, 0, 0, -4, 2 );
+    changewhizbyautosimparams( 0, 0, 0, 0, -4, 2 );
     soundscripts\_audio_mix_manager::mm_add_submix( "det_ambulance_push" );
     thread end_exo_push();
 }
@@ -2319,20 +2319,20 @@ ambulance_push_active()
 
     level.aud.amb_pushing = 1;
     level notify( "aud_amb_push_active" );
-    var_0 _meth_806F( 1, 0.1 );
-    var_0 _meth_8075( "det_amb_push_body_lp" );
+    var_0 scalevolume( 1, 0.1 );
+    var_0 playloopsound( "det_amb_push_body_lp" );
 }
 
 ambulance_push_step_away()
 {
     var_0 = self;
-    var_0 _meth_806F( 0, 0.4 );
+    var_0 scalevolume( 0, 0.4 );
     thread soundscripts\_snd_playsound::snd_play_2d( "det_amb_push_detach" );
     level.aud.amb_pushing = 0;
     level notify( "aud_amb_push_stopped" );
     wait 0.5;
-    var_0 _meth_80AC();
-    var_0 _meth_80AB();
+    var_0 stopsounds();
+    var_0 stoploopsound();
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "bullet_metal_vehicle" );
 }
 
@@ -2343,7 +2343,7 @@ ambulance_push_idle()
     if ( level.aud.amb_pushing == 1 )
         level.player soundscripts\_snd_playsound::snd_play_2d( "det_amb_push_stop" );
 
-    var_0 _meth_806F( 0, 0.4 );
+    var_0 scalevolume( 0, 0.4 );
     level.aud.amb_pushing = 0;
     level notify( "aud_amb_push_stopped" );
 }
@@ -2352,17 +2352,17 @@ ambulance_push_sequence_end()
 {
     var_0 = self;
     thread soundscripts\_snd_playsound::snd_play_2d( "det_amb_push_end" );
-    var_0 _meth_806F( 0, 0.2 );
+    var_0 scalevolume( 0, 0.2 );
     level.aud.amb_pushing = 0;
     level notify( "aud_amb_push_stopped" );
     wait 0.2;
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
 }
 
 end_exo_push()
 {
     common_scripts\utility::flag_wait( "exo_push_arrived" );
-    _func_2B5( 0, 0, 0, 0, 1, 1 );
+    changewhizbyautosimparams( 0, 0, 0, 0, 1, 1 );
     soundscripts\_audio_mix_manager::mm_clear_submix( "det_ambulance_push" );
 }
 
@@ -2697,13 +2697,13 @@ warehouse_car_shots( var_0 )
         var_6 = distance( var_1.origin, level.player.origin );
         var_7 = soundscripts\_snd::snd_map( var_6, level.aud.envs["gaz_strafe_whizybys"] );
         var_8 = level.jetbike maps\_shg_design_tools::offset_position_from_tag( "forward", "tag_origin", 500 );
-        var_3 _meth_82AE( var_8, var_2 );
+        var_3 moveto( var_8, var_2 );
 
         if ( isdefined( var_4 ) )
-            var_4 _meth_806F( var_7, var_2 );
+            var_4 scalevolume( var_7, var_2 );
 
         if ( isdefined( var_5 ) )
-            var_5 _meth_806F( var_7, var_2 );
+            var_5 scalevolume( var_7, var_2 );
 
         wait(var_2);
     }
@@ -2778,7 +2778,7 @@ exitdrive_chopper_initial_gopath()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "det_exit_ride_littlebirds", 1 );
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "det_littlebird_exitride_first" );
 }
 
@@ -2828,7 +2828,7 @@ exitdrive_chopper_final()
 exitdrive_chopper_final_gopath()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "det_littlebird_exitride_last" );
     wait 25;
     soundscripts\_audio_mix_manager::mm_clear_submix( "det_exit_ride_littlebirds", 3 );
@@ -2928,9 +2928,9 @@ exit_train_by_train3_loop( var_0 )
     for ( var_9 = var_7 - var_8 > 0; var_9; var_9 = var_7 - var_8 > 0 )
     {
         var_3 = soundscripts\_snd::snd_map( var_8, var_2 );
-        var_4 _meth_806F( var_3 );
-        var_5 _meth_806F( var_3 );
-        var_6 _meth_806F( var_3 );
+        var_4 scalevolume( var_3 );
+        var_5 scalevolume( var_3 );
+        var_6 scalevolume( var_3 );
         wait 0.1;
         var_7 = var_8;
         var_8 = distance2d( level.player.origin, var_0 );

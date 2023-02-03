@@ -11,7 +11,7 @@ watchadrenalineusage()
     self endon( "faux_spawn" );
     self endon( "exo_overclock_taken" );
 
-    if ( !self _meth_8314( "adrenaline_mp" ) )
+    if ( !self hasweapon( "adrenaline_mp" ) )
         return;
 
     adrenalineinit();
@@ -32,20 +32,20 @@ watchadrenalineusage()
 adrenalineinit()
 {
     self.overclock_on = 0;
-    self _meth_84A6( "adrenaline_mp", 1.0 );
-    var_0 = self _meth_84A5( "adrenaline_mp" );
+    self batterysetdischargescale( "adrenaline_mp", 1.0 );
+    var_0 = self batterygetsize( "adrenaline_mp" );
 
-    if ( self _meth_831A() == "adrenaline_mp" )
+    if ( self gettacticalweapon() == "adrenaline_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req0", 0 );
-        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
-        self _meth_82FB( "ui_exo_battery_level0", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req0", 0 );
+        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
+        self setclientomnvar( "ui_exo_battery_level0", var_0 );
     }
-    else if ( self _meth_8345() == "adrenaline_mp" )
+    else if ( self getlethalweapon() == "adrenaline_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req1", 0 );
-        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
-        self _meth_82FB( "ui_exo_battery_level1", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req1", 0 );
+        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
+        self setclientomnvar( "ui_exo_battery_level1", var_0 );
     }
 
     if ( !isdefined( level.exo_overclock_vfx_le_active ) )
@@ -113,12 +113,12 @@ startadrenaline()
 
     if ( isdefined( level.ishorde ) && level.ishorde )
     {
-        var_0 = self _meth_8447( "ui_horde_player_class" );
+        var_0 = self getclientomnvar( "ui_horde_player_class" );
         self.movespeedscaler = min( level.classsettings[var_0]["speed"] + 0.25, 1.12 );
     }
 
     maps\mp\gametypes\_weapons::updatemovespeedscale();
-    self _meth_849F( "adrenaline_mp" );
+    self batterydischargebegin( "adrenaline_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "adrenaline_mp", "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( "adrenaline_mp" );
     thread monitor_overclock_battery_charge();
@@ -131,8 +131,8 @@ startadrenaline()
 
     if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
     {
-        self.overclock_fx_l = _func_2C1( level.exo_overclock_vfx_le_active, self, "J_Hip_LE" );
-        self.overclock_fx_r = _func_2C1( level.exo_overclock_vfx_ri_active, self, "J_Hip_RI" );
+        self.overclock_fx_l = spawnlinkedfx( level.exo_overclock_vfx_le_active, self, "J_Hip_LE" );
+        self.overclock_fx_r = spawnlinkedfx( level.exo_overclock_vfx_ri_active, self, "J_Hip_RI" );
         triggerfx( self.overclock_fx_l );
         triggerfx( self.overclock_fx_r );
     }
@@ -156,13 +156,13 @@ stopadrenaline( var_0 )
 
     if ( isdefined( level.ishorde ) && level.ishorde )
     {
-        var_1 = self _meth_8447( "ui_horde_player_class" );
+        var_1 = self getclientomnvar( "ui_horde_player_class" );
         self.movespeedscaler = level.classsettings[var_1]["speed"];
     }
 
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     self.adrenaline_speed_scalar = undefined;
-    self _meth_84A0( "adrenaline_mp" );
+    self batterydischargeend( "adrenaline_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "adrenaline_mp", "ui_exo_battery_toggle", 0 );
     killoverclockfx();
 
@@ -173,8 +173,8 @@ stopadrenaline( var_0 )
 
         if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
         {
-            self.overclock_fx_l = _func_2C1( level.exo_overclock_vfx_le_inactive, self, "J_Hip_LE" );
-            self.overclock_fx_r = _func_2C1( level.exo_overclock_vfx_ri_inactive, self, "J_Hip_RI" );
+            self.overclock_fx_l = spawnlinkedfx( level.exo_overclock_vfx_le_inactive, self, "J_Hip_LE" );
+            self.overclock_fx_r = spawnlinkedfx( level.exo_overclock_vfx_ri_inactive, self, "J_Hip_RI" );
             triggerfx( self.overclock_fx_l );
             triggerfx( self.overclock_fx_r );
         }
@@ -199,7 +199,7 @@ monitor_overclock_battery_charge()
 
     while ( self.overclock_on == 1 )
     {
-        if ( self _meth_84A2( "adrenaline_mp" ) <= 0 )
+        if ( self batterygetcharge( "adrenaline_mp" ) <= 0 )
             thread stopadrenaline( 1 );
 
         wait 0.05;
@@ -210,12 +210,12 @@ take_exo_overclock()
 {
     self notify( "kill_battery" );
     self notify( "exo_overclock_taken" );
-    self _meth_830F( "adrenaline_mp" );
+    self takeweapon( "adrenaline_mp" );
 }
 
 give_exo_overclock()
 {
-    self _meth_830E( "adrenaline_mp" );
+    self giveweapon( "adrenaline_mp" );
     thread watchadrenalineusage();
 }
 

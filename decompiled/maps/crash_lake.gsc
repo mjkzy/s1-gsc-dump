@@ -32,7 +32,7 @@ precache_lake()
     common_scripts\utility::flag_init( "cargo_captured" );
     common_scripts\utility::flag_init( "player_swimming_end" );
     common_scripts\utility::flag_init( "player_swimming_drown" );
-    precacheitem( "iw5_mahemstraight_sp" );
+    precacheshellshock( "iw5_mahemstraight_sp" );
     precachestring( &"CRASH_FAIL_CARGO" );
     precachestring( &"CRASH_FAIL_DROWN" );
     maps\_utility::add_control_based_hint_strings( "player_lake_swim", &"CRASH_HINT_SWIM_GAMEPAD", ::should_break_swim_hint, &"CRASH_HINT_SWIM_KEYBOARD", &"CRASH_HINT_SWIM_GAMEPAD_S" );
@@ -59,9 +59,9 @@ debug_start_overlook()
     soundscripts\_snd::snd_message( "start_overlook" );
     common_scripts\utility::flag_set( "combat_cave_outdoors" );
     thread maps\crash::objective_init();
-    level.player _meth_83C0( "crash_overlook" );
+    level.player lightsetforplayer( "crash_overlook" );
     maps\_utility::vision_set_fog_changes( "crash_overlook", 0 );
-    level.player _meth_8490( "clut_crash_overlook", 0 );
+    level.player setclutforplayer( "clut_crash_overlook", 0 );
     setsunflareposition( ( -13.9, -125.7, 0 ) );
     common_scripts\_exploder::exploder( 1999 );
 }
@@ -74,9 +74,9 @@ debug_start_lake()
     soundscripts\_snd::snd_message( "start_lake" );
     thread exo_temp_overlook_lake();
     thread maps\crash::objective_init();
-    level.player _meth_83C0( "crash_avalanche" );
+    level.player lightsetforplayer( "crash_avalanche" );
     maps\_utility::vision_set_fog_changes( "crash_avalanche", 0 );
-    level.player _meth_8490( "clut_crash_overlook", 2 );
+    level.player setclutforplayer( "clut_crash_overlook", 2 );
     setsunflareposition( ( -10.39, -112.7, 0 ) );
     common_scripts\_exploder::exploder( 1999 );
 }
@@ -145,8 +145,8 @@ overlook_drone()
         var_2.ignoreme = 1;
         var_2.ignoreall = 1;
         var_2.attack_accuracy = 0.25;
-        var_2 _meth_84ED( "enhanceable" );
-        var_2 _meth_84ED( "detected" );
+        var_2 setthreatdetection( "enhanceable" );
+        var_2 setthreatdetection( "detected" );
     }
 
     var_6 overlook_start_combat();
@@ -214,13 +214,13 @@ overlook_anim()
     {
         level.cormack thread overlook_slide_fx();
         level.ilana thread overlook_slide_fx();
-        level.cormack _meth_81A3( 1 );
-        level.ilana _meth_81A3( 1 );
+        level.cormack pushplayer( 1 );
+        level.ilana pushplayer( 1 );
         thread overlook_override_anim();
         var_0 maps\_anim::anim_single( var_1, "overlook_intro" );
         level notify( "overlook_intro_done" );
-        level.cormack _meth_81A3( 0 );
-        level.ilana _meth_81A3( 0 );
+        level.cormack pushplayer( 0 );
+        level.ilana pushplayer( 0 );
     }
 
     common_scripts\utility::flag_set( "obj_start_overlook_run" );
@@ -299,14 +299,14 @@ overlook_wind()
     while ( !common_scripts\utility::flag( "lake_start" ) )
     {
         wait(randomfloatrange( 4.0, 7.0 ));
-        soundscripts\_snd::snd_message( "wind_warning", level.player _meth_80A8() );
+        soundscripts\_snd::snd_message( "wind_warning", level.player geteye() );
 
         if ( common_scripts\utility::flag( "FLAG_overlook_traversing" ) )
             earthquake( 0.1, 5, level.player.origin, 10000 );
 
         wait(randomfloatrange( 3.0, 5.0 ));
-        level.player _meth_80AD( "light_2s" );
-        soundscripts\_snd::snd_message( "wind_gust", level.player _meth_80A8() );
+        level.player playrumbleonentity( "light_2s" );
+        soundscripts\_snd::snd_message( "wind_gust", level.player geteye() );
         common_scripts\_exploder::exploder( 4555 );
         var_1 = randomfloatrange( 5.0, 10.0 );
         var_2 = randomintrange( 10, 20 );
@@ -315,11 +315,11 @@ overlook_wind()
         {
             if ( common_scripts\utility::flag( "FLAG_overlook_traversing" ) )
             {
-                level.player _meth_83D7( var_0 * ( var_1 + 0.5 * var_3 ), 0 );
+                level.player pushplayervector( var_0 * ( var_1 + 0.5 * var_3 ), 0 );
                 earthquake( 0.15, 0.1, level.player.origin, 1000 );
             }
             else
-                level.player _meth_83D7( ( 0, 0, 0 ), 0 );
+                level.player pushplayervector( ( 0, 0, 0 ), 0 );
 
             wait 0.1;
         }
@@ -328,16 +328,16 @@ overlook_wind()
         {
             if ( common_scripts\utility::flag( "FLAG_overlook_traversing" ) )
             {
-                level.player _meth_83D7( var_0 * ( var_1 + 0.5 * var_3 ), 0 );
+                level.player pushplayervector( var_0 * ( var_1 + 0.5 * var_3 ), 0 );
                 earthquake( 0.15, 0.1, level.player.origin, 1000 );
             }
             else
-                level.player _meth_83D7( ( 0, 0, 0 ), 0 );
+                level.player pushplayervector( ( 0, 0, 0 ), 0 );
 
             wait 0.1;
         }
 
-        level.player _meth_83D7( ( 0, 0, 0 ), 0 );
+        level.player pushplayervector( ( 0, 0, 0 ), 0 );
     }
 }
 
@@ -359,18 +359,18 @@ overlook_land()
     while ( !common_scripts\utility::flag( "lake_start" ) )
     {
         common_scripts\utility::flag_waitopen( "overlook_save" );
-        var_0 = level.player _meth_83B3();
+        var_0 = level.player isjumping();
 
         if ( isdefined( var_0 ) && var_0 )
         {
             var_1 = gettime();
             waitframe();
-            var_2 = level.player _meth_8341();
+            var_2 = level.player isonground();
 
             while ( isdefined( var_2 ) && !var_2 )
             {
                 waitframe();
-                var_2 = level.player _meth_8341();
+                var_2 = level.player isonground();
 
                 if ( common_scripts\utility::flag( "overlook_save" ) )
                     break;
@@ -401,7 +401,7 @@ overlook_land()
             }
 
             maps\_utility::_earthquake( var_5, var_6, level.player.origin, 500 );
-            level.player _meth_80AD( var_7 );
+            level.player playrumbleonentity( var_7 );
             playfx( level._effect["snow_impact"], level.player.origin );
             soundscripts\_snd::snd_message( "overlook_land" );
         }
@@ -430,21 +430,21 @@ overlook_grab_save_individual()
         if ( isdefined( var_2 ) && isplayer( var_2 ) && !common_scripts\utility::flag( "overlook_save" ) )
         {
             common_scripts\utility::flag_set( "overlook_save" );
-            level.player _meth_817D( "stand" );
-            level.player _meth_8119( 0 );
-            level.player _meth_811A( 0 );
-            level.player _meth_8482();
-            level.player _meth_831D();
-            level.player _meth_80AD( "heavy_1s" );
+            level.player setstance( "stand" );
+            level.player allowcrouch( 0 );
+            level.player allowprone( 0 );
+            level.player hideviewmodel();
+            level.player disableweapons();
+            level.player playrumbleonentity( "heavy_1s" );
             soundscripts\_snd::snd_message( "overlook_fall" );
             waitframe();
             var_3 = maps\_utility::spawn_anim_model( "rig_hands1", level.player.origin, level.player.angles );
             var_3 hide();
             var_1 thread maps\_anim::anim_single_solo( var_3, "fall_grab" );
             var_3 thread play_falling_snow();
-            level.player _meth_8080( var_3, "tag_player", 0.15 );
+            level.player playerlinktoblend( var_3, "tag_player", 0.15 );
             wait 0.15;
-            level.player _meth_807D( var_3, "tag_player", 1, 30, 30, 30, 5, 1 );
+            level.player playerlinktodelta( var_3, "tag_player", 1, 30, 30, 30, 5, 1 );
             var_3 show();
             var_3 waittillmatch( "single anim", "end" );
             var_1 thread maps\_anim::anim_loop_solo( var_3, "fall_loop" );
@@ -452,18 +452,18 @@ overlook_grab_save_individual()
             thread should_break_recover_hint_movement();
             level.player thread maps\_utility::hintdisplayhandler( "player_crash_falloff" );
             level.player waittill( "playerjump" );
-            level.player _meth_80AD( "damage_heavy" );
+            level.player playrumbleonentity( "damage_heavy" );
             soundscripts\_snd::snd_message( "overlook_recover" );
             level.player.recover = undefined;
-            level.player _meth_807D( var_3, "tag_player", 1, 0, 0, 0, 0, 1 );
+            level.player playerlinktodelta( var_3, "tag_player", 1, 0, 0, 0, 0, 1 );
             var_1 maps\_anim::anim_single_solo( var_3, "fall_recover" );
             waitframe();
-            level.player _meth_80AD( "damage_heavy" );
-            level.player _meth_8119( 1 );
-            level.player _meth_811A( 1 );
-            level.player _meth_8481();
-            level.player _meth_831E();
-            level.player _meth_804F();
+            level.player playrumbleonentity( "damage_heavy" );
+            level.player allowcrouch( 1 );
+            level.player allowprone( 1 );
+            level.player showviewmodel();
+            level.player enableweapons();
+            level.player unlink();
             var_3 delete();
             waitframe();
             common_scripts\utility::flag_clear( "overlook_save" );
@@ -487,7 +487,7 @@ overlook_force_stand()
         var_0 waittill( "trigger", var_1 );
 
         if ( var_1 == level.player )
-            level.player _meth_817D( "stand" );
+            level.player setstance( "stand" );
 
         waitframe();
     }
@@ -505,13 +505,13 @@ overlook_to_lake_teleport()
     var_1 maps\_anim::anim_first_frame_solo( var_3, "control_fall" );
     common_scripts\utility::flag_wait( "lake_begin_indoors" );
     common_scripts\utility::flag_set( "obj_lake_enter" );
-    level.player _meth_8482();
-    level.player _meth_831D();
+    level.player hideviewmodel();
+    level.player disableweapons();
     soundscripts\_snd::snd_message( "enter_lake_cave" );
-    level.player _meth_8080( var_2, "tag_player", 0.35 );
-    level.player _meth_817D( "stand" );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
+    level.player playerlinktoblend( var_2, "tag_player", 0.35 );
+    level.player setstance( "stand" );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
     wait 0.3;
     var_0 thread maps\_anim::anim_single_solo( var_2, "control_fall" );
     var_1 thread maps\_anim::anim_single_solo( var_3, "control_fall" );
@@ -519,17 +519,17 @@ overlook_to_lake_teleport()
     wait 0.7;
     level.player maps\_hud_util::fade_out( 0.05, "black" );
     waitframe();
-    level.player _meth_807F( var_3, "tag_player" );
+    level.player playerlinktoabsolute( var_3, "tag_player" );
     thread handle_teleport( var_1 );
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     var_3 waittillmatch( "single anim", "end" );
     var_2 delete();
     var_3 delete();
-    level.player _meth_804F();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8481();
-    level.player _meth_831E();
+    level.player unlink();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player showviewmodel();
+    level.player enableweapons();
 }
 
 handle_teleport( var_0 )
@@ -539,12 +539,12 @@ handle_teleport( var_0 )
     var_2 = common_scripts\utility::getstruct( "lake_ilana", "targetname" );
     level.cormack maps\_utility::disable_ai_color();
     level.ilana maps\_utility::disable_ai_color();
-    level.cormack _meth_81C6( var_1.origin, var_1.angles );
-    level.ilana _meth_81C6( var_2.origin, var_2.angles );
+    level.cormack forceteleport( var_1.origin, var_1.angles );
+    level.ilana forceteleport( var_2.origin, var_2.angles );
     waitframe();
     level.player maps\_hud_util::fade_in( 0.05, "black" );
-    level.cormack _meth_8092();
-    level.ilana _meth_8092();
+    level.cormack dontinterpolate();
+    level.ilana dontinterpolate();
     level.cormack.goalradius = 0;
     level.ilana.goalradius = 0;
     waitframe();
@@ -559,7 +559,7 @@ begin_lake()
     level notify( "moved_indoors" );
     level.player thread maps\crash_exo_temperature::set_external_temperature_over_time( level.temperature_indoor, 3.0 );
     level.underwater_visionset_callback = ::ic_underwater_visionset_change;
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
 
     foreach ( var_2 in var_0 )
     {
@@ -616,15 +616,15 @@ sniper_rifle_objective_logic()
 {
     for (;;)
     {
-        var_0 = self _meth_830C();
+        var_0 = self getweaponslistprimaries();
 
         foreach ( var_2 in var_0 )
         {
             if ( var_2 == "s1_railgun" )
             {
-                self _meth_830F( "s1_railgun" );
-                self _meth_830E( "s1_railgun+morsscope" );
-                self _meth_8315( "s1_railgun+morsscope" );
+                self takeweapon( "s1_railgun" );
+                self giveweapon( "s1_railgun+morsscope" );
+                self switchtoweapon( "s1_railgun+morsscope" );
                 break;
             }
         }
@@ -638,8 +638,8 @@ friendly_bias()
     createthreatbiasgroup( "squad" );
     createthreatbiasgroup( "pilots" );
     createthreatbiasgroup( "enemies" );
-    level.ilana _meth_8177( "squad" );
-    level.cormack _meth_8177( "squad" );
+    level.ilana setthreatbiasgroup( "squad" );
+    level.cormack setthreatbiasgroup( "squad" );
     setthreatbias( "enemies", "squad", -900 );
     setthreatbias( "enemies", "pilots", 90000000 );
     common_scripts\utility::flag_wait( "start_shooting_at_squad" );
@@ -826,8 +826,8 @@ custom_idle_trans_function()
     if ( !isdefined( self.heat ) )
         thread animscripts\cover_arrival::abortapproachifthreatened();
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
     animscripts\face::playfacialanim( var_1, "run" );
     animscripts\shared::donotetracks( "coverArrival", animscripts\cover_arrival::handlestartaim );
     var_2 = anim.arrivalendstance[self.approachtype];
@@ -837,7 +837,7 @@ custom_idle_trans_function()
 
     self.a.movement = "stop";
     self.a.arrivaltype = self.approachtype;
-    self _meth_8142( %root, 0.3 );
+    self clearanim( %root, 0.3 );
     self.lastapproachaborttime = undefined;
     var_3 = self.origin - self.goalpos;
 }
@@ -851,7 +851,7 @@ clear_custom_patrol_anim_set()
     self.startmovetransitionanim = undefined;
     self.customarrivalfunc = undefined;
     self.startidletransitionanim = undefined;
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
 
     if ( isdefined( self.oldcombatmode ) )
         self.combatmode = self.oldcombatmode;
@@ -860,10 +860,10 @@ clear_custom_patrol_anim_set()
 ice_lake_wakeup()
 {
     self endon( "death" );
-    self _meth_8041( "grenade danger" );
-    self _meth_8041( "silenced_shot" );
-    self _meth_8041( "gunshot" );
-    self _meth_8041( "explode" );
+    self addaieventlistener( "grenade danger" );
+    self addaieventlistener( "silenced_shot" );
+    self addaieventlistener( "gunshot" );
+    self addaieventlistener( "explode" );
     self waittill( "ai_event", var_0 );
     common_scripts\utility::flag_set( "ice_lake_start_combat" );
     self.ignoreall = 0;
@@ -873,13 +873,13 @@ ice_lake_wakeup_noreaction()
 {
     self endon( "death" );
     thread ice_lake_wakeup_play_reaction();
-    self _meth_8041( "grenade danger" );
-    self _meth_8041( "projectile_impact" );
-    self _meth_8041( "silenced_shot" );
-    self _meth_8041( "bulletwhizby" );
-    self _meth_8041( "gunshot" );
-    self _meth_8041( "gunshot_teammate" );
-    self _meth_8041( "explode" );
+    self addaieventlistener( "grenade danger" );
+    self addaieventlistener( "projectile_impact" );
+    self addaieventlistener( "silenced_shot" );
+    self addaieventlistener( "bulletwhizby" );
+    self addaieventlistener( "gunshot" );
+    self addaieventlistener( "gunshot_teammate" );
+    self addaieventlistener( "explode" );
     self waittill( "ai_event", var_0 );
     common_scripts\utility::flag_set( "ice_lake_start_combat" );
 }
@@ -887,13 +887,13 @@ ice_lake_wakeup_noreaction()
 ice_lake_wakeup_reaction()
 {
     self endon( "death" );
-    self _meth_8041( "grenade danger" );
-    self _meth_8041( "projectile_impact" );
-    self _meth_8041( "silenced_shot" );
-    self _meth_8041( "bulletwhizby" );
-    self _meth_8041( "gunshot" );
-    self _meth_8041( "gunshot_teammate" );
-    self _meth_8041( "explode" );
+    self addaieventlistener( "grenade danger" );
+    self addaieventlistener( "projectile_impact" );
+    self addaieventlistener( "silenced_shot" );
+    self addaieventlistener( "bulletwhizby" );
+    self addaieventlistener( "gunshot" );
+    self addaieventlistener( "gunshot_teammate" );
+    self addaieventlistener( "explode" );
     self waittill( "ai_event", var_0 );
     common_scripts\utility::flag_set( "ice_lake_start_combat" );
     self.ignoreall = 0;
@@ -922,7 +922,7 @@ ice_lake_kill()
     self waittill( "damage" );
     common_scripts\utility::flag_set( "ice_lake_start_combat" );
     maps\_utility::anim_stopanimscripted();
-    self _meth_8052();
+    self kill();
 }
 
 ice_lake_wave_1()
@@ -957,7 +957,7 @@ ice_lake_wave_1()
             var_6.script_noteworthy = "ice_attack_wave_1";
             var_6.ignoresuppression = 1;
             var_6.canjumppath = 5;
-            var_6 _meth_8177( "enemies" );
+            var_6 setthreatbiasgroup( "enemies" );
             var_6 thread lake_handle_vol_movement();
         }
     }
@@ -993,7 +993,7 @@ ice_lake_wave_1()
             var_6.script_noteworthy = "ice_attack_wave_1_back";
             var_6.ignoresuppression = 1;
             var_6.canjumppath = 5;
-            var_6 _meth_8177( "enemies" );
+            var_6 setthreatbiasgroup( "enemies" );
             var_6 thread lake_handle_vol_movement();
         }
     }
@@ -1036,7 +1036,7 @@ zippers_spawner( var_0 )
         var_2[var_2.size] = var_5;
         var_5.ignoresuppression = 1;
         var_5.canjumppath = 5;
-        var_5 _meth_8177( "enemies" );
+        var_5 setthreatbiasgroup( "enemies" );
         var_5 thread lake_handle_vol_movement();
         wait(randomfloatrange( 0.1, 0.25 ));
     }
@@ -1083,13 +1083,13 @@ ice_lake_wave_2()
             var_3.script_noteworthy = "ice_attack_wave_2";
             var_3.ignoresuppression = 1;
             var_3.canjumppath = 5;
-            var_3 _meth_8177( "enemies_2" );
+            var_3 setthreatbiasgroup( "enemies_2" );
             var_3 thread lake_handle_vol_movement();
         }
     }
 
     createthreatbiasgroup( "player" );
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     setthreatbias( "enemies_2", "player", -9000 );
     thread ice_lake_clear();
     maps\_utility::waittill_dead_or_dying( var_1, 3 );
@@ -1100,19 +1100,19 @@ ice_lake_wave_2()
 ice_lake_clear()
 {
     level endon( "ice_lake_new_move_up" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     maps\_utility::waittill_dead_or_dying( var_0, var_0.size - 5 );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_1 = getent( "VOL_ice_lake_wave_cargo", "targetname" );
 
     foreach ( var_3 in var_0 )
     {
-        var_3 _meth_81A9( var_1 );
+        var_3 setgoalvolumeauto( var_1 );
         randomfloatrange( 0.2, 0.5 );
     }
 
     level.cormack thread maps\_utility::smart_radio_dialogue( "crsh_crmk_jumpdown3" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     maps\_utility::waittill_dead_or_dying( var_0, var_0.size );
     common_scripts\utility::flag_clear( "ice_lake_callout_pause" );
     maps\_utility::smart_radio_dialogue( "crsh_iln_targetdown2" );
@@ -1240,19 +1240,19 @@ ice_lake_wave_3()
         }
     }
 
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
     maps\_utility::waittill_dead_or_dying( var_2, var_2.size - 5 );
     var_0 = getent( "VOL_ice_lake_wave_cargo", "targetname" );
     var_2 = maps\_utility::remove_dead_from_array( var_2 );
 
     foreach ( var_11 in var_2 )
     {
-        var_11 _meth_81A9( var_0 );
+        var_11 setgoalvolumeauto( var_0 );
         randomfloatrange( 0.2, 0.5 );
     }
 
     level.ilana maps\_utility::smart_radio_dialogue( "crsh_iln_securecargo2" );
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
     maps\_utility::waittill_dead_or_dying( var_2, var_2.size );
     common_scripts\utility::flag_clear( "ice_lake_callout_pause" );
     maps\_utility::smart_radio_dialogue( "crsh_iln_allclear3" );
@@ -1284,7 +1284,7 @@ lake_reinforcements_final()
                 {
                     var_4.ignoresuppression = 1;
                     var_4.script_noteworthy = "ice_attack";
-                    var_4 _meth_81A9( var_0 );
+                    var_4 setgoalvolumeauto( var_0 );
                 }
             }
 
@@ -1323,17 +1323,17 @@ lake_vol_movement()
 
         if ( var_3 == 0 )
         {
-            self _meth_81A9( var_0 );
+            self setgoalvolumeauto( var_0 );
             continue;
         }
 
         if ( var_3 == 1 )
         {
-            self _meth_81A9( var_1 );
+            self setgoalvolumeauto( var_1 );
             continue;
         }
 
-        self _meth_81A9( var_2 );
+        self setgoalvolumeauto( var_2 );
     }
 }
 
@@ -1344,10 +1344,10 @@ lake_fall_in( var_0 )
     if ( !isdefined( var_0 ) )
     {
         thread maps\_utility::autosave_now_silent();
-        level.player _meth_80EF();
+        level.player enableinvulnerability();
         level.player maps\_player_high_jump::disable_high_jump();
-        level.player _meth_8485( 0 );
-        level.player _meth_848D( 0 );
+        level.player allowpowerslide( 0 );
+        level.player allowdodge( 0 );
         level.player maps\crash_utility::disable_exo_melee();
         level.cormack thread maps\_utility::smart_radio_dialogue( "crsh_crmk_missilesfired" );
         var_1 = 400;
@@ -1376,8 +1376,8 @@ lake_fall_in( var_0 )
         soundscripts\_snd::snd_message( "lake_fall_in" );
         level notify( "player_fell_in_lake" );
         level.player maps\_player_high_jump::enable_high_jump();
-        level.player _meth_8485( 1 );
-        level.player _meth_848D( 1 );
+        level.player allowpowerslide( 1 );
+        level.player allowdodge( 1 );
     }
 
     common_scripts\utility::flag_set( "lake_done" );
@@ -1385,7 +1385,7 @@ lake_fall_in( var_0 )
     common_scripts\utility::flag_set( "go_gideon_moment" );
     common_scripts\utility::flag_set( "obj_lake_fall" );
     wait 2;
-    var_17 = _func_0D6( "axis" );
+    var_17 = getaiarray( "axis" );
 
     foreach ( var_19 in var_17 )
     {
@@ -1436,7 +1436,7 @@ vtol_fire_late_rpgs( var_0 )
     magicbullet( "iw5_mahemstraight_sp", var_1, var_0.origin - ( 0, 0, 200 ) );
     magicbullet( "iw5_mahemstraight_sp", var_2, var_0.origin - ( 0, 0, 200 ) );
     wait 2;
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 }
 
 ice_lake_chopper()
@@ -1445,9 +1445,9 @@ ice_lake_chopper()
     var_1 = maps\_utility::spawn_anim_model( "vtol" );
     level.lake_chopper = var_1;
     var_2 = maps\_utility::spawn_anim_model( "pulley" );
-    var_2 _meth_82BF();
+    var_2 notsolid();
     var_3 = maps\_utility::spawn_anim_model( "crate" );
-    var_3 _meth_82BF();
+    var_3 notsolid();
     level.cargo = var_3;
     var_0 thread maps\_anim::anim_loop_solo( var_3, "lake_loop", "stop_wait_loop" );
     var_0 thread handle_cargo_shut( var_3 );
@@ -1528,17 +1528,17 @@ ic_underwater_visionset_change( var_0 )
     {
         var_1 = 1;
         level.player maps\_utility::vision_set_fog_changes( "crash_lake_underwater", 2 );
-        level.player _meth_8490( "clut_crash_underwater", 2 );
+        level.player setclutforplayer( "clut_crash_underwater", 2 );
         setsunflareposition( ( -31, -169, 0 ) );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 4.32, 40.9, 1, 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 4.32, 40.9, 1, 1 );
         maps\_water::set_light_set_for_player( "crash_lake_fallin_02" );
 
         if ( isdefined( level.dofunderwater ) )
             thread maps\_water::setdof( level.dofunderwater );
 
         playfx( common_scripts\utility::getfx( "water_screen_plunge" ), self.origin );
-        self _meth_8218( 0 );
+        self setwatersheeting( 0 );
         maps\_water::setunderwateraudiozone();
         self playlocalsound( "underwater_enter" );
     }
@@ -1551,10 +1551,10 @@ ic_underwater_visionset_change( var_0 )
             thread maps\_water::setdof( level.dofdefault );
 
         level.player maps\_utility::vision_set_fog_changes( "crash_avalanche_cinematic", 2 );
-        level.player _meth_8490( "clut_crash_crash_site", 2 );
-        level.player _meth_84AA();
+        level.player setclutforplayer( "clut_crash_crash_site", 2 );
+        level.player disablephysicaldepthoffieldscripting();
         playfx( common_scripts\utility::getfx( "water_screen_emerge" ), self.origin );
-        self _meth_8218( 1, 1 );
+        self setwatersheeting( 1, 1 );
         maps\_water::clearunderwateraudiozone();
         self playlocalsound( "breathing_better" );
         self playlocalsound( "underwater_exit" );
@@ -1798,30 +1798,30 @@ lake_cinema_player()
 {
     common_scripts\utility::flag_wait( "go_gideon_moment" );
     common_scripts\utility::flag_set( "lake_underwater_lighting" );
-    level.player _meth_8482();
-    level.player _meth_831D();
+    level.player hideviewmodel();
+    level.player disableweapons();
     maps\_shg_utility::disable_features_entering_cinema( 1 );
     waitframe();
     var_0 = maps\_utility::spawn_anim_model( "rig_hands", level.player.origin, level.player.angles );
     var_1 = level.player common_scripts\utility::spawn_tag_origin();
     var_2 = common_scripts\utility::getstruct( "lake_fall_water_struct", "targetname" );
-    level.player _meth_807D( var_0, "tag_player", 1, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 0, 0, 0, 0 );
     level.player maps\_utility::delaythread( 1, maps\_hud_util::fade_out, 0.2, "black" );
-    level.player _meth_817D( "stand" );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
+    level.player setstance( "stand" );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
     var_1 maps\_anim::anim_single_solo( var_0, "lake_fall" );
     var_0 delete();
     var_3 = level.player common_scripts\utility::spawn_tag_origin();
     var_3.origin = ( var_2.origin[0], var_2.origin[1], var_3.origin[2] );
-    level.player _meth_807D( var_3, "tag_origin", 1, 25, 25, 25, 0 );
-    var_3 _meth_82B5( var_2.angles, 0.1 );
+    level.player playerlinktodelta( var_3, "tag_origin", 1, 25, 25, 25, 0 );
+    var_3 rotateto( var_2.angles, 0.1 );
     thread falling_bits_fx();
     playfxontag( level._effect["player_bubbles"], var_3, "tag_origin" );
     playfx( level._effect["water_splash_enter"], var_3.origin, anglestoforward( ( 0, level.player.angles[1], 0 ) + ( 270, 180, 0 ) ) );
     playfx( level._effect["water_screen_plunge"], var_3.origin, anglestoforward( ( 0, level.player.angles[1], 0 ) + ( 270, 180, 0 ) ) );
     wait 0.1;
-    var_3 _meth_82AE( var_2.origin, 1.5, 0, 0.5 );
+    var_3 moveto( var_2.origin, 1.5, 0, 0.5 );
     playfxontag( level._effect["player_bubbles"], var_3, "tag_origin" );
     playfx( level._effect["water_splash_enter"], var_3.origin, anglestoforward( ( 0, level.player.angles[1], 0 ) + ( 270, 180, 0 ) ) );
     level.player thread maps\_hud_util::fade_in( 0.25, "black" );
@@ -1836,8 +1836,8 @@ lake_cinema_player()
     wait 1;
     stopfxontag( level._effect["player_bubbles"], var_1, "tag_origin" );
     level.player_breath_amount_use_rate = 4.0;
-    level.player _meth_804F();
-    _func_0D3( "compass", "1" );
+    level.player unlink();
+    setsaveddvar( "compass", "1" );
     wait 2;
     stopfxontag( level._effect["player_bubbles"], var_3, "tag_origin" );
     var_1 delete();
@@ -1860,42 +1860,42 @@ lake_cinema_player()
     level.player thread maps\crash_exo_temperature::set_external_temperature_over_time( level.temperature_outdoor, 1.5 );
     level.player thread maps\crash_exo_temperature::set_exo_temperature_over_time( level.exo_max, 1.5 );
     level.player thread maps\crash_exo_temperature::set_operator_temperature_over_time( 98.6, 1.5 );
-    level.player _meth_8080( var_0, "tag_origin", 0.75 );
+    level.player playerlinktoblend( var_0, "tag_origin", 0.75 );
     wait 0.5;
     level.player maps\_utility::ent_flag_set( "water_trigger_paused" );
     level.player notify( "out_of_water" );
     level.player maps\_water::disable_swim_or_underwater_walk();
     level.player shellshock( "crash_goliath_hit", 0.25 );
-    level.player _meth_807D( var_0, "tag_player", 1, 10, 10, 10, 5, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 10, 10, 10, 5, 1 );
     var_0 show();
     var_6 = level.player maps\_utility::get_storable_weapons_list_primaries();
-    level.player _meth_8310();
+    level.player takeallweapons();
     stopfxontag( level._effect["player_bubbles"], var_0, "tag_origin" );
     wait 1;
     common_scripts\utility::flag_set( "go_lighting_gideon" );
     var_0 waittillmatch( "single anim", "end" );
     common_scripts\utility::flag_set( "gideon_lighting_unlock" );
-    _func_0D3( "ammoCounterHide", 0 );
-    _func_0D3( "actionSlotsHide", 0 );
-    level.player _meth_804F();
+    setsaveddvar( "ammoCounterHide", 0 );
+    setsaveddvar( "actionSlotsHide", 0 );
+    level.player unlink();
     var_0 delete();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
 
     foreach ( var_8 in var_6 )
     {
         if ( !issubstr( tolower( var_8 ), "s1_railgun" ) )
         {
-            level.player _meth_830E( var_8 );
+            level.player giveweapon( var_8 );
             continue;
         }
 
-        level.player _meth_830E( "iw5_kf5_sp" );
+        level.player giveweapon( "iw5_kf5_sp" );
     }
 
-    level.player _meth_8315( var_6[0] );
-    level.player _meth_8481();
-    level.player _meth_831E();
+    level.player switchtoweapon( var_6[0] );
+    level.player showviewmodel();
+    level.player enableweapons();
     level.player maps\_utility::blend_movespeedscale( 0.5, 0.5 );
     thread maps\crash_exfil::vtol_takedown_failure();
     common_scripts\utility::flag_set( "gideon_frees_you" );
@@ -1930,7 +1930,7 @@ player_swim_hint()
 
 should_break_swim_hint()
 {
-    return isdefined( level.player.swimming ) && ( level.player _meth_82F3()[0] > 0.25 || level.player _meth_82F3()[1] > 0.25 );
+    return isdefined( level.player.swimming ) && ( level.player getnormalizedmovement()[0] > 0.25 || level.player getnormalizedmovement()[1] > 0.25 );
 }
 
 should_break_recover_hint()
@@ -1941,9 +1941,9 @@ should_break_recover_hint()
 should_break_recover_hint_command()
 {
     var_0 = "playerjump";
-    level.player _meth_82DD( var_0, "+gostand" );
-    level.player _meth_82DD( var_0, "+usereload" );
-    level.player _meth_82DD( var_0, "+stance" );
+    level.player notifyonplayercommand( var_0, "+gostand" );
+    level.player notifyonplayercommand( var_0, "+usereload" );
+    level.player notifyonplayercommand( var_0, "+stance" );
     level.player waittill( var_0 );
     level.player.recover = 1;
 }
@@ -1952,7 +1952,7 @@ should_break_recover_hint_movement()
 {
     for (;;)
     {
-        if ( level.player _meth_82F3()[0] > 0.1 || level.player _meth_82F3()[1] > 0.1 )
+        if ( level.player getnormalizedmovement()[0] > 0.1 || level.player getnormalizedmovement()[1] > 0.1 )
         {
             level.player.recover = 1;
             level.player notify( "playerjump" );
@@ -1972,12 +1972,12 @@ get_forward_movement()
 
     for (;;)
     {
-        var_2 = level.player _meth_82F3();
+        var_2 = level.player getnormalizedmovement();
         var_0 = var_2[0];
 
         while ( var_0 <= 0 )
         {
-            var_2 = level.player _meth_82F3();
+            var_2 = level.player getnormalizedmovement();
             var_0 = var_2[0];
 
             if ( level.input_bool )
@@ -2050,12 +2050,12 @@ lake_cinema_enemies()
     var_1[1] maps\_utility::set_battlechatter( 0 );
     var_1[1].animname = "lake_enemy_1";
     level.lake_scene_anim_node maps\_anim::anim_single( var_1, "gideon_scene" );
-    var_1[0] _meth_8171();
-    var_1[0] _meth_84ED( "disable" );
-    var_1[0] _meth_8052();
-    var_1[1] _meth_8171();
-    var_1[1] _meth_84ED( "disable" );
-    var_1[1] _meth_8052();
+    var_1[0] invisiblenotsolid();
+    var_1[0] setthreatdetection( "disable" );
+    var_1[0] kill();
+    var_1[1] invisiblenotsolid();
+    var_1[1] setthreatdetection( "disable" );
+    var_1[1] kill();
 }
 
 ignore_friendlies()
@@ -2075,7 +2075,7 @@ ice_lake_cinema_heli()
 play_railgun_fx()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( self, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
+    var_0 linktoplayerview( self, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
 
     for (;;)
     {
@@ -2084,19 +2084,19 @@ play_railgun_fx()
         if ( !issubstr( tolower( var_1 ), "s1_railgun" ) )
             continue;
 
-        var_2 = self _meth_80A8();
+        var_2 = self geteye();
         var_3 = tag_project_player( 999999 );
         var_4 = bullettrace( var_2, var_3, 1, self );
         var_5 = var_4["surfacetype"];
         var_6 = isdefined( var_4["entity"] );
-        var_7 = -1 * anglestoforward( self _meth_80A8() );
+        var_7 = -1 * anglestoforward( self geteye() );
         var_8 = vectortoangles( var_4["normal"] );
         var_9 = 500;
         physicsexplosionsphere( var_4["position"], var_9 + 300, var_9 * 0.25, 1 );
-        var_0 _meth_80A7( self );
-        var_0 _meth_8092();
+        var_0 unlinkfromplayerview( self );
+        var_0 dontinterpolate();
         var_10 = vectortoangles( var_4["position"] - ( var_2 - ( 0, 0, 2 ) ) );
-        var_0 _meth_80A6( self, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
+        var_0 linktoplayerview( self, "tag_flash", ( 0, 0, -2 ), ( 0, 0, 0 ), 0 );
         playfx( common_scripts\utility::getfx( "railgun_tracer" ), var_0.origin, anglestoforward( var_10 ), anglestoup( var_10 ) );
         playfx( common_scripts\utility::getfx( "railgun_blast_snow" ), var_4["position"], anglestoforward( var_8 ), anglestoup( var_8 ) );
     }
@@ -2104,7 +2104,7 @@ play_railgun_fx()
 
 tag_project_player( var_0 )
 {
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     var_2 = self getangles();
     var_3 = anglestoforward( var_2 );
     var_3 = vectornormalize( var_3 ) * var_0;

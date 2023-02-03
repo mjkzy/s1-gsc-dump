@@ -3,7 +3,7 @@
 
 main()
 {
-    var_0[0] = "civ_seoul_male_body_d";
-    var_0[1] = "civ_seoul_male_body_dd";
+    var_0[0] = "civ_seoul_male_body_f";
+    var_0[1] = "civ_seoul_male_body_ff";
     return var_0;
 }

@@ -330,10 +330,10 @@ play_irons_pip()
 
 lagos_irons_speech_bink()
 {
-    level.player _meth_8512( 126, "lag_irs_letsshowthemwhatatlas2" );
-    level.player _meth_8512( 345, "lag_irs_ahandshakewiththeprime" );
-    level.burke _meth_8512( 555, "lag_brk_pressure" );
-    level.player _meth_8512( 625, "lag_irns_goodluck" );
+    level.player playscheduledcinematicsound( 126, "lag_irs_letsshowthemwhatatlas2" );
+    level.player playscheduledcinematicsound( 345, "lag_irs_ahandshakewiththeprime" );
+    level.burke playscheduledcinematicsound( 555, "lag_brk_pressure" );
+    level.player playscheduledcinematicsound( 625, "lag_irns_goodluck" );
 }
 
 play_hostage_vehicle_pip()

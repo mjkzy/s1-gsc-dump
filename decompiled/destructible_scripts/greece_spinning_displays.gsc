@@ -58,8 +58,8 @@ init_displays( var_0 )
         if ( !isdefined( var_2.origin ) )
             var_2.origin = ( 0, 0, 0 );
 
-        var_2 _meth_8115( #animtree );
-        var_2 _meth_82C0( 1 );
+        var_2 useanimtree( #animtree );
+        var_2 setcandamage( 1 );
         var_2.displayhealth = 50;
         var_2 thread display_update( var_0 );
     }
@@ -129,7 +129,7 @@ display_update( var_0 )
 
         thread maps\_utility::play_sound_on_entity( get_spin_snd_alias( self.model ) );
         var_11 = getanimlength( var_10 );
-        self _meth_8145( var_10, 1.0, 0.05 );
+        self setanimknobrestart( var_10, 1.0, 0.05 );
         var_12 = get_num_visible_card_tags();
 
         if ( var_12 == 0 )
@@ -138,7 +138,7 @@ display_update( var_0 )
 
             if ( self.displayhealth <= 0 )
             {
-                self _meth_82C2( var_4, var_3 * var_1 * 0.75 );
+                self physicslaunchclient( var_4, var_3 * var_1 * 0.75 );
                 thread maps\_utility::play_sound_on_entity( get_crash_snd_alias( self.model ) );
                 return;
             }
@@ -156,7 +156,7 @@ display_update( var_0 )
                 {
                     playfxontag( var_0.cardfx, self, self.cardtagnames[var_14] );
                     wait 0.05;
-                    self _meth_8048( self.cardtagnames[var_14] );
+                    self hidepart( self.cardtagnames[var_14] );
                     self.cardtagvisible[var_14] = 0;
                     var_13 = 1;
                 }

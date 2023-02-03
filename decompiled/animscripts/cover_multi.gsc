@@ -30,7 +30,7 @@ covermulti_think()
     if ( !isdefined( self.covernode ) )
         return;
 
-    var_0 = self.covernode _meth_8033();
+    var_0 = self.covernode getvalidcoverpeekouts();
 
     if ( isdefined( self.cover.arrivalnodetype ) )
     {
@@ -82,7 +82,7 @@ covermulti_think()
 covermulti_isvaliddir( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
-        var_1 = self.node _meth_8033();
+        var_1 = self.node getvalidcoverpeekouts();
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
     {
@@ -96,7 +96,7 @@ covermulti_isvaliddir( var_0, var_1 )
 covermulti_getbestvaliddir( var_0, var_1 )
 {
     if ( !isdefined( var_1 ) )
-        var_1 = self.node _meth_8033();
+        var_1 = self.node getvalidcoverpeekouts();
 
     var_2 = [];
 
@@ -126,7 +126,7 @@ covermulti_getbestvaliddir( var_0, var_1 )
 covermulti_getrandomvaliddir( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        var_0 = self.node _meth_8033();
+        var_0 = self.node getvalidcoverpeekouts();
 
     var_1 = randomint( var_0.size );
     return var_0[var_1];
@@ -135,11 +135,11 @@ covermulti_getrandomvaliddir( var_0 )
 covermulti_getnonrandomvaliddir( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        var_0 = self _meth_8033();
+        var_0 = self getvalidcoverpeekouts();
 
     if ( var_0[0] == "over" )
     {
-        if ( self _meth_8035( "stand" ) )
+        if ( self doesnodeallowstance( "stand" ) )
             return "stand";
         else
             return "crouch";
@@ -152,8 +152,8 @@ covermulti_setdir( var_0, var_1 )
 {
     if ( var_0 == "over" )
     {
-        var_2 = self.node _meth_8035( "stand" );
-        var_3 = self.node _meth_8035( "crouch" );
+        var_2 = self.node doesnodeallowstance( "stand" );
+        var_3 = self.node doesnodeallowstance( "crouch" );
 
         if ( var_2 )
         {
@@ -260,7 +260,7 @@ covermulti_dotransition( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !isdefined( var_6 ) )
         return;
 
-    self _meth_810F( "cover_multi_trans", var_6, %body, 1, 0.2, 1 );
+    self setflaggedanimknoball( "cover_multi_trans", var_6, %body, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "cover_multi_trans" );
 }
 
@@ -280,7 +280,7 @@ covermulti_getstatefromdir( var_0, var_1 )
     if ( var_1 == "left" || var_1 == "right" )
         return var_1;
 
-    if ( var_0 _meth_8035( "stand" ) )
+    if ( var_0 doesnodeallowstance( "stand" ) )
         return "stand";
 
     return "crouch";

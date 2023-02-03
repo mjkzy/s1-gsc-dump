@@ -32,7 +32,7 @@ vehicle_set_target_tracking_disabled( var_0 )
             self.ai_target_force_damaged = undefined;
         }
 
-        self _meth_8263();
+        self clearturrettarget();
     }
 }
 
@@ -81,16 +81,16 @@ vehicle_turret_settings_target( var_0 )
 
 vehicle_set_forced_target( var_0 )
 {
-    if ( is_valid_target( var_0 ) && ( _func_2AE( var_0 ) || !_func_2AE( var_0 ) && !var_0 maps\_vehicle_code::is_corpse() ) )
+    if ( is_valid_target( var_0 ) && ( isvector( var_0 ) || !isvector( var_0 ) && !var_0 maps\_vehicle_code::is_corpse() ) )
     {
         self.ai_target_force_scripted = var_0;
 
         if ( !isdefined( self.disable_target_tracking ) || !self.disable_target_tracking )
         {
             if ( is_vector( var_0 ) )
-                self _meth_8261( var_0 );
+                self setturrettargetvec( var_0 );
             else
-                self _meth_8262( var_0 );
+                self setturrettargetent( var_0 );
         }
     }
 }
@@ -201,7 +201,7 @@ vehicle_targeting()
 
 is_vector( var_0 )
 {
-    return _func_2AE( var_0 );
+    return isvector( var_0 );
 }
 
 is_valid_target( var_0 )
@@ -209,7 +209,7 @@ is_valid_target( var_0 )
     if ( is_vector( var_0 ) )
         return 1;
 
-    return isdefined( var_0 ) && !_func_294( var_0 ) && ( !isdefined( var_0.health ) || isdefined( var_0.health ) && var_0.health >= 0 );
+    return isdefined( var_0 ) && !isremovedentity( var_0 ) && ( !isdefined( var_0.health ) || isdefined( var_0.health ) && var_0.health >= 0 );
 }
 
 is_on_target( var_0 )
@@ -247,7 +247,7 @@ acquire_target()
 
     if ( isdefined( var_0 ) )
     {
-        var_1 = _func_0D6( var_0 );
+        var_1 = getaiarray( var_0 );
 
         if ( isdefined( var_1 ) && var_1.size > 0 )
         {
@@ -358,7 +358,7 @@ update_aim_offset( var_0 )
 
         if ( is_vector( self.ai_target ) )
         {
-            self _meth_8261( self.ai_target + var_2 );
+            self setturrettargetvec( self.ai_target + var_2 );
             var_1 = ( 0, 0, 0 );
         }
         else
@@ -366,7 +366,7 @@ update_aim_offset( var_0 )
             if ( isdefined( self.ai_target.a ) && isdefined( self.ai_target.a.pose ) && self.ai_target.a.pose == "crouch" )
                 var_2 = var_0 - ( 0, 0, 15 );
 
-            self _meth_8262( self.ai_target, var_2 );
+            self setturrettargetent( self.ai_target, var_2 );
             var_1 = ( 0, 0, 50 );
         }
 
@@ -445,7 +445,7 @@ fire_at_target()
                 break;
         }
 
-        self _meth_8268();
+        self fireweapon();
         soundscripts\_snd::snd_message( "titan_walker_weapon_fire" );
         self.last_fire_time = gettime();
         var_0 += var_3;

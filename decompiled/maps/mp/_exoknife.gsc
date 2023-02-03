@@ -88,8 +88,8 @@ exo_knife_touch_watch()
     self endon( "death" );
     self.owner endon( "disconnect" );
     var_0 = spawn( "trigger_radius", self.origin, 0, 15, 5 );
-    var_0 _meth_8069();
-    var_0 _meth_804D( self );
+    var_0 enablelinkto();
+    var_0 linkto( self );
     var_0.knife = self;
     thread common_scripts\utility::delete_on_death( var_0 );
 
@@ -100,7 +100,7 @@ exo_knife_touch_watch()
         if ( var_1 != self.owner )
             continue;
 
-        if ( var_1 _meth_8334( self.weaponname ) >= 1.0 )
+        if ( var_1 getfractionmaxammo( self.weaponname ) >= 1.0 )
             continue;
 
         break;
@@ -111,8 +111,8 @@ exo_knife_touch_watch()
 
 exo_knife_restock()
 {
-    self.owner _meth_82FB( "damage_feedback", "throwingknife" );
-    self.owner _meth_82F7( self.weaponname, self.owner _meth_82F9( self.weaponname ) + 1 );
+    self.owner setclientomnvar( "damage_feedback", "throwingknife" );
+    self.owner setweaponammostock( self.weaponname, self.owner setweaponammostock( self.weaponname ) + 1 );
     exo_knife_delete();
 }
 
@@ -130,7 +130,7 @@ exo_knife_stuck_watch()
         if ( isdefined( self.owner ) && isdefined( var_0 ) && ( isdefined( level.ishorde ) && level.ishorde && var_0.model == "animal_dobernan" || maps\mp\_utility::isgameparticipant( var_0 ) ) && !var_1 )
         {
             if ( isdefined( var_0.team ) && isdefined( self.owner.team ) && var_0.team != self.owner.team )
-                announcement( self.origin, self.origin - self.owner.origin );
+                playimpactheadfatalfx( self.origin, self.origin - self.owner.origin );
 
             var_0 maps\mp\_snd_common_mp::snd_message( "exo_knife_player_impact" );
             var_2 = getdvarfloat( "exo_knife_return_delay", 0.5 );
@@ -187,9 +187,9 @@ exo_knife_recall_watch()
     self.owner endon( "death" );
     self.owner waittill( "exo_knife_recall" );
     var_0 = self.origin;
-    var_1 = self.owner _meth_80A8();
+    var_1 = self.owner geteye();
 
-    if ( self.owner _meth_817C() != "prone" )
+    if ( self.owner getstance() != "prone" )
         var_1 -= ( 0, 0, 20 );
 
     var_2 = getdvarfloat( "exo_knife_speed", 1200.0 );
@@ -205,10 +205,10 @@ exo_knife_recall_watch()
         var_0 += var_6 * var_7;
 
     var_8 = var_6 * var_2;
-    var_9 = _func_071( self.weaponname, var_0, var_8, 30, self.owner, 1 );
+    var_9 = magicgrenademanual( self.weaponname, var_0, var_8, 30, self.owner, 1 );
     var_9.owner = self.owner;
     var_9.recall = 1;
-    var_9 _meth_81D9( self.owner );
+    var_9 missile_settargetent( self.owner );
     var_9 thread exo_knife_recall_stuck_watch();
     var_9 thread exo_knife_passed_target();
     exo_knife_delete();

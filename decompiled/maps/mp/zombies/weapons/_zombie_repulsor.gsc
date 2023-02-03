@@ -35,7 +35,7 @@ dorepulsor( var_0, var_1 )
     var_2 = self.angles;
     var_3 = ( 0, 0, 1 );
     playfx( common_scripts\utility::getfx( "dlc_repulsor" ), self.origin, var_2, var_3 );
-    self entityradiusdamage( var_0, 500, 100, 25, self, "MOD_EXPLOSIVE", "repulsor_zombie_mp" );
+    self radiusdamage( var_0, 500, 100, 25, self, "MOD_EXPLOSIVE", "repulsor_zombie_mp" );
     wait 0.1;
     physicsexplosionsphere( var_0, 500, 0, 10, 0 );
 }

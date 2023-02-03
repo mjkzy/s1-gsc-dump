@@ -110,7 +110,7 @@ onstartgametype()
 
     maps\mp\_utility::setobjectivehinttext( "allies", &"OBJECTIVES_DOM_HINT" );
     maps\mp\_utility::setobjectivehinttext( "axis", &"OBJECTIVES_DOM_HINT" );
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
     initspawns();
     precacheflags();
     var_2[0] = "dom";
@@ -162,7 +162,7 @@ updatemlgobjectives()
 
             foreach ( var_3 in level.domflags )
             {
-                if ( var_1 _meth_80A9( var_3.levelflag ) )
+                if ( var_1 istouching( var_3.levelflag ) )
                 {
                     if ( var_3.numtouching["axis"] * var_3.numtouching["allies"] > 0 )
                         var_1.objective = 1;
@@ -394,7 +394,7 @@ domflags()
             var_7[0].angles = var_6.angles;
         }
 
-        var_7[0] _meth_80B1( level.flagbasemodel );
+        var_7[0] setmodel( level.flagbasemodel );
         var_8 = maps\mp\gametypes\_gameobjects::createuseobject( "neutral", var_6, var_7, ( 0, 0, 100 ) );
         var_8 maps\mp\gametypes\_gameobjects::allowuse( "enemy" );
         var_8 maps\mp\gametypes\_gameobjects::setusetime( level.domcapturetime );
@@ -562,7 +562,7 @@ statusdialog( var_0, var_1, var_2 )
 onenduse( var_0, var_1, var_2 )
 {
     if ( isplayer( var_1 ) )
-        var_1 _meth_82FB( "ui_capture_icon", 0 );
+        var_1 setclientomnvar( "ui_capture_icon", 0 );
 
     var_3 = maps\mp\gametypes\_gameobjects::getownerteam();
 
@@ -605,7 +605,7 @@ updatevisuals( var_0 )
     if ( isdefined( var_0 ) && var_0 )
         waittillframeend;
 
-    if ( !_func_294( self.visuals[0] ) )
+    if ( !isremovedentity( self.visuals[0] ) )
     {
         var_1 = self.visuals[0];
         friendlyenemyeffects( var_1.origin, anglestoup( var_1.angles ) );

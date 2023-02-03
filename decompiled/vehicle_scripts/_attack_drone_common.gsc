@@ -46,7 +46,7 @@ setup_queen_drone()
     var_0.ignoreme = 1;
     var_0.maxhealth = 30000;
     var_0.health = 30000;
-    var_0 _meth_8283( 5, 60, 60 );
+    var_0 vehicle_setspeed( 5, 60, 60 );
 }
 
 skip_helicopter_death_logic()
@@ -67,7 +67,7 @@ make_non_sentient()
     while ( !issentient( self ) )
         wait 0.05;
 
-    self _meth_813A();
+    self freeentitysentient();
 }
 
 drone_lerp_to_position( var_0, var_1, var_2 )
@@ -179,7 +179,7 @@ boid_flock_think()
             var_6[var_6.size] = [ self.queen.origin - ( 0, 0, 1000000.0 ), ( 0, 0, 0 ), 0, 1, 0 ];
         else
         {
-            var_7 = self.queen _meth_8287();
+            var_7 = self.queen vehicle_getvelocity();
             var_8 = length( var_7 );
             var_9 = max( 87.5, var_8 );
             var_10 = clamp( var_9 / 262.5, 0, 0.8 );
@@ -189,7 +189,7 @@ boid_flock_think()
 
             if ( self.boid_settings.dodge_player_shots && level.player attackbuttonpressed() )
             {
-                var_13 = level.player _meth_80A8();
+                var_13 = level.player geteye();
                 var_14 = 0.15 * distance( self.queen.origin, var_13 );
                 var_6[var_6.size] = [ var_13, anglestoforward( level.player getangles() ), var_14, 0, 0 ];
             }
@@ -214,7 +214,7 @@ boid_flock_think()
             }
         }
 
-        _func_2A1( self.boids, var_6, self.boid_settings.neighborhood_radius, self.boid_settings.separation_factor, self.boid_settings.alignment_factor, self.boid_settings.cohesion_factor, self.boid_settings.magnet_factor, self.boid_settings.random_factor, self.boid_settings.max_accel, var_4, var_5, self.boid_settings.drag_amount, self.boid_settings.random_drag_amount );
+        boidflockupdate( self.boids, var_6, self.boid_settings.neighborhood_radius, self.boid_settings.separation_factor, self.boid_settings.alignment_factor, self.boid_settings.cohesion_factor, self.boid_settings.magnet_factor, self.boid_settings.random_factor, self.boid_settings.max_accel, var_4, var_5, self.boid_settings.drag_amount, self.boid_settings.random_drag_amount );
         waitframe();
     }
 }
@@ -293,10 +293,10 @@ monitor_drone_cloud_health( var_0 )
     if ( !var_0 )
         wait(randomfloat( 1.0 ));
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.can_be_damaged = 1;
     var_1 = 0;
 
@@ -353,9 +353,9 @@ fake_drone_death( var_0, var_1, var_2, var_3 )
         else
             break;
 
-        self _meth_82BA( var_11 );
-        self _meth_82BB( var_13 );
-        self _meth_82B9( var_12 );
+        self addyaw( var_11 );
+        self addroll( var_13 );
+        self addpitch( var_12 );
 
         if ( var_14 && randomint( 100 ) > 95 )
         {
@@ -708,7 +708,7 @@ snake_cloud_teleport_to_point( var_0 )
     foreach ( var_2 in self.snakes )
     {
         var_2 notify( "stop_snake_control" );
-        var_2 _meth_827C( var_0.origin, ( 0, 0, 0 ) );
+        var_2 vehicle_teleport( var_0.origin, ( 0, 0, 0 ) );
         var_2.snake_points = [ var_0 ];
         var_2.snake_points_center = getaverageorigin( var_2.snake_points );
         var_2 thread snake_dyanamic_control();
@@ -739,7 +739,7 @@ spawn_snake( var_0, var_1, var_2, var_3 )
     var_5 setcontents( 0 );
 
     if ( isdefined( var_2 ) )
-        var_5 _meth_827C( var_2, ( 0, 0, 0 ) );
+        var_5 vehicle_teleport( var_2, ( 0, 0, 0 ) );
 
     var_5.godmode = 1;
     var_5.ignoreme = 1;
@@ -762,7 +762,7 @@ spawn_snake_queen( var_0, var_1, var_2 )
     var_4 setcontents( 0 );
 
     if ( isdefined( var_2 ) )
-        var_4 _meth_827C( var_2, ( 0, 0, 0 ) );
+        var_4 vehicle_teleport( var_2, ( 0, 0, 0 ) );
 
     var_4.godmode = 1;
     var_4.ignoreme = 1;
@@ -916,7 +916,7 @@ snake_dyanamic_control()
                 break;
 
             var_1 += vectornormalize( var_8 ) * var_9;
-            self _meth_8260( var_1, var_7, var_7, var_7, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
+            self vehicle_helisetai( var_1, var_7, var_7, var_7, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
             wait 0.05;
         }
 
@@ -932,9 +932,9 @@ snake_kamikaze_control()
     self endon( "death" );
     self endon( "stop_snake_control" );
     var_0 = 175.0;
-    self _meth_8260( self.origin + ( 0, 0, 156 ), var_0, var_0, var_0, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
+    self vehicle_helisetai( self.origin + ( 0, 0, 156 ), var_0, var_0, var_0, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
     wait 3;
-    self _meth_8260( level.player.origin, var_0, var_0, var_0, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
+    self vehicle_helisetai( level.player.origin, var_0, var_0, var_0, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
     var_1 = self.health;
 
     while ( distance( self.origin, level.player.origin > 195 ) )
@@ -948,7 +948,7 @@ snake_kamikaze_control()
         }
     }
 
-    level.player _meth_8051( 25, self.origin );
+    level.player dodamage( 25, self.origin );
     thread snake_dyanamic_control();
 }
 
@@ -991,7 +991,7 @@ snake_choose_next_point( var_0, var_1 )
     var_10 = 0.003;
     var_11 = 10;
     var_12 = 1500.0;
-    var_13 = anglestoforward( level.player _meth_8036() );
+    var_13 = anglestoforward( level.player getgunangles() );
     var_14 = undefined;
     var_15 = undefined;
 
@@ -1081,7 +1081,7 @@ snake_pester_helicopter( var_0 )
         if ( isdefined( var_0 ) )
             var_12 = var_0.origin;
 
-        self _meth_8260( var_12, var_1, var_1, var_1, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
+        self vehicle_helisetai( var_12, var_1, var_1, var_1, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
         wait 0.05;
     }
 
@@ -1106,7 +1106,7 @@ snake_pester_helicopter( var_0 )
             if ( isdefined( var_0 ) )
             {
                 var_0.godmode = 0;
-                var_0 _meth_8051( 100, self.origin );
+                var_0 dodamage( 100, self.origin );
             }
 
             snake_cheap_death();
@@ -1120,7 +1120,7 @@ snake_pester_helicopter( var_0 )
 
         var_18 = ( cos( var_16 ), sin( var_16 ), 0 );
         var_19 = var_12 + var_18 * ( var_3 + cos( var_17 ) * var_5 ) + ( 0, 0, sin( var_17 ) * var_5 );
-        self _meth_8260( var_19, var_11, var_11, var_11, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
+        self vehicle_helisetai( var_19, var_11, var_11, var_11, 0, ( 0, 0, 0 ), 0, 0, 0, 1, 0, 0, 0 );
         wait 0.05;
     }
 }

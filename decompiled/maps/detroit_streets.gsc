@@ -64,8 +64,8 @@ alley_setup()
 return_full_mobility( var_0 )
 {
     maps\_shg_design_tools::waittill_trigger_with_name( var_0 );
-    self _meth_81E1( 1 );
-    self _meth_8304( 1 );
+    self setmovespeedscale( 1 );
+    self allowsprint( 1 );
 }
 
 destroy_the_window_exit()
@@ -132,8 +132,8 @@ advance_bones_and_joker_intro()
     var_0 = getnode( "bones_supressed_outside_node", "targetname" );
     var_1 = getnode( "joker_supressed_outside_node", "targetname" );
     common_scripts\utility::flag_wait( "move_burke_down" );
-    level.joker _meth_81A5( var_1 );
-    level.bones _meth_81A5( var_0 );
+    level.joker setgoalnode( var_1 );
+    level.bones setgoalnode( var_0 );
     level.joker maps\_utility::disable_careful();
     level.bones maps\_utility::disable_careful();
 }
@@ -263,8 +263,8 @@ bones_rollout_manager()
     level.joker.ignoreall = 1;
     level.bones.ignoreme = 1;
     level.joker.ignoreme = 1;
-    level.bones _meth_81A5( var_0 );
-    level.joker _meth_81A5( var_2 );
+    level.bones setgoalnode( var_0 );
+    level.joker setgoalnode( var_2 );
     level.bones thread enable_ai_on_goal();
     level.joker thread enable_ai_on_goal();
     level.bones.ignoreme = 0;
@@ -280,13 +280,13 @@ bones_rollout_manager()
     level.joker thread ignore_me_till_goal();
     level.bones thread maps\_utility::disable_cqbwalk();
     level.joker thread maps\_utility::disable_cqbwalk();
-    level.bones _meth_81A5( var_1 );
-    level.joker _meth_81A5( var_3 );
+    level.bones setgoalnode( var_1 );
+    level.joker setgoalnode( var_3 );
     level.bones thread enable_ai_on_goal();
     level.joker thread enable_ai_on_goal();
     common_scripts\utility::flag_wait( "send_exopush_guys_into_hospital" );
-    level.bones _meth_81A5( var_4 );
-    level.joker _meth_81A5( var_5 );
+    level.bones setgoalnode( var_4 );
+    level.joker setgoalnode( var_5 );
 }
 
 surprise_ambush_kva_team()
@@ -301,7 +301,7 @@ surprise_ambush_kva_team()
 
         if ( isdefined( var_4 ) )
         {
-            var_4 _meth_81A9( var_1 );
+            var_4 setgoalvolumeauto( var_1 );
             var_4.goalradius = 30;
             var_4 thread maps\detroit_lighting::add_enemy_flashlight();
             var_4 thread ignore_me_till_goal();
@@ -339,13 +339,13 @@ new_kva_window_ambush( var_0 )
     var_10 = var_5 maps\_utility::spawn_ai( 1 );
 
     if ( isalive( var_10 ) )
-        var_10 _meth_81A5( var_7 );
+        var_10 setgoalnode( var_7 );
 
     wait 2.4;
     var_11 = var_6 maps\_utility::spawn_ai( 1 );
 
     if ( isalive( var_11 ) )
-        var_11 _meth_81A5( var_8 );
+        var_11 setgoalnode( var_8 );
 }
 
 enable_ai_after_time( var_0 )
@@ -518,13 +518,13 @@ fake_gunfire_shooter_exopush_back( var_0 )
     {
         if ( distance2d( level.player.origin, var_1.origin ) < 260 )
         {
-            if ( !level.player _meth_80A9( var_2 ) )
+            if ( !level.player istouching( var_2 ) )
             {
                 var_3 = randomint( var_0.size );
                 var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_0[var_3].origin );
             }
         }
-        else if ( !level.player _meth_80A9( var_2 ) )
+        else if ( !level.player istouching( var_2 ) )
         {
             var_5 = level.player.origin + ( randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ) );
             var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_5 );
@@ -546,13 +546,13 @@ fake_gunfire_shooter_exopush_mid( var_0 )
     {
         if ( distance2d( level.player.origin, var_1.origin ) < 260 )
         {
-            if ( !level.player _meth_80A9( var_2 ) )
+            if ( !level.player istouching( var_2 ) )
             {
                 var_3 = randomint( var_0.size );
                 var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_0[var_3].origin );
             }
         }
-        else if ( !level.player _meth_80A9( var_2 ) )
+        else if ( !level.player istouching( var_2 ) )
         {
             var_5 = level.player.origin + ( randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ) );
             var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_5 );
@@ -574,13 +574,13 @@ fake_gunfire_shooter_exopush_front( var_0 )
     {
         if ( distance2d( level.player.origin, var_1.origin ) < 260 )
         {
-            if ( !level.player _meth_80A9( var_2 ) )
+            if ( !level.player istouching( var_2 ) )
             {
                 var_3 = randomint( var_0.size );
                 var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_0[var_3].origin );
             }
         }
-        else if ( !level.player _meth_80A9( var_2 ) )
+        else if ( !level.player istouching( var_2 ) )
         {
             var_5 = level.player.origin + ( randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ), randomfloatrange( -70, 70 ) );
             var_4 = magicbullet( "iw5_bal27_sp", self.origin, var_5 );
@@ -664,7 +664,7 @@ spawn_left_building_scaffolding_guy()
         var_3.meleeattackdist = 0;
         var_3 thread exo_guy_cleanup_think();
         var_3 maps\detroit_lighting::add_enemy_flashlight( "flashlight", undefined, undefined, 25 );
-        var_3 _meth_81A9( var_0 );
+        var_3 setgoalvolumeauto( var_0 );
         var_3.ignoreall = 1;
         var_3 waittill( "goal" );
         var_3.ignoreall = 0;
@@ -715,7 +715,7 @@ street_update_my_volume_think()
             var_0 = getent( "exo_push_street_vol3", "targetname" );
 
         if ( isalive( self ) )
-            self _meth_81A9( var_0 );
+            self setgoalvolumeauto( var_0 );
 
         wait 3;
     }
@@ -752,7 +752,7 @@ exo_scaffolding_enemies()
 
             if ( isdefined( var_6 ) )
             {
-                var_6 _meth_81A9( var_1 );
+                var_6 setgoalvolumeauto( var_1 );
                 var_6.goalradius = 15;
                 var_6.grenadeammo = 0;
                 var_6.meleeattackdist = 0;
@@ -815,7 +815,7 @@ scaffolding_update_my_volume_think()
             var_3 = var_2;
 
         if ( isalive( self ) )
-            self _meth_81A9( var_3 );
+            self setgoalvolumeauto( var_3 );
 
         wait 3;
     }
@@ -897,8 +897,8 @@ spawn_sniper_guy( var_0, var_1, var_2 )
 
     if ( !isdefined( var_2 ) )
     {
-        var_3 _meth_81AB();
-        var_3 _meth_81A9( var_1 );
+        var_3 cleargoalvolume();
+        var_3 setgoalvolumeauto( var_1 );
     }
 }
 
@@ -910,7 +910,7 @@ push_right_after_flag()
     wait(randomintrange( 1, 4 ));
 
     if ( isalive( self ) )
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
 }
 
 angles_clamp_180( var_0 )
@@ -952,16 +952,16 @@ train_gopath( var_0, var_1, var_2 )
         {
             var_11 = var_7.origin + var_5 * var_9;
             var_12 = euler_lerp( var_7.angles, var_8.angles, var_5 / var_10 );
-            self _meth_82AE( var_11, var_3, 0, 0 );
-            self _meth_82B5( var_12, var_3, 0, 0 );
+            self moveto( var_11, var_3, 0, 0 );
+            self rotateto( var_12, var_3, 0, 0 );
 
             if ( isdefined( var_2 ) )
             {
                 var_13 = transformmove( var_11, var_12, ( 0, 0, 0 ), ( 0, 0, 0 ), ( 0, 0, 48 ), ( 0, 90, 0 ) );
                 var_14 = var_13["origin"];
                 var_15 = var_13["angles"];
-                var_2 _meth_82AE( var_14, var_3, 0, 0 );
-                var_2 _meth_82B5( var_15, var_3, 0, 0 );
+                var_2 moveto( var_14, var_3, 0, 0 );
+                var_2 rotateto( var_15, var_3, 0, 0 );
             }
 
             waitframe();
@@ -982,8 +982,8 @@ get_door( var_0 )
     var_2 = getent( var_0 + "brush", "targetname" );
     var_3 = getent( var_0 + "clip", "targetname" );
     var_4 = var_1 common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_4, "tag_origin" );
-    var_3 _meth_804D( var_4, "tag_origin" );
+    var_2 linkto( var_4, "tag_origin" );
+    var_3 linkto( var_4, "tag_origin" );
     var_5 = spawnstruct();
     var_5.org = var_1;
     var_5.brush = var_2;
@@ -1040,7 +1040,7 @@ temp_clip_delete()
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_8058();
+        var_0 connectpaths();
         var_0 delete();
     }
 }
@@ -1075,13 +1075,13 @@ shoot_at_these_targets( var_0 )
 
 sneaky_reload()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
     var_1 = level.player getammocount( var_0 );
-    var_2 = level.player _meth_82F0();
+    var_2 = level.player getcurrentweaponclipammo();
     var_3 = weaponclipsize( var_0 );
     var_4 = var_3 - var_2;
-    level.player _meth_82F6( var_0, var_3 );
-    level.player _meth_82F7( var_0, var_1 - var_4 );
+    level.player setweaponammoclip( var_0, var_3 );
+    level.player setweaponammostock( var_0, var_1 - var_4 );
 }
 
 break_office_glass_ahead_of_time()
@@ -1131,7 +1131,7 @@ wait_then_movetogoalvol( var_0 )
     wait(randomfloatrange( 0.8, 1.5 ));
 
     if ( isalive( self ) )
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
 }
 
 bullet_break_glass_gag_timer()
@@ -1149,7 +1149,7 @@ move_burke_outside_office()
     level.burke.ignoreall = 1;
     level.burke maps\_utility::disable_pain();
     var_0 = getnode( "player_parkinglot_startorg", "targetname" );
-    level.burke _meth_81A6( var_0.origin );
+    level.burke setgoalpos( var_0.origin );
     level.burke waittill( "goal" );
     level.burke.ignoreall = 0;
     level.burke maps\_utility::enable_pain();
@@ -1196,7 +1196,7 @@ sniper_kva_dead_body()
     var_1.nodrop = 1;
     var_1.ignoreall = 1;
     var_1.ignoreme = 1;
-    var_1 _meth_8052();
+    var_1 kill();
 }
 
 waittill_enemy_group_size_is( var_0, var_1 )
@@ -1245,11 +1245,11 @@ burke_reunite_with_player_alley()
     level notify( "burke_and_player_reunited" );
     var_0 notify( "move ahead" );
     maps\_utility::battlechatter_off( "allies" );
-    level.burke _meth_8141();
+    level.burke stopanimscripted();
     level.burke.ignoreall = 0;
     level.burke maps\_utility::enable_dontevershoot();
     level.burke maps\_utility::enable_cqbwalk();
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
     common_scripts\utility::flag_set( "vo_alley_burke_reunite" );
     thread spawn_placed_alleyway_guys();
     thread dog_attack_enemies();
@@ -1269,13 +1269,13 @@ burke_reunite_with_player_alley()
         level.burke maps\_utility::clear_generic_run_anim();
         level.burke maps\_utility::enable_careful();
         level.burke maps\_utility::disable_dontevershoot();
-        var_2 = _func_0D6( "axis" );
+        var_2 = getaiarray( "axis" );
         var_3 = 0;
 
         if ( isdefined( level.burke.enemy ) && isdefined( level.burke.a.aimidlethread ) && level.burke animscripts\utility::canseeenemy( 0 ) )
         {
-            level.burke _meth_81E7( 1000, level.burke.enemy _meth_80A8() );
-            level.burke.enemy _meth_8052( level.burke _meth_80A8(), level.burke );
+            level.burke shoot( 1000, level.burke.enemy geteye() );
+            level.burke.enemy kill( level.burke geteye(), level.burke );
         }
 
         common_scripts\utility::flag_set( "_stealth_spotted" );
@@ -1303,9 +1303,9 @@ burke_move_into_office()
     common_scripts\utility::flag_wait( "all_street_fighters_dead" );
     common_scripts\utility::flag_set( "sitrep_dialogue_line" );
     level.burke maps\_utility::enable_careful();
-    level.burke _meth_81A5( var_0 );
+    level.burke setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "bar_has_been_cleared" );
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
 }
 
 bar_guy_check_function()
@@ -1507,8 +1507,8 @@ exterior_street_kickoff()
     var_7.health = 10;
     var_6.fovcosine = 0.95;
     var_7.fovcosine = 0.95;
-    var_6 _meth_81A6( var_4.origin );
-    var_7 _meth_81A6( var_5.origin );
+    var_6 setgoalpos( var_4.origin );
+    var_7 setgoalpos( var_5.origin );
     var_6 maps\_utility::disable_surprise();
     var_7 maps\_utility::disable_surprise();
     level.burke.ignoreme = 1;
@@ -1569,7 +1569,7 @@ wake_me_up_if_still_alive()
     while ( isalive( self ) )
     {
         common_scripts\utility::flag_wait( "one_street_guy_dead_kickoff_fight_now" );
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         return;
     }
 }
@@ -1653,7 +1653,7 @@ health_track()
     {
         if ( self.health < var_0 )
         {
-            self _meth_8141();
+            self stopanimscripted();
             maps\detroit_school::remove_patrol_anim_set();
             return;
         }
@@ -1673,8 +1673,8 @@ fail_enable( var_0, var_1 )
         self notify( "stop_loop" );
         var_0 notify( "stop_loop" );
         maps\_utility::set_moveplaybackrate( 1 );
-        self _meth_8141();
-        self _meth_81A5( var_1 );
+        self stopanimscripted();
+        self setgoalnode( var_1 );
     }
 }
 
@@ -1811,7 +1811,7 @@ activate_guy()
 {
     self endon( "death" );
     level waittill( "kickoff_street_fight" );
-    self _meth_8141();
+    self stopanimscripted();
     self.ignoreall = 0;
     self.ignoreme = 0;
     self.combatmode = "cover";
@@ -1841,7 +1841,7 @@ bar_setup()
     foreach ( var_3 in var_0 )
     {
         var_4 = var_3 maps\_utility::spawn_ai();
-        var_4 _meth_81A9( var_1 );
+        var_4 setgoalvolumeauto( var_1 );
         var_4 maps\detroit_lighting::add_enemy_flashlight( "flashlight", undefined, undefined, 25 );
     }
 
@@ -1885,7 +1885,7 @@ first_guy_looking()
     var_1 = getent( "first_cover_streetfight_spotlighter", "targetname" );
     wait 0.3;
     var_2 = var_1 maps\_utility::spawn_ai( 1 );
-    var_2 _meth_81A9( var_0 );
+    var_2 setgoalvolumeauto( var_0 );
     var_2 endon( "death" );
     var_2 maps\detroit_lighting::add_enemy_flashlight( "flashlight", "med" );
     var_2 maps\detroit::set_patrol_anim_set( "active" );
@@ -1901,10 +1901,10 @@ return_to_normal()
     maps\_utility::clear_generic_idle_anim();
     maps\_utility::set_moveplaybackrate( 1 );
     maps\_utility::clear_run_anim();
-    self _meth_81CA( "stand", "crouch", "prone" );
+    self allowedstances( "stand", "crouch", "prone" );
     self.disablearrivals = 0;
     self.disableexits = 0;
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "stop_animmode" );
     self notify( "flashlight_off" );
     self.script_nobark = undefined;
@@ -1930,7 +1930,7 @@ top_guy_spawn()
     {
         var_2 notify( "flashlight_off" );
         var_2.ignoreall = 0;
-        var_2 _meth_8141();
+        var_2 stopanimscripted();
         thread spawn_the_rest();
     }
 }
@@ -1946,7 +1946,7 @@ break_out_if_damaged( var_0 )
         {
             wait 0.4;
             var_0.ignoreall = 0;
-            var_0 _meth_8141();
+            var_0 stopanimscripted();
             level notify( "AI_broken_out" );
             level notify( "searching_alleyway_guy_is_dead" );
             self notify( "flashlight_off" );
@@ -1977,7 +1977,7 @@ outside_group_1()
 outside_group_start_fighting()
 {
     level waittill( "kickoff_street_fight" );
-    self _meth_8141();
+    self stopanimscripted();
     self.ignoreall = 0;
     self.ignoreme = 0;
 }
@@ -2028,7 +2028,7 @@ street_fighters_gone_yet()
         if ( var_0.size == 0 )
         {
             var_1 = getnode( "burke_inner_barnode", "targetname" );
-            level.burke _meth_81A5( var_1 );
+            level.burke setgoalnode( var_1 );
             thread streetfighters_notify();
             return;
         }
@@ -2196,7 +2196,7 @@ kill_all_inside_guys_now()
     foreach ( var_2 in var_0 )
     {
         if ( isalive( var_2 ) )
-            var_2 _meth_8052();
+            var_2 kill();
     }
 
     var_4 = getnode( "gideon_cheat_teleport_spot", "targetname" );
@@ -2205,13 +2205,13 @@ kill_all_inside_guys_now()
 
     if ( distance2d( level.burke.origin, var_5.origin ) > 400 )
     {
-        if ( level.burke _meth_80A9( var_6 ) )
+        if ( level.burke istouching( var_6 ) )
             return;
         else
         {
             level.burke maps\_utility::teleport_ai( var_4 );
             var_7 = getnode( "burke_rendezvous_animnode", "targetname" );
-            level.burke _meth_81A5( var_7 );
+            level.burke setgoalnode( var_7 );
         }
     }
 }
@@ -2226,7 +2226,7 @@ kill_when_player_reaches_overhang()
 
 detroit_laser()
 {
-    self _meth_80B2( "lag_snipper_laser" );
+    self laseron( "lag_snipper_laser" );
 }
 
 last_guy_in_group()
@@ -2264,7 +2264,7 @@ move_to_death_spot()
     self.ignoreall = 1;
     self.goalradius = 15;
     thread kill_me_in_x_seconds( 5 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
     self.ignoreall = 0;
 }
@@ -2306,13 +2306,13 @@ begin_exo_push( var_0 )
     var_4 = getent( "exo_push_team_goalorg_joker", "targetname" );
     var_5 = getent( "exo_push_team_goalorg_bones", "targetname" );
     var_6 = getent( "exo_push_team_goalorg_burke", "targetname" );
-    var_3 _meth_8069();
-    var_3 _meth_804D( var_1, "tag_origin", ( -140, -40, 30 ), ( 0, 0, 0 ) );
+    var_3 enablelinkto();
+    var_3 linkto( var_1, "tag_origin", ( -140, -40, 30 ), ( 0, 0, 0 ) );
     thread exo_push_think_burke( var_1, var_2, var_0 );
     thread exo_push_think_truck( var_1, var_2 );
     var_7 = maps\_utility::spawn_anim_model( "world_body", level.player.origin );
     var_1 maps\_anim::anim_first_frame_solo( var_7, "exo_push_attach", "tag_driver" );
-    var_7 _meth_804D( var_1, "tag_driver" );
+    var_7 linkto( var_1, "tag_driver" );
     var_7 hide();
     level.burke maps\_utility::set_ignoresuppression( 1 );
     level.burke maps\_utility::disable_pain();
@@ -2330,30 +2330,30 @@ begin_exo_push( var_0 )
             wait 3.5;
         }
 
-        var_3 _meth_80DB( &"DETROIT_PROMPT_PUSH" );
+        var_3 sethintstring( &"DETROIT_PROMPT_PUSH" );
         var_3 makeusable();
         var_3 thread disable_me_when_exopush_finished();
         var_3 waittill( "trigger" );
         common_scripts\utility::flag_set( "exo_push_has_been_started" );
         var_9 = 0.5;
         var_7 hide();
-        level.player _meth_8080( var_7, "tag_player", var_9, 0.25, 0.25 );
+        level.player playerlinktoblend( var_7, "tag_player", var_9, 0.25, 0.25 );
         var_3 makeunusable();
-        var_3 _meth_80DB( "" );
+        var_3 sethintstring( "" );
         level.player maps\_shg_utility::setup_player_for_scene( 1 );
         var_7 show();
         common_scripts\utility::flag_set( "exo_push_player_attached" );
         soundscripts\_snd::snd_message( "ambulance_push_attach", "exo_push_player_attached" );
-        var_1 _meth_814D( var_1 maps\_utility::getanim( "exo_push_attach" ) );
+        var_1 setanimrestart( var_1 maps\_utility::getanim( "exo_push_attach" ) );
         var_1 maps\_anim::anim_single_solo( var_7, "exo_push_attach", "tag_driver" );
-        var_1 _meth_8142( var_1 maps\_utility::getanim( "exo_push_attach" ), 0.2 );
-        var_1 _meth_814D( var_1 maps\_utility::getanim( "exo_push_idle" )[0] );
+        var_1 clearanim( var_1 maps\_utility::getanim( "exo_push_attach" ), 0.2 );
+        var_1 setanimrestart( var_1 maps\_utility::getanim( "exo_push_idle" )[0] );
         common_scripts\utility::flag_set( "exo_push_should_idle" );
         thread exo_push_think_player_attached( var_1, var_7 );
 
         while ( common_scripts\utility::flag( "exo_push_should_idle" ) || common_scripts\utility::flag( "exo_push_should_push" ) )
         {
-            var_10 = level.player _meth_82F3()[0];
+            var_10 = level.player getnormalizedmovement()[0];
 
             if ( level.player usebuttonpressed() )
             {
@@ -2383,9 +2383,9 @@ begin_exo_push( var_0 )
         }
 
         common_scripts\utility::flag_clear( "exo_push_player_attached" );
-        level.player common_scripts\utility::delaycall( 0.25, ::_meth_831E );
+        level.player common_scripts\utility::delaycall( 0.25, ::enableweapons );
         var_1 maps\_anim::anim_single_solo( var_7, "exo_push_detach", "tag_driver" );
-        level.player _meth_804F();
+        level.player unlink();
         var_11 = getgroundposition( level.player.origin, 16 )[2] - level.player.origin[2];
 
         if ( var_11 > 1 )
@@ -2422,7 +2422,7 @@ on_alert_chase_player()
     {
         level waittill( "chase_the_player_now" );
         iprintlnbold( "Time to fight the player nowc" );
-        self _meth_81A6( level.player.origin );
+        self setgoalpos( level.player.origin );
         return;
     }
 }
@@ -2453,7 +2453,7 @@ player_is_pushing_rumble()
             while ( common_scripts\utility::flag( "exo_push_should_push" ) )
                 wait 0.05;
 
-            var_0 _meth_80AF( "steady_rumble" );
+            var_0 stoprumble( "steady_rumble" );
             var_0 delete();
         }
 
@@ -2472,7 +2472,7 @@ end_the_exopush_even_if_never_pushed()
     common_scripts\utility::flag_wait( "exo_push_arrived" );
 
     if ( !common_scripts\utility::flag( "van_pushed_atlaest_once" ) )
-        level.burke _meth_8141();
+        level.burke stopanimscripted();
 }
 
 ambulance_objective_update()
@@ -2491,12 +2491,12 @@ ambulance_firstframe_function()
     var_2 = [ "tag_rooflight_tkl_d", "tag_rooflight_tkr_d", "tag_rooflight_tl_d", "tag_rooflight_tr_d", "tag_siren_f_d", "tag_roof_d" ];
 
     foreach ( var_4 in var_2 )
-        var_0 _meth_8048( var_4 );
+        var_0 hidepart( var_4 );
 
     var_6 = getent( "exo_push_first_animorg", "targetname" );
     var_0.animname = "ambulance";
     var_0 maps\_utility::assign_animtree();
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
 
     for ( var_7 = 0; var_7 < 4; var_7++ )
         var_0 thread ambulance_part_monitor( var_1[var_7], var_2[var_7], 100 );
@@ -2506,18 +2506,18 @@ ambulance_firstframe_function()
     var_0 thread ambulance_max_health();
     var_0.health = 10000;
     var_8 = getent( "exo_brush_clip_nosight", "targetname" );
-    var_8 _meth_804D( var_0, "tag_driver" );
+    var_8 linkto( var_0, "tag_driver" );
     var_9 = getent( "exo_push_team_goalorg_joker", "targetname" );
     var_10 = getent( "exo_push_team_goalorg_bones", "targetname" );
     var_11 = getent( "exo_push_team_goalorg_burke", "targetname" );
     var_0 thread exo_objective_use_prompt();
-    var_10 _meth_804D( var_0, "tag_origin" );
-    var_9 _meth_804D( var_0, "tag_origin" );
-    var_11 _meth_804D( var_0, "tag_origin" );
+    var_10 linkto( var_0, "tag_origin" );
+    var_9 linkto( var_0, "tag_origin" );
+    var_11 linkto( var_0, "tag_origin" );
     var_12 = getentarray( "exopush_shooter_org_target", "targetname" );
 
     foreach ( var_14 in var_12 )
-        var_14 _meth_804D( var_0, "tag_origin" );
+        var_14 linkto( var_0, "tag_origin" );
 
     var_6 thread maps\_anim::anim_first_frame_solo( var_0, "exo_push_burke_attach" );
     common_scripts\utility::flag_set( "ok_to_start_exo_push" );
@@ -2610,8 +2610,8 @@ damage_is_explosive( var_0 )
 
 ambulance_damage_part( var_0, var_1 )
 {
-    self _meth_8048( var_0 );
-    self _meth_804B( var_1 );
+    self hidepart( var_0 );
+    self showpart( var_1 );
 }
 
 second_line_of_fire()
@@ -2659,7 +2659,7 @@ spawn_a_second_line_guy( var_0 )
             var_3 thread accuracy_fake_function();
             var_3.grenadeammo = 0;
             var_3.meleeattackdist = 0;
-            var_3 _meth_81A9( var_2 );
+            var_3 setgoalvolumeauto( var_2 );
             var_3 thread secondline_alive_check( var_0 );
             var_3 thread seekplayercheck();
             var_3 thread secondline_flee_check();
@@ -2684,7 +2684,7 @@ spawn_a_second_line_guy( var_0 )
             var_3 thread accuracy_fake_function();
             var_3.grenadeammo = 0;
             var_3.meleeattackdist = 0;
-            var_3 _meth_81A9( var_2 );
+            var_3 setgoalvolumeauto( var_2 );
             var_3 thread secondline_alive_check( var_0 );
             var_3 thread seekplayercheck();
             var_3 thread secondline_flee_check();
@@ -2802,7 +2802,7 @@ spawn_a_backline_guy( var_0 )
             var_3.meleeattackdist = 0;
             var_3 thread accuracy_fake_function();
             var_3.radius = 15;
-            var_3 _meth_81A9( var_2 );
+            var_3 setgoalvolumeauto( var_2 );
             var_3 maps\detroit_lighting::add_enemy_flashlight( "flashlight", undefined, undefined, 25 );
             var_3 thread backline_alive_check( var_0 );
             var_3 thread backline_flee_check();
@@ -2856,7 +2856,7 @@ backline_flee_check()
 
     if ( isalive( self ) )
     {
-        self _meth_81A9( var_0 );
+        self setgoalvolumeauto( var_0 );
         thread exopush_end_flee();
         self waittill( "goal" );
     }
@@ -2877,8 +2877,8 @@ secondline_flee_check()
             if ( isdefined( self ) )
             {
                 var_1 = randomint( 3 );
-                self _meth_81AB();
-                self _meth_81A9( var_0 );
+                self cleargoalvolume();
+                self setgoalvolumeauto( var_0 );
                 self.ignoreall = 1;
                 thread player_close_disable_ignore_check();
                 thread exopush_end_flee();
@@ -2966,7 +2966,7 @@ spawn_hospital_roof_guys()
             var_5.grenadeammo = 0;
             var_5.meleeattackdist = 0;
             level.hospitalroofguys++;
-            var_5 _meth_81A9( var_1 );
+            var_5 setgoalvolumeauto( var_1 );
             var_5 maps\detroit_lighting::add_enemy_flashlight( "flashlight", undefined, undefined, 25 );
             wait(randomint( 4 ));
         }
@@ -3027,12 +3027,12 @@ accuracy_fake_function()
 exo_push_think_joker( var_0, var_1 )
 {
     var_2 = getnode( "joker_cover_exo_wait spot", "targetname" );
-    level.joker _meth_81A5( var_2 );
+    level.joker setgoalnode( var_2 );
     common_scripts\utility::flag_wait( "exo_push_has_been_started" );
     level.joker thread maps\_utility::set_grenadeammo( 0 );
     var_3 = getent( "exo_push_team_goalorg_joker", "targetname" );
     level.joker.goalradius = 5;
-    level.joker _meth_81A6( var_3.origin );
+    level.joker setgoalpos( var_3.origin );
 
     for (;;)
     {
@@ -3041,7 +3041,7 @@ exo_push_think_joker( var_0, var_1 )
 
         if ( distance2d( level.joker.origin, var_3.origin ) > 30 )
         {
-            level.joker _meth_81A6( var_3.origin );
+            level.joker setgoalpos( var_3.origin );
             level.joker.ignoreme = 1;
         }
 
@@ -3084,7 +3084,7 @@ exo_push_think_burke( var_0, var_1, var_2 )
     common_scripts\utility::flag_set( "exo_push_burke_attaching" );
     thread set_flag_on_burke_wave_to_ambulance();
     var_1 maps\_anim::anim_single_solo( level.burke, "exo_push_burke_attach" );
-    level.burke _meth_804D( var_0, "tag_walker3" );
+    level.burke linkto( var_0, "tag_walker3" );
     var_0 thread burke_exo_push_wait();
     common_scripts\utility::flag_wait( "exo_push_player_attached" );
     level.burke thread maps\_utility::set_grenadeammo( 0 );
@@ -3097,14 +3097,14 @@ exo_push_think_burke( var_0, var_1, var_2 )
         if ( common_scripts\utility::flag( "exo_push_arrived" ) )
             break;
 
-        level.burke _meth_804D( var_0, "tag_walker3" );
+        level.burke linkto( var_0, "tag_walker3" );
 
         for (;;)
         {
             if ( common_scripts\utility::flag( "exo_push_should_push" ) )
             {
-                level.joker _meth_81CA( "crouch", "stand", "prone" );
-                level.bones _meth_81CA( "crouch", "stand", "prone" );
+                level.joker allowedstances( "crouch", "stand", "prone" );
+                level.bones allowedstances( "crouch", "stand", "prone" );
                 var_0 thread maps\_anim::anim_loop_solo( level.burke, "exo_push_loop", "burke_ender", "tag_walker3" );
                 common_scripts\utility::flag_waitopen( "exo_push_should_push" );
                 var_0 notify( "burke_ender" );
@@ -3120,16 +3120,16 @@ exo_push_think_burke( var_0, var_1, var_2 )
             }
 
             level.burke.goalradius = 40;
-            level.burke _meth_81A6( var_3.origin );
+            level.burke setgoalpos( var_3.origin );
             level.bones.ignoreme = 0;
             level.joker.ignoreme = 0;
-            level.joker _meth_81CA( "crouch" );
-            level.bones _meth_81CA( "crouch" );
+            level.joker allowedstances( "crouch" );
+            level.bones allowedstances( "crouch" );
             break;
         }
 
-        level.burke _meth_804F();
-        level.burke _meth_8141();
+        level.burke unlink();
+        level.burke stopanimscripted();
     }
 
     var_4 = getent( "burke_grenade_location", "targetname" );
@@ -3138,16 +3138,16 @@ exo_push_think_burke( var_0, var_1, var_2 )
 burke_exo_push_end_early( var_0 )
 {
     common_scripts\utility::flag_wait( "exo_push_arrived" );
-    level.burke _meth_804F();
-    level.burke _meth_8141();
+    level.burke unlink();
+    level.burke stopanimscripted();
     var_0 notify( "burke_ender" );
 }
 
 exo_push_over_default_values()
 {
     common_scripts\utility::flag_wait( "exo_push_arrived" );
-    level.joker _meth_81CA( "crouch", "stand", "prone" );
-    level.bones _meth_81CA( "crouch", "stand", "prone" );
+    level.joker allowedstances( "crouch", "stand", "prone" );
+    level.bones allowedstances( "crouch", "stand", "prone" );
 }
 
 set_flag_on_burke_wave_to_ambulance()
@@ -3170,7 +3170,7 @@ exo_push_think_bones( var_0, var_1 )
             return;
 
         wait 1;
-        level.bones _meth_81A6( var_2.origin );
+        level.bones setgoalpos( var_2.origin );
         level.bones.ignoreme = 1;
     }
 }
@@ -3181,22 +3181,22 @@ exo_push_think_player_attached( var_0, var_1 )
     {
         if ( common_scripts\utility::flag( "exo_push_should_push" ) )
         {
-            var_0 _meth_8142( var_0 maps\_utility::getanim( "exo_push_idle" )[0], 0.2 );
-            var_0 _meth_814D( var_0 maps\_utility::getanim( "exo_push_idle_to_loop" ) );
+            var_0 clearanim( var_0 maps\_utility::getanim( "exo_push_idle" )[0], 0.2 );
+            var_0 setanimrestart( var_0 maps\_utility::getanim( "exo_push_idle_to_loop" ) );
             var_0 maps\_anim::anim_single_solo( var_1, "exo_push_idle_to_loop", "tag_driver" );
-            var_0 _meth_8142( var_0 maps\_utility::getanim( "exo_push_idle_to_loop" ), 0.2 );
-            var_0 _meth_814D( var_0 maps\_utility::getanim( "exo_push_loop" )[0] );
+            var_0 clearanim( var_0 maps\_utility::getanim( "exo_push_idle_to_loop" ), 0.2 );
+            var_0 setanimrestart( var_0 maps\_utility::getanim( "exo_push_loop" )[0] );
             var_0 thread maps\_anim::anim_loop_solo( var_1, "exo_push_loop", "player_ender", "tag_driver" );
             common_scripts\utility::flag_waitopen( "exo_push_should_push" );
             var_0 notify( "player_ender" );
-            var_0 _meth_8142( var_0 maps\_utility::getanim( "exo_push_loop" )[0], 0.2 );
-            var_0 _meth_814D( var_0 maps\_utility::getanim( "exo_push_loop_to_idle" ) );
+            var_0 clearanim( var_0 maps\_utility::getanim( "exo_push_loop" )[0], 0.2 );
+            var_0 setanimrestart( var_0 maps\_utility::getanim( "exo_push_loop_to_idle" ) );
 
             if ( isdefined( var_1 ) )
                 var_0 maps\_anim::anim_single_solo( var_1, "exo_push_loop_to_idle", "tag_driver" );
 
-            var_0 _meth_8142( var_0 maps\_utility::getanim( "exo_push_loop_to_idle" ), 0.2 );
-            var_0 _meth_814D( var_0 maps\_utility::getanim( "exo_push_idle" )[0] );
+            var_0 clearanim( var_0 maps\_utility::getanim( "exo_push_loop_to_idle" ), 0.2 );
+            var_0 setanimrestart( var_0 maps\_utility::getanim( "exo_push_idle" )[0] );
             continue;
         }
 
@@ -3217,7 +3217,7 @@ end_ambulance_anim_early()
     common_scripts\utility::flag_wait( "exo_push_arrived" );
     level notify( "stop_moving_ambulance_now" );
     wait 0.3;
-    level.truck _meth_8141();
+    level.truck stopanimscripted();
 }
 
 exo_push_think_truck( var_0, var_1 )
@@ -3241,7 +3241,7 @@ exo_push_think_truck( var_0, var_1 )
 exo_push_play_truck_idle_at_end_of_frame()
 {
     waittillframeend;
-    self _meth_814D( maps\_utility::getanim( "exo_push_idle" )[0] );
+    self setanimrestart( maps\_utility::getanim( "exo_push_idle" )[0] );
 }
 
 exo_push_truck_handle_speed( var_0, var_1 )
@@ -3285,9 +3285,9 @@ exo_push_truck_handle_path_disconnect( var_0 )
     {
         if ( distancesquared( self.origin, var_1 ) > 1024 )
         {
-            var_0 _meth_8058();
+            var_0 connectpaths();
             badplace_delete( "ambulance_badplace" );
-            var_0 _meth_8057();
+            var_0 disconnectpaths();
 
             if ( common_scripts\utility::flag( "exo_push_player_attached" ) )
                 badplace_cylinder( "ambulance_badplace", 0, self.origin, 150, 100, "axis", "allies" );
@@ -3305,9 +3305,9 @@ move_team_towards_hospital()
     var_0 = getnode( "burke_hospital_hide_outside", "targetname" );
     var_1 = getnode( "bones_hospital", "targetname" );
     var_2 = getnode( "joker_hospital", "targetname" );
-    level.burke _meth_81A5( var_0 );
-    level.bones _meth_81A5( var_1 );
-    level.joker _meth_81A5( var_2 );
+    level.burke setgoalnode( var_0 );
+    level.bones setgoalnode( var_1 );
+    level.joker setgoalnode( var_2 );
     maps\_utility::activate_trigger_with_targetname( "team_move_hospital" );
 }
 

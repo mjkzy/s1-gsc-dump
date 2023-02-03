@@ -219,8 +219,8 @@ main()
 
 set_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", 2 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", 2 );
 }
 
 cold_breath()
@@ -404,8 +404,8 @@ skyjack_wing_explosion()
     var_1 = level.skyjack_plane common_scripts\utility::spawn_tag_origin();
     var_0.origin = level.skyjack_plane gettagorigin( "tag_smoke_lt_body" );
     var_1.origin = level.skyjack_plane gettagorigin( "tag_smoke_rt_body" );
-    var_0 _meth_804D( level.skyjack_plane, "tag_smoke_lt_body" );
-    var_1 _meth_804D( level.skyjack_plane, "tag_smoke_rt_body" );
+    var_0 linkto( level.skyjack_plane, "tag_smoke_lt_body" );
+    var_1 linkto( level.skyjack_plane, "tag_smoke_rt_body" );
     playfx( level._effect["vehicle_skyjack_explosion_midair"], var_0.origin );
     playfx( level._effect["vehicle_skyjack_explosion_rhtengine"], var_1.origin );
     common_scripts\utility::flag_wait( "skyjack_end_heavy_clouds" );
@@ -422,8 +422,8 @@ skyjack_plane_contrails()
     var_1.origin = level.skyjack_plane gettagorigin( "tag_lt_wing_light_fx" );
     var_0.angles = level.skyjack_plane gettagangles( "tag_rt_wing_light_fx" );
     var_1.angles = level.skyjack_plane gettagangles( "tag_lt_wing_light_fx" );
-    var_0 _meth_804D( level.skyjack_plane, "tag_rt_wing_light_fx" );
-    var_1 _meth_804D( level.skyjack_plane, "tag_lt_wing_light_fx" );
+    var_0 linkto( level.skyjack_plane, "tag_rt_wing_light_fx" );
+    var_1 linkto( level.skyjack_plane, "tag_lt_wing_light_fx" );
     var_2 = ( 0, 90, 0 );
 
     while ( !common_scripts\utility::flag( "skyjack_end_heavy_clouds" ) )

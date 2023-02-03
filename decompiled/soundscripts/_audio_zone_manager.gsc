@@ -454,7 +454,7 @@ azmx_get_zone_preset_from_stringtable_internal( var_0, var_1 )
     var_2 = [];
     var_3 = "";
     var_4 = "";
-    var_5 = _func_28F( var_0, "zone_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
+    var_5 = packedtablesectionlookup( var_0, "zone_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
 
     if ( isdefined( var_5 ) )
     {
@@ -465,8 +465,8 @@ azmx_get_zone_preset_from_stringtable_internal( var_0, var_1 )
             if ( var_3 != "comments" && var_4 != "" )
                 var_2[var_3] = var_4;
 
-            var_3 = _func_290( var_0, 0, "zone_names", var_7, var_5[0], var_5[1] );
-            var_4 = _func_290( var_0, 0, var_1, var_7, var_5[0], var_5[1] );
+            var_3 = packedtablelookupwithrange( var_0, 0, "zone_names", var_7, var_5[0], var_5[1] );
+            var_4 = packedtablelookupwithrange( var_0, 0, var_1, var_7, var_5[0], var_5[1] );
 
             if ( var_3 != "comment" && var_3 != "comments" && var_4 != "" )
             {

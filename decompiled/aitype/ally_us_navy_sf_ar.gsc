@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 15 ) )
@@ -86,7 +86,7 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
@@ -94,21 +94,21 @@ precache()
     character\character_navy_sf_assault_a::precache();
     character\character_navy_sf_assault_b::precache();
     character\character_navy_sf_assault_c::precache();
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_opticsacog2" );
-    precacheitem( "iw5_bal27_sp_opticsreddot" );
-    precacheitem( "iw5_bal27_sp_opticsthermal" );
-    precacheitem( "iw5_bal27_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp_opticstargetenhancer" );
-    precacheitem( "iw5_ak12_sp" );
-    precacheitem( "iw5_ak12_sp_opticsacog2" );
-    precacheitem( "iw5_ak12_sp_opticsreddot" );
-    precacheitem( "iw5_ak12_sp_opticsthermal" );
-    precacheitem( "iw5_ak12_sp_opticstargetenhancer" );
-    precacheitem( "iw5_lsat_sp" );
-    precacheitem( "iw5_lsat_sp_opticsacog2" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "iw5_hbra3_sp_opticsacog2" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_opticsacog2" );
+    precacheshellshock( "iw5_bal27_sp_opticsreddot" );
+    precacheshellshock( "iw5_bal27_sp_opticsthermal" );
+    precacheshellshock( "iw5_bal27_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_ak12_sp" );
+    precacheshellshock( "iw5_ak12_sp_opticsacog2" );
+    precacheshellshock( "iw5_ak12_sp_opticsreddot" );
+    precacheshellshock( "iw5_ak12_sp_opticsthermal" );
+    precacheshellshock( "iw5_ak12_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_lsat_sp" );
+    precacheshellshock( "iw5_lsat_sp_opticsacog2" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_hbra3_sp_opticsacog2" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "fraggrenade" );
 }

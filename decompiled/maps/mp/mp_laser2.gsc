@@ -27,9 +27,6 @@ main()
     level.orbitalsupportoverridefunc = ::laser2customospfunc;
     level.orbitallaseroverridefunc = ::laser2customorbitallaserfunc;
     thread laser2customairstrike();
-    thread scriptpatchclip();
-    thread deathtriggerunderworld();
-    thread scriptinvalidcarepackagearea();
     level.anim_laserbuoy = "laser_buoy_loop";
     level.waterline_offset = 2;
     maps\mp\_water::setshallowwaterweapon( "iw5_underwater_mp" );
@@ -46,159 +43,6 @@ main()
 
     level thread handleclouds();
     thread spawnsetup();
-}
-
-deathtriggerunderworld()
-{
-    level endon( "game_ended" );
-    var_0 = spawn( "trigger_radius", ( 560, 400, -152 ), 0, 3500, 196 );
-
-    for (;;)
-    {
-        var_0 waittill( "trigger", var_1 );
-
-        if ( common_scripts\utility::array_contains( level.players, var_1 ) )
-            var_1 _meth_8051( var_1.health + 999, var_0.origin );
-    }
-}
-
-scriptpatchclip()
-{
-    thread vehiclecliproad();
-    thread clipradarbunker();
-    thread patchcliptower();
-    thread patchcliplaserroof();
-    thread patchclipbunkeroof();
-    thread patchclipfencebunker();
-    thread patchcliptowerbush();
-    thread patchpillar();
-    thread beachrockintoseam();
-}
-
-beachrockintoseam()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( 655, -1351, 196 ), ( 19.6222, 30.4879, -7.54321 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_64_64_64", ( 665, -1331, 181 ), ( 29.8983, 28.7324, -9.18216 ) );
-}
-
-patchpillar()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 67, -961, 348 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 81, -961, 348 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 81, -961, 380 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 82, -961, 412 ), ( 0, 44.998, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 65, -1013, 426 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 87, -1013, 426 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 65, -981, 426 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 87, -981, 426 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 69, -974, 425 ), ( 0, 44.998, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_32_32_32", ( 82, -961, 425 ), ( 0, 44.998, 0 ) );
-}
-
-patchcliptowerbush()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -750, 1842, 874 ), ( 0, 46, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -750, 1842, 1130 ), ( 0, 46, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -750, 1842, 1386 ), ( 0, 46, 0 ) );
-}
-
-patchclipfencebunker()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -272, 2618, 998 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -272, 2618, 742 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -176, 2549, 765 ), ( 0, 260.4, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -176, 2549, 1021 ), ( 0, 260.4, 0 ) );
-}
-
-patchclipbunkeroof()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -324, 2656, 832 ), ( 0, 170, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -674, 2718, 832 ), ( 0, 170, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -464, 2558, 832 ), ( 0, 260, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -576, 2578, 832 ), ( 0, 260, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -324, 2656, 1088 ), ( 0, 170, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -674, 2718, 1088 ), ( 0, 170, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -464, 2558, 1088 ), ( 0, 260, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -576, 2578, 1088 ), ( 0, 260, 0 ) );
-}
-
-vehiclecliproad()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 2862, 1182, 298 ), ( 274, 184, 180 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 3086, 1212, 308 ), ( 272, 194, -180 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 3314, 1286, 314 ), ( 272, 200, 180 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 3512, 1390, 320 ), ( 271.779, 248.166, 141.856 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 3713, 1516, 325 ), ( 271.485, 262.445, 132.281 ) );
-}
-
-clipradarbunker()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1317.97, 1816.02, 788 ), ( 320, 342, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1319.81, 1964.37, 788 ), ( 320, 27, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1426, 2068, 788 ), ( 320, 72, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1574.37, 2066.19, 788 ), ( 320, 117, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1678.03, 1959.98, 788 ), ( 320, 162, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1676.19, 1811.63, 788 ), ( 320, 207, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1569.98, 1707.97, 788 ), ( 320, 252, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1421.63, 1709.81, 788 ), ( 320, 297, -90 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1500, 1886, 890 ), ( 90, 0, 0 ) );
-}
-
-patchcliptower()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -946, -1218, 954 ), ( 0, 180, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -946, -1218, 1210 ), ( 0, 180, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1414, -1218, 954 ), ( 0, 180, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1414, -1218, 1210 ), ( 0, 180, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1294, -1082, 954 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1294, -1082, 1210 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1066, -1082, 954 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -1066, -1082, 1210 ), ( 0, 270, 0 ) );
-}
-
-patchcliplaserroof()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -434, 380, 802 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 418, 380, 802 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -36, 790, 846 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 38, 790, 846 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -42, -28, 846 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 32, -28, 846 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -314, 64, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -314, 320, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -314, 576, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -314, 704, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -194, 64, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -194, 320, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -194, 576, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -194, 704, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 62, 64, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 62, 320, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 62, 576, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 62, 704, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 318, 64, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 318, 320, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 318, 576, 814 ), ( 90, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 318, 704, 814 ), ( 90, 0, 0 ) );
-}
-
-scriptinvalidcarepackagearea()
-{
-    var_0 = spawn( "trigger_radius", ( -2, 393, 223 ), 0, 632, 215 );
-    var_0.targetname = "orbital_node_covered";
-    var_0.script_noteworthy = "dont_move_me";
-
-    if ( !isdefined( level.goliath_bad_landing_volumes ) )
-        level.goliath_bad_landing_volumes = [];
-
-    level.goliath_bad_landing_volumes[level.goliath_bad_landing_volumes.size] = var_0;
-    var_1 = getnodesinradiussorted( ( -2, 393, 223 ), 632, 0, 215 );
-
-    if ( var_1.size > 0 )
-    {
-        foreach ( var_3 in var_1 )
-            _func_2D6( var_3, "none" );
-    }
 }
 
 dynamicevent_init_sound()
@@ -244,12 +88,12 @@ laser2customairstrike()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 _meth_82FD( "r_tonemap", "2" );
+            var_0 setclientdvars( "r_tonemap", "2" );
         }
     }
 }
@@ -262,39 +106,92 @@ set_umbra_values()
 handleclouds()
 {
     var_0 = 122;
+    activatepersistentclientexploder( var_0 );
+    level thread handlecloudsaerialjoin();
+    level thread handlecloudsaerialleave();
+}
 
-    for (;;)
+enablecloudsexploder( var_0 )
+{
+    var_1 = 122;
+    var_2 = 0;
+    var_3 = [];
+
+    if ( isdefined( var_0 ) )
     {
-        level waittill( "connected", var_1 );
+        var_2 = 1;
+        var_3[var_3.size] = var_0;
 
-        if ( !isdefined( var_1.cloud_exploder_disabled ) )
+        if ( isdefined( var_0.disablecloudscount ) )
         {
-            common_scripts\_exploder::activate_clientside_exploder( var_0, var_1 );
-            var_1.cloud_exploder_disabled = 0;
+            var_0.disablecloudscount--;
+
+            if ( var_0.disablecloudscount <= 0 )
+                var_0.disablecloudscount = 0;
+        }
+    }
+    else
+    {
+        foreach ( var_5 in level.players )
+        {
+            if ( isdefined( var_5.disablecloudscount ) )
+            {
+                var_5.disablecloudscount--;
+
+                if ( var_5.disablecloudscount > 0 )
+                    var_2 = 1;
+                else
+                    var_5.disablecloudscount = 0;
+
+                var_3[var_3.size] = var_5;
+            }
+        }
+    }
+
+    if ( var_2 )
+        activatepersistentclientexploder( var_1, var_3 );
+    else
+        activatepersistentclientexploder( var_1 );
+}
+
+disablecloudsexploder( var_0, var_1 )
+{
+    var_2 = 122;
+    var_3 = [];
+    level thread common_scripts\_exploder::deactivate_clientside_exploder( var_2, var_0, var_1 );
+
+    if ( isdefined( var_0 ) )
+        var_3[var_3.size] = var_0;
+    else
+        var_3 = level.players;
+
+    foreach ( var_5 in var_3 )
+    {
+        if ( isdefined( var_5.disablecloudscount ) )
+        {
+            var_5.disablecloudscount++;
+            continue;
         }
 
-        var_1 thread handlecloudsplayer();
+        var_5.disablecloudscount = 1;
     }
 }
 
-handlecloudsplayer()
+handlecloudsaerialjoin()
 {
-    self endon( "disconnect" );
-    var_0 = 122;
-
     for (;;)
     {
-        self waittill( "player_start_aerial_view" );
+        level waittill( "player_start_aerial_view", var_0 );
+        level disablecloudsexploder( var_0, 1 );
+    }
+}
 
-        if ( self.cloud_exploder_disabled == 0 )
-            level thread common_scripts\_exploder::deactivate_clientside_exploder( var_0, self, 1 );
-
-        self.cloud_exploder_disabled++;
-        self waittill( "player_stop_aerial_view" );
-        self.cloud_exploder_disabled--;
-
-        if ( self.cloud_exploder_disabled == 0 )
-            common_scripts\_exploder::activate_clientside_exploder( var_0, self );
+handlecloudsaerialleave()
+{
+    for (;;)
+    {
+        level waittill( "player_stop_aerial_view", var_0 );
+        level enablecloudsexploder( var_0 );
     }
 }
 
@@ -315,11 +212,11 @@ handlepropattachments( var_0 )
         {
             if ( isdefined( var_0 ) )
             {
-                var_3 _meth_8446( var_0 );
+                var_3 vehicle_jetbikesethoverforcescale( var_0 );
                 continue;
             }
 
-            var_3 _meth_8446( self );
+            var_3 vehicle_jetbikesethoverforcescale( self );
         }
     }
 }
@@ -440,25 +337,25 @@ dynamicevent_init()
 connect_paths()
 {
     if ( isdefined( self ) )
-        self _meth_8058();
+        self connectpaths();
 }
 
 disconnect_paths()
 {
     if ( isdefined( self ) )
-        self _meth_8057();
+        self disconnectpaths();
 }
 
 connect_nodes()
 {
     if ( isdefined( self ) )
-        self _meth_805A();
+        self connectnode();
 }
 
 disconnect_nodes()
 {
     if ( isdefined( self ) )
-        self _meth_8059();
+        self disconnectnode();
 }
 
 hidegeo()
@@ -488,9 +385,9 @@ oceansinmovement( var_0 )
 
     for (;;)
     {
-        self _meth_82AE( ( 0, level.oceansinamplitude, level.oceansinamplitude ) + var_0, level.oceansinperiod / 2, level.oceansinperiod * 0.25, level.oceansinperiod * 0.25 );
+        self moveto( ( 0, level.oceansinamplitude, level.oceansinamplitude ) + var_0, level.oceansinperiod / 2, level.oceansinperiod * 0.25, level.oceansinperiod * 0.25 );
         wait(level.oceansinperiod / 2);
-        self _meth_82AE( -1 * ( 0, level.oceansinamplitude, level.oceansinamplitude ) + var_0, level.oceansinperiod / 2, level.oceansinperiod * 0.25, level.oceansinperiod * 0.25 );
+        self moveto( -1 * ( 0, level.oceansinamplitude, level.oceansinamplitude ) + var_0, level.oceansinperiod / 2, level.oceansinperiod * 0.25, level.oceansinperiod * 0.25 );
         wait(level.oceansinperiod / 2);
     }
 }
@@ -518,7 +415,7 @@ setoceansinvalueshightide()
 linktoent( var_0 )
 {
     var_1 = self;
-    var_1 _meth_8446( var_0 );
+    var_1 vehicle_jetbikesethoverforcescale( var_0 );
 }
 
 handlebuoydings( var_0, var_1 )
@@ -557,7 +454,7 @@ playbuoylights()
 playpropanim( var_0 )
 {
     wait(randomfloatrange( 0.1, 1 ));
-    self _meth_8279( var_0 );
+    self scriptmodelplayanim( var_0 );
 }
 
 oceanmover_init( var_0 )
@@ -612,30 +509,21 @@ handleendwater()
 handlemovingwater()
 {
     level endon( "game_ended" );
-    var_0 = 122;
-
-    foreach ( var_2 in level.players )
-    {
-        if ( var_2.cloud_exploder_disabled == 0 )
-            level thread common_scripts\_exploder::deactivate_clientside_exploder( var_0, var_2, 0 );
-
-        var_2.cloud_exploder_disabled++;
-    }
-
+    level disablecloudsexploder( undefined, 0 );
     level.skipoceanspawns = 1;
-    var_4 = level.ocean;
-    var_5 = getent( "tidal_wave", "targetname" );
-    var_5 show();
-    var_6 = common_scripts\utility::spawn_tag_origin();
-    var_6.targetname = "ocean_tag_origin";
-    var_6 show();
-    var_7 = getent( "lsr_tidal_wave_car", "targetname" );
-    var_8 = getent( "lsr_tidal_wave_shipping_container_closed", "targetname" );
-    var_9 = getent( "lsr_tidal_wave_shipping_container_open", "targetname" );
+    var_0 = level.ocean;
+    var_1 = getent( "tidal_wave", "targetname" );
+    var_1 show();
+    var_2 = common_scripts\utility::spawn_tag_origin();
+    var_2.targetname = "ocean_tag_origin";
+    var_2 show();
+    var_3 = getent( "lsr_tidal_wave_car", "targetname" );
+    var_4 = getent( "lsr_tidal_wave_shipping_container_closed", "targetname" );
+    var_5 = getent( "lsr_tidal_wave_shipping_container_open", "targetname" );
     create_bot_badplaces();
 
-    foreach ( var_11 in level.water_triggers )
-        var_11 thread killobjectsunderwater();
+    foreach ( var_7 in level.water_triggers )
+        var_7 thread killobjectsunderwater();
 
     level thread addposteventgeotocratebadplacearray();
     level thread killplayersusingremotestreaks();
@@ -643,56 +531,56 @@ handlemovingwater()
     level.water_warning = 1;
     level notify( "end_initial_waves" );
     thread maps\mp\mp_laser2_aud::start_rough_tide();
-    var_13 = 2;
-    earthquake( 0.3, var_13, ( 0, 0, 0 ), 5000 );
-    thread aud_dynamic_event_startup( var_13 );
+    var_9 = 2;
+    earthquake( 0.3, var_9, ( 0, 0, 0 ), 5000 );
+    thread aud_dynamic_event_startup( var_9 );
     thread play_earthquake_rumble_for_all_players( 0.75 );
     level maps\mp\_utility::delaythread( 3, ::handletsunamiwarningsounds );
-    var_14 = 26.667;
-    var_15 = 36.7;
-    var_16 = var_15;
+    var_10 = 26.667;
+    var_11 = 36.7;
+    var_12 = var_11;
 
-    if ( var_14 > var_15 )
-        var_16 = var_14;
+    if ( var_10 > var_11 )
+        var_12 = var_10;
 
-    if ( var_4.warning_time > var_16 )
-        wait(var_4.warning_time - var_16);
+    if ( var_0.warning_time > var_12 )
+        wait(var_0.warning_time - var_12);
     else
         wait 2;
 
-    var_5 thread tidal_wave_notetracks();
-    var_5 _meth_827B( "lsr_tidal_wave_mesh_anim", "tidal_wave_notetrack" );
-    var_4 _meth_804D( var_6 );
-    var_6 _meth_827B( "lsr_tidal_wave_ocean_anim" );
+    var_1 thread tidal_wave_notetracks();
+    var_1 scriptmodelplayanimdeltamotion( "lsr_tidal_wave_mesh_anim", "tidal_wave_notetrack" );
+    var_0 linkto( var_2 );
+    var_2 scriptmodelplayanimdeltamotion( "lsr_tidal_wave_ocean_anim" );
 
-    if ( isdefined( var_7 ) )
-        var_7 _meth_827B( "lsr_tidal_wave_car" );
+    if ( isdefined( var_3 ) )
+        var_3 scriptmodelplayanimdeltamotion( "lsr_tidal_wave_car" );
 
-    var_8 _meth_827B( "lsr_tidal_wave_shipping_container_closed" );
-    var_9 _meth_827B( "lsr_tidal_wave_shipping_container_open" );
+    var_4 scriptmodelplayanimdeltamotion( "lsr_tidal_wave_shipping_container_closed" );
+    var_5 scriptmodelplayanimdeltamotion( "lsr_tidal_wave_shipping_container_open" );
 
-    foreach ( var_18 in level.moving_buoys )
+    foreach ( var_14 in level.moving_buoys )
     {
-        if ( isdefined( var_18.animation ) )
+        if ( isdefined( var_14.animation ) )
         {
-            var_18 _meth_827A();
-            var_18 _meth_804F();
-            var_18 _meth_827B( var_18.animation );
-            var_18 thread playbuoylights();
-            var_18 maps\mp\_utility::delaythread( var_15, ::buoys_return_to_bobbing );
+            var_14 scriptmodelclearanim();
+            var_14 unlink();
+            var_14 scriptmodelplayanimdeltamotion( var_14.animation );
+            var_14 thread playbuoylights();
+            var_14 maps\mp\_utility::delaythread( var_11, ::buoys_return_to_bobbing );
         }
     }
 
-    level maps\mp\_utility::delaythread( var_14 - 3, ::stop_water_warning );
-    level maps\mp\_utility::delaythread( var_14 - 2.9, ::play_earthquake_rumble_for_all_players, 0.75 );
-    var_5 common_scripts\utility::delaycall( var_14, ::hide );
-    var_6 common_scripts\utility::delaycall( var_15, ::hide );
-    var_4 common_scripts\utility::delaycall( var_15, ::_meth_804F );
-    wait(var_16);
-    var_20 = getnodearray( "water_nodes", "targetname" );
+    level maps\mp\_utility::delaythread( var_10 - 3, ::stop_water_warning );
+    level maps\mp\_utility::delaythread( var_10 - 2.9, ::play_earthquake_rumble_for_all_players, 0.75 );
+    var_1 common_scripts\utility::delaycall( var_10, ::hide );
+    var_2 common_scripts\utility::delaycall( var_11, ::hide );
+    var_0 common_scripts\utility::delaycall( var_11, ::unlink );
+    wait(var_12);
+    var_16 = getnodearray( "water_nodes", "targetname" );
 
-    foreach ( var_22 in var_20 )
-        _func_2C0( var_22, 1 );
+    foreach ( var_18 in var_16 )
+        nodesetnotusable( var_18, 1 );
 
     delete_bot_badplaces();
     level.skipoceanspawns = 0;
@@ -734,7 +622,7 @@ killobjectsunderwater()
         {
             foreach ( var_1 in level.turrets )
             {
-                if ( var_1 _meth_80A9( self ) )
+                if ( var_1 istouching( self ) )
                     var_1 notify( "death" );
             }
         }
@@ -743,7 +631,7 @@ killobjectsunderwater()
         {
             foreach ( var_4 in level.carepackages )
             {
-                if ( isdefined( var_4 ) && !_func_294( var_4 ) && var_4 iscarepackageinposteventgeo() )
+                if ( isdefined( var_4 ) && !isremovedentity( var_4 ) && var_4 iscarepackageinposteventgeo() )
                 {
                     if ( isdefined( var_4.cratetype ) && var_4.cratetype != "juggernaut" )
                     {
@@ -767,7 +655,7 @@ iscarepackageinposteventgeo()
     {
         foreach ( var_1 in level.drop_pod_bad_places )
         {
-            if ( _func_22A( self.origin, var_1 ) )
+            if ( ispointinvolume( self.origin, var_1 ) )
                 return 1;
         }
     }
@@ -805,9 +693,9 @@ killplayersusingremotestreaks()
 buoys_return_to_bobbing()
 {
     linktoent( level.ocean );
-    self _meth_827A();
+    self scriptmodelclearanim();
     wait(randomfloatrange( 0.1, 1 ));
-    self _meth_8279( level.anim_laserbuoy );
+    self scriptmodelplayanim( level.anim_laserbuoy );
     thread playbuoylights();
 }
 
@@ -824,7 +712,7 @@ play_earthquake_rumble( var_0 )
 
     for ( var_1 = var_0 * 20; var_1 >= 0; var_1 -= 2 )
     {
-        self _meth_80AD( "damage_light" );
+        self playrumbleonentity( "damage_light" );
         wait 0.1;
     }
 }
@@ -888,18 +776,7 @@ event_fx()
     thread maps\mp\mp_laser2_fx::playoceanfoam( "tidal_wave_lingering_foam1", 8 );
     wait 1.0;
     level thread common_scripts\_exploder::activate_clientside_exploder( 121 );
-    var_0 = 122;
-
-    foreach ( var_2 in level.players )
-    {
-        if ( var_2.cloud_exploder_disabled > 0 )
-        {
-            var_2.cloud_exploder_disabled--;
-
-            if ( var_2.cloud_exploder_disabled == 0 )
-                common_scripts\_exploder::activate_clientside_exploder( var_0, var_2 );
-        }
-    }
+    level enablecloudsexploder();
 }
 
 event_killtriggers()
@@ -1092,20 +969,20 @@ isvalidspawn()
 spinalarmsstart()
 {
     self show();
-    self _meth_82BD( ( 0, 600, 0 ), 12 );
-    var_0 = _func_231( "tsunami_alarm", "targetname" );
+    self rotatevelocity( ( 0, 600, 0 ), 12 );
+    var_0 = getscriptablearray( "tsunami_alarm", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "static_part", "siren_on" );
+        var_2 setscriptablepartstate( "static_part", "siren_on" );
 }
 
 spinalarmsstop()
 {
     self hide();
-    var_0 = _func_231( "tsunami_alarm", "targetname" );
+    var_0 = getscriptablearray( "tsunami_alarm", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "static_part", "siren_off" );
+        var_2 setscriptablepartstate( "static_part", "siren_off" );
 }
 
 aud_init()
@@ -1151,10 +1028,10 @@ aud_handle_wave_incoming()
 {
     var_0 = thread maps\mp\_audio::snd_play_loop_in_space( "mp_laser2_ty_quake_lp", ( 79, -1591, 455 ), "aud_dynamic_event_end" );
     thread aud_handle_waves_crash();
-    var_0 _meth_806F( 0, 0.05 );
+    var_0 scalevolume( 0, 0.05 );
     wait 16.5;
     thread aud_handle_incoming();
-    var_0 _meth_806F( 0.8, 8 );
+    var_0 scalevolume( 0.8, 8 );
 }
 
 aud_handle_incoming()
@@ -1177,7 +1054,7 @@ aud_handle_waves_crash()
 
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_84D8( "mp_pre_event_mix" );
+        var_1 clientclearsoundsubmix( "mp_pre_event_mix" );
         wait 0.05;
     }
 
@@ -1185,7 +1062,7 @@ aud_handle_waves_crash()
 
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_84D7( "mp_post_event_mix", 1 );
+        var_1 clientaddsoundsubmix( "mp_post_event_mix", 1 );
         wait 0.05;
     }
 }

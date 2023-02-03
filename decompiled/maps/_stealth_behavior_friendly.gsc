@@ -29,10 +29,10 @@ friendly_state_spotted()
         self.grenadeammo = 3;
 
     self.ignoreme = 0;
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     maps\_utility::disable_cqbwalk();
     thread friendly_spotted_getup_from_prone();
-    self _meth_81CA( "prone", "crouch", "stand" );
+    self allowedstances( "prone", "crouch", "stand" );
 
     if ( self.type != "dog" || !isdefined( self.in_melee ) || !self.in_melee )
         maps\_utility::anim_stopanimscripted();
@@ -49,7 +49,7 @@ friendly_spotted_getup_from_prone( var_0 )
     var_1 = "_stealth_prone_2_run_roll";
 
     if ( isdefined( var_0 ) )
-        self _meth_818F( "face angle", var_0[1] + 20 );
+        self orientmode( "face angle", var_0[1] + 20 );
 
     thread maps\_stealth_shared_utilities::stealth_anim_custom_animmode( self, "gravity", var_1 );
     var_2 = getanimlength( maps\_utility::getanim_generic( var_1 ) );

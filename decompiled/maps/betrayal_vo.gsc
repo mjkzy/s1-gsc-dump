@@ -195,7 +195,7 @@ stop_vo_on_entity( var_0, var_1 )
     if ( isdefined( self.function_stack ) )
         maps\_utility::function_stack_clear();
 
-    self _meth_80AC();
+    self stopsounds();
 }
 
 stop_vo_on_radio( var_0, var_1 )
@@ -240,14 +240,14 @@ play_dialogue_office_block_baghdad()
 {
     common_scripts\utility::flag_wait( "flag_dialogue_office_baghdad" );
     var_0 = getent( "intro_gideon_city_lookat", "targetname" );
-    level.gideon _meth_81FF( var_0 );
+    level.gideon setlookatentity( var_0 );
     common_scripts\utility::delay_script_call( 5, ::gideon_look_off );
     level.gideon maps\_utility::dialogue_queue( "bet_gdn_hardtobelievethisis" );
 }
 
 gideon_look_off()
 {
-    level.gideon _meth_81FF();
+    level.gideon setlookatentity();
 }
 
 play_dialogue_office_block_kva()

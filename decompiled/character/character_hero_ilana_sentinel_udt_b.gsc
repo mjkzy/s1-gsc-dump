@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "body_ilana_sentinel_udt_dry" );
+    self setmodel( "body_ilana_sentinel_udt_dry" );
     self attach( "head_hero_ilana_blend", "", 1 );
     self.headmodel = "head_hero_ilana_blend";
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

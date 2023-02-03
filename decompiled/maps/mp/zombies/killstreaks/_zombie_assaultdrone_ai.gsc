@@ -19,9 +19,9 @@ aistartusingassaultvehicle( var_0 )
 assault_vehicle_ai_aerial_movement_zombies( var_0 )
 {
     self endon( "death" );
-    self _meth_8253( 100, 30, 5 );
-    var_1 = self _meth_84AD();
-    self _meth_8283( var_1, 8, 60 );
+    self sethoverparams( 100, 30, 5 );
+    var_1 = self vehicle_gettopspeed();
+    self vehicle_setspeed( var_1, 8, 60 );
 
     for (;;)
     {
@@ -45,7 +45,7 @@ assault_vehicle_ai_travel( var_0 )
 
     for (;;)
     {
-        self _meth_83F9( var_2, var_1 );
+        self setdronegoalpos( var_2, var_1 );
         wait 1;
     }
 }
@@ -85,9 +85,9 @@ assault_vehicle_ai_aerial_movement()
     self notify( "assault_vehicle_ai_aerial_movement" );
     self endon( "assault_vehicle_ai_aerial_movement" );
     self endon( "death" );
-    var_0 = self _meth_84AD();
-    self _meth_8283( var_0, 8, 60 );
-    self _meth_8253( 0, 0, 0 );
+    var_0 = self vehicle_gettopspeed();
+    self vehicle_setspeed( var_0, 8, 60 );
+    self sethoverparams( 0, 0, 0 );
     var_1 = undefined;
     var_2 = assault_vehicle_ai_get_nearest_node();
 
@@ -105,7 +105,7 @@ assault_vehicle_ai_aerial_movement()
     }
 
     if ( maps\mp\_aerial_pathnodes::node_is_aerial( var_3 ) )
-        var_1 = _func_200( self.origin, var_3.origin, 1, var_2 );
+        var_1 = getnodesonpath( self.origin, var_3.origin, 1, var_2 );
 
     if ( !isdefined( var_1 ) )
     {
@@ -118,7 +118,7 @@ assault_vehicle_ai_aerial_movement()
 
             if ( isdefined( var_7 ) )
             {
-                var_1 = _func_200( self.origin, var_7.origin, 1, var_2 );
+                var_1 = getnodesonpath( self.origin, var_7.origin, 1, var_2 );
 
                 if ( !isdefined( var_1 ) )
                     var_6 = distance( self.origin, var_7.origin ) + 1;
@@ -155,7 +155,7 @@ assault_vehicle_ai_aerial_follow_path_outside( var_0 )
         assault_vehicle_ai_air_movement_func( var_3.origin + var_1 );
         var_4 = 0;
 
-        while ( _func_220( var_3.origin, self.origin ) > squared( 24.0 ) )
+        while ( distance2dsquared( var_3.origin, self.origin ) > squared( 24.0 ) )
         {
             var_4 += 0.05;
 
@@ -185,13 +185,13 @@ assault_vehicle_ai_aerial_pathing_turret( var_0 )
 {
     var_1 = var_0;
     var_2 = [];
-    var_2[var_1 _meth_8381()] = 1;
+    var_2[var_1 getnodenumber()] = 1;
 
     for (;;)
     {
         var_1 = assault_vehicle_ai_pick_aerial_node( var_1, var_2 );
         assault_vehicle_ai_move_to_aerial_node( var_1 );
-        var_3 = var_1 _meth_8381();
+        var_3 = var_1 getnodenumber();
 
         if ( !isdefined( var_2[var_3] ) )
             var_2[var_3] = 0;
@@ -221,10 +221,10 @@ assault_vehicle_ai_aerial_pathing_c4()
 
         if ( assault_vehicle_ai_enemy_exists_and_is_alive() )
         {
-            if ( !assault_vehicle_ai_enemy_moved_air( var_0 ) || _func_220( self.origin, self.enemy_target.origin ) < squared( 200 ) )
+            if ( !assault_vehicle_ai_enemy_moved_air( var_0 ) || distance2dsquared( self.origin, self.enemy_target.origin ) < squared( 200 ) )
             {
                 var_3 = self.enemy_target.origin + ( 0, 0, 40 );
-                self _meth_825B( var_3, 1 );
+                self setvehgoalpos( var_3, 1 );
 
                 while ( assault_vehicle_ai_enemy_exists_and_is_alive() && distancesquared( var_3, self.origin ) > squared( 24.0 ) )
                     wait 0.05;
@@ -246,7 +246,7 @@ assault_vehicle_ai_pick_aerial_node( var_0, var_1 )
 
     foreach ( var_6 in var_4 )
     {
-        var_7 = var_6 _meth_8381();
+        var_7 = var_6 getnodenumber();
         var_8 = var_1[var_7];
 
         if ( !isdefined( var_8 ) )
@@ -311,7 +311,7 @@ assault_vehicle_ai_ground_movement_loop( var_0, var_1 )
 
             while ( !isdefined( var_3 ) && var_5 < 20 )
             {
-                var_3 = _func_287( self.origin, self.angles );
+                var_3 = getrandomnodedestination( self.origin, self.angles );
 
                 if ( isdefined( var_3 ) )
                 {
@@ -333,7 +333,7 @@ assault_vehicle_ai_ground_movement_loop( var_0, var_1 )
             if ( !isdefined( var_6 ) )
                 return;
 
-            var_7 = _func_200( self.origin, var_4, 0, var_6 );
+            var_7 = getnodesonpath( self.origin, var_4, 0, var_6 );
 
             if ( isdefined( var_7 ) )
                 assault_vehicle_ai_follow_path( var_7, var_0, var_1 );
@@ -347,7 +347,7 @@ assault_vehicle_ai_ground_movement_loop( var_0, var_1 )
 
 assault_vehicle_ai_get_camera_position()
 {
-    var_0 = self _meth_84F9();
+    var_0 = self vehicleget3pcameraoffset();
     var_1 = self.origin + rotatevector( var_0, self.angles );
     return var_1;
 }
@@ -379,7 +379,7 @@ assault_vehicle_ai_threat()
 
         foreach ( var_5 in var_3 )
         {
-            if ( isalive( var_5 ) && !_func_285( self, var_5 ) && self.owner != var_5 )
+            if ( isalive( var_5 ) && !isalliedsentient( self, var_5 ) && self.owner != var_5 )
             {
                 if ( var_5 maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
                     continue;
@@ -393,14 +393,14 @@ assault_vehicle_ai_threat()
 
                 if ( isdefined( var_5.lastshotfiredtime ) && gettime() - var_5.lastshotfiredtime < 3.0 )
                     var_6 = 1;
-                else if ( _func_178( self.team ) > getuavstrengthlevelneutral() )
+                else if ( getteamradarstrength( self.team ) > getuavstrengthlevelneutral() )
                     var_6 = 1;
                 else if ( sighttracepassed( var_7, var_8, 0, self, var_5 ) )
                     var_6 = 1;
 
                 if ( var_6 && self.hasturret )
                 {
-                    var_9 = self _meth_84FA();
+                    var_9 = self vehicleget3ppitchclamp();
                     var_10 = var_8 - var_7;
                     var_11 = vectortoangles( var_10 );
                     var_12 = angleclamp180( var_11[0] );
@@ -486,7 +486,7 @@ assault_vehicle_ai_weapons( var_0 )
                     else
                         var_5 = self.angles[1] + var_4 * var_3 / abs( var_3 );
 
-                    self _meth_827C( self.origin, ( var_2[0], var_5, var_2[2] ), 1, 1, 1 );
+                    self vehicle_teleport( self.origin, ( var_2[0], var_5, var_2[2] ), 1, 1, 1 );
 
                     if ( self.initial_enemy_target )
                     {
@@ -509,7 +509,7 @@ assault_vehicle_ai_weapons( var_0 )
 
                     var_8 = self.targetent.origin - var_7;
                     var_9 = vectortoangles( var_8 );
-                    var_10 = self _meth_84FA();
+                    var_10 = self vehicleget3ppitchclamp();
                     var_11 = angleclamp180( var_9[0] );
                     var_12 = var_11 < var_10 && var_11 > -1 * var_10;
                     var_13 = vectornormalize( anglestoforward( self.angles ) * ( 1, 1, 0 ) );
@@ -531,7 +531,7 @@ assault_vehicle_ai_weapons( var_0 )
                             }
                         }
                         else if ( self.hasmg )
-                            self.mgturret _meth_80EA();
+                            self.mgturret shootturret();
                         else if ( !self.hasturret )
                         {
                             if ( sighttracepassed( var_7, self.targetent.origin, 0, self, self.enemy_target ) )
@@ -547,7 +547,7 @@ assault_vehicle_ai_weapons( var_0 )
                 if ( self.hasmg )
                 {
                     if ( isdefined( self.fire_at_dead_time ) && gettime() < self.fire_at_dead_time )
-                        self.mgturret _meth_80EA();
+                        self.mgturret shootturret();
                 }
             }
         }
@@ -602,7 +602,7 @@ assault_vehicle_ai_follow_path( var_0, var_1, var_2, var_3 )
         self [[ var_1 ]]( var_6.origin + var_4 );
         var_7 = 0;
 
-        while ( _func_220( var_6.origin, self.origin ) > squared( 24.0 ) )
+        while ( distance2dsquared( var_6.origin, self.origin ) > squared( 24.0 ) )
         {
             var_7 += 0.05;
             var_8 = var_7 > assault_vehicle_ai_path_timeout_time();
@@ -646,5 +646,5 @@ assault_vehicle_ai_path_timeout_time()
 
 assault_vehicle_ai_air_movement_func( var_0 )
 {
-    self _meth_825B( var_0, 1 );
+    self setvehgoalpos( var_0, 1 );
 }

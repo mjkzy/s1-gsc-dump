@@ -107,7 +107,7 @@ breathingmanager( var_0, var_1, var_2, var_3 )
     {
         if ( !maps\mp\killstreaks\_juggernaut::get_is_in_mech() )
         {
-            if ( self _meth_843A() )
+            if ( self hasfemalecustomizationmodel() )
                 self playlocalsound( "deaths_door_exit_female" );
             else
                 self playlocalsound( "deaths_door_exit" );
@@ -135,12 +135,12 @@ playdamagesound( var_0 )
     {
         if ( self.team == "axis" )
         {
-            if ( self _meth_843A() )
+            if ( self hasfemalecustomizationmodel() )
                 self playsound( "generic_pain_enemy_fm_" + var_1 );
             else
                 self playsound( "generic_pain_enemy_" + var_1 );
         }
-        else if ( self _meth_843A() )
+        else if ( self hasfemalecustomizationmodel() )
             self playsound( "generic_pain_friendly_fm_" + var_1 );
         else
             self playsound( "generic_pain_friendly_" + var_1 );
@@ -273,7 +273,7 @@ playerpainbreathingsound()
 
         if ( !maps\mp\killstreaks\_juggernaut::get_is_in_mech() )
         {
-            if ( self _meth_843A() )
+            if ( self hasfemalecustomizationmodel() )
                 self playlocalsound( "deaths_door_mp_female" );
             else
                 self playlocalsound( "deaths_door_mp_male" );

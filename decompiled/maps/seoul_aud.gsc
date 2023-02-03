@@ -279,7 +279,7 @@ launch_loops()
 
 launch_intro_building_descend_fob_loops()
 {
-    if ( level.currentgen && ( !_func_21E( "seoul_intro_building_descend_tr" ) || !_func_21E( "seoul_fob_tr" ) ) )
+    if ( level.currentgen && ( !istransientloaded( "seoul_intro_building_descend_tr" ) || !istransientloaded( "seoul_fob_tr" ) ) )
         level common_scripts\utility::waittill_any( "transients_intro", "transients_intro_to_fob" );
 
     soundscripts\_snd_playsound::snd_play_loop_at( "emt_seo_fire_medium_intro", ( 36063, 10603, 4356 ), "stop_intro_fire_emitters" );
@@ -346,7 +346,7 @@ launch_intro_building_descend_fob_loops()
 
 launch_truck_puch_trans_loops()
 {
-    if ( level.currentgen && !_func_21E( "seoul_truck_push_trans_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_truck_push_trans_tr" ) )
         level waittill( "transients_drone_seq_one_to_truck_push" );
 
     soundscripts\_snd_playsound::snd_play_loop_at( "emt_seo_smartglass_glitchy", ( 25201, 11941, 1833 ), "stop_mall_electronic_emitters" );
@@ -360,7 +360,7 @@ launch_truck_puch_trans_loops()
 
 launch_mall_offices_loops()
 {
-    if ( level.currentgen && !_func_21E( "seoul_mall_offices_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_mall_offices_tr" ) )
         level waittill( "transients_truck_push_to_mall_office" );
 
     soundscripts\_snd_playsound::snd_play_loop_at( "emt_seo_steam", ( 25231, 14575, 1764 ), "stop_steam_emitters" );
@@ -374,7 +374,7 @@ launch_mall_offices_loops()
 
 launch_sinkhole_subway_loops()
 {
-    if ( level.currentgen && !_func_21E( "seoul_sinkhole_subway_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_sinkhole_subway_tr" ) )
         level waittill( "transients_mall_office_to_sinkhole_subway" );
 
     soundscripts\_snd_playsound::snd_play_loop_at( "emt_seo_smartglass_glitchy", ( 22118, 15809, 920 ), "stop_subway_electronic_emitters" );
@@ -394,7 +394,7 @@ launch_sinkhole_subway_loops()
 
 launch_riverwalk_loops()
 {
-    if ( level.currentgen && !_func_21E( "seoul_riverwalk_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_riverwalk_tr" ) )
         level waittill( "transients_canal_overlook_to_riverwalk" );
 
     soundscripts\_snd_playsound::snd_play_loop_at( "emt_seo_waterfall_fountain", ( 14237, 17799, 1338 ), "stop_water_emitters" );
@@ -643,7 +643,7 @@ play_hotel_exit_adaptive_music( var_0 )
     {
         var_11 = distance2d( level.player.origin, var_6 );
         var_12 = soundscripts\_snd::snd_map( var_11, var_9 );
-        var_15 _meth_806F( var_12, var_5 );
+        var_15 scalevolume( var_12, var_5 );
         var_16 = soundscripts\_snd::snd_map( var_11, var_10 );
         soundscripts\_audio::aud_set_music_submix( var_16, var_5 );
         wait(var_5);
@@ -1379,7 +1379,7 @@ hotel_razorback_approach()
     var_0 = ( 37198, 7604, 4747 );
     var_1 = ( 36801, 9652, 4661 );
     var_2 = soundscripts\_snd_playsound::snd_play_at( "seo_vista_razor_approach", var_0 );
-    var_2 _meth_82AE( var_1, 3.5 );
+    var_2 moveto( var_1, 3.5 );
 }
 
 hotel_razorback_fly_by()
@@ -1443,7 +1443,7 @@ setup_fall_cloth_floey()
     var_0 = level.player soundscripts\_snd_playsound::snd_play_loop_linked( "seo_hotel_falling_foley_lp", "aud_stop_foley_fall_watch", 0.2, 0.3 );
     thread stop_fall_foley_audio( var_0 );
     wait 0.05;
-    var_0 _meth_806F( 0, 0.05 );
+    var_0 scalevolume( 0, 0.05 );
     wait 0.05;
 
     for (;;)
@@ -1452,7 +1452,7 @@ setup_fall_cloth_floey()
         var_2 = soundscripts\_snd::snd_map( var_1, level.aud.envs["player_fall_foley"] );
 
         if ( isdefined( var_0 ) )
-            var_0 _meth_806F( var_2, 0.1 );
+            var_0 scalevolume( var_2, 0.1 );
 
         wait 0.05;
     }
@@ -1461,7 +1461,7 @@ setup_fall_cloth_floey()
 stop_fall_foley_audio( var_0 )
 {
     level waittill( "aud_stop_foley_fall_watch" );
-    var_0 _meth_80AC();
+    var_0 stopsounds();
 }
 
 landassist_jump_cormack_walkback( var_0 )
@@ -1722,7 +1722,7 @@ walker_step_over()
     thread walker_explode();
     soundscripts\_audio_mix_manager::mm_clear_submix( "seoul_fob" );
     soundscripts\_audio_mix_manager::mm_add_submix( "seoul_bus_battle" );
-    _func_2B5( 1000, 500, 500, 500, 3, 5 );
+    changewhizbyautosimparams( 1000, 500, 500, 500, 3, 5 );
     var_0 = self;
     soundscripts\_audio_mix_manager::mm_add_submix( "seoul_walker_step_over" );
     wait 15;
@@ -1874,7 +1874,7 @@ player_enter_walker_anim()
     wait 2;
     level.aud.in_turret = 1;
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "bullet_metal_vehicle" );
-    _func_2B5( 0, 0, 0, 0, -2, 2 );
+    changewhizbyautosimparams( 0, 0, 0, 0, -2, 2 );
 }
 
 cherry_picker_target_add()
@@ -1900,7 +1900,7 @@ player_exit_walker_anim()
     soundscripts\_snd_playsound::snd_play_2d( "x4walker_player_exit" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "seo_turret_drone_sequence" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "bullet_metal_vehicle" );
-    _func_2B5( 0, 0, 0, 0, 1, 1 );
+    changewhizbyautosimparams( 0, 0, 0, 0, 1, 1 );
 }
 
 seo_swarm_emp_wave()
@@ -1931,7 +1931,7 @@ seo_hotel_ent_wp_takeoff()
 seo_zipline_harpoon_fire( var_0, var_1, var_2 )
 {
     var_3 = soundscripts\_snd_playsound::snd_play_at( "seo_npc_zipline_shot", var_0 );
-    var_3 _meth_82AE( var_1, var_2 );
+    var_3 moveto( var_1, var_2 );
 }
 
 seo_zipline_harpoon_impact( var_0 )
@@ -2219,7 +2219,7 @@ binocs_put_away()
 {
     soundscripts\_snd_playsound::snd_play_2d( "seo_binocs_put_away" );
     soundscripts\_audio_mix_manager::mm_add_submix( "seo_canal_combat", 0.05 );
-    _func_2B5( 1000, 500, 500, 500, 5, 7 );
+    changewhizbyautosimparams( 1000, 500, 500, 500, 5, 7 );
     soundscripts\_audio_mix_manager::mm_clear_submix( "seo_havoc_mix_management" );
 }
 
@@ -2281,7 +2281,7 @@ canal_jet_flyover()
 
 seo_canal_razorback()
 {
-    if ( level.currentgen && !_func_21E( "seoul_riverwalk_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_riverwalk_tr" ) )
         level waittill( "transients_canal_overlook_to_riverwalk" );
 
     var_0 = level.canal_razorback;
@@ -2319,7 +2319,7 @@ timed_charges_vo()
 seo_finale_start()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "seo_finale", 5 );
-    _func_2B5( 0, 0, 0, 0, 1, 1 );
+    changewhizbyautosimparams( 0, 0, 0, 0, 1, 1 );
 }
 
 setup_finale_anims()
@@ -2480,7 +2480,7 @@ seo_finale_player_lands( var_0 )
 
 seo_finale_player_bounces( var_0 )
 {
-    if ( level.currentgen && !_func_21E( "seoul_riverwalk_tr" ) )
+    if ( level.currentgen && !istransientloaded( "seoul_riverwalk_tr" ) )
         level waittill( "transients_canal_overlook_to_riverwalk" );
 
     soundscripts\_snd_playsound::snd_play_2d( "seo_finale_plyr_roll" );

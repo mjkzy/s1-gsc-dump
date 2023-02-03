@@ -25,7 +25,7 @@ flashrumbleloop( var_0 )
 
     while ( gettime() < var_1 )
     {
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         wait 0.05;
     }
 }
@@ -112,7 +112,7 @@ monitorflash()
                 var_4 thread maps\mp\gametypes\_damagefeedback::updatedamagefeedback( "flash" );
                 var_11 = self;
 
-                if ( isplayer( var_4 ) && var_4 _meth_8221( "specialty_paint" ) && var_4 maps\mp\_utility::_hasperk( "specialty_paint" ) )
+                if ( isplayer( var_4 ) && var_4 isitemunlocked( "specialty_paint" ) && var_4 maps\mp\_utility::_hasperk( "specialty_paint" ) )
                 {
                     if ( !var_11 maps\mp\perks\_perkfunctions::ispainted() )
                         var_4 maps\mp\gametypes\_missions::processchallenge( "ch_paint_pro" );

@@ -9,12 +9,12 @@ main()
     init_vo_flags();
     init_lighting_flags();
     setup_start_points();
-    _func_0D3( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
         maps\_utility::tff_sync_setup();
     }
 
@@ -75,7 +75,7 @@ betrayal_intro_screen()
 
 precache_main()
 {
-    precacheitem( "flash_grenade" );
+    precacheshellshock( "flash_grenade" );
     precachestring( &"BETRAYAL_OBJ_FOLLOW_GIDEON" );
     precachestring( &"BETRAYAL_OBJ_ESCAPE_ATLAS" );
     precachestring( &"BETRAYAL_OBJ_FOLLOW_ILONA" );
@@ -113,12 +113,12 @@ precache_main()
     precachemodel( "ma_cup_single_closed" );
     precachemodel( "deployable_cover" );
     precachemodel( "vehicle_mobile_cover" );
-    precacheitem( "iw5_mahemcustombetrayalboatdive_sp" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_unarmed_nullattach" );
-    precacheitem( "betrayal_missile_small_harass" );
-    precacheitem( "betrayal_missile_small_lethal" );
-    precacheitem( "iw5_sn6_sp" );
+    precacheshellshock( "iw5_mahemcustombetrayalboatdive_sp" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_unarmed_nullattach" );
+    precacheshellshock( "betrayal_missile_small_harass" );
+    precacheshellshock( "betrayal_missile_small_lethal" );
+    precacheshellshock( "iw5_sn6_sp" );
     precachemodel( "npc_flash_grenade" );
     precachemodel( "irons_casual_nogun" );
     precachemodel( "npc_mp443_nocamo" );
@@ -129,7 +129,7 @@ precache_main()
     precachemodel( "irons_casual_cloaktrans" );
     precacheshader( "overlay_static" );
     precachemodel( "btr_sewer_cover_01_rig" );
-    precacheitem( "javelin" );
+    precacheshellshock( "javelin" );
     precachemodel( "vm_grapple_launcher_base_lodvm" );
     precachemodel( "viewbody_atlas_military_smp_grapple" );
     precachemodel( "ilana_atlas_pmc_launcher" );
@@ -398,10 +398,10 @@ player_boat_dive( var_0 )
     if ( common_scripts\utility::flag( "missionfailed" ) )
         return 1;
 
-    if ( level.player _meth_83DE() )
+    if ( level.player jumpbuttonpressed() )
         return 1;
 
-    if ( isdefined( var_0 ) && !level.player _meth_80A9( var_0 ) )
+    if ( isdefined( var_0 ) && !level.player istouching( var_0 ) )
         return 1;
 
     return 0;
@@ -514,7 +514,7 @@ player_moved_forward()
 
 leaving_mission_area_while_in_trig( var_0 )
 {
-    if ( isdefined( var_0 ) && !level.player _meth_80A9( var_0 ) )
+    if ( isdefined( var_0 ) && !level.player istouching( var_0 ) )
         return 1;
     else
         return 0;
@@ -532,7 +532,7 @@ player_used_grapple()
 
     foreach ( var_2 in var_0 )
     {
-        if ( !level.player _meth_80A9( var_2 ) )
+        if ( !level.player istouching( var_2 ) )
             return 1;
     }
 
@@ -603,20 +603,20 @@ tff_cleanup_canal_boats()
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) && var_2 maps\_vehicle::isvehicle() )
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) && var_2 maps\_vehicle::isvehicle() )
             var_2 delete();
     }
 }
 
 setup_tff_transitions()
 {
-    if ( !_func_21E( "betrayal_old_town_tr" ) )
+    if ( !istransientloaded( "betrayal_old_town_tr" ) )
         thread tff_trans_atlas_building_to_old_town();
 
-    if ( !_func_21E( "betrayal_canals_tr" ) )
+    if ( !istransientloaded( "betrayal_canals_tr" ) )
         thread tff_trans_old_town_to_canals();
 
-    if ( !_func_21E( "betrayal_finale_tr" ) )
+    if ( !istransientloaded( "betrayal_finale_tr" ) )
         thread tff_trans_canals_to_finale();
 }
 
@@ -624,10 +624,10 @@ tff_trans_atlas_building_to_old_town()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_atlas_building_to_old_town" );
     level notify( "tff_pre_atlas_building_to_old_town" );
-    _func_219( "betrayal_atlas_building_tr" );
-    _func_218( "betrayal_old_town_tr" );
+    unloadtransient( "betrayal_atlas_building_tr" );
+    loadtransient( "betrayal_old_town_tr" );
 
-    while ( !_func_21E( "betrayal_old_town_tr" ) )
+    while ( !istransientloaded( "betrayal_old_town_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_atlas_building_to_old_town" );
@@ -637,10 +637,10 @@ tff_trans_old_town_to_canals()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_old_town_to_canals" );
     level notify( "tff_pre_old_town_to_canals" );
-    _func_219( "betrayal_old_town_tr" );
-    _func_218( "betrayal_canals_tr" );
+    unloadtransient( "betrayal_old_town_tr" );
+    loadtransient( "betrayal_canals_tr" );
 
-    while ( !_func_21E( "betrayal_canals_tr" ) )
+    while ( !istransientloaded( "betrayal_canals_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_old_town_to_canals" );
@@ -650,10 +650,10 @@ tff_trans_canals_to_finale()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_canals_to_finale" );
     level notify( "tff_pre_canals_to_finale" );
-    _func_219( "betrayal_canals_tr" );
-    _func_218( "betrayal_finale_tr" );
+    unloadtransient( "betrayal_canals_tr" );
+    loadtransient( "betrayal_finale_tr" );
 
-    while ( !_func_21E( "betrayal_finale_tr" ) )
+    while ( !istransientloaded( "betrayal_finale_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_canals_to_finale" );
@@ -1166,12 +1166,12 @@ objectives()
         common_scripts\utility::flag_wait( "flag_objective_climb_start" );
         common_scripts\utility::run_thread_on_targetname( "trigger_objective_climb_update_position", ::objective_trigger_path_objective_updates, "Climb", "flag_objective_climb_start_crane", &"BETRAYAL_OBJ_CLIMB_EXTRACTION" );
         common_scripts\utility::flag_wait( "flag_objective_climb_start_crane" );
-        _func_0D3( "compass", "0" );
+        setsaveddvar( "compass", "0" );
         common_scripts\utility::flag_wait( "flag_climb_player_started_moving" );
         var_0 = maps\betrayal_util::get_ent_by_targetname( "origin_button_crane_dismount" );
         objective_position( maps\_utility::obj( "Climb" ), var_0.origin );
         objective_setpointertextoverride( maps\_utility::obj( "Climb" ), &"BETRAYAL_MANTLE" );
-        _func_0D3( "compass", "1" );
+        setsaveddvar( "compass", "1" );
         common_scripts\utility::flag_wait( "flag_objective_climb_complete" );
         maps\_utility::objective_complete( maps\_utility::obj( "Climb" ) );
     }
@@ -1208,7 +1208,7 @@ objective_trigger_path_objective_updates( var_0, var_1, var_2 )
 
         if ( isdefined( self.script_flag_wait ) )
         {
-            _func_0D3( "compass", "0" );
+            setsaveddvar( "compass", "0" );
             common_scripts\utility::flag_wait( self.script_flag_wait );
         }
 
@@ -1220,7 +1220,7 @@ objective_trigger_path_objective_updates( var_0, var_1, var_2 )
 
         objective_position( maps\_utility::obj( var_0 ), var_3.origin );
         wait 0.1;
-        _func_0D3( "compass", "1" );
+        setsaveddvar( "compass", "1" );
 
         if ( isdefined( self.script_noteworthy ) && self.script_noteworthy == "jump" )
             objective_setpointertextoverride( maps\_utility::obj( var_0 ), &"BETRAYAL_MANTLE" );
@@ -1252,8 +1252,8 @@ setupbetrayalportalscripting()
         }
 
         thread boat_portal_tigger_on( var_4, var_3, var_0, var_1 );
-        var_0 _meth_8070( 1 );
-        var_1 _meth_8070( 1 );
+        var_0 enableportalgroup( 1 );
+        var_1 enableportalgroup( 1 );
         thread maps\_shg_utility::portal_group_off( "portalGrp_betrayal_start", "portalGrp_betrayal_start2" );
         thread maps\_shg_utility::portal_group_off( "portalGrp_betrayal_start", "portalGrp_betrayal_start3" );
     }
@@ -1266,7 +1266,7 @@ boat_portal_tigger_on( var_0, var_1, var_2, var_3 )
         var_0 waittill( "trigger" );
         common_scripts\utility::flag_set( "portalGrp_betrayal_start" );
         var_1 waittill( "trigger" );
-        var_2 _meth_8070( 1 );
-        var_3 _meth_8070( 1 );
+        var_2 enableportalgroup( 1 );
+        var_3 enableportalgroup( 1 );
     }
 }

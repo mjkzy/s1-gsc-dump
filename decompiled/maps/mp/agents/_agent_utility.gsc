@@ -12,8 +12,8 @@ set_agent_team( var_0, var_1 )
     self.agentteam = var_0;
     self.pers["team"] = var_0;
     self.owner = var_1;
-    self _meth_8383( var_1 );
-    self _meth_8385( var_1 );
+    self setotherent( var_1 );
+    self setentityowner( var_1 );
 }
 
 initagentscriptvariables()
@@ -26,7 +26,7 @@ initagentscriptvariables()
     self.wasti = 0;
     self.issniper = 0;
     self.spawntime = 0;
-    self.entity_number = self _meth_81B1();
+    self.entity_number = self getentitynumber();
     self.agent_teamparticipant = 0;
     self.agent_gameparticipant = 0;
     self.canperformclienttraces = 0;
@@ -172,7 +172,7 @@ deactivateagentdelayed()
     self.headmodel = undefined;
     self detachall();
     self notify( "disconnect" );
-    self _meth_848A();
+    self agentclearscriptvars();
     level.despawning_agents = common_scripts\utility::array_remove( level.despawning_agents, self );
 }
 
@@ -245,7 +245,7 @@ getvalidspawnpathnodenearplayer( var_0, var_1 )
 
         foreach ( var_5 in var_3 )
         {
-            if ( var_5.origin[2] > level.waterdeletez || !_func_22A( var_5.origin, level.trigunderwater ) )
+            if ( var_5.origin[2] > level.waterdeletez || !ispointinvolume( var_5.origin, level.trigunderwater ) )
                 var_2[var_2.size] = var_5;
         }
     }
@@ -266,7 +266,7 @@ getvalidspawnpathnodenearplayer( var_0, var_1 )
 
     foreach ( var_14 in var_2 )
     {
-        if ( !var_14 _meth_8035( "stand" ) )
+        if ( !var_14 doesnodeallowstance( "stand" ) )
             continue;
 
         var_15 = vectornormalize( var_14.origin - self.origin );
@@ -333,7 +333,7 @@ getvalidspawnpathnodenearplayer( var_0, var_1 )
 
 killagent( var_0 )
 {
-    var_0 _meth_8051( var_0.health + 500000, var_0.origin );
+    var_0 dodamage( var_0.health + 500000, var_0.origin );
 }
 
 killdog()

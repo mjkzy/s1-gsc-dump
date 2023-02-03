@@ -3,8 +3,8 @@
 
 precache_code()
 {
-    precacheitem( "sam_dogfight" );
-    precacheitem( "s19_cannon_ground_turret" );
+    precacheshellshock( "sam_dogfight" );
+    precacheshellshock( "s19_cannon_ground_turret" );
 }
 
 radio_dialog_add_and_go( var_0, var_1 )
@@ -147,7 +147,7 @@ shoot_sam_missile( var_0, var_1 )
 
     if ( isdefined( var_6 ) && isvalidmissile( var_6 ) && isdefined( var_0 ) )
     {
-        var_6 _meth_81D9( var_0 );
+        var_6 missile_settargetent( var_0 );
         var_6 thread maps\df_fly_flight_code::monitor_missile_death( 1, self, undefined, var_0 );
         wait 2;
     }
@@ -184,7 +184,7 @@ turret_ai()
         else
             var_8 = turret_choose_targets( 0, var_3 );
 
-        if ( var_8.size > 0 && !_func_294( var_8[0] ) )
+        if ( var_8.size > 0 && !isremovedentity( var_8[0] ) )
         {
             var_9 = var_8[0];
 
@@ -214,10 +214,10 @@ turret_ai()
 
             var_12 = var_7 + ( var_0 + randomfloatrange( -0.5, 0.5 ) ) * 1000;
             var_13 = vectortoangles( var_9.origin - self.origin );
-            self _meth_8075( "ground_turret_mgun_lp_npc" );
-            self _meth_82B5( var_13, var_12 - 1 );
+            self playloopsound( "ground_turret_mgun_lp_npc" );
+            self rotateto( var_13, var_12 - 1 );
 
-            while ( var_7 < var_12 && !_func_294( var_9 ) )
+            while ( var_7 < var_12 && !isremovedentity( var_9 ) )
             {
                 var_14 = var_9.origin;
 
@@ -250,7 +250,7 @@ turret_ai()
                 var_7 = gettime();
             }
 
-            self _meth_80AB();
+            self stoploopsound();
             self playsound( "ground_turret_mgun_end_npc" );
             wait(randomfloatrange( 0.2, 0.4 ));
             continue;
@@ -308,8 +308,8 @@ handle_turrets( var_0, var_1, var_2 )
 
     foreach ( var_5 in var_3 )
     {
-        var_5 _meth_82C0( 1 );
-        var_5 _meth_82C1( 1 );
+        var_5 setcandamage( 1 );
+        var_5 setcanradiusdamage( 1 );
         var_5.default_hud = "hud_fofbox_hostile_obstructed";
         var_5.health = 10000;
         var_5.ground_target = 1;
@@ -321,7 +321,7 @@ handle_turrets( var_0, var_1, var_2 )
         if ( isdefined( var_5.animation ) )
         {
             var_5.animname = "turret";
-            var_5 _meth_8115( level.scr_animtree[var_5.animname] );
+            var_5 useanimtree( level.scr_animtree[var_5.animname] );
 
             if ( isarray( level.scr_anim["turret"][var_5.animation] ) )
             {
@@ -329,7 +329,7 @@ handle_turrets( var_0, var_1, var_2 )
                 continue;
             }
 
-            var_5 _meth_8075( "canyon_hover_drone_lp" );
+            var_5 playloopsound( "canyon_hover_drone_lp" );
 
             if ( isdefined( var_5.script_delay ) )
             {
@@ -357,8 +357,8 @@ handle_flak_cannons( var_0, var_1, var_2 )
     foreach ( var_5 in var_3 )
     {
         var_5.default_hud = "hud_fofbox_hostile_obstructed";
-        var_5 _meth_82C0( 1 );
-        var_5 _meth_82C1( 1 );
+        var_5 setcandamage( 1 );
+        var_5 setcanradiusdamage( 1 );
         var_5.health = 10000;
         var_5.ground_target = 1;
         level.enemy_units[level.enemy_units.size] = var_5;
@@ -388,16 +388,16 @@ wait_for_damage()
 
     self notify( "kill_target_think" );
 
-    if ( _func_0A3( self ) )
+    if ( target_istarget( self ) )
     {
-        _func_0A6( self, level.player );
-        _func_09B( self );
+        target_hidefromplayer( self, level.player );
+        target_remove( self );
     }
 
     if ( isdefined( self.animation ) && ( self.animation == "dogfight_canyon_mwp_hover" || !isarray( level.scr_anim["turret"][self.animation] ) ) )
     {
         playfx( common_scripts\utility::getfx( "bagh_aircraft_explosion_midair" ), self.origin );
-        self _meth_80AB();
+        self stoploopsound();
 
         if ( maps\_utility::hastag( self.model, "tag_origin" ) )
             var_5 = playfxontag( common_scripts\utility::getfx( "bagh_aircraft_damage_trail_huge" ), self, "tag_origin" );
@@ -431,7 +431,7 @@ handle_canyon_turret_clips()
     if ( isdefined( self.target ) && isdefined( self.script_noteworthy ) )
     {
         var_0 = getent( self.target, "script_noteworthy" );
-        self _meth_804D( var_0, self.script_noteworthy );
+        self linkto( var_0, self.script_noteworthy );
     }
 }
 
@@ -440,7 +440,7 @@ handle_canyon_destructible_clips()
     if ( isdefined( self.target ) && isdefined( self.script_parameters ) )
     {
         var_0 = getent( self.target, "targetname" );
-        self _meth_804D( var_0, self.script_parameters );
+        self linkto( var_0, self.script_parameters );
     }
 }
 
@@ -467,12 +467,12 @@ handle_canyon_destructible( var_0 )
     }
 
     self.animname = self.animation;
-    self _meth_8115( level.scr_animtree[self.animation] );
+    self useanimtree( level.scr_animtree[self.animation] );
 
     if ( var_0 )
     {
-        self _meth_82C0( 1 );
-        self _meth_82C1( 1 );
+        self setcandamage( 1 );
+        self setcanradiusdamage( 1 );
         self.health = 100;
         self.maxhealth = 100;
         thread waitforhoodoodamage();
@@ -523,7 +523,7 @@ handle_missile_jet( var_0, var_1, var_2, var_3, var_4 )
         var_9 = maps\_utility::spawn_anim_model( "refueler" );
         var_9.origin = var_6.origin;
         var_9.angles = var_6.angles;
-        var_9 _meth_804D( var_6, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_9 linkto( var_6, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_6 hide();
         var_7 = var_9;
         var_8 = "TAG_LT_WING_LIGHT_FX";
@@ -582,7 +582,7 @@ fake_missile_from_behind_player( var_0, var_1, var_2, var_3, var_4 )
     for ( var_10 = 0; var_10 < var_4; var_10++ )
     {
         var_9 = magicbullet( "sidewinder_atlas_jet", var_6, var_8 );
-        var_9 _meth_81D9( var_5 );
+        var_9 missile_settargetent( var_5 );
         var_9 thread maps\df_fly_flight_code::monitor_missile_death( 1, self, undefined, var_5 );
         var_8 = var_5.origin + ( randomintrange( -500, 500 ), randomintrange( -500, 500 ), randomintrange( -500, 500 ) );
     }
@@ -597,7 +597,7 @@ array_safe_delete( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        if ( !_func_294( var_2 ) )
+        if ( !isremovedentity( var_2 ) )
             var_2 delete();
     }
 }
@@ -606,7 +606,7 @@ adjust_bounce_lookahead( var_0, var_1, var_2 )
 {
     var_3 = getdvarfloat( "vehPlaneCollisionLookAheadTime" );
     common_scripts\utility::flag_wait( var_1 );
-    _func_0D3( "vehPlaneCollisionLookAheadTime", var_0 );
+    setsaveddvar( "vehPlaneCollisionLookAheadTime", var_0 );
     common_scripts\utility::flag_wait( var_2 );
-    _func_0D3( "vehPlaneCollisionLookAheadTime", var_3 );
+    setsaveddvar( "vehPlaneCollisionLookAheadTime", var_3 );
 }

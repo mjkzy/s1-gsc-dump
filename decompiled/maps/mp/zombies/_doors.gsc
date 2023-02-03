@@ -151,11 +151,11 @@ init_door_mover( var_0 )
         {
             case "link_blood":
                 var_0.blood[var_0.blood.size] = var_3;
-                var_3 _meth_8510();
-                var_3 _meth_804D( var_0 );
+                var_3 ghost();
+                var_3 linkto( var_0 );
                 break;
             case "link":
-                var_3 _meth_804D( var_0 );
+                var_3 linkto( var_0 );
                 break;
             default:
                 door_error( "Unknown door target ent type '" + var_4 + "' on ent at " + var_3.origin + "." );
@@ -328,7 +328,7 @@ run_door_trap_trigger()
 
         foreach ( var_8 in self.movers )
         {
-            var_8 _meth_82AE( var_8.closed_pos, var_0, var_0 );
+            var_8 moveto( var_8.closed_pos, var_0, var_0 );
             var_8 playsound( "trap_security_door_slam" );
         }
 
@@ -339,7 +339,7 @@ run_door_trap_trigger()
 
         foreach ( var_8 in self.movers )
         {
-            var_8 _meth_82AE( var_8.open_pos, var_10 );
+            var_8 moveto( var_8.open_pos, var_10 );
             var_8 playsound( "trap_security_door_reset" );
         }
 
@@ -357,7 +357,7 @@ door_trap_kill( var_0 )
         return;
 
     self.parent door_add_blood();
-    var_0 _meth_8051( var_0.health, var_0.origin, self.parent.trapowner, self, "MOD_CRUSH", "trap_zm_mp", "torso_upper" );
+    var_0 dodamage( var_0.health, var_0.origin, self.parent.trapowner, self, "MOD_CRUSH", "trap_zm_mp", "torso_upper" );
 }
 
 door_add_blood()
@@ -378,7 +378,7 @@ is_any_player_touching( var_0 )
 {
     foreach ( var_2 in level.players )
     {
-        if ( var_2 _meth_80A9( var_0 ) )
+        if ( var_2 istouching( var_0 ) )
             return 1;
     }
 
@@ -395,14 +395,14 @@ run_door_hint( var_0 )
         {
             if ( !door_has_power() )
             {
-                var_0 _meth_80DB( &"ZOMBIES_REQUIRES_POWER" );
-                var_0 _meth_80DC( "" );
+                var_0 sethintstring( &"ZOMBIES_REQUIRES_POWER" );
+                var_0 setsecondaryhintstring( "" );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
                 common_scripts\utility::flag_wait( self.script_flag_true );
             }
 
-            var_0 _meth_80DB( gethintstring( var_0 ) );
-            var_0 _meth_80DC( maps\mp\zombies\_util::getcoststring( self.cost ) );
+            var_0 sethintstring( gethintstring( var_0 ) );
+            var_0 setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( self.cost ) );
             var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
 
             if ( isdefined( self.script_flag_true ) )
@@ -411,8 +411,8 @@ run_door_hint( var_0 )
     }
     else
     {
-        var_0 _meth_80DB( gethintstring( var_0 ) );
-        var_0 _meth_80DC( maps\mp\zombies\_util::getcoststring( self.cost ) );
+        var_0 sethintstring( gethintstring( var_0 ) );
+        var_0 setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( self.cost ) );
         var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
     }
 }
@@ -432,8 +432,8 @@ door_has_power()
 
 end_door_trigger( var_0 )
 {
-    var_0 _meth_80DB( "" );
-    var_0 _meth_80DC( "" );
+    var_0 sethintstring( "" );
+    var_0 setsecondaryhintstring( "" );
     var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
 
     if ( level.currentgen )
@@ -443,7 +443,7 @@ end_door_trigger( var_0 )
 run_door_mover( var_0 )
 {
     var_1 = common_scripts\utility::random( var_0.movegoals );
-    var_0 _meth_82AE( var_1.origin, 1.0 );
+    var_0 moveto( var_1.origin, 1.0 );
     var_0.open_pos = var_1.origin;
     var_2 = "interact_door";
 
@@ -456,7 +456,7 @@ run_door_mover( var_0 )
     var_0 playsound( var_2 );
 
     if ( var_0 maps\mp\_movers::script_mover_is_dynamic_path() )
-        var_0 _meth_8058();
+        var_0 connectpaths();
 }
 
 door_error( var_0 )

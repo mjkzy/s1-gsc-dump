@@ -71,17 +71,17 @@ main()
     precachemodel( "fullbody_deer_c" );
     precachemodel( "lab_tank_battle_sequoia_02_1b" );
     precachemodel( "lab_tank_battle_sequoia_02_1t" );
-    precacheitem( "barrett" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "iw5_microdronelauncher_sp" );
+    precacheshellshock( "barrett" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_microdronelauncher_sp" );
     precacheturret( "heli_spotlight_so_castle" );
-    precacheitem( "iw5_unarmed_nullattach" );
-    precacheitem( "s1_unarmed_water" );
-    precacheitem( "s1_lab_heli_railgun_sp" );
-    precacheitem( "rpg_straight" );
-    precacheitem( "rpg" );
-    precacheitem( "iw5_mors_sp" );
+    precacheshellshock( "iw5_unarmed_nullattach" );
+    precacheshellshock( "s1_unarmed_water" );
+    precacheshellshock( "s1_lab_heli_railgun_sp" );
+    precacheshellshock( "rpg_straight" );
+    precacheshellshock( "rpg" );
+    precacheshellshock( "iw5_mors_sp" );
     precachemodel( "weapon_rappel_rope_long" );
     precachemodel( "vm_jamming_device_obj" );
     precachemodel( "safety_ladder_196_obj" );
@@ -237,24 +237,24 @@ main()
     maps\_patrol_extended::main();
     maps\_stealth::main();
     maps\_cloak::main();
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 5 );
-    _func_0D3( "r_chromaticaberration", 2 );
-    _func_0D3( "r_chromaticseparationr", 3 );
-    _func_0D3( "r_chromaticseparationb", 3 );
-    _func_0D3( "r_chromaticseparationg", -3 );
-    _func_0D3( "r_reactiveMotionWindFrequencyScale", "0.2" );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 5 );
+    setsaveddvar( "r_chromaticaberration", 2 );
+    setsaveddvar( "r_chromaticseparationr", 3 );
+    setsaveddvar( "r_chromaticseparationb", 3 );
+    setsaveddvar( "r_chromaticseparationg", -3 );
+    setsaveddvar( "r_reactiveMotionWindFrequencyScale", "0.2" );
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     maps\_variable_grenade::main();
 
-    foreach ( var_2 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_2, 0 );
+    foreach ( var_2 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_2, 0 );
 
     maps\lab_utility::spawn_metrics_init();
     setup_portal_scripting();
@@ -318,19 +318,19 @@ tff_setup_blocker_hangar_load()
     var_1 = getent( "tff_hangar_door_load_wait_l", "targetname" );
     var_2 = getent( "tff_hangar_door_load_wait_r_coll", "targetname" );
     var_3 = getent( "tff_hangar_door_load_wait_l_coll", "targetname" );
-    var_2 _meth_804D( var_0 );
-    var_3 _meth_804D( var_1 );
+    var_2 linkto( var_0 );
+    var_3 linkto( var_1 );
     var_4 = ( -48, 0, 0 );
     var_5 = ( 48, 0, 0 );
-    var_2 _meth_8058();
-    var_3 _meth_8058();
+    var_2 connectpaths();
+    var_3 connectpaths();
 
-    if ( !_func_21E( "lab_outro_tr" ) )
+    if ( !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_post_middle_to_outro" );
 
     soundscripts\_snd::snd_message( "current_gen_hangar_door_open" );
-    var_1 _meth_82AE( var_1.origin + var_5, 0.5 );
-    var_0 _meth_82AE( var_0.origin + var_4, 0.5 );
+    var_1 moveto( var_1.origin + var_5, 0.5 );
+    var_0 moveto( var_0.origin + var_4, 0.5 );
 }
 
 tff_setup_blocker_hangar_backtrack()
@@ -341,18 +341,18 @@ tff_setup_blocker_hangar_backtrack()
     var_3 = ( 0, 0, 105 );
     var_4 = ( 0, 26, 0 );
     var_5 = ( 0, -26, 0 );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     var_2.origin -= var_3;
     var_0.origin -= var_4;
     var_1.origin -= var_5;
 
-    if ( !_func_21E( "lab_outro_tr" ) )
+    if ( !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_pre_middle_to_outro" );
 
     var_2.origin += var_3;
     var_0.origin += var_4;
     var_1.origin += var_5;
-    var_2 _meth_8057();
+    var_2 disconnectpaths();
 }
 
 set_completed_flags()
@@ -560,7 +560,7 @@ debug_start_crash()
     level.burke.cloak = "off";
     level.burke animscripts\free_run::enable_free_running();
     level.burke maps\lab_utility::set_helmet_open( 0 );
-    level.burke _meth_8177( "cloak_friendly_npcs" );
+    level.burke setthreatbiasgroup( "cloak_friendly_npcs" );
     set_completed_flags();
 
     if ( common_scripts\utility::flag( "flag_demo_itiot_start" ) )
@@ -595,7 +595,7 @@ debug_start_forest_start()
     level.burke maps\_utility::disable_ai_color();
     level.burke animscripts\free_run::enable_free_running();
     level.burke maps\lab_utility::set_helmet_open( 0 );
-    level.burke _meth_8177( "cloak_friendly_npcs" );
+    level.burke setthreatbiasgroup( "cloak_friendly_npcs" );
     set_completed_flags();
     thread maps\lab_code::se_wall_climb_roots();
     thread maps\_shg_utility::show_player_hud();
@@ -607,7 +607,7 @@ debug_start_forest_start()
     thread maps\lab_code::setup_combat();
     thread maps\lab_code::player_movement_tweaks();
     level.player thread maps\lab_code::river_slow_movement_ai_think();
-    _func_0D3( "ammoCounterHide", "1" );
+    setsaveddvar( "ammoCounterHide", "1" );
     common_scripts\utility::flag_set( "flag_helo_spotlight_on" );
     thread maps\lab_code::helo_spotlight_init();
     thread maps\lab_code::helo_spotlight_movement();
@@ -628,14 +628,14 @@ debug_start_forest_takedown()
     level.burke maps\_utility::disable_ai_color();
     level.burke thread maps\lab_utility::cloak_on();
     level.burke animscripts\free_run::enable_free_running();
-    level.burke _meth_8177( "cloak_friendly_npcs" );
+    level.burke setthreatbiasgroup( "cloak_friendly_npcs" );
     set_completed_flags();
     thread maps\_shg_utility::show_player_hud();
     thread objective_init();
     thread maps\lab_code::setup_combat();
     maps\_cloak::turn_on_the_cloak_effect();
     thread maps\lab_code::player_movement_tweaks();
-    _func_0D3( "ammoCounterHide", "1" );
+    setsaveddvar( "ammoCounterHide", "1" );
     thread maps\lab_code::spawn_takedown_01_guys();
     maps\lab_utility::teleport_to_scriptstruct( "checkpoint_forest_takedown" );
 }
@@ -653,7 +653,7 @@ debug_start_logging_road()
     level.burke maps\_utility::disable_ai_color();
     level.burke thread maps\_utility::enable_cqbwalk();
     level.burke thread maps\lab_utility::cloak_on();
-    level.burke _meth_8177( "cloak_friendly_npcs" );
+    level.burke setthreatbiasgroup( "cloak_friendly_npcs" );
     set_completed_flags();
     thread maps\_shg_utility::show_player_hud();
     thread objective_init();
@@ -668,7 +668,7 @@ logging_road_logic()
 {
     thread maps\lab_code::burke_forest_stealth_movement();
     thread maps\lab_code::se_vehicle_takedown_01();
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
 }
 
 debug_start_mech_march()
@@ -679,7 +679,7 @@ debug_start_mech_march()
     level.burke maps\_utility::disable_ai_color();
     level.burke thread maps\_utility::enable_cqbwalk();
     level.burke thread maps\lab_utility::cloak_on();
-    level.burke _meth_8177( "cloak_friendly_npcs" );
+    level.burke setthreatbiasgroup( "cloak_friendly_npcs" );
     set_completed_flags();
     thread maps\_shg_utility::show_player_hud();
     thread objective_init();
@@ -692,7 +692,7 @@ debug_start_mech_march()
 
 mech_march_logic()
 {
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
     thread maps\lab_code::burke_mech_march_movement();
     thread maps\lab_code::logging_road_end_drop_logic();
     maps\lab_code::se_mech_march();
@@ -1095,7 +1095,7 @@ debug_start_tank_field_left_fork()
     thread maps\lab_lighting::tank_field();
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
     level.player thread maps\lab_code::equip_player();
     level.player thread maps\lab_code::debug_start_equip_player();
@@ -1132,7 +1132,7 @@ debug_start_tank_field_right_fork()
     thread maps\lab_lighting::tank_field();
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
     level.player thread maps\lab_code::equip_player();
     level.player thread maps\lab_code::debug_start_equip_player();
@@ -1169,7 +1169,7 @@ debug_start_tank_ascent()
     thread maps\lab_lighting::tank_field();
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
     level.player thread maps\lab_code::equip_player();
     level.player thread maps\lab_code::debug_start_equip_player();
@@ -1206,7 +1206,7 @@ debug_start_exfil()
     level.player thread maps\lab_code::debug_start_equip_player();
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
     thread maps\lab_lighting::exfil();
     thread objective_init();
@@ -1536,7 +1536,7 @@ setup_breach_marker()
 {
     var_0 = getent( "breach_hint_01", "targetname" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "mutecharge_obj" );
+    var_1 setmodel( "mutecharge_obj" );
     var_1.angles = var_0.angles;
     var_1.origin = var_0.origin;
     thread breach_cleanup( var_1 );
@@ -1594,18 +1594,18 @@ handle_lab_portal_scripting( var_0, var_1, var_2 )
         level endon( var_2 );
 
     var_3 = getentarray( var_0, "targetname" );
-    var_3[0] _meth_8070( 0 );
+    var_3[0] enableportalgroup( 0 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_1 );
-        var_3[0] _meth_8070( 1 );
+        var_3[0] enableportalgroup( 1 );
 
         if ( isdefined( var_2 ) )
             level notify( var_2 );
 
         common_scripts\utility::flag_waitopen( var_1 );
-        var_3[0] _meth_8070( 0 );
+        var_3[0] enableportalgroup( 0 );
     }
 }
 
@@ -1668,7 +1668,7 @@ tff_trans_middle_to_outro_ally_check()
 
 tff_trans_middle_to_outro_ally_touching( var_0 )
 {
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.05;
 
     level.tff_trans_ally_check_count--;
@@ -1677,15 +1677,15 @@ tff_trans_middle_to_outro_ally_touching( var_0 )
 
 transient_transition_middle_to_outro()
 {
-    if ( !_func_21E( "lab_outro_tr" ) )
+    if ( !istransientloaded( "lab_outro_tr" ) )
     {
         thread tff_trans_middle_to_outro_ally_check();
         common_scripts\utility::flag_wait( "tff_trans_middle_to_outro_allies_ready" );
         level notify( "tff_pre_middle_to_outro" );
-        _func_219( "lab_middle_tr" );
-        _func_218( "lab_outro_tr" );
+        unloadtransient( "lab_middle_tr" );
+        loadtransient( "lab_outro_tr" );
 
-        while ( !_func_21E( "lab_outro_tr" ) )
+        while ( !istransientloaded( "lab_outro_tr" ) )
             wait 0.05;
 
         level notify( "tff_post_middle_to_outro" );
@@ -1702,16 +1702,16 @@ cull_distance_triggers()
 
         foreach ( var_3 in var_0 )
         {
-            if ( level.player _meth_80A9( var_3 ) )
+            if ( level.player istouching( var_3 ) )
             {
                 var_4 = int( var_3.script_noteworthy );
-                _func_08A( var_4 );
+                setculldist( var_4 );
                 var_1 = 1;
             }
         }
 
         if ( !var_1 )
-            _func_08A( 0 );
+            setculldist( 0 );
 
         wait 0.2;
     }
@@ -1723,20 +1723,20 @@ itiot_logic( var_0 )
     common_scripts\utility::flag_wait( var_0 );
     soundscripts\_snd::snd_message( "e3_demo_fade_out" );
     level.player.auxillary_hud = newclienthudelem( level.player );
-    level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    level.player.auxillary_hud setshader( "black", 1280, 720 );
     level.player.auxillary_hud.horzalign = "fullscreen";
     level.player.auxillary_hud.vertalign = "fullscreen";
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud fadeovertime( 0.5 );
     level.player.auxillary_hud.alpha = 1;
     level.player.auxillary_hud.foreground = 1;
-    _func_0D3( "objectiveHide", "1" );
+    setsaveddvar( "objectiveHide", "1" );
     wait 0.5;
-    common_scripts\utility::array_call( _func_0D6( "axis" ), ::delete );
+    common_scripts\utility::array_call( getaiarray( "axis" ), ::delete );
     soundscripts\_snd::snd_message( "e3_demo_clear_alarm" );
     level.player.auxillary_hud.foreground = 0;
     wait 5;
-    common_scripts\utility::array_call( _func_0D6( "axis" ), ::delete );
+    common_scripts\utility::array_call( getaiarray( "axis" ), ::delete );
     maps\lab_utility::teleport_to_scriptstruct( "hovertank_reveal_demo_pos" );
     level.knox thread maps\lab_utility::goto_node( getnode( "tank_hangar_knox_node", "targetname" ), 0 );
     set_itiot_flags();
@@ -1799,12 +1799,12 @@ itiot_dialogue()
 umbra_accuracy_tweaks()
 {
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
     common_scripts\utility::flag_wait( "flag_forest_climb_wall_start" );
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", 1024 );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", 1024 );
 }
 
 umbra_accuracy_tweaks_tank_field()
@@ -1823,7 +1823,7 @@ umbra_tweak_128( var_0 )
         self waittill( "trigger" );
 
         if ( level.nextgen )
-            _func_0D3( "r_umbraAccurateOcclusionThreshold", 128 );
+            setsaveddvar( "r_umbraAccurateOcclusionThreshold", 128 );
 
         var_0 waittill( "trigger" );
     }
@@ -1836,7 +1836,7 @@ umbra_tweak_1024( var_0 )
         self waittill( "trigger" );
 
         if ( level.nextgen )
-            _func_0D3( "r_umbraAccurateOcclusionThreshold", 1024 );
+            setsaveddvar( "r_umbraAccurateOcclusionThreshold", 1024 );
 
         var_0 waittill( "trigger" );
     }

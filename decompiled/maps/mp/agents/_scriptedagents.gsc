@@ -19,7 +19,7 @@ playanimuntilnotetrack( var_0, var_1, var_2, var_3 )
 
 playanimnuntilnotetrack( var_0, var_1, var_2, var_3, var_4 )
 {
-    self _meth_83D2( var_0, var_1 );
+    self setanimstate( var_0, var_1 );
 
     if ( !isdefined( var_3 ) )
         var_3 = "end";
@@ -29,7 +29,7 @@ playanimnuntilnotetrack( var_0, var_1, var_2, var_3, var_4 )
 
 playanimnatrateuntilnotetrack( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    self _meth_83D2( var_0, var_1, var_2 );
+    self setanimstate( var_0, var_1, var_2 );
 
     if ( !isdefined( var_4 ) )
         var_4 = "end";
@@ -44,7 +44,7 @@ waituntilnotetrack( var_0, var_1, var_2, var_3, var_4 )
     var_7 = undefined;
 
     if ( isdefined( var_2 ) && isdefined( var_3 ) )
-        var_7 = getanimlength( self _meth_83D3( var_2, var_3 ) );
+        var_7 = getanimlength( self getanimentry( var_2, var_3 ) );
 
     for (;;)
     {
@@ -71,13 +71,13 @@ playanimfortime( var_0, var_1 )
 
 playanimnfortime( var_0, var_1, var_2 )
 {
-    self _meth_83D2( var_0, var_1 );
+    self setanimstate( var_0, var_1 );
     wait(var_2);
 }
 
 playanimnatratefortime( var_0, var_1, var_2, var_3 )
 {
-    self _meth_83D2( var_0, var_1, var_2 );
+    self setanimstate( var_0, var_1, var_2 );
     wait(var_3);
 }
 
@@ -130,7 +130,7 @@ droppostoground( var_0, var_1 )
 
     var_2 = var_0 + ( 0, 0, var_1 );
     var_3 = var_0 + ( 0, 0, var_1 * -1 );
-    var_4 = self _meth_83E5( var_2, var_3, self.radius, self.height, 1 );
+    var_4 = self aiphysicstrace( var_2, var_3, self.radius, self.height, 1 );
 
     if ( abs( var_4[2] - var_2[2] ) < 0.1 )
         return undefined;
@@ -152,7 +152,7 @@ canmovepointtopoint( var_0, var_1, var_2, var_3 )
     var_4 = ( 0, 0, 1 ) * var_2;
     var_5 = var_0 + var_4;
     var_6 = var_1 + var_4;
-    return self _meth_83E6( var_5, var_6, var_3, self.height - var_2, 1 );
+    return self aiphysicstracepassed( var_5, var_6, var_3, self.height - var_2, 1 );
 }
 
 getvalidpointtopointmovelocation( var_0, var_1, var_2 )
@@ -163,13 +163,13 @@ getvalidpointtopointmovelocation( var_0, var_1, var_2 )
     var_3 = ( 0, 0, 1 ) * var_2;
     var_4 = var_0 + var_3;
     var_5 = var_1 + var_3;
-    return self _meth_83E5( var_4, var_5, self.radius + 4, self.height - var_2, 1 );
+    return self aiphysicstrace( var_4, var_5, self.radius + 4, self.height - var_2, 1 );
 }
 
 getsafeanimmovedeltapercentage( var_0 )
 {
     var_1 = getmovedelta( var_0 );
-    var_2 = self _meth_81B0( var_1 );
+    var_2 = self localtoworldcoords( var_1 );
     var_3 = getvalidpointtopointmovelocation( self.origin, var_2 );
     var_4 = distance( self.origin, var_3 );
     var_5 = distance( self.origin, var_2 );
@@ -190,22 +190,22 @@ safelyplayanimatrateuntilnotetrack( var_0, var_1, var_2, var_3, var_4 )
 
 safelyplayanimnatrateuntilnotetrack( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    self _meth_83D2( var_0, var_1, var_2 );
+    self setanimstate( var_0, var_1, var_2 );
     safelyplayanimnuntilnotetrack( var_0, var_1, var_3, var_4, var_5 );
 }
 
 safelyplayanimnuntilnotetrack( var_0, var_1, var_2, var_3, var_4 )
 {
-    var_5 = self _meth_83D3( var_0, var_1 );
+    var_5 = self getanimentry( var_0, var_1 );
     var_6 = getsafeanimmovedeltapercentage( var_5 );
-    self _meth_8395( var_6, 1.0 );
+    self scragentsetanimscale( var_6, 1.0 );
     playanimnuntilnotetrack( var_0, var_1, var_2, var_3, var_4 );
-    self _meth_8395( 1.0, 1.0 );
+    self scragentsetanimscale( 1.0, 1.0 );
 }
 
 getrandomanimentry( var_0 )
 {
-    var_1 = self _meth_83D6( var_0 );
+    var_1 = self getanimentrycount( var_0 );
     return randomint( var_1 );
 }
 

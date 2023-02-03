@@ -35,13 +35,13 @@ usesquadmate( var_0 )
 {
     if ( maps\mp\agents\_agent_utility::getnumactiveagents( "squadmate" ) >= 5 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
+        self iprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
     if ( maps\mp\agents\_agent_utility::getnumownedactiveagents( self ) >= 2 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
+        self iprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
@@ -59,7 +59,7 @@ usesquadmate( var_0 )
 
     if ( !isdefined( var_4 ) )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
+        self iprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
@@ -113,7 +113,7 @@ squadmate_agent_think()
 
     for (;;)
     {
-        self _meth_8351( "prefer_shield_out", 1 );
+        self botsetflag( "prefer_shield_out", 1 );
         var_0 = self [[ maps\mp\agents\_agent_utility::agentfunc( "gametype_update" ) ]]();
 
         if ( !var_0 )

@@ -3,7 +3,7 @@
 
 init()
 {
-    precacheitem( "iw5_stingerm7greece_sp" );
+    precacheshellshock( "iw5_stingerm7greece_sp" );
     precacheshader( "bls_ui_turret_targetacquired" );
     precacheshader( "bls_ui_turret_targetlock_white" );
 
@@ -44,7 +44,7 @@ stingerm7_targeting()
 
     for (;;)
     {
-        if ( self _meth_8311() == "iw5_stingerm7greece_sp" && self _meth_8340() > 0.99 )
+        if ( self getcurrentweapon() == "iw5_stingerm7greece_sp" && self playerads() > 0.99 )
         {
             self.stingerm7_info.locked_targets = remove_bad_locked_targets();
 
@@ -52,7 +52,7 @@ stingerm7_targeting()
             {
                 if ( !target_still_valid( self.stingerm7_info.locking_target ) )
                 {
-                    _func_09B( self.stingerm7_info.locking_target );
+                    target_remove( self.stingerm7_info.locking_target );
                     self.stingerm7_info.locking_target = undefined;
                 }
             }
@@ -70,8 +70,8 @@ stingerm7_targeting()
                     if ( isdefined( self.stingerm7_info.locking_target ) )
                     {
                         var_0 = self.stingerm7_info.locking_target.origin;
-                        _func_09A( self.stingerm7_info.locking_target, var_0 );
-                        _func_09C( self.stingerm7_info.locking_target, "bls_ui_turret_targetacquired" );
+                        target_set( self.stingerm7_info.locking_target, var_0 );
+                        target_setshader( self.stingerm7_info.locking_target, "bls_ui_turret_targetacquired" );
                     }
                 }
             }
@@ -91,13 +91,13 @@ stingerm7_targeting()
         else
         {
             foreach ( var_2 in self.stingerm7_info.locked_targets )
-                _func_09B( var_2 );
+                target_remove( var_2 );
 
             self.stingerm7_info.locked_targets = [];
 
             if ( isdefined( self.stingerm7_info.locking_target ) )
             {
-                _func_09B( self.stingerm7_info.locking_target );
+                target_remove( self.stingerm7_info.locking_target );
                 self.stingerm7_info.locking_target = undefined;
             }
 
@@ -134,10 +134,10 @@ stinger_fire( var_0, var_1 )
         var_4 = common_scripts\utility::array_combine( var_4, var_0.stingerm7_info.level_stinger_missile_targets );
         firemangarockets( var_4[0] );
         soundscripts\_snd::snd_message( "stingerm7_shoot_tower" );
-        var_0 _meth_82F6( "iw5_stingerm7greece_sp", 0 );
+        var_0 setweaponammoclip( "iw5_stingerm7greece_sp", 0 );
     }
     else
-        var_0 _meth_82F6( "iw5_stingerm7greece_sp", 4 );
+        var_0 setweaponammoclip( "iw5_stingerm7greece_sp", 4 );
 
     swaptolastweapon();
 }
@@ -169,18 +169,18 @@ firemangarockets( var_0 )
 
 mangarocketparentupdate( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-    var_9 = var_0.origin - level.player _meth_80A8();
+    var_9 = var_0.origin - level.player geteye();
     var_10 = vectornormalize( var_9 );
     var_11 = vectorcross( var_10, ( 0, 0, 1 ) );
 
     if ( var_1 )
         var_11 *= -1;
 
-    var_12 = level.player _meth_80A8();
-    var_13 = level.player _meth_80A8() + var_9 * 0.5 + var_11 * var_2 + ( 0, 0, var_3 );
+    var_12 = level.player geteye();
+    var_13 = level.player geteye() + var_9 * 0.5 + var_11 * var_2 + ( 0, 0, var_3 );
     var_14 = var_0.origin;
     var_15 = level.player common_scripts\utility::spawn_tag_origin();
-    var_15.parentorigin = level.player _meth_80A8();
+    var_15.parentorigin = level.player geteye();
     playfxontag( common_scripts\utility::getfx( "manga_rocket_trail" ), var_15, "tag_origin" );
     soundscripts\_snd::snd_message( "manga_rocket_trail", var_15 );
     thread mangarocketupdate( var_0, var_15, var_6, var_7, var_8 );
@@ -216,7 +216,7 @@ mangarocketparentupdate( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7,
 mangarocketupdate( var_0, var_1, var_2, var_3, var_4 )
 {
     var_1 endon( "MangaRocketUpdate" );
-    var_5 = vectornormalize( var_0.origin - level.player _meth_80A8() );
+    var_5 = vectornormalize( var_0.origin - level.player geteye() );
     var_6 = vectortoangles( var_5 );
     var_7 = var_2;
     var_8 = ( 0, 0, 0 );
@@ -243,14 +243,14 @@ mangarocketupdate( var_0, var_1, var_2, var_3, var_4 )
 swaptolastweapon()
 {
     var_0 = level.player common_scripts\utility::getlastweapon();
-    level.player _meth_831D();
+    level.player disableweapons();
     wait 5;
-    level.player _meth_830F( "iw5_stingerm7greece_sp" );
-    level.player _meth_830E( var_0 );
-    level.player _meth_8315( var_0 );
-    level.player _meth_8332( var_0 );
-    level.player _meth_831E();
-    level.player _meth_811A( 1 );
+    level.player takeweapon( "iw5_stingerm7greece_sp" );
+    level.player giveweapon( var_0 );
+    level.player switchtoweapon( var_0 );
+    level.player givemaxammo( var_0 );
+    level.player enableweapons();
+    level.player allowprone( 1 );
 }
 
 _randommissilemovement( var_0 )
@@ -267,7 +267,7 @@ _randommissilemovement( var_0 )
         var_5 = randomintrange( -2500, 2500 ) * var_4;
         var_6 = randomintrange( -500, 500 ) * var_4;
         var_7 = randomintrange( -500, 500 ) * var_4;
-        self _meth_81D9( var_0, ( var_5, 0, var_7 ) );
+        self missile_settargetent( var_0, ( var_5, 0, var_7 ) );
         wait(var_2);
     }
 }
@@ -283,7 +283,7 @@ _closingdistancecheck( var_0 )
         if ( var_1 < 500 )
         {
             self notify( "within_closing_distance" );
-            self _meth_81D9( var_0 );
+            self missile_settargetent( var_0 );
             break;
         }
 
@@ -311,7 +311,7 @@ _missilemissedtargetcheck( var_0, var_1 )
 locked_target_think( var_0 )
 {
     self endon( "death" );
-    _func_09C( self, "bls_ui_turret_targetlock_white" );
+    target_setshader( self, "bls_ui_turret_targetlock_white" );
 }
 
 get_best_locking_target()
@@ -321,8 +321,8 @@ get_best_locking_target()
     if ( isdefined( self.stingerm7_info.level_stinger_lock_target ) )
         var_0[var_0.size] = self.stingerm7_info.level_stinger_lock_target;
 
-    var_1 = self _meth_80A8();
-    var_2 = anglestoforward( self _meth_8036() );
+    var_1 = self geteye();
+    var_2 = anglestoforward( self getgunangles() );
     var_3 = undefined;
     var_4 = cos( 6 );
 
@@ -349,8 +349,8 @@ get_best_locking_target()
 
 target_still_valid( var_0 )
 {
-    var_1 = self _meth_80A8();
-    var_2 = anglestoforward( self _meth_8036() );
+    var_1 = self geteye();
+    var_2 = anglestoforward( self getgunangles() );
     var_3 = stingerm7_get_target_pos( var_0 );
 
     if ( vectordot( vectornormalize( var_3 - var_1 ), var_2 ) > cos( 6 ) )
@@ -379,9 +379,9 @@ is_enemy_target( var_0, var_1 )
 stingerm7_get_target_pos( var_0 )
 {
     if ( isai( var_0 ) )
-        return var_0 _meth_80A8();
+        return var_0 geteye();
 
-    return var_0 _meth_8216( 0, 0, 0 );
+    return var_0 getpointinbounds( 0, 0, 0 );
 }
 
 stingerm7_get_target_offset( var_0 )

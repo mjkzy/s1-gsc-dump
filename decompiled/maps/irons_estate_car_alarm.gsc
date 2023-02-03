@@ -9,8 +9,8 @@ car_alarm_main( var_0, var_1 )
     foreach ( var_4 in var_2 )
     {
         var_5 = getent( var_4.script_linkto, "script_linkname" );
-        var_5 _meth_82C0( 1 );
-        var_5 _meth_82C1( 1 );
+        var_5 setcandamage( 1 );
+        var_5 setcanradiusdamage( 1 );
         var_5.health = 99999999;
         var_4 thread car_alarm_setup( var_5, var_1 );
     }
@@ -92,7 +92,7 @@ start_car_alarm( var_0 )
         }
 
         wait 0.25;
-        var_2 = _func_0D6( "axis" );
+        var_2 = getaiarray( "axis" );
 
         foreach ( var_4 in var_2 )
         {
@@ -151,7 +151,7 @@ turn_off_car_alarm()
 {
     self endon( "death" );
     self waittill( "stop_car_alarm" );
-    self _meth_80AC();
+    self stopsounds();
     wait 0.05;
     self playsound( "car_alarm_horn_chirp" );
 }

@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "iw5_sn6_sp_opticsreddot_silencer01";
@@ -27,12 +27,12 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_atlas_pmc_estate_smg::precache();
-    precacheitem( "iw5_sn6_sp_opticsreddot_silencer01" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_sn6_sp_opticsreddot_silencer01" );
+    precacheshellshock( "fraggrenade" );
 }

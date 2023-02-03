@@ -38,7 +38,7 @@ mutatorteleport()
         var_16 = randomint( var_9.size );
         self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap;
         self detachall();
-        self _meth_80B1( var_0[var_11] );
+        self setmodel( var_0[var_11] );
         self.swapbody = var_1[var_11];
         self attach( var_2[var_12] );
         self.headmodel = var_2[var_12];
@@ -115,8 +115,8 @@ mutatorteleport_handleteleport()
             continue;
 
         var_0 = anglestoforward( self.angles );
-        var_1 = self _meth_8551();
-        var_2 = self _meth_83E1();
+        var_1 = self scragentgetnodesonpath();
+        var_2 = self getpathgoalpos();
         var_3 = distancesquared( self.origin, var_2 );
         var_4 = [];
         self.teleport_min_dist_sq = squared( 50 * self.generalspeedratescale );
@@ -172,8 +172,8 @@ mutatorteleport_handleteleport()
             var_15 = self getvelocity();
             self setorigin( var_11.origin, 1 );
             self setangles( var_14 );
-            self _meth_82F1( anglestoforward( var_14 ) * length( var_15 ) );
-            self _meth_8564( var_11 );
+            self setvelocity( anglestoforward( var_14 ) * length( var_15 ) );
+            self scragenttrimpath( var_11 );
             wait 0.05;
             mutatorteleport_startfx();
         }
@@ -183,11 +183,11 @@ mutatorteleport_handleteleport()
 play_zombie_teleport_sound()
 {
     if ( self.agent_type == "zombie_generic" )
-        self _meth_8438( "teleport_blink_zombie" );
+        self playsoundonmovingent( "teleport_blink_zombie" );
     else if ( self.agent_type == "zombie_dog" )
-        self _meth_8438( "teleport_dog_zombie" );
+        self playsoundonmovingent( "teleport_dog_zombie" );
     else if ( self.agent_type == "zombie_melee_goliath" )
-        self _meth_8438( "teleport_goliath_zombie" );
+        self playsoundonmovingent( "teleport_goliath_zombie" );
     else
-        self _meth_8438( "teleport_blink_zombie" );
+        self playsoundonmovingent( "teleport_blink_zombie" );
 }

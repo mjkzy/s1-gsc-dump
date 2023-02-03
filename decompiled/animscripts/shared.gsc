@@ -74,7 +74,7 @@ detachallweaponmodels()
     var_0[var_0.size] = "left";
     var_0[var_0.size] = "chest";
     var_0[var_0.size] = "back";
-    self _meth_80B3();
+    self laseroff();
 
     foreach ( var_2 in var_0 )
     {
@@ -93,7 +93,7 @@ detachallweaponmodels()
         }
     }
 
-    self _meth_82DC();
+    self updateentitywithweapons();
 }
 
 updateattachedweaponmodels()
@@ -112,7 +112,7 @@ updateattachedweaponmodels()
         var_2[var_2.size] = gettagforpos( var_4 );
     }
 
-    self _meth_82DC( var_1[0], var_2[0], var_1[1], var_2[1], var_1[2], var_2[2], var_1[3], var_2[3] );
+    self updateentitywithweapons( var_1[0], var_2[0], var_1[1], var_2[1], var_1[2], var_2[2], var_1[3], var_2[3] );
 
     foreach ( var_4 in var_0 )
     {
@@ -122,7 +122,7 @@ updateattachedweaponmodels()
             continue;
 
         if ( self.weaponinfo[var_7].useclip && !self.weaponinfo[var_7].hasclip )
-            self _meth_8048( "tag_clip" );
+            self hidepart( "tag_clip" );
     }
 
     updatelaserstatus();
@@ -139,11 +139,11 @@ updatelaserstatus()
 
         if ( canuselaser() )
         {
-            self _meth_80B2( "nvg_laser" );
+            self laseron( "nvg_laser" );
             return;
         }
 
-        self _meth_80B3();
+        self laseroff();
     }
 }
 
@@ -234,7 +234,7 @@ dropallaiweapons()
 
 dropweaponwrapper( var_0, var_1 )
 {
-    if ( self _meth_81E0() )
+    if ( self isragdoll() )
         return "none";
 
     self.a.weaponposdropping[var_1] = var_0;
@@ -246,7 +246,7 @@ dropweaponwrapper( var_0, var_1 )
     if ( issubstr( tolower( var_2 ), "mahem" ) )
         var_2 = "iw5_mahemplayer_sp_mahemscopebase";
 
-    self _meth_81C2( var_2, var_1, 0 );
+    self dropweapon( var_2, var_1, 0 );
     self endon( "end_weapon_drop_" + var_1 );
     wait 0.05;
 
@@ -301,7 +301,7 @@ getaimyawtoshootentorpos()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         return getaimyawtopoint( animscripts\combat_utility::get_last_known_shoot_pos( self.shootent ) );
     else
-        return getaimyawtopoint( self.shootent _meth_8097() );
+        return getaimyawtopoint( self.shootent getshootatpos() );
 }
 
 getaimpitchtoshootentorpos()
@@ -327,20 +327,20 @@ getpitchtoshootentorpos()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         return animscripts\combat_utility::getpitchtospot( animscripts\combat_utility::get_last_known_shoot_pos( self.shootent ) );
     else
-        return animscripts\combat_utility::getpitchtospot( self.shootent _meth_8097() );
+        return animscripts\combat_utility::getpitchtospot( self.shootent getshootatpos() );
 }
 
 getshootfrompos()
 {
     if ( isdefined( self.usemuzzlesideoffset ) )
     {
-        var_0 = self _meth_81BA();
-        return ( var_0[0], var_0[1], self _meth_80A8()[2] );
+        var_0 = self getmuzzlesideoffsetpos();
+        return ( var_0[0], var_0[1], self geteye()[2] );
     }
 
     if ( isdefined( self.usemuzzleforaim ) && self.usemuzzleforaim )
     {
-        if ( self _meth_8442( "tag_flash" ) != -1 )
+        if ( self gettagindex( "tag_flash" ) != -1 )
         {
             var_1 = self gettagorigin( "tag_flash" );
 
@@ -349,7 +349,7 @@ getshootfrompos()
         }
     }
 
-    return ( self.origin[0], self.origin[1], self _meth_80A8()[2] );
+    return ( self.origin[0], self.origin[1], self geteye()[2] );
 }
 
 getaimyawtopoint( var_0 )
@@ -373,18 +373,18 @@ ramboaim( var_0 )
 {
     self endon( "killanimscript" );
     ramboaiminternal( var_0 );
-    self _meth_8142( %generic_aim_left, 0.5 );
-    self _meth_8142( %generic_aim_right, 0.5 );
+    self clearanim( %generic_aim_left, 0.5 );
+    self clearanim( %generic_aim_right, 0.5 );
 }
 
 ramboaiminternal( var_0 )
 {
     self endon( "rambo_aim_end" );
     waittillframeend;
-    self _meth_8142( %generic_aim_left, 0.2 );
-    self _meth_8142( %generic_aim_right, 0.2 );
-    self _meth_814C( %generic_aim_45l, 1, 0.2 );
-    self _meth_814C( %generic_aim_45r, 1, 0.2 );
+    self clearanim( %generic_aim_left, 0.2 );
+    self clearanim( %generic_aim_right, 0.2 );
+    self setanimlimited( %generic_aim_45l, 1, 0.2 );
+    self setanimlimited( %generic_aim_45r, 1, 0.2 );
     var_1 = 0.2;
     var_2 = 0;
 
@@ -413,8 +413,8 @@ ramboaiminternal( var_0 )
             if ( var_4 > 1 )
                 var_4 = 1;
 
-            self _meth_814C( %generic_aim_right, var_4, var_1 );
-            self _meth_814C( %generic_aim_left, 0, var_1 );
+            self setanimlimited( %generic_aim_right, var_4, var_1 );
+            self setanimlimited( %generic_aim_left, 0, var_1 );
         }
         else
         {
@@ -423,8 +423,8 @@ ramboaiminternal( var_0 )
             if ( var_4 > 1 )
                 var_4 = 1;
 
-            self _meth_814C( %generic_aim_left, var_4, var_1 );
-            self _meth_814C( %generic_aim_right, 0, var_1 );
+            self setanimlimited( %generic_aim_left, var_4, var_1 );
+            self setanimlimited( %generic_aim_right, 0, var_1 );
         }
 
         wait(var_1);
@@ -480,7 +480,7 @@ handledropclip( var_0 )
     var_1 = undefined;
 
     if ( self.weaponinfo[self.weapon].useclip )
-        var_1 = _func_0DB( self.weapon );
+        var_1 = getweaponclipmodel( self.weapon );
 
     if ( self.weaponinfo[self.weapon].hasclip )
     {
@@ -491,7 +491,7 @@ handledropclip( var_0 )
 
         if ( isdefined( var_1 ) )
         {
-            self _meth_8048( "tag_clip" );
+            self hidepart( "tag_clip" );
             thread dropclipmodel( var_1, "tag_clip" );
             self.weaponinfo[self.weapon].hasclip = 0;
             thread resetcliponabort( var_1 );
@@ -512,7 +512,7 @@ handledropclip( var_0 )
                     thread resetcliponabort( var_1, "tag_inhand" );
 
                     if ( !self.weaponinfo[self.weapon].hasclip )
-                        self _meth_8048( "tag_clip" );
+                        self hidepart( "tag_clip" );
                 }
 
                 animscripts\weaponlist::refillclip();
@@ -527,7 +527,7 @@ handledropclip( var_0 )
                 if ( isdefined( var_1 ) )
                 {
                     self detach( var_1, "tag_inhand" );
-                    self _meth_804B( "tag_clip" );
+                    self showpart( "tag_clip" );
                     self notify( "clip_detached" );
                     self.weaponinfo[self.weapon].hasclip = 1;
                 }
@@ -558,7 +558,7 @@ resetcliponabort( var_0, var_1 )
     if ( isalive( self ) )
     {
         if ( self.weapon != "none" && self.weaponinfo[self.weapon].position != "none" )
-            self _meth_804B( "tag_clip" );
+            self showpart( "tag_clip" );
 
         self.weaponinfo[self.weapon].hasclip = 1;
     }
@@ -569,9 +569,9 @@ resetcliponabort( var_0, var_1 )
 dropclipmodel( var_0, var_1 )
 {
     var_2 = spawn( "script_model", self gettagorigin( var_1 ) );
-    var_2 _meth_80B1( var_0 );
+    var_2 setmodel( var_0 );
     var_2.angles = self gettagangles( var_1 );
-    var_2 _meth_82C2( var_2.origin, ( 0, 0, 0 ) );
+    var_2 physicslaunchclient( var_2.origin, ( 0, 0, 0 ) );
     wait 10;
 
     if ( isdefined( var_2 ) )
@@ -586,11 +586,11 @@ movetonodeovertime( var_0, var_1 )
 
     if ( var_3 < 1 )
     {
-        self _meth_81C7( var_2 );
+        self safeteleport( var_2 );
         return;
     }
 
-    if ( var_3 > 256 && !self _meth_81C3( var_2, !self.swimmer ) )
+    if ( var_3 > 256 && !self maymovetopoint( var_2, !self.swimmer ) )
         return;
 
     self.keepclaimednodeifvalid = 1;
@@ -604,7 +604,7 @@ movetonodeovertime( var_0, var_1 )
         var_7 = vectornormalize( var_7 );
         var_8 = var_2 + var_7 * var_4;
         var_9 = var_8 + ( var_2 - var_8 ) * ( var_6 + 1 ) / var_5;
-        self _meth_81C7( var_9 );
+        self safeteleport( var_9 );
         wait 0.05;
     }
 
@@ -632,7 +632,7 @@ playlookanimation( var_0, var_1, var_2 )
         if ( animscripts\utility::issuppressedwrapper() && [[ var_2 ]]() )
             return;
 
-        self _meth_8147( var_0, %body, 1, 0.1 );
+        self setanimknoball( var_0, %body, 1, 0.1 );
         wait 0.1;
     }
 }

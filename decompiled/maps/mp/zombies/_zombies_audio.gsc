@@ -251,7 +251,7 @@ player_track_reload()
 
     for (;;)
     {
-        if ( self _meth_8336() )
+        if ( self isreloading() )
         {
             create_and_play_dialog( "general", "reloading" );
             wait 30;
@@ -273,16 +273,16 @@ player_movement_tracking()
         if ( var_0 && var_1 )
             return;
 
-        if ( !var_0 && maps\mp\zombies\_util::is_true( self.exosuitonline ) && self _meth_83B4() )
+        if ( !var_0 && maps\mp\zombies\_util::is_true( self.exosuitonline ) && self ishighjumping() )
         {
             wait 0.2;
 
             if ( isalive( self ) && !maps\mp\zombies\_util::isplayerinlaststand( self ) )
                 var_0 = create_and_play_dialog( "movement", "first_jump" );
         }
-        else if ( !var_1 && maps\mp\zombies\_util::is_true( self.exosuitonline ) && self _meth_83B4() && self getvelocity()[2] >= 0 )
+        else if ( !var_1 && maps\mp\zombies\_util::is_true( self.exosuitonline ) && self ishighjumping() && self getvelocity()[2] >= 0 )
         {
-            var_3 = self _meth_80A8();
+            var_3 = self geteye();
             var_4 = var_3 + ( 0, 0, 30 );
             var_5 = bullettrace( var_3, var_4, 0, self );
 
@@ -445,7 +445,7 @@ do_zombies_playvocals( var_0, var_1, var_2 )
         if ( var_0 == "spawn" )
             wait 0.1;
 
-        self _meth_8438( var_3 );
+        self playsoundonmovingent( var_3 );
     }
     else if ( !self.talking )
     {
@@ -704,7 +704,7 @@ player_stop_speaking()
 
     if ( maps\mp\zombies\_util::is_true( self.isspeaking ) && isdefined( self.speakingline ) )
     {
-        self _meth_855C( self.speakingline );
+        self stopsound( self.speakingline );
         self.isspeaking = 0;
     }
 }
@@ -1040,7 +1040,7 @@ zombie_hurt( var_0, var_1 )
 {
     if ( isdefined( var_0 ) && isplayer( var_0 ) && var_1 < self.health )
     {
-        if ( var_0 _meth_83B3() )
+        if ( var_0 isjumping() )
             var_0 thread playerlaugh();
         else if ( isdefined( self.agent_type ) && self.agent_type == "zombie_host" )
             var_0 thread player_hurt_zombie_vox( "host_damaged" );
@@ -1070,14 +1070,14 @@ player_track_ammo_count()
     self endon( "stop_ammo_tracking" );
     var_0 = [];
     var_1 = 0;
-    var_2 = self _meth_8311();
+    var_2 = self getcurrentweapon();
     var_3 = var_2;
 
     for (;;)
     {
         wait 0.1;
         var_3 = var_2;
-        var_2 = self _meth_8311();
+        var_2 = self getcurrentweapon();
 
         if ( !isdefined( var_2 ) || var_2 == "none" || !can_track_ammo( var_2 ) )
             continue;
@@ -1136,13 +1136,13 @@ playerammolow( var_0 )
         return var_2 / var_3 < 0.05;
     }
     else
-        return self _meth_82F9( var_0 ) == 0;
+        return self setweaponammostock( var_0 ) == 0;
 }
 
 playerammoout()
 {
     var_0 = 0;
-    var_1 = self _meth_830C();
+    var_1 = self getweaponslistprimaries();
 
     foreach ( var_3 in var_1 )
     {
@@ -1212,7 +1212,7 @@ weapon_toggle_vox( var_0, var_1 )
             return;
     }
 
-    self _meth_80AC();
+    self stopsounds();
     wait 0.05;
 
     if ( isdefined( var_4 ) )
@@ -1413,7 +1413,7 @@ playsoundwaituntildone( var_0, var_1, var_2, var_3 )
         }
     }
     else
-        self _meth_8438( var_0 );
+        self playsoundonmovingent( var_0 );
 
     var_7 = volength( var_0, var_1 );
     wait(var_7);
@@ -1574,7 +1574,7 @@ getplayerwhoonlyhaspistol()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_830C();
+        var_2 = var_1 getweaponslistprimaries();
 
         if ( var_2.size == 1 && var_2[0] == "iw5_titan45zm_mp" )
             return var_1;
@@ -1585,7 +1585,7 @@ getplayerwhohasnotupgraded()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_830C();
+        var_2 = var_1 getweaponslistprimaries();
 
         foreach ( var_4 in var_2 )
         {
@@ -2041,5 +2041,5 @@ playertrashchute()
 
 plinko_clink( var_0, var_1 )
 {
-    var_0 _meth_8438( "plinko_clink_" + var_1 );
+    var_0 playsoundonmovingent( "plinko_clink_" + var_1 );
 }

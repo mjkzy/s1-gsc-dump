@@ -198,7 +198,7 @@ waterfall_start( var_0 )
 toxic_waterfall_start( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        _func_292( 20 );
+        stopclientexploder( 20 );
 
     level thread common_scripts\_exploder::activate_clientside_exploder( 21, var_0 );
 }
@@ -207,7 +207,7 @@ dead_fish_fx( var_0 )
 {
     if ( !isdefined( var_0 ) )
     {
-        _func_292( 2 );
+        stopclientexploder( 2 );
         wait 1;
     }
 
@@ -222,7 +222,7 @@ machine_window_fx( var_0 )
 machine_toxic_pipes_fx( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        _func_292( 17 );
+        stopclientexploder( 17 );
 
     level thread common_scripts\_exploder::activate_clientside_exploder( 18, var_0 );
 }
@@ -241,9 +241,9 @@ water_transition_fx()
 {
     level thread common_scripts\_exploder::activate_clientside_exploder( 200 );
     wait 8;
-    _func_292( 201 );
+    stopclientexploder( 201 );
     waitframe();
-    _func_292( 203 );
+    stopclientexploder( 203 );
 }
 
 clear_water_transition_fx()
@@ -267,7 +267,7 @@ vent_steam_fx( var_0 )
 toxic_vent_steam_fx( var_0 )
 {
     if ( !isdefined( var_0 ) )
-        _func_292( 6 );
+        stopclientexploder( 6 );
 
     level thread common_scripts\_exploder::activate_clientside_exploder( 5, var_0 );
 }
@@ -301,9 +301,9 @@ less_freq_electrical_sparks_fx( var_0 )
 {
     if ( !isdefined( var_0 ) )
     {
-        _func_292( 10 );
-        _func_292( 12 );
-        _func_292( 13 );
+        stopclientexploder( 10 );
+        stopclientexploder( 12 );
+        stopclientexploder( 13 );
     }
 
     level thread common_scripts\_exploder::activate_clientside_exploder( 11, var_0 );

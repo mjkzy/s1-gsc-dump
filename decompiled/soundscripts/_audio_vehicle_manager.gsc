@@ -837,7 +837,7 @@ avmx_start_instance( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = self;
 
     if ( var_6 avmx_is_vehicle_proxy() == 0 )
-        var_6 _meth_828B();
+        var_6 vehicle_turnengineoff();
 
     var_7 = avmx_get_preset( var_0 );
 
@@ -1052,7 +1052,7 @@ avmx_map_io( var_0, var_1 )
         foreach ( var_23, var_20 in var_12.envs )
         {
             var_21 = var_3.env_data[var_23];
-            var_22 = _func_246( var_18, var_21.env_array );
+            var_22 = piecewiselinearlookup( var_18, var_21.env_array );
 
             if ( isdefined( var_5.physical_output[var_20.output_name] ) )
             {
@@ -1314,11 +1314,11 @@ vm2x_fade_sound_obj( var_0 )
             {
                 if ( isdefined( var_3 ) )
                 {
-                    var_3 _meth_806E( 0, var_0 );
+                    var_3 setvolume( 0, var_0 );
                     wait(var_0);
 
                     if ( isdefined( var_3 ) )
-                        var_3 _meth_80AC();
+                        var_3 stopsounds();
                 }
             }
 
@@ -1469,20 +1469,20 @@ input_callback_distance()
 input_callback_throttle()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_828A();
+    return var_0 vehicle_getthrottle();
 }
 
 input_callback_speed()
 {
     var_0 = avmx_get_vehicle_entity();
-    var_1 = length( var_0 _meth_8287() * 0.0568182 );
+    var_1 = length( var_0 vehicle_getvelocity() * 0.0568182 );
     return var_1;
 }
 
 input_callback_relative_speed()
 {
     var_0 = avmx_get_vehicle_entity();
-    var_1 = var_0 _meth_8287();
+    var_1 = var_0 vehicle_getvelocity();
     var_2 = level.player getvelocity();
     var_3 = var_1 - var_2;
     var_4 = length( var_3 ) * 0.0568182;
@@ -1514,19 +1514,19 @@ input_callback_jerk_gps()
 input_callback_doppler()
 {
     var_0 = avmx_get_vehicle_entity();
-    return _func_245( var_0.origin, var_0 _meth_8287(), level.player.origin, level.player getvelocity() );
+    return dopplerpitch( var_0.origin, var_0 vehicle_getvelocity(), level.player.origin, level.player getvelocity() );
 }
 
 input_callback_doppler_exaggerated()
 {
     var_0 = avmx_get_vehicle_entity();
-    return _func_245( var_0.origin, var_0 _meth_8287(), level.player.origin, level.player getvelocity(), 2, 5 );
+    return dopplerpitch( var_0.origin, var_0 vehicle_getvelocity(), level.player.origin, level.player getvelocity(), 2, 5 );
 }
 
 input_callback_doppler_subtle()
 {
     var_0 = avmx_get_vehicle_entity();
-    return _func_245( var_0.origin, var_0 _meth_8287(), level.player.origin, level.player getvelocity(), 1, 0.5 );
+    return dopplerpitch( var_0.origin, var_0 vehicle_getvelocity(), level.player.origin, level.player getvelocity(), 1, 0.5 );
 }
 
 avm_compute_doppler_pitch( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -1588,25 +1588,25 @@ input_callback_degrees_from_upright()
 input_callback_jetbike_thrust()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8450();
+    return var_0 vehicle_jetbikegetthrustfraction();
 }
 
 input_callback_jetbike_drag()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8451();
+    return var_0 vehicle_jetbikegetdragfraction();
 }
 
 input_callback_jetbike_anti_slip()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8452();
+    return var_0 vehicle_jetbikegetantislipfraction();
 }
 
 input_callback_jetbike_total_repulsor()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8453();
+    return var_0 vehicle_jetbikegettotalrepulsorfraction();
 }
 
 input_callback_player_jetbike_height()
@@ -1641,7 +1641,7 @@ input_callback_player_jetbike_height()
 input_hovertank_anti_slip()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8475();
+    return var_0 vehicle_hovertankgetantislipforce();
 }
 
 input_hovertank_anti_slip_magnitude()
@@ -1659,7 +1659,7 @@ input_hovertank_anti_slip_direction()
 input_hovertank_auto_yaw()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8477();
+    return var_0 vehicle_hovertankgetautoyawforce();
 }
 
 input_hovertank_auto_yaw_magnitude()
@@ -1677,7 +1677,7 @@ input_hovertank_auto_yaw_direction()
 input_hovertank_repulsors()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8474();
+    return var_0 vehicle_hovertankgetrepulsorforces();
 }
 
 input_hovertank_repulsor_front_left()
@@ -1707,7 +1707,7 @@ input_hovertank_repulsor_back_right()
 input_hovertank_throttle()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8473();
+    return var_0 vehicle_hovertankgetthrottleforce();
 }
 
 input_hovertank_throttle_magnitude()
@@ -1725,17 +1725,17 @@ input_hovertank_throttle_direction()
 input_hovertank_uprighting()
 {
     var_0 = avmx_get_vehicle_entity();
-    return var_0 _meth_8476();
+    return var_0 vehicle_hovertankgetuprightingforce();
 }
 
 input_hovertank_turret_pch()
 {
     var_0 = avmx_get_vehicle_entity();
-    var_1 = var_0.turret _meth_8479();
+    var_1 = var_0.turret getturretpitchrate();
     var_1 = abs( var_1 );
     var_1 = clamp( var_1, 0, 90 );
     var_1 = avmx_normalize_ranged_value( var_1, 0, 90 );
-    var_2 = level.player _meth_830D();
+    var_2 = level.player getnormalizedcameramovements();
     var_3 = abs( var_2[0] );
     return 0;
 }
@@ -1743,14 +1743,14 @@ input_hovertank_turret_pch()
 input_hovertank_turret_yaw()
 {
     var_0 = avmx_get_vehicle_entity();
-    var_1 = var_0.turret _meth_8478();
+    var_1 = var_0.turret getturretyawrate();
     var_1 = abs( var_1 );
-    var_2 = var_0.turret _meth_8479();
+    var_2 = var_0.turret getturretpitchrate();
     var_2 = abs( var_2 );
     var_3 = length2d( ( var_1, var_2, 0 ) );
     var_3 = clamp( var_3, 0, 135 );
     var_4 = avmx_normalize_ranged_value( var_3, 0, 135 );
-    var_5 = level.player _meth_830D();
+    var_5 = level.player getnormalizedcameramovements();
     var_6 = length2d( var_5 );
     return var_4 * var_6;
 }
@@ -1766,7 +1766,7 @@ input_diveboat_throttle()
     }
     else
     {
-        var_1 = var_0 _meth_851D();
+        var_1 = var_0 vehicle_diveboatgetthrottleforce();
 
         if ( var_1 != 0 )
             level.aud.diveboat_throttle = var_1;
@@ -1778,7 +1778,7 @@ input_diveboat_throttle()
 input_diveboat_drag()
 {
     var_0 = avmx_get_vehicle_entity();
-    var_1 = var_0 _meth_851E();
+    var_1 = var_0 vehicle_diveboatgetdragforce();
     return var_1;
 }
 
@@ -1792,7 +1792,7 @@ input_diveboat_drag_with_mph()
 
 input_player_pdrone_look()
 {
-    var_0 = level.player _meth_830D();
+    var_0 = level.player getnormalizedcameramovements();
     var_1 = abs( var_0[0] );
     var_2 = abs( var_0[1] );
 
@@ -1813,8 +1813,8 @@ avmx_start_oneshot_alias( var_0, var_1 )
     {
         var_6 = var_2 avmx_get_vehicle_entity();
         var_4 = spawn( "script_origin", var_6.origin );
-        var_4 _meth_804D( var_6, "tag_origin", var_2.sound_offset, ( 0, 0, 0 ) );
-        var_4 _meth_806F( 0 );
+        var_4 linkto( var_6, "tag_origin", var_2.sound_offset, ( 0, 0, 0 ) );
+        var_4 scalevolume( 0 );
         var_4 soundscripts\_snd_playsound::snd_play( var_5, "sound_done" );
         var_4 thread avmx_monitor_oneshot_done( "sound_done" );
     }
@@ -1857,10 +1857,10 @@ avmx_update_sound_ent_output_param( var_0, var_1 )
     switch ( var_0 )
     {
         case "volume":
-            self _meth_806F( var_1, 0.1 );
+            self scalevolume( var_1, 0.1 );
             break;
         case "pitch":
-            self _meth_806D( var_1, 0.1 );
+            self scalepitch( var_1, 0.1 );
             break;
         default:
             break;
@@ -2098,7 +2098,7 @@ avmx_map_input( var_0, var_1 )
     if ( isdefined( var_3.env_function ) )
         var_4 = [[ var_3.env_function ]]( var_0 );
     else
-        var_4 = _func_246( var_0, var_3.env_array );
+        var_4 = piecewiselinearlookup( var_0, var_3.env_array );
 
     return var_4;
 }
@@ -2120,8 +2120,8 @@ avmx_start_loop( var_0 )
     {
         var_10 = var_1 avmx_get_sound_alias( var_4, var_9 );
         var_11 = spawn( "script_origin", var_3.origin );
-        var_11 _meth_804D( var_3, "tag_origin", var_6, ( 0, 0, 0 ) );
-        var_11 _meth_806F( 0 );
+        var_11 linkto( var_3, "tag_origin", var_6, ( 0, 0, 0 ) );
+        var_11 scalevolume( 0 );
         var_11 soundscripts\_snd_playsound::snd_play_loop( var_10 );
         var_0.snd_ents[var_10] = var_11;
     }
@@ -2144,11 +2144,11 @@ avmx_stop_snd_ent( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_806E( 0, var_0 );
+        var_1 setvolume( 0, var_0 );
         wait(var_0);
 
         if ( isdefined( var_1 ) )
-            var_1 _meth_80AC();
+            var_1 stopsounds();
 
         wait 0.05;
 
@@ -2244,7 +2244,7 @@ avmx_vehicle_getspeed()
     var_0 = 0;
 
     if ( avmx_is_vehicle_proxy() == 0 )
-        var_0 = self _meth_8286();
+        var_0 = self vehicle_getspeed();
 
     return var_0;
 }

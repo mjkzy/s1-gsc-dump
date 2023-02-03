@@ -55,13 +55,13 @@ handprint_fx_test()
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
 
-    if ( level.player _meth_817C() != "stand" )
-        level.player _meth_817D( "stand" );
+    if ( level.player getstance() != "stand" )
+        level.player setstance( "stand" );
 
-    level.player _meth_8119( 0 );
-    level.player _meth_831D();
+    level.player allowcrouch( 0 );
+    level.player disableweapons();
     level.security_center_anim_struct maps\_anim::anim_first_frame_solo( level.player_rig, "handprint" );
-    level.player _meth_8080( level.player_rig, "tag_player", 0.6 );
+    level.player playerlinktoblend( level.player_rig, "tag_player", 0.6 );
     level.security_center_anim_struct thread maps\_anim::anim_single_solo( level.player_rig, "handprint" );
     wait 0.6;
     level.player_rig show();
@@ -117,7 +117,7 @@ handle_hack_security()
 {
     var_0 = common_scripts\utility::getstruct( "hack_security_obj", "targetname" );
     var_1 = common_scripts\utility::getstruct( "security_center_desk_xprompt", "targetname" );
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
     objective_position( maps\_utility::obj( "security_center" ), var_1.origin );
     objective_setpointertextoverride( maps\_utility::obj( "security_center" ), &"IRONS_ESTATE_USE" );
     thread maps\irons_estate_code::handle_objective_marker( var_1, var_0, "handprint_start", 50 );
@@ -127,40 +127,40 @@ handle_hack_security()
     maps\player_scripted_anim_util::waittill_trigger_activate_looking_at( var_2, var_1, cos( 20 ), 0, 1 );
     common_scripts\utility::flag_set( "handprint_start" );
     objective_setpointertextoverride( maps\_utility::obj( "security_center" ), "" );
-    _func_0D3( "objectiveHide", 1 );
+    setsaveddvar( "objectiveHide", 1 );
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
 
-    if ( level.player _meth_817C() != "stand" )
-        level.player _meth_817D( "stand" );
+    if ( level.player getstance() != "stand" )
+        level.player setstance( "stand" );
 
-    level.player _meth_8119( 0 );
-    level.player _meth_831D();
+    level.player allowcrouch( 0 );
+    level.player disableweapons();
     level.security_center_anim_struct maps\_anim::anim_first_frame_solo( level.player_rig, "handprint" );
-    level.player _meth_8080( level.player_rig, "tag_player", 0.6 );
+    level.player playerlinktoblend( level.player_rig, "tag_player", 0.6 );
     level.security_center_anim_struct thread maps\_anim::anim_single_solo( level.player_rig, "handprint" );
     wait 0.6;
-    level.player _meth_807D( level.player_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( level.player_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
     level.player_rig show();
     level.player_rig waittillmatch( "single anim", "print_on" );
     level notify( "handprint_on" );
     thread handprint_on();
     wait 1.5;
-    level.player _meth_80A2( 0.2, 0, 0, 10, 10, 10, 10 );
+    level.player lerpviewangleclamp( 0.2, 0, 0, 10, 10, 10, 10 );
     common_scripts\utility::flag_set( "computer_vo" );
     wait 1;
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     wait 6;
     level notify( "start_camera_vo" );
     wait 2;
     level notify( "security_center_table_bink_done" );
     level.player_rig waittillmatch( "single anim", "end" );
     level.player_rig hide();
-    level.player _meth_804F();
+    level.player unlink();
     level.player freezecontrols( 0 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_831E();
+    level.player allowcrouch( 1 );
+    level.player enableweapons();
     common_scripts\utility::flag_set( "security_center_hack_complete" );
     thread server_lights_setup();
     thread maps\irons_estate_fx::drone_holo_on();
@@ -174,7 +174,7 @@ handle_hack_security()
     maps\_utility::autosave_stealth();
     var_5 = common_scripts\utility::getstruct( "security_center_exit_grapple_magnet_struct", "targetname" );
     objective_position( maps\_utility::obj( "security_center" ), var_5.origin );
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
     var_6 = 15;
     thread maps\irons_estate_code::timer( var_6, undefined, "player_is_out_of_security_center", &"IRONS_ESTATE_SECURITY_TIMER" );
     thread timer_fail( var_6, var_4 );
@@ -245,55 +245,55 @@ finger_material_swap( var_0 )
 
     if ( level.nextgen )
     {
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_01" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_01" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_02" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_02" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_03" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_03" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_04" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_04" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_05" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_05" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_06" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_06" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_07" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_07" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_08" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_08" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_09" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_09" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_10" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_10" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_11" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_11" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "m/mtl_base_fingerprint_12" );
+        self overridematerial( var_0, "m/mtl_base_fingerprint_12" );
     }
     else
     {
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_01" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_01" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_02" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_02" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_03" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_03" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_04" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_04" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_05" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_05" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_06" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_06" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_07" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_07" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_08" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_08" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_09" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_09" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_10" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_10" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_11" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_11" );
         wait(randomfloatrange( 0.05, 0.1 ));
-        self _meth_846C( var_0, "mq/mtl_base_fingerprint_12" );
+        self overridematerial( var_0, "mq/mtl_base_fingerprint_12" );
     }
 }
 
@@ -346,7 +346,7 @@ timer_fail( var_0, var_1 )
     if ( !common_scripts\utility::flag( "player_is_exiting_security_center" ) )
     {
         maps\_grapple::grapple_magnet_unregister( var_1, "tag_origin" );
-        _func_0D3( "objectiveHide", 1 );
+        setsaveddvar( "objectiveHide", 1 );
         level.hatch_door_middle thread maps\_anim::anim_single_solo( level.hatch_door_middle, "hatch_close" );
         waitframe();
         maps\_anim::anim_set_rate_single( level.hatch_door_middle, "hatch_close", 0.25 );
@@ -361,7 +361,7 @@ security_center_exit()
     level.player waittill( "grapple_land_anim" );
     common_scripts\utility::flag_set( "player_is_exiting_security_center" );
     soundscripts\_snd::snd_message( "aud_security_hatch_exit" );
-    level.player _meth_831D();
+    level.player disableweapons();
     var_0 = getentarray( "security_center_light", "targetname" );
     thread maps\irons_estate_code::security_center_lights( undefined, var_0, 50 );
     var_1 = getentarray( "security_center_light_hatch", "targetname" );
@@ -382,7 +382,7 @@ security_center_exit()
     var_7 thread maps\irons_estate_code::security_center_script_brushmodels();
     level.hatch_door_middle thread maps\_anim::anim_single_solo( level.hatch_door_middle, "hatch_close" );
     common_scripts\_exploder::exploder( 6611 );
-    level.player _meth_831E();
+    level.player enableweapons();
     level.player maps\_tagging::tagging_set_enabled( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 1 );

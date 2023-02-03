@@ -219,7 +219,7 @@ bloody_death( var_0 )
         wait(randomfloat( 0.1 ));
     }
 
-    self _meth_8051( self.health + 50, self.origin );
+    self dodamage( self.health + 50, self.origin );
 }
 
 bloody_death_fx( var_0, var_1 )
@@ -252,13 +252,13 @@ teleport_to_scriptstruct( var_0 )
     {
         if ( var_7 < var_6.size )
         {
-            var_2[var_7] _meth_81C6( var_6[var_7].origin, var_6[var_7].angles );
-            var_2[var_7] _meth_81A6( var_6[var_7].origin );
+            var_2[var_7] forceteleport( var_6[var_7].origin, var_6[var_7].angles );
+            var_2[var_7] setgoalpos( var_6[var_7].origin );
             continue;
         }
 
-        var_2[var_7] _meth_81C6( level.player.origin, level.player.angles );
-        var_2[var_7] _meth_81A6( level.player.origin );
+        var_2[var_7] forceteleport( level.player.origin, level.player.angles );
+        var_2[var_7] setgoalpos( level.player.origin );
     }
 }
 
@@ -413,7 +413,7 @@ hint_button_clear_fus()
 
 point_is_in_screen_circle( var_0, var_1, var_2 )
 {
-    return vectordot( vectornormalize( var_0 - var_1 _meth_80A8() ), anglestoforward( var_1 getangles() ) ) > cos( var_2 );
+    return vectordot( vectornormalize( var_0 - var_1 geteye() ), anglestoforward( var_1 getangles() ) ) > cos( var_2 );
 }
 
 player_in_mt()
@@ -423,9 +423,9 @@ player_in_mt()
 
 is_sonar_vision_allowed()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
 
-    if ( _func_1E6( var_0 ) && level.player _meth_8340() > 0 )
+    if ( weaponhasthermalscope( var_0 ) && level.player playerads() > 0 )
         return 0;
 
     return 1;
@@ -481,25 +481,25 @@ sonar_save_and_set_dvars()
     level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] = getdvarfloat( "r_hudoutlinehaloblurradius", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] = getdvarfloat( "r_hudoutlinehalolumscale", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] = getdvar( "r_hudoutlinehalowhen", 1 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.7 );
-    _func_0D3( "r_hudoutlinehalolumscale", 2 );
-    _func_0D3( "r_hudoutlinehalowhen", 0 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.7 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 2 );
+    setsaveddvar( "r_hudoutlinehalowhen", 0 );
     level.player.sonarvisionsaveddvars["r_ssrBlendScale"] = getdvarfloat( "r_ssrBlendScale", 1.0 );
-    _func_0D3( "r_ssrBlendScale", 0.0 );
+    setsaveddvar( "r_ssrBlendScale", 0.0 );
 }
 
 sonar_reset_dvars()
 {
     if ( isdefined( level.player.sonarvisionsaveddvars ) )
     {
-        _func_0D3( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
-        _func_0D3( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
-        _func_0D3( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
-        _func_0D3( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
-        _func_0D3( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
-        _func_0D3( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
+        setsaveddvar( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
+        setsaveddvar( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
+        setsaveddvar( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
+        setsaveddvar( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
+        setsaveddvar( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
+        setsaveddvar( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
     }
 }
 
@@ -509,8 +509,8 @@ sonar_on()
     sonar_save_and_set_dvars();
     thread mark_enemies();
     var_0 = 0.05;
-    level.player _meth_83C1( "sanfran_b_sonar_vision", var_0 );
-    level.player _meth_8491( "clut_sonar", var_0 );
+    level.player lightsetoverrideenableforplayer( "sanfran_b_sonar_vision", var_0 );
+    level.player setclutoverrideenableforplayer( "clut_sonar", var_0 );
     soundscripts\_snd::snd_message( "aud_sonar_vision_on" );
     level.player.sonar_vision = 1;
     level notify( "sonar_update" );
@@ -519,8 +519,8 @@ sonar_on()
 sonar_off()
 {
     var_0 = 0.05;
-    level.player _meth_83C2( var_0 );
-    level.player _meth_8492( var_0 );
+    level.player lightsetoverrideenableforplayer( var_0 );
+    level.player setclutoverridedisableforplayer( var_0 );
     soundscripts\_snd::snd_message( "aud_sonar_vision_off" );
     level.player.sonar_vision = 0;
     level notify( "sonar_update" );
@@ -536,11 +536,11 @@ sonar_off()
 
     sonar_reset_dvars();
 
-    foreach ( var_2 in _func_0D6( "axis", "allies" ) )
+    foreach ( var_2 in getaiarray( "axis", "allies" ) )
     {
         if ( isdefined( var_2.hudoutlineenabledbysonarvision ) )
         {
-            var_2 _meth_83FB();
+            var_2 hudoutlinedisable();
             var_2.hudoutlineenabledbysonarvision = undefined;
         }
     }
@@ -554,15 +554,15 @@ mark_enemies()
 
     for (;;)
     {
-        foreach ( var_1 in _func_0D6( "axis" ) )
+        foreach ( var_1 in getaiarray( "axis" ) )
         {
-            var_1 _meth_83FA( 1, 1, 0 );
+            var_1 hudoutlineenable( 1, 1, 0 );
             var_1.hudoutlineenabledbysonarvision = 1;
         }
 
-        foreach ( var_4 in _func_0D6( "allies" ) )
+        foreach ( var_4 in getaiarray( "allies" ) )
         {
-            var_4 _meth_83FA( 2, 1, 0 );
+            var_4 hudoutlineenable( 2, 1, 0 );
             var_4.hudoutlineenabledbysonarvision = 1;
         }
 
@@ -585,7 +585,7 @@ create_hud_sonar_overlay( var_0, var_1 )
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
     var_2.alpha = var_1;
-    var_2 _meth_83A5( 10 );
+    var_2 setsonarvision( 10 );
     return var_2;
 }
 
@@ -618,7 +618,7 @@ spawn_player_drone_think()
     {
         level.player waittill( "use_drone" );
 
-        while ( level.player _meth_83B3() )
+        while ( level.player isjumping() )
             waitframe();
 
         if ( deploy_check_player_in_elevator_think() )
@@ -665,7 +665,7 @@ player_drone_manager()
 {
     common_scripts\utility::flag_set( "player_drone_start" );
     level notify( "player_drone_start" );
-    level.player _meth_821B( "actionslot1", "dpad_icon_drone_off" );
+    level.player setweaponhudiconoverride( "actionslot1", "dpad_icon_drone_off" );
     maps\_player_exo::player_exo_deactivate();
     player_drone_control();
     maps\_player_exo::player_exo_activate();
@@ -699,7 +699,7 @@ player_drone_control()
 force_exit_turbine_combat_complete()
 {
     waittillframeend;
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     maps\_utility::waittill_dead_or_dying( var_0 );
     common_scripts\utility::flag_set( "flag_turbine_pdrone_combat_complete" );
     wait 2.0;

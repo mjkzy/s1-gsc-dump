@@ -652,8 +652,8 @@ remove_name( var_0, var_1 )
 init_script_friendnames()
 {
     var_0 = [];
-    var_1 = _func_0D8();
-    var_2 = _func_0D6();
+    var_1 = getspawnerarray();
+    var_2 = getaiarray();
 
     foreach ( var_4 in var_1 )
     {
@@ -770,7 +770,7 @@ get_name_for_nationality( var_0 )
         self.airank = "sergeant";
     }
 
-    if ( isai( self ) && self _meth_813D() )
+    if ( isai( self ) && self isbadguy() )
         self.ainame = var_4;
     else
         self.name = var_4;

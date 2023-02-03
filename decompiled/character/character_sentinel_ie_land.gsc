@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "sentinel_udt_land_body" );
+    self setmodel( "sentinel_udt_land_body" );
     codescripts\character::attachhead( "alias_sentinel_udt_heads", xmodelalias\alias_sentinel_udt_heads::main() );
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

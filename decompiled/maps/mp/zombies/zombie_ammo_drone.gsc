@@ -32,14 +32,14 @@ findammodronespawnlocations()
         }
 
         var_2 = var_1.volumes[randomint( var_1.volumes.size )];
-        var_3 = _func_1FE( var_2 );
+        var_3 = getnodesintrigger( var_2 );
 
         if ( !isdefined( var_1.ammodronespawnnodes ) )
             var_1.ammodronespawnnodes = [];
 
         foreach ( var_5 in var_3 )
         {
-            if ( !var_5 _meth_8386() && isdefined( var_5.zombieszone ) )
+            if ( !var_5 nodeisdisconnected() && isdefined( var_5.zombieszone ) )
                 var_1.ammodronespawnnodes[var_1.ammodronespawnnodes.size] = var_5;
         }
 
@@ -48,7 +48,7 @@ findammodronespawnlocations()
 
         foreach ( var_5 in var_3 )
         {
-            if ( _func_2C9( var_5 ) != "none" )
+            if ( nodegetremotemissilename( var_5 ) != "none" )
                 var_1.ammodroneleavenodes[var_1.ammodroneleavenodes.size] = var_5;
         }
     }
@@ -239,7 +239,7 @@ spawnammodrone( var_0, var_1 )
 
     var_3.owner = var_2;
     var_3.team = level.enemyteam;
-    var_3 _meth_828B();
+    var_3 vehicle_turnengineoff();
     var_3 thread trackpreviousorigin();
     setupdamagecallback( var_3 );
     playfx( common_scripts\utility::getfx( "teleport_post_fx" ), var_0 );
@@ -262,7 +262,7 @@ setupdamagecallback( var_0 )
 {
     var_0.health = getdronehealth();
     var_0.maxhealth = var_0.health;
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
     var_0.damagecallback = ::dronehandledamagecallback;
 }
 
@@ -279,7 +279,7 @@ getdronehealth()
 
 disabledamagecallback( var_0 )
 {
-    var_0 _meth_82C0( 0 );
+    var_0 setcandamage( 0 );
     var_0.damagecallback = undefined;
 }
 
@@ -319,9 +319,9 @@ dronedodamageoutline()
     self notify( "droneDoDamageOutline" );
     self endon( "droneDoDamageOutline" );
     self endon( "disabled" );
-    self _meth_83FA( 5, 0 );
+    self hudoutlineenable( 5, 0 );
     wait 1;
-    self _meth_83FB();
+    self hudoutlinedisable();
 }
 
 dronemodifydamage( var_0, var_1, var_2, var_3 )
@@ -397,7 +397,7 @@ getplayerlookingatdronetoolong( var_0, var_1 )
 
         if ( !common_scripts\utility::array_contains( var_1, var_3 ) )
         {
-            var_3.lookingatammodrone[var_0 _meth_81B1()] = undefined;
+            var_3.lookingatammodrone[var_0 getentitynumber()] = undefined;
             continue;
         }
 
@@ -407,28 +407,28 @@ getplayerlookingatdronetoolong( var_0, var_1 )
 
         if ( var_6 < 0.7 )
         {
-            var_3.lookingatammodrone[var_0 _meth_81B1()] = undefined;
+            var_3.lookingatammodrone[var_0 getentitynumber()] = undefined;
             continue;
         }
 
-        var_7 = var_3 _meth_80A8();
+        var_7 = var_3 geteye();
         var_8 = var_0.origin + ( 0, 0, 40 );
         var_9 = bullettrace( var_7, var_8, 0, var_0, 0, 0, 0, 0, 0, 0, 0 );
         var_10 = var_9["entity"];
 
         if ( var_9["fraction"] != 1 && ( !isdefined( var_10 ) || var_10 != var_0 ) )
         {
-            var_3.lookingatammodrone[var_0 _meth_81B1()] = undefined;
+            var_3.lookingatammodrone[var_0 getentitynumber()] = undefined;
             continue;
         }
 
-        if ( !isdefined( var_3.lookingatammodrone[var_0 _meth_81B1()] ) )
+        if ( !isdefined( var_3.lookingatammodrone[var_0 getentitynumber()] ) )
         {
-            var_3.lookingatammodrone[var_0 _meth_81B1()] = gettime();
+            var_3.lookingatammodrone[var_0 getentitynumber()] = gettime();
             continue;
         }
 
-        var_11 = gettime() - var_3.lookingatammodrone[var_0 _meth_81B1()];
+        var_11 = gettime() - var_3.lookingatammodrone[var_0 getentitynumber()];
 
         if ( var_11 > 1500 )
             return var_3;
@@ -459,11 +459,11 @@ droneactivate( var_0, var_1, var_2, var_3 )
         var_0 thread dronehandlepickup();
     }
 
-    var_0 _meth_825B( var_0.origin + ( 0, 0, 10 ) );
+    var_0 setvehgoalpos( var_0.origin + ( 0, 0, 10 ) );
     var_0.currentspeed = getdronespeed( var_0 );
-    var_0 _meth_8283( var_0.currentspeed, 10, 10 );
-    var_0 _meth_8253( 30, 5, 5 );
-    var_0 _meth_8294( 15, 15 );
+    var_0 vehicle_setspeed( var_0.currentspeed, 10, 10 );
+    var_0 sethoverparams( 30, 5, 5 );
+    var_0 setmaxpitchroll( 15, 15 );
     wait 0.5;
     var_4 = var_0 dronepathtogoal( var_1, var_2 );
 
@@ -540,9 +540,9 @@ dronedodrop( var_0 )
     var_6 = ( randomfloatrange( -1 * var_4, var_4 ), randomfloatrange( -1 * var_4, var_4 ), var_4 );
     var_7 = vectornormalize( var_6 );
     var_8 = spawn( "script_model", var_5 );
-    var_8 _meth_80B1( var_2 );
-    var_8 _meth_8276( var_5, var_6 );
-    var_8 _meth_83FA( 3, 0 );
+    var_8 setmodel( var_2 );
+    var_8 physicslaunchserver( var_5, var_6 );
+    var_8 hudoutlineenable( 3, 0 );
     playfx( common_scripts\utility::getfx( "ammo_drone_drops_explode" ), var_5 + ( 0, 0, 5 ) );
     var_9 = var_8 common_scripts\utility::waittill_notify_or_timeout_return( "physics_finished", 5 );
 
@@ -614,7 +614,7 @@ playergiveammo()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    var_0 = self _meth_8312();
+    var_0 = self getcurrentprimaryweapon();
 
     if ( !isdefined( var_0 ) || var_0 == "none" || maps\mp\zombies\_util::isrippedturretweapon( var_0 ) || maps\mp\zombies\_util::iszombiekillstreakweapon( var_0 ) || maps\mp\zombies\_util::iszombieequipment( var_0 ) )
         return;
@@ -634,33 +634,33 @@ playergiveammo()
     }
     else
     {
-        var_1 = self _meth_82F9( var_0 );
-        var_2 = _func_1E1( var_0 );
+        var_1 = self setweaponammostock( var_0 );
+        var_2 = weaponmaxammo( var_0 );
 
         if ( var_1 < var_2 )
         {
             var_1 = getnewammoamount( var_1, var_2 );
-            self _meth_82F7( var_0, var_1 );
+            self setweaponammostock( var_0, var_1 );
             return;
         }
 
-        var_1 = self _meth_82F8( var_0, "right" );
+        var_1 = self getweaponammoclip( var_0, "right" );
         var_2 = weaponclipsize( var_0 );
 
         if ( var_1 < var_2 )
         {
             var_1 = getnewammoamount( var_1, var_2 );
-            self _meth_82F6( var_0, var_1, "right" );
+            self setweaponammoclip( var_0, var_1, "right" );
         }
 
         if ( issubstr( var_0, "akimbo" ) )
         {
-            var_1 = self _meth_82F8( var_0, "left" );
+            var_1 = self getweaponammoclip( var_0, "left" );
 
             if ( var_1 < var_2 )
             {
                 var_1 = getnewammoamount( var_1, var_2 );
-                self _meth_82F6( var_0, var_1, "left" );
+                self setweaponammoclip( var_0, var_1, "left" );
             }
         }
     }
@@ -694,15 +694,15 @@ dronehandlespeed()
     {
         self waittill( "droneDamaged", var_0 );
         self.currentspeed = min( self.currentspeed + 1, 30 );
-        self _meth_8283( self.currentspeed, 10, 10 );
+        self vehicle_setspeed( self.currentspeed, 10, 10 );
     }
 }
 
 dronebeep()
 {
-    self _meth_8075( "treasure_drone_vox_lp" );
+    self playloopsound( "treasure_drone_vox_lp" );
     common_scripts\utility::waittill_any( "disabled", "stopBeeping" );
-    self _meth_80AB();
+    self stoploopsound();
 }
 
 dronehandlepickup()
@@ -719,9 +719,9 @@ dronehandlepickup()
     else
     {
         var_4 = spawn( "script_model", self.origin );
-        var_4 _meth_80B1( var_2 );
-        var_4 _meth_83FA( 2, 0 );
-        var_4 _meth_804D( self, "tag_origin", ( 0, 0, 60 ), ( 0, 0, 0 ) );
+        var_4 setmodel( var_2 );
+        var_4 hudoutlineenable( 2, 0 );
+        var_4 linkto( self, "tag_origin", ( 0, 0, 60 ), ( 0, 0, 0 ) );
         thread dronecleanuppickupmodel( var_4 );
     }
 
@@ -768,7 +768,7 @@ dronepathtogoal( var_0, var_1 )
     self.goalent.health = 1;
     self.goalent.maxhealth = 1;
     thread dronecleanupgoalent();
-    self _meth_83F9( self.goalent, ( 0, 0, 30 ) );
+    self setdronegoalpos( self.goalent, ( 0, 0, 30 ) );
 
     for (;;)
     {
@@ -780,13 +780,13 @@ dronepathtogoal( var_0, var_1 )
         waitframe();
     }
 
-    if ( !_func_2C8( var_1 ) )
+    if ( !nodehasremotemissileset( var_1 ) )
         return 1;
 
     self.lastgroundposition = self.origin;
     var_5 = maps\mp\killstreaks\_aerial_utility::getentorstructarray( "remoteMissileSpawn", "targetname" );
     var_6 = maps\mp\killstreaks\_orbital_util::nodegetremotemissileorigin( var_1, var_5 );
-    self _meth_825B( var_6, 0 );
+    self setvehgoalpos( var_6, 0 );
     thread droneincreaseexitspeed();
     common_scripts\utility::waittill_any( "near_goal", "goal" );
 
@@ -811,7 +811,7 @@ droneincreaseexitspeed()
     self notify( "stopSpeedIncreasing" );
     self notify( "stopBeeping" );
     disabledamagecallback( self );
-    self _meth_8283( 100, 10, 10 );
+    self vehicle_setspeed( 100, 10, 10 );
     level thread dotreasuredroneleavevo( self );
 }
 
@@ -861,17 +861,17 @@ drone_stopthrustereffects()
 
 setupdrone( var_0 )
 {
-    var_0 _meth_83F3( 1 );
+    var_0 makevehiclenotcollidewithplayers( 1 );
     var_0.speed = getdronespeed( var_0 );
     var_0.followspeed = var_0.speed;
-    var_0 _meth_8283( var_0.speed, 10, 10 );
-    var_0 _meth_8292( 120, 90 );
-    var_0 _meth_825A( 64 );
-    var_0 _meth_8253( 4, 5, 5 );
-    var_0 _meth_828C();
+    var_0 vehicle_setspeed( var_0.speed, 10, 10 );
+    var_0 setyawspeed( 120, 90 );
+    var_0 setneargoalnotifydist( 64 );
+    var_0 sethoverparams( 4, 5, 5 );
+    var_0 vehicle_turnengineon();
     var_1 = 45;
     var_2 = 45;
-    var_0 _meth_8294( var_1, var_2 );
+    var_0 setmaxpitchroll( var_1, var_2 );
     var_3 = 10000;
     var_4 = 150;
     var_0.attractor = missile_createattractorent( var_0, var_3, var_4 );

@@ -51,7 +51,7 @@ onplayerspawn()
 
 firelinegun()
 {
-    var_0 = self _meth_8340();
+    var_0 = self playerads();
     var_1 = self getangles();
     var_2 = ( var_1[0], var_1[1], 0 );
     var_3 = randomfloatrange( -1.0, 1.0 ) * ( 1.0 - var_0 );
@@ -59,7 +59,7 @@ firelinegun()
     var_5 = var_2 + ( level.linegun.hipfireangles[0] * var_3, level.linegun.hipfireangles[1] * var_4, 0 );
     var_6 = anglestoforward( var_1 );
     var_7 = anglestoforward( var_5 );
-    var_8 = self _meth_845C();
+    var_8 = self getvieworigin();
     var_9 = var_8 + self getvelocity() * 0.05 + rotatevector( level.linegun.startoffset, var_2 );
     var_10 = var_8 + var_7 * level.linegun.maxdist;
     var_11 = var_8;
@@ -99,11 +99,11 @@ firelinegun()
     var_20 = distance( var_8, var_10 );
     var_21 = linegungetprojectileent( var_9, self.angles );
     var_22 = var_20 / level.linegun.movespeed;
-    var_21 _meth_82AE( var_10, var_22 );
+    var_21 moveto( var_10, var_22 );
     var_23 = -1 * var_4 * level.linegun.hipfireangles[2];
 
     if ( var_23 != 0 )
-        var_21 _meth_82BD( ( 0, 0, var_23 ), var_22 );
+        var_21 rotatevelocity( ( 0, 0, var_23 ), var_22 );
 
     var_21 thread lineprojectiledamageupdate( self );
     var_21 waittill( "movedone" );
@@ -230,7 +230,7 @@ linegundamage( var_0, var_1, var_2 )
 
         thread linegungibfx( var_13, var_17 );
         var_24 = linegundamagelocation( var_13, var_17 );
-        var_13 _meth_8051( level.linegun.damage, var_17, var_2, var_2, "MOD_RIFLE_BULLET", level.linegun.damageweapon, var_24 );
+        var_13 dodamage( level.linegun.damage, var_17, var_2, var_2, "MOD_RIFLE_BULLET", level.linegun.damageweapon, var_24 );
         var_2 maps\mp\gametypes\_damagefeedback::updatedamagefeedback( "linegun", var_13 );
         var_13.lastlinegundamagetime = gettime();
         self.enemyimpactcount++;
@@ -274,7 +274,7 @@ linegungetprojectileent( var_0, var_1 )
         if ( !isdefined( var_5.inuse ) || !var_5.inuse )
         {
             var_2 = var_5;
-            var_2 _meth_8092();
+            var_2 dontinterpolate();
             break;
         }
     }
@@ -285,13 +285,13 @@ linegungetprojectileent( var_0, var_1 )
         var_2.targetname = "line_gun_projectile";
     }
 
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_2.origin = var_0;
     var_2.angles = var_1;
     var_2.fxname = "dlc_zombies_linegun_laser";
     var_2.fxtag = "tag_origin";
     playfxontag( common_scripts\utility::getfx( var_2.fxname ), var_2, var_2.fxtag );
-    var_2 _meth_8075( "wpn_linegun_beam_hi" );
+    var_2 playloopsound( "wpn_linegun_beam_hi" );
     var_2.inuse = 1;
     return var_2;
 }
@@ -301,7 +301,7 @@ linegunreleaseprojectileent( var_0 )
     var_0 notify( "released" );
     killfxontag( common_scripts\utility::getfx( var_0.fxname ), var_0, var_0.fxtag );
     playfxontag( common_scripts\utility::getfx( "dlc_zombies_drone_death" ), var_0, var_0.fxtag );
-    var_0 _meth_80AB( "wpn_linegun_beam_hi" );
+    var_0 stoploopsound( "wpn_linegun_beam_hi" );
     var_0 playsound( "wpn_linegun_exp" );
     wait 1.0;
     var_0.inuse = 0;

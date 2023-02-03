@@ -27,7 +27,7 @@ setup_allies()
     level.cormack.canjumppath = 1;
 
     if ( level.start_point == "skyjack" || level.start_point == "crash_site" )
-        level.cormack _meth_80B1( "body_hero_cormack_sentinel_halo_jetpack" );
+        level.cormack setmodel( "body_hero_cormack_sentinel_halo_jetpack" );
 
     if ( level.start_point != "skyjack" && level.start_point != "crash_site" )
     {
@@ -89,7 +89,7 @@ spawn_ally_at_struct( var_0, var_1 )
     {
         var_4 = var_2 maps\_utility::spawn_ai( 1 );
         iprintlnbold( "Add a script struct called: " + var_1 + " to spawn ally in the correct location." );
-        var_4 _meth_81C5( level.player.origin, level.player.angles );
+        var_4 teleport( level.player.origin, level.player.angles );
         return var_4;
     }
 
@@ -283,7 +283,7 @@ set_helmet_open( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.2;
 
-    self _meth_8145( %sentinel_halo_helmet_open, 1, var_0 );
+    self setanimknobrestart( %sentinel_halo_helmet_open, 1, var_0 );
     self.helmet_open = 1;
     wait 0.25;
 }
@@ -293,7 +293,7 @@ set_helmet_closed( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.2;
 
-    self _meth_814D( %sentinel_halo_helmet_close, 1, var_0 );
+    self setanimrestart( %sentinel_halo_helmet_close, 1, var_0 );
     self.helmet_open = 0;
     wait 0.75;
 }
@@ -303,7 +303,7 @@ clear_additive_helmet_anim( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
 
-    self _meth_8142( %s1_halo_helmet, 0 );
+    self clearanim( %s1_halo_helmet, 0 );
 }
 
 player_exo_enable()
@@ -529,7 +529,7 @@ retreat_volume( var_0, var_1, var_2 )
         var_1 = getent( var_1, "targetname" );
 
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
-        var_3[var_4] _meth_81A9( var_1 );
+        var_3[var_4] setgoalvolumeauto( var_1 );
 }
 
 retreat_volume_and_set_flag( var_0, var_1, var_2, var_3 )
@@ -553,7 +553,7 @@ move_wave( var_0, var_1 )
     var_3 = getent( var_1, "targetname" );
 
     for ( var_4 = 0; var_4 < var_2.size; var_4++ )
-        var_2[var_4] _meth_81A9( var_3 );
+        var_2[var_4] setgoalvolumeauto( var_3 );
 }
 
 move_wave_random( var_0, var_1 )
@@ -563,7 +563,7 @@ move_wave_random( var_0, var_1 )
 
     for ( var_4 = 0; var_4 < var_2.size; var_4++ )
     {
-        var_2[var_4] _meth_81A9( var_3 );
+        var_2[var_4] setgoalvolumeauto( var_3 );
         var_2[var_4].pathrandompercent = 100;
     }
 }
@@ -668,7 +668,7 @@ kill_enemies( var_0 )
     var_1 = maps\_utility::get_living_ai_array( var_0, "script_noteworthy" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_8052();
+        var_3 kill();
 }
 
 spawn_wave_stagger( var_0, var_1, var_2 )
@@ -692,8 +692,8 @@ warbird_shooting_think( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -732,7 +732,7 @@ warbird_fire_init( var_0, var_1, var_2 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_5 = _func_0D6( "allies" );
+        var_5 = getaiarray( "allies" );
 
         if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
         {
@@ -766,7 +766,7 @@ warbird_fire_init( var_0, var_1, var_2 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_13 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_14 = var_9 _meth_80A8();
+                var_14 = var_9 geteye();
                 var_15 = vectornormalize( var_14 - var_13 );
                 var_16 = var_14 + var_15 * 20;
 
@@ -780,24 +780,24 @@ warbird_fire_init( var_0, var_1, var_2 )
 
         if ( isdefined( var_11 ) )
         {
-            var_3 _meth_8106( var_11 );
-            var_4 _meth_8106( var_11 );
-            var_3 _meth_8179();
-            var_4 _meth_8179();
-            var_3 _meth_80E2();
-            var_4 _meth_80E2();
+            var_3 settargetentity( var_11 );
+            var_4 settargetentity( var_11 );
+            var_3 turretfireenable();
+            var_4 turretfireenable();
+            var_3 startfiring();
+            var_4 startfiring();
             warbird_wait_for_fire_target_done( var_11, var_0, var_1 );
-            var_3 _meth_8108();
-            var_4 _meth_8108();
-            var_3 _meth_815C();
-            var_4 _meth_815C();
+            var_3 cleartargetentity();
+            var_4 cleartargetentity();
+            var_3 turretfiredisable();
+            var_4 turretfiredisable();
         }
 
         wait(var_2);
     }
 
-    var_3 _meth_815C();
-    var_4 _meth_815C();
+    var_3 turretfiredisable();
+    var_4 turretfiredisable();
 }
 
 warbird_ground_fire_init( var_0, var_1, var_2 )
@@ -813,7 +813,7 @@ warbird_ground_fire_init( var_0, var_1, var_2 )
     {
         var_5 = common_scripts\utility::getstructarray( "warbird_fire_targets", "targetname" );
         var_5 = sortbydistance( var_5, self.origin );
-        var_6 = _func_0D6( "allies" );
+        var_6 = getaiarray( "allies" );
 
         if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
         {
@@ -847,7 +847,7 @@ warbird_ground_fire_init( var_0, var_1, var_2 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_14 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_15 = var_10 _meth_80A8();
+                var_15 = var_10 geteye();
                 var_16 = vectornormalize( var_15 - var_14 );
                 var_17 = var_15 + var_16 * 20;
 
@@ -862,12 +862,12 @@ warbird_ground_fire_init( var_0, var_1, var_2 )
         if ( isdefined( var_12 ) )
         {
             var_19 = var_5[0] common_scripts\utility::spawn_tag_origin();
-            var_3 _meth_8106( var_19 );
-            var_4 _meth_8106( var_19 );
-            var_3 _meth_8179();
-            var_4 _meth_8179();
-            var_3 _meth_80E2();
-            var_4 _meth_80E2();
+            var_3 settargetentity( var_19 );
+            var_4 settargetentity( var_19 );
+            var_3 turretfireenable();
+            var_4 turretfireenable();
+            var_3 startfiring();
+            var_4 startfiring();
             var_20 = distance2d( var_19.origin, var_12.origin );
             var_21 = var_20 / 275;
             var_21 = maps\_utility::round_float( var_21, 2 );
@@ -875,26 +875,26 @@ warbird_ground_fire_init( var_0, var_1, var_2 )
 
             while ( var_22 < var_21 )
             {
-                var_19 _meth_82AE( var_12.origin + ( 0, 0, 16 ), var_21 - var_22 );
+                var_19 moveto( var_12.origin + ( 0, 0, 16 ), var_21 - var_22 );
                 var_22 += 0.05;
                 wait 0.05;
             }
 
-            var_3 _meth_8106( var_12 );
-            var_4 _meth_8106( var_12 );
+            var_3 settargetentity( var_12 );
+            var_4 settargetentity( var_12 );
             warbird_wait_for_fire_target_done( var_12, var_0, var_1 );
-            var_3 _meth_8108();
-            var_4 _meth_8108();
-            var_3 _meth_815C();
-            var_4 _meth_815C();
+            var_3 cleartargetentity();
+            var_4 cleartargetentity();
+            var_3 turretfiredisable();
+            var_4 turretfiredisable();
             var_19 delete();
         }
 
         wait(var_2);
     }
 
-    var_3 _meth_815C();
-    var_4 _meth_815C();
+    var_3 turretfiredisable();
+    var_4 turretfiredisable();
 }
 
 warbird_ground_fire_no_enemy_init( var_0, var_1, var_2, var_3 )
@@ -919,12 +919,12 @@ warbird_ground_fire_no_enemy_init( var_0, var_1, var_2, var_3 )
         var_8.origin += ( var_9[0] * 500, var_9[1] * 500, 0 );
     }
 
-    var_4 _meth_8106( var_7 );
-    var_5 _meth_8106( var_7 );
-    var_4 _meth_8179();
-    var_5 _meth_8179();
-    var_4 _meth_80E2();
-    var_5 _meth_80E2();
+    var_4 settargetentity( var_7 );
+    var_5 settargetentity( var_7 );
+    var_4 turretfireenable();
+    var_5 turretfireenable();
+    var_4 startfiring();
+    var_5 startfiring();
 
     if ( !isdefined( var_3 ) )
         var_3 = 275;
@@ -936,7 +936,7 @@ warbird_ground_fire_no_enemy_init( var_0, var_1, var_2, var_3 )
 
     while ( var_12 < var_11 )
     {
-        var_7 _meth_82AE( var_8.origin, var_11 - var_12 );
+        var_7 moveto( var_8.origin, var_11 - var_12 );
         var_12 += 0.05;
         wait 0.05;
     }
@@ -945,10 +945,10 @@ warbird_ground_fire_no_enemy_init( var_0, var_1, var_2, var_3 )
         maps\_utility::ent_flag_init( "turret_hit_target" );
 
     maps\_utility::ent_flag_set( "turret_hit_target" );
-    var_4 _meth_8108();
-    var_5 _meth_8108();
-    var_4 _meth_815C();
-    var_5 _meth_815C();
+    var_4 cleartargetentity();
+    var_5 cleartargetentity();
+    var_4 turretfiredisable();
+    var_5 turretfiredisable();
     var_7 delete();
 }
 
@@ -983,7 +983,7 @@ warbird_wait_for_fire_target_done( var_0, var_1, var_2 )
         if ( isdefined( var_1 ) && var_1 )
         {
             var_4 = self.mgturret[0] gettagorigin( "tag_flash" );
-            var_5 = var_0 _meth_80A8();
+            var_5 = var_0 geteye();
             var_6 = vectornormalize( var_5 - var_4 );
             var_7 = var_4 + var_6 * 20;
 
@@ -1054,16 +1054,16 @@ mech_fire_rockets_special( var_0 )
 
 fly_in_hud()
 {
-    _func_0D3( "cg_cinematicfullscreen", "1" );
-    _func_0D3( "cg_cinematicCanPause", "1" );
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
+    setsaveddvar( "cg_cinematicCanPause", "1" );
     level.player thread fly_in_hud_overlay( undefined, undefined, undefined, 1, 0, 0 );
-    _func_05A( "crash_jumpHUD_loop" );
+    cinematicingameloopresident( "crash_jumpHUD_loop" );
     common_scripts\utility::flag_wait( "start_hud" );
-    _func_057( "crash_jumpHUD", 0, 1.0, 1 );
+    cinematicingame( "crash_jumpHUD", 0, 1.0, 1 );
     wait 1;
     level.player thread thermal_with_nvg();
-    level.player _meth_8490( "clut_crash_hud", 0 );
-    level.player _meth_83C0( "crash_skyjack" );
+    level.player setclutforplayer( "clut_crash_hud", 0 );
+    level.player lightsetforplayer( "crash_skyjack" );
     maps\_utility::vision_set_fog_changes( "crash_skyjack", 0 );
     waitframe();
 
@@ -1073,15 +1073,15 @@ fly_in_hud()
     wait 29.5;
     level.player notify( "sonar_vision" );
     killfxontag( level._effect["fx_crash_hud_flare"], level.crashing_plane, "body_animate_jnt" );
-    level.crashing_plane _meth_83FB();
-    level.player _meth_8490( "clut_crash_crash_site", 0 );
+    level.crashing_plane hudoutlinedisable();
+    level.player setclutforplayer( "clut_crash_crash_site", 0 );
     maps\_utility::vision_set_fog_changes( "crash_crash_site_cinematic", 0 );
-    level.player _meth_83C0( "crash_crash_site" );
+    level.player lightsetforplayer( "crash_crash_site" );
     waitframe();
     level.player notify( "flag_end_sonar_vision" );
     wait 1.25;
-    _func_0D3( "cg_cinematicfullscreen", "0" );
-    _func_0D3( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicfullscreen", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
 }
 
 fly_in_hud_overlay( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -1089,7 +1089,7 @@ fly_in_hud_overlay( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = newclienthudelem( self );
     var_6.x = var_4;
     var_6.y = var_5;
-    var_6 _meth_80CC( "jump_hud_vignette", 640, 480 );
+    var_6 setshader( "jump_hud_vignette", 640, 480 );
     var_6.alignx = "left";
     var_6.aligny = "top";
     var_6.sort = 1;
@@ -1112,7 +1112,7 @@ mark_enemies()
     for (;;)
     {
         if ( isdefined( level.crashing_plane ) )
-            level.crashing_plane _meth_83FA( 4, 0, 0 );
+            level.crashing_plane hudoutlineenable( 4, 0, 0 );
 
         wait 0.1;
     }
@@ -1121,16 +1121,16 @@ mark_enemies()
 give_night_vision()
 {
     level endon( "flag_end_sonar_vision" );
-    level.player _meth_821B( "actionslot4", "dpad_icon_nvg" );
-    level.player _meth_82DD( "sonar_vision", "+actionslot 4" );
+    level.player setweaponhudiconoverride( "actionslot4", "dpad_icon_nvg" );
+    level.player notifyonplayercommand( "sonar_vision", "+actionslot 4" );
     level.player thread thermal_with_nvg();
 }
 
 is_sonar_vision_allowed()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
 
-    if ( _func_1E6( var_0 ) && level.player _meth_8340() > 0 )
+    if ( weaponhasthermalscope( var_0 ) && level.player playerads() > 0 )
         return 0;
 
     return 1;
@@ -1189,25 +1189,25 @@ sonar_save_and_set_dvars()
     level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] = getdvarfloat( "r_hudoutlinehaloblurradius", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] = getdvarfloat( "r_hudoutlinehalolumscale", 1 );
     level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] = getdvar( "r_hudoutlinehalowhen", 1 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.7 );
-    _func_0D3( "r_hudoutlinehalolumscale", 2 );
-    _func_0D3( "r_hudoutlinehalowhen", 0 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.7 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 2 );
+    setsaveddvar( "r_hudoutlinehalowhen", 0 );
     level.player.sonarvisionsaveddvars["r_ssrBlendScale"] = getdvarfloat( "r_ssrBlendScale", 1.0 );
-    _func_0D3( "r_ssrBlendScale", 0.0 );
+    setsaveddvar( "r_ssrBlendScale", 0.0 );
 }
 
 sonar_reset_dvars()
 {
     if ( isdefined( level.player.sonarvisionsaveddvars ) )
     {
-        _func_0D3( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
-        _func_0D3( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
-        _func_0D3( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
-        _func_0D3( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
-        _func_0D3( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
-        _func_0D3( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
+        setsaveddvar( "r_hudoutlineenable", level.player.sonarvisionsaveddvars["r_hudoutlineenable"] );
+        setsaveddvar( "r_hudoutlinepostmode", level.player.sonarvisionsaveddvars["r_hudoutlinepostmode"] );
+        setsaveddvar( "r_hudoutlinehaloblurradius", level.player.sonarvisionsaveddvars["r_hudoutlinehaloblurradius"] );
+        setsaveddvar( "r_hudoutlinehalolumscale", level.player.sonarvisionsaveddvars["r_hudoutlinehalolumscale"] );
+        setsaveddvar( "r_hudoutlinehalowhen", level.player.sonarvisionsaveddvars["r_hudoutlinehalowhen"] );
+        setsaveddvar( "r_ssrBlendScale", level.player.sonarvisionsaveddvars["r_ssrBlendScale"] );
     }
 }
 
@@ -1233,8 +1233,8 @@ sonar_off()
     if ( level.currentgen )
         var_0 = 0;
 
-    level.player _meth_83C2( var_0 );
-    level.player _meth_8492( var_0 );
+    level.player lightsetoverrideenableforplayer( var_0 );
+    level.player setclutoverridedisableforplayer( var_0 );
     soundscripts\_snd::snd_message( "aud_sonar_vision_off" );
     level.player.sonar_vision = 0;
     level notify( "sonar_update" );
@@ -1250,11 +1250,11 @@ sonar_off()
 
     sonar_reset_dvars();
 
-    foreach ( var_2 in _func_0D6( "axis", "allies" ) )
+    foreach ( var_2 in getaiarray( "axis", "allies" ) )
     {
         if ( isdefined( var_2.hudoutlineenabledbysonarvision ) )
         {
-            var_2 _meth_83FB();
+            var_2 hudoutlinedisable();
             var_2.hudoutlineenabledbysonarvision = undefined;
         }
     }
@@ -1271,7 +1271,7 @@ create_hud_nvg_overlay( var_0, var_1, var_2 )
     var_3.horzalign = "fullscreen";
     var_3.vertalign = "fullscreen";
     var_3.alpha = var_2;
-    var_3 _meth_80CC( var_0, 640, 480 );
+    var_3 setshader( var_0, 640, 480 );
     return var_3;
 }
 
@@ -1290,7 +1290,7 @@ create_hud_sonar_overlay( var_0, var_1 )
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
     var_2.alpha = var_1;
-    var_2 _meth_83A5( 10 );
+    var_2 setsonarvision( 10 );
     return var_2;
 }
 
@@ -1304,6 +1304,6 @@ create_hud_threat_overlay( var_0, var_1 )
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
     var_2.alpha = var_1;
-    var_2 _meth_83A4( -1 );
+    var_2 setradarhighlight( -1 );
     return var_2;
 }

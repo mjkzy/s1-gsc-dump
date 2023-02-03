@@ -92,15 +92,15 @@ mainloopstart()
                 var_0 = "crouch_l";
         }
 
-        if ( self.covernode _meth_8035( "stand" ) )
+        if ( self.covernode doesnodeallowstance( "stand" ) )
         {
-            if ( !self.covernode _meth_8035( "crouch" ) || shouldchangestanceforfun() )
+            if ( !self.covernode doesnodeallowstance( "crouch" ) || shouldchangestanceforfun() )
                 var_0 = "stand";
         }
     }
-    else if ( self.covernode _meth_8035( "crouch" ) )
+    else if ( self.covernode doesnodeallowstance( "crouch" ) )
     {
-        if ( !self.covernode _meth_8035( "stand" ) || shouldchangestanceforfun() )
+        if ( !self.covernode doesnodeallowstance( "stand" ) || shouldchangestanceforfun() )
         {
             var_0 = "crouch";
 
@@ -231,7 +231,7 @@ getcornermode( var_0, var_1 )
     var_4 = [];
 
     if ( isdefined( var_0 ) && self.a.pose == "crouch" && ( var_3 > self.leftaimlimit && self.rightaimlimit > var_3 ) )
-        var_4 = var_0 _meth_8033();
+        var_4 = var_0 getvalidcoverpeekouts();
 
     if ( self.cornerdirection == "up" )
     {
@@ -242,7 +242,7 @@ getcornermode( var_0, var_1 )
             if ( isdefined( var_1 ) )
             {
                 var_6 = anglestoup( self.angles );
-                var_5 = animscripts\combat_utility::getpitchtoorgfromorg( var_1, self _meth_80A8() + ( var_6[0] * 12, var_6[1] * 12, var_6[2] * 12 ) );
+                var_5 = animscripts\combat_utility::getpitchtoorgfromorg( var_1, self geteye() + ( var_6[0] * 12, var_6[1] * 12, var_6[2] * 12 ) );
             }
 
             if ( canlean( var_5, -5, 80 ) )
@@ -361,17 +361,17 @@ changestepoutpos()
     var_3 = !self.swimmer;
     var_4 = getpredictedpathmidpoint();
 
-    if ( !self _meth_81C3( var_4, var_3 ) )
+    if ( !self maymovetopoint( var_4, var_3 ) )
         return 0;
 
-    if ( !self _meth_81C4( var_4, animscripts\utility::getanimendpos( var_2 ), var_3 ) )
+    if ( !self maymovefrompointtopoint( var_4, animscripts\utility::getanimendpos( var_2 ), var_3 ) )
         return 0;
 
     animscripts\combat_utility::endaimidlethread();
     stopaiming( 0.3 );
     var_5 = self.a.pose;
-    self _meth_814C( animscripts\utility::animarray( "straight_level" ), 0, 0.2 );
-    self _meth_8152( "changeStepOutPos", var_2, 1, 0.2, 1.2 );
+    self setanimlimited( animscripts\utility::animarray( "straight_level" ), 0, 0.2 );
+    self setflaggedanimknob( "changeStepOutPos", var_2, 1, 0.2, 1.2 );
     corner_playcornerfacialanim( var_2 );
     thread donotetrackswithendon( "changeStepOutPos" );
     var_6 = animhasnotetrack( var_2, "start_aim" );
@@ -386,7 +386,7 @@ changestepoutpos()
     if ( var_6 )
         self waittillmatch( "changeStepOutPos", "end" );
 
-    self _meth_8142( var_2, 0.1 );
+    self clearanim( var_2, 0.1 );
     self.a.cornermode = var_0;
     self.changingcoverpos = 0;
     self.coverposestablishedtime = gettime();
@@ -450,18 +450,18 @@ changeaiming( var_0, var_1, var_2 )
 stopaiming( var_0 )
 {
     self.corneraiming = 0;
-    self _meth_8142( %add_fire, var_0 );
+    self clearanim( %add_fire, var_0 );
     animscripts\track::setanimaimweight( 0, var_0 );
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }
 
 setaimingparams( var_0, var_1, var_2 )
 {
     self.spot = var_0;
-    self _meth_814C( %exposed_modern, 1, var_2 );
-    self _meth_814C( %exposed_aiming, 1, var_2 );
-    self _meth_814C( %add_idle, 1, var_2 );
+    self setanimlimited( %exposed_modern, 1, var_2 );
+    self setanimlimited( %exposed_aiming, 1, var_2 );
+    self setanimlimited( %add_idle, 1, var_2 );
     animscripts\track::setanimaimweight( 1, var_2 );
     corner_playaimfacialanim( undefined );
     var_3 = undefined;
@@ -473,36 +473,36 @@ setaimingparams( var_0, var_1, var_2 )
 
     if ( isdefined( self.a.leanaim ) )
     {
-        self _meth_814C( var_3, 1, var_2 );
-        self _meth_814C( animscripts\utility::animarray( "straight_level" ), 0, 0 );
-        self _meth_8144( animscripts\utility::animarray( "lean_aim_left" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "lean_aim_right" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "lean_aim_up" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "lean_aim_down" ), 1, var_2 );
+        self setanimlimited( var_3, 1, var_2 );
+        self setanimlimited( animscripts\utility::animarray( "straight_level" ), 0, 0 );
+        self setanimknoblimited( animscripts\utility::animarray( "lean_aim_left" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "lean_aim_right" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "lean_aim_up" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "lean_aim_down" ), 1, var_2 );
     }
     else if ( var_1 )
     {
-        self _meth_814C( animscripts\utility::animarray( "straight_level" ), 1, var_2 );
+        self setanimlimited( animscripts\utility::animarray( "straight_level" ), 1, var_2 );
 
         if ( isdefined( var_3 ) )
-            self _meth_814C( var_3, 0, 0 );
+            self setanimlimited( var_3, 0, 0 );
 
-        self _meth_8144( animscripts\utility::animarray( "add_aim_up" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_aim_down" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_aim_left" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_aim_right" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_aim_up" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_aim_down" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_aim_left" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_aim_right" ), 1, var_2 );
     }
     else
     {
-        self _meth_814C( animscripts\utility::animarray( "straight_level" ), 0, var_2 );
+        self setanimlimited( animscripts\utility::animarray( "straight_level" ), 0, var_2 );
 
         if ( isdefined( var_3 ) )
-            self _meth_814C( var_3, 0, 0 );
+            self setanimlimited( var_3, 0, 0 );
 
-        self _meth_8144( animscripts\utility::animarray( "add_turn_aim_up" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_turn_aim_down" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_turn_aim_left" ), 1, var_2 );
-        self _meth_8144( animscripts\utility::animarray( "add_turn_aim_right" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_turn_aim_up" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_turn_aim_down" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_turn_aim_left" ), 1, var_2 );
+        self setanimknoblimited( animscripts\utility::animarray( "add_turn_aim_right" ), 1, var_2 );
     }
 }
 
@@ -573,7 +573,7 @@ stepout()
     self notify( "done_changing_cover_pos" );
     var_5 = stepoutandhidespeed();
     self.pushable = 0;
-    self _meth_8110( "stepout", var_3, %animscript_root, 1, 0.2, var_5 );
+    self setflaggedanimknoballrestart( "stepout", var_3, %animscript_root, 1, 0.2, var_5 );
     corner_playcornerfacialanim( var_3 );
     thread donotetrackswithendon( "stepout" );
     var_4 = animhasnotetrack( var_3, "start_aim" );
@@ -601,8 +601,8 @@ stepout()
     }
 
     changeaiming( undefined, 1, 0.2 );
-    self _meth_8142( %cover, 0.1 );
-    self _meth_8142( %corner, 0.1 );
+    self clearanim( %cover, 0.1 );
+    self clearanim( %corner, 0.1 );
     self.changingcoverpos = 0;
     self.coverposestablishedtime = gettime();
     self.pushable = 1;
@@ -683,7 +683,7 @@ rambo()
     var_4 = animscripts\utility::animarraypickrandom( var_3 );
     var_5 = getpredictedpathmidpoint( 48 );
 
-    if ( !self _meth_81C3( var_5, !self.swimmer ) )
+    if ( !self maymovetopoint( var_5, !self.swimmer ) )
         return 0;
 
     self.coverposestablishedtime = gettime();
@@ -693,7 +693,7 @@ rambo()
     self.a.prevattack = "rambo";
     self.changingcoverpos = 1;
     thread animscripts\shared::ramboaim( var_0 );
-    self _meth_8110( "rambo", var_4, %body, 1, 0, 1 );
+    self setflaggedanimknoballrestart( "rambo", var_4, %body, 1, 0, 1 );
     corner_playcornerfacialanim( var_4 );
     animscripts\shared::donotetracks( "rambo" );
     self notify( "rambo_aim_end" );
@@ -747,7 +747,7 @@ shootastold()
             else
             {
                 shootuntilshootbehaviorchange_corner( 1 );
-                self _meth_8142( %add_fire, 0.2 );
+                self clearanim( %add_fire, 0.2 );
             }
         }
 
@@ -828,13 +828,13 @@ canreturntocover( var_0 )
     {
         var_2 = getpredictedpathmidpoint();
 
-        if ( !self _meth_81C3( var_2, var_1 ) )
+        if ( !self maymovetopoint( var_2, var_1 ) )
             return 0;
 
-        return self _meth_81C4( var_2, self.covernode.origin, var_1 );
+        return self maymovefrompointtopoint( var_2, self.covernode.origin, var_1 );
     }
     else
-        return self _meth_81C3( self.covernode.origin, var_1 );
+        return self maymovetopoint( self.covernode.origin, var_1 );
 }
 
 returntocover()
@@ -858,11 +858,11 @@ returntocover()
     var_4 = stepoutandhidespeed();
 
     if ( animscripts\utility::isspaceai() )
-        self _meth_8142( %exposed_modern, 0.2 );
+        self clearanim( %exposed_modern, 0.2 );
     else
-        self _meth_8142( %body, 0.1 );
+        self clearanim( %body, 0.1 );
 
-    self _meth_8113( "hide", var_2, 1, 0.1, var_4 );
+    self setflaggedanimrestart( "hide", var_2, 1, 0.1, var_4 );
     corner_playcornerfacialanim( var_2 );
     animscripts\shared::donotetracks( "hide" );
 
@@ -879,7 +879,7 @@ returntocover()
         self.a.special = "cover_right";
 
     self.keepclaimednodeifvalid = 0;
-    self _meth_8142( var_2, 0.2 );
+    self clearanim( var_2, 0.2 );
 }
 
 blindfire()
@@ -890,7 +890,7 @@ blindfire()
     setdefaultcorneranimmode();
     self.keepclaimednodeifvalid = 1;
     var_0 = animscripts\utility::animarraypickrandom( "blind_fire" );
-    self _meth_8110( "blindfire", var_0, %body, 1, 0, 1 );
+    self setflaggedanimknoballrestart( "blindfire", var_0, %body, 1, 0, 1 );
     corner_playcornerfacialanim( var_0 );
     animscripts\shared::donotetracks( "blindfire" );
     self.keepclaimednodeifvalid = 0;
@@ -913,7 +913,7 @@ trythrowinggrenadestayhidden( var_0 )
 
 trythrowinggrenade( var_0, var_1 )
 {
-    if ( !self _meth_81C3( getpredictedpathmidpoint() ) )
+    if ( !self maymovetopoint( getpredictedpathmidpoint() ) )
         return 0;
 
     if ( isdefined( self.dontevershoot ) || isdefined( var_0.dontattackme ) )
@@ -976,7 +976,7 @@ lookforenemy( var_0 )
     else
         var_1 = animscripts\utility::animarray( "look_to_alert" );
 
-    self _meth_8110( "looking_end", var_1, %body, 1, 0.1, 1.0 );
+    self setflaggedanimknoballrestart( "looking_end", var_1, %body, 1, 0.1, 1.0 );
     corner_playcornerfacialanim( var_1 );
     animscripts\shared::donotetracks( "looking_end" );
     setdefaultcorneranimmode();
@@ -991,7 +991,7 @@ ispeekoutposclear()
     if ( animscripts\utility::isspaceai() )
         var_0 = animscripts\utility::gettruenodeangles( self.covernode );
 
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     var_2 = anglestoright( var_0 );
     var_3 = anglestoup( var_0 );
 
@@ -1021,7 +1021,7 @@ peekout()
     }
 
     var_0 = animscripts\utility::animarray( "alert_to_look" );
-    self _meth_810F( "looking_start", var_0, %body, 1, 0.2, 1 );
+    self setflaggedanimknoball( "looking_start", var_0, %body, 1, 0.2, 1 );
     corner_playcornerfacialanim( var_0 );
     animscripts\shared::donotetracks( "looking_start" );
     return 1;
@@ -1029,7 +1029,7 @@ peekout()
 
 canstoppeeking()
 {
-    return self _meth_81C3( self.covernode.origin, !self.swimmer );
+    return self maymovetopoint( self.covernode.origin, !self.swimmer );
 }
 
 fastlook()
@@ -1040,13 +1040,13 @@ fastlook()
 cornerreload()
 {
     var_0 = animscripts\utility::animarraypickrandom( "reload" );
-    self _meth_810D( "cornerReload", var_0, 1, 0.2 );
+    self setflaggedanimknobrestart( "cornerReload", var_0, 1, 0.2 );
     corner_playcornerfacialanim( var_0 );
     animscripts\shared::donotetracks( "cornerReload" );
     self notify( "abort_reload" );
     animscripts\weaponlist::refillclip();
-    self _meth_814D( animscripts\utility::animarray( "alert_idle" ), 1, 0.2 );
-    self _meth_8142( var_0, 0.2 );
+    self setanimrestart( animscripts\utility::animarray( "alert_idle" ), 1, 0.2 );
+    self clearanim( var_0, 0.2 );
     return 1;
 }
 
@@ -1058,20 +1058,20 @@ ispathclear( var_0, var_1 )
     {
         var_3 = getpredictedpathmidpoint();
 
-        if ( !self _meth_81C3( var_3, var_2 ) )
+        if ( !self maymovetopoint( var_3, var_2 ) )
             return 0;
 
         if ( self.swimmer )
             return 1;
 
-        return self _meth_81C4( var_3, animscripts\utility::getanimendpos( var_0 ), var_2 );
+        return self maymovefrompointtopoint( var_3, animscripts\utility::getanimendpos( var_0 ), var_2 );
     }
     else
     {
         if ( self.swimmer )
             return 1;
 
-        return self _meth_81C3( animscripts\utility::getanimendpos( var_0 ), var_2 );
+        return self maymovetopoint( animscripts\utility::getanimendpos( var_0 ), var_2 );
     }
 }
 
@@ -1144,9 +1144,9 @@ flinch()
 playidleanimation( var_0, var_1 )
 {
     if ( var_1 )
-        self _meth_8110( "idle", var_0, %body, 1, 0.1, 1 );
+        self setflaggedanimknoballrestart( "idle", var_0, %body, 1, 0.1, 1 );
     else
-        self _meth_810F( "idle", var_0, %body, 1, 0.1, 1 );
+        self setflaggedanimknoball( "idle", var_0, %body, 1, 0.1, 1 );
 
     corner_playcornerfacialanim( var_0 );
     animscripts\shared::donotetracks( "idle" );
@@ -1172,7 +1172,7 @@ transitiontostance( var_0 )
     }
 
     var_1 = animscripts\utility::animarray( "stance_change" );
-    self _meth_8110( "changeStance", var_1, %body );
+    self setflaggedanimknoballrestart( "changeStance", var_1, %body );
     corner_playcornerfacialanim( var_1 );
     set_anim_array( var_0 );
     animscripts\shared::donotetracks( "changeStance" );
@@ -1188,14 +1188,14 @@ gotocover( var_0, var_1, var_2 )
     if ( animscripts\utility::isspaceai() )
         self notify( "force_space_rotation_update", 0, 0 );
     else
-        self _meth_818F( "face angle", var_5 );
+        self orientmode( "face angle", var_5 );
 
-    self _meth_818E( "normal" );
+    self animmode( "normal" );
 
     if ( isdefined( var_4 ) )
         thread animscripts\shared::movetonodeovertime( var_4, var_1 );
 
-    self _meth_8110( "coveranim", var_0, %body, 1, var_1 );
+    self setflaggedanimknoballrestart( "coveranim", var_0, %body, 1, var_1 );
     corner_playcornerfacialanim( var_0 );
     animscripts\notetracks::donotetracksfortime( var_2, "coveranim" );
 
@@ -1418,9 +1418,9 @@ runcombat()
 setdefaultcorneranimmode()
 {
     if ( self.swimmer )
-        self _meth_818E( "nogravity" );
+        self animmode( "nogravity" );
     else
-        self _meth_818E( "zonly_physics" );
+        self animmode( "zonly_physics" );
 }
 
 corner_playcornerfacialanim( var_0 )
@@ -1441,5 +1441,5 @@ corner_playaimfacialanim( var_0 )
 corner_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

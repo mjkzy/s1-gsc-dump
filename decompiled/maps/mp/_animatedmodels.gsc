@@ -13,7 +13,7 @@ main()
         var_3 = getarraykeys( level.anim_prop_models[var_2] );
 
         foreach ( var_5 in var_3 )
-            map_restart( level.anim_prop_models[var_2][var_5] );
+            precachempanim( level.anim_prop_models[var_2][var_5] );
     }
 
     waittillframeend;
@@ -34,6 +34,6 @@ animatemodel()
         var_0 = level.anim_prop_models[self.model][var_2];
     }
 
-    self _meth_8279( var_0 );
-    self _meth_80E1();
+    self scriptmodelplayanim( var_0 );
+    self willneverchange();
 }

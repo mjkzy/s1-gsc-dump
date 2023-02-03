@@ -20,7 +20,7 @@ stingerm7_targeting()
 
     for (;;)
     {
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
         var_2 = 0;
 
         if ( issubstr( var_1, "stingerm7" ) )
@@ -28,7 +28,7 @@ stingerm7_targeting()
         else if ( issubstr( var_1, "dlcgun11loot2" ) )
             var_2 = 1;
 
-        if ( var_2 && self _meth_8340() > 0.99 )
+        if ( var_2 && self playerads() > 0.99 )
         {
             var_0 = 1;
 
@@ -144,7 +144,7 @@ stinger_fire( var_0, var_1, var_2 )
             else
                 var_10 = var_0.stingerm7_info.locked_targets[randomint( var_0.stingerm7_info.locked_targets.size )];
 
-            var_9 _meth_81D9( var_10, stingerm7_get_target_offset( var_10 ) );
+            var_9 missile_settargetent( var_10, stingerm7_get_target_offset( var_10 ) );
             var_9.lockedstingertarget = var_10;
         }
 
@@ -152,7 +152,7 @@ stinger_fire( var_0, var_1, var_2 )
     }
 
     level notify( "stinger_fired", var_0, var_5 );
-    var_0 _meth_82F6( var_2, 0 );
+    var_0 setweaponammoclip( var_2, 0 );
 }
 
 anystingermissilelockedon( var_0, var_1 )
@@ -231,7 +231,7 @@ get_best_locking_target()
     if ( isdefined( level.stingerlockonentsfunc ) )
         var_16 = common_scripts\utility::array_combine( var_16, [[ level.stingerlockonentsfunc ]]( self ) );
 
-    var_17 = self _meth_80A8();
+    var_17 = self geteye();
     var_18 = anglestoforward( self getangles() );
     var_19 = undefined;
     var_20 = cos( 5 );
@@ -270,7 +270,7 @@ get_best_locking_target()
 
 locking_target_still_valid( var_0 )
 {
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     var_2 = anglestoforward( self getangles() );
     var_3 = stingerm7_get_target_pos( var_0 );
 
@@ -300,9 +300,9 @@ remove_invalid_locks()
             if ( isplayer( self.stingerm7_info.locked_targets[var_0] ) || isbot( self.stingerm7_info.locked_targets[var_0] ) )
                 var_1 = ( 0, 0, 64 );
 
-            if ( self _meth_8215( self.stingerm7_info.locked_targets[var_0].origin + var_1, 50, 400, 200 ) )
+            if ( self worldpointinreticle_rect( self.stingerm7_info.locked_targets[var_0].origin + var_1, 50, 400, 200 ) )
             {
-                if ( bullettracepassed( self _meth_80A8(), self.stingerm7_info.locked_targets[var_0].origin + var_1, 0, self.stingerm7_info.locked_targets[var_0] ) )
+                if ( bullettracepassed( self geteye(), self.stingerm7_info.locked_targets[var_0].origin + var_1, 0, self.stingerm7_info.locked_targets[var_0] ) )
                 {
                     self.stingerm7_info.locked_targets[var_0].sight_lost_time = -1;
                     continue;
@@ -329,7 +329,7 @@ stingerm7_get_target_pos( var_0 )
     if ( isdefined( var_0.getstingertargetposfunc ) )
         return var_0 [[ var_0.getstingertargetposfunc ]]();
 
-    return var_0 _meth_8216( 0, 0, 0 );
+    return var_0 getpointinbounds( 0, 0, 0 );
 }
 
 stingerm7_get_target_offset( var_0 )
@@ -360,7 +360,7 @@ locking_feedback()
             level.orbitalsupport_player playlocalsound( "wpn_stingerm7_enemy_locked" );
 
         self playlocalsound( "wpn_stingerm7_locking" );
-        self _meth_80AD( "heavygun_fire" );
+        self playrumbleonentity( "heavygun_fire" );
         wait 0.6;
     }
 }
@@ -388,7 +388,7 @@ locked_feedback()
             level.orbitalsupport_player playlocalsound( "wpn_stingerm7_enemy_locked" );
 
         self playlocalsound( "wpn_stingerm7_locked" );
-        self _meth_80AD( "heavygun_fire" );
+        self playrumbleonentity( "heavygun_fire" );
         wait 0.25;
     }
 }

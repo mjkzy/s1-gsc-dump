@@ -78,7 +78,7 @@ scancameraswitching()
 {
     common_scripts\utility::flag_wait( "FlagCafeCameraUnlockSwitching" );
     maps\_hms_utility::playdialog( level.dialogtable, "SafehouseCafeFeedSwitch", "SafehouseCafeFeedSwitch", "CancelMarketScanDialog", undefined, 1 );
-    level.player _meth_82FB( "ui_greece_camera_instructions", 1 );
+    level.player setclientomnvar( "ui_greece_camera_instructions", 1 );
 
     while ( !common_scripts\utility::flag( "FlagMarketCameraSwitched" ) )
     {

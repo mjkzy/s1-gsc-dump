@@ -269,7 +269,7 @@ setup_destructibles()
         thread destructible_handles_collision_brushes();
 
     if ( self.code_classname != "script_vehicle" )
-        self _meth_82C0( 1 );
+        self setcandamage( 1 );
 
     if ( common_scripts\utility::issp() )
         thread connecttraverses();
@@ -959,7 +959,7 @@ destructible_think()
                 var_0 *= 13.0;
 
             if ( var_7 == self.model && isdefined( self.script_dest_cover_dmg_model ) )
-                self _meth_80B1( self.script_dest_cover_dmg_model );
+                self setmodel( self.script_dest_cover_dmg_model );
 
             destructible_splash_damage( int( var_0 ), var_3, var_4, var_5, var_8 );
             continue;
@@ -980,7 +980,7 @@ is_shotgun_damage( var_0, var_1 )
     var_2 = undefined;
 
     if ( isplayer( var_0 ) )
-        var_2 = var_0 _meth_8311();
+        var_2 = var_0 getcurrentweapon();
     else if ( isdefined( level.enable_ai_shotgun_destructible_damage ) && level.enable_ai_shotgun_destructible_damage )
     {
         if ( isdefined( var_0.weapon ) )
@@ -1224,10 +1224,10 @@ destructible_update_part( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7
 
                 if ( isdefined( var_28 ) && var_28 != self.model )
                 {
-                    self _meth_80B1( var_28 );
+                    self setmodel( var_28 );
 
                     if ( common_scripts\utility::issp() && self.modeldummyon )
-                        self.modeldummy _meth_80B1( var_28 );
+                        self.modeldummy setmodel( var_28 );
 
                     destructible_splash_rotatation( var_27 );
                 }
@@ -1778,7 +1778,7 @@ damage_mirror( var_0, var_1, var_2 )
     self notify( "stop_damage_mirror" );
     self endon( "stop_damage_mirror" );
     var_0 endon( "stop_taking_damage" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -1876,13 +1876,13 @@ badplace_remove( var_0 )
 physics_launch( var_0, var_1, var_2, var_3 )
 {
     var_4 = physics_object_create( var_0, var_1 );
-    var_4 _meth_82C2( var_2, var_3 );
+    var_4 physicslaunchclient( var_2, var_3 );
 }
 
 physics_launch_with_impulse( var_0, var_1, var_2, var_3 )
 {
     var_4 = physics_object_create( var_0, var_1 );
-    var_4 _meth_83C3( var_2, var_3 );
+    var_4 physicslaunchclientwithimpulse( var_2, var_3 );
 }
 
 physics_object_create( var_0, var_1 )
@@ -1896,7 +1896,7 @@ physics_object_create( var_0, var_1 )
 
     var_4 = spawn( "script_model", self gettagorigin( var_3 ) );
     var_4.angles = self gettagangles( var_3 );
-    var_4 _meth_80B1( var_2 );
+    var_4 setmodel( var_2 );
     level.destructiblespawnedents[level.destructiblespawnedents.size] = var_4;
     return var_4;
 }
@@ -2061,9 +2061,9 @@ explode( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
     if ( common_scripts\utility::issp() )
     {
         if ( level.gameskill == 0 && !player_touching_post_clip() )
-            self entityradiusdamage( var_28, var_3, var_5, var_4, self, "MOD_RIFLE_BULLET" );
+            self radiusdamage( var_28, var_3, var_5, var_4, self, "MOD_RIFLE_BULLET" );
         else
-            self entityradiusdamage( var_28, var_3, var_5, var_4, self );
+            self radiusdamage( var_28, var_3, var_5, var_4, self );
 
         if ( isdefined( self.damageowner ) && var_29 )
         {
@@ -2079,10 +2079,10 @@ explode( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
             var_30 = "destructible_car";
 
         if ( !isdefined( self.damageowner ) )
-            self entityradiusdamage( var_28, var_3, var_5, var_4, self, "MOD_EXPLOSIVE", var_30 );
+            self radiusdamage( var_28, var_3, var_5, var_4, self, "MOD_EXPLOSIVE", var_30 );
         else
         {
-            self entityradiusdamage( var_28, var_3, var_5, var_4, self.damageowner, "MOD_EXPLOSIVE", var_30 );
+            self radiusdamage( var_28, var_3, var_5, var_4, self.damageowner, "MOD_EXPLOSIVE", var_30 );
 
             if ( var_29 )
             {
@@ -2103,7 +2103,7 @@ explode( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, v
 
     if ( var_27 )
     {
-        self _meth_82C0( 0 );
+        self setcandamage( 0 );
         thread cleanupvars();
     }
 
@@ -2205,12 +2205,12 @@ get_traverse_disconnect_brush()
 
 hideapart( var_0 )
 {
-    self _meth_8048( var_0 );
+    self hidepart( var_0 );
 }
 
 showapart( var_0 )
 {
-    self _meth_804B( var_0 );
+    self showpart( var_0 );
 }
 
 disable_explosion()
@@ -2248,14 +2248,14 @@ play_loop_sound_on_destructible( var_0, var_1 )
     else
         var_3.origin = var_2.origin;
 
-    var_3 _meth_8075( var_0 );
+    var_3 playloopsound( var_0 );
     var_2 thread force_stop_sound( var_0 );
     var_2 waittill( "stop sound" + var_0 );
 
     if ( !isdefined( var_3 ) )
         return;
 
-    var_3 _meth_80AB( var_0 );
+    var_3 stoploopsound( var_0 );
     var_3 delete();
 }
 
@@ -2287,7 +2287,7 @@ play_sound( var_0, var_1 )
     {
         var_2 = spawn( "script_origin", self gettagorigin( var_1 ) );
         var_2 hide();
-        var_2 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
     else
     {
@@ -2295,7 +2295,7 @@ play_sound( var_0, var_1 )
         var_2 hide();
         var_2.origin = self.origin;
         var_2.angles = self.angles;
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
     }
 
     var_2 playsound( var_0 );
@@ -2317,13 +2317,13 @@ do_car_alarm()
 
     self.car_alarm_org = spawn( "script_model", self.origin );
     self.car_alarm_org hide();
-    self.car_alarm_org _meth_8075( "car_alarm" );
+    self.car_alarm_org playloopsound( "car_alarm" );
     level.currentcaralarms++;
     thread car_alarm_timeout();
     self waittill( "stop_car_alarm" );
     level.lastcaralarmtime = gettime();
     level.currentcaralarms--;
-    self.car_alarm_org _meth_80AB( "car_alarm" );
+    self.car_alarm_org stoploopsound( "car_alarm" );
     self.car_alarm_org delete();
 }
 
@@ -2380,15 +2380,15 @@ do_random_dynamic_attachment( var_0, var_1, var_2, var_3 )
     {
         var_4[0] = spawn( "script_model", self gettagorigin( var_0 ) );
         var_4[0].angles = self gettagangles( var_0 );
-        var_4[0] _meth_80B1( var_1 );
-        var_4[0] _meth_804D( self, var_0 );
+        var_4[0] setmodel( var_1 );
+        var_4[0] linkto( self, var_0 );
 
         if ( isdefined( var_2 ) && var_2 != "" )
         {
             var_4[1] = spawn( "script_model", self gettagorigin( var_0 ) );
             var_4[1].angles = self gettagangles( var_0 );
-            var_4[1] _meth_80B1( var_2 );
-            var_4[1] _meth_804D( self, var_0 );
+            var_4[1] setmodel( var_2 );
+            var_4[1] linkto( self, var_0 );
         }
     }
 
@@ -2416,10 +2416,10 @@ do_random_dynamic_attachment( var_0, var_1, var_2, var_3 )
     }
     else
     {
-        var_4[0] _meth_80B1( var_1 + "_destroy" );
+        var_4[0] setmodel( var_1 + "_destroy" );
 
         if ( isdefined( var_2 ) && var_2 != "" )
-            var_4[1] _meth_80B1( var_2 + "_destroy" );
+            var_4[1] setmodel( var_2 + "_destroy" );
     }
 }
 
@@ -2479,7 +2479,7 @@ get_player_touching( var_0 )
         if ( !isalive( var_2 ) )
             continue;
 
-        if ( var_0 _meth_80A9( var_2 ) )
+        if ( var_0 istouching( var_2 ) )
             return var_2;
     }
 
@@ -2524,7 +2524,7 @@ collision_brush_pre_explosion( var_0 )
 
 collision_brush_post_explosion( var_0 )
 {
-    var_0 _meth_82BF();
+    var_0 notsolid();
 
     if ( common_scripts\utility::issp() && var_0.spawnflags & 1 )
         var_0 call [[ level.connectpathsfunction ]]();
@@ -2550,7 +2550,7 @@ collision_brush_post_explosion( var_0 )
         }
     }
 
-    var_0 _meth_82BE();
+    var_0 solid();
 }
 
 debug_player_in_post_clip( var_0 )
@@ -2596,7 +2596,7 @@ break_nearest_light( var_0 )
     if ( !isdefined( self.breakable_light ) )
         return;
 
-    self.breakable_light _meth_81DF( 0 );
+    self.breakable_light setlightintensity( 0 );
 }
 
 debug_radiusdamage_circle( var_0, var_1, var_2, var_3 )
@@ -2708,16 +2708,16 @@ destructible_spotlight_think( var_0, var_1, var_2, var_3 )
     }
 
     level notify( "new_destructible_spotlight" );
-    level.destructible_spotlight _meth_804F();
+    level.destructible_spotlight unlink();
     var_5 = common_scripts\utility::spawn_tag_origin();
-    var_5 _meth_804D( self, var_0["spotlight_tag"], ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 linkto( self, var_0["spotlight_tag"], ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.destructible_spotlight.origin = self.breakable_light.origin;
     level.destructible_spotlight.angles = self.breakable_light.angles;
     level.destructible_spotlight thread spotlight_fizzles_out( var_0, var_1, var_2, var_3, var_5 );
     wait 0.05;
 
     if ( isdefined( var_5 ) )
-        level.destructible_spotlight _meth_804D( var_5 );
+        level.destructible_spotlight linkto( var_5 );
 }
 
 is_valid_damagetype( var_0, var_1, var_2, var_3 )
@@ -2831,7 +2831,7 @@ destructible_fx_spawn_think( var_0, var_1, var_2, var_3, var_4, var_5 )
                     var_7 delete();
                 else if ( var_5 == 2 )
                 {
-                    setwinningteam( var_7, 1 );
+                    setfxkillondelete( var_7, 1 );
                     wait 0.05;
                     var_7 delete();
                 }
@@ -2861,7 +2861,7 @@ destructible_fx_spawn_think( var_0, var_1, var_2, var_3, var_4, var_5 )
                 var_7 delete();
             else if ( var_5 == 2 )
             {
-                setwinningteam( var_7, 1 );
+                setfxkillondelete( var_7, 1 );
                 wait 0.05;
                 var_7 delete();
             }
@@ -3091,7 +3091,7 @@ init_destructible_frame_queue()
 
 add_destructible_to_frame_queue( var_0, var_1, var_2 )
 {
-    var_3 = self _meth_81B1();
+    var_3 = self getentitynumber();
 
     if ( !isdefined( level.destructibleframequeue[var_3] ) )
     {
@@ -3369,7 +3369,7 @@ builddot_wait( var_0 )
 
 onenterdot_buildfunc( var_0, var_1 )
 {
-    var_2 = var_1 _meth_81B1();
+    var_2 = var_1 getentitynumber();
     var_1 endon( "death" );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_2 );
     self endon( "disconnect" );
@@ -3399,8 +3399,8 @@ onenterdot_buildfunc( var_0, var_1 )
 
 onexitdot_buildfunc( var_0, var_1 )
 {
-    var_2 = var_1 _meth_81B1();
-    var_3 = self _meth_81B1();
+    var_2 = var_1 getentitynumber();
+    var_3 = self getentitynumber();
     var_1 notify( "LISTEN_kill_tick_" + var_0 + "_" + var_2 + "_" + var_3 );
 }
 
@@ -3422,8 +3422,8 @@ dobuilddot_damage( var_0, var_1, var_2 )
 
 dobuilddot_wait( var_0, var_1, var_2 )
 {
-    var_3 = var_1 _meth_81B1();
-    var_4 = self _meth_81B1();
+    var_3 = var_1 getentitynumber();
+    var_4 = self getentitynumber();
     var_1 endon( "death" );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_3 );
     var_1 notify( "LISTEN_kill_tick_" + var_0 + "_" + var_3 + "_" + var_4 );
@@ -3458,7 +3458,7 @@ startdot_group( var_0 )
 
         if ( isdefined( var_3.parent ) )
         {
-            var_4 _meth_804D( var_3.parent );
+            var_4 linkto( var_3.parent );
             var_3.parent.dot = var_4;
         }
 
@@ -3521,7 +3521,7 @@ monitordot()
         {
             if ( isdefined( var_2 ) && gettime() - var_0 >= var_2.duration * 1000 )
             {
-                var_3 = self _meth_81B1();
+                var_3 = self getentitynumber();
                 self notify( "LISTEN_kill_tick_" + var_4 + "_" + var_3 );
                 self.ticks[var_4] = undefined;
             }
@@ -3545,7 +3545,7 @@ monitordot()
 
 onenterdot_player( var_0 )
 {
-    var_1 = var_0 _meth_81B1();
+    var_1 = var_0 getentitynumber();
     self notify( "LISTEN_enter_dot_" + var_1 );
 
     foreach ( var_4, var_3 in var_0.ticks )
@@ -3563,7 +3563,7 @@ onenterdot_player( var_0 )
 
 onexitdot_player( var_0 )
 {
-    var_1 = var_0 _meth_81B1();
+    var_1 = var_0 getentitynumber();
     self notify( "LISTEN_exit_dot_" + var_1 );
 
     foreach ( var_4, var_3 in var_0.ticks )
@@ -3575,8 +3575,8 @@ onexitdot_player( var_0 )
 
 dodot_delayfunc( var_0, var_1, var_2, var_3 )
 {
-    var_4 = var_1 _meth_81B1();
-    var_5 = self _meth_81B1();
+    var_4 = var_1 getentitynumber();
+    var_5 = self getentitynumber();
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_4 + "_" + var_5 );
     self endon( "disconnect" );
     self endon( "game_ended" );
@@ -3590,8 +3590,8 @@ dodot_delayfunc( var_0, var_1, var_2, var_3 )
 
 onenterdot_poisondamageplayer( var_0, var_1 )
 {
-    var_2 = var_1 _meth_81B1();
-    var_3 = self _meth_81B1();
+    var_2 = var_1 getentitynumber();
+    var_3 = self getentitynumber();
     var_1 endon( "death" );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_2 );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_2 + "_" + var_3 );
@@ -3616,7 +3616,7 @@ onenterdot_poisondamageplayer( var_0, var_1 )
         switch ( self.onenterdot_poisondamagecount[var_0][var_2] )
         {
             case 1:
-                self _meth_81AF( 1, self.origin );
+                self viewkick( 1, self.origin );
                 break;
             case 3:
                 self shellshock( "mp_radiation_low", 4 );
@@ -3643,8 +3643,8 @@ onenterdot_poisondamageplayer( var_0, var_1 )
 
 onexitdot_poisondamageplayer( var_0, var_1 )
 {
-    var_2 = var_1 _meth_81B1();
-    var_3 = self _meth_81B1();
+    var_2 = var_1 getentitynumber();
+    var_3 = self getentitynumber();
     var_4 = self.onenterdot_poisondamageoverlay;
 
     if ( isdefined( var_4 ) )
@@ -3661,7 +3661,7 @@ onexitdot_poisondamageplayer( var_0, var_1 )
 
 ondeathdot_poisondamageplayer()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
 
     foreach ( var_2 in level.players )
     {
@@ -3689,8 +3689,8 @@ dodot_poisondamage( var_0, var_1 )
 
 dodot_poisonblackout( var_0, var_1 )
 {
-    var_2 = var_1 _meth_81B1();
-    var_3 = self _meth_81B1();
+    var_2 = var_1 getentitynumber();
+    var_3 = self getentitynumber();
     var_1 endon( "death" );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_2 );
     var_1 endon( "LISTEN_kill_tick_" + var_0 + "_" + var_2 + "_" + var_3 );
@@ -3715,7 +3715,7 @@ dodot_poisonblackout( var_0, var_1 )
         var_4.horzalign = "fullscreen";
         var_4.vertalign = "fullscreen";
         var_4.alpha = 0;
-        var_4 _meth_80CC( "black", 640, 480 );
+        var_4 setshader( "black", 640, 480 );
         self.onenterdot_poisondamageoverlay[var_0][var_2] = var_4;
     }
 
@@ -3796,7 +3796,7 @@ triggertouchthink( var_0, var_1 )
 {
     level endon( "game_ended" );
     self endon( "death" );
-    self.entnum = self _meth_81B1();
+    self.entnum = self getentitynumber();
 
     for (;;)
     {
@@ -3852,7 +3852,7 @@ playertouchtriggerthink( var_0, var_1, var_2 )
     {
         var_11 = 1;
 
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
             wait 0.05;
         else
         {
@@ -3861,7 +3861,7 @@ playertouchtriggerthink( var_0, var_1, var_2 )
 
             foreach ( var_6 in var_0.dot_group )
             {
-                if ( self _meth_80A9( var_6 ) )
+                if ( self istouching( var_6 ) )
                 {
                     wait 0.05;
                     break;
@@ -3940,9 +3940,9 @@ destructiblecoverwatcher()
         var_2 = distancesquared( level.player.origin, self.origin );
 
         if ( var_2 > self.script_dest_cover_dmg_dist * self.script_dest_cover_dmg_dist )
-            self _meth_82C0( 0 );
+            self setcandamage( 0 );
         else
-            self _meth_82C0( 1 );
+            self setcandamage( 1 );
 
         wait 0.05;
     }

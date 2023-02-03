@@ -12,8 +12,8 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
         maps\_utility::tff_sync_setup();
     }
 
@@ -45,13 +45,13 @@ levelprecacheassets()
     precachestring( &"GREECE_INTRO_SCREEN_WHO_TXT" );
     precachestring( &"GREECE_INTRO_SCREEN_SQUAD_TXT" );
     precachestring( &"GREECE_INTRO_SCREEN_WHERE_TXT" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
     precacherumble( "steady_rumble" );
     precacherumble( "silencer_fire" );
     precacherumble( "damage_light" );

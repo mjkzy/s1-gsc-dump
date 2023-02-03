@@ -24,11 +24,11 @@ openingsplashscreen()
 
     if ( var_0 == "start_safehouse_intro" || var_0 == "default" )
     {
-        level.player _meth_831D();
+        level.player disableweapons();
         level.player freezecontrols( 1 );
         thread maps\_shg_utility::play_chyron_video( "chyron_text_greece", 1, 2 );
         common_scripts\utility::flag_wait( "chyron_video_done" );
-        level.player _meth_831E();
+        level.player enableweapons();
         level.player freezecontrols( 0 );
         common_scripts\utility::flag_set( "FlagSafeHouseIntro" );
         common_scripts\utility::flag_set( "introscreen_complete" );
@@ -38,20 +38,20 @@ openingsplashscreen()
 
 safehouseprecache()
 {
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "iw5_sn6_sp_silencer01" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
-    precacheitem( "paint_grenade_var" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    precacheitem( "iw5_kf5_sp" );
-    precacheitem( "iw5_kf5_sp_silencer01" );
-    precacheitem( "hms_security_camera" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "iw5_sn6_sp_silencer01" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
+    precacheshellshock( "paint_grenade_var" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    precacheshellshock( "iw5_kf5_sp" );
+    precacheshellshock( "iw5_kf5_sp_silencer01" );
+    precacheshellshock( "hms_security_camera" );
     precacherumble( "silencer_fire" );
     precacherumble( "tank_rumble" );
     precacherumble( "steady_rumble" );
@@ -220,7 +220,7 @@ safehouseglobalvars()
     level.kvafollowtarget = undefined;
     level.kvasafehouseguardarray = [];
     level.bplayerscanon = 0;
-    _func_0D3( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
     common_scripts\utility::create_dvar( "display_placeholderdialog", 0 );
 }
 
@@ -252,10 +252,10 @@ initsafehouseintro()
     maps\_hms_utility::setupplayerinventory( "iw5_titan45_sp_opticsreddot_silencerpistol", undefined, undefined, undefined, "iw5_titan45_sp_opticsreddot_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_1 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_1, 0 );
+    foreach ( var_1 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_1, 0 );
 
-    level.player _meth_8343( "vm_civilian_mitchell" );
+    level.player setviewmodel( "vm_civilian_mitchell" );
     common_scripts\utility::flag_wait( "FlagSafeHouseIntro" );
     soundscripts\_snd::snd_message( "start_safehouse_intro_checkpoint" );
     common_scripts\_exploder::exploder( 666 );
@@ -282,10 +282,10 @@ initsafehousefollow()
     maps\_hms_utility::setupplayerinventory( "iw5_titan45_sp_opticsreddot_silencerpistol", undefined, undefined, undefined, "iw5_titan45_sp_opticsreddot_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_1 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_1, 0 );
+    foreach ( var_1 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_1, 0 );
 
-    level.player _meth_8343( "vm_civilian_mitchell" );
+    level.player setviewmodel( "vm_civilian_mitchell" );
     soundscripts\_snd::snd_message( "start_safehouse_follow_checkpoint" );
     thread cafecameraumbrella();
     thread cafeinitvendorgate();
@@ -318,10 +318,10 @@ initsafehousekill()
     maps\_hms_utility::setupplayerinventory( "iw5_titan45_sp_opticsreddot_silencerpistol", undefined, undefined, undefined, "iw5_titan45_sp_opticsreddot_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_1 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_1, 0 );
+    foreach ( var_1 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_1, 0 );
 
-    level.player _meth_8343( "vm_civilian_mitchell" );
+    level.player setviewmodel( "vm_civilian_mitchell" );
     common_scripts\_exploder::exploder( 666 );
     thread animatedpalmtrees();
     thread maps\greece_code::blimp_animation( "blimpOrg", "market_intro_blimp" );
@@ -356,10 +356,10 @@ initsafehouseclear()
     maps\_hms_utility::setupplayerinventory( "iw5_titan45_sp_opticsreddot_silencerpistol", undefined, undefined, undefined, "iw5_titan45_sp_opticsreddot_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_1 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_1, 0 );
+    foreach ( var_1 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_1, 0 );
 
-    level.player _meth_8343( "vm_civilian_mitchell" );
+    level.player setviewmodel( "vm_civilian_mitchell" );
     common_scripts\_exploder::exploder( 666 );
     thread animatedpalmtrees();
     thread maps\greece_code::blimp_animation( "blimpOrg", "market_intro_blimp" );
@@ -394,10 +394,10 @@ initsafehousetransition()
     maps\_hms_utility::setupplayerinventory( "iw5_titan45_sp_opticsreddot_silencerpistol", undefined, undefined, undefined, "iw5_titan45_sp_opticsreddot_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_1 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_1, 0 );
+    foreach ( var_1 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_1, 0 );
 
-    level.player _meth_8343( "vm_civilian_mitchell" );
+    level.player setviewmodel( "vm_civilian_mitchell" );
     common_scripts\_exploder::exploder( 666 );
     thread animatedpalmtrees();
     thread maps\greece_code::blimp_animation( "blimpOrg", "market_intro_blimp" );
@@ -575,7 +575,7 @@ animatedpalmtrees()
         var_2 maps\_utility::assign_animtree();
         var_3 = "light_sway";
         var_4 = randomfloatrange( 0.5, 0.7 );
-        var_2 _meth_814D( level.scr_anim[var_2.animname][var_3][0], 1, 0, var_4 );
+        var_2 setanimrestart( level.scr_anim[var_2.animname][var_3][0], 1, 0, var_4 );
     }
 }
 
@@ -603,7 +603,7 @@ spawnkvasafehouseguards()
         if ( var_1.target == "safehouse_pacing_npc" )
         {
             var_2 = common_scripts\utility::getstruct( var_1.target, "targetname" );
-            var_1 _meth_81C6( var_2.origin, var_2.angles );
+            var_1 forceteleport( var_2.origin, var_2.angles );
             var_1.animname = "generic";
             var_3 = var_2.targetname;
             var_4 = var_2.script_noteworthy;
@@ -627,7 +627,7 @@ sleepingguardcustombloodspray()
     self waittill( "damage", var_0, var_1, var_2, var_3 );
 
     if ( var_1 == level.allies["Ilona"] )
-        var_4 = self _meth_80A8();
+        var_4 = self geteye();
     else
         var_4 = var_3;
 
@@ -895,13 +895,13 @@ safehousevideochatmovie()
     level waittill( "SafehouseVideoChatConversationStarted" );
     thread videochatpostscreenhide( var_0, 1 );
     soundscripts\_snd::snd_message( "start_videochat_screen_turn_on" );
-    _func_0D3( "cg_cinematicfullscreen", "0" );
-    _func_059( "manhunt_vidchat" );
+    setsaveddvar( "cg_cinematicfullscreen", "0" );
+    cinematicingameloop( "manhunt_vidchat" );
     level common_scripts\utility::waittill_either( "HadesTalkFinished", "SafehouseAbortVideoChat" );
     soundscripts\_snd::snd_message( "start_videochat_screen_turn_off" );
     wait 1;
-    _func_05C();
-    _func_0D3( "cg_cinematicfullscreen", "1" );
+    stopcinematicingame();
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
     common_scripts\utility::flag_set( "FlagSafehouseVideoChatEnded" );
     wait 0.1;
     level notify( "HadesTalkReallyFinished" );
@@ -929,53 +929,53 @@ playerchangemode( var_0 )
     switch ( var_0 )
     {
         case "no_combat_slow":
-            self _meth_831D();
-            self _meth_8130( 0 );
-            self _meth_8119( 0 );
-            self _meth_811A( 0 );
-            self _meth_8304( 0 );
-            self _meth_848D( 0 );
-            self _meth_8301( 0 );
-            self _meth_8118( 1 );
-            self _meth_81E1( 0.3 );
+            self disableweapons();
+            self allowmelee( 0 );
+            self allowcrouch( 0 );
+            self allowprone( 0 );
+            self allowsprint( 0 );
+            self allowdodge( 0 );
+            self allowjump( 0 );
+            self allowstand( 1 );
+            self setmovespeedscale( 0.3 );
             break;
         case "no_combat_fast":
-            self _meth_831D();
-            self _meth_8130( 0 );
-            self _meth_8119( 0 );
-            self _meth_811A( 0 );
-            self _meth_8304( 0 );
-            self _meth_848D( 0 );
-            self _meth_8301( 0 );
-            self _meth_8118( 1 );
-            self _meth_81E1( 0.5 );
+            self disableweapons();
+            self allowmelee( 0 );
+            self allowcrouch( 0 );
+            self allowprone( 0 );
+            self allowsprint( 0 );
+            self allowdodge( 0 );
+            self allowjump( 0 );
+            self allowstand( 1 );
+            self setmovespeedscale( 0.5 );
             break;
         case "stealth_combat":
-            self _meth_831E();
-            self _meth_8130( 1 );
+            self enableweapons();
+            self allowmelee( 1 );
             maps\_utility::playerallowalternatemelee( 1 );
-            self _meth_8119( 1 );
-            self _meth_811A( 1 );
-            self _meth_8304( 0 );
-            self _meth_848D( 0 );
-            self _meth_8301( 1 );
-            self _meth_8118( 1 );
-            self _meth_81E1( 0.8 );
+            self allowcrouch( 1 );
+            self allowprone( 1 );
+            self allowsprint( 0 );
+            self allowdodge( 0 );
+            self allowjump( 1 );
+            self allowstand( 1 );
+            self setmovespeedscale( 0.8 );
 
             if ( !isdefined( self._stealth ) )
                 maps\_stealth_utility::stealth_default();
 
             break;
         case "full_combat":
-            self _meth_831E();
-            self _meth_8130( 1 );
-            self _meth_8119( 1 );
-            self _meth_811A( 1 );
-            self _meth_8304( 1 );
-            self _meth_848D( 1 );
-            self _meth_8301( 1 );
-            self _meth_8118( 1 );
-            self _meth_81E1( 1.0 );
+            self enableweapons();
+            self allowmelee( 1 );
+            self allowcrouch( 1 );
+            self allowprone( 1 );
+            self allowsprint( 1 );
+            self allowdodge( 1 );
+            self allowjump( 1 );
+            self allowstand( 1 );
+            self setmovespeedscale( 1.0 );
             break;
     }
 }
@@ -1010,7 +1010,7 @@ playerrubberbandmovespeedscale( var_0, var_1, var_2, var_3, var_4 )
             var_6 = var_1 + var_11;
         }
 
-        self _meth_81E1( var_6 );
+        self setmovespeedscale( var_6 );
         wait 0.5;
     }
 }
@@ -1134,7 +1134,7 @@ spawnfemalecivilians()
             var_11 = common_scripts\utility::random( var_8 );
             var_12 = common_scripts\utility::random( var_7 );
             var_10 thread codescripts\character::setheadmodel( var_11 );
-            var_10 _meth_80B1( var_12 );
+            var_10 setmodel( var_12 );
         }
     }
 
@@ -1279,7 +1279,7 @@ spawnwalkingcivilians( var_0, var_1 )
         if ( isdefined( level.cameralinkpoint ) )
             var_10 = level.cameralinkpoint.origin;
         else
-            var_10 = level.player _meth_80A8();
+            var_10 = level.player geteye();
 
         var_11 = level.player getangles();
 
@@ -1429,7 +1429,7 @@ cafewaiter()
     common_scripts\utility::flag_wait( "FlagSafeHouseIntro" );
     var_1 = common_scripts\utility::getstruct( "CafeWaiterOrg", "targetname" );
     var_2 = maps\_utility::spawn_targetname( "IntroCafeWaiter", 1 );
-    var_2 _meth_80B1( "civ_urban_male_waiter_body" );
+    var_2 setmodel( "civ_urban_male_waiter_body" );
     var_2 thread codescripts\character::setheadmodel( "head_m_act_afr_adams_base" );
     var_2.animname = "waiter";
     var_0 show();
@@ -1447,7 +1447,7 @@ markethost()
     common_scripts\utility::flag_wait( "FlagSafeHouseFollowStart" );
     var_0 = common_scripts\utility::getstruct( "CafeWaiterOrg", "targetname" );
     var_1 = maps\_utility::spawn_targetname( "marketHost", 1 );
-    var_1 _meth_80B1( "civ_urban_male_body_f" );
+    var_1 setmodel( "civ_urban_male_body_f" );
     var_1 thread codescripts\character::setheadmodel( "head_m_gen_mde_smith" );
     var_1.animname = "Host";
     wait 0.4;
@@ -1461,7 +1461,7 @@ cafeteasipper()
 {
     var_0 = getent( "tea_time_org", "targetname" );
     var_1 = maps\_utility::spawn_targetname( "TeaGuy", 1 );
-    var_1 _meth_80B1( "civ_urban_male_body_b" );
+    var_1 setmodel( "civ_urban_male_body_b" );
     var_1 thread codescripts\character::setheadmodel( "head_m_gen_cau_young" );
     var_1.animname = "TeaGuy";
     var_2 = getent( "tea_cup", "targetname" );
@@ -1472,7 +1472,7 @@ cafeteasipper()
     var_5 = ( 0, 0, 0 );
     var_2.origin = var_3;
     var_2.angles = var_4;
-    var_2 _meth_804D( var_1, "TAG_WEAPON_RIGHT" );
+    var_2 linkto( var_1, "TAG_WEAPON_RIGHT" );
     var_6 = [ var_1, var_2 ];
     var_2 thread maps\_anim::anim_loop_solo( var_2, "cafe_tea_time" );
     var_0 thread maps\_anim::anim_loop_solo( var_1, "cafe_tea_time" );
@@ -1485,7 +1485,7 @@ marketvendor()
     common_scripts\utility::flag_wait( "FlagSafeHouseFollowStart" );
     var_0 = common_scripts\utility::getstruct( "sweeperOrg", "targetname" );
     var_1 = maps\_utility::spawn_targetname( "MarketSweeper", 1 );
-    var_1 _meth_80B1( "civ_urban_female_body_b" );
+    var_1 setmodel( "civ_urban_female_body_b" );
     var_1 thread codescripts\character::setheadmodel( "head_f_gen_cau_coyle" );
     var_1.animname = "market_sweeper";
     var_2 = getent( "market_broom", "targetname" );
@@ -1497,7 +1497,7 @@ marketvendor()
     var_4 = common_scripts\utility::getstruct( "MarketVendorOrg", "targetname" );
     var_5 = maps\_utility::spawn_targetname( "MarketVendor", 1 );
     var_5.animname = "market_vendor";
-    var_5 _meth_80B1( "civ_african_male_body_d" );
+    var_5 setmodel( "civ_african_male_body_d" );
     var_5 thread codescripts\character::setheadmodel( "head_m_act_afr_adams_base" );
     var_6 = maps\_utility::spawn_anim_model( "lemon01" );
     var_7 = maps\_utility::spawn_anim_model( "lemon02" );
@@ -1606,11 +1606,11 @@ cafesittingreaderplaynextanim( var_0 )
 cafecivilianmeetandgreet()
 {
     var_0 = maps\_utility::spawn_targetname( "MaleGreet", 1 );
-    var_0 _meth_80B1( "civ_urban_male_body_c" );
+    var_0 setmodel( "civ_urban_male_body_c" );
     var_0 thread codescripts\character::setheadmodel( "head_m_gen_asi_pease" );
     var_0.animname = "greet_male";
     var_1 = maps\_utility::spawn_targetname( "FemaleGreet", 1 );
-    var_1 _meth_80B1( "civ_urban_female_body_b_blue_afr_light" );
+    var_1 setmodel( "civ_urban_female_body_b_blue_afr_light" );
     var_1 thread codescripts\character::setheadmodel( "head_f_gen_afr_rice" );
     var_1.animname = "greet_female";
     var_2 = getent( "Menu1", "targetname" );
@@ -1648,7 +1648,7 @@ cafesetupplayerseat()
     level endon( "lazy_mission_end" );
     common_scripts\utility::flag_wait( "FlagSafeHouseIntro" );
     thread cafeinitvendorgate();
-    level.player _meth_8031( 50, 0 );
+    level.player lerpfov( 50, 0 );
     var_0 = common_scripts\utility::getstruct( "PlayerVBCafeStruct", "targetname" );
     var_1 = maps\_utility::spawn_anim_model( "player_cafe_rig", level.player.origin, level.player.angles );
     var_2 = maps\_utility::spawn_anim_model( "cafe_control_pad", var_0.origin );
@@ -1657,7 +1657,7 @@ cafesetupplayerseat()
     var_0 thread maps\_anim::anim_single_solo( var_3, "hms_greece_market_intro" );
     var_4 = maps\_utility::spawn_anim_model( "player_chair", var_0.origin );
     var_0 thread maps\_anim::anim_single_solo( var_4, "hms_greece_market_intro" );
-    level.player _meth_8080( var_1, "tag_player", 0.1 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.1 );
     thread cafeplayercameralook( var_1 );
     var_5 = [ var_1, var_2 ];
     var_0 maps\_anim::anim_single( var_5, "hms_greece_market_intro" );
@@ -1679,12 +1679,12 @@ cafesetupplayerseat()
     level notify( "PlayerInitiateScan" );
     common_scripts\utility::flag_set( "FlagScanRemoveHint" );
     thread maps\_utility::autosave_by_name( "safehouse_market_scan_begin" );
-    level.player _meth_8080( var_1, "tag_player", 1 );
+    level.player playerlinktoblend( var_1, "tag_player", 1 );
     var_0 notify( "PlayerCafeSittingEnder" );
     var_1 maps\_utility::anim_stopanimscripted();
     var_0 thread maps\_anim::anim_single( var_5, "hms_greece_market_intro_activate" );
     wait 3.15;
-    level.player _meth_80FF();
+    level.player disableslowaim();
     common_scripts\utility::flag_set( "FlagPopulateMarket" );
     maps\greece_security_camera::scanfadeintro();
     wait 1;
@@ -1700,7 +1700,7 @@ cafesetupplayerseat()
     var_6 = common_scripts\utility::getstruct( "mitchellOrg", "targetname" );
     var_7 = maps\_utility::spawn_anim_model( "Mitchell", var_0.origin );
     var_7 maps\_utility::assign_animtree( "Mitchell" );
-    var_7 _meth_80B1( "civ_urban_male_body_b" );
+    var_7 setmodel( "civ_urban_male_body_b" );
     var_7 thread codescripts\character::setheadmodel( "head_civ_sf_male_c" );
     var_7.animname = "Mitchell";
     var_6 thread maps\_anim::anim_loop_solo( var_7, "Mitchell_scanning" );
@@ -1725,12 +1725,12 @@ hintcamerazoomoff()
 cafeplayercameralook( var_0 )
 {
     level waittill( "MarketIntroUnlockCamControl" );
-    level.player _meth_8080( var_0, "tag_player", 0.1 );
-    level.player _meth_807D( var_0, "tag_player", 0, 10, 10, 10, 10, 0, 0 );
-    level.player _meth_80FE( 0.1, 0.1 );
+    level.player playerlinktoblend( var_0, "tag_player", 0.1 );
+    level.player playerlinktodelta( var_0, "tag_player", 0, 10, 10, 10, 10, 0, 0 );
+    level.player enableslowaim( 0.1, 0.1 );
     level waittill( "MarketIntroExpandCamControl" );
-    level.player _meth_807D( var_0, "tag_player", 0, 45, 40, 30, 25, 0, 0 );
-    level.player _meth_80FE( 0.2, 0.2 );
+    level.player playerlinktodelta( var_0, "tag_player", 0, 45, 40, 30, 25, 0, 0 );
+    level.player enableslowaim( 0.2, 0.2 );
 }
 
 cafecamerascancounter()
@@ -1760,7 +1760,7 @@ cafeendcamerascan( var_0 )
     soundscripts\_snd::snd_message( "mhunt_cafe_cam_exit_front" );
     maps\greece_code::setdefaulthudoutlinedvars();
     common_scripts\utility::flag_set( "FlagSafeHouseFollowStart" );
-    level.player _meth_8031( 50, 0 );
+    level.player lerpfov( 50, 0 );
 
     if ( !common_scripts\utility::flag( "FlagFollowTargetReachedFirstStop" ) )
     {
@@ -1781,16 +1781,16 @@ cafeendcamerascan( var_0 )
     var_5 = [ var_2, var_3, var_4 ];
     var_1 thread maps\_anim::anim_first_frame_solo( var_0, "hms_greece_market_outro" );
     var_1 maps\_anim::anim_first_frame( var_5, "hms_greece_market_outro" );
-    level.player _meth_804F();
+    level.player unlink();
     waitframe();
-    level.player _meth_8080( var_2, "tag_player", 0.1 );
+    level.player playerlinktoblend( var_2, "tag_player", 0.1 );
     thread maps\greece_security_camera::scanfadeoutro();
     wait 0.4;
     thread cafeintrofov();
     thread cafevideolog();
     var_1 thread maps\_anim::anim_single_solo( var_0, "hms_greece_market_outro" );
     var_1 maps\_anim::anim_single( var_5, "hms_greece_market_outro" );
-    level.player _meth_804F();
+    level.player unlink();
     var_2 delete();
     var_3 delete();
     var_4 delete();
@@ -1811,7 +1811,7 @@ cafevideolog()
 cafeintrofov()
 {
     level waittill( "CafeTransitionBackFOV" );
-    level.player _meth_8031( 65, 0.5 );
+    level.player lerpfov( 65, 0.5 );
 }
 
 cafesetuptouristilana()
@@ -1825,9 +1825,9 @@ cafesetuptouristilana()
 
 cafesetupilanabackpack()
 {
-    self _meth_80B1( "body_ilana_civilian_backpack" );
+    self setmodel( "body_ilana_civilian_backpack" );
     self waittill( "DeleteIlanaBackpack" );
-    self _meth_80B1( "body_ilana_civilian" );
+    self setmodel( "body_ilana_civilian" );
 }
 
 cafeilanaseat()
@@ -1941,7 +1941,7 @@ cafeoutrositter()
 {
     var_0 = common_scripts\utility::getstruct( "CafeSitterOrg", "targetname" );
     var_1 = maps\_utility::spawn_targetname( "OutroCafeSitter", 1 );
-    var_1 _meth_80B1( "civ_urban_male_body_e" );
+    var_1 setmodel( "civ_urban_male_body_e" );
     var_1 thread codescripts\character::setheadmodel( "head_m_act_cau_kanik_base" );
     var_1.animname = "sitter";
     var_2 = maps\_utility::spawn_anim_model( "sitter_chair", var_0.origin );
@@ -1956,7 +1956,7 @@ cafeoutrositter()
     var_8 = common_scripts\utility::random( var_7 );
     var_9 = common_scripts\utility::random( var_6 );
     var_5 thread codescripts\character::setheadmodel( var_8 );
-    var_5 _meth_80B1( var_9 );
+    var_5 setmodel( var_9 );
     var_5.animname = "generic";
     var_10 = var_3.animation;
     var_3 thread maps\_anim::anim_generic_loop( var_5, var_10 );
@@ -2021,12 +2021,12 @@ marketmovekvafollowtarget()
     if ( var_0 == "start_safehouse_follow" )
     {
         var_1 = getent( "KVAFollowTargetTeleport1", "targetname" );
-        level.kvafollowtarget _meth_81C6( var_1.origin, var_1.angles );
+        level.kvafollowtarget forceteleport( var_1.origin, var_1.angles );
     }
     else if ( var_0 == "start_safehouse_xslice" )
     {
         var_1 = getent( "KVAFollowTargetTeleport2", "targetname" );
-        level.kvafollowtarget _meth_81C6( var_1.origin, var_1.angles );
+        level.kvafollowtarget forceteleport( var_1.origin, var_1.angles );
         thread marketkvafollowtargetkill();
     }
     else
@@ -2107,7 +2107,7 @@ monitorkvatargetinalley()
 
     for (;;)
     {
-        if ( level.kvafollowtarget _meth_80A9( var_0 ) )
+        if ( level.kvafollowtarget istouching( var_0 ) )
             break;
 
         waitframe();
@@ -2132,7 +2132,7 @@ marketkvafollowtargettimer()
     var_1.horzalign = "center";
     var_1.color = ( 0.95, 0.95, 1 );
     var_1 setpulsefx( 30, 900000, 700 );
-    var_1 _meth_80D2( level.markettimewindow );
+    var_1 settenthstimer( level.markettimewindow );
     thread freezemarkettimer( var_1 );
     thread maps\greece_safehouse_vo::scantakestoolongmonitor();
     thread marketscanautohighlight();
@@ -2161,7 +2161,7 @@ freezemarkettimer( var_0 )
     if ( var_4 <= 0 )
         var_4 = 0.01;
 
-    var_0 _meth_80D4( var_4 );
+    var_0 settenthstimerstatic( var_4 );
     wait 3;
     destroymarkettimer( var_0 );
 }
@@ -2181,7 +2181,7 @@ marketscanautohighlight()
         if ( !common_scripts\utility::flag( "FlagFollowTargetMarked" ) )
         {
             foreach ( var_1 in level.potentialscantargets )
-                var_1 _meth_83FA( 5, 0 );
+                var_1 hudoutlineenable( 5, 0 );
         }
     }
 }
@@ -2227,7 +2227,7 @@ marketkvafollowtargetkill()
     var_1 = level.kvafollowtarget;
     var_2 = getent( "SafehouseKVAAmbusher", "targetname" );
     var_3 = var_2 maps\_utility::spawn_ai( 1 );
-    var_3 _meth_80B1( "kva_civilian_a_ambusher" );
+    var_3 setmodel( "kva_civilian_a_ambusher" );
     var_3.animname = "Victim";
     var_3.script_parameters = "Victim";
     var_3.fovcosine = cos( 60 );
@@ -2267,21 +2267,21 @@ marketkvafollowtargetkill()
     level.player notify( "CancelMoveSpeedScale" );
     level.kvafollowtarget notify( "remove_outline" );
     common_scripts\utility::flag_set( "FlagClearObjFollowTarget" );
-    level.player _meth_8482();
+    level.player hideviewmodel();
     var_13 = maps\_utility::spawn_anim_model( "player_cafe_rig", level.player.origin );
     var_13 hide();
     maps\greece_safehouse_fx::guarddustdrag();
     var_9 maps\_anim::anim_first_frame_solo( var_13, var_6 );
-    level.player _meth_8080( var_13, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_13, "tag_player", 0.4 );
     wait 0.4;
     var_13 show();
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "greece_market_audio_tr" ) )
+        if ( istransientloaded( "greece_market_audio_tr" ) )
         {
             level notify( "tff_unload_market_audio" );
-            _func_219( "greece_market_audio_tr" );
+            unloadtransient( "greece_market_audio_tr" );
         }
     }
 
@@ -2364,7 +2364,7 @@ marketkvaambusherstopidle( var_0 )
     waitframe();
     var_0 maps\_anim::anim_single_solo( self, "courtyard_takedown_fail" );
     self.surprisedbymedistsq = 1;
-    self _meth_8141();
+    self stopanimscripted();
     self.combatmode = "no_cover";
     maps\_utility::set_goalradius( 512 );
     self.battlechatter = 1;
@@ -2379,7 +2379,7 @@ marketkvaambusherstopidle( var_0 )
 
 marketkvafollowtargetnecksnaprumble( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     wait 1;
     level.player maps\_upgrade_challenge::give_player_challenge_kill( 1 );
 }
@@ -2393,7 +2393,7 @@ marketkvafollowtargetalerted( var_0 )
     self notify( "stop_talking" );
     var_0 maps\_anim::anim_single_solo( self, "courtyard_takedown_fail" );
     self.surprisedbymedistsq = 1;
-    self _meth_8141();
+    self stopanimscripted();
     maps\_utility::disable_dontevershoot();
     self.combatmode = "no_cover";
     maps\_utility::set_goalradius( 512 );
@@ -2425,7 +2425,7 @@ marketkvafollowtargetalertmonitor()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) )
+        if ( level.player istouching( self ) )
             break;
 
         waitframe();
@@ -2443,10 +2443,10 @@ safehousecourtyardsightwatch()
 
     for (;;)
     {
-        if ( self _meth_81BE( level.player ) )
+        if ( self cansee( level.player ) )
             break;
 
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             break;
 
         waitframe();
@@ -2543,12 +2543,12 @@ safehousebackyardalertmonitoroff()
 safehousetakedownreturnplayercontrol( var_0, var_1 )
 {
     wait(var_0);
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
-    level.player _meth_8481();
-    level.player _meth_830E( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    level.player _meth_8316( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    level.player _meth_8322();
+    level.player showviewmodel();
+    level.player giveweapon( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    level.player switchtoweaponimmediate( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    level.player enableweaponswitch();
     thread maps\_utility::autosave_by_name( "safehouse_courtyard_takedown" );
     common_scripts\utility::flag_set( "FlagSafehouseCourtyardTakedownComplete" );
     wait 0.5;
@@ -2574,7 +2574,7 @@ marketkvafollowtargetbuttoncapture( var_0 )
     level endon( "KVAFollowTargetAlerted" );
     var_1 = getent( "UseTriggerKillKVAfollowTarget", "targetname" );
     thread marketkvafollowtargetbuttonhint( var_1 );
-    var_1 _meth_80DB( &"GREECE_SAFEHOUSE_EXECUTE_PROMPT" );
+    var_1 sethintstring( &"GREECE_SAFEHOUSE_EXECUTE_PROMPT" );
     thread marketkvafollowtargetmeleecheck( var_1 );
     common_scripts\utility::flag_wait( "FlagSafehouseMeleeKillInitiated" );
     var_0 notify( "StartSafehouseTakedown" );
@@ -2628,11 +2628,11 @@ safehouseenemiesignoreplayer( var_0 )
     if ( var_0 == 1 )
     {
         createthreatbiasgroup( "player_safehouse" );
-        self _meth_8177( "player_safehouse" );
+        self setthreatbiasgroup( "player_safehouse" );
         setignoremegroup( "player_safehouse", "axis" );
     }
     else
-        self _meth_8177();
+        self setthreatbiasgroup();
 }
 
 safehousetvdestructible()
@@ -2646,12 +2646,12 @@ safehousetvdestructible()
     var_5 = "greece_safehouse_tv_screen_static";
     precachemodel( var_4 );
     precachemodel( var_5 );
-    var_1 _meth_82C0( 1 );
+    var_1 setcandamage( 1 );
     var_1 common_scripts\utility::waittill_any( "damage", "SonicAoEDamage" );
-    var_1 _meth_80B1( var_4 );
-    var_0 _meth_80B1( var_5 );
-    var_3 _meth_81DF( 0 );
-    var_2 _meth_81DF( 0.25 );
+    var_1 setmodel( var_4 );
+    var_0 setmodel( var_5 );
+    var_3 setlightintensity( 0 );
+    var_2 setlightintensity( 0.25 );
     var_1 soundscripts\_snd::snd_message( "mhunt_tv_dest_expl" );
     var_6 = getent( "SafehousePlanningOrg", "targetname" );
     var_6 notify( "fail_left" );
@@ -2703,8 +2703,8 @@ safehouseilanaopensafehousedoor()
     var_3 thread maps\_anim::anim_single( var_8, var_0 );
     var_3 maps\_anim::anim_single_solo( var_4, var_0 );
     var_3 thread maps\_anim::anim_loop_solo( var_4, var_1, "stopIdleLoop" );
-    var_7 _meth_8058();
-    var_9 = _func_0D6( "axis" );
+    var_7 connectpaths();
+    var_9 = getaiarray( "axis" );
 
     foreach ( var_11 in var_9 )
         var_11 thread maps\_variable_grenade::handle_detection();
@@ -2796,7 +2796,7 @@ safehousedoorplayerblocker()
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_82BF();
+        var_0 notsolid();
         var_0 delete();
     }
 }
@@ -2811,9 +2811,9 @@ safehouseforceopensafehousedoor()
     var_0 = "keycard_door_open";
     var_1 = getent( "safehouse_door", "targetname" );
     var_2 = getent( "safehouse_door_collision", "targetname" );
-    var_1 _meth_814B( var_1 maps\_utility::getanim( var_0 ) );
+    var_1 setanim( var_1 maps\_utility::getanim( var_0 ) );
     var_1 safehousedoorsetlocked( 0 );
-    var_2 _meth_8058();
+    var_2 connectpaths();
 }
 
 safehousedoorinit()
@@ -2822,8 +2822,8 @@ safehousedoorinit()
     var_0.animname = "keycard_door";
     var_0 maps\_utility::assign_animtree( "keycard_door" );
     var_1 = getent( "safehouse_door_collision", "targetname" );
-    var_1 _meth_804D( var_0, "jo_door_l" );
-    var_1 _meth_8057();
+    var_1 linkto( var_0, "jo_door_l" );
+    var_1 disconnectpaths();
     var_2 = common_scripts\utility::getstruct( "safehousekill", "targetname" );
     var_2 maps\_anim::anim_first_frame_solo( var_0, "keycard_door_open" );
     var_0 safehousedoorsetlocked( 1 );
@@ -2833,13 +2833,13 @@ safehousedoorsetlocked( var_0 )
 {
     if ( var_0 )
     {
-        self _meth_8048( "TAG_PANEL_UNLOCKED" );
-        self _meth_804B( "TAG_PANEL_LOCKED" );
+        self hidepart( "TAG_PANEL_UNLOCKED" );
+        self showpart( "TAG_PANEL_LOCKED" );
     }
     else
     {
-        self _meth_8048( "TAG_PANEL_LOCKED" );
-        self _meth_804B( "TAG_PANEL_UNLOCKED" );
+        self hidepart( "TAG_PANEL_LOCKED" );
+        self showpart( "TAG_PANEL_UNLOCKED" );
     }
 }
 
@@ -2951,7 +2951,7 @@ safehouseilanatransition()
 safehouseremoveplayerblocker()
 {
     var_0 = getent( "SafehouseHorribleCatchKillPlayerBlocker", "targetname" );
-    var_0 _meth_82B1( -128, 0.1 );
+    var_0 movez( -128, 0.1 );
     var_0 delete();
 }
 
@@ -3004,7 +3004,7 @@ safehouseplanningguard( var_0, var_1 )
         var_6 maps\greece_code::giveplayerchallengekillpoint();
 
     common_scripts\utility::flag_set( var_6.script_deathflag );
-    var_6 _meth_84ED( "disable" );
+    var_6 setthreatdetection( "disable" );
     var_6 notify( "fail_watch_end" );
     var_5 notify( var_4 );
     var_5 notify( "fail_" + var_2 );
@@ -3030,7 +3030,7 @@ safehouseplanningguardsweapons( var_0 )
 {
     wait 1;
     var_1 = spawn( "script_model", self.origin );
-    var_1 _meth_80B1( "npc_kf5_base_loot" );
+    var_1 setmodel( "npc_kf5_base_loot" );
     var_1.origin = self gettagorigin( "tag_weapon_right" );
     var_1.angles = self gettagangles( "tag_weapon_right" );
     level waittill( var_0 );
@@ -3099,7 +3099,7 @@ safehouseguardsightwatch( var_0, var_1 )
 
     for (;;)
     {
-        if ( self _meth_81BE( level.player ) )
+        if ( self cansee( level.player ) )
             break;
 
         waitframe();
@@ -3116,11 +3116,11 @@ safehouseguardtriggerwatch( var_0, var_1, var_2, var_3 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_4 ) )
+        if ( level.player istouching( var_4 ) )
         {
             if ( var_3 == 1 )
             {
-                var_5 = level.player _meth_817C();
+                var_5 = level.player getstance();
 
                 if ( var_5 != "crouch" && var_5 != "prone" )
                     break;
@@ -3143,11 +3143,11 @@ safehousepacingguardtriggerwatch( var_0 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_1 ) )
+        if ( level.player istouching( var_1 ) )
         {
             if ( common_scripts\utility::flag( "FlagSafehouseVideoChatEnded" ) )
             {
-                var_2 = level.player _meth_817C();
+                var_2 = level.player getstance();
 
                 if ( var_2 != "crouch" && var_2 != "prone" )
                     break;
@@ -3184,9 +3184,9 @@ safehouseilanasetupteamkill()
         var_2 = level.allies["Ilona"] gettagorigin( "TAG_WEAPON" );
 
         if ( common_scripts\utility::flag( "FlagSafehousePlanningGuardRightKilled" ) )
-            magicbullet( "iw5_sn6_sp_silencer01", var_2, var_1 _meth_80A8() );
+            magicbullet( "iw5_sn6_sp_silencer01", var_2, var_1 geteye() );
         else
-            magicbullet( "iw5_sn6_sp_silencer01", var_2, var_0 _meth_80A8() );
+            magicbullet( "iw5_sn6_sp_silencer01", var_2, var_0 geteye() );
     }
 
     common_scripts\utility::flag_wait_all( "FlagSafehousePlanningGuardRightKilled", "FlagSafehousePlanningGuardLeftKilled" );
@@ -3228,7 +3228,7 @@ safehouseilanacheckdeckweapon()
     level waittill( "SafehouseIlanaCheckDeckGunPlaced" );
     maps\_utility::gun_remove();
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "npc_titan45_base_loot" );
+    var_0 setmodel( "npc_titan45_base_loot" );
     var_0 attach( "weapon_silencer_01", "TAG_SILENCER" );
     var_0.origin = self gettagorigin( "tag_weapon_right" );
     var_0.angles = self gettagangles( "tag_weapon_right" );
@@ -3257,12 +3257,12 @@ safehousechangeclothes()
     var_12 = maps\_utility::spawn_anim_model( "backpack_drone_small", var_7.origin );
     var_5 = common_scripts\utility::array_add( var_5, var_12 );
     var_9 maps\_utility::gun_remove();
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8331( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player givestartammo( "iw5_titan45_sp_opticsreddot_silencerpistol" );
     var_7 maps\_anim::anim_first_frame( var_4, var_0 );
-    level.player _meth_8080( var_10, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_10, "tag_player", 0.4 );
     wait 0.4;
     var_10 show();
     common_scripts\utility::flag_set( "greece_safehouse_exso_dressup" );
@@ -3284,18 +3284,18 @@ safehousechangeclothes()
     var_11 delete();
     var_19 = common_scripts\utility::getstruct( "SafehouseSmallBackpackOrg", "targetname" );
     var_20 = spawn( "script_model", var_19.origin );
-    var_20 _meth_80B1( "greece_duffelbag_rigged_empty" );
+    var_20 setmodel( "greece_duffelbag_rigged_empty" );
     var_20.angles = var_19.angles;
-    level.allies["Ilona"] _meth_8141();
+    level.allies["Ilona"] stopanimscripted();
     level.allies["Ilona"] delete();
     maps\_hms_utility::spawnandinitnamedally( "Ilona", undefined, 1, 1, "IlanaSafehouseExoSuit" );
     var_9 = level.allies["Ilona"];
     var_9 maps\_utility::gun_remove();
-    level.player _meth_804F();
+    level.player unlink();
     var_10 delete();
     waitframe();
     var_21 = maps\_utility::spawn_anim_model( "player_safehouse_rig", var_7.origin );
-    level.player _meth_8080( var_21, "tag_player", 0.1 );
+    level.player playerlinktoblend( var_21, "tag_player", 0.1 );
     wait 1.25;
     var_22 = common_scripts\utility::getstruct( "BagDropOrg2", "targetname" );
     var_23 = maps\_utility::spawn_anim_model( "sniper_drone", var_7.origin );
@@ -3312,13 +3312,13 @@ safehousechangeclothes()
     common_scripts\utility::flag_set( "greece_safehouse_exso_dressup_fadeout" );
     var_22 waittill( var_1 );
     common_scripts\utility::flag_set( "FlagConfCenterVOStart" );
-    level.player _meth_804F();
+    level.player unlink();
     var_21 delete();
-    level.player _meth_8343( "viewhands_atlas_military" );
-    level.player _meth_830E( "iw5_hmr9_sp_variablereddot" );
-    level.player _meth_831E();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
+    level.player setviewmodel( "viewhands_atlas_military" );
+    level.player giveweapon( "iw5_hmr9_sp_variablereddot" );
+    level.player enableweapons();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
     common_scripts\utility::flag_wait( "FlagTriggerPlayerExitAfterBagdrop" );
     playfxontag( common_scripts\utility::getfx( "sniper_drone_fan_distortion" ), var_23, "TAG_ORIGIN" );
     maps\greece_safehouse_fx::dronedraftplants();
@@ -3344,18 +3344,18 @@ safehousesniperdronecloaking()
 {
     level waittill( "SafehouseDroneStartCloak" );
     soundscripts\_snd::snd_message( "wasp_cloak_on" );
-    self _meth_80B1( "vehicle_sniper_drone_cloak" );
-    self _meth_8448();
-    self _meth_83A7( 1.0, 0.05 );
+    self setmodel( "vehicle_sniper_drone_cloak" );
+    self drawpostresolve();
+    self setmaterialscriptparam( 1.0, 0.05 );
     wait 0.05;
-    self _meth_83A7( 0.0, 3 );
+    self setmaterialscriptparam( 0.0, 3 );
 }
 
 safehouseenddronecontrolsetup( var_0, var_1, var_2 )
 {
     common_scripts\utility::flag_wait( "FlagPlayerEndDroneControl" );
     var_0 notify( "StopSniperDroneLaunchIdle" );
-    var_1 _meth_8141();
+    var_1 stopanimscripted();
     var_1.disablefacialfilleranims = 0;
     thread maps\_hms_utility::allyredirectgotonode( "Ilona", "IlanaSafehouseExitBalconyWait" );
 
@@ -3461,34 +3461,34 @@ safehouseexit2floorviewmodel()
     var_4 = [ var_2, var_3 ];
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     var_0 maps\_anim::anim_first_frame( var_4, var_1 );
-    level.player _meth_8080( var_2, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_2, "tag_player", 0.4 );
     wait 0.4;
     maps\_hud_util::fade_in( 0.25, "white" );
     wait 0.25;
     level.player setblurforplayer( 0, 1.0 );
     var_0 maps\_anim::anim_single( var_4, var_1 );
-    level.player _meth_804F();
+    level.player unlink();
     var_2 delete();
     var_3 delete();
-    level.player _meth_830E( "iw5_hmr9_sp_variablereddot" );
-    level.player _meth_8316( "iw5_hmr9_sp_variablereddot" );
+    level.player giveweapon( "iw5_hmr9_sp_variablereddot" );
+    level.player switchtoweaponimmediate( "iw5_hmr9_sp_variablereddot" );
     maps\_variable_grenade::give_player_variable_grenade();
 
-    foreach ( var_6 in level.player _meth_82CE() )
-        level.player _meth_82F7( var_6, 4 );
+    foreach ( var_6 in level.player getweaponslistoffhands() )
+        level.player setweaponammostock( var_6, 4 );
 
-    level.player _meth_8131( 1 );
-    level.player _meth_8300( 1 );
-    _func_0D3( "ammoCounterHide", 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8320();
-    level.player _meth_831E();
-    level.player _meth_8130( 1 );
+    level.player allowfire( 1 );
+    level.player allowads( 1 );
+    setsaveddvar( "ammoCounterHide", 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
+    level.player allowjump( 1 );
+    level.player enableoffhandweapons();
+    level.player enableweapons();
+    level.player allowmelee( 1 );
     thread maps\_player_exo::player_exo_activate();
     level.player notify( "CancelMoveSpeedScale" );
     waitframe();
@@ -3533,7 +3533,7 @@ safehouseexittogglegates( var_0 )
     var_1.animname = "safehousegate";
     var_1 maps\_utility::assign_animtree( "safehousegate" );
     var_2 = getent( "SafehouseBackyardEntryGateCollision", "targetname" );
-    var_2 _meth_804D( var_1, "jo_gate_door" );
+    var_2 linkto( var_1, "jo_gate_door" );
 
     switch ( var_0 )
     {
@@ -3558,9 +3558,9 @@ safehousespawnwindowshooters()
     var_0 = maps\_utility::array_spawn_targetname( "SafehouseWindowShooters" );
     self endon( "CancelMoveSpeedScale" );
     waitframe();
-    level.player _meth_8304( 1 );
-    level.player _meth_848D( 1 );
-    level.player _meth_81E1( 1.0 );
+    level.player allowsprint( 1 );
+    level.player allowdodge( 1 );
+    level.player setmovespeedscale( 1.0 );
 }
 
 safehousewindowshooterthink()
@@ -3572,15 +3572,15 @@ safehousewindowshooterthink()
     maps\_utility::set_goal_pos( var_1.origin );
     var_2 = "Org" + self.script_noteworthy;
     var_3 = getent( var_2, "targetname" );
-    self _meth_8167( var_3 );
+    self setentitytarget( var_3 );
     childthread safehousewindowshootermovetarget( var_3 );
     childthread safehousewindowshutterdestroy();
     childthread safehousewindowshootermonitor();
     common_scripts\utility::flag_wait_either( "FlagWindowShootersBreakOut", "FlagTriggerExitPlayerLeavingBuilding" );
-    self _meth_8168( var_3 );
+    self clearentitytarget( var_3 );
     waitframe();
     var_4 = getent( "WindowShooterVol", "targetname" );
-    self _meth_81A8( var_4 );
+    self setgoalvolume( var_4 );
     maps\_utility::set_favoriteenemy( level.player );
     var_5 = "Goal" + self.script_noteworthy;
     var_1 = getnode( var_5, "targetname" );
@@ -3594,7 +3594,7 @@ safehousewindowshootermovetarget( var_0 )
     for (;;)
     {
         var_2 = var_1 + ( 0, randomfloatrange( -16, 16 ), randomfloatrange( -8, 8 ) );
-        var_0 _meth_82AE( var_2, randomfloatrange( 0.5, 2.0 ) );
+        var_0 moveto( var_2, randomfloatrange( 0.5, 2.0 ) );
         wait(randomfloatrange( 0.1, 0.5 ));
     }
 }
@@ -3663,10 +3663,10 @@ safehouseexitplayerjumpwatcher()
         level.player waittill( "playerjump" );
         wait 0.1;
 
-        if ( !level.player _meth_8341() )
+        if ( !level.player isonground() )
             common_scripts\utility::flag_set( "FlagPlayerJumping" );
 
-        while ( !level.player _meth_8341() )
+        while ( !level.player isonground() )
             wait 0.05;
 
         common_scripts\utility::flag_clear( "FlagPlayerJumping" );
@@ -3681,13 +3681,13 @@ safehouseexitplayerleaps( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         var_3 = 1;
 
-    if ( !level.player _meth_80A9( var_0 ) )
+    if ( !level.player istouching( var_0 ) )
         return 0;
 
-    if ( level.player _meth_817C() != "stand" )
+    if ( level.player getstance() != "stand" )
         return 0;
 
-    if ( var_3 && level.player _meth_8341() )
+    if ( var_3 && level.player isonground() )
         return 0;
 
     var_4 = level.player getangles();
@@ -3730,7 +3730,7 @@ cafecameraumbrella()
 {
     var_0 = common_scripts\utility::getstruct( "mitchel_blocker", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "lag_umbrella_01_b" );
+    var_1 setmodel( "lag_umbrella_01_b" );
     common_scripts\utility::flag_wait( "FlagSafeHouseFollowStart" );
     var_1 delete();
 }

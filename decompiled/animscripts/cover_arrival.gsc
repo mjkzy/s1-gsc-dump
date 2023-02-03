@@ -26,8 +26,8 @@ main()
     if ( !isdefined( self.heat ) )
         thread abortapproachifthreatened();
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
     animscripts\face::playfacialanim( var_1, "run" );
     animscripts\shared::donotetracks( "coverArrival", ::handlestartaim );
     var_2 = anim.arrivalendstance[self.approachtype];
@@ -37,7 +37,7 @@ main()
 
     self.a.movement = "stop";
     self.a.arrivaltype = self.approachtype;
-    self _meth_8142( %animscript_root, 0.2 );
+    self clearanim( %animscript_root, 0.2 );
     self.lastapproachaborttime = undefined;
 }
 
@@ -66,8 +66,8 @@ isthreatenedbyenemy()
     if ( !isdefined( self.node ) )
         return 0;
 
-    if ( isdefined( self.enemy ) && self _meth_81BF( self.enemy, 1.5 ) && distancesquared( self.origin, self.enemy.origin ) < 250000 )
-        return !self _meth_81F1();
+    if ( isdefined( self.enemy ) && self seerecently( self.enemy, 1.5 ) && distancesquared( self.origin, self.enemy.origin ) < 250000 )
+        return !self iscovervalidagainstenemy();
 
     return 0;
 }
@@ -83,7 +83,7 @@ abortapproachifthreatened()
 
         if ( isthreatenedbyenemy() )
         {
-            self _meth_8142( %animscript_root, 0.3 );
+            self clearanim( %animscript_root, 0.3 );
             self notify( "abort_approach" );
             self.lastapproachaborttime = gettime();
             return;
@@ -151,7 +151,7 @@ determinenodeapproachtype( var_0 )
     if ( isdefined( var_0.arrivalstance ) )
         var_4 = var_0.arrivalstance;
     else
-        var_4 = var_0 _meth_8034();
+        var_4 = var_0 gethighestnodestance();
 
     if ( var_4 == "prone" )
         var_4 = "crouch";
@@ -202,7 +202,7 @@ determineexposedapproachtype( var_0 )
     if ( isdefined( var_0.arrivalstance ) )
         var_1 = var_0.arrivalstance;
     else
-        var_1 = var_0 _meth_8034();
+        var_1 = var_0 gethighestnodestance();
 
     if ( var_1 == "prone" )
         var_1 = "crouch";
@@ -282,7 +282,7 @@ getapproachpoint( var_0, var_1 )
 
 checkapproachpreconditions()
 {
-    if ( isdefined( self _meth_819D() ) )
+    if ( isdefined( self getnegotiationstartnode() ) )
         return 0;
 
     if ( isdefined( self.disablearrivals ) && self.disablearrivals )
@@ -371,7 +371,7 @@ coverapproachlastminutecheck( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( self.disablearrivals ) && self.disablearrivals )
         return 0;
 
-    if ( abs( self _meth_8190() ) > 45 && isdefined( self.enemy ) && vectordot( anglestoforward( self.angles ), vectornormalize( self.enemy.origin - self.origin ) ) > 0.8 )
+    if ( abs( self getmotionangle() ) > 45 && isdefined( self.enemy ) && vectordot( anglestoforward( self.angles ), vectornormalize( self.enemy.origin - self.origin ) ) > 0.8 )
         return 0;
 
     if ( self.a.pose != "stand" || self.a.movement != "run" && !animscripts\utility::iscqbwalkingorfacingenemy() )
@@ -379,7 +379,7 @@ coverapproachlastminutecheck( var_0, var_1, var_2, var_3, var_4 )
 
     if ( animscripts\utility::absangleclamp180( var_4 - self.angles[1] ) > 30 )
     {
-        if ( isdefined( self.enemy ) && self _meth_81BE( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) < 65536 )
+        if ( isdefined( self.enemy ) && self cansee( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) < 65536 )
         {
             if ( vectordot( anglestoforward( self.angles ), self.enemy.origin - self.origin ) > 0 )
                 return 0;
@@ -449,7 +449,7 @@ startcoverapproach( var_0, var_1, var_2, var_3, var_4 )
         self.arrivalstartdist = length( animscripts\utility::lookuptransitionanim( "cover_trans_dist", var_0, var_10 ) );
         approachwaittillclose( var_5, self.arrivalstartdist );
 
-        if ( !self _meth_81C3( var_1 ) )
+        if ( !self maymovetopoint( var_1 ) )
         {
             self.arrivalstartdist = undefined;
             return;
@@ -466,7 +466,7 @@ startcoverapproach( var_0, var_1, var_2, var_3, var_4 )
     }
     else
     {
-        self _meth_8160( self.coverenterpos );
+        self setruntopos( self.coverenterpos );
         self waittill( "runto_arrived" );
         var_12 = var_3 - animscripts\utility::lookuptransitionanim( "cover_trans_angles", var_0, var_10 );
 
@@ -477,7 +477,7 @@ startcoverapproach( var_0, var_1, var_2, var_3, var_4 )
     self.approachnumber = var_10;
     self.approachtype = var_0;
     self.arrivalstartdist = undefined;
-    self _meth_81E4( self.coverenterpos, var_12, 0 );
+    self startcoverarrival( self.coverenterpos, var_12, 0 );
 }
 
 checkarrivalenterpositions( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -597,7 +597,7 @@ exposedapproachconditioncheck( var_0, var_1 )
     if ( isthreatenedbyenemy() || isdefined( self.lastapproachaborttime ) && self.lastapproachaborttime + 500 > gettime() )
         return 0;
 
-    if ( !self _meth_81C3( self.pathgoalpos ) )
+    if ( !self maymovetopoint( self.pathgoalpos ) )
         return 0;
 
     return 1;
@@ -648,13 +648,13 @@ faceenemyatendofapproach( var_0 )
     if ( isdefined( self.heat ) && isdefined( var_0 ) )
         return 0;
 
-    if ( self.combatmode == "cover" && issentient( self.enemy ) && gettime() - self _meth_81C0( self.enemy ) > 15000 )
+    if ( self.combatmode == "cover" && issentient( self.enemy ) && gettime() - self lastknowntime( self.enemy ) > 15000 )
         return 0;
 
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
-        return self _meth_81BE( self.enemy );
+        return self cansee( self.enemy );
 
-    return sighttracepassed( self.enemy _meth_8097(), self.pathgoalpos + ( 0, 0, 60 ), 0, undefined );
+    return sighttracepassed( self.enemy getshootatpos(), self.pathgoalpos + ( 0, 0, 60 ), 0, undefined );
 }
 
 dolastminuteexposedapproach()
@@ -662,7 +662,7 @@ dolastminuteexposedapproach()
     self endon( "goal_changed" );
     self endon( "move_interrupt" );
 
-    if ( isdefined( self _meth_819D() ) )
+    if ( isdefined( self getnegotiationstartnode() ) )
         return;
 
     exposedapproachwaittillclose();
@@ -728,7 +728,7 @@ dolastminuteexposedapproach()
             var_5 = animscripts\utility::getnodeforwardyaw( var_2 );
         else
         {
-            var_7 = self _meth_8192();
+            var_7 = self getanglestolikelyenemypath();
 
             if ( isdefined( var_7 ) )
                 var_5 = var_7[1];
@@ -801,7 +801,7 @@ dolastminuteexposedapproach()
         var_17 = self.origin;
     }
 
-    self _meth_81E4( var_17, var_16, 0 );
+    self startcoverarrival( var_17, var_16, 0 );
 }
 
 waitforpathgoalpos()
@@ -820,16 +820,16 @@ custommovetransitionfunc()
     if ( !isdefined( self.startmovetransitionanim ) )
         return;
 
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face current" );
-    self _meth_8110( "move", self.startmovetransitionanim, %animscript_root, 1 );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face current" );
+    self setflaggedanimknoballrestart( "move", self.startmovetransitionanim, %animscript_root, 1 );
     animscripts\face::playfacialanim( self.startmovetransitionanim, "run" );
 
     if ( animhasnotetrack( self.startmovetransitionanim, "code_move" ) )
     {
         animscripts\shared::donotetracks( "move" );
-        self _meth_818F( "face motion" );
-        self _meth_818E( "none", 0 );
+        self orientmode( "face motion" );
+        self animmode( "none", 0 );
     }
 
     animscripts\shared::donotetracks( "move" );
@@ -846,8 +846,8 @@ customidletransitionfunc()
     if ( !isdefined( self.heat ) )
         thread abortapproachifthreatened();
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
     animscripts\face::playfacialanim( var_1, "run" );
     animscripts\shared::donotetracks( "coverArrival", ::handlestartaim );
     var_2 = anim.arrivalendstance[self.approachtype];
@@ -857,7 +857,7 @@ customidletransitionfunc()
 
     self.a.movement = "stop";
     self.a.arrivaltype = self.approachtype;
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
     self.lastapproachaborttime = undefined;
 }
 
@@ -918,7 +918,7 @@ checkcoverenterpos( var_0, var_1, var_2, var_3, var_4 )
     if ( var_3 <= 6 && var_4 )
         return 1;
 
-    if ( !self _meth_81C4( var_5, var_0 ) )
+    if ( !self maymovefrompointtopoint( var_5, var_0 ) )
         return 0;
 
     if ( var_3 <= 6 || isdefined( anim.exposedtransition[var_2] ) )
@@ -926,7 +926,7 @@ checkcoverenterpos( var_0, var_1, var_2, var_3, var_4 )
 
     var_6 = getarrivalprestartpos( var_5, var_1, var_2, var_3 );
     self.coverenterpos = var_6;
-    return self _meth_81C4( var_6, var_5 );
+    return self maymovefrompointtopoint( var_6, var_5 );
 }
 
 usereadystand()

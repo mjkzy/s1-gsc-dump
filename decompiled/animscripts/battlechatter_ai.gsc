@@ -649,13 +649,13 @@ squadthreatwaiter()
     for (;;)
     {
         if ( self.team == "allies" )
-            var_0 = getthreatsovertime( _func_0D6( "axis", "team3" ), 0.5 );
+            var_0 = getthreatsovertime( getaiarray( "axis", "team3" ), 0.5 );
         else if ( self.team == "team3" )
-            var_0 = getthreatsovertime( _func_0D6( "allies", "axis" ), 0.5 );
+            var_0 = getthreatsovertime( getaiarray( "allies", "axis" ), 0.5 );
         else
         {
             wait 0.5;
-            var_0 = _func_0D6( "allies", "team3" );
+            var_0 = getaiarray( "allies", "team3" );
             var_0[var_0.size] = level.player;
         }
 
@@ -694,7 +694,7 @@ squadthreatwaiter()
                 if ( !isdefined( var_5.enemyclass ) )
                     continue;
 
-                if ( !var_3 _meth_81BE( var_5 ) )
+                if ( !var_3 cansee( var_5 ) )
                 {
                     if ( isplayer( var_5 ) )
                         continue;

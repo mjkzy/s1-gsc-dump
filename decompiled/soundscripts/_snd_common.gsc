@@ -158,7 +158,7 @@ wpn_deam160_charge( var_0 )
     level waittill( "aud_deam160_charge_break" );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_806F( 0, 0.05 );
+        var_1 scalevolume( 0, 0.05 );
 }
 
 wpn_deam160_watch_weapon_change()
@@ -167,7 +167,7 @@ wpn_deam160_watch_weapon_change()
 
     for (;;)
     {
-        if ( self _meth_812C() || self _meth_8336() || self _meth_812E() || self ismantling() )
+        if ( self isthrowinggrenade() || self isreloading() || self ismeleeing() || self ismantling() )
         {
             level notify( "aud_deam160_charge_break" );
             break;
@@ -183,7 +183,7 @@ wpn_deam160_is_chargeable()
 
     for (;;)
     {
-        var_0 = _func_23C( self _meth_8311() );
+        var_0 = weaponischargeable( self getcurrentweapon() );
 
         if ( !var_0 )
         {
@@ -199,11 +199,11 @@ wpn_deam160_play_charge_loop_sfx()
 {
     level endon( "aud_deam160_charge_break" );
     var_0 = soundscripts\_audio::deprecated_aud_play_linked_sound( "wpn_deam160_charge_hi_lp", level.player, "loop", "aud_deam160_charge_break" );
-    var_0 _meth_806F( 0, 0.05 );
+    var_0 scalevolume( 0, 0.05 );
     wait 2;
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_806F( 1, 0.4 );
+        var_0 scalevolume( 1, 0.4 );
 }
 
 wpn_deam160_charge_dots_increase( var_0 )
@@ -268,18 +268,18 @@ aud_microwave_grenade()
     thread soundscripts\_snd_playsound::snd_play_at( "wpn_mw_grenade_die", var_0 );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_806F( 0, 0.3 );
+        var_2 scalevolume( 0, 0.3 );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_806F( 0, 0.3 );
+        var_1 scalevolume( 0, 0.3 );
 
     wait 0.3;
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_80AC();
+        var_2 stopsounds();
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_80AC();
+        var_1 stopsounds();
 }
 
 aud_microwave_grenade_sparks_env( var_0 )
@@ -349,7 +349,7 @@ snd_mute_device( var_0, var_1, var_2, var_3, var_4, var_5 )
                     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_active_enter", 0.05 );
                     self.aud.mute_device_in_bubble = 1;
                     thread sndx_mute_device_wait_to_play( self.aud.mute_device_enter );
-                    self.aud.loop_ent _meth_806F( 1.0, 2 );
+                    self.aud.loop_ent scalevolume( 1.0, 2 );
                 }
             }
         }
@@ -371,7 +371,7 @@ snd_mute_device( var_0, var_1, var_2, var_3, var_4, var_5 )
                     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_active_exit", 0.05 );
                     self.aud.mute_device_in_bubble = 0;
                     thread sndx_mute_device_wait_to_play( self.aud.mute_device_exit );
-                    self.aud.loop_ent _meth_806F( 0.0, 2 );
+                    self.aud.loop_ent scalevolume( 0.0, 2 );
                 }
             }
         }
@@ -384,7 +384,7 @@ snd_mute_device( var_0, var_1, var_2, var_3, var_4, var_5 )
                 wait 0.05;
                 self.aud.mute_device_filter = undefined;
                 thread soundscripts\_snd_filters::snd_fade_out_filter( 1 );
-                self.aud.loop_ent _meth_806F( 0.0, 2 );
+                self.aud.loop_ent scalevolume( 0.0, 2 );
             }
         }
 
@@ -640,7 +640,7 @@ boost_land_player( var_0 )
             if ( var_0 < var_2 )
                 return;
 
-            var_7 = _func_238( var_3.origin + ( 0, 0, 16 ), var_3.origin + ( 0, 0, -16 ), var_3 )["surfacetype"];
+            var_7 = playerphysicstraceinfo( var_3.origin + ( 0, 0, 16 ), var_3.origin + ( 0, 0, -16 ), var_3 )["surfacetype"];
             var_8 = snd_is_valid_surface( var_7, level._snd.boost_jump.surfaces );
 
             if ( var_8 )
@@ -938,7 +938,7 @@ exo_cloak_battery_low()
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_806F( 0, 0.25 );
+        var_1 scalevolume( 0, 0.25 );
         wait 0.25;
         level notify( "notify_stop_exo_cloak_battery_low" );
     }
@@ -961,7 +961,7 @@ exo_cloak_battery_recharge()
         wait 0.1;
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_806F( 0, 0.25 );
+        var_0 scalevolume( 0, 0.25 );
 }
 
 npc_cloak_buttons( var_0 )
@@ -996,10 +996,10 @@ npc_cloak_enable()
 
 overdrive_on()
 {
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_audio_zone_manager::azm_set_reverb_bypass( 1 );
-    level.player _meth_832E( "snd_enveffectsprio_level", "sewer", 1, 0.7, 1 );
+    level.player setreverb( "snd_enveffectsprio_level", "sewer", 1, 0.7, 1 );
     soundscripts\_audio_zone_manager::azm_set_filter_bypass( 1 );
     soundscripts\_snd_filters::snd_fade_in_filter( "overdrive", 1 );
     soundscripts\_audio_mix_manager::mm_add_submix( "overdrive", 1 );
@@ -1017,12 +1017,12 @@ overdrive_off()
     level notify( "kill_overdrive_loop" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "overdrive", 2 );
     soundscripts\_snd_timescale::snd_set_timescale( "default" );
-    level.player _meth_832F( "snd_enveffectsprio_level", 1 );
+    level.player deactivatereverb( "snd_enveffectsprio_level", 1 );
     soundscripts\_audio_zone_manager::azm_set_reverb_bypass( 0 );
     soundscripts\_snd_filters::snd_fade_out_filter( 2 );
     soundscripts\_audio_zone_manager::azm_set_filter_bypass( 0 );
     snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
 }
 
 sonic_blast()
@@ -1107,7 +1107,7 @@ snd_air_vehicle_smart_flyby( var_0, var_1, var_2, var_3, var_4 )
         if ( var_7 < var_1 )
         {
             var_8 = spawn( "script_origin", self.origin );
-            var_8 _meth_804D( self );
+            var_8 linkto( self );
             var_8 playsound( var_0, "sounddone" );
             var_8 thread sndx_air_vehicle_smart_flyby_deathspin( self, var_4 );
             var_8 thread sndx_air_vehicle_smart_flyby_sounddone();
@@ -1115,9 +1115,9 @@ snd_air_vehicle_smart_flyby( var_0, var_1, var_2, var_3, var_4 )
 
             if ( var_9 == "deathspin" )
             {
-                var_8 _meth_806F( 0.0, 0.3 );
+                var_8 scalevolume( 0.0, 0.3 );
                 wait 0.4;
-                var_8 _meth_80AC();
+                var_8 stopsounds();
                 var_8 delete();
                 return;
             }
@@ -1144,7 +1144,7 @@ sndx_air_vehicle_smart_flyby_deathspin( var_0, var_1 )
     if ( isdefined( var_1 ) )
     {
         var_2 = spawn( "script_origin", self.origin );
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
         var_2 playsound( var_1, "sounddone" );
         var_2 waittill( "sounddone" );
         var_2 delete();
@@ -1162,7 +1162,7 @@ snd_advanced_flyby_system( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
 {
     self endon( "death" );
     self endon( "deathspin" );
-    self _meth_828B();
+    self vehicle_turnengineoff();
 
     if ( !isdefined( self.audio ) )
         self.audio = spawnstruct();
@@ -1180,7 +1180,7 @@ snd_advanced_flyby_system( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
     if ( isdefined( var_6 ) )
     {
         var_12 = spawn( "script_origin", self.origin );
-        var_12 _meth_804D( self );
+        var_12 linkto( self );
         thread sndx_advanced_flyby_destruct( var_12, var_6, var_10 );
     }
 
@@ -1279,7 +1279,7 @@ sndx_advanced_flyby_dist_check( var_0 )
 sndx_advanced_flyby_construct_alias( var_0, var_1, var_2, var_3 )
 {
     var_4 = 0;
-    var_5 = self _meth_8287();
+    var_5 = self vehicle_getvelocity();
     var_6 = length( var_5 ) * 0.0568182;
 
     if ( var_6 > 5 )
@@ -1387,12 +1387,12 @@ sndx_advanced_flyby_cleanup( var_0, var_1, var_2 )
         if ( isdefined( var_2 ) )
             var_3 = var_2;
 
-        var_0 _meth_806F( 0.0, var_3 );
+        var_0 scalevolume( 0.0, var_3 );
         wait(var_3);
 
         if ( isdefined( var_0 ) )
         {
-            var_0 _meth_80AC();
+            var_0 stopsounds();
             wait 0.1;
 
             if ( isdefined( var_0 ) )
@@ -1702,8 +1702,8 @@ sndx_play_vehicle_collision_internal( var_0 )
 
         var_20 = soundscripts\_audio::deprecated_aud_map2( var_18, level._snd.envs["veh_crash_intensity_to_pitch"] );
         var_21 = snd_impact( self.audio.vehicleid, var_6, var_17, var_3, var_14 );
-        var_21 _meth_806F( var_18, 0.1 );
-        var_21 _meth_806D( var_20, 0.1 );
+        var_21 scalevolume( var_18, 0.1 );
+        var_21 scalepitch( var_20, 0.1 );
 
         if ( var_15 && var_17 != "sml" )
         {
@@ -1712,7 +1712,7 @@ sndx_play_vehicle_collision_internal( var_0 )
             if ( var_22 > self.audio.minlfevolumethreshold )
             {
                 var_23 = snd_impact( self.audio.vehicleid, var_6, "lfe", var_3 );
-                var_23 _meth_806F( var_22, 0.1 );
+                var_23 scalevolume( var_22, 0.1 );
             }
         }
     }
@@ -1897,10 +1897,10 @@ snd_is_valid_surface( var_0, var_1 )
 
 snd_dpad_functions( var_0, var_1, var_2, var_3 )
 {
-    level.player _meth_82DD( "dpad_action_01", "+actionslot 1" );
-    level.player _meth_82DD( "dpad_action_02", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_action_03", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_action_04", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_action_01", "+actionslot 1" );
+    level.player notifyonplayercommand( "dpad_action_02", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_action_03", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_action_04", "+actionslot 4" );
     thread sndx_dpad_function_watch( "dpad_action_01", var_0 );
     thread sndx_dpad_function_watch( "dpad_action_02", var_1 );
     thread sndx_dpad_function_watch( "dpad_action_03", var_2 );
@@ -1995,11 +1995,11 @@ snd_wait_for_enemies_aware( var_0 )
 {
     for (;;)
     {
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
 
         foreach ( var_3 in var_1 )
         {
-            if ( var_3 _meth_8410() )
+            if ( var_3 isenemyaware() )
             {
                 if ( isstring( var_0 ) )
                     level notify( var_0 );
@@ -2016,11 +2016,11 @@ snd_wait_for_enemies_see_player( var_0 )
 {
     for (;;)
     {
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
 
         foreach ( var_3 in var_1 )
         {
-            if ( var_3 _meth_81BE( level.player ) )
+            if ( var_3 cansee( level.player ) )
             {
                 if ( isstring( var_0 ) )
                     level notify( var_0 );
@@ -2036,11 +2036,11 @@ snd_wait_for_enemies_see_player( var_0 )
 snd_enemies_can_see_player()
 {
     var_0 = 0;
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
     {
-        if ( var_3 _meth_81BE( level.player ) )
+        if ( var_3 cansee( level.player ) )
         {
             var_0 = 1;
             break;
@@ -2053,11 +2053,11 @@ snd_enemies_can_see_player()
 snd_get_num_enemies_aware()
 {
     var_0 = 0;
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
     {
-        if ( var_3 _meth_8410() )
+        if ( var_3 isenemyaware() )
             var_0 += 1;
     }
 
@@ -2070,12 +2070,12 @@ _snd_update_soundcontextoverride()
     {
         if ( var_1[1] )
         {
-            _func_289( var_1[0] );
+            enablesoundcontextoverride( var_1[0] );
             return;
         }
     }
 
-    _func_28A();
+    disablesoundcontextoverride();
 }
 
 snd_enable_soundcontextoverride( var_0 )

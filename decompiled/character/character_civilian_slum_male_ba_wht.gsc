@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "body_slum_civ_male_ba_wht" );
+    self setmodel( "body_slum_civ_male_ba_wht" );
     codescripts\character::attachhead( "alias_civilian_slum_heads_wht", xmodelalias\alias_civilian_slum_heads_wht::main() );
     self.voice = "american";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

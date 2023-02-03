@@ -56,7 +56,7 @@ ismeleeblocked()
 
 end_script()
 {
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
 }
 
 doattack( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -67,8 +67,8 @@ doattack( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( !isdefined( var_6 ) )
         var_6 = 0;
 
-    var_7 = randomint( self _meth_83D6( var_2 ) );
-    var_8 = self _meth_83D3( var_2, var_7 );
+    var_7 = randomint( self getanimentrycount( var_2 ) );
+    var_8 = self getanimentry( var_2, var_7 );
     var_9 = getanimlength( var_8 );
     var_10 = getnotetracktimes( var_8, "hit" );
     var_11 = var_9 / var_5 * 0.33;
@@ -76,14 +76,14 @@ doattack( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( var_10.size > 0 )
         var_11 = var_9 / var_5 * var_10[0];
 
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
 
     if ( var_4 )
-        self _meth_8396( "face enemy" );
+        self scragentsetorientmode( "face enemy" );
     else
-        self _meth_8396( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_2, var_7, var_5 );
 
     if ( var_6 )
@@ -114,18 +114,18 @@ doattack( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     if ( var_3 )
     {
-        self _meth_8395( 0, 1 );
-        self _meth_839F( self.origin, var_1, var_11 );
+        self scragentsetanimscale( 0, 1 );
+        self scragentdoanimlerp( self.origin, var_1, var_11 );
         childthread updatelerppos( var_0, var_11, 1, self.lungelerprange );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoAttack" );
     }
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
     wait(var_11);
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -247,8 +247,8 @@ updatelerppos( var_0, var_1, var_2, var_3 )
         if ( lengthsquared( var_9 ) > var_8 * var_8 )
             var_7 = var_4 + vectornormalize( var_9 ) * var_8;
 
-        self _meth_8396( "face enemy" );
-        self _meth_839F( self.origin, var_7, var_5 );
+        self scragentsetorientmode( "face enemy" );
+        self scragentdoanimlerp( self.origin, var_7, var_5 );
     }
 }
 
@@ -305,7 +305,7 @@ domeleedamage( var_0, var_1, var_2 )
     if ( isprotectedbyriotshield( var_0 ) )
         return;
 
-    var_0 _meth_8051( var_1, self.origin, self, self, var_2 );
+    var_0 dodamage( var_1, self.origin, self, self, var_2 );
 }
 
 meleefailed()

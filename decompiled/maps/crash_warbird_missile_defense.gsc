@@ -66,7 +66,7 @@ missilewatchproximity( var_0, var_1, var_2 )
         if ( !isdefined( var_2 ) )
             break;
 
-        var_5 = var_2 _meth_8216( 0, 0, 0 );
+        var_5 = var_2 getpointinbounds( 0, 0, 0 );
         var_6 = distance( self.origin, var_5 );
 
         if ( var_6 < var_4 )
@@ -83,12 +83,12 @@ missilewatchproximity( var_0, var_1, var_2 )
                     self.delayedlocktargettag = "tag_origin";
                 }
                 else
-                    self _meth_81D9( var_7 );
+                    self missile_settargetent( var_7 );
 
                 return;
             }
 
-            self _meth_81D9( var_2, ( 0, 0, 50 ) );
+            self missile_settargetent( var_2, ( 0, 0, 50 ) );
         }
 
         wait 0.05;
@@ -103,7 +103,7 @@ deployflares( var_0 )
     var_2 = common_scripts\utility::randomvector( 1 ) + ( 0, 0, 1 );
     var_2 = vectornormalize( var_2 );
     var_3 = var_2 * randomfloatrange( 500, 800 );
-    var_1 _meth_82B2( var_3, var_0 );
+    var_1 movegravity( var_3, var_0 );
     var_1 thread deleteaftertime( var_0 );
     return var_1;
 }

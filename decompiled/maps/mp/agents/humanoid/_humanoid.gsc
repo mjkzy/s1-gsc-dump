@@ -23,7 +23,7 @@ setuphumanoidstate()
     self.meleeradiusbasesq = squared( self.meleeradiusbase );
     maps\mp\zombies\_util::setmeleeradius( self.meleeradiusbase );
     self.defaultgoalradius = self.radius + 1;
-    self _meth_8394( self.defaultgoalradius );
+    self scragentsetgoalradius( self.defaultgoalradius );
     self.meleedot = 0.5;
 }
 
@@ -63,7 +63,7 @@ onscriptedend()
 
 spawn_humanoid( var_0, var_1, var_2, var_3 )
 {
-    self _meth_80B1( "tag_origin" );
+    self setmodel( "tag_origin" );
     self.species = "humanoid";
     self.onenteranimstate = maps\mp\agents\_scripted_agent_anim_util::onenteranimstate;
 
@@ -89,27 +89,27 @@ spawn_humanoid( var_0, var_1, var_2, var_3 )
     if ( isdefined( level.getradiusandheight ) && isdefined( level.getradiusandheight[self.agent_type] ) )
         [var_7, var_8] = [[ level.getradiusandheight[self.agent_type] ]]();
 
-    self _meth_838A( var_4, var_5, var_0, var_7, var_8, var_3 );
+    self spawnagent( var_4, var_5, var_0, var_7, var_8, var_3 );
     level notify( "spawned_agent", self );
     maps\mp\agents\_agent_common::set_agent_health( 100 );
 
     if ( isdefined( var_3 ) )
         maps\mp\agents\_agent_utility::set_agent_team( var_3.team, var_3 );
 
-    self _meth_8310();
-    self _meth_853C( "human" );
-    self _meth_853E( 1 );
-    self _meth_8541( 0 );
-    self _meth_8543( 0 );
-    self _meth_8544( 0 );
-    self _meth_8545( 1 );
-    self _meth_8542( 1 );
+    self takeallweapons();
+    self scragentsetspecies( "human" );
+    self scragentsetnopenetrate( 1 );
+    self scragentsetorienttoground( 0 );
+    self scragentsetobstacleavoid( 0 );
+    self scragentsetlateralcodemove( 0 );
+    self scragentsetpathteamspread( 1 );
+    self scragentsetallowragdoll( 1 );
     self thread [[ maps\mp\agents\_agent_utility::agentfunc( "think" ) ]]();
 }
 
 didpastmeleefail()
 {
-    if ( isdefined( self.lastmeleefailedpos ) && isdefined( self.lastmeleefailedmypos ) && _func_220( self.curmeleetarget.origin, self.lastmeleefailedpos ) < 4 && distancesquared( self.origin, self.lastmeleefailedmypos ) < 2500 )
+    if ( isdefined( self.lastmeleefailedpos ) && isdefined( self.lastmeleefailedmypos ) && distance2dsquared( self.curmeleetarget.origin, self.lastmeleefailedpos ) < 4 && distancesquared( self.origin, self.lastmeleefailedmypos ) < 2500 )
         return 1;
 
     return 0;
@@ -117,7 +117,7 @@ didpastmeleefail()
 
 didpastlungemeleefail()
 {
-    if ( isdefined( self.lastlungemeleefailedpos ) && isdefined( self.lastlungemeleefailedmypos ) && _func_220( self.curmeleetarget.origin, self.lastlungemeleefailedpos ) < 4 && distancesquared( self.origin, self.lastlungemeleefailedmypos ) < 2500 )
+    if ( isdefined( self.lastlungemeleefailedpos ) && isdefined( self.lastlungemeleefailedmypos ) && distance2dsquared( self.curmeleetarget.origin, self.lastlungemeleefailedpos ) < 4 && distancesquared( self.origin, self.lastlungemeleefailedmypos ) < 2500 )
         return 1;
 
     return 0;
@@ -143,7 +143,7 @@ wanttoattacktargetbutcant()
     if ( maps\mp\agents\humanoid\_humanoid_util::isentstandingonme( self.curmeleetarget ) )
         return 0;
 
-    return !iswithinattackheight( self.curmeleetarget.origin ) && _func_220( self.origin, self.curmeleetarget.origin ) < maps\mp\agents\humanoid\_humanoid_util::getmeleeradiussq() * 0.75 * 0.75;
+    return !iswithinattackheight( self.curmeleetarget.origin ) && distance2dsquared( self.origin, self.curmeleetarget.origin ) < maps\mp\agents\humanoid\_humanoid_util::getmeleeradiussq() * 0.75 * 0.75;
 }
 
 readytomeleetarget( var_0 )
@@ -248,7 +248,7 @@ dostophitreaction( var_0, var_1, var_2, var_3, var_4 )
     if ( maps\mp\agents\humanoid\_humanoid_util::iscrawling() )
         return;
 
-    self _meth_839D( 1 );
+    self scragentsetscripted( 1 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoStopHitReaction" );
     self.inpain = 1;
     var_5 = "pain_stand";
@@ -275,7 +275,7 @@ dostophitreaction( var_0, var_1, var_2, var_3, var_4 )
         else
             var_5 = "pain_stun";
 
-        var_8 = self _meth_83D6( var_5 );
+        var_8 = self getanimentrycount( var_5 );
         var_6 = randomint( var_8 );
     }
     else if ( isdefined( var_2 ) && var_2 == "iw5_linegundamagezm_mp" )
@@ -289,21 +289,21 @@ dostophitreaction( var_0, var_1, var_2, var_3, var_4 )
         else
             var_5 = "pain_knockback_left";
 
-        var_8 = self _meth_83D6( var_5 );
+        var_8 = self getanimentrycount( var_5 );
         var_6 = randomint( var_8 );
     }
     else
     {
-        var_8 = self _meth_83D6( var_5 );
+        var_8 = self getanimentrycount( var_5 );
         var_6 = maps\mp\agents\humanoid\_humanoid_util::getpainangleindexvariable( var_7, var_8 );
     }
 
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", self.angles );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_5, var_6, self.nonmoveratescale, "pain_anim" );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoStopHitReaction" );
     self.inpain = undefined;
-    self _meth_839D( 0 );
+    self scragentsetscripted( 0 );
 }
 
 ondamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )

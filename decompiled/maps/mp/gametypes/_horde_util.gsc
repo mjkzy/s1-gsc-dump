@@ -71,7 +71,7 @@ hasagentsquadmember( var_0 )
 
 getplayerweaponhorde( var_0 )
 {
-    var_1 = var_0 _meth_8312();
+    var_1 = var_0 getcurrentprimaryweapon();
 
     if ( isdefined( var_0.changingweapon ) )
         var_1 = var_0.changingweapon;
@@ -79,7 +79,7 @@ getplayerweaponhorde( var_0 )
     if ( !maps\mp\gametypes\_weapons::isprimaryweapon( var_1 ) )
         var_1 = var_0 common_scripts\utility::getlastweapon();
 
-    if ( !var_0 _meth_8314( var_1 ) )
+    if ( !var_0 hasweapon( var_1 ) )
         var_1 = var_0 maps\mp\killstreaks\_killstreaks::getfirstprimaryweapon();
 
     return var_1;
@@ -103,21 +103,21 @@ playsoundtoallplayers( var_0 )
 
 refillammohorde( var_0 )
 {
-    var_1 = var_0 _meth_830C();
+    var_1 = var_0 getweaponslistprimaries();
 
     foreach ( var_3 in var_1 )
     {
         if ( issubstr( var_3, "iw5_microdronelaunchercoop_mp" ) )
         {
-            var_4 = var_0 _meth_82F9( var_3 );
-            var_5 = _func_1E1( var_3 );
+            var_4 = var_0 setweaponammostock( var_3 );
+            var_5 = weaponmaxammo( var_3 );
             var_6 = var_4 / var_5 + 0.5;
-            var_0 _meth_8332( var_3, var_6 );
+            var_0 givemaxammo( var_3, var_6 );
             continue;
         }
 
         if ( !issubstr( var_3, "turrethead" ) )
-            var_0 _meth_8332( var_3 );
+            var_0 givemaxammo( var_3 );
     }
 }
 
@@ -153,7 +153,7 @@ hordeenableweapons( var_0 )
 
         if ( var_1 == "horde_close_armory" )
         {
-            var_0 _meth_831E();
+            var_0 enableweapons();
             level notify( "stop_enable_weapons" );
         }
 
@@ -166,10 +166,10 @@ awardhordekill( var_0 )
     if ( var_0.killz < 65535 )
         var_0.killz++;
 
-    var_0 _meth_8526( "killsTotal", var_0.killz );
+    var_0 sethordeplayerdata( "killsTotal", var_0.killz );
 
-    if ( var_0.killz > var_0 _meth_8525( "killsBest" ) )
-        var_0 _meth_8526( "killsBest", var_0.killz );
+    if ( var_0.killz > var_0 gethordeplayerdata( "killsBest" ) )
+        var_0 sethordeplayerdata( "killsBest", var_0.killz );
 
     var_0.kills = var_0.killz;
     var_0 maps\mp\_utility::setpersstat( "kills", var_0.kills );
@@ -191,10 +191,10 @@ awardhordemeleekills( var_0 )
     if ( var_0.meleekills < 65535 )
         var_0.meleekills++;
 
-    var_0 _meth_8526( "meleeKillsTotal", var_0.meleekills );
+    var_0 sethordeplayerdata( "meleeKillsTotal", var_0.meleekills );
 
-    if ( var_0.meleekills > var_0 _meth_8525( "meleeKillsBest" ) )
-        var_0 _meth_8526( "meleeKillsBest", var_0.meleekills );
+    if ( var_0.meleekills > var_0 gethordeplayerdata( "meleeKillsBest" ) )
+        var_0 sethordeplayerdata( "meleeKillsBest", var_0.meleekills );
 }
 
 awardhordeheadshotkills( var_0 )
@@ -202,10 +202,10 @@ awardhordeheadshotkills( var_0 )
     if ( var_0.headshotkills < 65535 )
         var_0.headshotkills++;
 
-    var_0 _meth_8526( "headshotKillsTotal", var_0.headshotkills );
+    var_0 sethordeplayerdata( "headshotKillsTotal", var_0.headshotkills );
 
-    if ( var_0.headshotkills > var_0 _meth_8525( "headshotKillsBest" ) )
-        var_0 _meth_8526( "headshotKillsBest", var_0.headshotkills );
+    if ( var_0.headshotkills > var_0 gethordeplayerdata( "headshotKillsBest" ) )
+        var_0 sethordeplayerdata( "headshotKillsBest", var_0.headshotkills );
 }
 
 awardhordeobjectivescompleted( var_0 )
@@ -213,10 +213,10 @@ awardhordeobjectivescompleted( var_0 )
     if ( var_0.objectivescompleted < 65535 )
         var_0.objectivescompleted++;
 
-    var_0 _meth_8526( "objectivesTotal", var_0.objectivescompleted );
+    var_0 sethordeplayerdata( "objectivesTotal", var_0.objectivescompleted );
 
-    if ( var_0.objectivescompleted > var_0 _meth_8525( "objectivesBest" ) )
-        var_0 _meth_8526( "objectivesBest", var_0.objectivescompleted );
+    if ( var_0.objectivescompleted > var_0 gethordeplayerdata( "objectivesBest" ) )
+        var_0 sethordeplayerdata( "objectivesBest", var_0.objectivescompleted );
 }
 
 awardhordesupportdrop( var_0 )
@@ -224,10 +224,10 @@ awardhordesupportdrop( var_0 )
     if ( var_0.numcratesobtained < 65535 )
         var_0.numcratesobtained++;
 
-    var_0 _meth_8526( "cratesTotal", var_0.numcratesobtained );
+    var_0 sethordeplayerdata( "cratesTotal", var_0.numcratesobtained );
 
-    if ( var_0.numcratesobtained > var_0 _meth_8525( "cratesBest" ) )
-        var_0 _meth_8526( "cratesBest", var_0.numcratesobtained );
+    if ( var_0.numcratesobtained > var_0 gethordeplayerdata( "cratesBest" ) )
+        var_0 sethordeplayerdata( "cratesBest", var_0.numcratesobtained );
 
     var_0.extrascore0 = var_0.numcratesobtained;
     var_0 maps\mp\_utility::setpersstat( "extrascore0", var_0.numcratesobtained );
@@ -238,10 +238,10 @@ awardhorderevive( var_0 )
     if ( var_0.numrevives < 65535 )
         var_0.numrevives++;
 
-    var_0 _meth_8526( "revivesTotal", var_0.numrevives );
+    var_0 sethordeplayerdata( "revivesTotal", var_0.numrevives );
 
-    if ( var_0.numrevives > var_0 _meth_8525( "revivesBest" ) )
-        var_0 _meth_8526( "revivesBest", var_0.numrevives );
+    if ( var_0.numrevives > var_0 gethordeplayerdata( "revivesBest" ) )
+        var_0 sethordeplayerdata( "revivesBest", var_0.numrevives );
 
     var_0.assists = int( var_0.numrevives / 128 );
     var_0.extrascore1 = var_0.numrevives % 128;
@@ -254,10 +254,10 @@ awardhorderoundnumber( var_0 )
     if ( var_0.roundsplayed < 65535 )
         var_0.roundsplayed++;
 
-    var_0 _meth_8526( "roundsTotal", var_0.roundsplayed );
+    var_0 sethordeplayerdata( "roundsTotal", var_0.roundsplayed );
 
-    if ( var_0.roundsplayed > var_0 _meth_8525( "roundsBest" ) )
-        var_0 _meth_8526( "roundsBest", var_0.roundsplayed );
+    if ( var_0.roundsplayed > var_0 gethordeplayerdata( "roundsBest" ) )
+        var_0 sethordeplayerdata( "roundsBest", var_0.roundsplayed );
 
     var_1 = hordegetmapindex();
 
@@ -273,7 +273,7 @@ awardhorderoundnumber( var_0 )
         var_3 = 0;
 
         for ( var_4 = 0; var_4 < 4; var_4++ )
-            var_3 += var_0 _meth_8525( "numWavesCompleted", var_4 );
+            var_3 += var_0 gethordeplayerdata( "numWavesCompleted", var_4 );
 
         if ( var_3 >= 50 )
             var_2 = 1;
@@ -283,7 +283,7 @@ awardhorderoundnumber( var_0 )
         var_3 = 0;
 
         for ( var_4 = 4; var_4 < 8; var_4++ )
-            var_3 += var_0 _meth_8525( "numWavesCompleted", var_4 );
+            var_3 += var_0 gethordeplayerdata( "numWavesCompleted", var_4 );
 
         if ( var_3 >= 75 )
             var_2 = 1;
@@ -293,7 +293,7 @@ awardhorderoundnumber( var_0 )
         var_3 = 0;
 
         for ( var_4 = 8; var_4 < 12; var_4++ )
-            var_3 += var_0 _meth_8525( "numWavesCompleted", var_4 );
+            var_3 += var_0 gethordeplayerdata( "numWavesCompleted", var_4 );
 
         if ( var_3 >= 100 )
             var_2 = 1;
@@ -301,15 +301,15 @@ awardhorderoundnumber( var_0 )
 
     if ( var_2 )
     {
-        var_5 = var_0 _meth_8525( "numWavesCompleted", var_1 );
+        var_5 = var_0 gethordeplayerdata( "numWavesCompleted", var_1 );
 
         if ( var_5 < 65535 )
             var_5++;
 
-        var_0 _meth_8526( "numWavesCompleted", var_1, var_5 );
+        var_0 sethordeplayerdata( "numWavesCompleted", var_1, var_5 );
 
-        if ( var_0.roundsplayed > var_0 _meth_8525( "highestWave", var_1 ) )
-            var_0 _meth_8526( "highestWave", var_1, var_0.roundsplayed );
+        if ( var_0.roundsplayed > var_0 gethordeplayerdata( "highestWave", var_1 ) )
+            var_0 sethordeplayerdata( "highestWave", var_1, var_0.roundsplayed );
     }
 }
 
@@ -325,10 +325,10 @@ hordeupdatescore( var_0, var_1 )
     if ( var_0.horde_score > 16777215 )
         var_0.horde_score = 16777215;
 
-    var_0 _meth_8526( "scoreTotal", var_0.horde_score );
+    var_0 sethordeplayerdata( "scoreTotal", var_0.horde_score );
 
-    if ( var_0.horde_score > var_0 _meth_8525( "scoreBest" ) )
-        var_0 _meth_8526( "scoreBest", var_0.horde_score );
+    if ( var_0.horde_score > var_0 gethordeplayerdata( "scoreBest" ) )
+        var_0 sethordeplayerdata( "scoreBest", var_0.horde_score );
 
     var_2 = int( 0 );
     var_3 = int( 0 );
@@ -483,7 +483,7 @@ hordescorestreaksplash( var_0, var_1, var_2, var_3 )
     var_0 notify( "horde_score_streak_splash_request" );
     var_0 endon( "horde_score_streak_splash_request" );
 
-    while ( var_0 _meth_8447( "ui_horde_show_armory" ) != 0 )
+    while ( var_0 getclientomnvar( "ui_horde_show_armory" ) != 0 )
         waitframe();
 
     var_0 thread maps\mp\gametypes\_hud_message::splashnotify( var_2, undefined, var_3 );
@@ -495,7 +495,7 @@ horderemoveksicon( var_0, var_1, var_2 )
     if ( var_2 != 1 )
     {
         var_3 = "ks_icon" + common_scripts\utility::tostring( var_2 );
-        self _meth_82FB( var_3, 0 );
+        self setclientomnvar( var_3, 0 );
     }
 }
 
@@ -512,14 +512,14 @@ hordeallowallboost( var_0, var_1 )
 trygivehordeweapon( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     var_0 playlocalsound( "ammo_crate_use" );
-    var_6 = var_0 _meth_8447( "ui_horde_player_class" );
+    var_6 = var_0 getclientomnvar( "ui_horde_player_class" );
 
     if ( isdefined( var_4 ) )
         var_7 = var_4;
     else
         var_7 = "none";
 
-    var_8 = var_0 _meth_830C();
+    var_8 = var_0 getweaponslistprimaries();
     var_9 = getweaponbasename( var_1 );
 
     if ( var_8.size > 1 && !isdefined( var_0.underwater ) )
@@ -527,9 +527,9 @@ trygivehordeweapon( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_10 = 1;
 
         if ( !isdefined( var_7 ) || var_7 == "none" )
-            var_7 = var_0 _meth_8312();
+            var_7 = var_0 getcurrentprimaryweapon();
 
-        var_0 _meth_830F( var_7 );
+        var_0 takeweapon( var_7 );
     }
 
     var_11 = var_0.weaponproficiency > 0 && isdefined( var_2 ) && var_2;
@@ -548,13 +548,13 @@ trygivehordeweapon( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_14[var_14.size] = "iw5_microdronelauncher_mp";
 
     var_14[var_14.size] = var_1;
-    var_15 = !var_0 _meth_8511( var_14 );
+    var_15 = !var_0 loadweapons( var_14 );
 
-    for ( var_0.classweaponswait = var_15; var_15; var_15 = !var_0 _meth_8511( var_14 ) )
+    for ( var_0.classweaponswait = var_15; var_15; var_15 = !var_0 loadweapons( var_14 ) )
         waitframe();
 
-    var_0 _meth_8511( maps\mp\gametypes\_horde_laststand::hordelaststandweapon() );
-    var_0 _meth_8511( [ "iw5_microdronelauncher_mp" ] );
+    var_0 loadweapons( maps\mp\gametypes\_horde_laststand::hordelaststandweapon() );
+    var_0 loadweapons( [ "iw5_microdronelauncher_mp" ] );
 
     if ( issubstr( var_1, "camo" ) )
         var_1 = getsubstr( var_1, 0, var_1.size - 7 );
@@ -562,13 +562,13 @@ trygivehordeweapon( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_16 = getcamostring( var_0 );
     var_17 = getcamoindex( var_0 );
     var_0 maps\mp\_utility::_giveweapon( var_1, var_17 );
-    var_0 _meth_8332( var_1 + var_16, 1 );
+    var_0 givemaxammo( var_1 + var_16, 1 );
 
     if ( var_11 )
         var_0.updatinglootweapon = 0;
 
     if ( isdefined( var_3 ) && var_3 )
-        var_0 _meth_8316( var_1 + var_16 );
+        var_0 switchtoweaponimmediate( var_1 + var_16 );
 
     if ( isdefined( var_5 ) )
         var_0.hordeclassweapons[var_6][var_5] = var_1 + var_16;
@@ -718,65 +718,65 @@ hordegetmapindex()
 
 hordecleardata( var_0 )
 {
-    var_0 _meth_8526( "roundsTotal", 0 );
-    var_0 _meth_8526( "matchesTotal", 0 );
-    var_0 _meth_8526( "scoreTotal", 0 );
-    var_0 _meth_8526( "killsTotal", 0 );
-    var_0 _meth_8526( "cratesTotal", 0 );
-    var_0 _meth_8526( "revivesTotal", 0 );
-    var_0 _meth_8526( "objectivesTotal", 0 );
-    var_0 _meth_8526( "meleeKillsTotal", 0 );
-    var_0 _meth_8526( "headshotKillsTotal", 0 );
-    var_0 _meth_8526( "timePlayedTotal", 0 );
+    var_0 sethordeplayerdata( "roundsTotal", 0 );
+    var_0 sethordeplayerdata( "matchesTotal", 0 );
+    var_0 sethordeplayerdata( "scoreTotal", 0 );
+    var_0 sethordeplayerdata( "killsTotal", 0 );
+    var_0 sethordeplayerdata( "cratesTotal", 0 );
+    var_0 sethordeplayerdata( "revivesTotal", 0 );
+    var_0 sethordeplayerdata( "objectivesTotal", 0 );
+    var_0 sethordeplayerdata( "meleeKillsTotal", 0 );
+    var_0 sethordeplayerdata( "headshotKillsTotal", 0 );
+    var_0 sethordeplayerdata( "timePlayedTotal", 0 );
 }
 
 hordecompletetu1transition( var_0 )
 {
     for ( var_1 = 0; var_1 < 13; var_1++ )
     {
-        var_2 = var_0 _meth_8525( "highestWave", var_1 );
-        var_3 = var_0 _meth_8525( "numWavesCompleted", var_1 );
+        var_2 = var_0 gethordeplayerdata( "highestWave", var_1 );
+        var_3 = var_0 gethordeplayerdata( "numWavesCompleted", var_1 );
 
         if ( var_2 > var_3 )
-            var_0 _meth_8526( "numWavesCompleted", var_1, var_2 );
+            var_0 sethordeplayerdata( "numWavesCompleted", var_1, var_2 );
     }
 }
 
 hordeupdatetimestats( var_0 )
 {
     var_1 = int( getomnvar( "ui_game_duration" ) / 1000 );
-    var_0 _meth_8526( "timePlayedTotal", var_1 );
+    var_0 sethordeplayerdata( "timePlayedTotal", var_1 );
 
-    if ( var_1 > var_0 _meth_8525( "timePlayedBest" ) )
-        var_0 _meth_8526( "timePlayedBest", var_1 );
+    if ( var_1 > var_0 gethordeplayerdata( "timePlayedBest" ) )
+        var_0 sethordeplayerdata( "timePlayedBest", var_1 );
 
     check_class_time( var_0 );
 }
 
 givegearforwavescompleted( var_0 )
 {
-    var_1 = var_0 _meth_8525( "numWaves" );
+    var_1 = var_0 gethordeplayerdata( "numWaves" );
 
     if ( var_1 < 32767 )
     {
         var_1++;
-        var_0 _meth_8526( "numWaves", var_1 );
+        var_0 sethordeplayerdata( "numWaves", var_1 );
     }
 
-    if ( var_1 > 199 && !var_0 _meth_8525( "requirement_beat200Waves" ) )
+    if ( var_1 > 199 && !var_0 gethordeplayerdata( "requirement_beat200Waves" ) )
     {
-        var_0 _meth_8526( "requirement_beat200Waves", 1 );
-        var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+        var_0 sethordeplayerdata( "requirement_beat200Waves", 1 );
+        var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
     }
-    else if ( var_1 > 99 && !var_0 _meth_8525( "requirement_beat100Waves" ) )
+    else if ( var_1 > 99 && !var_0 gethordeplayerdata( "requirement_beat100Waves" ) )
     {
-        var_0 _meth_8526( "requirement_beat100Waves", 1 );
-        var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+        var_0 sethordeplayerdata( "requirement_beat100Waves", 1 );
+        var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
     }
-    else if ( var_1 > 49 && !var_0 _meth_8525( "requirement_beat50Waves" ) )
+    else if ( var_1 > 49 && !var_0 gethordeplayerdata( "requirement_beat50Waves" ) )
     {
-        var_0 _meth_8526( "requirement_beat50Waves", 1 );
-        var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+        var_0 sethordeplayerdata( "requirement_beat50Waves", 1 );
+        var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
     }
 }
 
@@ -787,64 +787,64 @@ givegearformapsplayed( var_0 )
     if ( var_1 == -1 )
         return;
 
-    if ( !var_0 _meth_8525( "requirement_unlockedTier2" ) )
+    if ( !var_0 gethordeplayerdata( "requirement_unlockedTier2" ) )
     {
         var_2 = 0;
 
         for ( var_3 = 0; var_3 < 4; var_3++ )
-            var_2 += var_0 _meth_8525( "numWavesCompleted", var_3 );
+            var_2 += var_0 gethordeplayerdata( "numWavesCompleted", var_3 );
 
         if ( var_1 < 4 )
             var_2 += var_0.roundsplayed;
 
         if ( var_2 >= 50 )
         {
-            var_0 _meth_8526( "requirement_unlockedTier2", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_unlockedTier2", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
             return;
         }
     }
-    else if ( !var_0 _meth_8525( "requirement_unlockedTier3" ) )
+    else if ( !var_0 gethordeplayerdata( "requirement_unlockedTier3" ) )
     {
         var_2 = 0;
 
         for ( var_3 = 4; var_3 < 8; var_3++ )
-            var_2 += var_0 _meth_8525( "numWavesCompleted", var_3 );
+            var_2 += var_0 gethordeplayerdata( "numWavesCompleted", var_3 );
 
         if ( var_1 >= 4 && var_1 < 8 )
             var_2 += var_0.roundsplayed;
 
         if ( var_2 >= 75 )
         {
-            var_0 _meth_8526( "requirement_unlockedTier3", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_unlockedTier3", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
             return;
         }
     }
-    else if ( !var_0 _meth_8525( "requirement_unlockedPrison" ) )
+    else if ( !var_0 gethordeplayerdata( "requirement_unlockedPrison" ) )
     {
         var_2 = 0;
 
         for ( var_3 = 8; var_3 < 12; var_3++ )
-            var_2 += var_0 _meth_8525( "numWavesCompleted", var_3 );
+            var_2 += var_0 gethordeplayerdata( "numWavesCompleted", var_3 );
 
         if ( var_1 >= 8 && var_1 < 12 )
             var_2 += var_0.roundsplayed;
 
         if ( var_2 >= 100 )
         {
-            var_0 _meth_8526( "requirement_unlockedPrison", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_unlockedPrison", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
             return;
         }
     }
-    else if ( !var_0 _meth_8525( "requirement_playedAllMaps" ) )
+    else if ( !var_0 gethordeplayerdata( "requirement_playedAllMaps" ) )
     {
         var_4 = 1;
 
         for ( var_3 = 0; var_3 < 13; var_3++ )
         {
-            if ( var_0 _meth_8525( "numWavesCompleted", var_3 ) == 0 && var_1 != var_3 )
+            if ( var_0 gethordeplayerdata( "numWavesCompleted", var_3 ) == 0 && var_1 != var_3 )
             {
                 var_4 = 0;
                 break;
@@ -853,32 +853,32 @@ givegearformapsplayed( var_0 )
 
         if ( var_4 )
         {
-            var_0 _meth_8526( "requirement_playedAllMaps", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_playedAllMaps", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
         }
     }
 }
 
 givegearformaxweaponproficiency( var_0 )
 {
-    if ( !var_0 _meth_8525( "requirement_maxWeaponProficiency" ) )
+    if ( !var_0 gethordeplayerdata( "requirement_maxWeaponProficiency" ) )
     {
         if ( var_0.weaponproficiency > 9 )
         {
-            var_0 _meth_8526( "requirement_maxWeaponProficiency", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_maxWeaponProficiency", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
         }
     }
 }
 
 givegearformaxarmorproficiency( var_0 )
 {
-    if ( !var_0 _meth_8525( "requirement_maxArmorProficiency" ) )
+    if ( !var_0 gethordeplayerdata( "requirement_maxArmorProficiency" ) )
     {
         if ( var_0.hordearmor > 9 )
         {
-            var_0 _meth_8526( "requirement_maxArmorProficiency", 1 );
-            var_0 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_0 sethordeplayerdata( "requirement_maxArmorProficiency", 1 );
+            var_0 setclientomnvar( "ui_horde_loot_unlocked", 1 );
         }
     }
 }
@@ -896,21 +896,21 @@ strip_prefix( var_0, var_1 )
 
 hordeupdatenummatches( var_0 )
 {
-    var_0.exosurvivalmatches = var_0 _meth_8525( "numMatches" );
+    var_0.exosurvivalmatches = var_0 gethordeplayerdata( "numMatches" );
 
     if ( var_0.exosurvivalmatches < 32767 )
     {
         var_0.exosurvivalmatches += 1;
-        var_0 _meth_8526( "numMatches", var_0.exosurvivalmatches );
+        var_0 sethordeplayerdata( "numMatches", var_0.exosurvivalmatches );
     }
 
     if ( var_0.exosurvivalmatches == 50 )
-        var_0 _meth_80F9( "COOP_VETERAN" );
+        var_0 giveachievement( "COOP_VETERAN" );
 }
 
 check_class_time( var_0 )
 {
-    var_1 = var_0 _meth_8447( "ui_horde_player_class" );
+    var_1 = var_0 getclientomnvar( "ui_horde_player_class" );
     var_0.hordeclassendtime = gettime();
 
     if ( isdefined( var_0.hordeclassstarttime ) )
@@ -921,52 +921,52 @@ check_class_time( var_0 )
         switch ( var_1 )
         {
             case "light":
-                var_3 = var_0 _meth_8525( "lightClassTime" );
+                var_3 = var_0 gethordeplayerdata( "lightClassTime" );
 
                 if ( isdefined( var_3 ) )
                 {
                     var_3 += int( var_2 / 10 );
 
                     if ( var_3 <= 7200 )
-                        var_0 _meth_8526( "lightClassTime", var_3 );
+                        var_0 sethordeplayerdata( "lightClassTime", var_3 );
                 }
 
                 break;
             case "heavy":
-                var_3 = var_0 _meth_8525( "heavyClassTime" );
+                var_3 = var_0 gethordeplayerdata( "heavyClassTime" );
 
                 if ( isdefined( var_3 ) )
                 {
                     var_3 += int( var_2 / 10 );
 
                     if ( var_3 <= 7200 )
-                        var_0 _meth_8526( "heavyClassTime", var_3 );
+                        var_0 sethordeplayerdata( "heavyClassTime", var_3 );
                 }
 
                 break;
             case "support":
-                var_3 = var_0 _meth_8525( "specialistClassTime" );
+                var_3 = var_0 gethordeplayerdata( "specialistClassTime" );
 
                 if ( isdefined( var_3 ) )
                 {
                     var_3 += int( var_2 / 10 );
 
                     if ( var_3 <= 7200 )
-                        var_0 _meth_8526( "specialistClassTime", var_3 );
+                        var_0 sethordeplayerdata( "specialistClassTime", var_3 );
                 }
 
                 break;
         }
     }
 
-    var_4 = var_0 _meth_8525( "lightClassTime" );
-    var_5 = var_0 _meth_8525( "heavyClassTime" );
-    var_6 = var_0 _meth_8525( "specialistClassTime" );
+    var_4 = var_0 gethordeplayerdata( "lightClassTime" );
+    var_5 = var_0 gethordeplayerdata( "heavyClassTime" );
+    var_6 = var_0 gethordeplayerdata( "specialistClassTime" );
 
     if ( isdefined( var_4 ) && isdefined( var_5 ) && isdefined( var_6 ) )
     {
         if ( var_4 >= 1800 && var_5 >= 1800 && var_6 >= 1800 )
-            var_0 _meth_80F9( "COOP_WARFARE" );
+            var_0 giveachievement( "COOP_WARFARE" );
     }
 
     var_0.hordeclassstarttime = gettime();
@@ -977,8 +977,8 @@ hordegivebackgoliath( var_0 )
     if ( var_0 )
     {
         self notify( "cancel_goliath_wait" );
-        self _meth_82FB( "ks_count1", 0 );
-        self _meth_82FB( "ks_count_updated", 1 );
+        self setclientomnvar( "ks_count1", 0 );
+        self setclientomnvar( "ks_count_updated", 1 );
         self.classabilityready = 1;
         var_1 = maps\mp\killstreaks\_killstreaks::getnexthordekillstreakslotindex( 1 );
         thread maps\mp\killstreaks\_killstreaks::givehordekillstreak( self.currentkillstreaks[1], level.owner, self.hordekillstreakmodules, 1, 1 );
@@ -1009,11 +1009,11 @@ hordeonunderwater( var_0 )
 
             if ( var_1 )
             {
-                if ( self _meth_8311() == "iw5_carrydrone_mp" && isdefined( self.changingweapon ) )
+                if ( self getcurrentweapon() == "iw5_carrydrone_mp" && isdefined( self.changingweapon ) )
                     self.water_last_weapon = self.changingweapon;
                 else if ( isdefined( self.pass_or_throw_active ) && self.pass_or_throw_active )
                 {
-                    var_5 = self _meth_830C();
+                    var_5 = self getweaponslistprimaries();
                     self.water_last_weapon = common_scripts\utility::ter_op( var_5.size, var_5[0], undefined );
                 }
             }

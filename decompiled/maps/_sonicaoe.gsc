@@ -26,7 +26,7 @@ enablesonicaoe( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 2;
 
-    level.player _meth_82DD( "flash_aoe", "+actionslot " + var_0 );
+    level.player notifyonplayercommand( "flash_aoe", "+actionslot " + var_0 );
 
     for (;;)
     {
@@ -43,15 +43,15 @@ enablesonicaoe( var_0 )
                 wait 0.5;
         }
 
-        level.player _meth_8309( 0.45 );
-        level.player _meth_821B( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
+        level.player setviewkickscale( 0.45 );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
         soundscripts\_snd::snd_message( "start_sonic_attack_mix" );
         level notify( "SonicAoEStarted" );
         soundscripts\_snd::snd_message( "sonic_blast" );
         level.sonicaoeactive = 1;
         earthquake( 0.65, 0.6, level.player.origin, 128 );
         physicsexplosionsphere( level.player.origin, 512, 512, 1 );
-        level.player _meth_80AD( "damage_heavy" );
+        level.player playrumbleonentity( "damage_heavy" );
         level.player thread _stunassaultdrones();
 
         for ( var_2 = 0; var_2 < 7; var_2++ )
@@ -68,7 +68,7 @@ enablesonicaoe( var_0 )
                 var_7 notify( "SonicAoEDamage" );
 
             var_9 = [];
-            var_9 = _func_0D6( "axis", "neutral" );
+            var_9 = getaiarray( "axis", "neutral" );
             var_10 = common_scripts\utility::get_array_of_closest( level.player.origin, var_9, undefined, undefined, 512, 0 );
 
             if ( var_10.size > 0 )
@@ -100,7 +100,7 @@ enablesonicaoe( var_0 )
         }
 
         soundscripts\_snd::snd_message( "sonic_blast_done" );
-        level.player _meth_8309( 1 );
+        level.player setviewkickscale( 1 );
         level.sonicaoeactive = 0;
         level.sonicaoeready = 0;
         wait 0.5;
@@ -133,7 +133,7 @@ _stunenemies()
     if ( !var_0 )
     {
         if ( isdefined( self.sonic_stop_scripted_anim ) )
-            self _meth_8141();
+            self stopanimscripted();
 
         maps\_utility::flashbangstart( 4 );
     }
@@ -143,7 +143,7 @@ _stuncivilians()
 {
     self endon( "death" );
     self.iscivilianflashed = 1;
-    self _meth_8141();
+    self stopanimscripted();
     wait(randomfloatrange( 0.1, 0.2 ));
     thread _findfleelocation();
 }
@@ -183,7 +183,7 @@ _stunassaultdrones()
 
         foreach ( var_1 in level.flying_attack_drones )
         {
-            if ( !isdefined( var_1 ) || _func_220( var_1.origin, level.player.origin ) > squared( 1024 ) )
+            if ( !isdefined( var_1 ) || distance2dsquared( var_1.origin, level.player.origin ) > squared( 1024 ) )
                 continue;
 
             var_1 notify( "stun_drone" );
@@ -193,13 +193,13 @@ _stunassaultdrones()
 
 _sonicaoeanim()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player waittill( "weapon_change" );
     var_0 = maps\_utility::spawn_anim_model( "player_rig", level.player.origin );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     level.player maps\_anim::anim_single_solo( var_0, "SonicAoE_On" );
-    level.player _meth_831E();
-    var_0 _meth_804F();
+    level.player enableweapons();
+    var_0 unlink();
     var_0 delete();
 }
 
@@ -222,7 +222,7 @@ _displayhelpertext()
         if ( level.sonicaoeready == 0 || level.sonicaoeactive == 1 )
             continue;
 
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
         var_0 = maps\_utility::array_removedead_or_dying( var_0 );
 
         if ( isdefined( level.flying_attack_drones ) && level.flying_attack_drones.size > 0 )
@@ -267,9 +267,9 @@ disablesonicaoe( var_0, var_1 )
     level notify( "DisableSonicAoE" );
 
     if ( var_1 == 1 )
-        level.player _meth_821B( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
     else
-        level.player _meth_821B( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
 }
 
 update_sonic_aoe_icon( var_0 )
@@ -278,9 +278,9 @@ update_sonic_aoe_icon( var_0 )
         var_0 = 2;
 
     if ( !maps\_player_exo::player_exo_is_active() )
-        level.player _meth_821B( "actionslot" + var_0, "none" );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "none" );
     else if ( maps\_player_exo::get_exo_battery_percent() > 0 )
-        level.player _meth_821B( "actionslot" + var_0, "dpad_icon_sonic_blast" );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "dpad_icon_sonic_blast" );
     else
-        level.player _meth_821B( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
+        level.player setweaponhudiconoverride( "actionslot" + var_0, "dpad_icon_sonic_blast_off" );
 }

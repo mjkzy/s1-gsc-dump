@@ -13,10 +13,10 @@ meet_cormack_pt2_start()
         level.meet_cormack_kill_org = common_scripts\utility::getstruct( "meet_cormack_kill_org", "targetname" );
 
     thread elevator_top_enemies_setup();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_pbwsingleshot_sp_silencerpistol" );
-    level.player _meth_830E( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
-    level.player _meth_8315( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_pbwsingleshot_sp_silencerpistol" );
+    level.player giveweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+    level.player switchtoweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
 }
 
 meet_cormack_pt2_main()
@@ -129,20 +129,20 @@ cormack_rappel()
     var_0 = maps\_utility::spawn_anim_model( "generic_prop_raven" );
     level.meet_cormack_kill_org maps\_anim::anim_first_frame_solo( var_0, "pent_escape" );
     var_1 = getent( "upper_elevator_door_left", "targetname" );
-    var_1 _meth_804D( var_0, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_2 = getent( "upper_elevator_door_left_clip", "targetname" );
-    var_2 _meth_804D( var_1 );
+    var_2 linkto( var_1 );
     var_3 = getent( "upper_elevator_door_right", "targetname" );
-    var_3 _meth_804D( var_0, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4 = getent( "upper_elevator_door_right_clip", "targetname" );
-    var_4 _meth_804D( var_3 );
+    var_4 linkto( var_3 );
     objective_add( maps\_utility::obj( "infiltrate_hangar" ), "current", &"IRONS_ESTATE_OBJ_INFILTRATE_HANGAR" );
     objective_onentity( maps\_utility::obj( "infiltrate_hangar" ), level.allies[0] );
     level.allies[0] maps\_utility::unset_forcegoal();
     level.allies[0] maps\_utility::set_fixednode_false();
     level.allies[0] maps\_utility::set_goalradius( 16 );
     var_5 = getnode( "cormack_pent_escape_node", "targetname" );
-    level.allies[0] _meth_81A5( var_5 );
+    level.allies[0] setgoalnode( var_5 );
     common_scripts\utility::flag_wait( "penthouse_reinforcements_01_dead" );
     level.allies[0] maps\_utility::disable_cqbwalk();
     thread meet_cormack_pt2_vo();
@@ -160,10 +160,10 @@ cormack_rappel()
     var_7 = getent( "upper_elevator_door_player_clip", "targetname" );
     var_7 delete();
     level.allies[0] waittillmatch( "single anim", "end" );
-    level.allies[0] _meth_804F();
+    level.allies[0] unlink();
     var_8 = getnode( "cormack_post_rappel_cover_spot", "targetname" );
     level.allies[0] maps\_utility::set_goal_radius( 16 );
-    level.allies[0] _meth_81A5( var_8 );
+    level.allies[0] setgoalnode( var_8 );
 }
 
 player_rappel()
@@ -176,37 +176,37 @@ player_rappel()
     soundscripts\_snd_playsound::snd_play_2d( "irons_player_elev_slide" );
     common_scripts\utility::flag_set( "post_penthouse_trees" );
     level.player freezecontrols( 1 );
-    level.player _meth_8485( 0 );
-    level.player _meth_848D( 0 );
-    level.player _meth_817D( "stand" );
+    level.player allowpowerslide( 0 );
+    level.player allowdodge( 0 );
+    level.player setstance( "stand" );
 
-    if ( level.player _meth_8520() || level.player _meth_851F() )
+    if ( level.player ispowersliding() || level.player isdodging() )
     {
-        while ( level.player _meth_8520() || level.player _meth_851F() )
+        while ( level.player ispowersliding() || level.player isdodging() )
             wait 0.05;
     }
 
     level.player maps\_shg_utility::setup_player_for_scene();
-    _func_0D3( "objectiveHide", 1 );
+    setsaveddvar( "objectiveHide", 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player maps\_tagging::tagging_set_enabled( 0 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
-    level.player _meth_831D();
-    level.player _meth_8321();
-    level.player _meth_831F();
-    level.player _meth_84BF();
-    level.player _meth_8080( level.elevator_rappel_rig, "tag_player", 0.5 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_817D( "stand" );
+    level.player disableweapons();
+    level.player disableweaponswitch();
+    level.player disableoffhandweapons();
+    level.player disableoffhandsecondaryweapons();
+    level.player playerlinktoblend( level.elevator_rappel_rig, "tag_player", 0.5 );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
+    level.player setstance( "stand" );
     level.meet_cormack_kill_org thread maps\_anim::anim_single_solo( level.elevator_rappel_rig, "pent_escape" );
     wait 0.5;
     level.elevator_rappel_rig show();
     level.elevator_rappel_rig waittillmatch( "single anim", "end" );
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
     objective_onentity( maps\_utility::obj( "infiltrate_hangar" ), level.allies[0] );
-    level.player _meth_804F();
+    level.player unlink();
     level.elevator_rappel_rig delete();
     level.player freezecontrols( 0 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
@@ -214,14 +214,14 @@ player_rappel()
     level.player maps\_tagging::tagging_set_enabled( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 1 );
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_831E();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_84C0();
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8485( 1 );
-    level.player _meth_848D( 1 );
+    level.player enableweapons();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player enableoffhandsecondaryweapons();
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowpowerslide( 1 );
+    level.player allowdodge( 1 );
     thread maps\irons_estate_code::irons_estate_stealth_enable();
 }
 
@@ -243,8 +243,8 @@ elevator_top_enemies_setup()
     var_2 = maps\_utility::spawn_anim_model( "generic_prop_raven_x3" );
     level.meet_cormack_kill_org maps\_anim::anim_first_frame_solo( var_2, "elevator_top_enemies" );
     wait 0.05;
-    var_0 _meth_804D( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_804D( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     common_scripts\utility::flag_wait( "spawn_penthouse_reinforcements_01" );
     soundscripts\_snd::snd_message( "aud_reinforcements_door1" );
     var_3 = maps\_utility::array_spawn_targetname( "penthouse_reinforcements_01", 1 );
@@ -279,8 +279,8 @@ elevator_bottom_enemies_setup()
     var_2 = maps\_utility::spawn_anim_model( "generic_prop_raven_x3" );
     level.meet_cormack_kill_org maps\_anim::anim_first_frame_solo( var_2, "elevator_bottom_enemies" );
     wait 0.05;
-    var_0 _meth_804D( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_804D( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.elevator_rappel_rig waittillmatch( "single anim", "start_enemy_anim" );
     var_3 = maps\_utility::array_spawn_targetname( "penthouse_reinforcements_02", 1 );
     var_3[0].animname = "elevator_bottom_enemy_1";
@@ -362,15 +362,15 @@ lower_elevator_door()
 {
     var_0 = getent( "lower_elevator_door_left", "targetname" );
     var_1 = getent( "lower_elevator_door_right", "targetname" );
-    var_0 _meth_82AE( var_0.origin + ( 44, 0, 0 ), 1.0 );
-    var_1 _meth_82AE( var_1.origin - ( 44, 0, 0 ), 1.0 );
+    var_0 moveto( var_0.origin + ( 44, 0, 0 ), 1.0 );
+    var_1 moveto( var_1.origin - ( 44, 0, 0 ), 1.0 );
     wait 1.05;
     wait 0.05;
 }
 
 setup_car_ride_moment()
 {
-    if ( level.currentgen && !_func_21E( "irons_estate_upper_tr" ) )
+    if ( level.currentgen && !istransientloaded( "irons_estate_upper_tr" ) )
         level waittill( "tff_post_lower_to_upper" );
 
     level.car_ride_org = common_scripts\utility::getstruct( "car_ride", "targetname" );
@@ -380,11 +380,11 @@ setup_car_ride_moment()
     level.guardhouse_door = maps\_utility::spawn_anim_model( "ie_door" );
     level.car_ride_org maps\_anim::anim_first_frame_solo( level.guardhouse_door, "car_ride_enter" );
     level.guard_house_exit_door_clip = getent( "guard_house_exit_door_clip", "targetname" );
-    level.guard_house_exit_door_clip _meth_804D( level.guardhouse_door, "tag_origin", ( 0, 0, 0 ), ( 0, -90, 0 ) );
+    level.guard_house_exit_door_clip linkto( level.guardhouse_door, "tag_origin", ( 0, 0, 0 ), ( 0, -90, 0 ) );
     var_0 = [];
     level.gaz = maps\_utility::spawn_anim_model( "gaz" );
     level.gaz.player_clip = getent( "gaz_clip", "targetname" );
-    level.gaz.player_clip _meth_804D( level.gaz, "tag_body", ( 0, 0, -24 ), ( 0, 0, 0 ) );
+    level.gaz.player_clip linkto( level.gaz, "tag_body", ( 0, 0, -24 ), ( 0, 0, 0 ) );
     var_0[var_0.size] = level.gaz;
     level.gaz hide();
     level.gaz thread gaz_damage_watcher();
@@ -399,7 +399,7 @@ setup_car_ride_moment()
     level.gaz thread gaz_brake_lights_detail();
     level.gaz2 = maps\_utility::spawn_anim_model( "gaz2" );
     level.gaz2.player_clip = getent( "gaz2_clip", "targetname" );
-    level.gaz2.player_clip _meth_804D( level.gaz2, "tag_body", ( 0, 0, -24 ), ( 0, 0, 0 ) );
+    level.gaz2.player_clip linkto( level.gaz2, "tag_body", ( 0, 0, -24 ), ( 0, 0, 0 ) );
     var_0[var_0.size] = level.gaz2;
     level.gaz2 hide();
     level.gaz2 thread gaz_damage_watcher();
@@ -413,12 +413,12 @@ setup_car_ride_moment()
     playfxontag( level._effect["headlight_civhumvee_bright"], level.gaz2, "tag_headlight_left" );
     playfxontag( level._effect["headlight_civhumvee_bright"], level.gaz2, "tag_headlight_right" );
     level.gaz2.spotlight_tag = level.gaz2 common_scripts\utility::spawn_tag_origin();
-    level.gaz2.spotlight_tag _meth_804D( level.gaz2, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
+    level.gaz2.spotlight_tag linkto( level.gaz2, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
     playfxontag( level._effect["headlight_gaz_spotlight"], level.gaz2.spotlight_tag, "tag_origin" );
     playfxontag( level._effect["headlight_civhumvee_bright"], level.gaz, "tag_headlight_left" );
     playfxontag( level._effect["headlight_civhumvee_bright"], level.gaz, "tag_headlight_right" );
     level.gaz.spotlight_tag = level.gaz common_scripts\utility::spawn_tag_origin();
-    level.gaz.spotlight_tag _meth_804D( level.gaz, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
+    level.gaz.spotlight_tag linkto( level.gaz, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
     playfxontag( level._effect["headlight_gaz_spotlight"], level.gaz.spotlight_tag, "tag_origin" );
     level.car_ride_org thread maps\_anim::anim_single( var_0, "car_ride_intro" );
     level.gaz thread gaz_intro_waits();
@@ -487,8 +487,8 @@ setup_car_ride_moment()
     thread prone_hint_trigger();
     level notify( "stop_car_ride_intro_fail" );
     var_3 = getent( "car_ride_trigger", "targetname" );
-    var_3 _meth_8069();
-    var_3 _meth_804D( level.car_ride_player_rig, "tag_player", ( 0, 0, -16 ), ( 0, 0, 0 ) );
+    var_3 enablelinkto();
+    var_3 linkto( level.car_ride_player_rig, "tag_player", ( 0, 0, -16 ), ( 0, 0, 0 ) );
     wait 0.05;
     objective_position( maps\_utility::obj( "infiltrate_hangar" ), level.car_ride_player_rig gettagorigin( "tag_player" ) );
     var_3 waittill( "trigger" );
@@ -501,25 +501,25 @@ setup_car_ride_moment()
     var_3 delete();
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    level.player _meth_8304( 0 );
+    level.player allowsprint( 0 );
     thread maps\_stealth_display::stealth_display_off();
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player maps\_tagging::tagging_set_enabled( 0 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 0 );
-    level.player _meth_8118( 0 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 0 );
+    level.player allowstand( 0 );
     level.player maps\_grapple::grapple_take();
 
-    if ( level.player _meth_817C() != "prone" )
-        level.player _meth_817D( "prone" );
+    if ( level.player getstance() != "prone" )
+        level.player setstance( "prone" );
 
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8080( level.car_ride_player_rig, "tag_player", 0.6 );
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player playerlinktoblend( level.car_ride_player_rig, "tag_player", 0.6 );
     level.car_ride_org thread maps\_anim::anim_single_solo( level.car_ride_player_rig, "car_ride_enter" );
     wait 0.6;
-    level.player _meth_807D( level.car_ride_player_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( level.car_ride_player_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
     level.car_ride_player_rig show();
     level.car_ride_player_rig waittillmatch( "single anim", "end" );
 
@@ -527,7 +527,7 @@ setup_car_ride_moment()
     {
         level.car_ride_org thread maps\_anim::anim_loop_solo( level.car_ride_player_rig, "car_ride_idle", "stop_car_ride_idle" );
         wait 0.05;
-        level.player _meth_80A2( 0.5, 0.5, 0.25, 70, 30, 25, 5 );
+        level.player lerpviewangleclamp( 0.5, 0.5, 0.25, 70, 30, 25, 5 );
         common_scripts\utility::flag_wait( "cormack_under_car" );
     }
 
@@ -571,7 +571,7 @@ guardhouse_door_waits()
 {
     self waittillmatch( "single anim", "end" );
     wait 0.05;
-    level.guard_house_exit_door_clip _meth_8058();
+    level.guard_house_exit_door_clip connectpaths();
 }
 
 gaz_intro_waits()
@@ -642,25 +642,25 @@ guard_house_light_exit_light()
     level.allies[0] waittillmatch( "single anim", "light_smash" );
     common_scripts\_exploder::exploder( 14 );
     soundscripts\_snd::snd_message( "aud_conduit_smash" );
-    var_0 _meth_80B1( "bay_light_a" );
-    var_1 _meth_81DF( 0 );
+    var_0 setmodel( "bay_light_a" );
+    var_1 setlightintensity( 0 );
 
     if ( level.nextgen )
-        level.guard_house_exit_light_02 _meth_81DF( 0 );
+        level.guard_house_exit_light_02 setlightintensity( 0 );
 
-    var_2 _meth_81DF( 0 );
+    var_2 setlightintensity( 0 );
     thread fx_leaves();
 }
 
 post_car_ride_player()
 {
     level.car_ride_player_rig waittillmatch( "single anim", "to_stand" );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_817D( "stand" );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
+    level.player setstance( "stand" );
     level.car_ride_player_rig waittillmatch( "single anim", "end" );
-    level.player _meth_804F();
-    level.player _meth_8304( 1 );
+    level.player unlink();
+    level.player allowsprint( 1 );
     level.player freezecontrols( 0 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
     thread maps\_stealth_display::stealth_display_on();
@@ -668,8 +668,8 @@ post_car_ride_player()
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 1 );
     level.player maps\_tagging::tagging_set_enabled( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 1 );
-    level.player _meth_831E();
-    level.player _meth_8320();
+    level.player enableweapons();
+    level.player enableoffhandweapons();
     level.car_ride_player_rig delete();
     common_scripts\utility::flag_set( "meet_cormack_pt2_end" );
     wait 1.0;
@@ -681,11 +681,11 @@ post_car_ride_cormack()
     level endon( "track_irons_start" );
     self waittillmatch( "single anim", "end" );
     maps\_stealth_utility::enable_stealth_for_ai();
-    self _meth_81A6( self.origin );
+    self setgoalpos( self.origin );
     wait 1.0;
     var_0 = getnode( "cormack_girder_node_01", "targetname" );
     maps\_utility::set_goalradius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
 }
 
 hangar_door()
@@ -693,24 +693,24 @@ hangar_door()
     wait 9.0;
     var_0 = getent( "hangar_door_left", "targetname" );
     var_1 = getent( "hangar_door_right", "targetname" );
-    var_0 _meth_82B0( 96, 3.0 );
-    var_1 _meth_82B0( -96, 3.0 );
+    var_0 movey( 96, 3.0 );
+    var_1 movey( -96, 3.0 );
     wait 9.0;
-    var_0 _meth_82B0( -96, 3.0 );
-    var_1 _meth_82B0( 96, 3.0 );
+    var_0 movey( -96, 3.0 );
+    var_1 movey( 96, 3.0 );
 }
 
 car_ride_view_clamps()
 {
-    level.player _meth_80A2( 0.5, 0.5, 0.25, 80, 50, 25, 5 );
+    level.player lerpviewangleclamp( 0.5, 0.5, 0.25, 80, 50, 25, 5 );
     level.car_ride_player_rig waittillmatch( "single anim", "clamp_change" );
-    level.player _meth_80A2( 0.5, 0.5, 0.25, 80, 50, 25, 5 );
+    level.player lerpviewangleclamp( 0.5, 0.5, 0.25, 80, 50, 25, 5 );
     level.car_ride_player_rig waittillmatch( "single anim", "clamp_change" );
-    level.player _meth_80A2( 1.0, 0.5, 0.25, 10, 10, 10, 5 );
+    level.player lerpviewangleclamp( 1.0, 0.5, 0.25, 10, 10, 10, 5 );
     level.car_ride_player_rig waittillmatch( "single anim", "clamp_change" );
-    level.player _meth_80A2( 1.0, 0.5, 0.25, 80, 80, 10, 5 );
+    level.player lerpviewangleclamp( 1.0, 0.5, 0.25, 80, 80, 10, 5 );
     level.car_ride_player_rig waittillmatch( "single anim", "clamp_change" );
-    level.player _meth_80A2( 1.0, 0.5, 0.25, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1.0, 0.5, 0.25, 0, 0, 0, 0 );
 }
 
 car_ride_intro_fail()
@@ -730,12 +730,12 @@ car_ride_boundary_fail()
 hangar_car_door_light()
 {
     var_0 = getent( "hangar_car_door_light", "targetname" );
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
     level.gaz waittillmatch( "single anim", "light_on" );
-    var_0 _meth_81DF( 25000 );
+    var_0 setlightintensity( 25000 );
     soundscripts\_snd::snd_message( "aud_hangar_car_door_exit" );
     level.gaz waittillmatch( "single anim", "light_off" );
-    var_0 _meth_81DF( 0 );
+    var_0 setlightintensity( 0 );
 }
 
 hangar_car_door_light_audio()
@@ -787,7 +787,7 @@ car_ride_driving_workers_waits()
 gaz_damage_watcher()
 {
     level endon( "player_under_car" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -863,9 +863,9 @@ car_ride_rumble()
 
 car_ride_bink()
 {
-    _func_0D3( "cg_cinematicCanPause", "1" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( "base_videolog", 1 );
+    setsaveddvar( "cg_cinematicCanPause", "1" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( "base_videolog", 1 );
     wait 8.12;
     var_0 = newhudelem();
     var_0.x = 0;
@@ -875,17 +875,17 @@ car_ride_bink()
     var_0.horzalign = "left";
     var_0.vertalign = "top";
     var_0.sort = -1;
-    var_0 _meth_80CC( "cinematic_add", int( 340.0 ), int( 231.2 ) );
+    var_0 setshader( "cinematic_add", int( 340.0 ), int( 231.2 ) );
     var_0.alpha = 1.0;
     pausecinematicingame( 0 );
     soundscripts\_snd::snd_message( "aud_vehicle_ride_data" );
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
-    _func_0D3( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
     var_0 destroy();
-    _func_0D3( "cg_cinematicFullScreen", "1" );
+    setsaveddvar( "cg_cinematicFullScreen", "1" );
 }
 
 prone_hint_trigger()
@@ -915,13 +915,13 @@ convoy_barrier()
 {
     var_0 = 1.5;
     var_1 = getent( self.target, "targetname" );
-    var_1 _meth_804D( self );
+    var_1 linkto( self );
 
     if ( level.currentgen )
         common_scripts\utility::flag_wait( "start_convoy" );
 
     level.gaz waittillmatch( "single anim", "barrier_down" );
-    self _meth_82B1( -34, var_0 );
+    self movez( -34, var_0 );
     level.gaz waittillmatch( "single anim", "barrier_up" );
-    self _meth_82B1( 34, var_0 );
+    self movez( 34, var_0 );
 }

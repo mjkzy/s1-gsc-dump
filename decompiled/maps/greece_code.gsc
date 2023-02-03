@@ -3,9 +3,9 @@
 
 manhuntintroscreen()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     var_0 = newclienthudelem( level.player );
-    var_0 _meth_80CC( "black", 1280, 720 );
+    var_0 setshader( "black", 1280, 720 );
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
     var_0.alpha = 1;
@@ -35,23 +35,23 @@ settargetandshader( var_0, var_1, var_2, var_3 )
 {
     var_4 = 0;
 
-    if ( !_func_0A3( var_0 ) )
+    if ( !target_istarget( var_0 ) )
         var_4 = 1;
 
     if ( !isdefined( var_3 ) )
         var_3 = 48;
 
     if ( var_4 )
-        _func_098( var_0, ( 0, 0, var_3 ) );
+        target_alloc( var_0, ( 0, 0, var_3 ) );
 
     if ( isdefined( var_1 ) )
-        _func_09C( var_0, var_1 );
+        target_setshader( var_0, var_1 );
 
     if ( isdefined( var_2 ) )
-        _func_09D( var_0, var_2 );
+        target_setoffscreenshader( var_0, var_2 );
 
     if ( var_4 )
-        _func_099( var_0 );
+        target_flush( var_0 );
 }
 
 killfloodspawnersonflag( var_0, var_1, var_2 )
@@ -120,11 +120,11 @@ _vehicleturretreenable( var_0 )
 
     foreach ( var_2 in var_0.mgturret )
     {
-        while ( !_func_097( var_2 ) )
+        while ( !isturretactive( var_2 ) )
             wait 1;
 
         level notify( "TurretInUse" );
-        var_2 _meth_8179();
+        var_2 turretfireenable();
     }
 }
 
@@ -200,9 +200,9 @@ kill_with_delay( var_0, var_1 )
     thread maps\_utility::set_battlechatter( 0 );
 
     if ( isdefined( var_1 ) )
-        self _meth_8052( self.origin, var_1 );
+        self kill( self.origin, var_1 );
     else
-        self _meth_8052();
+        self kill();
 }
 
 clear_set_goal()
@@ -234,7 +234,7 @@ setragdolldeath( var_0, var_1 )
     self.noragdoll = undefined;
     self.a.nodeath = 1;
     animscripts\notetracks::notetrackstartragdoll( "ragdoll" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 clearragdolldeath()
@@ -295,7 +295,7 @@ shootguytargetmustdie( var_0 )
         self endon( "death" );
         var_0 endon( "death" );
         wait 2;
-        magicbullet( "iw5_sn6_sp_silencer01", self gettagorigin( "TAG_WEAPON" ), var_0 _meth_80A8() );
+        magicbullet( "iw5_sn6_sp_silencer01", self gettagorigin( "TAG_WEAPON" ), var_0 geteye() );
     }
 }
 
@@ -337,13 +337,13 @@ enableawareness()
 
 rumbleplayerlight()
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     earthquake( 0.1, 0.2, level.player.origin, 100 );
 }
 
 rumbleplayerheavy()
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
     earthquake( 0.3, 0.2, level.player.origin, 100 );
 }
 
@@ -357,7 +357,7 @@ clearstencil()
     if ( !isdefined( self ) )
         return;
 
-    self _meth_84ED( "enhanceable" );
+    self setthreatdetection( "enhanceable" );
 }
 
 settargetoutline()
@@ -365,7 +365,7 @@ settargetoutline()
     if ( isdefined( self.outlinecolor ) && self.outlinecolor == "red" )
         return;
 
-    self _meth_83FA( 5 );
+    self hudoutlineenable( 5 );
     self.outlinecolor = "yellow";
 }
 
@@ -374,7 +374,7 @@ setalertoutline( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0;
 
-    self _meth_83FA( 1, var_0 );
+    self hudoutlineenable( 1, var_0 );
     self.outlinecolor = "red";
 }
 
@@ -388,7 +388,7 @@ clearalertoutline()
     if ( !isdefined( self ) )
         return;
 
-    self _meth_83FB();
+    self hudoutlinedisable();
 }
 
 initfanprops()
@@ -407,9 +407,9 @@ _rotateprop( var_0, var_1, var_2, var_3, var_4 )
     for (;;)
     {
         if ( var_2 == 1 )
-            self _meth_82BD( ( var_6, 0, 0 ), var_5 );
+            self rotatevelocity( ( var_6, 0, 0 ), var_5 );
         else if ( var_3 == 1 )
-            self _meth_82BD( ( 0, var_6, 0 ), var_5 );
+            self rotatevelocity( ( 0, var_6, 0 ), var_5 );
 
         wait 0.05;
     }
@@ -420,7 +420,7 @@ _attachfanclip()
     var_0 = getentarray( "ceiling_fan_blades_clip", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_804D( self );
+        var_2 linkto( self );
 }
 
 bloodsprayexitwoundtrace( var_0, var_1, var_2, var_3 )
@@ -445,7 +445,7 @@ bloodsprayexitwoundtrace( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_5 ) || isdefined( var_1 ) && var_1 != var_5 )
         return;
 
-    var_6 = level.player _meth_80A8();
+    var_6 = level.player geteye();
     var_7 = level.player getangles();
     var_8 = anglestoforward( var_7 );
     var_9 = self gettagorigin( var_2 );
@@ -495,7 +495,7 @@ aioverridemodelrandom( var_0, var_1 )
 aioverridemodel( var_0, var_1 )
 {
     thread codescripts\character::setheadmodel( var_1 );
-    self _meth_80B1( var_0 );
+    self setmodel( var_0 );
 }
 
 aiarrayoverridemodelrandom( var_0, var_1, var_2 )
@@ -509,9 +509,9 @@ aiarrayoverridemodelrandom( var_0, var_1, var_2 )
 
 setdefaulthudoutlinedvars()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 0 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 0 );
 }
 
 warning( var_0, var_1, var_2, var_3 )
@@ -620,7 +620,7 @@ get_farthest_living( var_0, var_1, var_2 )
 
 calculateleftstickdeadzone()
 {
-    var_0 = level.player _meth_82F3();
+    var_0 = level.player getnormalizedmovement();
     var_0 = ( scalestickinput( var_0[0] ), scalestickinput( var_0[1] ), var_0[2] );
     return var_0;
 }
@@ -691,13 +691,13 @@ hint_quickfade( var_0 )
 
 sneaky_reload()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
     var_1 = level.player getammocount( var_0 );
-    var_2 = level.player _meth_82F0();
+    var_2 = level.player getcurrentweaponclipammo();
     var_3 = weaponclipsize( var_0 );
     var_4 = var_3 - var_2;
-    level.player _meth_82F6( var_0, var_3 );
-    level.player _meth_82F7( var_0, var_1 - var_4 );
+    level.player setweaponammoclip( var_0, var_3 );
+    level.player setweaponammostock( var_0, var_1 - var_4 );
 }
 
 blimp_animation( var_0, var_1 )

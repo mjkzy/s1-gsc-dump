@@ -15,8 +15,8 @@ main( var_0 )
 
 minigun_cleanup_func( var_0, var_1 )
 {
-    if ( var_1 _meth_80E7() > 0 )
-        var_1 _meth_80E6();
+    if ( var_1 getbarrelspinrate() > 0 )
+        var_1 stopbarrelspin();
 }
 
 firecontroller_minigun( var_0 )
@@ -85,7 +85,7 @@ firecontroller_minigun( var_0 )
 
             if ( self.iscustomanimating || gettime() - var_4 >= var_5 )
             {
-                var_0 _meth_80E6();
+                var_0 stopbarrelspin();
                 var_7 = 0;
                 var_5 = undefined;
             }
@@ -115,11 +115,11 @@ firecontroller_minigun( var_0 )
 
 minigun_spinup()
 {
-    if ( self _meth_80E7() == 1 )
+    if ( self getbarrelspinrate() == 1 )
         return;
 
-    self _meth_80E5();
+    self startbarrelspin();
 
-    while ( self _meth_80E7() < 1 )
+    while ( self getbarrelspinrate() < 1 )
         wait 0.05;
 }

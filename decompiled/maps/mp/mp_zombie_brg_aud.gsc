@@ -14,7 +14,7 @@ onplayerconnectedaudio()
     for (;;)
     {
         level waittill( "connected", var_0 );
-        var_0 _meth_84D7( "master_mix" );
+        var_0 clientaddsoundsubmix( "master_mix" );
     }
 }
 
@@ -29,15 +29,15 @@ setup_audio()
 exploder_7_audio_emitters()
 {
     var_0 = spawn( "script_origin", ( 3761, -2060, 143 ) );
-    var_0 _meth_8075( "water_main_spray" );
+    var_0 playloopsound( "water_main_spray" );
     var_1 = spawn( "script_origin", ( 3602, -2074, -23 ) );
-    var_1 _meth_8075( "water_main_splash" );
+    var_1 playloopsound( "water_main_splash" );
     var_2 = spawn( "script_origin", ( 415, -5346, 170 ) );
-    var_2 _meth_8075( "water_main_spray" );
+    var_2 playloopsound( "water_main_spray" );
     level waittill( "stop_audio_exloder_7" );
-    var_0 _meth_80AB();
-    var_2 _meth_80AB();
-    var_1 _meth_80AB();
+    var_0 stoploopsound();
+    var_2 stoploopsound();
+    var_1 stoploopsound();
     waitframe();
     var_0 delete();
     var_2 delete();
@@ -70,21 +70,21 @@ horde_audio()
 
     for (;;)
     {
-        level.horde_audio_ent _meth_806F( 0 );
+        level.horde_audio_ent scalevolume( 0 );
         level waittill( "zombie_wave_started" );
         wait 0.5;
 
         if ( level.roundtype == "zombie_dog" )
-            level.horde_audio_ent _meth_8075( "zmb_horde_dog" );
+            level.horde_audio_ent playloopsound( "zmb_horde_dog" );
 
         if ( level.roundtype == "zombie_host" )
-            level.horde_audio_ent _meth_8075( "zmb_horde_host" );
+            level.horde_audio_ent playloopsound( "zmb_horde_host" );
         else
-            level.horde_audio_ent _meth_8075( "zmb_horde_general" );
+            level.horde_audio_ent playloopsound( "zmb_horde_general" );
 
-        level.horde_audio_ent _meth_806F( 1, 5 );
+        level.horde_audio_ent scalevolume( 1, 5 );
         level waittill( "zombie_wave_ended" );
-        level.horde_audio_ent _meth_80AB();
+        level.horde_audio_ent stoploopsound();
     }
 }
 

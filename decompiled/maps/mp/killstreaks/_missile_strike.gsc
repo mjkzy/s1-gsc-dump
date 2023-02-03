@@ -114,7 +114,7 @@ prespawnclusterrotationentities( var_0 )
     var_1 = ( 0, 0, -1000 );
     var_0.prespawnedkillcament = spawn( "script_model", var_1 );
     var_0.prespawnedkillcament setcontents( 0 );
-    var_0.prespawnedkillcament _meth_834D( "large explosive" );
+    var_0.prespawnedkillcament setscriptmoverkillcam( "large explosive" );
     waitframe();
     var_0.prespawnedrotationents = [];
     var_0.prespawnedindex = 0;
@@ -223,7 +223,7 @@ _fire( var_0, var_1, var_2 )
     var_2.rocketammo--;
 
     if ( var_2.rocketammo > 0 || var_2.clustermissile )
-        var_4 _meth_8418();
+        var_4 disablemissileboosting();
 
     var_4.owner = var_1;
     var_4.team = var_1.team;
@@ -235,7 +235,7 @@ _fire( var_0, var_1, var_2 )
     if ( isdefined( level.ishorde ) && level.ishorde )
         var_4 thread rocketimpact_dronekillcheck( var_1 );
 
-    var_4 _meth_8464( 1 );
+    var_4 setmissileminimapvisible( 1 );
     var_4 playsoundtoteam( "mstrike_entry_npc", maps\mp\_utility::getotherteam( var_4.team ) );
     var_4 playsoundtoteam( "mstrike_entry_npc", var_4.team, var_1 );
     missileeyes( var_1, var_4, var_2 );
@@ -249,8 +249,8 @@ rocketimpact_dronekillcheck( var_0 )
     {
         foreach ( var_2 in level.flying_attack_drones )
         {
-            if ( var_2.origin[2] > self.origin[2] && var_2.origin[2] < self.origin[2] + 1200 && _func_220( var_2.origin, self.origin ) < 40000 )
-                var_2 _meth_8051( 350, self.origin, var_0, var_0, "MOD_PROJECTILE_SPLASH", "remotemissile_projectile_mp" );
+            if ( var_2.origin[2] > self.origin[2] && var_2.origin[2] < self.origin[2] + 1200 && distance2dsquared( var_2.origin, self.origin ) < 40000 )
+                var_2 dodamage( 350, self.origin, var_0, var_0, "MOD_PROJECTILE_SPLASH", "remotemissile_projectile_mp" );
         }
     }
 }
@@ -325,8 +325,8 @@ missileeyes( var_0, var_1, var_2 )
     var_0 thread player_cleanuponteamchange( var_1, var_2 );
     var_0.clusterdeployed = 0;
     var_0.missileboostused = 0;
-    var_0 _meth_81E2( var_1, "tag_origin" );
-    var_0 _meth_8200( var_1 );
+    var_0 cameralinkto( var_1, "tag_origin" );
+    var_0 controlslinkto( var_1 );
 
     if ( getdvarint( "camera_thirdPerson" ) )
         var_0 maps\mp\_utility::setthirdpersondof( 0 );
@@ -339,7 +339,7 @@ missileeyes( var_0, var_1, var_2 )
 
     if ( var_2.rocketammo <= 0 && !var_2.clustermissile )
     {
-        var_1 _meth_8419();
+        var_1 enablemissileboosting();
         var_0 thread hud_watch_for_boost_active( var_1, var_2 );
     }
     else
@@ -396,7 +396,7 @@ playerwaitreset( var_0 )
 playerreset()
 {
     self endon( "disconnect" );
-    self _meth_8201();
+    self controlsunlink();
     maps\mp\_utility::freezecontrolswrapper( 1 );
     playerremovenotifycommands();
     stopmissileboostsounds();
@@ -407,7 +407,7 @@ playerreset()
     wait 0.5;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
     remove_hud();
-    self _meth_81E3();
+    self cameraunlink();
     maps\mp\_utility::freezecontrolswrapper( 0 );
 
     if ( maps\mp\_utility::isusingremote() )
@@ -419,7 +419,7 @@ playerreset()
     maps\mp\_utility::playerrestoreangles();
 
     if ( isdefined( level.script ) )
-        self _meth_82D4( level.script, 0.0 );
+        self visionsetnakedforplayer( level.script, 0.0 );
 
     maps\mp\_utility::revertvisionsetforplayer( 0.02 );
 }
@@ -454,7 +454,7 @@ watchforextramissilefire( var_0, var_1 )
 enableboost( var_0 )
 {
     wait 0.5;
-    var_0 _meth_8419();
+    var_0 enablemissileboosting();
 }
 
 firebabymissile( var_0, var_1 )
@@ -487,12 +487,12 @@ firebabymissile( var_0, var_1 )
     if ( isdefined( var_2 ) )
     {
         if ( isdefined( var_0.targets ) && var_0.targets.size )
-            var_9 _meth_81D9( var_0.targets[0] );
+            var_9 missile_settargetent( var_0.targets[0] );
     }
 
     var_9.team = self.team;
-    var_9 _meth_8464( 1 );
-    self _meth_80AD( "sniper_fire" );
+    var_9 setmissileminimapvisible( 1 );
+    self playrumbleonentity( "sniper_fire" );
     earthquake( 0.2, 0.2, var_0.origin, 200 );
     var_9 thread maps\mp\gametypes\_damage::setentitydamagecallback( 10, undefined, ::missilestrikeondeath, undefined, 1 );
 }
@@ -543,9 +543,9 @@ split_rocket_hellfire( var_0, var_1 )
         var_2++;
     }
 
-    self _meth_80AD( "sniper_fire" );
+    self playrumbleonentity( "sniper_fire" );
     earthquake( 0.2, 0.2, var_0.origin, 200 );
-    var_0 _meth_8505( 1 );
+    var_0 setmissilecoasting( 1 );
     thread fade_to_white();
     thread bomblet_camera_waiter( var_0, var_1 );
 }
@@ -568,7 +568,7 @@ split_rocket_spiral( var_0, var_1 )
     var_3 = var_0.origin + anglestoforward( var_0.angles ) * var_2;
     var_4 = self.strikerocketstoredposition;
     var_5 = var_0.origin + anglestoforward( var_0.angles ) * 3250;
-    var_0 _meth_8505( 1 );
+    var_0 setmissilecoasting( 1 );
     thread bomblet_camera_waiter( var_0, var_1 );
     thread spawnclusterchildren( var_3, self.strikerocketstoredposition, var_5, var_1 );
     self waittill( "fade_white_over" );
@@ -589,7 +589,7 @@ fire_straight_bomblet( var_0, var_1, var_2 )
     var_6 = magicbullet( "remotemissile_projectile_cluster_child_hellfire_mp", var_3, var_3 + anglestoforward( var_4 ) * 1000, self );
     var_6.team = self.team;
     var_6.killcament = self;
-    var_6 _meth_8464( 1 );
+    var_6 setmissileminimapvisible( 1 );
     var_6 thread bomblet_explosion_waiter( self, var_2 );
 }
 
@@ -602,7 +602,7 @@ fire_targeted_bomblet( var_0, var_1, var_2, var_3 )
     var_7 = var_1.origin;
     wait(var_2 * 0.05);
 
-    if ( isdefined( var_1 ) && _func_220( var_1.origin, var_7 ) < 57600.0 )
+    if ( isdefined( var_1 ) && distance2dsquared( var_1.origin, var_7 ) < 57600.0 )
         var_7 = var_1.origin;
 
     var_8 = magicbullet( "remotemissile_projectile_cluster_child_hellfire_mp", var_4, var_7, self );
@@ -610,9 +610,9 @@ fire_targeted_bomblet( var_0, var_1, var_2, var_3 )
     var_8.killcament = self;
 
     if ( isdefined( var_1 ) )
-        var_8 _meth_81D9( var_1 );
+        var_8 missile_settargetent( var_1 );
 
-    var_8 _meth_8464( 1 );
+    var_8 setmissileminimapvisible( 1 );
     var_8 thread bomblet_explosion_waiter( self, var_3 );
 }
 
@@ -632,7 +632,7 @@ fire_random_bomblet( var_0, var_1, var_2, var_3 )
     var_13 = magicbullet( "remotemissile_projectile_cluster_child_hellfire_mp", var_5, var_8 + ( var_11, var_12, 0 ), self );
     var_13.team = self.team;
     var_13.killcament = self;
-    var_13 _meth_8464( 1 );
+    var_13 setmissileminimapvisible( 1 );
     var_13 thread bomblet_explosion_waiter( self, var_3 );
 }
 
@@ -695,13 +695,13 @@ spawnclusterchildren( var_0, var_1, var_2, var_3 )
     var_8 = getprespawnedclusterrotationent( var_3, var_2 );
     var_8.rotatinglinkarray = [];
     var_8.rotatinglinkarray[0] = getprespawnedclusterrotationent( var_3, var_7 );
-    var_8.rotatinglinkarray[0] _meth_8446( var_8 );
+    var_8.rotatinglinkarray[0] vehicle_jetbikesethoverforcescale( var_8 );
     var_9 = magicbullet( "remotemissile_projectile_cluster_child_mp", var_6, var_7, self );
-    var_9 _meth_81D9( var_8.rotatinglinkarray[0] );
-    var_9 _meth_81DC();
+    var_9 missile_settargetent( var_8.rotatinglinkarray[0] );
+    var_9 missile_setflightmodedirect();
     var_9.owner = self;
     var_9.team = self.team;
-    var_9 _meth_8464( 1 );
+    var_9 setmissileminimapvisible( 1 );
     var_9 thread bomblet_explosion_waiter( self, var_3 );
     var_10 = var_7 - var_6;
     var_10 = vectornormalize( ( var_10[0], var_10[1], 0 ) );
@@ -710,7 +710,7 @@ spawnclusterchildren( var_0, var_1, var_2, var_3 )
     var_11 = var_3.prespawnedkillcament;
     var_11.origin = var_6 + var_10;
     var_11.killcamstarttime = gettime();
-    var_11 _meth_804D( var_9 );
+    var_11 linkto( var_9 );
     var_11 thread killcamrocketdeath( var_9 );
     var_9.killcament = var_11;
     var_12 = 10;
@@ -734,12 +734,12 @@ spawnclusterchildren( var_0, var_1, var_2, var_3 )
         var_7 = var_15.origin;
         var_6 = var_15.randomposition;
         var_16 = magicbullet( "remotemissile_projectile_cluster_child_mp", var_6, var_7, self );
-        var_16 _meth_81D9( var_8.rotatinglinkarray[var_13] );
-        var_16 _meth_81DC();
+        var_16 missile_settargetent( var_8.rotatinglinkarray[var_13] );
+        var_16 missile_setflightmodedirect();
         var_16.owner = self;
         var_16.team = self.team;
         var_16.killcament = var_11;
-        var_16 _meth_8464( 1 );
+        var_16 setmissileminimapvisible( 1 );
         var_16 thread bomblet_explosion_waiter( self, var_3 );
         waitframe();
     }
@@ -773,7 +773,7 @@ getmissileposition( var_0, var_1, var_2, var_3 )
     var_11 = var_2.origin + ( var_7, var_9, 0 );
     var_4.origin = var_11;
     var_4.randomposition = var_10;
-    var_4 _meth_8446( var_2 );
+    var_4 vehicle_jetbikesethoverforcescale( var_2 );
     return var_4;
 }
 
@@ -781,7 +781,7 @@ killcamrocketdeath( var_0 )
 {
     self endon( "death" );
     var_0 waittill( "death" );
-    self _meth_804F();
+    self unlink();
     self.origin += ( 0, 0, 50 );
     wait 3;
     self delete();
@@ -794,7 +794,7 @@ rotatetargets( var_0, var_1 )
 
     for (;;)
     {
-        var_0 _meth_82BD( ( 0, 120, 0 ), var_2 );
+        var_0 rotatevelocity( ( 0, 120, 0 ), var_2 );
         wait(var_2);
     }
 }
@@ -833,11 +833,11 @@ releasegas( var_0 )
 {
     var_1 = var_0 + ( 0, 0, 40 );
     var_2 = spawn( "script_model", var_1 );
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_3 = spawn( "script_model", var_2.origin );
     var_2.killcament = var_3;
-    var_2.killcament _meth_834D( "explosive" );
-    var_2.killcament _meth_8446( var_2 );
+    var_2.killcament setscriptmoverkillcam( "explosive" );
+    var_2.killcament vehicle_jetbikesethoverforcescale( var_2 );
     var_4 = spawnstruct();
     var_4.origin = var_1;
     var_4.team = self.team;
@@ -845,10 +845,10 @@ releasegas( var_0 )
     var_2 thread showgascloud( self );
     var_2.objidenemy = maps\mp\gametypes\_gameobjects::getnextobjid();
     objective_add( var_2.objidenemy, "active", var_2.origin, "hud_gas_enemy" );
-    objective_playerenemyteam( var_2.objidenemy, self _meth_81B1() );
+    objective_playerenemyteam( var_2.objidenemy, self getentitynumber() );
     var_2.objidfriendly = maps\mp\gametypes\_gameobjects::getnextobjid();
     objective_add( var_2.objidfriendly, "active", var_2.origin, "hud_gas_friendly" );
-    objective_playerteam( var_2.objidfriendly, self _meth_81B1() );
+    objective_playerteam( var_2.objidfriendly, self getentitynumber() );
     thread chemdamagethink( var_2, var_1, self );
     common_scripts\utility::waittill_any_timeout_no_endon_death( 20, "joined_team", "joined_spectators", "disconnect" );
     maps\mp\_utility::_objective_delete( var_2.objidenemy );
@@ -900,7 +900,7 @@ creategastrackingoverlay()
         self.strikegastrackingoverlay = newclienthudelem( self );
         self.strikegastrackingoverlay.x = 0;
         self.strikegastrackingoverlay.y = 0;
-        self.strikegastrackingoverlay _meth_80CC( "lab_gas_overlay", 640, 480 );
+        self.strikegastrackingoverlay setshader( "lab_gas_overlay", 640, 480 );
         self.strikegastrackingoverlay.alignx = "left";
         self.strikegastrackingoverlay.aligny = "top";
         self.strikegastrackingoverlay.horzalign = "fullscreen";
@@ -923,7 +923,7 @@ chemdamagethink( var_0, var_1, var_2 )
         if ( !isdefined( var_2 ) )
             return;
 
-        var_0.killcament entityradiusdamage( var_1, var_3, var_4, var_4, var_2, "MOD_TRIGGER_HURT", "killstreak_strike_missile_gas_mp", 0 );
+        var_0.killcament radiusdamage( var_1, var_3, var_4, var_4, var_2, "MOD_TRIGGER_HURT", "killstreak_strike_missile_gas_mp", 0 );
         wait 1;
     }
 }
@@ -1019,7 +1019,7 @@ player_cleanuponteamchange( var_0, var_1 )
 
 rocket_cleanupondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     level.rockets[var_0] = self;
     self waittill( "death" );
     level.rockets[var_0] = undefined;
@@ -1039,7 +1039,7 @@ player_is_valid_target( var_0 )
     if ( !isdefined( var_0 ) )
         return 0;
 
-    if ( _func_285( var_0, self ) )
+    if ( isalliedsentient( var_0, self ) )
         return 0;
 
     if ( !isalive( var_0 ) )
@@ -1095,7 +1095,7 @@ getvalidtargetssorted( var_0, var_1, var_2 )
 
     foreach ( var_16 in var_14 )
     {
-        if ( _func_220( var_16.origin, var_12 ) < var_5 )
+        if ( distance2dsquared( var_16.origin, var_12 ) < var_5 )
         {
             if ( var_1 )
             {
@@ -1128,10 +1128,10 @@ targeting_hud_init()
         var_2.alpha = 0;
         var_2.archived = 0;
         var_2.shader = "hud_fofbox_hostile";
-        var_2 _meth_80CC( "hud_fofbox_hostile", 450, 450 );
-        var_2 _meth_80D8( 0, 0, 0, 0 );
-        var_2 _meth_8514( 0 );
-        var_2 _meth_8534( 1 );
+        var_2 setshader( "hud_fofbox_hostile", 450, 450 );
+        var_2 setwaypoint( 0, 0, 0, 0 );
+        var_2 setwaypointiconfadeatcenter( 0 );
+        var_2 setwaypointaerialtargeting( 1 );
         self.missile_target_icons[var_1] = var_2;
     }
 }
@@ -1189,10 +1189,10 @@ targeting_hud_think( var_0, var_1 )
         if ( var_10.shader != "hud_fofbox_self" )
         {
             var_10.shader = "hud_fofbox_self";
-            var_10 _meth_80CC( "hud_fofbox_self", 450, 450 );
-            var_10 _meth_80D8( 0, 0, 0, 0 );
-            var_10 _meth_8514( 0 );
-            var_10 _meth_8534( 1 );
+            var_10 setshader( "hud_fofbox_self", 450, 450 );
+            var_10 setwaypoint( 0, 0, 0, 0 );
+            var_10 setwaypointiconfadeatcenter( 0 );
+            var_10 setwaypointaerialtargeting( 1 );
         }
 
         var_11 = 1;
@@ -1237,11 +1237,11 @@ targeting_hud_think( var_0, var_1 )
                 if ( common_scripts\utility::array_contains( var_0.targets, var_22 ) && var_10.shader == "hud_fofbox_hostile" )
                 {
                     var_10.shader = "hud_fofbox_hostile_ms_target";
-                    var_10 _meth_80CC( "hud_fofbox_hostile_ms_target", 450, 450 );
-                    var_10 _meth_80D8( 0, 0, 0, 0, 0 );
+                    var_10 setshader( "hud_fofbox_hostile_ms_target", 450, 450 );
+                    var_10 setwaypoint( 0, 0, 0, 0, 0 );
                     var_10 fadeovertime( 0.05 );
-                    var_10 _meth_8514( 0 );
-                    var_10 _meth_8534( 1 );
+                    var_10 setwaypointiconfadeatcenter( 0 );
+                    var_10 setwaypointaerialtargeting( 1 );
                     var_12++;
                     continue;
                 }
@@ -1249,11 +1249,11 @@ targeting_hud_think( var_0, var_1 )
                 if ( !common_scripts\utility::array_contains( var_0.targets, var_22 ) && var_10.shader == "hud_fofbox_hostile_ms_target" )
                 {
                     var_10.shader = "hud_fofbox_hostile";
-                    var_10 _meth_80CC( "hud_fofbox_hostile", 450, 450 );
-                    var_10 _meth_80D8( 0, 0, 0, 0 );
+                    var_10 setshader( "hud_fofbox_hostile", 450, 450 );
+                    var_10 setwaypoint( 0, 0, 0, 0 );
                     var_10 fadeovertime( 0.05 );
-                    var_10 _meth_8514( 0 );
-                    var_10 _meth_8534( 1 );
+                    var_10 setwaypointiconfadeatcenter( 0 );
+                    var_10 setwaypointaerialtargeting( 1 );
                 }
             }
         }
@@ -1273,20 +1273,20 @@ init_hud( var_0, var_1 )
     self endon( "disconnect" );
     thread targeting_hud_init();
     thread targeting_hud_think( var_0, var_1 );
-    self _meth_82FB( "ui_predator_missile", 1 );
-    self _meth_82FB( "ui_predator_missile_count", var_1.rocketammo );
+    self setclientomnvar( "ui_predator_missile", 1 );
+    self setclientomnvar( "ui_predator_missile_count", var_1.rocketammo );
     var_2 = var_1.name;
 
     if ( var_2 == "remotemissile_projectile_mp" )
-        self _meth_82FB( "ui_predator_missile_type", 1 );
+        self setclientomnvar( "ui_predator_missile_type", 1 );
     else if ( var_2 == "remotemissile_projectile_gas_mp" )
-        self _meth_82FB( "ui_predator_missile_type", 2 );
+        self setclientomnvar( "ui_predator_missile_type", 2 );
     else if ( var_2 == "remotemissile_projectile_cluster_parent_mp" )
     {
         if ( var_1.clusterhellfire )
-            self _meth_82FB( "ui_predator_missile_type", 4 );
+            self setclientomnvar( "ui_predator_missile_type", 4 );
         else
-            self _meth_82FB( "ui_predator_missile_type", 3 );
+            self setclientomnvar( "ui_predator_missile_type", 3 );
     }
 
     waitframe();
@@ -1296,31 +1296,31 @@ init_hud( var_0, var_1 )
 
 remove_hud()
 {
-    self _meth_82FB( "ui_predator_missile", 0 );
-    self _meth_82FB( "ui_predator_missile_text", 0 );
-    self _meth_82FB( "ui_predator_missile_type", 0 );
-    self _meth_82FB( "ui_predator_missile_count", 0 );
+    self setclientomnvar( "ui_predator_missile", 0 );
+    self setclientomnvar( "ui_predator_missile_text", 0 );
+    self setclientomnvar( "ui_predator_missile_type", 0 );
+    self setclientomnvar( "ui_predator_missile_count", 0 );
     targeting_hud_destroy();
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 }
 
 hud_update_fire_text( var_0, var_1 )
 {
-    self _meth_82FB( "ui_predator_missile_count", var_1.rocketammo );
+    self setclientomnvar( "ui_predator_missile_count", var_1.rocketammo );
 
     if ( var_1.rocketammo > 0 )
-        self _meth_82FB( "ui_predator_missile_text", var_1.rocketammo );
+        self setclientomnvar( "ui_predator_missile_text", var_1.rocketammo );
     else if ( var_1.clustermissile )
     {
         if ( !self.clusterdeployed )
-            self _meth_82FB( "ui_predator_missile_text", 5 );
+            self setclientomnvar( "ui_predator_missile_text", 5 );
         else
-            self _meth_82FB( "ui_predator_missile_text", 6 );
+            self setclientomnvar( "ui_predator_missile_text", 6 );
     }
     else if ( !self.missileboostused )
-        self _meth_82FB( "ui_predator_missile_text", 3 );
+        self setclientomnvar( "ui_predator_missile_text", 3 );
     else
-        self _meth_82FB( "ui_predator_missile_text", 4 );
+        self setclientomnvar( "ui_predator_missile_text", 4 );
 }
 
 hud_watch_for_boost_active( var_0, var_1 )
@@ -1329,7 +1329,7 @@ hud_watch_for_boost_active( var_0, var_1 )
     var_1 endon( "missile_strike_complete" );
     var_1 endon( "ms_early_exit" );
     self waittill( "FireButtonPressed" );
-    self _meth_80AD( "sniper_fire" );
+    self playrumbleonentity( "sniper_fire" );
     self.missileboostused = 1;
     hud_update_fire_text( var_0, var_1 );
 }
@@ -1343,7 +1343,7 @@ fade_to_white()
         self.strikewhitefade = newclienthudelem( self );
         self.strikewhitefade.x = 0;
         self.strikewhitefade.y = 0;
-        self.strikewhitefade _meth_80CC( "white", 640, 480 );
+        self.strikewhitefade setshader( "white", 640, 480 );
         self.strikewhitefade.alignx = "left";
         self.strikewhitefade.aligny = "top";
         self.strikewhitefade.horzalign = "fullscreen";
@@ -1364,12 +1364,12 @@ fade_to_white()
 
 playeraddnotifycommands()
 {
-    self _meth_82DD( "FireButtonPressed", "+attack" );
-    self _meth_82DD( "FireButtonPressed", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "FireButtonPressed", "+attack" );
+    self notifyonplayercommand( "FireButtonPressed", "+attack_akimbo_accessible" );
 }
 
 playerremovenotifycommands()
 {
-    self _meth_849C( "FireButtonPressed", "+attack" );
-    self _meth_849C( "FireButtonPressed", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "FireButtonPressed", "+attack" );
+    self notifyonplayercommandremove( "FireButtonPressed", "+attack_akimbo_accessible" );
 }

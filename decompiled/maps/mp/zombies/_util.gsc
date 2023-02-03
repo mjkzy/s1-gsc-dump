@@ -24,7 +24,7 @@ removeksicon( var_0, var_1, var_2 )
     if ( var_2 != 1 )
     {
         var_3 = "ks_icon" + common_scripts\utility::tostring( var_2 );
-        self _meth_82FB( var_3, 0 );
+        self setclientomnvar( var_3, 0 );
     }
 }
 
@@ -52,14 +52,14 @@ zombies_make_usable( var_0, var_1 )
     zombies_make_unusable();
     self.trigger = spawn( "script_model", self.origin );
     self.trigger.owner = self;
-    self.trigger _meth_80B1( "tag_origin" );
+    self.trigger setmodel( "tag_origin" );
 
     if ( isdefined( var_1 ) )
         self.trigger.origin += var_1;
 
-    self.trigger _meth_804D( self );
+    self.trigger linkto( self );
     self.trigger makeusable();
-    self.trigger _meth_80DB( var_0 );
+    self.trigger sethintstring( var_0 );
     self.trigger thread zombies_trigger_use_think();
 }
 
@@ -227,10 +227,10 @@ playerhasweapon( var_0, var_1 )
     if ( iszombieequipment( var_1 ) )
     {
         var_2 = getzombieequipmentalternatename( var_1 );
-        return var_0 _meth_8314( var_1 ) || var_0 _meth_8314( var_2 );
+        return var_0 hasweapon( var_1 ) || var_0 hasweapon( var_2 );
     }
 
-    return var_0 _meth_8314( var_1 );
+    return var_0 hasweapon( var_1 );
 }
 
 getzombieequipmentalternatename( var_0 )
@@ -306,7 +306,7 @@ iszombiekillstreakweapon( var_0 )
 
 getplayerweaponzombies( var_0 )
 {
-    var_1 = var_0 _meth_8312();
+    var_1 = var_0 getcurrentprimaryweapon();
 
     if ( isdefined( var_0.changingweapon ) )
         var_1 = var_0.changingweapon;
@@ -314,9 +314,9 @@ getplayerweaponzombies( var_0 )
     if ( !maps\mp\gametypes\_weapons::isprimaryweapon( var_1 ) )
         var_1 = var_0 common_scripts\utility::getlastweapon();
 
-    if ( !var_0 _meth_8314( var_1 ) )
+    if ( !var_0 hasweapon( var_1 ) )
     {
-        var_2 = var_0 _meth_830C();
+        var_2 = var_0 getweaponslistprimaries();
 
         if ( var_2.size > 0 )
             var_1 = var_2[0];
@@ -408,7 +408,7 @@ spawnscriptagent( var_0, var_1, var_2 )
         {
             var_6 = randomint( var_1.model_bodies.size );
             var_7 = common_scripts\utility::random( var_1.model_bodies[var_6] );
-            var_3 _meth_80B1( var_7 );
+            var_3 setmodel( var_7 );
 
             if ( isdefined( var_1.model_heads ) )
             {
@@ -465,7 +465,7 @@ onscriptagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
         var_9 = self.deathanimstateoverride;
     else if ( self.species == "dog" )
     {
-        if ( var_3 == "MOD_MELEE" && isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_854A() )
+        if ( var_3 == "MOD_MELEE" && isdefined( var_1 ) && isplayer( var_1 ) && var_1 ishighjumpallowed() )
         {
             var_10 = vectornormalize( var_1.origin - self.origin );
             var_11 = anglestoforward( self.angles );
@@ -490,7 +490,7 @@ onscriptagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     }
     else if ( var_3 == "MOD_MELEE" )
     {
-        if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_854A() )
+        if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 ishighjumpallowed() )
         {
             var_10 = vectornormalize( var_1.origin - self.origin );
             var_11 = anglestoforward( self.angles );
@@ -528,10 +528,10 @@ onscriptagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     if ( isdefined( self.traversalvector ) )
         moveawayfromtraversalsurface();
 
-    self _meth_8398( "gravity" );
-    var_15 = randomint( self _meth_83D6( var_9 ) );
+    self scragentsetphysicsmode( "gravity" );
+    var_15 = randomint( self getanimentrycount( var_9 ) );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_9, var_15 );
-    var_16 = self _meth_83D3( var_9, var_15 );
+    var_16 = self getanimentry( var_9, var_15 );
     var_17 = getdeathanimduration( var_16 );
 
     if ( isdefined( self.precloneswapfunc ) )
@@ -545,7 +545,7 @@ onscriptagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
 
     if ( !isdefined( self.bypasscorpse ) || !self.bypasscorpse )
     {
-        self.body = self _meth_838D( var_17 );
+        self.body = self finishagentdamage( var_17 );
 
         if ( doimmediateragdollviaweapon( var_4, var_3, var_1 ) )
             self.ragdollimmediately = 1;
@@ -589,7 +589,7 @@ shouldimmediateragdoll()
     if ( maps\mp\zombies\_mutators::isfullbodymutilation() )
         return 1;
 
-    if ( !self _meth_8341() || is_true( self.inairforleap ) )
+    if ( !self isonground() || is_true( self.inairforleap ) )
         return 1;
 
     if ( is_true( self.neverimmediatelyragdoll ) )
@@ -644,9 +644,9 @@ handleragdoll( var_0, var_1, var_2 )
 
     if ( shouldimmediateragdoll() )
     {
-        var_0 _meth_8023();
+        var_0 startragdoll();
 
-        if ( var_0 _meth_81E0() )
+        if ( var_0 isragdoll() )
             return;
     }
 
@@ -655,9 +655,9 @@ handleragdoll( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         return;
 
-    var_0 _meth_8023();
+    var_0 startragdoll();
 
-    if ( var_0 _meth_81E0() )
+    if ( var_0 isragdoll() )
         return;
 
     var_3 = getanimlength( var_2 );
@@ -669,10 +669,10 @@ handleragdoll( var_0, var_1, var_2 )
         if ( !isdefined( var_0 ) )
             return;
 
-        var_0 _meth_8023();
+        var_0 startragdoll();
     }
 
-    if ( !var_0 _meth_81E0() )
+    if ( !var_0 isragdoll() )
         var_0 delete();
 }
 
@@ -750,7 +750,7 @@ locateenemypositions()
         foreach ( var_1 in level.participants )
         {
             if ( isonhumanteam( var_1 ) )
-                self _meth_8165( var_1 );
+                self getenemyinfo( var_1 );
         }
 
         wait 0.5;
@@ -765,7 +765,7 @@ agentemptythink()
 
     for (;;)
     {
-        self _meth_8390( self.origin );
+        self scragentsetgoalpos( self.origin );
         wait 0.5;
     }
 }
@@ -834,7 +834,7 @@ zombiedelaydeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     level.zmdeaththrottlequeue--;
     level.zmdeaththrottlecount++;
     self notify( "processDelayDeath" );
-    self _meth_8051( var_2, var_5, var_1, undefined, var_3, var_4 );
+    self dodamage( var_2, var_5, var_1, undefined, var_3, var_4 );
 }
 
 candie()
@@ -1287,7 +1287,7 @@ arrayremoveundefinedkeephash( var_0 )
         if ( !isdefined( var_3 ) )
             continue;
 
-        if ( _func_2BA( var_4 ) )
+        if ( isnumber( var_4 ) )
         {
             var_1[var_1.size] = var_3;
             continue;
@@ -1413,14 +1413,14 @@ setcharactermodel( var_0, var_1, var_2 )
     self.charactermodel = level.characterassets[var_0]["body"];
 
     if ( !maps\mp\_utility::isjuggernaut() )
-        self _meth_80B1( level.characterassets[var_0]["body"] );
+        self setmodel( level.characterassets[var_0]["body"] );
 
     if ( isdefined( level.characterassets[var_0]["viewmodel"] ) )
     {
         self.characterviewmodel = level.characterassets[var_0]["viewmodel"];
 
         if ( !maps\mp\_utility::isjuggernaut() )
-            self _meth_8343( level.characterassets[var_0]["viewmodel"] );
+            self setviewmodel( level.characterassets[var_0]["viewmodel"] );
     }
 
     if ( isdefined( level.characterassets[var_0]["attachments"] ) )
@@ -1451,7 +1451,7 @@ givecustomcharactersdefault( var_0 )
     if ( var_3 )
     {
         var_1 = "ui_zm_character_" + var_2;
-        setomnvar( var_1, self _meth_81B1() );
+        setomnvar( var_1, self getentitynumber() );
         var_4 = "ui_zm_character_" + var_2 + "_alive";
         setomnvar( var_4, 0 );
         thread resetcharacterondisconnect( var_1, var_4, var_2 );
@@ -1638,7 +1638,7 @@ _stopfxontagnetworkforclientinternal( var_0, var_1, var_2, var_3 )
     var_1 endon( "death" );
     var_1 endon( "StopFxOnTagNetwork_" + var_0 + var_2 );
     _waittillcandofxevent( var_1 );
-    _func_2AC( var_0, var_1, var_2, var_3 );
+    stopfxontagforclient( var_0, var_1, var_2, var_3 );
     var_1 _entityincrementeventcount();
 }
 
@@ -1727,8 +1727,8 @@ _entityincrementeventcount()
 
 _entitytrackfx( var_0, var_1, var_2 )
 {
-    if ( !isdefined( level.entswithfx[self _meth_81B1()] ) )
-        level.entswithfx[self _meth_81B1()] = self;
+    if ( !isdefined( level.entswithfx[self getentitynumber()] ) )
+        level.entswithfx[self getentitynumber()] = self;
 
     var_3 = 0;
 
@@ -1766,7 +1766,7 @@ _entitystoptrackingondeath()
 {
     self notify( "_entityKillFXOnDeath" );
     self endon( "_entityKillFXOnDeath" );
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death" );
     level.entswithfx[var_0] = undefined;
 
@@ -1988,7 +1988,7 @@ _onplayerconnectedusetriggerassign( var_0, var_1 )
 
 _playerisassignedtousetrigger( var_0 )
 {
-    return isdefined( var_0.script_index ) && self _meth_81B1() == var_0.script_index;
+    return isdefined( var_0.script_index ) && self getentitynumber() == var_0.script_index;
 }
 
 _playerassignusetrigger( var_0, var_1 )
@@ -2031,7 +2031,7 @@ outofboundswatch( var_0 )
             if ( var_2.sessionstate == "spectator" || var_2.sessionstate == "intermission" )
                 continue;
 
-            if ( var_2 _meth_8558() )
+            if ( var_2 isnoclip() )
                 continue;
 
             if ( !isalive( var_2 ) )
@@ -2046,7 +2046,7 @@ outofboundswatch( var_0 )
                 if ( var_4 )
                 {
                     var_2.outofbounds = 1;
-                    var_2 _meth_826B();
+                    var_2 suicide();
                 }
                 else
                 {
@@ -2068,7 +2068,7 @@ outofboundswatch( var_0 )
 waittillplayersnextsnapshot( var_0 )
 {
     var_0 endon( "disconnect" );
-    var_1 = var_0 _meth_8565();
+    var_1 = var_0 getsnapshotindexforclient();
 
     if ( !isdefined( var_1 ) )
         return;
@@ -2076,7 +2076,7 @@ waittillplayersnextsnapshot( var_0 )
     for (;;)
     {
         waitframe();
-        var_2 = var_0 _meth_8566();
+        var_2 = var_0 getsnapshotacknowledgedindexforclient();
 
         if ( !isdefined( var_2 ) )
             return;
@@ -2105,35 +2105,35 @@ clearzombiestats( var_0 )
     if ( isdefined( level.dlcleaderboardnumber ) && level.dlcleaderboardnumber >= 2 && level.dlcleaderboardnumber <= 4 )
     {
         var_1 = "dlc" + level.dlcleaderboardnumber;
-        var_0 _meth_8555( var_1 + "MoneyEarned", 0 );
-        var_0 _meth_8555( var_1 + "Kills", 0 );
-        var_0 _meth_8555( var_1 + "Revives", 0 );
-        var_0 _meth_8555( var_1 + "Rounds", 0 );
-        var_0 _meth_8555( var_1 + "TimePlayed", 0 );
-        var_0 _meth_8555( var_1 + "Headshots", 0 );
-        var_0 _meth_8555( var_1 + "MeleeKills", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "MoneyEarned", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "Kills", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "Revives", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "Rounds", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "TimePlayed", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "Headshots", 0 );
+        var_0 setcoopplayerdatareservedint( var_1 + "MeleeKills", 0 );
 
         if ( level.dlcleaderboardnumber == 2 )
-            var_0 _meth_8555( var_1 + "Civilians", 0 );
+            var_0 setcoopplayerdatareservedint( var_1 + "Civilians", 0 );
 
         if ( level.dlcleaderboardnumber == 3 )
         {
-            var_0 _meth_8555( var_1 + "Bombs", 0 );
+            var_0 setcoopplayerdatareservedint( var_1 + "Bombs", 0 );
             return;
         }
     }
     else
     {
-        var_0 _meth_8246( "totalRounds", 0 );
-        var_0 _meth_8246( "totalKills", 0 );
-        var_0 _meth_8246( "totalRevives", 0 );
-        var_0 _meth_8246( "totalMoneyEarned", 0 );
-        var_0 _meth_8246( "totalMoneySpent", 0 );
-        var_0 _meth_8246( "totalMagicBox", 0 );
-        var_0 _meth_8246( "totalTraps", 0 );
-        var_0 _meth_8246( "totalHeadshots", 0 );
-        var_0 _meth_8246( "totalMeleeKills", 0 );
-        var_0 _meth_8555( "totalTimePlayed", 0 );
+        var_0 setcoopplayerdata( "totalRounds", 0 );
+        var_0 setcoopplayerdata( "totalKills", 0 );
+        var_0 setcoopplayerdata( "totalRevives", 0 );
+        var_0 setcoopplayerdata( "totalMoneyEarned", 0 );
+        var_0 setcoopplayerdata( "totalMoneySpent", 0 );
+        var_0 setcoopplayerdata( "totalMagicBox", 0 );
+        var_0 setcoopplayerdata( "totalTraps", 0 );
+        var_0 setcoopplayerdata( "totalHeadshots", 0 );
+        var_0 setcoopplayerdata( "totalMeleeKills", 0 );
+        var_0 setcoopplayerdatareservedint( "totalTimePlayed", 0 );
     }
 }
 
@@ -2185,12 +2185,12 @@ recordplayermatchdataforroundstart( var_0 )
     if ( var_0 < 0 || var_0 >= 75 )
         return;
 
-    var_1 = self _meth_81B1();
+    var_1 = self getentitynumber();
     var_2 = self.origin;
     setmatchdata( "zombieRounds", var_0, "playerRounds", var_1, "startPos", 0, int( var_2[0] ) );
     setmatchdata( "zombieRounds", var_0, "playerRounds", var_1, "startPos", 1, int( var_2[1] ) );
     setmatchdata( "zombieRounds", var_0, "playerRounds", var_1, "startPos", 2, int( var_2[2] ) );
-    var_3 = self _meth_830B();
+    var_3 = self getweaponslistall();
     var_4 = 1;
 
     foreach ( var_6 in var_3 )
@@ -2249,7 +2249,7 @@ recordplayermatchdataforroundend( var_0 )
     if ( var_0 < 0 || var_0 >= 75 )
         return;
 
-    var_1 = self _meth_81B1();
+    var_1 = self getentitynumber();
     var_2 = self.origin;
     setmatchdata( "zombieRounds", var_0, "playerRounds", var_1, "endPos", 0, int( var_2[0] ) );
     setmatchdata( "zombieRounds", var_0, "playerRounds", var_1, "endPos", 1, int( var_2[1] ) );
@@ -2338,9 +2338,9 @@ writezombieplayerstats( var_0 )
 
             if ( isdefined( level.civiliansrescued ) )
             {
-                var_2 = var_0 _meth_8554( "civiliansRescued" );
+                var_2 = var_0 getcoopplayerdatareservedint( "civiliansRescued" );
                 var_2 += level.civiliansrescued;
-                var_0 _meth_8555( "civiliansRescued", var_2 );
+                var_0 setcoopplayerdatareservedint( "civiliansRescued", var_2 );
             }
         }
 
@@ -2361,8 +2361,8 @@ writezombieplayerstats( var_0 )
         setzombiereservedata( var_0, "totalTimePlayed", "mostTimePlayed", var_0.timeplayed["total"] );
     }
 
-    var_3 = var_0 _meth_8225( "totalGames" );
-    var_0 _meth_8246( "totalGames", var_3 + 1 );
+    var_3 = var_0 getcoopplayerdata( "totalGames" );
+    var_0 setcoopplayerdata( "totalGames", var_3 + 1 );
 }
 
 setzombieplayerdata( var_0, var_1, var_2, var_3 )
@@ -2370,12 +2370,12 @@ setzombieplayerdata( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         return;
 
-    var_4 = var_0 _meth_8225( var_1 );
-    var_0 _meth_8246( var_1, var_4 + var_3 );
-    var_5 = var_0 _meth_8225( var_2 );
+    var_4 = var_0 getcoopplayerdata( var_1 );
+    var_0 setcoopplayerdata( var_1, var_4 + var_3 );
+    var_5 = var_0 getcoopplayerdata( var_2 );
 
     if ( var_3 > var_5 )
-        var_0 _meth_8246( var_2, var_3 );
+        var_0 setcoopplayerdata( var_2, var_3 );
 }
 
 setzombiereservedata( var_0, var_1, var_2, var_3 )
@@ -2383,12 +2383,12 @@ setzombiereservedata( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         return;
 
-    var_4 = var_0 _meth_8554( var_1 );
-    var_0 _meth_8555( var_1, var_4 + var_3 );
-    var_5 = var_0 _meth_8554( var_2 );
+    var_4 = var_0 getcoopplayerdatareservedint( var_1 );
+    var_0 setcoopplayerdatareservedint( var_1, var_4 + var_3 );
+    var_5 = var_0 getcoopplayerdatareservedint( var_2 );
 
     if ( var_3 > var_5 )
-        var_0 _meth_8555( var_2, var_3 );
+        var_0 setcoopplayerdatareservedint( var_2, var_3 );
 }
 
 setmeleeradius( var_0 )
@@ -2512,17 +2512,17 @@ watchtokenuseentwait( var_0 )
 
 cleartokenuseomnvars()
 {
-    self _meth_82FB( "ui_use_bar_start_time", 0 );
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
-    self _meth_82FB( "ui_use_bar_text", 0 );
+    self setclientomnvar( "ui_use_bar_start_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_text", 0 );
 }
 
 settokenuseomvars()
 {
-    self _meth_82FB( "ui_use_bar_start_time", gettime() );
+    self setclientomnvar( "ui_use_bar_start_time", gettime() );
     var_0 = gettime() + maps\mp\gametypes\zombies::gettokenusetime();
-    self _meth_82FB( "ui_use_bar_end_time", var_0 );
-    self _meth_82FB( "ui_use_bar_text", 5 );
+    self setclientomnvar( "ui_use_bar_end_time", var_0 );
+    self setclientomnvar( "ui_use_bar_text", 5 );
 }
 
 settokencost( var_0 )
@@ -2535,12 +2535,12 @@ tokenhintstring( var_0 )
     if ( var_0 && level.tokensenabled )
     {
         self.tokenstringvisible = 1;
-        self _meth_8562( gettokencoststring( self.tokencost ) );
+        self settertiaryhintstring( gettokencoststring( self.tokencost ) );
     }
     else
     {
         self.tokenstringvisible = 0;
-        self _meth_8562( "" );
+        self settertiaryhintstring( "" );
     }
 }
 
@@ -2551,7 +2551,7 @@ enabletokens()
 
 isplayeruseent( var_0, var_1 )
 {
-    var_2 = var_0 _meth_84C5( 1 );
+    var_2 = var_0 playergetuseent( 1 );
     return isdefined( var_2 ) && var_2 == var_1;
 }
 
@@ -2562,7 +2562,7 @@ droppostoground( var_0, var_1 )
 
     var_2 = var_0 + ( 0, 0, var_1 );
     var_3 = var_0 + ( 0, 0, var_1 * -1 );
-    var_4 = self _meth_83E5( var_2, var_3, self.radius, self.height, 1 );
+    var_4 = self aiphysicstrace( var_2, var_3, self.radius, self.height, 1 );
 
     if ( abs( var_4[2] - var_2[2] ) < 0.1 )
         return undefined;
@@ -2584,7 +2584,7 @@ canmovepointtopoint( var_0, var_1, var_2, var_3 )
     var_4 = ( 0, 0, 1 ) * var_2;
     var_5 = var_0 + var_4;
     var_6 = var_1 + var_4;
-    return self _meth_83E6( var_5, var_6, var_3, self.height - var_2, 1 );
+    return self aiphysicstracepassed( var_5, var_6, var_3, self.height - var_2, 1 );
 }
 
 getzombieslevelnum()
@@ -2657,12 +2657,12 @@ disttoline( var_0, var_1, var_2 )
 
 despawnzombie()
 {
-    self _meth_83FB();
+    self hudoutlinedisable();
     maps\mp\agents\_agent_utility::deactivateagent();
     self notify( "killanimscript" );
     self notify( "death" );
     self waittill( "disconnect" );
-    self _meth_8487();
+    self despawnagent();
 }
 
 gameflagexists( var_0 )
@@ -2810,7 +2810,7 @@ getenemyagents()
         if ( is_true( var_3.waitingtodeactivate ) )
             continue;
 
-        if ( !_func_285( self, var_3 ) )
+        if ( !isalliedsentient( self, var_3 ) )
             var_0[var_0.size] = var_3;
     }
 
@@ -2845,7 +2845,7 @@ getarrayofoffscreenagentstorecycle( var_0 )
     {
         if ( isalive( var_3 ) )
         {
-            var_4 = var_3 _meth_8387();
+            var_4 = var_3 getnearestnode();
 
             if ( isdefined( var_4 ) )
                 var_1[var_1.size] = var_4;
@@ -2860,13 +2860,13 @@ getarrayofoffscreenagentstorecycle( var_0 )
             continue;
 
         var_9 = 1;
-        var_10 = var_8 _meth_8387();
+        var_10 = var_8 getnearestnode();
 
         if ( isdefined( var_10 ) )
         {
             foreach ( var_4 in var_1 )
             {
-                if ( _func_1FF( var_10, var_4, 1 ) )
+                if ( nodesvisible( var_10, var_4, 1 ) )
                 {
                     var_9 = 0;
                     break;
@@ -2967,14 +2967,14 @@ playerallowfire( var_0, var_1 )
         self.playerdisablefire = common_scripts\utility::array_remove( self.playerdisablefire, var_1 );
 
         if ( !self.playerdisablefire.size )
-            self _meth_8131( 1 );
+            self allowfire( 1 );
     }
     else
     {
         if ( !isdefined( common_scripts\utility::array_find( self.playerdisablefire, var_1 ) ) )
             self.playerdisablefire = common_scripts\utility::array_add( self.playerdisablefire, var_1 );
 
-        self _meth_8131( 0 );
+        self allowfire( 0 );
     }
 }
 

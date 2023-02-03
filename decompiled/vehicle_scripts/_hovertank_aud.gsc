@@ -261,7 +261,7 @@ play_missile_whoosh_thread( var_0, var_1 )
     if ( isdefined( var_2 ) )
     {
         var_3 = 0.5;
-        var_2 _meth_806F( 0, var_3 );
+        var_2 scalevolume( 0, var_3 );
         wait(var_3);
 
         if ( isdefined( var_2 ) )
@@ -330,7 +330,7 @@ ht_cannon_reload()
     soundscripts\_audio::deprecated_aud_play_2d_sound( "ht_cannon_reload_stop" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_806F( 0, 0.1 );
+        var_0 scalevolume( 0, 0.1 );
 }
 
 monitor_tank_health()

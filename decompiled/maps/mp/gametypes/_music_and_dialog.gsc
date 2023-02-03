@@ -218,12 +218,12 @@ practiceroundmusic()
         level.practiceroundmusicent hide();
         wait 12;
         self.practiceroundmusicplaying = 1;
-        level.practiceroundmusicent _meth_8075( "mus_practice_round_backing_track" );
+        level.practiceroundmusicent playloopsound( "mus_practice_round_backing_track" );
         playpracticeroundmusicforactiveclients();
         level.practiceroundmusicent showtoplayer( self );
-        level.practiceroundmusicent _meth_806F( 0, 0.05 );
+        level.practiceroundmusicent scalevolume( 0, 0.05 );
         wait 0.8;
-        level.practiceroundmusicent _meth_806F( 0.8, 2.5 );
+        level.practiceroundmusicent scalevolume( 0.8, 2.5 );
     }
     else
     {
@@ -259,9 +259,9 @@ endpracticeroundmusic()
 
     level notify( "practiceRoundMusicEnding" );
     level.practiceroundmusicending = 1;
-    level.practiceroundmusicent _meth_806F( 0, 5 );
+    level.practiceroundmusicent scalevolume( 0, 5 );
     wait 5.5;
-    level.practiceroundmusicent _meth_80AC();
+    level.practiceroundmusicent stopsounds();
     level.practiceroundmusicent delete();
 }
 

@@ -61,7 +61,7 @@ heli_firelink( var_0 )
             var_4 = [ 0.1, 0.2, 0.3 ];
             wait 1;
             var_1.origin += ( 0, 0, -150 );
-            var_1 _meth_82AE( var_1.origin + ( 0, 0, 150 ), 0.6, 0, 0 );
+            var_1 moveto( var_1.origin + ( 0, 0, 150 ), 0.6, 0, 0 );
 
             foreach ( var_6 in var_4 )
             {
@@ -210,7 +210,7 @@ flares_redirect_missiles( var_0, var_1 )
 
     var_2 = flares_get_vehicle_velocity( var_0 );
     var_3 = spawn( "script_origin", var_0 gettagorigin( "tag_flare" ) );
-    var_3 _meth_82B2( var_2, var_1 );
+    var_3 movegravity( var_2, var_1 );
     var_4 = undefined;
 
     if ( isdefined( var_0.playercontrolled ) )
@@ -224,7 +224,7 @@ flares_redirect_missiles( var_0, var_1 )
     if ( isdefined( var_0.incomming_missiles ) )
     {
         for ( var_5 = 0; var_5 < var_0.incomming_missiles.size; var_5++ )
-            var_0.incomming_missiles[var_5] _meth_81D9( var_3 );
+            var_0.incomming_missiles[var_5] missile_settargetent( var_3 );
     }
 
     wait(var_1);
@@ -246,7 +246,7 @@ flares_redirect_missiles( var_0, var_1 )
         return;
 
     for ( var_5 = 0; var_5 < var_0.incomming_missiles.size; var_5++ )
-        var_0.incomming_missiles[var_5] _meth_81D9( var_0, var_6 );
+        var_0.incomming_missiles[var_5] missile_settargetent( var_0, var_6 );
 }
 
 flares_get_vehicle_velocity( var_0 )
@@ -295,7 +295,7 @@ getenemytarget( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     if ( var_2 )
     {
-        var_12 = _func_0D6( var_9 );
+        var_12 = getaiarray( var_9 );
 
         for ( var_11 = 0; var_11 < var_12.size; var_11++ )
         {
@@ -322,9 +322,9 @@ getenemytarget( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     for ( var_11 = 0; var_11 < var_10.size; var_11++ )
     {
-        if ( issentient( var_10[var_11] ) && issentient( self ) && self _meth_8178() != "" )
+        if ( issentient( var_10[var_11] ) && issentient( self ) && self getthreatbiasgroup() != "" )
         {
-            var_14 = getthreatbias( var_10[var_11] _meth_8178(), self _meth_8178() );
+            var_14 = getthreatbias( var_10[var_11] getthreatbiasgroup(), self getthreatbiasgroup() );
 
             if ( var_14 <= -1000000 )
                 continue;
@@ -397,7 +397,7 @@ shootenemytarget_bullets( var_0 )
     else if ( issentient( var_0 ) )
         var_1 = ( 0, 0, 32 );
 
-    self _meth_8262( var_0, var_1 );
+    self setturrettargetent( var_0, var_1 );
 
     while ( self.health > 0 )
     {
@@ -411,14 +411,14 @@ shootenemytarget_bullets( var_0 )
             if ( isdefined( self.playercontrolled ) )
             {
                 if ( isdefined( level.cobraweapon ) && level.cobraweapon.size > 0 )
-                    self _meth_8267( level.gunnerweapon );
+                    self setvehweapon( level.gunnerweapon );
             }
 
             thread shootenemytarget_bullets_debugline( self, "tag_turret", var_0, var_1, ( 1, 1, 0 ), 0.05 );
-            self _meth_8268( "tag_flash" );
+            self fireweapon( "tag_flash" );
 
             if ( isdefined( self.playercontrolled ) )
-                self _meth_8267( level.cobraweapon[self.pilot.currentweapon].v["weapon"] );
+                self setvehweapon( level.cobraweapon[self.pilot.currentweapon].v["weapon"] );
 
             wait 0.05;
         }
@@ -630,11 +630,11 @@ fire_missile( var_0, var_1, var_2, var_3, var_4 )
         }
         else
         {
-            self _meth_8267( var_5 );
+            self setvehweapon( var_5 );
 
             if ( isdefined( var_2 ) )
             {
-                var_11 = self _meth_8268( var_8[var_9], var_2 );
+                var_11 = self fireweapon( var_8[var_9], var_2 );
                 soundscripts\_audio::deprecated_aud_send_msg( "missile_fired", var_11 );
 
                 switch ( var_0 )
@@ -660,7 +660,7 @@ fire_missile( var_0, var_1, var_2, var_3, var_4 )
                 }
             }
             else
-                var_11 = self _meth_8268( var_8[var_9] );
+                var_11 = self fireweapon( var_8[var_9] );
 
             self notify( "missile_fired", var_11 );
         }
@@ -674,7 +674,7 @@ fire_missile( var_0, var_1, var_2, var_3, var_4 )
             wait(var_3);
     }
 
-    self _meth_8267( var_7 );
+    self setvehweapon( var_7 );
 }
 
 delayed_earthquake( var_0, var_1, var_2, var_3, var_4 )
@@ -689,5 +689,5 @@ missilelosetarget( var_0 )
     wait(var_0);
 
     if ( isdefined( self ) )
-        self _meth_81DB();
+        self missile_cleartarget();
 }

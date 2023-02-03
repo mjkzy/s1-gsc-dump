@@ -38,8 +38,8 @@ spawn_friendlies( var_0, var_1, var_2, var_3 )
         if ( var_2 )
             var_15 thread maps\_utility::replace_on_death();
 
-        var_15 _meth_81C6( var_11.origin, var_11.angles );
-        var_15 _meth_81A6( var_15.origin );
+        var_15 forceteleport( var_11.origin, var_11.angles );
+        var_15 setgoalpos( var_15.origin );
         var_7 = common_scripts\utility::array_add( var_7, var_15 );
         var_12++;
 
@@ -52,14 +52,14 @@ spawn_friendlies( var_0, var_1, var_2, var_3 )
 
 setup_player_for_scene( var_0, var_1 )
 {
-    self _meth_8130( 0 );
-    self _meth_831D();
-    self _meth_831F();
-    self _meth_8118( 1 );
-    self _meth_8119( 0 );
-    self _meth_811A( 0 );
-    self _meth_8304( 0 );
-    _func_0D3( "ammoCounterHide", 1 );
+    self allowmelee( 0 );
+    self disableweapons();
+    self disableoffhandweapons();
+    self allowstand( 1 );
+    self allowcrouch( 0 );
+    self allowprone( 0 );
+    self allowsprint( 0 );
+    setsaveddvar( "ammoCounterHide", 1 );
 
     if ( isdefined( var_0 ) && var_0 )
     {
@@ -73,13 +73,13 @@ setup_player_for_scene( var_0, var_1 )
                 maps\_player_exo::player_exo_remove_single( "boost_dash" );
         }
 
-        for ( var_3 = 0; self _meth_817C() != "stand"; var_3 += 0.05 )
+        for ( var_3 = 0; self getstance() != "stand"; var_3 += 0.05 )
         {
-            self _meth_817D( "stand" );
+            self setstance( "stand" );
             waitframe();
         }
 
-        while ( self _meth_812C() || self _meth_8337() || self _meth_8311( 0 ) != "none" )
+        while ( self isthrowinggrenade() || self isreloading() || self getcurrentweapon( 0 ) != "none" )
         {
             waitframe();
             var_3 += 0.05;
@@ -95,14 +95,14 @@ setup_player_for_scene( var_0, var_1 )
 
 setup_player_for_gameplay()
 {
-    _func_0D3( "ammoCounterHide", 0 );
-    self _meth_8304( 1 );
-    self _meth_811A( 1 );
-    self _meth_8119( 1 );
-    self _meth_8118( 1 );
-    self _meth_8320();
-    self _meth_831E();
-    self _meth_8130( 1 );
+    setsaveddvar( "ammoCounterHide", 0 );
+    self allowsprint( 1 );
+    self allowprone( 1 );
+    self allowcrouch( 1 );
+    self allowstand( 1 );
+    self enableoffhandweapons();
+    self enableweapons();
+    self allowmelee( 1 );
 }
 
 monitorscopechange()
@@ -155,7 +155,7 @@ monitorscopechange()
         {
             foreach ( var_1 in level.players )
             {
-                if ( var_1 _meth_8311() == var_10 && isalive( var_1 ) )
+                if ( var_1 getcurrentweapon() == var_10 && isalive( var_1 ) )
                 {
                     var_8 = 1;
                     var_6 = var_1;
@@ -167,7 +167,7 @@ monitorscopechange()
                 break;
         }
 
-        if ( var_8 && !var_6 _meth_8336() && !var_6 _meth_8337() )
+        if ( var_8 && !var_6 isreloading() && !var_6 isreloading() )
         {
             if ( var_6 maps\_utility::isads() && var_6 adsbuttonpressed() )
             {
@@ -194,7 +194,7 @@ monitorscopechange()
                     }
 
                     if ( isdefined( var_14 ) )
-                        _func_0D3( "sm_sunShadowCenter", var_14 );
+                        setsaveddvar( "sm_sunShadowCenter", var_14 );
                 }
             }
             else if ( var_3 )
@@ -204,7 +204,7 @@ monitorscopechange()
                 if ( isdefined( var_6 ) )
                     var_6 turnoffvariablescopehud();
 
-                _func_0D3( "sm_sunShadowCenter", "0 0 0" );
+                setsaveddvar( "sm_sunShadowCenter", "0 0 0" );
             }
         }
         else if ( var_3 )
@@ -214,7 +214,7 @@ monitorscopechange()
             if ( isdefined( var_7 ) )
                 var_7 turnoffvariablescopehud();
 
-            _func_0D3( "sm_sunShadowCenter", "0 0 0" );
+            setsaveddvar( "sm_sunShadowCenter", "0 0 0" );
         }
 
         wait 0.05;
@@ -223,8 +223,8 @@ monitorscopechange()
 
 turnonvariablescopehud( var_0 )
 {
-    self _meth_831F();
-    _func_0D3( self.sniper_dvar, self.fov_snipe );
+    self disableoffhandweapons();
+    setsaveddvar( self.sniper_dvar, self.fov_snipe );
     self.sniper_zoom_hint_hud.alpha = 1;
 
     if ( !var_0 )
@@ -234,8 +234,8 @@ turnonvariablescopehud( var_0 )
 turnoffvariablescopehud()
 {
     level notify( "variable_sniper_hud_exit" );
-    self _meth_8320();
-    _func_0D3( self.sniper_dvar, 1 );
+    self enableoffhandweapons();
+    setsaveddvar( self.sniper_dvar, 1 );
     self.sniper_zoom_hint_hud.alpha = 0;
 }
 
@@ -347,11 +347,11 @@ laser_targeting_device( var_0 )
     var_0 endon( "remove_laser_targeting_device" );
     var_0.lastusedweapon = undefined;
     var_0.laserforceon = 0;
-    var_0 _meth_821B( "actionslot4", "dpad_laser_designator" );
+    var_0 setweaponhudiconoverride( "actionslot4", "dpad_laser_designator" );
     var_0 thread cleanuplasertargetingdevice();
-    var_0 _meth_82DD( "use_laser", "+actionslot 4" );
-    var_0 _meth_82DD( "fired_laser", "+attack" );
-    var_0 _meth_82DD( "fired_laser", "+attack_akimbo_accessible" );
+    var_0 notifyonplayercommand( "use_laser", "+actionslot 4" );
+    var_0 notifyonplayercommand( "fired_laser", "+attack" );
+    var_0 notifyonplayercommand( "fired_laser", "+attack_akimbo_accessible" );
     var_0.laserallowed = 1;
     var_0.lasercooldownafterhit = 20;
     var_0 childthread monitorlaseroff();
@@ -363,25 +363,25 @@ laser_targeting_device( var_0 )
         if ( var_0.laserforceon || !var_0.laserallowed || var_0 shouldforcedisablelaser() )
         {
             var_0 notify( "cancel_laser" );
-            var_0 _meth_80B3();
+            var_0 laseroff();
             var_0.laserforceon = 0;
-            var_0 _meth_8300( 1 );
+            var_0 allowads( 1 );
             wait 0.2;
-            var_0 _meth_8131( 1 );
+            var_0 allowfire( 1 );
             continue;
         }
 
-        var_0 _meth_80B2();
-        var_0 _meth_8131( 0 );
+        var_0 laseron();
+        var_0 allowfire( 0 );
         var_0.laserforceon = 1;
-        var_0 _meth_8300( 0 );
+        var_0 allowads( 0 );
         var_0 thread laser_designate_target();
     }
 }
 
 shouldforcedisablelaser()
 {
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( var_0 == "rpg" )
         return 1;
@@ -398,10 +398,10 @@ shouldforcedisablelaser()
         }
     }
 
-    if ( self _meth_8336() )
+    if ( self isreloading() )
         return 1;
 
-    if ( self _meth_812C() )
+    if ( self isthrowinggrenade() )
         return 1;
 
     return 0;
@@ -410,12 +410,12 @@ shouldforcedisablelaser()
 cleanuplasertargetingdevice()
 {
     self waittill( "remove_laser_targeting_device" );
-    self _meth_821B( "actionslot4", "none" );
+    self setweaponhudiconoverride( "actionslot4", "none" );
     self notify( "cancel_laser" );
-    self _meth_80B3();
+    self laseroff();
     self.laserforceon = undefined;
-    self _meth_8131( 1 );
-    self _meth_8300( 1 );
+    self allowfire( 1 );
+    self allowads( 1 );
 }
 
 monitorlaseroff()
@@ -491,7 +491,7 @@ gettargettriggerhit( var_0 )
 
 get_laser_designated_trace()
 {
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
     var_1 = self getangles();
     var_2 = anglestoforward( var_1 );
     var_3 = var_0 + var_2 * 7000;
@@ -508,7 +508,7 @@ laser_artillery( var_0 )
 {
     level.player endon( "remove_laser_targeting_device" );
     level.player.laserallowed = 0;
-    self _meth_821B( "actionslot4", "dpad_killstreak_hellfire_missile_inactive" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_killstreak_hellfire_missile_inactive" );
     maps\_utility::flavorbursts_off( "allies" );
     var_1 = level.player;
     wait 2.5;
@@ -533,7 +533,7 @@ laser_artillery( var_0 )
 
     wait(level.player.lasercooldownafterhit);
     level.player.laserallowed = 1;
-    self _meth_821B( "actionslot4", "dpad_laser_designator" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_laser_designator" );
 }
 
 get_geo_group( var_0, var_1 )
@@ -616,57 +616,57 @@ get_differentiated_jerk()
 show_player_hud( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( isdefined( var_0 ) )
-        _func_0D3( "g_friendlyNameDist", var_0 );
+        setsaveddvar( "g_friendlyNameDist", var_0 );
     else
-        _func_0D3( "g_friendlyNameDist", 15000 );
+        setsaveddvar( "g_friendlyNameDist", 15000 );
 
     if ( isdefined( var_1 ) )
-        _func_0D3( "compass", var_1 );
+        setsaveddvar( "compass", var_1 );
     else
-        _func_0D3( "compass", "1" );
+        setsaveddvar( "compass", "1" );
 
     if ( isdefined( var_2 ) )
-        _func_0D3( "ammoCounterHide", var_2 );
+        setsaveddvar( "ammoCounterHide", var_2 );
     else
-        _func_0D3( "ammoCounterHide", "0" );
+        setsaveddvar( "ammoCounterHide", "0" );
 
     if ( isdefined( var_3 ) )
-        _func_0D3( "actionSlotsHide", var_3 );
+        setsaveddvar( "actionSlotsHide", var_3 );
     else
-        _func_0D3( "actionSlotsHide", "0" );
+        setsaveddvar( "actionSlotsHide", "0" );
 
     if ( isdefined( var_4 ) )
-        _func_0D3( "hud_showStance", var_4 );
+        setsaveddvar( "hud_showStance", var_4 );
     else
-        _func_0D3( "hud_showStance", "1" );
+        setsaveddvar( "hud_showStance", "1" );
 }
 
 hide_player_hud( var_0, var_1, var_2, var_3, var_4 )
 {
     if ( isdefined( var_0 ) )
-        _func_0D3( "g_friendlyNameDist", var_0 );
+        setsaveddvar( "g_friendlyNameDist", var_0 );
     else
-        _func_0D3( "g_friendlyNameDist", 0 );
+        setsaveddvar( "g_friendlyNameDist", 0 );
 
     if ( isdefined( var_1 ) )
-        _func_0D3( "compass", var_1 );
+        setsaveddvar( "compass", var_1 );
     else
-        _func_0D3( "compass", "0" );
+        setsaveddvar( "compass", "0" );
 
     if ( isdefined( var_2 ) )
-        _func_0D3( "ammoCounterHide", var_2 );
+        setsaveddvar( "ammoCounterHide", var_2 );
     else
-        _func_0D3( "ammoCounterHide", "1" );
+        setsaveddvar( "ammoCounterHide", "1" );
 
     if ( isdefined( var_3 ) )
-        _func_0D3( "actionSlotsHide", var_3 );
+        setsaveddvar( "actionSlotsHide", var_3 );
     else
-        _func_0D3( "actionSlotsHide", "1" );
+        setsaveddvar( "actionSlotsHide", "1" );
 
     if ( isdefined( var_4 ) )
-        _func_0D3( "hud_showStance", var_4 );
+        setsaveddvar( "hud_showStance", var_4 );
     else
-        _func_0D3( "hud_showStance", "0" );
+        setsaveddvar( "hud_showStance", "0" );
 }
 
 disable_features_entering_cinema( var_0 )
@@ -716,14 +716,14 @@ handle_portal_group( var_0, var_1, var_2 )
     if ( !isdefined( var_3 ) )
         return;
 
-    var_3 _meth_8070( 0 );
+    var_3 enableportalgroup( 0 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_0 );
-        var_3 _meth_8070( 1 );
+        var_3 enableportalgroup( 1 );
         common_scripts\utility::flag_waitopen( var_0 );
-        var_3 _meth_8070( 0 );
+        var_3 enableportalgroup( 0 );
         wait 0.05;
     }
 }
@@ -747,9 +747,9 @@ portal_group_on( var_0, var_1 )
     if ( !isdefined( var_2 ) )
         return;
 
-    var_2 _meth_8070( 0 );
+    var_2 enableportalgroup( 0 );
     common_scripts\utility::flag_wait( var_0 );
-    var_2 _meth_8070( 1 );
+    var_2 enableportalgroup( 1 );
 }
 
 portal_group_off( var_0, var_1 )
@@ -772,7 +772,7 @@ portal_group_off( var_0, var_1 )
         return;
 
     common_scripts\utility::flag_wait( var_0 );
-    var_2 _meth_8070( 0 );
+    var_2 enableportalgroup( 0 );
 }
 
 make_emp_vulnerable()
@@ -795,7 +795,7 @@ play_fx_with_handle( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_3 ) && var_3 )
     {
         var_4.tag_origin = common_scripts\utility::spawn_tag_origin();
-        var_4.tag_origin _meth_804D( var_1, var_4.tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_4.tag_origin linkto( var_1, var_4.tag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
         playfxontag( var_4.fx_id, var_4.tag_origin, "tag_origin" );
         kill_fx_with_handle_on_death( var_4 );
     }
@@ -873,9 +873,9 @@ hint_button_create( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( isdefined( self ) )
     {
         if ( isdefined( var_1 ) )
-            var_7 _meth_80CD( self, var_1 );
+            var_7 settargetent( self, var_1 );
         else
-            var_7 _meth_80CD( self );
+            var_7 settargetent( self );
     }
 
     var_8 = hint_button_string_lookup( var_0 );
@@ -913,9 +913,9 @@ scale_3d_hint_button( var_0, var_1, var_2, var_3, var_4, var_5 )
     for (;;)
     {
         if ( isdefined( var_1 ) )
-            var_6 = distance( var_0 gettagorigin( var_1 ), var_2 _meth_80A8() );
+            var_6 = distance( var_0 gettagorigin( var_1 ), var_2 geteye() );
         else
-            var_6 = distance( var_0, var_2 _meth_80A8() );
+            var_6 = distance( var_0, var_2 geteye() );
 
         if ( var_4 != 0 && var_6 > var_4 )
             self.alpha = 0;
@@ -928,7 +928,7 @@ scale_3d_hint_button( var_0, var_1, var_2, var_3, var_4, var_5 )
         }
         else if ( isdefined( var_5 ) && isdefined( var_5.classname ) && issubstr( var_5.classname, "trigger" ) )
         {
-            var_7 = var_2 _meth_8521();
+            var_7 = var_2 getusableentity();
 
             if ( isdefined( var_7 ) && var_7 == var_5 )
                 self.alpha = 1;
@@ -1040,10 +1040,10 @@ button_mash_dynamic_hint( var_0, var_1, var_2, var_3 )
     thread maps\_utility::hint( var_0 );
     var_4 = var_1 + "_button_mash_dynamic_hint";
     thread buttonmash_hint_cleanup( var_2, var_4, var_1, var_3 );
-    level.player _meth_82DD( var_4, var_1 );
+    level.player notifyonplayercommand( var_4, var_1 );
 
     if ( isdefined( var_3 ) )
-        level.player _meth_82DD( var_4, var_3 );
+        level.player notifyonplayercommand( var_4, var_3 );
 
     for (;;)
     {
@@ -1060,10 +1060,10 @@ buttonmash_hint_cleanup( var_0, var_1, var_2, var_3 )
     self endon( "death" );
     common_scripts\utility::waittill_any_ents( self, var_0, level.player, var_0 );
     thread maps\_utility::hint_fade();
-    level.player _meth_849C( var_1, var_2 );
+    level.player notifyonplayercommandremove( var_1, var_2 );
 
     if ( isdefined( var_3 ) )
-        level.player _meth_849C( var_1, var_3 );
+        level.player notifyonplayercommandremove( var_1, var_3 );
 }
 
 hint_button_create_flashing( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -1075,7 +1075,7 @@ hint_button_create_flashing( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7 = common_scripts\utility::spawn_tag_origin();
     var_7.origin = self gettagorigin( var_0 );
     var_7.origin += var_3;
-    var_7 _meth_804D( self, var_0 );
+    var_7 linkto( self, var_0 );
     var_1 = var_7 hint_button_create( var_1, "TAG_ORIGIN", var_4, var_5, 1, 1 );
 
     if ( isdefined( var_6 ) )
@@ -1115,7 +1115,7 @@ play_videolog( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 
     var_10 = var_9[var_1];
     var_11 = getdvarint( "cg_cinematicfullscreen" );
-    _func_0D3( "cg_cinematicfullscreen", 0 );
+    setsaveddvar( "cg_cinematicfullscreen", 0 );
     var_12 = [];
 
     if ( isdefined( var_8 ) )
@@ -1138,17 +1138,17 @@ play_videolog( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( !isdefined( var_7 ) )
         var_7 = level._snd.default_vid_log_vol;
 
-    _func_057( var_0, 0, var_7, 1 );
+    cinematicingame( var_0, 0, var_7, 1 );
 
-    while ( !_func_05B() )
+    while ( !iscinematicplaying() )
         waitframe();
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         waitframe();
 
     setomnvar( "ui_videolog", 0 );
     setomnvar( "ui_videolog_blendfunc", var_13 );
-    _func_0D3( "cg_cinematicfullscreen", var_11 );
+    setsaveddvar( "cg_cinematicfullscreen", var_11 );
 
     if ( isdefined( var_8 ) )
     {
@@ -1161,27 +1161,27 @@ play_videolog( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 
 stop_videolog()
 {
-    if ( _func_05B() )
-        _func_05C();
+    if ( iscinematicplaying() )
+        stopcinematicingame();
 }
 
 play_chyron_video( var_0, var_1, var_2 )
 {
     common_scripts\utility::flag_init( "chyron_video_done" );
     var_3 = newclienthudelem( level.player );
-    var_3 _meth_80CC( "black", 1280, 720 );
+    var_3 setshader( "black", 1280, 720 );
     var_3.horzalign = "fullscreen";
     var_3.vertalign = "fullscreen";
     var_3.alpha = 1;
     var_3.foreground = 0;
-    _func_057( var_0 );
+    cinematicingame( var_0 );
     var_4 = getdvarint( "cg_cinematicCanPause", 0 );
-    _func_0D3( "cg_cinematicCanPause", 1 );
+    setsaveddvar( "cg_cinematicCanPause", 1 );
 
-    while ( !_func_05B() )
+    while ( !iscinematicplaying() )
         waitframe();
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         waitframe();
 
     common_scripts\utility::flag_set( "chyron_video_done" );
@@ -1196,7 +1196,7 @@ play_chyron_video( var_0, var_1, var_2 )
         wait(var_2);
     }
 
-    _func_0D3( "cg_cinematicCanPause", var_4 );
+    setsaveddvar( "cg_cinematicCanPause", var_4 );
     var_3 destroy();
 }
 
@@ -1205,7 +1205,7 @@ point_in_angle_of_crosshairs( var_0, var_1, var_2 )
     if ( !isdefined( var_2 ) )
         var_2 = level.player;
 
-    return vectordot( vectornormalize( var_0 - var_2 _meth_80A8() ), anglestoforward( var_2 getangles() ) ) > cos( var_1 );
+    return vectordot( vectornormalize( var_0 - var_2 geteye() ), anglestoforward( var_2 getangles() ) ) > cos( var_1 );
 }
 
 entity_is_in_circle( var_0, var_1, var_2, var_3 )

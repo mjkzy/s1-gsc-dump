@@ -26,33 +26,6 @@ main()
     level.dronelightset = "mp_terrace_drone";
     level.warbirdvisionset = "mp_terrace_warbird";
     level.warbirdlightset = "mp_terrace_warbird";
-    terracefixup();
-    level thread terracedisconnectnodes();
-}
-
-terracefixup()
-{
-    var_0 = spawn( "trigger_radius", ( -1016, 3232, -416 ), 0, 300, 128 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1224, 3136, -488 ), 0, 300, 128 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1360, 3000, -536 ), 0, 300, 128 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1472, 2848, -800 ), 0, 300, 328 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1672, 2624, -824 ), 0, 300, 328 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1736, 2296, -696 ), 0, 300, 128 );
-    var_0.targetname = "out_of_bounds";
-    var_0 = spawn( "trigger_radius", ( -1944, 2032, -712 ), 0, 300, 128 );
-    var_0.targetname = "out_of_bounds";
-}
-
-terracedisconnectnodes()
-{
-    var_0 = getnodesinradiussorted( ( -899.981, 2463.71, -40 ), 256, 0 )[0];
-    var_1 = getnodesinradiussorted( ( -914.081, 2867.46, -288 ), 256, 0 )[0];
-    disconnectnodepair( var_0, var_1 );
 }
 
 terracecustomospfunc()
@@ -87,7 +60,7 @@ turbine_spin()
 
     for (;;)
     {
-        self _meth_82BD( ( 0, var_1, 0 ), var_0 );
+        self rotatevelocity( ( 0, var_1, 0 ), var_0 );
         wait(var_0);
     }
 }
@@ -110,8 +83,8 @@ blimp_run()
         if ( !isdefined( var_1 ) )
             return;
 
-        self _meth_82AE( var_1.origin, var_0, var_0 * 0.1, var_0 * 0.1 );
-        self _meth_82B5( var_1.angles, var_0, var_0 * 0.1, var_0 * 0.1 );
+        self moveto( var_1.origin, var_0, var_0 * 0.1, var_0 * 0.1 );
+        self rotateto( var_1.angles, var_0, var_0 * 0.1, var_0 * 0.1 );
         wait(var_0);
     }
 }
@@ -124,8 +97,8 @@ init_bells()
 
 bell_run()
 {
-    self _meth_82C0( 1 );
-    self _meth_8510();
+    self setcandamage( 1 );
+    self ghost();
 
     for (;;)
     {

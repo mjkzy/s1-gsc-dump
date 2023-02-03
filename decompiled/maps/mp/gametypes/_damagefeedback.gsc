@@ -87,9 +87,9 @@ setdamagefeedbackclientomnvar( var_0 )
     else
         var_2 = 0;
 
-    if ( var_1 - var_2 < 300 && self _meth_8447( "damage_feedback" ) == var_0 )
+    if ( var_1 - var_2 < 300 && self getclientomnvar( "damage_feedback" ) == var_0 )
         return;
 
     self.damagefeedbacktime = var_1;
-    self _meth_82FB( "damage_feedback", var_0 );
+    self setclientomnvar( "damage_feedback", var_0 );
 }

@@ -33,7 +33,7 @@ mutatoracid()
     self.acidpools = 0;
     maps\mp\zombies\_util::zombie_set_eyes( "mut_acid_eye" );
     maps\mp\zombies\_mutators::torso_effects_apply( "mut_acid" );
-    self _meth_8075( "zmb_mut_acid_drip_loop" );
+    self playloopsound( "zmb_mut_acid_drip_loop" );
     thread mutatoraciddotzonespawner();
     self waittill( "death" );
     level.activeacidzombies--;
@@ -60,7 +60,7 @@ mutatoraciddotzonespawner()
 
         self.acidpools++;
         var_1 = spawn( "script_model", var_0["position"] + ( 0, 0, 8 ) );
-        var_1 _meth_80B1( "tag_origin" );
+        var_1 setmodel( "tag_origin" );
         var_1.angles = vectortoangles( var_0["normal"] );
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "mut_acid_pool" ), var_1, "tag_origin" );
 
@@ -90,7 +90,7 @@ mutatoracidtriggerthink( var_0 )
         if ( isplayer( var_1 ) && !maps\mp\zombies\_util::isplayerinlaststand( var_1 ) )
         {
             var_1 thread mutatoracidplayereffects();
-            var_1 _meth_8051( clamp( 20 * level.wavecounter / 6, 20, 60 ), var_1.origin );
+            var_1 dodamage( clamp( 20 * level.wavecounter / 6, 20, 60 ), var_1.origin );
             var_1 playlocalsound( "zmb_mut_acid_damage" );
             wait 1;
         }
@@ -111,7 +111,7 @@ mutatoracidtriggerthink_cg( var_0 )
             if ( !maps\mp\zombies\_util::isplayerinlaststand( var_3 ) && distance( var_3.origin, var_0 ) < 48 )
             {
                 var_3 thread mutatoracidplayereffects();
-                var_3 _meth_8051( clamp( 20 * level.wavecounter / 6, 20, 60 ), var_3.origin );
+                var_3 dodamage( clamp( 20 * level.wavecounter / 6, 20, 60 ), var_3.origin );
                 var_3 playlocalsound( "zmb_mut_acid_damage" );
                 var_1 += 0.8;
                 wait 0.8;
@@ -129,7 +129,7 @@ mutatoracidplayereffects()
     self endon( "death" );
     self notify( "remove_acid_debuff" );
     self endon( "remove_acid_debuff" );
-    self _meth_8304( 0 );
+    self allowsprint( 0 );
 
     foreach ( var_1 in level.acidscreenoverlayshaders )
         thread mutatoracidoverlay( var_1 );
@@ -137,7 +137,7 @@ mutatoracidplayereffects()
     wait 1.25;
 
     if ( !maps\mp\zombies\_util::isplayerinlaststand( self ) )
-        self _meth_8304( 1 );
+        self allowsprint( 1 );
 
     self notify( "remove_acid_overlay" );
 }
@@ -172,7 +172,7 @@ mutatoracidoverlay( var_0 )
     var_1.aligny = "top";
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
-    var_1 _meth_80CC( "screen_blood_directional_" + var_0 + "_yellow", 640, 480 );
+    var_1 setshader( "screen_blood_directional_" + var_0 + "_yellow", 640, 480 );
     var_1.sort = -10;
     var_1.archived = 1;
     var_1.hidein3rdperson = 1;

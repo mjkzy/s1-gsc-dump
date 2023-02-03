@@ -4,8 +4,8 @@
 irons_estate_stealth_setup()
 {
     setdvarifuninitialized( "irons_stealth_lose_interest_time", 45 );
-    _func_0D3( "ai_threatSightDelayRateMax", 0.1 );
-    _func_0D3( "ai_threatSightDelayRateMin", 0.3 );
+    setsaveddvar( "ai_threatSightDelayRateMax", 0.1 );
+    setsaveddvar( "ai_threatSightDelayRateMin", 0.3 );
     maps\_stealth_utility::stealth_set_default_stealth_function( "irons_estate_stealth_custom", ::irons_estate_stealth_custom );
     irons_estate_stealth_settings_normal();
     thread player_broke_stealth();
@@ -22,7 +22,7 @@ irons_estate_stealth_setup()
 
 irons_estate_collect_corpse_override()
 {
-    var_0 = _func_0D9();
+    var_0 = getcorpsearray();
     var_1 = [];
 
     foreach ( var_3 in var_0 )
@@ -173,7 +173,7 @@ irons_estate_enemy_state_hidden()
         return;
 
     self.diequietly = 1;
-    self _meth_8166();
+    self clearenemy();
 }
 
 irons_estate_enemy_state_spotted( var_0 )
@@ -217,7 +217,7 @@ irons_estate_enemy_state_spotted( var_0 )
         var_1 = level._stealth.group.spotted_enemy[self.script_stealthgroup];
 
         if ( isdefined( var_1 ) )
-            self _meth_8165( var_1 );
+            self getenemyinfo( var_1 );
     }
 }
 
@@ -503,7 +503,7 @@ do_nothing()
 
 witness_kill_valid( var_0 )
 {
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     var_2 = anglestoforward( self.angles );
 
     if ( isai( self ) )
@@ -534,9 +534,9 @@ ai_ignore_foliage_for_time( var_0 )
     self notify( "ai_ignore_foliage_for_time" );
     self endon( "ai_ignore_foliage_for_time" );
     self endon( "death" );
-    _func_0D3( "ai_foliageSeeThroughDist", 10000.0 );
+    setsaveddvar( "ai_foliageSeeThroughDist", 10000.0 );
     wait(var_0);
-    _func_0D3( "ai_foliageSeeThroughDist", 128.0 );
+    setsaveddvar( "ai_foliageSeeThroughDist", 128.0 );
 }
 
 enemy_know_player_for_time( var_0 )
@@ -547,7 +547,7 @@ enemy_know_player_for_time( var_0 )
 
     while ( var_0 >= 0 )
     {
-        self _meth_8165( level.player );
+        self getenemyinfo( level.player );
         var_0 -= 0.05;
         wait 0.05;
     }
@@ -689,11 +689,11 @@ irons_estate_threat_search()
 
     while ( isdefined( self ) && isdefined( self.enemy ) && maps\_utility::ent_flag( "_stealth_enabled" ) )
     {
-        var_0 = gettime() - self _meth_81C0( self.enemy );
+        var_0 = gettime() - self lastknowntime( self.enemy );
 
         if ( var_0 > getdvarfloat( "irons_stealth_lose_interest_time" ) * 1000 )
         {
-            self _meth_8166();
+            self clearenemy();
             return;
         }
 
@@ -709,8 +709,8 @@ irons_estate_stealth_ai_status_thread()
 
     for (;;)
     {
-        var_0 = self _meth_84DF( level.player );
-        var_1 = self _meth_81BE( level.player );
+        var_0 = self getthreatsightdelay( level.player );
+        var_1 = self cansee( level.player );
 
         if ( !var_1 && self.alertlevel != "combat" && !self.ignoreall )
         {
@@ -718,7 +718,7 @@ irons_estate_stealth_ai_status_thread()
 
             if ( var_1 )
             {
-                self _meth_8165( level.player );
+                self getenemyinfo( level.player );
                 maps\_stealth_threat_enemy::enemy_alert_level_change( "attack" );
             }
         }
@@ -737,9 +737,9 @@ irons_estate_close_awareness_check( var_0, var_1, var_2 )
     var_3 = var_0.origin;
 
     if ( isai( var_0 ) || isplayer( var_0 ) )
-        var_3 = var_0 _meth_80A8();
+        var_3 = var_0 geteye();
 
-    var_4 = self _meth_80A8();
+    var_4 = self geteye();
     var_5 = var_3 - var_4;
     var_6 = lengthsquared( var_5 );
 
@@ -792,7 +792,7 @@ irons_estate_enemy_go_back()
 
     if ( isdefined( self.custommovetransition ) && isdefined( self.pathgoalpos ) )
     {
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         wait 0.05;
     }
 
@@ -834,7 +834,7 @@ irons_estate_enemy_go_back()
 
         self.disablearrivals = 1;
         self.disableexits = 1;
-        self _meth_81A6( var_0 );
+        self setgoalpos( var_0 );
         self.goalradius = 40;
     }
 
@@ -893,11 +893,11 @@ irons_estate_enemy_warning1_behavior()
         return;
 
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-    self _meth_81A6( var_3 );
+    self setgoalpos( var_3 );
     self.goalradius = 64;
     common_scripts\utility::waittill_notify_or_timeout( "goal", 2 );
 
-    if ( !self _meth_815F( self.origin ) )
+    if ( !self isingoal( self.origin ) )
         self.shootposoverride = var_3 + ( 0, 0, 64 );
 
     maps\_stealth_threat_enemy::enemy_lookaround_for_time( 10 );
@@ -925,7 +925,7 @@ irons_estate_enemy_warning2_behavior()
     var_0 = self.enemy.origin;
     var_1 = distance( var_0, self.origin );
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-    self _meth_81A6( var_0 );
+    self setgoalpos( var_0 );
     self.goalradius = var_1 * 0.5;
     var_2 = common_scripts\utility::waittill_any_timeout( 4.0, "goal", "bad_path" );
 
@@ -947,7 +947,7 @@ irons_estate_enemy_warning2_behavior()
         maps\_utility::set_dog_walk_anim();
     }
 
-    self _meth_81A6( var_0 );
+    self setgoalpos( var_0 );
     self.goalradius = 64;
     self.disablearrivals = 1;
     self.disableexits = 1;
@@ -994,7 +994,7 @@ irons_estate_enemy_close_in_on_target()
 
     while ( isdefined( self.enemy ) && maps\_utility::ent_flag( "_stealth_enabled" ) )
     {
-        self _meth_81A6( self.enemy.origin );
+        self setgoalpos( self.enemy.origin );
         wait(randomfloatrange( 4.0, 8.0 ));
 
         if ( isdefined( self.script_stealth_dontseek ) && self.script_stealth_dontseek == 1 )
@@ -1139,9 +1139,9 @@ player_shadow_monitor()
     for (;;)
     {
         if ( !isdefined( self.ent_flag["_stealth_in_shadow"] ) || !self.ent_flag["_stealth_in_shadow"] )
-            _func_0D3( "ai_threatSightDelayRateMin", var_0 );
+            setsaveddvar( "ai_threatSightDelayRateMin", var_0 );
         else
-            _func_0D3( "ai_threatSightDelayRateMin", var_0 * 0.5 );
+            setsaveddvar( "ai_threatSightDelayRateMin", var_0 * 0.5 );
 
         wait 0.25;
     }
@@ -1207,15 +1207,15 @@ irons_estate_whistle( var_0 )
         if ( level.start_point == "briefing" || level.start_point == "intro" || level.start_point == "grapple" || level.start_point == "recon" || level.start_point == "infil" )
             common_scripts\utility::flag_wait_any( "player_concealed", "player_skipping_concealed_kill_tutorial", "concealed_kill_spawner_dead" );
 
-        level.player _meth_821B( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle" );
+        level.player setweaponhudiconoverride( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle" );
         var_1 = [];
         var_1[var_1.size] = "irons_whistle";
-        level.player _meth_82DD( "whistle", "+actionslot " + level.action_slot_whistle );
+        level.player notifyonplayercommand( "whistle", "+actionslot " + level.action_slot_whistle );
     }
     else
     {
-        level.player _meth_821B( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle_off" );
-        level.player _meth_849C( "whistle", "+actionslot " + level.action_slot_whistle );
+        level.player setweaponhudiconoverride( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle_off" );
+        level.player notifyonplayercommandremove( "whistle", "+actionslot " + level.action_slot_whistle );
         return;
     }
 
@@ -1233,7 +1233,7 @@ irons_estate_whistle( var_0 )
 
             level.player playsound( common_scripts\utility::random( var_1 ), "whistle_done" );
             wait 0.25;
-            var_2 = _func_0D6( "axis" );
+            var_2 = getaiarray( "axis" );
 
             foreach ( var_4 in var_2 )
             {
@@ -1248,7 +1248,7 @@ irons_estate_whistle( var_0 )
             {
                 foreach ( var_4 in var_2 )
                 {
-                    if ( common_scripts\utility::within_fov( level.player _meth_80A8(), level.player getangles(), var_4 _meth_80A8(), cos( 45 ) ) )
+                    if ( common_scripts\utility::within_fov( level.player geteye(), level.player getangles(), var_4 geteye(), cos( 45 ) ) )
                     {
                         var_4 notify( "whistle", level.player.origin );
                         break;
@@ -1268,9 +1268,9 @@ irons_estate_jump_monitor()
     self notify( "irons_estate_jump_monitor" );
     self endon( "irons_estate_jump_monitor" );
     self endon( "death" );
-    childthread irons_estate_call_notify( ::_meth_83B4, "boost_jump_player" );
-    childthread irons_estate_call_notify( ::_meth_851F, "boost_dodge_player" );
-    childthread irons_estate_call_notify( ::_meth_8520, "boost_slide_player" );
+    childthread irons_estate_call_notify( ::ishighjumping, "boost_jump_player" );
+    childthread irons_estate_call_notify( ::isdodging, "boost_dodge_player" );
+    childthread irons_estate_call_notify( ::ispowersliding, "boost_slide_player" );
 
     for (;;)
     {
@@ -1280,7 +1280,7 @@ irons_estate_jump_monitor()
         if ( var_0 != "boost_jump_player" )
             var_1 = 300;
 
-        var_2 = _func_0D6( "axis", "neutral" );
+        var_2 = getaiarray( "axis", "neutral" );
         var_2 = common_scripts\utility::get_array_of_closest( self.origin, var_2, undefined, undefined, var_1, undefined );
         var_2 = maps\_utility::array_removedead_or_dying( var_2 );
 
@@ -1388,8 +1388,8 @@ irons_estate_stealth_anims()
 irons_estate_patrol_resume_move_start_func()
 {
     self endon( "enemy" );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face current" );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face current" );
     maps\_patrol::stand_up_if_necessary();
 
     if ( isdefined( self.script_animation ) )
@@ -1402,7 +1402,7 @@ irons_estate_patrol_resume_move_start_func()
 
     if ( isdefined( var_1 ) )
     {
-        self _meth_8110( "radio", var_1, %root, 1 );
+        self setflaggedanimknoballrestart( "radio", var_1, %root, 1 );
         animscripts\shared::donotetracks( "radio" );
     }
 

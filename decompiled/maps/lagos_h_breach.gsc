@@ -32,8 +32,8 @@ startharmonicbreach( var_0 )
 
 precacheharmonicbreachitems()
 {
-    precacheitem( "ak47" );
-    precacheitem( "glock" );
+    precacheshellshock( "ak47" );
+    precacheshellshock( "glock" );
     precachemodel( "viewhands_sentinel" );
     precacheshader( "nightvision_overlay_goggles" );
     precacheshader( "line_vertical" );
@@ -129,7 +129,7 @@ swapwalldelayed()
     level.xraywall_static = getentarray( "xraywall_static", "targetname" );
     level.xraywall_on = getentarray( "xraywall_on", "targetname" );
     common_scripts\utility::array_call( level.xraywall_static, ::hide );
-    common_scripts\utility::array_call( level.xraywall_static, ::_meth_82BF );
+    common_scripts\utility::array_call( level.xraywall_static, ::notsolid );
     common_scripts\utility::array_call( level.xraywall_on, ::show );
 }
 
@@ -161,7 +161,7 @@ initdistortionfx()
         var_12 = 3;
     }
 
-    var_10 _meth_83A6( 2, var_12, var_11, 2, 1 );
+    var_10 setharmonicbreach( 2, var_12, var_11, 2, 1 );
     maps\_player_exo::setharmonicbreachhudoutlinestyle();
     level waittill( "BreachComplete" );
 
@@ -184,19 +184,19 @@ initplayerforharmonicbreach()
     level.kva = [];
     level.hostages = [];
     level.breachtargets = [];
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.5 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.5 );
     level.player.primaryweapon = "iw5_bal27_sp_variablereddot";
     thread playerhbreachwristequipment();
-    level.player _meth_831D();
-    level.player _meth_8301( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8321();
+    level.player disableweapons();
+    level.player allowjump( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player disableweaponswitch();
     thread hostagemarktargetstext();
-    level.player _meth_82DD( "MarkTarget", "+attack" );
-    level.player _meth_82DD( "MarkTarget", "+attack_akimbo_accessible" );
+    level.player notifyonplayercommand( "MarkTarget", "+attack" );
+    level.player notifyonplayercommand( "MarkTarget", "+attack_akimbo_accessible" );
     level.player thread tracelocation();
     level.player thread restoreplayeractions();
 }
@@ -204,11 +204,11 @@ initplayerforharmonicbreach()
 restoreplayeractions()
 {
     level waittill( "BreachComplete" );
-    level.player _meth_8301( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8322();
-    level.player _meth_8320();
+    level.player allowjump( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
 }
 
 initallysquad( var_0 )
@@ -345,7 +345,7 @@ deathcleanup()
     level endon( "BreachComplete" );
     level endon( "BreachFailed" );
     self waittill( "death" );
-    self _meth_83FB();
+    self hudoutlinedisable();
 
     if ( maps\_utility::is_in_array( level.breachtargets, self ) )
         level.breachtargets = common_scripts\utility::array_remove( level.breachtargets, self );
@@ -357,7 +357,7 @@ hostagepm()
 {
     var_0 = getent( "anim_org_drone_opening", "targetname" );
     level.kva_hostage_leader = maps\_utility::spawn_targetname( "kva_hostage_leader_post_pcap" );
-    level.kva_hostage_leader _meth_84ED( "disable" );
+    level.kva_hostage_leader setthreatdetection( "disable" );
     level.kva = common_scripts\utility::array_add( level.kva, level.kva_hostage_leader );
     level.kva_hostage_leader.animname = "kva_hostage_leader";
     level.kva_hostage_leader.maxhealth = 1;
@@ -384,7 +384,7 @@ hostagebeatup()
 {
     var_0 = getent( "anim_org_drone_opening", "targetname" );
     level.kva_guard_beatup = maps\_utility::spawn_targetname( "kva_guard_beatup" );
-    level.kva_guard_beatup _meth_84ED( "disable" );
+    level.kva_guard_beatup setthreatdetection( "disable" );
     level.kva = common_scripts\utility::array_add( level.kva, level.kva_guard_beatup );
     level.kva_guard_beatup.animname = "kva_guard_beatup";
     level.kva_guard_beatup maps\_utility::gun_remove();
@@ -408,7 +408,7 @@ hostagecorner()
 {
     var_0 = getent( "anim_org_drone_opening", "targetname" );
     level.kva_pm_guard = maps\_utility::spawn_targetname( "kva_pm_guard" );
-    level.kva_pm_guard _meth_84ED( "disable" );
+    level.kva_pm_guard setthreatdetection( "disable" );
     level.kva = common_scripts\utility::array_add( level.kva, level.kva_pm_guard );
     level.kva_pm_guard.animname = "kva_pm_guard";
     level.kva_pm_guard.maxhealth = 1;
@@ -427,7 +427,7 @@ hostageexecution()
     level endon( "BreachComplete" );
     level endon( "BreachFailed" );
     level.kva_guard_corner = maps\_utility::spawn_targetname( "kva_guard_corner" );
-    level.kva_guard_corner _meth_84ED( "disable" );
+    level.kva_guard_corner setthreatdetection( "disable" );
     level.kva_guard_corner endon( "death" );
     level.kva_guard_corner.animname = "kva_guard_corner";
     level.kva_guard_corner.battlechatter = 0;
@@ -507,7 +507,7 @@ tracelocation()
 
     for (;;)
     {
-        var_0 = self _meth_80A8();
+        var_0 = self geteye();
         var_1 = self getangles();
         var_2 = anglestoforward( var_1 );
         var_3 = var_0 + var_2 * 250000;
@@ -538,7 +538,7 @@ activetarget()
     if ( self.targetmarked == 0 )
     {
         soundscripts\_snd::snd_message( "hb_highlight_enable" );
-        self _meth_83FA( 3, 1 );
+        self hudoutlineenable( 3, 1 );
     }
 
     waittill_either_differnt_senders( level.player, "TargetLostAll", self, "TargetLost" );
@@ -546,7 +546,7 @@ activetarget()
     if ( self.targetmarked == 0 )
     {
         soundscripts\_snd::snd_message( "hb_highlight_disable" );
-        self _meth_83FB();
+        self hudoutlinedisable();
     }
 }
 
@@ -593,7 +593,7 @@ tagtarget()
                 level.breachtargets = common_scripts\utility::array_add( level.breachtargets, self );
                 soundscripts\_snd::snd_message( "hb_target_tagged" );
                 self.targetmarked = 1;
-                self _meth_83FA( 1, 1 );
+                self hudoutlineenable( 1, 1 );
 
                 if ( self.script_noteworthy == "KVA" )
                     level notify( "check_target_confirm" );
@@ -606,7 +606,7 @@ tagtarget()
         {
             self.targetmarked = 0;
             soundscripts\_snd::snd_message( "hb_target_untagged" );
-            self _meth_83FA( 3, 1 );
+            self hudoutlineenable( 3, 1 );
             level.breachtargets = common_scripts\utility::array_remove( level.breachtargets, self );
         }
 
@@ -655,9 +655,9 @@ locktargets()
                 thread hostageclearmarklocktext();
                 level.bpm settext( "" );
                 level waittill( "arms_down" );
-                level.player _meth_831E();
-                level.player _meth_831F();
-                level.player _meth_8315( level.player.primaryweapon );
+                level.player enableweapons();
+                level.player disableoffhandweapons();
+                level.player switchtoweapon( level.player.primaryweapon );
                 level.player thread h_breach_bullet_decals();
                 return;
             }
@@ -719,7 +719,7 @@ breachtrigger()
         level notify( "HostageMonitorOff" );
         soundscripts\_snd::snd_message( "hb_sensor_flash_off" );
         common_scripts\utility::array_call( level.xraywall_static, ::show );
-        common_scripts\utility::array_call( level.xraywall_static, ::_meth_82BE );
+        common_scripts\utility::array_call( level.xraywall_static, ::solid );
         common_scripts\utility::array_call( level.xraywall_on, ::hide );
         level notify( "h_breach_wall_solid" );
         thread remove_h_breach_hostages();
@@ -851,8 +851,8 @@ breachfailstate()
     level waittill( "BreachFailed" );
     level notify( "DisableBreachTrigger" );
     thread togglebreachslomo();
-    level.player _meth_831D();
-    _func_0D3( "r_hudoutlineenable", 0 );
+    level.player disableweapons();
+    setsaveddvar( "r_hudoutlineenable", 0 );
     thread hostageclearmarklocktext();
     level.bpm settext( "" );
     common_scripts\utility::array_thread( level.hostages, ::teamswap, "allies" );
@@ -879,7 +879,7 @@ returnfilterednoteworthyarray( var_0 )
 stopscriptedanimations()
 {
     if ( isdefined( self ) && isalive( self ) )
-        self _meth_8141();
+        self stopanimscripted();
 }
 
 teamswap( var_0 )
@@ -920,7 +920,7 @@ playerhudelements()
 {
     var_0 = "remote_chopper_hud_target_hit";
     var_1 = newclienthudelem( level.player );
-    var_1 _meth_80CC( var_0, 32, 32 );
+    var_1 setshader( var_0, 32, 32 );
     var_1.x = 0;
     var_1.y = 0;
     var_1.alignx = "center";
@@ -936,7 +936,7 @@ playerhudelements()
 playerwristmodelanim()
 {
     var_0 = maps\_utility::spawn_anim_model( "player_hbreach_wrist", level.player.origin );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, -2 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, -2 ), ( 0, 0, 0 ), 1 );
     level.player thread maps\_anim::anim_single_solo( var_0, "h_breach_on" );
     level waittill( "LockTargets" );
     level.player maps\_anim::anim_set_rate_single( var_0, "h_breach_on", 1 );
@@ -978,7 +978,7 @@ h_breach_multi_sync_kills_timeout()
     foreach ( var_1 in level.kva )
     {
         if ( isalive( var_1 ) )
-            var_1 _meth_8052();
+            var_1 kill();
     }
 }
 
@@ -1007,9 +1007,9 @@ h_breach_multi_sync_kill_shooter( var_0, var_1 )
 
 h_breach_multi_sync_kill_player_god()
 {
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     level waittill( "player_god_off" );
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 }
 
 h_breach_bullet_decals()
@@ -1017,8 +1017,8 @@ h_breach_bullet_decals()
     self waittill( "weapon_fired" );
     var_0 = [];
     var_0[var_0.size] = spawnstruct();
-    var_1 = self _meth_80A8();
-    var_2 = self _meth_80A8() + anglestoforward( self _meth_8036() ) * 100;
+    var_1 = self geteye();
+    var_2 = self geteye() + anglestoforward( self getgunangles() ) * 100;
     var_0[0].start = var_1;
     var_0[0].end = var_2;
 

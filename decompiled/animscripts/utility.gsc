@@ -5,8 +5,8 @@
 
 initanimtree( var_0 )
 {
-    self _meth_8142( %body, 0.3 );
-    self _meth_814B( %body, 1, 0 );
+    self clearanim( %body, 0.3 );
+    self setanim( %body, 1, 0 );
 
     if ( var_0 != "pain" && var_0 != "death" )
         self.a.special = "none";
@@ -28,9 +28,9 @@ updateanimpose()
 
         if ( self.desired_anim_pose == "prone" )
         {
-            self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+            self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
             enterpronewrapper( 0.5 );
-            self _meth_8147( lookupanim( "default_prone", "straight_level" ), %body, 1, 0.1, 1 );
+            self setanimknoball( lookupanim( "default_prone", "straight_level" ), %body, 1, 0.1, 1 );
         }
     }
 
@@ -42,7 +42,7 @@ initialize( var_0 )
     if ( isdefined( self.longdeathstarting ) )
     {
         if ( var_0 != "pain" && var_0 != "death" )
-            self _meth_8052( self.origin );
+            self kill( self.origin );
 
         if ( var_0 != "pain" )
         {
@@ -52,7 +52,7 @@ initialize( var_0 )
     }
 
     if ( isdefined( self.a.mayonlydie ) && var_0 != "death" )
-        self _meth_8052( self.origin );
+        self kill( self.origin );
 
     if ( isdefined( self.a.postscriptfunc ) )
     {
@@ -152,7 +152,7 @@ getenemyeyepos()
         if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
             self.a.lastenemypos = animscripts\combat_utility::get_last_known_shoot_pos( self.enemy );
         else
-            self.a.lastenemypos = self.enemy _meth_8097();
+            self.a.lastenemypos = self.enemy getshootatpos();
 
         self.a.lastenemytime = gettime();
         return self.a.lastenemypos;
@@ -161,7 +161,7 @@ getenemyeyepos()
         return self.a.lastenemypos;
     else
     {
-        var_0 = self _meth_8097();
+        var_0 = self getshootatpos();
         var_0 += ( 196 * self.lookforward[0], 196 * self.lookforward[1], 196 * self.lookforward[2] );
         return var_0;
     }
@@ -355,9 +355,9 @@ geteyeyawtoorigin( var_0 )
 isstanceallowedwrapper( var_0 )
 {
     if ( isdefined( self.covernode ) )
-        return self.covernode _meth_8035( var_0 );
+        return self.covernode doesnodeallowstance( var_0 );
 
-    return self _meth_81CB( var_0 );
+    return self isstanceallowed( var_0 );
 }
 
 choosepose( var_0 )
@@ -412,7 +412,7 @@ getclaimednode()
 {
     var_0 = self.node;
 
-    if ( isdefined( var_0 ) && ( self _meth_8161( var_0 ) || isdefined( self.covernode ) && var_0 == self.covernode ) )
+    if ( isdefined( var_0 ) && ( self nearnode( var_0 ) || isdefined( self.covernode ) && var_0 == self.covernode ) )
         return var_0;
 
     return undefined;
@@ -540,7 +540,7 @@ playanim( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        self _meth_8110( "playAnim", var_0, %animscript_root, 1, 0.1, 1 );
+        self setflaggedanimknoballrestart( "playAnim", var_0, %animscript_root, 1, 0.1, 1 );
         var_1 = getanimlength( var_0 );
         var_1 = 3 * var_1 + 1;
         thread notifyaftertime( "time is up", "time is up", var_1 );
@@ -624,8 +624,8 @@ util_evaluateknownenemylocation()
     if ( !hasenemysightpos() )
         return 0;
 
-    var_0 = self _meth_81B8();
-    var_1 = self _meth_8097() - var_0;
+    var_0 = self getmuzzlepos();
+    var_1 = self getshootatpos() - var_0;
 
     if ( isdefined( self.ignoresightpos ) && isdefined( self.ignoreorigin ) )
     {
@@ -634,7 +634,7 @@ util_evaluateknownenemylocation()
     }
 
     self.ignoresightpos = undefined;
-    var_2 = self _meth_81BC( getenemysightpos(), var_1 );
+    var_2 = self canshoot( getenemysightpos(), var_1 );
 
     if ( !var_2 )
     {
@@ -741,7 +741,7 @@ shootenemywrapper_normal( var_0 )
     self.a.lastshoottime = gettime();
     maps\_gameskill::set_accuracy_based_on_situation();
     self notify( "shooting" );
-    self _meth_81E7( 1, undefined, var_0 );
+    self shoot( 1, undefined, var_0 );
 }
 
 shootenemywrapper_shootnotify( var_0 )
@@ -752,31 +752,31 @@ shootenemywrapper_shootnotify( var_0 )
 
 shootposwrapper( var_0, var_1 )
 {
-    var_2 = bulletspread( self _meth_81B8(), var_0, 4 );
+    var_2 = bulletspread( self getmuzzlepos(), var_0, 4 );
     self.a.lastshoottime = gettime();
 
     if ( !isdefined( var_1 ) )
         var_1 = 1;
 
     self notify( "shooting" );
-    self _meth_81E7( 1, var_2, var_1 );
+    self shoot( 1, var_2, var_1 );
 }
 
 throwgun()
 {
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0 _meth_80B1( "temp" );
+    var_0 setmodel( "temp" );
     var_0.origin = self gettagorigin( "tag_weapon_right" ) + ( 50, 50, 0 );
     var_0.angles = self gettagangles( "tag_weapon_right" );
     var_1 = anglestoright( var_0.angles );
     var_1 *= 15;
     var_2 = anglestoforward( var_0.angles );
     var_2 *= 15;
-    var_0 _meth_82B2( ( 0, 50, 150 ), 100 );
+    var_0 movegravity( ( 0, 50, 150 ), 100 );
     var_3 = "weapon_" + self.weapon;
     var_4 = spawn( var_3, var_0.origin );
     var_4.angles = self gettagangles( "tag_weapon_right" );
-    var_4 _meth_804D( var_0 );
+    var_4 linkto( var_0 );
     var_5 = var_0.origin;
 
     while ( isdefined( var_4 ) && isdefined( var_4.origin ) )
@@ -802,7 +802,7 @@ throwgun()
     }
 
     if ( isdefined( var_4 ) && isdefined( var_4.origin ) )
-        var_4 _meth_804F();
+        var_4 unlink();
 
     var_0 delete();
 }
@@ -865,7 +865,7 @@ issuppressedwrapper()
     if ( self.suppressionmeter <= self.suppressionthreshold )
         return 0;
 
-    return self _meth_81CD();
+    return self issuppressed();
 }
 
 isspaceai()
@@ -893,7 +893,7 @@ ispartiallysuppressedwrapper()
     if ( self.suppressionmeter <= self.suppressionthreshold * 0.25 )
         return 0;
 
-    return self _meth_81CD();
+    return self issuppressed();
 }
 
 getnodeoffset( var_0, var_1 )
@@ -924,7 +924,7 @@ getnodeoffset( var_0, var_1 )
     {
         case "Cover Left":
         case "Cover Left 3D":
-            if ( var_0 _meth_8034() == "crouch" )
+            if ( var_0 gethighestnodestance() == "crouch" )
                 var_9 = calculatenodeoffset( var_10, var_11, var_2 );
             else
                 var_9 = calculatenodeoffset( var_10, var_11, var_3 );
@@ -932,7 +932,7 @@ getnodeoffset( var_0, var_1 )
             break;
         case "Cover Right":
         case "Cover Right 3D":
-            if ( var_0 _meth_8034() == "crouch" )
+            if ( var_0 gethighestnodestance() == "crouch" )
                 var_9 = calculatenodeoffset( var_10, var_11, var_4 );
             else
                 var_9 = calculatenodeoffset( var_10, var_11, var_5 );
@@ -961,7 +961,7 @@ calculatenodeoffset( var_0, var_1, var_2 )
 
 recentlysawenemy()
 {
-    return isdefined( self.enemy ) && self _meth_81BF( self.enemy, 5 );
+    return isdefined( self.enemy ) && self seerecently( self.enemy, 5 );
 }
 
 canseeenemy( var_0 )
@@ -974,12 +974,12 @@ canseeenemy( var_0 )
         if ( isdefined( self.enemy_who_surprised_me ) && self.enemy_who_surprised_me == self.enemy )
             return 1;
         else
-            return self _meth_81BE( self.enemy );
+            return self cansee( self.enemy );
     }
 
-    if ( isdefined( var_0 ) && self _meth_81BE( self.enemy, var_0 ) || self _meth_81BE( self.enemy ) )
+    if ( isdefined( var_0 ) && self cansee( self.enemy, var_0 ) || self cansee( self.enemy ) )
     {
-        if ( !checkpitchvisibility( self _meth_80A8(), self.enemy _meth_8097() ) )
+        if ( !checkpitchvisibility( self geteye(), self.enemy getshootatpos() ) )
             return 0;
 
         self.goodshootpos = getenemyeyepos();
@@ -1001,7 +1001,7 @@ canseeenemyfromexposed()
     var_0 = getenemyeyepos();
 
     if ( !isdefined( self.node ) )
-        var_1 = self _meth_81BE( self.enemy );
+        var_1 = self cansee( self.enemy );
     else
         var_1 = canseepointfromexposedatnode( var_0, self.node );
 
@@ -1138,7 +1138,7 @@ showlines( var_0, var_1, var_2 )
 
 aisuppressai()
 {
-    if ( !self _meth_819C() )
+    if ( !self canattackenemynode() )
         return 0;
 
     var_0 = undefined;
@@ -1151,14 +1151,14 @@ aisuppressai()
     else if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         var_0 = animscripts\combat_utility::get_last_known_shoot_pos( self.enemy );
     else
-        var_0 = self.enemy _meth_8097();
+        var_0 = self.enemy getshootatpos();
 
-    if ( !self _meth_81BC( var_0 ) )
+    if ( !self canshoot( var_0 ) )
         return 0;
 
     if ( self.script == "combat" )
     {
-        if ( !sighttracepassed( self _meth_80A8(), self _meth_81B8(), 0, undefined ) )
+        if ( !sighttracepassed( self geteye(), self getmuzzlepos(), 0, undefined ) )
             return 0;
     }
 
@@ -1189,7 +1189,7 @@ cansuppressenemyfromexposed()
         var_1 = self.node.origin + var_0;
     }
     else
-        var_1 = self _meth_81B8();
+        var_1 = self getmuzzlepos();
 
     if ( !checkpitchvisibility( var_1, self.lastenemysightpos ) )
         return 0;
@@ -1208,7 +1208,7 @@ cansuppressenemy()
     if ( !isplayer( self.enemy ) )
         return aisuppressai();
 
-    var_0 = self _meth_81B8();
+    var_0 = self getmuzzlepos();
 
     if ( !checkpitchvisibility( var_0, self.lastenemysightpos ) )
         return 0;
@@ -1237,13 +1237,13 @@ hassuppressableenemy()
 
 canseeandshootpoint( var_0 )
 {
-    if ( !sighttracepassed( self _meth_8097(), var_0, 0, undefined ) )
+    if ( !sighttracepassed( self getshootatpos(), var_0, 0, undefined ) )
         return 0;
 
     if ( self.a.weaponpos["right"] == "none" )
         return 0;
 
-    var_1 = self _meth_81B8();
+    var_1 = self getmuzzlepos();
     return sighttracepassed( var_1, var_0, 0, undefined );
 }
 
@@ -1266,7 +1266,7 @@ findgoodsuppressspot( var_0 )
         return 0;
     }
 
-    if ( !sighttracepassed( self _meth_8097(), var_0, 0, undefined ) )
+    if ( !sighttracepassed( self getshootatpos(), var_0, 0, undefined ) )
     {
         self.goodshootpos = undefined;
         return 0;
@@ -1533,7 +1533,7 @@ enterpronewrapperproc( var_0 )
     self endon( "death" );
     self notify( "anim_prone_change" );
     self endon( "anim_prone_change" );
-    self _meth_81F8( var_0, isdefined( self.a.onback ) );
+    self enterprone( var_0, isdefined( self.a.onback ) );
     self waittill( "killanimscript" );
 
     if ( self.a.pose != "prone" && !isdefined( self.a.onback ) )
@@ -1550,7 +1550,7 @@ exitpronewrapperproc( var_0 )
     self endon( "death" );
     self notify( "anim_prone_change" );
     self endon( "anim_prone_change" );
-    self _meth_81F9( var_0 );
+    self exitprone( var_0 );
     self waittill( "killanimscript" );
 
     if ( self.a.pose == "prone" )
@@ -1579,7 +1579,7 @@ canhitsuppressspot()
     if ( !hasenemysightpos() )
         return 0;
 
-    var_0 = self _meth_81B8();
+    var_0 = self getmuzzlepos();
     return sighttracepassed( var_0, getenemysightpos(), 0, undefined );
 }
 
@@ -1747,7 +1747,7 @@ aihasweapon( var_0 )
 getanimendpos( var_0 )
 {
     var_1 = getmovedelta( var_0, 0, 1 );
-    return self _meth_81B0( var_1 );
+    return self localtoworldcoords( var_1 );
 }
 
 damagelocationisany( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11 )
@@ -1901,8 +1901,8 @@ ragdolldeath( var_0 )
         if ( self.health == 1 )
         {
             self.a.nodeath = 1;
-            self _meth_8023();
-            self _meth_8142( var_0, 0.1 );
+            self startragdoll();
+            self clearanim( var_0, 0.1 );
             wait 0.05;
             physicsexplosionsphere( var_1, 600, 0, var_3 * 0.1 );
             self notify( "killanimscript" );
@@ -1957,7 +1957,7 @@ setalwaysusepistol( var_0 )
         self.custommoveanimset["run"] = lookupanimarray( "pistol_move" );
         self.custommoveanimset["walk"] = lookupanimarray( "pistol_move" );
         self.alwaysusepistol = 1;
-        self _meth_81CA( "stand" );
+        self allowedstances( "stand" );
         self.no_pistol_switch = 1;
         self.dontshootwhilemoving = 1;
         self.disablebulletwhizbyreaction = 1;
@@ -1967,7 +1967,7 @@ setalwaysusepistol( var_0 )
         self.custommoveanimset["run"] = undefined;
         self.custommoveanimset["walk"] = undefined;
         self.alwaysusepistol = undefined;
-        self _meth_81CA( "stand", "crouch", "prone" );
+        self allowedstances( "stand", "crouch", "prone" );
         self.no_pistol_switch = undefined;
         self.dontshootwhilemoving = undefined;
         self.disablebulletwhizbyreaction = undefined;
@@ -2161,7 +2161,7 @@ follow_enemy_with_laser( var_0, var_1 )
     else
         return;
 
-    if ( var_0 _meth_8442( "tag_flash" ) == -1 )
+    if ( var_0 gettagindex( "tag_flash" ) == -1 )
     {
         var_0.laser_follower = undefined;
         return;
@@ -2175,8 +2175,8 @@ follow_enemy_with_laser( var_0, var_1 )
         return;
     }
 
-    var_2 _meth_80B1( "tag_laser" );
-    var_2 _meth_80B2( var_1 );
+    var_2 setmodel( "tag_laser" );
+    var_2 laseron( var_1 );
     var_3 = cos( 10 );
     var_4 = 0.5;
 
@@ -2189,7 +2189,7 @@ follow_enemy_with_laser( var_0, var_1 )
         {
             var_2.origin = var_0 gettagorigin( "tag_flash" );
             var_5 = var_0 gettagangles( "tag_flash" );
-            var_6 = vectornormalize( var_0.enemy _meth_8097() - var_2.origin );
+            var_6 = vectornormalize( var_0.enemy getshootatpos() - var_2.origin );
             var_7 = anglestoforward( var_5 );
             var_8 = vectornormalize( var_6 );
             var_9 = vectortoangles( var_8 );
@@ -2197,18 +2197,18 @@ follow_enemy_with_laser( var_0, var_1 )
 
             if ( var_10 > var_3 )
             {
-                var_2 _meth_80B2( var_1 );
+                var_2 laseron( var_1 );
                 var_11 = vectortoangles( var_6 ) + ( randomfloatrange( -1 * var_4, var_4 ), randomfloatrange( -1 * var_4, var_4 ), randomfloatrange( -1 * var_4, var_4 ) );
                 var_2.angles = vectorlerp( var_2.angles, var_11, 0.15 );
             }
             else
-                var_2 _meth_80B3();
+                var_2 laseroff();
         }
 
         waitframe();
     }
 
-    var_2 _meth_80B3();
+    var_2 laseroff();
     var_2 delete();
 
     if ( isdefined( var_0 ) )

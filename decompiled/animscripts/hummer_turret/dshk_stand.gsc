@@ -5,7 +5,7 @@
 
 main()
 {
-    var_0 = self _meth_8194();
+    var_0 = self getturret();
     var_1 = get_death_anim();
     self.desired_anim_pose = "stand";
     animscripts\utility::updateanimpose();
@@ -49,7 +49,7 @@ get_death_anim()
 
 setup_turret_anims()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     self.passenger2turret_anime = %humvee_passenger_2_turret_minigun;
     self.turret2passenger_anime = %humvee_turret_2_passenger_minigun;
 }

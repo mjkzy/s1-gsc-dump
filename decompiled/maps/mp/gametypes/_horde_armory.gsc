@@ -17,14 +17,14 @@ armorythink()
     level endon( "armories_online" );
     level endon( "game_ended" );
     self makeusable();
-    self _meth_83FA( 5, 1 );
+    self hudoutlineenable( 5, 1 );
 
     foreach ( var_1 in self.monitors )
     {
         if ( self.script_parameters == "specops_ui_equipmentstore" && var_1.model == "mp_exo_upgrade_screen_01_glass" )
-            var_1 _meth_80B1( "mp_weapon_upgrade_screen_01_glass" );
+            var_1 setmodel( "mp_weapon_upgrade_screen_01_glass" );
 
-        var_1 _meth_83FA( 5, 1 );
+        var_1 hudoutlineenable( 5, 1 );
     }
 
     var_3 = &"HORDE_ARMORY_EXO";
@@ -36,7 +36,7 @@ armorythink()
         var_3 = &"HORDE_ARMORY_WEAPONS";
     }
 
-    self _meth_80DB( var_3 );
+    self sethintstring( var_3 );
 
     foreach ( var_6 in level.players )
         self.headicon = maps\mp\_entityheadicons::setheadicon( var_6, var_4, ( 0, 0, 48 ), 4, 4, undefined, undefined, 0, 1, undefined, 0 );
@@ -51,7 +51,7 @@ armorythink()
 
         if ( iscarryingturrethead( var_6 ) )
         {
-            var_6 iclientprintlnbold( &"HORDE_ARMORY_TURRET_DENIED" );
+            var_6 iprintlnbold( &"HORDE_ARMORY_TURRET_DENIED" );
             level thread armorypurchasefail( var_6 );
             continue;
         }
@@ -62,7 +62,7 @@ armorythink()
             continue;
         }
 
-        if ( var_6 _meth_84E0() || var_6 _meth_812C() || isdefined( var_6.changingweapon ) && ( var_6.changingweapon == var_6 _meth_831A() || var_6.changingweapon == var_6 _meth_8345() ) )
+        if ( var_6 isusingoffhand() || var_6 isthrowinggrenade() || isdefined( var_6.changingweapon ) && ( var_6.changingweapon == var_6 gettacticalweapon() || var_6.changingweapon == var_6 getlethalweapon() ) )
         {
             level thread armorypurchasefail( var_6 );
             continue;
@@ -70,21 +70,21 @@ armorythink()
 
         if ( !isdefined( level.empowner ) )
         {
-            var_6 _meth_82FB( "ui_horde_armory_type", self.script_noteworthy );
-            var_6 _meth_82FB( "ui_horde_show_armory", 1 );
+            var_6 setclientomnvar( "ui_horde_armory_type", self.script_noteworthy );
+            var_6 setclientomnvar( "ui_horde_show_armory", 1 );
             var_6.usingarmory = 1;
-            var_6 _meth_832A();
+            var_6 disableusability();
             var_6 notify( "exo_cloak_cancel" );
             continue;
         }
 
-        var_6 iclientprintlnbold( &"HORDE_ARMORY_OFFLINE" );
+        var_6 iprintlnbold( &"HORDE_ARMORY_OFFLINE" );
     }
 }
 
 iscarryingturrethead( var_0 )
 {
-    var_1 = var_0 _meth_8312();
+    var_1 = var_0 getcurrentprimaryweapon();
 
     if ( issubstr( var_1, "turret" ) )
         return 1;
@@ -105,10 +105,10 @@ hordedisablearmories()
             var_1.headicon destroy();
 
         maps\mp\_utility::_objective_delete( var_1.objectiveindex );
-        var_1 _meth_83FB();
+        var_1 hudoutlinedisable();
 
         foreach ( var_6 in var_1.monitors )
-            var_6 _meth_83FB();
+            var_6 hudoutlinedisable();
     }
 
     thread hordearmoryemptimeout();
@@ -134,9 +134,9 @@ closehordearmoryonoffhandweapon()
     {
         self waittill( "weapon_switch_started", var_0 );
 
-        if ( self _meth_8447( "ui_horde_show_armory" ) == 1 && ( var_0 == self _meth_831A() || var_0 == self _meth_8345() ) )
+        if ( self getclientomnvar( "ui_horde_show_armory" ) == 1 && ( var_0 == self gettacticalweapon() || var_0 == self getlethalweapon() ) )
         {
-            var_1 = self _meth_8447( "ui_horde_armory_type" );
+            var_1 = self getclientomnvar( "ui_horde_armory_type" );
 
             if ( var_1 != "killstreak_armory" && var_1 != "perk_armory" )
                 hordecleanuparmory( self );
@@ -213,7 +213,7 @@ monitorupgrades( var_0 )
         }
 
         var_0 playsoundtoplayer( "new_title_unlocks", var_0 );
-        var_0 _meth_82FB( "ui_horde_armory_purchase", var_2 );
+        var_0 setclientomnvar( "ui_horde_armory_purchase", var_2 );
 
         switch ( var_1 )
         {
@@ -223,7 +223,7 @@ monitorupgrades( var_0 )
                     var_0 notify( "horde_class_change" );
                     var_0.usingarmory = 0;
                     var_0.classselection = 0;
-                    var_7 = var_0 _meth_8447( "ui_horde_player_class" );
+                    var_7 = var_0 getclientomnvar( "ui_horde_player_class" );
                     maps\mp\gametypes\_horde_util::check_class_time( var_0 );
                     var_0.classdmgmod = var_0.classsettings[var_4]["classDmgMod"];
                     var_0.classmaxhealth = var_0.classsettings[var_4]["classhealth"];
@@ -233,43 +233,43 @@ monitorupgrades( var_0 )
                     var_0.movespeedscaler = var_0.classsettings[var_4]["speed"];
                     var_0 maps\mp\_utility::playerallowdodge( var_0.classsettings[var_4]["allowDodge"], "class" );
                     var_0 maps\mp\_utility::playerallowpowerslide( var_0.classsettings[var_4]["allowSlide"], "class" );
-                    var_9 = var_0 _meth_831A();
-                    var_0.classsettings[var_7]["battery"] = var_0 _meth_82F8( var_9 );
+                    var_9 = var_0 gettacticalweapon();
+                    var_0.classsettings[var_7]["battery"] = var_0 getweaponammoclip( var_9 );
 
                     if ( isdefined( var_7 ) && var_7 != "none" && isdefined( var_0.loadoutequipment ) )
                     {
-                        var_10 = var_0 _meth_8345();
+                        var_10 = var_0 getlethalweapon();
                         var_0.hordeclassweapons[var_7]["lethalStoredGrenade"] = var_10;
-                        var_0.hordeclassweapons[var_7]["lethalStoredGrenadeStock"] = var_0 _meth_82F9( var_10 );
+                        var_0.hordeclassweapons[var_7]["lethalStoredGrenadeStock"] = var_0 setweaponammostock( var_10 );
                     }
 
                     if ( isdefined( var_7 ) && var_7 != "none" && isdefined( var_0.hordeclassweapons[var_7]["primary"] ) )
                     {
-                        var_0.hordeclassweapons[var_7]["primaryStoredAmmoClip"] = var_0 _meth_82F8( var_0.hordeclassweapons[var_7]["primary"] );
-                        var_0.hordeclassweapons[var_7]["primaryStoredAmmoStock"] = var_0 _meth_82F9( var_0.hordeclassweapons[var_7]["primary"] );
+                        var_0.hordeclassweapons[var_7]["primaryStoredAmmoClip"] = var_0 getweaponammoclip( var_0.hordeclassweapons[var_7]["primary"] );
+                        var_0.hordeclassweapons[var_7]["primaryStoredAmmoStock"] = var_0 setweaponammostock( var_0.hordeclassweapons[var_7]["primary"] );
                     }
 
                     if ( isdefined( var_7 ) && var_7 != "none" && isdefined( var_0.hordeclassweapons[var_7]["secondary"] ) )
                     {
-                        var_0.hordeclassweapons[var_7]["secondaryStoredAmmoClip"] = var_0 _meth_82F8( var_0.hordeclassweapons[var_7]["secondary"] );
-                        var_0.hordeclassweapons[var_7]["secondaryStoredAmmoStock"] = var_0 _meth_82F9( var_0.hordeclassweapons[var_7]["secondary"] );
+                        var_0.hordeclassweapons[var_7]["secondaryStoredAmmoClip"] = var_0 getweaponammoclip( var_0.hordeclassweapons[var_7]["secondary"] );
+                        var_0.hordeclassweapons[var_7]["secondaryStoredAmmoStock"] = var_0 setweaponammostock( var_0.hordeclassweapons[var_7]["secondary"] );
                     }
 
-                    var_0 _meth_82FB( "ui_horde_player_class", var_4 );
+                    var_0 setclientomnvar( "ui_horde_player_class", var_4 );
                     hordegiveability( var_0, var_4 );
-                    var_11 = var_0 _meth_830C();
+                    var_11 = var_0 getweaponslistprimaries();
 
                     foreach ( var_13 in var_11 )
                     {
-                        if ( var_0 _meth_8447( "horde_first_spawn" ) == 1 )
+                        if ( var_0 getclientomnvar( "horde_first_spawn" ) == 1 )
                         {
                             if ( var_13 != var_0.hordeclassweapons[var_4]["primary"] )
-                                var_0 _meth_830F( var_13 );
+                                var_0 takeweapon( var_13 );
 
                             continue;
                         }
 
-                        var_0 _meth_830F( var_13 );
+                        var_0 takeweapon( var_13 );
                     }
 
                     var_0.isrunningweapongive = 1;
@@ -277,7 +277,7 @@ monitorupgrades( var_0 )
                     var_0 armorygiveexoability( var_0.classsettings[var_4]["exoAbility"], 1 );
                     wait 0.1;
 
-                    if ( var_0 _meth_8447( "horde_first_spawn" ) == 1 )
+                    if ( var_0 getclientomnvar( "horde_first_spawn" ) == 1 )
                         thread hordeclassrunfirstspawn( var_0 );
 
                     var_0.classswitchwaiting = 1;
@@ -289,23 +289,23 @@ monitorupgrades( var_0 )
                 var_0 armorygiveexoability( var_4 );
                 break;
             case "horde_equipment_upgrade":
-                var_15 = var_0 _meth_8345();
+                var_15 = var_0 getlethalweapon();
 
-                if ( var_4 != var_0 _meth_8345() )
+                if ( var_4 != var_0 getlethalweapon() )
                 {
-                    var_0 _meth_8344( var_4 );
-                    var_0 _meth_830E( var_4 );
-                    var_0 _meth_82F7( var_15, 0 );
-                    var_0 _meth_82F6( var_15, 0 );
+                    var_0 setlethalweapon( var_4 );
+                    var_0 giveweapon( var_4 );
+                    var_0 setweaponammostock( var_15, 0 );
+                    var_0 setweaponammoclip( var_15, 0 );
                 }
                 else
-                    var_0 _meth_82F6( var_4, 4 );
+                    var_0 setweaponammoclip( var_4, 4 );
 
                 break;
             case "horde_weapon_upgrade":
                 if ( !issubstr( var_4, "iw5" ) && !issubstr( var_4, "ammo" ) && !issubstr( var_4, "turrethead" ) )
                 {
-                    var_16 = var_0 _meth_8312();
+                    var_16 = var_0 getcurrentprimaryweapon();
 
                     if ( issubstr( var_4, "scopevz" ) )
                     {
@@ -327,13 +327,13 @@ monitorupgrades( var_0 )
                 }
                 else if ( issubstr( var_4, "ammo" ) )
                 {
-                    var_11 = var_0 _meth_830C();
+                    var_11 = var_0 getweaponslistprimaries();
 
                     foreach ( var_21 in var_11 )
                     {
                         var_22 = weaponclipsize( var_21 );
-                        var_0 _meth_82F6( var_21, var_22 );
-                        var_0 _meth_8332( var_21 );
+                        var_0 setweaponammoclip( var_21, var_22 );
+                        var_0 givemaxammo( var_21 );
                     }
                 }
                 else
@@ -364,13 +364,13 @@ monitorupgrades( var_0 )
                 {
                     case "horde_weapon_proficiency":
                         var_0.weaponproficiency++;
-                        var_0 _meth_82FB( var_4, var_0.weaponproficiency );
+                        var_0 setclientomnvar( var_4, var_0.weaponproficiency );
                         level thread hordeweaponlevel( var_0 );
                         maps\mp\gametypes\_horde_util::givegearformaxweaponproficiency( var_0 );
                         break;
                     case "horde_armor":
                         var_0.hordearmor++;
-                        var_0 _meth_82FB( var_4, var_0.hordearmor );
+                        var_0 setclientomnvar( var_4, var_0.hordearmor );
                         var_0.maxhealth = var_0.classmaxhealth + var_0.hordearmor * 40;
                         var_0.health = var_0.maxhealth;
                         maps\mp\gametypes\_horde_util::givegearformaxarmorproficiency( var_0 );
@@ -378,10 +378,10 @@ monitorupgrades( var_0 )
                     case "horde_exo_battery":
                         var_0.hordeexobattery += 1;
                         level thread hordebatterylevel( var_0 );
-                        var_0 _meth_82FB( var_4, var_0.hordeexobattery );
-                        var_9 = var_0 _meth_831A();
-                        var_0 _meth_84A4( var_9 );
-                        var_0 _meth_82FB( "ui_exo_battery_level0", var_0 _meth_84A5( var_9 ) );
+                        var_0 setclientomnvar( var_4, var_0.hordeexobattery );
+                        var_9 = var_0 gettacticalweapon();
+                        var_0 batteryfullrecharge( var_9 );
+                        var_0 setclientomnvar( "ui_exo_battery_level0", var_0 batterygetsize( var_9 ) );
                         break;
                 }
 
@@ -396,7 +396,7 @@ monitorupgrades( var_0 )
             if ( var_5 > 0 )
             {
                 var_0.armorypoints -= var_5;
-                var_0 _meth_82FB( "ui_horde_player_points", var_0.armorypoints );
+                var_0 setclientomnvar( "ui_horde_player_points", var_0.armorypoints );
             }
         }
 
@@ -416,7 +416,7 @@ horderesetarmory( var_0 )
 
         if ( var_2 == "horde_reset_armory" )
         {
-            var_0 _meth_82FB( "ui_horde_armory_type", "none" );
+            var_0 setclientomnvar( "ui_horde_armory_type", "none" );
 
             if ( var_3 == 2 )
                 hordecleanuparmory( var_0 );
@@ -426,8 +426,8 @@ horderesetarmory( var_0 )
 
         if ( var_2 == "ui_horde_secondary_index" )
         {
-            var_4 = var_0 _meth_830C();
-            var_5 = maps\mp\gametypes\_horde_util::hordegetweaponbasenamespecial( var_0 _meth_8312() );
+            var_4 = var_0 getweaponslistprimaries();
+            var_5 = maps\mp\gametypes\_horde_util::hordegetweaponbasenamespecial( var_0 getcurrentprimaryweapon() );
 
             foreach ( var_7 in var_4 )
             {
@@ -437,7 +437,7 @@ horderesetarmory( var_0 )
                     var_1 = int( tablelookup( "mp/hordeMenus.csv", 2, var_8, 0 ) );
             }
 
-            var_0 _meth_82FB( "ui_horde_secondary_index", var_1 );
+            var_0 setclientomnvar( "ui_horde_secondary_index", var_1 );
         }
     }
 }
@@ -447,10 +447,10 @@ hordecleanuparmory( var_0 )
     if ( isdefined( var_0.usingarmory ) )
     {
         var_0.usingarmory = undefined;
-        var_0 _meth_82FB( "ui_horde_show_armory", 0 );
+        var_0 setclientomnvar( "ui_horde_show_armory", 0 );
 
         if ( !maps\mp\gametypes\_horde_util::isplayerinlaststand( var_0 ) )
-            var_0 _meth_832B();
+            var_0 enableusability();
     }
 }
 
@@ -458,8 +458,8 @@ hordeclassrunfirstspawn( var_0 )
 {
     var_0.health = var_0.classmaxhealth;
     var_0.ignoreme = 0;
-    var_0 _meth_82FB( "horde_first_spawn", 0 );
-    var_0 _meth_82FB( "ui_horde_show_armory", 0 );
+    var_0 setclientomnvar( "horde_first_spawn", 0 );
+    var_0 setclientomnvar( "ui_horde_show_armory", 0 );
     var_0.classchosen = 1;
     var_0 hordeequipstartgrenade();
     level.noonespawnedyet = 0;
@@ -468,11 +468,11 @@ hordeclassrunfirstspawn( var_0 )
 hordeequipstartgrenade()
 {
     var_0 = 4;
-    var_1 = self _meth_8447( "ui_horde_player_class" );
+    var_1 = self getclientomnvar( "ui_horde_player_class" );
     var_2 = self.classsettings[var_1]["classGrenade"];
-    self _meth_8344( var_2 );
-    self _meth_82F6( var_2, var_0 );
-    self _meth_830E( var_2 );
+    self setlethalweapon( var_2 );
+    self setweaponammoclip( var_2, var_0 );
+    self giveweapon( var_2 );
 }
 
 hordegiveclassweapons( var_0, var_1, var_2 )
@@ -490,31 +490,31 @@ hordegiveclassweapons( var_0, var_1, var_2 )
 
     maps\mp\gametypes\_horde_util::trygivehordeweapon( var_0, var_0.hordeclassweapons[var_1]["secondary"], 1, 0, var_3, "secondary" );
 
-    if ( var_0 _meth_8447( "horde_first_spawn" ) == 0 || var_0 _meth_8447( "horde_first_spawn" ) == 1 && var_0.hordeclassweapons[var_1]["primary"] != "iw5_kf5_mp" )
+    if ( var_0 getclientomnvar( "horde_first_spawn" ) == 0 || var_0 getclientomnvar( "horde_first_spawn" ) == 1 && var_0.hordeclassweapons[var_1]["primary"] != "iw5_kf5_mp" )
         maps\mp\gametypes\_horde_util::trygivehordeweapon( var_0, var_0.hordeclassweapons[var_1]["primary"], 1, 1, var_4, "primary" );
 
     if ( isdefined( var_1 ) && ( isdefined( var_2 ) && var_2 != "none" ) )
     {
         if ( isdefined( var_0.hordeclassweapons[var_1]["primaryStoredAmmoClip"] ) )
-            var_0 _meth_82F6( var_0.hordeclassweapons[var_1]["primary"], var_0.hordeclassweapons[var_1]["primaryStoredAmmoClip"] );
+            var_0 setweaponammoclip( var_0.hordeclassweapons[var_1]["primary"], var_0.hordeclassweapons[var_1]["primaryStoredAmmoClip"] );
 
         if ( isdefined( var_0.hordeclassweapons[var_1]["primaryStoredAmmoStock"] ) )
-            var_0 _meth_82F7( var_0.hordeclassweapons[var_1]["primary"], var_0.hordeclassweapons[var_1]["primaryStoredAmmoStock"] );
+            var_0 setweaponammostock( var_0.hordeclassweapons[var_1]["primary"], var_0.hordeclassweapons[var_1]["primaryStoredAmmoStock"] );
 
         if ( isdefined( var_0.hordeclassweapons[var_1]["secondaryStoredAmmoClip"] ) )
-            var_0 _meth_82F6( var_0.hordeclassweapons[var_1]["secondary"], var_0.hordeclassweapons[var_1]["secondaryStoredAmmoClip"] );
+            var_0 setweaponammoclip( var_0.hordeclassweapons[var_1]["secondary"], var_0.hordeclassweapons[var_1]["secondaryStoredAmmoClip"] );
 
         if ( isdefined( var_0.hordeclassweapons[var_1]["secondaryStoredAmmoStock"] ) )
-            var_0 _meth_82F7( var_0.hordeclassweapons[var_1]["secondary"], var_0.hordeclassweapons[var_1]["secondaryStoredAmmoStock"] );
+            var_0 setweaponammostock( var_0.hordeclassweapons[var_1]["secondary"], var_0.hordeclassweapons[var_1]["secondaryStoredAmmoStock"] );
 
         if ( !isdefined( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"] ) )
             var_0 hordeequipstartgrenade();
         else
         {
-            var_0 _meth_8344( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"] );
-            var_0 _meth_830E( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"] );
-            var_0 _meth_82F7( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"], var_0.hordeclassweapons[var_1]["lethalStoredGrenadeStock"] );
-            var_0 _meth_82F6( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"], var_0.hordeclassweapons[var_1]["lethalStoredGrenadeStock"] );
+            var_0 setlethalweapon( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"] );
+            var_0 giveweapon( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"] );
+            var_0 setweaponammostock( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"], var_0.hordeclassweapons[var_1]["lethalStoredGrenadeStock"] );
+            var_0 setweaponammoclip( var_0.hordeclassweapons[var_1]["lethalStoredGrenade"], var_0.hordeclassweapons[var_1]["lethalStoredGrenadeStock"] );
         }
     }
 
@@ -540,14 +540,14 @@ addarmorypoints( var_0, var_1 )
 
     var_0.armorypoints += var_2;
     var_0.armorypoints = int( min( var_0.armorypoints, 999 ) );
-    var_0 _meth_82FB( "ui_horde_player_points", var_0.armorypoints );
+    var_0 setclientomnvar( "ui_horde_player_points", var_0.armorypoints );
     var_0.roundupgradepoints += var_2;
 }
 
 armorygiveexoability( var_0, var_1 )
 {
-    var_2 = self _meth_8447( "ui_horde_player_class" );
-    var_3 = self _meth_831A();
+    var_2 = self getclientomnvar( "ui_horde_player_class" );
+    var_3 = self gettacticalweapon();
 
     switch ( var_3 )
     {
@@ -572,7 +572,7 @@ armorygiveexoability( var_0, var_1 )
     }
 
     wait 0.05;
-    self _meth_8319( var_0 );
+    self settacticalweapon( var_0 );
 
     switch ( var_0 )
     {
@@ -600,11 +600,11 @@ armorygiveexoability( var_0, var_1 )
 
     if ( isdefined( var_1 ) && var_1 )
     {
-        self _meth_84A3( var_0, self.classsettings[var_2]["battery"] );
-        self _meth_82FB( "ui_exo_battery_level0", self.classsettings[var_2]["battery"] );
+        self batterysetcharge( var_0, self.classsettings[var_2]["battery"] );
+        self setclientomnvar( "ui_exo_battery_level0", self.classsettings[var_2]["battery"] );
     }
     else
-        self _meth_84A4( var_0 );
+        self batteryfullrecharge( var_0 );
 
     self.classsettings[var_2]["exoAbility"] = var_0;
     level thread hordebatterylevel( self );
@@ -625,12 +625,12 @@ hordeweaponlevel( var_0 )
     if ( var_0.weaponproficiency > var_1 )
         return;
 
-    var_2 = getweaponbasename( var_0 _meth_8312() );
+    var_2 = getweaponbasename( var_0 getcurrentprimaryweapon() );
 
     if ( isdefined( var_2 ) )
         var_2 = maps\mp\_utility::strip_suffix( var_2, "_mp" );
 
-    var_3 = var_0 _meth_830C();
+    var_3 = var_0 getweaponslistprimaries();
 
     foreach ( var_5 in var_3 )
     {
@@ -654,11 +654,11 @@ hordeweaponlevel( var_0 )
 hordebatterylevel( var_0 )
 {
     var_1 = -0.1;
-    var_0 _meth_84A6( "exocloakhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
-    var_0 _meth_84A6( "exoshieldhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
-    var_0 _meth_84A6( "exohoverhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
-    var_0 _meth_84A6( "exorepulsor_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
-    var_0 _meth_84A6( "extra_health_mp", 1 + var_0.hordeexobattery * var_1 );
+    var_0 batterysetdischargescale( "exocloakhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
+    var_0 batterysetdischargescale( "exoshieldhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
+    var_0 batterysetdischargescale( "exohoverhorde_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
+    var_0 batterysetdischargescale( "exorepulsor_equipment_mp", 1 + var_0.hordeexobattery * var_1 );
+    var_0 batterysetdischargescale( "extra_health_mp", 1 + var_0.hordeexobattery * var_1 );
 }
 
 hordegiveability( var_0, var_1 )
@@ -738,12 +738,12 @@ hordeabilityregenbar( var_0, var_1 )
     {
         wait 1;
         var_2 += 1 / var_1;
-        var_0 _meth_82FB( "ks_count1", var_2 );
-        var_0 _meth_82FB( "ks_count_updated", 1 );
+        var_0 setclientomnvar( "ks_count1", var_2 );
+        var_0 setclientomnvar( "ks_count_updated", 1 );
     }
 
-    var_0 _meth_82FB( "ks_count1", 0 );
-    var_0 _meth_82FB( "ks_count_updated", 1 );
+    var_0 setclientomnvar( "ks_count1", 0 );
+    var_0 setclientomnvar( "ks_count_updated", 1 );
     var_0.classabilityready = 1;
     var_3 = var_0 maps\mp\killstreaks\_killstreaks::getnexthordekillstreakslotindex( 1 );
     var_0 thread maps\mp\killstreaks\_killstreaks::givehordekillstreak( var_0.currentkillstreaks[1], self.owner, var_0.hordekillstreakmodules, 1, 1 );
@@ -801,7 +801,7 @@ hordeisinscorestreakmodules( var_0, var_1 )
 
 hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
 {
-    var_4 = var_0 _meth_8447( "ui_horde_armory_type" );
+    var_4 = var_0 getclientomnvar( "ui_horde_armory_type" );
 
     if ( var_0.classswitchwaiting )
         return 1;
@@ -809,10 +809,10 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
     if ( getdvarint( "horde_ignore_cost" ) == 1 )
         return 0;
 
-    var_5 = var_0 _meth_830C();
-    var_6 = var_0 _meth_8312();
-    var_7 = var_0 _meth_831A();
-    var_8 = var_0 _meth_8345();
+    var_5 = var_0 getweaponslistprimaries();
+    var_6 = var_0 getcurrentprimaryweapon();
+    var_7 = var_0 gettacticalweapon();
+    var_8 = var_0 getlethalweapon();
     var_9 = 9;
     var_10 = 9;
 
@@ -826,23 +826,23 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
     {
         if ( var_7 == var_2 )
         {
-            if ( var_0 _meth_8334( var_2 ) == 1 )
+            if ( var_0 getfractionmaxammo( var_2 ) == 1 )
             {
-                var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 6 );
+                var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 6 );
                 return 1;
             }
         }
         else if ( var_2 == var_8 )
         {
-            if ( var_0 _meth_8334( var_2 ) == 1 )
+            if ( var_0 getfractionmaxammo( var_2 ) == 1 )
             {
-                var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 5 );
+                var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 5 );
                 return 1;
             }
         }
         else
         {
-            var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 1 );
+            var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 1 );
             return 1;
         }
     }
@@ -851,26 +851,26 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
     {
         if ( var_2 == "horde_weapon_proficiency" && var_0.weaponproficiency > var_9 || var_2 == "horde_armor" && var_0.hordearmor > var_10 || var_2 == "horde_exo_battery" && var_0.hordeexobattery > 4 )
         {
-            var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 3 );
+            var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 3 );
             return 1;
         }
     }
 
     if ( var_3 > var_0.armorypoints )
     {
-        var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 0 );
+        var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 0 );
         return 1;
     }
 
-    if ( var_1 == "horde_exo_class" && var_0 _meth_8447( "ui_horde_player_class" ) == var_2 )
+    if ( var_1 == "horde_exo_class" && var_0 getclientomnvar( "ui_horde_player_class" ) == var_2 )
     {
-        var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 1 );
+        var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 1 );
         return 1;
     }
 
     if ( ( var_1 == "horde_exo_class" && var_0.classchosen || var_1 == "horde_weapon_upgrade" || var_2 == "horde_weapon_proficiency" ) && level.hordeweaponsjammed )
     {
-        var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 4 );
+        var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 4 );
         return 1;
     }
 
@@ -880,7 +880,7 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
         {
             if ( hordeammofull( var_0, var_5 ) )
             {
-                var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 5 );
+                var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 5 );
                 return 1;
             }
 
@@ -900,7 +900,7 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
 
             if ( var_11.size + 1 > var_13 )
             {
-                var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 2 );
+                var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 2 );
                 return 1;
             }
         }
@@ -914,7 +914,7 @@ hordeshouldupgradefail( var_0, var_1, var_2, var_3 )
 
                 if ( issubstr( var_16, var_2 ) )
                 {
-                    var_0 _meth_82FB( "ui_horde_armory_purchase_fail", 1 );
+                    var_0 setclientomnvar( "ui_horde_armory_purchase_fail", 1 );
                     return 1;
                 }
             }
@@ -930,7 +930,7 @@ hordeammofull( var_0, var_1 )
     {
         if ( issubstr( var_3, "turret" ) )
             continue;
-        else if ( var_0 _meth_82F9( var_3 ) < _func_1E1( var_3 ) || var_0 _meth_82F8( var_3 ) < weaponclipsize( var_3 ) )
+        else if ( var_0 setweaponammostock( var_3 ) < weaponmaxammo( var_3 ) || var_0 getweaponammoclip( var_3 ) < weaponclipsize( var_3 ) )
             return 0;
     }
 
@@ -944,13 +944,13 @@ hordegiveperk( var_0 )
         maps\mp\_utility::giveperk( var_0, 1, 1 );
         maps\mp\perks\_perks::applyperks();
         var_1 = tablelookup( "mp/hordeMenus.csv", 2, var_0, 0 );
-        self _meth_82FB( "ui_horde_update_perk", int( var_1 ) );
+        self setclientomnvar( "ui_horde_update_perk", int( var_1 ) );
         var_2 = self.horde_perks.size;
         self.horde_perks[var_2]["name"] = var_0;
         self.horde_perks[var_2]["index"] = int( var_1 );
 
         if ( var_0 == "specialty_horde_weaponsfree" )
-            self _meth_82FB( "horde_has_weaponsfree", 1 );
+            self setclientomnvar( "horde_has_weaponsfree", 1 );
     }
 }
 
@@ -973,7 +973,7 @@ hordegivekillstreak( var_0, var_1 )
 
 hordegivescorestreakupgrade( var_0, var_1 )
 {
-    var_2 = var_0 _meth_8447( "ui_horde_player_class" );
+    var_2 = var_0 getclientomnvar( "ui_horde_player_class" );
     var_0.hordekillstreakmodules[var_0.hordekillstreakmodules.size] = var_1;
 
     if ( var_1 == "sentry_machinegun_turret" || var_1 == "sentry_energy_turret" || var_1 == "sentry_rocket_turret" )

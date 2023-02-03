@@ -148,15 +148,15 @@ cloudfastplayer( var_0 )
         var_2 = level.wind_dir;
 
         if ( level.fastcloudlevel > 5 )
-            _func_234( level.player.origin, level.fastcloudlevel * 0.1 * 0.09, 0, 0, 0.3, 0, 0, 500, 15, 1, 1 );
+            screenshake( level.player.origin, level.fastcloudlevel * 0.1 * 0.09, 0, 0, 0.3, 0, 0, 500, 15, 1, 1 );
         else
-            _func_234( level.player.origin, level.fastcloudlevel * 0.1 * 0.15, 0, 0, 0.3, 0, 0, 500, 15, 1, 1 );
+            screenshake( level.player.origin, level.fastcloudlevel * 0.1 * 0.15, 0, 0, 0.3, 0, 0, 500, 15, 1, 1 );
 
         playfx( level._effect["fast_clouds"], var_1.origin + ( 0, 0, 16 ), ( var_2[0], var_2[1] + 90, var_2[2] ) );
         var_3 = level.player.angles;
 
-        if ( level.player _meth_8068() )
-            var_3 += ( 0, level.player _meth_83EC().angles[1], 0 );
+        if ( level.player islinked() )
+            var_3 += ( 0, level.player getlinkedparent().angles[1], 0 );
 
         var_4 = anglestoforward( ( 0, var_2[1], 0 ) );
         var_5 = anglestoforward( var_3 );
@@ -271,9 +271,9 @@ cloudpushplayer( var_0, var_1 )
             var_4 = vectorlerp( var_4, ( 0, 0, 0 ), 0.25 );
 
         if ( !isdefined( var_1 ) || !var_1 || !self attackbuttonpressed() )
-            self _meth_83D7( var_4, 1 );
+            self pushplayervector( var_4, 1 );
         else
-            self _meth_83D7( ( 0, 0, 0 ), 1 );
+            self pushplayervector( ( 0, 0, 0 ), 1 );
 
         wait 0.05;
     }

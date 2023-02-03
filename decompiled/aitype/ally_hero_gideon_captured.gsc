@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "iw5_hmr9_sp";
@@ -27,13 +27,13 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_hero_gideon_captured::precache();
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "flash_grenade" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "flash_grenade" );
 }

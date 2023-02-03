@@ -1,0 +1,16 @@
+// S1 GSC SOURCE
+// Dumped by https://github.com/xensik/gsc-tool
+
+main()
+{
+    self setmodel( "civ_urban_male_body_g" );
+    codescripts\character::attachhead( "alias_atlas_bodyguard_heads", xmodelalias\alias_atlas_bodyguard_heads::main() );
+    self.voice = "secretservice";
+    self setclothtype( "vestlight" );
+}
+
+precache()
+{
+    precachemodel( "civ_urban_male_body_g" );
+    codescripts\character::precachemodelarray( xmodelalias\alias_atlas_bodyguard_heads::main() );
+}

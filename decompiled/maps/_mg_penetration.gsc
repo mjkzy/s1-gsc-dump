@@ -25,7 +25,7 @@ gunner_think( var_0 )
     if ( isdefined( self.last_enemy_sighting_position ) )
         var_2.origin = self.last_enemy_sighting_position;
 
-    var_0 _meth_8106( var_2 );
+    var_0 settargetentity( var_2 );
     var_3 = undefined;
 
     for (;;)
@@ -42,7 +42,7 @@ gunner_think( var_0 )
         if ( !isalive( self.current_enemy ) )
             continue;
 
-        if ( self _meth_81BE( self.current_enemy ) )
+        if ( self cansee( self.current_enemy ) )
             continue;
 
         self waittill( "saw_enemy" );
@@ -62,18 +62,18 @@ shoot_enemy_until_he_hides_then_shoot_wall( var_0 )
     self.current_enemy endon( "death" );
     var_1 = self.current_enemy;
 
-    while ( self _meth_81BE( var_1 ) )
+    while ( self cansee( var_1 ) )
     {
-        var_2 = vectortoangles( var_1 _meth_80A8() - var_0.origin );
+        var_2 = vectortoangles( var_1 geteye() - var_0.origin );
         var_2 = anglestoforward( var_2 );
-        var_0 _meth_82AE( var_0.origin + var_2 * 12, 0.1 );
+        var_0 moveto( var_0.origin + var_2 * 12, 0.1 );
         wait 0.1;
     }
 
     if ( isplayer( var_1 ) )
     {
         self endon( "saw_enemy" );
-        var_3 = var_1 _meth_80A8();
+        var_3 = var_1 geteye();
         var_2 = vectortoangles( var_3 - var_0.origin );
         var_2 = anglestoforward( var_2 );
         var_4 = 150;
@@ -81,19 +81,19 @@ shoot_enemy_until_he_hides_then_shoot_wall( var_0 )
 
         if ( var_5 > 0 )
         {
-            var_0 _meth_82AE( self.last_enemy_sighting_position, var_5 );
+            var_0 moveto( self.last_enemy_sighting_position, var_5 );
             wait(var_5);
         }
 
         var_6 = var_0.origin + var_2 * 180;
-        var_7 = get_suppress_point( self _meth_80A8(), var_0.origin, var_6 );
+        var_7 = get_suppress_point( self geteye(), var_0.origin, var_6 );
 
         if ( !isdefined( var_7 ) )
             var_7 = var_0.origin;
 
-        var_0 _meth_82AE( var_0.origin + var_2 * 80 + ( 0, 0, randomfloatrange( 15, 50 ) * -1 ), 3, 1, 1 );
+        var_0 moveto( var_0.origin + var_2 * 80 + ( 0, 0, randomfloatrange( 15, 50 ) * -1 ), 3, 1, 1 );
         wait 3.5;
-        var_0 _meth_82AE( var_7 + var_2 * -20, 3, 1, 1 );
+        var_0 moveto( var_7 + var_2 * -20, 3, 1, 1 );
     }
 
     wait(randomfloatrange( 2.5, 4 ));
@@ -199,9 +199,9 @@ solo_fires()
 
     for (;;)
     {
-        self.turret _meth_80E2();
+        self.turret startfiring();
         wait(randomfloatrange( 0.3, 0.7 ));
-        self.turret _meth_80E3();
+        self.turret stopfiring();
         wait(randomfloatrange( 0.1, 1.1 ));
     }
 }
@@ -236,24 +236,24 @@ spotted_an_enemy( var_0, var_1 )
     self endon( "new_enemy" );
     var_1 endon( "death" );
 
-    while ( self _meth_81BE( var_1 ) )
+    while ( self cansee( var_1 ) )
     {
-        var_2 = vectortoangles( var_1 _meth_80A8() - var_0.origin );
+        var_2 = vectortoangles( var_1 geteye() - var_0.origin );
         var_2 = anglestoforward( var_2 );
-        var_0 _meth_82AE( var_0.origin + var_2 * 10, 0.2 );
+        var_0 moveto( var_0.origin + var_2 * 10, 0.2 );
         wait 0.2;
     }
 
-    var_2 = vectortoangles( var_1 _meth_80A8() - var_0.origin );
+    var_2 = vectortoangles( var_1 geteye() - var_0.origin );
     var_2 = anglestoforward( var_2 );
     var_3 = 150;
     var_4 = distance( var_0.origin, self.last_enemy_sighting_position ) / var_3;
-    var_0 _meth_82AE( self.last_enemy_sighting_position, var_4 );
+    var_0 moveto( self.last_enemy_sighting_position, var_4 );
     wait(var_4);
     var_5 = var_0.origin;
-    var_0 _meth_82AE( var_0.origin + var_2 * 80 + ( 0, 0, -25 ), 3, 1, 1 );
+    var_0 moveto( var_0.origin + var_2 * 80 + ( 0, 0, -25 ), 3, 1, 1 );
     wait 3.5;
-    var_0 _meth_82AE( var_5 + var_2 * -20, 3, 1, 1 );
+    var_0 moveto( var_5 + var_2 * -20, 3, 1, 1 );
     wait 1;
     stop_firing();
 }
@@ -307,10 +307,10 @@ record_sighting()
     if ( !isalive( self.enemy ) )
         return;
 
-    if ( !self _meth_81BE( self.enemy ) )
+    if ( !self cansee( self.enemy ) )
         return;
 
-    self.last_enemy_sighting_position = self.enemy _meth_80A8();
+    self.last_enemy_sighting_position = self.enemy geteye();
     self notify( "saw_enemy" );
 
     if ( !isalive( self.current_enemy ) || self.current_enemy != self.enemy )

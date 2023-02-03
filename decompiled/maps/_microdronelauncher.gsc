@@ -3,7 +3,7 @@
 
 init()
 {
-    precacheitem( "iw5_microdronelauncher_sp" );
+    precacheshellshock( "iw5_microdronelauncher_sp" );
 
     foreach ( var_1 in level.players )
         var_1 thread monitor_microdrone_launch();
@@ -52,7 +52,7 @@ microdrone_think( var_0 )
 
             if ( isdefined( var_6 ) )
             {
-                self _meth_81DA( microdrone_get_target_pos( var_6 ) );
+                self missile_settargetpos( microdrone_get_target_pos( var_6 ) );
                 var_5 = 1;
                 var_3 = var_4;
             }
@@ -65,7 +65,7 @@ microdrone_think( var_0 )
         if ( !var_5 )
         {
             var_7 = vectornormalize( var_3 + ( 0, 0, -400.0 * squared( var_2 ) ) );
-            self _meth_81DA( self.origin + var_7 * 10000 );
+            self missile_settargetpos( self.origin + var_7 * 10000 );
         }
 
         wait 0.05;
@@ -79,7 +79,7 @@ microdrone_get_best_target( var_0, var_1, var_2, var_3 )
     var_5 = undefined;
     var_6 = cos( 15 );
 
-    foreach ( var_8 in common_scripts\utility::array_combine( _func_0D6( "axis" ), vehicle_getarray() ) )
+    foreach ( var_8 in common_scripts\utility::array_combine( getaiarray( "axis" ), vehicle_getarray() ) )
     {
         if ( is_enemy_target( var_8, var_3 ) && !isdefined( var_8.pretending_to_be_dead ) )
         {
@@ -118,5 +118,5 @@ is_enemy_target( var_0, var_1 )
 
 microdrone_get_target_pos( var_0 )
 {
-    return var_0 _meth_8097();
+    return var_0 getshootatpos();
 }

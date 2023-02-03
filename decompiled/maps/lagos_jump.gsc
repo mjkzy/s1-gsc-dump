@@ -11,7 +11,7 @@ exo_jump_process()
     level.player endon( "exo_jump_process_end" );
     common_scripts\utility::flag_wait( "flag_setup_highway_vehicles" );
     waitframe();
-    level.player _meth_82DD( "exo_jump_button", "+gostand" );
+    level.player notifyonplayercommand( "exo_jump_button", "+gostand" );
     thread exo_jump_button_listener();
     level.player.exo_jump_button_pressed = 0;
     level.jumping_rig = maps\_utility::spawn_anim_model( "player_arms", ( 0, 0, 0 ) );
@@ -46,12 +46,12 @@ exo_jump_process()
             case 2:
                 break;
             case 3:
-                if ( level.player _meth_824C( "DPAD_UP" ) )
+                if ( level.player buttonpressed( "DPAD_UP" ) )
                 {
                     player_unlock();
                     level.player.jump_state = 1;
                 }
-                else if ( level.player _meth_8341() && level.player.exo_jump_button_pressed )
+                else if ( level.player isonground() && level.player.exo_jump_button_pressed )
                     player_assisted_jump( level.script_origin_target_array );
 
                 break;
@@ -87,7 +87,7 @@ exo_jump_end()
     level.player.jump_state = 1;
 
     if ( isdefined( level.jumping_rig ) )
-        level.player _meth_804F();
+        level.player unlink();
 
     if ( isdefined( level.jumping_rig ) )
         level.jumping_rig delete();
@@ -95,7 +95,7 @@ exo_jump_end()
     if ( isdefined( level.handplant_target ) )
         level.handplant_target delete();
 
-    level.player _meth_849C( "exo_jump_button", "+gostand" );
+    level.player notifyonplayercommandremove( "exo_jump_button", "+gostand" );
     level.player.exo_jump_button_pressed = undefined;
 }
 
@@ -128,7 +128,7 @@ player_assisted_jump( var_0 )
         {
             var_3 = 40;
 
-            if ( _func_220( level.burke_bus_goal.origin, var_1.origin ) < var_3 * var_3 )
+            if ( distance2dsquared( level.burke_bus_goal.origin, var_1.origin ) < var_3 * var_3 )
             {
                 var_4 = vectornormalize( var_1.origin - level.burke_bus_goal.origin );
                 var_2 = level.burke_bus_goal.origin + var_3 * var_4 - var_1.origin;
@@ -141,7 +141,7 @@ player_assisted_jump( var_0 )
         level.player.jump_state = 2;
         level.player maps\_shg_utility::setup_player_for_scene();
         level.player maps\_utility::store_players_weapons( "traffic_weapons" );
-        level.player _meth_8310();
+        level.player takeallweapons();
         thread animate_script_origin( var_1, var_2, var_6, var_7, 1 );
         player_unlock();
     }
@@ -159,14 +159,14 @@ player_handplant_standalone()
 {
     var_0 = level.handplant_target;
     level.jump_target = var_0;
-    level.jumping_rig _meth_804C();
+    level.jumping_rig showallparts();
     level.player maps\_shg_utility::setup_player_for_scene();
     level.player maps\_utility::store_players_weapons( "traffic_weapons" );
-    level.player _meth_8310();
+    level.player takeallweapons();
     match_angles_pos( level.jumping_rig, level.player );
     match_angles_pos( var_0, level.jumping_rig );
-    level.jumping_rig _meth_804D( var_0 );
-    level.player _meth_8080( level.jumping_rig, "tag_player", 1, 0.1, 0.1 );
+    level.jumping_rig linkto( var_0 );
+    level.player playerlinktoblend( level.jumping_rig, "tag_player", 1, 0.1, 0.1 );
     level.jump_animstring = "bus_jump_vm_handplant";
     level.jumping_rig thread maps\_anim::anim_single_solo( level.jumping_rig, level.jump_animstring );
     thread player_handplant();
@@ -194,32 +194,32 @@ player_link_to( var_0, var_1 )
             break;
     }
 
-    level.player _meth_8080( level.jumping_rig, "tag_player", var_2 );
+    level.player playerlinktoblend( level.jumping_rig, "tag_player", var_2 );
     level.jumping_rig hide();
     wait(var_2);
     level.jumping_rig show();
     level waittill( "bus_jump_player_landed" );
     wait 1;
-    level.player _meth_807D( level.jumping_rig, "tag_player" );
-    level.player _meth_80A2( 1, 0.2, 0.2, 70, 35, 70, 10 );
+    level.player playerlinktodelta( level.jumping_rig, "tag_player" );
+    level.player lerpviewangleclamp( 1, 0.2, 0.2, 70, 35, 70, 10 );
 }
 
 player_unlock()
 {
     maps\_anim::anim_set_rate_single( level.jumping_rig, level.jump_animstring, 1 );
     level.jumping_rig waittill( "notetrack_vm_exo_magnet_end" );
-    level.player _meth_804F();
-    level.player _meth_807D( level.jump_target, "" );
+    level.player unlink();
+    level.player playerlinktodelta( level.jump_target, "" );
     level.player maps\_shg_utility::setup_player_for_gameplay();
     level.player maps\_utility::restore_players_weapons( "traffic_weapons" );
     wait 0.5;
-    level.player _meth_804F();
+    level.player unlink();
     level.player.jump_state = 1;
 }
 
 get_stick_dir_in_world_coor()
 {
-    var_0 = level.player _meth_82F3();
+    var_0 = level.player getnormalizedmovement();
     var_0 = ( var_0[0], var_0[1] * -1, 0.0 );
     var_1 = rotatevector( var_0, level.player.angles );
     var_1 = vectornormalize( var_1 );
@@ -234,7 +234,7 @@ get_best_jump_target( var_0 )
     if ( !isdefined( level.const_cosine_bunched_angle ) )
         level.const_cosine_bunched_angle = cos( 2.0 );
 
-    var_1 = level.player _meth_82F3();
+    var_1 = level.player getnormalizedmovement();
     var_2 = vectortoyaw( var_1 );
     var_3 = 45.0;
 
@@ -255,8 +255,8 @@ get_best_jump_target( var_0 )
 
     for ( var_8 = 0; var_8 < var_0.size; var_8++ )
     {
-        var_9 = var_0[var_8] _meth_83EC();
-        var_10 = level.jump_target _meth_83EC();
+        var_9 = var_0[var_8] getlinkedparent();
+        var_10 = level.jump_target getlinkedparent();
 
         if ( isdefined( var_9 ) && isdefined( var_10 ) && var_9 == var_10 )
             continue;
@@ -264,7 +264,7 @@ get_best_jump_target( var_0 )
         if ( level.player.origin[2] - var_0[var_8].origin[2] < -120 )
             continue;
 
-        var_11 = _func_220( var_0[var_8].origin, level.player.origin );
+        var_11 = distance2dsquared( var_0[var_8].origin, level.player.origin );
 
         if ( var_11 > 360000 || var_11 < 100 )
             continue;
@@ -322,8 +322,8 @@ animate_script_origin( var_0, var_1, var_2, var_3, var_4 )
     level.player endon( "exo_jump_process_end" );
     level.jumping_rig.origin = var_0.origin;
     var_5 = vectortoangles( var_2 );
-    var_0 _meth_804D( var_0.linkparent_ent, var_0.linkparent_tag, var_1, var_5 - var_0.linkparent_ent.angles );
-    level.jumping_rig _meth_804D( var_0 );
+    var_0 linkto( var_0.linkparent_ent, var_0.linkparent_tag, var_1, var_5 - var_0.linkparent_ent.angles );
+    level.jumping_rig linkto( var_0 );
     level.jump_animstring = "";
 
     if ( var_3 < 118.5 )
@@ -333,7 +333,7 @@ animate_script_origin( var_0, var_1, var_2, var_3, var_4 )
     else
         level.jump_animstring = "bus_jump_vm_c";
 
-    var_6 = level.player _meth_83ED();
+    var_6 = level.player getmovingplatformparent();
 
     if ( isdefined( var_6 ) && isdefined( var_6.targetname ) && var_6.targetname == "sb_bus_traverse_4" )
         common_scripts\utility::flag_set( "flag_bus_traverse_5_start_takedown" );
@@ -395,7 +395,7 @@ spawn_vehicle_from_targetname_and_setup_jump_targets( var_0, var_1, var_2, var_3
             var_5.script_origin_roof[var_7] = spawn( "script_origin", ( 0, 0, 0 ) );
             var_5.script_origin_roof[var_7].origin = var_5 gettagorigin( var_6 );
             var_5.script_origin_roof[var_7].targetname = "jump_target";
-            var_5.script_origin_roof[var_7] _meth_804D( var_5, var_6 );
+            var_5.script_origin_roof[var_7] linkto( var_5, var_6 );
             var_5.script_origin_roof[var_7].linkparent_tag = var_6;
             var_5.script_origin_roof[var_7].linkparent_ent = var_5;
             var_7++;

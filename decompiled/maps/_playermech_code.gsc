@@ -4,26 +4,26 @@
 playermech_init( var_0 )
 {
     level thread playermech_fx_init();
-    _func_0D3( "mechHide", 0 );
+    setsaveddvar( "mechHide", 0 );
 
     if ( level.script == "finale" )
-        _func_0D3( "mechFxLethalFlash", "muzzleflash/playermech_lethal_flash_view_run" );
+        setsaveddvar( "mechFxLethalFlash", "muzzleflash/playermech_lethal_flash_view_run" );
     else
-        _func_0D3( "mechFxLethalFlash", "muzzleflash/playermech_lethal_flash_view_run_cap" );
+        setsaveddvar( "mechFxLethalFlash", "muzzleflash/playermech_lethal_flash_view_run_cap" );
 
-    _func_0D3( "mechMissileLerpTime", 0.4 );
-    _func_0D3( "mechMissileTrackDelay", 0.2 );
-    _func_0D3( "mechFxTacticalFlash", "muzzleflash/playermech_tactical_flash_view_run" );
-    _func_0D3( "mechFxTacticalFlashTag", "tag_rocket_flash" );
+    setsaveddvar( "mechMissileLerpTime", 0.4 );
+    setsaveddvar( "mechMissileTrackDelay", 0.2 );
+    setsaveddvar( "mechFxTacticalFlash", "muzzleflash/playermech_tactical_flash_view_run" );
+    setsaveddvar( "mechFxTacticalFlashTag", "tag_rocket_flash" );
     setdvar( "mechCompassScaleFudge", 1.5 );
 
     if ( 1 )
     {
-        _func_0D3( "r_hudoutlineenable", 1 );
-        _func_0D3( "r_chromaticAberrationTweaks", 1 );
-        _func_0D3( "r_chromaticAberration", 0 );
-        _func_0D3( "r_chromaticSeparationG", -10 );
-        _func_0D3( "r_chromaticSeparationR", 10 );
+        setsaveddvar( "r_hudoutlineenable", 1 );
+        setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+        setsaveddvar( "r_chromaticAberration", 0 );
+        setsaveddvar( "r_chromaticSeparationG", -10 );
+        setsaveddvar( "r_chromaticSeparationR", 10 );
     }
 
     precachemodel( "viewhands_playermech" );
@@ -61,14 +61,14 @@ playermech_init( var_0 )
         self.mechdata.weapon_names["mech_dmg2_weapon"] = "playermech_auto_cannon_dmg2";
     }
 
-    precacheitem( self.mechdata.weapon_names["mech_base_weapon"] );
-    precacheitem( self.mechdata.weapon_names["mech_lethal_weapon"] );
-    precacheitem( self.mechdata.weapon_names["mech_tactical_weapon"] );
-    precacheitem( self.mechdata.weapon_names["mech_swarm_rocket"] );
-    precacheitem( self.mechdata.weapon_names["mech_swarm_rocket_deploy"] );
-    precacheitem( self.mechdata.weapon_names["mech_base_no_weapon"] );
-    precacheitem( self.mechdata.weapon_names["mech_dmg1_weapon"] );
-    precacheitem( self.mechdata.weapon_names["mech_dmg2_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_base_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_lethal_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_tactical_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_swarm_rocket"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_swarm_rocket_deploy"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_base_no_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_dmg1_weapon"] );
+    precacheshellshock( self.mechdata.weapon_names["mech_dmg2_weapon"] );
     common_scripts\utility::flag_init( "internal_threat_paint_in_progress" );
     common_scripts\utility::flag_init( "internal_swarm_rocket_active" );
     common_scripts\utility::flag_init( "internal_rocket_active" );
@@ -343,12 +343,12 @@ playermech_start( var_0, var_1, var_2, var_3, var_4 )
     switch ( var_0 )
     {
         case "base_noweap_bootup":
-            var_5 _meth_8343( var_3 );
+            var_5 setviewmodel( var_3 );
 
             if ( level.currentgen )
-                var_5 _meth_84F5( "tag_camera", 1 );
+                var_5 hidepartviewmodel( "tag_camera", 1 );
 
-            var_5 _meth_82FB( "ui_hide_hud", 1 );
+            var_5 setclientomnvar( "ui_hide_hud", 1 );
             var_5 thread set_mech_weapon_state( var_0, var_1, var_5.mechdata.weapon_names["mech_base_no_weapon"], var_5.mechdata.weapon_names["mech_lethal_weapon"], var_5.mechdata.weapon_names["mech_tactical_weapon"], 0, 0, 0 );
 
             if ( !var_2 )
@@ -356,16 +356,16 @@ playermech_start( var_0, var_1, var_2, var_3, var_4 )
 
             break;
         case "base_noweap":
-            var_5 _meth_8343( var_3 );
+            var_5 setviewmodel( var_3 );
 
             if ( level.currentgen )
-                var_5 _meth_84F5( "tag_camera", 1 );
+                var_5 hidepartviewmodel( "tag_camera", 1 );
 
-            var_5 _meth_82FB( "ui_playermech_hud", 1 );
-            var_5 _meth_82FB( "ui_hide_hud", 0 );
+            var_5 setclientomnvar( "ui_playermech_hud", 1 );
+            var_5 setclientomnvar( "ui_hide_hud", 0 );
 
             if ( level.currentgen )
-                var_5 common_scripts\utility::delaycall( 0.2, ::_meth_84F5, "tag_camera", 0 );
+                var_5 common_scripts\utility::delaycall( 0.2, ::hidepartviewmodel, "tag_camera", 0 );
 
             var_5 thread set_mech_weapon_state( var_0, var_1, var_5.mechdata.weapon_names["mech_base_no_weapon"], var_5.mechdata.weapon_names["mech_lethal_weapon"], var_5.mechdata.weapon_names["mech_tactical_weapon"], 0, 0, 0 );
 
@@ -375,9 +375,9 @@ playermech_start( var_0, var_1, var_2, var_3, var_4 )
             break;
         case "base_transition":
         case "base":
-            var_5 _meth_82FB( "ui_playermech_hud", 1 );
-            var_5 _meth_82FB( "ui_hide_hud", 0 );
-            var_5 _meth_8343( var_3 );
+            var_5 setclientomnvar( "ui_playermech_hud", 1 );
+            var_5 setclientomnvar( "ui_hide_hud", 0 );
+            var_5 setviewmodel( var_3 );
             var_5 thread set_mech_weapon_state( var_0, var_1, var_5.mechdata.weapon_names["mech_base_weapon"], var_5.mechdata.weapon_names["mech_lethal_weapon"], var_5.mechdata.weapon_names["mech_tactical_weapon"] );
 
             if ( !var_2 )
@@ -386,9 +386,9 @@ playermech_start( var_0, var_1, var_2, var_3, var_4 )
             break;
         case "dmg1":
         case "dmg1_transition":
-            var_5 _meth_82FB( "ui_playermech_hud", 1 );
-            var_5 _meth_82FB( "ui_hide_hud", 0 );
-            var_5 _meth_8343( var_4 );
+            var_5 setclientomnvar( "ui_playermech_hud", 1 );
+            var_5 setclientomnvar( "ui_hide_hud", 0 );
+            var_5 setviewmodel( var_4 );
             var_5 thread set_mech_weapon_state( var_0, var_1, var_5.mechdata.weapon_names["mech_dmg1_weapon"], var_5.mechdata.weapon_names["mech_lethal_weapon"], var_5.mechdata.weapon_names["mech_tactical_weapon"] );
 
             if ( !var_2 )
@@ -397,9 +397,9 @@ playermech_start( var_0, var_1, var_2, var_3, var_4 )
             break;
         case "dmg2":
         case "dmg2_transition":
-            var_5 _meth_82FB( "ui_playermech_hud", 1 );
-            var_5 _meth_82FB( "ui_hide_hud", 0 );
-            var_5 _meth_8343( var_4 );
+            var_5 setclientomnvar( "ui_playermech_hud", 1 );
+            var_5 setclientomnvar( "ui_hide_hud", 0 );
+            var_5 setviewmodel( var_4 );
             var_5 thread set_mech_weapon_state( var_0, var_1, var_5.mechdata.weapon_names["mech_dmg2_weapon"], var_5.mechdata.weapon_names["mech_lethal_weapon"], var_5.mechdata.weapon_names["mech_tactical_weapon"], 0, 0, 0 );
             disable_mech_threat_ping();
             break;
@@ -433,7 +433,7 @@ add_swarm_repulsor_for_ally( var_0, var_1 )
     if ( !isdefined( var_0.swarm_repulsor_foot ) )
     {
         var_0.swarm_repulsor_foot = missile_createrepulsorent( var_0, 10000, 100, var_1 );
-        var_2 = var_0 _meth_8096() - var_0.origin;
+        var_2 = var_0 getcentroid() - var_0.origin;
         var_0.swarm_repulsor_body = missile_createrepulsorent( var_0, 10000, 100, var_1, 0, ( 0, 0, var_2[2] ) );
         var_0.swarm_repulsor_head = missile_createrepulsorent( var_0, 10000, 100, var_1, 0, ( 0, 0, var_2[2] * 2 ) );
     }
@@ -452,21 +452,21 @@ disable_mech_threat_ping()
 enable_mech_chaingun()
 {
     set_mech_chaingun_state( "ready" );
-    self _meth_8131( 1 );
+    self allowfire( 1 );
 }
 
 disable_mech_chaingun()
 {
     set_mech_chaingun_state( "offline" );
     dialog_mech_clear_queued( "chaingun" );
-    self _meth_8131( 0 );
+    self allowfire( 0 );
 }
 
 enable_mech_rocket()
 {
     set_mech_rocket_state( "ready" );
     thread playermech_monitor_rocket_recharge();
-    self _meth_8320();
+    self enableoffhandweapons();
 }
 
 disable_mech_rocket()
@@ -475,14 +475,14 @@ disable_mech_rocket()
     self notify( "stop_rocket_recharge" );
     self.mechuistate.rocket.recharge = 100;
     dialog_mech_clear_queued( "rocket" );
-    self _meth_831F();
+    self disableoffhandweapons();
 }
 
 enable_mech_swarm()
 {
     set_mech_swarm_state( "ready" );
     thread playermech_monitor_swarm_recharge();
-    self _meth_84C0();
+    self enableoffhandsecondaryweapons();
 }
 
 disable_mech_swarm()
@@ -490,7 +490,7 @@ disable_mech_swarm()
     set_mech_swarm_state( "offline" );
     dialog_mech_clear_queued( "swarm" );
     self notify( "stop_swarm_recharge" );
-    self _meth_84BF();
+    self disableoffhandsecondaryweapons();
 }
 
 enable_stencil( var_0 )
@@ -531,32 +531,32 @@ mech_setup_player_for_scene( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = 0;
 
-    _func_0D3( "ammoCounterHide", 1 );
-    self _meth_831F();
-    self _meth_8321();
-    self _meth_8536( 0 );
-    self _meth_8119( 0 );
-    self _meth_8301( 0 );
-    self _meth_8130( 0 );
-    self _meth_8118( 1 );
-    self _meth_811A( 0 );
-    self _meth_8304( 0 );
-    self _meth_8303( 0 );
-    self _meth_82CB( 1 );
-    self _meth_80FA();
+    setsaveddvar( "ammoCounterHide", 1 );
+    self disableoffhandweapons();
+    self disableweaponswitch();
+    self enablegrenadethrowback( 0 );
+    self allowcrouch( 0 );
+    self allowjump( 0 );
+    self allowmelee( 0 );
+    self allowstand( 1 );
+    self allowprone( 0 );
+    self allowsprint( 0 );
+    self allowmantle( 0 );
+    self disableweaponpickup( 1 );
+    self hidehud();
     self.original_r_znear = getdvarfloat( "r_znear" );
-    _func_0D3( "r_znear", 1 );
+    setsaveddvar( "r_znear", 1 );
 
     if ( var_1 )
     {
-        self _meth_8300( 1 );
-        self _meth_8481();
+        self allowads( 1 );
+        self showviewmodel();
         self.viewmodel_hidden = 0;
     }
     else
     {
-        self _meth_8300( 0 );
-        self _meth_8482();
+        self allowads( 0 );
+        self hideviewmodel();
         self.viewmodel_hidden = 1;
         self notify( "kill_barrel_vfx" );
         thread reload_checker_hack();
@@ -574,40 +574,40 @@ mech_setup_player_for_scene( var_0, var_1 )
         waitframe();
         waitframe();
 
-        while ( self _meth_817C() != "stand" || self _meth_812C() || self _meth_8337() )
+        while ( self getstance() != "stand" || self isthrowinggrenade() || self isreloading() )
         {
-            self _meth_817D( "stand" );
+            self setstance( "stand" );
             wait 0.05;
         }
     }
 
-    self _meth_84B8( 0 );
+    self setadditiveviewmodelanim( 0 );
 }
 
 mech_setup_player_for_gameplay()
 {
-    _func_0D3( "ammoCounterHide", 0 );
-    self _meth_8320();
-    self _meth_8321();
-    self _meth_8536( 0 );
-    self _meth_8119( 0 );
-    self _meth_8301( 1 );
-    self _meth_8130( 1 );
-    self _meth_8118( 1 );
-    self _meth_811A( 0 );
-    self _meth_8304( 1 );
-    self _meth_8303( 0 );
-    self _meth_82CB( 1 );
-    self _meth_80FB();
-    self _meth_8300( 1 );
+    setsaveddvar( "ammoCounterHide", 0 );
+    self enableoffhandweapons();
+    self disableweaponswitch();
+    self enablegrenadethrowback( 0 );
+    self allowcrouch( 0 );
+    self allowjump( 1 );
+    self allowmelee( 1 );
+    self allowstand( 1 );
+    self allowprone( 0 );
+    self allowsprint( 1 );
+    self allowmantle( 0 );
+    self disableweaponpickup( 1 );
+    self showhud();
+    self allowads( 1 );
 
     if ( isdefined( self.original_r_znear ) )
     {
-        _func_0D3( "r_znear", self.original_r_znear );
+        setsaveddvar( "r_znear", self.original_r_znear );
         self.original_r_znear = undefined;
     }
 
-    self _meth_8481();
+    self showviewmodel();
     self.viewmodel_hidden = 0;
 
     if ( isdefined( self.mechuistate ) )
@@ -623,7 +623,7 @@ reload_checker_hack()
     for (;;)
     {
         if ( self.viewmodel_hidden == 1 )
-            self _meth_8482();
+            self hideviewmodel();
         else
             break;
 
@@ -638,7 +638,7 @@ _state_init()
 
     }
 
-    self _meth_831E();
+    self enableweapons();
     mech_setup_player_for_gameplay();
 
     if ( !self.mechdata.active )
@@ -651,13 +651,13 @@ _state_init()
         thread playermech_damage_manager();
         thread playermech_state_manager();
         level.savedcompassfadetime = getdvar( "hud_fade_compass" );
-        _func_0D3( "hud_fade_compass", 0 );
-        _func_0D3( "mechUseCodeSounds", 1 );
-        _func_0D3( "mechUseCodeRumble", 1 );
+        setsaveddvar( "hud_fade_compass", 0 );
+        setsaveddvar( "mechUseCodeSounds", 1 );
+        setsaveddvar( "mechUseCodeRumble", 1 );
         wait 0.2;
-        self _meth_8470();
-        self _meth_846F( "cinematic_3d_blend", "cinematic_3d_blend_visor" );
-        self _meth_8494( 1 );
+        self overrideviewmodelmaterialreset();
+        self overrideviewmodelmaterial( "cinematic_3d_blend", "cinematic_3d_blend_visor" );
+        self setplayermech( 1 );
 
         if ( !isdefined( self._old_visionset ) || level.lvl_visionset != "_playermech" )
             self._old_visionset = level.lvl_visionset;
@@ -690,8 +690,8 @@ mech_linkplayerview_rocket()
     mech_unlinkplayerview_rocket();
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
     var_0.angles = ( 0, 0, 0 );
-    var_0 _meth_80B1( "vm_exo_interior_base_missile" );
-    var_0 _meth_80A6( self, "j_rocket", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
+    var_0 setmodel( "vm_exo_interior_base_missile" );
+    var_0 linktoplayerview( self, "j_rocket", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
     self.linked_rocket = var_0;
 }
 
@@ -700,7 +700,7 @@ mech_unlinkplayerview_rocket()
     if ( !isdefined( self.linked_rocket ) )
         return;
 
-    self.linked_rocket _meth_80A7( self );
+    self.linked_rocket unlinkfromplayerview( self );
     self.linked_rocket delete();
     self.linked_rocket = undefined;
 }
@@ -733,49 +733,49 @@ set_mech_weapon_state( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     else
         disable_mech_swarm();
 
-    var_8 = self _meth_8312();
+    var_8 = self getcurrentprimaryweapon();
 
     if ( var_8 != var_2 )
     {
         if ( var_8 != "none" )
             thread delayed_takeweapon( var_8 );
 
-        self _meth_830E( var_2 );
+        self giveweapon( var_2 );
 
         if ( var_1 )
-            self _meth_8316( var_2 );
+            self switchtoweaponimmediate( var_2 );
         else
-            self _meth_8315( var_2 );
+            self switchtoweapon( var_2 );
 
         thread mech_linkplayerview_rocket();
     }
 
-    var_9 = self _meth_8345();
+    var_9 = self getlethalweapon();
 
     if ( var_9 != var_3 )
     {
         if ( var_9 != "none" )
-            self _meth_830F( var_9 );
+            self takeweapon( var_9 );
 
-        self _meth_8344( var_3 );
-        self _meth_830E( var_3 );
+        self setlethalweapon( var_3 );
+        self giveweapon( var_3 );
     }
 
-    var_10 = self _meth_831A();
+    var_10 = self gettacticalweapon();
 
     if ( var_10 != var_4 )
     {
         if ( var_10 != "none" )
-            self _meth_830F( var_10 );
+            self takeweapon( var_10 );
 
-        self _meth_8319( var_4 );
-        self _meth_830E( var_4 );
+        self settacticalweapon( var_4 );
+        self giveweapon( var_4 );
     }
 
     while ( self.mechdata.init_active )
         wait 0.05;
 
-    while ( self _meth_8312() != var_2 )
+    while ( self getcurrentprimaryweapon() != var_2 )
         wait 0.05;
 
     set_mech_state( var_0 );
@@ -787,7 +787,7 @@ delayed_takeweapon( var_0 )
     self notify( "notify_stop_delayed_takeweapon" );
     self endon( "notify_stop_delayed_takeweapon" );
     wait 0.3;
-    self _meth_830F( var_0 );
+    self takeweapon( var_0 );
 }
 
 _exit( var_0 )
@@ -807,18 +807,18 @@ _exit( var_0 )
 
     mech_unlinkplayerview_rocket();
     playermech_restore_player_data();
-    _func_0D3( "cg_cinematicfullscreen", "1" );
-    _func_05C();
-    self _meth_8470();
-    self _meth_82FB( "ui_playermech_hud", 0 );
-    _func_0D3( "hud_fade_compass", level.savedcompassfadetime );
-    _func_0D3( "player_damagemultiplier", 1 );
-    _func_0D3( "player_radiusDamageMultiplier", 1 );
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
+    stopcinematicingame();
+    self overrideviewmodelmaterialreset();
+    self setclientomnvar( "ui_playermech_hud", 0 );
+    setsaveddvar( "hud_fade_compass", level.savedcompassfadetime );
+    setsaveddvar( "player_damagemultiplier", 1 );
+    setsaveddvar( "player_radiusDamageMultiplier", 1 );
     self notify( "noHealthOverlay" );
     thread maps\_gameskill::healthoverlay();
-    _func_0D3( "mechUseCodeSounds", 0 );
-    _func_0D3( "mechUseCodeRumble", 0 );
-    self _meth_8494( 0 );
+    setsaveddvar( "mechUseCodeSounds", 0 );
+    setsaveddvar( "mechUseCodeRumble", 0 );
+    self setplayermech( 0 );
 
     if ( isdefined( self._old_visionset ) )
         thread maps\_utility::vision_set_changes( self._old_visionset, 0.05 );
@@ -828,13 +828,13 @@ _exit( var_0 )
     level.noautosaveammocheck = 0;
     set_mech_state( "none" );
     self notify( "exit_mech" );
-    self _meth_80EC( 0 );
+    self enabledeathshield( 0 );
 }
 
 playermech_save_player_data()
 {
-    self.mechdata.activeweapon = self _meth_8311();
-    var_0 = self _meth_830B();
+    self.mechdata.activeweapon = self getcurrentweapon();
+    var_0 = self getweaponslistall();
     self.mechdata.weapons = [];
 
     foreach ( var_2 in var_0 )
@@ -842,30 +842,30 @@ playermech_save_player_data()
         var_3 = self.mechdata.weapons.size;
         self.mechdata.weapons[var_3] = spawnstruct();
         self.mechdata.weapons[var_3].name = var_2;
-        self.mechdata.weapons[var_3].clipammor = self _meth_82F8( var_2, "right" );
-        self.mechdata.weapons[var_3].clipammol = self _meth_82F8( var_2, "left" );
-        self.mechdata.weapons[var_3].stockammo = self _meth_82F9( var_2 );
+        self.mechdata.weapons[var_3].clipammor = self getweaponammoclip( var_2, "right" );
+        self.mechdata.weapons[var_3].clipammol = self getweaponammoclip( var_2, "left" );
+        self.mechdata.weapons[var_3].stockammo = self setweaponammostock( var_2 );
     }
 
-    self _meth_8310();
-    self _meth_8536( 0 );
+    self takeallweapons();
+    self enablegrenadethrowback( 0 );
 }
 
 playermech_restore_player_data()
 {
-    self _meth_8310();
+    self takeallweapons();
 
     foreach ( var_1 in self.mechdata.weapons )
     {
-        self _meth_830E( var_1.name );
-        self _meth_82F6( var_1.name, var_1.clipammor, "right" );
-        self _meth_82F6( var_1.name, var_1.clipammol, "left" );
-        self _meth_82F7( var_1.name, var_1.stockammo );
+        self giveweapon( var_1.name );
+        self setweaponammoclip( var_1.name, var_1.clipammor, "right" );
+        self setweaponammoclip( var_1.name, var_1.clipammol, "left" );
+        self setweaponammostock( var_1.name, var_1.stockammo );
     }
 
-    self _meth_8322();
-    self _meth_8536( 1 );
-    self _meth_8315( self.mechdata.activeweapon );
+    self enableweaponswitch();
+    self enablegrenadethrowback( 1 );
+    self switchtoweapon( self.mechdata.activeweapon );
 }
 
 playermech_ui_state_reset()
@@ -903,19 +903,19 @@ playermech_ui_state_enter( var_0 )
     switch ( var_0 )
     {
         case "base_noweap_bootup":
-            _func_0D3( "cg_cinematicfullscreen", "0" );
+            setsaveddvar( "cg_cinematicfullscreen", "0" );
 
             if ( !level.currentgen )
-                _func_057( "playermech_bootup" );
+                cinematicingame( "playermech_bootup" );
 
             break;
         case "base_noweap":
-            _func_0D3( "cg_cinematicfullscreen", "0" );
+            setsaveddvar( "cg_cinematicfullscreen", "0" );
             break;
         case "base_transition":
             break;
         case "base":
-            _func_0D3( "cg_cinematicfullscreen", "0" );
+            setsaveddvar( "cg_cinematicfullscreen", "0" );
             break;
         case "dmg1_transition":
             break;
@@ -926,8 +926,8 @@ playermech_ui_state_enter( var_0 )
         case "dmg2":
             break;
         case "outro":
-            _func_0D3( "cg_cinematicfullscreen", "0" );
-            _func_059( "playermech_outro" );
+            setsaveddvar( "cg_cinematicfullscreen", "0" );
+            cinematicingameloop( "playermech_outro" );
             break;
     }
 }
@@ -939,8 +939,8 @@ playermech_ui_state_leave( var_0 )
         case "base_noweap_bootup":
             break;
         default:
-            _func_0D3( "cg_cinematicfullscreen", "1" );
-            _func_05C();
+            setsaveddvar( "cg_cinematicfullscreen", "1" );
+            stopcinematicingame();
             break;
     }
 }
@@ -1014,19 +1014,19 @@ get_front_sorted_threat_list( var_0, var_1 )
 playermech_ui_weapon_feedback( var_0, var_1 )
 {
     self endon( "exit_mech" );
-    self _meth_82FB( var_1, 0 );
+    self setclientomnvar( var_1, 0 );
 
     for (;;)
     {
         while ( !self call [[ var_0 ]]() )
             wait 0.05;
 
-        self _meth_82FB( var_1, 1 );
+        self setclientomnvar( var_1, 1 );
 
         while ( self call [[ var_0 ]]() )
             wait 0.05;
 
-        self _meth_82FB( var_1, 0 );
+        self setclientomnvar( var_1, 0 );
         wait 0.05;
     }
 }
@@ -1038,12 +1038,12 @@ playermech_ui_chaingun_feedback()
 
 playermech_ui_swarm_feedback()
 {
-    playermech_ui_weapon_feedback( ::_meth_82EF, "ui_playermech_swarm_pressed" );
+    playermech_ui_weapon_feedback( ::secondaryoffhandbuttonpressed, "ui_playermech_swarm_pressed" );
 }
 
 playermech_ui_rocket_feedback()
 {
-    playermech_ui_weapon_feedback( ::_meth_82EE, "ui_playermech_rocket_pressed" );
+    playermech_ui_weapon_feedback( ::fragbuttonpressed, "ui_playermech_rocket_pressed" );
 }
 
 playermech_ui_update_threat_compass_values( var_0 )
@@ -1082,19 +1082,19 @@ playermech_ui_update_threat_compass_values( var_0 )
 
 playermech_ui_update_lui( var_0 )
 {
-    self _meth_82FB( "ui_playermech_numswarmtargets", var_0.swarm.target_list.size );
-    self _meth_82FB( "ui_playermech_swarmrecharge", var_0.swarm.recharge );
-    self _meth_82FB( "ui_playermech_threats_scanned", var_0.swarm.threat_scan );
-    self _meth_82FB( "ui_playermech_rocketrecharge", var_0.rocket.recharge );
-    self _meth_82FB( "ui_playermech_chaingun_heatlevel", var_0.chaingun.heatlevel );
-    self _meth_82FB( "ui_playermech_threat_count", var_0.threat_list.compass_offsets.size );
+    self setclientomnvar( "ui_playermech_numswarmtargets", var_0.swarm.target_list.size );
+    self setclientomnvar( "ui_playermech_swarmrecharge", var_0.swarm.recharge );
+    self setclientomnvar( "ui_playermech_threats_scanned", var_0.swarm.threat_scan );
+    self setclientomnvar( "ui_playermech_rocketrecharge", var_0.rocket.recharge );
+    self setclientomnvar( "ui_playermech_chaingun_heatlevel", var_0.chaingun.heatlevel );
+    self setclientomnvar( "ui_playermech_threat_count", var_0.threat_list.compass_offsets.size );
 
     for ( var_1 = 0; var_1 < 8; var_1++ )
     {
         var_2 = var_1 + 1;
 
         if ( var_0.threat_list.compass_offsets.size >= var_2 )
-            self _meth_82FB( "ui_playermech_threat_position_" + var_2, var_0.threat_list.compass_offsets[var_1] );
+            self setclientomnvar( "ui_playermech_threat_position_" + var_2, var_0.threat_list.compass_offsets[var_1] );
     }
 }
 
@@ -1123,9 +1123,9 @@ state_chaingun_pump()
 {
     set_mech_chaingun_last_state();
     var_0 = get_mech_chaingun_state();
-    var_1 = self _meth_8311();
-    self.mechuistate.chaingun.heatlevel = self _meth_83B9( var_1 );
-    self.mechuistate.chaingun.overheated = self _meth_83BA( var_1 );
+    var_1 = self getcurrentweapon();
+    self.mechuistate.chaingun.heatlevel = self getweaponheatlevel( var_1 );
+    self.mechuistate.chaingun.overheated = self isweaponoverheated( var_1 );
 
     if ( common_scripts\utility::flag( "flag_force_hud_ready" ) && var_0 != "offline" )
     {
@@ -1139,7 +1139,7 @@ state_chaingun_pump()
             set_mech_chaingun_state( "overheat" );
             thread barrel_overheat_fx();
         }
-        else if ( self attackbuttonpressed() && !self _meth_82EE() && !self _meth_82EF() && !common_scripts\utility::flag( "internal_swarm_rocket_active" ) && !common_scripts\utility::flag( "internal_rocket_active" ) )
+        else if ( self attackbuttonpressed() && !self fragbuttonpressed() && !self secondaryoffhandbuttonpressed() && !common_scripts\utility::flag( "internal_swarm_rocket_active" ) && !common_scripts\utility::flag( "internal_rocket_active" ) )
             set_mech_chaingun_state( "firing" );
     }
     else if ( var_0 == "firing" )
@@ -1149,7 +1149,7 @@ state_chaingun_pump()
             set_mech_chaingun_state( "overheat" );
             thread barrel_overheat_fx();
         }
-        else if ( !self attackbuttonpressed() || self _meth_82EE() || self _meth_82EF() )
+        else if ( !self attackbuttonpressed() || self fragbuttonpressed() || self secondaryoffhandbuttonpressed() )
             set_mech_chaingun_state( "ready" );
     }
     else if ( var_0 == "overheat" && !self.mechuistate.chaingun.overheated )
@@ -1158,19 +1158,19 @@ state_chaingun_pump()
     switch ( get_mech_chaingun_state() )
     {
         case "ready":
-            self _meth_82FB( "ui_playermech_chaingun_state", 1 );
+            self setclientomnvar( "ui_playermech_chaingun_state", 1 );
             break;
         case "firing":
-            self _meth_82FB( "ui_playermech_chaingun_state", 2 );
+            self setclientomnvar( "ui_playermech_chaingun_state", 2 );
             break;
         case "overheat":
-            self _meth_82FB( "ui_playermech_chaingun_state", 3 );
+            self setclientomnvar( "ui_playermech_chaingun_state", 3 );
             break;
         case "offline":
-            self _meth_82FB( "ui_playermech_chaingun_state", 4 );
+            self setclientomnvar( "ui_playermech_chaingun_state", 4 );
             break;
         case "none":
-            self _meth_82FB( "ui_playermech_chaingun_state", 0 );
+            self setclientomnvar( "ui_playermech_chaingun_state", 0 );
             break;
         default:
     }
@@ -1194,16 +1194,16 @@ state_rocket_pump()
     switch ( get_mech_rocket_state() )
     {
         case "ready":
-            self _meth_82FB( "ui_playermech_rocket_state", 1 );
+            self setclientomnvar( "ui_playermech_rocket_state", 1 );
             break;
         case "reload":
-            self _meth_82FB( "ui_playermech_rocket_state", 2 );
+            self setclientomnvar( "ui_playermech_rocket_state", 2 );
             break;
         case "offline":
-            self _meth_82FB( "ui_playermech_rocket_state", 3 );
+            self setclientomnvar( "ui_playermech_rocket_state", 3 );
             break;
         case "none":
-            self _meth_82FB( "ui_playermech_rocket_state", 0 );
+            self setclientomnvar( "ui_playermech_rocket_state", 0 );
             break;
         default:
     }
@@ -1233,19 +1233,19 @@ state_swarm_pump()
     switch ( get_mech_swarm_state() )
     {
         case "ready":
-            self _meth_82FB( "ui_playermech_swarm_state", 1 );
+            self setclientomnvar( "ui_playermech_swarm_state", 1 );
             break;
         case "reload":
-            self _meth_82FB( "ui_playermech_swarm_state", 3 );
+            self setclientomnvar( "ui_playermech_swarm_state", 3 );
             break;
         case "target":
-            self _meth_82FB( "ui_playermech_swarm_state", 2 );
+            self setclientomnvar( "ui_playermech_swarm_state", 2 );
             break;
         case "offline":
-            self _meth_82FB( "ui_playermech_swarm_state", 4 );
+            self setclientomnvar( "ui_playermech_swarm_state", 4 );
             break;
         case "none":
-            self _meth_82FB( "ui_playermech_swarm_state", 0 );
+            self setclientomnvar( "ui_playermech_swarm_state", 0 );
             break;
         default:
     }
@@ -1370,9 +1370,9 @@ playermech_monitor_rocket_recharge()
     for (;;)
     {
         self waittill( "mech_rocket_fire" );
-        self _meth_831F();
+        self disableoffhandweapons();
         playermech_monitor_update_recharge( self.mechuistate.rocket, 4.0 );
-        self _meth_8320();
+        self enableoffhandweapons();
         wait 0.05;
     }
 }
@@ -1386,9 +1386,9 @@ playermech_monitor_swarm_recharge()
     for (;;)
     {
         self waittill( "mech_swarm_fire" );
-        self _meth_84BF();
+        self disableoffhandsecondaryweapons();
         playermech_monitor_update_recharge( self.mechuistate.swarm, 6.0 );
-        self _meth_84C0();
+        self enableoffhandsecondaryweapons();
         wait 0.05;
     }
 }
@@ -1396,17 +1396,17 @@ playermech_monitor_swarm_recharge()
 playermech_link_viewmodel_part( var_0, var_1, var_2, var_3 )
 {
     self endon( "exit_mech" );
-    var_0 _meth_8115( var_2 );
-    var_0 _meth_80A6( self, var_3, ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
-    var_0 _meth_82BF();
-    self _meth_82DD( "playerdamage", "+usereload" );
+    var_0 useanimtree( var_2 );
+    var_0 linktoplayerview( self, var_3, ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 notsolid();
+    self notifyonplayercommand( "playerdamage", "+usereload" );
 
     for (;;)
     {
         var_0 hide();
         self waittill( "playerdamage" );
         var_0 show();
-        var_0 _meth_814D( var_1, 1, 0, 1 );
+        var_0 setanimrestart( var_1, 1, 0, 1 );
         wait(getanimlength( var_1 ) + 0.05);
     }
 }
@@ -1419,7 +1419,7 @@ playermech_damage_parts()
         return;
 
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0 _meth_80B1( "cap_playermech_breakable_wall" );
+    var_0 setmodel( "cap_playermech_breakable_wall" );
     playermech_link_viewmodel_part( var_0, %cap_playermech_run_through_prop_short, #animtree, "tag_flash" );
 }
 
@@ -1443,8 +1443,8 @@ playermech_damage_manager()
     self.mechdata.health = level.mech_max_health;
     self.mechdata.damage_allowed = 0;
     self.mechdata.regen_cooldown = 0;
-    _func_0D3( "player_damagemultiplier", level.damage_multiplier_mod );
-    _func_0D3( "player_radiusDamageMultiplier", level.damage_multiplier_mod );
+    setsaveddvar( "player_damagemultiplier", level.damage_multiplier_mod );
+    setsaveddvar( "player_radiusDamageMultiplier", level.damage_multiplier_mod );
     childthread playermech_health_restore();
     childthread playermech_player_hit_fx();
     childthread playermech_mech_regen();
@@ -1558,9 +1558,9 @@ hide_mech_screen( var_0, var_1 )
     if ( !var_0.hidden )
     {
         if ( isplayer( self ) )
-            self _meth_84F5( var_0.bone, 1 );
+            self hidepartviewmodel( var_0.bone, 1 );
         else
-            self _meth_8048( var_0.bone );
+            self hidepart( var_0.bone );
 
         var_0.hidden = 1;
     }
@@ -1577,9 +1577,9 @@ show_mech_screen( var_0, var_1 )
     if ( var_0.hidden )
     {
         if ( isplayer( self ) )
-            self _meth_84F5( var_0.bone, 0 );
+            self hidepartviewmodel( var_0.bone, 0 );
         else
-            self _meth_804B( var_0.bone );
+            self showpart( var_0.bone );
 
         var_0.hidden = 0;
     }
@@ -1614,26 +1614,26 @@ playermech_player_hit_fx()
         {
             self.mechdata.damage_allowed = 1;
             thread maps\_gameskill::healthoverlay();
-            _func_0D3( var_0, var_1 );
+            setsaveddvar( var_0, var_1 );
         }
         else if ( var_3 || self.mechdata.health >= 30 && self.mechdata.damage_allowed )
         {
             var_3 = 0;
             self.mechdata.damage_allowed = 0;
-            self _meth_8309( 0 );
+            self setviewkickscale( 0 );
             self notify( "noHealthOverlay" );
-            _func_0D3( var_0, var_2 );
+            setsaveddvar( var_0, var_2 );
         }
 
         wait 0.05;
     }
 
-    _func_0D3( var_0, var_1 );
+    setsaveddvar( var_0, var_1 );
 }
 
 playermech_health_restore()
 {
-    self _meth_80EC( 1 );
+    self enabledeathshield( 1 );
 
     for (;;)
     {
@@ -1641,28 +1641,28 @@ playermech_health_restore()
 
         if ( !playermech_is_damage_allowed( var_0, var_4, var_1 ) )
         {
-            self _meth_8050( self.health + var_0 );
+            self setnormalhealth( self.health + var_0 );
             continue;
         }
 
         if ( self.health == 1 )
         {
-            self _meth_80EC( 0 );
+            self enabledeathshield( 0 );
 
             if ( isdefined( var_9 ) )
             {
-                self _meth_8051( 1, var_3, var_1, var_1, var_4, var_9 );
+                self dodamage( 1, var_3, var_1, var_1, var_4, var_9 );
                 continue;
             }
 
-            self _meth_8051( 1, var_3, var_1, var_1, var_4 );
+            self dodamage( 1, var_3, var_1, var_1, var_4 );
         }
     }
 }
 
 playermech_dodamage( var_0, var_1, var_2 )
 {
-    self _meth_8051( var_0, var_1, var_2 );
+    self dodamage( var_0, var_1, var_2 );
 }
 
 playermech_physics_push_on()
@@ -1730,7 +1730,7 @@ playermech_invalid_rocket_callback()
 {
     if ( self.mechuistate.rocket.recharge < 100 )
     {
-        if ( self _meth_82EE() )
+        if ( self fragbuttonpressed() )
             self notify( "callback_rocket_reload" );
 
         return 1;
@@ -1743,7 +1743,7 @@ playermech_invalid_swarm_callback()
 {
     if ( self.mechuistate.swarm.recharge < 100 )
     {
-        if ( self _meth_82EF() )
+        if ( self secondaryoffhandbuttonpressed() )
             self notify( "callback_swarm_reload" );
 
         return 1;
@@ -1782,21 +1782,21 @@ playermech_invalid_weapon_instance( var_0, var_1 )
 playermech_invalid_weapon_watcher()
 {
     thread playermech_invalid_weapon_instance( ::attackbuttonpressed, ::playermech_invalid_gun_callback );
-    thread playermech_invalid_weapon_instance( ::_meth_82EE, ::playermech_invalid_rocket_callback );
-    thread playermech_invalid_weapon_instance( ::_meth_82EF, ::playermech_invalid_swarm_callback );
+    thread playermech_invalid_weapon_instance( ::fragbuttonpressed, ::playermech_invalid_rocket_callback );
+    thread playermech_invalid_weapon_instance( ::secondaryoffhandbuttonpressed, ::playermech_invalid_swarm_callback );
 }
 
 playermech_chaingun_watcher()
 {
     self endon( "exit_mech" );
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( level.player, "j_barrel", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "j_barrel", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
 
     for (;;)
     {
         self waittill( "weapon_fired" );
 
-        if ( self _meth_82EF() || self _meth_82EE() )
+        if ( self secondaryoffhandbuttonpressed() || self fragbuttonpressed() )
             continue;
 
         self notify( "chaingun_fired" );
@@ -1804,7 +1804,7 @@ playermech_chaingun_watcher()
     }
 
     common_scripts\utility::waittill_any_timeout( 0.5, "kill_barrel_vfx" );
-    var_0 _meth_80A7( level.player );
+    var_0 unlinkfromplayerview( level.player );
     var_0 delete();
 }
 
@@ -1817,12 +1817,12 @@ barrel_overheat_fx()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     waitframe();
-    var_0 _meth_80A6( level.player, "j_barrel", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "j_barrel", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     waitframe();
     playfxontag( common_scripts\utility::getfx( "exo_armor_gun_barrel_overheat_view" ), var_0, "tag_origin" );
     common_scripts\utility::waittill_any_timeout( 4, "kill_barrel_vfx" );
     killfxontag( common_scripts\utility::getfx( "exo_armor_gun_barrel_overheat_view" ), var_0, "tag_origin" );
-    var_0 _meth_80A7( level.player );
+    var_0 unlinkfromplayerview( level.player );
     waitframe();
     var_0 delete();
 }
@@ -1838,11 +1838,11 @@ playermech_threat_paint( var_0, var_1 )
     self.mechdata.swarm_target_list = [];
     thread threat_paint_highlight_hud_effect();
     var_2 = [];
-    var_3 = _func_0D6( "axis" );
+    var_3 = getaiarray( "axis" );
 
     foreach ( var_5 in var_3 )
     {
-        var_6 = var_5 _meth_83EC();
+        var_6 = var_5 getlinkedparent();
 
         if ( !isdefined( var_6 ) || !isdefined( var_6.code_classname ) || var_6.code_classname != "script_vehicle" )
             var_2[var_2.size] = var_5;
@@ -1935,7 +1935,7 @@ pass_line_of_sight( var_0, var_1 )
     var_2 = self.origin;
 
     if ( isplayer( self ) )
-        var_2 = self _meth_80A8();
+        var_2 = self geteye();
 
     if ( var_1 )
     {
@@ -2033,7 +2033,7 @@ threat_paint_highlight_hud_effect()
     var_0.color = ( 1, 0.05, 0.025 );
     var_0.alpha = 1.0;
     var_1 = 0.05;
-    var_0 _meth_83A4( var_1 );
+    var_0 setradarhighlight( var_1 );
     wait(var_1);
     var_0 destroy();
     common_scripts\utility::flag_clear( "internal_threat_paint_in_progress" );
@@ -2050,7 +2050,7 @@ threat_paint_hud_effect()
     var_1 = 0;
     var_2 = 3000;
     var_3 = 500;
-    var_0 _meth_83A3( int( var_2 + var_3 / 2 ), int( var_3 ), var_1 + 0.05 );
+    var_0 setradarping( int( var_2 + var_3 / 2 ), int( var_3 ), var_1 + 0.05 );
     wait(var_1);
     var_0 destroy();
 }
@@ -2061,7 +2061,7 @@ get_guy_offset( var_0 )
         var_0 = 0;
 
     var_1 = undefined;
-    var_2 = self _meth_8096()[2] - self.origin[2];
+    var_2 = self getcentroid()[2] - self.origin[2];
 
     if ( !isdefined( self ) )
         var_1 = ( 0, 0, 32 );
@@ -2115,7 +2115,7 @@ handle_marking_guy( var_0, var_1 )
 
     if ( !maps\_utility::player_looking_at( var_0.origin + var_2, var_3, 1 ) )
     {
-        var_4 = bullettrace( self _meth_80A8(), var_0.origin + var_2, 0 );
+        var_4 = bullettrace( self geteye(), var_0.origin + var_2, 0 );
 
         if ( !isdefined( var_4 ) || !isdefined( var_4["position"] ) )
             return;
@@ -2140,7 +2140,7 @@ handle_marking_guy( var_0, var_1 )
         if ( !pass_line_of_sight( var_0 ) )
             break;
 
-        if ( !self _meth_82EF() || !self _meth_84E0() )
+        if ( !self secondaryoffhandbuttonpressed() || !self isusingoffhand() )
             break;
     }
 
@@ -2157,9 +2157,9 @@ mark_stencil( var_0 )
         var_0.target_stencil = 1;
 
         if ( 1 )
-            var_0 _meth_83FA( 4, 1 );
+            var_0 hudoutlineenable( 4, 1 );
         else
-            var_0 _meth_84ED( "detected" );
+            var_0 setthreatdetection( "detected" );
 
         self.mechdata.threat_list = common_scripts\utility::array_add( self.mechdata.threat_list, var_0 );
     }
@@ -2173,11 +2173,11 @@ unmark_stencil( var_0 )
 
         if ( 1 )
         {
-            var_0 _meth_83FB();
-            var_0 _meth_83FA( 0, 0 );
+            var_0 hudoutlinedisable();
+            var_0 hudoutlineenable( 0, 0 );
         }
         else
-            var_0 _meth_84ED( "enhanceable" );
+            var_0 setthreatdetection( "enhanceable" );
 
         self.mechdata.threat_list = common_scripts\utility::array_remove( self.mechdata.threat_list, var_0 );
     }
@@ -2189,8 +2189,8 @@ mark_swarm_target( var_0 )
     {
         var_0.target_swarm = 1;
         var_1 = var_0 get_guy_offset( 0 );
-        _func_09A( var_0, var_1 );
-        _func_09C( var_0, "ui_playermech_icon_swarm_target" );
+        target_set( var_0, var_1 );
+        target_setshader( var_0, "ui_playermech_icon_swarm_target" );
         self.mechdata.swarm_target_list = common_scripts\utility::array_add( self.mechdata.swarm_target_list, var_0 );
         wait 0.05;
     }
@@ -2203,8 +2203,8 @@ unmark_swarm_target( var_0 )
 
     var_0.target_swarm = undefined;
 
-    if ( _func_0A3( var_0 ) )
-        _func_09B( var_0 );
+    if ( target_istarget( var_0 ) )
+        target_remove( var_0 );
 }
 
 handle_threat_paint_death( var_0 )
@@ -2218,7 +2218,7 @@ handle_threat_paint_death( var_0 )
         var_0 notify( "stop_marking_guy" );
         unmark_stencil( var_0 );
         unmark_swarm_target( var_0 );
-        var_0 _meth_84ED( "disable" );
+        var_0 setthreatdetection( "disable" );
     }
 }
 
@@ -2403,7 +2403,7 @@ rocket_two_stage_swarm_think( var_0, var_1, var_2, var_3 )
             {
                 var_2 notify( "rocket_start_swarm_stage_two" );
                 var_2.origin = var_1.origin + var_1 get_guy_offset( 0 );
-                var_2 _meth_804D( var_1 );
+                var_2 linkto( var_1 );
             }
 
             if ( isdefined( var_1 ) )
@@ -2508,7 +2508,7 @@ rocket_swarm_path_think( var_0, var_1, var_2, var_3 )
         var_4 += ( randomfloatrange( var_5 * -1.0, var_5 ), randomfloatrange( var_5 * -1.0, var_5 ), 0 );
     }
 
-    var_6 = _func_200( self.origin, var_4 );
+    var_6 = getnodesonpath( self.origin, var_4 );
 
     if ( !rocket_swarm_should_path( var_0, var_6, var_2 ) )
     {
@@ -2603,7 +2603,7 @@ rocket_swarm_death_thread( var_0, var_1, var_2 )
             if ( issubstr( var_1.classname, "pdrone" ) )
             {
                 var_1 notify( "death", var_2, "MOD_MECH_SWARM_DESTROY" );
-                var_1 _meth_8052();
+                var_1 kill();
             }
 
             var_0 delete();
@@ -2633,12 +2633,12 @@ rocket_swarm_straight_rocket( var_0, var_1, var_2, var_3 )
 rocket_swarm()
 {
     thread rocket_swarm_fired_rumbles();
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
     var_1 = vectornormalize( anglestoforward( self getangles() ) );
 
     if ( 0 )
     {
-        var_2 = sortbydistance( _func_0D6( "axis" ), self.origin );
+        var_2 = sortbydistance( getaiarray( "axis" ), self.origin );
         var_3 = get_front_sorted_threat_list( var_2, var_1 );
     }
     else
@@ -2672,8 +2672,8 @@ rocket_swarm()
             var_10 = rocket_swarm_end_position( var_9, var_8 );
             var_11 = magicbullet( self.mechdata.weapon_names["mech_swarm_rocket"], var_9, var_10, self );
 
-            if ( isai( var_8 ) && _func_0A3( var_8 ) )
-                _func_09C( var_8, "ui_playermech_icon_swarm_target" );
+            if ( isai( var_8 ) && target_istarget( var_8 ) )
+                target_setshader( var_8, "ui_playermech_icon_swarm_target" );
 
             var_12 = common_scripts\utility::spawn_tag_origin();
             var_12 thread rocket_swarm_create_and_manage_attractor( var_11, var_8, self );
@@ -2735,10 +2735,10 @@ rocket_swarm_fired_rumbles()
 hide_mech_glass_static_overlay( var_0 )
 {
     foreach ( var_2 in level.player.mechdata.dmg_screen_right )
-        var_0 _meth_8048( var_2.bone );
+        var_0 hidepart( var_2.bone );
 
     foreach ( var_2 in level.player.mechdata.dmg_screen_left )
-        var_0 _meth_8048( var_2.bone );
+        var_0 hidepart( var_2.bone );
 }
 
 scripted_screen_flicker_loop( var_0 )
@@ -2772,8 +2772,8 @@ unlimited_mech_ammo()
 
     for (;;)
     {
-        foreach ( var_1 in self _meth_830B() )
-            level.player _meth_82F7( var_1, _func_1E1( var_1 ) );
+        foreach ( var_1 in self getweaponslistall() )
+            level.player setweaponammostock( var_1, weaponmaxammo( var_1 ) );
 
         wait 5;
     }

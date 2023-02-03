@@ -4,7 +4,7 @@
 main()
 {
     maps\_utility::template_level( "df_fly" );
-    _func_0D3( "vehPlaneSwapSticks", "0" );
+    setsaveddvar( "vehPlaneSwapSticks", "0" );
     maps\_utility::add_control_based_hint_strings( "climb_hint", &"PLAYERPLANE_MOVEMENT_HINT", ::climb_hint, &"PLAYERPLANE_MOVEMENT_HINT_PC", &"PLAYERPLANE_MOVEMENT_HINT_SP" );
     maps\_utility::add_hint_string( "boost_hint", &"PLAYERPLANE_AFTERBURNERS_HINT", ::boost_hint );
     maps\_utility::add_hint_string( "missile_hint", &"PLAYERPLANE_MISSILES_HINT", ::missile_hint );
@@ -31,7 +31,7 @@ main()
 
 canyon_no_game_start_setupfunc()
 {
-    level.player _meth_83C0( "df_fly_canyon", 0 );
+    level.player lightsetforplayer( "df_fly_canyon", 0 );
     maps\_utility::vision_set_fog_changes( "df_fly_canyon", 0 );
     thread maps\df_fly_lighting::set_sun_flare();
 }
@@ -153,7 +153,7 @@ autosave_fly_check()
     var_4 = 2;
     var_5 = level.plane;
     var_6 = var_5 maps\_shg_utility::get_differentiated_acceleration();
-    var_7 = var_5 _meth_8287();
+    var_7 = var_5 vehicle_getvelocity();
     var_8 = length( var_7 );
 
     if ( var_8 > 0 )
@@ -198,10 +198,10 @@ autosave_fly_check()
 
 intro_movie()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     var_0 = newclienthudelem( level.player );
-    var_0 _meth_80CC( "black", 1280, 720 );
+    var_0 setshader( "black", 1280, 720 );
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
     var_0.alpha = 1;
@@ -259,7 +259,7 @@ setup_post_refuel_old_controls()
 post_refuel()
 {
     level.old_gravity = getdvarfloat( "vehPlaneGravityVelocity" );
-    _func_0D3( "vehPlaneGravityVelocity", 0 );
+    setsaveddvar( "vehPlaneGravityVelocity", 0 );
     thread intro_vo();
     thread handle_intro_clip();
     maps\df_fly_flight_code::flight_code_start( "intro_player_jet", 1 );
@@ -288,7 +288,7 @@ post_refuel()
     var_4 = 0;
     common_scripts\utility::flag_set( "controls_set" );
     common_scripts\utility::flag_wait( "set_waypoint" );
-    level.player _meth_84F6( &"invert_flight_controls_popmenu" );
+    level.player luiopenmenu( &"invert_flight_controls_popmenu" );
     var_5 = getent( "waypoint1", "targetname" );
     var_6 = maps\_utility::obj( "intro_waypoint" );
     objective_add( var_6, "current", "Proceed to waypoint" );
@@ -341,7 +341,7 @@ post_refuel()
     common_scripts\utility::flag_wait( "intro_finished" );
     level.player maps\_hud_util::fade_out( 1, "white" );
     wait 1;
-    _func_0D3( "vehPlaneGravityVelocity", level.old_gravity );
+    setsaveddvar( "vehPlaneGravityVelocity", level.old_gravity );
 
     foreach ( var_12 in level.allies )
         var_12 delete();
@@ -415,9 +415,9 @@ handle_clouds( var_0, var_1 )
 handle_intro_clip()
 {
     var_0 = getent( "intro_clip", "script_noteworthy" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     common_scripts\utility::flag_wait( "in_the_sky" );
-    var_0 _meth_82BE();
+    var_0 solid();
 }
 
 nag_player_to_shoot_target( var_0 )
@@ -434,7 +434,7 @@ nag_player_to_shoot_target( var_0 )
 
         foreach ( var_5 in level.allies )
         {
-            var_6 = _func_220( var_5.origin, var_1.origin );
+            var_6 = distance2dsquared( var_5.origin, var_1.origin );
 
             if ( var_3 == 0 || var_6 < var_3 )
                 var_2 = var_5;
@@ -597,7 +597,7 @@ wait_for_stick_press()
     {
         if ( level.player common_scripts\utility::is_player_gamepad_enabled() )
         {
-            var_1 = self _meth_82F3();
+            var_1 = self getnormalizedmovement();
 
             if ( abs( var_1[0] ) > var_0 )
                 var_2 += 0.05;
@@ -634,7 +634,7 @@ drop_down()
         var_4 = "ally_drop_path" + var_0 + var_1;
         var_5 = getvehiclenode( var_4, "targetname" );
         var_3 thread maps\_vehicle::vehicle_paths( var_5 );
-        var_3 _meth_827F( var_5 );
+        var_3 startpath( var_5 );
         var_0++;
     }
 }
@@ -653,7 +653,7 @@ find_drop_path()
         {
             if ( maps\_utility::get_dot( self.origin, self.angles, var_4.origin ) > 0.93 )
             {
-                var_6 = _func_220( self.origin, var_4.origin );
+                var_6 = distance2dsquared( self.origin, var_4.origin );
 
                 if ( var_1 == -1 || var_6 < var_1 )
                 {
@@ -676,7 +676,7 @@ intro_scene( var_0 )
         var_4 = var_3 maps\_utility::spawn_vehicle();
         var_1[var_1.size] = var_4;
         var_4.animname = "ally" + var_4.script_noteworthy[var_4.script_noteworthy.size - 1];
-        var_4 _meth_8115( level.scr_animtree[var_4.animname] );
+        var_4 useanimtree( level.scr_animtree[var_4.animname] );
     }
 
     common_scripts\utility::array_thread( var_1, ::playfakecontrail );
@@ -688,18 +688,18 @@ intro_scene( var_0 )
     var_9 = maps\_utility::make_array( level.intro_arms, var_6, var_8 );
     var_9 = common_scripts\utility::array_combine( var_9, var_1 );
     var_10 = common_scripts\utility::getstruct( "intro_struct", "targetname" );
-    var_7 _meth_804D( var_6, "TAG_FUEL_ROD" );
-    level.player _meth_807F( level.intro_arms, "tag_player" );
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_831F();
-    level.player _meth_8321();
+    var_7 linkto( var_6, "TAG_FUEL_ROD" );
+    level.player playerlinktoabsolute( level.intro_arms, "tag_player" );
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
     thread setup_generic_allies();
     thread refuel_vo();
     thread refuel_timings();
     var_6 thread maps\_anim::anim_single_solo( var_7, "intro", "TAG_FUEL_ROD" );
     var_10 maps\_anim::anim_single( var_9, "intro" );
-    level.player _meth_804F();
+    level.player unlink();
     common_scripts\utility::array_call( var_9, ::delete );
     common_scripts\utility::flag_set( "intro_scene_done" );
 }
@@ -727,12 +727,12 @@ refuel_vo()
 
 unlimit_player_view( var_0 )
 {
-    level.player _meth_807D( level.intro_arms, "tag_player", 0.9, 70, 70, 20, 20, 1 );
+    level.player playerlinktodelta( level.intro_arms, "tag_player", 0.9, 70, 70, 20, 20, 1 );
 }
 
 limit_player_view( var_0 )
 {
-    level.player _meth_8080( level.intro_arms, "tag_player", 0.5 );
+    level.player playerlinktoblend( level.intro_arms, "tag_player", 0.5 );
 }
 
 setup_generic_allies()
@@ -776,7 +776,7 @@ setup_generic_allies()
         waitframe();
 
         foreach ( var_16 in var_12 )
-            var_16 _meth_8117( level.scr_anim[var_16.animname]["intro_idle"][0], var_14 );
+            var_16 setanimtime( level.scr_anim[var_16.animname]["intro_idle"][0], var_14 );
     }
 
     wait 10;

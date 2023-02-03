@@ -36,7 +36,7 @@ get_group_connect_dist()
 
 node_is_valid__to_convert_to_aerial_pathnode( var_0 )
 {
-    return var_0.type == "Path" && _func_20C( var_0, 1 ) && !var_0 _meth_8386() || isdefined( var_0.forceenableaerialnode ) && var_0.forceenableaerialnode;
+    return var_0.type == "Path" && nodeexposedtosky( var_0, 1 ) && !var_0 nodeisdisconnected() || isdefined( var_0.forceenableaerialnode ) && var_0.forceenableaerialnode;
 }
 
 calculate_aerial_pathnodes()
@@ -121,7 +121,7 @@ calculate_aerial_pathnodes()
                                 {
                                     var_25 = squared( var_24.radius );
 
-                                    if ( _func_220( var_24.origin, var_3.origin ) < var_25 && _func_220( var_24.origin, var_19.origin ) < var_25 )
+                                    if ( distance2dsquared( var_24.origin, var_3.origin ) < var_25 && distance2dsquared( var_24.origin, var_19.origin ) < var_25 )
                                     {
                                         var_22 = 1;
                                         break;

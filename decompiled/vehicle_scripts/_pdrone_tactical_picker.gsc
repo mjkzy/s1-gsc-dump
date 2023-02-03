@@ -50,8 +50,8 @@ build_nodes_for_airspace()
         if ( isdefined( var_1.tactical_location ) )
             continue;
 
-        var_1.tactical_location = var_1 _meth_8216( 0, 0, 0 );
-        var_2 = transformmove( ( 0, 0, 0 ), ( 0, 0, 0 ), var_1.origin, var_1.angles, var_1 _meth_8216( 1, 1, 1 ), ( 0, 0, 0 ) );
+        var_1.tactical_location = var_1 getpointinbounds( 0, 0, 0 );
+        var_2 = transformmove( ( 0, 0, 0 ), ( 0, 0, 0 ), var_1.origin, var_1.angles, var_1 getpointinbounds( 1, 1, 1 ), ( 0, 0, 0 ) );
         var_1.box_extent = var_2["origin"];
 
         if ( !isdefined( var_1.target ) )
@@ -85,7 +85,7 @@ validate_drone_test_points()
 
         }
 
-        if ( !_func_22A( var_1.origin, var_2 ) )
+        if ( !ispointinvolume( var_1.origin, var_2 ) )
         {
 
         }
@@ -149,7 +149,7 @@ evaluate_tactical_range( var_0, var_1, var_2, var_3 )
 {
     var_2 = max( 0.001, var_2 );
     var_3 = max( 0.001, var_3 );
-    var_4 = length2d( var_0 - var_1 _meth_80A8() );
+    var_4 = length2d( var_0 - var_1 geteye() );
 
     if ( var_4 < var_2 )
         return squared( min( var_4 / var_2, 1.0 ) );
@@ -170,7 +170,7 @@ evaluate_tactical_los( var_0, var_1 )
 
 evaluate_tactical_too_close( var_0, var_1, var_2 )
 {
-    var_3 = length2d( var_0 - var_1 _meth_80A8() );
+    var_3 = length2d( var_0 - var_1 geteye() );
 
     if ( var_3 >= var_2 )
         return 1;
@@ -180,7 +180,7 @@ evaluate_tactical_too_close( var_0, var_1, var_2 )
 
 evaluate_tactical_in_front_of_enemy( var_0, var_1 )
 {
-    var_2 = ( var_0 - var_1 _meth_80A8() ) * ( 1, 1, 0 );
+    var_2 = ( var_0 - var_1 geteye() ) * ( 1, 1, 0 );
     var_2 = vectornormalize( var_2 );
     var_3 = anglestoforward( var_1.angles * ( 1, 1, 0 ) );
     var_4 = ( vectordot( var_3, var_2 ) + 1 ) / 2;
@@ -364,7 +364,7 @@ randomize_flock_positions()
         if ( !isdefined( var_1 ) || !isalive( var_1 ) )
             continue;
 
-        if ( !isdefined( var_1.flock_goal_position ) || !_func_22A( var_1.flock_goal_position, level.drone_tactical_picker_data.target_air_space ) )
+        if ( !isdefined( var_1.flock_goal_position ) || !ispointinvolume( var_1.flock_goal_position, level.drone_tactical_picker_data.target_air_space ) )
         {
             var_1.flock_goal_position = var_1 get_random_point_nearby_in_volume( level.drone_tactical_picker_data.target_air_space, 1 );
             var_1.current_goal_position = var_1.flock_goal_position;
@@ -465,7 +465,7 @@ get_random_point_in_bounds( var_0, var_1 )
     var_2 = clamp( var_0[0] + randomfloatrange( -1 * var_1, var_1 ), -1, 1 );
     var_3 = clamp( var_0[1] + randomfloatrange( -1 * var_1, var_1 ), -1, 1 );
     var_4 = clamp( var_0[2] + randomfloatrange( -1 * var_1, var_1 ), -1, 1 );
-    var_5 = level.drone_tactical_picker_data.target_air_space _meth_8216( var_2, var_3, var_4 );
+    var_5 = level.drone_tactical_picker_data.target_air_space getpointinbounds( var_2, var_3, var_4 );
     return var_5;
 }
 
@@ -485,12 +485,12 @@ get_random_point_radius_in_volume( var_0, var_1 )
     var_2 = vectornormalize( var_2 );
     var_3 = self.origin + var_2 * var_1;
 
-    if ( !_func_22A( var_3, var_0 ) )
+    if ( !ispointinvolume( var_3, var_0 ) )
     {
         var_2 *= -1;
         var_3 = self.origin + var_2 * var_1;
 
-        if ( !_func_22A( var_3, var_0 ) )
+        if ( !ispointinvolume( var_3, var_0 ) )
             var_3 = get_random_point_in_volume( var_0 );
     }
 
@@ -499,7 +499,7 @@ get_random_point_radius_in_volume( var_0, var_1 )
 
 get_random_point_in_volume( var_0 )
 {
-    return var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) );
+    return var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) );
 }
 
 update_drone_moves()
@@ -676,7 +676,7 @@ update_grenade_dodger()
         if ( !isdefined( level.flying_attack_drones ) || level.flying_attack_drones.size == 0 )
             return;
 
-        var_1 = anglestoforward( level.player _meth_8036() );
+        var_1 = anglestoforward( level.player getgunangles() );
         calculate_dodge_positions( var_0, var_1 );
         wait 0.5;
         clear_dodge_positions();

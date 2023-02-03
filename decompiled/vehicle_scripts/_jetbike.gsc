@@ -63,8 +63,8 @@ jetbike_allow_player_use( var_0 )
 {
     self makeunusable();
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( self, "tag_origin", ( 0, 0, 64 ), ( 0, 0, 0 ) );
-    var_1 _meth_80DB( &"DETROIT_PROMPT_USE" );
+    var_1 linkto( self, "tag_origin", ( 0, 0, 64 ), ( 0, 0, 0 ) );
+    var_1 sethintstring( &"DETROIT_PROMPT_USE" );
     var_1 makeusable();
     var_1 waittill( "trigger" );
     var_1 delete();
@@ -81,7 +81,7 @@ jetbike_stop_player_use()
 {
     stop_jetbike_handle_viewmodel_anims();
     self notify( "player_dismount" );
-    level.player _meth_80FD();
+    level.player dismountvehicle();
     self detach( level.scr_model["world_body"], "tag_driver" );
 }
 
@@ -94,22 +94,22 @@ jetbike_speedometer_on_thread()
 {
     setomnvar( "ui_hoverbike", 1 );
     wait 0.2;
-    level.player _meth_82FB( "ui_hoverbike_bootup", 1 );
+    level.player setclientomnvar( "ui_hoverbike_bootup", 1 );
     wait 0.2;
 
     if ( level.nextgen )
     {
-        self _meth_846C( "m/mtl_mil_hoverbike_screen_center_off", "m/mtl_hoverbike_screen_ui_01" );
-        self _meth_846C( "m/mtl_mil_hoverbike_screen_right_off", "m/mtl_hoverbike_screen_ui_02" );
-        self _meth_846C( "m/mtl_mil_hoverbike_screen_top_off", "m/mtl_hoverbike_screen_ui_03" );
-        self _meth_846C( "m/mtl_mil_hoverbike_lights_off", "m/mtl_hoverbike_screen_ui_04" );
+        self overridematerial( "m/mtl_mil_hoverbike_screen_center_off", "m/mtl_hoverbike_screen_ui_01" );
+        self overridematerial( "m/mtl_mil_hoverbike_screen_right_off", "m/mtl_hoverbike_screen_ui_02" );
+        self overridematerial( "m/mtl_mil_hoverbike_screen_top_off", "m/mtl_hoverbike_screen_ui_03" );
+        self overridematerial( "m/mtl_mil_hoverbike_lights_off", "m/mtl_hoverbike_screen_ui_04" );
     }
     else
     {
-        self _meth_846C( "mq/mtl_mil_hoverbike_screen_center_off", "mq/mtl_hoverbike_screen_ui_01" );
-        self _meth_846C( "mq/mtl_mil_hoverbike_screen_right_off", "mq/mtl_hoverbike_screen_ui_02" );
-        self _meth_846C( "mq/mtl_mil_hoverbike_screen_top_off", "mq/mtl_hoverbike_screen_ui_03" );
-        self _meth_846C( "mq/mtl_mil_hoverbike_lights_off", "mq/mtl_hoverbike_screen_ui_04" );
+        self overridematerial( "mq/mtl_mil_hoverbike_screen_center_off", "mq/mtl_hoverbike_screen_ui_01" );
+        self overridematerial( "mq/mtl_mil_hoverbike_screen_right_off", "mq/mtl_hoverbike_screen_ui_02" );
+        self overridematerial( "mq/mtl_mil_hoverbike_screen_top_off", "mq/mtl_hoverbike_screen_ui_03" );
+        self overridematerial( "mq/mtl_mil_hoverbike_lights_off", "mq/mtl_hoverbike_screen_ui_04" );
     }
 
     thread jetbike_speedometer_think();
@@ -118,9 +118,9 @@ jetbike_speedometer_on_thread()
 jetbike_speedometer_off()
 {
     self notify( "jetbike_speedometer_off" );
-    level.player _meth_82FB( "ui_hoverbike_bootup", 0 );
+    level.player setclientomnvar( "ui_hoverbike_bootup", 0 );
     setomnvar( "ui_hoverbike", 0 );
-    self _meth_846D();
+    self overridematerialreset();
 }
 
 jetbike_speedometer_think()
@@ -138,7 +138,7 @@ jetbike_speedometer_think()
 
         var_0 *= 1.39683;
         var_1 = int( clamp( abs( var_0 ), 0, 100 ) );
-        level.player _meth_82FB( "ui_hoverbike_speed", var_1 );
+        level.player setclientomnvar( "ui_hoverbike_speed", var_1 );
         waitframe();
     }
 }
@@ -171,10 +171,10 @@ smooth_vehicle_animation_wait( var_0, var_1, var_2, var_3, var_4 )
         var_4 = 1.0;
 
     var_8 = var_0.origin + ( var_6 - var_0.origin ) * var_4;
-    var_0 _meth_8229( var_8, var_3 );
+    var_0 vehicledriveto( var_8, var_3 );
     var_9 = var_6 - var_0.origin;
     var_10 = vectordot( var_9, var_6 - var_0.origin );
-    var_11 = var_0 _meth_8286();
+    var_11 = var_0 vehicle_getspeed();
 
     if ( vectordot( vectornormalize( var_9 ), anglestoforward( var_0.angles ) ) > cos( 75 ) )
     {
@@ -186,7 +186,7 @@ smooth_vehicle_animation_wait( var_0, var_1, var_2, var_3, var_4 )
                 break;
 
             var_13 = maps\_utility::linear_interpolate( var_12 / var_10, var_3, var_11 );
-            var_0 _meth_8229( var_8, var_13 );
+            var_0 vehicledriveto( var_8, var_13 );
             wait 0.05;
         }
     }
@@ -218,14 +218,14 @@ smooth_vehicle_animation_play( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_12 = level common_scripts\utility::spawn_tag_origin();
     var_12.origin = var_0.origin;
     var_12.angles = var_0.angles;
-    var_0 _meth_804D( var_11, "tag_origin" );
+    var_0 linkto( var_11, "tag_origin" );
 
     foreach ( var_14 in var_3 )
-        var_14 _meth_804D( var_11, "tag_origin" );
+        var_14 linkto( var_11, "tag_origin" );
 
-    var_11 _meth_804D( var_12, "tag_origin" );
-    var_12 _meth_82AE( var_8, var_5, var_5 * 0.3, var_5 * 0.3 );
-    var_12 _meth_82B5( var_9, var_6, var_6 * 0.3, var_6 * 0.3 );
+    var_11 linkto( var_12, "tag_origin" );
+    var_12 moveto( var_8, var_5, var_5 * 0.3, var_5 * 0.3 );
+    var_12 rotateto( var_9, var_6, var_6 * 0.3, var_6 * 0.3 );
     var_16 = getanimlength( var_7 );
 
     if ( var_4 )
@@ -243,12 +243,12 @@ smooth_vehicle_animation_play( var_0, var_1, var_2, var_3, var_4, var_5 )
     foreach ( var_14 in var_3 )
     {
         if ( isdefined( var_14 ) )
-            var_14 _meth_804F();
+            var_14 unlink();
     }
 
     if ( !var_4 )
     {
-        var_0 _meth_804F();
+        var_0 unlink();
         var_11 delete();
         var_12 delete();
     }
@@ -260,11 +260,11 @@ jetbike_allow_player_use_internal( var_0 )
     var_1 = maps\_utility::spawn_anim_model( "world_body" );
     var_1 hide();
     var_2 = 0.5;
-    level.player _meth_8080( var_1, "tag_player", var_2, var_2 * 0.3, var_2 * 0.3 );
-    level.player common_scripts\utility::delaycall( var_2, ::_meth_807D, var_1, "tag_player", 1, 20, 20, 10, 10, 1 );
+    level.player playerlinktoblend( var_1, "tag_player", var_2, var_2 * 0.3, var_2 * 0.3 );
+    level.player common_scripts\utility::delaycall( var_2, ::playerlinktodelta, var_1, "tag_player", 1, 20, 20, 10, 10, 1 );
     var_3 = 1;
     var_4 = getanimlength( var_1 maps\_utility::getanim( "mount_jetbike" ) );
-    level.player common_scripts\utility::delaycall( var_4 - var_3, ::_meth_80A2, var_3, var_3 * 0.5, var_3 * 0.5, 0, 0, 0, 0 );
+    level.player common_scripts\utility::delaycall( var_4 - var_3, ::lerpviewangleclamp, var_3, var_3 * 0.5, var_3 * 0.5, 0, 0, 0, 0 );
     var_1 common_scripts\utility::delaycall( var_2, ::show );
     var_5 = [ var_1, self ];
 
@@ -276,13 +276,13 @@ jetbike_allow_player_use_internal( var_0 )
     var_1 delete();
     self attach( level.scr_model["world_body"], "tag_driver" );
     level.player.attackeraccuracy = 0;
-    self _meth_8141();
-    level.player _meth_80FC( self );
+    self stopanimscripted();
+    level.player mountvehicle( self );
     level.player.drivingvehicle = self;
-    self _meth_8445( 1 );
+    self vehicle_jetbikesethoverforcescale( 1 );
     maps\_utility::ent_flag_set( "jetbike_is_hovering" );
-    level.player _meth_834C( 1 );
-    self _meth_80C6();
+    level.player enablemousesteer( 1 );
+    self returnplayercontrol();
     thread jetbike_player_think();
 }
 
@@ -331,28 +331,28 @@ jetbike_handle_fake_speed()
 
         if ( var_9 )
         {
-            var_15 = maps\_shg_utility::linear_map_clamp( self _meth_8286(), 15, 65, 3, 1 );
+            var_15 = maps\_shg_utility::linear_map_clamp( self vehicle_getspeed(), 15, 65, 3, 1 );
             self.boost_timer += 0.05;
             var_11 += 0.05 / var_3;
-            self _meth_8489( var_15 );
-            self _meth_8445( 0.75 );
+            self vehicle_jetbikesetthrustscale( var_15 );
+            self vehicle_jetbikesethoverforcescale( 0.75 );
         }
         else
         {
             self.boost_timer = 0;
             var_11 -= 0.05 / var_4;
-            self _meth_8489( 1 );
-            self _meth_8445( 1 );
+            self vehicle_jetbikesetthrustscale( 1 );
+            self vehicle_jetbikesethoverforcescale( 1 );
         }
 
-        if ( level.player _meth_82F3()[0] > 0.75 )
+        if ( level.player getnormalizedmovement()[0] > 0.75 )
             var_12 += 0.05 / var_6;
         else
             var_12 -= 0.05 / var_7;
 
         var_11 = clamp( var_11, 0, 1 );
         var_12 = clamp( var_12, 0, 1 );
-        var_16 = self _meth_8286() + var_11 * var_2 + var_12 * var_5;
+        var_16 = self vehicle_getspeed() + var_11 * var_2 + var_12 * var_5;
         vehicle_set_fake_speed( var_16 );
         wait 0.05;
     }
@@ -373,7 +373,7 @@ vehicle_set_fake_speed( var_0 )
     else
         var_2 = 1;
 
-    self _meth_8488( var_0 * var_2 );
+    self vehicle_setfakespeed( var_0 * var_2 );
 }
 
 jetbike_handle_viewmodel_anims()
@@ -407,25 +407,25 @@ jetbike_handle_viewmodel_anims()
     for (;;)
     {
         waittillframeend;
-        var_23 = 0 - level.player _meth_830D()[1] * 1.00794;
+        var_23 = 0 - level.player getnormalizedcameramovements()[1] * 1.00794;
         var_19 = maps\_utility::linear_interpolate( var_3, var_23, var_19 );
         var_24 = ( var_19 - var_20 ) * 20;
         var_20 = var_19;
         var_21 = maps\_utility::linear_interpolate( var_4, var_24, var_21 );
         var_25 = clamp( var_19 - var_21 * var_1, -1, 1 );
-        var_26 = self _meth_8286();
+        var_26 = self vehicle_getspeed();
 
         if ( isdefined( self.fakespeed ) )
             var_26 = self.fakespeed;
 
         var_27 = maps\_shg_utility::linear_map_clamp( var_26, 15, 80, 0, 1 );
-        var_28 = clamp( level.player _meth_82F3()[0] * 1.00794, 0, 1 );
+        var_28 = clamp( level.player getnormalizedmovement()[0] * 1.00794, 0, 1 );
         var_22 = maps\_utility::linear_interpolate( var_2, var_28, var_22 );
         var_29 = var_22;
         var_30 = clamp( 1 - max( var_27, var_29 ), 0, 1 );
         var_31 = var_27;
-        var_32 = self _meth_8453() > 1.7;
-        var_33 = self _meth_8453() < 0.7;
+        var_32 = self vehicle_jetbikegettotalrepulsorfraction() > 1.7;
+        var_33 = self vehicle_jetbikegettotalrepulsorfraction() < 0.7;
         var_34 = 0;
         var_35 = 0;
 
@@ -513,17 +513,17 @@ stop_jetbike_handle_viewmodel_anims()
     self notify( "stop_jetbike_handle_viewmodel_anims" );
 
     foreach ( var_1 in [ "frankenbike_jetbike", "frankenbike_worldbody" ] )
-        self _meth_8142( level.scr_anim[var_1]["branch"], 0.2 );
+        self clearanim( level.scr_anim[var_1]["branch"], 0.2 );
 }
 
 getanimtimeseconds( var_0 )
 {
-    return self _meth_814F( var_0 ) * getanimlength( var_0 );
+    return self getanimtime( var_0 ) * getanimlength( var_0 );
 }
 
 getanimtimeremainingseconds( var_0 )
 {
-    return ( 1 - self _meth_814F( var_0 ) ) * getanimlength( var_0 );
+    return ( 1 - self getanimtime( var_0 ) ) * getanimlength( var_0 );
 }
 
 jetbike_set_viewmodel_state( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
@@ -539,36 +539,36 @@ jetbike_set_viewmodel_state( var_0, var_1, var_2, var_3, var_4, var_5, var_6, va
 
     foreach ( var_17 in [ "frankenbike_jetbike", "frankenbike_worldbody" ] )
     {
-        self _meth_814C( level.scr_anim[var_17]["idle_slow_branch"], var_4, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast_branch"], 1 - var_4, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_slow"], var_15, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_slow_lt"], var_13, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_slow_rt"], var_14, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast_throttle"], 1 - var_6, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast_direction_branch"], var_6, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast"], var_15, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast_lt"], var_13, var_12 );
-        self _meth_814C( level.scr_anim[var_17]["idle_fast_rt"], var_14, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_slow_branch"], var_4, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast_branch"], 1 - var_4, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_slow"], var_15, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_slow_lt"], var_13, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_slow_rt"], var_14, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast_throttle"], 1 - var_6, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast_direction_branch"], var_6, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast"], var_15, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast_lt"], var_13, var_12 );
+        self setanimlimited( level.scr_anim[var_17]["idle_fast_rt"], var_14, var_12 );
 
         if ( var_0 )
         {
             if ( var_1 )
-                self _meth_8143( level.scr_anim[var_17]["jump_st"], 1, var_8 );
+                self setanimknob( level.scr_anim[var_17]["jump_st"], 1, var_8 );
             else if ( var_2 )
-                self _meth_8143( level.scr_anim[var_17]["jump_loop"], 1, var_10 );
+                self setanimknob( level.scr_anim[var_17]["jump_loop"], 1, var_10 );
             else if ( getanimtimeremainingseconds( level.scr_anim[var_17]["jump_st"] ) < var_9 )
-                self _meth_8143( level.scr_anim[var_17]["jump_loop"], 1, var_9 );
+                self setanimknob( level.scr_anim[var_17]["jump_loop"], 1, var_9 );
 
             continue;
         }
 
         if ( var_3 )
         {
-            self _meth_8143( level.scr_anim[var_17]["jump_end"], 1, var_11 );
+            self setanimknob( level.scr_anim[var_17]["jump_end"], 1, var_11 );
             continue;
         }
 
-        self _meth_8143( level.scr_anim[var_17]["idle_branch"], 1, var_7 );
+        self setanimknob( level.scr_anim[var_17]["idle_branch"], 1, var_7 );
     }
 }
 
@@ -576,7 +576,7 @@ debug_tags()
 {
     for (;;)
     {
-        if ( self _meth_8442( "tag_camera" ) != -1 )
+        if ( self gettagindex( "tag_camera" ) != -1 )
         {
 
         }
@@ -589,43 +589,43 @@ jetbike_dismount_riding_player()
 {
     jetbike_stop_hovering();
     wait 1;
-    self _meth_80B1( "vehicle_mil_hoverbike_ai" );
+    self setmodel( "vehicle_mil_hoverbike_ai" );
     var_0 = 0.5;
-    level.player _meth_8031( 65, var_0 );
+    level.player lerpfov( 65, var_0 );
     var_1 = level.player common_scripts\utility::spawn_tag_origin();
-    level.player _meth_807C( var_1 );
-    var_1 _meth_82AE( self gettagorigin( "tag_detach" ), var_0 );
+    level.player playerlinkto( var_1 );
+    var_1 moveto( self gettagorigin( "tag_detach" ), var_0 );
     wait(var_0);
-    level.player _meth_804F();
-    level.player _meth_831E();
-    level.player _meth_8119( 1 );
+    level.player unlink();
+    level.player enableweapons();
+    level.player allowcrouch( 1 );
     self makeunusable();
 }
 
 jetbike_start_hovering()
 {
     maps\_utility::ent_flag_set( "jetbike_is_hovering" );
-    self _meth_8445( 0.6, 0 );
-    self _meth_8445( 1, 1.5 );
+    self vehicle_jetbikesethoverforcescale( 0.6, 0 );
+    self vehicle_jetbikesethoverforcescale( 1, 1.5 );
     wait 1;
 }
 
 jetbike_start_hovering_now()
 {
     maps\_utility::ent_flag_set( "jetbike_is_hovering" );
-    self _meth_8445( 1 );
+    self vehicle_jetbikesethoverforcescale( 1 );
 }
 
 jetbike_stop_hovering()
 {
     maps\_utility::ent_flag_clear( "jetbike_is_hovering" );
-    self _meth_8445( 0, 5 );
+    self vehicle_jetbikesethoverforcescale( 0, 5 );
 }
 
 jetbike_stop_hovering_now()
 {
     maps\_utility::ent_flag_clear( "jetbike_is_hovering" );
-    self _meth_8445( 0 );
+    self vehicle_jetbikesethoverforcescale( 0 );
 }
 
 jetbike_player_think()
@@ -633,7 +633,7 @@ jetbike_player_think()
     thread jetbike_handle_viewmodel_anims();
     thread jetbike_handle_fake_speed();
     self.saved_bg_viewbobmax = getdvarfloat( "bg_viewBobMax" );
-    _func_0D3( "bg_viewBobMax", 0 );
+    setsaveddvar( "bg_viewBobMax", 0 );
     thread vehicle_handle_debugfly();
     thread collision_watcher();
 }
@@ -641,16 +641,16 @@ jetbike_player_think()
 jetbike_stop_player_think()
 {
     self notify( "player_dismount" );
-    _func_0D3( "bg_viewBobMax", self.saved_bg_viewbobmax );
+    setsaveddvar( "bg_viewBobMax", self.saved_bg_viewbobmax );
 }
 
 jetbike_npc_load( var_0, var_1 )
 {
-    var_1 _meth_8445( 0 );
+    var_1 vehicle_jetbikesethoverforcescale( 0 );
     maps\_utility::guy_runtovehicle_load( var_0, var_1 );
     var_2 = 1;
-    var_1 _meth_8445( 0.75 );
-    var_1 _meth_8445( 1, var_2 );
+    var_1 vehicle_jetbikesethoverforcescale( 0.75 );
+    var_1 vehicle_jetbikesethoverforcescale( 1, var_2 );
     maps\_utility::ent_flag_set( "jetbike_is_hovering" );
     wait(var_2);
     var_1 thread stop_hovering_on_unload();
@@ -665,7 +665,7 @@ stop_hovering_on_unload()
 {
     self endon( "death" );
     self waittill( "unloading" );
-    self _meth_8445( 0, 2 );
+    self vehicle_jetbikesethoverforcescale( 0, 2 );
     maps\_utility::ent_flag_clear( "jetbike_is_hovering" );
 }
 
@@ -1067,7 +1067,7 @@ contact_watcher()
         }
 
         if ( var_11 > 100 )
-            level.player _meth_80AD( "damage_heavy" );
+            level.player playrumbleonentity( "damage_heavy" );
 
         jetbike_collision_hit_func( self, var_4, var_5, var_6, var_7, var_8 );
     }
@@ -1093,7 +1093,7 @@ accel_watcher()
 
             }
 
-            level.player _meth_8051( var_5, self.origin, self, level.player, "MOD_CRUSH" );
+            level.player dodamage( var_5, self.origin, self, level.player, "MOD_CRUSH" );
         }
     }
 }
@@ -1101,7 +1101,7 @@ accel_watcher()
 stop_hovering_on_player_death()
 {
     level.player waittill( "death" );
-    self _meth_8445( 0 );
+    self vehicle_jetbikesethoverforcescale( 0 );
     maps\_utility::ent_flag_clear( "jetbike_is_hovering" );
 }
 
@@ -1122,5 +1122,5 @@ angles_lerp( var_0, var_1, var_2 )
 
 level_jetbike_to_vm_model( var_0 )
 {
-    level.jetbike _meth_80B1( "vehicle_mil_hoverbike_vm" );
+    level.jetbike setmodel( "vehicle_mil_hoverbike_vm" );
 }

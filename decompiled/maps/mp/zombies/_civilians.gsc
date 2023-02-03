@@ -79,7 +79,7 @@ buildbodies( var_0 )
 oncivaiconnect()
 {
     self.agentname = &"ZOMBIE_CIVILIANS_SURVIVOR";
-    self _meth_811A( 0 );
+    self allowprone( 0 );
     self.traversecost = 3.0;
 }
 
@@ -106,7 +106,7 @@ spawncivilian( var_0, var_1 )
         var_7 = level.civ_extract.spawnpoint;
 
     var_8 = spawn( "script_model", var_7.origin );
-    var_8 _meth_80B1( "tag_origin" );
+    var_8 setmodel( "tag_origin" );
     thread killicononroundskip( var_8 );
 
     foreach ( var_10 in level.players )
@@ -123,7 +123,7 @@ spawncivilian( var_0, var_1 )
     {
         foreach ( var_10 in level.players )
         {
-            if ( _func_220( var_7.origin, var_10.origin ) < var_4 && abs( var_10.origin[2] - var_7.origin[2] ) < 128 )
+            if ( distance2dsquared( var_7.origin, var_10.origin ) < var_4 && abs( var_10.origin[2] - var_7.origin[2] ) < 128 )
             {
                 var_5 = 2;
                 break;
@@ -172,7 +172,7 @@ spawncivilian( var_0, var_1 )
         var_14 maps\mp\agents\_agent_common::set_agent_health( var_16 );
         var_14.meleedamage = var_2.meleedamage;
         var_14 maps\mp\zombies\_util::zombies_make_objective( "compass_objpoint_ammo_friendly" );
-        var_14 _meth_853C( "civilian" );
+        var_14 scragentsetspecies( "civilian" );
         var_14 maps\mp\_utility::giveperk( "specialty_coldblooded", 0 );
     }
 }
@@ -215,7 +215,7 @@ onzombiecivilianspawn( var_0, var_1, var_2 )
     thread interestmonitor();
     self.idlestateoverridefunc = ::determineidlestate;
     level.numberofalivecivilians++;
-    self _meth_8177( "zombie_civilians" );
+    self setthreatbiasgroup( "zombie_civilians" );
     self.movemode = "walk";
 }
 
@@ -337,10 +337,10 @@ zombiecivilianthink()
     thread maps\mp\zombies\_util::waitforbadpath();
     thread enemyproximitymonitor();
     var_2 = spawn( "script_model", self.targetextractpoint.origin + ( 0, 0, 2 ) );
-    var_2 _meth_80B1( "viewmodel_flare" );
+    var_2 setmodel( "viewmodel_flare" );
     var_2.angles = ( 90, randomfloatrange( -180, 180 ), 0 );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "Extraction_Flare" ), var_2, "TAG_FIRE_FX", 0 );
-    var_2 _meth_8075( "zmb_civ_extraction_flare_lp" );
+    var_2 playloopsound( "zmb_civ_extraction_flare_lp" );
     thread flarefxcleanup( var_2 );
 
     for (;;)
@@ -377,7 +377,7 @@ movetoextractpoint()
 
     self notify( "begin_extraction_escort" );
     [[ level.extractionescortfuncs[var_0] ]]();
-    self _meth_8394( 64 );
+    self scragentsetgoalradius( 64 );
     var_1 = self.targetextractpoint;
     self.badpathresults = 0;
 
@@ -385,7 +385,7 @@ movetoextractpoint()
     {
         for (;;)
         {
-            self _meth_8390( self.targetextractpoint.origin );
+            self scragentsetgoalpos( self.targetextractpoint.origin );
             var_2 = common_scripts\utility::waittill_any_return( "goal", "goal_reached", "bad_path", "close_enemy" );
 
             if ( var_2 == "goal" || var_2 == "goal_reached" && distance( self.origin, self.targetextractpoint.origin ) < 64 )
@@ -413,7 +413,7 @@ flarefxcleanup( var_0 )
 {
     level common_scripts\utility::waittill_any( "extraction_complete", "extraction_failed" );
     maps\mp\zombies\_util::killfxontagnetwork( common_scripts\utility::getfx( "Extraction_Flare" ), var_0, "TAG_FIRE_FX" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     wait 10;
     var_0 delete();
 }
@@ -477,8 +477,8 @@ stopmoving()
     self.isbeingescorted = 0;
     self notify( "civilian_stop" );
     waitframe();
-    self _meth_8390( self.origin );
-    self _meth_8394( 4096 );
+    self scragentsetgoalpos( self.origin );
+    self scragentsetgoalradius( 4096 );
     thread movetocowerlocation();
 }
 
@@ -528,8 +528,8 @@ movetocowerlocation()
 
     for (;;)
     {
-        self _meth_8390( var_7.origin );
-        self _meth_8394( 64 );
+        self scragentsetgoalpos( var_7.origin );
+        self scragentsetgoalradius( 64 );
         var_10 = common_scripts\utility::waittill_any_return( "goal", "goal_reached", "bad_path", "civilian_stop" );
 
         if ( var_10 == "goal" || var_10 == "goal_reached" )
@@ -638,7 +638,7 @@ extractioncleanup()
     self notify( "extraction_complete" );
     self.bypasscorpse = 1;
     level waittill( "extraction_sequence_complete" );
-    self _meth_826B();
+    self suicide();
 }
 
 givecivilianachievement()
@@ -658,7 +658,7 @@ givecivilianachievement()
     foreach ( var_1 in level.players )
     {
         if ( !isdefined( var_1.numcivilianslifetimetotal ) )
-            var_1.numcivilianslifetimetotal = var_1 _meth_8554( "civiliansRescued" );
+            var_1.numcivilianslifetimetotal = var_1 getcoopplayerdatareservedint( "civiliansRescued" );
 
         if ( var_1.numcivilianslifetimetotal + level.civiliansrescued >= 20 )
             var_1 maps\mp\gametypes\zombies::givezombieachievement( "DLC2_ZOMBIE_RESCUE20" );
@@ -672,7 +672,7 @@ areplayerswithinrange( var_0 )
         if ( !isalive( var_2 ) )
             continue;
 
-        if ( _func_220( self.origin, var_2.origin ) < var_0 )
+        if ( distance2dsquared( self.origin, var_2.origin ) < var_0 )
             return 1;
     }
 
@@ -684,14 +684,14 @@ oncivdamagefinished( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     maps\mp\agents\_agents::agent_damage_finished( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
 
     if ( isalive( self ) && self.health < self.maxhealth * 0.4 )
-        self _meth_83FA( 0, 0 );
+        self hudoutlineenable( 0, 0 );
 }
 
 oncivkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-    self _meth_83FB();
+    self hudoutlinedisable();
     maps\mp\zombies\_util::zombies_make_nonobjective();
-    self _meth_82A8();
+    self clearperks();
 
     if ( !isdefined( self.extractionsuccessful ) )
     {
@@ -701,7 +701,7 @@ oncivkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
         iprintlnbold( &"ZOMBIE_CIVILIANS_RESCUE_FAIL" );
     }
 
-    self _meth_83FB();
+    self hudoutlinedisable();
 
     if ( isdefined( self.headicon ) )
         self.headicon destroy();

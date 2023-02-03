@@ -5,10 +5,10 @@
 
 main()
 {
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
     self endon( "killanimscript" );
     animscripts\utility::initialize( "grenade_return_throw" );
-    self _meth_818E( "zonly_physics" );
+    self animmode( "zonly_physics" );
     var_0 = undefined;
     var_1 = 1000;
 
@@ -41,7 +41,7 @@ main()
     }
 
     var_0 = var_2[randomint( var_2.size )];
-    self _meth_8110( "throwanim", var_0, %body, 1, 0.3 );
+    self setflaggedanimknoballrestart( "throwanim", var_0, %body, 1, 0.3 );
     var_4 = animhasnotetrack( var_0, "grenade_left" ) || animhasnotetrack( var_0, "grenade_right" );
 
     if ( var_4 )
@@ -51,7 +51,7 @@ main()
         thread notifygrenadepickup( "throwanim", "grenade_left" );
         thread notifygrenadepickup( "throwanim", "grenade_right" );
         self waittill( "grenade_pickup" );
-        self _meth_8189();
+        self pickupgrenade();
         animscripts\battlechatter_ai::evaluateattackevent( "grenade" );
 
         if ( isdefined( self.team ) )
@@ -62,7 +62,7 @@ main()
     else
     {
         self waittillmatch( "throwanim", "grenade_throw" );
-        self _meth_8189();
+        self pickupgrenade();
         animscripts\battlechatter_ai::evaluateattackevent( "grenade" );
 
         if ( isdefined( self.team ) )
@@ -70,7 +70,7 @@ main()
     }
 
     if ( isdefined( self.grenade ) )
-        self _meth_81D3();
+        self throwgrenade();
 
     wait 1;
 

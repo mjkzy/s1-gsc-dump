@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "kva_hazmat_body_low" );
+    self setmodel( "kva_hazmat_body_low" );
     codescripts\character::attachhead( "alias_civ_cau_male_heads_hazmat_nohat", xmodelalias\alias_civ_cau_male_heads_hazmat_nohat::main() );
     self.voice = "kva";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

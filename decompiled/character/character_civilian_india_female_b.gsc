@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "body_india_female_b" );
+    self setmodel( "body_india_female_b" );
     self attach( "head_india_female_b", "", 1 );
     self.headmodel = "head_india_female_b";
     self.voice = "arab";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

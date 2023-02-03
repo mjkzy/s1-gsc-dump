@@ -18,7 +18,7 @@ init()
     var_8 = 7;
     var_9 = 8;
     var_10 = 9;
-    var_11 = _func_295( var_0 );
+    var_11 = tablegetrowcount( var_0 );
 
     for ( var_12 = 0; var_12 < var_11; var_12++ )
     {

@@ -19,13 +19,13 @@ grapple_traverse( var_0, var_1, var_2, var_3 )
     foreach ( var_5 in self.grapple_end_events )
         self endon( var_5 );
 
-    self _meth_818D( "nogravity" );
-    self _meth_818D( "noclip" );
+    self traversemode( "nogravity" );
+    self traversemode( "noclip" );
 
     if ( !isdefined( var_1 ) )
     {
-        self.traversestartnode = self _meth_819D();
-        self.traverseendnode = self _meth_819E();
+        self.traversestartnode = self getnegotiationstartnode();
+        self.traverseendnode = self getnegotiationendnode();
     }
 
     thread grapple_traverse_cleanup( self.traverseendnode );
@@ -65,12 +65,12 @@ grapple_traverse( var_0, var_1, var_2, var_3 )
     self.grapple_end_ent.angles = var_8;
 
     if ( isdefined( var_1 ) )
-        self.grapple_end_ent _meth_804D( var_1 );
+        self.grapple_end_ent linkto( var_1 );
 
     self.grapple_end_ent thread grapple_delete_monitor( self );
     var_10 = self.origin;
     grapple_add_void_point( self.grapple_end_ent.origin, 64, grapple_travel_time( var_10, self.grapple_end_ent.origin ) + 2.0 );
-    self _meth_818F( "face angle", vectortoyaw( self.grapple_end_ent.origin - var_10 ) );
+    self orientmode( "face angle", vectortoyaw( self.grapple_end_ent.origin - var_10 ) );
 
     if ( isdefined( var_0 ) )
         self.grapple_config = level.grapple_traverse_configs[var_0];
@@ -113,7 +113,7 @@ grapple_traverse_cleanup( var_0 )
     var_1 = common_scripts\utility::waittill_any_return( self.grapple_end_events[0], self.grapple_end_events[1], self.grapple_end_events[2], self.grapple_end_events[3], self.grapple_end_events[4], self.grapple_end_events[5] );
 
     if ( isdefined( var_0 ) && var_1 == "killanimscript" )
-        self _meth_81C6( var_0.origin, self.angles, 10000 );
+        self forceteleport( var_0.origin, self.angles, 10000 );
 
     if ( isdefined( self ) )
     {
@@ -160,11 +160,11 @@ grapple_animate( var_0, var_1, var_2 )
     self.traverseanim = var_0;
 
     if ( isdefined( self.grapple_target_ent ) )
-        self _meth_813E( "grappleanim", self.origin, vectortoangles( self.grapple_end_ent.origin - self.origin ), var_0 );
+        self animscripted( "grappleanim", self.origin, vectortoangles( self.grapple_end_ent.origin - self.origin ), var_0 );
     else
-        self _meth_810F( "grappleanim", var_0, %body, 1, var_6, 1 );
+        self setflaggedanimknoball( "grappleanim", var_0, %body, 1, var_6, 1 );
 
-    self _meth_8117( var_0, 0 );
+    self setanimtime( var_0, 0 );
     thread animscripts\shared::donotetracks( "grappleanim" );
     wait(max( getanimlength( var_0 ) - var_1, 0 ));
 }
@@ -184,7 +184,7 @@ grapple_anim_lerp( var_0, var_1, var_2 )
     {
         var_7 = distance( self.origin, self.grapple_end_ent.origin );
         var_8 = clamp( 1.0 - var_7 / var_6, 0.0001, 0.9999 );
-        self _meth_8117( var_0, var_8 );
+        self setanimtime( var_0, var_8 );
         wait 0.05;
     }
 }
@@ -220,17 +220,17 @@ grapple_fire_rope_thread( var_0, var_1 )
     maps\_grapple::aud_grapple_launch();
     magicbullet( "s1_grapple_impact", var_0 + var_1 * -1.0, var_0 + var_1, level.player );
     var_2 = maps\_utility::spawn_anim_model( "grapple_rope", self gettagorigin( "tag_weapon_left" ) );
-    var_2 _meth_804D( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_2 thread maps\_anim::anim_single_solo( var_2, "fire_third_person" );
     var_2 show();
     var_3 = maps\_utility::spawn_anim_model( "grapple_rope_stretch", var_0 );
     var_3 show();
 
     if ( isdefined( self.grapple_target_ent ) )
-        var_3 _meth_804D( self.grapple_target_ent );
+        var_3 linkto( self.grapple_target_ent );
 
-    var_2 _meth_848C( var_3 );
-    var_3 _meth_848C( var_2 );
+    var_2 drawfacingentity( var_3 );
+    var_3 drawfacingentity( var_2 );
 
     if ( distancesquared( var_0, self gettagorigin( "tag_weapon_left" ) ) > 64009.0 )
         var_3 thread maps\_grapple::grapple_rope_length_thread( var_2, 1 );
@@ -273,7 +273,7 @@ grapple_travel( var_0, var_1 )
     self endon( "death" );
     self.grapple_end_ent endon( "death" );
     var_2 = grapple_end_anim();
-    self _meth_8117( var_2, 0 );
+    self setanimtime( var_2, 0 );
     var_3 = getstartorigin( self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_2 );
     var_4 = getstartangles( self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_2 );
     var_5 = vectortoyaw( self.grapple_end_ent.origin - var_0 );
@@ -284,23 +284,23 @@ grapple_travel( var_0, var_1 )
     var_8 = common_scripts\utility::spawn_tag_origin();
     var_8.origin = var_0;
     var_8.angles = var_1;
-    self _meth_804D( var_8, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self linkto( var_8, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     if ( var_6 > 0 )
-        var_8 _meth_82AE( var_3, var_6, 0, 0, self.grapple_end_ent );
+        var_8 moveto( var_3, var_6, 0, 0, self.grapple_end_ent );
 
     var_8 thread grapple_delete_monitor( self );
 
     while ( var_6 >= 0 )
     {
-        self _meth_818F( "face angle", var_5 );
+        self orientmode( "face angle", var_5 );
         var_6 -= 0.05;
         wait 0.05;
     }
 
     wait 0.05;
-    self _meth_804F();
-    self _meth_818F( "face angle", getstartangles( self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_2 )[1] );
+    self unlink();
+    self orientmode( "face angle", getstartangles( self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_2 )[1] );
     self notify( "traverse_grapple_traveled" );
 }
 
@@ -318,11 +318,11 @@ grapple_land()
 
     if ( isdefined( self.grapple_target_ent ) )
     {
-        self _meth_804D( self.grapple_target_ent );
-        self _meth_813E( "grappleanim", self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_0 );
+        self linkto( self.grapple_target_ent );
+        self animscripted( "grappleanim", self.grapple_end_ent.origin, self.grapple_end_ent.angles, var_0 );
     }
     else
-        self _meth_8110( "grappleanim", var_0, %animscript_root, 1, 0, 1 );
+        self setflaggedanimknoballrestart( "grappleanim", var_0, %animscript_root, 1, 0, 1 );
 
     childthread animscripts\shared::donotetracks( "grappleanim", animscripts\traverse\shared::handletraversenotetracks );
     wait(getanimlength( var_0 ));
@@ -344,7 +344,7 @@ trace_end_position( var_0, var_1 )
 {
     var_2 = 32.5;
     var_3 = var_1.origin;
-    var_4 = self _meth_83E5( var_3, var_3 - ( 0, 0, 50 ), undefined, undefined, 1, 1, 1 );
+    var_4 = self aiphysicstrace( var_3, var_3 - ( 0, 0, 50 ), undefined, undefined, 1, 1, 1 );
 
     if ( var_4["fraction"] < 1.0 )
         var_3 = var_4["position"];
@@ -357,7 +357,7 @@ trace_end_position( var_0, var_1 )
 
     var_3 += var_6 * 100;
     var_3 -= ( 0, 0, 5 );
-    var_4 = self _meth_83E5( var_3, ( var_1.origin[0], var_1.origin[1], var_3[2] ), undefined, undefined, 1, 1, 1 );
+    var_4 = self aiphysicstrace( var_3, ( var_1.origin[0], var_1.origin[1], var_3[2] ), undefined, undefined, 1, 1, 1 );
 
     if ( var_4["fraction"] < 1.0 )
         var_3 = var_4["position"];
@@ -366,7 +366,7 @@ trace_end_position( var_0, var_1 )
 
     var_7 = var_1.origin[2] - var_2;
     var_8 = ( var_3[0], var_3[1], var_1.origin[2] ) + ( 0, 0, 70 ) + var_6 * -10;
-    var_4 = self _meth_83E5( var_8, var_8 + ( 0, 0, -100 ), undefined, undefined, 1, 1, 1 );
+    var_4 = self aiphysicstrace( var_8, var_8 + ( 0, 0, -100 ), undefined, undefined, 1, 1, 1 );
 
     if ( var_4["fraction"] < 1.0 )
         var_7 = var_4["position"][2];

@@ -19,12 +19,12 @@ saveplayerweaponstatepersistent( var_0, var_1 )
     }
 
     game["weaponstates"][var_0]["current"] = var_2;
-    var_3 = level.player _meth_8313();
-    var_4 = level.player _meth_8345();
-    var_5 = level.player _meth_831A();
+    var_3 = level.player getcurrentoffhand();
+    var_4 = level.player getlethalweapon();
+    var_5 = level.player gettacticalweapon();
     game["weaponstates"][var_0]["offhand"] = var_3;
     game["weaponstates"][var_0]["list"] = [];
-    var_6 = common_scripts\utility::array_combine( level.player _meth_830C(), level.player _meth_82CE() );
+    var_6 = common_scripts\utility::array_combine( level.player getweaponslistprimaries(), level.player getweaponslistoffhands() );
     var_7 = 0;
 
     foreach ( var_9 in var_6 )
@@ -33,7 +33,7 @@ saveplayerweaponstatepersistent( var_0, var_1 )
             continue;
 
         game["weaponstates"][var_0]["list"][var_7]["name"] = var_6[var_7];
-        var_10 = level.player _meth_8317( var_6[var_7] );
+        var_10 = level.player gethybridsightenabled( var_6[var_7] );
         game["weaponstates"][var_0]["list"][var_7]["hybrid_sight_enabled"] = var_10;
 
         if ( var_6[var_7] == var_4 )
@@ -48,8 +48,8 @@ saveplayerweaponstatepersistent( var_0, var_1 )
 
         if ( var_1 )
         {
-            game["weaponstates"][var_0]["list"][var_7]["clip"] = level.player _meth_82F8( var_6[var_7] );
-            game["weaponstates"][var_0]["list"][var_7]["stock"] = level.player _meth_82F9( var_6[var_7] );
+            game["weaponstates"][var_0]["list"][var_7]["clip"] = level.player getweaponammoclip( var_6[var_7] );
+            game["weaponstates"][var_0]["list"][var_7]["stock"] = level.player setweaponammostock( var_6[var_7] );
         }
 
         var_7++;
@@ -58,7 +58,7 @@ saveplayerweaponstatepersistent( var_0, var_1 )
 
 restoreplayerweaponstatepersistent( var_0, var_1, var_2 )
 {
-    var_3 = common_scripts\utility::ter_op( isdefined( var_2 ) && var_2, ::_meth_8316, ::_meth_8315 );
+    var_3 = common_scripts\utility::ter_op( isdefined( var_2 ) && var_2, ::switchtoweaponimmediate, ::switchtoweapon );
 
     if ( !isdefined( var_1 ) )
         var_1 = 0;
@@ -69,7 +69,7 @@ restoreplayerweaponstatepersistent( var_0, var_1, var_2 )
     if ( !isdefined( game["weaponstates"][var_0] ) )
         return 0;
 
-    level.player _meth_8310();
+    level.player takeallweapons();
     var_4 = [];
 
     for ( var_5 = 0; var_5 < game["weaponstates"][var_0]["list"].size; var_5++ )
@@ -83,15 +83,15 @@ restoreplayerweaponstatepersistent( var_0, var_1, var_2 )
             continue;
 
         if ( game["weaponstates"][var_0]["list"][var_5]["isLethal"] == 1 )
-            level.player _meth_8344( var_6 );
+            level.player setlethalweapon( var_6 );
 
         if ( game["weaponstates"][var_0]["list"][var_5]["isTactical"] == 1 )
-            level.player _meth_8319( var_6 );
+            level.player settacticalweapon( var_6 );
 
-        level.player _meth_830E( var_6 );
-        level.player _meth_8332( var_6 );
+        level.player giveweapon( var_6 );
+        level.player givemaxammo( var_6 );
         var_7 = game["weaponstates"][var_0]["list"][var_5]["hybrid_sight_enabled"];
-        level.player _meth_8440( var_6, var_7 );
+        level.player enablehybridsight( var_6, var_7 );
 
         if ( var_1 )
         {
@@ -104,27 +104,27 @@ restoreplayerweaponstatepersistent( var_0, var_1, var_2 )
 
     foreach ( var_10 in var_4 )
     {
-        level.player _meth_82F6( var_10["name"], var_10["clip"] );
-        level.player _meth_82F7( var_10["name"], var_10["stock"] );
+        level.player setweaponammoclip( var_10["name"], var_10["clip"] );
+        level.player setweaponammostock( var_10["name"], var_10["stock"] );
     }
 
-    level.player _meth_8318( game["weaponstates"][var_0]["offhand"] );
+    level.player switchtooffhand( game["weaponstates"][var_0]["offhand"] );
     level.player call [[ var_3 ]]( game["weaponstates"][var_0]["current"] );
     return 1;
 }
 
 setdefaultactionslot()
 {
-    self _meth_8308( 1, "" );
-    self _meth_8308( 2, "" );
-    self _meth_8308( 3, "altMode" );
-    self _meth_8308( 4, "" );
+    self setactionslot( 1, "" );
+    self setactionslot( 2, "" );
+    self setactionslot( 3, "altMode" );
+    self setactionslot( 4, "" );
 }
 
 init_player()
 {
     setdefaultactionslot();
-    self _meth_8310();
+    self takeallweapons();
 }
 
 get_loadout()
@@ -168,28 +168,28 @@ loadout( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( var_1 ) )
     {
         level.default_weapon = var_1;
-        level.player _meth_830E( var_1 );
+        level.player giveweapon( var_1 );
     }
 
     if ( isdefined( var_2 ) )
-        level.player _meth_830E( var_2 );
+        level.player giveweapon( var_2 );
 
     if ( isdefined( var_3 ) )
     {
-        level.player _meth_8344( var_3 );
-        level.player _meth_830E( var_3 );
+        level.player setlethalweapon( var_3 );
+        level.player giveweapon( var_3 );
     }
 
     if ( isdefined( var_4 ) )
     {
-        level.player _meth_8319( var_4 );
-        level.player _meth_830E( var_4 );
+        level.player settacticalweapon( var_4 );
+        level.player giveweapon( var_4 );
     }
 
-    level.player _meth_8315( var_1 );
+    level.player switchtoweapon( var_1 );
 
     if ( isdefined( var_5 ) )
-        level.player _meth_8343( var_5 );
+        level.player setviewmodel( var_5 );
 
     level.campaign = level._lc;
     level._lc = undefined;

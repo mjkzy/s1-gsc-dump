@@ -95,7 +95,7 @@ handle_infil()
     thread maps\irons_estate_security_center::security_center_fan_blades();
     maps\_utility::autosave_stealth();
     level.play_ally_callout_vo = undefined;
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     wait 0.25;
     var_7 = common_scripts\utility::getstruct( "security_center_rooftop_obj", "targetname" );
@@ -125,12 +125,12 @@ start_enemy_callout_vo()
 watch_for_player_to_reach_overlook()
 {
     var_0 = getent( "overlook_block_player_clip", "targetname" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     common_scripts\utility::flag_wait( "overlook_block_player_trigger" );
     soundscripts\_snd::snd_message( "aud_grapple_infil" );
 
     if ( level.player.grapple["grappling"] != 1 )
-        var_0 _meth_82BE();
+        var_0 solid();
 }
 
 handle_player_during_tutorial( var_0 )
@@ -152,40 +152,40 @@ handle_player_during_tutorial( var_0 )
     level.player_rig show();
     level.player waittill( "overlook_balcony_land" );
     maps\_grapple::grapple_magnet_unregister( var_0, "tag_origin" );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    level.player _meth_831D();
+    level.player disableweapons();
     thread maps\irons_estate_code::remove_grapple();
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     var_2 = "";
-    level.player _meth_807D( level.player_rig, "tag_player", 0, 80, 40, 40, 20, 1 );
+    level.player playerlinktodelta( level.player_rig, "tag_player", 0, 80, 40, 40, 20, 1 );
     common_scripts\utility::flag_wait( "stealth_display_tutorial_over" );
     maps\_utility::autosave_stealth();
     level.tutorial_anim_struct notify( "stop_loop" );
     level.tutorial_anim_struct thread maps\_anim::anim_single_solo( level.player_rig, "tutorial_exit" );
-    level.player _meth_80A2( 0.25, 0, 0, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 0.25, 0, 0, 0, 0, 0, 0 );
     level.player_rig waittillmatch( "single anim", "to_crouch" );
-    level.player _meth_8119( 1 );
-    level.player _meth_817D( "crouch" );
+    level.player allowcrouch( 1 );
+    level.player setstance( "crouch" );
     level.player_rig waittillmatch( "single anim", "end" );
     level.player_rig delete();
-    level.player _meth_804F();
-    level.player _meth_8118( 1 );
-    level.player _meth_811A( 1 );
+    level.player unlink();
+    level.player allowstand( 1 );
+    level.player allowprone( 1 );
     level.player freezecontrols( 0 );
     thread maps\_shg_utility::show_player_hud();
-    var_3 = level.player _meth_830B();
-    var_2 = level.player _meth_8311();
-    level.player _meth_830E( "s1_unarmed" );
-    level.player _meth_8316( "s1_unarmed" );
-    level.player _meth_8321();
+    var_3 = level.player getweaponslistall();
+    var_2 = level.player getcurrentweapon();
+    level.player giveweapon( "s1_unarmed" );
+    level.player switchtoweaponimmediate( "s1_unarmed" );
+    level.player disableweaponswitch();
     wait 0.25;
-    level.player _meth_831E();
-    level.player _meth_8130( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8300( 0 );
+    level.player enableweapons();
+    level.player allowmelee( 0 );
+    level.player allowsprint( 0 );
+    level.player allowads( 0 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 1 );
 
     if ( common_scripts\utility::flag( "_stealth_spotted" ) )
@@ -208,19 +208,19 @@ handle_player_during_tutorial( var_0 )
     if ( !( common_scripts\utility::flag( "_stealth_spotted" ) || common_scripts\utility::flag( "tutorial_guard_alerted" ) ) )
         wait 0.25;
 
-    level.player _meth_8322();
+    level.player enableweaponswitch();
 
-    if ( level.player _meth_8311() != level.player.grapple["weapon"] && !level.player.grapple["quick_firing"] )
-        level.player _meth_8315( var_2 );
+    if ( level.player getcurrentweapon() != level.player.grapple["weapon"] && !level.player.grapple["quick_firing"] )
+        level.player switchtoweapon( var_2 );
     else
-        _func_0D3( "cg_drawCrosshair", 0 );
+        setsaveddvar( "cg_drawCrosshair", 0 );
 
     wait 0.25;
-    level.player _meth_830F( "s1_unarmed" );
+    level.player takeweapon( "s1_unarmed" );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_8300( 1 );
+    level.player allowmelee( 1 );
+    level.player allowsprint( 1 );
+    level.player allowads( 1 );
 }
 
 handle_stealth_display_tutorial()
@@ -248,7 +248,7 @@ concealed_kill_tutorial_display()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             if ( !isdefined( level.concealed_tutorial_display_hint ) )
             {
@@ -298,7 +298,7 @@ handle_decoy_tutorial_hint_display()
     level endon( "player_skipping_concealed_kill_tutorial" );
     level.player thread maps\_utility::display_hint_timeout( "HINT_DECOY" );
     thread decoy_hint_hud();
-    level.player _meth_82DD( "whistle", "+actionslot " + level.action_slot_whistle );
+    level.player notifyonplayercommand( "whistle", "+actionslot " + level.action_slot_whistle );
     level.player waittill( "whistle" );
     maps\_grapple::grapple_magnet_register( level.tutorial_enemy_3, "j_SpineUpper", undefined, "concealed_kill_enemy_grappled", undefined, undefined, undefined );
     common_scripts\utility::flag_set( "HINT_DECOY" );
@@ -310,12 +310,12 @@ handle_decoy_tutorial_hint_display()
 
 decoy_hint_hud()
 {
-    _func_0D3( "cg_drawcrosshair", "0" );
+    setsaveddvar( "cg_drawcrosshair", "0" );
     var_0 = undefined;
     var_1 = undefined;
     var_2 = undefined;
 
-    if ( level.player _meth_834E() )
+    if ( level.player usinggamepad() )
     {
         var_3 = "icon_hud_dpad";
 
@@ -339,16 +339,16 @@ decoy_hint_hud()
     }
 
     common_scripts\utility::flag_wait_any( "HINT_DECOY", "_stealth_spotted", "concealed_kill_spawner_dead", "player_skipping_concealed_kill_tutorial", "tutorial_guard_alerted" );
-    _func_0D3( "cg_drawcrosshair", "1" );
+    setsaveddvar( "cg_drawcrosshair", "1" );
 
-    if ( level.player _meth_834E() )
+    if ( level.player usinggamepad() )
     {
         var_0 destroy();
         var_1 destroy();
         var_2 destroy();
     }
 
-    level.player _meth_821B( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle" );
+    level.player setweaponhudiconoverride( "actionslot" + level.action_slot_whistle, "dpad_icon_whistle" );
 }
 
 infil_allies()
@@ -471,7 +471,7 @@ nox_generic_hints_internal()
                 continue;
         }
 
-        if ( level.player _meth_80A9( self ) )
+        if ( level.player istouching( self ) )
         {
             if ( isdefined( level.current_vo ) )
             {
@@ -608,7 +608,7 @@ security_center_guard_spawner_setup()
         if ( isdefined( self.exposed_vo_said ) )
             level.security_center_guard_exposed_vo_said = 1;
 
-        if ( isdefined( self.tagged ) && isdefined( self.tagged[level.player _meth_81B1()] ) )
+        if ( isdefined( self.tagged ) && isdefined( self.tagged[level.player getentitynumber()] ) )
         {
             if ( self.script_noteworthy == "security_center_guard_right" )
                 level.security_center_guard_right_tagged = 1;
@@ -657,7 +657,7 @@ security_center_rooftop_drone()
     {
         var_0 = getent( "hatch_door_left", "targetname" );
         var_0.animname = "hatch_door_left";
-        var_0 _meth_8115( level.scr_animtree["hatch_door_left"] );
+        var_0 useanimtree( level.scr_animtree["hatch_door_left"] );
         var_0 thread maps\_anim::anim_single_solo( var_0, "hatch_left_open" );
         soundscripts\_snd_playsound::snd_play_at( "irons_drone_hatch", var_0.origin );
         var_0 waittillmatch( "single anim", "end" );
@@ -702,8 +702,8 @@ stealth_display_tutorial_spawner_setup()
         var_1 = getent( "overlook_door_model", "targetname" );
         var_2 = getent( "overlook_door_clip", "targetname" );
         level.tutorial_anim_struct maps\_anim::anim_first_frame_solo( var_0, "ie_stealth_meter_door" );
-        var_1 _meth_804D( var_0, "J_prop_1" );
-        var_2 _meth_804D( var_0, "J_prop_1" );
+        var_1 linkto( var_0, "J_prop_1" );
+        var_2 linkto( var_0, "J_prop_1" );
         self waittillmatch( "single anim", "open_door" );
         level.tutorial_anim_struct thread maps\_anim::anim_single_solo( var_0, "ie_stealth_meter_door" );
         wait 1;

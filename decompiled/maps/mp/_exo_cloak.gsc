@@ -5,33 +5,33 @@ give_exo_cloak()
 {
     var_0 = get_exo_cloak_weapon();
 
-    if ( self _meth_8314( var_0 ) )
+    if ( self hasweapon( var_0 ) )
         return;
 
-    self _meth_830E( var_0 );
-    self _meth_84A6( var_0, 1.0 );
+    self giveweapon( var_0 );
+    self batterysetdischargescale( var_0, 1.0 );
     self.exo_cloak_on = 0;
     self.exo_cloak_off_time = undefined;
 
-    if ( self _meth_831A() == var_0 )
+    if ( self gettacticalweapon() == var_0 )
     {
-        self _meth_82FB( "ui_exo_battery_level0", self _meth_84A2( var_0 ) );
-        self _meth_82FB( "exo_ability_nrg_req0", _func_298( var_0 ) );
-        self _meth_82FB( "exo_ability_nrg_total0", self _meth_84A5( var_0 ) );
+        self setclientomnvar( "ui_exo_battery_level0", self batterygetcharge( var_0 ) );
+        self setclientomnvar( "exo_ability_nrg_req0", batteryreqtouse( var_0 ) );
+        self setclientomnvar( "exo_ability_nrg_total0", self batterygetsize( var_0 ) );
     }
-    else if ( self _meth_8345() == var_0 )
+    else if ( self getlethalweapon() == var_0 )
     {
-        self _meth_82FB( "ui_exo_battery_level1", self _meth_84A2( var_0 ) );
-        self _meth_82FB( "exo_ability_nrg_req1", _func_298( var_0 ) );
-        self _meth_82FB( "exo_ability_nrg_total1", self _meth_84A5( var_0 ) );
+        self setclientomnvar( "ui_exo_battery_level1", self batterygetcharge( var_0 ) );
+        self setclientomnvar( "exo_ability_nrg_req1", batteryreqtouse( var_0 ) );
+        self setclientomnvar( "exo_ability_nrg_total1", self batterygetsize( var_0 ) );
     }
 
     if ( !isdefined( self.exocloak ) )
         self.exocloak = spawnstruct();
 
     self.exocloak.costume = [];
-    self.exocloak.costume["viewmodel"] = self _meth_82ED();
-    self.exocloak.costume["body"] = self _meth_83B8();
+    self.exocloak.costume["viewmodel"] = self getviewmodel();
+    self.exocloak.costume["body"] = self getmodelfromentity();
     self notify( "exo_cloak_reset" );
     thread wait_for_exocloak_cancel();
     thread wait_for_exocloak_pressed();
@@ -54,7 +54,7 @@ wait_for_exocloak_pressed()
 
         if ( var_0 == level.cloakweapon )
         {
-            if ( !self _meth_84F8() )
+            if ( !self iscloaked() )
                 thread handle_exocloak();
             else
                 active_cloaking_disable( 1 );
@@ -102,11 +102,11 @@ handle_exocloak()
     self endon( "exo_cloak_disabled" );
     self endon( "exo_cloak_reset" );
 
-    if ( self _meth_84A2( level.cloakweapon ) > 0 )
+    if ( self batterygetcharge( level.cloakweapon ) > 0 )
     {
         active_cloaking_enable();
 
-        while ( self _meth_84A2( level.cloakweapon ) > 0 )
+        while ( self batterygetcharge( level.cloakweapon ) > 0 )
             wait 0.05;
 
         active_cloaking_disable( 1 );
@@ -117,9 +117,9 @@ active_cloaking_enable()
 {
     self.exo_cloak_on = 1;
     self.exo_cloak_off_time = undefined;
-    self _meth_844B();
+    self cloakingenable();
     hideattachmentswhilecloaked();
-    self _meth_849F( level.cloakweapon );
+    self batterydischargebegin( level.cloakweapon );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( level.cloakweapon, "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( level.cloakweapon );
     maps\mp\_snd_common_mp::snd_message( "mp_exo_cloak_activate" );
@@ -137,18 +137,18 @@ active_cloaking_disable( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 1;
 
-    if ( !self _meth_84F8() )
+    if ( !self iscloaked() )
         return;
 
     self.exo_cloak_on = 0;
     self.exo_cloak_off_time = gettime();
-    self _meth_844C();
+    self cloakingdisable();
     showattachmentsaftercloak();
 
     if ( isdefined( level.ishorde ) )
         self.ignoreme = 0;
 
-    self _meth_84A0( level.cloakweapon );
+    self batterydischargeend( level.cloakweapon );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( level.cloakweapon, "ui_exo_battery_toggle", 0 );
 
     if ( var_0 )
@@ -162,7 +162,7 @@ take_exo_cloak()
     var_0 = get_exo_cloak_weapon();
     self notify( "kill_battery" );
     active_cloaking_disable( 0 );
-    self _meth_830F( var_0 );
+    self takeweapon( var_0 );
     self notify( "exo_cloak_reset" );
 }
 
@@ -179,7 +179,7 @@ wait_for_game_end()
 
 hideattachmentswhilecloaked()
 {
-    if ( self _meth_8314( "adrenaline_mp" ) )
+    if ( self hasweapon( "adrenaline_mp" ) )
     {
         if ( isdefined( self.overclock_on ) && self.overclock_on == 1 )
         {
@@ -193,7 +193,7 @@ hideattachmentswhilecloaked()
         }
     }
 
-    if ( self _meth_8314( "exorepulsor_equipment_mp" ) )
+    if ( self hasweapon( "exorepulsor_equipment_mp" ) )
     {
         if ( isdefined( self.repulsoractive ) && self.repulsoractive == 1 )
             killfxontag( level.exo_repulsor_player_vfx_active, self, "TAG_JETPACK" );
@@ -201,7 +201,7 @@ hideattachmentswhilecloaked()
             killfxontag( level.exo_repulsor_player_vfx_inactive, self, "TAG_JETPACK" );
     }
 
-    if ( self _meth_8314( "exoping_equipment_mp" ) )
+    if ( self hasweapon( "exoping_equipment_mp" ) )
     {
         if ( isdefined( self.exo_ping_on ) && self.exo_ping_on == 1 )
             killfxontag( level.exo_ping_vfx_active, self, "J_SpineUpper" );
@@ -209,7 +209,7 @@ hideattachmentswhilecloaked()
             killfxontag( level.exo_ping_vfx_inactive, self, "J_SpineUpper" );
     }
 
-    if ( self _meth_8314( "extra_health_mp" ) )
+    if ( self hasweapon( "extra_health_mp" ) )
     {
         if ( isdefined( self.exo_health_on ) && self.exo_health_on == 1 )
         {
@@ -226,7 +226,7 @@ hideattachmentswhilecloaked()
 
 showattachmentsaftercloak()
 {
-    if ( self _meth_8314( "adrenaline_mp" ) )
+    if ( self hasweapon( "adrenaline_mp" ) )
     {
         if ( isdefined( self.overclock_on ) && self.overclock_on == 1 )
         {
@@ -240,7 +240,7 @@ showattachmentsaftercloak()
         }
     }
 
-    if ( self _meth_8314( "exorepulsor_equipment_mp" ) )
+    if ( self hasweapon( "exorepulsor_equipment_mp" ) )
     {
         if ( isdefined( self.repulsoractive ) && self.repulsoractive == 1 )
             playfxontag( level.exo_repulsor_player_vfx_active, self, "TAG_JETPACK" );
@@ -248,7 +248,7 @@ showattachmentsaftercloak()
             playfxontag( level.exo_repulsor_player_vfx_inactive, self, "TAG_JETPACK" );
     }
 
-    if ( self _meth_8314( "exoping_equipment_mp" ) )
+    if ( self hasweapon( "exoping_equipment_mp" ) )
     {
         if ( isdefined( self.exo_ping_on ) && self.exo_ping_on == 1 )
             playfxontag( level.exo_ping_vfx_active, self, "J_SpineUpper" );
@@ -256,7 +256,7 @@ showattachmentsaftercloak()
             playfxontag( level.exo_ping_vfx_inactive, self, "J_SpineUpper" );
     }
 
-    if ( self _meth_8314( "extra_health_mp" ) )
+    if ( self hasweapon( "extra_health_mp" ) )
     {
         if ( isdefined( self.exo_health_on ) && self.exo_health_on == 1 )
         {

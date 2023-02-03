@@ -13,12 +13,12 @@ battle_deployable_cover_setup()
         var_3.contents = var_3 setcontents( 0 );
         var_3 hide();
         var_4 = getent( var_3.target, "targetname" );
-        var_4 _meth_82BF();
-        var_4 _meth_8058();
+        var_4 notsolid();
+        var_4 connectpaths();
         var_5 = getentarray( var_4.target, "targetname" );
 
         foreach ( var_7 in var_5 )
-            var_7 _meth_8059();
+            var_7 disconnectnode();
 
         level.deployablecover[level.deployablecover.size] = var_2;
     }
@@ -49,7 +49,7 @@ handle_deployable_cover( var_0, var_1 )
         {
             var_3 = getent( var_0, "targetname" );
 
-            if ( isdefined( var_3 ) && _func_22A( level.deployablecover[level.deployablecoverinuse].origin, var_3 ) && !isdefined( level.deployablecover[level.deployablecoverinuse].isused ) )
+            if ( isdefined( var_3 ) && ispointinvolume( level.deployablecover[level.deployablecoverinuse].origin, var_3 ) && !isdefined( level.deployablecover[level.deployablecoverinuse].isused ) )
                 break;
             else
             {
@@ -135,10 +135,10 @@ deployable_cover_think()
     var_0 = spawn( "script_model", self gettagorigin( "j_SpineUpper" ) + ( 0, 0, 0 ) );
     var_0.angles = self gettagangles( "j_SpineUpper" ) + ( 0, 0, 0 );
     var_0.animname = "deployable_cover";
-    var_0 _meth_80B1( "deployable_cover" );
+    var_0 setmodel( "deployable_cover" );
     var_0 maps\_anim::setanimtree();
     var_0 maps\_anim::anim_first_frame_solo( var_0, "deployable_cover_closed_idle" );
-    var_0 _meth_804D( self, "j_SpineUpper" );
+    var_0 linkto( self, "j_SpineUpper" );
     self waittill( "placing_deployable_cover" );
     var_0 delete();
 }
@@ -171,7 +171,7 @@ deployable_cover_kill( var_0 )
     if ( isdefined( self ) && isalive( self ) )
     {
         maps\_utility::anim_stopanimscripted();
-        self _meth_8052();
+        self kill();
     }
 
     var_0 maps\_utility::anim_stopanimscripted();
@@ -186,8 +186,8 @@ deployable_cover_cleanup( var_0, var_1, var_2, var_3, var_4 )
 
     if ( isalive( self ) )
     {
-        var_2 _meth_82BE();
-        var_2 _meth_8057();
+        var_2 solid();
+        var_2 disconnectpaths();
     }
 
     if ( isalive( self ) )
@@ -199,12 +199,12 @@ deployable_cover_cleanup( var_0, var_1, var_2, var_3, var_4 )
         var_1 show();
 
         foreach ( var_6 in var_3 )
-            var_6 _meth_805A();
+            var_6 connectnode();
     }
     else
     {
-        var_2 _meth_82BF();
-        var_2 _meth_8058();
+        var_2 notsolid();
+        var_2 connectpaths();
         level.deployablecover[var_4].isused = undefined;
     }
 

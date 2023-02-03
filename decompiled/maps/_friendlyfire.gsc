@@ -104,7 +104,7 @@ friendly_fire_think( var_0 )
             if ( isdefined( var_6 ) && var_6 == "none" )
                 var_8 = 0;
 
-            if ( var_2 _meth_8342() )
+            if ( var_2 isusingturret() )
                 var_8 = 1;
 
             if ( isdefined( var_7 ) )
@@ -112,7 +112,7 @@ friendly_fire_think( var_0 )
         }
         else if ( isdefined( var_2.code_classname ) && var_2.code_classname == "script_vehicle" )
         {
-            var_9 = var_2 _meth_8257();
+            var_9 = var_2 getvehicleowner();
 
             if ( isdefined( var_9 ) && isplayer( var_9 ) )
                 var_8 = 1;
@@ -287,10 +287,10 @@ missionfail( var_0 )
     level notify( "mission failed" );
     level notify( "friendlyfire_mission_fail" );
     waittillframeend;
-    _func_0D3( "hud_missionFailed", 1 );
-    _func_0D3( "ammoCounterHide", 1 );
-    _func_0D3( "hud_showstance", 0 );
-    _func_0D3( "actionSlotsHide", 1 );
+    setsaveddvar( "hud_missionFailed", 1 );
+    setsaveddvar( "ammoCounterHide", 1 );
+    setsaveddvar( "hud_showstance", 0 );
+    setsaveddvar( "actionSlotsHide", 1 );
 
     if ( isdefined( level.player.failingmission ) )
         return;

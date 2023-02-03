@@ -32,8 +32,8 @@ init_local()
 
 landing_gear_up()
 {
-    self _meth_8115( #animtree );
-    self _meth_814B( %mig_landing_gear_up );
+    self useanimtree( #animtree );
+    self setanim( %mig_landing_gear_up );
 }
 
 playengineeffects()

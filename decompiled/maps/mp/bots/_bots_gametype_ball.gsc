@@ -27,12 +27,12 @@ setup_bot_ball()
     level.ball_goals["allies"].script_label = "allies";
     level.ball_goals["axis"].script_label = "axis";
     bot_setup_ball_jump_nodes();
-    var_0 = _func_202( level.ball_goals["allies"].origin );
+    var_0 = getzonenearest( level.ball_goals["allies"].origin );
 
     if ( isdefined( var_0 ) )
         botzonesetteam( var_0, "allies" );
 
-    var_0 = _func_202( level.ball_goals["axis"].origin );
+    var_0 = getzonenearest( level.ball_goals["axis"].origin );
 
     if ( isdefined( var_0 ) )
         botzonesetteam( var_0, "axis" );
@@ -113,7 +113,7 @@ bot_setup_ball_jump_nodes()
 
         foreach ( var_7 in var_3.ball_jump_nodes )
         {
-            var_11 = _func_220( var_7.origin, var_3.origin );
+            var_11 = distance2dsquared( var_7.origin, var_3.origin );
 
             if ( var_11 < var_9 )
             {
@@ -181,13 +181,13 @@ bot_ball_think()
     while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    self _meth_8351( "separation", 0 );
-    var_0 = randomint( 100 ) < self _meth_837B( "strategyLevel" ) * 25;
+    self botsetflag( "separation", 0 );
+    var_0 = randomint( 100 ) < self botgetdifficultysetting( "strategyLevel" ) * 25;
     var_1 = 0;
     self.last_pass_throw_check = 0;
-    self.ball_can_pass_ally = randomint( 100 ) < self _meth_837B( "strategyLevel" ) * 25;
-    self.ball_can_pass_enemy = randomint( 100 ) < self _meth_837B( "strategyLevel" ) * 25;
-    self.ball_can_throw = randomint( 100 ) < self _meth_837B( "strategyLevel" ) * 25;
+    self.ball_can_pass_ally = randomint( 100 ) < self botgetdifficultysetting( "strategyLevel" ) * 25;
+    self.ball_can_pass_enemy = randomint( 100 ) < self botgetdifficultysetting( "strategyLevel" ) * 25;
+    self.ball_can_throw = randomint( 100 ) < self botgetdifficultysetting( "strategyLevel" ) * 25;
     var_2 = level.ball_goals[self.team];
     var_3 = level.ball_goals[common_scripts\utility::get_enemy_team( self.team )];
     childthread watch_ball_pickup_and_loss();
@@ -202,19 +202,19 @@ bot_ball_think()
         if ( var_4 )
             maps\mp\bots\_bots_gametype_common::bot_gametype_initialize_attacker_defender_role();
 
-        self _meth_8351( "force_sprint", 0 );
+        self botsetflag( "force_sprint", 0 );
         var_5 = bot_ball_get_balls_carried_by_team( self.team );
         var_6 = bot_ball_get_balls_carried_by_team( common_scripts\utility::get_enemy_team( self.team ) );
 
         foreach ( var_8 in var_6 )
         {
             var_9 = var_8 bot_ball_get_origin() - ( 0, 0, 75 );
-            self _meth_8377( var_8.carrier, var_9 );
+            self botgetimperfectenemyinfo( var_8.carrier, var_9 );
         }
 
         if ( has_ball() )
         {
-            self _meth_8351( "force_sprint", 1 );
+            self botsetflag( "force_sprint", 1 );
             var_11 = distancesquared( self.origin, var_3.nearest_node.origin );
 
             if ( var_11 > 360000 )
@@ -229,16 +229,16 @@ bot_ball_think()
             }
 
             clear_defend_or_goal_if_necessary();
-            self _meth_8354( var_12.origin, var_13, "critical" );
+            self botsetscriptgoal( var_12.origin, var_13, "critical" );
             var_14 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "bot_no_longer_has_ball" );
 
             if ( var_14 == "goal" && distancesquared( self.origin, var_12.origin ) <= 256 )
             {
-                self _meth_8356();
-                var_15 = vectornormalize( var_3.origin - self _meth_80A8() );
+                self botclearscriptgoal();
+                var_15 = vectornormalize( var_3.origin - self geteye() );
 
                 if ( vectordot( var_15, ( 0, 0, 1 ) ) < 0.93 )
-                    self _meth_836D( var_3.origin, 5.0, "script_forced" );
+                    self botlookatpoint( var_3.origin, 5.0, "script_forced" );
 
                 var_16 = 0;
                 var_17 = 0;
@@ -246,10 +246,10 @@ bot_ball_think()
 
                 while ( var_16 < 4.0 && has_ball() )
                 {
-                    self _meth_8353( vectortoyaw( var_3.origin - self.origin ), 0.05 );
+                    self botsetscriptmove( vectortoyaw( var_3.origin - self.origin ), 0.05 );
 
                     if ( var_16 == 0.3 || var_16 == 0.75 )
-                        self _meth_837E( "jump" );
+                        self botpressbutton( "jump" );
 
                     var_19 = var_16 > 1.25 && self.origin[2] < var_18;
                     var_18 = self.origin[2];
@@ -261,7 +261,7 @@ bot_ball_think()
 
                         if ( var_20 < 10 || var_19 && var_21 > 200 )
                         {
-                            self _meth_837E( "sprint" );
+                            self botpressbutton( "sprint" );
                             var_17 = 1;
                         }
                     }
@@ -269,14 +269,14 @@ bot_ball_think()
                     wait 0.05;
                     var_16 += 0.05;
 
-                    if ( !has_ball() || var_16 > 0.75 && self _meth_8341() )
+                    if ( !has_ball() || var_16 > 0.75 && self isonground() )
                         var_16 = 5.0;
                 }
 
-                self _meth_836D( undefined );
+                self botlookatpoint( undefined );
             }
 
-            self _meth_8356();
+            self botclearscriptgoal();
         }
         else if ( self.role == "attacker" )
         {
@@ -295,7 +295,7 @@ bot_ball_think()
                         {
                             var_1 = gettime() + 5000;
                             var_25 = undefined;
-                            var_26 = _func_200( var_24, var_2.nearest_node.origin );
+                            var_26 = getnodesonpath( var_24, var_2.nearest_node.origin );
 
                             if ( isdefined( var_26 ) && var_26.size > 0 )
                                 var_25 = var_26[int( var_26.size * randomfloatrange( 0.25, 0.75 ) )].origin;
@@ -303,15 +303,15 @@ bot_ball_think()
                             clear_defend_or_goal_if_necessary();
 
                             if ( isdefined( var_25 ) && maps\mp\bots\_bots_personality::find_ambush_node( var_25, 512 ) )
-                                self _meth_8355( self.node_ambushing_from, "guard", self.ambush_yaw );
+                                self botsetscriptgoalnode( self.node_ambushing_from, "guard", self.ambush_yaw );
                             else
-                                self _meth_8354( var_24, 16, "guard" );
+                                self botsetscriptgoal( var_24, 16, "guard" );
                         }
                     }
                     else
                     {
                         clear_defend_or_goal_if_necessary();
-                        self _meth_8354( var_24, 16, "guard" );
+                        self botsetscriptgoal( var_24, 16, "guard" );
                     }
                 }
                 else if ( var_5.size > 0 )
@@ -329,7 +329,7 @@ bot_ball_think()
                 {
                     var_28 = common_scripts\utility::get_array_of_closest( self.origin, level.ball_starts );
                     clear_defend_or_goal_if_necessary();
-                    self _meth_8354( var_28[0].origin, 16, "guard" );
+                    self botsetscriptgoal( var_28[0].origin, 16, "guard" );
                 }
             }
             else if ( maps\mp\_utility::isjuggernaut() )
@@ -343,11 +343,11 @@ bot_ball_think()
                 {
                     var_30 = var_29 bot_ball_get_origin();
 
-                    if ( !self _meth_8365() || !maps\mp\bots\_bots_util::bot_vectors_are_equal( var_30, self _meth_835A() ) )
-                        self _meth_8354( var_30, 16, "objective", undefined, 180 );
+                    if ( !self bothasscriptgoal() || !maps\mp\bots\_bots_util::bot_vectors_are_equal( var_30, self botgetscriptgoal() ) )
+                        self botsetscriptgoal( var_30, 16, "objective", undefined, 180 );
                 }
                 else
-                    self _meth_8354( var_29.nearest_node.origin, 16, "objective", undefined, 180 );
+                    self botsetscriptgoal( var_29.nearest_node.origin, 16, "objective", undefined, 180 );
             }
         }
         else
@@ -357,7 +357,7 @@ bot_ball_think()
 
             foreach ( var_8 in var_22 )
             {
-                var_33 = _func_220( var_8 bot_ball_get_origin(), var_2.origin );
+                var_33 = distance2dsquared( var_8 bot_ball_get_origin(), var_2.origin );
 
                 if ( var_33 < squared( get_ball_goal_protect_radius() ) )
                 {
@@ -371,15 +371,15 @@ bot_ball_think()
                 clear_defend_or_goal_if_necessary();
 
                 if ( var_31.ball_at_rest )
-                    self _meth_8354( var_31 bot_ball_get_origin(), 16, "guard" );
+                    self botsetscriptgoal( var_31 bot_ball_get_origin(), 16, "guard" );
                 else
-                    self _meth_8354( var_31.nearest_node.origin, 16, "guard" );
+                    self botsetscriptgoal( var_31.nearest_node.origin, 16, "guard" );
 
                 maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( 1.0 );
             }
             else if ( !maps\mp\bots\_bots_util::bot_is_protecting() )
             {
-                self _meth_8356();
+                self botclearscriptgoal();
                 var_35["score_flags"] = "strict_los";
                 var_35["override_origin_node"] = var_2.nearest_node;
                 maps\mp\bots\_bots_strategy::bot_protect_point( var_2.nearest_node.origin, get_ball_goal_protect_radius(), var_35 );
@@ -400,13 +400,13 @@ watch_ball_pickup_and_loss()
         {
             childthread monitor_pass_throw();
             var_0 = 1;
-            self _meth_8351( "melee_critical_path", 1 );
+            self botsetflag( "melee_critical_path", 1 );
         }
         else if ( !has_ball() && var_0 )
         {
             self notify( "bot_no_longer_has_ball" );
             var_0 = 0;
-            self _meth_8351( "melee_critical_path", 0 );
+            self botsetflag( "melee_critical_path", 0 );
         }
 
         wait 0.05;
@@ -440,9 +440,9 @@ monitor_pass_throw()
 
                         if ( var_7 > 0.7 )
                         {
-                            self _meth_836D( self.pass_target.origin + ( 0, 0, 40 ), 1.25, "script_forced" );
+                            self botlookatpoint( self.pass_target.origin + ( 0, 0, 40 ), 1.25, "script_forced" );
                             wait 0.25;
-                            self _meth_837E( "throw" );
+                            self botpressbutton( "throw" );
                             wait 1.0;
                         }
                     }
@@ -452,7 +452,7 @@ monitor_pass_throw()
 
         if ( self.ball_can_pass_enemy )
         {
-            if ( isdefined( self.enemy ) && isalive( self.enemy ) && self _meth_836F( self.enemy ) )
+            if ( isdefined( self.enemy ) && isalive( self.enemy ) && self botcanseeentity( self.enemy ) )
             {
                 var_8 = 1;
 
@@ -475,9 +475,9 @@ monitor_pass_throw()
 
                             if ( var_7 > 0.77 )
                             {
-                                self _meth_836D( self.enemy.origin + ( 0, 0, 40 ), 1.25, "script_forced" );
+                                self botlookatpoint( self.enemy.origin + ( 0, 0, 40 ), 1.25, "script_forced" );
                                 wait 0.25;
-                                self _meth_837E( "attack" );
+                                self botpressbutton( "attack" );
                                 wait 1.0;
                             }
                         }
@@ -490,9 +490,9 @@ monitor_pass_throw()
         {
             if ( self.health < 100 && bot_ball_origin_can_see_goal( self.origin, var_1 ) )
             {
-                self _meth_836D( var_1.origin, 1.25, "script_forced" );
+                self botlookatpoint( var_1.origin, 1.25, "script_forced" );
                 wait 0.25;
-                self _meth_837E( "attack" );
+                self botpressbutton( "attack" );
                 wait 1.0;
             }
             else if ( self.role == "defender" )
@@ -502,9 +502,9 @@ monitor_pass_throw()
                 if ( var_9 < squared( get_ball_goal_protect_radius() ) )
                 {
                     var_14 = anglestoforward( self getangles() * ( 0, 1, 1 ) + ( -30, 0, 0 ) );
-                    self _meth_836D( self _meth_80A8() + var_14 * 200, 1.25, "script_forced" );
+                    self botlookatpoint( self geteye() + var_14 * 200, 1.25, "script_forced" );
                     wait 0.25;
-                    self _meth_837E( "attack" );
+                    self botpressbutton( "attack" );
                     wait 1.0;
                 }
             }
@@ -516,19 +516,19 @@ monitor_pass_throw()
 
 ball_carrier_is_almost_visible( var_0 )
 {
-    var_1 = self _meth_8387();
-    var_2 = var_0 _meth_8387();
+    var_1 = self getnearestnode();
+    var_2 = var_0 getnearestnode();
 
     if ( isdefined( var_1 ) && isdefined( var_2 ) )
     {
-        if ( _func_1FF( var_1, var_2, 1 ) )
+        if ( nodesvisible( var_1, var_2, 1 ) )
             return var_2;
 
         var_3 = getlinkednodes( var_2 );
 
         foreach ( var_5 in var_3 )
         {
-            if ( _func_1FF( var_1, var_5, 1 ) )
+            if ( nodesvisible( var_1, var_5, 1 ) )
                 return var_5;
         }
     }
@@ -576,12 +576,12 @@ clear_defend_or_goal_if_necessary( var_0 )
     if ( maps\mp\bots\_bots_util::bot_is_defending() )
         maps\mp\bots\_bots_strategy::bot_defend_stop();
 
-    if ( self _meth_835D() == "objective" )
+    if ( self botgetscriptgoaltype() == "objective" )
     {
         var_1 = isdefined( var_0 ) && var_0 == "objective";
 
         if ( !var_1 )
-            self _meth_8356();
+            self botclearscriptgoal();
     }
 }
 
@@ -649,7 +649,7 @@ get_ball_goal_protect_radius()
 {
     if ( isalive( self ) && !isdefined( level.protect_radius ) )
     {
-        var_0 = self _meth_835F();
+        var_0 = self botgetworldsize();
         var_1 = ( var_0[0] + var_0[1] ) / 2;
         level.protect_radius = min( 800, var_1 / 5.5 );
     }

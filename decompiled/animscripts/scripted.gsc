@@ -11,7 +11,7 @@ main()
     self.a.suppressingenemy = 0;
     self.codescripted["root"] = %body;
     self endon( "end_sequence" );
-    self _meth_8241( self.codescripted["notifyName"], self.codescripted["origin"], self.codescripted["angles"], self.codescripted["anim"], self.codescripted["animMode"], self.codescripted["root"], self.codescripted["goalTime"] );
+    self startscriptedanim( self.codescripted["notifyName"], self.codescripted["origin"], self.codescripted["angles"], self.codescripted["anim"], self.codescripted["animMode"], self.codescripted["root"], self.codescripted["goalTime"] );
     self.codescripted = undefined;
 
     if ( isdefined( self.scripted_dialogue ) || isdefined( self.facial_animation ) )

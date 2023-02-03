@@ -3,9 +3,9 @@
 
 init()
 {
-    _func_251( "trap_zm" );
-    precacheitem( "trap_missile_zm_mp" );
-    precacheitem( "orbitalsupport_missile_mp" );
+    precachelaser( "trap_zm" );
+    precacheshellshock( "trap_missile_zm_mp" );
+    precacheshellshock( "orbitalsupport_missile_mp" );
 }
 
 trap_airstrike_begin()
@@ -61,8 +61,8 @@ trap_airstrike_laser( var_0, var_1 )
     var_2.angles = var_3;
     var_2.start_origin = var_0;
     var_2.start_angles = var_3;
-    var_2 _meth_80B1( "tag_laser" );
-    var_2 _meth_80B2( "trap_zm" );
+    var_2 setmodel( "tag_laser" );
+    var_2 laseron( "trap_zm" );
     var_4 = spawnfx( common_scripts\utility::getfx( "trap_airstrike_laser_target" ), var_1, ( 0, 0, 90 ) );
     triggerfx( var_4 );
     self waittill( "death" );
@@ -92,7 +92,7 @@ trap_airstrike_radius_damage( var_0 )
         if ( isdefined( var_5.agentteam ) && var_5.agentteam == level.playerteam )
         {
             if ( common_scripts\utility::array_contains( var_3, var_5 ) && var_5.health > 1 )
-                var_5 _meth_8051( 1, var_0 );
+                var_5 dodamage( 1, var_0 );
 
             continue;
         }
@@ -108,10 +108,10 @@ trap_airstrike_radius_damage( var_0 )
                     if ( var_6 > 20 )
                         var_6 = 20;
 
-                    var_5 _meth_8051( var_6, var_0 );
+                    var_5 dodamage( var_6, var_0 );
                 }
                 else if ( var_5.health > 1 )
-                    var_5 _meth_8051( 1, var_0 );
+                    var_5 dodamage( 1, var_0 );
             }
 
             continue;
@@ -144,6 +144,6 @@ trap_airstrike_radius_damage( var_0 )
                 var_6 = var_5.maxhealth * 0.5;
         }
 
-        var_5 _meth_8051( var_6, var_0, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_missile_zm_mp" );
+        var_5 dodamage( var_6, var_0, self.owner, self.owner, "MOD_EXPLOSIVE", "trap_missile_zm_mp" );
     }
 }

@@ -7,7 +7,7 @@ init()
     level._effect["power_station_exhaust_fx"] = loadfx( "vfx/props/dlc_prop_power_station_fx_exhaust" );
     level._effect["power_station_beacon_fx"] = loadfx( "vfx/props/dlc_prop_power_station_fx_beacon" );
     level._effect["power_station_fx_off"] = loadfx( "vfx/props/dlc_prop_power_station_fx_off" );
-    map_restart( "dlc_power_station_activate" );
+    precachempanim( "dlc_power_station_activate" );
     level.power_switches = [];
     level.roundpowerstations = [];
     var_0 = common_scripts\utility::getstructarray( "power_switch", "targetname" );
@@ -103,8 +103,8 @@ power_switch_run()
         foreach ( var_1 in self.hideents )
             var_1 show();
 
-        self.trigger _meth_80DA( "HINT_NOICON" );
-        self.trigger _meth_80DB( &"ZOMBIES_POWER_ON" );
+        self.trigger setcursorhint( "HINT_NOICON" );
+        self.trigger sethintstring( &"ZOMBIES_POWER_ON" );
 
         for (;;)
         {
@@ -126,7 +126,7 @@ power_switch_run()
         }
 
         level.roundpowerstations[level.roundpowerstations.size] = self.power_switch_index;
-        self.trigger _meth_80DB( "" );
+        self.trigger sethintstring( "" );
         self notify( "on" );
         common_scripts\utility::flag_set( self.script_flag );
 
@@ -182,9 +182,9 @@ power_switch_button_run()
     for (;;)
     {
         self waittill( "on" );
-        self.button _meth_82AE( var_2, var_0 );
+        self.button moveto( var_2, var_0 );
         self waittill( "off" );
-        self.button _meth_82AE( var_1, var_0 );
+        self.button moveto( var_1, var_0 );
     }
 }
 
@@ -198,12 +198,12 @@ power_anim_model_run()
         thread power_anim_model_fx( 0 );
         self waittill( "on" );
         self.modelent playsound( "interact_generator_start" );
-        self.modelent _meth_8075( "interact_generator_lp" );
-        self.modelent _meth_8279( "dlc_power_station_activate" );
+        self.modelent playloopsound( "interact_generator_lp" );
+        self.modelent scriptmodelplayanim( "dlc_power_station_activate" );
         thread power_anim_model_fx( 1 );
         self waittill( "off" );
-        self.modelent _meth_827A();
-        self.modelent _meth_80AB();
+        self.modelent scriptmodelclearanim();
+        self.modelent stoploopsound();
     }
 }
 

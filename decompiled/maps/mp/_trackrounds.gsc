@@ -16,7 +16,7 @@ trackrounds_think()
     if ( maps\mp\_utility::_hasperk( "specialty_paint_pro" ) )
         self.trackrounds.has_paint_pro = 1;
 
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
     toggle_has_trackrounds( var_0 );
 
     for (;;)
@@ -26,7 +26,7 @@ trackrounds_think()
         if ( var_0 == "none" )
         {
             wait 0.4;
-            var_0 = self _meth_8311();
+            var_0 = self getcurrentweapon();
 
             if ( var_0 == "none" )
                 return;
@@ -96,12 +96,12 @@ trackrounds_mark_till_death()
     {
         wait 0.1;
 
-        if ( self _meth_82A7( "specialty_radararrow", 1 ) )
+        if ( self hasperk( "specialty_radararrow", 1 ) )
             continue;
 
-        if ( self _meth_82A7( "specialty_radarblip", 1 ) )
+        if ( self hasperk( "specialty_radarblip", 1 ) )
             continue;
 
-        self _meth_82A6( "specialty_radarblip", 1, 0 );
+        self setperk( "specialty_radarblip", 1, 0 );
     }
 }

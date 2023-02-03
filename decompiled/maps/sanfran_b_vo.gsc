@@ -189,7 +189,7 @@ grenade_launcher_vo()
     maps\_utility::trigger_wait_targetname( "trig_grenade_launcher_vo" );
     soundscripts\_snd::snd_message( "begin_rooftop_combat" );
     var_0 = 0;
-    var_1 = level.player _meth_830B();
+    var_1 = level.player getweaponslistall();
 
     foreach ( var_3 in var_1 )
     {
@@ -200,7 +200,7 @@ grenade_launcher_vo()
         }
     }
 
-    var_5 = level.player _meth_8311();
+    var_5 = level.player getcurrentweapon();
 
     if ( var_0 && !issubstr( var_5, "microdronelauncher" ) )
         return;
@@ -248,7 +248,7 @@ navy_vo()
 
 find_non_squad_allies_by_distance()
 {
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
 
     foreach ( var_2 in var_0 )
     {
@@ -287,7 +287,7 @@ player_jump_into_mob_nag_lines()
 
     while ( !var_1 )
     {
-        if ( level.cormack _meth_80A9( var_0 ) )
+        if ( level.cormack istouching( var_0 ) )
         {
             var_1 = 1;
             break;
@@ -419,13 +419,13 @@ init_pcap_vo()
         init_pcap_vo_intro();
         init_pcap_vo_outro();
     }
-    else if ( _func_21E( "sanfran_b_intro_tr" ) )
+    else if ( istransientloaded( "sanfran_b_intro_tr" ) )
     {
         init_pcap_vo_intro();
         level waittill( "tff_post_transition_intro_to_outro" );
         init_pcap_vo_outro();
     }
-    else if ( _func_21E( "sanfran_b_outro_tr" ) )
+    else if ( istransientloaded( "sanfran_b_outro_tr" ) )
         init_pcap_vo_outro();
 }
 

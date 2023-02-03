@@ -133,7 +133,7 @@ semtex_sticky_handle( var_0 )
         return;
     }
 
-    var_1 _meth_8052( var_1.origin, var_0 );
+    var_1 kill( var_1.origin, var_0 );
 }
 
 begin_concussion_grenade_tracking()
@@ -247,7 +247,7 @@ claymoremakesentient( var_0 )
         return;
     }
 
-    self _meth_8139( var_0, 1 );
+    self makeentitysentient( var_0, 1 );
     self.attackeraccuracy = 2;
     self.maxvisibledist = 750;
     self.threatbias = -1000;
@@ -283,7 +283,7 @@ claymoredetonation()
         if ( isplayer( var_2 ) )
             continue;
 
-        if ( var_2 _meth_81D7( self.origin, self ) > 0 )
+        if ( var_2 damageconetrace( self.origin, self ) > 0 )
         {
             self playsound( "claymore_activated_SP" );
             wait 0.4;
@@ -315,7 +315,7 @@ watchc4detonation()
     for (;;)
     {
         self waittill( "detonate" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( var_0 == "c4" )
         {
@@ -338,7 +338,7 @@ watchc4altdetonation()
     for (;;)
     {
         self waittill( "alt_detonate" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( var_0 != "c4" )
         {
@@ -368,7 +368,7 @@ waitanddetonate( var_0 )
 c4damage()
 {
     self.health = 100;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.maxhealth = 100000;
     self.health = self.maxhealth;
     var_0 = undefined;

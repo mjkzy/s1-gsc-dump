@@ -56,7 +56,7 @@ launch_threads()
 
 launch_loops()
 {
-    if ( level.currentgen && !_func_21E( "lagos_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lagos_intro_tr" ) )
         return;
 
     common_scripts\utility::loop_fx_sound( "lag_gov_rescue_computer_tone", ( -52252, 9133, 480 ), 1, "aud_stop_intro" );
@@ -275,7 +275,7 @@ music_handler( var_0, var_1 )
             soundscripts\_audio_music::mus_stop( 5 );
             var_3 = soundscripts\_snd_playsound::snd_play_2d( "lag_mus_buschase_main_end", undefined, undefined, undefined, 0.1 );
             wait 0.05;
-            var_3 _meth_806F( 1.0, 3.2 );
+            var_3 scalevolume( 1.0, 3.2 );
             break;
         default:
             soundscripts\_audio::aud_print_warning( "\\tMUSIC MESSAGE NOT HANDLED: " + var_0 );
@@ -387,7 +387,7 @@ intro_fly_drone_idle()
 
 stop_audio_intro_fly_drone_idle()
 {
-    if ( level.currentgen && !_func_21E( "lagos_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lagos_intro_tr" ) )
         return;
 
     if ( level.currentgen )
@@ -448,7 +448,7 @@ fly_drone_camera_start_1( var_0, var_1 )
 
         var_8 = abs( var_2 - var_3 );
 
-        if ( abs( var_8 - var_4 ) > var_6 || abs( var_8 - var_4 ) > var_7 && length( var_1 _meth_830D() ) > 0.1 )
+        if ( abs( var_8 - var_4 ) > var_6 || abs( var_8 - var_4 ) > var_7 && length( var_1 getnormalizedcameramovements() ) > 0.1 )
         {
             if ( !var_5 )
             {
@@ -504,7 +504,7 @@ fly_drone_camera_start_2( var_0, var_1 )
         var_9 = abs( var_2 - var_3 );
         var_10 = var_1 getangles()[0];
 
-        if ( ( abs( var_9 - var_4 ) > var_7 || abs( var_10 - var_5 ) > var_8 ) && length( var_1 _meth_830D() ) > 0.1 )
+        if ( ( abs( var_9 - var_4 ) > var_7 || abs( var_10 - var_5 ) > var_8 ) && length( var_1 getnormalizedcameramovements() ) > 0.1 )
         {
             if ( !var_6 )
             {
@@ -792,8 +792,8 @@ monitor_tram( var_0, var_1, var_2 )
     {
         if ( var_2 )
         {
-            var_10 = _func_245( var_3.origin, var_3 maps\_shg_utility::get_differentiated_velocity(), level.player.origin, level.player maps\_shg_utility::get_differentiated_velocity(), var_5, var_6 );
-            var_0 _meth_806D( var_10, var_4 );
+            var_10 = dopplerpitch( var_3.origin, var_3 maps\_shg_utility::get_differentiated_velocity(), level.player.origin, level.player maps\_shg_utility::get_differentiated_velocity(), var_5, var_6 );
+            var_0 scalepitch( var_10, var_4 );
         }
 
         var_8 = var_3 maps\_shg_utility::get_differentiated_speed();
@@ -953,15 +953,15 @@ aud_exo_climb_gideon_land( var_0 )
 gov_building_mute_device()
 {
     var_0 = self;
-    level.player _meth_8518();
-    _func_289( "mute" );
+    level.player enablecustomweaponcontext();
+    enablesoundcontextoverride( "mute" );
     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_activate", 0.75 );
     wait 1.25;
     var_0 thread soundscripts\_snd_common::snd_mute_device( "mute_device", 400, 650, 18, "mute_device" );
     wait 18;
     common_scripts\utility::flag_set( "flag_roof_breach_mute_complete" );
-    _func_28A( "mute" );
-    level.player _meth_8519();
+    disablesoundcontextoverride( "mute" );
+    level.player disablecustomweaponcontext();
 }
 
 setup_roof_breach_anims()
@@ -1166,7 +1166,7 @@ play_pm_rescue_walla()
 {
     wait 0.5;
     var_0 = soundscripts\_snd_playsound::snd_play_at( "lag_walla_pm_rescue", ( -52215, 9177, 494 ), "stop_lag_walla_pm_rescue", 0, 5 );
-    var_0 _meth_806F( 0.7, 30 );
+    var_0 scalevolume( 0.7, 30 );
     wait 30;
     level notify( "stop_lag_walla_pm_rescue" );
     soundscripts\_snd_playsound::snd_play_loop_at( "lag_walla_pm_rescue_lp", ( -52437, 9214, 494 ), "stop_lag_walla_pm_rescue_lp", 5, 5, 1.0 );
@@ -1317,12 +1317,12 @@ roundabout_panic_walla()
     wait 7;
     var_1 = soundscripts\_snd_playsound::snd_play_loop_2d( "lag_walla_rndabt_panic_md", "lag_walla_rndabt_panic_md", 4, 4, 1.0 );
     level notify( "stop_lag_walla_rndabt_panic_hi" );
-    var_1 _meth_806F( 0.4, 5 );
+    var_1 scalevolume( 0.4, 5 );
     wait 10;
     var_2 = soundscripts\_snd_playsound::snd_play_loop_2d( "lag_walla_rndabt_panic_dist", "lag_walla_rndabt_panic_dist", 4, 60, 0.5 );
     level notify( "lag_walla_rndabt_panic_md" );
     soundscripts\_audio_mix_manager::mm_add_submix( "lag_roundabout_combat" );
-    var_2 _meth_806F( 0.2, 40 );
+    var_2 scalevolume( 0.2, 40 );
 
     while ( !isdefined( level.aud.tanker_exploded ) )
         waitframe();
@@ -1363,7 +1363,6 @@ crossing_into_alley()
 roundabout_exited()
 {
     level notify( "aud_roundabout_finished" );
-    level notify( "stop_lag_walla_rndabt_panic_tense" );
 }
 
 alley_1_big_metal_gate()
@@ -1499,7 +1498,7 @@ handle_busses( var_0 )
     {
         foreach ( var_9 in var_1 )
         {
-            var_10 = _func_220( level.player.origin, var_9.veh_ent.origin );
+            var_10 = distance2dsquared( level.player.origin, var_9.veh_ent.origin );
 
             if ( isdefined( var_9.snd_ent ) && var_10 > var_2 )
             {
@@ -1708,9 +1707,9 @@ aud_player_bus_jump_handplant( var_0 )
 
 lag_brk_stayclose_done()
 {
-    level.player _meth_82DD( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
     level.player waittill( "a_pressed" );
-    level.player _meth_849C( "a_pressed", "+gostand" );
+    level.player notifyonplayercommandremove( "a_pressed", "+gostand" );
     music( "bus_chase_lag_brk_stayclose_done" );
 }
 
@@ -1914,7 +1913,7 @@ truck_whipeout_anim_begin()
 
 spawn_traffic_helicopter()
 {
-    self _meth_828B();
+    self vehicle_turnengineoff();
     soundscripts\_audio_mix_manager::mm_add_submix( "lag_bus_chase_helicopter" );
     soundscripts\_snd_playsound::snd_play_linked( "bus_chase_helicopter" );
     self waittill( "deathspin" );

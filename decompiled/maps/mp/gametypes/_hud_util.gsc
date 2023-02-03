@@ -209,7 +209,7 @@ updatebarscale( var_0, var_1 )
         var_2 = 1;
 
     self.bar.frac = var_0;
-    self.bar _meth_80CC( self.bar.shader, var_2, self.height );
+    self.bar setshader( self.bar.shader, var_2, self.height );
 
     if ( isdefined( var_1 ) && var_2 < self.width )
     {
@@ -325,7 +325,7 @@ createicon( var_0, var_1, var_2 )
 
     if ( isdefined( var_0 ) )
     {
-        var_3 _meth_80CC( var_0, var_1, var_2 );
+        var_3 setshader( var_0, var_1, var_2 );
         var_3.shader = var_0;
     }
 
@@ -354,7 +354,7 @@ createservericon( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( var_0 ) )
     {
-        var_4 _meth_80CC( var_0, var_1, var_2 );
+        var_4 setshader( var_0, var_1, var_2 );
         var_4.shader = var_0;
     }
 
@@ -374,7 +374,7 @@ createserverbar( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6.color = var_0;
     var_6.sort = -2;
     var_6.shader = "progress_bar_fill";
-    var_6 _meth_80CC( "progress_bar_fill", var_1, var_2 );
+    var_6 setshader( "progress_bar_fill", var_1, var_2 );
     var_6.hidden = 0;
 
     if ( isdefined( var_3 ) )
@@ -398,7 +398,7 @@ createserverbar( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_7.color = ( 0, 0, 0 );
     var_7.alpha = 0.5;
     var_7 setparent( level.uiparent );
-    var_7 _meth_80CC( "progress_bar_bg", var_1, var_2 );
+    var_7 setshader( "progress_bar_bg", var_1, var_2 );
     var_7.hidden = 0;
     return var_7;
 }
@@ -412,7 +412,7 @@ createbar( var_0, var_1, var_2, var_3 )
     var_4.color = var_0;
     var_4.sort = -2;
     var_4.shader = "progress_bar_fill";
-    var_4 _meth_80CC( "progress_bar_fill", var_1, var_2 );
+    var_4 setshader( "progress_bar_fill", var_1, var_2 );
     var_4.hidden = 0;
 
     if ( isdefined( var_3 ) )
@@ -430,7 +430,7 @@ createbar( var_0, var_1, var_2, var_3 )
     var_5.color = ( 0, 0, 0 );
     var_5.alpha = 0.5;
     var_5 setparent( level.uiparent );
-    var_5 _meth_80CC( "progress_bar_bg", var_1 + 4, var_2 + 4 );
+    var_5 setshader( "progress_bar_bg", var_1 + 4, var_2 + 4 );
     var_5.hidden = 0;
     return var_5;
 }
@@ -597,7 +597,7 @@ destroyelem()
 
 seticonshader( var_0 )
 {
-    self _meth_80CC( var_0, self.width, self.height );
+    self setshader( var_0, self.width, self.height );
     self.shader = var_0;
 }
 
@@ -608,7 +608,7 @@ geticonshader( var_0 )
 
 seticonsize( var_0, var_1 )
 {
-    self _meth_80CC( self.shader, var_0, var_1 );
+    self setshader( self.shader, var_0, var_1 );
 }
 
 setwidth( var_0 )
@@ -647,7 +647,7 @@ transitionreset()
         self.label = &"";
     }
     else if ( self.elemtype == "icon" )
-        self _meth_80CC( self.shader, self.width, self.height );
+        self setshader( self.shader, self.width, self.height );
 
     self.alpha = 0;
 }
@@ -659,11 +659,11 @@ transitionzoomin( var_0 )
         case "timer":
         case "font":
             self.fontscale = 6.3;
-            self _meth_808B( var_0 );
+            self changefontscaleovertime( var_0 );
             self.fontscale = self.basefontscale;
             break;
         case "icon":
-            self _meth_80CC( self.shader, self.width * 6, self.height * 6 );
+            self setshader( self.shader, self.width * 6, self.height * 6 );
             self scaleovertime( var_0, self.width, self.height );
             break;
     }
@@ -747,7 +747,7 @@ transitionzoomout( var_0 )
     {
         case "timer":
         case "font":
-            self _meth_808B( var_0 );
+            self changefontscaleovertime( var_0 );
             self.fontscale = 6.3;
         case "icon":
             self scaleovertime( var_0, self.width * 6, self.height * 6 );
@@ -798,9 +798,9 @@ ch_getprogress( var_0 )
     if ( isweaponclasschallenge( var_0 ) )
         return processviaitemstatsprogress( var_0 );
     else if ( maps\mp\_utility::isstrstart( var_0, "ch_daily_" ) )
-        return self _meth_8222( "challengeProgress", "ch_marksman_iw5_dlcgun12" );
+        return self getplayerdata( "challengeProgress", "ch_marksman_iw5_dlcgun12" );
     else
-        return self _meth_8222( "challengeProgress", var_0 );
+        return self getplayerdata( "challengeProgress", var_0 );
 }
 
 ch_getstate( var_0 )
@@ -808,9 +808,9 @@ ch_getstate( var_0 )
     if ( isweaponclasschallenge( var_0 ) )
         return processviaitemstatsstate( var_0 );
     else if ( maps\mp\_utility::isstrstart( var_0, "ch_daily_" ) )
-        return self _meth_8222( "challengeState", "ch_marksman_iw5_dlcgun12" );
+        return self getplayerdata( "challengeState", "ch_marksman_iw5_dlcgun12" );
     else
-        return self _meth_8222( "challengeState", var_0 );
+        return self getplayerdata( "challengeState", var_0 );
 }
 
 ch_setprogress( var_0, var_1 )
@@ -821,9 +821,9 @@ ch_setprogress( var_0, var_1 )
     var_2 = maps\mp\_utility::clamptoshort( var_1 );
 
     if ( maps\mp\_utility::isstrstart( var_0, "ch_daily_" ) )
-        self _meth_8243( "challengeProgress", "ch_marksman_iw5_dlcgun12", var_2 );
+        self setplayerdata( "challengeProgress", "ch_marksman_iw5_dlcgun12", var_2 );
     else
-        self _meth_8243( "challengeProgress", var_0, var_2 );
+        self setplayerdata( "challengeProgress", var_0, var_2 );
 }
 
 ch_setstate( var_0, var_1 )
@@ -832,9 +832,9 @@ ch_setstate( var_0, var_1 )
         return;
 
     if ( maps\mp\_utility::isstrstart( var_0, "ch_daily_" ) )
-        self _meth_8243( "challengeState", "ch_marksman_iw5_dlcgun12", var_1 );
+        self setplayerdata( "challengeState", "ch_marksman_iw5_dlcgun12", var_1 );
     else
-        self _meth_8243( "challengeState", var_0, var_1 );
+        self setplayerdata( "challengeState", var_0, var_1 );
 }
 
 ch_gettarget( var_0, var_1 )
@@ -903,7 +903,7 @@ totalallweaponvariants( var_0, var_1 )
         for ( var_6 = tablelookuprownum( "mp/statstable.csv", 59, var_2 ); var_6 >= 0; var_6 = tablelookuprownum( "mp/statstable.csv", 59, var_2, var_6 - 1 ) )
         {
             var_7 = tablelookupbyrow( "mp/statstable.csv", var_6, 4 );
-            var_3 += self _meth_8223( "weaponStats", var_7, var_1 );
+            var_3 += self getrankedplayerdata( "weaponStats", var_7, var_1 );
         }
 
         if ( var_1 == "kills" && isdefined( self.trackingweaponkills ) )
@@ -915,7 +915,7 @@ totalallweaponvariants( var_0, var_1 )
         if ( var_1 == "headShots" && isdefined( self.trackingweaponheadshots ) )
             var_3 += self.trackingweaponheadshots;
 
-        var_8 = self _meth_8223( "attachUnlock_" + var_1, var_2 );
+        var_8 = self getrankedplayerdata( "attachUnlock_" + var_1, var_2 );
 
         if ( var_8 > var_3 )
             var_8 = 0;

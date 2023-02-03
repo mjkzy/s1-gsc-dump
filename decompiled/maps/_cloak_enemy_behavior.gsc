@@ -30,9 +30,9 @@ cloak_enemy_warning1_behavior_mech()
 
     if ( isdefined( self.enemy ) )
     {
-        var_0 = self _meth_81C1( self.enemy );
+        var_0 = self lastknownpos( self.enemy );
         maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-        self _meth_81A6( var_0 );
+        self setgoalpos( var_0 );
         self.goalradius = 36;
         self._cloak_enemy_state = "Path 2 LKP";
         self waittill( "goal" );
@@ -64,9 +64,9 @@ cloak_enemy_warning1_behavior()
 
     if ( isdefined( self.enemy ) )
     {
-        var_1 = self _meth_81C1( self.enemy );
+        var_1 = self lastknownpos( self.enemy );
         maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-        self _meth_81A6( var_1 );
+        self setgoalpos( var_1 );
         self.goalradius = 36;
         self._cloak_enemy_state = "Path 2 LKP";
         self waittill( "goal" );
@@ -92,7 +92,7 @@ _investigate_last_known_position_with_endons()
     self.pathrandompercent = 50;
     self.goalradius = 64;
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
-    self _meth_81A6( level._stealth.logic.lastknownposition );
+    self setgoalpos( level._stealth.logic.lastknownposition );
     self._cloak_enemy_state = "Path 2 LKP";
     self waittill( "goal" );
     self._cloak_enemy_state = "Looking around LKP";
@@ -166,7 +166,7 @@ cloak_enemy_investigative_attack_behavior()
             {
                 if ( isdefined( common_scripts\utility::array_find( var_1, self ) ) )
                 {
-                    level._stealth.logic.lastknownposition = self _meth_81C1( self.enemy );
+                    level._stealth.logic.lastknownposition = self lastknownpos( self.enemy );
 
                     if ( isarray( var_1 ) )
                     {
@@ -195,10 +195,10 @@ cloak_enemy_investigative_attack_behavior()
         {
             foreach ( var_7 in var_5 )
             {
-                if ( _func_22A( level._stealth.logic.lastknownposition, var_7 ) )
+                if ( ispointinvolume( level._stealth.logic.lastknownposition, var_7 ) )
                 {
-                    self _meth_81AB();
-                    self _meth_81A9( var_7 );
+                    self cleargoalvolume();
+                    self setgoalvolumeauto( var_7 );
                     wait 1.0;
                     break;
                 }
@@ -231,7 +231,7 @@ cloak_enemy_attack_behavior()
         var_2 = self.enemy.origin;
         var_3 = self.origin;
 
-        if ( _func_220( var_3, var_2 ) < var_0 * var_0 )
+        if ( distance2dsquared( var_3, var_2 ) < var_0 * var_0 )
             var_1 = 1;
     }
 
@@ -240,9 +240,9 @@ cloak_enemy_attack_behavior()
     else if ( isdefined( self.mech ) && self.mech )
     {
         self.goalradius = 1024;
-        self _meth_81A6( self _meth_81C1( self.enemy ) );
+        self setgoalpos( self lastknownpos( self.enemy ) );
         wait(randomfloatrange( 0.5, 1.5 ));
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         cloak_enemy_attack_behavior_mech();
     }
     else
@@ -280,7 +280,7 @@ cloak_enemy_state_hidden()
     self.dontevershoot = 1;
     thread maps\_utility::set_battlechatter( 0 );
     self.diequietly = 1;
-    self _meth_8166();
+    self clearenemy();
 }
 
 cloak_enemy_state_spotted( var_0 )
@@ -368,7 +368,7 @@ cloak_enemy_default_setup()
         level._cloak_enemy_array = [];
 
     level._cloak_enemy_array[level._cloak_enemy_array.size] = self;
-    self _meth_8177( "cloak_enemy_npcs" );
+    self setthreatbiasgroup( "cloak_enemy_npcs" );
     maps\_utility::enable_surprise();
 }
 
@@ -382,14 +382,14 @@ cqb_investigate_behavior( var_0 )
     self.disablearrivals = 0;
     self.disableexits = 0;
     var_1 = distance( var_0.origin, self.origin );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self.goalradius = var_1 * 0.5;
     wait 0.05;
     maps\_utility::set_generic_run_anim( "_stealth_patrol_cqb" );
     self._stealth.debug_state = "Investigate-CQB";
     self waittill( "goal" );
 
-    if ( !common_scripts\utility::flag( "_stealth_spotted" ) && ( !isdefined( self.enemy ) || !self _meth_81BE( self.enemy ) ) )
+    if ( !common_scripts\utility::flag( "_stealth_spotted" ) && ( !isdefined( self.enemy ) || !self cansee( self.enemy ) ) )
         maps\_stealth_shared_utilities::enemy_runto_and_lookaround( var_0 );
 }
 

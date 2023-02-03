@@ -8,12 +8,12 @@ load_precache()
     precachemodel( "viewbody_atlas_pmc_smp_custom" );
     precachemodel( "viewbody_atlas_military_smp" );
     precachemodel( "viewbody_atlas_military_smp_grapple" );
-    precacheitem( "frag_grenade_var_exoclimb" );
-    precacheitem( "tracking_grenade_var_exoclimb" );
-    precacheitem( "contact_grenade_var_exoclimb" );
-    precacheitem( "flash_grenade_var_exoclimb" );
-    precacheitem( "emp_grenade_var_exoclimb" );
-    precacheitem( "paint_grenade_var_exoclimb" );
+    precacheshellshock( "frag_grenade_var_exoclimb" );
+    precacheshellshock( "tracking_grenade_var_exoclimb" );
+    precacheshellshock( "contact_grenade_var_exoclimb" );
+    precacheshellshock( "flash_grenade_var_exoclimb" );
+    precacheshellshock( "emp_grenade_var_exoclimb" );
+    precacheshellshock( "paint_grenade_var_exoclimb" );
     precachestring( &"EXOCLIMB_CLIMB_HINT" );
     precachestring( &"EXOCLIMB_CLIMB_HINT_PC" );
     precacherumble( "falling_land" );
@@ -593,7 +593,7 @@ trigger_handle_jump_mount()
 
 trigger_handle_mag_mount()
 {
-    self _meth_817B();
+    self usetriggerrequirelookat();
     maps\_utility::addhinttrigger( &"EXOCLIMB_CLIMB_HINT", &"EXOCLIMB_CLIMB_HINT_PC" );
     self.script_flag_false = "flag_exo_climbing_enabled";
     level thread maps\_trigger::trigger_script_flag_false( self );
@@ -652,15 +652,15 @@ climbing_player_mount( var_0, var_1 )
         level.exo_climb_player_center.angles = level.exo_climb_rig.angles;
         var_2 = anglestoforward( level.exo_climb_player_center.angles );
         var_3 = 0 * var_2 + ( 0, 0, 60 );
-        level.exo_climb_player_center _meth_804D( level.exo_climb_rig, "tag_origin", var_3, ( 0, 0, 0 ) );
+        level.exo_climb_player_center linkto( level.exo_climb_rig, "tag_origin", var_3, ( 0, 0, 0 ) );
     }
 
     if ( !isdefined( var_0.override_rig ) )
     {
         level.player maps\_shg_utility::setup_player_for_scene();
-        level.player _meth_8300( 0 );
-        level.player _meth_8321();
-        level.player _meth_8320();
+        level.player allowads( 0 );
+        level.player disableweaponswitch();
+        level.player enableoffhandweapons();
         level.player waittill( "weapon_change" );
     }
 
@@ -678,8 +678,8 @@ climbing_player_mount( var_0, var_1 )
 
     if ( !isdefined( var_0.override_rig ) )
     {
-        level.player _meth_8080( level.exo_climb_rig, "tag_player", var_5 );
-        level.player common_scripts\utility::delaycall( var_5, ::_meth_807D, level.exo_climb_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
+        level.player playerlinktoblend( level.exo_climb_rig, "tag_player", var_5 );
+        level.player common_scripts\utility::delaycall( var_5, ::playerlinktodelta, level.exo_climb_rig, "tag_player", 1.0, 0, 0, 0, 0, 1 );
     }
 
     var_6 = 120;
@@ -713,8 +713,8 @@ climbing_player_mount( var_0, var_1 )
     if ( isdefined( var_0.override_view_angle_unclamp_time ) )
         var_9 = var_0.override_view_angle_unclamp_time;
 
-    level.player common_scripts\utility::delaycall( var_9, ::_meth_80A2, 0.5, 0, 0, var_6, var_6, var_7, var_8 );
-    level.player _meth_8031( 70.0, var_9 + 0.1 );
+    level.player common_scripts\utility::delaycall( var_9, ::lerpviewangleclamp, 0.5, 0, 0, var_6, var_6, var_7, var_8 );
+    level.player lerpfov( 70.0, var_9 + 0.1 );
     level notify( "exoclimb_start_mount_anim" );
 
     if ( isdefined( var_0.override_anim_org ) && isdefined( var_0.override_anim ) )
@@ -726,13 +726,13 @@ climbing_player_mount( var_0, var_1 )
         var_0 maps\_anim::anim_single_solo( level.exo_climb_rig, var_4 );
 
     level.exo_climb_ground_ref_ent = spawn( "script_model", ( 0, 0, 0 ) );
-    level.exo_climb_ground_ref_ent _meth_80B1( "tag_origin" );
-    level.exo_climb_ground_ref_ent _meth_804D( level.exo_climb_rig, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.exo_climb_ground_ref_ent setmodel( "tag_origin" );
+    level.exo_climb_ground_ref_ent linkto( level.exo_climb_rig, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     if ( !isdefined( level.player.hack_fix_lagos_flank_alley_camera_pop ) || !level.player.hack_fix_lagos_flank_alley_camera_pop )
-        level.player _meth_8091( level.exo_climb_ground_ref_ent );
+        level.player playersetgroundreferenceent( level.exo_climb_ground_ref_ent );
 
-    level.player _meth_80FE( 1.0, 0.6 );
+    level.player enableslowaim( 1.0, 0.6 );
     level thread climbing_player_controller( var_1 );
 }
 
@@ -763,7 +763,7 @@ using_variable_grenade( var_0 )
 swap_to_climbing_weapon()
 {
     maps\_player_exo::player_exo_deactivate();
-    var_0 = level.player _meth_82CE();
+    var_0 = level.player getweaponslistoffhands();
 
     if ( level.player using_variable_grenade( var_0 ) )
     {
@@ -796,31 +796,31 @@ swap_to_climbing_weapon()
         level.player.variable_grenade_ui_type = var_4;
 
         foreach ( var_6 in var_0 )
-            level.player _meth_830F( var_6 );
+            level.player takeweapon( var_6 );
 
-        level.player _meth_8344( level.player.variable_grenade["normal"][var_1] );
-        level.player _meth_830E( level.player.variable_grenade["normal"][var_1] );
-        level.player _meth_8319( level.player.variable_grenade["special"][var_2] );
-        level.player _meth_830E( level.player.variable_grenade["special"][var_2] );
+        level.player setlethalweapon( level.player.variable_grenade["normal"][var_1] );
+        level.player giveweapon( level.player.variable_grenade["normal"][var_1] );
+        level.player settacticalweapon( level.player.variable_grenade["special"][var_2] );
+        level.player giveweapon( level.player.variable_grenade["special"][var_2] );
     }
 
     level.exo_climb_rig.stored_weapon = level.player maps\_utility::get_storable_current_weapon();
-    level.exo_climb_rig.stored_clipsize = level.player _meth_82F8( level.exo_climb_rig.stored_weapon );
-    level.exo_climb_rig.stored_stock = level.player _meth_82F9( level.exo_climb_rig.stored_weapon );
-    level.player _meth_830F( level.exo_climb_rig.stored_weapon );
+    level.exo_climb_rig.stored_clipsize = level.player getweaponammoclip( level.exo_climb_rig.stored_weapon );
+    level.exo_climb_rig.stored_stock = level.player setweaponammostock( level.exo_climb_rig.stored_weapon );
+    level.player takeweapon( level.exo_climb_rig.stored_weapon );
 }
 
 swap_to_real_weapon()
 {
     maps\_player_exo::player_exo_activate();
-    level.player _meth_830E( level.exo_climb_rig.stored_weapon );
-    level.player _meth_82F6( level.exo_climb_rig.stored_weapon, level.exo_climb_rig.stored_clipsize );
-    level.player _meth_82F7( level.exo_climb_rig.stored_weapon, level.exo_climb_rig.stored_stock );
-    level.player _meth_8315( level.exo_climb_rig.stored_weapon );
+    level.player giveweapon( level.exo_climb_rig.stored_weapon );
+    level.player setweaponammoclip( level.exo_climb_rig.stored_weapon, level.exo_climb_rig.stored_clipsize );
+    level.player setweaponammostock( level.exo_climb_rig.stored_weapon, level.exo_climb_rig.stored_stock );
+    level.player switchtoweapon( level.exo_climb_rig.stored_weapon );
 
     if ( isdefined( level.exo_climb_rig.stored_variable_grenade ) )
     {
-        var_0 = level.player _meth_82CE();
+        var_0 = level.player getweaponslistoffhands();
         var_1 = 0;
 
         if ( isdefined( var_0[0] ) )
@@ -835,12 +835,12 @@ swap_to_real_weapon()
         level.exo_climb_rig.stored_variable_grenade = undefined;
 
         foreach ( var_4 in var_0 )
-            level.player _meth_830F( var_4 );
+            level.player takeweapon( var_4 );
 
-        level.player _meth_8344( level.player.variable_grenade["normal"][var_1] );
-        level.player _meth_830E( level.player.variable_grenade["normal"][var_1] );
-        level.player _meth_8319( level.player.variable_grenade["special"][var_2] );
-        level.player _meth_830E( level.player.variable_grenade["special"][var_2] );
+        level.player setlethalweapon( level.player.variable_grenade["normal"][var_1] );
+        level.player giveweapon( level.player.variable_grenade["normal"][var_1] );
+        level.player settacticalweapon( level.player.variable_grenade["special"][var_2] );
+        level.player giveweapon( level.player.variable_grenade["special"][var_2] );
     }
 
     if ( isdefined( level.exo_climb_rig.stored_variable_grenade_ui_type ) )
@@ -853,19 +853,19 @@ stop_player_climbing( var_0 )
     {
         swap_to_real_weapon();
         level.player maps\_shg_utility::setup_player_for_gameplay();
-        level.player _meth_8300( 1 );
-        level.player _meth_8322();
-        level.player _meth_804F();
+        level.player allowads( 1 );
+        level.player enableweaponswitch();
+        level.player unlink();
         level.exo_climb_rig delete();
     }
 
     level.exo_climb_rig = undefined;
-    level.player _meth_80FF();
-    level.exo_climb_player_center _meth_804F();
+    level.player disableslowaim();
+    level.exo_climb_player_center unlink();
     level.exo_climb_player_center delete();
     level.exo_climb_player_center = undefined;
-    level.player _meth_8091( undefined );
-    level.exo_climb_ground_ref_ent _meth_804F();
+    level.player playersetgroundreferenceent( undefined );
+    level.exo_climb_ground_ref_ent unlink();
     level.exo_climb_ground_ref_ent delete();
     level.exo_climb_ground_ref_ent = undefined;
     common_scripts\utility::flag_clear( "flag_exo_climbing_enabled" );
@@ -900,12 +900,12 @@ reset_button_buffers()
 
 update_button_buffers()
 {
-    if ( level.player _meth_83DE() )
+    if ( level.player jumpbuttonpressed() )
         level.exo_climb_rig.jumpbuttonbuffer = 0.6;
     else if ( level.exo_climb_rig.jumpbuttonbuffer > 0.0 )
         level.exo_climb_rig.jumpbuttonbuffer -= 0.05;
 
-    if ( level.player _meth_824C( "Button_B" ) || level.player attackbuttonpressed() || level.player adsbuttonpressed() || level.player _meth_82EE() || level.player _meth_82EF() )
+    if ( level.player buttonpressed( "Button_B" ) || level.player attackbuttonpressed() || level.player adsbuttonpressed() || level.player fragbuttonpressed() || level.player secondaryoffhandbuttonpressed() )
         level.exo_climb_rig.combatbuttonbuffer = 0.6;
     else if ( level.exo_climb_rig.combatbuttonbuffer > 0.0 )
         level.exo_climb_rig.combatbuttonbuffer -= 0.05;
@@ -935,7 +935,7 @@ climbing_player_controller( var_0 )
         {
             update_button_buffers();
 
-            if ( climbing_helper_player_in_combat_mode() && level.player _meth_812C() )
+            if ( climbing_helper_player_in_combat_mode() && level.player isthrowinggrenade() )
                 climbing_motion_player_combat_mode();
             else if ( climbing_helper_player_dismount_requested() )
                 climbing_motion_dismount();
@@ -1039,27 +1039,27 @@ exo_climb_grab_rumble( var_0 )
     var_4 = sin( var_1 ) * var_3 + cos( var_1 ) * var_2;
     var_5 = 0.9;
     glassradiusdamage( level.exo_climb_rig.origin, 84, 10, 10, var_5, var_4 );
-    level.player _meth_80AD( "falling_land" );
+    level.player playrumbleonentity( "falling_land" );
 }
 
 exo_climb_jump_rumble( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 exo_climb_mag_rumble( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 exo_climb_grab_shake( var_0 )
 {
-    level.player _meth_83FE( 12, 6, 2, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
+    level.player screenshakeonentity( 12, 6, 2, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
 }
 
 exo_climb_jump_shake( var_0 )
 {
-    level.player _meth_83FE( 4, 2, 0.5, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
+    level.player screenshakeonentity( 4, 2, 0.5, 0.5, 0, 0.25, 128, 10, 5, 5, 2 );
 }
 
 exo_climb_allow_player_input_1( var_0 )
@@ -1085,44 +1085,44 @@ climbing_motion_start_player_jump( var_0 )
             var_2 = level.player getangles()[0];
 
             if ( var_2 < 20.0 )
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 100.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 100.0, 0.4 );
             else
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 85.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 85.0, 0.4 );
 
-            level.player common_scripts\utility::delaycall( 0.9, ::_meth_8031, 70.0, 0.15 );
+            level.player common_scripts\utility::delaycall( 0.9, ::lerpfov, 70.0, 0.15 );
         }
         else if ( var_0 == "d" )
         {
             var_2 = level.player getangles()[0];
 
             if ( var_2 > -20.0 )
-                level.player _meth_8031( 100.0, 0.5 );
+                level.player lerpfov( 100.0, 0.5 );
             else
-                level.player _meth_8031( 85.0, 0.5 );
+                level.player lerpfov( 85.0, 0.5 );
 
-            level.player common_scripts\utility::delaycall( 0.7, ::_meth_8031, 70.0, 0.4 );
+            level.player common_scripts\utility::delaycall( 0.7, ::lerpfov, 70.0, 0.4 );
         }
         else if ( var_0 == "l" )
         {
             var_3 = get_player_local_yaw();
 
             if ( var_3 > -20.0 )
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 100.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 100.0, 0.4 );
             else
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 85.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 85.0, 0.4 );
 
-            level.player common_scripts\utility::delaycall( 0.7, ::_meth_8031, 70.0, 0.4 );
+            level.player common_scripts\utility::delaycall( 0.7, ::lerpfov, 70.0, 0.4 );
         }
         else if ( var_0 == "r" )
         {
             var_3 = get_player_local_yaw();
 
             if ( var_3 < 20.0 )
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 100.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 100.0, 0.4 );
             else
-                level.player common_scripts\utility::delaycall( 0.2, ::_meth_8031, 85.0, 0.4 );
+                level.player common_scripts\utility::delaycall( 0.2, ::lerpfov, 85.0, 0.4 );
 
-            level.player common_scripts\utility::delaycall( 0.7, ::_meth_8031, 70.0, 0.4 );
+            level.player common_scripts\utility::delaycall( 0.7, ::lerpfov, 70.0, 0.4 );
         }
     }
     else if ( level.exo_climb_move_options["short"][var_0] != "blocked" )
@@ -1160,7 +1160,7 @@ climbing_motion_start_player_jump_to_mag( var_0 )
             var_4 = level.player.exo_climb_overrides.idle_look_down_limit_mag;
     }
 
-    level.player _meth_80A2( 0.5, 0, 0, var_2, var_2, var_3, var_4 );
+    level.player lerpviewangleclamp( 0.5, 0, 0, var_2, var_2, var_3, var_4 );
     level.exo_climb_rig.allow_player_input_1 = undefined;
     level.exo_climb_rig.allow_player_input_2 = undefined;
 }
@@ -1170,14 +1170,14 @@ climbing_motion_player_jumping()
     if ( isdefined( level.exo_climb_rig.current_traverse_anime ) )
     {
         var_0 = level.scr_anim["player_climb_rig"][level.exo_climb_rig.current_traverse_anime];
-        var_1 = level.exo_climb_rig _meth_814F( var_0 );
+        var_1 = level.exo_climb_rig getanimtime( var_0 );
 
         if ( var_1 >= 1.0 )
         {
             level.exo_climb_rig.is_jumping = undefined;
 
             if ( level.nextgen )
-                _func_0D3( "r_mbEnable", "0" );
+                setsaveddvar( "r_mbEnable", "0" );
 
             climbing_update_available_moving_options();
             restore_idle();
@@ -1190,7 +1190,7 @@ climbing_motion_player_moving_on_magnetic_surface()
     if ( isdefined( level.exo_climb_rig.current_traverse_anime ) )
     {
         var_0 = level.scr_anim["player_climb_rig"][level.exo_climb_rig.current_traverse_anime];
-        var_1 = level.exo_climb_rig _meth_814F( var_0 );
+        var_1 = level.exo_climb_rig getanimtime( var_0 );
 
         if ( var_1 >= 1.0 )
         {
@@ -1204,7 +1204,7 @@ climbing_motion_player_moving_on_magnetic_surface()
                 restore_idle();
 
             if ( level.nextgen )
-                _func_0D3( "r_mbEnable", "0" );
+                setsaveddvar( "r_mbEnable", "0" );
         }
     }
 }
@@ -1214,7 +1214,7 @@ climbing_motion_player_jump_to_mag()
     if ( isdefined( level.exo_climb_rig.current_traverse_anime ) )
     {
         var_0 = level.scr_anim["player_climb_rig"][level.exo_climb_rig.current_traverse_anime];
-        var_1 = level.exo_climb_rig _meth_814F( var_0 );
+        var_1 = level.exo_climb_rig getanimtime( var_0 );
 
         if ( var_1 >= 1.0 )
         {
@@ -1222,7 +1222,7 @@ climbing_motion_player_jump_to_mag()
             restore_idle();
 
             if ( level.nextgen )
-                _func_0D3( "r_mbEnable", "0" );
+                setsaveddvar( "r_mbEnable", "0" );
         }
     }
 }
@@ -1234,7 +1234,7 @@ climbing_motion_player_mag_to_jump()
     else if ( isdefined( level.exo_climb_rig.current_traverse_anime ) )
     {
         var_0 = level.scr_anim["player_climb_rig"][level.exo_climb_rig.current_traverse_anime];
-        var_1 = level.exo_climb_rig _meth_814F( var_0 );
+        var_1 = level.exo_climb_rig getanimtime( var_0 );
 
         if ( var_1 >= 1.0 )
         {
@@ -1242,7 +1242,7 @@ climbing_motion_player_mag_to_jump()
             enter_state_on_jump_surface();
 
             if ( level.nextgen )
-                _func_0D3( "r_mbEnable", "0" );
+                setsaveddvar( "r_mbEnable", "0" );
 
             restore_idle();
         }
@@ -1269,7 +1269,7 @@ get_direction_from_normalized_movement( var_0 )
 get_requested_jump_direction()
 {
     var_0 = "u";
-    var_1 = level.player _meth_82F3();
+    var_1 = level.player getnormalizedmovement();
     var_2 = length2d( var_1 );
 
     if ( var_2 > 0.15 )
@@ -1290,7 +1290,7 @@ jump_direction_is_valid( var_0 )
 
 get_requested_move_direction()
 {
-    var_0 = level.player _meth_82F3();
+    var_0 = level.player getnormalizedmovement();
 
     if ( length2d( var_0 ) <= 0.15 )
         return "";
@@ -1341,7 +1341,7 @@ climbing_motion_start_player_mag_to_jump( var_0 )
     thread climbing_animation_traverse_move( var_1, 2 );
     enter_state_mag_to_jump_surface();
     level.exo_climb_rig.is_jumping = 1;
-    level.player _meth_80A2( 0.5, 0, 0, 120, 120, 60, 57 );
+    level.player lerpviewangleclamp( 0.5, 0, 0, 120, 120, 60, 57 );
     level.exo_climb_rig.allow_player_input_1 = undefined;
     level.exo_climb_rig.allow_player_input_2 = undefined;
 }
@@ -1377,11 +1377,11 @@ climbing_update_available_moving_options()
 
         foreach ( var_3 in var_1 )
         {
-            var_0.origin = level.exo_climb_player_center _meth_81B0( level.exo_climb_anim_offsets["magnetic"][var_3]["0"]["offset"] );
+            var_0.origin = level.exo_climb_player_center localtoworldcoords( level.exo_climb_anim_offsets["magnetic"][var_3]["0"]["offset"] );
 
             foreach ( var_5 in level.exo_climb_magnetic_trigs )
             {
-                if ( var_0 _meth_80A9( var_5 ) )
+                if ( var_0 istouching( var_5 ) )
                 {
                     if ( isdefined( var_5.script_noteworthy ) && issubstr( var_5.script_noteworthy, "exo_climb_toggle_trigger" ) )
                     {
@@ -1403,11 +1403,11 @@ climbing_update_available_moving_options()
 
         foreach ( var_3 in var_8 )
         {
-            var_0.origin = level.exo_climb_player_center _meth_81B0( level.exo_climb_anim_offsets["jump2mag"][var_3]["offset"] );
+            var_0.origin = level.exo_climb_player_center localtoworldcoords( level.exo_climb_anim_offsets["jump2mag"][var_3]["offset"] );
 
             foreach ( var_5 in level.exo_climb_magnetic_trigs )
             {
-                if ( var_0 _meth_80A9( var_5 ) )
+                if ( var_0 istouching( var_5 ) )
                 {
                     if ( isdefined( var_5.script_noteworthy ) && issubstr( var_5.script_noteworthy, "exo_climb_toggle_trigger" ) )
                     {
@@ -1429,11 +1429,11 @@ climbing_update_available_moving_options()
 
         foreach ( var_3 in var_13 )
         {
-            var_0.origin = level.exo_climb_player_center _meth_81B0( level.exo_climb_anim_offsets["mag2jump"][var_3]["offset"] );
+            var_0.origin = level.exo_climb_player_center localtoworldcoords( level.exo_climb_anim_offsets["mag2jump"][var_3]["offset"] );
 
             foreach ( var_5 in level.exo_climb_jump_trigs )
             {
-                if ( var_0 _meth_80A9( var_5 ) )
+                if ( var_0 istouching( var_5 ) )
                 {
                     if ( isdefined( var_5.script_noteworthy ) && issubstr( var_5.script_noteworthy, "exo_climb_toggle_trigger" ) )
                     {
@@ -1459,11 +1459,11 @@ climbing_update_available_moving_options()
 
             foreach ( var_3 in var_21 )
             {
-                var_0.origin = level.exo_climb_player_center _meth_81B0( level.exo_climb_anim_offsets["normal"][var_20][var_3]["offset"] );
+                var_0.origin = level.exo_climb_player_center localtoworldcoords( level.exo_climb_anim_offsets["normal"][var_20][var_3]["offset"] );
 
                 foreach ( var_5 in level.exo_climb_jump_trigs )
                 {
-                    if ( var_0 _meth_80A9( var_5 ) )
+                    if ( var_0 istouching( var_5 ) )
                     {
                         if ( isdefined( var_5.script_noteworthy ) && issubstr( var_5.script_noteworthy, "exo_climb_toggle_trigger" ) )
                         {
@@ -1497,11 +1497,11 @@ climbing_update_available_moving_options()
                     if ( level.exo_climb_move_options[var_20][var_3] != "blocked" )
                         continue;
 
-                    var_0.origin = level.exo_climb_player_center _meth_81B0( level.exo_climb_anim_offsets["special"][var_20][var_3][var_31]["offset"] );
+                    var_0.origin = level.exo_climb_player_center localtoworldcoords( level.exo_climb_anim_offsets["special"][var_20][var_3][var_31]["offset"] );
 
                     foreach ( var_5 in level.exo_climb_jump_trigs )
                     {
-                        if ( var_0 _meth_80A9( var_5 ) )
+                        if ( var_0 istouching( var_5 ) )
                         {
                             if ( isdefined( var_5.script_noteworthy ) && issubstr( var_5.script_noteworthy, "exo_climb_toggle_trigger" ) )
                             {
@@ -1571,7 +1571,7 @@ climbing_motion_player_looking()
 
 climbing_motion_player_combat_mode()
 {
-    if ( !level.player _meth_824C( "BUTTON_B" ) )
+    if ( !level.player buttonpressed( "BUTTON_B" ) )
         level.exo_climb_rig.crouch_button_reset = 1;
 
     var_0 = get_player_local_yaw();
@@ -1629,25 +1629,25 @@ climbing_motion_start_player_shooting()
 
 climbing_motion_stop_player_combat_mode_quick()
 {
-    level.player _meth_8300( 0 );
-    level.player _meth_831D();
-    var_0 = level.player _meth_8311();
-    level.exo_climb_rig.stored_clipsize = level.player _meth_82F8( var_0 );
-    level.exo_climb_rig.stored_stock = level.player _meth_82F9( var_0 );
-    level.player _meth_830F( var_0 );
+    level.player allowads( 0 );
+    level.player disableweapons();
+    var_0 = level.player getcurrentweapon();
+    level.exo_climb_rig.stored_clipsize = level.player getweaponammoclip( var_0 );
+    level.exo_climb_rig.stored_stock = level.player setweaponammostock( var_0 );
+    level.player takeweapon( var_0 );
     level.exo_climb_rig.in_combat_mode = undefined;
     climbing_animation_stop_idle();
 }
 
 climbing_motion_stop_player_combat_mode()
 {
-    level.player _meth_8300( 0 );
-    level.player _meth_831D();
+    level.player allowads( 0 );
+    level.player disableweapons();
     level.player waittill( "weapon_change" );
-    var_0 = level.player _meth_8311();
-    level.exo_climb_rig.stored_clipsize = level.player _meth_82F8( var_0 );
-    level.exo_climb_rig.stored_stock = level.player _meth_82F9( var_0 );
-    level.player _meth_830F( var_0 );
+    var_0 = level.player getcurrentweapon();
+    level.exo_climb_rig.stored_clipsize = level.player getweaponammoclip( var_0 );
+    level.exo_climb_rig.stored_stock = level.player setweaponammostock( var_0 );
+    level.player takeweapon( var_0 );
     level.exo_climb_rig.in_combat_mode = undefined;
     climbing_animation_stop_idle();
     level.exo_climb_rig maps\_anim::anim_single_solo( level.exo_climb_rig, "combat_to_climb_idle" );
@@ -1657,10 +1657,10 @@ climbing_motion_stop_player_combat_mode()
 
 climbing_motion_dismount()
 {
-    level.player _meth_8031( 65.0, 1.0 );
+    level.player lerpfov( 65.0, 1.0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
     if ( climbing_helper_player_in_combat_mode() )
         climbing_motion_stop_player_combat_mode();
@@ -1680,13 +1680,13 @@ climbing_give_player_weapon( var_0 )
     else
         var_4 = level.exo_climb_weapon[var_1][var_0];
 
-    level.player _meth_830E( var_4 );
-    level.player _meth_8315( var_4 );
-    level.player _meth_82F6( var_4, level.exo_climb_rig.stored_clipsize );
-    level.player _meth_82F7( var_4, level.exo_climb_rig.stored_stock );
-    level.player _meth_831E();
+    level.player giveweapon( var_4 );
+    level.player switchtoweapon( var_4 );
+    level.player setweaponammoclip( var_4, level.exo_climb_rig.stored_clipsize );
+    level.player setweaponammostock( var_4, level.exo_climb_rig.stored_stock );
+    level.player enableweapons();
     level.player waittill( "weapon_change" );
-    level.player _meth_8300( 1 );
+    level.player allowads( 1 );
 }
 
 climbing_animation_stop_idle()
@@ -1762,16 +1762,16 @@ climbing_animation_traverse_move( var_0, var_1 )
     if ( level.nextgen )
     {
         if ( var_1 == 0 )
-            _func_0D3( "r_mbEnable", "0" );
+            setsaveddvar( "r_mbEnable", "0" );
         else if ( var_1 == 1 )
         {
-            _func_0D3( "r_mbEnable", "2" );
-            _func_0D3( "r_mbVelocityScalar", "2" );
+            setsaveddvar( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbVelocityScalar", "2" );
         }
         else
         {
-            _func_0D3( "r_mbEnable", "2" );
-            _func_0D3( "r_mbVelocityScalar", "6" );
+            setsaveddvar( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbVelocityScalar", "6" );
         }
     }
 }
@@ -1779,9 +1779,9 @@ climbing_animation_traverse_move( var_0, var_1 )
 climbing_animation_dismount()
 {
     climbing_animation_stop_idle();
-    level.player _meth_8091( undefined );
-    level.player _meth_80A2( 0.5, 0, 0, 0, 0, 0, 0 );
-    level.exo_climb_rig _meth_808E();
+    level.player playersetgroundreferenceent( undefined );
+    level.player lerpviewangleclamp( 0.5, 0, 0, 0, 0, 0, 0 );
+    level.exo_climb_rig dontcastshadows();
     var_0 = 0;
 
     if ( isdefined( level.exo_climb_force_animated_dismount ) )
@@ -1808,7 +1808,7 @@ climbing_head_sway()
 
     for (;;)
     {
-        _func_234( level.player.origin, 3, 5, 1, 2, 0.2, 0.2, 0, 0.3, 0.375, 0.225 );
+        screenshake( level.player.origin, 3, 5, 1, 2, 0.2, 0.2, 0, 0.3, 0.375, 0.225 );
         wait 1.0;
     }
 }
@@ -1878,7 +1878,7 @@ climbing_helper_player_combat_requested()
 
 climbing_helper_player_exit_combat_mode_requested()
 {
-    return isdefined( level.exo_climb_rig.crouch_button_reset ) && level.player _meth_824C( "Button_B" );
+    return isdefined( level.exo_climb_rig.crouch_button_reset ) && level.player buttonpressed( "Button_B" );
 }
 
 climbing_helper_player_dismount_requested()
@@ -1895,7 +1895,7 @@ climbing_helper_player_dismount_requested()
     if ( isdefined( level.exo_climb_force_animated_dismount ) )
         return 1;
 
-    if ( level.player _meth_824C( "BUTTON_X" ) )
+    if ( level.player buttonpressed( "BUTTON_X" ) )
     {
         if ( isdefined( level.exo_climb_rig.dismount_timer ) && level.exo_climb_rig.dismount_timer < 0 )
             return 1;
@@ -1971,9 +1971,9 @@ toggle_mount_mag_trigger_on( var_0 )
 
 mag_mount_link_player( var_0, var_1 )
 {
-    if ( !isdefined( var_0.player_linked ) && var_1 _meth_80A9( self ) )
+    if ( !isdefined( var_0.player_linked ) && var_1 istouching( self ) )
     {
-        level.exo_climb_rig _meth_804D( var_0 );
+        level.exo_climb_rig linkto( var_0 );
         level.exo_climb_rig.is_linked = 1;
         var_0.player_linked = 1;
     }
@@ -1983,7 +1983,7 @@ mag_mount_unlink_player( var_0, var_1 )
 {
     if ( isdefined( var_0.player_linked ) )
     {
-        level.exo_climb_rig _meth_804F();
+        level.exo_climb_rig unlink();
         level.exo_climb_rig.is_linked = undefined;
         var_0.player_linked = undefined;
     }
@@ -2017,7 +2017,7 @@ temp_exoclimb_hud_init()
     level.temp_exoclimb_hud.up_arrow.horzalign = "fullscreen";
     level.temp_exoclimb_hud.up_arrow.vertalign = "fullscreen";
     level.temp_exoclimb_hud.up_arrow.color = ( 1, 1, 1 );
-    level.temp_exoclimb_hud.up_arrow _meth_80CC( "hud_arrow_up", 64, 64 );
+    level.temp_exoclimb_hud.up_arrow setshader( "hud_arrow_up", 64, 64 );
     level.temp_exoclimb_hud.down_arrow = newhudelem();
     level.temp_exoclimb_hud.down_arrow.x = 320;
     level.temp_exoclimb_hud.down_arrow.y = 356.0;
@@ -2026,7 +2026,7 @@ temp_exoclimb_hud_init()
     level.temp_exoclimb_hud.down_arrow.horzalign = "fullscreen";
     level.temp_exoclimb_hud.down_arrow.vertalign = "fullscreen";
     level.temp_exoclimb_hud.down_arrow.color = ( 1, 1, 1 );
-    level.temp_exoclimb_hud.down_arrow _meth_80CC( "hud_arrow_down", 64, 64 );
+    level.temp_exoclimb_hud.down_arrow setshader( "hud_arrow_down", 64, 64 );
     level.temp_exoclimb_hud.left_arrow = newhudelem();
     level.temp_exoclimb_hud.left_arrow.x = 304.0;
     level.temp_exoclimb_hud.left_arrow.y = 340;
@@ -2035,7 +2035,7 @@ temp_exoclimb_hud_init()
     level.temp_exoclimb_hud.left_arrow.horzalign = "fullscreen";
     level.temp_exoclimb_hud.left_arrow.vertalign = "fullscreen";
     level.temp_exoclimb_hud.left_arrow.color = ( 1, 1, 1 );
-    level.temp_exoclimb_hud.left_arrow _meth_80CC( "hud_arrow_left", 64, 64 );
+    level.temp_exoclimb_hud.left_arrow setshader( "hud_arrow_left", 64, 64 );
     level.temp_exoclimb_hud.right_arrow = newhudelem();
     level.temp_exoclimb_hud.right_arrow.x = 336.0;
     level.temp_exoclimb_hud.right_arrow.y = 340;
@@ -2044,7 +2044,7 @@ temp_exoclimb_hud_init()
     level.temp_exoclimb_hud.right_arrow.horzalign = "fullscreen";
     level.temp_exoclimb_hud.right_arrow.vertalign = "fullscreen";
     level.temp_exoclimb_hud.right_arrow.color = ( 1, 1, 1 );
-    level.temp_exoclimb_hud.right_arrow _meth_80CC( "hud_arrow_right", 64, 64 );
+    level.temp_exoclimb_hud.right_arrow setshader( "hud_arrow_right", 64, 64 );
     temp_exoclimb_hud_hide();
 }
 

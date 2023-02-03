@@ -15,7 +15,7 @@ se_irons_react_to_gunfire( var_0 )
             return;
 
         var_4 = getdvarfloat( "cg_fov" );
-        var_5 = level.player _meth_8400( level.irons.origin, var_4 );
+        var_5 = level.player worldpointtoscreenpos( level.irons.origin, var_4 );
 
         if ( isdefined( var_5 ) )
         {
@@ -50,7 +50,7 @@ anim_first_frame_with_finale_gameplay( var_0, var_1, var_2, var_3, var_4, var_5 
     var_6 = create_pivot( var_2, "tag_origin", 0 );
     var_8 = gettime() + 34700.0;
     wait 13.3333;
-    level.player _meth_82DD( "trigger_pulled", "+attack" );
+    level.player notifyonplayercommand( "trigger_pulled", "+attack" );
     thread allow_fake_shooting( var_2, var_3, 7.0666 );
     move_pivot_process( var_6, var_2, "TAG_WEAPON_LEFT", level.irons, "TAG_EYE", var_1, 32.1333, 1, var_4 );
 
@@ -99,15 +99,15 @@ allow_fake_shooting( var_0, var_1, var_2 )
 
             magicbullet( "iw5_titan45_sp", var_6, var_8, level.player );
             playfxontag( common_scripts\utility::getfx( "titan45_muzzle" ), var_1, var_4 );
-            level.player _meth_80AD( "pistol_fire" );
+            level.player playrumbleonentity( "pistol_fire" );
 
             if ( 0 )
             {
                 var_10 = var_0 maps\_utility::getanim( "irons_reveal_fire_add" );
-                var_0 _meth_814B( var_10, 1.0, 0.05 );
+                var_0 setanim( var_10, 1.0, 0.05 );
                 wait(getanimlength( var_10 ));
                 var_11 = 0.05;
-                var_0 _meth_814B( var_10, 0, var_11 );
+                var_0 setanim( var_10, 0, var_11 );
                 wait(var_11);
             }
             else
@@ -139,13 +139,13 @@ anim_single_with_gameplay( var_0, var_1 )
     {
         var_4 = maps\_anim::anim_spawn_model( var_5.model, var_5.animname, var_1 );
         var_4.animname = var_5.animname;
-        var_4 _meth_8115( level.scr_animtree[var_4.animname] );
+        var_4 useanimtree( level.scr_animtree[var_4.animname] );
         var_5 hide();
         var_2 = maps\_anim::anim_spawn_model( var_3.model, var_3.animname, var_1 );
         var_2.animname = var_3.animname;
-        var_2 _meth_8115( level.scr_animtree[var_3.animname] );
+        var_2 useanimtree( level.scr_animtree[var_3.animname] );
         var_9 = ( 11.6, 0, 3.7 );
-        var_2 _meth_804D( var_4, "TAG_WEAPON_RIGHT", var_9, ( 0, 0, 0 ) );
+        var_2 linkto( var_4, "TAG_WEAPON_RIGHT", var_9, ( 0, 0, 0 ) );
         var_3 hide();
     }
     else
@@ -157,7 +157,7 @@ anim_single_with_gameplay( var_0, var_1 )
     if ( 0 )
     {
         var_0 = common_scripts\utility::array_remove( var_0, var_3 );
-        var_2 _meth_804D( var_4, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 linkto( var_4, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     thread anim_first_frame_with_finale_gameplay( var_0, var_1, var_4, var_2, var_5, var_3 );
@@ -168,7 +168,7 @@ anim_single_with_gameplay( var_0, var_1 )
     maps\_anim::anim_single( var_0, var_1 );
 
     if ( 0 )
-        var_2 _meth_804F();
+        var_2 unlink();
 }
 
 create_pivot( var_0, var_1, var_2 )
@@ -182,8 +182,8 @@ create_pivot( var_0, var_1, var_2 )
     if ( var_2 )
         var_3.angles = var_0 gettagangles( var_1 );
 
-    var_0 _meth_804F();
-    var_0 _meth_804D( var_3 );
+    var_0 unlink();
+    var_0 linkto( var_3 );
     return var_3;
 }
 
@@ -192,13 +192,13 @@ set_pivot_pos( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_3 ) )
         var_3 = 0;
 
-    var_0 _meth_804F();
+    var_0 unlink();
     var_1.origin = var_0 gettagorigin( var_2 );
 
     if ( var_3 )
         var_1.angles = var_0 gettagangles( var_2 );
 
-    var_0 _meth_804D( var_1 );
+    var_0 linkto( var_1 );
     return var_1;
 }
 
@@ -224,7 +224,7 @@ move_pivot_process( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
         if ( var_1.return_to_position )
         {
             var_17 = 0.5;
-            var_0 _meth_82B5( var_9, var_17, 0.025, 0.025 );
+            var_0 rotateto( var_9, var_17, 0.025, 0.025 );
             var_14 = ( 0, 0, 0 );
             wait(var_17 * 2);
             var_1.return_to_position = 0;
@@ -234,7 +234,7 @@ move_pivot_process( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
         {
             var_18 = 0;
             var_19 = randomfloatrange( 0.4, 1.2 );
-            var_20 = level.player _meth_830D();
+            var_20 = level.player getnormalizedcameramovements();
 
             if ( abs( var_20[0] ) > 0.01 && abs( var_20[1] ) > 0.01 )
             {
@@ -309,7 +309,7 @@ move_pivot_process( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
                 var_14 = ( var_14[0], var_14[1] + var_24, var_14[2] + var_25 );
             }
 
-            var_29 = var_1 _meth_814F( var_11 );
+            var_29 = var_1 getanimtime( var_11 );
 
             if ( var_29 >= var_12 )
             {
@@ -324,7 +324,7 @@ move_pivot_process( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
             var_15 = combineangles( var_9, var_14 );
             var_15 = angles_clamp_180( var_15 );
             var_30 = var_9 * ( 1.0 - var_16 ) + var_15 * var_16;
-            var_0 _meth_82B5( var_30, 0.05, 0.025, 0.025 );
+            var_0 rotateto( var_30, 0.05, 0.025, 0.025 );
 
             if ( var_16 == 0.0 )
                 break;
@@ -361,14 +361,14 @@ check_on_target_process( var_0, var_1, var_2, var_3, var_4 )
 
         if ( var_5 )
         {
-            var_11 = level.player _meth_8400( var_8, var_6 );
-            var_12 = level.player _meth_8400( var_9, var_6 );
-            var_13 = level.player _meth_8400( var_10, var_6 );
+            var_11 = level.player worldpointtoscreenpos( var_8, var_6 );
+            var_12 = level.player worldpointtoscreenpos( var_9, var_6 );
+            var_13 = level.player worldpointtoscreenpos( var_10, var_6 );
 
             if ( isdefined( var_11 ) && isdefined( var_12 ) && isdefined( var_13 ) )
             {
-                var_14 = _func_220( ( var_11[0], var_11[1], 0 ), ( var_12[0], var_12[1], 0 ) );
-                var_15 = _func_220( ( var_11[0], var_11[1], 0 ), ( var_13[0], var_13[1], 0 ) );
+                var_14 = distance2dsquared( ( var_11[0], var_11[1], 0 ), ( var_12[0], var_12[1], 0 ) );
+                var_15 = distance2dsquared( ( var_11[0], var_11[1], 0 ), ( var_13[0], var_13[1], 0 ) );
 
                 if ( var_14 < var_15 )
                     var_7 = 1;
@@ -382,7 +382,7 @@ check_on_target_process( var_0, var_1, var_2, var_3, var_4 )
                 var_7 = 1;
         }
 
-        if ( level.player _meth_824C( "BUTTON_LTRIG" ) || level.player _meth_824C( "BUTTON_X" ) )
+        if ( level.player buttonpressed( "BUTTON_LTRIG" ) || level.player buttonpressed( "BUTTON_X" ) )
         {
             if ( var_7 )
             {
@@ -397,7 +397,7 @@ check_on_target_process( var_0, var_1, var_2, var_3, var_4 )
 
 player_input_ending_aim_button_off()
 {
-    var_0 = level.player _meth_830D();
+    var_0 = level.player getnormalizedcameramovements();
 
     if ( isdefined( var_0 ) && length2d( var_0 ) > 0.0 )
         return 1;

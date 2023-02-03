@@ -179,8 +179,8 @@ fx_init()
 {
     maps\_shg_fx::setup_shg_fx();
 
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", "1" );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", "1" );
 
     thread maps\_shg_fx::fx_zone_watcher( 1000, "msg_vfx_zone1_intro_ambient" );
     thread maps\_shg_fx::fx_zone_watcher( 1100, "msg_vfx_zone1_intro_upper" );
@@ -225,7 +225,7 @@ fx_props_setup()
     common_scripts\utility::array_thread( getentarray( "cap_ind_camera_sm_square_top_far", "script_noteworthy" ), ::fx_props_security_cameras, "ind_camera_lens_glow", 0, 2500000 );
     var_0 = getent( "fx_crash_sky_blocker", "targetname" );
     var_0 hide();
-    var_0 _meth_82BF();
+    var_0 notsolid();
 }
 
 fx_props_security_cameras( var_0, var_1, var_2 )
@@ -318,7 +318,7 @@ fx_props_security_cameras( var_0, var_1, var_2 )
 
         if ( var_1 )
         {
-            self _meth_82B5( var_3, 0.5 );
+            self rotateto( var_3, 0.5 );
             wait 0.5;
             continue;
         }
@@ -631,7 +631,7 @@ fx_inc_godrays()
 {
     var_0 = getent( "fx_inc_sun_blocker", "targetname" );
     var_0 hide();
-    var_0 _meth_82BF();
+    var_0 notsolid();
 
     if ( maps\_utility::is_gen4() )
     {
@@ -896,12 +896,12 @@ scriptable_pillars_light_retarget()
     wait 1;
     var_0 = getent( "pillar_light_target", "targetname" );
     iprintlnbold( "START RETARGETING PILLARS" );
-    var_1 = _func_231( "scriptable_pillar", "targetname" );
+    var_1 = getscriptablearray( "scriptable_pillar", "targetname" );
 
     foreach ( var_3 in var_1 )
     {
         iprintlnbold( "RETARGETING A NEW PILLAR" );
-        var_3 _meth_83EF( var_0 );
+        var_3 retargetscriptmodellighting( var_0 );
     }
 }
 
@@ -1093,7 +1093,7 @@ fx_mech_cockpit_damage()
     if ( !isdefined( level.fx_mech_cockpit ) )
     {
         level.fx_mech_cockpit = common_scripts\utility::spawn_tag_origin();
-        level.fx_mech_cockpit _meth_804D( self, "tag_view", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.fx_mech_cockpit linkto( self, "tag_view", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["cap_mech_cockpit_damage"], level.fx_mech_cockpit, "tag_origin" );
     }
 }
@@ -1118,9 +1118,9 @@ fx_interrogation_arm_smash( var_0 )
 {
     var_1 = spawn( "script_model", var_0 gettagorigin( "J_Elbow_LE" ) );
     var_1.angles = ( 15, 0, 0 );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     playfxontag( level._effect["cap_exo_arm_burst"], var_1, "tag_origin" );
-    var_1 _meth_804D( var_0, "J_Elbow_LE" );
+    var_1 linkto( var_0, "J_Elbow_LE" );
     wait 5;
     var_1 delete();
 }
@@ -1152,7 +1152,7 @@ fx_mech_land_sparks( var_0 )
     if ( !isdefined( level.fx_mech_cockpit ) )
     {
         level.fx_mech_cockpit = common_scripts\utility::spawn_tag_origin();
-        level.fx_mech_cockpit _meth_804D( self, "tag_view", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.fx_mech_cockpit linkto( self, "tag_view", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["cap_heli_gideon_sparks"], level.fx_mech_cockpit, "tag_origin" );
     }
 }

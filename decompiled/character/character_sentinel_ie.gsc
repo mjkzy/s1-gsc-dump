@@ -3,9 +3,9 @@
 
 main()
 {
-    self _meth_80B1( "sentinel_udt_underwater" );
+    self setmodel( "sentinel_udt_underwater" );
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

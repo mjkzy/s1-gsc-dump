@@ -46,7 +46,7 @@ main()
     thread initendinghadesfight();
 
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 
     if ( level.currentgen )
     {
@@ -78,7 +78,7 @@ triggermultiplevisionlightsetinternal( var_0, var_1, var_2, var_3, var_4 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) )
+        if ( level.player istouching( self ) )
         {
             if ( var_5 )
             {
@@ -86,7 +86,7 @@ triggermultiplevisionlightsetinternal( var_0, var_1, var_2, var_3, var_4 )
                     maps\_utility::vision_set_changes( var_1, var_4 );
 
                 if ( var_3 != "none" )
-                    level.player _meth_83C0( var_3 );
+                    level.player lightsetforplayer( var_3 );
 
                 var_6 = 1;
                 var_5 = 0;
@@ -98,7 +98,7 @@ triggermultiplevisionlightsetinternal( var_0, var_1, var_2, var_3, var_4 )
                 maps\_utility::vision_set_changes( var_0, var_4 );
 
             if ( var_2 != "none" )
-                level.player _meth_83C0( var_2 );
+                level.player lightsetforplayer( var_2 );
 
             var_6 = 0;
             var_5 = 1;
@@ -171,19 +171,19 @@ autofocus_loop()
     common_scripts\utility::flag_wait( "flag_autofocus_on" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     waitframe();
 
     while ( common_scripts\utility::flag( "flag_autofocus_on" ) == 1 )
     {
         waitframe();
         var_0 = trace_distance();
-        level.player _meth_84AB( 1.8, var_0 );
+        level.player setphysicaldepthoffield( 1.8, var_0 );
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
         return;
@@ -192,7 +192,7 @@ autofocus_loop()
 trace_distance()
 {
     var_0 = 10000;
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = level.player getangles();
 
     if ( isdefined( level.player.dof_ref_ent ) )
@@ -219,7 +219,7 @@ lightintensityflicker( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     while ( var_8 )
     {
         var_9 = randomfloatrange( var_3, var_4 );
-        var_7 _meth_81DF( var_9 );
+        var_7 setlightintensity( var_9 );
 
         if ( common_scripts\utility::flag( var_2 ) )
         {
@@ -235,15 +235,15 @@ lightintensityflicker( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disableLightSets", 0 );
-        _func_0D3( "r_aodiminish", 0.1 );
+        setsaveddvar( "r_disableLightSets", 0 );
+        setsaveddvar( "r_aodiminish", 0.1 );
         maps\_utility::vision_set_fog_changes( "greece", 0 );
-        level.player _meth_83C0( "greece" );
+        level.player lightsetforplayer( "greece" );
 
         if ( level.nextgen )
-            level.player _meth_8490( "clut_greece_safehouse_start_aa", 1.0 );
+            level.player setclutforplayer( "clut_greece_safehouse_start_aa", 1.0 );
     }
 
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 1 );
@@ -349,21 +349,21 @@ initsafehouseintro()
 
     if ( level.currentgen )
     {
-        _func_08A( 0 );
+        setculldist( 0 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_safehouse_intro", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 1 );
-    level.player _meth_83C0( "safehouse_intro" );
+    level.player lightsetforplayer( "safehouse_intro" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 
     thread setup_ilona_lighting();
 }
@@ -372,19 +372,19 @@ setup_ilona_lighting()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
         var_0 = getent( "char_fill", "targetname" );
         thread maps\_lighting::set_spot_intensity( "char_fill", 5000 );
-        var_0 _meth_8046( 120 );
-        var_0 _meth_8020( 110, 20 );
+        var_0 setlightradius( 120 );
+        var_0 setlightfovrange( 110, 20 );
         var_1 = getent( "char_rim", "targetname" );
         thread maps\_lighting::set_spot_intensity( "char_rim", 50000 );
-        var_1 _meth_8046( 120 );
-        var_1 _meth_8020( 110, 20 );
+        var_1 setlightradius( 120 );
+        var_1 setlightfovrange( 110, 20 );
     }
 
     var_2 = getent( "ilona_lighting_centroid", "targetname" );
-    level.allies["Ilona"] _meth_847B( var_2.origin );
+    level.allies["Ilona"] overridelightingorigin( var_2.origin );
 }
 
 inittabletoverlay()
@@ -392,23 +392,23 @@ inittabletoverlay()
     common_scripts\utility::flag_wait( "init_tablet_overlay" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_security_cam", 0.0 );
+        level.player setclutforplayer( "clut_greece_security_cam", 0.0 );
     else
         maps\_utility::vision_set_fog_changes( "greece_tablet_overlay", 0 );
 
-    _func_0D3( "r_dof_physical_hipenable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 1.5 );
+    setsaveddvar( "r_dof_physical_hipenable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 1.5 );
 
     if ( level.currentgen )
     {
-        _func_08A( 6500 );
+        setculldist( 6500 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     common_scripts\utility::flag_clear( "init_tablet_overlay" );
 }
@@ -419,37 +419,37 @@ setup_dof_safehouseintro()
     wait 2.0;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
 
-    _func_0D3( "r_dof_physical_hipenable", 0 );
-    level.player _meth_84A9();
+    setsaveddvar( "r_dof_physical_hipenable", 0 );
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
-        level.player _meth_84AB( 2.0, 450.0, 2.0, 2.0 );
+        level.player setphysicaldepthoffield( 2.0, 450.0, 2.0, 2.0 );
         wait 3.0;
-        level.player _meth_84AB( 3.0, 70.0, 2.0, 2.0 );
+        level.player setphysicaldepthoffield( 3.0, 70.0, 2.0, 2.0 );
         wait 8.0;
-        level.player _meth_84AB( 3.0, 54.0 );
+        level.player setphysicaldepthoffield( 3.0, 54.0 );
         wait 5.0;
-        level.player _meth_84AB( 3.0, 60.0 );
+        level.player setphysicaldepthoffield( 3.0, 60.0 );
     }
     else
     {
-        level.player _meth_84AB( 3.0, 450.0, 2.0, 2.0 );
+        level.player setphysicaldepthoffield( 3.0, 450.0, 2.0, 2.0 );
         wait 3.0;
-        level.player _meth_84AB( 2.8, 60.0, 2.0, 2.0 );
+        level.player setphysicaldepthoffield( 2.8, 60.0, 2.0, 2.0 );
         wait 8.0;
-        level.player _meth_84AB( 3.0, 54.0 );
+        level.player setphysicaldepthoffield( 3.0, 54.0 );
         wait 5.0;
-        level.player _meth_84AB( 3.0, 60.0 );
+        level.player setphysicaldepthoffield( 3.0, 60.0 );
     }
 
     common_scripts\utility::flag_wait( "FlagScanTargetBegin" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_hipenable", 0 );
+        setsaveddvar( "r_dof_physical_hipenable", 0 );
 
     wait 2.0;
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 1.0 );
@@ -462,23 +462,23 @@ initsafehousefollow()
 
     if ( level.currentgen )
     {
-        _func_08A( 0 );
+        setculldist( 0 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_safehouse_intro", 1 );
-    level.player _meth_83C0( "safehouse_intro" );
+    level.player lightsetforplayer( "safehouse_intro" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 
     thread setup_ilona_lighting();
-    _func_0D3( "r_dof_physical_hipenable", 0 );
+    setsaveddvar( "r_dof_physical_hipenable", 0 );
 }
 
 setup_dof_safehousefollow()
@@ -486,41 +486,41 @@ setup_dof_safehousefollow()
     common_scripts\utility::flag_wait( "init_safehouse_follow_lighting" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
-        level.player _meth_84AB( 8.0, 14, 20, 20 );
+        level.player setphysicaldepthoffield( 8.0, 14, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 12.0, 55.0, 2, 2 );
+        level.player setphysicaldepthoffield( 12.0, 55.0, 2, 2 );
         wait 4.0;
-        level.player _meth_84AB( 3.8, 26.0, 2, 2 );
+        level.player setphysicaldepthoffield( 3.8, 26.0, 2, 2 );
         wait 1.5;
-        level.player _meth_84AB( 8.0, 70.0, 1, 2 );
+        level.player setphysicaldepthoffield( 8.0, 70.0, 1, 2 );
     }
     else
     {
-        level.player _meth_84AB( 5.0, 14, 20, 20 );
+        level.player setphysicaldepthoffield( 5.0, 14, 20, 20 );
         wait 1.5;
-        level.player _meth_84AB( 3.8, 55.0, 7, 7 );
+        level.player setphysicaldepthoffield( 3.8, 55.0, 7, 7 );
         wait 2.0;
-        level.player _meth_84AB( 4.8, 26.0, 7, 7 );
+        level.player setphysicaldepthoffield( 4.8, 26.0, 7, 7 );
         wait 4.5;
-        level.player _meth_84AB( 11.0, 250.0, 1, 2 );
+        level.player setphysicaldepthoffield( 11.0, 250.0, 1, 2 );
     }
 
     wait 5;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", 0 );
-        level.player _meth_84AA();
+        setsaveddvar( "r_mbEnable", 0 );
+        level.player disablephysicaldepthoffieldscripting();
     }
 
     var_0 = getent( "ilona_lighting_centroid", "targetname" );
-    level.allies["Ilona"] _meth_847C();
+    level.allies["Ilona"] defaultlightingorigin();
 
     if ( level.nextgen )
     {
@@ -548,14 +548,14 @@ initsafehousetakedownkill()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 3000 );
+        setculldist( 3000 );
 
     thread inittakedownkill();
 }
@@ -567,56 +567,56 @@ setup_dof_takedownkill()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", 2 );
-        _func_0D3( "r_mbVelocityScalar", 0.5 );
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_mbEnable", 2 );
+        setsaveddvar( "r_mbVelocityScalar", 0.5 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
     }
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
-        level.player _meth_84AB( 6.0, 20.0 );
+        level.player setphysicaldepthoffield( 6.0, 20.0 );
         wait 0.5;
-        level.player _meth_84AB( 6.0, 20.0 );
+        level.player setphysicaldepthoffield( 6.0, 20.0 );
         wait 0.5;
-        level.player _meth_84AB( 6.0, 70.0 );
+        level.player setphysicaldepthoffield( 6.0, 70.0 );
         wait 0.5;
-        level.player _meth_84AB( 6.0, 26.0 );
+        level.player setphysicaldepthoffield( 6.0, 26.0 );
         wait 0.5;
-        level.player _meth_84AB( 6.0, 7.5 );
+        level.player setphysicaldepthoffield( 6.0, 7.5 );
         wait 1.5;
-        level.player _meth_84AB( 6.0, 20.0 );
+        level.player setphysicaldepthoffield( 6.0, 20.0 );
         wait 1.0;
-        level.player _meth_84AB( 12.0, 350.0 );
+        level.player setphysicaldepthoffield( 12.0, 350.0 );
         wait 2.0;
-        level.player _meth_84AB( 12.0, 40.0 );
+        level.player setphysicaldepthoffield( 12.0, 40.0 );
         wait 1.0;
-        level.player _meth_84AB( 12.0, 250.0 );
+        level.player setphysicaldepthoffield( 12.0, 250.0 );
     }
     else
     {
-        level.player _meth_84AB( 5.2, 20.0 );
+        level.player setphysicaldepthoffield( 5.2, 20.0 );
         wait 0.5;
-        level.player _meth_84AB( 5.2, 20.0 );
+        level.player setphysicaldepthoffield( 5.2, 20.0 );
         wait 0.5;
-        level.player _meth_84AB( 5.2, 70.0 );
+        level.player setphysicaldepthoffield( 5.2, 70.0 );
         wait 0.5;
-        level.player _meth_84AB( 5.2, 26.0 );
+        level.player setphysicaldepthoffield( 5.2, 26.0 );
         wait 0.5;
-        level.player _meth_84AB( 5.2, 7.5 );
+        level.player setphysicaldepthoffield( 5.2, 7.5 );
         wait 1.5;
-        level.player _meth_84AB( 5.2, 20.0 );
+        level.player setphysicaldepthoffield( 5.2, 20.0 );
         wait 1.0;
-        level.player _meth_84AB( 9.0, 350.0 );
+        level.player setphysicaldepthoffield( 9.0, 350.0 );
         wait 2.0;
-        level.player _meth_84AB( 9.0, 40.0 );
+        level.player setphysicaldepthoffield( 9.0, 40.0 );
         wait 1.0;
-        level.player _meth_84AB( 9.0, 250.0 );
+        level.player setphysicaldepthoffield( 9.0, 250.0 );
     }
 
     wait 1.0;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
@@ -627,7 +627,7 @@ setup_dof_takedownkill()
     wait 1;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", 0 );
+        setsaveddvar( "r_mbEnable", 0 );
 
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_transition_start", 1.0 );
 }
@@ -638,21 +638,21 @@ initsafehousexslice()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 3000 );
+        setculldist( 3000 );
 
     maps\_utility::vision_set_fog_changes( "greece_safehouse_intro", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 0 );
-    level.player _meth_83C0( "safehouse_intro" );
+    level.player lightsetforplayer( "safehouse_intro" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 }
 
 initsafehouseclearstart()
@@ -661,21 +661,21 @@ initsafehouseclearstart()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 3000 );
+        setculldist( 3000 );
 
     maps\_utility::vision_set_fog_changes( "greece_safehouse_intro", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 0 );
-    level.player _meth_83C0( "safehouse_intro" );
+    level.player lightsetforplayer( "safehouse_intro" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 3.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 3.0 );
 
     common_scripts\utility::flag_set( "start_safehouse_computerlab_light_flicker" );
 }
@@ -686,7 +686,7 @@ setsafehouseextdrawdist()
 
     if ( level.currentgen )
     {
-        _func_08A( 0 );
+        setculldist( 0 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
@@ -703,7 +703,7 @@ setsafehouseintdrawdist()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
@@ -720,21 +720,21 @@ initsafehousetransitionstart()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_safehouse_dark", 1 );
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_intro", 1 );
-    level.player _meth_83C0( "safehouse_dark" );
+    level.player lightsetforplayer( "safehouse_dark" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 3.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 3.0 );
 }
 
 initsafehouseexosuitup()
@@ -756,10 +756,10 @@ hackenablevisiontweaks()
 
 setup_dof_drone()
 {
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 0.15 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.05 );
-    _func_0D3( "r_dof_physical_hipFocusSpeed", 32, 32, 32, 32 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 0.15 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.05 );
+    setsaveddvar( "r_dof_physical_hipFocusSpeed", 32, 32, 32, 32 );
 }
 
 initconfcenterstart()
@@ -767,16 +767,16 @@ initconfcenterstart()
     common_scripts\utility::flag_wait( "init_confcenter_start_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0.0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     common_scripts\utility::flag_set( "stop_safehouse_computerlab_light_flicker" );
     thread setup_dof_drone();
@@ -787,18 +787,18 @@ initbeginconfcentersupporta()
     common_scripts\utility::flag_wait( "init_begin_confcenter_support_a_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
-    level.player _meth_840A();
+    level.player enableforceviewmodeldof();
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_viewmodel_presets( "default", "greece_drone_dof", 0.1 );
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -808,18 +808,18 @@ initbeginconfcentersupportb()
     common_scripts\utility::flag_wait( "init_begin_confcenter_support_b_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_viewmodel_presets( "default", "greece_drone_dof", 0.1 );
     thread hackenablevisiontweaks();
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -829,18 +829,18 @@ initbeginconfcentersupportc()
     common_scripts\utility::flag_wait( "init_begin_confcenter_support_c_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_viewmodel_presets( "default", "greece_drone_dof", 0.1 );
     thread hackenablevisiontweaks();
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -850,16 +850,16 @@ initbeginconfcenterkill()
     common_scripts\utility::flag_wait( "init_begin_confcenter_kill_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -869,16 +869,16 @@ initbeginconfcentercombat()
     common_scripts\utility::flag_wait( "init_begin_confcenter_combat_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -888,16 +888,16 @@ initbeginconfcenteroutro()
     common_scripts\utility::flag_wait( "init_begin_confcenter_outro_lighting" );
 
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     maps\_utility::vision_set_fog_changes( "greece_confcenter_begin_support_a", 0 );
     maps\_lighting::blend_dof_presets( "default", "greece_confcenter_begin_support_a", 0 );
-    level.player _meth_83C0( "confcenter_start" );
+    level.player lightsetforplayer( "confcenter_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_conference_center_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_conference_center_aa", 0.0 );
 
     thread setup_dof_drone();
 }
@@ -905,18 +905,18 @@ initbeginconfcenteroutro()
 initsafehouseoutrostart()
 {
     common_scripts\utility::flag_wait( "init_safehouse_outro_start_lighting" );
-    _func_0D3( "r_dof_physical_hipenable", 0 );
+    setsaveddvar( "r_dof_physical_hipenable", 0 );
 
     if ( level.currentgen )
     {
-        _func_08A( 0 );
+        setculldist( 0 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     if ( level.nextgen )
     {
@@ -925,10 +925,10 @@ initsafehouseoutrostart()
 
     thread handlesafehouseoutroblur();
     maps\_utility::vision_set_fog_changes( "greece_safehouse_outro_start", 0 );
-    level.player _meth_83C0( "safehouse_outro_start" );
+    level.player lightsetforplayer( "safehouse_outro_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 
     common_scripts\utility::flag_set( "start_safehouse_computerlab_light_flicker" );
     common_scripts\utility::flag_wait( "FlagTriggerExitPlayerComingDownStairs" );
@@ -937,14 +937,14 @@ initsafehouseoutrostart()
 
     if ( isdefined( var_1 ) && isdefined( var_2 ) )
     {
-        var_1 _meth_8498( "force_on" );
+        var_1 setlightshadowstate( "force_on" );
         thread maps\_lighting::lerp_spot_intensity( "light_cuc_greece_bullets_ent", 1, 1 );
         wait 1.0;
         thread maps\_lighting::lerp_spot_intensity( "light_cuc_greece_bullets_ent", 1, 0.1 );
-        var_2 _meth_8498( "force_on" );
+        var_2 setlightshadowstate( "force_on" );
         thread maps\_lighting::lerp_spot_intensity( "safehouse_windowblast_light", 3, 75000 );
         common_scripts\utility::flag_wait( "FlagTriggerExitPlayerLeavingBuilding" );
-        var_1 _meth_8498( "normal" );
+        var_1 setlightshadowstate( "normal" );
         thread maps\_lighting::lerp_spot_intensity( "safehouse_windowblast_light", 2, 0.1 );
     }
 }
@@ -960,7 +960,7 @@ handlesafehouseoutroblur()
     }
 
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_outro_start", 0 );
-    level.player _meth_8187( 1, 0 );
+    level.player setviewmodeldepthoffield( 1, 0 );
 }
 
 setalleystransitionculldist()
@@ -968,9 +968,9 @@ setalleystransitionculldist()
     common_scripts\utility::flag_wait( "FlagTriggerAlleysTransitionStreet" );
 
     if ( level.currentgen )
-        _func_08A( 6500 );
+        setculldist( 6500 );
     else
-        _func_08A( 6500 );
+        setculldist( 6500 );
 }
 
 initalleystransitionstart()
@@ -980,14 +980,14 @@ initalleystransitionstart()
 
     if ( level.currentgen )
     {
-        _func_08A( 6500 );
+        setculldist( 6500 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 6500 );
+        setculldist( 6500 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -996,10 +996,10 @@ initalleystransitionstart()
     }
 
     maps\_utility::vision_set_fog_changes( "greece_alleys_transition_start", 3 );
-    level.player _meth_83C0( "alleys_transition_start" );
+    level.player lightsetforplayer( "alleys_transition_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 2.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 2.0 );
 }
 
 initalleysstart()
@@ -1008,14 +1008,14 @@ initalleysstart()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 show();
     }
     else
-        _func_08A( 3000 );
+        setculldist( 3000 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -1025,10 +1025,10 @@ initalleysstart()
 
     maps\_utility::vision_set_fog_changes( "greece_alleys_start", 1 );
     maps\_lighting::blend_dof_presets( "default", "greece_alleys_start", 0 );
-    level.player _meth_83C0( "alleys_start" );
+    level.player lightsetforplayer( "alleys_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 1.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 1.0 );
 
     common_scripts\utility::flag_set( "stop_safehouse_computerlab_light_flicker" );
     common_scripts\utility::flag_set( "halogen_flickering_jewelry_start" );
@@ -1040,14 +1040,14 @@ initsniperscrambleintro()
 
     if ( level.currentgen )
     {
-        _func_08A( 5000 );
+        setculldist( 5000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -1056,10 +1056,10 @@ initsniperscrambleintro()
     }
 
     maps\_utility::vision_set_fog_changes( "greece_sniper_scramble_start", 0 );
-    level.player _meth_83C0( "sniper_scramble_start" );
+    level.player lightsetforplayer( "sniper_scramble_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 2.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 2.0 );
 }
 
 initsniperscramblestarthotel()
@@ -1068,14 +1068,14 @@ initsniperscramblestarthotel()
 
     if ( level.currentgen )
     {
-        _func_08A( 9000 );
+        setculldist( 9000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -1088,10 +1088,10 @@ initsniperscramblestarthotel()
     else
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble", 0 );
 
-    level.player _meth_83C0( "sniper_scramble_start" );
+    level.player lightsetforplayer( "sniper_scramble_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 }
 
 initsniperscrambledrones()
@@ -1100,14 +1100,14 @@ initsniperscrambledrones()
 
     if ( level.currentgen )
     {
-        _func_08A( 9000 );
+        setculldist( 9000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -1120,10 +1120,10 @@ initsniperscrambledrones()
     else
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble", 0 );
 
-    level.player _meth_83C0( "sniper_scramble_start" );
+    level.player lightsetforplayer( "sniper_scramble_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 }
 
 initsniperscramblefinalelighting()
@@ -1132,14 +1132,14 @@ initsniperscramblefinalelighting()
 
     if ( level.currentgen )
     {
-        _func_08A( 9000 );
+        setculldist( 9000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     if ( !common_scripts\utility::flag( "flag_autofocus_on" ) )
     {
@@ -1152,10 +1152,10 @@ initsniperscramblefinalelighting()
     else
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble", 0 );
 
-    level.player _meth_83C0( "sniper_scramble_start" );
+    level.player lightsetforplayer( "sniper_scramble_start" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 0.0 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 0.0 );
 
     common_scripts\utility::flag_wait( "FlagScrambleSniperKilled" );
     maps\_utility::vision_set_fog_changes( "greece_convoy_explosion", 0.25 );
@@ -1165,35 +1165,35 @@ initsniperscramblefinalelighting()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_enable", 1 );
-        level.player _meth_84A9();
-        _func_0D3( "r_mbEnable", 2 );
-        _func_0D3( "r_mbVelocityScalar", 0.5 );
-        level.player _meth_84AB( 3.0, 54.0 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        setsaveddvar( "r_mbEnable", 2 );
+        setsaveddvar( "r_mbVelocityScalar", 0.5 );
+        level.player setphysicaldepthoffield( 3.0, 54.0 );
         wait 3.5;
-        level.player _meth_84AB( 3.0, 55.0 );
+        level.player setphysicaldepthoffield( 3.0, 55.0 );
         wait 1.5;
-        level.player _meth_84AB( 6.0, 45.0 );
+        level.player setphysicaldepthoffield( 6.0, 45.0 );
         wait 1.5;
-        level.player _meth_84AB( 8.0, 55.0 );
+        level.player setphysicaldepthoffield( 8.0, 55.0 );
         wait 0.5;
-        level.player _meth_84AB( 12.0, 160.0 );
+        level.player setphysicaldepthoffield( 12.0, 160.0 );
         wait 0.5;
 
         if ( level.nextgen )
-            _func_0D3( "r_mbEnable", 0 );
+            setsaveddvar( "r_mbEnable", 0 );
     }
     else
     {
-        level.player _meth_84AB( 4.0, 54.0 );
+        level.player setphysicaldepthoffield( 4.0, 54.0 );
         wait 4;
-        level.player _meth_84AB( 4.0, 13.0 );
+        level.player setphysicaldepthoffield( 4.0, 13.0 );
         wait 4;
-        level.player _meth_84AB( 3.0, 26.0 );
+        level.player setphysicaldepthoffield( 3.0, 26.0 );
     }
 
     wait 0.5;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
@@ -1207,86 +1207,86 @@ initsniperscramblefinalelighting()
 initendingambushinteractlighting()
 {
     common_scripts\utility::flag_wait( "init_ending_ambush_interact_lighting_level" );
-    level.player _meth_83C0( "sniper_scramble_start" );
+    level.player lightsetforplayer( "sniper_scramble_start" );
 
     if ( level.currentgen )
     {
-        _func_08A( 10000 );
+        setculldist( 10000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 10000 );
+        setculldist( 10000 );
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_greece_safehouse_start_aa", 2.0 );
-        _func_0D3( "r_mbEnable", 2 );
-        _func_0D3( "r_mbVelocityScalar", 0.5 );
+        level.player setclutforplayer( "clut_greece_safehouse_start_aa", 2.0 );
+        setsaveddvar( "r_mbEnable", 2 );
+        setsaveddvar( "r_mbVelocityScalar", 0.5 );
     }
     else
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble", 1.0 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_enable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 8.0, 16.0, 2, 2 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 8.0, 16.0, 2, 2 );
         wait 0.5;
-        level.player _meth_84AB( 18.0, 330.0, 2, 2 );
+        level.player setphysicaldepthoffield( 18.0, 330.0, 2, 2 );
         wait 2.2;
-        level.player _meth_84AB( 3.0, 17.0, 2, 2 );
+        level.player setphysicaldepthoffield( 3.0, 17.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 6.0, 115.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 115.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 8.0, 40.0, 2, 2 );
+        level.player setphysicaldepthoffield( 8.0, 40.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 12.0, 110.0, 2, 2 );
+        level.player setphysicaldepthoffield( 12.0, 110.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 18.0, 348.0, 2, 2 );
+        level.player setphysicaldepthoffield( 18.0, 348.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 22.0, 850.0, 2, 2 );
+        level.player setphysicaldepthoffield( 22.0, 850.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 22.0, 13.0, 2, 2 );
+        level.player setphysicaldepthoffield( 22.0, 13.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 22.0, 320.0, 2, 2 );
+        level.player setphysicaldepthoffield( 22.0, 320.0, 2, 2 );
         wait 2.5;
-        level.player _meth_84AB( 32.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 32.0, 389.0, 2, 2 );
         wait 0.5;
     }
     else
     {
-        level.player _meth_84AB( 2, 16.0, 2, 2 );
+        level.player setphysicaldepthoffield( 2, 16.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 4.0, 30.0, 2, 2 );
+        level.player setphysicaldepthoffield( 4.0, 30.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 6.0, 234.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 234.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 6.0, 155.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 155.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 9.0, 51.0, 2, 2 );
+        level.player setphysicaldepthoffield( 9.0, 51.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 13.0, 127.0, 2, 2 );
+        level.player setphysicaldepthoffield( 13.0, 127.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 19.0, 348.0, 2, 2 );
+        level.player setphysicaldepthoffield( 19.0, 348.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 23.0, 850.0, 2, 2 );
+        level.player setphysicaldepthoffield( 23.0, 850.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 23.0, 13.0, 2, 2 );
+        level.player setphysicaldepthoffield( 23.0, 13.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 23.0, 320.0, 2, 2 );
+        level.player setphysicaldepthoffield( 23.0, 320.0, 2, 2 );
         wait 10.0;
-        level.player _meth_84AB( 33.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 33.0, 389.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 19.0, 17.0, 2, 2 );
+        level.player setphysicaldepthoffield( 19.0, 17.0, 2, 2 );
         wait 6.0;
-        level.player _meth_84AB( 33.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 33.0, 389.0, 2, 2 );
         wait 0.5;
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
@@ -1297,7 +1297,7 @@ initendingambushinteractlighting()
     wait 1;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", 0 );
+        setsaveddvar( "r_mbEnable", 0 );
 
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_transition_start", 1.0 );
 
@@ -1313,7 +1313,7 @@ ending_confculldist()
     common_scripts\utility::flag_wait( "ending_conf_culldist" );
 
     if ( level.currentgen )
-        _func_08A( 10000 );
+        setculldist( 10000 );
 
     common_scripts\utility::flag_clear( "ending_conf_culldist" );
     thread ending_confculldist();
@@ -1324,7 +1324,7 @@ preending_confculldist()
     common_scripts\utility::flag_wait( "pre_ending_conf_culldist" );
 
     if ( level.currentgen )
-        _func_08A( 3000 );
+        setculldist( 3000 );
 
     common_scripts\utility::flag_clear( "pre_ending_conf_culldist" );
     thread preending_confculldist();
@@ -1336,14 +1336,14 @@ endingambushvision()
 
     if ( level.currentgen )
     {
-        _func_08A( 8000 );
+        setculldist( 8000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 10000 );
+        setculldist( 10000 );
 
     maps\_utility::vision_set_fog_changes( "greece_convoy_explosion", 0.5 );
     wait 0.25;
@@ -1357,85 +1357,85 @@ initendinghadesfight()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_0 = getent( "vista_buildings_intro", "targetname" );
 
         if ( isdefined( var_0 ) )
             var_0 hide();
     }
     else
-        _func_08A( 10000 );
+        setculldist( 10000 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", 2 );
-        _func_0D3( "r_mbVelocityScalar", 0.5 );
-        _func_0D3( "r_dof_physical_enable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 4.0, 16.0, 2, 2 );
+        setsaveddvar( "r_mbEnable", 2 );
+        setsaveddvar( "r_mbVelocityScalar", 0.5 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 4.0, 16.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 5.0, 40.0, 2, 2 );
+        level.player setphysicaldepthoffield( 5.0, 40.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 7.0, 14.0, 2, 2 );
+        level.player setphysicaldepthoffield( 7.0, 14.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 7.0, 155.0, 2, 2 );
+        level.player setphysicaldepthoffield( 7.0, 155.0, 2, 2 );
         wait 2.1;
-        level.player _meth_84AB( 14.0, 50.0, 2, 2 );
+        level.player setphysicaldepthoffield( 14.0, 50.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 14.0, 127.0, 2, 2 );
+        level.player setphysicaldepthoffield( 14.0, 127.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 7.0, 12.0, 2, 2 );
+        level.player setphysicaldepthoffield( 7.0, 12.0, 2, 2 );
         maps\_utility::vision_set_fog_changes( "greece_ending_hades", 2.0 );
         wait 3.0;
-        level.player _meth_84AB( 28.0, 850.0, 2, 2 );
+        level.player setphysicaldepthoffield( 28.0, 850.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 28.0, 13.0, 2, 2 );
+        level.player setphysicaldepthoffield( 28.0, 13.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 28.0, 320.0, 2, 2 );
+        level.player setphysicaldepthoffield( 28.0, 320.0, 2, 2 );
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble_start", 4.0 );
         wait 5.0;
-        level.player _meth_84AB( 32.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 32.0, 389.0, 2, 2 );
         wait 47.0;
-        level.player _meth_84AB( 6.0, 20.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 20.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 36.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 36.0, 389.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 6.0, 20.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 20.0, 2, 2 );
         wait 16.0;
-        level.player _meth_84AB( 20.0, 60.0, 2, 2 );
+        level.player setphysicaldepthoffield( 20.0, 60.0, 2, 2 );
         wait 20.0;
     }
     else
     {
-        level.player _meth_84AB( 3.0, 16.0, 2, 2 );
+        level.player setphysicaldepthoffield( 3.0, 16.0, 2, 2 );
         wait 2.0;
-        level.player _meth_84AB( 4.0, 40.0, 2, 2 );
+        level.player setphysicaldepthoffield( 4.0, 40.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 6.0, 14.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 14.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 6.0, 155.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 155.0, 2, 2 );
         wait 2.1;
-        level.player _meth_84AB( 13.0, 50.0, 2, 2 );
+        level.player setphysicaldepthoffield( 13.0, 50.0, 2, 2 );
         maps\_utility::vision_set_fog_changes( "greece_ending_hades", 1.0 );
         wait 1.0;
-        level.player _meth_84AB( 13.0, 127.0, 2, 2 );
+        level.player setphysicaldepthoffield( 13.0, 127.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 6.0, 12.0, 2, 2 );
+        level.player setphysicaldepthoffield( 6.0, 12.0, 2, 2 );
         wait 3.0;
-        level.player _meth_84AB( 24.0, 850.0, 2, 2 );
+        level.player setphysicaldepthoffield( 24.0, 850.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 24.0, 13.0, 2, 2 );
+        level.player setphysicaldepthoffield( 24.0, 13.0, 2, 2 );
         wait 1.0;
-        level.player _meth_84AB( 24.0, 320.0, 2, 2 );
+        level.player setphysicaldepthoffield( 24.0, 320.0, 2, 2 );
         maps\_utility::vision_set_fog_changes( "greece_sniper_scramble", 4.0 );
         wait 5.0;
-        level.player _meth_84AB( 33.0, 389.0, 2, 2 );
+        level.player setphysicaldepthoffield( 33.0, 389.0, 2, 2 );
         wait 45.0;
-        level.player _meth_84AB( 3, 20.0, 2, 2 );
+        level.player setphysicaldepthoffield( 3, 20.0, 2, 2 );
         wait 20.0;
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
@@ -1446,7 +1446,7 @@ initendinghadesfight()
     wait 1;
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", 0 );
+        setsaveddvar( "r_mbEnable", 0 );
 
     maps\_lighting::blend_dof_presets( "default", "greece_safehouse_transition_start", 1.0 );
 

@@ -27,8 +27,8 @@ onplayerconnectedaudio()
     for (;;)
     {
         level waittill( "connected", var_0 );
-        var_0 _meth_84D7( "master_mix" );
-        var_0 _meth_84D7( "mute_security" );
+        var_0 clientaddsoundsubmix( "master_mix" );
+        var_0 clientaddsoundsubmix( "mute_security" );
     }
 }
 
@@ -62,7 +62,7 @@ gate_moving( var_0, var_1 )
             playsoundatpos( ( -128, 803, 1149 ), "plinko_hopper_move_start" );
 
         level.aud_plinko_moving = 1;
-        level.aud_plinko_ent _meth_8075( "plinko_hopper_move" );
+        level.aud_plinko_ent playloopsound( "plinko_hopper_move" );
         level.aud_plinko_gate_last_loc = var_1;
     }
     else if ( level.aud_plinko_moving == 0 )
@@ -72,7 +72,7 @@ gate_moving( var_0, var_1 )
         playsoundatpos( ( -128, 803, 1149 ), "plinko_hopper_move_start" );
 
         if ( level.aud_plinko_machine_activated )
-            level.aud_plinko_ent _meth_8075( "plinko_hopper_move" );
+            level.aud_plinko_ent playloopsound( "plinko_hopper_move" );
     }
 }
 
@@ -83,7 +83,7 @@ gate_stopped()
 
     if ( level.aud_plinko_moving )
     {
-        level.aud_plinko_ent _meth_80AB();
+        level.aud_plinko_ent stoploopsound();
         level.aud_plinko_moving = 0;
 
         if ( level.aud_play_stop_sound )
@@ -109,18 +109,18 @@ idle_shark_sound()
     for (;;)
     {
         self waittillmatch( "shark_notetrack", "shark_anim_start" );
-        self _meth_8438( "zombie_shark_in_tank" );
+        self playsoundonmovingent( "zombie_shark_in_tank" );
     }
 }
 
 start_obstacle_course()
 {
-    _func_222( 200 );
+    activateclientexploder( 200 );
 }
 
 stop_obstacle_course()
 {
-    _func_292( 200 );
+    stopclientexploder( 200 );
 
     foreach ( var_1 in level.players )
         var_1 thread mute_obstacle_field_hum();
@@ -128,9 +128,9 @@ stop_obstacle_course()
 
 mute_obstacle_field_hum()
 {
-    self _meth_84D7( "mute_security2" );
+    self clientaddsoundsubmix( "mute_security2" );
     wait 2;
-    self _meth_84D8( "mute_security2" );
+    self clientclearsoundsubmix( "mute_security2" );
 }
 
 throw_rum_bottle( var_0 )
@@ -170,18 +170,18 @@ drink_rum()
     self.isspeaking = 1;
     self playlocalsound( var_0 );
     wait 0.75;
-    self _meth_84D8( "mute_security" );
-    self _meth_84D7( "infected" );
-    level.aud_drunk_ent _meth_8075( "ee_drunk_loop" );
+    self clientclearsoundsubmix( "mute_security" );
+    self clientaddsoundsubmix( "infected" );
+    level.aud_drunk_ent playloopsound( "ee_drunk_loop" );
     self.isspeaking = 0;
 }
 
 rum_wears_off( var_0 )
 {
-    var_0 _meth_84D7( "mute_security" );
-    var_0 _meth_84D8( "infected" );
+    var_0 clientaddsoundsubmix( "mute_security" );
+    var_0 clientclearsoundsubmix( "infected" );
     wait 5;
-    level.aud_drunk_ent _meth_80AB();
+    level.aud_drunk_ent stoploopsound();
 }
 
 obstacle_course_complete()
@@ -206,7 +206,7 @@ teleporter_repaired()
 {
     playsoundatpos( ( -1869, 1181, 815 ), "teleporter_power_on" );
     var_0 = spawn( "script_origin", ( -1869, 1181, 815 ) );
-    var_0 _meth_8075( "teleporter_hum" );
+    var_0 playloopsound( "teleporter_hum" );
 }
 
 get_weapon_disposal_item( var_0 )
@@ -351,13 +351,13 @@ radioswitchinit()
     else
         var_2 = "zmb_mus_radio_05";
 
-    level.radioent2 _meth_806F( 0.02, 0.1 );
-    level.radioent3 _meth_806F( 0.02, 0.1 );
-    level.radioent4 _meth_806F( 0.02, 0.1 );
-    level.radioent1 _meth_8075( "zmb_mus_radio_01" );
-    level.radioent2 _meth_8075( "zmb_mus_radio_02" );
-    level.radioent3 _meth_8075( "zmb_mus_radio_03" );
-    level.radioent4 _meth_8075( var_2 );
+    level.radioent2 scalevolume( 0.02, 0.1 );
+    level.radioent3 scalevolume( 0.02, 0.1 );
+    level.radioent4 scalevolume( 0.02, 0.1 );
+    level.radioent1 playloopsound( "zmb_mus_radio_01" );
+    level.radioent2 playloopsound( "zmb_mus_radio_02" );
+    level.radioent3 playloopsound( "zmb_mus_radio_03" );
+    level.radioent4 playloopsound( var_2 );
 
     if ( isdefined( var_0 ) )
     {
@@ -458,11 +458,11 @@ radiosetvolumes( var_0 )
     var_1[2] = level.radioent2;
     var_1[3] = level.radioent3;
     var_1[4] = level.radioent4;
-    var_1[1] _meth_806F( 0.02, 0.1 );
-    var_1[2] _meth_806F( 0.02, 0.1 );
-    var_1[3] _meth_806F( 0.02, 0.1 );
-    var_1[4] _meth_806F( 0.02, 0.1 );
-    var_1[var_0] _meth_806F( 1.0, 0.1 );
+    var_1[1] scalevolume( 0.02, 0.1 );
+    var_1[2] scalevolume( 0.02, 0.1 );
+    var_1[3] scalevolume( 0.02, 0.1 );
+    var_1[4] scalevolume( 0.02, 0.1 );
+    var_1[var_0] scalevolume( 1.0, 0.1 );
 }
 
 radioalivemonitor()
@@ -471,10 +471,10 @@ radioalivemonitor()
     wait 0.5;
     var_0 waittill( "trigger", var_1 );
     level.radioalive = 0;
-    level.radioent1 _meth_806F( 0.0, 0.1 );
-    level.radioent2 _meth_806F( 0.0, 0.1 );
-    level.radioent3 _meth_806F( 0.0, 0.1 );
-    level.radioent4 _meth_806F( 0.0, 0.1 );
+    level.radioent1 scalevolume( 0.0, 0.1 );
+    level.radioent2 scalevolume( 0.0, 0.1 );
+    level.radioent3 scalevolume( 0.0, 0.1 );
+    level.radioent4 scalevolume( 0.0, 0.1 );
     wait 1;
     level.radioent1 delete();
     level.radioent2 delete();

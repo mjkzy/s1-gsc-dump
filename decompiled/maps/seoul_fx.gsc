@@ -457,7 +457,7 @@ intro_droppod_blimp_detach01( var_0 )
     level notify( "droppod_blimp_detach" );
     wait 0.8;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "hatch3a", ( 0, 0, 150 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "hatch3a", ( 0, 0, 150 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_droppod_blimp_detach" ), var_1, "tag_origin" );
     wait 0.6;
     playfxontag( common_scripts\utility::getfx( "seo_intro_droppod_blimp_detach" ), var_1, "tag_origin" );
@@ -469,7 +469,7 @@ intro_droppod_blimp_detach02( var_0 )
 {
     wait 0.35;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "hatch4a", ( 0, 0, 150 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "hatch4a", ( 0, 0, 150 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_droppod_blimp_detach" ), var_1, "tag_origin" );
     wait 5;
     var_1 delete();
@@ -492,15 +492,15 @@ intro_blimp_missile_trail_delete( var_0 )
 intro_blimp_explode( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "lock4", ( 900, -550, 0 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "lock4", ( 900, -550, 0 ), ( 90, 0, 0 ) );
     var_0 soundscripts\_snd::snd_message( "droppod_intro_blimp_explode" );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo1" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_fire" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "lock4", ( 300, -200, 0 ), ( 90, 0, 0 ) );
+    var_2 linkto( var_0, "lock4", ( 300, -200, 0 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_fire" ), var_2, "tag_origin" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "lock4", ( 500, -600, 0 ), ( 90, 0, 0 ) );
+    var_3 linkto( var_0, "lock4", ( 500, -600, 0 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_fire" ), var_3, "tag_origin" );
     wait 1.6;
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_0, "lock8" );
@@ -515,7 +515,7 @@ intro_blimp_explode( var_0 )
 intro_blimp_explode2( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "lock4", ( 300, 0, 0 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "lock4", ( 300, 0, 0 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_1, "tag_origin" );
     wait 0.4;
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_0, "lock6" );
@@ -530,7 +530,7 @@ intro_blimp_explode2( var_0 )
 intro_blimp_explode3( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "lock4", ( -500, 200, 0 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "lock4", ( -500, 200, 0 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_1, "tag_origin" );
     wait 0.3;
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_0, "lock4" );
@@ -546,7 +546,7 @@ intro_blimp_explode3( var_0 )
 intro_blimp_explode4( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_flash_flares", ( 0, 0, 150 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_flash_flares", ( 0, 0, 150 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_1, "tag_origin" );
     wait 0.3;
     thread intro_blimp_explode5( var_0 );
@@ -560,7 +560,7 @@ intro_blimp_explode4( var_0 )
 intro_blimp_explode5( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_flash_flares", ( 0, 0, 300 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_flash_flares", ( 0, 0, 300 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_1, "tag_origin" );
     wait 0.3;
     playfxontag( common_scripts\utility::getfx( "seo_intro_blimp_explo2" ), var_1, "tag_origin" );
@@ -571,10 +571,10 @@ intro_blimp_explode5( var_0 )
 droppod_rt_spinout( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "slider02", ( 0, 0, 20 ), ( 180, 0, 15 ) );
+    var_1 linkto( var_0, "slider02", ( 0, 0, 20 ), ( 180, 0, 15 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_spinout" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "jetlid01", ( -15, 0, 70 ), ( 75, 0, 0 ) );
+    var_2 linkto( var_0, "jetlid01", ( -15, 0, 70 ), ( 75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
     wait 0.3;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
@@ -583,7 +583,7 @@ droppod_rt_spinout( var_0 )
     wait 0.3;
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_spinout" ), var_1, "tag_origin" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "jetlid02", ( -15, 0, 70 ), ( 75, 0, 0 ) );
+    var_3 linkto( var_0, "jetlid02", ( -15, 0, 70 ), ( 75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_3, "tag_origin" );
     wait 0.3;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_3, "tag_origin" );
@@ -603,12 +603,12 @@ droppod_lt_spinout( var_0 )
 {
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_thruster" ), var_0, "tag_fx" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "jetlid01", ( -15, 0, 70 ), ( 75, 0, 0 ) );
+    var_1 linkto( var_0, "jetlid01", ( -15, 0, 70 ), ( 75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_1, "tag_origin" );
     wait 0.5;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "jetlid02", ( -15, 0, 70 ), ( 75, 0, 0 ) );
+    var_2 linkto( var_0, "jetlid02", ( -15, 0, 70 ), ( 75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
     wait 0.3;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
@@ -625,7 +625,7 @@ droppod_lt_spinout( var_0 )
 main_pod_jets( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "jetlid01", ( -15, 0, 80 ), ( 75, 0, 0 ) );
+    var_1 linkto( var_0, "jetlid01", ( -15, 0, 80 ), ( 75, 0, 0 ) );
     var_0 soundscripts\_snd::snd_message( "droppod_main_pod_jets" );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_1, "tag_origin" );
     wait 0.2;
@@ -639,7 +639,7 @@ main_pod_jets( var_0 )
     wait 0.2;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "jetlid02", ( -15, 0, 80 ), ( 75, 0, 0 ) );
+    var_2 linkto( var_0, "jetlid02", ( -15, 0, 80 ), ( 75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
     wait 0.3;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
@@ -653,7 +653,7 @@ main_pod_jets( var_0 )
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
     wait 1.5;
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 15 ) );
+    var_3 linkto( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 15 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_extra_clouds" ), var_3, "tag_origin" );
     level waittill( "stop_extra_clouds" );
     stopfxontag( common_scripts\utility::getfx( "seo_intro_extra_clouds" ), var_3, "tag_origin" );
@@ -802,24 +802,24 @@ intro_pod_door_flyout( var_0 )
 {
     wait 0.5;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "emergencyShield_dam_F", ( 68, -5, 16 ), ( 0, 4, 180 ) );
+    var_1 linkto( var_0, "emergencyShield_dam_F", ( 68, -5, 16 ), ( 0, 4, 180 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_at_door_L" ), var_1, "tag_origin" );
     wait 1;
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "emergencyShield_dam_F", ( 0, 0, 0 ), ( 0, -25.5, 0 ) );
+    var_2 linkto( var_0, "emergencyShield_dam_F", ( 0, 0, 0 ), ( 0, -25.5, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_door_middle" ), var_2, "tag_origin" );
     wait 1;
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "emergencyShield_dam_F", ( 40, -60, 10 ), ( 170, 120, 180 ) );
+    var_3 linkto( var_0, "emergencyShield_dam_F", ( 40, -60, 10 ), ( 170, 120, 180 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_at_door_R" ), var_3, "tag_origin" );
     wait 7;
     stopfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_at_door_L" ), var_1, "tag_origin" );
     stopfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_at_door_R" ), var_3, "tag_origin" );
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( var_0, "emergencyShield_dam_F", ( 68, -5, 16 ), ( 0, 4, 180 ) );
+    var_4 linkto( var_0, "emergencyShield_dam_F", ( 68, -5, 16 ), ( 0, 4, 180 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smk_droppod_at_door" ), var_4, "tag_origin" );
     var_5 = common_scripts\utility::spawn_tag_origin();
-    var_5 _meth_804D( var_0, "emergencyShield_dam_F", ( 40, -60, 10 ), ( 170, 120, 180 ) );
+    var_5 linkto( var_0, "emergencyShield_dam_F", ( 40, -60, 10 ), ( 170, 120, 180 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smk_droppod_at_door" ), var_5, "tag_origin" );
     wait 4;
     playfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_door_linger" ), var_0, "emergencyShield_dam_F" );
@@ -846,7 +846,7 @@ intro_droppod_velocity_streaks( var_0 )
 {
     common_scripts\_exploder::exploder( 425 );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 0 ) );
     wait 2.75;
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_wind_streaks" ), var_1, "tag_origin" );
     level waittill( "pod_hit_first_building" );
@@ -858,16 +858,16 @@ intro_droppod_velocity_streaks( var_0 )
 
 intro_pod_hit_building1( var_0 )
 {
-    _func_059( "drop_pod_glass_damaged" );
+    cinematicingameloop( "drop_pod_glass_damaged" );
     level notify( "pod_hit_first_building" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_roof", ( -60, 0, -20 ), ( 60, 0, 15 ) );
+    var_1 linkto( var_0, "tag_roof", ( -60, 0, -20 ), ( 60, 0, 15 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_missile_hit_pod_sparks" ), var_1, "tag_origin" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_roof", ( -30, 50, -20 ), ( 60, 0, 15 ) );
+    var_1 linkto( var_0, "tag_roof", ( -30, 50, -20 ), ( 60, 0, 15 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_missile_hit_pod_sparks" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 15 ) );
+    var_2 linkto( var_0, "tag_roof", ( 0, 0, 20 ), ( 90, 0, 15 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_hit_building" ), var_2, "tag_origin" );
     level waittill( "hit_3" );
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_exit_building" ), var_2, "tag_origin" );
@@ -887,7 +887,7 @@ intro_pod_hit_building1( var_0 )
 final_pod_crash_fast( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_roof", ( 0, 0, 0 ), ( 90, -120, 0 ) );
+    var_1 linkto( var_0, "tag_roof", ( 0, 0, 0 ), ( 90, -120, 0 ) );
     waitframe();
     playfxontag( common_scripts\utility::getfx( "seo_intro_pod_hit_building" ), var_1, "tag_origin" );
     level waittill( "pod_land_apartment" );
@@ -938,7 +938,7 @@ player_drop_pod_se_door_kick( var_0 )
 {
     level notify( "player_drop_pod_door_kick" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "emergencyShield_F", ( 0, -55, 44 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "emergencyShield_F", ( 0, -55, 44 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_intro_smoke_droppod_door_kick" ), var_1, "tag_origin" );
     common_scripts\_exploder::exploder( "cormack_land" );
     common_scripts\_exploder::exploder( "cormack_sparks_pod_exit" );
@@ -1040,7 +1040,7 @@ vista_warbird_fx( var_0 )
 {
     wait 0.2;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 750, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 750, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_razorback_exhaust_vf" ), var_1, "tag_origin" );
     wait 9;
     killfxontag( common_scripts\utility::getfx( "seo_razorback_exhaust_vf" ), var_1, "tag_origin" );
@@ -1205,13 +1205,13 @@ drop_pod_thrusters( var_0 )
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_thruster" ), var_0, "tag_fx" );
     playfxontag( common_scripts\utility::getfx( "light_red_point" ), var_0, "body_animate_joint" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "jetlid01", ( -15, 0, -15 ), ( -75, 0, 0 ) );
+    var_1 linkto( var_0, "jetlid01", ( -15, 0, -15 ), ( -75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "jetlid02", ( -15, 0, -15 ), ( -75, 0, 0 ) );
+    var_2 linkto( var_0, "jetlid02", ( -15, 0, -15 ), ( -75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_2, "tag_origin" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "jetlid03", ( -15, 0, -15 ), ( -75, 0, 0 ) );
+    var_3 linkto( var_0, "jetlid03", ( -15, 0, -15 ), ( -75, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "drop_pod_hovering_side_spray" ), var_3, "tag_origin" );
     wait 1.5;
     stopfxontag( common_scripts\utility::getfx( "drop_pod_hovering_thruster" ), var_0, "tag_fx" );
@@ -1241,7 +1241,7 @@ drop_pod_door_spark( var_0 )
     playfxontag( common_scripts\utility::getfx( "seo_smoke_inside_droppod" ), var_0, "tag_fx" );
     wait 0.08;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "door_l", ( 0, -22, 18 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "door_l", ( 0, -22, 18 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_spark_droppod_door" ), var_1, "tag_origin" );
     wait 0.2;
     playfxontag( common_scripts\utility::getfx( "seo_dust_droppod_door" ), var_1, "tag_origin" );
@@ -1480,7 +1480,7 @@ titan_tank_tread( var_0 )
 
     var_0 endon( "death" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "ankle_fr", ( -50, 0, 10 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "ankle_fr", ( -50, 0, 10 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "titan_tread_kickup_front" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "titan_tread_kickup_front" ), var_0, "frontwheeltread05_fl" );
     wait 0.5;
@@ -1592,7 +1592,7 @@ weaponplf_flyby_dustfx_sinkhole( var_0 )
 {
     wait 3;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, -500, -50 ), ( 90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 0, -500, -50 ), ( 90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "weaponplf_tread_smk_sinkhole" ), var_1, "TAG_ORIGIN" );
     wait 10;
     stopfxontag( common_scripts\utility::getfx( "weaponplf_tread_smk_sinkhole" ), var_1, "TAG_ORIGIN" );
@@ -1828,7 +1828,7 @@ seo_outro_wp_init_explo( var_0 )
 {
     level notify( "wp_init_explo_start" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_left_rim", ( 0, 0, 0 ), ( -120, 0, 270 ) );
+    var_1 linkto( var_0, "tag_left_rim", ( 0, 0, 0 ), ( -120, 0, 270 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_initial" ), var_1, "tag_origin" );
     var_1 soundscripts\_snd::snd_message( "seo_finale_wp_init_explo" );
     wait 3;
@@ -1846,7 +1846,7 @@ seo_outro_pause_env_fx()
 seo_outro_wp_belly_explo_1( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "launcherLift", ( 80, -500, -230 ), ( 90, 0, 90 ) );
+    var_1 linkto( var_0, "launcherLift", ( 80, -500, -230 ), ( 90, 0, 90 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_belly1" ), var_1, "tag_origin" );
     var_1 soundscripts\_snd::snd_message( "seo_finale_wp_belly_explo" );
     level waittill( "wp_final_explo" );
@@ -1856,7 +1856,7 @@ seo_outro_wp_belly_explo_1( var_0 )
 seo_outro_wp_belly_explo_2( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "launcherLift", ( -20, -200, -230 ), ( 90, 0, 90 ) );
+    var_1 linkto( var_0, "launcherLift", ( -20, -200, -230 ), ( 90, 0, 90 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_belly2" ), var_1, "tag_origin" );
     level waittill( "wp_final_explo" );
     var_1 delete();
@@ -1865,7 +1865,7 @@ seo_outro_wp_belly_explo_2( var_0 )
 seo_outro_wp_belly_explo_2_end( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tailWheelPitch", ( 0, 115, -20 ), ( 50, 90, 0 ) );
+    var_1 linkto( var_0, "tailWheelPitch", ( 0, 115, -20 ), ( 50, 90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_belly2_chd" ), var_1, "tag_origin" );
     level waittill( "wp_final_explo" );
     var_1 delete();
@@ -1874,7 +1874,7 @@ seo_outro_wp_belly_explo_2_end( var_0 )
 seo_outro_wp_wing_fall_off( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "wing_R", ( 0, 120, 0 ), ( 0, 90, 0 ) );
+    var_1 linkto( var_0, "wing_R", ( 0, 120, 0 ), ( 0, 90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_wing" ), var_1, "tag_origin" );
     var_1 soundscripts\_snd::snd_message( "seo_finale_wp_wing_explo" );
     level waittill( "wp_final_explo" );
@@ -1885,7 +1885,7 @@ seo_outro_wp_tail_explo_shockwave( var_0 )
 {
     level notify( "wp_final_explo" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_body", ( -200, 0, 0 ), ( 0, 160, 0 ) );
+    var_1 linkto( var_0, "tag_body", ( -200, 0, 0 ), ( 0, 160, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_tail_shkwv" ), var_1, "tag_origin" );
     wait 5;
     var_1 delete();
@@ -1899,7 +1899,7 @@ seo_outro_wp_tail_explo_shockwave_ground()
 seo_outro_wp_tail_explo( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "launcherLift", ( 0, 270, 0 ), ( 0, 90, 0 ) );
+    var_1 linkto( var_0, "launcherLift", ( 0, 270, 0 ), ( 0, 90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "seo_outro_wp_explo_tail" ), var_1, "tag_origin" );
     var_1 soundscripts\_snd::snd_message( "seo_finale_wp_big_explo" );
     wait 10;
@@ -1917,8 +1917,8 @@ seo_outro_rolling_smk()
 seo_outro_thick_smk_vm()
 {
     var_0 = spawn( "script_model", level.player.origin );
-    var_0 _meth_80B1( "tag_origin" );
-    var_0 _meth_804D( level.player );
+    var_0 setmodel( "tag_origin" );
+    var_0 linkto( level.player );
     playfxontag( common_scripts\utility::getfx( "seo_outro_thick_smk_vm" ), var_0, "tag_origin" );
     wait 20.0;
     stopfxontag( common_scripts\utility::getfx( "seo_outro_thick_smk_vm" ), var_0, "tag_origin" );
@@ -1945,7 +1945,7 @@ outro_vm_arm_blood_init( var_0 )
     var_3 = ( var_1 - var_2 ) / 30.0;
     wait(var_3);
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( var_0[1], "j_clavicle_le", ( 16, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 linkto( var_0[1], "j_clavicle_le", ( 16, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "fusion_blood_smear_oriented" ), var_4, "tag_origin" );
     var_5 = var_0[2] gettagorigin( "shoulder_L" );
     var_5 += ( 0, 1.5, 0 );

@@ -6,7 +6,7 @@ main()
     codescripts\character::setmodelfromarray( xmodelalias\alias_seoul_civilian_body_males_a::main() );
     codescripts\character::attachhead( "alias_seoul_civilian_head_males_a", xmodelalias\alias_seoul_civilian_head_males_a::main() );
     self.voice = "american";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

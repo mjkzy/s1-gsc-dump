@@ -82,8 +82,8 @@ spawn_ally( var_0, var_1 )
         var_3 maps\_utility::magic_bullet_shield();
 
     var_3.grenadeammo = 0;
-    var_3 _meth_81A3( 1 );
-    var_3 _meth_84E5( "grapple" );
+    var_3 pushplayer( 1 );
+    var_3 pathabilityadd( "grapple" );
     return var_3;
 }
 
@@ -104,7 +104,7 @@ set_helmet_open( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.2;
 
-    self _meth_8145( %sentinel_halo_helmet_open, 1, var_0 );
+    self setanimknobrestart( %sentinel_halo_helmet_open, 1, var_0 );
     self.helmet_open = 1;
 }
 
@@ -113,7 +113,7 @@ set_helmet_closed( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.2;
 
-    self _meth_814D( %sentinel_halo_helmet_close, 1, var_0 );
+    self setanimrestart( %sentinel_halo_helmet_close, 1, var_0 );
     self.helmet_open = 0;
 }
 
@@ -122,7 +122,7 @@ clear_additive_helmet_anim( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 0.5;
 
-    self _meth_8142( %s1_halo_helmet, 0 );
+    self clearanim( %s1_halo_helmet, 0 );
 }
 
 spawn_targetname_at_struct_targetname( var_0, var_1 )
@@ -145,7 +145,7 @@ spawn_targetname_at_struct_targetname( var_0, var_1 )
     {
         var_4 = var_2 maps\_utility::spawn_ai( 1 );
         iprintlnbold( "Add a script struct called: " + var_1 + " to spawn him in the correct location." );
-        var_4 _meth_81C5( level.player.origin, level.player.angles );
+        var_4 teleport( level.player.origin, level.player.angles );
         return var_4;
     }
 
@@ -173,7 +173,7 @@ irons_estate_trigger_saves( var_0, var_1 )
 corpse_cleanup()
 {
     waitframe();
-    var_0 = _func_0D9();
+    var_0 = getcorpsearray();
 
     foreach ( var_2 in var_0 )
     {
@@ -279,7 +279,7 @@ generic_enemy_vo_chatter( var_0 )
     for (;;)
     {
         wait 0.05;
-        var_4 = _func_0D6( "axis" );
+        var_4 = getaiarray( "axis" );
 
         foreach ( var_6 in var_4 )
         {
@@ -392,7 +392,7 @@ stop_generic_enemy_vo_chatter()
         if ( isdefined( self.isbeinggrappled ) || common_scripts\utility::flag( "_stealth_spotted" ) || isdefined( self.alerted ) )
         {
             self notify( "stop_sound" );
-            self _meth_80AC();
+            self stopsounds();
             break;
         }
 
@@ -530,7 +530,7 @@ enemy_callout_vo( var_0 )
         for (;;)
         {
             wait 0.5;
-            var_10 = _func_0D6( "axis" );
+            var_10 = getaiarray( "axis" );
             level.active_civilians = maps\_utility::remove_dead_from_array( level.active_civilians );
             var_11 = common_scripts\utility::array_combine( level.active_civilians, var_10 );
             var_12 = maps\_utility::get_closest_living( level.player.origin, var_11, 500 );
@@ -714,7 +714,7 @@ enemy_callout_vo( var_0 )
                         continue;
                     else
                     {
-                        var_35 = level.player _meth_80A8();
+                        var_35 = level.player geteye();
                         var_36 = var_12 gettagorigin( "tag_eye" );
                         var_37 = bullettrace( var_35, var_36, 1, level.player );
                         var_38 = var_37["entity"];
@@ -803,7 +803,7 @@ enemy_callout_vo( var_0 )
                     continue;
                 else
                 {
-                    var_35 = level.player _meth_80A8();
+                    var_35 = level.player geteye();
                     var_36 = var_12 gettagorigin( "tag_eye" );
                     var_37 = bullettrace( var_35, var_36, 1, level.player );
                     var_38 = var_37["entity"];
@@ -911,7 +911,7 @@ player_can_see_ai_through_foliage( var_0, var_1 )
         return 0;
     }
 
-    var_3 = level.player _meth_80A8();
+    var_3 = level.player geteye();
     var_4 = var_0.origin;
 
     if ( sighttracepassed( var_3, var_4, 1, level.player, var_0, 0 ) )
@@ -920,7 +920,7 @@ player_can_see_ai_through_foliage( var_0, var_1 )
         return 1;
     }
 
-    var_5 = var_0 _meth_80A8();
+    var_5 = var_0 geteye();
 
     if ( sighttracepassed( var_3, var_5, 1, level.player, var_0, 0 ) )
     {
@@ -946,7 +946,7 @@ check_player_in_stop_enemy_callout_vo_volume()
 
     foreach ( var_2 in var_0 )
     {
-        if ( level.player _meth_80A9( var_2 ) )
+        if ( level.player istouching( var_2 ) )
             return 0;
     }
 
@@ -1028,8 +1028,8 @@ watch_for_death()
 
     if ( isdefined( self ) && isdefined( var_0 ) )
     {
-        var_1 = self _meth_80A8();
-        var_2 = _func_0D6( "axis", "neutral" );
+        var_1 = self geteye();
+        var_2 = getaiarray( "axis", "neutral" );
         var_2 = common_scripts\utility::get_array_of_closest( var_1, var_2, undefined, undefined, 500, undefined );
 
         foreach ( var_4 in var_2 )
@@ -1095,7 +1095,7 @@ watch_for_death()
 
 check_enemies_for_alert()
 {
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_0 = maps\_utility::remove_dead_from_array( var_0 );
 
     foreach ( var_2 in var_0 )
@@ -1231,7 +1231,7 @@ dont_shoot_warning_vo_player_thread( var_0 )
 
         if ( level.player maps\_utility::isads() )
         {
-            var_1 = level.player _meth_80A8();
+            var_1 = level.player geteye();
             var_2 = anglestoforward( level.player getangles() );
 
             if ( !isdefined( level.play_ally_callout_vo ) )
@@ -1245,7 +1245,7 @@ dont_shoot_warning_vo_player_thread( var_0 )
 
             var_3 = bullettrace( var_1, var_1 + var_2 * 15000, 1, level.player );
             var_4 = var_3["entity"];
-            var_5 = _func_0D6( "axis" );
+            var_5 = getaiarray( "axis" );
             var_5 = maps\_utility::remove_dead_from_array( var_5 );
 
             if ( isdefined( level.active_drones ) )
@@ -1286,7 +1286,7 @@ exposed_group_logic()
     for (;;)
     {
         waitframe();
-        var_2 = _func_0D6( "axis" );
+        var_2 = getaiarray( "axis" );
         var_2 = maps\_utility::remove_dead_from_array( var_2 );
         var_3 = [];
 
@@ -1309,7 +1309,7 @@ exposed_group_logic()
 
         if ( var_7 && var_8 )
         {
-            var_9 = level.player _meth_80A8();
+            var_9 = level.player geteye();
             var_10 = anglestoforward( level.player getangles() );
             var_11 = bullettrace( var_9, var_9 + var_10 * 15000, 1, level.player );
             var_12 = var_11["entity"];
@@ -1371,7 +1371,7 @@ handle_whistle_hint()
     level endon( "HINT_DECOY_STOP" );
     common_scripts\utility::flag_clear( "HINT_DECOY" );
     level.player thread maps\_utility::display_hint_timeout( "HINT_DECOY_EXPOSED_GROUP" );
-    level.player _meth_82DD( "whistle", "+actionslot " + level.action_slot_whistle );
+    level.player notifyonplayercommand( "whistle", "+actionslot " + level.action_slot_whistle );
     level.player waittill( "whistle" );
     common_scripts\utility::flag_set( "HINT_DECOY" );
 
@@ -1607,7 +1607,7 @@ ally_vo_controller( var_0 )
     {
         if ( isdefined( level.current_vo ) && isdefined( var_0.vo_priority ) && var_0.vo_priority > level.current_vo.vo_priority )
         {
-            level.ally_vo_org _meth_80AC();
+            level.ally_vo_org stopsounds();
             wait 0.05;
             level.current_vo = var_0;
             level.ally_vo_org playsound( var_0.vo, "sounddone", 1 );
@@ -1746,12 +1746,12 @@ spawn_model_from_struct( var_0, var_1 )
         var_2.angles = var_0.angles;
     }
 
-    var_2 _meth_80B1( var_0.script_noteworthy );
+    var_2 setmodel( var_0.script_noteworthy );
 
     if ( level.nextgen )
     {
         var_2.animname = var_1;
-        var_2 _meth_8115( level.scr_animtree[var_2.animname] );
+        var_2 useanimtree( level.scr_animtree[var_2.animname] );
     }
 
     var_2.script_noteworthy = var_0.script_noteworthy;
@@ -1802,8 +1802,8 @@ player_kill_trigger( var_0 )
 {
     level endon( "intel_begin" );
     common_scripts\utility::flag_wait( var_0 );
-    level.player _meth_80F0();
-    level.player _meth_8052();
+    level.player disableinvulnerability();
+    level.player kill();
 }
 
 waterfall_save( var_0 )
@@ -1812,7 +1812,7 @@ waterfall_save( var_0 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) && level.player _meth_8341() )
+        if ( level.player istouching( self ) && level.player isonground() )
         {
             maps\_utility::autosave_stealth();
             break;
@@ -1907,7 +1907,7 @@ player_abandoned_mission_warning( var_0, var_1 )
         thread ally_vo_controller( var_3 );
         var_4 = randomfloatrange( 8, 10 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
         {
             if ( !isdefined( level.abandon_mission_warning_hint ) )
             {
@@ -1948,7 +1948,7 @@ ally_grapple( var_0, var_1, var_2 )
 {
     if ( isdefined( self.move_origin ) )
     {
-        self _meth_804F();
+        self unlink();
         self.move_origin delete();
     }
 
@@ -1956,14 +1956,14 @@ ally_grapple( var_0, var_1, var_2 )
     var_0 = common_scripts\utility::getstruct( var_0, "targetname" );
     maps\_utility::set_goal_radius( 16 );
     self.move_origin = common_scripts\utility::spawn_tag_origin();
-    self _meth_804D( self.move_origin, "tag_origin" );
-    self.move_origin _meth_82AE( var_0.origin, var_1 );
+    self linkto( self.move_origin, "tag_origin" );
+    self.move_origin moveto( var_0.origin, var_1 );
     wait(var_1);
     waitframe();
 
     if ( !isdefined( var_2 ) )
     {
-        self _meth_804F();
+        self unlink();
 
         if ( isdefined( self.move_origin ) )
             self.move_origin delete();
@@ -1980,7 +1980,7 @@ check_allies_in_volume( var_0, var_1 )
 
         foreach ( var_4 in var_0 )
         {
-            if ( isalive( var_4 ) && !var_4 _meth_80A9( var_1 ) )
+            if ( isalive( var_4 ) && !var_4 istouching( var_1 ) )
                 var_2 = 0;
         }
 
@@ -2020,12 +2020,12 @@ security_center_lights( var_0, var_1, var_2 )
     if ( isdefined( var_0 ) )
     {
         foreach ( var_4 in var_1 )
-            var_4 _meth_81DF( 0 );
+            var_4 setlightintensity( 0 );
     }
     else
     {
         foreach ( var_4 in var_1 )
-            var_4 _meth_81DF( var_2 );
+            var_4 setlightintensity( var_2 );
     }
 }
 
@@ -2042,7 +2042,7 @@ security_center_player_rig_and_hatch_door_setup()
     level.security_center_anim_struct = common_scripts\utility::getstruct( "security_center_anim_struct", "targetname" );
     level.hatch_door_middle = getent( "hatch_door_middle", "targetname" );
     level.hatch_door_middle.animname = "hatch_door_middle";
-    level.hatch_door_middle _meth_8115( level.scr_animtree["hatch_door_middle"] );
+    level.hatch_door_middle useanimtree( level.scr_animtree["hatch_door_middle"] );
     level.player_rig = maps\_utility::spawn_anim_model( "player_rig" );
     level.player_rig hide();
     level.player_and_hatch_doors = [];
@@ -2060,28 +2060,28 @@ security_center_bink()
     waitframe();
     level endon( "hack_security_end" );
     thread security_center_bink_off();
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "atlas_logo_loop" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "atlas_logo_loop" );
     common_scripts\utility::flag_wait( "handprint_start" );
     wait 1.5;
-    _func_05C();
+    stopcinematicingame();
     maps\_utility::delaythread( 2, ::security_center_main_screen_bink, 1 );
-    _func_057( "security_center_table_scan" );
+    cinematicingame( "security_center_table_scan" );
     soundscripts\_snd_playsound::snd_play_2d( "irons_bink_tablescan" );
     wait 0.05;
     level waittill( "security_center_table_bink_done" );
-    _func_05C();
+    stopcinematicingame();
     var_0 = getent( "security_center_desk_screen", "targetname" );
     var_0 hide();
     thread security_center_main_screen_bink( undefined );
     soundscripts\_snd::snd_message( "aud_security_main_screen" );
-    _func_059( "security_center_main_screen" );
+    cinematicingameloop( "security_center_main_screen" );
 }
 
 security_center_bink_off()
 {
     common_scripts\utility::flag_wait( "hack_security_end" );
-    _func_05C();
+    stopcinematicingame();
 }
 
 security_center_main_screen_bink( var_0, var_1 )
@@ -2132,7 +2132,7 @@ timer( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_3 ) )
         level.timer.label = var_3;
 
-    level.timer _meth_80CF( var_0 );
+    level.timer settimer( var_0 );
     level.start_time = gettime();
     var_4 = level.timer;
 
@@ -2212,7 +2212,7 @@ stopsounds_on_death()
             self.anim_org notify( "stop_looping_anim" );
 
         self notify( "stop_sound" );
-        self _meth_80AC();
+        self stopsounds();
     }
 }
 
@@ -2323,8 +2323,8 @@ trigger_sprinklervolume_think( var_0 )
 volume_fallingwaterfx( var_0 )
 {
     self endon( "death" );
-    var_1 = var_0 _meth_8216( 1, 1, 0 );
-    var_2 = var_0 _meth_8216( -1, -1, 0 );
+    var_1 = var_0 getpointinbounds( 1, 1, 0 );
+    var_2 = var_0 getpointinbounds( -1, -1, 0 );
     var_3 = ( var_1[0] - var_2[0] ) * ( var_1[1] - var_2[1] );
     var_4 = 3;
 
@@ -2351,7 +2351,7 @@ volume_fallingwaterfx( var_0 )
 
     for (;;)
     {
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
         {
             if ( isai( self ) )
             {
@@ -2364,7 +2364,7 @@ volume_fallingwaterfx( var_0 )
                         var_11 = var_0.sprinkler_origin.origin;
                         var_12 = self.origin + ( randomfloatrange( 0, 4.0 ), randomfloatrange( 0, 4.0 ), randomfloatrange( 10.0, 50.0 ) );
 
-                        if ( _func_220( var_12, self.origin ) < 900 )
+                        if ( distance2dsquared( var_12, self.origin ) < 900 )
                         {
                             var_13 = bullettrace( var_11, var_12, 1, undefined, 0, 1 );
 
@@ -2388,9 +2388,9 @@ volume_fallingwaterfx( var_0 )
                 playfx( level._effect["ie_sprinkler_screen_drops"], level.player.origin );
                 var_9 += 0.05;
 
-                if ( ( var_9 > var_4 * 0.2 || var_9 < 0 ) && distancesquared( var_0.sprinkler_origin.origin, level.player _meth_80A8() ) < 4096 )
+                if ( ( var_9 > var_4 * 0.2 || var_9 < 0 ) && distancesquared( var_0.sprinkler_origin.origin, level.player geteye() ) < 4096 )
                 {
-                    self _meth_8218( 1, var_4 );
+                    self setwatersheeting( 1, var_4 );
                     var_9 = 0;
                 }
             }
@@ -2411,7 +2411,7 @@ is_player_looking_at( var_0, var_1, var_2, var_3 )
         var_1 = 0.8;
 
     var_4 = maps\_utility::get_player_from_self();
-    var_5 = var_4 _meth_80A8();
+    var_5 = var_4 geteye();
     var_6 = vectortoangles( var_0 - var_5 );
     var_7 = anglestoforward( var_6 );
     var_8 = var_4 getangles();
@@ -2480,12 +2480,12 @@ force_alert_trigger_monitor()
         level endon( self.script_noteworthy );
 
     self waittill( "trigger", var_0 );
-    var_1 = _func_0D6( "neutral" );
+    var_1 = getaiarray( "neutral" );
     var_1 = maps\_utility::remove_dead_from_array( var_1 );
 
     foreach ( var_3 in var_1 )
     {
-        if ( !var_3 _meth_80A9( self ) )
+        if ( !var_3 istouching( self ) )
             var_1 = common_scripts\utility::array_remove( var_1, var_3 );
     }
 
@@ -2517,7 +2517,7 @@ tff_cleanup_vehicle( var_0 )
     if ( !isdefined( self ) )
         return;
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     maps\_vehicle_code::_freevehicle();

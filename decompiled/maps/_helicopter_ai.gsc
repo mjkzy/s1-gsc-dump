@@ -70,8 +70,8 @@ evasive_startmaneuvers( var_0, var_1 )
     if ( getdvar( "cobrapilot_debug" ) == "1" )
         var_0 evasive_drawpoints( var_1 );
 
-    var_0 _meth_825A( 1500 );
-    var_0 _meth_8283( 100, 30, 30 );
+    var_0 setneargoalnotifydist( 1500 );
+    var_0 vehicle_setspeed( 100, 30, 30 );
     var_2 = var_0.angles[1];
 
     for ( var_3 = 1; var_3 < var_1.size; var_3++ )
@@ -91,7 +91,7 @@ evasive_startmaneuvers( var_0, var_1 )
         if ( getdvar( "cobrapilot_debug" ) == "1" )
             thread maps\_utility::draw_line_until_notify( var_1[var_3]["pos"], var_1[var_3]["pos"] + anglestoforward( ( 0, var_5, 0 ) ) * 250, 1.0, 1.0, 0.2, var_0, "evasive_action_done" );
 
-        var_0 _meth_825E( var_5 );
+        var_0 settargetyaw( var_5 );
         var_0 thread maps\_vehicle_code::setvehgoalpos_wrap( var_1[var_3]["pos"], 0 );
         var_0 waittill( "near_goal" );
     }
@@ -165,9 +165,9 @@ wingman_think( var_0 )
     var_10 = 0.0;
     var_11 = gettime();
     var_12 = wingman_getgoalpos( var_1, var_2, var_3 );
-    var_0 _meth_8283( 30, 20, 20 );
-    var_0 _meth_825E( level.playervehicle.angles[1] );
-    var_0 _meth_825B( var_12, 1 );
+    var_0 vehicle_setspeed( 30, 20, 20 );
+    var_0 settargetyaw( level.playervehicle.angles[1] );
+    var_0 setvehgoalpos( var_12, 1 );
 
     for (;;)
     {
@@ -215,8 +215,8 @@ wingman_think( var_0 )
             if ( var_17 >= var_15 / 2 )
                 var_17 = var_15 / 2;
 
-            var_0 _meth_8283( var_15, var_16, var_17 );
-            var_0 _meth_825E( level.playervehicle.angles[1] );
+            var_0 vehicle_setspeed( var_15, var_16, var_17 );
+            var_0 settargetyaw( level.playervehicle.angles[1] );
             var_18 = 0;
 
             if ( getplayerhelispeed() <= 30 )
@@ -225,7 +225,7 @@ wingman_think( var_0 )
             if ( getdvar( "cobrapilot_debug" ) == "1" )
                 iprintln( "wingman speed: " + var_15 + " : " + var_18 );
 
-            var_0 _meth_825B( var_12, var_18 );
+            var_0 setvehgoalpos( var_12, var_18 );
         }
 
         wait(var_4);
@@ -242,5 +242,5 @@ wingman_getgoalpos( var_0, var_1, var_2 )
 
 getplayerhelispeed()
 {
-    return level.playervehicle _meth_8286();
+    return level.playervehicle vehicle_getspeed();
 }

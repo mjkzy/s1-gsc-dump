@@ -7,18 +7,18 @@ main()
     level endon( "new_quote_string" );
     level.player waittill( "death", var_0, var_1, var_2, var_3 );
     set_deadquote( "" );
-    _func_0D3( "ammoCounterHide", 1 );
-    _func_0D3( "hud_showstance", 0 );
-    _func_0D3( "actionSlotsHide", 1 );
+    setsaveddvar( "ammoCounterHide", 1 );
+    setsaveddvar( "hud_showstance", 0 );
+    setsaveddvar( "actionSlotsHide", 1 );
     soundscripts\_snd::snd_message( "player_death" );
 
     if ( isdefined( var_3 ) )
     {
-        var_4 = level.player.origin - level.player _meth_80A8() + ( 0, 0, 35 );
+        var_4 = level.player.origin - level.player geteye() + ( 0, 0, 35 );
         var_5 = spawn( "script_model", level.player.origin + ( 0, 0, var_4[2] ) );
         var_5.angles = ( -10, level.player.angles[2], 30 );
-        var_5 _meth_804D( var_3 );
-        level.player _meth_807C( var_5 );
+        var_5 linkto( var_3 );
+        level.player playerlinkto( var_5 );
     }
 
     maps\_sp_matchdata::register_death( var_2, var_1 );
@@ -32,12 +32,12 @@ player_throwgrenade_timer()
 
     for (;;)
     {
-        while ( !self _meth_812C() )
+        while ( !self isthrowinggrenade() )
             wait 0.05;
 
         self.lastgrenadetime = gettime();
 
-        while ( self _meth_812C() )
+        while ( self isthrowinggrenade() )
             wait 0.05;
     }
 }
@@ -228,7 +228,7 @@ grenade_death_indicator_hud()
     var_0 = newhudelem();
     var_0.x = 0;
     var_0.y = 68;
-    var_0 _meth_80CC( "hud_grenadeicon", 50, 50 );
+    var_0 setshader( "hud_grenadeicon", 50, 50 );
     var_0.alignx = "center";
     var_0.aligny = "middle";
     var_0.horzalign = "center";
@@ -240,7 +240,7 @@ grenade_death_indicator_hud()
     var_0 = newhudelem();
     var_0.x = 0;
     var_0.y = 25;
-    var_0 _meth_80CC( "hud_grenadepointer", 50, 25 );
+    var_0 setshader( "hud_grenadepointer", 50, 25 );
     var_0.alignx = "center";
     var_0.aligny = "middle";
     var_0.horzalign = "center";
@@ -260,7 +260,7 @@ set_death_icon( var_0, var_1, var_2, var_3 )
     var_4 = newhudelem();
     var_4.x = 0;
     var_4.y = 40;
-    var_4 _meth_80CC( var_0, var_1, var_2 );
+    var_4 setshader( var_0, var_1, var_2 );
     var_4.alignx = "center";
     var_4.aligny = "middle";
     var_4.horzalign = "center";

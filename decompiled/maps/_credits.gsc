@@ -264,7 +264,7 @@ playcredits()
 {
     level.player endon( "stop_credits" );
     visionsetnaked( "", 0 );
-    _func_0D3( "cl_disable_pause", "1" );
+    setsaveddvar( "cl_disable_pause", "1" );
     var_0 = "credits_black";
     soundscripts\_snd::snd_message( "play_credits" );
     var_1 = getdvarint( "loc_language", 0 );
@@ -287,7 +287,7 @@ playcredits()
             var_7 = level.linelist[var_3].width;
             var_8 = level.linelist[var_3].height;
             var_9 = newhudelem();
-            var_9 _meth_80CC( var_6, var_7, var_8 );
+            var_9 setshader( var_6, var_7, var_8 );
             var_9.alignx = "center";
             var_9.horzalign = "center";
             var_9.x = 0;
@@ -309,7 +309,7 @@ playcredits()
             var_7 = level.linelist[var_3].width;
             var_8 = level.linelist[var_3].height;
             var_9 = newhudelem();
-            var_9 _meth_80CC( var_6, var_7, var_8 );
+            var_9 setshader( var_6, var_7, var_8 );
             var_9.alignx = "center";
             var_9.horzalign = "left";
             var_9.x = 128;
@@ -795,27 +795,27 @@ readtriple( var_0, var_1, var_2 )
 
 allow_early_back_out()
 {
-    level.player _meth_82DD( "stop_credits_pressed", "+stance" );
+    level.player notifyonplayercommand( "stop_credits_pressed", "+stance" );
 
     if ( !level.player common_scripts\utility::is_player_gamepad_enabled() )
-        level.player _meth_82DD( "stop_credits_pressed", "+gostand" );
+        level.player notifyonplayercommand( "stop_credits_pressed", "+gostand" );
 
-    level.player _meth_82DD( "show_skip_prompt", "+activate" );
-    level.player _meth_82DD( "show_skip_prompt", "+gostand" );
-    level.player _meth_82DD( "show_skip_prompt", "weapnext" );
-    level.player _meth_82DD( "show_skip_prompt", "+stance" );
-    level.player _meth_82DD( "show_skip_prompt", "+melee" );
-    level.player _meth_82DD( "show_skip_prompt", "+sprint" );
-    level.player _meth_82DD( "show_skip_prompt", "+attack" );
-    level.player _meth_82DD( "show_skip_prompt", "+frag" );
-    level.player _meth_82DD( "show_skip_prompt", "+speed_throw" );
-    level.player _meth_82DD( "show_skip_prompt", "+toggleads_throw" );
-    level.player _meth_82DD( "show_skip_prompt", "+smoke" );
-    level.player _meth_82DD( "show_skip_prompt", "pause" );
-    level.player _meth_82DD( "show_skip_prompt", "+actionslot 1" );
-    level.player _meth_82DD( "show_skip_prompt", "+actionslot 2" );
-    level.player _meth_82DD( "show_skip_prompt", "+actionslot 3" );
-    level.player _meth_82DD( "show_skip_prompt", "+actionslot 4" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+activate" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+gostand" );
+    level.player notifyonplayercommand( "show_skip_prompt", "weapnext" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+stance" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+melee" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+sprint" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+attack" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+frag" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+speed_throw" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+toggleads_throw" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+smoke" );
+    level.player notifyonplayercommand( "show_skip_prompt", "pause" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+actionslot 1" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+actionslot 2" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+actionslot 3" );
+    level.player notifyonplayercommand( "show_skip_prompt", "+actionslot 4" );
 
     for (;;)
     {

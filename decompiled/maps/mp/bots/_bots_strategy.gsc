@@ -21,7 +21,7 @@ bot_defend_get_precalc_entrances_for_current_area( var_0, var_1 )
 
 bot_get_ambush_trap_item( var_0, var_1, var_2 )
 {
-    if ( self _meth_837B( "allowGrenades" ) == 0 )
+    if ( self botgetdifficultysetting( "allowGrenades" ) == 0 )
         return;
 
     var_3 = [];
@@ -37,10 +37,10 @@ bot_get_ambush_trap_item( var_0, var_1, var_2 )
     if ( var_4.size == 0 )
         return;
 
-    var_5 = self _meth_8403( "lethal" );
-    var_6 = self _meth_8403( "tactical" );
-    var_7 = isdefined( var_5 ) && ( self _meth_82F8( var_5 ) > 0 || self _meth_82F9( var_5 ) > 0 );
-    var_8 = isdefined( var_6 ) && ( self _meth_82F8( var_6 ) > 0 || self _meth_82F9( var_6 ) > 0 );
+    var_5 = self botfirstavailablegrenade( "lethal" );
+    var_6 = self botfirstavailablegrenade( "tactical" );
+    var_7 = isdefined( var_5 ) && ( self getweaponammoclip( var_5 ) > 0 || self setweaponammostock( var_5 ) > 0 );
+    var_8 = isdefined( var_6 ) && ( self getweaponammoclip( var_6 ) > 0 || self setweaponammostock( var_6 ) > 0 );
 
     if ( !var_7 && !var_8 )
         return;
@@ -112,7 +112,7 @@ bot_set_ambush_trap( var_0, var_1, var_2, var_3, var_4 )
             }
 
             var_11 = var_12;
-            var_4 = self _meth_8364( var_11, min( var_11.size, 3 ), "node_trap", var_2, var_5 );
+            var_4 = self botnodepick( var_11, min( var_11.size, 3 ), "node_trap", var_2, var_5 );
         }
     }
 
@@ -126,10 +126,10 @@ bot_set_ambush_trap( var_0, var_1, var_2, var_3, var_4 )
             var_16 = var_17[1];
         }
 
-        if ( self _meth_8365() && self _meth_835D() != "critical" && self _meth_835D() != "tactical" )
-            self _meth_8356();
+        if ( self bothasscriptgoal() && self botgetscriptgoaltype() != "critical" && self botgetscriptgoaltype() != "tactical" )
+            self botclearscriptgoal();
 
-        var_18 = self _meth_8355( var_4, "guard", var_16 );
+        var_18 = self botsetscriptgoalnode( var_4, "guard", var_16 );
 
         if ( var_18 )
         {
@@ -139,12 +139,12 @@ bot_set_ambush_trap( var_0, var_1, var_2, var_3, var_4 )
             {
                 thread maps\mp\bots\_bots_util::bot_force_stance_for_time( "stand", 5.0 );
 
-                if ( !isdefined( self.enemy ) || 0 == self _meth_836F( self.enemy ) )
+                if ( !isdefined( self.enemy ) || 0 == self botcanseeentity( self.enemy ) )
                 {
                     if ( isdefined( var_16 ) )
-                        self _meth_8367( var_5.origin, var_0["item_action"] );
+                        self botthrowgrenade( var_5.origin, var_0["item_action"] );
                     else
-                        self _meth_8367( self.origin + anglestoforward( self.angles ) * 50, var_0["item_action"] );
+                        self botthrowgrenade( self.origin + anglestoforward( self.angles ) * 50, var_0["item_action"] );
 
                     self.ambush_trap_ent = undefined;
                     thread bot_set_ambush_trap_wait_fire( "grenade_fire" );
@@ -163,7 +163,7 @@ bot_set_ambush_trap( var_0, var_1, var_2, var_3, var_4 )
 
                     self.ambush_trap_ent = undefined;
                     wait(randomfloat( 0.25 ));
-                    self _meth_8352( "none" );
+                    self botsetstance( "none" );
                 }
             }
 
@@ -197,11 +197,11 @@ bot_watch_manual_detonate( var_0, var_1, var_2 )
     {
         if ( distancesquared( self.origin, var_0.origin ) > var_3 )
         {
-            var_4 = self _meth_8176( var_0.origin, 1.0 );
+            var_4 = self getclosestenemysqdist( var_0.origin, 1.0 );
 
             if ( var_4 < var_3 )
             {
-                self _meth_837E( var_1 );
+                self botpressbutton( var_1 );
                 return;
             }
         }
@@ -264,8 +264,8 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
     self endon( "defend_stop" );
     thread defense_death_monitor();
 
-    if ( isdefined( self.bot_defending ) || self _meth_835D() == "camp" )
-        self _meth_8356();
+    if ( isdefined( self.bot_defending ) || self botgetscriptgoaltype() == "camp" )
+        self botclearscriptgoal();
 
     self.bot_defending = 1;
     self.bot_defending_type = var_2;
@@ -294,7 +294,7 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
         self.bot_defending_center = var_0;
     }
 
-    self _meth_8352( "none" );
+    self botsetstance( "none" );
     var_4 = undefined;
     var_5 = 6;
     var_6 = 10;
@@ -409,7 +409,7 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
         self.cur_defend_point_override = undefined;
         var_18 = isdefined( var_3["entrance_points_index"] ) && isarray( var_3["entrance_points_index"] );
         self.cur_defend_stance = calculate_defend_stance( var_17, var_18 );
-        var_19 = self _meth_835D();
+        var_19 = self botgetscriptgoaltype();
         var_20 = maps\mp\bots\_bots_util::bot_goal_can_override( var_4, var_19 );
 
         if ( !var_20 )
@@ -446,7 +446,7 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
             self [[ var_16 ]]();
         }
 
-        self _meth_8356();
+        self botclearscriptgoal();
         var_24 = "";
 
         if ( isdefined( self.cur_defend_node ) || isdefined( self.cur_defend_point_override ) )
@@ -469,33 +469,33 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
                 if ( isdefined( self.cur_defend_angle_override ) )
                     var_27 = self.cur_defend_angle_override[1];
 
-                self _meth_8354( self.cur_defend_point_override, 0, var_4, var_27, self.defend_objective_radius );
+                self botsetscriptgoal( self.cur_defend_point_override, 0, var_4, var_27, self.defend_objective_radius );
             }
             else if ( !isdefined( self.cur_defend_angle_override ) )
-                self _meth_8355( self.cur_defend_node, var_4, undefined, self.defend_objective_radius );
+                self botsetscriptgoalnode( self.cur_defend_node, var_4, undefined, self.defend_objective_radius );
             else
-                self _meth_8355( self.cur_defend_node, var_4, self.cur_defend_angle_override[1], self.defend_objective_radius );
+                self botsetscriptgoalnode( self.cur_defend_node, var_4, self.cur_defend_angle_override[1], self.defend_objective_radius );
 
             if ( var_17 )
             {
                 if ( !isdefined( self.prev_defend_node ) || !isdefined( self.cur_defend_node ) || self.prev_defend_node != self.cur_defend_node )
-                    self _meth_8352( "none" );
+                    self botsetstance( "none" );
             }
 
-            var_28 = self _meth_835A();
+            var_28 = self botgetscriptgoal();
             self notify( "new_defend_goal" );
             maps\mp\bots\_bots_util::watch_nodes_stop();
 
             if ( var_4 == "objective" )
             {
                 defense_cautious_approach();
-                self _meth_8374( 1.0 );
-                self _meth_8351( "cautious", 0 );
+                self botsetawareness( 1.0 );
+                self botsetflag( "cautious", 0 );
             }
 
-            if ( self _meth_8365() )
+            if ( self bothasscriptgoal() )
             {
-                var_29 = self _meth_835A();
+                var_29 = self botgetscriptgoal();
 
                 if ( maps\mp\bots\_bots_util::bot_vectors_are_equal( var_29, var_28 ) )
                     var_24 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( 20, "defend_force_node_recalculation" );
@@ -504,7 +504,7 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
             if ( var_24 == "goal" )
             {
                 if ( var_17 )
-                    self _meth_8352( self.cur_defend_stance );
+                    self botsetstance( self.cur_defend_stance );
 
                 childthread defense_watch_entrances_at_goal();
 
@@ -523,7 +523,7 @@ bot_defend_think( var_0, var_1, var_2, var_3 )
         var_24 = common_scripts\utility::waittill_any_timeout( var_30, "node_relinquished", "goal_changed", "script_goal_changed", "defend_force_node_recalculation", "bad_path" );
 
         if ( ( var_24 == "node_relinquished" || var_24 == "bad_path" || var_24 == "goal_changed" || var_24 == "script_goal_changed" ) && ( self.cur_defend_stance == "crouch" || self.cur_defend_stance == "prone" ) )
-            self _meth_8352( "none" );
+            self botsetstance( "none" );
     }
 }
 
@@ -536,7 +536,7 @@ calculate_defend_stance( var_0, var_1 )
         var_3 = 100;
         var_4 = 0;
         var_5 = 0;
-        var_6 = self _meth_837B( "strategyLevel" );
+        var_6 = self botgetdifficultysetting( "strategyLevel" );
 
         if ( var_6 == 1 )
         {
@@ -589,17 +589,17 @@ should_start_cautious_approach_default( var_0 )
 
     if ( var_0 )
     {
-        if ( self _meth_837B( "strategyLevel" ) == 0 )
+        if ( self botgetdifficultysetting( "strategyLevel" ) == 0 )
             return 0;
 
-        if ( self.bot_defending_type == "capture_zone" && self _meth_80A9( self.bot_defending_trigger ) )
+        if ( self.bot_defending_type == "capture_zone" && self istouching( self.bot_defending_trigger ) )
             return 0;
 
         return distancesquared( self.origin, self.bot_defending_center ) > var_2 * 0.75 * 0.75;
     }
-    else if ( self _meth_8375() && distancesquared( self.origin, self.bot_defending_center ) < var_2 )
+    else if ( self botpursuingscriptgoal() && distancesquared( self.origin, self.bot_defending_center ) < var_2 )
     {
-        var_3 = self _meth_837C();
+        var_3 = self botgetpathdist();
         return 0 <= var_3 && var_3 <= var_1;
     }
     else
@@ -634,8 +634,8 @@ defense_cautious_approach()
     if ( ![[ level.bot_funcs["should_start_cautious_approach"] ]]( 1 ) )
         return;
 
-    var_0 = self _meth_835A();
-    var_1 = self _meth_8376();
+    var_0 = self botgetscriptgoal();
+    var_1 = self botgetscriptgoalnode();
     var_2 = 1;
     var_3 = 0.2;
 
@@ -643,10 +643,10 @@ defense_cautious_approach()
     {
         wait 0.25;
 
-        if ( !self _meth_8365() )
+        if ( !self bothasscriptgoal() )
             return;
 
-        var_4 = self _meth_835A();
+        var_4 = self botgetscriptgoal();
 
         if ( !maps\mp\bots\_bots_util::bot_vectors_are_equal( var_0, var_4 ) )
             return;
@@ -662,9 +662,9 @@ defense_cautious_approach()
         }
     }
 
-    self _meth_8374( 1.8 );
-    self _meth_8351( "cautious", 1 );
-    var_5 = self _meth_8370();
+    self botsetawareness( 1.8 );
+    self botsetflag( "cautious", 1 );
+    var_5 = self botgetnodesonpath();
 
     if ( !isdefined( var_5 ) || var_5.size <= 2 )
         return;
@@ -681,9 +681,9 @@ defense_cautious_approach()
     if ( var_8.size <= 0 )
         return;
 
-    var_9 = 5 + self _meth_837B( "strategyLevel" ) * 2;
+    var_9 = 5 + self botgetdifficultysetting( "strategyLevel" ) * 2;
     var_10 = int( min( var_9, var_8.size ) );
-    var_11 = self _meth_8371( var_8, 15, var_10, "node_protect", maps\mp\bots\_bots_util::defend_valid_center(), "ignore_occupancy" );
+    var_11 = self botnodepickmultiple( var_8, 15, var_10, "node_protect", maps\mp\bots\_bots_util::defend_valid_center(), "ignore_occupancy" );
 
     for ( var_12 = 0; var_12 < var_11.size; var_12++ )
     {
@@ -722,9 +722,9 @@ defense_cautious_approach()
         return;
 
     childthread monitor_cautious_approach_dangerous_locations();
-    var_20 = self _meth_835D();
-    var_21 = self _meth_835B();
-    var_22 = self _meth_835C();
+    var_20 = self botgetscriptgoaltype();
+    var_21 = self botgetscriptgoalradius();
+    var_22 = self botgetscriptgoalyaw();
     wait 0.05;
 
     for ( var_23 = 1; var_23 < var_5.size - 2; var_23++ )
@@ -746,7 +746,7 @@ defense_cautious_approach()
             {
                 var_16 = self.locations_to_investigate[var_26];
 
-                if ( _func_1FF( var_16.node, var_24[var_12], 1 ) )
+                if ( nodesvisible( var_16.node, var_24[var_12], 1 ) )
                 {
                     var_25 = common_scripts\utility::array_add( var_25, var_24[var_12] );
                     var_26 = self.locations_to_investigate.size;
@@ -757,7 +757,7 @@ defense_cautious_approach()
         if ( var_25.size == 0 )
             continue;
 
-        var_27 = self _meth_8364( var_25, 1 + var_25.size * 0.15, "node_hide" );
+        var_27 = self botnodepick( var_25, 1 + var_25.size * 0.15, "node_hide" );
 
         if ( isdefined( var_27 ) )
         {
@@ -765,15 +765,15 @@ defense_cautious_approach()
 
             for ( var_12 = 0; var_12 < self.locations_to_investigate.size; var_12++ )
             {
-                if ( _func_1FF( self.locations_to_investigate[var_12].node, var_27, 1 ) )
+                if ( nodesvisible( self.locations_to_investigate[var_12].node, var_27, 1 ) )
                 {
-                    if ( _func_220( self.locations_to_investigate[var_12].origin, var_27.origin ) > 3600 )
+                    if ( distance2dsquared( self.locations_to_investigate[var_12].origin, var_27.origin ) > 3600 )
                         var_28 = common_scripts\utility::array_add( var_28, self.locations_to_investigate[var_12] );
                 }
             }
 
-            self _meth_8356();
-            self _meth_8355( var_27, "critical" );
+            self botclearscriptgoal();
+            self botsetscriptgoalnode( var_27, "critical" );
             childthread monitor_cautious_approach_early_out();
             var_29 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "cautious_approach_early_out" );
             self notify( "stop_cautious_approach_early_out_monitor" );
@@ -785,12 +785,12 @@ defense_cautious_approach()
             {
                 for ( var_12 = 0; var_12 < var_28.size; var_12++ )
                 {
-                    if ( _func_220( self.origin, var_28[var_12].origin ) < 1600 )
+                    if ( distance2dsquared( self.origin, var_28[var_12].origin ) < 1600 )
                         continue;
 
                     for ( var_30 = 0; var_28[var_12].frames_visible < 18 && var_30 < 3.6; var_30 += 0.25 )
                     {
-                        self _meth_836D( var_28[var_12].origin + ( 0, 0, self _meth_82F2() ), 0.25, "script_search" );
+                        self botlookatpoint( var_28[var_12].origin + ( 0, 0, self getplayerviewheight() ), 0.25, "script_search" );
                         wait 0.25;
                     }
                 }
@@ -801,12 +801,12 @@ defense_cautious_approach()
     }
 
     self notify( "stop_location_monitoring" );
-    self _meth_8356();
+    self botclearscriptgoal();
 
     if ( isdefined( var_1 ) )
-        self _meth_8355( var_1, var_20, var_22 );
+        self botsetscriptgoalnode( var_1, var_20, var_22 );
     else
-        self _meth_8354( self.cur_defend_point_override, var_21, var_20, var_22 );
+        self botsetscriptgoal( self.cur_defend_point_override, var_21, var_20, var_22 );
 }
 
 monitor_cautious_approach_early_out()
@@ -841,15 +841,15 @@ monitor_cautious_approach_dangerous_locations()
 
     for (;;)
     {
-        var_1 = self _meth_8387();
+        var_1 = self getnearestnode();
 
         if ( isdefined( var_1 ) )
         {
-            var_2 = self _meth_8373();
+            var_2 = self botgetfovdot();
 
             for ( var_3 = 0; var_3 < self.locations_to_investigate.size; var_3++ )
             {
-                if ( _func_1FF( var_1, self.locations_to_investigate[var_3].node, 1 ) )
+                if ( nodesvisible( var_1, self.locations_to_investigate[var_3].node, 1 ) )
                 {
                     var_4 = common_scripts\utility::within_fov( self.origin, self.angles, self.locations_to_investigate[var_3].origin, var_2 );
                     var_5 = !var_4 || self.locations_to_investigate[var_3].frames_visible < 17;
@@ -901,7 +901,7 @@ protect_watch_allies()
             var_8 = var_7.entity_number;
 
             if ( !isdefined( var_8 ) )
-                var_8 = var_7 _meth_81B1();
+                var_8 = var_7 getentitynumber();
 
             if ( !isdefined( var_0[var_8] ) )
                 var_0[var_8] = var_4 - 1;
@@ -917,7 +917,7 @@ protect_watch_allies()
                     {
                         if ( distancesquared( var_7.origin, self.origin ) < var_2 )
                         {
-                            self _meth_8377( var_7.lastattacker, var_7.origin );
+                            self botgetimperfectenemyinfo( var_7.lastattacker, var_7.origin );
                             var_9 = getclosestnodeinsight( var_7.origin );
 
                             if ( isdefined( var_9 ) )
@@ -947,7 +947,7 @@ defense_get_initial_entrances()
         return bot_defend_get_precalc_entrances_for_current_area( self.cur_defend_stance, 1 );
     else if ( maps\mp\bots\_bots_util::bot_is_protecting() || maps\mp\bots\_bots_util::bot_is_bodyguarding() )
     {
-        var_0 = _func_20D( self.origin );
+        var_0 = findentrances( self.origin );
         return var_0;
     }
 }
@@ -958,7 +958,7 @@ defense_watch_entrances_at_goal()
     self endon( "defense_watch_entrances_at_goal" );
     self endon( "new_defend_goal" );
     self endon( "script_goal_changed" );
-    var_0 = self _meth_8387();
+    var_0 = self getnearestnode();
     var_1 = undefined;
 
     if ( maps\mp\bots\_bots_util::bot_is_capturing() )
@@ -970,21 +970,21 @@ defense_watch_entrances_at_goal()
         {
             foreach ( var_4 in var_2 )
             {
-                if ( _func_1FF( var_0, var_4, 1 ) )
+                if ( nodesvisible( var_0, var_4, 1 ) )
                     var_1 = common_scripts\utility::array_add( var_1, var_4 );
             }
         }
 
         if ( var_1.size == 0 )
-            var_1 = _func_20D( self.origin );
+            var_1 = findentrances( self.origin );
     }
     else if ( maps\mp\bots\_bots_util::bot_is_protecting() || maps\mp\bots\_bots_util::bot_is_bodyguarding() )
     {
         var_1 = defense_get_initial_entrances();
 
-        if ( isdefined( var_0 ) && !issubstr( self _meth_8311(), "riotshield" ) )
+        if ( isdefined( var_0 ) && !issubstr( self getcurrentweapon(), "riotshield" ) )
         {
-            if ( _func_1FF( var_0, self.node_closest_to_defend_center, 1 ) )
+            if ( nodesvisible( var_0, self.node_closest_to_defend_center, 1 ) )
                 var_1 = common_scripts\utility::array_add( var_1, self.node_closest_to_defend_center );
         }
     }
@@ -1092,7 +1092,7 @@ bot_monitor_watch_entrances_bodyguard()
 
 entrance_to_enemy_zone( var_0 )
 {
-    var_1 = _func_206( var_0 );
+    var_1 = getnodezone( var_0 );
     var_2 = vectornormalize( var_0.origin - self.origin );
 
     for ( var_3 = 0; var_3 < level.zonecount; var_3++ )
@@ -1103,7 +1103,7 @@ entrance_to_enemy_zone( var_0 )
                 return 1;
             else
             {
-                var_4 = vectornormalize( _func_205( var_3 ) - self.origin );
+                var_4 = vectornormalize( getzoneorigin( var_3 ) - self.origin );
                 var_5 = vectordot( var_2, var_4 );
 
                 if ( var_5 > 0.2 )
@@ -1130,11 +1130,11 @@ prioritize_watch_nodes_toward_enemies( var_0 )
         if ( var_1.size == 0 )
             break;
 
-        var_3 = vectornormalize( _func_205( var_2 ) - self.origin );
+        var_3 = vectornormalize( getzoneorigin( var_2 ) - self.origin );
 
         for ( var_4 = 0; var_4 < var_1.size; var_4++ )
         {
-            var_5 = _func_206( var_1[var_4] );
+            var_5 = getnodezone( var_1[var_4] );
             var_6 = 0;
 
             if ( isdefined( var_5 ) && var_2 == var_5 )
@@ -1259,8 +1259,8 @@ bot_defend_stop()
     self.cur_defend_point_override = undefined;
     self.defend_entrance_index = undefined;
     self.defense_override_entrances = undefined;
-    self _meth_8356();
-    self _meth_8352( "none" );
+    self botclearscriptgoal();
+    self botsetstance( "none" );
 }
 
 defend_get_ally_bots_at_zone_for_stance( var_0 )
@@ -1296,14 +1296,14 @@ monitor_defend_player()
             thread bot_defend_stop();
 
         self.bot_defending_center = self.bot_defend_player_guarding.origin;
-        self.node_closest_to_defend_center = self.bot_defend_player_guarding _meth_8387();
+        self.node_closest_to_defend_center = self.bot_defend_player_guarding getnearestnode();
 
         if ( !isdefined( self.node_closest_to_defend_center ) )
-            self.node_closest_to_defend_center = self _meth_8387();
+            self.node_closest_to_defend_center = self getnearestnode();
 
-        if ( self _meth_835D() != "none" )
+        if ( self botgetscriptgoaltype() != "none" )
         {
-            var_5 = self _meth_835A();
+            var_5 = self botgetscriptgoal();
             var_6 = self.bot_defend_player_guarding getvelocity();
             var_7 = lengthsquared( var_6 );
 
@@ -1434,7 +1434,7 @@ find_defend_node_bodyguard()
         self.cur_defend_node = var_0;
     else
     {
-        var_1 = self _meth_8387();
+        var_1 = self getnearestnode();
 
         if ( isdefined( var_1 ) )
             self.cur_defend_node = var_1;
@@ -1449,7 +1449,7 @@ find_defend_node_patrol()
     var_1 = getnodesinradius( maps\mp\bots\_bots_util::defend_valid_center(), self.bot_defending_radius, 0 );
 
     if ( isdefined( var_1 ) && var_1.size > 0 )
-        var_0 = self _meth_8364( var_1, 1 + var_1.size * 0.5, "node_traffic" );
+        var_0 = self botnodepick( var_1, 1 + var_1.size * 0.5, "node_traffic" );
 
     if ( isdefined( var_0 ) )
         self.cur_defend_node = var_0;
@@ -1500,9 +1500,9 @@ bot_check_team_is_using_position( var_0, var_1, var_2, var_3 )
                         return 1;
                 }
 
-                if ( var_3 && var_5 _meth_8365() )
+                if ( var_3 && var_5 bothasscriptgoal() )
                 {
-                    var_6 = var_5 _meth_835A();
+                    var_6 = var_5 botgetscriptgoal();
 
                     if ( distancesquared( var_0, var_6 ) < 441 )
                         return 1;
@@ -1566,7 +1566,7 @@ bot_think_tactical_goals()
                 if ( isdefined( var_0.goal_type ) )
                     var_1 = var_0.goal_type;
 
-                self _meth_8354( var_0.goal_position, var_0.goal_radius, var_1, var_0.goal_yaw, var_0.objective_radius );
+                self botsetscriptgoal( var_0.goal_position, var_0.goal_radius, var_1, var_0.goal_yaw, var_0.objective_radius );
                 var_2 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( undefined, "stop_tactical_goal" );
                 self notify( "stop_goal_aborted_watch" );
 
@@ -1577,7 +1577,7 @@ bot_think_tactical_goals()
                 }
 
                 if ( var_2 != "script_goal_changed" )
-                    self _meth_8356();
+                    self botclearscriptgoal();
 
                 if ( isdefined( var_0.end_thread ) )
                     self [[ var_0.end_thread ]]( var_0 );
@@ -1718,10 +1718,10 @@ bot_melee_tactical_insertion_check()
         if ( !isdefined( var_1 ) )
             return 0;
 
-        if ( isdefined( self.enemy ) && self _meth_836F( self.enemy ) )
+        if ( isdefined( self.enemy ) && self botcanseeentity( self.enemy ) )
             return 0;
 
-        var_2 = _func_202( self.origin );
+        var_2 = getzonenearest( self.origin );
 
         if ( !isdefined( var_2 ) )
             return 0;
@@ -1736,7 +1736,7 @@ bot_melee_tactical_insertion_check()
         if ( var_4.size <= 0 )
             return 0;
 
-        var_5 = self _meth_8364( var_4, var_4.size * 0.15, "node_hide" );
+        var_5 = self botnodepick( var_4, var_4.size * 0.15, "node_hide" );
 
         if ( !isdefined( var_5 ) )
             return 0;

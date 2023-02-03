@@ -324,7 +324,7 @@ scramblefinalealldronesdeaddialogue()
 
     if ( !common_scripts\utility::flag( "FlagScrambleSniperKilled" ) )
     {
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
         {
             common_scripts\utility::flag_set( "FlagDelayRPGReminderDialogue" );
             maps\_hms_utility::playdialog( level.dialogtable, "ScrambleRemindwithRPG" );
@@ -354,7 +354,7 @@ scramblefinaleplayeruserpgreminderdialogue()
             continue;
         }
 
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
         {
             level notify( "ScrambleFinalePlayerHasRPG" );
             maps\_hms_utility::playdialog( level.dialogtable, "ScrambleRemindGetSniper", undefined, undefined, undefined, 1 );

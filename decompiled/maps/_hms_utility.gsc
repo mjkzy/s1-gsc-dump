@@ -9,32 +9,32 @@ setupplayerinventory( var_0, var_1, var_2, var_3, var_4 )
             return;
     }
 
-    level.player _meth_8310();
+    level.player takeallweapons();
 
     if ( isdefined( var_0 ) )
-        level.player _meth_830E( var_0 );
+        level.player giveweapon( var_0 );
 
     if ( isdefined( var_1 ) )
-        level.player _meth_830E( var_1 );
+        level.player giveweapon( var_1 );
 
     if ( isdefined( var_2 ) )
     {
-        level.player _meth_8344( var_2 );
-        level.player _meth_830E( var_2 );
+        level.player setlethalweapon( var_2 );
+        level.player giveweapon( var_2 );
     }
 
     if ( isdefined( var_3 ) )
     {
-        level.player _meth_8319( var_3 );
-        level.player _meth_830E( var_3 );
+        level.player settacticalweapon( var_3 );
+        level.player giveweapon( var_3 );
     }
 
     if ( isdefined( var_4 ) )
     {
         if ( var_4 == var_0 || var_4 == var_1 )
-            level.player _meth_8315( var_4 );
+            level.player switchtoweapon( var_4 );
         else
-            level.player _meth_8315( var_0 );
+            level.player switchtoweapon( var_0 );
     }
 }
 
@@ -80,7 +80,7 @@ spawnandinitnamedally( var_0, var_1, var_2, var_3, var_4 )
         var_6 = common_scripts\utility::getstruct( var_1, "targetname" );
 
         if ( isdefined( var_6 ) )
-            level.allies[var_0] _meth_81C6( var_6.origin, var_6.angles );
+            level.allies[var_0] forceteleport( var_6.origin, var_6.angles );
     }
 }
 
@@ -107,7 +107,7 @@ getdialogai( var_0, var_1 )
 
 filteraiarray( var_0, var_1 )
 {
-    var_2 = _func_0D7( "all", "all" );
+    var_2 = getaispeciesarray( "all", "all" );
     var_3 = [];
 
     foreach ( var_5 in var_2 )
@@ -297,8 +297,8 @@ aifallbackonflag( var_0, var_1, var_2, var_3 )
     if ( var_2 == 0 )
         wait(randomfloat( var_3 ));
 
-    self _meth_81AB();
-    self _meth_81A9( var_4 );
+    self cleargoalvolume();
+    self setgoalvolumeauto( var_4 );
 }
 
 printlnscreenandconsole( var_0 )
@@ -612,7 +612,7 @@ _clearcharacterdialogondeath()
     common_scripts\utility::waittill_any( "death", "pain_death" );
 
     if ( isdefined( self ) )
-        self _meth_80AC();
+        self stopsounds();
 }
 
 _clearcharacterdialogonnotify( var_0 )
@@ -620,20 +620,20 @@ _clearcharacterdialogonnotify( var_0 )
     self endon( "death" );
     self endon( "pain_death" );
     level waittill( var_0 );
-    self _meth_80AC();
+    self stopsounds();
 }
 
 _clearworlddialogonnotify( var_0 )
 {
     level endon( "WorldDialogFinished" );
     level waittill( var_0 );
-    var_1 = self _meth_8436( 0 );
+    var_1 = self getlinkedchildren( 0 );
 
     if ( !isdefined( var_1 ) )
         return;
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_80AC();
+        var_3 stopsounds();
 }
 
 displayruleofthirds()
@@ -676,7 +676,7 @@ _createhudline( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7.horzalign = "fullscreen";
     var_7.vertalign = "fullscreen";
     var_7.alpha = 1;
-    var_7 _meth_80CC( var_4, var_2, var_3 );
+    var_7 setshader( var_4, var_2, var_3 );
     return var_7;
 }
 
@@ -723,7 +723,7 @@ _glass_physics_wakeup_update( var_0 )
     if ( isdefined( self.radius ) )
         var_1 = self.radius;
 
-    _func_244( self.origin, var_1 );
+    wakeupphysicssphere( self.origin, var_1 );
 
     if ( getdvarint( "debug_glass_phys_wake", 0 ) )
         iprintln( "Glass physics wakeup occurred for glass " + self.glass_id + " at (" + self.origin[0] + "," + self.origin[1] + "," + self.origin[2] + ")" + " with radius: " + var_1 );

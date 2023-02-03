@@ -19,7 +19,7 @@ s3_escape_hack_action( var_0, var_1 )
     s3_escape_hack_action_switcher( var_0, var_1 );
     level notify( "captured_action_complete" );
 
-    if ( !_func_294( level.script_button ) )
+    if ( !isremovedentity( level.script_button ) )
         level.script_button maps\_shg_utility::hint_button_clear();
 }
 
@@ -47,29 +47,29 @@ s3_escape_hack_action_switcher( var_0, var_1 )
 s3_escape_console_gun_action( var_0, var_1, var_2 )
 {
     var_0 endon( "s3escape_console_ender" );
-    level.player _meth_8310();
-    level.player _meth_82CC();
-    level.player _meth_831E();
+    level.player takeallweapons();
+    level.player enableweaponpickup();
+    level.player enableweapons();
     level.player waittill( "pickup" );
-    _func_0D3( "ammoCounterHide", "1" );
-    level.player _meth_8482();
+    setsaveddvar( "ammoCounterHide", "1" );
+    level.player hideviewmodel();
     common_scripts\utility::flag_set( "s3_player_pickedup_console_gun" );
     level.player notify( "captured_action_complete" );
     var_0 maps\_anim::anim_single_solo( var_1, "s3escape_console_end" );
-    _func_0D3( "g_friendlyNameDist", level.friendlynamedist );
-    level.player _meth_804F();
+    setsaveddvar( "g_friendlyNameDist", level.friendlynamedist );
+    level.player unlink();
     var_1 delete();
     var_2 delete();
-    level.player _meth_8131( 1 );
-    level.player _meth_8481();
+    level.player allowfire( 1 );
+    level.player showviewmodel();
     level.player thread maps\captured_util::start_one_handed_gunplay( "iw5_titan45pickup_sp_xmags" );
-    level.player _meth_82F6( "iw5_titan45_sp", 0 );
-    level.player _meth_8316( "iw5_titan45_sp" );
-    level.player _meth_8130( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_811A( 1 );
+    level.player setweaponammoclip( "iw5_titan45_sp", 0 );
+    level.player switchtoweaponimmediate( "iw5_titan45_sp" );
+    level.player allowmelee( 1 );
+    level.player allowsprint( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowjump( 1 );
+    level.player allowprone( 1 );
 }
 
 autopsy_door_action( var_0, var_1 )
@@ -98,7 +98,7 @@ mech_entry_action()
     var_1 = var_0.origin;
     var_2 = maps\_shg_utility::hint_button_position( "use", var_1, 72 );
     level waittill( "captured_action_complete" );
-    level.player _meth_84F1();
+    level.player disablealternatemelee();
     var_2 maps\_shg_utility::hint_button_clear();
 }
 

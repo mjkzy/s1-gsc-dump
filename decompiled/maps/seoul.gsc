@@ -56,8 +56,8 @@ main()
     precacheturret( "heli_spotlight_so_castle" );
     precachemodel( "weapon_binocular" );
     precachemodel( "npc_stingerm7_base_black" );
-    precacheitem( "iw5_stingerm7_sp" );
-    precacheitem( "iw5_maaws_sp" );
+    precacheshellshock( "iw5_stingerm7_sp" );
+    precacheshellshock( "iw5_maaws_sp" );
     precacheshellshock( "seo_canal_finale_blowback" );
     precacheshader( "waypoint_ammo" );
     precachemodel( "npc_titan45_nocamo" );
@@ -67,34 +67,34 @@ main()
     thread objectives();
     thread handle_weapon_pickups();
     thread handle_prone_and_crouch_bugs();
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "a_pressed", "+gostand" );
-    level.player _meth_82DD( "b_pressed", "+stance" );
-    level.player _meth_82DD( "y_pressed", "weapnext" );
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "attack_pressed", "+attack" );
-    level.player _meth_82DD( "ads_pressed", "+speed_throw" );
-    level.player _meth_82DD( "ads_pressed", "+toggleads_throw" );
-    level.player _meth_82DD( "r3_pressed", "+melee" );
-    level.player _meth_82DD( "r3_pressed", "+melee_zoom" );
-    level.player _meth_82DD( "l3_pressed", "+sprint" );
-    level.player _meth_82DD( "l3_pressed", "+sprint_zoom" );
-    level.player _meth_82DD( "rb_pressed", "+frag" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "b_pressed", "+stance" );
+    level.player notifyonplayercommand( "y_pressed", "weapnext" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "attack_pressed", "+attack" );
+    level.player notifyonplayercommand( "ads_pressed", "+speed_throw" );
+    level.player notifyonplayercommand( "ads_pressed", "+toggleads_throw" );
+    level.player notifyonplayercommand( "r3_pressed", "+melee" );
+    level.player notifyonplayercommand( "r3_pressed", "+melee_zoom" );
+    level.player notifyonplayercommand( "l3_pressed", "+sprint" );
+    level.player notifyonplayercommand( "l3_pressed", "+sprint_zoom" );
+    level.player notifyonplayercommand( "rb_pressed", "+frag" );
     thread setup_dont_leave_failure();
     thread setup_dont_leave_hint();
     maps\_utility::add_hint_string( "hint_dont_leave_mission", &"SEOUL_DONT_LEAVE_WARNING", ::should_break_dont_leave );
     gameplay();
     ingame_movies();
     thread cleanup_ai_think();
-    _func_0D3( "r_fastModelPrimaryLightLink", "1" );
+    setsaveddvar( "r_fastModelPrimaryLightLink", "1" );
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     thread set_seoul_fall_height();
@@ -103,8 +103,8 @@ main()
 set_seoul_fall_height()
 {
     wait 3;
-    _func_0D3( "bg_fallDamageMinHeight", 490 );
-    _func_0D3( "bg_fallDamageMaxHeight", 640 );
+    setsaveddvar( "bg_fallDamageMinHeight", 490 );
+    setsaveddvar( "bg_fallDamageMaxHeight", 640 );
 }
 
 enable_cqb_squad()
@@ -133,13 +133,13 @@ cleanup_ai_on_trigger()
 {
     var_0 = getent( self.target, "targetname" );
     var_0 waittill( "trigger" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
     {
         if ( isdefined( var_3 ) )
         {
-            if ( var_3 _meth_80A9( self ) )
+            if ( var_3 istouching( self ) )
                 var_3 maps\_shg_design_tools::delete_auto();
         }
     }
@@ -223,12 +223,12 @@ objectives()
     maps\_utility::objective_complete( maps\_utility::obj( "objective_bombs" ) );
     var_11 = getent( "objective_sd_origin_bomb", "targetname" );
     var_12 = getent( "objective_sd_origin_bomb_a", "targetname" );
-    _func_0D3( "objectiveAlphaEnabled", 1 );
+    setsaveddvar( "objectiveAlphaEnabled", 1 );
     objective_add( maps\_utility::obj( "objective_follow_will" ), "current", &"SEOUL_OBJECTIVE_HELP_WILL" );
     objective_onentity( maps\_utility::obj( "objective_follow_will" ), level.will_irons );
     common_scripts\utility::flag_wait( "canal_bomb_plant_trigger_on" );
     common_scripts\utility::flag_wait( "weapon_platform_reached" );
-    _func_0D3( "objectiveAlphaEnabled", 0 );
+    setsaveddvar( "objectiveAlphaEnabled", 0 );
     objective_position( maps\_utility::obj( "objective_follow_will" ), var_11.origin );
     common_scripts\utility::flag_wait( "objective_sd_bomb_planted" );
     maps\_utility::objective_complete( maps\_utility::obj( "objective_follow_will" ) );
@@ -247,8 +247,8 @@ gameplay()
 
 ingame_movies()
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "seo_advertisement_01", 1.0, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "seo_advertisement_01", 1.0, 1 );
 }
 
 setup_dont_leave_squad()
@@ -346,21 +346,21 @@ setup_clip_pickups()
 
     for (;;)
     {
-        while ( issubstr( level.player _meth_8311(), "door" ) )
+        while ( issubstr( level.player getcurrentweapon(), "door" ) )
             waitframe();
 
         if ( distance( self.origin, level.player.origin ) < 42 )
         {
-            var_0 = level.player _meth_8311();
-            var_1 = level.player _meth_82F0( "right" );
+            var_0 = level.player getcurrentweapon();
+            var_1 = level.player getcurrentweaponclipammo( "right" );
             var_2 = level.player getammocount( var_0 );
-            var_3 = _func_1E1( var_0 );
+            var_3 = weaponmaxammo( var_0 );
             var_4 = weaponclipsize( var_0 );
 
             if ( var_3 - var_2 > var_4 )
-                level.player _meth_82F7( var_0, var_2 + var_4 );
+                level.player setweaponammostock( var_0, var_2 + var_4 );
             else if ( var_3 - var_2 < var_4 )
-                level.player _meth_82F7( var_0, var_3 );
+                level.player setweaponammostock( var_0, var_3 );
             else
             {
                 waitframe();
@@ -385,13 +385,13 @@ setup_smart_grenade_pickups()
     {
         if ( distance( self.origin, level.player.origin ) < 42 )
         {
-            var_0 = level.player _meth_8345();
-            var_1 = _func_1E1( var_0 );
+            var_0 = level.player getlethalweapon();
+            var_1 = weaponmaxammo( var_0 );
             var_2 = level.player getammocount( var_0 );
 
             if ( var_2 < var_1 )
             {
-                level.player _meth_82F7( var_0, var_2 + 1 );
+                level.player setweaponammostock( var_0, var_2 + 1 );
                 self delete();
                 self notify( "nade_picked_up" );
             }
@@ -411,13 +411,13 @@ setup_threat_grenade_pickups()
     {
         if ( distance( self.origin, level.player.origin ) < 42 )
         {
-            var_0 = level.player _meth_831A();
-            var_1 = _func_1E1( var_0 );
+            var_0 = level.player gettacticalweapon();
+            var_1 = weaponmaxammo( var_0 );
             var_2 = level.player getammocount( var_0 );
 
             if ( var_2 < var_1 )
             {
-                level.player _meth_82F7( var_0, var_2 + 1 );
+                level.player setweaponammostock( var_0, var_2 + 1 );
                 self delete();
                 self notify( "nade_picked_up" );
             }
@@ -434,7 +434,7 @@ seoul_cover_art()
     var_2 = common_scripts\utility::getstruct( "gi_art_struct_anim", "targetname" );
     var_3 = var_2 common_scripts\utility::spawn_tag_origin();
     var_4 = spawn( "script_model", var_3.origin );
-    var_4 _meth_80B1( "vehicle_walker_tank" );
+    var_4 setmodel( "vehicle_walker_tank" );
     var_4.animname = "walker_tank";
     var_4 maps\_anim::setanimtree();
     var_3 thread maps\_anim::anim_first_frame_solo( var_4, "gi_pose" );
@@ -500,15 +500,15 @@ no_prone_in_vol()
 {
     for (;;)
     {
-        while ( !level.player _meth_80A9( self ) )
+        while ( !level.player istouching( self ) )
             waitframe();
 
-        level.player _meth_811A( 0 );
+        level.player allowprone( 0 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             waitframe();
 
-        level.player _meth_811A( 1 );
+        level.player allowprone( 1 );
         waitframe();
     }
 }
@@ -568,7 +568,7 @@ tff_cleanup_vehicle( var_0 )
     if ( !isdefined( self ) )
         return;
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     if ( maps\_vehicle::isvehicle() )

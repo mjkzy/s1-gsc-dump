@@ -308,7 +308,7 @@ findbuddyspawn()
 getbuddyspawnangles( var_0, var_1 )
 {
     var_2 = ( 0, var_0.angles[1], 0 );
-    var_3 = _func_20D( var_1 );
+    var_3 = findentrances( var_1 );
 
     if ( isdefined( var_3 ) && var_3.size > 0 )
         var_2 = vectortoangles( var_3[0].origin - var_1 );
@@ -345,10 +345,10 @@ getteammatesoutofcombat( var_0 )
 
 isplayerincombat( var_0 )
 {
-    if ( var_0 _meth_82EA() )
+    if ( var_0 issighted() )
         return 1;
 
-    if ( !var_0 _meth_8341() )
+    if ( !var_0 isonground() )
         return 1;
 
     if ( var_0 isonladder() )
@@ -396,7 +396,7 @@ findbuddypathnode( var_0, var_1, var_2 )
             var_8 = vectornormalize( var_7.origin - var_0.origin );
             var_9 = vectordot( var_5, var_8 );
 
-            if ( var_9 <= var_2 && !getstarttime( var_7.origin ) )
+            if ( var_9 <= var_2 && !positionwouldtelefrag( var_7.origin ) )
             {
                 if ( sighttracepassed( var_0.origin + ( 0, 0, var_1 ), var_7.origin + ( 0, 0, var_1 ), 0, var_0 ) )
                 {
@@ -414,7 +414,7 @@ findbuddypathnode( var_0, var_1, var_2 )
 
 issafetospawnon( var_0, var_1, var_2 )
 {
-    if ( var_0 _meth_82EA() )
+    if ( var_0 issighted() )
         return 0;
 
     foreach ( var_4 in level.players )
@@ -436,7 +436,7 @@ issafetospawnon( var_0, var_1, var_2 )
 
         var_2.currenttracecount++;
         var_5 = maps\mp\gametypes\_spawnlogic::getplayertraceheight( var_4 );
-        var_6 = var_4 _meth_80A8();
+        var_6 = var_4 geteye();
         var_6 = ( var_6[0], var_6[1], var_4.origin[2] + var_5 );
         var_7 = spawnsighttrace( var_2, var_1 + ( 0, 0, var_5 ), var_6, 0 );
 

@@ -6,7 +6,7 @@ main()
     level.tweakfile = 1;
     level.player = getentarray( "player", "classname" )[0];
 
-    if ( _func_235() )
+    if ( isusinghdr() )
         maps\createart\recovery_fog_hdr::main();
     else
         maps\createart\recovery_fog::main();

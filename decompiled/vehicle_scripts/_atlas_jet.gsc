@@ -53,8 +53,8 @@ set_vehicle_anims( var_0 )
 
 landing_gear_up()
 {
-    self _meth_8115( #animtree );
-    self _meth_814B( %mig_landing_gear_up );
+    self useanimtree( #animtree );
+    self setanim( %mig_landing_gear_up );
 }
 
 setanims()
@@ -219,7 +219,7 @@ plane_bomb_cluster()
     var_1 thread plane_bomb_cluster();
     var_2 = spawn( "script_model", var_1.origin - ( 0, 0, 100 ) );
     var_2.angles = var_1.angles;
-    var_2 _meth_80B1( "projectile_cbu97_clusterbomb" );
+    var_2 setmodel( "projectile_cbu97_clusterbomb" );
     var_3 = anglestoforward( var_1.angles ) * 2;
     var_4 = anglestoup( var_1.angles ) * -0.2;
     var_5 = [];
@@ -229,10 +229,10 @@ plane_bomb_cluster()
 
     var_5 = ( var_5[0], var_5[1], var_5[2] );
     var_5 *= 7000;
-    var_2 _meth_82B2( var_5, 2.0 );
+    var_2 movegravity( var_5, 2.0 );
     wait 1.2;
     var_7 = spawn( "script_model", var_2.origin );
-    var_7 _meth_80B1( "tag_origin" );
+    var_7 setmodel( "tag_origin" );
     var_7.origin = var_2.origin;
     var_7.angles = var_2.angles;
     wait 0.05;

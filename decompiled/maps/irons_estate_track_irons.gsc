@@ -16,9 +16,9 @@ track_irons_main()
     level.start_point_scripted = "hangar";
     thread track_irons_begin();
     common_scripts\utility::flag_wait( "track_irons_end" );
-    _func_05C();
-    _func_0D3( "cg_cinematicCanPause", "0" );
-    _func_0D3( "cg_cinematicFullScreen", "1" );
+    stopcinematicingame();
+    setsaveddvar( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicFullScreen", "1" );
     thread maps\_utility::autosave_by_name();
 }
 
@@ -39,7 +39,7 @@ track_irons_begin()
     level.allies[0] maps\_utility::set_fixednode_true();
     level.allies[0] maps\_utility::set_ignoreall( 1 );
     level.allies[0] maps\_utility::set_ignoreme( 1 );
-    level.allies[0] _meth_81CA( "crouch" );
+    level.allies[0] allowedstances( "crouch" );
     level.allies[0] thread crouch_watcher();
 
     if ( !isdefined( level.listening_org ) )
@@ -95,7 +95,7 @@ crouch_watcher()
     {
         self waittill( "traverse_finish" );
         wait 0.05;
-        self _meth_81CA( "crouch" );
+        self allowedstances( "crouch" );
     }
 }
 
@@ -123,27 +123,27 @@ handle_player()
     common_scripts\utility::flag_set( "at_listening_position" );
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptivesubdiv", 0 );
+        setsaveddvar( "r_adaptivesubdiv", 0 );
 
     level.player freezecontrols( 1 );
     common_scripts\utility::flag_clear( "_stealth_enabled" );
     level.player maps\_grapple::grapple_take();
-    level.player _meth_8304( 0 );
+    level.player allowsprint( 0 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player thread maps\_tagging::tagging_set_enabled( 0 );
     thread maps\_stealth_display::stealth_display_off();
-    level.player _meth_831D();
-    level.player _meth_8321();
-    level.player _meth_8130( 0 );
-    level.player _meth_831F();
-    level.player _meth_84BF();
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_807C( var_1 );
-    level.player _meth_817D( "stand" );
-    level.player _meth_8080( var_1, "tag_player", 0.6 );
+    level.player disableweapons();
+    level.player disableweaponswitch();
+    level.player allowmelee( 0 );
+    level.player disableoffhandweapons();
+    level.player disableoffhandsecondaryweapons();
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
+    level.player playerlinkto( var_1 );
+    level.player setstance( "stand" );
+    level.player playerlinktoblend( var_1, "tag_player", 0.6 );
     level.listening_org thread maps\_anim::anim_single( level.hangar_ents, "hangar" );
     var_1 thread player_hangar_waits();
     wait 0.55;
@@ -154,75 +154,75 @@ handle_player()
 
 hangar_visor_bink()
 {
-    _func_0D3( "cg_cinematicCanPause", "1" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "1" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
     var_0 = newclienthudelem( level.player );
-    var_0 _meth_80CC( "cinematic_screen_add", 640, 480 );
+    var_0 setshader( "cinematic_screen_add", 640, 480 );
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
-    _func_057( "hangar_visor_hud", 1 );
+    cinematicingame( "hangar_visor_hud", 1 );
     level waittill( "start_hangar_visor_hud_bink" );
     pausecinematicingame( 0 );
     wait 0.05;
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
-    _func_05C();
+    stopcinematicingame();
     var_0 destroy();
-    _func_0D3( "cg_cinematicCanPause", "0" );
-    _func_0D3( "cg_cinematicFullScreen", "1" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicFullScreen", "1" );
 }
 
 player_hangar_waits()
 {
     self waittillmatch( "single anim", "device_up" );
-    var_0 = level.player _meth_8311();
-    var_1 = level.player _meth_830B();
-    level.player _meth_8310();
+    var_0 = level.player getcurrentweapon();
+    var_1 = level.player getweaponslistall();
+    level.player takeallweapons();
     level notify( "start_hangar_visor_hud_bink" );
     self waittillmatch( "single anim", "zoom_in" );
-    level.player _meth_8031( 10, 0.5 );
+    level.player lerpfov( 10, 0.5 );
 
     foreach ( var_3 in var_1 )
     {
         if ( isdefined( var_3 ) && var_3 == "iw5_kf5singleshot_sp_opticsreddot_silencer01" )
-            level.player _meth_830E( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+            level.player giveweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
 
         if ( isdefined( var_3 ) && var_3 == "iw5_kf5fullauto_sp_opticsreddot_silencer01" )
-            level.player _meth_830E( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+            level.player giveweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
 
         if ( isdefined( var_3 ) && var_3 == "iw5_sn6_sp_opticsreddot_silencer01" )
-            level.player _meth_830E( "iw5_sn6_sp_opticsreddot_silencer01" );
+            level.player giveweapon( "iw5_sn6_sp_opticsreddot_silencer01" );
 
         if ( isdefined( var_3 ) && var_3 == "iw5_pbwsingleshot_sp_silencerpistol" )
-            level.player _meth_830E( "iw5_pbwsingleshot_sp_silencerpistol" );
+            level.player giveweapon( "iw5_pbwsingleshot_sp_silencerpistol" );
     }
 
     self waittillmatch( "single anim", "zoom_in" );
-    level.player _meth_8031( 5, 0.5 );
+    level.player lerpfov( 5, 0.5 );
     self waittillmatch( "single anim", "zoom_out" );
-    level.player _meth_8031( 20, 0.5 );
+    level.player lerpfov( 20, 0.5 );
 
     if ( isdefined( var_0 ) && var_0 == "iw5_kf5singleshot_sp_opticsreddot_silencer01" || var_0 == "iw5_kf5fullauto_sp_opticsreddot_silencer01" )
-        level.player _meth_8315( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+        level.player switchtoweapon( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
     else if ( isdefined( var_0 ) && var_0 == "iw5_sn6_sp_opticsreddot_silencer01" || var_0 == "iw5_pbwsingleshot_sp_silencerpistol" )
-        level.player _meth_8315( "iw5_sn6_sp_opticsreddot_silencer01" );
+        level.player switchtoweapon( "iw5_sn6_sp_opticsreddot_silencer01" );
 
     self waittillmatch( "single anim", "zoom_out" );
-    level.player _meth_8031( 65, 0.5 );
+    level.player lerpfov( 65, 0.5 );
     self waittillmatch( "single anim", "device_down" );
     self waittillmatch( "single anim", "end" );
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptivesubdiv", 1 );
+        setsaveddvar( "r_adaptivesubdiv", 1 );
 
-    level.player _meth_804F();
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8130( 1 );
+    level.player unlink();
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowmelee( 1 );
     level.player freezecontrols( 0 );
-    level.player _meth_8304( 1 );
+    level.player allowsprint( 1 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 1 );
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 1 );
@@ -233,10 +233,10 @@ player_hangar_waits()
     while ( !level.player common_scripts\utility::isweaponenabled() )
         level.player common_scripts\utility::_enableweapon();
 
-    level.player _meth_831E();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_84C0();
+    level.player enableweapons();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player enableoffhandsecondaryweapons();
     self delete();
     common_scripts\utility::flag_set( "_stealth_enabled" );
     objective_state_nomessage( maps\_utility::obj( "monitor_irons" ), "done" );
@@ -247,13 +247,13 @@ handle_cormack()
 {
     objective_add( maps\_utility::obj( "monitor_irons" ), "current", &"IRONS_ESTATE_OBJ_MONITOR_IRONS" );
     objective_onentity( maps\_utility::obj( "monitor_irons" ), level.allies[0] );
-    level.allies[0] _meth_81CA( "crouch" );
+    level.allies[0] allowedstances( "crouch" );
     level.allies[0] maps\_utility::smart_dialogue( "ie_crmk_onme5" );
     var_0 = getnode( "cormack_girder_node_01", "targetname" );
     level.allies[0] maps\_utility::set_goalradius( 16 );
-    level.allies[0] _meth_81A5( var_0 );
+    level.allies[0] setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "at_girders" );
-    level.allies[0] _meth_81CA( "crouch" );
+    level.allies[0] allowedstances( "crouch" );
     level.listening_org maps\_anim::anim_reach_solo( level.allies[0], "hangar_enter_run" );
     level.listening_org maps\_anim::anim_single_solo( level.allies[0], "hangar_enter_run" );
     level.listening_org thread maps\_anim::anim_loop_solo( level.allies[0], "hangar_enter_loop", "stop_hangar_enter_loop" );
@@ -266,7 +266,7 @@ handle_cormack()
     level.listening_org thread maps\_anim::anim_loop_solo( level.allies[0], "hangar_loop", "stop_loop" );
     wait 0.05;
     common_scripts\utility::flag_set( "cormack_in_hangar_position" );
-    level.allies[0] _meth_81CA( "stand" );
+    level.allies[0] allowedstances( "stand" );
 }
 
 handle_irons()
@@ -356,14 +356,14 @@ hangar_lift()
     level.listening_org maps\_anim::anim_first_frame_solo( var_0, "hangar" );
     wait 0.05;
     var_1 = getent( "landing_pad_lift", "targetname" );
-    var_1 _meth_804D( var_0, "j_prop_1" );
+    var_1 linkto( var_0, "j_prop_1" );
 }
 
 hangar_cargo_crate()
 {
     var_0 = maps\_utility::spawn_anim_model( "cargo_crate" );
-    var_0 _meth_8048( "TAG_STATIC_CASE" );
-    var_0 _meth_8048( "TAG_STATIC_VIALS" );
+    var_0 hidepart( "TAG_STATIC_CASE" );
+    var_0 hidepart( "TAG_STATIC_VIALS" );
     level.hangar_ents[level.hangar_ents.size] = var_0;
     level.listening_org maps\_anim::anim_first_frame_solo( var_0, "hangar" );
     wait 0.05;
@@ -460,8 +460,8 @@ hangar_ambient_worker_setup_anim()
     {
         self.welder = 1;
         self.torch = spawn( "script_model", ( 0, 0, 0 ) );
-        self.torch _meth_80B1( "machinery_welder_handle" );
-        self.torch _meth_804D( self, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self.torch setmodel( "machinery_welder_handle" );
+        self.torch linkto( self, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         self.scripted_node = level.listening_org;
         thread flashing_welding();
         thread flashing_welding_death_handler();
@@ -500,7 +500,7 @@ forklift_setup()
     var_0 = [];
     level.forklift = maps\_utility::spawn_anim_model( "forklift" );
     var_1 = getent( "forklift_clip", "targetname" );
-    var_1 _meth_804D( level.forklift, "tag_body", ( 0, 0, -32 ), ( 0, 90, 0 ) );
+    var_1 linkto( level.forklift, "tag_body", ( 0, 0, -32 ), ( 0, 90, 0 ) );
     var_0[var_0.size] = level.forklift;
     level.forklift_crate_prop = maps\_utility::spawn_anim_model( "generic_prop_raven" );
     var_0[var_0.size] = level.forklift_crate_prop;
@@ -508,7 +508,7 @@ forklift_setup()
     var_2 = getent( "forklift_cargo_clip", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_804D( level.forklift_crate_prop, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 linkto( level.forklift_crate_prop, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     level.forklift_driver = maps\_utility::spawn_targetname( "forklift_driver", "targetname" );
     var_0[var_0.size] = level.forklift_driver;
@@ -527,8 +527,8 @@ forklift_setup()
 
     if ( isdefined( var_3 ) )
     {
-        var_3 _meth_8069();
-        var_3 _meth_804D( level.forklift, "tag_body", ( 40, 0, 38 ), ( 0, 90, 0 ) );
+        var_3 enablelinkto();
+        var_3 linkto( level.forklift, "tag_body", ( 40, 0, 38 ), ( 0, 90, 0 ) );
         var_3 thread forklift_fail_trigger_setup();
     }
 
@@ -536,9 +536,9 @@ forklift_setup()
     var_0[var_0.size] = level.forklift_door_prop;
     level.forklift_org thread maps\_anim::anim_loop( var_0, "forklift_loop", "stop_loop" );
     var_4 = getent( "forklift_door_left", "targetname" );
-    var_4 _meth_804D( level.forklift_door_prop, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 linkto( level.forklift_door_prop, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_5 = getent( "forklift_door_right", "targetname" );
-    var_5 _meth_804D( level.forklift_door_prop, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 linkto( level.forklift_door_prop, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.forklift thread maps\irons_estate_aud::forklift_audio_loop();
 }
 
@@ -553,9 +553,9 @@ forklift_fail_trigger_setup()
 forklift_stop_watcher()
 {
     common_scripts\utility::waittill_any( "alerted", "death" );
-    level.forklift _meth_8111( "looping anim", level.scr_anim[level.forklift.animname]["forklift_loop"][0], 1, 0, 0 );
-    level.forklift_door_prop _meth_8111( "looping anim", level.scr_anim[level.forklift_door_prop.animname]["forklift_loop"][0], 1, 0, 0 );
-    level.forklift_crate_prop _meth_8111( "looping anim", level.scr_anim[level.forklift_crate_prop.animname]["forklift_loop"][0], 1, 0, 0 );
+    level.forklift setflaggedanim( "looping anim", level.scr_anim[level.forklift.animname]["forklift_loop"][0], 1, 0, 0 );
+    level.forklift_door_prop setflaggedanim( "looping anim", level.scr_anim[level.forklift_door_prop.animname]["forklift_loop"][0], 1, 0, 0 );
+    level.forklift_crate_prop setflaggedanim( "looping anim", level.scr_anim[level.forklift_crate_prop.animname]["forklift_loop"][0], 1, 0, 0 );
 }
 
 hangar_pa()
@@ -737,14 +737,14 @@ ambient_hangar_fan_blade_rotate( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1.angles = self.angles;
-    self _meth_804D( var_1, "tag_origin" );
+    self linkto( var_1, "tag_origin" );
     var_2 = ( 0, -180, 0 );
 
     while ( !common_scripts\utility::flag( var_0 ) )
     {
-        self _meth_842A( var_2, 0.25 );
+        self rotatebylinked( var_2, 0.25 );
         self waittill( "rotatedone" );
-        self _meth_842A( var_2, 0.25 );
+        self rotatebylinked( var_2, 0.25 );
         self waittill( "rotatedone" );
     }
 }

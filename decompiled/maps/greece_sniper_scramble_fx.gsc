@@ -59,9 +59,9 @@ windowgapjumpglassshatter()
     var_0 = common_scripts\utility::getstruct( "ScramblePlayerGapJumpGlassRef", "targetname" );
     level waittill( "ScramblePlayerBreakWindowGapJump" );
     glassradiusdamage( var_0.origin, 64, 1000, 1000 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     earthquake( 0.6, 0.4, var_0.origin, 40 );
-    _func_234( var_0.origin, 0.2, 0.2, 0.2, 0.4, 0, -1, 40 );
+    screenshake( var_0.origin, 0.2, 0.2, 0.2, 0.4, 0, -1, 40 );
 }
 
 windowhoteljumpglassshatter( var_0 )
@@ -74,7 +74,7 @@ windowhoteljumpglassshatter( var_0 )
     if ( !isglassdestroyed( var_2 ) )
     {
         earthquake( 0.2, 0.2, var_2.origin, 20 );
-        _func_234( var_2.origin, 0.1, 0.1, 0.1, 0.2, 0, -1, 20 );
+        screenshake( var_2.origin, 0.1, 0.1, 0.1, 0.2, 0, -1, 20 );
     }
 }
 

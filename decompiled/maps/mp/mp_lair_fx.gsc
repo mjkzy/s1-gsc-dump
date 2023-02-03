@@ -105,7 +105,7 @@ start_vista_vfx( var_0 )
     level notify( "aud_fireworks" );
     level thread fountain_water_show( var_0 );
     wait 1;
-    _func_292( 11, var_0 );
+    stopclientexploder( 11, var_0 );
     level thread fountain_water_show_center( var_0 );
 }
 

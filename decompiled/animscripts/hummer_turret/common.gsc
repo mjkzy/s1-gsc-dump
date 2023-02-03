@@ -16,8 +16,8 @@ humvee_turret_init( var_0, var_1 )
         self.ignoreme = self.minigun_ignoreme;
 
     self.iscustomanimating = 0;
-    self _meth_8193( self.primaryturretanim );
-    self _meth_8145( self.primaryturretanim, 1, 0.2, 1 );
+    self setturretanim( self.primaryturretanim );
+    self setanimknobrestart( self.primaryturretanim, 1, 0.2, 1 );
 
     if ( isdefined( self.weapon ) )
         animscripts\shared::placeweaponon( self.weapon, "none" );
@@ -28,10 +28,10 @@ humvee_turret_init( var_0, var_1 )
     var_0.turretstate = "start";
     var_0.aiowner = self;
     var_0.firetime = 0;
-    var_0 _meth_8065( "sentry" );
-    var_0 _meth_8103( self );
-    var_0 _meth_815A( 0 );
-    var_0 _meth_802F( 0 );
+    var_0 setmode( "sentry" );
+    var_0 setsentryowner( self );
+    var_0 setdefaultdroppitch( 0 );
+    var_0 setturretcanaidetach( 0 );
     gunner_pain_init();
     level thread handle_gunner_pain( self, var_0 );
     level thread handle_gunner_death( self, var_0 );
@@ -118,7 +118,7 @@ turret_cleanup_on_unload()
         self.turretspecialanims = undefined;
         self.turretpainanims = undefined;
         self.getoffvehiclefunc = undefined;
-        self _meth_818B();
+        self stopuseturret();
 
         if ( isdefined( self.weapon ) )
             animscripts\shared::placeweaponon( self.weapon, "right" );
@@ -134,15 +134,15 @@ turret_cleanup( var_0, var_1 )
 
     var_1 notify( "kill_fireController" );
     var_1 notify( "turret_cleanup" );
-    var_1 _meth_8065( "manual" );
-    var_1 _meth_8108();
-    var_1 _meth_815A( var_1.default_drop_pitch );
+    var_1 setmode( "manual" );
+    var_1 cleartargetentity();
+    var_1 setdefaultdroppitch( var_1.default_drop_pitch );
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_8142( var_0.additiveusegunroot, 0 );
-        var_0 _meth_8142( var_0.additiverotateroot, 0 );
-        var_0 _meth_8142( var_0.turretspecialanimsroot, 0 );
+        var_0 clearanim( var_0.additiveusegunroot, 0 );
+        var_0 clearanim( var_0.additiverotateroot, 0 );
+        var_0 clearanim( var_0.turretspecialanimsroot, 0 );
     }
 
     var_1.fireinterval = undefined;
@@ -219,8 +219,8 @@ gunner_turning_anims( var_0 )
 
             if ( isdefined( var_3 ) )
             {
-                self _meth_814C( self.additiverotateroot, 1, var_1, 1 );
-                self _meth_8144( var_3, 1, 0, 1 );
+                self setanimlimited( self.additiverotateroot, 1, var_1, 1 );
+                self setanimknoblimited( var_3, 1, 0, 1 );
 
                 while ( isdefined( var_0.firetarget ) && !var_0 turret_aiming_near_target( var_0.firetarget, var_0.closeenoughaimdegrees ) )
                 {
@@ -230,7 +230,7 @@ gunner_turning_anims( var_0 )
                     wait 0.05;
                 }
 
-                self _meth_8142( self.additiverotateroot, var_2 );
+                self clearanim( self.additiverotateroot, var_2 );
             }
         }
     }
@@ -254,7 +254,7 @@ guy_gets_on_turret( var_0, var_1, var_2, var_3 )
 {
     self endon( "death" );
     var_2 endon( "death" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "newanim" );
     self.drivingvehicle = undefined;
     self.no_ai = 1;
@@ -266,31 +266,31 @@ guy_gets_on_turret( var_0, var_1, var_2, var_3 )
     var_4 = maps\_vehicle_aianim::anim_pos( var_0, var_1 );
     var_5 = var_0 gettagorigin( var_4.sittag );
     var_6 = var_0 gettagangles( var_4.sittag );
-    var_2 _meth_815A( 0 );
+    var_2 setdefaultdroppitch( 0 );
     var_2 thread turret_animate( var_2.passenger2turret_anime );
-    self _meth_813E( "passenger2turret", var_5, var_6, var_3 );
+    self animscripted( "passenger2turret", var_5, var_6, var_3 );
     wait(getanimlength( var_3 ));
-    self _meth_8141();
+    self stopanimscripted();
     var_2 turret_aim_restore();
-    self _meth_818A( var_2 );
+    self useturret( var_2 );
 }
 
 turret_animate( var_0 )
 {
     if ( isdefined( self.idleanim ) )
     {
-        self _meth_8142( self.idleanim, 0 );
+        self clearanim( self.idleanim, 0 );
         self.idleanim = undefined;
     }
 
-    self _meth_810D( "minigun_turret", var_0, 1, 0, 1 );
+    self setflaggedanimknobrestart( "minigun_turret", var_0, 1, 0, 1 );
     self waittillmatch( "minigun_turret", "end" );
-    self _meth_8142( var_0, 0 );
+    self clearanim( var_0, 0 );
 }
 
 turret_animfirstframe( var_0 )
 {
-    self _meth_8145( var_0, 1, 0, 0 );
+    self setanimknobrestart( var_0, 1, 0, 0 );
     self.idleanim = var_0;
 }
 
@@ -359,7 +359,7 @@ turret_target_updater( var_0 )
 
     for (;;)
     {
-        var_1 = self _meth_8109( 0 );
+        var_1 = self getturrettarget( 0 );
         var_3 = 0;
 
         if ( turret_target_validate( var_1 ) || !isdefined( var_1 ) )
@@ -400,10 +400,10 @@ turret_target_validate( var_0 )
 set_manual_target( var_0, var_1, var_2, var_3 )
 {
     self endon( "turret_cleanup" );
-    var_4 = self _meth_8066();
+    var_4 = self getmode();
 
     if ( var_4 != "manual" )
-        self _meth_8065( "manual" );
+        self setmode( "manual" );
 
     if ( !isdefined( var_1 ) && !isdefined( var_2 ) )
     {
@@ -412,7 +412,7 @@ set_manual_target( var_0, var_1, var_2, var_3 )
     }
 
     custom_anim_wait();
-    self _meth_8106( var_0 );
+    self settargetentity( var_0 );
     self waittill( "turret_on_target" );
 
     if ( isdefined( var_3 ) )
@@ -423,17 +423,17 @@ set_manual_target( var_0, var_1, var_2, var_3 )
         wait(var_1);
 
     custom_anim_wait();
-    self _meth_8108( var_0 );
+    self cleartargetentity( var_0 );
 
     if ( isdefined( var_4 ) )
-        self _meth_8065( var_4 );
+        self setmode( var_4 );
 }
 
 doshoot( var_0 )
 {
     self notify( "doshoot_starting" );
-    self _meth_814C( self.additiveusegunroot, 1, 0.1 );
-    self _meth_8144( self.additiveturretfire, 1, 0.1 );
+    self setanimlimited( self.additiveusegunroot, 1, 0.1 );
+    self setanimknoblimited( self.additiveturretfire, 1, 0.1 );
     var_0.turretstate = "fire";
     var_0 thread fire( self );
 }
@@ -449,7 +449,7 @@ fire( var_0 )
 
     for (;;)
     {
-        self _meth_80EA();
+        self shootturret();
         wait(self.fireinterval);
     }
 }
@@ -474,16 +474,16 @@ doaim_idle_think( var_0 )
 
     for (;;)
     {
-        if ( var_1 _meth_8286() < 1 && var_2 )
+        if ( var_1 vehicle_getspeed() < 1 && var_2 )
         {
-            self _meth_814C( self.additiveusegunroot, 1, 0.1 );
-            self _meth_8144( self.additiveturretidle, 1, 0.1 );
+            self setanimlimited( self.additiveusegunroot, 1, 0.1 );
+            self setanimknoblimited( self.additiveturretidle, 1, 0.1 );
             var_2 = 0;
         }
-        else if ( var_1 _meth_8286() >= 1 && !var_2 )
+        else if ( var_1 vehicle_getspeed() >= 1 && !var_2 )
         {
-            self _meth_814C( self.additiveusegunroot, 1, 0.1 );
-            self _meth_8144( self.additiveturretdriveidle, 1, 0.1 );
+            self setanimlimited( self.additiveusegunroot, 1, 0.1 );
+            self setanimknoblimited( self.additiveturretdriveidle, 1, 0.1 );
             var_2 = 1;
         }
 
@@ -552,10 +552,10 @@ docustomanim( var_0, var_1, var_2 )
     self.iscustomanimating = 1;
     self.customanim = var_1;
     var_0.turretstate = "customanim";
-    var_0 _meth_815C();
+    var_0 turretfiredisable();
 
-    if ( var_0 _meth_80E7() > 0 )
-        var_0 _meth_80E6();
+    if ( var_0 getbarrelspinrate() > 0 )
+        var_0 stopbarrelspin();
 
     var_0 notify( "kill_fireController" );
     self notify( "custom_anim" );
@@ -563,8 +563,8 @@ docustomanim( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) && var_2 )
         var_0 turret_aim_straight();
 
-    self _meth_8146( self.turretspecialanimsroot, 1, 0.2 );
-    self _meth_810D( "special_anim", var_1, 1, 0, 1 );
+    self setanimknoblimitedrestart( self.turretspecialanimsroot, 1, 0.2 );
+    self setflaggedanimknobrestart( "special_anim", var_1, 1, 0, 1 );
 
     for (;;)
     {
@@ -574,16 +574,16 @@ docustomanim( var_0, var_1, var_2 )
             break;
     }
 
-    self _meth_8142( self.turretspecialanimsroot, 0.2 );
-    self _meth_814C( self.primaryturretanim, 1 );
-    self _meth_814C( self.additiveusegunroot, 1 );
+    self clearanim( self.turretspecialanimsroot, 0.2 );
+    self setanimlimited( self.primaryturretanim, 1 );
+    self setanimlimited( self.additiveusegunroot, 1 );
 
     if ( isdefined( var_2 ) && var_2 )
         var_0 turret_aim_restore();
 
     self.customanim = undefined;
     self.iscustomanimating = 0;
-    var_0 _meth_8179();
+    var_0 turretfireenable();
     thread firedirector( var_0 );
 }
 
@@ -600,7 +600,7 @@ custom_anim_wait()
 
 turret_aim_straight( var_0 )
 {
-    if ( self _meth_8066() == "sentry" )
+    if ( self getmode() == "sentry" )
         return;
 
     if ( !isdefined( var_0 ) )
@@ -609,32 +609,32 @@ turret_aim_straight( var_0 )
         var_0 = ( 0, var_1[1], var_1[2] );
     }
 
-    self.oldmode = self _meth_8066();
-    self _meth_8065( "manual" );
+    self.oldmode = self getmode();
+    self setmode( "manual" );
     var_2 = anglestoforward( var_0 );
     var_3 = var_2 * 96;
     var_4 = self gettagorigin( "tag_aim" ) + var_3;
     self.temptarget = spawn( "script_origin", var_4 );
     self.temptarget.ignoreme = 1;
-    self.temptarget _meth_804D( self.ownervehicle );
-    self _meth_8108();
-    self _meth_8106( self.temptarget );
+    self.temptarget linkto( self.ownervehicle );
+    self cleartargetentity();
+    self settargetentity( self.temptarget );
     self waittill( "turret_on_target" );
 }
 
 turret_aim_restore()
 {
-    self _meth_8108();
+    self cleartargetentity();
 
     if ( isdefined( self.temptarget ) )
     {
-        self.temptarget _meth_804F();
+        self.temptarget unlink();
         self.temptarget delete();
     }
 
     if ( isdefined( self.oldmode ) )
     {
-        self _meth_8065( self.oldmode );
+        self setmode( self.oldmode );
         self.oldmode = undefined;
     }
 }
@@ -666,5 +666,5 @@ lerp_out_drop_pitch( var_0 )
 blend_droppitch( var_0, var_1, var_2 )
 {
     var_3 = var_1 * ( 1 - var_0 ) + var_2 * var_0;
-    self _meth_815A( var_3 );
+    self setdefaultdroppitch( var_3 );
 }

@@ -499,14 +499,14 @@ input_reactive_radius( var_0 )
     {
         wait 0.05;
 
-        if ( level.player _meth_824C( "escape" ) || level.player _meth_824C( "x" ) )
+        if ( level.player buttonpressed( "escape" ) || level.player buttonpressed( "x" ) )
             break;
 
         var_1 = 0;
 
-        if ( level.player _meth_824C( "-" ) )
+        if ( level.player buttonpressed( "-" ) )
             var_1 = -10;
-        else if ( level.player _meth_824C( "=" ) )
+        else if ( level.player buttonpressed( "=" ) )
             var_1 = 10;
 
         if ( var_1 != 0 )

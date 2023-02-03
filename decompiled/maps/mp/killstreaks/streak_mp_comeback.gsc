@@ -17,13 +17,13 @@ init()
 
     foreach ( var_2 in var_0 )
     {
-        if ( _func_20C( var_2, 1 ) )
+        if ( nodeexposedtosky( var_2, 1 ) )
             level.sky_nodes[level.sky_nodes.size] = var_2;
     }
 
     level.missile_start_offset = 20;
-    map_restart( "mp_comeback_spider_tank_idle" );
-    map_restart( "mp_comeback_spider_tank_fire" );
+    precachempanim( "mp_comeback_spider_tank_idle" );
+    precachempanim( "mp_comeback_spider_tank_fire" );
 }
 
 setupbotsformapkillstreak()
@@ -119,9 +119,9 @@ tank_show_icon( var_0 )
         objective_state( var_2, "active" );
 
         if ( var_3 == "allies" )
-            objective_playerteam( var_2, self.owner _meth_81B1() );
+            objective_playerteam( var_2, self.owner getentitynumber() );
         else
-            objective_playerenemyteam( var_2, self.owner _meth_81B1() );
+            objective_playerenemyteam( var_2, self.owner getentitynumber() );
 
         objective_onentitywithrotation( var_2, var_0 );
     }
@@ -135,7 +135,7 @@ tank_hide_icon( var_0 )
 
 tank_idle( var_0 )
 {
-    var_0 _meth_827B( "mp_comeback_spider_tank_idle" );
+    var_0 scriptmodelplayanimdeltamotion( "mp_comeback_spider_tank_idle" );
 }
 
 tank_attack( var_0 )
@@ -143,7 +143,7 @@ tank_attack( var_0 )
     self.owner endon( "disconnect" );
     var_0 endon( "tank_destroyed" );
     var_0 playsound( "walker_start" );
-    var_0 _meth_827B( "mp_comeback_spider_tank_fire", "comeback_tank" );
+    var_0 scriptmodelplayanimdeltamotion( "mp_comeback_spider_tank_fire", "comeback_tank" );
     var_1 = 0;
     var_2 = 0;
 
@@ -220,7 +220,7 @@ tank_missile_set_target( var_0 )
     if ( isdefined( var_1 ) )
     {
         var_1.tank_no_target_time = gettime() + 3000;
-        var_0 _meth_81D9( var_1 );
+        var_0 missile_settargetent( var_1 );
     }
     else
     {
@@ -234,7 +234,7 @@ tank_missile_set_target( var_0 )
                 var_11 = common_scripts\utility::random( level.sky_nodes );
         }
 
-        var_0 _meth_81DA( var_11.origin );
+        var_0 missile_settargetpos( var_11.origin );
     }
 }
 

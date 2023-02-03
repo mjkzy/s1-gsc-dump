@@ -11,7 +11,7 @@ select_target_think( var_0 )
 {
     self endon( "death" );
     self endon( var_0 );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
     var_2 = 0;
     self.enemy_custom = var_1[var_2];
     var_3 = 0.25;
@@ -25,7 +25,7 @@ select_target_think( var_0 )
             self.enemy_custom_fire_ok_time = gettime() + randomfloatrange( 0.15, 0.35 ) * 1000;
         }
 
-        var_5 = _func_0D6( "axis" );
+        var_5 = getaiarray( "axis" );
         var_6 = maps\_utility::getvehiclearray();
 
         foreach ( var_8 in var_6 )
@@ -47,7 +47,7 @@ select_target_think( var_0 )
             if ( distancesquared( self.origin, var_12.origin ) > 5000000 )
                 continue;
 
-            if ( !self _meth_81BC( var_12 _meth_8096() ) )
+            if ( !self canshoot( var_12 getcentroid() ) )
                 continue;
 
             if ( !within_angle( var_12, self.rightaimlimit, self.leftaimlimit, self.upaimlimit, self.downaimlimit ) )
@@ -133,7 +133,7 @@ get_diff_angles_from_tag_to_guy( var_0, var_1, var_2, var_3 )
     var_9 = anglestoforward( var_8 );
     var_10 = var_6 - var_7;
     var_11 = vectortoangles( var_10 );
-    var_12 = _func_24D( var_9, var_11 );
+    var_12 = rotatevectorinverted( var_9, var_11 );
     var_13 = anglestoforward( ( 0, 0, 0 ) );
     [var_15, var_16] = get_world_pitch_yaw_between_vectors( var_13, var_12 );
     return [ var_15, var_16 ];
@@ -142,11 +142,11 @@ get_diff_angles_from_tag_to_guy( var_0, var_1, var_2, var_3 )
 ender_cleanup( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     self waittill( var_5 );
-    self _meth_8142( var_0, 0 );
-    self _meth_8142( var_1, 0 );
-    self _meth_8142( var_2, 0 );
-    self _meth_8142( var_3, 0 );
-    self _meth_8142( var_4, 0 );
+    self clearanim( var_0, 0 );
+    self clearanim( var_1, 0 );
+    self clearanim( var_2, 0 );
+    self clearanim( var_3, 0 );
+    self clearanim( var_4, 0 );
 }
 
 rotate_to_goal( var_0, var_1, var_2, var_3 )
@@ -207,7 +207,7 @@ rotate_until_no_diff( var_0, var_1, var_2, var_3 )
 
 quarter_up_position()
 {
-    var_0 = self _meth_8096()[2] - self.origin[2];
+    var_0 = self getcentroid()[2] - self.origin[2];
     return ( self.origin[0], self.origin[1], self.origin[2] + var_0 * 0.5 );
 }
 
@@ -229,13 +229,13 @@ get_shoot_pos_with_offset()
 heli_custom_fireuntiloutofammo( var_0, var_1, var_2 )
 {
     self.heli_action_status = 1;
-    self _meth_814C( var_0, 1, 0 );
+    self setanimlimited( var_0, 1, 0 );
     self.shootstyle = "full";
     self.shootpos = self.enemy_custom get_shoot_pos_with_offset();
     self.fastburst = 0;
     self.shootent = undefined;
     animscripts\combat_utility::fireuntiloutofammo( var_1, 0, 100 );
-    self _meth_8142( var_1, 0 );
+    self clearanim( var_1, 0 );
 
     if ( need_to_reload() )
         heli_custom_reload( var_0, var_2 );
@@ -252,7 +252,7 @@ need_to_reload()
     var_1 = weaponclipsize( self.weapon ) - self.bulletsinclip;
     var_2 = getdvarfloat( "cg_fov" );
 
-    if ( var_0 < 0.75 || var_1 > 50 && randomfloat( 100 ) < 100 - min( 100, var_1 ) && level.player _meth_8214( self.origin, var_2, 250 ) )
+    if ( var_0 < 0.75 || var_1 > 50 && randomfloat( 100 ) < 100 - min( 100, var_1 ) && level.player worldpointinreticle_circle( self.origin, var_2, 250 ) )
         return 1;
     else
         return 0;
@@ -261,13 +261,13 @@ need_to_reload()
 heli_custom_reload( var_0, var_1 )
 {
     self.heli_action_status = 2;
-    self _meth_814C( var_0, 1, 0 );
+    self setanimlimited( var_0, 1, 0 );
     var_2 = "reload_" + animscripts\combat_utility::getuniqueflagnameindex();
-    self _meth_810D( var_2, var_1, 1, 0.2 );
+    self setflaggedanimknobrestart( var_2, var_1, 1, 0.2 );
     animscripts\shared::donotetracks( var_2 );
     self notify( "abort_reload" );
     animscripts\weaponlist::refillclip();
-    self _meth_8142( var_1, 0 );
+    self clearanim( var_1, 0 );
     self.heli_action_status = 0;
 }
 
@@ -294,18 +294,18 @@ aim_additives_think( var_0 )
     self.upaimlimit = var_15;
     self.downaimlimit = var_16;
     thread ender_cleanup( var_1, var_3, var_5, var_7, var_9, var_0 );
-    self _meth_814B( var_3, 0.01, 0 );
-    self _meth_814B( var_4, 1, 0 );
-    self _meth_8117( var_4, 1.0 );
-    self _meth_814B( var_1, 0.01, 0 );
-    self _meth_814B( var_2, 1, 0 );
-    self _meth_8117( var_2, 1.0 );
-    self _meth_814B( var_7, 0.01, 0 );
-    self _meth_814B( var_8, 1, 0 );
-    self _meth_8117( var_8, 1.0 );
-    self _meth_814B( var_5, 0.01, 0 );
-    self _meth_814B( var_6, 1, 0 );
-    self _meth_8117( var_6, 1.0 );
+    self setanim( var_3, 0.01, 0 );
+    self setanim( var_4, 1, 0 );
+    self setanimtime( var_4, 1.0 );
+    self setanim( var_1, 0.01, 0 );
+    self setanim( var_2, 1, 0 );
+    self setanimtime( var_2, 1.0 );
+    self setanim( var_7, 0.01, 0 );
+    self setanim( var_8, 1, 0 );
+    self setanimtime( var_8, 1.0 );
+    self setanim( var_5, 0.01, 0 );
+    self setanim( var_6, 1, 0 );
+    self setanimtime( var_6, 1.0 );
     var_17 = 0;
     var_18 = 0;
     var_19 = 0;
@@ -338,8 +338,8 @@ aim_additives_think( var_0 )
         {
             self notify( "enemy" );
 
-            if ( self _meth_8150( var_10 ) > 0 )
-                self _meth_8142( var_10, 0 );
+            if ( self getanimweight( var_10 ) > 0 )
+                self clearanim( var_10, 0 );
 
             self.heli_action_status = 0;
         }
@@ -353,18 +353,18 @@ aim_additives_think( var_0 )
             {
                 if ( var_20 == 0 )
                 {
-                    self _meth_814B( var_7, 0.001, 0.05, 1, 1 );
-                    self _meth_814B( var_5, 0.001, 0.05, 1, 1 );
+                    self setanim( var_7, 0.001, 0.05, 1, 1 );
+                    self setanim( var_5, 0.001, 0.05, 1, 1 );
                 }
                 else if ( var_20 < 0 )
                 {
-                    self _meth_814B( var_7, 0.001, 0.05, 1, 1 );
-                    self _meth_814B( var_5, absz( var_20 / self.upaimlimit ), 0.05, 1, 1 );
+                    self setanim( var_7, 0.001, 0.05, 1, 1 );
+                    self setanim( var_5, absz( var_20 / self.upaimlimit ), 0.05, 1, 1 );
                 }
                 else
                 {
-                    self _meth_814B( var_7, absz( var_20 / self.downaimlimit ), 0.05, 1, 1 );
-                    self _meth_814B( var_5, 0.001, 0.05, 1, 1 );
+                    self setanim( var_7, absz( var_20 / self.downaimlimit ), 0.05, 1, 1 );
+                    self setanim( var_5, 0.001, 0.05, 1, 1 );
                 }
             }
 
@@ -372,26 +372,26 @@ aim_additives_think( var_0 )
             {
                 if ( var_19 == 0 )
                 {
-                    self _meth_814B( var_3, 0.001, 0.05, 1, 1 );
-                    self _meth_814B( var_1, 0.001, 0.05, 1, 1 );
+                    self setanim( var_3, 0.001, 0.05, 1, 1 );
+                    self setanim( var_1, 0.001, 0.05, 1, 1 );
                 }
                 else if ( var_19 > 0 )
                 {
-                    self _meth_814B( var_3, absz( var_19 / self.leftaimlimit ), 0.05, 1, 1 );
-                    self _meth_814B( var_1, 0.001, 0.05, 1, 1 );
+                    self setanim( var_3, absz( var_19 / self.leftaimlimit ), 0.05, 1, 1 );
+                    self setanim( var_1, 0.001, 0.05, 1, 1 );
                 }
                 else
                 {
-                    self _meth_814B( var_3, 0.001, 0.05, 1, 1 );
-                    self _meth_814B( var_1, absz( var_19 / self.rightaimlimit ), 0.05, 1, 1 );
+                    self setanim( var_3, 0.001, 0.05, 1, 1 );
+                    self setanim( var_1, absz( var_19 / self.rightaimlimit ), 0.05, 1, 1 );
                 }
             }
         }
 
-        self _meth_8117( var_2, 1.0 );
-        self _meth_8117( var_4, 1.0 );
-        self _meth_8117( var_6, 1.0 );
-        self _meth_8117( var_8, 1.0 );
+        self setanimtime( var_2, 1.0 );
+        self setanimtime( var_4, 1.0 );
+        self setanimtime( var_6, 1.0 );
+        self setanimtime( var_8, 1.0 );
         waitframe();
     }
 }
@@ -469,17 +469,17 @@ get_limit_table( var_0, var_1, var_2, var_3, var_4 )
         return var_8;
     }
 
-    var_5 _meth_814C( var_0, 1.0, 0 );
-    var_5 _meth_8144( var_1, 1.0, 0 );
-    var_5 _meth_8117( var_1, 1.0 );
+    var_5 setanimlimited( var_0, 1.0, 0 );
+    var_5 setanimknoblimited( var_1, 1.0, 0 );
+    var_5 setanimtime( var_1, 1.0 );
 
     while ( var_10 >= 0.0 )
     {
-        var_5 _meth_814C( var_0, var_10, 0 );
+        var_5 setanimlimited( var_0, var_10, 0 );
         waitframe();
         var_11 = var_5 gettagangles( "TAG_FLASH" );
         var_12 = var_5.angles;
-        var_13 = _func_24C( var_12 );
+        var_13 = invertangles( var_12 );
         var_14 = combineangles( var_11, var_13 );
         var_8[maps\_utility::string( angleclamp180( var_14[var_2] ) )] = var_10;
         var_10 = 1.0 - var_9 * var_7;
@@ -489,6 +489,6 @@ get_limit_table( var_0, var_1, var_2, var_3, var_4 )
             break;
     }
 
-    var_5 _meth_8142( var_0, 0 );
+    var_5 clearanim( var_0, 0 );
     return var_8;
 }

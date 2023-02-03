@@ -17,13 +17,13 @@ main()
     self endon( "killanimscript" );
     self endon( "stop_flashbang_effect" );
     wait(randomfloatrange( 0, 0.4 ));
-    self _meth_8142( %body, 0.1 );
+    self clearanim( %body, 0.1 );
     var_0 = maps\_utility::flashbanggettimeleftsec();
 
     if ( var_0 > 2 && randomint( 100 ) > 60 )
-        self _meth_8113( "flashed_anim", getdogflashedanim( "flash_long" ), 1, 0.2, self.animplaybackrate * 0.75 );
+        self setflaggedanimrestart( "flashed_anim", getdogflashedanim( "flash_long" ), 1, 0.2, self.animplaybackrate * 0.75 );
     else
-        self _meth_8113( "flashed_anim", getdogflashedanim( "flash_short" ), 1, 0.2, self.animplaybackrate );
+        self setflaggedanimrestart( "flashed_anim", getdogflashedanim( "flash_short" ), 1, 0.2, self.animplaybackrate );
 
     var_1 = getanimlength( getdogflashedanim( "flash_short" ) ) * self.animplaybackrate;
 

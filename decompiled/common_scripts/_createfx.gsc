@@ -226,7 +226,7 @@ convertoneshotfx()
     for ( var_1 = 0; var_1 < level._createfx.selected_fx_ents.size; var_1++ )
     {
         var_2 = level._createfx.selected_fx_ents[var_1];
-        setwinningteam( var_2.looper, 1 );
+        setfxkillondelete( var_2.looper, 1 );
         waitframe();
         var_2 common_scripts\utility::pauseeffect();
         var_2.v["type"] = "exploder";
@@ -375,7 +375,7 @@ createfxlogic()
     var_2.x = -120;
     var_2.y = 200;
     var_2.foreground = 0;
-    var_2 _meth_80CC( "black", 250, 160 );
+    var_2 setshader( "black", 250, 160 );
     var_2.alpha = 0;
     level.createfx_inputlocked = 0;
 
@@ -397,7 +397,7 @@ createfxlogic()
         var_10 = anglestoup( level.player getangles() );
         var_11 = 0.85;
         var_12 = var_9 * 750;
-        level.createfxcursor = bullettrace( level.player _meth_80A8(), level.player _meth_80A8() + var_12, 0, undefined );
+        level.createfxcursor = bullettrace( level.player geteye(), level.player geteye() + var_12, 0, undefined );
         var_13 = undefined;
         level.buttonclick = [];
         level.button_is_kb = [];
@@ -610,7 +610,7 @@ set_player_speed_hud()
         level._createfx.player_speed_hud = var_0;
     }
 
-    level._createfx.player_speed_hud.hud_value _meth_80D7( level._createfx.player_speed );
+    level._createfx.player_speed_hud.hud_value setvalue( level._createfx.player_speed );
 }
 
 toggle_createfx_drawing()
@@ -1171,11 +1171,11 @@ rotate_over_time( var_0, var_1 )
     for ( var_3 = 0; var_3 < var_2 * 20; var_3++ )
     {
         if ( level.selectedrotate_pitch != 0 )
-            var_0 _meth_82B9( level.selectedrotate_pitch );
+            var_0 addpitch( level.selectedrotate_pitch );
         else if ( level.selectedrotate_roll != 0 )
-            var_0 _meth_82BA( level.selectedrotate_roll );
+            var_0 addyaw( level.selectedrotate_roll );
         else
-            var_0 _meth_82BB( level.selectedrotate_yaw );
+            var_0 addroll( level.selectedrotate_yaw );
 
         wait 0.05;
         var_0 draw_axis();
@@ -1826,8 +1826,8 @@ hack_start( var_0 )
     if ( var_0 == "painter_mp" )
         return;
 
-    level.player _meth_8323( var_0 );
-    level.player _meth_8325( var_0 );
+    level.player openpopupmenu( var_0 );
+    level.player closepopupmenu( var_0 );
 }
 
 stop_fx_looper()
@@ -1927,7 +1927,7 @@ process_fx_rotater()
         {
             var_2[var_3] = spawn( "script_origin", level._createfx.selected_fx_ents[var_3].v["origin"] );
             var_2[var_3].angles = level._createfx.selected_fx_ents[var_3].v["angles"];
-            var_2[var_3] _meth_8446( var_1 );
+            var_2[var_3] vehicle_jetbikesethoverforcescale( var_1 );
         }
 
         rotate_over_time( var_1, var_2 );
@@ -1944,11 +1944,11 @@ process_fx_rotater()
             var_2.angles = var_5.v["angles"];
 
             if ( level.selectedrotate_pitch != 0 )
-                var_2 _meth_82B9( level.selectedrotate_pitch );
+                var_2 addpitch( level.selectedrotate_pitch );
             else if ( level.selectedrotate_yaw != 0 )
-                var_2 _meth_82BA( level.selectedrotate_yaw );
+                var_2 addyaw( level.selectedrotate_yaw );
             else
-                var_2 _meth_82BB( level.selectedrotate_roll );
+                var_2 addroll( level.selectedrotate_roll );
 
             var_5.v["angles"] = var_2.angles;
             var_2 delete();
@@ -2347,13 +2347,13 @@ add_button( var_0 )
 
     if ( !isdefined( level.buttonisheld[var_0] ) )
     {
-        if ( level.player _meth_824C( var_0 ) )
+        if ( level.player buttonpressed( var_0 ) )
         {
             level.buttonisheld[var_0] = 1;
             level.buttonclick[var_0] = 1;
         }
     }
-    else if ( !level.player _meth_824C( var_0 ) )
+    else if ( !level.player buttonpressed( var_0 ) )
         level.buttonisheld[var_0] = undefined;
 }
 
@@ -2376,7 +2376,7 @@ buttonpressed_internal( var_0 )
     if ( kb_locked( var_0 ) )
         return 0;
 
-    return level.player _meth_824C( var_0 );
+    return level.player buttonpressed( var_0 );
 }
 
 button_is_held( var_0, var_1 )
@@ -2484,7 +2484,7 @@ init_crosshair()
 
 clear_fx_hudelements()
 {
-    level.cleartextmarker _meth_80CB();
+    level.cleartextmarker clearalltextafterhudelem();
 
     for ( var_0 = 0; var_0 < level._createfx.hudelem_count; var_0++ )
     {
@@ -2693,7 +2693,7 @@ frame_selected()
 
     var_2 = anglestoforward( level.player getangles() );
     var_3 = var_2 * ( -1 * var_1 );
-    var_4 = level.player _meth_80A8();
+    var_4 = level.player geteye();
     var_5 = var_4 - level.player.origin;
     level.player setorigin( var_0 + var_3 - var_5 );
 }

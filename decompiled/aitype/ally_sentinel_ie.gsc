@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     self.weapon = "iw5_kf5singleshot_sp";
@@ -27,11 +27,11 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_sentinel_ie::precache();
-    precacheitem( "iw5_kf5singleshot_sp" );
+    precacheshellshock( "iw5_kf5singleshot_sp" );
 }

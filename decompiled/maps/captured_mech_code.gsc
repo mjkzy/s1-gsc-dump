@@ -20,8 +20,8 @@ pre_load()
 init_mech_actions()
 {
     level.allow_threat_paint = 1;
-    _func_0D3( "mechAcceleration", 0.6 );
-    _func_0D3( "mechAirAcceleration", 0.6 );
+    setsaveddvar( "mechAcceleration", 0.6 );
+    setsaveddvar( "mechAirAcceleration", 0.6 );
 
     if ( !isdefined( self.mech_init ) )
     {
@@ -249,13 +249,13 @@ mech_action_smash()
             self.fx = var_4;
         }
 
-        self._id_03A7 = _func_231( self.nodes[0].target, "targetname" )[0];
+        self._id_03A7 = getscriptablearray( self.nodes[0].target, "targetname" )[0];
         self.glass = getglassarray( self.nodes[0].target );
 
         if ( isdefined( self.col ) )
         {
             if ( isdefined( self.nodes[0].height ) )
-                self.col _meth_8058();
+                self.col connectpaths();
 
             if ( isdefined( self.col.target ) )
             {
@@ -307,7 +307,7 @@ mech_action_smash()
 
                 if ( distance( level.player.origin, var_8.origin ) > 70 )
                 {
-                    while ( level.player _meth_812E() )
+                    while ( level.player ismeleeing() )
                         wait 0.05;
 
                     continue;
@@ -315,7 +315,7 @@ mech_action_smash()
 
                 if ( vectordot( anglestoforward( level.player getangles() ), anglestoforward( var_8.angles ) ) < 0.5 )
                 {
-                    while ( level.player _meth_812E() )
+                    while ( level.player ismeleeing() )
                         wait 0.05;
 
                     continue;
@@ -345,19 +345,19 @@ mech_action_smash()
             if ( isdefined( self._id_03A7 ) )
             {
                 if ( angleclamp180( self._id_03A7.angles[1] ) == angleclamp180( var_8.angles[1] ) )
-                    self._id_03A7 _meth_83F6( 0, 4 );
+                    self._id_03A7 setscriptablepartstate( 0, 4 );
                 else
-                    self._id_03A7 _meth_83F6( 0, 3 );
+                    self._id_03A7 setscriptablepartstate( 0, 3 );
             }
             else if ( self.smash_obj.model != "tag_origin" )
             {
                 var_8 thread maps\_anim::anim_single_solo( self.smash_obj, "mech_run_through" );
-                self.smash_obj _meth_8117( self.smash_obj maps\_utility::getanim( "mech_run_through" ), 0.2 );
+                self.smash_obj setanimtime( self.smash_obj maps\_utility::getanim( "mech_run_through" ), 0.2 );
             }
 
             if ( isdefined( self.col ) )
             {
-                self.col _meth_8058();
+                self.col connectpaths();
                 self.col notify( "remove" );
                 self.col delete();
             }
@@ -384,7 +384,7 @@ mech_action_smash()
             cleanup_mech_traversal_elements( var_8 );
             return;
         }
-        else if ( level.player _meth_82F3()[0] > 0 )
+        else if ( level.player getnormalizedmovement()[0] > 0 )
         {
             var_8 = choosesmashnode( level.player.origin, anglestoforward( level.player.angles ), 1 );
 
@@ -406,9 +406,9 @@ mech_action_smash()
             if ( isdefined( self._id_03A7 ) )
             {
                 if ( angleclamp180( self._id_03A7.angles[1] ) == angleclamp180( var_8.angles[1] ) )
-                    self._id_03A7 _meth_83F6( 0, 4 );
+                    self._id_03A7 setscriptablepartstate( 0, 4 );
                 else
-                    self._id_03A7 _meth_83F6( 0, 3 );
+                    self._id_03A7 setscriptablepartstate( 0, 3 );
             }
 
             var_18 = [ level.player.rig ];
@@ -427,7 +427,7 @@ mech_action_smash()
 
             if ( isdefined( self.col ) )
             {
-                self.col _meth_8058();
+                self.col connectpaths();
                 self.col notify( "remove" );
                 self.col delete();
             }
@@ -445,8 +445,8 @@ mech_action_smash()
 
             var_8 waittill( "mech_anim_done" );
             common_scripts\utility::flag_clear( "flag_force_hud_ready" );
-            _func_0D3( "mechHide", 0 );
-            level.player _meth_804F();
+            setsaveddvar( "mechHide", 0 );
+            level.player unlink();
             level.player.rig delete();
 
             if ( level.allow_threat_paint )
@@ -462,16 +462,16 @@ mech_action_smash()
 
 smash_surface_float()
 {
-    level.player.rig _meth_804D( self );
+    level.player.rig linkto( self );
     var_0 = self.origin + anglestoforward( self.angles ) * 64 + ( 0, 0, 64 );
     var_0 = maps\_utility::groundpos( var_0 );
     var_1 = getanimlength( level.player.rig maps\_utility::getanim( "mech_run_through" ) );
 
     if ( isdefined( var_0 ) )
-        self _meth_82AE( var_0, var_1 );
+        self moveto( var_0, var_1 );
 
     wait(var_1);
-    level.player.rig _meth_804F();
+    level.player.rig unlink();
     wait 0.05;
     self delete();
 }
@@ -530,7 +530,7 @@ choosesmashnode( var_0, var_1, var_2, var_3 )
 
 cansmash( var_0, var_1 )
 {
-    if ( self _meth_817C() != "stand" )
+    if ( self getstance() != "stand" )
         return 0;
 
     if ( distance( ( 0, 0, self.origin[2] ), ( 0, 0, var_0.origin[2] ) ) > 64 )
@@ -582,14 +582,14 @@ smash_throw_solo()
     self.allowdeath = 1;
     level.player maps\_playermech_code::disable_stencil( self );
     self.noragdoll = 0;
-    self _meth_8023();
+    self startragdoll();
     var_0 thread maps\_anim::anim_single_solo( self, "explode_death" );
     wait 0.25;
 
     if ( isalive( self ) )
     {
         self notify( "death", level.player, "MOD_MECH_SMASH" );
-        self _meth_8052();
+        self kill();
     }
 
     var_0 delete();
@@ -597,9 +597,9 @@ smash_throw_solo()
 
 mech_action_smash_projectile()
 {
-    self.col _meth_82C0( 1 );
-    self.col _meth_82C1( 1 );
-    self.col _meth_82BE();
+    self.col setcandamage( 1 );
+    self.col setcanradiusdamage( 1 );
+    self.col solid();
     self.col endon( "remove" );
 
     if ( isdefined( self.col.hits_left ) )
@@ -631,9 +631,9 @@ mech_action_smash_projectile()
                         continue;
 
                     if ( angleclamp180( self._id_03A7.angles[1] ) == angleclamp180( var_6.angles[1] ) )
-                        self._id_03A7 _meth_83F6( 0, 1 );
+                        self._id_03A7 setscriptablepartstate( 0, 1 );
                     else
-                        self._id_03A7 _meth_83F6( 0, 2 );
+                        self._id_03A7 setscriptablepartstate( 0, 2 );
 
                     self.damaged = 1;
                 }
@@ -743,7 +743,7 @@ cleanup_mech_traversal_elements( var_0, var_1 )
 
     if ( isdefined( self.col ) )
     {
-        self.col _meth_8058();
+        self.col connectpaths();
         self.col notify( "remove" );
         self.col delete();
     }
@@ -781,7 +781,7 @@ cleanup_mech_traversal_elements( var_0, var_1 )
 connect_node()
 {
     self.state = "linked";
-    self _meth_805A();
+    self connectnode();
 }
 
 disconnect_node( var_0 )
@@ -794,7 +794,7 @@ disconnect_node( var_0 )
     else
         self.state = "disabled";
 
-    self _meth_8059();
+    self disconnectnode();
 
     if ( isdefined( self.owner ) && !isplayer( self.owner ) )
         self.owner maps\captured_mech::go_to_vol();
@@ -821,9 +821,9 @@ node_is_exposed( var_0, var_1 )
 
 mech_action_shoot()
 {
-    self._id_03A7 = _func_231( self.target, "targetname" )[0];
-    self _meth_82C0( 1 );
-    self _meth_82C1( 1 );
+    self._id_03A7 = getscriptablearray( self.target, "targetname" )[0];
+    self setcandamage( 1 );
+    self setcanradiusdamage( 1 );
     self._id_03A7 waittill( "death" );
 
     foreach ( var_1 in getnodesinradius( self.origin, self.radius, 0, self.height ) )
@@ -859,7 +859,7 @@ mech_victim_death_func()
     {
         var_0 = level.player.origin;
         var_1 = self.origin - ( var_0[0], var_0[1], self.origin[2] );
-        self _meth_81C5( self.origin, vectortoangles( var_1 ) );
+        self teleport( self.origin, vectortoangles( var_1 ) );
         self.deathanim = %death_explosion_run_f_v2;
     }
 
@@ -896,14 +896,14 @@ death_throw( var_0, var_1, var_2 )
 
     if ( var_3 <= var_1 )
     {
-        if ( !var_2 && !level.player _meth_83D8() && ( var_6 < var_4 || var_8 <= 0 ) )
+        if ( !var_2 && !level.player issprinting() && ( var_6 < var_4 || var_8 <= 0 ) )
             return 0;
 
         maps\_utility::anim_stopanimscripted();
         self.mech_death_throw = 1;
         self.allowdeath = 1;
         self notify( "death", level.player, "MOD_MECH_CRUSH" );
-        self _meth_8052();
+        self kill();
         return 1;
     }
     else if ( var_3 < 200 )
@@ -927,7 +927,7 @@ spawn_mech_rig( var_0, var_1 )
     self.rig hide();
 
     foreach ( var_3 in common_scripts\utility::array_combine( level.mechdata_left_bones, level.mechdata_right_bones ) )
-        self.rig _meth_8048( var_3 );
+        self.rig hidepart( var_3 );
 
     if ( !isdefined( var_0 ) )
         return;
@@ -938,10 +938,10 @@ spawn_mech_rig( var_0, var_1 )
         var_1 = 1;
 
     if ( var_0 )
-        self _meth_8080( self.rig, "tag_player", var_1 );
+        self playerlinktoblend( self.rig, "tag_player", var_1 );
 
     wait(var_1);
-    self _meth_807D( self.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+    self playerlinktodelta( self.rig, "tag_player", 1, 0, 0, 0, 0, 1 );
 }
 
 anim_single_mech( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
@@ -970,7 +970,7 @@ anim_single_mech( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( !isdefined( var_2 ) )
         iprintln( "Warning: no vm_anim_index for anim_single_player() call for '" + var_1 + "'" );
 
-    level.player _meth_8499();
+    level.player forceviewmodelanimationclear();
 
     if ( var_8 )
     {
@@ -985,7 +985,7 @@ anim_single_mech( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     {
         var_4 notify( "mech_anim_start" );
         self notify( "mech_anim_start" );
-        var_4 _meth_84B5( var_2 );
+        var_4 setviewmodelanim( var_2 );
         maps\_anim::anim_single( var_0, var_1, var_5, var_6, var_7 );
         var_4 notify( "mech_anim_done" );
         self notify( "mech_anim_done" );
@@ -1001,12 +1001,12 @@ anim_single_mech( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 anim_loop_vm( var_0, var_1, var_2 )
 {
     self endon( "stop_loop" );
-    var_0 _meth_84B5( var_1 );
+    var_0 setviewmodelanim( var_1 );
 
     for (;;)
     {
         wait(var_2);
-        var_0 _meth_84B6( 0 );
+        var_0 setviewmodelanimtime( 0 );
     }
 }
 
@@ -1199,7 +1199,7 @@ mech_obj_move( var_0, var_1 )
         self notify( "exit_anim_done" );
     }
 
-    self _meth_804F();
+    self unlink();
     self.rig delete();
 }
 
@@ -1210,7 +1210,7 @@ constant_quake()
     for (;;)
     {
         earthquake( 0.5, 0.05, self.origin, 128 );
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         wait 0.05;
     }
 }
@@ -1234,12 +1234,12 @@ add_idle_control( var_0, var_1 )
 
         if ( var_0.input_type == "push_forward" )
         {
-            if ( self _meth_82F3()[0] > 0 )
+            if ( self getnormalizedmovement()[0] > 0 )
                 var_3 = 1;
         }
         else if ( var_0.input_type == "pull_back" )
         {
-            if ( self _meth_82F3()[0] < 0 )
+            if ( self getnormalizedmovement()[0] < 0 )
                 var_3 = 1;
         }
 
@@ -1255,10 +1255,10 @@ add_idle_control( var_0, var_1 )
                     var_2 = 0;
 
                     if ( isdefined( var_0.main_anim_idle_vm ) )
-                        self _meth_84B8( 0 );
+                        self setadditiveviewmodelanim( 0 );
 
                     maps\_anim::anim_set_rate( var_0.guys, var_0.current_anim, 1 );
-                    self _meth_84B7( 0 );
+                    self pauseviewmodelanim( 0 );
 
                     if ( !var_1 )
                         thread constant_quake();
@@ -1275,10 +1275,10 @@ add_idle_control( var_0, var_1 )
                 {
                     var_2 = 1;
                     maps\_anim::anim_set_rate( var_0.guys, var_0.current_anim, 0 );
-                    self _meth_84B7( 1 );
+                    self pauseviewmodelanim( 1 );
 
                     if ( isdefined( var_0.main_anim_idle_vm ) )
-                        self _meth_84B8( var_0.main_anim_idle_vm );
+                        self setadditiveviewmodelanim( var_0.main_anim_idle_vm );
 
                     thread stop_constant_quake();
                 }

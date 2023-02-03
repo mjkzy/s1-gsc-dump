@@ -6,7 +6,7 @@
 main()
 {
     self.a.movement = "stop";
-    var_0 = self _meth_8194();
+    var_0 = self getturret();
     var_1 = 0;
 
     if ( issubstr( var_0.model, "_left" ) )
@@ -17,7 +17,7 @@ main()
     else
         self.primaryturretanim = %ziplinegunnerright_aim;
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8193( self.primaryturretanim );
-    self _meth_8145( self.primaryturretanim, 1, 0.2, 1 );
+    self clearanim( %body, 0.2 );
+    self setturretanim( self.primaryturretanim );
+    self setanimknobrestart( self.primaryturretanim, 1, 0.2, 1 );
 }

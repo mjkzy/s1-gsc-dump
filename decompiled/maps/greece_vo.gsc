@@ -485,8 +485,8 @@ gre_hades_death_outro_hades( var_0 )
 
 cafe_irons_speech_bink()
 {
-    level.player _meth_8512( 131, "gre_irs_teamidontneedto" );
-    level.player _meth_8512( 351, "gre_irs_webringhimdownwe" );
+    level.player playscheduledcinematicsound( 131, "gre_irs_teamidontneedto" );
+    level.player playscheduledcinematicsound( 351, "gre_irs_webringhimdownwe" );
 }
 
 startdialoguethreads()

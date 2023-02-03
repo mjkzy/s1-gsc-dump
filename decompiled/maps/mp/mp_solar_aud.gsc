@@ -14,7 +14,7 @@ watchforlasermovement( var_0 )
     var_2 = 0;
     var_3 = self getangles();
     var_4 = spawn( "script_origin", level.solar_reflector_cam_tag.origin );
-    var_4 _meth_804D( level.solar_reflector_cam_tag );
+    var_4 linkto( level.solar_reflector_cam_tag );
     thread wait_for_laser_end( var_4 );
 
     for (;;)
@@ -26,15 +26,15 @@ watchforlasermovement( var_0 )
         {
             if ( !var_2 )
             {
-                var_4 _meth_8075( "mp_solar_array_player_move" );
-                var_4 _meth_806F( 0.7, 0.1 );
+                var_4 playloopsound( "mp_solar_array_player_move" );
+                var_4 scalevolume( 0.7, 0.1 );
                 var_2 = 1;
             }
         }
         else if ( var_2 )
         {
-            var_4 _meth_806F( 0, 0.3 );
-            var_4 _meth_80AB();
+            var_4 scalevolume( 0, 0.3 );
+            var_4 stoploopsound();
             var_2 = 0;
         }
 
@@ -51,7 +51,7 @@ array_sound_start()
 wait_for_laser_end( var_0 )
 {
     self waittill( "solar_reflector_player_removed" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     wait 0.25;
     var_0 delete();
 }

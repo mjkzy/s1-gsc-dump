@@ -124,17 +124,17 @@ doteleportinstant( var_0, var_1, var_2, var_3, var_4 )
             wait(0.2 - var_9);
 
         playerteleport( var_7 );
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         earthquake( randomfloatrange( 0.25, 0.35 ), 1, self.origin, 100, self );
         playertelefragzombie( var_4, var_7 );
-        self entityradiusdamage( var_7, 300, 200 * level.wavecounter, 100 * level.wavecounter, self, "MOD_EXPLOSIVE", "teleport_zombies_mp" );
+        self radiusdamage( var_7, 300, 200 * level.wavecounter, 100 * level.wavecounter, self, "MOD_EXPLOSIVE", "teleport_zombies_mp" );
         thread playerteleportedvo();
         thread playerfixgoingunderwater();
     }
     else
     {
-        var_10 = self _meth_82F8( var_3 );
-        self _meth_82F6( var_3, var_10 + 1 );
+        var_10 = self getweaponammoclip( var_3 );
+        self setweaponammoclip( var_3, var_10 + 1 );
     }
 }
 
@@ -186,7 +186,7 @@ playertelefragzombie( var_0, var_1 )
     if ( var_0 maps\mp\zombies\_util::instakillimmune() )
         return;
 
-    var_0 _meth_8051( var_0.health + 1, var_1, self, self, "MOD_CRUSH", "teleport_zombies_mp" );
+    var_0 dodamage( var_0.health + 1, var_1, self, self, "MOD_CRUSH", "teleport_zombies_mp" );
 }
 
 playerteleportaudio()
@@ -202,7 +202,7 @@ findsafeposition( var_0, var_1, var_2 )
 
     foreach ( var_4 in level.teleport_grenade_override_triggers )
     {
-        if ( _func_22A( var_0, var_4 ) )
+        if ( ispointinvolume( var_0, var_4 ) )
         {
             var_5 = common_scripts\utility::getstruct( var_4.target, "targetname" );
             return var_5.origin;
@@ -211,7 +211,7 @@ findsafeposition( var_0, var_1, var_2 )
 
     foreach ( var_4 in level.teleport_grenade_ignore_triggers )
     {
-        if ( _func_22A( var_0, var_4 ) )
+        if ( ispointinvolume( var_0, var_4 ) )
             return;
     }
 
@@ -405,13 +405,13 @@ teleporttrace( var_0, var_1, var_2 )
     {
         var_6 = var_3 * 2;
         var_7 = var_6 * var_6;
-        var_8 = _func_220( var_5.origin, var_0 );
+        var_8 = distance2dsquared( var_5.origin, var_0 );
 
         if ( var_8 < var_7 )
             return 0;
     }
 
-    var_10 = _func_238( var_0, var_0, var_1 );
+    var_10 = playerphysicstraceinfo( var_0, var_0, var_1 );
     return var_10["fraction"] == 1;
 }
 

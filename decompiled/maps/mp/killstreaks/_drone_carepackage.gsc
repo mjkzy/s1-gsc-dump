@@ -15,7 +15,7 @@ init()
 setupcarepackagedrone( var_0, var_1 )
 {
     var_0 common_scripts\utility::make_entity_sentient_mp( self.team );
-    var_0 _meth_83F3( 1 );
+    var_0 makevehiclenotcollidewithplayers( 1 );
     var_0 addtocarepackagedronelist();
     var_0 thread removefromcarepackagedronelistondeath();
     var_0.health = level.carepackagedrone.health;
@@ -25,23 +25,23 @@ setupcarepackagedrone( var_0, var_1 )
     var_0.followspeed = 15;
     var_0.owner = self;
     var_0.team = self.team;
-    var_0 _meth_8283( var_0.speed, 10, 10 );
-    var_0 _meth_8292( 120, 90 );
-    var_0 _meth_825A( 64 );
-    var_0 _meth_8253( 4, 5, 5 );
+    var_0 vehicle_setspeed( var_0.speed, 10, 10 );
+    var_0 setyawspeed( 120, 90 );
+    var_0 setneargoalnotifydist( 64 );
+    var_0 sethoverparams( 4, 5, 5 );
     var_0.fx_tag0 = "tag_body";
 
     if ( var_1 )
     {
         var_0.usableent = spawn( "script_model", var_0.origin + ( 0, 0, 1 ) );
-        var_0.usableent _meth_80B1( "tag_origin" );
+        var_0.usableent setmodel( "tag_origin" );
         var_0.usableent.owner = self;
         var_0.usableent maps\mp\_utility::makegloballyusablebytype( "killstreakRemote", level.carepackagedrone.releasestring, self );
     }
 
     var_2 = 45;
     var_3 = 45;
-    var_0 _meth_8294( var_2, var_3 );
+    var_0 setmaxpitchroll( var_2, var_3 );
     var_4 = 10000;
     var_5 = 150;
     var_0.attractor = missile_createattractorent( var_0, var_4, var_5 );
@@ -142,7 +142,7 @@ addtocarepackagedronelist()
 
 removefromcarepackagedronelistondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death" );
     level.carepackagedrones = common_scripts\utility::array_remove( level.carepackagedrones, self );
 }

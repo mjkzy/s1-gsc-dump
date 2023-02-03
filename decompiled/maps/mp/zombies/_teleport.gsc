@@ -4,8 +4,8 @@
 init()
 {
     level._effect["trash_chute_burst"] = loadfx( "vfx/props/dlc_prop_trash_chute_burst" );
-    map_restart( "incinerator_hatch_open" );
-    map_restart( "incinerator_hatch_close" );
+    precachempanim( "incinerator_hatch_open" );
+    precachempanim( "incinerator_hatch_close" );
 
     if ( !isdefined( level.zmteleportreadyhint ) )
         level.zmteleportreadyhint = &"ZOMBIES_TELEPORT_USE";
@@ -83,8 +83,8 @@ teleporter_disable()
         self waittill( "teleportReady" );
 
     self.disabled = 1;
-    self.start _meth_80DB( &"ZOMBIES_EMPTY_STRING" );
-    self.start _meth_80DC( &"ZOMBIES_EMPTY_STRING" );
+    self.start sethintstring( &"ZOMBIES_EMPTY_STRING" );
+    self.start setsecondaryhintstring( &"ZOMBIES_EMPTY_STRING" );
     self.start maps\mp\zombies\_util::tokenhintstring( 0 );
 }
 
@@ -99,9 +99,9 @@ teleporter_enable()
         return;
 
     self.disabled = 0;
-    self.start _meth_80DB( level.zmteleportreadyhint );
+    self.start sethintstring( level.zmteleportreadyhint );
     var_0 = teleporter_get_cost();
-    self.start _meth_80DC( maps\mp\zombies\_util::getcoststring( var_0 ) );
+    self.start setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( var_0 ) );
     self.start maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_0 ) );
     self.start maps\mp\zombies\_util::tokenhintstring( 1 );
 }
@@ -113,7 +113,7 @@ teleporter_run()
 
     if ( isdefined( self.script_flag_true ) )
     {
-        self.start _meth_80DB( &"ZOMBIES_REQUIRES_POWER" );
+        self.start sethintstring( &"ZOMBIES_REQUIRES_POWER" );
         self.start maps\mp\zombies\_util::tokenhintstring( 0 );
         common_scripts\utility::flag_wait( self.script_flag_true );
     }
@@ -126,8 +126,8 @@ teleporter_run()
 
     for (;;)
     {
-        self.start _meth_80DA( "HINT_NOICON" );
-        self.start _meth_80DB( level.zmteleportreadyhint );
+        self.start setcursorhint( "HINT_NOICON" );
+        self.start sethintstring( level.zmteleportreadyhint );
         self.start maps\mp\zombies\_util::tokenhintstring( 1 );
         self.inuse = 0;
         self notify( "teleportReady" );
@@ -163,7 +163,7 @@ teleporter_run()
 
         self.inuse = 1;
         level notify( "teleportUse", self, var_2 );
-        self.start _meth_80DB( &"ZOMBIES_EMPTY_STRING" );
+        self.start sethintstring( &"ZOMBIES_EMPTY_STRING" );
         self.start maps\mp\zombies\_util::tokenhintstring( 0 );
 
         if ( isdefined( level.zmteleporterused ) )
@@ -173,7 +173,7 @@ teleporter_run()
         {
             playfx( common_scripts\utility::getfx( "trash_chute_burst" ), self.hatch.origin, anglestoup( self.hatch.angles ), -1 * anglestoforward( self.hatch.angles ) );
             playsoundatpos( self.hatch.origin, "trash_chute_teleport_open" );
-            self.hatch _meth_8279( "incinerator_hatch_open", "hatch" );
+            self.hatch scriptmodelplayanim( "incinerator_hatch_open", "hatch" );
             self.hatch waittillmatch( "hatch", "teleport" );
         }
 
@@ -183,7 +183,7 @@ teleporter_run()
 
         if ( isdefined( self.hatch ) )
         {
-            self.hatch _meth_8279( "incinerator_hatch_close", "hatch" );
+            self.hatch scriptmodelplayanim( "incinerator_hatch_close", "hatch" );
             self.hatch waittillmatch( "hatch", "end" );
         }
     }
@@ -199,7 +199,7 @@ teleport_players_loop()
 
         foreach ( var_2 in level.players )
         {
-            if ( var_2 _meth_80A9( self.start ) )
+            if ( var_2 istouching( self.start ) )
                 var_0[var_0.size] = var_2;
         }
 
@@ -221,7 +221,7 @@ teleporter_update_cost()
     foreach ( var_1 in level.zombieteleporters )
     {
         var_2 = var_1 teleporter_get_cost();
-        var_1.start _meth_80DC( maps\mp\zombies\_util::getcoststring( var_2 ) );
+        var_1.start setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( var_2 ) );
         var_1.start maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_2 ) );
         var_1.start maps\mp\zombies\_util::tokenhintstring( 1 );
     }
@@ -275,7 +275,7 @@ player_teleport_unlink( var_0 )
 {
     self endon( "disconnect" );
     wait(var_0);
-    self _meth_804F();
+    self unlink();
 }
 
 teleport_players_through_chute( var_0, var_1, var_2 )
@@ -291,10 +291,10 @@ teleport_players_through_chute( var_0, var_1, var_2 )
         if ( !isdefined( var_6 ) || !isalive( var_6 ) )
             continue;
 
-        var_7 = var_6 _meth_817C();
+        var_7 = var_6 getstance();
 
         if ( var_7 == "prone" )
-            var_6 _meth_817D( "crouch" );
+            var_6 setstance( "crouch" );
 
         var_6 playsoundtoplayer( "trash_chute_teleport", var_6 );
         var_8 = level.teleportrooms[level.teleportroomindex];
@@ -313,7 +313,7 @@ teleport_players_through_chute( var_0, var_1, var_2 )
             if ( !isdefined( var_8.playerlinkent ) )
             {
                 var_8.playerlinkent = spawn( "script_model", var_8.origin );
-                var_8.playerlinkent _meth_80B1( "tag_origin" );
+                var_8.playerlinkent setmodel( "tag_origin" );
                 var_8.playerlinkent.angles = var_8.angles;
             }
 
@@ -322,8 +322,8 @@ teleport_players_through_chute( var_0, var_1, var_2 )
             var_13 = level.zmteleportlookarcs[1];
             var_14 = level.zmteleportlookarcs[2];
             var_15 = level.zmteleportlookarcs[3];
-            var_6 _meth_807D( var_8.playerlinkent, "tag_origin", 1, var_12, var_13, var_14, var_15 );
-            var_8.playerlinkent _meth_82AE( var_11.origin + var_4, var_3, var_3, 0 );
+            var_6 playerlinktodelta( var_8.playerlinkent, "tag_origin", 1, var_12, var_13, var_14, var_15 );
+            var_8.playerlinkent moveto( var_11.origin + var_4, var_3, var_3, 0 );
             var_6 thread player_teleport_unlink( var_3 );
         }
 

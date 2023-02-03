@@ -19,7 +19,7 @@ patrol( var_0 )
     thread waittill_combat();
     thread waittill_death();
     self.goalradius = 32;
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.disablearrivals = 1;
     self.disableexits = 1;
     self.allowdeath = 1;
@@ -207,7 +207,7 @@ patrol( var_0 )
             if ( isdefined( var_13 ) )
             {
                 if ( isdefined( var_7.script_faceangles ) )
-                    self _meth_818F( "face angle", var_7.angles[1] );
+                    self orientmode( "face angle", var_7.angles[1] );
 
                 self.patrol_script_animation = 1;
                 var_18 = var_9[var_13];
@@ -309,7 +309,7 @@ stand_up_if_necessary()
 
         if ( isdefined( var_0 ) )
         {
-            self _meth_8110( "stand_up", var_0, %root, 1 );
+            self setflaggedanimknoballrestart( "stand_up", var_0, %root, 1 );
             animscripts\shared::donotetracks( "stand_up" );
         }
     }
@@ -318,11 +318,11 @@ stand_up_if_necessary()
 patrol_resume_move_start_func()
 {
     self endon( "enemy" );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face current" );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face current" );
     stand_up_if_necessary();
     var_0 = level.scr_anim["generic"]["patrol_radio_in_clear"];
-    self _meth_8110( "radio", var_0, %root, 1 );
+    self setflaggedanimknoballrestart( "radio", var_0, %root, 1 );
     animscripts\shared::donotetracks( "radio" );
     turn_180_move_start_func();
 }
@@ -345,8 +345,8 @@ turn_180_move_start_func()
 
     if ( vectordot( var_3, var_1 ) < -0.5 )
     {
-        self _meth_818E( "zonly_physics", 0 );
-        self _meth_818F( "face current" );
+        self animmode( "zonly_physics", 0 );
+        self orientmode( "face current" );
         stand_up_if_necessary();
 
         if ( isdefined( self.script_animation ) && isdefined( level.scr_anim["generic"]["patrol_turn180_" + self.script_animation] ) )
@@ -354,13 +354,13 @@ turn_180_move_start_func()
         else
             var_4 = level.scr_anim["generic"]["patrol_turn180"];
 
-        self _meth_8110( "move", var_4, %root, 1 );
+        self setflaggedanimknoballrestart( "move", var_4, %root, 1 );
 
         if ( animhasnotetrack( var_4, "code_move" ) )
         {
             animscripts\shared::donotetracks( "move" );
-            self _meth_818F( "face motion" );
-            self _meth_818E( "none", 0 );
+            self orientmode( "face motion" );
+            self animmode( "none", 0 );
         }
 
         animscripts\shared::donotetracks( "move" );
@@ -442,10 +442,10 @@ waittill_combat()
     {
         maps\_utility::clear_generic_idle_anim();
         maps\_utility::clear_run_anim();
-        self _meth_81CA( "stand", "crouch", "prone" );
+        self allowedstances( "stand", "crouch", "prone" );
         self.disablearrivals = 0;
         self.disableexits = 0;
-        self _meth_8141();
+        self stopanimscripted();
         self notify( "stop_animmode" );
         self.script_nobark = undefined;
         self.goalradius = level.default_goalradius;
@@ -534,7 +534,7 @@ linkpet()
         return;
 
     waittillframeend;
-    var_0 = _func_0D7( self.team, "dog" );
+    var_0 = getaispeciesarray( self.team, "dog" );
     var_1 = undefined;
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
@@ -604,7 +604,7 @@ pet_patrol()
         else
             self.patrol_goal_pos = self.origin;
 
-        self _meth_81A6( self.patrol_goal_pos );
+        self setgoalpos( self.patrol_goal_pos );
         wait 0.05;
     }
 }
@@ -693,7 +693,7 @@ pet_patrol_get_available_origin( var_0, var_1 )
         if ( var_0[var_3].checked )
             continue;
 
-        if ( self _meth_81C3( var_0[var_3].origin ) )
+        if ( self maymovetopoint( var_0[var_3].origin ) )
             return var_3;
 
         var_0[var_3].checked = 1;

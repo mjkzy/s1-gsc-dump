@@ -141,7 +141,7 @@ ambient_flare_fx()
 
 stop_ambient_flare_fx()
 {
-    _func_292( 200 );
+    stopclientexploder( 200 );
 }
 
 drill_dust_fx()

@@ -59,7 +59,7 @@ main()
 
 end_script()
 {
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
     self.blockgoalpos = 0;
 }
 
@@ -133,7 +133,7 @@ shoulddoextendedkill( var_0 )
     if ( abs( var_11[2] - var_10[2] ) > var_1 )
         return undefined;
 
-    if ( !self _meth_83E6( var_0.origin + ( 0, 0, 4 ), var_11 + ( 0, 0, 4 ), self.radius, self.height ) )
+    if ( !self aiphysicstracepassed( var_0.origin + ( 0, 0, 4 ), var_11 + ( 0, 0, 4 ), self.radius, self.height ) )
         return undefined;
 
     return var_6;
@@ -143,13 +143,13 @@ doextendedkill( var_0 )
 {
     var_1 = "attack_extended";
     domeleedamage( self.curmeleetarget, self.curmeleetarget.health, "MOD_MELEE_DOG" );
-    var_2 = self _meth_83D3( var_1, var_0 );
+    var_2 = self getanimentry( var_1, var_0 );
     thread extendedkill_sticktovictim( var_2, self.curmeleetarget.origin, self.curmeleetarget.angles );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_1, var_0, "attack", "end" );
     self notify( "kill_stick" );
     self.curmeleetarget = undefined;
-    self _meth_8397( "anim deltas" );
-    self _meth_804F();
+    self scragentsetanimmode( "anim deltas" );
+    self unlink();
 }
 
 extendedkill_sticktovictim( var_0, var_1, var_2 )
@@ -162,9 +162,9 @@ extendedkill_sticktovictim( var_0, var_1, var_2 )
     if ( isalive( self.curmeleetarget ) )
         return;
 
-    var_3 = self.curmeleetarget _meth_842C();
-    self _meth_804D( var_3 );
-    self _meth_8428( var_0, var_1, var_2 );
+    var_3 = self.curmeleetarget getcorpseentity();
+    self linkto( var_3 );
+    self scragentdoanimrelative( var_0, var_1, var_2 );
 }
 
 dostandardkill( var_0, var_1 )
@@ -174,7 +174,7 @@ dostandardkill( var_0, var_1 )
 
     if ( !var_1 )
     {
-        if ( self _meth_838E( self.curmeleetarget ) )
+        if ( self agentcanseesentient( self.curmeleetarget ) )
         {
             var_4 = maps\mp\agents\_scriptedagents::droppostoground( self.curmeleetarget.origin );
 
@@ -198,7 +198,7 @@ dostandardkill( var_0, var_1 )
 
     self.lastmeleefailedmypos = undefined;
     self.lastmeleefailedpos = undefined;
-    var_5 = self _meth_83D3( var_2, 0 );
+    var_5 = self getanimentry( var_2, 0 );
     var_6 = getanimlength( var_5 );
     var_7 = getnotetracktimes( var_5, "dog_melee" );
 
@@ -207,7 +207,7 @@ dostandardkill( var_0, var_1 )
     else
         var_8 = var_6;
 
-    self _meth_839F( self.origin, var_0, var_8 );
+    self scragentdoanimlerp( self.origin, var_0, var_8 );
     thread updatelerppos( self.curmeleetarget, var_8, var_1 );
     maps\mp\agents\_scriptedagents::playanimnuntilnotetrack( var_2, 0, "attack", "dog_melee" );
     self notify( "cancel_updatelerppos" );
@@ -225,12 +225,12 @@ dostandardkill( var_0, var_1 )
     self.curmeleetarget = undefined;
 
     if ( var_3 )
-        self _meth_8395( 0, 1 );
+        self scragentsetanimscale( 0, 1 );
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
-    self _meth_8398( "gravity" );
-    self _meth_8397( "anim deltas" );
+    self scragentsetphysicsmode( "gravity" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scriptedagents::waituntilnotetrack( "attack", "end" );
 }
 
@@ -257,7 +257,7 @@ updatelerppos( var_0, var_1, var_2 )
         if ( !isdefined( var_5 ) )
             break;
 
-        self _meth_839F( self.origin, var_5, var_3 );
+        self scragentdoanimlerp( self.origin, var_5, var_3 );
     }
 }
 
@@ -314,7 +314,7 @@ domeleedamage( var_0, var_1, var_2 )
     if ( isprotectedbyriotshield( var_0 ) )
         return;
 
-    var_0 _meth_8051( var_1, self.origin, self, self, var_2 );
+    var_0 dodamage( var_1, self.origin, self, self, var_2 );
 }
 
 meleefailed()

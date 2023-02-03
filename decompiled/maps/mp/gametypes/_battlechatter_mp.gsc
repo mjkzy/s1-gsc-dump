@@ -119,7 +119,7 @@ onplayerspawned()
 
         var_3 = "";
 
-        if ( !isagent( self ) && self _meth_843A() )
+        if ( !isagent( self ) && self hasfemalecustomizationmodel() )
             var_3 = "w";
 
         self.pers["voiceNum"] = level.voice_count[self.team][var_3];
@@ -200,7 +200,7 @@ grenadeproximitytracking()
                         continue;
                 }
 
-                if ( _func_1DF( var_6.weaponname ) != "offhand" && weaponclass( var_6.weaponname ) == "grenade" )
+                if ( weaponinventorytype( var_6.weaponname ) != "offhand" && weaponclass( var_6.weaponname ) == "grenade" )
                     continue;
             }
 
@@ -486,7 +486,7 @@ threatcallouttracking()
         if ( !cansay( "callout_location" ) && !cansay( "callout_generic" ) )
             continue;
 
-        var_0 = self _meth_82EB();
+        var_0 = self getsightedplayers();
 
         if ( !isdefined( var_0 ) )
             continue;
@@ -494,7 +494,7 @@ threatcallouttracking()
         var_1 = undefined;
         var_2 = 4000000;
 
-        if ( self _meth_8340() > 0.7 )
+        if ( self playerads() > 0.7 )
             var_2 = 6250000;
 
         foreach ( var_4 in var_0 )
@@ -518,8 +518,8 @@ threatcallouttracking()
 
         if ( isdefined( var_1 ) && cansay( "callout_generic" ) )
         {
-            var_7 = var_1 _meth_8312();
-            var_8 = var_1 _meth_84F8();
+            var_7 = var_1 getcurrentprimaryweapon();
+            var_8 = var_1 iscloaked();
             var_9 = isdefined( var_1.exo_hover_on ) && var_1.exo_hover_on;
             var_10 = isdefined( var_1.overclock_on ) && var_1.overclock_on;
             var_11 = isdefined( var_1.exo_shield_on ) && var_1.exo_shield_on;
@@ -606,7 +606,7 @@ dosound( var_0, var_1, var_2 )
 
     var_3 = self.pers["team"];
     level addspeaker( self, var_3 );
-    var_4 = !level.istactical || !maps\mp\_utility::_hasperk( "specialty_coldblooded" ) && ( isagent( self ) || self _meth_82EA() );
+    var_4 = !level.istactical || !maps\mp\_utility::_hasperk( "specialty_coldblooded" ) && ( isagent( self ) || self issighted() );
 
     if ( var_2 && var_4 )
     {
@@ -651,7 +651,7 @@ dothreatcalloutresponse( var_0, var_1 )
         var_3 = self.team;
 
         if ( !isagent( self ) )
-            var_4 = self _meth_843A();
+            var_4 = self hasfemalecustomizationmodel();
         else
             var_4 = 0;
 
@@ -674,7 +674,7 @@ dothreatcalloutresponse( var_0, var_1 )
                 continue;
 
             if ( !isagent( var_8 ) )
-                var_9 = var_8 _meth_843A();
+                var_9 = var_8 hasfemalecustomizationmodel();
             else
                 var_9 = 0;
 
@@ -842,7 +842,7 @@ getvalidlocation( var_0 )
 get_all_my_locations()
 {
     var_0 = anim.bcs_locations;
-    var_1 = self _meth_80AA( var_0 );
+    var_1 = self getistouchingentities( var_0 );
     var_2 = [];
 
     foreach ( var_4 in var_1 )

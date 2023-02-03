@@ -26,7 +26,7 @@ playercamouflagemode( var_0 )
 
     if ( isdefined( self.crategodmode ) && self.crategodmode )
     {
-        var_2 = self _meth_8447( "ui_zm_camo" );
+        var_2 = self getclientomnvar( "ui_zm_camo" );
 
         if ( var_2 >= var_1 )
             return;
@@ -40,7 +40,7 @@ playercamouflagemode( var_0 )
     self playlocalsound( "zmb_ss_camo_use" );
     self.crategodmode++;
     maps\mp\zombies\_util::setzombiesignoreme( 1 );
-    self _meth_82FB( "ui_zm_camo", var_1 );
+    self setclientomnvar( "ui_zm_camo", var_1 );
     playercamouflagemodewait( var_0 );
 
     if ( isdefined( self ) )

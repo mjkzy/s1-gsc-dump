@@ -42,7 +42,7 @@ runhordezombies()
                     waitframe();
             }
             else
-                var_1 _meth_8315( var_1.hordeclassweapons[var_1 _meth_8447( "ui_horde_player_class" )]["primary"] );
+                var_1 switchtoweapon( var_1.hordeclassweapons[var_1 getclientomnvar( "ui_horde_player_class" )]["primary"] );
         }
 
         if ( isdefined( var_1.enteringgoliath ) )
@@ -68,11 +68,11 @@ runhordezombies()
     thread zombiesdestroykillstreaks();
 
     foreach ( var_1 in level.players )
-        var_1 _meth_82FB( "ui_hide_hints_hud", 1 );
+        var_1 setclientomnvar( "ui_hide_hints_hud", 1 );
 
     level thread zombiesmusic();
     level thread hordednaexplosion();
-    _func_2A9( "coop_outro" );
+    preloadcinematicforall( "coop_outro" );
     level thread monitorgameended();
 }
 
@@ -97,15 +97,15 @@ disablekillstreaks()
             var_1.actionslotenabled[var_2] = 0;
         }
 
-        var_1 _meth_82FB( "ks_count1", 0 );
-        var_1 _meth_82FB( "ks_count_updated", 1 );
+        var_1 setclientomnvar( "ks_count1", 0 );
+        var_1 setclientomnvar( "ks_count_updated", 1 );
     }
 }
 
 monitorgameended()
 {
     level waittill( "game_ended" );
-    _func_2AA( "coop_outro" );
+    stopcinematicforall( "coop_outro" );
 }
 
 hordednaexplosion()
@@ -165,20 +165,20 @@ hordednaexplosion()
     {
         var_10 show();
         var_10 makeusable();
-        var_10 _meth_83FA( 4, 1 );
+        var_10 hudoutlineenable( 4, 1 );
         var_10 thread zombieweaponpickup();
     }
 
-    _func_222( 60 );
+    activateclientexploder( 60 );
 
     foreach ( var_13 in level.hordedome )
         var_13 hide();
 
     foreach ( var_4 in level.players )
     {
-        var_4 _meth_8310();
-        var_4 _meth_82FB( "ui_horde_zombie_hud", 1 );
-        var_4 _meth_82FB( "ui_hide_hints_hud", 0 );
+        var_4 takeallweapons();
+        var_4 setclientomnvar( "ui_horde_zombie_hud", 1 );
+        var_4 setclientomnvar( "ui_hide_hints_hud", 0 );
 
         if ( isdefined( var_4.hasselfrevive ) )
             var_4.hasselfrevive = 0;
@@ -211,7 +211,7 @@ startinteriordnadrones( var_0 )
     playfxontag( level._effect["bagh_dna_bomb_drone_loop"], var_0, "tag_origin" );
     wait 0.25;
     var_1 = common_scripts\utility::getstruct( var_0.target, "targetname" );
-    var_0 _meth_82AE( var_1.origin, 1, 0.2, 0.5 );
+    var_0 moveto( var_1.origin, 1, 0.2, 0.5 );
     var_0 thread dnadronereachedgoal( var_1 );
     var_2 = int( var_0.script_parameters );
     level.dnadrones[var_2][level.dnadrones[var_2].size] = var_0;
@@ -224,9 +224,9 @@ startexteriordnadrones()
     foreach ( var_1 in level.dnadronelocs )
     {
         var_2 = spawn( "script_model", var_1.origin + ( 0, 0, 6000 ) );
-        var_2 _meth_80B1( "sentinel_survey_drone_sphere_ai_swarm" );
+        var_2 setmodel( "sentinel_survey_drone_sphere_ai_swarm" );
         var_2.drone_travel_time = randomfloatrange( 7.5, 9.0 );
-        var_2 _meth_82AE( var_1.origin, var_2.drone_travel_time, 0.5, 0.2 );
+        var_2 moveto( var_1.origin, var_2.drone_travel_time, 0.5, 0.2 );
         var_2 thread dnadronereachedgoal( var_1 );
         var_3 = int( var_1.script_parameters );
         var_4 = bullettrace( var_1.origin, var_1.origin + ( 0, 0, 6001 ), 0, undefined, 0, 0, 0, 0, 1 );
@@ -268,7 +268,7 @@ _id_4136()
     level waittill( "start_extraction" );
 
     foreach ( var_2 in level.players )
-        var_2 _meth_82FB( "ui_hide_hud", 0 );
+        var_2 setclientomnvar( "ui_hide_hud", 0 );
 
     maps\mp\gametypes\horde::sethudtimer( "escape_time", 40 );
 
@@ -347,9 +347,9 @@ dnadronereachedgoal( var_0 )
     {
         var_2 = ( 0, 0, randomintrange( 16, 24 ) );
         var_3 = ( 0, 0, randomintrange( -24, -16 ) );
-        self _meth_82AE( var_1 + var_2, 1, 0.3, 0.3 );
+        self moveto( var_1 + var_2, 1, 0.3, 0.3 );
         wait 1;
-        self _meth_82AE( var_1 + var_3, 1, 0.3, 0.3 );
+        self moveto( var_1 + var_3, 1, 0.3, 0.3 );
         wait 1;
     }
 }
@@ -362,8 +362,8 @@ dnadronesexplode()
     {
         var_1 playsound( "bagh_dna_bombs_main" );
         var_1 playsound( "dna_bomb_gas_start" );
-        var_1 _meth_80AD( "dna_carpet_bomb" );
-        var_1 _meth_847A( "mp_prison_z_zombiefog", 1.0 );
+        var_1 playrumbleonentity( "dna_carpet_bomb" );
+        var_1 setclienttriggervisionset( "mp_prison_z_zombiefog", 1.0 );
         level thread dnaexplosionscreenshake( var_1 );
     }
 
@@ -404,7 +404,7 @@ dnablackout()
         self.blackoutoverlay = newclienthudelem( self );
         self.blackoutoverlay.x = 0;
         self.blackoutoverlay.y = 0;
-        self.blackoutoverlay _meth_80CC( "black", 640, 480 );
+        self.blackoutoverlay setshader( "black", 640, 480 );
         self.blackoutoverlay.alignx = "left";
         self.blackoutoverlay.aligny = "top";
         self.blackoutoverlay.horzalign = "fullscreen";
@@ -414,14 +414,14 @@ dnablackout()
 
     wait 1;
     self freezecontrols( 1 );
-    self _meth_831D();
-    self _meth_831F();
-    self _meth_84BF();
-    self _meth_817D( "prone" );
-    self _meth_8118( 0 );
-    self _meth_8119( 0 );
-    self _meth_8130( 0 );
-    self _meth_8304( 0 );
+    self disableweapons();
+    self disableoffhandweapons();
+    self disableoffhandsecondaryweapons();
+    self setstance( "prone" );
+    self allowstand( 0 );
+    self allowcrouch( 0 );
+    self allowmelee( 0 );
+    self allowsprint( 0 );
     thread play_backout_sound_breath();
     self.blackoutoverlay hordefadeinblackout( 2, 1 );
     level notify( "blackout_done" );
@@ -429,15 +429,15 @@ dnablackout()
     self.blackoutoverlay thread hordefadeoutblackout( 5, 0 );
     self freezecontrols( 0 );
     wait 4;
-    self _meth_8130( 1 );
-    self _meth_8118( 1 );
-    self _meth_8119( 1 );
-    self _meth_817D( "stand" );
+    self allowmelee( 1 );
+    self allowstand( 1 );
+    self allowcrouch( 1 );
+    self setstance( "stand" );
     wait 0.65;
-    self _meth_8304( 1 );
-    self _meth_831E();
-    self _meth_830E( "iw5_titan45_mp_xmags" );
-    self _meth_8316( "iw5_titan45_mp_xmags" );
+    self allowsprint( 1 );
+    self enableweapons();
+    self giveweapon( "iw5_titan45_mp_xmags" );
+    self switchtoweaponimmediate( "iw5_titan45_mp_xmags" );
     thread zombiegivemaxammo();
     wait 0.5;
     level notify( "end_blackout_sounds" );
@@ -450,7 +450,7 @@ finalblackout( var_0 )
     var_0.blackoutoverlay hordefadeinblackout( 1, 1 );
     var_0 freezecontrols( 1 );
     var_0 setdemigod( 1 );
-    var_0 _meth_82FB( "ui_hide_hud", 1 );
+    var_0 setclientomnvar( "ui_hide_hud", 1 );
 }
 
 play_backout_sound_heartbeat()
@@ -518,10 +518,10 @@ hordestartzombieoutro()
 
             wait 1;
             thread outro_horde_cleanup();
-            _func_2A8( "coop_outro", 1 );
+            playcinematicforall( "coop_outro", 1 );
 
             foreach ( var_2 in level.players )
-                var_2 _meth_80F9( "COOP_UNDEAD_SURVIVOR" );
+                var_2 giveachievement( "COOP_UNDEAD_SURVIVOR" );
 
             break;
         }
@@ -530,16 +530,16 @@ hordestartzombieoutro()
     }
 
     wait 55;
-    _func_2AA( "coop_outro" );
+    stopcinematicforall( "coop_outro" );
 
     foreach ( var_2 in level.players )
     {
-        if ( !var_2 _meth_8525( "requirement_beatenZombies" ) )
+        if ( !var_2 gethordeplayerdata( "requirement_beatenZombies" ) )
         {
-            var_2 _meth_8526( "requirement_beatenZombies", 1 );
-            var_2 _meth_82FB( "ui_hide_hud", 0 );
-            var_2 _meth_82FB( "ui_horde_zombie_hud", 1 );
-            var_2 _meth_82FB( "ui_horde_loot_unlocked", 1 );
+            var_2 sethordeplayerdata( "requirement_beatenZombies", 1 );
+            var_2 setclientomnvar( "ui_hide_hud", 0 );
+            var_2 setclientomnvar( "ui_horde_zombie_hud", 1 );
+            var_2 setclientomnvar( "ui_horde_loot_unlocked", 1 );
         }
     }
 
@@ -569,7 +569,7 @@ zombiegivemaxammo()
     for (;;)
     {
         wait 5;
-        self _meth_8332( "iw5_titan45_mp_xmags", 1 );
+        self givemaxammo( "iw5_titan45_mp_xmags", 1 );
     }
 }
 
@@ -643,8 +643,8 @@ zombieweaponpickup()
     if ( isdefined( self.script_parameters ) )
     {
         var_1 = weaponclipsize( self.script_parameters );
-        var_0 _meth_82F7( self.script_parameters, 500 );
-        var_0 _meth_82F6( self.script_parameters, var_1 );
+        var_0 setweaponammostock( self.script_parameters, 500 );
+        var_0 setweaponammoclip( self.script_parameters, var_1 );
     }
 }
 
@@ -657,18 +657,18 @@ zombiesdisablearmories()
         foreach ( var_3 in level.players )
         {
             var_1 maps\mp\_entityheadicons::setheadicon( "none", "", ( 0, 0, 0 ) );
-            var_3 _meth_82FB( "ui_horde_show_armory", 0 );
-            var_3 _meth_832B();
+            var_3 setclientomnvar( "ui_horde_show_armory", 0 );
+            var_3 enableusability();
         }
 
         if ( isdefined( var_1.headicon ) )
             var_1.headicon destroy();
 
         maps\mp\_utility::_objective_delete( var_1.objectiveindex );
-        var_1 _meth_83FB();
+        var_1 hudoutlinedisable();
 
         foreach ( var_6 in var_1.monitors )
-            var_6 _meth_83FB();
+            var_6 hudoutlinedisable();
 
         var_1 makeunusable();
     }
@@ -700,7 +700,7 @@ zombiesdestroykillstreaks()
     foreach ( var_9 in var_7 )
     {
         var_2 = var_9.maxhealth + 1;
-        var_9 _meth_8051( var_2, var_9.origin, var_3, var_3, var_0, var_1 );
+        var_9 dodamage( var_2, var_9.origin, var_3, var_3, var_0, var_1 );
         wait 0.05;
     }
 
@@ -708,7 +708,7 @@ zombiesdestroykillstreaks()
     {
         if ( isdefined( var_12.missileweapon ) && isdefined( var_12.rocket ) )
         {
-            var_12.rocket _meth_8495( 0 );
+            var_12.rocket setdamagecallbackon( 0 );
             var_12.missileweapon notify( "ms_early_exit" );
             var_12.rocket maps\mp\killstreaks\_missile_strike::missilestrikeondeath( var_3, var_1, var_0, var_2 );
             var_12.missileweapon = undefined;
@@ -743,9 +743,9 @@ zombiepreloadweapons( var_0 )
 {
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
-    var_0 _meth_8511( [ "iw5_em1_mp", "iw5_sn6_mp", "iw5_maul_mp", "iw5_lsat_mp" ] );
+    var_0 loadweapons( [ "iw5_em1_mp", "iw5_sn6_mp", "iw5_maul_mp", "iw5_lsat_mp" ] );
     wait 3;
-    var_0 _meth_8511( [ "iw5_hbra3_mp", "iw5_asm1_mp", "iw5_uts19_mp" ] );
+    var_0 loadweapons( [ "iw5_hbra3_mp", "iw5_asm1_mp", "iw5_uts19_mp" ] );
 }
 
 zombiesetspeedscale( var_0 )
@@ -784,7 +784,7 @@ hordesetzombiemodel( var_0 )
     var_12 = var_7[var_9][var_10];
     var_13 = var_8[var_9][var_11];
     self detachall();
-    self _meth_80B1( var_12 );
+    self setmodel( var_12 );
     self.headmodel = var_13;
     self attach( self.headmodel, "", 1 );
 }

@@ -89,8 +89,8 @@ civilian_pool_spawner_setup( var_0 )
     {
         civilian_head_and_body_swap( level.civilian_african_male_d );
         var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_2 _meth_80B1( "base_pool_stick_01" );
-        var_2 _meth_804D( self, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 setmodel( "base_pool_stick_01" );
+        var_2 linkto( self, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         thread poolhouse_prop_cleanup( var_2 );
         self.fovcosinez = cos( 20 );
     }
@@ -99,8 +99,8 @@ civilian_pool_spawner_setup( var_0 )
     {
         civilian_head_and_body_swap( level.civilian_african_male_c );
         var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_2 _meth_80B1( "base_pool_stick_01" );
-        var_2 _meth_804D( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_2 setmodel( "base_pool_stick_01" );
+        var_2 linkto( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         thread poolhouse_prop_cleanup( var_2 );
         self.fovcosinez = cos( 20 );
     }
@@ -109,8 +109,8 @@ civilian_pool_spawner_setup( var_0 )
     {
         civilian_head_and_body_swap( level.civilian_urban_male_e );
         var_3 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3 _meth_80B1( "cellphone_kit_03" );
-        var_3 _meth_804D( self, "tag_inhand", ( 0, -1, -3 ), ( 0, 180, 0 ) );
+        var_3 setmodel( "cellphone_kit_03" );
+        var_3 linkto( self, "tag_inhand", ( 0, -1, -3 ), ( 0, 180, 0 ) );
         thread poolhouse_prop_cleanup( var_3 );
         self.fovcosinez = cos( 20 );
     }
@@ -225,8 +225,8 @@ civilian_walker_phone()
     level.active_civilians = common_scripts\utility::array_combine( level.active_civilians, var_0 );
     waitframe();
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "cellphone_kit_03" );
-    var_1 _meth_804D( var_0[0], "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( "cellphone_kit_03" );
+    var_1 linkto( var_0[0], "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     common_scripts\utility::flag_wait_any( "civilian_walker_phone_delete", "civilian_walker_phone_alerted" );
     var_1 delete();
 }
@@ -252,7 +252,7 @@ civilian_walker_phone_spawner_setup()
 
     foreach ( var_4 in var_2 )
     {
-        if ( !level.player _meth_80A9( var_4 ) )
+        if ( !level.player istouching( var_4 ) )
         {
             var_1++;
 
@@ -319,8 +319,8 @@ civilian_guesthouse()
     level.active_civilians = common_scripts\utility::array_combine( level.active_civilians, var_1 );
     waitframe();
     var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_2 _meth_80B1( "cellphone_kit_03" );
-    var_2 _meth_804D( var_1[0], "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 setmodel( "cellphone_kit_03" );
+    var_2 linkto( var_1[0], "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     common_scripts\utility::flag_wait_any( "player_enters_front_yard_save_4", "civilians_guesthouse_alerted", "civilian_guesthouse_walkin_transition" );
 
     if ( common_scripts\utility::flag( "civilian_guesthouse_walkin_transition" ) )
@@ -525,25 +525,25 @@ drone_scan_civilian_setup()
         self waittillmatch( "single anim", "end" );
     }
 
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] + 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
-    self _meth_81C6( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
+    self forceteleport( self.origin, ( self.angles[0], self.angles[1] - 1, self.angles[2] ) );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
     maps\_anim::anim_single_solo( self, "holding_hands_walk_" + self.script_noteworthy );
@@ -562,10 +562,10 @@ garage_side_door()
     var_1 = getent( "garage_side_door", "targetname" );
     level.civilian_drone_scan_anim_struct maps\_anim::anim_first_frame_solo( var_0, "drone_scan_enter_door" );
     var_2 = getent( "garage_side_door_clip", "targetname" );
-    var_2 _meth_804D( var_0, "J_prop_1" );
-    var_1 _meth_804D( var_0, "J_prop_1" );
+    var_2 linkto( var_0, "J_prop_1" );
+    var_1 linkto( var_0, "J_prop_1" );
     level.civilian_drone_scan_anim_struct maps\_anim::anim_single_solo( var_0, "drone_scan_enter_door" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
 }
 
 civilian_drone_scan_vo()
@@ -691,17 +691,17 @@ car_lift()
     var_0 = common_scripts\utility::getstruct( "car_lift_struct", "targetname" );
     var_1 = var_0 common_scripts\utility::spawn_tag_origin();
     var_2 = getent( "car_lift_brushes", "targetname" );
-    var_2 _meth_804D( var_1, "tag_origin" );
+    var_2 linkto( var_1, "tag_origin" );
     var_3 = getentarray( "car_lift_models", "targetname" );
 
     foreach ( var_5 in var_3 )
-        var_5 _meth_804D( var_1, "tag_origin" );
+        var_5 linkto( var_1, "tag_origin" );
 
-    var_1 _meth_82AE( var_1.origin + ( 0, 0, 132 ), 8 );
+    var_1 moveto( var_1.origin + ( 0, 0, 132 ), 8 );
     soundscripts\_snd::snd_message( "aud_garage_lift" );
     wait 8;
     var_7 = getent( "car_lift_light", "targetname" );
-    var_7 _meth_81DF( 2050 );
+    var_7 setlightintensity( 2050 );
     var_8 = common_scripts\utility::getstruct( "garage_lift_grapple_magnet_1", "targetname" );
     maps\_grapple::grapple_magnet_register( var_8 );
 }
@@ -795,10 +795,10 @@ lost_civilian_door()
     var_1 = getent( "lost_civilian_door", "targetname" );
     level.lost_civilian_anim_struct maps\_anim::anim_first_frame_solo( var_0, "ie_frontyard_lost_civ_door" );
     var_2 = getent( "lost_civilian_door_clip", "targetname" );
-    var_2 _meth_804D( var_0, "J_prop_1" );
-    var_2 _meth_8057();
+    var_2 linkto( var_0, "J_prop_1" );
+    var_2 disconnectpaths();
     level waittill( "start_guard" );
-    var_1 _meth_804D( var_0, "J_prop_1" );
+    var_1 linkto( var_0, "J_prop_1" );
     level.lost_civilian_anim_struct maps\_anim::anim_single_solo( var_0, "ie_frontyard_lost_civ_door" );
 }
 
@@ -816,8 +816,8 @@ civilian_lost_setup()
     waitframe();
     level.lost_civilian_anim_struct maps\_anim::anim_single_solo( self, "ie_frontyard_lost_civ_guy" );
     var_0 = getent( "driveway_monster_clip_5", "targetname" );
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
     var_1 = common_scripts\utility::getstruct( "civilian_lost_escort_start", "targetname" );
     self.target = var_1.targetname;
     thread maps\_patrol::patrol( self.target );
@@ -840,7 +840,7 @@ civilian_lost_guard_setup()
     level.lost_civilian_anim_struct maps\_anim::anim_first_frame_solo( self, "ie_frontyard_lost_civ_guard" );
     level.lost_civilian_anim_struct thread maps\_anim::anim_single_solo( self, "ie_frontyard_lost_civ_guard" );
 
-    while ( self _meth_814F( maps\_utility::getanim( "ie_frontyard_lost_civ_guard" ) ) < 0.15 )
+    while ( self getanimtime( maps\_utility::getanim( "ie_frontyard_lost_civ_guard" ) ) < 0.15 )
         wait 0.05;
 
     self.allowdeath = 1;
@@ -912,7 +912,7 @@ civilian_in_running_car_setup()
     thread civilian_alert_watcher( "player_entered_balcony_door" );
     self.sight_ignore = level.running_car;
     self.vehicle_ride = level.running_car;
-    self _meth_804D( level.running_car, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self linkto( level.running_car, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.running_car thread maps\_anim::anim_loop_solo( self, "running_car_driver", "stop_loop", "tag_driver" );
     common_scripts\utility::flag_wait( "player_entered_balcony_door" );
     self delete();
@@ -978,8 +978,8 @@ driveway_monster_clip( var_0 )
 {
     common_scripts\utility::flag_wait_either( var_0, "player_entered_balcony_door" );
     var_0 = getent( var_0, "targetname" );
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
     wait 1;
     var_0 delete();
 }
@@ -1003,40 +1003,40 @@ driveway_car( var_0 )
     if ( var_0 == "driveway_car_1" )
     {
         self.left_headlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.left_headlight_tag _meth_804D( self, "tag_headlight_left", ( 25, -10, -20 ), ( 0, 0, 0 ) );
+        self.left_headlight_tag linkto( self, "tag_headlight_left", ( 25, -10, -20 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_civ_sedan_headlight"], self.left_headlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_1_path_end", self.left_headlight_tag, "ie_civ_sedan_headlight" );
         self.right_headlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.right_headlight_tag _meth_804D( self, "tag_headlight_right", ( 25, 10, -20 ), ( 0, 0, 0 ) );
+        self.right_headlight_tag linkto( self, "tag_headlight_right", ( 25, 10, -20 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_civ_sedan_headlight"], self.right_headlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_1_path_end", self.right_headlight_tag, "ie_civ_sedan_headlight" );
         playfxontag( level._effect["ie_civ_sedan_lights"], self, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_1_path_end", undefined, "ie_civ_sedan_headlight" );
         self.spotlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.spotlight_tag _meth_804D( self, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
+        self.spotlight_tag linkto( self, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_headlight_misc"], self.spotlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_1_path_end", self.spotlight_tag, "ie_headlight_misc" );
     }
     else
     {
         self.left_headlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.left_headlight_tag _meth_804D( self, "tag_headlight_left", ( 20, 0, -15 ), ( 0, 0, 0 ) );
+        self.left_headlight_tag linkto( self, "tag_headlight_left", ( 20, 0, -15 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_truck_headlight"], self.left_headlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.left_headlight_tag, "ie_truck_headlight" );
         self.right_headlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.right_headlight_tag _meth_804D( self, "tag_headlight_right", ( 20, 0, -15 ), ( 0, 0, 0 ) );
+        self.right_headlight_tag linkto( self, "tag_headlight_right", ( 20, 0, -15 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_truck_headlight"], self.right_headlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.right_headlight_tag, "ie_truck_headlight" );
         self.left_brakelight_tag = common_scripts\utility::spawn_tag_origin();
-        self.left_brakelight_tag _meth_804D( self, "tag_brakelight_left", ( 10, 0, -15 ), ( 0, 0, 0 ) );
+        self.left_brakelight_tag linkto( self, "tag_brakelight_left", ( 10, 0, -15 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_truck_tail"], self.left_brakelight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.left_brakelight_tag, "ie_truck_tail" );
         self.right_brakelight_tag = common_scripts\utility::spawn_tag_origin();
-        self.right_brakelight_tag _meth_804D( self, "tag_brakelight_right", ( 10, 0, -15 ), ( 0, 0, 0 ) );
+        self.right_brakelight_tag linkto( self, "tag_brakelight_right", ( 10, 0, -15 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_truck_tail"], self.right_brakelight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.right_brakelight_tag, "ie_truck_tail" );
         self.spotlight_tag = common_scripts\utility::spawn_tag_origin();
-        self.spotlight_tag _meth_804D( self, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
+        self.spotlight_tag linkto( self, "tag_origin", ( 104, 0, 44 ), ( 0, 0, 0 ) );
         playfxontag( level._effect["ie_headlight_misc"], self.spotlight_tag, "tag_origin" );
         thread driveway_car_cleanup_fx( "driveway_car_2_path_end", self.spotlight_tag, "ie_headlight_misc" );
     }
@@ -1070,7 +1070,7 @@ driveway_car_2_civilian_setup()
     thread civilian_alert_watcher( "driveway_car_2_path_end" );
     self.sight_ignore = level.driveway_car_2;
     self.vehicle_ride = level.driveway_car_2;
-    self _meth_804D( level.driveway_car_2, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self linkto( level.driveway_car_2, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.driveway_car_2 thread maps\_anim::anim_loop_solo( self, "driveway_car_2_driver", "stop_loop", "tag_driver" );
     common_scripts\utility::flag_wait_either( "driveway_car_2_path_end", "player_entered_balcony_door" );
     self delete();
@@ -1173,22 +1173,22 @@ driveway_car_1_civilian_setup()
 
     if ( isdefined( self.script_noteworthy ) && self.script_noteworthy == "driveway_female" )
     {
-        while ( self _meth_814F( maps\_utility::getanim( "driveway_car_1_enter_driveway_female" ) ) < 0.5 )
+        while ( self getanimtime( maps\_utility::getanim( "driveway_car_1_enter_driveway_female" ) ) < 0.5 )
             wait 0.05;
 
         common_scripts\utility::flag_set( "driveway_civilians_female_to_car" );
         self waittillmatch( "single anim", "end" );
-        self _meth_804D( level.driveway_car_1, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self linkto( level.driveway_car_1, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         level.driveway_car_1 thread maps\_anim::anim_loop_solo( self, "driveway_car_1_driver", "stop_loop", "tag_driver" );
     }
     else
     {
-        while ( self _meth_814F( maps\_utility::getanim( "driveway_car_1_enter_driveway_male" ) ) < 0.75 )
+        while ( self getanimtime( maps\_utility::getanim( "driveway_car_1_enter_driveway_male" ) ) < 0.75 )
             wait 0.05;
 
         common_scripts\utility::flag_set( "driveway_civilians_male_to_car" );
         self waittillmatch( "single anim", "end" );
-        self _meth_804D( level.driveway_car_1, "tag_passenger", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self linkto( level.driveway_car_1, "tag_passenger", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         level.driveway_car_1 thread maps\_anim::anim_loop_solo( self, "driveway_car_1_passenger", "stop_loop", "tag_passenger" );
     }
 
@@ -1409,7 +1409,7 @@ stop_civilian_conversation( var_0, var_1 )
     common_scripts\utility::waittill_either( "alerted", "death" );
 
     if ( isdefined( self ) )
-        self _meth_80AC();
+        self stopsounds();
 }
 
 civilian_head_and_body_setup()
@@ -1450,7 +1450,7 @@ civilian_head_and_body_setup()
 civilian_head_and_body_swap( var_0 )
 {
     if ( isdefined( var_0 ) && isdefined( var_0[0] ) )
-        self _meth_80B1( var_0[0] );
+        self setmodel( var_0[0] );
 
     if ( isdefined( var_0 ) && isdefined( var_0[1] ) )
     {

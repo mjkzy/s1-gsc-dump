@@ -194,22 +194,22 @@ initstataward( var_0, var_1, var_2, var_3, var_4, var_5 )
 
 setpersonalbestifgreater( var_0 )
 {
-    var_1 = self _meth_8226( "bests", var_0 );
+    var_1 = self getcommonplayerdata( "bests", var_0 );
     var_2 = maps\mp\_utility::getplayerstat( var_0 );
     var_2 = getformattedvalue( var_0, var_2 );
 
     if ( var_1 == 0 || var_2 > var_1 )
-        self _meth_8247( "bests", var_0, var_2 );
+        self setcommonplayerdata( "bests", var_0, var_2 );
 }
 
 setpersonalbestiflower( var_0 )
 {
-    var_1 = self _meth_8226( "bests", var_0 );
+    var_1 = self getcommonplayerdata( "bests", var_0 );
     var_2 = maps\mp\_utility::getplayerstat( var_0 );
     var_2 = getformattedvalue( var_0, var_2 );
 
     if ( var_1 == 0 || var_2 < var_1 )
-        self _meth_8247( "bests", var_0, var_2 );
+        self setcommonplayerdata( "bests", var_0, var_2 );
 }
 
 calculatekd( var_0 )
@@ -285,24 +285,24 @@ assignawards()
 giveaward( var_0, var_1 )
 {
     var_1 = getformattedvalue( var_0, var_1 );
-    var_2 = self _meth_8226( "round", "awards", var_0 );
-    self _meth_8247( "round", "awards", var_0, var_2 + var_1 );
+    var_2 = self getcommonplayerdata( "round", "awards", var_0 );
+    self setcommonplayerdata( "round", "awards", var_0, var_2 + var_1 );
 
     if ( maps\mp\_utility::practiceroundgame() )
         return;
 
     if ( shouldaveragetotal( var_0 ) )
     {
-        var_3 = self _meth_8226( "awards", "numMatchesRecorded" );
-        var_4 = self _meth_8226( "awards", var_0 );
+        var_3 = self getcommonplayerdata( "awards", "numMatchesRecorded" );
+        var_4 = self getcommonplayerdata( "awards", var_0 );
         var_5 = var_4 * var_3;
         var_6 = int( ( var_5 + var_1 ) / ( var_3 + 1 ) );
-        self _meth_8247( "awards", var_0, var_6 );
+        self setcommonplayerdata( "awards", var_0, var_6 );
     }
     else
     {
-        var_2 = self _meth_8226( "awards", var_0 );
-        self _meth_8247( "awards", var_0, var_2 + var_1 );
+        var_2 = self getcommonplayerdata( "awards", var_0 );
+        self setcommonplayerdata( "awards", var_0, var_2 + var_1 );
     }
 }
 

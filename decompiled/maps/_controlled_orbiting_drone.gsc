@@ -41,20 +41,20 @@ initializesniperdronedata()
 
 initdroneflyinturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", 30 );
-    _func_0D3( "aim_turnrate_pitch_ads", 25 );
-    _func_0D3( "aim_turnrate_yaw", 60 );
-    _func_0D3( "aim_turnrate_yaw_ads", 40 );
-    _func_0D3( "aim_accel_turnrate_lerp", 300 );
+    setsaveddvar( "aim_turnrate_pitch", 30 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 25 );
+    setsaveddvar( "aim_turnrate_yaw", 60 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 40 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 300 );
 }
 
 initdroneturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", 70 );
-    _func_0D3( "aim_turnrate_pitch_ads", 55 );
-    _func_0D3( "aim_turnrate_yaw", 125 );
-    _func_0D3( "aim_turnrate_yaw_ads", 90 );
-    _func_0D3( "aim_accel_turnrate_lerp", 600 );
+    setsaveddvar( "aim_turnrate_pitch", 70 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 55 );
+    setsaveddvar( "aim_turnrate_yaw", 125 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 90 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 600 );
 }
 
 savedefaultturnrate()
@@ -68,11 +68,11 @@ savedefaultturnrate()
 
 restoredefaultturnrate()
 {
-    _func_0D3( "aim_turnrate_pitch", self.aim_turnrate_pitch );
-    _func_0D3( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
-    _func_0D3( "aim_turnrate_yaw", self.aim_turnrate_yaw );
-    _func_0D3( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
-    _func_0D3( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
+    setsaveddvar( "aim_turnrate_pitch", self.aim_turnrate_pitch );
+    setsaveddvar( "aim_turnrate_pitch_ads", self.aim_turnrate_pitch_ads );
+    setsaveddvar( "aim_turnrate_yaw", self.aim_turnrate_yaw );
+    setsaveddvar( "aim_turnrate_yaw_ads", self.aim_turnrate_yaw_ads );
+    setsaveddvar( "aim_accel_turnrate_lerp", self.aim_accel_turnrate_lerp );
 }
 
 startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -81,10 +81,10 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
     maps\_shg_utility::hide_player_hud();
     var_6 = distance2d( var_0.origin, var_1.origin );
     var_7 = vectortoangles( var_1.origin - var_0.origin );
-    level.player _meth_831D();
-    level.player _meth_8321();
-    level.player _meth_831F();
-    level.player _meth_8119( 0 );
+    level.player disableweapons();
+    level.player disableweaponswitch();
+    level.player disableoffhandweapons();
+    level.player allowcrouch( 0 );
     var_8 = initializesniperdronedata();
     var_9 = common_scripts\utility::spawn_tag_origin();
     level.player.sniperdronelink = var_9;
@@ -150,7 +150,7 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
         if ( var_14 )
         {
             var_22 = 0.75;
-            level.player _meth_804F();
+            level.player unlink();
             var_23 = level.player getorigin();
             var_24 = level.player getangles();
             var_25 = 0;
@@ -160,11 +160,11 @@ startdronecontrol( var_0, var_1, var_2, var_3, var_4, var_5 )
                 var_27 = var_25 / var_22;
                 var_26.origin = vectorlerp( var_23, var_9.origin, var_27 );
                 var_26.angles = vectorlerp( var_24, var_9.angles, var_27 );
-                level.player _meth_807D( var_26, "tag_origin", 1, 10, 10, 10, 30, 1 );
+                level.player playerlinktodelta( var_26, "tag_origin", 1, 10, 10, 10, 30, 1 );
                 waitframe();
             }
 
-            level.player _meth_807D( var_9, "tag_origin", 1, 10, 10, 10, 30, 1 );
+            level.player playerlinktodelta( var_9, "tag_origin", 1, 10, 10, 10, 30, 1 );
             var_14 = 0;
         }
 
@@ -280,7 +280,7 @@ move_fly_drone_check()
 {
     level.player endon( "death" );
 
-    if ( level.player _meth_82F3() != 0 )
+    if ( level.player getnormalizedmovement() != 0 )
         return 1;
     else
         return 0;
@@ -290,7 +290,7 @@ notifyonplayermovingsniperdrone()
 {
     for (;;)
     {
-        var_0 = level.player _meth_82F3();
+        var_0 = level.player getnormalizedmovement();
 
         if ( length( var_0 ) != 0 )
         {
@@ -325,7 +325,7 @@ createoverlay( var_0, var_1 )
     var_2.aligny = "top";
     var_2.horzalign = "fullscreen";
     var_2.vertalign = "fullscreen";
-    var_2 _meth_80CC( var_0, 640, 480 );
+    var_2 setshader( var_0, 640, 480 );
     var_2.alpha = var_1;
     var_2.sort = -3;
     return var_2;
@@ -401,7 +401,7 @@ scalevelocity( var_0 )
     if ( level.player adsbuttonpressed() || common_scripts\utility::flag( "FlagForcePlayerADS" ) )
         var_0 *= 0.85;
 
-    if ( level.player adsbuttonpressed() && level.player _meth_8471() )
+    if ( level.player adsbuttonpressed() && level.player enemyincrosshairs() )
         var_0 *= 0.85;
 
     return var_0;

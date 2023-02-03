@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 512.0, 0.0 );
-        self _meth_816D( 2056.0, 2056.0 );
+        self setengagementmindist( 512.0, 0.0 );
+        self setengagementmaxdist( 2056.0, 2056.0 );
     }
 
     self.weapon = "exo_minigun";
@@ -27,13 +27,13 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_mech_long_lod::precache();
-    precacheitem( "exo_minigun" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "exo_minigun" );
+    precacheshellshock( "fraggrenade" );
     maps\_mech::main();
 }

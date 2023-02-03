@@ -25,7 +25,7 @@ trap_sewergas_player_watch( var_0 )
             if ( !isalive( var_5 ) )
                 continue;
 
-            if ( !var_5 _meth_80A9( var_0 ) )
+            if ( !var_5 istouching( var_0 ) )
                 continue;
 
             if ( maps\mp\zombies\_util::isplayerinlaststand( var_5 ) )
@@ -69,7 +69,7 @@ trap_sewergas_trigger_watch( var_0 )
             if ( !isdefined( var_5 ) || !isalive( var_5 ) )
                 continue;
 
-            if ( !var_5 _meth_80A9( var_0 ) )
+            if ( !var_5 istouching( var_0 ) )
                 continue;
 
             if ( isplayer( var_5 ) )
@@ -110,7 +110,7 @@ sewergaszombie()
 
     if ( common_scripts\utility::cointoss() )
     {
-        self _meth_8177( "zombie_confused" );
+        self setthreatbiasgroup( "zombie_confused" );
         maps\mp\agents\_agent_utility::set_agent_team( level.playerteam );
         thread sewergaszombiecleanup();
     }
@@ -123,7 +123,7 @@ sewergaszombiecleanup()
     var_0 = randomfloatrange( 1, 2 );
     var_1 = 10 * var_0;
     wait(var_1);
-    self _meth_8177( "zombies" );
+    self setthreatbiasgroup( "zombies" );
     maps\mp\agents\_agent_utility::set_agent_team( level.enemyteam );
 }
 
@@ -145,7 +145,7 @@ playersewergascamo()
     self endon( "disconnect" );
     level endon( "game_ended" );
     thread maps\mp\zombies\killstreaks\_zombie_camouflage::playercamouflagemode( 10 );
-    self _meth_8304( 0 );
+    self allowsprint( 0 );
     var_0 = [ "center", "right", "left" ];
 
     foreach ( var_2 in var_0 )
@@ -154,7 +154,7 @@ playersewergascamo()
     wait 1.0;
 
     if ( !maps\mp\zombies\_util::isplayerinlaststand( self ) )
-        self _meth_8304( 1 );
+        self allowsprint( 1 );
 
     wait 2.0;
     self notify( "remove_gas_overlay" );
@@ -169,7 +169,7 @@ sewergasoverlay( var_0 )
     var_1.aligny = "top";
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
-    var_1 _meth_80CC( "screen_blood_directional_" + var_0 + "_yellow", 640, 480 );
+    var_1 setshader( "screen_blood_directional_" + var_0 + "_yellow", 640, 480 );
     var_1.sort = -10;
     var_1.archived = 1;
     var_1.hidein3rdperson = 1;

@@ -26,7 +26,7 @@ monitor_na45_use()
 
     for (;;)
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( is_na45( var_0 ) )
             self.bullethitcallback = ::m990_hit;
@@ -41,14 +41,14 @@ transfer_primer_to_corpse( var_0, var_1 )
 {
     self endon( "primer_deleted" );
     var_0 waittill( "death" );
-    var_2 = var_0 _meth_842C();
+    var_2 = var_0 getcorpseentity();
 
     if ( isdefined( var_2 ) )
     {
         if ( isdefined( var_1 ) )
-            self.primer _meth_804D( var_2, var_1 );
+            self.primer linkto( var_2, var_1 );
         else
-            self.primer _meth_804D( var_2 );
+            self.primer linkto( var_2 );
 
         self.primer thread show_primer_fx( self );
     }
@@ -59,7 +59,7 @@ m990_hit( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( !is_na45( var_0 ) )
         return;
 
-    if ( self _meth_8311() != var_0 )
+    if ( self getcurrentweapon() != var_0 )
         return;
 
     var_6 = get_current_shot();
@@ -95,7 +95,7 @@ m990_hit( var_0, var_1, var_2, var_3, var_4, var_5 )
                     thread transfer_primer_to_corpse( var_3, var_5 );
                 else
                 {
-                    var_8 = var_3 _meth_842C();
+                    var_8 = var_3 getcorpseentity();
 
                     if ( isdefined( var_8 ) )
                         var_7 = var_8;
@@ -105,9 +105,9 @@ m990_hit( var_0, var_1, var_2, var_3, var_4, var_5 )
             }
 
             if ( isdefined( var_5 ) )
-                self.primer _meth_804D( var_7, var_5 );
+                self.primer linkto( var_7, var_5 );
             else
-                self.primer _meth_804D( var_7 );
+                self.primer linkto( var_7 );
         }
 
         thread cleanup_primer();
@@ -122,7 +122,7 @@ m990_hit( var_0, var_1, var_2, var_3, var_4, var_5 )
                 playfx( common_scripts\utility::getfx( "na45_explosion" ), self.primer.origin, anglestoforward( self.primer.angles ) );
 
             playsoundatpos( self.origin, "wpn_na45_exp" );
-            var_0 = self _meth_8311();
+            var_0 = self getcurrentweapon();
             var_9 = 256;
             var_10 = 130;
             var_11 = 15;
@@ -159,7 +159,7 @@ reset_shot_on_reload()
     for (;;)
     {
         self waittill( "reload_start" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( !is_na45( var_0 ) )
         {
@@ -190,7 +190,7 @@ cleanup_primer_reload()
 
 get_current_shot()
 {
-    var_0 = self _meth_82F0();
+    var_0 = self getcurrentweaponclipammo();
 
     if ( var_0 % 2 == 1 )
         return "primer";

@@ -277,7 +277,7 @@ trap_activate_model( var_0 )
         var_3 = level.trap_state_models[var_1][var_2];
 
         if ( isdefined( var_3 ) )
-            var_0 _meth_80B1( var_3 );
+            var_0 setmodel( var_3 );
     }
 }
 
@@ -299,29 +299,29 @@ trap_trigger_hint( var_0 )
         switch ( var_1 )
         {
             case "no_power":
-                var_0 _meth_80DB( &"ZOMBIES_REQUIRES_POWER" );
-                var_0 _meth_80DC( &"ZOMBIES_EMPTY_STRING" );
+                var_0 sethintstring( &"ZOMBIES_REQUIRES_POWER" );
+                var_0 setsecondaryhintstring( &"ZOMBIES_EMPTY_STRING" );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
                 break;
             case "active":
-                var_0 _meth_80DB( &"ZOMBIES_EMPTY_STRING" );
-                var_0 _meth_80DC( &"ZOMBIES_EMPTY_STRING" );
+                var_0 sethintstring( &"ZOMBIES_EMPTY_STRING" );
+                var_0 setsecondaryhintstring( &"ZOMBIES_EMPTY_STRING" );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
                 break;
             case "cooldown":
                 if ( isdefined( self.hint_strings ) )
-                    var_0 _meth_80DB( self.hint_strings["hint_cooldown"] );
+                    var_0 sethintstring( self.hint_strings["hint_cooldown"] );
                 else
-                    var_0 _meth_80DB( &"ZOMBIES_TRAP_COOLDOWN" );
+                    var_0 sethintstring( &"ZOMBIES_TRAP_COOLDOWN" );
 
-                var_0 _meth_80DC( &"ZOMBIES_EMPTY_STRING" );
+                var_0 setsecondaryhintstring( &"ZOMBIES_EMPTY_STRING" );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
                 break;
             case "ready":
                 if ( isdefined( self.hint_strings ) )
-                    var_0 _meth_80DB( self.hint_strings["hint_ready"] );
+                    var_0 sethintstring( self.hint_strings["hint_ready"] );
                 else
-                    var_0 _meth_80DB( &"ZOMBIES_TRAP_READY" );
+                    var_0 sethintstring( &"ZOMBIES_TRAP_READY" );
 
                 var_2 = self.cost;
 
@@ -331,13 +331,13 @@ trap_trigger_hint( var_0 )
                         var_2 = maps\mp\zombies\_util::getincreasedcost( var_2 );
                 }
 
-                var_0 _meth_80DC( maps\mp\zombies\_util::getcoststring( var_2 ) );
+                var_0 setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( var_2 ) );
                 var_0 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_2 ) );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
                 break;
             case "deactivate":
-                var_0 _meth_80DB( &"ZOMBIES_REQUIRES_POWER" );
-                var_0 _meth_80DC( &"ZOMBIES_EMPTY_STRING" );
+                var_0 sethintstring( &"ZOMBIES_REQUIRES_POWER" );
+                var_0 setsecondaryhintstring( &"ZOMBIES_EMPTY_STRING" );
                 var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
                 break;
             default:
@@ -352,7 +352,7 @@ trap_fx_move( var_0 )
     var_1.angles = var_0.angles;
     var_1.start_origin = var_1.origin;
     var_1.start_angles = var_1.angles;
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1.movelist = [];
     var_2 = [];
 
@@ -372,8 +372,8 @@ trap_fx_move( var_0 )
         {
             case "damage_over_time":
             case "damage":
-                var_6 _meth_8069();
-                var_6 _meth_804D( var_1 );
+                var_6 enablelinkto();
+                var_6 linkto( var_1 );
                 thread trap_damage_trigger( var_6, var_6.script_noteworthy == "damage_over_time", "fx_trap_move" );
                 break;
             case "moveto":
@@ -440,7 +440,7 @@ trap_laser( var_0 )
     var_1.angles = var_0.angles;
     var_1.start_origin = var_1.origin;
     var_1.start_angles = var_1.angles;
-    var_1 _meth_80B1( "tag_laser" );
+    var_1 setmodel( "tag_laser" );
     var_1.movelist = [];
     var_2 = [];
 
@@ -460,8 +460,8 @@ trap_laser( var_0 )
         {
             case "damage_over_time":
             case "damage":
-                var_6 _meth_8069();
-                var_6 _meth_804D( var_1 );
+                var_6 enablelinkto();
+                var_6 linkto( var_1 );
                 thread trap_damage_trigger( var_6, var_6.script_noteworthy == "damage_over_time", "laser" );
                 break;
             case "moveto":
@@ -486,14 +486,14 @@ trap_laser( var_0 )
                 if ( isdefined( level.zmblasertrapsoundloop ) )
                     var_9 = level.zmblasertrapsoundloop;
 
-                var_1 _meth_80AB( var_9 );
+                var_1 stoploopsound( var_9 );
                 var_10 = "trap_laser_stop";
 
                 if ( isdefined( level.zmblasertrapsoundstop ) )
                     var_10 = level.zmblasertrapsoundstop;
 
                 var_1 playsound( var_10 );
-                var_1 _meth_80B3();
+                var_1 laseroff();
                 break;
             case "active":
                 thread trap_laser_move( var_1 );
@@ -521,12 +521,12 @@ trap_laser_color( var_0 )
     if ( isdefined( level.zmblasertrapcustom ) )
         var_2 = level.zmblasertrapcustom;
 
-    var_0 _meth_80B2( var_1 );
+    var_0 laseron( var_1 );
     var_3 = spawn( "script_origin", var_0.origin );
     thread trap_laser_alarm_start( var_3 );
     wait 3;
     thread trap_laser_alarm_stop( var_3 );
-    var_0 _meth_80B2( var_2 );
+    var_0 laseron( var_2 );
     var_4 = "trap_laser_start";
 
     if ( isdefined( level.zmblasertrapsoundstart ) )
@@ -538,7 +538,7 @@ trap_laser_color( var_0 )
     if ( isdefined( level.zmblasertrapsoundloop ) )
         var_5 = level.zmblasertrapsoundloop;
 
-    var_0 _meth_8075( var_5 );
+    var_0 playloopsound( var_5 );
 }
 
 trap_laser_alarm_start( var_0 )
@@ -548,7 +548,7 @@ trap_laser_alarm_start( var_0 )
         level.laser_alarm_started = 1;
 
         if ( isdefined( var_0 ) )
-            var_0 _meth_8075( "trap_laser_alarm" );
+            var_0 playloopsound( "trap_laser_alarm" );
     }
     else
     {
@@ -562,7 +562,7 @@ trap_laser_alarm_stop( var_0 )
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_80AB( "trap_laser_alarm" );
+        var_0 stoploopsound( "trap_laser_alarm" );
         var_0 delete();
     }
 }
@@ -609,10 +609,10 @@ trap_laser_move( var_0 )
             var_5 = var_7 / var_2;
 
         if ( var_6 > 0 )
-            var_0 _meth_82AE( var_4.origin, var_5 );
+            var_0 moveto( var_4.origin, var_5 );
 
         if ( var_7 > 0 )
-            var_0 _meth_82B5( var_4.angles, var_5 );
+            var_0 rotateto( var_4.angles, var_5 );
 
         if ( var_5 > 0 )
             wait(var_5);
@@ -732,7 +732,7 @@ trap_damage_trigger_watch( var_0, var_1, var_2 )
             if ( isdefined( level.modplayertrapdmg ) && isdefined( var_0.script_count ) )
                 var_9.nexttrapdamage = gettime() + 200 * var_0.script_count;
 
-            var_9 _meth_8051( var_6, var_9.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+            var_9 dodamage( var_6, var_9.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
             continue;
         }
 
@@ -748,7 +748,7 @@ trap_damage_trigger_watch( var_0, var_1, var_2 )
                 continue;
 
             var_9.nexttrapdamage = gettime() + 200;
-            var_9 _meth_8051( var_6 * 0.5, var_9.origin );
+            var_9 dodamage( var_6 * 0.5, var_9.origin );
             continue;
         }
 
@@ -773,7 +773,7 @@ trap_damage_trigger_watch( var_0, var_1, var_2 )
             if ( var_9 maps\mp\zombies\_util::istrapresistant() )
                 var_13 *= 0.1;
 
-            var_9 _meth_8051( var_13, var_10, self.owner, self.owner, var_12, var_8, var_11 );
+            var_9 dodamage( var_13, var_10, self.owner, self.owner, var_12, var_8, var_11 );
         }
         else
         {
@@ -782,7 +782,7 @@ trap_damage_trigger_watch( var_0, var_1, var_2 )
             if ( var_9 maps\mp\zombies\_util::istrapresistant() )
                 var_13 *= 0.2;
 
-            var_9 _meth_8051( var_13, var_10, self.owner, self.owner, "MOD_TRIGGER_HURT", var_8, var_11 );
+            var_9 dodamage( var_13, var_10, self.owner, self.owner, "MOD_TRIGGER_HURT", var_8, var_11 );
         }
     }
 }
@@ -954,7 +954,7 @@ trap_zomboni( var_0 )
 {
     if ( !isdefined( level.zomboni_init ) )
     {
-        map_restart( "zombie_ark_zomboni_trap" );
+        precachempanim( "zombie_ark_zomboni_trap" );
         level.zomboni_init = 1;
         createthreatbiasgroup( "zomboni" );
         level._effect["chompy_churn"] = loadfx( "vfx/gameplay/mp/zombie/dlc_chompy_churn" );
@@ -964,12 +964,12 @@ trap_zomboni( var_0 )
 
     self.trap_active_end_notify = "zomboni_done";
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "vehicle_ind_zomboni_ai" );
+    var_1 setmodel( "vehicle_ind_zomboni_ai" );
     var_1.angles = var_0.angles;
     var_1.linegunignore = 1;
     var_1.noturretplacement = 1;
-    var_1 _meth_8139( level.playerteam );
-    var_1 _meth_8177( "zomboni" );
+    var_1 makeentitysentient( level.playerteam );
+    var_1 setthreatbiasgroup( "zomboni" );
     var_1.canbetargetedby = ::trap_zomboni_can_be_targeted_by;
 
     if ( !isdefined( level.npcs ) )
@@ -989,8 +989,8 @@ trap_zomboni( var_0 )
         var_10 = var_1 gettagorigin( var_8 );
         var_11 = spawn( "script_model", var_10 );
         var_11.angles = var_1 gettagangles( var_8 );
-        var_11 _meth_80B1( "tag_origin" );
-        var_11 _meth_804D( var_1, var_8 );
+        var_11 setmodel( "tag_origin" );
+        var_11 linkto( var_1, var_8 );
         var_11.grab_radius = var_2;
         var_11.jump_radius = var_3;
         var_11.attack_radius = var_4;
@@ -1018,17 +1018,17 @@ trap_zomboni( var_0 )
                 var_17.zomboni = var_1;
                 var_17.noturretplacement = 1;
                 var_1.clip = var_17;
-                var_17 _meth_804D( var_1 );
+                var_17 linkto( var_1 );
                 break;
             case "mantle":
                 var_1.mantle = var_17;
                 var_1.mantle hide();
                 var_1.mantlecontents = var_1.mantle setcontents( 0 );
-                var_17 _meth_804D( var_1 );
+                var_17 linkto( var_1 );
                 break;
             case "kill_trigger":
-                var_17 _meth_8069();
-                var_17 _meth_804D( var_1 );
+                var_17 enablelinkto();
+                var_17 linkto( var_1 );
                 var_1.killtrigger = var_17;
                 break;
             case "door":
@@ -1053,18 +1053,18 @@ trap_zomboni( var_0 )
         var_1.isstopped = 0;
         playfxontag( common_scripts\utility::getfx( "chompy_lights" ), var_1, "tag_fx_lights" );
         var_1 playsound( "chompy_engine_start" );
-        var_1 _meth_8075( "chompy_engine_loop" );
-        var_1 _meth_848B( "zombie_ark_zomboni_trap", var_0.origin, var_0.angles, "zomboni_anim" );
+        var_1 playloopsound( "chompy_engine_loop" );
+        var_1 scriptmodelplayanimdeltamotionfrompos( "zombie_ark_zomboni_trap", var_0.origin, var_0.angles, "zomboni_anim" );
         thread trap_zomboni_notetracks( var_1 );
         thread trap_zomboni_zombies_attack( var_1 );
         thread trap_zomboni_enable_targeting_after_zone_enabled( var_1 );
         thread trap_zomboni_kill_zone( var_1 );
         var_1 waittill( "end" );
         self notify( "zomboni_done" );
-        var_1 _meth_80AB();
+        var_1 stoploopsound();
         var_1 playsound( "chompy_engine_stop" );
         killfxontag( common_scripts\utility::getfx( "chompy_lights" ), var_1, "tag_fx_lights" );
-        var_1 _meth_827A();
+        var_1 scriptmodelclearanim();
         var_1.origin = var_0.origin;
         var_1.angles = var_0.angles;
     }
@@ -1090,7 +1090,7 @@ trap_zomboni_enable_targeting_after_zone_enabled( var_0 )
             if ( isdefined( var_4 ) )
             {
                 if ( var_0 trap_zomboni_zombie_in_zone_allowed_to_target( var_3, var_4 ) )
-                    var_3 _meth_8165( var_0 );
+                    var_3 getenemyinfo( var_0 );
             }
 
             wait 0.05;
@@ -1158,7 +1158,7 @@ trap_zomboni_get_unresolved_collision_locs( var_0, var_1 )
         var_8 = spawnstruct();
         var_8.origin = var_5 + rotatevector( var_7, var_0.angles + ( 0, -90, 0 ) );
 
-        if ( !isdefined( var_4 ) || !_func_22A( var_8.origin, var_4 ) )
+        if ( !isdefined( var_4 ) || !ispointinvolume( var_8.origin, var_4 ) )
             var_2[var_2.size] = var_8;
     }
 
@@ -1228,7 +1228,7 @@ trap_zomboni_stop( var_0 )
 
         foreach ( var_3 in level.players )
         {
-            var_4 = var_3 _meth_8557();
+            var_4 = var_3 getgroundentity();
 
             if ( isdefined( var_4 ) && var_4 == var_0.clip )
             {
@@ -1239,12 +1239,12 @@ trap_zomboni_stop( var_0 )
 
         if ( var_1 && !var_0.isstopped )
         {
-            var_0 _meth_84BD( 1 );
+            var_0 scriptmodelpauseanim( 1 );
             var_0.isstopped = 1;
         }
         else if ( !var_1 && var_0.isstopped )
         {
-            var_0 _meth_84BD( 0 );
+            var_0 scriptmodelpauseanim( 0 );
             var_0.isstopped = 0;
         }
 
@@ -1265,7 +1265,7 @@ trap_zomboni_is_any_player_on_zomboni( var_0 )
 
 trap_zomboni_is_player_on_zomboni( var_0, var_1 )
 {
-    var_2 = var_0 _meth_8557();
+    var_2 = var_0 getgroundentity();
 
     if ( !isdefined( var_2 ) )
         return 0;
@@ -1312,7 +1312,7 @@ trap_zomboni_zombies_attack( var_0 )
             if ( !var_5 maps\mp\zombies\_util::has_entered_game() )
                 continue;
 
-            if ( !_func_2D9( var_5 ) || var_5.agent_type == "zombie_dog" )
+            if ( !isscriptedagent( var_5 ) || var_5.agent_type == "zombie_dog" )
                 continue;
 
             if ( var_5 maps\mp\zombies\_util::istrapresistant() )
@@ -1392,11 +1392,11 @@ trap_zomboni_zombie_attack( var_0, var_1, var_2 )
 {
     var_1 endon( "death" );
     thread trap_zomboni_assign_attack_ent( var_0, var_2, var_1 );
-    var_1 _meth_839D( 1 );
+    var_1 scragentsetscripted( 1 );
     var_1 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "AttackZomboni" );
-    var_1 _meth_8398( "noclip" );
+    var_1 scragentsetphysicsmode( "noclip" );
     trap_zomboni_zombie_attack_anims( var_0, var_1, var_2 );
-    var_1 _meth_839D( 0 );
+    var_1 scragentsetscripted( 0 );
     var_1 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "AttackZomboni" );
 }
 
@@ -1413,10 +1413,10 @@ trap_zomboni_zombie_attack_anims( var_0, var_1, var_2 )
         var_3 = "zomboni_attack_leap_on";
 
     var_6 = var_2.anim_index;
-    var_1 _meth_8395( 0, 1 );
-    var_1 _meth_8561( var_4, var_4, var_2, "tag_origin" );
+    var_1 scragentsetanimscale( 0, 1 );
+    var_1 scragentsynchronizeanims( var_4, var_4, var_2, "tag_origin" );
     var_1 maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_3, var_6, 1.0, "scripted_anim" );
-    var_1 _meth_8395( 1, 1 );
+    var_1 scragentsetanimscale( 1, 1 );
 
     for (;;)
     {
@@ -1443,14 +1443,14 @@ trap_zomboni_zombie_attack_notetracks( var_0, var_1, var_2, var_3 )
 
             foreach ( var_6 in level.players )
             {
-                var_7 = var_6 _meth_8557();
+                var_7 = var_6 getgroundentity();
 
                 if ( isdefined( var_7 ) && var_7 == self.zomboni.clip )
                 {
                     var_8 = distance2d( self.attack_ent.origin, var_6.origin );
                     var_9 = self.attack_ent.attack_radius;
 
-                    if ( var_6 _meth_817C() == "prone" )
+                    if ( var_6 getstance() == "prone" )
                         var_9 += 40;
 
                     if ( var_8 < var_9 )
@@ -1554,10 +1554,10 @@ trap_zomboni_damage_jumpons( var_0, var_1 )
                 var_8 = var_7.attacker;
                 var_9 = self.owner;
 
-                if ( _func_294( var_9 ) )
+                if ( isremovedentity( var_9 ) )
                     var_9 = undefined;
 
-                var_8 _meth_8051( var_8.health, var_8.origin, var_9, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
+                var_8 dodamage( var_8.health, var_8.origin, var_9, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
             }
         }
     }
@@ -1599,12 +1599,12 @@ trap_zomboni_animated_distraction( var_0, var_1 )
 trap_zomboni_door_open( var_0, var_1 )
 {
     var_0 playsound( "chompy_hatch" );
-    var_0 _meth_82AE( var_0.open_origin, var_1 );
+    var_0 moveto( var_0.open_origin, var_1 );
 }
 
 trap_zomboni_door_close( var_0, var_1 )
 {
-    var_0 _meth_82AE( var_0.close_origin, var_1 );
+    var_0 moveto( var_0.close_origin, var_1 );
 }
 
 trap_zomboni_kill_zone( var_0 )
@@ -1631,23 +1631,23 @@ trap_zomboni_kill_zone( var_0 )
 
         if ( isplayer( var_1 ) )
         {
-            var_1 _meth_8051( 10, var_1.origin, undefined, var_0 );
+            var_1 dodamage( 10, var_1.origin, undefined, var_0 );
             continue;
         }
 
         thread trap_zomboni_play_churn_fx( var_0 );
 
-        if ( !_func_2D9( var_1 ) || var_1.agent_type == "zombie_dog" || !trap_zomboni_try_zombie_death_anim( var_0, var_1 ) )
+        if ( !isscriptedagent( var_1 ) || var_1.agent_type == "zombie_dog" || !trap_zomboni_try_zombie_death_anim( var_0, var_1 ) )
         {
             var_2 = self.owner;
 
-            if ( _func_294( var_2 ) )
+            if ( isremovedentity( var_2 ) )
                 var_2 = undefined;
 
-            var_1 _meth_8051( var_1.health, var_1.origin, var_2, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
+            var_1 dodamage( var_1.health, var_1.origin, var_2, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
 
             if ( isalive( var_1 ) )
-                var_1 _meth_826B();
+                var_1 suicide();
         }
     }
 }
@@ -1682,12 +1682,12 @@ trap_zomboni_zombie_death_anim( var_0, var_1 )
 {
     var_1 notify( "killanimscript" );
     var_1.zomboni_death = 1;
-    var_1 _meth_8397( "anim deltas" );
-    var_1 _meth_8395( 1, 1 );
-    var_1 _meth_8398( "noclip" );
+    var_1 scragentsetanimmode( "anim deltas" );
+    var_1 scragentsetanimscale( 1, 1 );
+    var_1 scragentsetphysicsmode( "noclip" );
     var_2 = angleclamp180( var_0.angles[1] - var_1.angles[1] );
     var_3 = "zomboni_trap_victim";
-    var_4 = var_1 _meth_83D6( var_3 );
+    var_4 = var_1 getanimentrycount( var_3 );
     var_5 = 0;
 
     if ( abs( var_2 ) < 45 )
@@ -1718,24 +1718,24 @@ trap_zomboni_zombie_death_anim( var_0, var_1 )
         }
     }
 
-    var_1 _meth_8438( "chompy_chomp" );
+    var_1 playsoundonmovingent( "chompy_chomp" );
     var_1.godmode = 1;
-    var_1 _meth_839D( 1 );
+    var_1 scragentsetscripted( 1 );
     var_1 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "SynchronizedAnim" );
-    var_1 _meth_8398( "noclip" );
-    var_1 _meth_8561( 0.5, 0.5, var_0, var_6 );
+    var_1 scragentsetphysicsmode( "noclip" );
+    var_1 scragentsynchronizeanims( 0.5, 0.5, var_0, var_6 );
     trap_zomboni_zombie_death_anim_wait( var_1, var_3, var_5 );
     var_1.godmode = 0;
     var_1.bypasscorpse = 1;
     var_14 = self.owner;
 
-    if ( _func_294( var_14 ) )
+    if ( isremovedentity( var_14 ) )
         var_14 = undefined;
 
-    var_1 _meth_8051( var_1.health, var_1.origin, var_14, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
+    var_1 dodamage( var_1.health, var_1.origin, var_14, var_0, "MOD_TRIGGER_HURT", "trap_zm_mp" );
 
     if ( isalive( var_1 ) )
-        var_1 _meth_826B();
+        var_1 suicide();
 }
 
 trap_zomboni_zombie_death_anim_wait( var_0, var_1, var_2 )
@@ -1754,9 +1754,9 @@ trap_zomboni_zombie_death_anim_timeout( var_0, var_1 )
     var_2 = 3;
 
     if ( isdefined( var_1 ) )
-        var_2 = getanimlength( self _meth_83D3( var_0, var_1 ) );
+        var_2 = getanimlength( self getanimentry( var_0, var_1 ) );
     else
-        var_2 = getanimlength( self _meth_83D3( var_0, 0 ) );
+        var_2 = getanimlength( self getanimentry( var_0, 0 ) );
 
     wait(var_2 + 0.05);
     self notify( "trap_zomboni_zombie_death_anim_timeout" );
@@ -1820,7 +1820,7 @@ trap_zomboni_process_path( var_0, var_1 )
             }
         }
 
-        var_11 = var_0 _meth_827E( var_1 )[0];
+        var_11 = var_0 getattachpos( var_1 )[0];
 
         if ( ( !isdefined( var_4 ) || distance( var_4.origin, var_11 ) > 400 ) && distance( var_2, var_11 ) > 300 )
         {
@@ -1971,10 +1971,10 @@ trap_zomboni_path_get_linked_ents( var_0, var_1 )
 
 zomboni_stop()
 {
-    self _meth_8283( 0, 100, 100 );
+    self vehicle_setspeed( 0, 100, 100 );
 }
 
 zomboni_resume()
 {
-    self _meth_8291( 100 );
+    self resumespeed( 100 );
 }

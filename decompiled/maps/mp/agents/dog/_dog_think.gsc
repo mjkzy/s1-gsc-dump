@@ -37,7 +37,7 @@ setupdogstate()
     self.bhasbadpath = 0;
     self.timeoflastdamage = 0;
     self.allowcrouch = 1;
-    self _meth_8394( 24 );
+    self scragentsetgoalradius( 24 );
 }
 
 init()
@@ -96,7 +96,7 @@ think()
     for (;;)
     {
         if ( self.aistate != "melee" && !self.statelocked && readytomeleetarget() && !didpastmeleefail() )
-            self _meth_839C( self.curmeleetarget );
+            self scragentbeginmelee( self.curmeleetarget );
 
         switch ( self.aistate )
         {
@@ -123,7 +123,7 @@ didpastpursuitfail( var_0 )
     if ( !isdefined( self.lastpursuitfailedpos ) || !isdefined( self.lastpursuitfailedmypos ) )
         return 0;
 
-    if ( _func_220( var_0.origin, self.lastpursuitfailedpos ) > 4 )
+    if ( distance2dsquared( var_0.origin, self.lastpursuitfailedpos ) > 4 )
         return 0;
 
     if ( self.blastpursuitfailedposbad )
@@ -137,7 +137,7 @@ didpastpursuitfail( var_0 )
 
 didpastmeleefail()
 {
-    if ( isdefined( self.lastmeleefailedpos ) && isdefined( self.lastmeleefailedmypos ) && _func_220( self.curmeleetarget.origin, self.lastmeleefailedpos ) < 4 && distancesquared( self.origin, self.lastmeleefailedmypos ) < 2500 )
+    if ( isdefined( self.lastmeleefailedpos ) && isdefined( self.lastmeleefailedmypos ) && distance2dsquared( self.curmeleetarget.origin, self.lastmeleefailedpos ) < 4 && distancesquared( self.origin, self.lastmeleefailedmypos ) < 2500 )
         return 1;
 
     if ( wanttoattacktargetbutcant( 0 ) )
@@ -191,7 +191,7 @@ updatemove()
 
 updatemelee()
 {
-    self _meth_8390( self.origin );
+    self scragentsetgoalpos( self.origin );
 }
 
 updatemovestate()
@@ -220,9 +220,9 @@ updatemovestate()
 
         if ( isdefined( self.lastbadpathtime ) && gettime() - self.lastbadpathtime < 3000 )
         {
-            if ( _func_220( var_0, self.lastbadpathgoal ) < 16 )
+            if ( distance2dsquared( var_0, self.lastbadpathgoal ) < 16 )
                 var_4 = 1;
-            else if ( isdefined( self.lastbadpathmovestate ) && self.lastbadpathmovestate == "pursuit" && _func_220( self.lastbadpathultimategoal, self.enemy.origin ) < 16 )
+            else if ( isdefined( self.lastbadpathmovestate ) && self.lastbadpathmovestate == "pursuit" && distance2dsquared( self.lastbadpathultimategoal, self.enemy.origin ) < 16 )
                 var_4 = 1;
         }
 
@@ -250,7 +250,7 @@ updatemovestate()
         self.curmeleetarget = undefined;
         self.movemode = getfollowmovemode( self.movemode );
         self.barrivalsenabled = 1;
-        var_5 = self _meth_83E1();
+        var_5 = self getpathgoalpos();
 
         if ( !isdefined( var_5 ) )
             var_5 = self.origin;
@@ -261,21 +261,21 @@ updatemovestate()
         if ( gettime() - self.timeoflastdamage < 5000 )
             var_1 = 1;
 
-        var_6 = self.owner _meth_817C();
+        var_6 = self.owner getstance();
 
         if ( !isdefined( self.owner.prevstance ) && isdefined( self.owner ) )
             self.owner.prevstance = var_6;
 
-        var_7 = !isdefined( self.ownerprevpos ) || _func_220( self.ownerprevpos, self.owner.origin ) > 100;
+        var_7 = !isdefined( self.ownerprevpos ) || distance2dsquared( self.ownerprevpos, self.owner.origin ) > 100;
 
         if ( var_7 )
             self.ownerprevpos = self.owner.origin;
 
-        var_8 = _func_220( var_5, self.owner.origin );
+        var_8 = distance2dsquared( var_5, self.owner.origin );
 
         if ( var_1 || var_8 > self.ownerradiussq && var_7 || self.owner.prevstance != var_6 || self.prevmovestate != "idle" && self.prevmovestate != self.movestate )
         {
-            self _meth_8390( findpointnearowner() );
+            self scragentsetgoalpos( findpointnearowner() );
             self.owner.prevstance = var_6;
             return;
         }
@@ -285,7 +285,7 @@ updatemovestate()
         self.curmeleetarget = self.enemy;
         self.movemode = "sprint";
         self.barrivalsenabled = 0;
-        self _meth_8390( var_0 );
+        self scragentsetgoalpos( var_0 );
     }
 }
 
@@ -296,12 +296,12 @@ getmovestate( var_0 )
         if ( isdefined( self.favoriteenemy ) && self.enemy == self.favoriteenemy )
             return "pursuit";
 
-        if ( abs( self.origin[2] - self.enemy.origin[2] ) < self.warningzheight && _func_220( self.enemy.origin, self.origin ) < self.attackradiussq )
+        if ( abs( self.origin[2] - self.enemy.origin[2] ) < self.warningzheight && distance2dsquared( self.enemy.origin, self.origin ) < self.attackradiussq )
             return "pursuit";
 
         if ( isdefined( self.curmeleetarget ) && self.curmeleetarget == self.enemy )
         {
-            if ( _func_220( self.curmeleetarget.origin, self.origin ) < self.keeppursuingtargetradiussq )
+            if ( distance2dsquared( self.curmeleetarget.origin, self.origin ) < self.keeppursuingtargetradiussq )
                 return "pursuit";
         }
     }
@@ -371,7 +371,7 @@ getfollowmovemode( var_0 )
 {
     var_1 = 40000;
     var_2 = 65536;
-    var_3 = self _meth_83E1();
+    var_3 = self getpathgoalpos();
 
     if ( isdefined( var_3 ) )
     {
@@ -405,7 +405,7 @@ wanttoattacktargetbutcant( var_0 )
     if ( !isdefined( self.curmeleetarget ) )
         return 0;
 
-    return !iswithinattackheight( self.curmeleetarget.origin ) && _func_220( self.origin, self.curmeleetarget.origin ) < self.meleeradiussq * 0.75 * 0.75 && ( !var_0 || self _meth_838E( self.curmeleetarget ) );
+    return !iswithinattackheight( self.curmeleetarget.origin ) && distance2dsquared( self.origin, self.curmeleetarget.origin ) < self.meleeradiussq * 0.75 * 0.75 && ( !var_0 || self agentcanseesentient( self.curmeleetarget ) );
 }
 
 readytomeleetarget()
@@ -419,7 +419,7 @@ readytomeleetarget()
     if ( self.aistate == "traverse" )
         return 0;
 
-    if ( _func_220( self.origin, self.curmeleetarget.origin ) > self.meleeradiussq )
+    if ( distance2dsquared( self.origin, self.curmeleetarget.origin ) > self.meleeradiussq )
         return 0;
 
     if ( !iswithinattackheight( self.curmeleetarget.origin ) )
@@ -433,9 +433,9 @@ wantstogrowlattarget()
     if ( !isdefined( self.enemy ) )
         return 0;
 
-    if ( abs( self.origin[2] - self.enemy.origin[2] ) <= self.warningzheight || self _meth_838E( self.enemy ) )
+    if ( abs( self.origin[2] - self.enemy.origin[2] ) <= self.warningzheight || self agentcanseesentient( self.enemy ) )
     {
-        var_0 = _func_220( self.origin, self.enemy.origin );
+        var_0 = distance2dsquared( self.origin, self.enemy.origin );
 
         if ( var_0 < self.warningradiussq )
             return 1;
@@ -448,10 +448,10 @@ getattackpoint( var_0 )
 {
     var_1 = var_0.origin - self.origin;
     var_1 = vectornormalize( var_1 );
-    var_2 = self _meth_83E1();
+    var_2 = self getpathgoalpos();
     var_3 = self.attackoffset + 4;
 
-    if ( isdefined( var_2 ) && _func_220( var_2, var_0.origin ) < var_3 * var_3 && maps\mp\agents\_scriptedagents::canmovepointtopoint( var_0.origin, var_2 ) )
+    if ( isdefined( var_2 ) && distance2dsquared( var_2, var_0.origin ) < var_3 * var_3 && maps\mp\agents\_scriptedagents::canmovepointtopoint( var_0.origin, var_2 ) )
         return var_2;
 
     var_4 = var_0.origin - var_1 * self.attackoffset;
@@ -520,7 +520,7 @@ findpointnearowner()
 
         var_15 /= var_16;
         var_18 = vectordot( var_1, var_15 );
-        var_19 = self.owner _meth_817C();
+        var_19 = self.owner getstance();
 
         switch ( var_19 )
         {
@@ -585,7 +585,7 @@ findpointnearowner()
     if ( !isdefined( var_26 ) )
         return self.origin;
 
-    if ( self.bhasbadpath && _func_220( var_26, self.lastbadpathgoal ) < 4 )
+    if ( self.bhasbadpath && distance2dsquared( var_26, self.lastbadpathgoal ) < 4 )
         return self.origin;
 
     return var_26;
@@ -605,7 +605,7 @@ destroyonownerdisconnect( var_0 )
     if ( isdefined( self.animcbs.onexit[self.aistate] ) )
         self [[ self.animcbs.onexit[self.aistate] ]]();
 
-    self _meth_826B();
+    self suicide();
 }
 
 watchattackstate()

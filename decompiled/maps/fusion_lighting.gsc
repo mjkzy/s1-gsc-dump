@@ -59,7 +59,7 @@ main()
     var_0 = getent( "cooling_towers_fire_light", "targetname" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_81DF( 0 );
+        var_0 setlightintensity( 0 );
 
     level.player thread fusion_zip_dof();
 }
@@ -97,7 +97,7 @@ simcurrentgendynamicexpossure()
         var_21 = max( vectordot( var_11, var_2 ), 0 );
         var_22 = var_20 / var_0 * var_21;
         var_23 = linearlerp( 9.5, 11, var_22 );
-        _func_0D3( "r_tonemapexposure", var_23 );
+        setsaveddvar( "r_tonemapexposure", var_23 );
         wait 0.55;
     }
 }
@@ -110,21 +110,21 @@ test_sun_flare()
 set_level_lighting_values()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 
-    _func_0D3( "r_disablelightsets", 0 );
+    setsaveddvar( "r_disablelightsets", 0 );
 
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         if ( maps\_utility::is_gen4() )
         {
 
         }
         else
-            _func_0D3( "r_tonemapExposureMultiplier", 0.3 );
+            setsaveddvar( "r_tonemapExposureMultiplier", 0.3 );
 
         if ( level.ps4 )
-            level.player _meth_83C0( "fusion" );
+            level.player lightsetforplayer( "fusion" );
     }
 }
 
@@ -165,35 +165,35 @@ fusion_intro_dof()
         setsunlight( 0, 0, 0 );
         thread fly_in_vfx_dopl_light_setup();
         maps\_utility::vision_set_fog_changes( "fusion_helicopter_closed", 0 );
-        level.player _meth_8490( "clut_fusion_heli_interior", 0.1 );
+        level.player setclutforplayer( "clut_fusion_heli_interior", 0.1 );
         thread motion_blur_rotation_enable();
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 1.1, 64 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 1.1, 64 );
         wait 15.0;
-        level.player _meth_84AB( 1.5, 45 );
+        level.player setphysicaldepthoffield( 1.5, 45 );
         wait 12.0;
-        level.player _meth_84AB( 1.1, 62 );
+        level.player setphysicaldepthoffield( 1.1, 62 );
     }
     else
     {
         wait 35;
         thread fly_in_vfx_dopl_light_setup();
         maps\_utility::vision_set_fog_changes( "fusion_helicopter", 0 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 1.1, 64 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 1.1, 64 );
         wait 15.0;
-        level.player _meth_84AB( 2.25, 32 );
+        level.player setphysicaldepthoffield( 2.25, 32 );
         wait 12.0;
-        level.player _meth_84AB( 1.1, 64 );
-        level.player _meth_84AA();
+        level.player setphysicaldepthoffield( 1.1, 64 );
+        level.player disablephysicaldepthoffieldscripting();
     }
 
     level waittill( "hatch_door_open" );
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_fusion_fly_in", 1.0 );
+        level.player setclutforplayer( "clut_fusion_fly_in", 1.0 );
         maps\_utility::vision_set_fog_changes( "fusion_neutral", 0 );
     }
 
@@ -207,7 +207,7 @@ fusion_intro_dof()
         resetsunlight();
 
     if ( level.nextgen )
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     else
     {
 
@@ -221,13 +221,13 @@ fusion_intro_dof()
 
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2, 3500 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2, 3500 );
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2, 3500 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2, 3500 );
         maps\_lighting::blend_dof_presets( "default", "default", 0.1 );
     }
 
@@ -236,7 +236,7 @@ fusion_intro_dof()
     common_scripts\utility::flag_wait( "ready_zip" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_fusion_zipline", 1.0 );
+        level.player setclutforplayer( "clut_fusion_zipline", 1.0 );
 
     if ( level.nextgen )
     {
@@ -254,8 +254,8 @@ fusion_intro_dof()
         wait 5.5;
         common_scripts\utility::flag_clear( "flag_autofocus_on" );
         wait 1;
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
     }
 
     thread script_probe_heli_default();
@@ -272,10 +272,10 @@ fly_in_primary_light_setup()
 fly_in_vfx_dopl_light_setup()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( level.warbird_a, "TAG_light_body_l", ( 10, 0, -20 ), ( 14, 110, 0 ) );
+    var_0 linkto( level.warbird_a, "TAG_light_body_l", ( 10, 0, -20 ), ( 14, 110, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_spot_key_burke_dopl" ), var_0, "TAG_ORIGIN" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( level.warbird_a, "TAG_burke_rim_light", ( -5, 20, -2 ), ( -10, -20, 0 ) );
+    var_1 linkto( level.warbird_a, "TAG_burke_rim_light", ( -5, 20, -2 ), ( -10, -20, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_spot_rim_burke_dopl" ), var_1, "TAG_ORIGIN" );
     level waittill( "hatch_door_open" );
     wait 4;
@@ -289,7 +289,7 @@ heli_fly_vfx_dopl_fill_light_setup()
 {
     wait 3.5;
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( level.warbird_a, "TAG_light_body_l", ( 10, 0, -20 ), ( 6, 112, 0 ) );
+    var_0 linkto( level.warbird_a, "TAG_light_body_l", ( 10, 0, -20 ), ( 6, 112, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_spot_fill_burke_dopl" ), var_0, "TAG_ORIGIN" );
     wait 20;
     stopfxontag( common_scripts\utility::getfx( "light_spot_fill_burke_dopl" ), var_0, "TAG_ORIGIN" );
@@ -302,25 +302,25 @@ heli_fly_vfx_dopl_fill_light_setup()
 frame_rate_tune_shadows_up_over_cliff()
 {
     wait 22;
-    level.player _meth_83C0( "fusion_helicopter_cliff" );
+    level.player lightsetforplayer( "fusion_helicopter_cliff" );
 }
 
 frame_rate_tune_shadows_heli_crash()
 {
     wait 33;
-    level.player _meth_83C0( "fusion_helicopter_crash" );
+    level.player lightsetforplayer( "fusion_helicopter_crash" );
 }
 
 frame_rate_tune_shadows_turn_to_right()
 {
     wait 39;
-    level.player _meth_83C0( "fusion_helicopter_turn_right" );
+    level.player lightsetforplayer( "fusion_helicopter_turn_right" );
 }
 
 frame_rate_tune_shadows_roof_top()
 {
     wait 55;
-    level.player _meth_83C0( "fusion_helicopter_roof_top" );
+    level.player lightsetforplayer( "fusion_helicopter_roof_top" );
 }
 
 ar_moment()
@@ -344,19 +344,19 @@ fusion_zip_dof()
 
     }
 
-    if ( _func_236() )
-        level.player _meth_83C0( "fusion_helicopter_zip_grab" );
+    if ( isusingssao() )
+        level.player lightsetforplayer( "fusion_helicopter_zip_grab" );
 
     if ( level.nextgen )
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.5, 22, 2, 2 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.5, 22, 2, 2 );
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.5, 22, 2, 2 );
-        level.player _meth_84AA();
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.5, 22, 2, 2 );
+        level.player disablephysicaldepthoffieldscripting();
     }
 
     wait 2.5;
@@ -364,15 +364,15 @@ fusion_zip_dof()
     if ( level.nextgen == 1 )
     {
         wait 0.5;
-        level.player _meth_84AB( 9, 800, 2, 2 );
+        level.player setphysicaldepthoffield( 9, 800, 2, 2 );
     }
     else
     {
 
     }
 
-    if ( _func_236() )
-        level.player _meth_83C0( "fusion_helicopter_roof_top" );
+    if ( isusingssao() )
+        level.player lightsetforplayer( "fusion_helicopter_roof_top" );
 
     self waittill( "fastzip_start" );
 }
@@ -382,7 +382,7 @@ sun_shad_vision_fly_in()
     common_scripts\utility::flag_wait( "sun_shad_fly_in" );
     thread set_grid_color_dark();
     thread script_probe_heli_closed();
-    level.player _meth_83C0( "fusion_helicopter_intro" );
+    level.player lightsetforplayer( "fusion_helicopter_intro" );
 
     if ( level.currentgen )
         maps\_utility::vision_set_fog_changes( "fusion_helicopter", 0.0 );
@@ -391,7 +391,7 @@ sun_shad_vision_fly_in()
 setup_vfx_lighting()
 {
     if ( level.currentgen )
-        _func_0D3( "r_dlightLimit", 4 );
+        setsaveddvar( "r_dlightLimit", 4 );
 
     playfxontag( common_scripts\utility::getfx( "light_godray_02" ), level.warbird_a, "TAG_godray" );
     playfxontag( common_scripts\utility::getfx( "light_point_blue_mon_left" ), level.warbird_a, "TAG_monitor_left_light" );
@@ -409,11 +409,11 @@ burke_spot_lighting()
     stopfxontag( common_scripts\utility::getfx( "light_spot_rim_burke_fadeout" ), level.warbird_a, "TAG_burke_rim_light" );
     wait 0.1;
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( level.warbird_a, "TAG_burke_key_light", ( -8, -35, 5 ), ( 0, 40, 0 ) );
+    var_0 linkto( level.warbird_a, "TAG_burke_key_light", ( -8, -35, 5 ), ( 0, 40, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_spot_key_burke" ), var_0, "TAG_ORIGIN" );
     var_1 = common_scripts\utility::spawn_tag_origin();
     wait 10;
-    var_1 _meth_804D( level.warbird_a, "TAG_burke_key_light", ( 25, 25, -10 ), ( 0, 0, 0 ) );
+    var_1 linkto( level.warbird_a, "TAG_burke_key_light", ( 25, 25, -10 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_point_blue_mon_mid" ), var_1, "TAG_ORIGIN" );
     wait 15;
     wait 1.8;
@@ -437,16 +437,16 @@ set_grid_color_dark()
     if ( level.nextgen )
     {
         wait 4;
-        level.warbird_a _meth_805B();
+        level.warbird_a startusingheroonlylighting();
 
         foreach ( var_1 in level.warbird_a.zipline_gun_model )
-            var_1 _meth_805B();
+            var_1 startusingheroonlylighting();
     }
 
     if ( level.nextgen == 1 )
     {
-        _func_0D3( "r_lightgridenabletweaks", "1" );
-        _func_0D3( "r_lightgridintensity", ".4" );
+        setsaveddvar( "r_lightgridenabletweaks", "1" );
+        setsaveddvar( "r_lightgridintensity", ".4" );
     }
     else
     {
@@ -458,17 +458,17 @@ script_probe_heli_closed()
 {
     wait 5;
     var_0 = getent( "refl_probe_heli_closed", "targetname" );
-    level.warbird_a _meth_83AB( var_0.origin );
-    level.burke _meth_83AB( var_0.origin );
-    level.guy_facing_player_intro _meth_83AB( var_0.origin );
-    level.copilot_intro _meth_83AB( var_0.origin );
-    level.pilot_intro _meth_83AB( var_0.origin );
+    level.warbird_a overridereflectionprobe( var_0.origin );
+    level.burke overridereflectionprobe( var_0.origin );
+    level.guy_facing_player_intro overridereflectionprobe( var_0.origin );
+    level.copilot_intro overridereflectionprobe( var_0.origin );
+    level.pilot_intro overridereflectionprobe( var_0.origin );
     level.carter hide();
     level.deployable_cover hide();
     level.joker hide();
 
     foreach ( var_2 in level.warbird_a.zipline_gun_model )
-        var_2 _meth_83AB( var_0.origin );
+        var_2 overridereflectionprobe( var_0.origin );
 }
 
 hide_all_chars()
@@ -484,15 +484,15 @@ script_probe_heli_open()
 {
     wait 3.5;
     var_0 = getent( "refl_probe_heli_open", "targetname" );
-    level.warbird_a _meth_83AB( var_0.origin );
-    level.burke _meth_83AB( var_0.origin );
-    level.copilot_intro _meth_83AB( var_0.origin );
-    level.pilot_intro _meth_83AB( var_0.origin );
+    level.warbird_a overridereflectionprobe( var_0.origin );
+    level.burke overridereflectionprobe( var_0.origin );
+    level.copilot_intro overridereflectionprobe( var_0.origin );
+    level.pilot_intro overridereflectionprobe( var_0.origin );
 
     if ( level.nextgen )
     {
         foreach ( var_2 in level.warbird_a.zipline_gun_model )
-            var_2 _meth_83AB( var_0.origin );
+            var_2 overridereflectionprobe( var_0.origin );
     }
     else
         maps\_utility::vision_set_fog_changes( "fusion_helicopter_open", 2.0 );
@@ -500,9 +500,9 @@ script_probe_heli_open()
 
 script_probe_heli_default()
 {
-    level.warbird_a _meth_83AC();
-    level.burke _meth_83AC();
-    level.joker _meth_83AC();
+    level.warbird_a defaultreflectionprobe();
+    level.burke defaultreflectionprobe();
+    level.joker defaultreflectionprobe();
 }
 
 hatch_door_veil( var_0 )
@@ -521,22 +521,22 @@ hatch_door_vision( var_0 )
     wait 0.05;
 
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
-    level.player _meth_83C0( "fusion_helicopter_door" );
+    level.player lightsetforplayer( "fusion_helicopter_door" );
 
     if ( level.nextgen )
         wait 0.5;
     else
         wait 0.5;
 
-    level.player _meth_83C0( "fusion_helicopter_ride" );
+    level.player lightsetforplayer( "fusion_helicopter_ride" );
     wait 2;
     thread fusion_fly_player_mist();
 
     if ( level.currentgen == 1 )
     {
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
         maps\_utility::vision_set_fog_changes( "fusion_helicopter_open", 1.5 );
     }
 
@@ -587,7 +587,7 @@ play_fullscreen_mist( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = newclienthudelem( self );
     var_6.x = var_4;
     var_6.y = var_5;
-    var_6 _meth_80CC( "overlay_rain_blur", 640, 480 );
+    var_6 setshader( "overlay_rain_blur", 640, 480 );
     var_6.splatter = 1;
     var_6.alignx = "left";
     var_6.aligny = "top";
@@ -647,10 +647,10 @@ lighting_setup_off_zip()
     common_scripts\utility::flag_wait( "sun_shad_off_zip" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_fusion_street", 1.0 );
+        level.player setclutforplayer( "clut_fusion_street", 1.0 );
 
-    if ( _func_235() )
-        level.player _meth_83C0( "fusion_default_exterior_lightset" );
+    if ( isusinghdr() )
+        level.player lightsetforplayer( "fusion_default_exterior_lightset" );
 
     if ( level.currentgen )
         maps\_utility::vision_set_fog_changes( "fusion_battle_exterior_golden", 10.0 );
@@ -669,7 +669,7 @@ setup_lighting_courtyard_start()
     {
         common_scripts\utility::flag_wait( "courtyard_start_lighting" );
         maps\_utility::vision_set_fog_changes( "fusion_neutral", 0.25 );
-        level.player _meth_8490( "clut_fusion_street", 0.1 );
+        level.player setclutforplayer( "clut_fusion_street", 0.1 );
     }
 }
 
@@ -692,16 +692,16 @@ exposure_adjust_courtyard_room_volume()
         {
             self waittill( "trigger" );
 
-            if ( _func_235() )
-                level.player _meth_83C0( "fusion_courtyard" );
+            if ( isusinghdr() )
+                level.player lightsetforplayer( "fusion_courtyard" );
 
             maps\_utility::vision_set_fog_changes( "fusion_neutral_fogfar", 5 );
 
-            while ( level.player _meth_80A9( self ) )
+            while ( level.player istouching( self ) )
                 wait 0.1;
 
-            if ( _func_235() )
-                level.player _meth_83C0( "fusion_default_exterior_lightset" );
+            if ( isusinghdr() )
+                level.player lightsetforplayer( "fusion_default_exterior_lightset" );
 
             maps\_utility::vision_set_fog_changes( "fusion_neutral", 5 );
         }
@@ -710,42 +710,42 @@ exposure_adjust_courtyard_room_volume()
 
 setup_dof_enter_turret()
 {
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
 }
 
 setup_dof_exit_turret()
 {
-    _func_0D3( "r_dof_physical_bokehenable", 0 );
+    setsaveddvar( "r_dof_physical_bokehenable", 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
-    _func_0D3( "r_mbCameraRotationInfluence", "0" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "0" );
 }
 
 setup_lighting_security_start()
 {
     common_scripts\utility::flag_wait( "security_room_player_start" );
     wait 0.5;
-    level.player _meth_83C0( "fusion_security_lightset" );
+    level.player lightsetforplayer( "fusion_security_lightset" );
     maps\_utility::vision_set_fog_changes( "fusion_security", 0.05 );
-    level.player _meth_8490( "clut_fusion_security", 0.1 );
+    level.player setclutforplayer( "clut_fusion_security", 0.1 );
     thread maps\_lighting::lerp_spot_intensity( "fusion_security_elevator_light", 1.0, 150000 );
     thread setup_turbine_room_outerspace_lighting();
 
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 }
 
 setup_dof_security()
 {
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
     var_0 = getentarray( "security_area_volume", "targetname" );
 
@@ -759,13 +759,13 @@ setup_dof_security_volume()
     {
         self waittill( "trigger" );
         var_0 = getent( "fusion_security_elevator_light", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
         thread setup_turbine_room_outerspace_lighting();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
 
-        var_0 _meth_8498( "normal" );
+        var_0 setlightshadowstate( "normal" );
     }
 }
 
@@ -781,8 +781,8 @@ elevator_fall_dof_tweaks()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     wait 2.5;
@@ -790,8 +790,8 @@ elevator_fall_dof_tweaks()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -799,9 +799,9 @@ setup_lighting_lab_start()
 {
     common_scripts\utility::flag_wait( "lab_player_start" );
     wait 0.5;
-    level.player _meth_83C0( "fusion_lab_lightset" );
+    level.player lightsetforplayer( "fusion_lab_lightset" );
     maps\_utility::vision_set_fog_changes( "fusion_lab", 0.05 );
-    level.player _meth_8490( "clut_fusion_lab", 0.1 );
+    level.player setclutforplayer( "clut_fusion_lab", 0.1 );
     thread setup_turbine_room_outerspace_lighting();
 }
 
@@ -818,9 +818,9 @@ lab_script_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        _func_0D3( "Sm_spotlightscoreradiuspower", 0.8 );
+        setsaveddvar( "Sm_spotlightscoreradiuspower", 0.8 );
         var_0 = getent( "lab_warm_light_01", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
     }
 }
 
@@ -837,9 +837,9 @@ lab_script_exit_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        _func_0D3( "Sm_spotlightscoreradiuspower", 0.6 );
+        setsaveddvar( "Sm_spotlightscoreradiuspower", 0.6 );
         var_0 = getent( "lab_warm_light_01", "targetname" );
-        var_0 _meth_8498( "normal" );
+        var_0 setlightshadowstate( "normal" );
     }
 }
 
@@ -849,9 +849,9 @@ setup_lighting_reactor_start()
     {
         common_scripts\utility::flag_wait( "reactor_player_start" );
         wait 0.5;
-        level.player _meth_83C0( "fusion_locker_room_lightset" );
+        level.player lightsetforplayer( "fusion_locker_room_lightset" );
         maps\_utility::vision_set_fog_changes( "fusion_locker_room", 0.05 );
-        level.player _meth_8490( "clut_fusion_lab", 0.1 );
+        level.player setclutforplayer( "clut_fusion_lab", 0.1 );
     }
 
     thread setup_turbine_room_outerspace_lighting();
@@ -873,12 +873,12 @@ lighting_setup_reactor_door_volume()
         thread maps\_lighting::lerp_spot_intensity( "fusion_airlock_open_light", 1.0, 0 );
         thread maps\_lighting::lerp_spot_intensity( "fusion_reactor_airlock_screen_light", 1.0, 20 );
         var_0 = getent( "fusion_airlock_open_light", "targetname" );
-        var_0 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
 
-        var_0 _meth_8498( "normal" );
+        var_0 setlightshadowstate( "normal" );
     }
 }
 
@@ -887,12 +887,12 @@ reactor_reveal_lighting()
     common_scripts\utility::flag_wait( "reactor_room_reveal_scene" );
     thread maps\_lighting::lerp_spot_intensity( "fusion_airlock_open_light", 1.0, 45000 );
     wait 8.0;
-    level.player _meth_83C0( "fusion_reactor_door_lightset" );
+    level.player lightsetforplayer( "fusion_reactor_door_lightset" );
 
     if ( level.nextgen )
     {
         wait 8;
-        level.player _meth_83C0( "fusion_reactor_lightset" );
+        level.player lightsetforplayer( "fusion_reactor_lightset" );
         maps\_utility::vision_set_fog_changes( "fusion_reactor", 8 );
     }
 }
@@ -903,11 +903,11 @@ setup_lighting_reactor_exit_start()
     wait 0.5;
 
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
-    level.player _meth_83C0( "fusion_pre_elevator_lightset" );
+    level.player lightsetforplayer( "fusion_pre_elevator_lightset" );
     maps\_utility::vision_set_fog_changes( "fusion_loading_area", 0.5 );
-    level.player _meth_8490( "clut_fusion_reactor", 0.1 );
+    level.player setclutforplayer( "clut_fusion_reactor", 0.1 );
     thread setup_turbine_room_outerspace_lighting();
 }
 
@@ -917,8 +917,8 @@ setup_lights_pre_elevator()
     var_0 = getent( "elevator_control", "targetname" );
     var_1 = getent( "pre_elevator_omni_teal", "targetname" );
     var_2 = getent( "pre_elevator_omni_white", "targetname" );
-    var_1 _meth_8498( "force_off" );
-    var_2 _meth_8498( "force_off" );
+    var_1 setlightshadowstate( "force_off" );
+    var_2 setlightshadowstate( "force_off" );
     thread maps\_lighting::lerp_spot_intensity( "elevator_start_fill_light", 1, 1000 );
     thread maps\_lighting::lerp_spot_color( "elevator_start_fill_light", 1, ( 0.9, 0.6, 0.3 ) );
     common_scripts\utility::flag_wait( "elevator_ascend" );
@@ -949,15 +949,15 @@ lighting_setup_turbine_elevator_volume()
         common_scripts\utility::flag_wait( "elevator_ascend" );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbEnable", "2" );
+            setsaveddvar( "r_mbEnable", "2" );
 
-        level.player _meth_83C0( "fusion_elevator_dark_lightset" );
+        level.player lightsetforplayer( "fusion_elevator_dark_lightset" );
 
         if ( level.nextgen )
             common_scripts\_exploder::exploder( 3466 );
 
         if ( level.currentgen == 1 )
-            _func_0D3( "r_dlightLimit", 2 );
+            setsaveddvar( "r_dlightLimit", 2 );
 
         common_scripts\utility::flag_wait( "turbine_room_combat_start" );
 
@@ -965,7 +965,7 @@ lighting_setup_turbine_elevator_volume()
             common_scripts\_exploder::kill_exploder( 3466 );
 
         if ( level.nextgen )
-            _func_0D3( "r_mbEnable", "0" );
+            setsaveddvar( "r_mbEnable", "0" );
     }
 }
 
@@ -975,13 +975,13 @@ setup_lighting_turbine_start()
     wait 0.5;
 
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
-    level.player _meth_83C0( "fusion_elevator_to_turbine_lightset" );
+    level.player lightsetforplayer( "fusion_elevator_to_turbine_lightset" );
     maps\_utility::vision_set_fog_changes( "fusion_turbines_reveal", 3 );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_fusion_turbine", 0.1 );
+        level.player setclutforplayer( "clut_fusion_turbine", 0.1 );
 
     thread maps\_lighting::lerp_spot_intensity( "turbine_main_key_01", 1.0, 1200000 );
     thread maps\_lighting::lerp_spot_intensity( "turbine_main_key_02", 1.0, 1200000 );
@@ -1021,9 +1021,9 @@ setup_lighting_fly_drone_turbine()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
     }
 }
 
@@ -1034,9 +1034,9 @@ setup_lighting_fly_drone_off_turbine()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
     }
 }
 
@@ -1047,12 +1047,12 @@ setup_lighting_control_room_start()
     maps\_utility::vision_set_fog_changes( "fusion_offices", 0.5 );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_fusion_lab", 0.1 );
+        level.player setclutforplayer( "clut_fusion_lab", 0.1 );
 
     if ( level.currentgen )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
-    level.player _meth_83C0( "fusion_default_interior_lightset" );
+    level.player lightsetforplayer( "fusion_default_interior_lightset" );
     thread setup_turbine_room_outerspace_lighting();
 }
 
@@ -1065,11 +1065,11 @@ setup_control_room_door_explosion_light()
     {
         if ( level.nextgen == 1 )
         {
-            var_2 _meth_81DF( 40000.0 );
+            var_2 setlightintensity( 40000.0 );
             continue;
         }
 
-        var_2 _meth_81DF( 4000.0 );
+        var_2 setlightintensity( 4000.0 );
     }
 }
 
@@ -1083,9 +1083,9 @@ setup_control_room_screen_light()
 setup_control_room_player_start()
 {
     common_scripts\utility::flag_wait( "control_room_player_start" );
-    level.player _meth_83C0( "fusion_screen_control_room_lightset" );
+    level.player lightsetforplayer( "fusion_screen_control_room_lightset" );
     maps\_utility::vision_set_fog_changes( "fusion_control_room_dark", 0.5 );
-    level.player _meth_8490( "clut_fusion_control_room", 0.1 );
+    level.player setclutforplayer( "clut_fusion_control_room", 0.1 );
 }
 
 setup_control_room_scene_dof()
@@ -1095,12 +1095,12 @@ setup_control_room_scene_dof()
     if ( level.nextgen )
     {
         var_0 = getent( "control_room_static_screen", "targetname" );
-        var_0 _meth_8020( 60, 30 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 3.0, 61 );
+        var_0 setlightfovrange( 60, 30 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 3.0, 61 );
     }
 
     common_scripts\utility::flag_wait( "flag_shut_down_reactor_failed" );
@@ -1108,11 +1108,11 @@ setup_control_room_scene_dof()
     if ( level.nextgen )
     {
         var_0 = getent( "control_room_static_screen", "targetname" );
-        var_0 _meth_8020( 110, 40 );
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
-        level.player _meth_84AA();
+        var_0 setlightfovrange( 110, 40 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -1120,12 +1120,12 @@ sun_shad_exposure_control_room()
 {
     common_scripts\utility::flag_wait( "start_control_room_exit_lighting" );
     maps\_utility::vision_set_fog_changes( "fusion_control_room", 0.5 );
-    level.player _meth_8490( "clut_fusion_hangar", 0.1 );
+    level.player setclutforplayer( "clut_fusion_hangar", 0.1 );
 
     if ( level.currentgen == 1 )
-        _func_0D3( "r_dlightLimit", 2 );
+        setsaveddvar( "r_dlightLimit", 2 );
 
-    level.player _meth_83C0( "fusion_control_room_exit_lightset" );
+    level.player lightsetforplayer( "fusion_control_room_exit_lightset" );
     thread setup_fusion_finale_light_flicker();
 }
 
@@ -1144,7 +1144,7 @@ tonemapkey_control_room_volume()
         self waittill( "trigger" );
         disableouterspacemodellighting();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1156,8 +1156,8 @@ setup_firelight_explosion_hangar()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     wait 1.0;
@@ -1166,8 +1166,8 @@ setup_firelight_explosion_hangar()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -1175,16 +1175,16 @@ enable_motion_blur_cooling_tower_explosions()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     wait 4.5;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -1202,7 +1202,7 @@ tonemapkey_cooling_towers_volume()
     {
         self waittill( "trigger" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1211,7 +1211,7 @@ sun_shad_cooling_tower_area()
 {
     common_scripts\utility::flag_wait( "cooling_tower_cart_explosion_lighting" );
     wait 1.25;
-    level.player _meth_83C0( "fusion_cooling_towers_post_lightset" );
+    level.player lightsetforplayer( "fusion_cooling_towers_post_lightset" );
 }
 
 sun_shad_cooling_tower_start()
@@ -1219,11 +1219,11 @@ sun_shad_cooling_tower_start()
     common_scripts\utility::flag_wait( "player_start_cooling_tower" );
 
     if ( level.currentgen == 0 )
-        level.player _meth_83C0( "fusion_cooling_towers_start_lightset" );
+        level.player lightsetforplayer( "fusion_cooling_towers_start_lightset" );
     else
-        _func_0D3( "sm_sunsamplesizenear", 0.38 );
+        setsaveddvar( "sm_sunsamplesizenear", 0.38 );
 
-    level.player _meth_8490( "clut_fusion_cooling_towers", 0.1 );
+    level.player setclutforplayer( "clut_fusion_cooling_towers", 0.1 );
     thread setup_fusion_finale_light_flicker();
 }
 
@@ -1233,18 +1233,18 @@ setup_fusion_finale_arm_rimlight()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
-    level.player _meth_8490( "clut_fusion_collapse", 0.1 );
-    level.player _meth_83C0( "fusion_cooling_towers_collapse_lightset" );
-    _func_0D3( "sm_spotlightscoremodelscale", 1 );
+    level.player setclutforplayer( "clut_fusion_collapse", 0.1 );
+    level.player lightsetforplayer( "fusion_cooling_towers_collapse_lightset" );
+    setsaveddvar( "sm_spotlightscoremodelscale", 1 );
     maps\_utility::vision_set_fog_changes( "fusion_cooling_towers_collapse", 5.0 );
     common_scripts\utility::flag_wait( "tower_knockback" );
 
-    if ( _func_235() )
-        level.player _meth_83C0( "fusion_cooling_towers_collapse_lightset" );
+    if ( isusinghdr() )
+        level.player lightsetforplayer( "fusion_cooling_towers_collapse_lightset" );
 
     wait 2.0;
     wait 12.0;
@@ -1252,15 +1252,15 @@ setup_fusion_finale_arm_rimlight()
     wait 5.0;
     wait 16.5;
 
-    if ( _func_235() )
-        level.player _meth_83C0( "fusion_arm_sequence_lightset" );
+    if ( isusinghdr() )
+        level.player lightsetforplayer( "fusion_arm_sequence_lightset" );
 
     wait 1;
     wait 1;
     wait 14;
 
-    if ( _func_235() )
-        level.player _meth_83C0( "fusion_cooling_towers_collapse_veil_off_lightset" );
+    if ( isusinghdr() )
+        level.player lightsetforplayer( "fusion_cooling_towers_collapse_veil_off_lightset" );
 }
 
 setup_fusion_finale_arm_fx()
@@ -1300,7 +1300,7 @@ setup_fusion_finale_light_flicker()
     var_0 = getentarray( "fusion_finale_light_flicker", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_81DF( 200000.0 );
+        var_2 setlightintensity( 200000.0 );
 
     common_scripts\utility::flag_wait( "collapse_start" );
     var_4 = 5;
@@ -1312,12 +1312,12 @@ setup_fusion_finale_light_flicker()
         common_scripts\_exploder::exploder( 6026 );
 
         foreach ( var_2 in var_0 )
-            var_2 _meth_81DF( 200000.0 );
+            var_2 setlightintensity( 200000.0 );
 
         wait(var_6);
 
         foreach ( var_2 in var_0 )
-            var_2 _meth_81DF( 0.5 );
+            var_2 setlightintensity( 0.5 );
 
         var_5++;
         wait(var_6);
@@ -1330,7 +1330,7 @@ setup_fusion_finale_lightgrid()
 {
     common_scripts\utility::flag_wait( "tower_knockback" );
     wait 30;
-    _func_0D3( "r_lightgridenabletweaks", "1" );
+    setsaveddvar( "r_lightgridenabletweaks", "1" );
 
     if ( level.nextgen == 1 )
         maps\_utility::lerp_saveddvar( "r_lightgridintensity", 0.15, 4 );
@@ -1347,11 +1347,11 @@ setup_fusion_finale_light_rim_fov()
 
     foreach ( var_2 in var_0 )
     {
-        var_2 _meth_8020( 45, 25 );
+        var_2 setlightfovrange( 45, 25 );
         wait 36;
-        var_2 _meth_8020( 30, 20 );
+        var_2 setlightfovrange( 30, 20 );
         wait 18;
-        var_2 _meth_8020( 65, 55 );
+        var_2 setlightfovrange( 65, 55 );
     }
 }
 
@@ -1365,7 +1365,7 @@ setup_fusion_finale_light_rim()
     foreach ( var_2 in var_0 )
     {
         wait 18;
-        var_2 _meth_81DF( 300000.0 );
+        var_2 setlightintensity( 300000.0 );
     }
 
     var_4 = 999;
@@ -1546,7 +1546,7 @@ scripted_fx_on_struct( var_0, var_1, var_2, var_3 )
             var_5.angles = var_4.angles;
 
         if ( isdefined( var_2 ) )
-            var_5 _meth_804D( var_2 );
+            var_5 linkto( var_2 );
 
         playfxontag( common_scripts\utility::getfx( var_1 ), var_5, "tag_origin" );
 
@@ -1570,9 +1570,9 @@ debug_show_org()
 motion_blur_rotation_enable()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
 }
 
 autofocus_hipenable()
@@ -1580,15 +1580,15 @@ autofocus_hipenable()
     common_scripts\utility::flag_wait( "flag_autofocus_on" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84AA();
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 0.2 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+    level.player disablephysicaldepthoffieldscripting();
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 0.2 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
     common_scripts\utility::flag_waitopen( "flag_autofocus_on" );
-    _func_0D3( "r_dof_physical_hipEnable", 0 );
+    setsaveddvar( "r_dof_physical_hipEnable", 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }

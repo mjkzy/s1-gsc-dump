@@ -47,17 +47,17 @@ main()
     precachemodel( "viewbody_atlas_pmc_smp_custom" );
     precachemodel( "npc_titan45_base_loot" );
     precachemodel( "npc_titan45_nocamo" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_asm1_sp" );
-    precacheitem( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_asm1_sp" );
+    precacheshellshock( "iw5_uts19_sp" );
     precachemodel( "vm_hms_rhino" );
     precacheshader( "mtl_lag_exo_door_breach" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "iw5_mors_sp" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "iw5_mors_sp" );
     precachemodel( "npc_bal27_nocamo" );
-    precacheitem( "iw5_kf5_sp" );
-    precacheitem( "iw5_mahemstraight_sp" );
+    precacheshellshock( "iw5_kf5_sp" );
+    precacheshellshock( "iw5_mahemstraight_sp" );
     precachemodel( "vehicle_ind_semi_truck_fuel_tanker" );
     precachemodel( "ind_semi_truck_fuel_tank_destroy" );
     precachemodel( "ind_semi_truck_03_destroy" );
@@ -83,10 +83,10 @@ main()
     precachemodel( "muteCharge" );
     precachemodel( "lag_roof_breach_device" );
     precachemodel( "com_hand_radio" );
-    _func_251( "prison_laser" );
-    _func_251( "lag_snipper_laser" );
-    _func_251( "tracking_drone_laser" );
-    _func_251( "orbital_strike_laser" );
+    precachelaser( "prison_laser" );
+    precachelaser( "lag_snipper_laser" );
+    precachelaser( "tracking_drone_laser" );
+    precachelaser( "orbital_strike_laser" );
     precacherumble( "damage_light" );
     precacherumble( "light_1s" );
     precacherumble( "light_2s" );
@@ -97,13 +97,13 @@ main()
     precacherumble( "heavy_3s" );
     precacherumble( "artillery_rumble" );
     precacherumble( "steady_rumble" );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_081();
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    precachesonarvisioncodeassets();
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     setdvar( "qte_show_real_weapon", 1 );
@@ -154,7 +154,7 @@ main()
     createthreatbiasgroup( "player" );
     level.player.hack_fix_lagos_flank_alley_camera_pop = 1;
     var_1 = getent( "harmonic_breach_player_blocker", "targetname" );
-    var_1 _meth_82BF();
+    var_1 notsolid();
 }
 
 #using_animtree("player");
@@ -163,7 +163,7 @@ mag_wall_gov_setup()
 {
     var_0 = getent( "anim_org_exo_climb_player", "targetname" );
     var_1 = getent( "lighting_centroid_overlook_door_exterior", "targetname" );
-    var_0 _meth_847B( var_1.origin );
+    var_0 overridelightingorigin( var_1.origin );
     var_2 = getanimlength( %lag_gov_wallpullup_start_vm ) - 1;
     maps\_exo_climb::override_mount_anim( "mag_climb_gov_wall", %lag_gov_wallpullup_start_vm, var_0, undefined, var_2 );
 }
@@ -191,10 +191,10 @@ transient_transition_alley_to_outro()
         wait 0.05;
 
     level notify( "tff_pre_alley_to_outro" );
-    _func_219( "lagos_alley_tr" );
-    _func_218( "lagos_outro_tr" );
+    unloadtransient( "lagos_alley_tr" );
+    loadtransient( "lagos_outro_tr" );
 
-    while ( !_func_21E( "lagos_outro_tr" ) )
+    while ( !istransientloaded( "lagos_outro_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_alley_to_outro" );
@@ -203,9 +203,9 @@ transient_transition_alley_to_outro()
 transient_transition_load_alley()
 {
     common_scripts\utility::flag_wait( "flag_tff_transition_load_alley" );
-    _func_218( "lagos_alley_tr" );
+    loadtransient( "lagos_alley_tr" );
 
-    while ( !_func_21E( "lagos_alley_tr" ) )
+    while ( !istransientloaded( "lagos_alley_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_load_alley" );
@@ -217,16 +217,16 @@ transient_transition_intro_to_middle()
         return;
 
     common_scripts\utility::flag_wait( "flag_leaving_gov_building" );
-    _func_218( "lagos_roundabout_lobby_tr" );
+    loadtransient( "lagos_roundabout_lobby_tr" );
     common_scripts\utility::flag_wait( "gov_player_exiting_area" );
     level notify( "tff_pre_intro_to_middle" );
     var_0 = getent( "anim_HM_post_breach_door", "targetname" );
     var_1 = getent( "gov_hostage_ext_door", "targetname" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "h_breach_exit_door_open" );
-    _func_219( "lagos_intro_tr" );
-    _func_218( "lagos_middle_tr" );
+    unloadtransient( "lagos_intro_tr" );
+    loadtransient( "lagos_middle_tr" );
 
-    while ( !_func_21E( "lagos_middle_tr" ) )
+    while ( !istransientloaded( "lagos_middle_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_intro_to_middle" );
@@ -236,14 +236,14 @@ transient_transition_unload_lobby()
 {
     common_scripts\utility::flag_wait( "tff_transition_unload_lobby" );
     level notify( "tff_pre_unload_lobby" );
-    _func_219( "lagos_roundabout_lobby_tr" );
+    unloadtransient( "lagos_roundabout_lobby_tr" );
 }
 
 transient_transition_unload_middle()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_unload_middle" );
     level notify( "tff_pre_unload_middle" );
-    _func_219( "lagos_middle_tr" );
+    unloadtransient( "lagos_middle_tr" );
 }
 
 init_level_flags()

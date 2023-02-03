@@ -627,7 +627,7 @@ cafe_market_music_stop()
 
 mhunt_cafe_cam_enter_front()
 {
-    level.player _meth_8346( 20, 30, 1.0, 0 );
+    level.player enablefocus( 20, 30, 1.0, 0 );
     soundscripts\_snd_playsound::snd_play_2d( "mhunt_cafe_cam_enter_front" );
     soundscripts\_audio_mix_manager::mm_add_submix( "mhunt_cafe_security_cam_zoom_out" );
 }
@@ -646,7 +646,7 @@ start_cafe_cam_mvmnt_loops()
     {
         waitframe();
         waittillframeend;
-        var_3 = level.player _meth_830D();
+        var_3 = level.player getnormalizedcameramovements();
         var_4 = max( abs( var_3[0] ), abs( var_3[1] ) );
 
         if ( var_4 - var_1 > 0 )
@@ -674,7 +674,7 @@ start_cafe_cam_mvmnt_loops()
         if ( isdefined( level.aud.looklp ) )
         {
             var_7 = soundscripts\_snd::snd_map( var_1, level.aud.envs["sniper_drone_look_spd2vol"] );
-            level.aud.looklp _meth_806F( var_7 );
+            level.aud.looklp scalevolume( var_7 );
         }
 
         var_2 = level.player getangles();
@@ -723,7 +723,7 @@ mhunt_cafe_cam_zoom_in()
         level notify( "stop_cam_zoom_out" );
 
     level.aud.cam_zoom_in = soundscripts\_snd_playsound::snd_play_2d( "mhunt_cafe_cam_zoom_in", "stop_cam_zoom_in", 0, 0.12 );
-    level.player _meth_8346( 20, 30, 0.125, 1 );
+    level.player enablefocus( 20, 30, 0.125, 1 );
     soundscripts\_audio_mix_manager::mm_add_submix( "mhunt_cafe_security_cam_zoom_in" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_cafe_security_cam_zoom_out" );
 }
@@ -734,7 +734,7 @@ mhunt_cafe_cam_zoom_out()
         level notify( "stop_cam_zoom_in" );
 
     level.aud.cam_zoom_out = soundscripts\_snd_playsound::snd_play_2d( "mhunt_cafe_cam_zoom_out", "stop_cam_zoom_out", 0, 0.12 );
-    level.player _meth_8346( 20, 30, 1.0, 1 );
+    level.player enablefocus( 20, 30, 1.0, 1 );
     soundscripts\_audio_mix_manager::mm_add_submix( "mhunt_cafe_security_cam_zoom_out" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_cafe_security_cam_zoom_in" );
 }
@@ -802,7 +802,7 @@ mhunt_cafe_cam4_switch()
 
 mhunt_cafe_cam_exit_front()
 {
-    level.player _meth_8347( 2 );
+    level.player disablefocus( 2 );
     soundscripts\_snd_playsound::snd_play_2d( "mhunt_cafe_cam_exit_front" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_cafe_security_cam_zoom_out" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_cafe_security_cam_zoom_in" );
@@ -885,7 +885,7 @@ safehouse_int_trigger_think()
             level.aud.ac_duct_02 = undefined;
         }
 
-        while ( self _meth_80A9( var_0 ) )
+        while ( self istouching( var_0 ) )
             wait 0.05;
     }
 }
@@ -910,7 +910,7 @@ mhunt_tv_broadcast()
     if ( !isdefined( level.aud.tv_broadcast_lp ) )
     {
         level.aud.tv_broadcast_lp = soundscripts\_snd_playsound::snd_play_loop_at( "mhunt_tv_broadcast_lp", ( 23692, 69307, -314 ), "stop_mhunt_broadcast", 3, 0.1 );
-        level.aud.tv_broadcast_lp _meth_806F( 0, 3 );
+        level.aud.tv_broadcast_lp scalevolume( 0, 3 );
     }
 }
 
@@ -965,12 +965,12 @@ first_floor_trigger_think()
         }
 
         if ( isdefined( level.aud.tv_broadcast_lp ) )
-            level.aud.tv_broadcast_lp _meth_806F( 1, 3 );
+            level.aud.tv_broadcast_lp scalevolume( 1, 3 );
 
         if ( isdefined( level.aud.tv_dest_lp ) )
-            level.aud.tv_dest_lp _meth_806F( 0, 1 );
+            level.aud.tv_dest_lp scalevolume( 0, 1 );
 
-        while ( self _meth_80A9( var_0 ) )
+        while ( self istouching( var_0 ) )
             wait 0.05;
 
         if ( isdefined( level.aud.ac_duct ) )
@@ -986,10 +986,10 @@ first_floor_trigger_think()
         }
 
         if ( isdefined( level.aud.tv_broadcast_lp ) )
-            level.aud.tv_broadcast_lp _meth_806F( 0, 3 );
+            level.aud.tv_broadcast_lp scalevolume( 0, 3 );
 
         if ( isdefined( level.aud.tv_dest_lp ) )
-            level.aud.tv_dest_lp _meth_806F( 0, 1 );
+            level.aud.tv_dest_lp scalevolume( 0, 1 );
 
         wait 0.05;
     }
@@ -1037,7 +1037,7 @@ second_floor_trigger_think()
             level.aud.terminal_hum_02 aud_fade_in( "amb_mach_terminal_hum_lp", 0.5, 1 );
         }
 
-        while ( self _meth_80A9( var_0 ) )
+        while ( self istouching( var_0 ) )
             wait 0.05;
 
         if ( isdefined( level.aud.circuit_breaker ) )
@@ -1176,7 +1176,7 @@ start_sniper_drone_loops()
         var_4 += 0.6 * var_11;
         var_1 = level.player.sniperdronelink.origin;
         var_0 = var_7;
-        var_12 = level.player _meth_830D();
+        var_12 = level.player getnormalizedcameramovements();
         var_13 = max( abs( var_12[0] ), abs( var_12[1] ) );
         var_5 += 0.6 * ( var_13 - var_5 );
         var_14 = maps\greece_code::calculateleftstickdeadzone();
@@ -1212,31 +1212,31 @@ start_sniper_drone_loops()
         if ( isdefined( level.aud.hoverlp ) )
         {
             var_16 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_hover_spd2vol"] );
-            level.aud.hoverlp _meth_806F( var_16 );
+            level.aud.hoverlp scalevolume( var_16 );
             var_17 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_hover_spd2pch"] );
-            level.aud.hoverlp _meth_806D( var_17 );
+            level.aud.hoverlp scalepitch( var_17 );
         }
 
         if ( isdefined( level.aud.lfelp ) )
         {
             var_18 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_lfe_spd2vol"] );
-            level.aud.lfelp _meth_806F( var_18 );
+            level.aud.lfelp scalevolume( var_18 );
             var_19 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_lfe_spd2pch"] );
-            level.aud.lfelp _meth_806D( var_19 );
+            level.aud.lfelp scalepitch( var_19 );
         }
 
         if ( isdefined( level.aud.flylp ) )
         {
             var_20 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_fly_spd2vol"] );
-            level.aud.flylp _meth_806F( var_20 );
+            level.aud.flylp scalevolume( var_20 );
             var_21 = soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_fly_spd2pch"] );
-            level.aud.flylp _meth_806D( var_21 );
+            level.aud.flylp scalepitch( var_21 );
         }
 
         if ( isdefined( level.aud.looklp ) )
         {
             var_22 = soundscripts\_snd::snd_map( var_5, level.aud.envs["sniper_drone_look_spd2vol"] ) * soundscripts\_snd::snd_map( var_4, level.aud.envs["sniper_drone_look_hover_spd2vol"] );
-            level.aud.looklp _meth_806F( var_22 );
+            level.aud.looklp scalevolume( var_22 );
         }
 
         wait 0.05;
@@ -1374,7 +1374,7 @@ start_gate_breach_music()
 
 start_burke_ambush_slomo()
 {
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_snd::snd_music_message( "start_burke_ambush_slomo" );
     soundscripts\_audio_mix_manager::mm_add_submix( "mhunt_burke_ambush" );
@@ -1388,7 +1388,7 @@ stop_burke_ambush_slomo()
     wait 0.25;
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_burke_ambush" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
 }
 
 npc_shoots_pool_enemy()
@@ -2039,7 +2039,7 @@ sniper_interior_trigger_think( var_0 )
 
         foreach ( var_2 in var_0 )
         {
-            if ( level.player _meth_80A9( var_2 ) )
+            if ( level.player istouching( var_2 ) )
             {
                 level.aud.playerinside = 1;
                 break;
@@ -2128,7 +2128,7 @@ windmill_sniper_shot_whizby( var_0, var_1 )
 aud_windmill_sniper_whizby( var_0, var_1 )
 {
     var_2 = soundscripts\_snd_playsound::snd_play_at( "mhunt_snpr_bullet_whizby", var_0 );
-    var_2 _meth_82AE( var_1, 0.1 );
+    var_2 moveto( var_1, 0.1 );
 }
 
 scramble_amb_siren_loop()
@@ -2227,7 +2227,7 @@ hotel_glass_footstep_think( var_0 )
 
         foreach ( var_2 in var_0 )
         {
-            if ( level.player _meth_80A9( var_2 ) )
+            if ( level.player istouching( var_2 ) )
             {
                 level.aud.broken_glass = 1;
                 break;
@@ -2381,7 +2381,7 @@ gondola_movement_loops( var_0 )
 
 start_swarm_drones_context()
 {
-    _func_2B5( 0, 0, 0, 0, 0, 0 );
+    changewhizbyautosimparams( 0, 0, 0, 0, 0, 0 );
 }
 
 restaurant_doors_open( var_0 )
@@ -2413,7 +2413,7 @@ restaurant_wet_floor_think( var_0 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             level.aud.restaurant_water = 1;
         else
             level.aud.restaurant_water = 0;
@@ -2453,13 +2453,13 @@ finale_civ_04_cower( var_0 )
 
 manga_rocket_trail( var_0 )
 {
-    var_0 _meth_8075( "wpn_stingerm7_loop" );
+    var_0 playloopsound( "wpn_stingerm7_loop" );
 }
 
 manga_rocket_explosion( var_0 )
 {
     soundscripts\_snd_playsound::snd_play_at( "wpn_stingerm7_proj_impact", var_0.origin );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
 }
 
 stingerm7_shoot_tower()
@@ -2490,7 +2490,7 @@ mhunt_snpr_tower_collapse()
 
 stop_swarm_drones_context()
 {
-    _func_2B5( 0, 0, 0, 0, 1, 1 );
+    changewhizbyautosimparams( 0, 0, 0, 0, 1, 1 );
 }
 
 exit_truck_fire( var_0 )
@@ -2591,7 +2591,7 @@ enemy_on_fire()
 
     for (;;)
     {
-        var_0 _meth_82AE( self.origin, 0.05 );
+        var_0 moveto( self.origin, 0.05 );
         wait 0.05;
     }
 }
@@ -2609,7 +2609,7 @@ stop_finale_fight_music()
 
 start_hades_suv_extraction()
 {
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_audio_mix_manager::mm_add_submix( "mhunt_suv_charge_plyr_slomo" );
     soundscripts\_snd_playsound::snd_play_2d( "mhunt_hades_suv_slomo_start", "stop_suv_slomo", 0.18, 0.13 );
@@ -2618,7 +2618,7 @@ start_hades_suv_extraction()
 stop_hades_suv_extraction()
 {
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     soundscripts\_audio_mix_manager::mm_clear_submix( "mhunt_suv_charge_plyr_slomo" );
     level notify( "stop_suv_slomo" );
     soundscripts\_snd_playsound::snd_play_2d( "mhunt_hades_suv_slomo_stop" );
@@ -2688,9 +2688,9 @@ aud_create_linked_entity( var_0, var_1 )
     var_2 = spawn( "script_origin", var_0.origin );
 
     if ( isdefined( var_1 ) )
-        var_2 _meth_804D( var_0, "", var_1, ( 0, 0, 0 ) );
+        var_2 linkto( var_0, "", var_1, ( 0, 0, 0 ) );
     else
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
 
     return var_2;
 }
@@ -2703,7 +2703,7 @@ aud_play( var_0, var_1 )
         var_2 = var_1;
 
     if ( var_2 )
-        self _meth_8075( var_0 );
+        self playloopsound( var_0 );
     else
     {
         self playsound( var_0, "sounddone" );
@@ -2719,7 +2719,7 @@ aud_fade_in( var_0, var_1, var_2 )
         var_3 = var_2;
 
     if ( var_3 )
-        self _meth_8075( var_0 );
+        self playloopsound( var_0 );
     else
     {
         self playsound( var_0, "sounddone" );
@@ -2732,13 +2732,13 @@ aud_fade_in( var_0, var_1, var_2 )
 
 audx_fade_in_internal( var_0 )
 {
-    self _meth_806F( 0.0 );
+    self scalevolume( 0.0 );
     wait 0.05;
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_806F( 1.0, var_0 );
+    self scalevolume( 1.0, var_0 );
 }
 
 aud_fade_out( var_0 )
@@ -2748,14 +2748,14 @@ aud_fade_out( var_0 )
 
 audx_fade_out_internal( var_0 )
 {
-    self _meth_806F( 0.0, var_0 );
+    self scalevolume( 0.0, var_0 );
     wait(var_0 + 0.05);
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_80AC();
-    self _meth_80AB();
+    self stopsounds();
+    self stoploopsound();
     wait 0.05;
 
     if ( !isdefined( self ) )

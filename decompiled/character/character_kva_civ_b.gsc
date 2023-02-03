@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "kva_civilian_b" );
+    self setmodel( "kva_civilian_b" );
     self attach( "head_m_gen_cau_young", "", 1 );
     self.headmodel = "head_m_gen_cau_young";
     self.voice = "kva";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

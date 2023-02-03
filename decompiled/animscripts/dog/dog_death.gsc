@@ -19,17 +19,17 @@ main()
     if ( isdefined( self.a.nodeath ) )
     {
         wait 1.1;
-        var_0 = self _meth_813C();
+        var_0 = self getdroptofloorposition();
 
         if ( isdefined( var_0 ) )
         {
             var_1 = common_scripts\utility::spawn_tag_origin();
             var_1.origin = self.origin;
             var_1.angles = self.angles;
-            self _meth_804D( var_1 );
-            var_1 _meth_82AE( var_0, 0.5 );
+            self linkto( var_1 );
+            var_1 moveto( var_0, 0.5 );
             wait 0.5;
-            self _meth_804F();
+            self unlink();
             var_1 delete();
         }
         else
@@ -38,12 +38,12 @@ main()
         return;
     }
 
-    self _meth_804F();
+    self unlink();
 
     if ( isdefined( self.enemy ) && isdefined( self.enemy.syncedmeleetarget ) && self.enemy.syncedmeleetarget == self )
         self.enemy.syncedmeleetarget = undefined;
 
-    self _meth_8142( %body, 0.2 );
+    self clearanim( %body, 0.2 );
     var_2 = getdogdeathanim( "front" );
 
     if ( isdefined( self.deathanim ) )
@@ -51,12 +51,12 @@ main()
 
     if ( isdefined( self.custom_deathsound ) )
         self playsound( self.custom_deathsound );
-    else if ( self _meth_83CD() )
+    else if ( self isdogbeingdriven() )
         soundscripts\_snd::snd_message( "anml_doberman", "death" );
     else
         soundscripts\_snd::snd_message( "anml_doberman", "death" );
 
-    self _meth_8113( "dog_anim", var_2, 1, 0.2, 1 );
+    self setflaggedanimrestart( "dog_anim", var_2, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "dog_anim" );
 }
 

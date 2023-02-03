@@ -77,41 +77,41 @@ security_center_fan_blades_internal()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     var_0.angles = self.angles;
-    self _meth_804D( var_0, "tag_origin" );
+    self linkto( var_0, "tag_origin" );
 
     if ( level.start_point_scripted == "infil" || level.start_point_scripted == "security_center" )
     {
         while ( !common_scripts\utility::flag( "emp_detonated" ) )
         {
-            self _meth_842A( ( 0, 180, 0 ), 0.25 );
+            self rotatebylinked( ( 0, 180, 0 ), 0.25 );
             self waittill( "rotatedone" );
         }
 
-        self _meth_842A( ( 0, 180, 0 ), 0.25, 0, 0 );
+        self rotatebylinked( ( 0, 180, 0 ), 0.25, 0, 0 );
         self waittill( "rotatedone" );
-        self _meth_842A( ( 0, 180, 0 ), 0.5, 0, 0 );
+        self rotatebylinked( ( 0, 180, 0 ), 0.5, 0, 0 );
         self waittill( "rotatedone" );
-        self _meth_842A( ( 0, 180, 0 ), 1, 0, 0 );
+        self rotatebylinked( ( 0, 180, 0 ), 1, 0, 0 );
         self waittill( "rotatedone" );
-        self _meth_842A( ( 0, 180, 0 ), 2, 0, 0 );
+        self rotatebylinked( ( 0, 180, 0 ), 2, 0, 0 );
     }
 
     if ( level.start_point_scripted == "security_center" || level.start_point_scripted == "hack_security" )
         common_scripts\utility::flag_wait( "player_is_exiting_security_center" );
 
-    self _meth_842A( ( 0, 180, 0 ), 2, 0, 0 );
+    self rotatebylinked( ( 0, 180, 0 ), 2, 0, 0 );
     self waittill( "rotatedone" );
-    self _meth_842A( ( 0, 180, 0 ), 1, 0, 0 );
+    self rotatebylinked( ( 0, 180, 0 ), 1, 0, 0 );
     self waittill( "rotatedone" );
-    self _meth_842A( ( 0, 180, 0 ), 0.5, 0, 0 );
+    self rotatebylinked( ( 0, 180, 0 ), 0.5, 0, 0 );
     self waittill( "rotatedone" );
-    self _meth_842A( ( 0, 180, 0 ), 0.25, 0, 0 );
+    self rotatebylinked( ( 0, 180, 0 ), 0.25, 0, 0 );
     self waittill( "rotatedone" );
 
     while ( !common_scripts\utility::flag( "penthouse_end" ) )
     {
-        self _meth_804D( var_0, "tag_origin" );
-        self _meth_842A( ( 0, 180, 0 ), 0.25 );
+        self linkto( var_0, "tag_origin" );
+        self rotatebylinked( ( 0, 180, 0 ), 0.25 );
         self waittill( "rotatedone" );
     }
 
@@ -127,7 +127,7 @@ plant_emp_setup()
     level.security_center_anim_struct = common_scripts\utility::getstruct( "security_center_anim_struct", "targetname" );
     var_0 = getent( "emp_device_position", "targetname" );
     level.emp_device_obj = spawn( "script_model", ( 0, 0, 0 ) );
-    level.emp_device_obj _meth_80B1( "mutecharge_obj" );
+    level.emp_device_obj setmodel( "mutecharge_obj" );
     level.emp_device_obj.angles = var_0.angles;
     level.emp_device_obj.origin = var_0.origin;
     level.emp = maps\_utility::spawn_anim_model( "emp" );
@@ -162,30 +162,30 @@ plant_emp()
 {
     level notify( "player_planting_emp" );
     common_scripts\utility::flag_set( "player_planting_emp" );
-    _func_0D3( "objectiveHide", 1 );
+    setsaveddvar( "objectiveHide", 1 );
     level.play_ally_warning_vo = undefined;
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     level.player thread maps\_tagging::tagging_set_binocs_enabled( 0 );
     level.player thread maps\irons_estate_stealth::irons_estate_whistle( 0 );
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
 
-    if ( level.player _meth_817C() != "stand" )
-        level.player _meth_817D( "stand" );
+    if ( level.player getstance() != "stand" )
+        level.player setstance( "stand" );
 
-    level.player _meth_8119( 0 );
-    level.player _meth_831D();
-    level.player _meth_8080( level.player_rig, "tag_player", 0.6 );
+    level.player allowcrouch( 0 );
+    level.player disableweapons();
+    level.player playerlinktoblend( level.player_rig, "tag_player", 0.6 );
     level.security_center_anim_struct thread maps\_anim::anim_single( level.player_and_hatch_doors, "plant_emp" );
     wait 0.6;
     level.emp_device_obj delete();
     level.player_rig show();
     level.emp show();
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     level.player_rig waittillmatch( "single anim", "lights_off" );
     common_scripts\utility::flag_set( "emp_detonated" );
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     level.player thread maps\_tagging::tagging_set_enabled( 0 );
     var_0 = getentarray( "security_center_light", "targetname" );
     thread maps\irons_estate_code::security_center_lights( 1, var_0 );
@@ -208,19 +208,19 @@ plant_emp()
     playfxontag( common_scripts\utility::getfx( "ie_emp" ), level.emp, "tag_vfx_attach" );
     maps\_utility::stop_exploder( 6611 );
     wait 3.25;
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     wait 0.5;
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     wait 6.3;
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
     level.player_rig waittillmatch( "single anim", "end" );
     thread maps\irons_estate_code::timer( 120, 10, undefined, &"IRONS_ESTATE_SECURITY_TIMER" );
     level.player_rig hide();
     level.player_and_hatch_doors = common_scripts\utility::array_remove( level.player_and_hatch_doors, level.emp );
     level.emp delete();
-    level.player _meth_804F();
-    level.player _meth_831E();
-    level.player _meth_8119( 1 );
+    level.player unlink();
+    level.player enableweapons();
+    level.player allowcrouch( 1 );
     level.player freezecontrols( 0 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
     common_scripts\utility::flag_set( "security_center_enter_anim_done" );
@@ -238,7 +238,7 @@ security_center_vo()
     wait 0.5;
     var_0 = getent( "security_center_rooftop_trigger", "targetname" );
 
-    if ( !level.player _meth_80A9( var_0 ) )
+    if ( !level.player istouching( var_0 ) )
         var_0 waittill( "trigger" );
 
     maps\_utility::smart_radio_dialogue( "ie_nox_microemp" );

@@ -106,7 +106,7 @@ onstartgametype()
         game["defenders"] = var_0;
     }
 
-    getteamplayersalive( "manual_change" );
+    setclientnamemode( "manual_change" );
     level._effect["bomb_explosion"] = loadfx( "vfx/explosion/mp_gametype_bomb" );
     level._effect["bomb_light_blinking"] = loadfx( "vfx/lights/light_sdbomb_blinking" );
     level._effect["bomb_light_planted"] = loadfx( "vfx/lights/light_beacon_sdbomb" );
@@ -186,9 +186,9 @@ onspawnplayer()
     if ( isplayer( self ) && !var_0 )
     {
         if ( level.multibomb && self.pers["team"] == game["attackers"] )
-            self _meth_82FB( "ui_carrying_bomb", 1 );
+            self setclientomnvar( "ui_carrying_bomb", 1 );
         else
-            self _meth_82FB( "ui_carrying_bomb", 0 );
+            self setclientomnvar( "ui_carrying_bomb", 0 );
     }
 
     self.isrespawningwithbombcarrierclass = undefined;
@@ -237,7 +237,7 @@ shouldspawntags( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 
 onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
     if ( isplayer( self ) )
-        self _meth_82FB( "ui_carrying_bomb", 0 );
+        self setclientomnvar( "ui_carrying_bomb", 0 );
 
     if ( !maps\mp\_utility::gameflag( "prematch_done" ) )
         maps\mp\gametypes\_playerlogic::mayspawn();
@@ -276,12 +276,12 @@ spawndogtags( var_0, var_1 )
     else
     {
         var_3[0] = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3[0] _meth_8382( var_0 );
-        var_3[0] _meth_80B1( "prop_dogtags_future_enemy_animated" );
+        var_3[0] setclientowner( var_0 );
+        var_3[0] setmodel( "prop_dogtags_future_enemy_animated" );
         var_3[0] _meth_856C( 1 );
         var_3[1] = spawn( "script_model", ( 0, 0, 0 ) );
-        var_3[1] _meth_8382( var_0 );
-        var_3[1] _meth_80B1( "prop_dogtags_future_friend_animated" );
+        var_3[1] setclientowner( var_0 );
+        var_3[1] setmodel( "prop_dogtags_future_friend_animated" );
         var_3[1] _meth_856C( 1 );
         var_4 = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
         level.dogtags[var_0.guid] = maps\mp\gametypes\_gameobjects::createuseobject( "any", var_4, var_3, ( 0, 0, 16 ) );
@@ -329,8 +329,8 @@ spawndogtags( var_0, var_1 )
     level notify( "sr_player_killed", var_0 );
     var_0.tagavailable = 1;
     var_0.objective = 3;
-    level.dogtags[var_0.guid].visuals[0] _meth_8279( "mp_dogtag_spin" );
-    level.dogtags[var_0.guid].visuals[1] _meth_8279( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[0] scriptmodelplayanim( "mp_dogtag_spin" );
+    level.dogtags[var_0.guid].visuals[1] scriptmodelplayanim( "mp_dogtag_spin" );
 }
 
 showtoteam( var_0, var_1 )

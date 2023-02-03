@@ -40,7 +40,7 @@ remove_intel_item()
 {
     self.removed = 1;
     self.item hide();
-    self.item _meth_82BF();
+    self.item notsolid();
     common_scripts\utility::trigger_off();
     level.intel_counter++;
     setdvar( "ui_level_player_cheatpoints", level.intel_counter );
@@ -85,7 +85,7 @@ check_item_found()
 {
     foreach ( var_1 in level.players )
     {
-        if ( !var_1 _meth_823D( self.num ) )
+        if ( !var_1 getplayerintelisfound( self.num ) )
             return 0;
     }
 
@@ -144,8 +144,8 @@ wait_for_pickup()
 
     if ( self.classname == "trigger_use" )
     {
-        self _meth_80DB( &"SCRIPT_INTELLIGENCE_PICKUP" );
-        self _meth_817B();
+        self sethintstring( &"SCRIPT_INTELLIGENCE_PICKUP" );
+        self usetriggerrequirelookat();
     }
 
     thread upload_hold();
@@ -170,7 +170,7 @@ upload_hold()
     }
 
     self notify( "hold_complete" );
-    self _meth_80AB( "intelligence_pickup_loop" );
+    self stoploopsound( "intelligence_pickup_loop" );
     setdvar( "ui_securing_progress", 1.0 );
     setdvar( "ui_securing", "" );
     level.player.hold_count = 0;
@@ -187,7 +187,7 @@ hold_count_check()
         else
         {
             setdvar( "ui_securing", "" );
-            self _meth_80AB( "intelligence_pickup_loop" );
+            self stoploopsound( "intelligence_pickup_loop" );
             self notify( "stopped_pressing" );
         }
 
@@ -195,7 +195,7 @@ hold_count_check()
         {
             setdvar( "ui_securing", "" );
             self notify( "stopped_pressing" );
-            self _meth_80AB( "intelligence_pickup_loop" );
+            self stoploopsound( "intelligence_pickup_loop" );
         }
 
         waitframe();
@@ -247,10 +247,10 @@ save_intel_for_all_players()
 {
     foreach ( var_1 in level.players )
     {
-        if ( var_1 _meth_823D( self.num ) )
+        if ( var_1 getplayerintelisfound( self.num ) )
             continue;
 
-        var_1 _meth_823E( self.num );
+        var_1 setplayerintelfound( self.num );
         var_1 maps\_player_stats::stat_notify( "intel", 1 );
     }
 
@@ -260,14 +260,14 @@ save_intel_for_all_players()
 
 give_point()
 {
-    var_0 = self _meth_820E( "cheatPoints" );
-    self _meth_820F( "cheatPoints", var_0 + 1 );
+    var_0 = self getlocalplayerprofiledata( "cheatPoints" );
+    self setlocalplayerprofiledata( "cheatPoints", var_0 + 1 );
     check_intel_achievements( self );
 }
 
 check_intel_achievements( var_0 )
 {
-    var_1 = var_0 _meth_820E( "cheatPoints" );
+    var_1 = var_0 getlocalplayerprofiledata( "cheatPoints" );
 
     if ( var_1 >= 45 )
         maps\_utility::giveachievement_wrapper( "INTEL_ALL" );
@@ -279,7 +279,7 @@ check_intel_achievements( var_0 )
 intel_feedback( var_0 )
 {
     self.item hide();
-    self.item _meth_82BF();
+    self.item notsolid();
     level thread common_scripts\utility::play_sound_in_space( "intelligence_pickup", self.item.origin );
     var_1 = 3000;
     var_2 = 700;
@@ -287,7 +287,7 @@ intel_feedback( var_0 )
 
     foreach ( var_5 in level.players )
     {
-        if ( var_0 != var_5 && var_5 _meth_823D( self.num ) )
+        if ( var_0 != var_5 && var_5 getplayerintelisfound( self.num ) )
             continue;
 
         var_6 = var_5 maps\_hud_util::createclientfontstring( "objective", 1.5 );
@@ -304,14 +304,14 @@ intel_feedback( var_0 )
 
         var_8 = 0;
 
-        if ( var_0 == var_5 && var_5 _meth_823D( self.num ) )
+        if ( var_0 == var_5 && var_5 getplayerintelisfound( self.num ) )
             var_6.label = &"SCRIPT_RORKEFILE_PREV_FOUND";
         else
         {
             var_6.label = &"SCRIPT_INTELLIGENCE_OF_FOURTYFIVE";
             var_5 give_point();
-            var_8 = var_5 _meth_820E( "cheatPoints" );
-            var_6 _meth_80D7( var_8 );
+            var_8 = var_5 getlocalplayerprofiledata( "cheatPoints" );
+            var_6 setvalue( var_8 );
         }
 
         if ( var_8 == 18 )

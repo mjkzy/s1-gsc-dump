@@ -49,7 +49,7 @@ breach_map_func( var_0 )
 
     for (;;)
     {
-        var_0 _meth_8510();
+        var_0 ghost();
         common_scripts\utility::flag_wait( var_0.script_flag_true );
         var_0 show();
         common_scripts\utility::flag_waitopen( var_0.script_flag_true );
@@ -96,8 +96,8 @@ initsaboteurdata()
 
 initdefuseobject()
 {
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( &"AREA_INVALIDATION_BOMB_DEFUSE" );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( &"AREA_INVALIDATION_BOMB_DEFUSE" );
     var_0 = getent( self.target, "targetname" );
     var_0 makeunusable();
     self.trigger = var_0;
@@ -118,12 +118,12 @@ initdefuseobject()
 activatedefuseobject()
 {
     maps\mp\gametypes\_gameobjects::setusetime( level.defusetime );
-    self.visuals[0] _meth_83FA( 0, 0 );
+    self.visuals[0] hudoutlineenable( 0, 0 );
     self.visuals[0] setbombenabled( 1 );
     self.visuals[0] thread defusethink();
     self.hudicon = newhudelem();
-    self.hudicon _meth_80CC( "hud_waypoint_bomb", 8, 8 );
-    self.hudicon _meth_80D8( 1, 1 );
+    self.hudicon setshader( "hud_waypoint_bomb", 8, 8 );
+    self.hudicon setwaypoint( 1, 1 );
     self.hudicon.x = self.visuals[0].origin[0];
     self.hudicon.y = self.visuals[0].origin[1];
     self.hudicon.z = self.visuals[0].origin[2] + 40;
@@ -157,8 +157,8 @@ defuseonbeginuse( var_0 )
     var_0 playsound( "mp_bomb_defuse" );
     var_0.isdefusing = 1;
     self.visuals[0] setbombenabled( 0 );
-    self.hudicon _meth_80CC( "hud_waypoint_bomb_defuse", 8, 8 );
-    self.hudicon _meth_80D8( 1, 1 );
+    self.hudicon setshader( "hud_waypoint_bomb_defuse", 8, 8 );
+    self.hudicon setwaypoint( 1, 1 );
 }
 
 defuseonenduse( var_0, var_1, var_2 )
@@ -166,8 +166,8 @@ defuseonenduse( var_0, var_1, var_2 )
     if ( level.breachzones[self.zonename].status != 2 )
     {
         self.visuals[0] setbombenabled( 1 );
-        self.hudicon _meth_80CC( "hud_waypoint_bomb", 8, 8 );
-        self.hudicon _meth_80D8( 1, 1 );
+        self.hudicon setshader( "hud_waypoint_bomb", 8, 8 );
+        self.hudicon setwaypoint( 1, 1 );
     }
 
     if ( isdefined( var_1 ) )
@@ -287,15 +287,15 @@ notifysoldiersbombbeingused( var_0 )
 {
     foreach ( var_2 in level.participants )
     {
-        if ( !isai( var_2 ) || _func_285( self, var_2 ) )
+        if ( !isai( var_2 ) || isalliedsentient( self, var_2 ) )
             continue;
 
         var_3 = 0;
 
         if ( var_0 == "plant" )
-            var_3 = 300 + var_2 _meth_837B( "strategyLevel" ) * 100;
+            var_3 = 300 + var_2 botgetdifficultysetting( "strategyLevel" ) * 100;
         else if ( var_0 == "defuse" )
-            var_3 = 500 + var_2 _meth_837B( "strategyLevel" ) * 500;
+            var_3 = 500 + var_2 botgetdifficultysetting( "strategyLevel" ) * 500;
 
         if ( distancesquared( var_2.origin, self.origin ) < squared( var_3 ) )
         {
@@ -345,7 +345,7 @@ clean_zone( var_0 )
             var_3.bomb_guarding = undefined;
     }
     else
-        _func_292( level.breachzones[var_0].exploderid );
+        stopclientexploder( level.breachzones[var_0].exploderid );
 
     remove_breach_timer( var_0 );
     level.breachzones[var_0].status = 0;
@@ -386,7 +386,7 @@ try_continue_breach( var_0, var_1 )
         if ( !var_6 )
         {
             foreach ( var_4 in var_0 )
-                var_4 _meth_826B();
+                var_4 suicide();
         }
     }
 }
@@ -401,7 +401,7 @@ hide_soldier_and_make_invulnerable( var_0 )
     self.ignoreme = var_0;
     self.ignoreall = var_0;
     self.godmode = var_0;
-    self _meth_8351( "disable_movement", var_0 );
+    self botsetflag( "disable_movement", var_0 );
 }
 
 breach_zone_timer( var_0 )
@@ -555,7 +555,7 @@ spawnsoldiers( var_0, var_1 )
             var_8[var_9] = var_3[var_9];
 
         foreach ( var_11 in var_8 )
-            var_11 _meth_826B();
+            var_11 suicide();
 
         wait 0.5;
     }
@@ -618,7 +618,7 @@ soldier_think()
                 if ( maps\mp\bots\_bots_util::bot_is_defending() )
                     maps\mp\bots\_bots_strategy::bot_defend_stop();
 
-                self _meth_8354( self.bomb_guarding.curorigin, 0, "guard" );
+                self botsetscriptgoal( self.bomb_guarding.curorigin, 0, "guard" );
             }
             else if ( !maps\mp\bots\_bots_util::bot_is_defending_point( self.bomb_guarding.curorigin ) )
             {
@@ -639,13 +639,13 @@ soldier_think()
 
 disableattacksandmovement()
 {
-    self _meth_8351( "disable_attack", 1 );
-    self _meth_8351( "disable_movement", 1 );
-    self _meth_8351( "disable_rotation", 1 );
+    self botsetflag( "disable_attack", 1 );
+    self botsetflag( "disable_movement", 1 );
+    self botsetflag( "disable_rotation", 1 );
     wait 3.0;
-    self _meth_8351( "disable_attack", 0 );
-    self _meth_8351( "disable_movement", 0 );
-    self _meth_8351( "disable_rotation", 0 );
+    self botsetflag( "disable_attack", 0 );
+    self botsetflag( "disable_movement", 0 );
+    self botsetflag( "disable_rotation", 0 );
 }
 
 dropcamoondeath()
@@ -709,7 +709,7 @@ infectplayersinzone( var_0 )
             if ( maps\mp\zombies\_util::isplayerinlaststand( var_3 ) )
                 continue;
 
-            if ( var_3 _meth_852C() )
+            if ( var_3 isgod() )
                 continue;
 
             if ( maps\mp\zombies\_util::isplayerteleporting( var_3 ) )
@@ -738,7 +738,7 @@ infectplayersinzone( var_0 )
                 if ( gettime() - var_1 < 10000 )
                     continue;
 
-                var_3 _meth_8051( 25, var_3.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+                var_3 dodamage( 25, var_3.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
                 var_3.lastinfectdamagetime = gettime();
                 continue;
             }
@@ -786,7 +786,7 @@ contaminate_zone( var_0 )
     if ( isdefined( level.players[0] ) )
         level.players[0] thread maps\mp\_matchdata::loggameevent( "zm_bomb_explode", var_3.curorigin );
 
-    _func_29C( level.breachzones[var_0].exploderid );
+    activatepersistentclientexploder( level.breachzones[var_0].exploderid );
     level thread infectplayersinzone( var_0 );
     contaminate_breach_timer( var_0 );
     level notify( "contaminate" + var_0 );

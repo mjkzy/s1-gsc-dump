@@ -144,7 +144,7 @@ init_local()
     self.thrusters_angle_goal = [];
     self.thrusters_angle_current = [];
     self.thrusters_fx_amount = [];
-    self _meth_814B( %razorback_idle, 1, 0, 1 );
+    self setanim( %razorback_idle, 1, 0, 1 );
     thread vehicle_scripts\_razorback_fx::vfx_rb_thruster_front_light_on( self );
     thread vehicle_scripts\_razorback_fx::play_regular_tail_thruster_rz( self );
     thread vehicle_scripts\_razorback_fx::vfx_red_lights_on();
@@ -259,14 +259,14 @@ setup_missile_launchers()
 
 missile_door_open()
 {
-    self _meth_8145( %razorback_launcher_hatch_open, 0.9, 0 );
-    self _meth_814C( %razorback_root_launcher_hatch, 1, 0 );
+    self setanimknobrestart( %razorback_launcher_hatch_open, 0.9, 0 );
+    self setanimlimited( %razorback_root_launcher_hatch, 1, 0 );
     wait(getanimlength( %razorback_launcher_hatch_open ));
 }
 
 missile_door_close()
 {
-    self _meth_814C( %razorback_root_launcher_hatch, 0.01, 0.5 );
+    self setanimlimited( %razorback_root_launcher_hatch, 0.01, 0.5 );
     wait(getanimlength( %razorback_launcher_hatch_open ));
 }
 
@@ -354,13 +354,13 @@ play_thruster_rotation( var_0, var_1 )
     if ( var_0 == 4 )
         var_4 = 0.2;
 
-    self _meth_8144( var_3, 1, 0, 1 );
-    self _meth_8117( var_3, 1 );
+    self setanimknoblimited( var_3, 1, 0, 1 );
+    self setanimtime( var_3, 1 );
 
     if ( var_1 == 0 )
-        self _meth_814C( var_2, 0.01, var_4, 1 );
+        self setanimlimited( var_2, 0.01, var_4, 1 );
     else
-        self _meth_814C( var_2, var_1, var_4, 1 );
+        self setanimlimited( var_2, var_1, var_4, 1 );
 }
 
 update_thruster_angle( var_0 )
@@ -395,13 +395,13 @@ update_nozzle_opening( var_0, var_1 )
 
     if ( isdefined( var_2 ) )
     {
-        self _meth_8144( var_3, 1, 0, 1 );
-        self _meth_8117( var_3, 1 );
+        self setanimknoblimited( var_3, 1, 0, 1 );
+        self setanimtime( var_3, 1 );
 
         if ( var_1 == 0 )
-            self _meth_814C( var_2, 0.01, 0.05, 1 );
+            self setanimlimited( var_2, 0.01, 0.05, 1 );
         else
-            self _meth_814C( var_2, var_1, 0.05, 1 );
+            self setanimlimited( var_2, var_1, 0.05, 1 );
 
         var_5 = self.thrusters_fx_amount[var_0];
 

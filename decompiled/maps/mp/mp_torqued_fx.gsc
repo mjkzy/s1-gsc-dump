@@ -77,85 +77,85 @@ roof_falling_snow_chunk_fx()
 {
     var_0 = level.dyneventavalanche.avalanchephase1time + level.dyneventavalanche.avalanchephase2time + level.dyneventavalanche.avalanchephase3time;
     waitframe();
-    _func_222( 200 );
+    activateclientexploder( 200 );
     wait(var_0);
-    _func_292( 200 );
+    stopclientexploder( 200 );
 }
 
 snow_edge_runoff_fx()
 {
     wait 1;
-    _func_222( 202 );
+    activateclientexploder( 202 );
     wait 10;
-    _func_292( 202 );
+    stopclientexploder( 202 );
 }
 
 avalanche_fx()
 {
     waitframe();
-    _func_222( 199 );
+    activateclientexploder( 199 );
 }
 
 avalanche_treeline_impact_fx()
 {
     var_0 = level.dyneventavalanche.avalanchephase1time + level.dyneventavalanche.avalanchephase2time;
     waitframe();
-    _func_222( 201 );
+    activateclientexploder( 201 );
     wait(var_0);
-    _func_292( 201 );
+    stopclientexploder( 201 );
 }
 
 avalanche_impact_fx()
 {
     wait 9;
-    _func_222( 204 );
+    activateclientexploder( 204 );
     wait 3;
-    _func_292( 204 );
+    stopclientexploder( 204 );
     waitframe();
-    _func_222( 210 );
+    activateclientexploder( 210 );
     wait 5;
-    _func_292( 210 );
+    stopclientexploder( 210 );
 }
 
 avalanche_hide_geo_fx()
 {
     waitframe();
-    _func_222( 211 );
+    activateclientexploder( 211 );
     wait 2;
-    _func_292( 211 );
+    stopclientexploder( 211 );
 }
 
 alley_snow_fx()
 {
     wait 2;
-    _func_222( 203 );
+    activateclientexploder( 203 );
     wait 7;
-    _func_292( 203 );
+    stopclientexploder( 203 );
 }
 
 electrical_spark_fx()
 {
     var_0 = level.dyneventavalanche.avalanchephase1time + level.dyneventavalanche.avalanchephase2time + level.dyneventavalanche.avalanchephase3time;
     wait(var_0);
-    _func_222( 205 );
+    activateclientexploder( 205 );
 }
 
 snow_edge_runoff_stop_fx()
 {
     var_0 = level.dyneventavalanche.avalanchephase1time + level.dyneventavalanche.avalanchephase2time + level.dyneventavalanche.avalanchephase3time;
     wait(var_0);
-    _func_222( 206 );
+    activateclientexploder( 206 );
     wait 20;
-    _func_292( 206 );
+    stopclientexploder( 206 );
 }
 
 avalanche_snow_linger_fx()
 {
     var_0 = level.dyneventavalanche.avalanchephase1time + level.dyneventavalanche.avalanchephase2time + level.dyneventavalanche.avalanchephase3time;
     wait 3;
-    _func_222( 207 );
+    activateclientexploder( 207 );
     wait 30;
-    _func_292( 207 );
+    stopclientexploder( 207 );
 }
 
 window_broken_hide_fx()
@@ -171,7 +171,7 @@ window_swap_fx()
 {
     waitframe();
     var_0 = getentarray( "window_intact", "targetname" );
-    _func_222( 209 );
+    activateclientexploder( 209 );
 
     foreach ( var_2 in var_0 )
         var_2 thread hide_window_script_delay();

@@ -18,7 +18,7 @@ trapwaterfloorlogic()
     self notify( "trapWaterFloorLogic" );
     self endon( "trapWaterFloorLogic" );
     self endon( "cooldown" );
-    _func_222( 57 );
+    activateclientexploder( 57 );
     thread trapwaterfloorcleanup();
     var_0 = trapgetwatervolume();
     var_1 = 0;
@@ -54,7 +54,7 @@ trapwaterfloorlogic()
             if ( var_4 maps\mp\zombies\_util::istrapresistant() )
                 continue;
 
-            if ( _func_22A( var_4.origin, var_0 ) )
+            if ( ispointinvolume( var_4.origin, var_0 ) )
             {
                 thread trapwaterlaunch( var_4, var_4.origin );
                 var_1++;
@@ -79,7 +79,7 @@ trapwaterfloorlogic()
             if ( isdefined( var_7.watertrapcooldown ) && gettime() < var_7.watertrapcooldown )
                 continue;
 
-            if ( _func_22A( var_7.origin, var_0 ) )
+            if ( ispointinvolume( var_7.origin, var_0 ) )
             {
                 thread trapwaterlaunch( var_7, var_7.origin );
 
@@ -96,7 +96,7 @@ trapwaterfloorcleanup()
 {
     self endon( "trapWaterFloorLogic" );
     self waittill( "cooldown" );
-    _func_292( 57 );
+    stopclientexploder( 57 );
 
     foreach ( var_1 in level.players )
         var_1.watertrapcooldown = undefined;
@@ -112,7 +112,7 @@ trapwaterlaunch( var_0, var_1 )
     if ( isplayer( var_0 ) )
     {
         var_4 = ( var_2[0], var_2[1], 700 );
-        var_0 _meth_82F1( var_4 );
+        var_0 setvelocity( var_4 );
         earthquake( 0.4, 1, var_3, 500, var_0 );
         var_0.watertrapcooldown = gettime() + 3000;
     }
@@ -123,9 +123,9 @@ trapwaterlaunch( var_0, var_1 )
 
         var_0.watervelocity = ( var_2[0], var_2[1], 800 );
         var_5 = level.wavecounter * randomintrange( 100, 120 );
-        var_0 _meth_8051( var_5, var_3 + ( 0, 0, -1 ), self.owner, undefined, "MOD_EXPLOSIVE", "zombie_water_trap_mp" );
+        var_0 dodamage( var_5, var_3 + ( 0, 0, -1 ), self.owner, undefined, "MOD_EXPLOSIVE", "zombie_water_trap_mp" );
 
-        if ( isalive( var_0 ) && _func_2D9( var_0 ) && !var_0 maps\mp\agents\_scripted_agent_anim_util::isstatelocked() && !var_0 maps\mp\agents\humanoid\_humanoid_util::iscrawling() && isdefined( var_0.agent_type ) && var_0.agent_type != "zombie_dog" && var_0.agent_type != "ranged_elite_soldier" && var_0.agent_type != "ranged_elite_soldier_goliath" )
+        if ( isalive( var_0 ) && isscriptedagent( var_0 ) && !var_0 maps\mp\agents\_scripted_agent_anim_util::isstatelocked() && !var_0 maps\mp\agents\humanoid\_humanoid_util::iscrawling() && isdefined( var_0.agent_type ) && var_0.agent_type != "zombie_dog" && var_0.agent_type != "ranged_elite_soldier" && var_0.agent_type != "ranged_elite_soldier_goliath" )
             level thread trapflingzombie( var_0 );
         else
             var_0.watertrapcooldown = gettime() + 3000;
@@ -139,18 +139,18 @@ trapflingzombie( var_0 )
 {
     var_0 endon( "death" );
     var_0.flungbywatertrap = 1;
-    var_0 _meth_8397( "anim deltas" );
-    var_0 _meth_8395( 1, 1 );
-    var_0 _meth_8398( "no_gravity" );
-    var_0 _meth_8396( "face angle abs", var_0.angles );
+    var_0 scragentsetanimmode( "anim deltas" );
+    var_0 scragentsetanimscale( 1, 1 );
+    var_0 scragentsetphysicsmode( "no_gravity" );
+    var_0 scragentsetorientmode( "face angle abs", var_0.angles );
     var_1 = "water_trap_victim";
-    var_2 = var_0 _meth_83D6( var_1 );
+    var_2 = var_0 getanimentrycount( var_1 );
     var_3 = randomint( 4 );
-    var_0 _meth_839D( 1 );
+    var_0 scragentsetscripted( 1 );
     var_0 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "WaterTrapAnim" );
     var_0 maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_1, var_3, 1.0, "scripted_anim" );
-    var_0 _meth_8398( "gravity" );
-    var_0 _meth_839D( 0 );
+    var_0 scragentsetphysicsmode( "gravity" );
+    var_0 scragentsetscripted( 0 );
     var_0 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "WaterTrapAnim" );
     var_0.flungbywatertrap = undefined;
 }

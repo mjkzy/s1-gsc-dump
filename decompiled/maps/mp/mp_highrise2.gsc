@@ -53,7 +53,7 @@ spawnkilltriggerthink( var_0, var_1, var_2 )
         var_3 waittill( "trigger", var_4 );
 
         if ( isdefined( var_4 ) && isplayer( var_4 ) && isdefined( var_4.health ) )
-            var_4 _meth_8051( var_4.health + 999, var_3.origin );
+            var_4 dodamage( var_4.health + 999, var_3.origin );
     }
 }
 
@@ -114,7 +114,7 @@ droneanims()
 animatedrone( var_0 )
 {
     wait 0.05;
-    self _meth_8279( var_0 );
+    self scriptmodelplayanim( var_0 );
     playfxontag( common_scripts\utility::getfx( "mp_hr2_drone_lightbeam" ), self, "tag_light" );
     waitframe();
     playfxontag( common_scripts\utility::getfx( "mp_hr2_drone_prop_wind" ), self, "tag_light" );
@@ -124,10 +124,10 @@ animatedrone( var_0 )
 spawmdroneandanimate( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawn( "script_model", var_2 );
-    var_4 _meth_80B1( var_0 );
+    var_4 setmodel( var_0 );
     var_4.angles = var_3;
     wait 0.05;
-    var_4 _meth_8279( var_1 );
+    var_4 scriptmodelplayanim( var_1 );
     playfxontag( common_scripts\utility::getfx( "mp_hr2_drone_lightbeam" ), var_4, "tag_light" );
     waitframe();
     playfxontag( common_scripts\utility::getfx( "mp_hr2_drone_prop_wind" ), var_4, "tag_light" );
@@ -186,7 +186,7 @@ isoutofbounds()
     {
         for ( var_1 = 0; var_1 < var_0.size; var_1++ )
         {
-            if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+            if ( !self.visuals[0] istouching( var_0[var_1] ) )
                 continue;
 
             return 1;
@@ -206,7 +206,7 @@ scriptinvalidcarepackagearea()
             level.goliath_bad_landing_volumes = [];
 
         level.goliath_bad_landing_volumes[level.goliath_bad_landing_volumes.size] = var_2;
-        var_3 = _func_1FE( var_2 );
+        var_3 = getnodesintrigger( var_2 );
 
         if ( !isdefined( level.goliath_bad_landing_nodes ) )
             level.goliath_bad_landing_nodes = [];
@@ -236,7 +236,7 @@ scriptinvalidcarepackagearea()
     if ( level.goliath_bad_landing_nodes.size > 0 )
     {
         foreach ( var_5 in level.goliath_bad_landing_nodes )
-            _func_2D6( var_5, "none" );
+            nodesetremotemissilename( var_5, "none" );
     }
 }
 

@@ -112,7 +112,7 @@ pdrone_player_init( var_0 )
 
 pdrone_player_callback_look()
 {
-    var_0 = level.player _meth_830D();
+    var_0 = level.player getnormalizedcameramovements();
     var_1 = abs( var_0[0] );
     var_2 = abs( var_0[1] );
 

@@ -114,7 +114,7 @@ monitorthreathighlightnotification()
     var_0.aligny = "top";
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
-    var_0 _meth_80CC( "paint_overlay", 640, 480 );
+    var_0 setshader( "paint_overlay", 640, 480 );
     var_0.alpha = 0.0;
     var_0.color = ( 0, 0, 0 );
     var_0.sort = -3;
@@ -210,7 +210,7 @@ detection_highlight_hud_effect_on( var_0, var_1, var_2 )
         var_3.color = ( 1, 0.015, 0.015 );
 
     var_3.alpha = 1.0;
-    var_3 _meth_83A4( var_1 );
+    var_3 setradarhighlight( var_1 );
     return var_3;
 }
 
@@ -241,7 +241,7 @@ detection_grenade_hud_effect( var_0, var_1, var_2, var_3 )
     var_4.color = ( getdvarfloat( "scr_paintexplosionred" ), getdvarfloat( "scr_paintexplosiongreen" ), getdvarfloat( "scr_paintexplosionblue" ) );
     var_4.alpha = getdvarfloat( "scr_paintexplosionalpha" );
     var_5 = getdvarint( "paintexplosionwidth" );
-    var_4 _meth_83A3( int( var_3 + var_5 / 2 ), int( var_5 ), var_2 + 0.05 );
+    var_4 setradarping( int( var_3 + var_5 / 2 ), int( var_5 ), var_2 + 0.05 );
     wait(var_2);
 
     if ( isdefined( var_4 ) )
@@ -268,7 +268,7 @@ exo_ping_hud_effect( var_0, var_1, var_2, var_3, var_4 )
 
     var_5.alpha = 0.05;
     var_6 = getdvarint( "scr_exopingwidth", 100 );
-    var_5 _meth_83A3( int( var_2 ), int( var_6 ), var_1 + 0.05 );
+    var_5 setradarping( int( var_2 ), int( var_6 ), var_1 + 0.05 );
     wait(var_1);
 
     if ( isdefined( var_5 ) )
@@ -386,10 +386,10 @@ visitfxent( var_0, var_1, var_2 )
 
 visitorrelink( var_0, var_1, var_2 )
 {
-    var_0 _meth_804F();
+    var_0 unlink();
     var_0.origin = self gettagorigin( var_2 );
     var_0.angles = self gettagangles( var_2 );
-    var_0 _meth_804D( self, var_2 );
+    var_0 linkto( self, var_2 );
     wait 0.05;
     playfxontag( var_0.fx, var_0, "tag_origin" );
 }
@@ -412,7 +412,7 @@ visitorupdatemarkerpos( var_0, var_1, var_2 )
         triggerfx( var_0 );
     else if ( var_3 == "model" )
     {
-        var_4 = "mp_hud_" + self _meth_817C() + "_char";
+        var_4 = "mp_hud_" + self getstance() + "_char";
         var_5 = var_0 != self._threatdetection.mark_friendly_model;
 
         if ( var_5 )
@@ -422,13 +422,13 @@ visitorupdatemarkerpos( var_0, var_1, var_2 )
 
         if ( var_4 != var_6 )
         {
-            var_0 _meth_80B1( var_4 );
+            var_0 setmodel( var_4 );
             return;
         }
     }
     else if ( var_3 == "vfx_model" )
     {
-        switch ( self _meth_817C() )
+        switch ( self getstance() )
         {
             case "prone":
                 var_4 = "threat_detect_model_prone";
@@ -713,7 +713,7 @@ visitorretriggerfx( var_0, var_1, var_2 )
 
 check_los( var_0 )
 {
-    if ( bullettracepassed( var_0.player _meth_80A8(), self _meth_80A8(), 0, var_0.player ) )
+    if ( bullettracepassed( var_0.player geteye(), self geteye(), 0, var_0.player ) )
         return 1;
 
     return 0;
@@ -753,13 +753,13 @@ threat_init( var_0 )
         var_6 = spawn( "script_model", self.origin );
         var_6.origin = self.origin;
         var_6.angles = self.angles;
-        var_6 _meth_80B1( level._threatdetection.friendlymodel );
+        var_6 setmodel( level._threatdetection.friendlymodel );
         var_6 setcontents( 0 );
         self._threatdetection.mark_friendly_model = var_6;
         var_6 = spawn( "script_model", self.origin );
         var_6.origin = self.origin;
         var_6.angles = self.angles;
-        var_6 _meth_80B1( level._threatdetection.hostilemodel );
+        var_6 setmodel( level._threatdetection.hostilemodel );
         var_6 setcontents( 0 );
         self._threatdetection.mark_enemy_model = var_6;
     }
@@ -780,7 +780,7 @@ threat_init( var_0 )
             var_8 show();
             var_8.origin = self gettagorigin( var_3[0] );
             var_8.angles = self gettagangles( var_3[0] );
-            var_8 _meth_804D( self, var_3[0] );
+            var_8 linkto( self, var_3[0] );
             var_8.fx = var_3[1];
             var_1.fx_ent[var_5] = var_8;
         }

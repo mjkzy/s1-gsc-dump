@@ -16,16 +16,16 @@ main()
 
 sniperscrambleprecache()
 {
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
-    precacheitem( "hms_rail_sniper" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
+    precacheshellshock( "hms_rail_sniper" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_opticsreddot_silencerpistol" );
     precacherumble( "silencer_fire" );
     precacherumble( "damage_light" );
     precacherumble( "damage_heavy" );
@@ -120,7 +120,7 @@ sniperscramblegameskillmultiplier()
     var_1[3] = 0.5;
     var_2 = var_1[var_0];
 
-    if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+    if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
         var_2 *= 0.75;
 
     return var_2;
@@ -342,7 +342,7 @@ objscramblekillsniper()
 
     for (;;)
     {
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
             break;
 
         wait 0.5;
@@ -351,13 +351,13 @@ objscramblekillsniper()
     common_scripts\utility::flag_set( "FlagScrambleObjDestroyTower" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_83FA( 1, 0 );
+        var_3 hudoutlineenable( 1, 0 );
 
     common_scripts\utility::flag_wait( "FlagScrambleSniperKilled" );
 
     foreach ( var_3 in var_1 )
     {
-        var_3 _meth_83FB();
+        var_3 hudoutlinedisable();
         var_3 delete();
     }
 
@@ -485,7 +485,7 @@ objscramblerpg()
     objective_position( maps\_utility::obj( "InterceptHades" ), var_0.origin );
     objective_setpointertextoverride( maps\_utility::obj( "InterceptHades" ), &"GREECE_OBJ_SCRAMBLE_PICKUPSTINGER" );
     var_3 = getent( "ScrambleStingerPickup", "targetname" );
-    var_3 _meth_83FA( 3 );
+    var_3 hudoutlineenable( 3 );
 }
 
 objscramblesnipertower( var_0 )
@@ -507,11 +507,11 @@ objscramblemovetruck()
     objective_position( maps\_utility::obj( "InterceptHades" ), var_0.origin );
     objective_setpointertextoverride( maps\_utility::obj( "InterceptHades" ), &"GREECE_OBJ_SCRAMBLE_PUSHTRUCK" );
     var_1 = getent( "ScrambleExitTruck", "targetname" );
-    var_1 _meth_83FA( 3 );
+    var_1 hudoutlineenable( 3 );
     common_scripts\utility::flag_wait( "FlagScramblePlayerStartMoveTruck" );
     objective_position( maps\_utility::obj( "InterceptHades" ), ( 0, 0, 0 ) );
     objective_setpointertextoverride( maps\_utility::obj( "InterceptHades" ), " " );
-    var_1 _meth_83FB();
+    var_1 hudoutlinedisable();
 }
 
 sniperscrambleinit()
@@ -523,7 +523,7 @@ sniperscrambleinit()
     level.player thread monitorlastweapon();
     level.player thread stingerpronestatemonitor();
 
-    if ( level.nextgen || _func_21E( "greece_middle_tr" ) )
+    if ( level.nextgen || istransientloaded( "greece_middle_tr" ) )
         thread scramblestartdoorinit();
 
     thread scramblemodifyplayerviewkick();
@@ -534,10 +534,10 @@ sniperscrambleinit()
 
 scramblemodifyplayerviewkick()
 {
-    var_0 = level.player _meth_830A();
-    level.player _meth_8309( 0.15 );
+    var_0 = level.player getviewkickscale();
+    level.player setviewkickscale( 0.15 );
     common_scripts\utility::flag_wait( "FlagScrambleSniperKilled" );
-    level.player _meth_8309( var_0 );
+    level.player setviewkickscale( var_0 );
     killfxontag( common_scripts\utility::getfx( "railgun_sniper_glint" ), level.sniper_scramble_data.sniper_fx_base, "tag_origin" );
 }
 
@@ -616,7 +616,7 @@ updatescopeglintwarning()
     var_4 = var_3 * 2;
     var_5 = 10;
     var_6 = var_5 / 2;
-    var_7 = level.player _meth_80A8();
+    var_7 = level.player geteye();
 
     for (;;)
     {
@@ -647,10 +647,10 @@ updatescopeglintwarning()
         var_2 += var_4;
         var_2 = common_scripts\utility::mod( var_2, 360 + var_4 );
         var_10 = sin( var_2 );
-        var_11 = vectorcross( vectornormalize( level.player _meth_80A8() - level.sniperpos.origin ), ( 0, 0, 1 ) );
+        var_11 = vectorcross( vectornormalize( level.player geteye() - level.sniperpos.origin ), ( 0, 0, 1 ) );
         var_12 = var_11 * var_9 * var_5;
         var_12 = ( var_12[0], var_12[1], var_10 * var_6 );
-        var_7 = vectorlerp( var_7, level.player _meth_80A8() + var_12, 0.5 );
+        var_7 = vectorlerp( var_7, level.player geteye() + var_12, 0.5 );
         var_13 = var_7 - level.sniperpos.origin;
         level.sniper_scramble_data.sniper_fx_base.angles = vectortoangles( var_13 );
     }
@@ -700,14 +700,14 @@ snipernearshotshake( var_0, var_1 )
 
     if ( var_3 <= var_4 )
     {
-        level.player _meth_80AD( "damage_light" );
+        level.player playrumbleonentity( "damage_light" );
         var_6 = randomfloatrange( 0.4, 0.5 ) * var_1;
         var_7 = randomfloatrange( 0.6, 0.8 );
         thread maps\_utility::dirt_on_screen_from_position( var_0 );
     }
     else if ( var_3 <= var_5 )
     {
-        level.player _meth_80AD( "damage_light" );
+        level.player playrumbleonentity( "damage_light" );
         var_6 = randomfloatrange( 0.2, 0.4 ) * var_1;
         var_7 = randomfloatrange( 0.4, 0.6 );
     }
@@ -854,9 +854,9 @@ calculate_lateral_move_accuracy( var_0 )
 
 calculate_stance_accuracy( var_0 )
 {
-    if ( var_0 _meth_817C() == "crouch" )
+    if ( var_0 getstance() == "crouch" )
         return 0.75;
-    else if ( var_0 _meth_817C() == "prone" )
+    else if ( var_0 getstance() == "prone" )
         return 0.5;
 
     return 1;
@@ -864,7 +864,7 @@ calculate_stance_accuracy( var_0 )
 
 calculate_sprinting_jumping_accuracy( var_0 )
 {
-    if ( var_0 _meth_83D8() || var_0 _meth_83B3() )
+    if ( var_0 issprinting() || var_0 isjumping() )
         return 0.5;
 
     return 1;
@@ -872,8 +872,8 @@ calculate_sprinting_jumping_accuracy( var_0 )
 
 getentitytargetlocationwithspread( var_0 )
 {
-    var_1 = var_0 _meth_80A8();
-    var_2 = var_0 _meth_80A8() - var_0.origin;
+    var_1 = var_0 geteye();
+    var_2 = var_0 geteye() - var_0.origin;
     var_3 = ( 0, 0, var_2[2] * 0.85 );
     var_4 = 0.3;
     var_5 = var_0.origin - level.sniperpos.origin;
@@ -890,7 +890,7 @@ getentitytargetlocationwithspread( var_0 )
             var_4 *= calculate_stance_accuracy( level.player );
             var_4 *= calculate_sprinting_jumping_accuracy( level.player );
 
-            if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+            if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
             {
                 var_4 *= 0.5;
                 var_4 = clamp( var_4, 0.5, 1 );
@@ -910,7 +910,7 @@ targetinsafevolume( var_0, var_1 )
 {
     foreach ( var_3 in var_1 )
     {
-        if ( var_3.bisactivated == 1 && var_0 _meth_80A9( var_3 ) )
+        if ( var_3.bisactivated == 1 && var_0 istouching( var_3 ) )
             return 1;
     }
 
@@ -946,7 +946,7 @@ updatesnipertargetentitylocation( var_0 )
     var_1 = undefined;
 
     if ( level.sniper_scramble_data.requires_player_los && !level.player ismantling() && !targetinsafevolume( level.player, var_0 ) )
-        var_1 = bullettrace( level.sniperpos.origin, level.player _meth_80A8(), 0, level.player, 0, 0, 0, 0, 0 );
+        var_1 = bullettrace( level.sniperpos.origin, level.player geteye(), 0, level.player, 0, 0, 0, 0, 0 );
 
     if ( isdefined( var_1 ) && var_1["fraction"] == 1 || !level.sniper_scramble_data.requires_player_los )
     {
@@ -962,7 +962,7 @@ updatesnipertargetentitylocation( var_0 )
     var_1 = undefined;
 
     if ( !targetinsafevolume( level.allies["Ilona"], var_0 ) )
-        var_1 = bullettrace( level.sniperpos.origin, level.player _meth_80A8(), 0, level.allies["Ilona"], 0, 0, 0, 0, 0 );
+        var_1 = bullettrace( level.sniperpos.origin, level.player geteye(), 0, level.allies["Ilona"], 0, 0, 0, 0, 0 );
 
     if ( isdefined( var_1 ) && var_1["fraction"] == 1 )
     {
@@ -999,7 +999,7 @@ findsnipertargetnearactor( var_0, var_1 )
         if ( isdefined( var_4.lasttime ) && gettime() - var_4.lasttime < var_1 )
             continue;
 
-        if ( _func_220( level.player.origin, var_4.origin ) > var_2 )
+        if ( distance2dsquared( level.player.origin, var_4.origin ) > var_2 )
             continue;
 
         if ( level.player maps\_utility::point_in_fov( var_4.origin ) == 0 )
@@ -1044,9 +1044,9 @@ findrandomlocationneartarget( var_0, var_1 )
             var_7 = anglestoright( var_4 );
 
             if ( common_scripts\utility::cointoss() )
-                var_6 = var_2 _meth_80A8() + var_7 * randomfloatrange( var_0, var_1 );
+                var_6 = var_2 geteye() + var_7 * randomfloatrange( var_0, var_1 );
             else
-                var_6 = var_2 _meth_80A8() - var_7 * randomfloatrange( var_0, var_1 );
+                var_6 = var_2 geteye() - var_7 * randomfloatrange( var_0, var_1 );
         }
 
         level.sniper_scramble_data.sniper_target_location = var_6;
@@ -1094,7 +1094,7 @@ snipershootfirstcivilian()
 
     if ( isdefined( var_0 ) )
     {
-        var_1 = var_0 _meth_80A8();
+        var_1 = var_0 geteye();
         soundscripts\_snd::snd_message( "windmill_sniper_shot", var_1 );
         thread snipershoot( var_1, 1.0, 1 );
         playfx( common_scripts\utility::getfx( "scramble_blood_impact_splat" ), var_1 );
@@ -1148,7 +1148,7 @@ snipershootilana()
 
 openrestaurantdoor( var_0 )
 {
-    self _meth_82B5( self.angles + ( 0, var_0, 0 ), 0.35, 0, 0.35 );
+    self rotateto( self.angles + ( 0, var_0, 0 ), 0.35, 0, 0.35 );
     earthquake( 0.25, 0.2, self.origin, 256 );
 }
 
@@ -1158,8 +1158,8 @@ snipershootrestaurantfishtank()
     level.sniperpos.bsniperenabled = 0;
     snipersettargetent( undefined );
     maps\_utility::trigger_wait_targetname( "TrigFishTankDestruction" );
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     var_0 = getent( "ScrambleFishTankShootOrg", "script_noteworthy" );
     soundscripts\_snd::snd_message( "restaurant_fish_tank_destruct", var_0 );
     thread snipershoot( var_0.origin, 1.5, 1 );
@@ -1202,7 +1202,7 @@ monitorplayerapproachfishtank()
         if ( maps\_utility::players_within_distance( 300, var_0.origin ) && maps\_utility::within_fov_of_players( var_0.origin, cos( 120 ) ) )
             return 1;
 
-        if ( level.player _meth_80A9( var_1 ) )
+        if ( level.player istouching( var_1 ) )
             return 0;
     }
 }
@@ -1215,22 +1215,22 @@ scrambleplayerfishtankstumble()
     var_3 = maps\_utility::spawn_anim_model( "player_scramble_rig", level.player.origin, level.player.angles );
     var_3 hide();
     level.player thread maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_81E1( 0.5 );
-    var_3 _meth_804D( level.player );
+    level.player setmovespeedscale( 0.5 );
+    var_3 linkto( level.player );
     var_3 show();
     level.player maps\_anim::anim_single_solo( var_3, var_2 );
-    var_3 _meth_804F();
+    var_3 unlink();
     var_3 delete();
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_8320();
-    level.player _meth_831E();
-    level.player _meth_8130( 1 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
+    level.player enableoffhandweapons();
+    level.player enableweapons();
+    level.player allowmelee( 1 );
     level.player maps\_utility::blend_movespeedscale( 0.8, 2.0 );
     wait 3.0;
-    level.player _meth_848D( 1 );
-    level.player _meth_8304( 1 );
+    level.player allowdodge( 1 );
+    level.player allowsprint( 1 );
     level.player maps\_utility::blend_movespeedscale_default( 2.0 );
 }
 
@@ -1292,7 +1292,7 @@ fish_animloop( var_0, var_1, var_2 )
         for ( var_5 = 0; var_5 < var_2.size; var_5++ )
         {
             wait(randomfloatrange( 0.1, 1 ));
-            var_2[var_5] _meth_814D( var_3 );
+            var_2[var_5] setanimrestart( var_3 );
         }
 
         wait(var_4);
@@ -1319,8 +1319,8 @@ snipershootwoundedsoldier()
     wait 1.0;
     level.sniperpos.bsniperenabled = 1;
     thread scramblerestaurantexitclip( 0 );
-    level.player _meth_848D( 1 );
-    level.player _meth_8304( 1 );
+    level.player allowdodge( 1 );
+    level.player allowsprint( 1 );
 }
 
 scramblegapjumpslomo()
@@ -1427,18 +1427,18 @@ ilanascrambleopenstartdoor()
 scramblestartdoorshots( var_0 )
 {
     level waittill( "ScrambleSniperFireFirstShot" );
-    var_0 _meth_804B( "tag_destroyed1", "greece_door_interior" );
-    var_0 _meth_804B( "tag_door_handle_destroyed1", "greece_door_interior" );
-    var_0 _meth_804B( "tag_door_handle_base_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_intact", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle", "greece_door_interior" );
+    var_0 showpart( "tag_destroyed1", "greece_door_interior" );
+    var_0 showpart( "tag_door_handle_destroyed1", "greece_door_interior" );
+    var_0 showpart( "tag_door_handle_base_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_intact", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle", "greece_door_interior" );
     level waittill( "ScrambleSniperFireSecondShot" );
-    var_0 _meth_8048( "tag_door_handle_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle_base_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_destroyed1", "greece_door_interior" );
-    var_0 _meth_804B( "tag_destroyed2", "greece_door_interior" );
-    var_0 _meth_804B( "tag_door_handle_base_destroyed2", "greece_door_interior" );
-    var_0 _meth_804B( "tag_door_handle_destroyed2", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_base_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_destroyed1", "greece_door_interior" );
+    var_0 showpart( "tag_destroyed2", "greece_door_interior" );
+    var_0 showpart( "tag_door_handle_base_destroyed2", "greece_door_interior" );
+    var_0 showpart( "tag_door_handle_destroyed2", "greece_door_interior" );
 }
 
 scramblestartdoorinit()
@@ -1448,12 +1448,12 @@ scramblestartdoorinit()
     var_0 maps\_utility::assign_animtree( "sniper_intro_door" );
     var_1 = common_scripts\utility::getstruct( "SniperScrambleStartDoorOrg", "targetname" );
     var_1 maps\_anim::anim_first_frame_solo( var_0, "scramble_intro_door_out" );
-    var_0 _meth_8048( "tag_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle_base_destroyed1", "greece_door_interior" );
-    var_0 _meth_8048( "tag_destroyed2", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle_destroyed2", "greece_door_interior" );
-    var_0 _meth_8048( "tag_door_handle_base_destroyed2", "greece_door_interior" );
+    var_0 hidepart( "tag_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_base_destroyed1", "greece_door_interior" );
+    var_0 hidepart( "tag_destroyed2", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_destroyed2", "greece_door_interior" );
+    var_0 hidepart( "tag_door_handle_base_destroyed2", "greece_door_interior" );
 }
 
 ilanasmokescreen( var_0 )
@@ -1475,10 +1475,10 @@ ilanatogglesnipersuppression( var_0 )
     var_1 = getent( "ScrambleSniperWindow", "targetname" );
 
     if ( var_0 == 1 )
-        level.allies["Ilona"] _meth_8167( var_1 );
+        level.allies["Ilona"] setentitytarget( var_1 );
     else
     {
-        level.allies["Ilona"] _meth_8168( var_1 );
+        level.allies["Ilona"] clearentitytarget( var_1 );
         level notify( "StopIlanaSuppression" );
     }
 }
@@ -1489,7 +1489,7 @@ ilanasuppresspos( var_0 )
 
     for (;;)
     {
-        magicbullet( "iw5_hmr9_sp", level.allies["Ilona"] _meth_80A8(), var_0.origin );
+        magicbullet( "iw5_hmr9_sp", level.allies["Ilona"] geteye(), var_0.origin );
         wait(randomfloatrange( 0.1, 0.5 ));
     }
 }
@@ -1539,8 +1539,8 @@ ilanascramblehotel()
     thread monitorslidesafevol();
     thread scrambleplayerhoteljump();
     level.sniperpos.bsniperenabled = 0;
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     common_scripts\utility::flag_wait( "FlagTriggerScramblePlayerMovingThroughHotel" );
     var_0 = getent( "hothall_org", "targetname" );
     var_0 maps\_anim::anim_reach_solo( level.allies["Ilona"], "scram_hothall" );
@@ -1555,7 +1555,7 @@ ilanascramblehotel()
     common_scripts\utility::flag_wait( "FlagTriggerScramblePlayerNearSecondJump" );
     thread maps\_utility::autosave_by_name( "scramble_hotel_jump_start" );
     common_scripts\utility::flag_wait( "FlagScrambleCheckPlayerDecision" );
-    level.allies["Ilona"] _meth_81A3( 1 );
+    level.allies["Ilona"] pushplayer( 1 );
 
     for (;;)
     {
@@ -1599,7 +1599,7 @@ ilanascramblehotel()
     var_1 thread maps\_anim::anim_single_solo_run( level.allies["Ilona"], var_2 );
     wait 1.0;
     maps\_utility::activate_trigger_with_targetname( "SniperScrambleColorTrigFiftyFifth" );
-    level.allies["Ilona"] _meth_81A3( 0 );
+    level.allies["Ilona"] pushplayer( 0 );
     common_scripts\utility::flag_wait( "FlagTriggerScramblePlayerCompletedThirdJump" );
     wait 1;
     common_scripts\utility::flag_set( "FlagScrambleStartDrones" );
@@ -1788,7 +1788,7 @@ scramblerestaurantdoorsopen()
     var_2 = getent( "ScrambleRestaurantDoorClip", "targetname" );
     var_2 delete();
     var_3 = getent( "ScrambleRestaurantDoorOpenClip", "targetname" );
-    var_3 _meth_82B1( 128, 0.1 );
+    var_3 movez( 128, 0.1 );
 }
 
 monitorrestaurantglassfrenzyvol()
@@ -1798,7 +1798,7 @@ monitorrestaurantglassfrenzyvol()
 
     while ( !common_scripts\utility::flag( "FlagTriggerScramblePlayerAlmostNearWoundedSoldier" ) )
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             var_1 = sortbydistance( var_1, level.player.origin );
 
@@ -1859,15 +1859,15 @@ monitorslidesafevol()
 
     while ( !common_scripts\utility::flag( "FlagScrambleHotelIlanaReachedGoal" ) )
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             snipersettargetent( level.player );
-            soundscripts\_snd::snd_message( "windmill_sniper_shot", level.player _meth_80A8() );
-            snipershoot( level.player _meth_80A8(), 1.5, 1 );
+            soundscripts\_snd::snd_message( "windmill_sniper_shot", level.player geteye() );
+            snipershoot( level.player geteye(), 1.5, 1 );
             wait 0.05;
             maps\_hms_utility::printlnscreenandconsole( "*** FORCE KILL PLAYER ***" );
-            level.player _meth_8141();
-            level.player _meth_8052();
+            level.player stopanimscripted();
+            level.player kill();
             level notify( "ScramblePlayerLeftIlana" );
             maps\greece_sniper_scramble_vo::scramblefailplayerleftilanadialogue();
             wait 1;
@@ -1890,8 +1890,8 @@ ilanascramblefinale()
     thread scramblefiredamagemonitor();
     thread scramblerestaurantexitclip( 1 );
     thread destroydroppedgun();
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     var_0 = level.allies["Ilona"];
     var_1 = common_scripts\utility::getstruct( "ScrambleIlanaLookAllyOrg", "targetname" );
     var_1 maps\_anim::anim_reach_solo( var_0, "scramble_check_ally_enter" );
@@ -1914,7 +1914,7 @@ ilanascramblefinale()
 
     for (;;)
     {
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
             break;
 
         wait 0.1;
@@ -1953,7 +1953,7 @@ scramblesniperkillplayerfailmsg()
     level endon( "ScrambleSniperKilled" );
     level.player waittill( "death", var_0, var_1, var_2 );
 
-    if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+    if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
         return;
 
     if ( isdefined( var_1 ) && var_1 == "MOD_EXPLOSIVE" )
@@ -1980,7 +1980,7 @@ ilanascramblefinalemoveandsuppress()
 
     while ( !common_scripts\utility::flag( "FlagScrambleSniperKilled" ) )
     {
-        var_1 = level.allies["Ilona"] _meth_81EF();
+        var_1 = level.allies["Ilona"] getcovernode();
 
         if ( isdefined( var_1 ) && maps\_utility::is_in_array( var_0, var_1 ) && level.allies["Ilona"].bissuppressingsniper == 0 )
         {
@@ -2030,7 +2030,7 @@ scramblesnipertowerdestruction()
 {
     var_0 = getent( "sniper_tower_org", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "greece_sniper_tower_des" );
+    var_1 setmodel( "greece_sniper_tower_des" );
     var_2 = [];
     var_2[0] = maps\_utility::spawn_anim_model( "greece_sniper_tower_des_01", var_0.origin );
     var_2[0].animname = "greece_sniper_tower_des_01";
@@ -2061,10 +2061,10 @@ scramblesnipertowerdestruction()
 
 scramblesnipertowerdestructionshake()
 {
-    level.player _meth_80AD( "tank_rumble" );
+    level.player playrumbleonentity( "tank_rumble" );
     earthquake( 0.6, 0.25, level.player.origin, 128 );
     wait 0.5;
-    level.player _meth_80AD( "subtle_tank_rumble" );
+    level.player playrumbleonentity( "subtle_tank_rumble" );
     earthquake( 0.2, 10.0, level.player.origin, 128 );
 }
 
@@ -2087,10 +2087,10 @@ sniperscrambleragdollkill( var_0, var_1 )
 {
     thread maps\greece_sniper_scramble_fx::ragdollonfirefx();
     var_0 maps\_anim::anim_single_solo( self, var_1 );
-    self _meth_8052();
+    self kill();
     wait 3.0;
 
-    if ( isdefined( self ) && self _meth_81E0() )
+    if ( isdefined( self ) && self isragdoll() )
         self delete();
 }
 
@@ -2223,7 +2223,7 @@ _destroyprojectileafterdelay( var_0 )
             var_3 = common_scripts\utility::getclosest( self.origin, level.flying_attack_drones );
 
             if ( isdefined( var_3 ) && var_3.health > 0 )
-                var_3 _meth_8051( var_3.health, level.player.origin );
+                var_3 dodamage( var_3.health, level.player.origin );
 
             level.numberofdronestokill--;
         }
@@ -2240,7 +2240,7 @@ monitorfinalesafevol()
 
     for (;;)
     {
-        if ( common_scripts\utility::flag( "FlagScrambleDronesBdead" ) || level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( common_scripts\utility::flag( "FlagScrambleDronesBdead" ) || level.player hasweapon( "iw5_stingerm7greece_sp" ) )
             break;
 
         wait 0.5;
@@ -2251,7 +2251,7 @@ monitorfinalesafevol()
 
     for (;;)
     {
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
             break;
 
         wait 0.1;
@@ -2268,7 +2268,7 @@ droneflyinshooting( var_0 )
 {
     self endon( "death" );
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
     thread monitordeaddrones();
     maps\_utility::ent_flag_set( "fire_disabled" );
     self.pacifist = 1;
@@ -2304,7 +2304,7 @@ dronetargetmove( var_0, var_1 )
     self endon( "emp_death" );
     self endon( "pdrone_end_flyin" );
     var_2 = level.player.origin + ( randomfloatrange( -100, 100 ), randomfloatrange( -100, 100 ), 0 );
-    var_0 _meth_82AE( var_2, var_1 );
+    var_0 moveto( var_2, var_1 );
 
     for (;;)
     {
@@ -2338,10 +2338,10 @@ dronefireatscriptedtarget( var_0, var_1 )
     for (;;)
     {
         var_8 = ( randomfloatrange( var_4, var_5 ), randomfloatrange( var_4, var_5 ), randomfloatrange( var_6, var_7 ) );
-        self _meth_8262( var_0, var_8 );
+        self setturrettargetent( var_0, var_8 );
         var_9 = self gettagorigin( "tag_flash" );
         var_10 = self gettagorigin( "tag_flash" );
-        self _meth_8268();
+        self fireweapon();
         wait(var_3);
     }
 }
@@ -2400,7 +2400,7 @@ scrambleplayergapjump()
     thread maps\greece_sniper_scramble_fx::windowgapjumpglassshatter();
     soundscripts\_snd::snd_message( "hotel_crowd_panic_walla" );
     thread scrambleilanagapjump( var_7, var_5 );
-    level.player _meth_8080( var_8, "tag_player", 0.2 );
+    level.player playerlinktoblend( var_8, "tag_player", 0.2 );
     wait 0.2;
     thread scramblehideplayergapjump( var_8 );
 
@@ -2411,7 +2411,7 @@ scrambleplayergapjump()
     }
 
     var_6 maps\_anim::anim_single_solo( var_8, var_5 );
-    level.player _meth_804F();
+    level.player unlink();
     level.player thread maps\_shg_utility::setup_player_for_gameplay();
     var_8 delete();
     thread scramblecivpool();
@@ -2430,10 +2430,10 @@ scramblehideplayergapjump( var_0 )
 tff_trans_middle_to_outro()
 {
     level notify( "tff_pre_middle_to_outro" );
-    _func_219( "greece_middle_tr" );
-    _func_218( "greece_outro_tr" );
+    unloadtransient( "greece_middle_tr" );
+    loadtransient( "greece_outro_tr" );
 
-    while ( !_func_21E( "greece_outro_tr" ) )
+    while ( !istransientloaded( "greece_outro_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_middle_to_outro" );
@@ -2467,7 +2467,7 @@ scrambleplayerhoteljump()
     var_5 = "hotel_jump";
     var_6 = getent( "TriggerScrambleHotelJumpStartL", "targetname" );
 
-    if ( level.player _meth_80A9( var_6 ) )
+    if ( level.player istouching( var_6 ) )
     {
         var_7 = common_scripts\utility::getstruct( "ScrambleHotelJumpOrgL", "targetname" );
         var_8 = 1;
@@ -2484,16 +2484,16 @@ scrambleplayerhoteljump()
     var_7 maps\_anim::anim_first_frame_solo( var_9, var_5 );
     level.player maps\_shg_utility::setup_player_for_scene();
     thread maps\greece_sniper_scramble_fx::windowhoteljumpglassshatter( 0.1 );
-    level.player _meth_831D();
-    level.player _meth_8080( var_9, "tag_player", 0.2 );
+    level.player disableweapons();
+    level.player playerlinktoblend( var_9, "tag_player", 0.2 );
     wait 0.2;
     var_9 show();
     var_7 maps\_anim::anim_single_solo( var_9, var_5 );
-    level.player _meth_804F();
+    level.player unlink();
     level.player thread maps\_shg_utility::setup_player_for_gameplay();
     var_9 delete();
-    level.player _meth_8304( 1 );
-    level.player _meth_848D( 1 );
+    level.player allowsprint( 1 );
+    level.player allowdodge( 1 );
     thread maps\_utility::autosave_by_name( "scramble_hotel_jump_end" );
     common_scripts\utility::flag_set( "FlagScrambleHotelJumpCompleted" );
     thread scrambleplayercafejump();
@@ -2517,7 +2517,7 @@ scrambleplayercafejump()
     var_6 delete();
     var_7 = "cafe_jump";
 
-    if ( level.player _meth_80A9( var_3 ) )
+    if ( level.player istouching( var_3 ) )
     {
         var_8 = common_scripts\utility::getstruct( "ScrambleCafeJumpOrgL", "targetname" );
         var_9 = 1;
@@ -2533,11 +2533,11 @@ scrambleplayercafejump()
     var_10 hide();
     var_8 maps\_anim::anim_first_frame_solo( var_10, var_7 );
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_8080( var_10, "tag_player", 0.2 );
+    level.player playerlinktoblend( var_10, "tag_player", 0.2 );
     wait 0.2;
     var_10 show();
     var_8 maps\_anim::anim_single_solo( var_10, var_7 );
-    level.player _meth_804F();
+    level.player unlink();
     level.player thread maps\_shg_utility::setup_player_for_gameplay();
     var_10 delete();
     thread maps\_utility::autosave_by_name( "scramble_cafe_jump_end" );
@@ -2567,7 +2567,7 @@ scrambleplayerjumpwatcher( var_0 )
         common_scripts\utility::flag_set( "FlagScramblePlayerJumping" );
         wait 0.1;
 
-        while ( !level.player _meth_8341() )
+        while ( !level.player isonground() )
             wait 0.05;
 
         common_scripts\utility::flag_clear( "FlagScramblePlayerJumping" );
@@ -2580,13 +2580,13 @@ waitforscramblejump( var_0, var_1, var_2 )
     {
         wait 0.05;
 
-        if ( level.player _meth_8336() )
+        if ( level.player isreloading() )
             continue;
 
         if ( isdefined( level.player.using_ammo_cache ) && level.player.using_ammo_cache == 1 )
             continue;
 
-        if ( level.player _meth_80A9( var_0 ) && common_scripts\utility::flag( "FlagScramblePlayerJumping" ) && scrambleplayerleaps( var_0, var_1, 0.6, var_2 ) )
+        if ( level.player istouching( var_0 ) && common_scripts\utility::flag( "FlagScramblePlayerJumping" ) && scrambleplayerleaps( var_0, var_1, 0.6, var_2 ) )
             break;
     }
 }
@@ -2596,7 +2596,7 @@ scrambleplayerleaps( var_0, var_1, var_2, var_3 )
     if ( !isdefined( var_2 ) )
         var_2 = 0.965;
 
-    if ( level.player _meth_817C() != "stand" )
+    if ( level.player getstance() != "stand" )
         return 0;
 
     var_4 = level.player getangles() * ( 1, 1, 0 );
@@ -2620,7 +2620,7 @@ scrambleplayerleaps( var_0, var_1, var_2, var_3 )
 
 scramblecivsetup()
 {
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     maps\_utility::set_ignoreall( 1 );
     thread civsniperdamagemonitor();
 }
@@ -2876,7 +2876,7 @@ scramblecivrestaurantdooropener()
     var_0 = common_scripts\utility::getstruct( "RestaurantDoorOpenOrg", "script_noteworthy" );
     maps\_utility::array_spawn_function_targetname( "ScrambleCivRestaurantDoorOpener", ::scramblecivsetup );
     var_1 = maps\_utility::spawn_targetname( "ScrambleCivRestaurantDoorOpener", 1 );
-    var_1 _meth_81A3( 0 );
+    var_1 pushplayer( 0 );
     var_1.animname = "generic";
     var_1.ignoresonicaoe = 1;
     var_1.health = 9999999;
@@ -2968,7 +2968,7 @@ scrambleciviliancower( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = 0;
 
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     self.allowpain = 0;
     self.animname = "generic";
     self.ignoresonicaoe = 1;
@@ -2978,7 +2978,7 @@ scrambleciviliancower( var_0, var_1 )
     if ( isdefined( var_3.targetname ) && var_3.targetname == "DronesCowerCasual" )
     {
         thread codescripts\character::setheadmodel( "head_f_act_cau_hamilton_base" );
-        self _meth_80B1( "civ_urban_female_body_b_olive" );
+        self setmodel( "civ_urban_female_body_b_olive" );
     }
 
     if ( var_1 == 1 )
@@ -3029,7 +3029,7 @@ scramblecivilianflee( var_0, var_1, var_2, var_3, var_4 )
     if ( !isdefined( var_3 ) )
         var_3 = 1;
 
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     self.animname = "generic";
     self.ignoresonicaoe = 1;
     self.allowpain = 0;
@@ -3086,7 +3086,7 @@ scramblecivilianflee( var_0, var_1, var_2, var_3, var_4 )
 
             self.allowdeath = 1;
             self.a.nodeath = 1;
-            self _meth_8052();
+            self kill();
         }
         else if ( isdefined( var_13 ) && maps\_utility::hasanim( var_13 ) )
             var_6 thread maps\_anim::anim_loop_solo( self, var_13, var_9 );
@@ -3129,7 +3129,7 @@ civkillwhennearplayer( var_0 )
             if ( isdefined( self.magic_bullet_shield ) )
                 maps\_utility::stop_magic_bullet_shield();
 
-            soundscripts\_snd::snd_message( "windmill_sniper_shot_multi", self _meth_80A8() );
+            soundscripts\_snd::snd_message( "windmill_sniper_shot_multi", self geteye() );
             var_3 = snipertargetgettagpos();
             snipershoot( var_3, 1.0, 1 );
         }
@@ -3224,27 +3224,27 @@ monitorplayerfirerpgattower()
 
 firestingerrumble()
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
     earthquake( 0.5, 0.3, level.player.origin, 100 );
 }
 
 slowmotiontowerdestruction()
 {
     level.sniperpos.bsniperenabled = 0;
-    level.player _meth_80EF();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player enableinvulnerability();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player allowjump( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     common_scripts\utility::flag_wait( "FlagScrambleSniperKilled" );
     wait 1.5;
-    level.player _meth_80F0();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_848D( 1 );
+    level.player disableinvulnerability();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowjump( 1 );
+    level.player allowsprint( 1 );
+    level.player allowdodge( 1 );
 }
 
 monitormantlevols()
@@ -3296,12 +3296,12 @@ stingerpronestatemonitor()
 
     while ( !common_scripts\utility::flag( "FlagScrambleSniperKilled" ) )
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( var_0 == "iw5_stingerm7greece_sp" )
-            level.player _meth_811A( 0 );
+            level.player allowprone( 0 );
         else
-            level.player _meth_811A( 1 );
+            level.player allowprone( 1 );
 
         wait 0.05;
     }
@@ -3383,13 +3383,13 @@ playermovetruck()
     var_1 hide();
     var_0 maps\_anim::anim_first_frame_solo( var_1, "move_truck" );
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
-    level.player _meth_8080( var_1, "tag_player", 0.3 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.3 );
     wait 0.3;
     var_1 show();
     thread ilanamovetruck();
     thread truckmovetruck();
     var_0 maps\_anim::anim_single_solo( var_1, "move_truck" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player thread maps\_shg_utility::setup_player_for_gameplay();
     var_1 delete();
 
@@ -3468,7 +3468,7 @@ initsniperscramblesuppressionfeedback()
     self.hud_damagefeedback.y = -12;
     self.hud_damagefeedback.alpha = 0;
     self.hud_damagefeedback.archived = 1;
-    self.hud_damagefeedback _meth_80CC( "damage_feedback", 24, 48 );
+    self.hud_damagefeedback setshader( "damage_feedback", 24, 48 );
     level waittill( "ScrambleSniperKilled" );
 
     if ( isdefined( self.saved_hud_damagefeedback ) )
@@ -3516,7 +3516,7 @@ civsniperdamagemonitor()
         var_4 = createsniperimpulse( var_3 );
         self.a.nodeath = 1;
         animscripts\notetracks::notetrackstartragdoll( "ragdoll" );
-        self _meth_8141();
+        self stopanimscripted();
         wait 0.1;
         physicsexplosionsphere( var_4, 32, 0, 5 );
     }
@@ -3553,10 +3553,10 @@ closeendinggatestransition()
     thread closeendinggates();
     thread scramblesetupexittruck();
     level notify( "tff_pre_outro_to_hades_fight" );
-    _func_219( "greece_outro_tr" );
-    _func_218( "greece_hades_fight_tr" );
+    unloadtransient( "greece_outro_tr" );
+    loadtransient( "greece_hades_fight_tr" );
 
-    while ( !_func_21E( "greece_hades_fight_tr" ) )
+    while ( !istransientloaded( "greece_hades_fight_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_outro_to_hades_fight" );
@@ -3567,9 +3567,9 @@ closeendinggates()
     var_0 = getent( "left_gate_to_close", "targetname" );
     var_1 = getent( "right_gate_to_close", "targetname" );
     var_2 = getent( "block_alley_gate", "targetname" );
-    var_2 _meth_82AE( ( var_2.origin[0], var_2.origin[1], var_2.origin[2] + 104 ), 0.1 );
-    var_0 _meth_82B7( -95, 0.6 );
-    var_1 _meth_82B7( 110, 0.4 );
+    var_2 moveto( ( var_2.origin[0], var_2.origin[1], var_2.origin[2] + 104 ), 0.1 );
+    var_0 rotateyaw( -95, 0.6 );
+    var_1 rotateyaw( 110, 0.4 );
 }
 
 scramblefiredamagemonitor()
@@ -3590,7 +3590,7 @@ scrambletruckfiredamagevol( var_0, var_1 )
     for (;;)
     {
         var_0 waittill( "trigger", var_2 );
-        var_2 _meth_8051( 5, var_0.origin, var_0, var_0, "MOD_CRUSH" );
+        var_2 dodamage( 5, var_0.origin, var_0, var_0, "MOD_CRUSH" );
         wait 0.1;
     }
 }
@@ -3606,7 +3606,7 @@ scramblerestaurantexitclip( var_0 )
 
     var_3 = var_1.origin;
     var_4 = var_3 + ( -10, 0, var_2 );
-    var_1 _meth_82AE( var_4, 0.1 );
+    var_1 moveto( var_4, 0.1 );
 }
 
 scramblevisitorcentergateopen()
@@ -3615,13 +3615,13 @@ scramblevisitorcentergateopen()
     var_0.animname = "visitorgate";
     var_0 maps\_utility::assign_animtree( "visitorgate" );
     var_1 = getent( "AlleysVisitorCenterGateCollision", "targetname" );
-    var_1 _meth_804D( var_0, "jo_gate_door" );
+    var_1 linkto( var_0, "jo_gate_door" );
     var_2 = getent( "AlleysVisitorCenterGateUseTrigger", "targetname" );
     var_2 makeunusable();
     var_3 = common_scripts\utility::getstruct( "AlleysVisitorCenterGateRipOrg", "targetname" );
     var_4 = "alleys_gate_rip";
     var_3 maps\_anim::anim_last_frame_solo( var_0, var_4 );
-    var_1 _meth_8058();
+    var_1 connectpaths();
 }
 
 torresblood()
@@ -3642,7 +3642,7 @@ destroydroppedgun()
     {
         level.player waittill( "pickup", var_0, var_1 );
 
-        if ( level.player _meth_8314( "iw5_stingerm7greece_sp" ) )
+        if ( level.player hasweapon( "iw5_stingerm7greece_sp" ) )
         {
             if ( isdefined( var_1 ) )
             {

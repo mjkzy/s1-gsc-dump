@@ -3,9 +3,9 @@
 
 main()
 {
-    self _meth_80B1( "animal_dobernan" );
+    self setmodel( "animal_dobernan" );
     self.voice = "arab";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

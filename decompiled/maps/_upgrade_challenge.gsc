@@ -97,7 +97,7 @@ upgrade_notify_stat( var_0, var_1 )
 
         if ( var_0 == "intel" )
         {
-            var_4 = int( self _meth_820E( "sp_upgradeChallengeStage_" + var_2 ) );
+            var_4 = int( self getlocalplayerprofiledata( "sp_upgradeChallengeStage_" + var_2 ) );
 
             if ( !isdefined( self.stats["upgradeChallengeStage"][var_0] ) )
             {
@@ -106,7 +106,7 @@ upgrade_notify_stat( var_0, var_1 )
             }
 
             self.stats["upgradeChallengeStage"][var_0] = var_4;
-            var_5 = int( self _meth_820E( "sp_upgradeChallengeProgress_" + var_2 ) );
+            var_5 = int( self getlocalplayerprofiledata( "sp_upgradeChallengeProgress_" + var_2 ) );
 
             if ( !isdefined( self.stats["upgradeChallengeProgress"][var_0] ) )
                 setomnvar( "ui_pm_p_start_intel", var_5 );
@@ -119,7 +119,7 @@ upgrade_notify_stat( var_0, var_1 )
 
             if ( !isdefined( self.stats["upgradeChallengeStage"][var_0] ) )
             {
-                var_4 = int( self _meth_820E( "sp_upgradeChallengeStage_" + var_2 ) );
+                var_4 = int( self getlocalplayerprofiledata( "sp_upgradeChallengeStage_" + var_2 ) );
                 self.stats["upgradeChallengeStage"][var_0] = var_4;
             }
             else
@@ -129,7 +129,7 @@ upgrade_notify_stat( var_0, var_1 )
 
             if ( !isdefined( self.stats["upgradeChallengeProgress"][var_0] ) )
             {
-                var_5 = int( self _meth_820E( "sp_upgradeChallengeProgress_" + var_2 ) );
+                var_5 = int( self getlocalplayerprofiledata( "sp_upgradeChallengeProgress_" + var_2 ) );
                 self.stats["upgradeChallengeProgress"][var_0] = var_5;
             }
             else
@@ -153,7 +153,7 @@ upgrade_notify_stat( var_0, var_1 )
 
         while ( var_4 <= var_6 && var_5 >= var_8 && !var_10 )
         {
-            _func_2AF( level.upgrade_chal_complete_messages[var_2] );
+            notifychallengecomplete( level.upgrade_chal_complete_messages[var_2] );
 
             if ( var_0 == "intel" )
                 upgrade_challenge_complete_for_intel( var_2 );
@@ -209,11 +209,11 @@ commit_exo_awards_upgrade_points_custom( var_0 )
     if ( isdefined( level.player ) )
     {
         var_1 = level.player;
-        var_2 = int( var_1 _meth_820E( "sp_upgradePoints" ) );
+        var_2 = int( var_1 getlocalplayerprofiledata( "sp_upgradePoints" ) );
         var_3 = var_2 + var_0;
 
         if ( var_3 > var_2 )
-            var_1 _meth_820F( "sp_upgradePoints", var_3 );
+            var_1 setlocalplayerprofiledata( "sp_upgradePoints", var_3 );
     }
 }
 
@@ -228,10 +228,10 @@ commit_exo_awards_stage_and_progress( var_0, var_1 )
         if ( isdefined( var_2.stats["upgradeChallengeStage"][var_0] ) )
         {
             var_4 = var_2.stats["upgradeChallengeStage"][var_0];
-            var_5 = int( var_2 _meth_820E( "sp_upgradeChallengeStage_" + var_3 ) );
+            var_5 = int( var_2 getlocalplayerprofiledata( "sp_upgradeChallengeStage_" + var_3 ) );
 
             if ( var_4 > var_5 )
-                var_2 _meth_820F( "sp_upgradeChallengeStage_" + var_3, var_4 );
+                var_2 setlocalplayerprofiledata( "sp_upgradeChallengeStage_" + var_3, var_4 );
         }
 
         var_6 = 0;
@@ -239,10 +239,10 @@ commit_exo_awards_stage_and_progress( var_0, var_1 )
         if ( isdefined( var_2.stats["upgradeChallengeProgress"][var_0] ) )
         {
             var_6 = var_2.stats["upgradeChallengeProgress"][var_0];
-            var_7 = int( var_2 _meth_820E( "sp_upgradeChallengeProgress_" + var_3 ) );
+            var_7 = int( var_2 getlocalplayerprofiledata( "sp_upgradeChallengeProgress_" + var_3 ) );
 
             if ( var_6 != var_7 )
-                var_2 _meth_820F( "sp_upgradeChallengeProgress_" + var_3, var_6 );
+                var_2 setlocalplayerprofiledata( "sp_upgradeChallengeProgress_" + var_3, var_6 );
         }
 
         if ( var_1 )

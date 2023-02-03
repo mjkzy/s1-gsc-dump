@@ -435,24 +435,24 @@ mus_submixer_thread( var_0 )
 
     for (;;)
     {
-        var_7 = level.player _meth_830D()[0];
-        var_8 = level.player _meth_830D()[1];
+        var_7 = level.player getnormalizedcameramovements()[0];
+        var_8 = level.player getnormalizedcameramovements()[1];
         var_9 = abs( var_7 ) + abs( var_8 );
         var_10 = length( level.player getvelocity() ) / var_5 / 2;
 
         if ( level.player adsbuttonpressed() )
             var_10 += 3;
 
-        if ( level.player _meth_824C( "BUTTON_B" ) )
+        if ( level.player buttonpressed( "BUTTON_B" ) )
             var_10 += 4;
 
-        if ( level.player _meth_824C( "BUTTON_Y" ) )
+        if ( level.player buttonpressed( "BUTTON_Y" ) )
             var_10 += 4;
 
-        if ( level.player _meth_824C( "BUTTON_RTRIG" ) )
+        if ( level.player buttonpressed( "BUTTON_RTRIG" ) )
             var_10 += 10;
 
-        if ( level.player _meth_824C( "DPAD_UP" ) )
+        if ( level.player buttonpressed( "DPAD_UP" ) )
             var_10 += 4;
 
         if ( var_9 > 0.1 )
@@ -469,7 +469,7 @@ mus_submixer_thread( var_0 )
             var_11 = var_3;
 
         var_4 += var_11 * ( var_10 - var_4 );
-        var_12 = _func_246( var_4, level.aud.envs["player_speed_to_music_vol"] );
+        var_12 = piecewiselinearlookup( var_4, level.aud.envs["player_speed_to_music_vol"] );
         soundscripts\_audio::aud_set_music_submix( var_12 * var_0, var_1 );
         wait 0.25;
     }
@@ -668,7 +668,7 @@ aud_cave_ambience()
     soundscripts\_audio_mix_manager::mm_clear_submix( "irons_mute_teleport" );
     wait 4;
     soundscripts\_snd_playsound::snd_play_2d( "irons_intro_boom_2" );
-    var_0 _meth_806F( 0.5, 3 );
+    var_0 scalevolume( 0.5, 3 );
     wait 8;
     soundscripts\_snd_playsound::snd_play_2d( "irons_intro_boom_3" );
     common_scripts\utility::flag_wait( "drone_passed" );
@@ -1058,8 +1058,8 @@ aud_rooftops_ambience()
         else if ( level.aud_rooftop_wind_volume <= 0.01 )
             level.aud_rooftop_wind_volume = 0.01;
 
-        var_0 _meth_806F( level.aud_rooftop_wind_volume, 0.2 );
-        var_1 _meth_806F( level.aud_rooftop_wind_volume, 0.2 );
+        var_0 scalevolume( level.aud_rooftop_wind_volume, 0.2 );
+        var_1 scalevolume( level.aud_rooftop_wind_volume, 0.2 );
         wait 0.2;
     }
 }
@@ -1165,7 +1165,7 @@ cormack_grapple_kill_rope()
     var_0 = spawn( "script_origin", ( 633, -3376, 1073 ) );
     var_0 soundscripts\_snd_playsound::snd_play_linked( "irons_pent_grap_kill_end" );
     var_1 = ( 724, -3215, 1059 );
-    var_0 _meth_82AE( var_1, 0.9 );
+    var_0 moveto( var_1, 0.9 );
     wait 5;
     var_0 delete();
 }
@@ -1389,7 +1389,7 @@ aud_vtol_exterior_idle()
     var_0 = level.vtol soundscripts\_snd_playsound::snd_play_loop_linked( "irons_finale_jet_exterior_idle", "aud_fade_out_exterior_idle", 0.05, 0.2 );
     level notify( "aud_stop_interior_idle" );
     wait 2;
-    var_0 _meth_806D( 1.5, 30 );
+    var_0 scalepitch( 1.5, 30 );
 }
 
 aud_exfil_vtol_grapple()
@@ -1567,7 +1567,7 @@ aud_foliage_movement()
 {
     level.player endon( "death" );
     var_0 = level.player soundscripts\_snd_playsound::snd_play_loop_linked( "irons_foliage_movement_plr_lp" );
-    var_0 _meth_806E( 0, 0 );
+    var_0 setvolume( 0, 0 );
     var_1 = 0;
 
     while ( isdefined( var_0 ) )
@@ -1578,9 +1578,9 @@ aud_foliage_movement()
 
             if ( var_2 > 0 )
             {
-                if ( level.player _meth_817C() == "crouch" )
+                if ( level.player getstance() == "crouch" )
                     var_2 /= 140;
-                else if ( level.player _meth_817C() == "prone" )
+                else if ( level.player getstance() == "prone" )
                     var_2 /= 30;
                 else
                     var_2 /= 220;
@@ -1591,20 +1591,20 @@ aud_foliage_movement()
 
             if ( common_scripts\utility::flag( "aud_grapple_kill_foliage_movement" ) )
             {
-                var_0 _meth_806F( 1, 0.1 );
+                var_0 scalevolume( 1, 0.1 );
 
                 while ( common_scripts\utility::flag( "aud_grapple_kill_foliage_movement" ) )
                     wait 0.1;
 
-                var_0 _meth_806F( 0, 0.8 );
+                var_0 scalevolume( 0, 0.8 );
             }
             else
-                var_0 _meth_806F( var_2, 0.1 );
+                var_0 scalevolume( var_2, 0.1 );
 
             thread aud_foliage_insects();
         }
         else
-            var_0 _meth_806F( 0, 0.6 );
+            var_0 scalevolume( 0, 0.6 );
 
         wait 0.2;
     }
@@ -1617,7 +1617,7 @@ aud_foliage_mix()
 
     for (;;)
     {
-        var_1 = level.player _meth_817C();
+        var_1 = level.player getstance();
 
         if ( var_1 != var_0 )
         {

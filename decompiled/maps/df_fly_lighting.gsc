@@ -26,7 +26,7 @@ df_fly_dof_presets()
     }
     else
     {
-        _func_0D3( "r_dof_physical_enable", 0 );
+        setsaveddvar( "r_dof_physical_enable", 0 );
         maps\_lighting::create_dof_preset( "df_fly", 0, 100, 0, 18000, 29000, 1.1, 0.5 );
         maps\_lighting::create_dof_preset( "df_fly_intro", 0, 100, 0, 18000, 29000, 1.1, 0.5 );
         maps\_lighting::create_dof_preset( "df_fly_canyon", 0, 100, 0, 18000, 29000, 1.1, 0.5 );
@@ -38,24 +38,24 @@ retarget_lighting()
 {
     var_0 = getent( "terrain_no_light", "targetname" );
     var_1 = getent( "terrain_light", "targetname" );
-    var_0 _meth_83EF( var_1 );
+    var_0 retargetscriptmodellighting( var_1 );
 }
 
 df_fly_set_level_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_disableLightSets", 0 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_disableLightSets", 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 }
 
 df_fly_lighting()
 {
-    level.player _meth_83C0( "df_fly_canyon" );
+    level.player lightsetforplayer( "df_fly_canyon" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_df_fly", 0 );
+        level.player setclutforplayer( "clut_df_fly", 0 );
 
     maps\_utility::vision_set_fog_changes( "df_fly_canyon", 0 );
 
@@ -65,7 +65,7 @@ df_fly_lighting()
 
 df_fly_lighting_canyon()
 {
-    level.player _meth_83C0( "df_fly_canyon" );
+    level.player lightsetforplayer( "df_fly_canyon" );
     maps\_utility::vision_set_fog_changes( "df_fly_canyon", 0 );
 
     if ( level.currentgen )
@@ -74,22 +74,22 @@ df_fly_lighting_canyon()
     if ( level.nextgen )
     {
         thread set_canyon_dof();
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 }
 
 set_canyon_dof()
 {
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 7000.0, 50, 50 );
-    level.player _meth_84BC( 1.25, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 7000.0, 50, 50 );
+    level.player setphysicalviewmodeldepthoffield( 1.25, 30 );
     common_scripts\utility::flag_wait( "canyon_finished" );
     wait 5.0;
-    level.player _meth_84AB( 5.0, 660 );
+    level.player setphysicaldepthoffield( 5.0, 660 );
     wait 3.0;
-    level.player _meth_84AB( 5.0, 28.8 );
+    level.player setphysicaldepthoffield( 5.0, 28.8 );
 }
 
 set_sun_flare()
@@ -106,13 +106,13 @@ setup_vignette()
     level.flyvignette.horzalign = "fullscreen";
     level.flyvignette.vertalign = "fullscreen";
     level.flyvignette.sort = 3;
-    level.flyvignette _meth_80CC( "s1_railgun_hud_outer_shadow", 640, 480 );
+    level.flyvignette setshader( "s1_railgun_hud_outer_shadow", 640, 480 );
 }
 
 df_fly_lighting_canyon_finale()
 {
     common_scripts\utility::flag_wait( "canyon_finished" );
-    level.player _meth_83C0( "df_fly_canyon" );
+    level.player lightsetforplayer( "df_fly_canyon" );
     maps\_utility::vision_set_fog_changes( "df_fly_canyon_finale", 2 );
 
     if ( level.currentgen )
@@ -120,9 +120,9 @@ df_fly_lighting_canyon_finale()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 }
 
@@ -130,14 +130,14 @@ df_fly_lighting_end_pod()
 {
     common_scripts\utility::flag_wait( "canyon_finished" );
     wait 12;
-    level.player _meth_83C0( "df_fly_canyon" );
+    level.player lightsetforplayer( "df_fly_canyon" );
     maps\_utility::vision_set_fog_changes( "df_fly_canyon_finale", 2 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 }
 
@@ -150,8 +150,8 @@ ambient_model_fix()
     var_3 = getent( "crumble_hoodoo_a", "targetname" );
     var_4 = getent( "cliff_01_origin", "targetname" );
     var_5 = common_scripts\utility::getstruct( "cliff_02_origin", "targetname" );
-    var_0 _meth_847B( var_4.origin );
-    var_1 _meth_847B( var_5.origin );
-    var_2 _meth_847B( var_5.origin );
-    var_3 _meth_847B( var_5.origin );
+    var_0 overridelightingorigin( var_4.origin );
+    var_1 overridelightingorigin( var_5.origin );
+    var_2 overridelightingorigin( var_5.origin );
+    var_3 overridelightingorigin( var_5.origin );
 }

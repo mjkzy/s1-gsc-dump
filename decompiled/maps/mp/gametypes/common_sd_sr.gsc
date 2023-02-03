@@ -88,7 +88,7 @@ onpickup( var_0 )
     if ( isplayer( var_0 ) )
     {
         var_0 thread maps\mp\_matchdata::loggameevent( "pickup", var_0.origin );
-        var_0 _meth_82FB( "ui_carrying_bomb", 1 );
+        var_0 setclientomnvar( "ui_carrying_bomb", 1 );
     }
 
     maps\mp\gametypes\_gameobjects::set2dicon( "friendly", "waypoint_escort" );
@@ -131,7 +131,7 @@ bombs()
         return;
     }
 
-    var_1[0] _meth_80B1( "npc_search_dstry_bomb" );
+    var_1[0] setmodel( "npc_search_dstry_bomb" );
 
     if ( !level.multibomb )
     {
@@ -230,7 +230,7 @@ bombs()
         var_8.bombdefusetrig = getent( var_1[0].target, "targetname" );
         var_8.bombdefusetrig.origin += ( 0, 0, -10000 );
         var_8.bombdefusetrig.label = var_9;
-        var_8.bombdefusetrig _meth_8537( 1 );
+        var_8.bombdefusetrig usetriggertouchcheckstance( 1 );
     }
 
     for ( var_7 = 0; var_7 < level.bombzones.size; var_7++ )
@@ -342,20 +342,20 @@ setupkillcament( var_0 )
 {
     var_1 = spawn( "script_origin", self.origin );
     var_1.angles = self.angles;
-    var_1 _meth_82B7( -45, 0.05 );
+    var_1 rotateyaw( -45, 0.05 );
     wait 0.05;
     var_2 = self.origin + ( 0, 0, 5 );
     var_3 = self.origin + anglestoforward( var_1.angles ) * 100 + ( 0, 0, 128 );
     var_4 = bullettrace( var_2, var_3, 0, self );
     self.killcament = spawn( "script_model", var_4["position"] );
-    self.killcament _meth_834D( "explosive" );
-    var_0.killcamentnum = self.killcament _meth_81B1();
+    self.killcament setscriptmoverkillcam( "explosive" );
+    var_0.killcamentnum = self.killcament getentitynumber();
     var_1 delete();
 }
 
 onbeginuse( var_0 )
 {
-    var_0 _meth_8130( 0 );
+    var_0 allowmelee( 0 );
 
     if ( maps\mp\gametypes\_gameobjects::isfriendlyteam( var_0.pers["team"] ) )
     {
@@ -407,7 +407,7 @@ onenduse( var_0, var_1, var_2 )
     if ( !isdefined( var_1 ) )
         return;
 
-    var_1 _meth_8130( 1 );
+    var_1 allowmelee( 1 );
 
     if ( isalive( var_1 ) )
     {
@@ -439,13 +439,13 @@ bombplantedanim( var_0 )
 {
     var_0 endon( "death" );
     var_0 endon( "disconnect" );
-    var_0 _meth_807C( level.sdbombmodel );
-    var_0 _meth_8081();
+    var_0 playerlinkto( level.sdbombmodel );
+    var_0 playerlinkedoffsetenable();
 
-    while ( var_0 _meth_8311() == self.useweapon )
+    while ( var_0 getcurrentweapon() == self.useweapon )
         waitframe();
 
-    var_0 _meth_804F();
+    var_0 unlink();
 }
 
 bombplanted( var_0, var_1 )
@@ -456,7 +456,7 @@ bombplanted( var_0, var_1 )
     var_1.objective = 0;
 
     if ( isplayer( var_1 ) )
-        var_1 _meth_82FB( "ui_carrying_bomb", 0 );
+        var_1 setclientomnvar( "ui_carrying_bomb", 0 );
 
     var_0.visuals[0] thread maps\mp\gametypes\_gamelogic::playtickingsound();
     level.tickingobject = var_0.visuals[0];
@@ -477,7 +477,7 @@ bombplanted( var_0, var_1 )
     {
         level.sdbombmodel = spawn( "script_model", var_1.origin );
         level.sdbombmodel.angles = var_1.angles;
-        level.sdbombmodel _meth_80B1( "npc_search_dstry_bomb" );
+        level.sdbombmodel setmodel( "npc_search_dstry_bomb" );
     }
 
     level.sdbombmodel thread invalidatecarepackageandgoliathdrop();
@@ -533,11 +533,11 @@ bombplanted( var_0, var_1 )
 
         if ( isdefined( var_1 ) )
         {
-            var_0.visuals[0] entityradiusdamage( var_6, 512, 300, 20, var_1, "MOD_EXPLOSIVE", "bomb_site_mp" );
+            var_0.visuals[0] radiusdamage( var_6, 512, 300, 20, var_1, "MOD_EXPLOSIVE", "bomb_site_mp" );
             var_1 thread maps\mp\_events::bombdetonateevent();
         }
         else
-            var_0.visuals[0] entityradiusdamage( var_6, 512, 300, 20, undefined, "MOD_EXPLOSIVE", "bomb_site_mp" );
+            var_0.visuals[0] radiusdamage( var_6, 512, 300, 20, undefined, "MOD_EXPLOSIVE", "bomb_site_mp" );
 
         var_7 = "bomb_explosion";
 
@@ -621,7 +621,7 @@ invalidatecarepackageandgoliathdrop()
     if ( var_12.size > 0 )
     {
         foreach ( var_14 in var_12 )
-            _func_2D6( var_14, "none" );
+            nodesetremotemissilename( var_14, "none" );
     }
 
     common_scripts\utility::waittill_any( "bomb_defused", "game_ended" );
@@ -634,7 +634,7 @@ invalidatecarepackageandgoliathdrop()
     if ( var_12.size > 0 )
     {
         foreach ( var_14 in var_12 )
-            _func_2D6( var_14, "up" );
+            nodesetremotemissilename( var_14, "up" );
     }
 
     return;
@@ -697,7 +697,7 @@ goliathdropbomb()
     if ( isdefined( self.carryobject ) )
     {
         self.isbombcarrier = 0;
-        self _meth_82FB( "ui_carrying_bomb", 0 );
+        self setclientomnvar( "ui_carrying_bomb", 0 );
         self.carryobject thread maps\mp\gametypes\_gameobjects::setdropped();
     }
 }
@@ -753,7 +753,7 @@ bombdefused()
 
 oncantuse( var_0 )
 {
-    var_0 iclientprintlnbold( &"MP_CANT_PLANT_WITHOUT_BOMB" );
+    var_0 iprintlnbold( &"MP_CANT_PLANT_WITHOUT_BOMB" );
 }
 
 ontimelimit()
@@ -872,7 +872,7 @@ applybombcarrierclass()
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self _meth_8341() )
+    while ( !self isonground() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )
@@ -899,10 +899,10 @@ applybombcarrierclass()
 
 refillbattery()
 {
-    var_0 = self _meth_82CE();
+    var_0 = self getweaponslistoffhands();
 
     foreach ( var_2 in var_0 )
-        self _meth_84A4( var_2 );
+        self batteryfullrecharge( var_2 );
 }
 
 removebombcarrierclass()
@@ -920,7 +920,7 @@ removebombcarrierclass()
     while ( self ismantling() )
         wait 0.05;
 
-    while ( !self _meth_8341() )
+    while ( !self isonground() )
         wait 0.05;
 
     if ( maps\mp\_utility::isjuggernaut() )

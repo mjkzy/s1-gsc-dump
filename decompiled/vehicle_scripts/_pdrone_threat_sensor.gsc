@@ -36,7 +36,7 @@ pdrone_update_threat_sensor()
             continue;
         }
 
-        var_1 = _func_0D6( var_0 );
+        var_1 = getaiarray( var_0 );
 
         if ( self.script_team == "axis" )
             var_1 = common_scripts\utility::array_add( var_1, level.player );
@@ -100,7 +100,7 @@ evaluate_threat_los( var_0 )
 
     var_1 = self.origin;
 
-    if ( self _meth_8442( "tag_flash" ) != -1 )
+    if ( self gettagindex( "tag_flash" ) != -1 )
         var_1 = self gettagorigin( "tag_flash" );
 
     if ( trace_to_enemy( var_1, var_0, undefined ) )
@@ -145,14 +145,14 @@ evaluate_threat_avoid_friendly_fire( var_0 )
 
 trace_to_enemy( var_0, var_1, var_2 )
 {
-    var_3 = bullettrace( var_0, var_1 _meth_80A8(), 0, var_2, 0, 0, 0, 0, 0 );
+    var_3 = bullettrace( var_0, var_1 geteye(), 0, var_2, 0, 0, 0, 0, 0 );
 
     if ( isdefined( var_3["entity"] ) && var_3["entity"] maps\_vehicle::isvehicle() )
     {
         if ( isdefined( var_3["entity"].vehicletype ) && var_3["entity"].vehicletype == "pdrone" )
             return 1;
 
-        var_4 = var_3["entity"] _meth_8257();
+        var_4 = var_3["entity"] getvehicleowner();
 
         if ( isdefined( var_4 ) && var_4 == var_1 )
             return 1;

@@ -25,37 +25,7 @@ main()
     thread handle_glass_pathing();
     thread damcustomairstrike();
     thread dampatchclip();
-    thread killoutofworldwarbirds();
     thread removebadtriggerhurtthatguyplacedwrong();
-}
-
-killoutofworldwarbirds()
-{
-    level endon( "game_ended" );
-    level.warbirdxbounds = -2500;
-
-    for (;;)
-    {
-        if ( !isdefined( level.spawnedwarbirds ) || level.spawnedwarbirds.size == 0 )
-        {
-            wait 1;
-            continue;
-        }
-
-        foreach ( var_1 in level.spawnedwarbirds )
-        {
-            if ( isdefined( var_1 ) && !_func_294( var_1 ) && var_1.damagetaken < var_1.maxhealth && var_1.iscrashing == 0 )
-            {
-                if ( !isdefined( var_1.isleaving ) || var_1.isleaving == 0 )
-                {
-                    if ( var_1.origin[0] <= level.warbirdxbounds )
-                        var_1 thread maps\mp\killstreaks\_aerial_utility::heli_explode( 1 );
-                }
-            }
-        }
-
-        wait 0.5;
-    }
 }
 
 removebadtriggerhurtthatguyplacedwrong()
@@ -69,7 +39,7 @@ removebadtriggerhurtthatguyplacedwrong()
 
         if ( var_4 < 32 )
         {
-            var_3 _meth_8092();
+            var_3 dontinterpolate();
             var_3.origin += ( 0, 0, -10000 );
         }
     }
@@ -219,51 +189,51 @@ spawndamturret( var_0, var_1, var_2 )
     var_3 = spawnturret( "misc_turret", self.origin, var_0, 0 );
     var_3.attachpoint = self;
     var_3.angles = common_scripts\utility::flat_angle( self.angles );
-    var_3 _meth_80B1( var_1 );
-    var_3 _meth_815A( 45.0 );
+    var_3 setmodel( var_1 );
+    var_3 setdefaultdroppitch( 45.0 );
     var_3.health = 99999;
     var_3.maxhealth = 1000;
     var_3.damagetaken = 0;
     var_3.stunned = 0;
     var_3.stunnedtime = 0.0;
-    var_3 _meth_82C0( 0 );
-    var_3 _meth_82C1( 0 );
-    var_3 _meth_8065( "manual" );
+    var_3 setcandamage( 0 );
+    var_3 setcanradiusdamage( 0 );
+    var_3 setmode( "manual" );
     level.damdefaultaiment = getent( "DamTurretDefaultTarget", "targetname" );
-    var_3 _meth_8106( level.damdefaultaiment );
+    var_3 settargetentity( level.damdefaultaiment );
     return var_3;
 }
 
 setupcraneanimations()
 {
-    map_restart( "dam_crane01_idle_l" );
-    map_restart( "dam_crane01_idle_r" );
-    map_restart( "dam_crane01_l_2_r" );
-    map_restart( "dam_crane01_r_2_l" );
-    map_restart( "dam_crane02_idle_l" );
-    map_restart( "dam_crane02_idle_r" );
-    map_restart( "dam_crane02_l_2_r" );
-    map_restart( "dam_crane02_r_2_l" );
-    map_restart( "dam_crane01_tag_idle_l" );
-    map_restart( "dam_crane01_tag_idle_r" );
-    map_restart( "dam_crane01_tag_l_2_r" );
-    map_restart( "dam_crane01_tag_r_2_l" );
-    map_restart( "dam_crane02_tag_idle_l" );
-    map_restart( "dam_crane02_tag_idle_r" );
-    map_restart( "dam_crane02_tag_l_2_r" );
-    map_restart( "dam_crane02_tag_r_2_l" );
-    map_restart( "dam_crane01_collisiontest" );
+    precachempanim( "dam_crane01_idle_l" );
+    precachempanim( "dam_crane01_idle_r" );
+    precachempanim( "dam_crane01_l_2_r" );
+    precachempanim( "dam_crane01_r_2_l" );
+    precachempanim( "dam_crane02_idle_l" );
+    precachempanim( "dam_crane02_idle_r" );
+    precachempanim( "dam_crane02_l_2_r" );
+    precachempanim( "dam_crane02_r_2_l" );
+    precachempanim( "dam_crane01_tag_idle_l" );
+    precachempanim( "dam_crane01_tag_idle_r" );
+    precachempanim( "dam_crane01_tag_l_2_r" );
+    precachempanim( "dam_crane01_tag_r_2_l" );
+    precachempanim( "dam_crane02_tag_idle_l" );
+    precachempanim( "dam_crane02_tag_idle_r" );
+    precachempanim( "dam_crane02_tag_l_2_r" );
+    precachempanim( "dam_crane02_tag_r_2_l" );
+    precachempanim( "dam_crane01_collisiontest" );
 }
 
 cranecollisiontest()
 {
     var_0 = getent( "Crane_02", "targetname" );
     var_1 = getent( "crane2PipeCollision", "targetname" );
-    var_1 _meth_804D( var_0, "j_tube_01_c" );
+    var_1 linkto( var_0, "j_tube_01_c" );
 
     for (;;)
     {
-        var_0 _meth_827B( "dam_crane01_collisiontest" );
+        var_0 scriptmodelplayanimdeltamotion( "dam_crane01_collisiontest" );
         wait 20;
     }
 }
@@ -272,12 +242,12 @@ tempcraneidlesetup()
 {
     var_0 = getent( "Crane_01", "targetname" );
     var_1 = getent( "crane1PipeCollision", "targetname" );
-    var_1 _meth_804D( var_0, "j_tube_01_c" );
+    var_1 linkto( var_0, "j_tube_01_c" );
     var_2 = getent( "Crane_02", "targetname" );
     var_3 = getent( "crane2PipeCollision", "targetname" );
-    var_3 _meth_804D( var_2, "j_tube_01_c" );
-    var_0 _meth_827B( "dam_crane02_idle_l" );
-    var_2 _meth_827B( "dam_crane01_idle_l" );
+    var_3 linkto( var_2, "j_tube_01_c" );
+    var_0 scriptmodelplayanimdeltamotion( "dam_crane02_idle_l" );
+    var_2 scriptmodelplayanimdeltamotion( "dam_crane01_idle_l" );
 }
 
 crane1movement()
@@ -288,31 +258,31 @@ crane1movement()
     var_3 = getent( "crane_01_bcs_trigger", "targetname" );
     var_4 = getent( "Crane_01_TagBaseProxy", "targetname" );
     var_5 = getent( "crane1Collision", "targetname" );
-    var_2 _meth_8446( var_0, "tag_origin" );
+    var_2 vehicle_jetbikesethoverforcescale( var_0, "tag_origin" );
     var_3 handle_trigger_updateto( var_2 );
     var_5.angles += ( 0, -249.215, 0 );
-    var_5 _meth_8446( var_4, "tag_origin" );
+    var_5 vehicle_jetbikesethoverforcescale( var_4, "tag_origin" );
     var_6 = 20;
     var_7 = ( 2181, -1069, 1407 );
     thread aud_play_crane_sfx( var_7, var_6, "crane_01" );
 
     for (;;)
     {
-        var_0 _meth_827A();
+        var_0 scriptmodelclearanim();
         var_0.origin = var_1.origin;
         var_0.angles = var_1.angles;
-        var_4 _meth_827A();
-        var_1 _meth_827B( "dam_crane01_l_2_r" );
-        var_0 _meth_827B( "dam_crane01_tag_l_2_r" );
-        var_4 _meth_827B( "dam_crane01_tag_base_l_2_r" );
+        var_4 scriptmodelclearanim();
+        var_1 scriptmodelplayanimdeltamotion( "dam_crane01_l_2_r" );
+        var_0 scriptmodelplayanimdeltamotion( "dam_crane01_tag_l_2_r" );
+        var_4 scriptmodelplayanimdeltamotion( "dam_crane01_tag_base_l_2_r" );
         wait(var_6);
-        var_0 _meth_827A();
+        var_0 scriptmodelclearanim();
         var_0.origin = var_1.origin;
         var_0.angles = var_1.angles;
-        var_4 _meth_827A();
-        var_1 _meth_827B( "dam_crane01_r_2_l" );
-        var_0 _meth_827B( "dam_crane01_tag_r_2_l" );
-        var_4 _meth_827B( "dam_crane01_tag_base_r_2_l" );
+        var_4 scriptmodelclearanim();
+        var_1 scriptmodelplayanimdeltamotion( "dam_crane01_r_2_l" );
+        var_0 scriptmodelplayanimdeltamotion( "dam_crane01_tag_r_2_l" );
+        var_4 scriptmodelplayanimdeltamotion( "dam_crane01_tag_base_r_2_l" );
         wait(var_6);
     }
 }
@@ -328,28 +298,28 @@ crane2movement()
     var_6 = 20;
     var_7 = ( 849, 2315, 1455 );
     thread aud_play_crane_sfx( var_7, var_6, "crane_02" );
-    var_2 _meth_8446( var_0, "tag_origin" );
+    var_2 vehicle_jetbikesethoverforcescale( var_0, "tag_origin" );
     var_3 handle_trigger_updateto( var_2 );
     var_5.angles += ( 0, -117.312, 0 );
-    var_5 _meth_8446( var_4, "tag_origin" );
+    var_5 vehicle_jetbikesethoverforcescale( var_4, "tag_origin" );
 
     for (;;)
     {
-        var_0 _meth_827A();
+        var_0 scriptmodelclearanim();
         var_0.origin = var_1.origin;
         var_0.angles = var_1.angles;
-        var_4 _meth_827A();
-        var_1 _meth_827B( "dam_crane02_l_2_r" );
-        var_0 _meth_827B( "dam_crane02_tag_l_2_r" );
-        var_4 _meth_827B( "dam_crane02_tag_base_l_2_r" );
+        var_4 scriptmodelclearanim();
+        var_1 scriptmodelplayanimdeltamotion( "dam_crane02_l_2_r" );
+        var_0 scriptmodelplayanimdeltamotion( "dam_crane02_tag_l_2_r" );
+        var_4 scriptmodelplayanimdeltamotion( "dam_crane02_tag_base_l_2_r" );
         wait(var_6);
-        var_0 _meth_827A();
+        var_0 scriptmodelclearanim();
         var_0.origin = var_1.origin;
         var_0.angles = var_1.angles;
-        var_4 _meth_827A();
-        var_1 _meth_827B( "dam_crane02_r_2_l" );
-        var_0 _meth_827B( "dam_crane02_tag_r_2_l" );
-        var_4 _meth_827B( "dam_crane02_tag_base_r_2_l" );
+        var_4 scriptmodelclearanim();
+        var_1 scriptmodelplayanimdeltamotion( "dam_crane02_r_2_l" );
+        var_0 scriptmodelplayanimdeltamotion( "dam_crane02_tag_r_2_l" );
+        var_4 scriptmodelplayanimdeltamotion( "dam_crane02_tag_base_r_2_l" );
         wait(var_6);
     }
 }
@@ -397,7 +367,7 @@ rotatefan()
     {
         if ( var_0 != level.genrotatespeed )
         {
-            self _meth_82BD( ( 0, level.genrotatespeed, 0 ), 3600 );
+            self rotatevelocity( ( 0, level.genrotatespeed, 0 ), 3600 );
             var_0 = level.genrotatespeed;
         }
 
@@ -411,21 +381,21 @@ rotatecrane()
 
     for (;;)
     {
-        self.cab _meth_82B5( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.platform _meth_82B5( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.pipe _meth_82B5( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.pulley _meth_82B5( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.hook _meth_82B5( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.heightoscillator _meth_82AE( ( 0, 0, getdvarint( self.pipe_end_height_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.radiusoscillator _meth_82AE( ( 0, 0, getdvarint( self.pipe_end_radius_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.cab rotateto( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.platform rotateto( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.pipe rotateto( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.pulley rotateto( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.hook rotateto( ( 0, getdvarint( self.end_angle_dvar, 180 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.heightoscillator moveto( ( 0, 0, getdvarint( self.pipe_end_height_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.radiusoscillator moveto( ( 0, 0, getdvarint( self.pipe_end_radius_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
         wait(getdvarint( self.time_dvar, 10 ) + 5);
-        self.cab _meth_82B5( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.platform _meth_82B5( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.pipe _meth_82B5( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.pulley _meth_82B5( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.hook _meth_82B5( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.heightoscillator _meth_82AE( ( 0, 0, getdvarint( self.pipe_start_height_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
-        self.radiusoscillator _meth_82AE( ( 0, 0, getdvarint( self.pipe_start_radius_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.cab rotateto( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.platform rotateto( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.pipe rotateto( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.pulley rotateto( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.hook rotateto( ( 0, getdvarint( self.start_angle_dvar, 130 ), 0 ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.heightoscillator moveto( ( 0, 0, getdvarint( self.pipe_start_height_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
+        self.radiusoscillator moveto( ( 0, 0, getdvarint( self.pipe_start_radius_dvar, 0 ) ), getdvarint( self.time_dvar, 10 ), 1, 1 );
         wait(getdvarint( self.time_dvar, 10 ) + 5);
     }
 }
@@ -437,9 +407,9 @@ movecranepipe()
     for (;;)
     {
         var_0 = ( cos( self.platform.angles[1] + 90 ) * self.radiusoscillator.origin[2] + self.cab.origin[0], sin( self.platform.angles[1] + 90 ) * self.radiusoscillator.origin[2] + self.cab.origin[1], self.heightoscillator.origin[2] );
-        self.pipe _meth_82AE( var_0, 0.05, 0.025, 0.025 );
-        self.pulley _meth_82AE( ( var_0[0], var_0[1], self.pulley.origin[2] ), 0.05, 0.025, 0.025 );
-        self.hook _meth_82AE( var_0 + ( 0, 0, 270 ), 0.05, 0.025, 0.025 );
+        self.pipe moveto( var_0, 0.05, 0.025, 0.025 );
+        self.pulley moveto( ( var_0[0], var_0[1], self.pulley.origin[2] ), 0.05, 0.025, 0.025 );
+        self.hook moveto( var_0 + ( 0, 0, 270 ), 0.05, 0.025, 0.025 );
         wait 0.05;
     }
 }
@@ -506,11 +476,11 @@ handlepowersurgedamage()
             {
                 foreach ( var_3 in level.dam_surge_triggers )
                 {
-                    if ( var_1 _meth_80A9( var_3 ) )
+                    if ( var_1 istouching( var_3 ) )
                     {
-                        var_1 _meth_80AD( "damage_heavy" );
+                        var_1 playrumbleonentity( "damage_heavy" );
                         var_1 shellshock( "orbital_laser_mp", 1 );
-                        var_1 _meth_8051( 5, var_1.origin );
+                        var_1 dodamage( 5, var_1.origin );
                     }
                 }
             }
@@ -557,10 +527,10 @@ handle_pathing_on_glass()
         return 0;
 
     var_0 common_scripts\utility::trigger_off();
-    var_0 _meth_8058();
+    var_0 connectpaths();
     waittill_glass_break( self.glass_id );
     var_0 common_scripts\utility::trigger_on();
-    var_0 _meth_8057();
+    var_0 disconnectpaths();
     var_0 common_scripts\utility::trigger_off();
 }
 

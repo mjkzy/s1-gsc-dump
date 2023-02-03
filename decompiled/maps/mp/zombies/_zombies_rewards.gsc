@@ -198,8 +198,8 @@ reward_singlegrenade()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_8345();
-        var_3 = var_1 _meth_831A();
+        var_2 = var_1 getlethalweapon();
+        var_3 = var_1 gettacticalweapon();
         var_4 = [ var_2, var_3 ];
 
         foreach ( var_6 in var_4 )
@@ -207,7 +207,7 @@ reward_singlegrenade()
             if ( var_6 == "none" )
                 continue;
 
-            var_1 _meth_82F6( var_6, var_1 _meth_82F8( var_6 ) + 1 );
+            var_1 setweaponammoclip( var_6, var_1 getweaponammoclip( var_6 ) + 1 );
         }
     }
 }
@@ -216,8 +216,8 @@ reward_grenaderefill()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_8345();
-        var_3 = var_1 _meth_831A();
+        var_2 = var_1 getlethalweapon();
+        var_3 = var_1 gettacticalweapon();
         var_4 = [ var_2, var_3 ];
 
         foreach ( var_6 in var_4 )
@@ -226,7 +226,7 @@ reward_grenaderefill()
                 continue;
 
             var_7 = weaponclipsize( var_6 );
-            var_1 _meth_82F6( var_6, var_7 );
+            var_1 setweaponammoclip( var_6, var_7 );
         }
     }
 }
@@ -450,11 +450,11 @@ penalty_powergenerators()
 
 poweroffpenaltyhint()
 {
-    self.trigger _meth_80DA( "HINT_NOICON" );
-    self.trigger _meth_80DB( &"ZOMBIE_CIVILIANS_POWER_OFF_TRIGGER" );
+    self.trigger setcursorhint( "HINT_NOICON" );
+    self.trigger sethintstring( &"ZOMBIE_CIVILIANS_POWER_OFF_TRIGGER" );
     level waittill( "zombie_power_penalty_end" );
-    self.trigger _meth_80DA( "HINT_NOICON" );
-    self.trigger _meth_80DB( &"ZOMBIES_POWER_ON" );
+    self.trigger setcursorhint( "HINT_NOICON" );
+    self.trigger sethintstring( &"ZOMBIES_POWER_ON" );
 }
 
 penalty_magicbox()

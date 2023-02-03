@@ -51,7 +51,7 @@ transient_middle_remove_nightclub_interior_begin()
 {
     maps\_utility::trigger_wait_targetname( "CG_LoadHospitalTrigger" );
     level notify( "tff_pre_middle_remove_nightclub" );
-    _func_219( "detroit_nightclub_interior_tr" );
+    unloadtransient( "detroit_nightclub_interior_tr" );
     var_0 = getent( "office_interior_model", "targetname" );
     var_0 show();
     thread transient_middle_add_hospital_interior_begin();
@@ -59,11 +59,11 @@ transient_middle_remove_nightclub_interior_begin()
 
 transient_middle_add_hospital_interior_begin()
 {
-    _func_218( "detroit_hospital_interior_tr" );
+    loadtransient( "detroit_hospital_interior_tr" );
 
     for (;;)
     {
-        if ( _func_21E( "detroit_hospital_interior_tr" ) )
+        if ( istransientloaded( "detroit_hospital_interior_tr" ) )
         {
             var_0 = getent( "office_interior_model", "targetname" );
             var_0 show();
@@ -120,30 +120,30 @@ hospital_desk_door_open()
     var_0 = getent( "kva_door_buster", "targetname" );
     var_1 = getent( "hospital_door_clip_open", "targetname" );
     var_2 = getent( "first_hospital_door_open", "targetname" );
-    var_1 _meth_82BF();
+    var_1 notsolid();
     var_3 = getent( "hospital_door_clip_closed", "targetname" );
     var_4 = getent( "first_hospital_door_closed", "targetname" );
     var_2 hide();
     common_scripts\utility::flag_wait( "player_is_shocked" );
     var_4 delete();
-    var_3 _meth_8058();
+    var_3 connectpaths();
     var_3 delete();
     var_2 show();
-    var_1 _meth_82BE();
+    var_1 solid();
     wait 0.05;
     var_5 = var_0 maps\_utility::spawn_ai( 1 );
     var_5.goalradius = 15;
     var_5 maps\_utility::disable_surprise();
     var_5 maps\_utility::disable_careful();
     var_6 = getnode( "kva_door_buster_goal", "targetname" );
-    var_5 _meth_81A5( var_6 );
+    var_5 setgoalnode( var_6 );
 }
 
 grenade_1()
 {
     var_0 = getent( "magic_grenade_start", "targetname" );
     var_1 = getent( "magic_grenade_target", "targetname" );
-    var_2 = _func_070( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
+    var_2 = magicgrenade( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
     soundscripts\_snd::snd_message( "hospital_flashbang1", 2.25, var_1.origin );
 }
 
@@ -151,7 +151,7 @@ grenade_2()
 {
     var_0 = getent( "magic_grenade_start2", "targetname" );
     var_1 = getent( "magic_grenade_target2", "targetname" );
-    var_2 = _func_070( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
+    var_2 = magicgrenade( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
     soundscripts\_snd::snd_message( "hospital_flashbang2", 2.25, var_1.origin );
 }
 
@@ -159,7 +159,7 @@ grenade_3()
 {
     var_0 = getent( "magic_grenade_start3", "targetname" );
     var_1 = getent( "magic_grenade_target3", "targetname" );
-    var_2 = _func_070( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
+    var_2 = magicgrenade( "flash_grenade_var", var_0.origin, var_1.origin, 2.25, 1 );
     soundscripts\_snd::snd_message( "hospital_flashbang3", 2.25, var_1.origin );
 }
 
@@ -174,7 +174,7 @@ flash_mob1()
     var_2 maps\_anim::anim_single_solo( var_1, "hospital_mantle" );
     var_1.ignoreall = 0;
     var_3 = getnode( "kva_jumper_1_goal", "targetname" );
-    var_1 _meth_81A5( var_3 );
+    var_1 setgoalnode( var_3 );
 }
 
 flash_mob2()
@@ -188,7 +188,7 @@ flash_mob2()
     var_2 maps\_anim::anim_single_solo( var_1, "hospital_mantle_2" );
     var_1.ignoreall = 0;
     var_3 = getnode( "kva_jumper_2_goal", "targetname" );
-    var_1 _meth_81A5( var_3 );
+    var_1 setgoalnode( var_3 );
 }
 
 flash_mob3()
@@ -199,7 +199,7 @@ flash_mob3()
     if ( isdefined( var_1 ) )
     {
         var_2 = getent( "hospital_fight_goal1", "targetname" );
-        var_1 _meth_81A9( var_2 );
+        var_1 setgoalvolumeauto( var_2 );
     }
 }
 
@@ -219,7 +219,7 @@ setup_hospital()
     var_2 = var_1 maps\_utility::spawn_ai( 1 );
     var_2.combatmode = "no_cover";
     var_3 = getent( "hospital_fight_goal1", "targetname" );
-    var_2 _meth_81A9( var_3 );
+    var_2 setgoalvolumeauto( var_3 );
     common_scripts\utility::flag_set( "obj_capture_doctor_pos_doctor" );
     common_scripts\utility::flag_set( "doctor_inside_office_now" );
 }
@@ -227,15 +227,15 @@ setup_hospital()
 make_gate_close_down()
 {
     var_0 = getent( "gate_close_clip", "targetname" );
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
     maps\_utility::trigger_wait_targetname( "doctor_chase_gate_close_trig" );
-    var_0 _meth_82BE();
-    var_0 _meth_8057();
+    var_0 solid();
+    var_0 disconnectpaths();
     var_1 = getent( "hospital_gate_animated", "targetname" );
     var_2 = getent( "gate_close_origin", "targetname" );
     var_1 soundscripts\_snd::snd_message( "det_hospital_gate_close" );
-    var_1 _meth_82AE( var_2.origin, 1, 0.9, 0.1 );
+    var_1 moveto( var_2.origin, 1, 0.9, 0.1 );
     var_3 = getent( "gate_lock_kva", "targetname" );
     var_4 = var_3 maps\_utility::spawn_ai( 0, 0 );
     var_4 waittill( "goal" );
@@ -319,7 +319,7 @@ retreating_kva()
 
         var_6 enable_awareness();
         var_8 = getent( "hospital_fight_goal1", "targetname" );
-        var_6 _meth_81A9( var_8 );
+        var_6 setgoalvolumeauto( var_8 );
     }
 
     if ( isalive( var_6 ) )
@@ -337,15 +337,15 @@ retreat_function( var_0 )
     if ( isdefined( var_0 ) )
     {
         var_1 = getent( "hospital_fight_goal1", "targetname" );
-        var_0 _meth_81A9( var_1 );
+        var_0 setgoalvolumeauto( var_1 );
     }
 }
 
 team_move_hospital()
 {
     common_scripts\utility::flag_wait( "exo_push_arrived" );
-    level.burke _meth_8141();
-    level.burke _meth_804F();
+    level.burke stopanimscripted();
+    level.burke unlink();
     wait 0.25;
     thread burke_advance_hospital();
     wait 0.25;
@@ -362,12 +362,12 @@ hospital_escape_door_function()
     var_1 = getent( "hospital_escape_door_open_clip", "targetname" );
     var_2 = getent( "hospital_escape_door_closed", "targetname" );
     var_3 = getent( "hospital_escape_door_closed_clip", "targetname" );
-    var_1 _meth_82BF();
+    var_1 notsolid();
     var_0 hide();
     common_scripts\utility::flag_wait( "player_captured_doctor" );
     var_0 show();
-    var_1 _meth_82BE();
-    var_3 _meth_8058();
+    var_1 solid();
+    var_3 connectpaths();
     var_2 delete();
     var_3 delete();
 }
@@ -381,10 +381,10 @@ burke_advance_hospital()
     wait 0.9;
     thread doctor_capture_new_breach_doctor_takedown();
     common_scripts\utility::flag_set( "go_go_go" );
-    level.burke _meth_81A5( var_0 );
+    level.burke setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "send_all_teammates_upstairs" );
     wait 0.5;
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
 }
 
 kva_sentinel_atlas_reveal_moment()
@@ -429,7 +429,7 @@ player_jumped_out_vol()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             common_scripts\utility::flag_set( "exit_drive_cinematic_start" );
             return;
@@ -443,13 +443,13 @@ pay_machine()
 {
     if ( level.currentgen )
     {
-        if ( !_func_21E( "detroit_hospital_interior_tr" ) )
+        if ( !istransientloaded( "detroit_hospital_interior_tr" ) )
         {
             for (;;)
             {
                 wait 0.25;
 
-                if ( _func_21E( "detroit_hospital_interior_tr" ) )
+                if ( istransientloaded( "detroit_hospital_interior_tr" ) )
                     break;
             }
         }
@@ -469,9 +469,9 @@ bouncing_betty_animated()
     var_2 = getent( "new_grenade_org", "targetname" );
     maps\_utility::trigger_wait_targetname( "sentinel_reveal_moment_trigger" );
     level notify( "no_more_random_trains" );
-    _func_250( level.player, 1 );
+    setdemigodmode( level.player, 1 );
     soundscripts\_snd::snd_message( "reveal_scene_start" );
-    var_1 _meth_82AE( var_1.origin + ( 0, 0, 50 ), 0.6, 0.3, 0.2 );
+    var_1 moveto( var_1.origin + ( 0, 0, 50 ), 0.6, 0.3, 0.2 );
     wait 0.6;
     level.player shellshock( "paris_scripted_flashbang", 4 );
     var_3 = level.player maps\_utility::get_rumble_ent( "steady_rumble" );
@@ -484,14 +484,14 @@ bouncing_betty_animated()
     var_1 delete();
     var_0 delete();
     wait 2;
-    _func_250( level.player, 0 );
+    setdemigodmode( level.player, 0 );
 }
 
 sentinel_kva_fov_function()
 {
-    level.player _meth_8031( 55, 2 );
+    level.player lerpfov( 55, 2 );
     common_scripts\utility::flag_wait( "sentinel_kva_fov_lerp_out" );
-    level.player _meth_8031( 65, 1 );
+    level.player lerpfov( 65, 1 );
 }
 
 joker_sentinel_kva_reveal()
@@ -501,7 +501,7 @@ joker_sentinel_kva_reveal()
     var_0 = getnode( "joker_with_doctor_waitnode", "targetname" );
     var_1 = getnode( "joker_with_doctor_goal_node", "targetname" );
     level.joker maps\_utility::teleport_ai( var_0 );
-    level.joker _meth_81A5( var_0 );
+    level.joker setgoalnode( var_0 );
     level.joker maps\_utility::delaythread( 0.25, ::show_me_now );
     var_2 = getent( "joker_pickup_doctor_reveal_org", "targetname" );
     level.joker maps\_utility::gun_recall();
@@ -514,7 +514,7 @@ joker_sentinel_kva_reveal()
     common_scripts\utility::flag_set( "sentinel_reveal_animation_complete" );
     common_scripts\utility::flag_wait( "exit_drive_cinematic_start" );
     var_4 = getnode( "joker_wait_withdoc_after_reveal", "targetname" );
-    level.joker _meth_81A5( var_4 );
+    level.joker setgoalnode( var_4 );
 }
 
 doctor_kva_reveal()
@@ -532,16 +532,16 @@ burke_pre_sentinel_kva_reveal()
 {
     level.burke thread final_flag_wait();
     var_0 = getnode( "burke_first_wait_after_capture_node", "targetname" );
-    level.burke _meth_81A5( var_0 );
+    level.burke setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "send_burke_to_stairs_waitpoint" );
     var_1 = getnode( "burke_wait_by_railwaydoor_node", "targetname" );
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
     common_scripts\utility::flag_wait( "send_burke_to_railway_half" );
     var_2 = getnode( "burke_half_railway_wait", "targetname" );
-    level.burke _meth_81A5( var_2 );
+    level.burke setgoalnode( var_2 );
     common_scripts\utility::flag_wait( "send_burke_fully_across" );
     var_3 = getnode( "burke_post_before_sentinel_room", "targetname" );
-    level.burke _meth_81A5( var_3 );
+    level.burke setgoalnode( var_3 );
     level.burke.radius = 15;
     maps\detroit_school::is_1_near_2( level.burke, var_3, 60 );
     common_scripts\utility::flag_wait( "make_burke_anim_reach_sentinel" );
@@ -550,10 +550,10 @@ burke_pre_sentinel_kva_reveal()
     thread burke_180_function();
     common_scripts\utility::flag_wait( "joker_wait_before_doorway" );
     var_4 notify( "ender" );
-    level.burke _meth_8141();
+    level.burke stopanimscripted();
     var_5 = getent( "kva_sentinel_squad_reveal_animnode", "targetname" );
     var_6 = getnode( "burke_wait_after_sentinel_moment", "targetname" );
-    level.burke _meth_81A5( var_6 );
+    level.burke setgoalnode( var_6 );
 }
 
 burke_180_function()
@@ -561,10 +561,10 @@ burke_180_function()
     level.burke.animname = "burke";
     var_0 = getent( "burke_180_animorg", "targetname" );
     var_1 = getnode( "burke_wait_before_180", "targetname" );
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
     maps\detroit_school::is_1_near_2( level.burke, var_1, 100 );
     var_2 = getnode( "burke_wait_before_bomb", "targetname" );
-    level.burke _meth_81A5( var_2 );
+    level.burke setgoalnode( var_2 );
 }
 
 final_flag_wait()
@@ -585,13 +585,13 @@ final_flag_wait()
 
 burke_sentinel_kva_reveal()
 {
-    level.burke _meth_8141();
+    level.burke stopanimscripted();
     var_0 = getent( "kva_sentinel_squad_reveal_animnode", "targetname" );
     var_0 thread maps\_anim::anim_single_solo( level.burke, "sentinel_kva_reveal" );
     level.burke.ignoreall = 1;
     level.burke.goalradius = 15;
     var_1 = getnode( "burke_wait_after_sentinel_moment", "targetname" );
-    level.burke _meth_81A5( var_1 );
+    level.burke setgoalnode( var_1 );
 }
 
 kva_show_timer()
@@ -604,7 +604,7 @@ kva_show_timer()
 kill_me( var_0 )
 {
     self endon( "death" );
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
     wait(var_0);
 
     if ( isalive( self ) )
@@ -717,8 +717,8 @@ player_sentinel_kva_reveal()
     level.player maps\_shg_utility::setup_player_for_scene();
     level.player thread maps\_player_exo::player_exo_deactivate();
     var_2 = 0.01;
-    level.player _meth_8080( var_1, "tag_player", var_2 );
-    level.player common_scripts\utility::delaycall( var_2, ::_meth_807D, var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktoblend( var_1, "tag_player", var_2 );
+    level.player common_scripts\utility::delaycall( var_2, ::playerlinktodelta, var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
     var_1 common_scripts\utility::delaycall( var_2, ::show );
     var_1 thread view_clamping_unlock();
 
@@ -730,7 +730,7 @@ player_sentinel_kva_reveal()
     var_3 = level.player common_scripts\utility::spawn_tag_origin();
     var_3.origin += ( 0, 0, 0.268 );
     level.player maps\_utility::teleport_player( var_3 );
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
     common_scripts\utility::flag_set( "obj_escape_detroit_pos_exit_stairs" );
     level.player maps\_shg_utility::setup_player_for_gameplay();
@@ -748,7 +748,7 @@ wait_for_trigger_set_flag()
 view_clamping_unlock()
 {
     wait 8;
-    level.player _meth_807D( self, "tag_player", 1, 20, 20, 20, 20, 1 );
+    level.player playerlinktodelta( self, "tag_player", 1, 20, 20, 20, 20, 1 );
 }
 
 decloak_wait_1()
@@ -805,7 +805,7 @@ guy1_sentinel_kva_reveal()
     level.sentinel_guy1 thread unhide_me_on_flag( "show_sentinel_guys_now" );
     level.sentinel_guy1 maps\_utility::forceuseweapon( "iw5_bal27_sp", "primary" );
     level.sentinel_guy1 thread decloak_wait_1();
-    level.sentinel_guy1 _meth_846C( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
+    level.sentinel_guy1 overridematerial( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
     level.sentinel_guy1 assign_cloak_model( "sentinel_covert_body_a" );
     level.sentinel_guy1 cloak_on();
     level.sentinel_guy1 maps\_utility::magic_bullet_shield();
@@ -828,7 +828,7 @@ guy2_sentinel_kva_reveal()
     var_2 thread unhide_me_on_flag( "show_sentinel_guys_now" );
     var_2 maps\_utility::forceuseweapon( "iw5_bal27_sp", "primary" );
     var_2 thread decloak_wait_2();
-    var_2 _meth_846C( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
+    var_2 overridematerial( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
     var_2 assign_cloak_model( "body_hero_burke_sentinel_covert_cloak" );
     var_2 cloak_on();
     var_2 maps\_utility::magic_bullet_shield();
@@ -851,7 +851,7 @@ guy3_sentinel_kva_reveal()
     var_2 thread unhide_me_on_flag( "show_sentinel_guys_now" );
     var_2 maps\_utility::forceuseweapon( "iw5_bal27_sp", "primary" );
     var_2 thread decloak_wait_3();
-    var_2 _meth_846C( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
+    var_2 overridematerial( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
     var_2 assign_cloak_model( "body_hero_burke_sentinel_covert_cloak" );
     var_2 cloak_on();
     var_2 maps\_utility::magic_bullet_shield();
@@ -920,7 +920,7 @@ mission_fail_warning( var_0, var_1 )
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             maps\_utility::hint( &"DETROIT_LEAVING_MISSION", 3 );
             wait 8;
@@ -936,7 +936,7 @@ kill_me_on_sentrev_cleanup()
     wait(randomfloatrange( 0.25, 0.8 ));
 
     if ( isdefined( self ) )
-        self _meth_8052();
+        self kill();
 }
 
 cloak_again()
@@ -957,16 +957,16 @@ run_train_with_shaking( var_0, var_1, var_2, var_3 )
     {
         var_6 = "vehicle_civ_det_train_car_01";
         var_3 = spawn( "script_model", var_0.origin );
-        var_3 _meth_80B1( var_6 );
+        var_3 setmodel( var_6 );
         var_3 thread maps\detroit_exit_drive::run_train_shaker( var_4, var_5 );
     }
 
     var_7 = common_scripts\utility::spawn_tag_origin();
-    var_7 _meth_804D( var_3, "", ( 300, 0, 80 ), ( 25, 0, 0 ) );
+    var_7 linkto( var_3, "", ( 300, 0, 80 ), ( 25, 0, 0 ) );
     var_8 = common_scripts\utility::spawn_tag_origin();
-    var_8 _meth_804D( var_3, "", ( 300, 0, 80 ), ( 0, 0, 0 ) );
+    var_8 linkto( var_3, "", ( 300, 0, 80 ), ( 0, 0, 0 ) );
     var_9 = common_scripts\utility::spawn_tag_origin();
-    var_9 _meth_804D( var_3, "", ( 200, 0, 15 ), ( 0, 90, 0 ) );
+    var_9 linkto( var_3, "", ( 200, 0, 15 ), ( 0, 90, 0 ) );
     thread maps\detroit_lighting::train_lighting( var_7, var_8, var_9 );
 
     if ( !isdefined( var_3.tags ) )
@@ -984,7 +984,7 @@ run_train_with_shaking( var_0, var_1, var_2, var_3 )
 
 delay_linkto_anim()
 {
-    level.player common_scripts\utility::delaycall( 10.94, ::_meth_807D, self, "tag_player", 15, 15, 15, 15, 0, 1 );
+    level.player common_scripts\utility::delaycall( 10.94, ::playerlinktodelta, self, "tag_player", 15, 15, 15, 15, 0, 1 );
 }
 
 mission_fail_on_dead()
@@ -1015,7 +1015,7 @@ passoja_death_wait_function()
     if ( isalive( self ) )
     {
         maps\_utility::stop_magic_bullet_shield();
-        self _meth_8141();
+        self stopanimscripted();
         doimmediateragdolldeath();
     }
 }
@@ -1050,7 +1050,7 @@ doimmediateragdolldeath()
     if ( isdefined( self.ragdoll_start_vel ) )
         var_5 += self.ragdoll_start_vel * 10;
 
-    self _meth_8024( self.damagelocation, var_5 );
+    self startragdollfromimpact( self.damagelocation, var_5 );
     wait 0.05;
 }
 
@@ -1094,8 +1094,8 @@ doctor_capture_new_breach_doctor_takedown()
     var_4 = getent( "dr_pickup_placed_org", "targetname" );
     var_5 = getnode( "burke_first_wait_after_capture_node", "targetname" );
     var_6 = getent( "kickdown", "targetname" );
-    var_6 _meth_817B();
-    var_6 _meth_80DB( &"DETROIT_PROMPT_BREACH" );
+    var_6 usetriggerrequirelookat();
+    var_6 sethintstring( &"DETROIT_PROMPT_BREACH" );
     var_6 waittill( "trigger" );
     thread breach_backtrack_fail();
     objective_position( maps\_utility::obj( "Capture the doctor" ), ( 0, 0, 0 ) );
@@ -1138,9 +1138,9 @@ doctor_capture_new_breach_doctor_takedown()
     common_scripts\utility::flag_set( "obj_capture_doctor_pos_doctor_breached" );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 
-    var_11 _meth_80DB( &"DETROIT_DOCTOR_GRAB" );
+    var_11 sethintstring( &"DETROIT_DOCTOR_GRAB" );
     var_11 waittill( "trigger" );
     common_scripts\utility::flag_set( "doctor_grabbed" );
     maps\_player_exo::player_exo_deactivate();
@@ -1154,9 +1154,9 @@ doctor_capture_new_breach_doctor_takedown()
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     var_13 = 0.3;
     var_12 hide();
-    level.player _meth_8080( var_12, "tag_player", var_13, var_13 * 0.5, var_13 * 0.5 );
-    level.player common_scripts\utility::delaycall( var_13, ::_meth_807D, var_12, "tag_player", 0, 0, 0, 0, 0, 1 );
-    level.player common_scripts\utility::delaycall( var_13, ::_meth_80FE );
+    level.player playerlinktoblend( var_12, "tag_player", var_13, var_13 * 0.5, var_13 * 0.5 );
+    level.player common_scripts\utility::delaycall( var_13, ::playerlinktodelta, var_12, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( var_13, ::enableslowaim );
     var_12 common_scripts\utility::delaycall( var_13, ::show );
     thread maps\detroit_lighting::capture_lighting();
     common_scripts\utility::flag_set( "player_captured_doctor" );
@@ -1169,20 +1169,20 @@ doctor_capture_new_breach_doctor_takedown()
     var_14 = maps\_utility::spawn_anim_model( "capture_bag" );
     var_14 hide();
     var_2 thread doctor_capture_bag_capture_anim( var_14 );
-    level.burke _meth_8141();
+    level.burke stopanimscripted();
     level notify( "kill_burke_loop" );
     var_2 notify( "no_more_door_looping_burke" );
     var_15 = [ level.joker, level.doctor ];
     thread doctor_blood_swap();
     var_2 thread maps\_anim::anim_single_solo( level.burke, "doctor_capture" );
     thread doctor_capture_set_new_objective_outside_breach();
-    level.burke _meth_81A5( var_5 );
+    level.burke setgoalnode( var_5 );
     var_2 thread maps\_anim::anim_single_solo( var_14, "doctor_capture" );
     var_2 thread maps\_anim::anim_single( var_15, "doctor_capture" );
     wait 24;
-    level.player _meth_831E();
+    level.player enableweapons();
     wait 6;
-    level.doctor _meth_83C7( level.doctor maps\_utility::getanim( "doctor_capture" ), 0 );
+    level.doctor setanimrate( level.doctor maps\_utility::getanim( "doctor_capture" ), 0 );
     common_scripts\utility::flag_set( "capture_animation_complete" );
     common_scripts\utility::flag_set( "obj_escape_detroit_give" );
     level.burke maps\_utility::set_moveplaybackrate( 1 );
@@ -1222,7 +1222,7 @@ doctor_capture_stop_spawning_school_trains()
 doctor_blood_swap()
 {
     wait 5.12;
-    level.doctor _meth_846C( "mtl_dr_pas_head", "mtl_dr_pas_head_damaged" );
+    level.doctor overridematerial( "mtl_dr_pas_head", "mtl_dr_pas_head_damaged" );
     level.doctor maps\_utility::dialogue_queue( "det_dcr_painreaction" );
 }
 
@@ -1268,8 +1268,8 @@ doctor_capture_player_capture_thread()
     wait 13.25;
     maps\detroit::controller_rumble_heavy0();
     wait 5.25;
-    level.player _meth_804F();
-    level.player _meth_80FF();
+    level.player unlink();
+    level.player disableslowaim();
     level.player maps\_shg_utility::setup_player_for_gameplay();
     maps\_player_exo::player_exo_activate();
     level notify( "doctor_cant_die_anymore" );
@@ -1322,14 +1322,14 @@ doctor_capture_doctor_carry( var_0, var_1, var_2 )
         var_3.angles = level.doctor.angles;
         var_4 = level.doctor.animname;
         var_3.animname = var_4;
-        var_3 _meth_8115( #animtree );
-        var_3 _meth_80B1( level.doctor _meth_83B8(), 0 );
+        var_3 useanimtree( #animtree );
+        var_3 setmodel( level.doctor getmodelfromentity(), 0 );
         var_3 attach( "det_doctor_head_bagA" );
         var_3.name = "scriptmodelDoc";
-        var_3 _meth_82C0( 1 );
+        var_3 setcandamage( 1 );
         var_3.health = 100;
         var_3 thread mission_fail_on_dead();
-        var_3 _meth_803F( "Doctor", &"" );
+        var_3 setlookattext( "Doctor", &"" );
         level.doctor delete();
         level.doctor = var_3;
     }
@@ -1338,7 +1338,7 @@ doctor_capture_doctor_carry( var_0, var_1, var_2 )
     var_0 maps\_anim::anim_single( [ level.joker, level.doctor ], "carry_doc_lift" );
     var_0 maps\_anim::anim_first_frame_solo( level.doctor, "carry_doc_stop" );
     level.joker maps\_utility::ai_ignore_everything();
-    level.joker _meth_81A3( 1 );
+    level.joker pushplayer( 1 );
     level.joker maps\_utility::disable_turnanims();
     level.joker.run_overrideanim_hasstairanimarray = 1;
     level.joker.disablearrivals = 1;
@@ -1346,22 +1346,22 @@ doctor_capture_doctor_carry( var_0, var_1, var_2 )
     level.joker.run_overrideanim = level.scr_anim[level.joker.animname]["carry_doc_walk"];
     level.joker.walk_overrideanim = level.scr_anim[level.joker.animname]["carry_doc_walk"];
     level.joker.specialidleanim = [ level.scr_anim[level.joker.animname]["carry_doc_stop"] ];
-    level.joker _meth_81CA( "stand" );
-    level.joker _meth_818E( "gravity" );
-    level.joker _meth_818F( "face default" );
+    level.joker allowedstances( "stand" );
+    level.joker animmode( "gravity" );
+    level.joker orientmode( "face default" );
     level.joker thread keep_stair_override( var_1 );
-    level.doctor _meth_8143( level.scr_anim[level.doctor.animname]["carry_doc_stop"], 1, 0, 0 );
-    level.doctor _meth_8117( level.scr_anim[level.doctor.animname]["carry_doc_stop"], 0 );
-    level.doctor _meth_804D( level.joker, "j_spine4", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    level.doctor _meth_8092();
+    level.doctor setanimknob( level.scr_anim[level.doctor.animname]["carry_doc_stop"], 1, 0, 0 );
+    level.doctor setanimtime( level.scr_anim[level.doctor.animname]["carry_doc_stop"], 0 );
+    level.doctor linkto( level.joker, "j_spine4", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.doctor dontinterpolate();
     level.doctor thread sync_anim_times_with_carrier( level.joker, var_1 );
-    level.joker _meth_81A5( var_2 );
+    level.joker setgoalnode( var_2 );
     common_scripts\utility::flag_wait( var_1 );
-    level.doctor _meth_804F();
+    level.doctor unlink();
     level.joker maps\_utility::ai_unignore_everything();
-    level.joker _meth_81A3( 0 );
+    level.joker pushplayer( 0 );
     level.joker maps\_utility::enable_turnanims();
-    level.joker _meth_81CA( "stand", "crouch", "prone" );
+    level.joker allowedstances( "stand", "crouch", "prone" );
     level.joker.run_overrideanim_hasstairanimarray = undefined;
     level.joker.disablearrivals = undefined;
     level.joker.disableexits = undefined;
@@ -1372,7 +1372,7 @@ doctor_capture_doctor_carry( var_0, var_1, var_2 )
 
 clear_doctor_head()
 {
-    level.doctor _meth_8142( %head, 0.1 );
+    level.doctor clearanim( %head, 0.1 );
 }
 
 doctor_capture_bones_breach_functionality()
@@ -1380,11 +1380,11 @@ doctor_capture_bones_breach_functionality()
     var_0 = getnode( "bones_guard_capture_node", "targetname" );
     var_1 = getnode( "bones_guard_doctor_node", "targetname" );
     var_2 = getnode( "bones_guard_bikes_node", "targetname" );
-    level.bones _meth_81A5( var_0 );
+    level.bones setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "capture_animation_complete" );
-    level.bones _meth_81A5( var_1 );
+    level.bones setgoalnode( var_1 );
     common_scripts\utility::flag_wait( "sentinel_reveal_animation_complete" );
-    level.bones _meth_81A5( var_2 );
+    level.bones setgoalnode( var_2 );
 }
 
 doctor_capture_bookshelf1()
@@ -1396,7 +1396,7 @@ doctor_capture_bookshelf1()
     var_2 hide();
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles + ( 0, 90, 0 );
-    var_2 _meth_804D( var_1, "TAG_ORIGIN" );
+    var_2 linkto( var_1, "TAG_ORIGIN" );
     level waittill( "begin_second_half_of_breach" );
     var_0 maps\_anim::anim_single_solo( var_1, "det_hos_breach_success_shelf01" );
     common_scripts\utility::flag_wait( "player_captured_doctor" );
@@ -1414,7 +1414,7 @@ doctor_capture_bookshelf2()
     var_2 hide();
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles + ( 0, 90, 0 );
-    var_2 _meth_804D( var_1, "TAG_ORIGIN" );
+    var_2 linkto( var_1, "TAG_ORIGIN" );
     level waittill( "begin_second_half_of_breach" );
     var_0 maps\_anim::anim_single_solo( var_1, "det_hos_breach_success_shelf02" );
     common_scripts\utility::flag_wait( "player_captured_doctor" );
@@ -1434,13 +1434,13 @@ doctor_capture_door_breach_anim()
 {
     if ( level.currentgen )
     {
-        if ( !_func_21E( "detroit_hospital_interior_tr" ) )
+        if ( !istransientloaded( "detroit_hospital_interior_tr" ) )
         {
             for (;;)
             {
                 wait 0.25;
 
-                if ( _func_21E( "detroit_hospital_interior_tr" ) )
+                if ( istransientloaded( "detroit_hospital_interior_tr" ) )
                     break;
             }
         }
@@ -1451,8 +1451,8 @@ doctor_capture_door_breach_anim()
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "hospital_breach" );
     wait 0.05;
     var_2 = getent( "reflection_green", "targetname" );
-    var_1 _meth_83AB( var_2.origin );
-    var_1 _meth_847B( var_2.origin );
+    var_1 overridereflectionprobe( var_2.origin );
+    var_1 overridelightingorigin( var_2.origin );
     level waittill( "breach_begin" );
     var_0 maps\_anim::anim_single_solo( var_1, "hospital_breach" );
 }
@@ -1464,15 +1464,15 @@ doctor_capture_player_breach()
     var_1.animname = "world_body";
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "det_hos_breach_vm" );
     var_1 hide();
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.5, 100 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.5, 100 );
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     var_2 = 0.3;
     var_1 hide();
-    level.player _meth_8080( var_1, "tag_player", var_2, var_2 * 0.5, var_2 * 0.5 );
+    level.player playerlinktoblend( var_1, "tag_player", var_2, var_2 * 0.5, var_2 * 0.5 );
     wait(var_2);
     var_1 show();
-    level.player _meth_807D( var_1, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 0, 0, 0, 0, 0, 1 );
     thread doctor_capture_burke_enter_doctor_room();
     thread doctor_capture_burke_takedown_finish();
     level notify( "breach_begin" );
@@ -1485,13 +1485,13 @@ doctor_capture_player_breach()
         thread maps\_utility::slowmo_lerp_out();
         var_0 thread maps\_anim::anim_single_solo( var_1, "det_hos_breach_fail_vm" );
         wait 3;
-        var_1 _meth_83C7( var_1 maps\_utility::getanim( "det_hos_breach_fail_vm" ), 0 );
+        var_1 setanimrate( var_1 maps\_utility::getanim( "det_hos_breach_fail_vm" ), 0 );
     }
     else
     {
         soundscripts\_snd::snd_message( "push_dude_into_shelves" );
         var_0 maps\_anim::anim_single_solo( var_1, "det_hos_breach_success_vm" );
-        level.player _meth_804F();
+        level.player unlink();
         var_1 delete();
         level.player maps\_shg_utility::setup_player_for_gameplay();
         wait 2;
@@ -1512,7 +1512,7 @@ doctor_capture_burke_enter_doctor_room()
     thread doctor_capture_burke_shooting();
     var_0 thread maps\_anim::anim_single_solo( level.burke, var_1 );
     wait 0.05;
-    level.burke _meth_8117( level.burke maps\_utility::getanim( var_1 ), ( var_3 + 0.05 ) / var_2 );
+    level.burke setanimtime( level.burke maps\_utility::getanim( var_1 ), ( var_3 + 0.05 ) / var_2 );
     wait(var_2 - var_3);
     doctor_capture_burke_alternate_point_anim();
 }
@@ -1620,7 +1620,7 @@ doctor_capture_firstguy_breach()
 doctor_capture_guy1_health_check_killfunction()
 {
     var_0 = getent( "player_success_hospital_glass_clip", "targetname" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     var_1 = getglass( "player_success_hospital_glass" );
     var_2 = 0.2;
     var_3 = getent( "dr_capture_pcap_animnode", "targetname" );
@@ -1641,7 +1641,7 @@ doctor_capture_guy1_health_check_killfunction()
             self.ignoreme = 1;
             self setcontents( 0 );
             thread doctor_capture_destroy_this_glass( var_1, var_2 );
-            var_0 _meth_82BE();
+            var_0 solid();
             var_3 maps\_anim::anim_single_solo( self, "det_hos_breach_success_guy1" );
             self delete();
             return;
@@ -1662,7 +1662,7 @@ doctor_capture_destroy_this_glass( var_0, var_1 )
 doctor_capture_thirdguy_notify_when_dead()
 {
     self waittill( "death" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 doctor_capture_guy3_health_check_killfunction()
@@ -1716,8 +1716,8 @@ doctor_capture_guy_3_kill_player()
 
     if ( var_0 == self.health )
     {
-        magicbullet( "iw5_bal27_sp", self _meth_80A8(), level.player _meth_80A8() );
-        level.player _meth_8052();
+        magicbullet( "iw5_bal27_sp", self geteye(), level.player geteye() );
+        level.player kill();
         maps\_player_death::set_deadquote( &"DETROIT_QTE_FAIL" );
         maps\_utility::missionfailedwrapper();
     }
@@ -1771,7 +1771,7 @@ doctor_capture_forthguy_breach()
     {
         var_0 thread maps\_anim::anim_single_solo( self, "det_hos_breach_fail_guy4" );
         wait 2.25;
-        self _meth_83C7( maps\_utility::getanim( "det_hos_breach_fail_guy4" ), 0 );
+        self setanimrate( maps\_utility::getanim( "det_hos_breach_fail_guy4" ), 0 );
     }
     else
     {
@@ -1780,7 +1780,7 @@ doctor_capture_forthguy_breach()
         self.a.nodeath = 1;
         self.ignoreall = 1;
         self.ignoreme = 1;
-        common_scripts\utility::delaycall( 3, ::_meth_8052 );
+        common_scripts\utility::delaycall( 3, ::kill );
         level notify( "begin_second_half_of_breach" );
         var_0 maps\_anim::anim_single_solo( self, "det_hos_breach_success_guy4" );
         var_0 maps\_anim::anim_last_frame_solo( self, "det_hos_breach_success_guy4" );
@@ -1870,12 +1870,12 @@ doctor_capture_use_hint_blinks_melee( var_0 )
 
         var_6 fadeovertime( 0.01 );
         var_6.alpha = 0.95;
-        var_6 _meth_808B( 0.01 );
+        var_6 changefontscaleovertime( 0.01 );
         var_6.fontscale = var_0;
         wait 0.1;
         var_6 fadeovertime( var_1 );
         var_6.alpha = 0.0;
-        var_6 _meth_808B( var_1 );
+        var_6 changefontscaleovertime( var_1 );
         var_6.fontscale = 0.25;
         wait(var_2);
 
@@ -1969,12 +1969,12 @@ use_hint_blinks( var_0 )
 
         var_6 fadeovertime( 0.01 );
         var_6.alpha = 0.95;
-        var_6 _meth_808B( 0.01 );
+        var_6 changefontscaleovertime( 0.01 );
         var_6.fontscale = var_0;
         wait 0.1;
         var_6 fadeovertime( var_1 );
         var_6.alpha = 0.0;
-        var_6 _meth_808B( var_1 );
+        var_6 changefontscaleovertime( var_1 );
         var_6.fontscale = 0.25;
         wait(var_2);
 
@@ -1995,13 +1995,13 @@ joker_advance_hospital()
     var_2 = getnode( "joker_holdup_before_going_upstairs_node", "targetname" );
     level.joker.ignoreall = 0;
     level.joker.goalradius = 15;
-    level.joker _meth_81A5( var_0 );
+    level.joker setgoalnode( var_0 );
     level.joker waittill( "goal" );
     wait 5;
-    level.joker _meth_81A5( var_2 );
+    level.joker setgoalnode( var_2 );
     common_scripts\utility::flag_wait( "send_all_teammates_upstairs" );
     wait 1.5;
-    level.joker _meth_81A5( var_1 );
+    level.joker setgoalnode( var_1 );
 }
 
 bones_advance_hospital()
@@ -2011,13 +2011,13 @@ bones_advance_hospital()
     var_2 = getnode( "bones_holdup_before_going_upstairs_node", "targetname" );
     level.bones.ignoreall = 0;
     level.bones.goalradius = 15;
-    level.bones _meth_81A5( var_0 );
+    level.bones setgoalnode( var_0 );
     level.bones waittill( "goal" );
     wait 4;
-    level.bones _meth_81A5( var_2 );
+    level.bones setgoalnode( var_2 );
     common_scripts\utility::flag_wait( "send_all_teammates_upstairs" );
     wait 2;
-    level.bones _meth_81A5( var_1 );
+    level.bones setgoalnode( var_1 );
 }
 
 hospital_stairs_autosave()
@@ -2029,7 +2029,7 @@ hospital_stairs_autosave()
 stop_current_animations( var_0 )
 {
     self endon( "death" );
-    self _meth_8141();
+    self stopanimscripted();
     self notify( "drone_stop" );
     self notify( "stop_loop" );
     self notify( "single anim", "end" );
@@ -2057,7 +2057,7 @@ sync_anim_times_with_carrier( var_0, var_1 )
         if ( common_scripts\utility::flag( var_1 ) )
             return;
 
-        var_4 = var_0 _meth_84F4();
+        var_4 = var_0 getactiveanimations();
 
         foreach ( var_6 in var_4 )
         {
@@ -2067,11 +2067,11 @@ sync_anim_times_with_carrier( var_0, var_1 )
                 {
                     if ( !isdefined( var_3 ) || var_3 != var_6["animation"] )
                     {
-                        self _meth_8145( level.scr_anim[self.animname][var_8], 1, 0.2, 1 );
+                        self setanimknobrestart( level.scr_anim[self.animname][var_8], 1, 0.2, 1 );
                         var_3 = var_6["animation"];
                     }
 
-                    self _meth_8117( level.scr_anim[self.animname][var_8], var_6["currentAnimTime"] );
+                    self setanimtime( level.scr_anim[self.animname][var_8], var_6["currentAnimTime"] );
                 }
             }
         }
@@ -2088,7 +2088,7 @@ kva_ar()
     foreach ( var_3 in var_1 )
     {
         var_4 = var_3 maps\_utility::spawn_ai( 1 );
-        var_4 _meth_81A9( var_0 );
+        var_4 setgoalvolumeauto( var_0 );
     }
 
     maps\_utility::trigger_wait_targetname( "doctor_chase_gate_close_trig" );
@@ -2117,7 +2117,7 @@ kva_heavy()
     {
         var_4 = var_3 maps\_utility::spawn_ai();
         var_4 maps\_utility::set_moveplaybackrate( 0.75 );
-        var_4 _meth_81A9( var_0 );
+        var_4 setgoalvolumeauto( var_0 );
     }
 
     maps\_utility::trigger_wait_targetname( "doctor_chase_gate_close_trig" );
@@ -2133,7 +2133,7 @@ kva_heavy()
             var_0 = getent( "hospital_fight_goal1", "targetname" );
             var_4 maps\_utility::set_moveplaybackrate( 0.75 );
             var_4.combatmode = "no_cover";
-            var_4 _meth_81A9( var_0 );
+            var_4 setgoalvolumeauto( var_0 );
             wait 4;
         }
 
@@ -2157,8 +2157,8 @@ special_kva()
     var_5 = var_1 maps\_utility::spawn_ai( 1 );
     var_4.goalradius = 15;
     var_5.goalradius = 15;
-    var_4 _meth_81A5( var_2 );
-    var_5 _meth_81A5( var_3 );
+    var_4 setgoalnode( var_2 );
+    var_5 setgoalnode( var_3 );
 }
 
 final_approach()
@@ -2216,29 +2216,29 @@ cloak_off( var_0 )
         var_0 = 0.75;
 
     var_1 = 0;
-    self _meth_83A7( 1.0, var_0 );
+    self setmaterialscriptparam( 1.0, var_0 );
     wait(var_0);
-    self _meth_8449();
-    self _meth_80B1( self.defaultmodel );
+    self drawpostresolveoff();
+    self setmodel( self.defaultmodel );
     self.cloak = "off";
-    self _meth_846D();
-    self _meth_846C( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
+    self overridematerialreset();
+    self overridematerial( "mtl_burke_sentinel_covert_headgear_a", "mc/mtl_burke_sentinel_covert_headgear_a_cloak" );
 }
 
 set_cloak_material_for_npc_weapon()
 {
     if ( self.weapon != "iw5_unarmed" )
     {
-        self _meth_846C( "_base_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "_iron_sights_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "_iron_sights_color", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_weapon_suppressor_b", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_screen_a_green", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_magazine_out", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_magazine_inside", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_optics_variable_red_dot", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_optics_variable_red_dot_lens_02", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
-        self _meth_846C( "mtl_bal27_iron_sights", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_base_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_iron_sights_black", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "_iron_sights_color", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_weapon_suppressor_b", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_screen_a_green", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_magazine_out", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_magazine_inside", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_optics_variable_red_dot", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_optics_variable_red_dot_lens_02", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
+        self overridematerial( "mtl_bal27_iron_sights", "m/mtl_burke_sentinel_covert_headgear_a_cloak" );
     }
 }
 
@@ -2254,9 +2254,9 @@ cloak_on( var_0 )
         var_0 = 0.75;
 
     var_1 = 0;
-    self _meth_80B1( self.cloakedmodel );
-    self _meth_8448();
-    self _meth_83A7( 0.0, var_0 );
+    self setmodel( self.cloakedmodel );
+    self drawpostresolve();
+    self setmaterialscriptparam( 0.0, var_0 );
     self.cloak = "on";
     wait 0.1;
     set_cloak_material_for_npc_weapon();
@@ -2281,7 +2281,7 @@ set_helmet_open( var_0, var_1 )
         var_0 = 0.5;
 
     wait(var_1);
-    self _meth_8145( %sentinel_covert_helmet_open_idle, 1, var_0 );
+    self setanimknobrestart( %sentinel_covert_helmet_open_idle, 1, var_0 );
 }
 
 set_helmet_closed( var_0, var_1 )
@@ -2290,7 +2290,7 @@ set_helmet_closed( var_0, var_1 )
         var_0 = 0.5;
 
     wait(var_1);
-    self _meth_8145( %sentinel_covert_helmet_closed_idle, 1, var_0 );
+    self setanimknobrestart( %sentinel_covert_helmet_closed_idle, 1, var_0 );
 }
 
 setup_hospital_bodies()

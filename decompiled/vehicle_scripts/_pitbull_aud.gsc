@@ -228,7 +228,7 @@ pbull_callback_to_brakes_med( var_0, var_1 )
     var_2 = 0;
     var_3 = var_0["speed"];
 
-    if ( level.player _meth_824C( "BUTTON_B" ) && var_3 > 20 && !level.player attackbuttonpressed() && !var_1.pbull_is_reversed )
+    if ( level.player buttonpressed( "BUTTON_B" ) && var_3 > 20 && !level.player attackbuttonpressed() && !var_1.pbull_is_reversed )
     {
         var_1.pbull_is_revving = 0;
         var_1.pbull_is_reversed = 0;
@@ -288,7 +288,7 @@ pbull_callback_from_stopped_to_reverse( var_0, var_1 )
     var_2 = 0;
     var_3 = var_0["speed"];
 
-    if ( level.player _meth_824C( "BUTTON_B" ) && var_3 > 0 && !var_1.pbull_is_reversed )
+    if ( level.player buttonpressed( "BUTTON_B" ) && var_3 > 0 && !var_1.pbull_is_reversed )
     {
         var_1.pbull_is_reversed = 1;
         thread pbull_play_reverse_beeps( var_1 );
@@ -303,7 +303,7 @@ pbull_callback_from_reverse_to_reverse_gas_off( var_0, var_1 )
     var_2 = 0;
     var_3 = var_0["speed"];
 
-    if ( !level.player _meth_824C( "BUTTON_B" ) )
+    if ( !level.player buttonpressed( "BUTTON_B" ) )
     {
         var_1.pbull_is_revving = 0;
         var_1.pbull_is_reversed = 0;
@@ -351,7 +351,7 @@ pbull_callback_crash( var_0, var_1 )
 player_pbull_honk()
 {
     var_0 = "honk";
-    level.player _meth_82DD( var_0, "+usereload" );
+    level.player notifyonplayercommand( var_0, "+usereload" );
 
     for (;;)
     {
@@ -387,7 +387,7 @@ pbull_shift_watch( var_0 )
     {
         self waittill( "audio_shift", var_1 );
         soundscripts\_snd_playsound::snd_play( "pbull_int_shift" );
-        var_2 = self _meth_8286();
+        var_2 = self vehicle_getspeed();
 
         if ( var_1 == "gear_up" )
         {

@@ -36,7 +36,7 @@ stage_guy( var_0, var_1, var_2, var_3 )
     var_3 maps\_anim::anim_generic_reach( var_5[0], var_4, "tag_detach_" + var_1 );
     var_3 maps\_anim::anim_generic( var_5[0], var_4, "tag_detach_" + var_1 );
     maps\_utility::ent_flag_set( "staged_guy_" + var_1 );
-    var_0 _meth_81A6( common_scripts\utility::drop_to_ground( var_0.origin ) );
+    var_0 setgoalpos( common_scripts\utility::drop_to_ground( var_0.origin ) );
     var_0.goalradius = 16;
     maps\_utility::ent_flag_wait( "guy2_in_" + var_1 );
     thread maps\_vehicle_aianim::load_ai( [ var_0 ], undefined, var_1 );
@@ -56,10 +56,10 @@ setup_gag_stage_littlebird_load()
     for (;;)
     {
         self waittill( "trigger", var_0 );
-        var_0 _meth_8290( 6 );
-        var_0 _meth_828F( 4 );
-        var_0 _meth_825E( self.angles[1] );
-        var_0 _meth_8283( 20, 7, 7 );
+        var_0 setdeceleration( 6 );
+        var_0 setacceleration( 4 );
+        var_0 settargetyaw( self.angles[1] );
+        var_0 vehicle_setspeed( 20, 7, 7 );
 
         while ( distance( common_scripts\utility::flat_origin( var_0.origin ), common_scripts\utility::flat_origin( self.origin ) ) > 256 )
             wait 0.05;
@@ -67,21 +67,21 @@ setup_gag_stage_littlebird_load()
         var_0 endon( "death" );
         var_0 thread vehicle_land_beneath_node( 220, self );
         var_0 waittill( "near_goal" );
-        var_0 _meth_8283( 20, 22, 7 );
+        var_0 vehicle_setspeed( 20, 22, 7 );
         var_0 thread vehicle_land_beneath_node( 16, self );
         var_0 waittill( "near_goal" );
         var_0 maps\_vehicle_code::waittill_stable();
         var_0 notify( "touch_down", self );
-        var_0 _meth_8283( 20, 8, 7 );
+        var_0 vehicle_setspeed( 20, 8, 7 );
     }
 }
 
 littlebird_lands_and_unloads( var_0 )
 {
-    var_0 _meth_8290( 6 );
-    var_0 _meth_828F( 4 );
-    var_0 _meth_825E( self.angles[1] );
-    var_0 _meth_8283( 20, 7, 7 );
+    var_0 setdeceleration( 6 );
+    var_0 setacceleration( 4 );
+    var_0 settargetyaw( self.angles[1] );
+    var_0 vehicle_setspeed( 20, 7, 7 );
 
     while ( distance( common_scripts\utility::flat_origin( var_0.origin ), common_scripts\utility::flat_origin( self.origin ) ) > 512 )
         wait 0.05;
@@ -95,7 +95,7 @@ littlebird_lands_and_unloads( var_0 )
     badplace_cylinder( var_1, 30, self.origin, 200, 300, "axis", "allies", "neutral", "team3" );
     var_0 notify( "groupedanimevent", "pre_unload" );
     var_0 thread maps\_vehicle_aianim::animate_guys( "pre_unload" );
-    var_0 _meth_8283( 20, 22, 7 );
+    var_0 vehicle_setspeed( 20, 22, 7 );
     var_0 notify( "nearing_landing" );
 
     if ( isdefined( var_0.custom_landing ) )
@@ -103,7 +103,7 @@ littlebird_lands_and_unloads( var_0 )
         switch ( var_0.custom_landing )
         {
             case "hover_then_land":
-                var_0 _meth_8283( 10, 22, 7 );
+                var_0 vehicle_setspeed( 10, 22, 7 );
                 var_0 thread vehicle_land_beneath_node( 32, self, 64 );
                 var_0 waittill( "near_goal" );
                 var_0 notify( "hovering" );
@@ -120,7 +120,7 @@ littlebird_lands_and_unloads( var_0 )
     maps\_utility::script_delay();
     var_0 maps\_vehicle::vehicle_unload();
     var_0 maps\_vehicle_code::waittill_stable();
-    var_0 _meth_8283( 20, 8, 7 );
+    var_0 vehicle_setspeed( 20, 8, 7 );
     wait 0.2;
     var_0 notify( "stable_for_unlink" );
     wait 0.2;
@@ -149,7 +149,7 @@ set_stage( var_0, var_1, var_2 )
     var_3 = get_stage_nodes( var_0, var_2 );
     var_4 = common_scripts\utility::getstruct( var_0.target, "targetname" );
     var_5 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5 _meth_80B1( self.model );
+    var_5 setmodel( self.model );
 
     if ( isdefined( self.new_stage_heli_spawn ) )
         var_5.origin = self.origin;
@@ -271,10 +271,10 @@ vehicle_land_beneath_node( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         var_0 = 2;
 
-    self _meth_825A( var_0 );
-    self _meth_8253( 0, 0, 0 );
-    self _meth_825D();
-    self _meth_825E( common_scripts\utility::flat_angle( var_1.angles )[1] );
+    self setneargoalnotifydist( var_0 );
+    self sethoverparams( 0, 0, 0 );
+    self cleargoalyaw();
+    self settargetyaw( common_scripts\utility::flat_angle( var_1.angles )[1] );
     maps\_vehicle_code::_setvehgoalpos_wrap( maps\_utility::groundpos( var_1.origin ) + ( 0, 0, var_2 ), 1 );
     self waittill( "goal" );
 }

@@ -40,9 +40,9 @@ explosivedronelink()
     {
         self.explosivedrone = spawn( "script_model", self.origin );
         self.explosivedrone.targetname = "explosive_drone_head_model";
-        self.explosivedrone _meth_80B1( level.explosivedronesettings.modelbase );
+        self.explosivedrone setmodel( level.explosivedronesettings.modelbase );
         self.explosivedrone.oldcontents = self.explosivedrone setcontents( 0 );
-        self.explosivedrone _meth_804D( self, "tag_spike", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        self.explosivedrone linkto( self, "tag_spike", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         self.explosivedrone.owner = self.owner;
         var_0 = self.explosivedrone;
         var_0 thread cleanup_on_grenade_death( self );
@@ -120,12 +120,12 @@ tryuseexplosivedrone( var_0 )
         return 0;
     else if ( exceededmaxexplosivedrones() )
     {
-        self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
     else if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + var_1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
@@ -201,7 +201,7 @@ createexplosivedrone( var_0, var_1, var_2, var_3 )
 
     var_14.type = "explosive_drone";
     var_14 common_scripts\utility::make_entity_sentient_mp( self.owner.team );
-    var_14 _meth_83F3( 1 );
+    var_14 makevehiclenotcollidewithplayers( 1 );
     var_14 addtoexplosivedronelist();
     var_14 thread removefromexplosivedronelistondeath();
     var_14.health = level.explosivedronesettings.health;
@@ -211,10 +211,10 @@ createexplosivedrone( var_0, var_1, var_2, var_3 )
     var_14.followspeed = 20;
     var_14.owner = self.owner;
     var_14.team = self.owner.team;
-    var_14 _meth_8283( var_14.speed, 10, 10 );
-    var_14 _meth_8292( 120, 90 );
-    var_14 _meth_825A( 64 );
-    var_14 _meth_8253( 20, 5, 5 );
+    var_14 vehicle_setspeed( var_14.speed, 10, 10 );
+    var_14 setyawspeed( 120, 90 );
+    var_14 setneargoalnotifydist( 64 );
+    var_14 sethoverparams( 20, 5, 5 );
     var_14.fx_tag0 = undefined;
 
     if ( isdefined( var_14.type ) )
@@ -230,7 +230,7 @@ createexplosivedrone( var_0, var_1, var_2, var_3 )
     var_14.trackedplayer = undefined;
     var_15 = 45;
     var_16 = 45;
-    var_14 _meth_8294( var_15, var_16 );
+    var_14 setmaxpitchroll( var_15, var_16 );
     var_14.targetpos = var_11;
     var_14.attract_strength = 10000;
     var_14.attract_range = 150;
@@ -285,7 +285,7 @@ idletargetmoverexplosive( var_0 )
         {
             var_1 = anglestoforward( self.angles );
             var_2 = self.origin + var_1 * -100 + ( 0, 0, 40 );
-            var_0 _meth_82AE( var_2, 0.5 );
+            var_0 moveto( var_2, 0.5 );
         }
 
         wait 0.5;
@@ -604,9 +604,9 @@ blowupdronesequenceexplosive()
         playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_2, var_1 );
 
         if ( isdefined( var_0 ) )
-            self entityradiusdamage( self.origin, 256, 130, 55, var_0, "MOD_EXPLOSIVE", "explosive_drone_mp" );
+            self radiusdamage( self.origin, 256, 130, 55, var_0, "MOD_EXPLOSIVE", "explosive_drone_mp" );
         else
-            self entityradiusdamage( self.origin, 256, 130, 55, undefined, "MOD_EXPLOSIVE", "explosive_drone_mp" );
+            self radiusdamage( self.origin, 256, 130, 55, undefined, "MOD_EXPLOSIVE", "explosive_drone_mp" );
 
         self notify( "death" );
     }
@@ -648,7 +648,7 @@ explosivedrone_followtarget()
 
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
-    self _meth_8283( self.followspeed, 10, 10 );
+    self vehicle_setspeed( self.followspeed, 10, 10 );
     self.previoustrackedplayer = self.owner;
     self.trackedplayer = undefined;
 
@@ -724,7 +724,7 @@ explosivedrone_movetoplayer( var_0 )
     var_2 = 0;
     var_3 = 65;
 
-    switch ( var_0 _meth_817C() )
+    switch ( var_0 getstance() )
     {
         case "stand":
             var_3 = 65;
@@ -738,7 +738,7 @@ explosivedrone_movetoplayer( var_0 )
     }
 
     var_4 = ( var_2, var_1, var_3 );
-    self _meth_83F9( var_0, var_4 );
+    self setdronegoalpos( var_0, var_4 );
     self.intransit = 1;
     thread explosivedrone_watchforgoal();
     thread explosivedrone_watchtargetdisconnect();
@@ -746,7 +746,7 @@ explosivedrone_movetoplayer( var_0 )
 
 explosivedrone_stopmovement()
 {
-    self _meth_825B( self.origin, 1 );
+    self setvehgoalpos( self.origin, 1 );
     self.intransit = 0;
     self.inactive = 1;
 }
@@ -793,7 +793,7 @@ explosivedrone_highlighttarget()
     self.owner endon( "joined_team" );
     self.owner endon( "joined_spectators" );
     self.lasertag = spawn( "script_model", self.origin );
-    self.lasertag _meth_80B1( "tag_laser" );
+    self.lasertag setmodel( "tag_laser" );
 
     for (;;)
     {
@@ -804,7 +804,7 @@ explosivedrone_highlighttarget()
             var_1 = ( randomfloat( var_0 ), randomfloat( var_0 ), randomfloat( var_0 ) ) - ( 10, 10, 10 );
             var_2 = 65;
 
-            switch ( self.trackedplayer _meth_817C() )
+            switch ( self.trackedplayer getstance() )
             {
                 case "stand":
                     var_2 = 65;
@@ -848,13 +848,13 @@ explosivedrone_highlighttarget()
 
 starthighlightingplayerexplosive( var_0 )
 {
-    self.lasertag _meth_80B2( "explosive_drone_laser" );
+    self.lasertag laseron( "explosive_drone_laser" );
     playfxontag( level.explosivedronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
 
     if ( isdefined( level.explosivedronesettings.sound_lock ) )
         self playsound( level.explosivedronesettings.sound_lock );
 
-    var_0 _meth_82A6( "specialty_radararrow", 1, 0 );
+    var_0 setperk( "specialty_radararrow", 1, 0 );
 
     if ( var_0.is_being_tracked == 0 )
     {
@@ -867,17 +867,17 @@ stophighlightingplayerexplosive( var_0 )
 {
     if ( isdefined( self.lasertag ) )
     {
-        self.lasertag _meth_80B3();
+        self.lasertag laseroff();
         stopfxontag( level.explosivedronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
     }
 
     if ( isdefined( var_0 ) )
     {
         if ( isdefined( level.explosivedronesettings.sound_lock ) )
-            self _meth_80AB();
+            self stoploopsound();
 
-        if ( var_0 _meth_82A7( "specialty_radararrow", 1 ) )
-            var_0 _meth_82A9( "specialty_radararrow", 1 );
+        if ( var_0 hasperk( "specialty_radararrow", 1 ) )
+            var_0 unsetperk( "specialty_radararrow", 1 );
 
         var_0 notify( "player_not_tracked" );
         var_0.is_being_tracked = 0;
@@ -1158,12 +1158,12 @@ removeexplosivedrone()
 
 addtoexplosivedronelist()
 {
-    level.explosivedrones[self _meth_81B1()] = self;
+    level.explosivedrones[self getentitynumber()] = self;
 }
 
 removefromexplosivedronelistondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death" );
     level.explosivedrones[var_0] = undefined;
     level.explosivedrones = common_scripts\utility::array_removeundefined( level.explosivedrones );
@@ -1217,7 +1217,7 @@ explosivedroneproximitytrigger()
                 continue;
             }
 
-            if ( isdefined( self.explosivedrone ) && !var_2 _meth_81D8( self.explosivedrone gettagorigin( "TAG_BEACON" ), self.explosivedrone ) )
+            if ( isdefined( self.explosivedrone ) && !var_2 sightconetrace( self.explosivedrone gettagorigin( "TAG_BEACON" ), self.explosivedrone ) )
             {
                 wait 0.1;
                 continue;
@@ -1226,7 +1226,7 @@ explosivedroneproximitytrigger()
             if ( isdefined( self.explosivedrone ) )
             {
                 var_3 = self.explosivedrone gettagorigin( "TAG_BEACON" );
-                var_4 = var_2 _meth_80A8();
+                var_4 = var_2 geteye();
 
                 if ( !bullettracepassed( var_3, var_4, 0, self.explosivedrone ) )
                 {
@@ -1292,7 +1292,7 @@ monitorheaddestroy()
         var_0 = anglestoup( self.angles );
         var_1 = anglestoforward( self.angles );
         playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_1, var_0 );
-        self entityradiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
+        self radiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
         self notify( "death" );
     }
 
@@ -1354,7 +1354,7 @@ watchforstick()
             var_2 = anglestoup( self.angles );
             var_3 = anglestoforward( self.angles );
             playfx( level.explosivedronesettings.fxid_lethalexplode, self.origin, var_3, var_2 );
-            self entityradiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
+            self radiusdamage( self.origin, 256, 130, 55, self.owner, "MOD_EXPLOSIVE", "explosive_drone_mp" );
             thread explosivegrenadedeath();
         }
     }
@@ -1376,8 +1376,8 @@ createkillcamentity()
 {
     var_0 = ( 0, 0, 0 );
     self.killcament = spawn( "script_model", self.origin );
-    self.killcament _meth_834D( "explosive" );
-    self.killcament _meth_804D( self, "TAG_THRUSTER_BTM", var_0, ( 0, 0, 0 ) );
+    self.killcament setscriptmoverkillcam( "explosive" );
+    self.killcament linkto( self, "TAG_THRUSTER_BTM", var_0, ( 0, 0, 0 ) );
     self.killcament setcontents( 0 );
     self.killcament.starttime = gettime();
 }
@@ -1396,8 +1396,8 @@ watchforpickup( var_0 )
     self endon( "death" );
     self.owner endon( "death" );
     self.explosivedrone makeusable();
-    self.explosivedrone _meth_80DB( &"MP_PICKUP_EXPLOSIVE_DRONE" );
-    self.explosivedrone _meth_849B( 1 );
+    self.explosivedrone sethintstring( &"MP_PICKUP_EXPLOSIVE_DRONE" );
+    self.explosivedrone sethintstringvisibleonlytoowner( 1 );
     var_1 = getdvarfloat( "player_useRadius", 128 );
     var_1 *= var_1;
 
@@ -1406,9 +1406,9 @@ watchforpickup( var_0 )
         if ( !isdefined( self ) || !isdefined( var_0 ) )
             break;
 
-        var_2 = isdefined( self.explosivedrone ) && distancesquared( self.owner _meth_80A8(), self.explosivedrone.origin ) <= var_1;
+        var_2 = isdefined( self.explosivedrone ) && distancesquared( self.owner geteye(), self.explosivedrone.origin ) <= var_1;
 
-        if ( self.owner _meth_80A9( var_0 ) && var_2 )
+        if ( self.owner istouching( var_0 ) && var_2 )
         {
             var_3 = 0;
 
@@ -1417,13 +1417,13 @@ watchforpickup( var_0 )
                 if ( !maps\mp\_utility::isreallyalive( self.owner ) )
                     break;
 
-                if ( !self.owner _meth_80A9( var_0 ) )
+                if ( !self.owner istouching( var_0 ) )
                     break;
 
-                if ( self.owner _meth_82EE() || self.owner _meth_82EF() || isdefined( self.owner.throwinggrenade ) )
+                if ( self.owner fragbuttonpressed() || self.owner secondaryoffhandbuttonpressed() || isdefined( self.owner.throwinggrenade ) )
                     break;
 
-                if ( self.owner _meth_8342() || self.owner maps\mp\_utility::isusingremote() )
+                if ( self.owner isusingturret() || self.owner maps\mp\_utility::isusingremote() )
                     break;
 
                 if ( isdefined( self.owner.iscapturingcrate ) && self.owner.iscapturingcrate )
@@ -1439,7 +1439,7 @@ watchforpickup( var_0 )
 
                 if ( var_3 > 0.75 )
                 {
-                    self.owner _meth_82F7( self.weaponname, self.owner _meth_82F9( self.weaponname ) + 1 );
+                    self.owner setweaponammostock( self.weaponname, self.owner setweaponammostock( self.weaponname ) + 1 );
                     self.explosivedrone deleteexplosivedrone();
                     self delete();
                     break;

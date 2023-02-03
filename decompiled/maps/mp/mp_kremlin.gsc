@@ -19,10 +19,10 @@ main()
     level.dronelightset = "mp_kremlin_drone";
     level.warbirdvisionset = "mp_kremlin_warbird";
     level.warbirdlightset = "mp_kremlin_warbird";
-    map_restart( "krem_killstreak_mine_close" );
-    map_restart( "krem_killstreak_mine_closed_idle" );
-    map_restart( "krem_killstreak_mine_open" );
-    map_restart( "krem_killstreak_mine_open_idle" );
+    precachempanim( "krem_killstreak_mine_close" );
+    precachempanim( "krem_killstreak_mine_closed_idle" );
+    precachempanim( "krem_killstreak_mine_open" );
+    precachempanim( "krem_killstreak_mine_open_idle" );
     level.orbitalsupportoverridefunc = ::kremlinpaladinoverrides;
     thread mine_init();
     level dynamicevent_init_sound();
@@ -95,7 +95,7 @@ sequence_walker_tank_anims()
 
 play_walker_tank_anims()
 {
-    self _meth_8279( self.animname );
+    self scriptmodelplayanim( self.animname );
     self show();
     wait(self.animtime);
     self hide();
@@ -211,7 +211,7 @@ createmine( var_0 )
 {
     var_1 = level.minetype;
     var_2 = spawn( "script_model", var_0.origin );
-    var_2 _meth_80B1( level.minesettings[var_1].modelbase );
+    var_2 setmodel( level.minesettings[var_1].modelbase );
     var_2.scale = 3;
     var_2.health = 1000;
     var_2.angles = ( 0, 0, 0 );
@@ -234,7 +234,7 @@ createmine( var_0 )
     var_2.animationidleinactive = level.minesettings[var_2.minetype].animationidleinactive;
 
     if ( isdefined( var_2.animationidleinactive ) )
-        var_2 _meth_8279( var_2.animationidleinactive );
+        var_2 scriptmodelplayanim( var_2.animationidleinactive );
 
     if ( level.nextgen )
     {
@@ -243,19 +243,19 @@ createmine( var_0 )
     }
 
     var_2.explosive = spawn( "script_model", var_2 gettagorigin( level.minesettings[var_2.minetype].tagexplosive1 ) );
-    var_2.explosive _meth_80B1( level.minesettings[var_2.minetype].modelexplosive );
+    var_2.explosive setmodel( level.minesettings[var_2.minetype].modelexplosive );
     var_2.explosive.tag = level.minesettings[var_2.minetype].tagexplosive1;
-    var_2.explosive _meth_804D( var_2 );
+    var_2.explosive linkto( var_2 );
     var_2.explosive.isenvironmentweapon = 1;
     var_2.script_stay_drone = 1;
 
     if ( level.nextgen )
     {
         var_2.explosive.killcament = spawn( "script_model", var_2.explosive.origin + level.minekillcamoffset );
-        var_2.explosive.killcament _meth_834D( "explosive" );
+        var_2.explosive.killcament setscriptmoverkillcam( "explosive" );
     }
 
-    var_2 _meth_82C0( 0 );
+    var_2 setcandamage( 0 );
     level.minelist = common_scripts\utility::add_to_array( level.minelist, var_2 );
     var_2.activateoffsettime = level.minelist.size * 0.1;
     return var_2;
@@ -268,7 +268,7 @@ reload_mine()
         self.explosive.fired = undefined;
         self.explosive.origin = self gettagorigin( level.minesettings[self.minetype].tagexplosive1 );
         self.explosive.angles = ( 0, 0, 0 );
-        self.explosive _meth_804D( self );
+        self.explosive linkto( self );
 
         if ( level.nextgen )
             self.explosive.killcament.origin = self.explosive.origin + level.minekillcamoffset;
@@ -318,13 +318,13 @@ cg_minecollisionmoveup()
     wait(var_0);
 
     if ( isdefined( level.minesettings["mine"].collision ) )
-        level.minesettings["mine"].collision _meth_82AE( level.minesettings["mine"].collision.origin + ( 0, 0, 30 ), 0.5 );
+        level.minesettings["mine"].collision moveto( level.minesettings["mine"].collision.origin + ( 0, 0, 30 ), 0.5 );
 }
 
 cg_minecollisionmovedown()
 {
     if ( isdefined( level.minesettings["mine"].collision ) )
-        level.minesettings["mine"].collision _meth_82AE( level.minesettings["mine"].collision.origin + ( 0, 0, -30 ), 0.5 );
+        level.minesettings["mine"].collision moveto( level.minesettings["mine"].collision.origin + ( 0, 0, -30 ), 0.5 );
 }
 
 activateminewithdelay()
@@ -373,8 +373,8 @@ minefieldareafx()
 mine_setactive()
 {
     thread mine_handledamage();
-    self _meth_82C0( 1 );
-    self _meth_8388();
+    self setcandamage( 1 );
+    self makeentitynomeleetarget();
     var_0 = ( 0, 0, 20 );
     var_1 = ( 0, 0, 128 );
     var_2 = [];
@@ -397,8 +397,8 @@ mine_setactive()
 
 mine_setinactive()
 {
-    self _meth_82C0( 0 );
-    self _meth_813A();
+    self setcandamage( 0 );
+    self freeentitysentient();
 
     if ( isdefined( self.activateoffsettime ) )
         wait(self.activateoffsettime);
@@ -478,12 +478,12 @@ mine_attacktargets()
 fire_sensor( var_0 )
 {
     var_0.fired = 1;
-    var_0 _meth_804F();
-    var_0 _meth_82B7( 3600, self.attackmovetime );
-    var_0 _meth_82AE( self.attackheightpos, self.attackmovetime, self.attackmovetime * 0.25, self.attackmovetime * 0.25 );
+    var_0 unlink();
+    var_0 rotateyaw( 3600, self.attackmovetime );
+    var_0 moveto( self.attackheightpos, self.attackmovetime, self.attackmovetime * 0.25, self.attackmovetime * 0.25 );
 
     if ( isdefined( var_0.killcament ) )
-        var_0.killcament _meth_82AE( self.attackheightpos + level.minekillcamoffset, self.attackmovetime, self.attackmovetime * 0.25, self.attackmovetime * 0.25 );
+        var_0.killcament moveto( self.attackheightpos + level.minekillcamoffset, self.attackmovetime, self.attackmovetime * 0.25, self.attackmovetime * 0.25 );
 
     var_0 playsound( level.minesoundlaunchmine );
     var_0 waittill( "movedone" );
@@ -611,7 +611,7 @@ play_mine_open_anim()
     if ( isdefined( self.animationactivate ) )
     {
         var_0 = 2.94;
-        self _meth_8279( self.animationactivate );
+        self scriptmodelplayanim( self.animationactivate );
         wait(var_0);
     }
 
@@ -619,7 +619,7 @@ play_mine_open_anim()
         self.minecollision thread minecollisionmoveup();
 
     if ( isdefined( self.animationidleactive ) )
-        self _meth_8279( self.animationidleactive );
+        self scriptmodelplayanim( self.animationidleactive );
 
     self notify( "mine_opened" );
 }
@@ -632,7 +632,7 @@ play_mine_close_anim()
     if ( isdefined( self.animationdeactivate ) )
     {
         var_0 = 5.03;
-        self _meth_8279( self.animationdeactivate );
+        self scriptmodelplayanim( self.animationdeactivate );
         wait(var_0);
     }
 
@@ -640,17 +640,17 @@ play_mine_close_anim()
         self.minecollision thread minecollisionmovedown();
 
     if ( isdefined( self.animationidleinactive ) )
-        self _meth_8279( self.animationidleinactive );
+        self scriptmodelplayanim( self.animationidleinactive );
 }
 
 minecollisionmoveup()
 {
-    self _meth_82AE( self.origin + ( 0, 0, 30 ), 0.5 );
+    self moveto( self.origin + ( 0, 0, 30 ), 0.5 );
 }
 
 minecollisionmovedown()
 {
-    self _meth_82AE( self.origin + ( 0, 0, -30 ), 0.5 );
+    self moveto( self.origin + ( 0, 0, -30 ), 0.5 );
 }
 
 play_mine_fx()
@@ -724,7 +724,7 @@ disconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        var_0[var_1] _meth_8059();
+        var_0[var_1] disconnectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -735,7 +735,7 @@ disconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_2.size; var_1++ )
     {
-        var_2[var_1] _meth_8059();
+        var_2[var_1] disconnectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -748,7 +748,7 @@ reconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        var_0[var_1] _meth_805A();
+        var_0[var_1] connectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -759,7 +759,7 @@ reconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_2.size; var_1++ )
     {
-        var_2[var_1] _meth_805A();
+        var_2[var_1] connectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -842,7 +842,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+        if ( !self.visuals[0] istouching( var_0[var_1] ) )
             continue;
 
         return 1;

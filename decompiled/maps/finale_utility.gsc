@@ -23,13 +23,13 @@ teleport_to_scriptstruct( var_0 )
     {
         if ( var_7 < var_6.size )
         {
-            var_2[var_7] _meth_81C6( var_6[var_7].origin, var_6[var_7].angles );
-            var_2[var_7] _meth_81A6( var_6[var_7].origin );
+            var_2[var_7] forceteleport( var_6[var_7].origin, var_6[var_7].angles );
+            var_2[var_7] setgoalpos( var_6[var_7].origin );
             continue;
         }
 
-        var_2[var_7] _meth_81C6( level.player.origin, level.player.angles );
-        var_2[var_7] _meth_81A6( level.player.origin );
+        var_2[var_7] forceteleport( level.player.origin, level.player.angles );
+        var_2[var_7] setgoalpos( level.player.origin );
     }
 }
 
@@ -39,7 +39,7 @@ spawn_metrics_init()
     level.spawn_metrics_death_count = [];
     maps\_utility::add_global_spawn_function( "axis", ::spawn_metrics_spawn_func );
 
-    foreach ( var_1 in _func_0D6( "axis" ) )
+    foreach ( var_1 in getaiarray( "axis" ) )
     {
         if ( !isspawner( var_1 ) && isalive( var_1 ) )
             var_1 spawn_metrics_spawn_func();
@@ -208,14 +208,14 @@ player_animated_sequence_restrictions( var_0 )
         level.player waittill( "notify_player_animated_sequence_restrictions" );
 
     level.player.disablereload = 1;
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8321();
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8130( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowmelee( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
 }
 
 load_mech()
@@ -268,10 +268,10 @@ mech_fx()
 
 mech_setup()
 {
-    _func_0D3( "mechSpeed", 350 );
-    _func_0D3( "mechAcceleration", 3.25 );
-    _func_0D3( "mechAirAcceleration", 0.23 );
-    _func_0D3( "player_sprintSpeedScale", 1.6 );
+    setsaveddvar( "mechSpeed", 350 );
+    setsaveddvar( "mechAcceleration", 3.25 );
+    setsaveddvar( "mechAirAcceleration", 0.23 );
+    setsaveddvar( "player_sprintSpeedScale", 1.6 );
 
     if ( level.player adsbuttonpressed() || getdvar( "quickmech" ) == "1" )
         thread mech_enable();
@@ -285,18 +285,18 @@ mech_enable( var_0, var_1 )
     level.mech_swarm_rocket_dud_max_count = 3;
     level.mech_swarm_skip_line_of_sight_obstruction_test = 0;
     level.player maps\_playermech_code::playermech_start( "base", var_1, var_0, "vm_view_arms_mech", "vm_view_arms_mech" );
-    _func_0D3( "mechStandHeight", 71 );
-    _func_0D3( "mechBarrelSpinAnim", "s1_playermech_barrel_spin" );
+    setsaveddvar( "mechStandHeight", 71 );
+    setsaveddvar( "mechBarrelSpinAnim", "s1_playermech_barrel_spin" );
 }
 
 mech_enable_switch_exhaust_version( var_0, var_1 )
 {
     level.player notify( "kill_think_player_blast_walk_anims" );
     level.player.blast_anim_set = undefined;
-    level.player _meth_830F( "playermech_auto_cannon_finale" );
-    level.player _meth_830E( "playermech_auto_cannon_finale_exhaust" );
-    level.player _meth_8316( "playermech_auto_cannon_finale_exhaust" );
-    _func_0D3( "mechBarrelSpinAnim", "s1_blast_gun_up_playermech_barrel_spin" );
+    level.player takeweapon( "playermech_auto_cannon_finale" );
+    level.player giveweapon( "playermech_auto_cannon_finale_exhaust" );
+    level.player switchtoweaponimmediate( "playermech_auto_cannon_finale_exhaust" );
+    setsaveddvar( "mechBarrelSpinAnim", "s1_blast_gun_up_playermech_barrel_spin" );
     level.player.mechdata.weapon_names["mech_base_weapon"] = "playermech_auto_cannon_finale_exhaust";
     level.player maps\_playermech_code::playermech_start( "base", var_0, var_1, "vm_view_arms_mech", "vm_view_arms_mech" );
 }
@@ -338,7 +338,7 @@ screen_fade_out( var_0 )
     if ( !isdefined( level.black_screen ) )
         create_black_screen();
 
-    _func_072( 10, var_0 );
+    setblur( 10, var_0 );
 
     if ( var_0 > 0 )
     {
@@ -361,7 +361,7 @@ screen_fade_in( var_0 )
     if ( !isdefined( level.black_screen ) )
         create_black_screen();
 
-    _func_072( 0, var_0 );
+    setblur( 0, var_0 );
 
     if ( var_0 > 0 )
     {
@@ -382,7 +382,7 @@ create_black_screen()
     level.black_screen.horzalign = "fullscreen";
     level.black_screen.vertalign = "fullscreen";
     level.black_screen.foreground = 1;
-    level.black_screen _meth_80CC( "black", 640, 480 );
+    level.black_screen setshader( "black", 640, 480 );
 }
 
 screen_fade( var_0, var_1, var_2 )
@@ -404,7 +404,7 @@ screen_fade( var_0, var_1, var_2 )
 set_custom_patrol_anim_set( var_0 )
 {
     set_custom_run_anim( var_0 );
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.oldcombatmode = self.combatmode;
     self.combatmode = "no_cover";
     maps\_utility::disable_cqbwalk();
@@ -456,8 +456,8 @@ custom_idle_trans_function()
     if ( !isdefined( self.heat ) )
         thread animscripts\cover_arrival::abortapproachifthreatened();
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8113( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
+    self clearanim( %body, 0.2 );
+    self setflaggedanimrestart( "coverArrival", var_1, 1, 0.2, self.movetransitionrate );
     animscripts\face::playfacialanim( var_1, "run" );
     animscripts\shared::donotetracks( "coverArrival", animscripts\cover_arrival::handlestartaim );
     var_2 = anim.arrivalendstance[self.approachtype];
@@ -467,7 +467,7 @@ custom_idle_trans_function()
 
     self.a.movement = "stop";
     self.a.arrivaltype = self.approachtype;
-    self _meth_8142( %root, 0.3 );
+    self clearanim( %root, 0.3 );
     self.lastapproachaborttime = undefined;
     var_3 = self.origin - self.goalpos;
 }
@@ -530,17 +530,17 @@ mech_glass_damage_think( var_0 )
 
 setstencilstate( var_0 )
 {
-    self _meth_83FA( 6, 1 );
+    self hudoutlineenable( 6, 1 );
 }
 
 clearstencilstate()
 {
     if ( isdefined( self ) )
     {
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
-        self _meth_83FB();
-        _func_0D3( "r_hudoutlinewidth", 1 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
+        self hudoutlinedisable();
+        setsaveddvar( "r_hudoutlinewidth", 1 );
     }
 }
 
@@ -550,7 +550,7 @@ player_looking_in_direction_2d( var_0, var_1, var_2, var_3 )
         var_1 = 0.8;
 
     var_4 = maps\_utility::get_player_from_self();
-    var_5 = var_4 _meth_80A8();
+    var_5 = var_4 geteye();
     var_6 = vectortoangles( var_0 - var_5 );
     var_7 = anglestoforward( var_6 );
     var_8 = var_4 getangles();
@@ -604,7 +604,7 @@ enable_takedown_hint( var_0, var_1, var_2, var_3, var_4 )
             return;
         }
 
-        var_7 = _func_220( var_0.origin, level.player.origin );
+        var_7 = distance2dsquared( var_0.origin, level.player.origin );
 
         if ( level.melee_hint_displayed )
         {
@@ -616,7 +616,7 @@ enable_takedown_hint( var_0, var_1, var_2, var_3, var_4 )
 
             if ( isdefined( var_2 ) && var_2 )
             {
-                var_8 = var_0 _meth_80A8();
+                var_8 = var_0 geteye();
                 var_9 = 0.9;
 
                 if ( !level.player player_looking_in_direction_2d( var_8, var_9, 1 ) )
@@ -632,7 +632,7 @@ enable_takedown_hint( var_0, var_1, var_2, var_3, var_4 )
 
             if ( isdefined( var_2 ) && var_2 )
             {
-                var_8 = var_0 _meth_80A8();
+                var_8 = var_0 geteye();
                 var_9 = 0.9;
 
                 if ( !level.player player_looking_in_direction_2d( var_8, var_9, 1 ) )
@@ -643,7 +643,7 @@ enable_takedown_hint( var_0, var_1, var_2, var_3, var_4 )
             {
                 level.should_display_melee_hint = 1;
                 level.melee_hint_displayed = 1;
-                level.player _meth_8130( 0 );
+                level.player allowmelee( 0 );
                 level.takedown_button = var_0 maps\_shg_utility::hint_button_tag( "melee", "J_SpineUpper" );
                 maps\_utility::hintdisplaymintimehandler( "takedown_hint", undefined );
             }
@@ -669,7 +669,7 @@ takedown_hint_off()
     if ( !level.should_display_melee_hint )
     {
         if ( !isdefined( level.player.disable_melee ) )
-            level.player _meth_8130( 1 );
+            level.player allowmelee( 1 );
 
         var_0 = 1;
     }
@@ -768,8 +768,8 @@ process_buttonmash_finale_scene( var_0, var_1, var_2, var_3 )
     level.player.buttonmash_decay_per_frame = 0.1;
     level.player.buttonmash_value = 0.0;
     level.player.buttonmash_add_per_press = 0.2;
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "x_pressed", "+activate" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "x_pressed", "+activate" );
     var_0 thread maps\_shg_utility::hint_button_create_flashing( var_1, "x", "end_process_buttonmash", ( 0, 0, 0 ), 35, 300, 2 );
     var_4 = 0;
     var_5 = 30;
@@ -791,8 +791,8 @@ process_buttonmash_finale_scene( var_0, var_1, var_2, var_3 )
 
     childthread buttonmash_monitor( var_3, var_0 );
     common_scripts\utility::flag_wait( "flag_xbutton_mash_end" );
-    level.player _meth_849C( "x_pressed", "+usereload" );
-    level.player _meth_849C( "x_pressed", "+activate" );
+    level.player notifyonplayercommandremove( "x_pressed", "+usereload" );
+    level.player notifyonplayercommandremove( "x_pressed", "+activate" );
     var_0 notify( "end_process_buttonmash" );
 }
 
@@ -844,7 +844,7 @@ process_buttonmash_handle_fail( var_0 )
 {
     soundscripts\_snd::snd_message( "finale_ending_buttonmash_fail" );
     common_scripts\utility::flag_set( "flag_xbutton_mash_end" );
-    level.player _meth_83C0( "finale_hang_fail" );
+    level.player lightsetforplayer( "finale_hang_fail" );
     self notify( "end_process_buttonmash" );
     level notify( "audio_finale_qte_fail" );
     thread maps\finale_fx::vfx_irons_fail_fall();
@@ -862,9 +862,9 @@ chase_timer_countdown( var_0, var_1 )
 
     if ( var_1 == &"FINALE_FAILED_MISSILE_LAUNCH" )
     {
-        level.player _meth_80FB();
-        level.player _meth_82FB( "ui_playermech_hud", 0 );
-        _func_0D3( "cg_drawCrosshair", 0 );
+        level.player showhud();
+        level.player setclientomnvar( "ui_playermech_hud", 0 );
+        setsaveddvar( "cg_drawCrosshair", 0 );
     }
 
     setdvar( "ui_deadquote", var_1 );
@@ -880,7 +880,7 @@ sprint_hint_reminder()
 {
     while ( !common_scripts\utility::flag( "flag_player_passed_door" ) )
     {
-        if ( !level.player _meth_83D8() )
+        if ( !level.player issprinting() )
             thread maps\_utility::hintdisplayhandler( "player_input_sprint_hint" );
 
         waitframe();
@@ -889,7 +889,7 @@ sprint_hint_reminder()
 
 player_input_sprint()
 {
-    if ( level.player _meth_83D8() || level.player _meth_8435() || common_scripts\utility::flag( "missionfailed" ) )
+    if ( level.player issprinting() || level.player issprintsliding() || common_scripts\utility::flag( "missionfailed" ) )
         return 1;
 
     return 0;
@@ -904,7 +904,7 @@ player_chase_speed_control()
     level.too_close_distance = 180;
     var_3 = level.too_close_distance + 80;
     common_scripts\utility::flag_set( "flag_player_speed_control_on" );
-    level.player _meth_81E1( var_0 );
+    level.player setmovespeedscale( var_0 );
 
     while ( common_scripts\utility::flag( "flag_player_speed_control_on" ) )
     {
@@ -913,7 +913,7 @@ player_chase_speed_control()
             while ( var_0 >= var_1 && distance( level.player.origin, level.irons.origin ) < level.too_close_distance && common_scripts\utility::flag( "flag_player_speed_control_on" ) )
             {
                 var_0 -= 0.05;
-                level.player _meth_81E1( var_0 );
+                level.player setmovespeedscale( var_0 );
                 wait(var_2);
             }
 
@@ -923,21 +923,21 @@ player_chase_speed_control()
             while ( var_0 < 1 && distance( level.player.origin, level.irons.origin ) < level.too_close_distance & common_scripts\utility::flag( "flag_player_speed_control_on" ) )
             {
                 var_0 += 0.05;
-                level.player _meth_81E1( var_0 );
+                level.player setmovespeedscale( var_0 );
                 wait(var_2);
             }
 
             if ( var_0 > 1 )
             {
                 var_0 = 1;
-                level.player _meth_81E1( var_0 );
+                level.player setmovespeedscale( var_0 );
             }
         }
 
         waitframe();
     }
 
-    level.player _meth_81E1( 1 );
+    level.player setmovespeedscale( 1 );
 }
 
 lowering_door_think( var_0, var_1, var_2, var_3, var_4, var_5 )
@@ -950,7 +950,7 @@ lowering_door_think( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( isdefined( var_4 ) )
         common_scripts\utility::flag_wait( var_4 );
 
-    var_7 _meth_804D( var_6 );
+    var_7 linkto( var_6 );
     soundscripts\_snd::snd_message( "irons_chase_door_close", var_6 );
     var_6 move_door_to_position( var_3.origin, var_0, undefined, undefined, var_5 );
 
@@ -991,13 +991,13 @@ move_door_to_position( var_0, var_1, var_2, var_3, var_4 )
         {
             var_9 = 0;
 
-            while ( level.player _meth_80A9( var_4 ) )
+            while ( level.player istouching( var_4 ) )
             {
                 var_9 += 1;
 
                 if ( var_9 == 30 )
                 {
-                    level.player _meth_8052();
+                    level.player kill();
                     break;
                 }
 
@@ -1034,7 +1034,7 @@ lowering_door_slide_hint()
 
     while ( !common_scripts\utility::flag( "flag_player_passed_door" ) )
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             thread maps\_utility::hintdisplayhandler( "player_input_slide_button" );
 
         waitframe();
@@ -1112,9 +1112,9 @@ rotate_camera_to_internal( var_0, var_1, var_2, var_3, var_4 )
     {
         var_9 = get_goal_angles_ramped_given_viewdir( var_5, var_0, var_6, var_7, var_4 );
         iprintln( var_9 );
-        self _meth_804F();
+        self unlink();
         self.angles = var_9;
-        self _meth_804D( level.player.drivingvehicle );
+        self linkto( level.player.drivingvehicle );
         thread maps\_shg_debug::draw_axis( self.origin, var_9, 10 );
         waitframe();
 
@@ -1153,7 +1153,7 @@ camera_sway_tuning()
 
     for (;;)
     {
-        if ( level.player _meth_824C( "DPAD_LEFT" ) )
+        if ( level.player buttonpressed( "DPAD_LEFT" ) )
         {
             var_1++;
 
@@ -1163,7 +1163,7 @@ camera_sway_tuning()
             var_2 = 1;
             wait 0.5;
         }
-        else if ( level.player _meth_824C( "DPAD_RIGHT" ) )
+        else if ( level.player buttonpressed( "DPAD_RIGHT" ) )
         {
             var_1--;
 
@@ -1173,12 +1173,12 @@ camera_sway_tuning()
             var_2 = 1;
             wait 0.5;
         }
-        else if ( level.player _meth_824C( "DPAD_UP" ) )
+        else if ( level.player buttonpressed( "DPAD_UP" ) )
         {
             level.values[var_1] += 0.05;
             var_2 = 1;
         }
-        else if ( level.player _meth_824C( "DPAD_DOWN" ) )
+        else if ( level.player buttonpressed( "DPAD_DOWN" ) )
         {
             level.values[var_1] -= 0.05;
             var_2 = 1;
@@ -1203,7 +1203,7 @@ boat_bobbing_think( var_0 )
     if ( !isdefined( var_0 ) )
     {
         var_0 = common_scripts\utility::get_target_ent();
-        var_0 _meth_804D( self );
+        var_0 linkto( self );
     }
 
     maps\_utility::ent_flag_init( "flag_big_bobbing" );
@@ -1261,7 +1261,7 @@ boat_scene_big_bob_settings()
 
 postspawn_rpg_vehicle()
 {
-    self _meth_80B1( "projectile_rpg7" );
+    self setmodel( "projectile_rpg7" );
     var_0 = common_scripts\utility::getfx( "rpg_trail" );
     playfxontag( var_0, self, "tag_origin" );
     var_0 = common_scripts\utility::getfx( "rpg_muzzle" );
@@ -1276,7 +1276,7 @@ postspawn_rpg_vehicle()
             self playsound( self.script_sound );
     }
     else
-        self _meth_8075( "weap_rpg_loop" );
+        self playloopsound( "weap_rpg_loop" );
 
     self waittill( "reached_end_node" );
     self notify( "explode", self.origin );
@@ -1332,7 +1332,7 @@ combat_silo_seeker_ai()
 
     for (;;)
     {
-        var_2 = _func_0D6( "axis" );
+        var_2 = getaiarray( "axis" );
         var_3 = [];
 
         foreach ( var_5 in var_2 )
@@ -1356,7 +1356,7 @@ combat_silo_seeker_ai()
                         var_5 maps\_utility::stop_magic_bullet_shield();
 
                     var_5.playerseeker = 1;
-                    var_5 _meth_81AB();
+                    var_5 cleargoalvolume();
                     var_5 thread maps\_utility::player_seek();
                     var_5.favoriteenemy = level.player;
                     var_1[var_1.size] = var_5;
@@ -1379,14 +1379,14 @@ combat_silo_seeker_ai()
 
 murder_player_seek()
 {
-    self _meth_81AB();
+    self cleargoalvolume();
     self.favoriteenemy = level.player;
     maps\_utility::set_baseaccuracy( 999 );
-    self _meth_81A7( level.player );
+    self setgoalentity( level.player );
     self.goalradius = 20;
     self.combatmode = "no_cover";
     self notify( "end_patrol" );
-    level.player _meth_8132( 0 );
+    level.player enablehealthshield( 0 );
 }
 
 get_follow_volume_array()
@@ -1460,7 +1460,7 @@ player_follow_volume_think()
 
         foreach ( var_5 in self.follow_volume_array )
         {
-            if ( ( !isdefined( self.follow_volume ) || var_2 || var_3 || self.follow_volume != var_5 ) && self _meth_80A9( var_5 ) )
+            if ( ( !isdefined( self.follow_volume ) || var_2 || var_3 || self.follow_volume != var_5 ) && self istouching( var_5 ) )
             {
                 if ( var_2 )
                     self.match_player_floor_percent = 1.0;
@@ -1497,7 +1497,7 @@ player_follow_volume_think()
 
 get_non_mech_enemies()
 {
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_1 = [];
 
     foreach ( var_3 in var_0 )
@@ -1566,9 +1566,9 @@ move_guy( var_0, var_1, var_2 )
         }
     }
 
-    self _meth_81AB();
+    self cleargoalvolume();
     self.goalradius = 256;
-    self _meth_81A9( var_7 );
+    self setgoalvolumeauto( var_7 );
     self.follow_volume = var_7;
     return var_8;
 }
@@ -1656,7 +1656,7 @@ get_floor_count_array()
 {
     var_0 = 0;
     var_1 = 0;
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
 
     foreach ( var_4 in var_2 )
     {

@@ -69,7 +69,7 @@ pm_slidemove( var_0, var_1, var_2 )
     for ( var_9 = 0; var_9 < var_3; var_9++ )
     {
         var_10 = var_0.origin + var_6 * var_0.vel;
-        var_11 = _func_238( var_0.origin, var_10, self );
+        var_11 = playerphysicstraceinfo( var_0.origin, var_10, self );
         var_12 = var_11["position"];
 
         if ( var_11["fraction"] < 1 )
@@ -176,7 +176,7 @@ pm_stepslidemove( var_0, var_1, var_2 )
     if ( var_5 || var_1[2] < 0.9 )
     {
         var_13 = var_3 + ( 0, 0, var_6 + 1 );
-        var_14 = _func_238( var_3, var_13, self );
+        var_14 = playerphysicstraceinfo( var_3, var_13, self );
         var_12 = var_14["fraction"] * ( var_6 + 1 ) - 1;
 
         if ( var_12 < 1.0 )
@@ -196,7 +196,7 @@ pm_stepslidemove( var_0, var_1, var_2 )
         if ( var_8 )
             var_15 -= ( 0, 0, var_7 * 0.5 );
 
-        var_14 = _func_238( var_0.origin, var_15, self );
+        var_14 = playerphysicstraceinfo( var_0.origin, var_15, self );
 
         if ( var_14["fraction"] < 1 )
         {
@@ -228,7 +228,7 @@ pm_stepslidemove( var_0, var_1, var_2 )
         if ( var_8 )
         {
             var_15 = var_0.origin - ( 0, 0, var_7 * 0.5 );
-            var_14 = _func_238( var_0.origin, var_15, self );
+            var_14 = playerphysicstraceinfo( var_0.origin, var_15, self );
 
             if ( var_14["fraction"] < 1.0 )
             {

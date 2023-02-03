@@ -90,17 +90,17 @@ already_dumpped( var_0, var_1 )
 
 animatemodel()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     var_0 = getarraykeys( level.anim_prop_models[self.model] );
     var_1 = var_0[randomint( var_0.size )];
     var_2 = level.anim_prop_models[self.model][var_1];
-    self _meth_814B( var_2, 1, self _meth_814F( var_2 ), 1 );
-    self _meth_8117( var_2, randomfloatrange( 0, 1 ) );
+    self setanim( var_2, 1, self getanimtime( var_2 ), 1 );
+    self setanimtime( var_2, randomfloatrange( 0, 1 ) );
 }
 
 animatetreewind()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     var_0 = "strong";
 
     for (;;)
@@ -115,6 +115,6 @@ blendtreeanims( var_0 )
     level endon( "windchange" );
     var_1 = level.wind.weight;
     var_2 = level.wind.rate + randomfloat( level.wind.variance );
-    self _meth_814B( level.anim_prop_models[self.model]["still"], 1, self _meth_814F( level.anim_prop_models[self.model]["still"] ), var_2 );
-    self _meth_814B( level.anim_prop_models[self.model][var_0], var_1, self _meth_814F( level.anim_prop_models[self.model][var_0] ), var_2 );
+    self setanim( level.anim_prop_models[self.model]["still"], 1, self getanimtime( level.anim_prop_models[self.model]["still"] ), var_2 );
+    self setanim( level.anim_prop_models[self.model][var_0], var_1, self getanimtime( level.anim_prop_models[self.model][var_0] ), var_2 );
 }

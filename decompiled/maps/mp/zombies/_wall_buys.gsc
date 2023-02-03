@@ -29,7 +29,7 @@ wallbuyupdatehinstrings( var_0 )
         common_scripts\utility::waittill_any_ents( var_0, "weapon_change", var_0, "new_equipment", level, "disableWallbuysUpdate" );
         var_1 = 0;
         var_2 = "";
-        var_3 = var_0 _meth_830B();
+        var_3 = var_0 getweaponslistall();
 
         foreach ( var_5 in var_3 )
         {
@@ -50,33 +50,33 @@ wallbuyupdatehinstrings( var_0 )
             }
         }
 
-        var_8 = var_0 _meth_8312();
+        var_8 = var_0 getcurrentprimaryweapon();
         var_9 = 0;
 
         if ( !maps\mp\zombies\_util::iszombieequipment( self.weaponname ) )
             var_9 = maps\mp\zombies\_util::getzombieweaponlevel( var_0, self.weaponname );
 
-        self _meth_80DA( "HINT_NOICON" );
+        self setcursorhint( "HINT_NOICON" );
 
         if ( maps\mp\zombies\_util::isrippedturretweapon( var_8 ) || maps\mp\zombies\_util::iszombiekillstreakweapon( var_8 ) || maps\mp\zombies\_util::arewallbuysdisabled() )
         {
-            self _meth_80DB( "" );
-            self _meth_80DC( "" );
+            self sethintstring( "" );
+            self setsecondaryhintstring( "" );
             maps\mp\zombies\_util::tokenhintstring( 0 );
             continue;
         }
 
         if ( var_1 )
         {
-            self _meth_80DB( getammohintstring( self ) );
-            self _meth_80DC( getammohintcoststring( self, var_9 ) );
+            self sethintstring( getammohintstring( self ) );
+            self setsecondaryhintstring( getammohintcoststring( self, var_9 ) );
             maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( self.currentammocost ) );
             maps\mp\zombies\_util::tokenhintstring( 1 );
             continue;
         }
 
-        self _meth_80DB( getweaponhintstring( self ) );
-        self _meth_80DC( getweaponhintcoststring( self, var_9 ) );
+        self sethintstring( getweaponhintstring( self ) );
+        self setsecondaryhintstring( getweaponhintcoststring( self, var_9 ) );
         maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( self.currentweaponcost ) );
         maps\mp\zombies\_util::tokenhintstring( 1 );
     }
@@ -96,7 +96,7 @@ cg_wallbuyupdatehintstrings( var_0 )
         var_0 common_scripts\utility::waittill_any( "weapon_change", "new_equipment" );
         var_0.haveweapons[self.weaponname] = 0;
         var_1 = "";
-        var_2 = var_0 _meth_830B();
+        var_2 = var_0 getweaponslistall();
 
         foreach ( var_4 in var_2 )
         {
@@ -125,10 +125,10 @@ cg_storetriggermonitor( var_0 )
 
     for (;;)
     {
-        while ( !var_0 _meth_80A9( self ) )
+        while ( !var_0 istouching( self ) )
             wait 0.1;
 
-        var_1 = var_0 _meth_8312();
+        var_1 = var_0 getcurrentprimaryweapon();
         var_2 = 0;
 
         if ( !maps\mp\zombies\_util::iszombieequipment( self.weaponname ) )
@@ -161,7 +161,7 @@ cg_terminalwaittilltriggerexit( var_0 )
     var_0 endon( "wallBuyStateChange" );
     childthread cg_wallbuywaittillstatechange( var_0 );
 
-    while ( var_0 _meth_80A9( self ) )
+    while ( var_0 istouching( self ) )
         wait 0.1;
 
     return;
@@ -230,8 +230,8 @@ wallbuythink( var_0 )
         {
             if ( isdefined( var_0.weaponent ) )
             {
-                var_0.weaponent _meth_844B();
-                var_0.weaponent _meth_8509( var_1 );
+                var_0.weaponent cloakingenable();
+                var_0.weaponent hideweapontags( var_1 );
                 var_0.weaponent.origin = var_0.modelent.origin;
                 var_8 = undefined;
 
@@ -272,7 +272,7 @@ wallbuythink( var_0 )
     for (;;)
     {
         [var_10, var_13] = var_0 maps\mp\zombies\_util::waittilltriggerortokenuse();
-        var_14 = var_10 _meth_8312();
+        var_14 = var_10 getcurrentprimaryweapon();
 
         if ( level.nextgen )
         {
@@ -311,7 +311,7 @@ wallbuythink( var_0 )
         if ( level.nextgen )
         {
             var_0 thread cloaking();
-            var_0.modelent _meth_8279( "dlc_weapon_box_01_activate" );
+            var_0.modelent scriptmodelplayanim( "dlc_weapon_box_01_activate" );
             var_10 thread maps\mp\zombies\_zombies_audio::moneyspend();
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "station_buy_weapon" ), var_0.modelent, "tag_printer_laser", 1 );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "wall_buy_steam" ), var_0.modelent, "tag_origin", 1 );
@@ -348,13 +348,13 @@ centerweaponforwallbuy( var_0, var_1, var_2 )
         var_3 = var_2;
 
     var_4 = var_0.origin;
-    var_5 = _func_247( var_0.angles );
+    var_5 = anglestoaxis( var_0.angles );
     var_4 += var_5["forward"] * var_3[0];
     var_4 += var_5["right"] * var_3[1];
     var_4 += var_5["up"] * var_3[2];
-    var_6 = var_1 _meth_854D( 0.0, 1.0, 0.0 );
+    var_6 = var_1 getpointinmodelbounds( 0.0, 1.0, 0.0 );
     var_7 = var_4 - var_6;
-    var_1 _meth_8092();
+    var_1 dontinterpolate();
     var_1.origin += var_7;
 }
 
@@ -365,9 +365,9 @@ cloaking()
 
     if ( isdefined( self.weaponent ) )
     {
-        self.weaponent _meth_844C();
+        self.weaponent cloakingdisable();
         wait 3.5;
-        self.weaponent _meth_844B();
+        self.weaponent cloakingenable();
     }
 }
 
@@ -381,10 +381,10 @@ hasfullammo( var_0, var_1 )
             var_1 = var_2;
     }
 
-    if ( var_0 _meth_82F9( var_1 ) < _func_1E1( var_1, var_0 ) )
+    if ( var_0 setweaponammostock( var_1 ) < weaponmaxammo( var_1, var_0 ) )
         return 0;
 
-    if ( var_0 _meth_82F8( var_1 ) < weaponclipsize( var_1, var_0 ) )
+    if ( var_0 getweaponammoclip( var_1 ) < weaponclipsize( var_1, var_0 ) )
         return 0;
 
     return 1;
@@ -395,9 +395,9 @@ displayfullammomessage( var_0, var_1 )
     var_0 playsoundtoplayer( "ui_button_error", var_0 );
 
     if ( var_1 )
-        var_0 iclientprintlnbold( &"ZOMBIES_EQUIPMENT_FULL" );
+        var_0 iprintlnbold( &"ZOMBIES_EQUIPMENT_FULL" );
     else
-        var_0 iclientprintlnbold( &"ZOMBIES_AMMO_FULL" );
+        var_0 iprintlnbold( &"ZOMBIES_AMMO_FULL" );
 }
 
 getweaponhintstring( var_0 )
@@ -529,7 +529,7 @@ getammohintcoststring( var_0, var_1 )
 getweaponslistprimariesminusalts()
 {
     var_0 = [];
-    var_1 = self _meth_830C();
+    var_1 = self getweaponslistprimaries();
 
     foreach ( var_3 in var_1 )
     {
@@ -562,7 +562,7 @@ givezombieweapon( var_0, var_1, var_2, var_3 )
 
         if ( var_5 )
         {
-            var_9 = var_0 _meth_8312();
+            var_9 = var_0 getcurrentprimaryweapon();
 
             if ( isdefined( level.customreplaceweaponfunc ) )
                 var_9 = [[ level.customreplaceweaponfunc ]]( var_0 );
@@ -571,11 +571,11 @@ givezombieweapon( var_0, var_1, var_2, var_3 )
                 if ( var_9 == "none" || var_9 == "search_dstry_bomb_defuse_mp" )
                     var_9 = var_0 common_scripts\utility::getlastweapon();
 
-                if ( !var_0 _meth_8314( var_9 ) )
+                if ( !var_0 hasweapon( var_9 ) )
                     var_9 = var_0 maps\mp\killstreaks\_killstreaks::getfirstprimaryweapon();
             }
 
-            var_0 _meth_830F( var_9 );
+            var_0 takeweapon( var_9 );
         }
         else
         {
@@ -591,11 +591,11 @@ givezombieweapon( var_0, var_1, var_2, var_3 )
 
     maps\mp\gametypes\zombies::createzombieweaponstate( var_0, var_1 );
     var_0 maps\mp\_utility::_giveweapon( var_1 );
-    var_0 _meth_8332( var_1 );
+    var_0 givemaxammo( var_1 );
     var_0 givemaxscriptedammo( var_1 );
 
     if ( var_3 )
-        var_0 _meth_8316( var_1 );
+        var_0 switchtoweaponimmediate( var_1 );
 
     if ( isdefined( level.zmbprocessweapongivenfunc ) )
         level thread [[ level.zmbprocessweapongivenfunc ]]( var_0, var_1 );
@@ -619,7 +619,7 @@ writeweaponlisttomatchdata( var_0 )
     }
     else
     {
-        var_1 = var_0 _meth_830C();
+        var_1 = var_0 getweaponslistprimaries();
         var_2 = [];
 
         foreach ( var_4 in var_1 )
@@ -645,13 +645,13 @@ givezombieequipment( var_0, var_1, var_2 )
                 var_1 = var_3;
         }
 
-        var_4 = var_0 _meth_8345();
+        var_4 = var_0 getlethalweapon();
 
         if ( var_4 != var_1 )
         {
-            var_0 _meth_830F( var_4 );
-            var_0 _meth_8344( var_1 );
-            var_0 _meth_830E( var_1 );
+            var_0 takeweapon( var_4 );
+            var_0 setlethalweapon( var_1 );
+            var_0 giveweapon( var_1 );
             fillweaponclip( var_0, var_1 );
 
             if ( isdefined( level.weaponnamemap[var_1] ) )
@@ -660,7 +660,7 @@ givezombieequipment( var_0, var_1, var_2 )
             var_0 notify( "new_equipment" );
         }
         else
-            var_0 _meth_82F6( var_1, var_0 _meth_82F8( var_1 ) + 1 );
+            var_0 setweaponammoclip( var_1, var_0 getweaponammoclip( var_1 ) + 1 );
     }
     else if ( maps\mp\zombies\_util::iszombietactical( var_1 ) )
     {
@@ -675,13 +675,13 @@ givezombieequipment( var_0, var_1, var_2 )
                 var_1 = var_3;
         }
 
-        var_5 = var_0 _meth_831A();
+        var_5 = var_0 gettacticalweapon();
 
         if ( var_5 != var_1 )
         {
-            var_0 _meth_830F( var_5 );
-            var_0 _meth_8319( var_1 );
-            var_0 _meth_830E( var_1 );
+            var_0 takeweapon( var_5 );
+            var_0 settacticalweapon( var_1 );
+            var_0 giveweapon( var_1 );
             fillweaponclip( var_0, var_1 );
 
             if ( isdefined( level.weaponnamemap[var_1] ) )
@@ -690,7 +690,7 @@ givezombieequipment( var_0, var_1, var_2 )
             var_0 notify( "new_equipment" );
         }
         else
-            var_0 _meth_82F6( var_1, var_0 _meth_82F8( var_1 ) + 1 );
+            var_0 setweaponammoclip( var_1, var_0 getweaponammoclip( var_1 ) + 1 );
     }
 
     if ( isdefined( level.zmbprocessweapongivenfunc ) )
@@ -706,33 +706,33 @@ givezombieequipment( var_0, var_1, var_2 )
 fillweaponclip( var_0, var_1 )
 {
     var_2 = weaponclipsize( var_1, var_0 );
-    var_0 _meth_82F6( var_1, var_2 );
+    var_0 setweaponammoclip( var_1, var_2 );
 }
 
 plusoneweaponclip( var_0, var_1 )
 {
     var_2 = weaponclipsize( var_1, var_0 );
-    var_3 = var_0 _meth_82F8( var_1 );
+    var_3 = var_0 getweaponammoclip( var_1 );
 
     if ( var_3 + 1 <= var_2 )
         var_3++;
 
-    var_0 _meth_82F6( var_1, var_3 );
+    var_0 setweaponammoclip( var_1, var_3 );
 }
 
 zombiesgiveammoandswitch( var_0, var_1, var_2 )
 {
     var_3 = weaponclipsize( var_1, var_0 );
-    var_0 _meth_82F6( var_1, var_3, "right" );
+    var_0 setweaponammoclip( var_1, var_3, "right" );
 
     if ( issubstr( var_1, "akimbo" ) )
-        var_0 _meth_82F6( var_1, var_3, "left" );
+        var_0 setweaponammoclip( var_1, var_3, "left" );
 
-    var_0 _meth_8332( var_1 );
+    var_0 givemaxammo( var_1 );
     var_0 givemaxscriptedammo( var_1 );
 
     if ( var_2 )
-        var_0 _meth_8316( var_1 );
+        var_0 switchtoweaponimmediate( var_1 );
 }
 
 givemaxscriptedammo( var_0 )
@@ -997,7 +997,7 @@ magicboxthink()
             if ( isdefined( var_3 ) && var_3.code_classname == "light" )
             {
                 var_2.light = var_3;
-                var_2.light.lightonintensity = var_2.light _meth_81DE();
+                var_2.light.lightonintensity = var_2.light getlightintensity();
                 var_2.light.lightoffintensity = 0.1;
             }
         }
@@ -1019,15 +1019,15 @@ magicboxthink()
             var_0 = var_2;
             var_0.active = 1;
             var_2 activatemagicboxeffects( var_2.modelent, var_2.light );
-            var_2 _meth_80DB( getmagicboxhintsting() );
-            var_2 _meth_80DC( var_2 getmagicboxhintstringcost() );
+            var_2 sethintstring( getmagicboxhintsting() );
+            var_2 setsecondaryhintstring( var_2 getmagicboxhintstringcost() );
             var_2 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_2.cost ) );
             var_2 maps\mp\zombies\_util::tokenhintstring( 1 );
             continue;
         }
 
-        var_2 _meth_80DB( getmagicboxhintsting( 1 ) );
-        var_2 _meth_80DC( var_2 getmagicboxhintstringcost( 1 ) );
+        var_2 sethintstring( getmagicboxhintsting( 1 ) );
+        var_2 setsecondaryhintstring( var_2 getmagicboxhintstringcost( 1 ) );
         var_2 maps\mp\zombies\_util::tokenhintstring( 0 );
         var_2 deactivatemagicboxeffects( var_2.modelent, var_2.light );
     }
@@ -1069,8 +1069,8 @@ magicboxthink()
         if ( var_7.size > 0 )
         {
             var_0 deactivatemagicboxeffects( var_0.modelent, var_0.light );
-            var_0 _meth_80DB( getmagicboxhintsting( 1 ) );
-            var_0 _meth_80DC( var_0 getmagicboxhintstringcost( 1 ) );
+            var_0 sethintstring( getmagicboxhintsting( 1 ) );
+            var_0 setsecondaryhintstring( var_0 getmagicboxhintstringcost( 1 ) );
             var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
             var_0.active = 0;
 
@@ -1079,8 +1079,8 @@ magicboxthink()
 
             var_0 = var_7[randomint( var_7.size )];
             var_0 activatemagicboxeffects( var_0.modelent, var_0.light );
-            var_0 _meth_80DB( getmagicboxhintsting() );
-            var_0 _meth_80DC( var_0 getmagicboxhintstringcost() );
+            var_0 sethintstring( getmagicboxhintsting() );
+            var_0 setsecondaryhintstring( var_0 getmagicboxhintstringcost() );
             var_0 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_0.cost ) );
             var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
             var_0.active = 1;
@@ -1100,7 +1100,7 @@ activatemagicboxeffects( var_0, var_1 )
     thread audio_magicbox_attract_on( var_0 );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_81DF( var_1.lightonintensity );
+        var_1 setlightintensity( var_1.lightonintensity );
 
     if ( isdefined( self.script_flag ) )
         common_scripts\utility::flag_set( self.script_flag );
@@ -1113,7 +1113,7 @@ deactivatemagicboxeffects( var_0, var_1 )
     thread audio_magicbox_attract_off( var_0 );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_81DF( var_1.lightoffintensity );
+        var_1 setlightintensity( var_1.lightoffintensity );
 
     if ( isdefined( self.script_flag ) )
         common_scripts\utility::flag_clear( self.script_flag );
@@ -1125,12 +1125,12 @@ audio_magicbox_attract_on( var_0 )
     {
         var_1 = var_0 gettagorigin( "tag_printer_laser" );
         var_0.soundent = spawn( "script_origin", var_1 );
-        var_0.soundent _meth_806F( 0 );
+        var_0.soundent scalevolume( 0 );
         waitframe();
     }
 
-    var_0.soundent _meth_806F( 1, 0.25 );
-    var_0.soundent _meth_8075( "interact_mystery_box_attract" );
+    var_0.soundent scalevolume( 1, 0.25 );
+    var_0.soundent playloopsound( "interact_mystery_box_attract" );
 }
 
 audio_magicbox_attract_off( var_0 )
@@ -1138,44 +1138,44 @@ audio_magicbox_attract_off( var_0 )
     if ( !isdefined( var_0.soundent ) )
         return;
 
-    var_0.soundent _meth_806F( 0, 1 );
+    var_0.soundent scalevolume( 0, 1 );
     wait 1;
-    var_0.soundent _meth_80AB();
+    var_0.soundent stoploopsound();
     waitframe();
     var_0.soundent delete();
 }
 
 audio_magicbox_attract_in_use( var_0 )
 {
-    var_0.soundent _meth_806F( 0, 0.5 );
+    var_0.soundent scalevolume( 0, 0.5 );
     wait 0.5;
-    var_0.soundent _meth_80AB();
+    var_0.soundent stoploopsound();
 }
 
 audio_wpnbox_attract_on( var_0 )
 {
-    var_0 _meth_806F( 1, 0.25 );
-    var_0 _meth_8075( "interact_weapon_box_attract" );
+    var_0 scalevolume( 1, 0.25 );
+    var_0 playloopsound( "interact_weapon_box_attract" );
 }
 
 audio_wpnbox_attract_in_use( var_0 )
 {
-    var_0 _meth_806F( 0, 0.5 );
+    var_0 scalevolume( 0, 0.5 );
     wait 3.5;
-    var_0 _meth_806F( 1, 0.5 );
+    var_0 scalevolume( 1, 0.5 );
 }
 
 centerweaponformagicbox( var_0, var_1, var_2 )
 {
     var_3 = [ 0, 0, 39 ];
     var_4 = var_0.origin;
-    var_5 = _func_247( var_0.angles );
+    var_5 = anglestoaxis( var_0.angles );
     var_4 += var_5["forward"] * var_3[0];
     var_4 += var_5["right"] * var_3[1];
     var_4 += var_5["up"] * var_3[2];
-    var_6 = var_1 _meth_854D( 0.0, 0.0, 0.0 );
+    var_6 = var_1 getpointinmodelbounds( 0.0, 0.0, 0.0 );
     var_7 = var_4 - var_6;
-    var_1 _meth_8092();
+    var_1 dontinterpolate();
     var_1.origin += var_7;
 }
 
@@ -1200,7 +1200,7 @@ watchmagicboxtrigger( var_0, var_1 )
     var_6 = var_0.modelent gettagangles( "tag_printer_laser" );
     var_7 = spawn( "script_model", var_5 );
     var_7.angles = var_6 + ( 0, 90, 0 );
-    var_7 _meth_80B1( "tag_origin" );
+    var_7 setmodel( "tag_origin" );
     var_0.weaponmodel = var_7;
     var_0.lastweapon = "";
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "weapon_cycle_slow" ), var_0.modelent, "tag_origin" );
@@ -1218,7 +1218,7 @@ watchmagicboxtrigger( var_0, var_1 )
         [var_10, var_11] = var_8;
         var_12 = var_2 >= var_3 && !maps\mp\_utility::gameflag( "fire_sale" ) && !isscriptedmagicbox( var_0 );
         var_13 = getmagicboxcost( var_4 );
-        var_14 = var_10 _meth_8312();
+        var_14 = var_10 getcurrentprimaryweapon();
 
         if ( maps\mp\zombies\_util::isrippedturretweapon( var_14 ) || maps\mp\zombies\_util::iszombiekillstreakweapon( var_14 ) || maps\mp\zombies\_util::arewallbuysdisabled() )
             continue;
@@ -1252,19 +1252,19 @@ watchmagicboxtrigger( var_0, var_1 )
             maps\mp\zombies\_util::killfxontagnetwork( common_scripts\utility::getfx( "weapon_cycle_slow" ), var_0.modelent, "tag_origin" );
             var_18 = selectmagicboxweapon( var_10, var_0 );
             level.ondeckweapons[level.ondeckweapons.size] = var_18["fullName"];
-            var_7 _meth_80B1( var_18["displayModel"] );
+            var_7 setmodel( var_18["displayModel"] );
             level thread centerweaponformagicbox( var_0.modelent, var_7 );
             var_7 show();
 
             if ( level.nextgen )
-                var_7 _meth_844B();
+                var_7 cloakingenable();
 
             wait 0.5;
 
             if ( level.nextgen )
-                var_7 _meth_844C();
+                var_7 cloakingdisable();
 
-            var_0.modelent _meth_8279( "dlc_weapon_mystery_box_01_open", "magicBox" );
+            var_0.modelent scriptmodelplayanim( "dlc_weapon_mystery_box_01_open", "magicBox" );
             var_0.modelent.soundent playsound( "interact_mystery_box" );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "station_mystery_box" ), var_0.modelent, "tag_printer_laser", 1 );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "magic_box_steam" ), var_0.modelent, "tag_origin", 1 );
@@ -1284,8 +1284,8 @@ watchmagicboxtrigger( var_0, var_1 )
             if ( isdefined( var_0.magicboxpickupstrfunc ) )
                 var_19 = [[ var_0.magicboxpickupstrfunc ]]();
 
-            var_0 _meth_80DB( var_19 );
-            var_0 _meth_80DC( "" );
+            var_0 sethintstring( var_19 );
+            var_0 setsecondaryhintstring( "" );
             var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
 
             if ( isdefined( var_10 ) )
@@ -1318,7 +1318,7 @@ watchmagicboxtrigger( var_0, var_1 )
                 }
                 else
                 {
-                    var_14 = var_25 _meth_8312();
+                    var_14 = var_25 getcurrentprimaryweapon();
 
                     if ( maps\mp\zombies\_util::isrippedturretweapon( var_14 ) || maps\mp\zombies\_util::iszombiekillstreakweapon( var_14 ) || maps\mp\zombies\_util::arewallbuysdisabled() )
                         var_22 = "nothing";
@@ -1329,14 +1329,14 @@ watchmagicboxtrigger( var_0, var_1 )
             }
 
             var_0.modelent.soundent playsound( "interact_mystery_box_reset" );
-            var_0.modelent _meth_8279( "dlc_weapon_mystery_box_01_close", "magicBox" );
+            var_0.modelent scriptmodelplayanim( "dlc_weapon_mystery_box_01_close", "magicBox" );
             var_0 common_scripts\utility::trigger_off();
-            var_0 _meth_80DB( getmagicboxhintsting() );
-            var_0 _meth_80DC( var_0 getmagicboxhintstringcost() );
+            var_0 sethintstring( getmagicboxhintsting() );
+            var_0 setsecondaryhintstring( var_0 getmagicboxhintstringcost() );
             var_0 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_0.cost ) );
             var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
             var_0 releaseclaimedtrigger();
-            var_7 _meth_80B1( "tag_origin" );
+            var_7 setmodel( "tag_origin" );
             var_7 notify( "stop_flashing" );
 
             if ( isdefined( var_10 ) )
@@ -1379,7 +1379,7 @@ watchmagicboxtrigger( var_0, var_1 )
         maps\mp\zombies\_util::killfxontagnetwork( common_scripts\utility::getfx( "station_mystery_box_icon_on" ), var_0.modelent, "tag_origin" );
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "magic_box_move" ), var_0.modelent, "tag_origin" );
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "magic_box_steam" ), var_0.modelent, "tag_origin", 1 );
-        var_0.modelent _meth_8279( "dlc_weapon_mystery_box_01_malfunction", "magicBox" );
+        var_0.modelent scriptmodelplayanim( "dlc_weapon_mystery_box_01_malfunction", "magicBox" );
         maps\mp\zombies\_zombies_audio_announcer::announcerprintermoveddialog();
         wait 3;
         var_0.modelent.soundent playsound( "interact_mystery_box_shutoff" );
@@ -1408,7 +1408,7 @@ flashweaponmodel( var_0 )
 
     for (;;)
     {
-        var_0 _meth_8510();
+        var_0 ghost();
         wait 0.35;
         var_0 show();
         wait 0.35;
@@ -1432,7 +1432,7 @@ selectmagicboxweapon( var_0, var_1 )
 {
     var_2 = [];
     var_3 = "";
-    var_4 = var_0 _meth_830B();
+    var_4 = var_0 getweaponslistall();
     var_5 = [];
 
     foreach ( var_7 in var_4 )
@@ -1486,7 +1486,7 @@ islimitreached( var_0 )
 
     foreach ( var_3 in level.players )
     {
-        var_4 = var_3 _meth_830B();
+        var_4 = var_3 getweaponslistall();
         var_1 = common_scripts\utility::array_combine( var_1, var_4 );
     }
 
@@ -1592,7 +1592,7 @@ weaponlevelboxsetupspecialbox()
     if ( isdefined( var_0 ) && var_0.code_classname == "light" )
     {
         self.modelent.light = var_0;
-        self.modelent.light.lightonintensity = self.modelent.light _meth_81DE();
+        self.modelent.light.lightonintensity = self.modelent.light getlightintensity();
         self.modelent.light.lightoffintensity = 0.1;
         self.modelent.light.ison = 1;
     }
@@ -1602,7 +1602,7 @@ weaponlevelboxturnonlight()
 {
     if ( isdefined( self.modelent.light ) && isdefined( self.modelent.light.lightoffintensity ) && isdefined( self.modelent.light.ison ) && !self.modelent.light.ison )
     {
-        self.modelent.light _meth_81DF( self.modelent.light.lightonintensity );
+        self.modelent.light setlightintensity( self.modelent.light.lightonintensity );
         self.modelent.light.ison = 1;
     }
 }
@@ -1611,7 +1611,7 @@ weaponlevelboxturnofflight()
 {
     if ( isdefined( self.modelent.light ) && isdefined( self.modelent.light.lightoffintensity ) && isdefined( self.modelent.light.ison ) && self.modelent.light.ison )
     {
-        self.modelent.light _meth_81DF( self.modelent.light.lightoffintensity );
+        self.modelent.light setlightintensity( self.modelent.light.lightoffintensity );
         self.modelent.light.ison = 0;
     }
 }
@@ -1648,8 +1648,8 @@ weaponlevelboxupdatehintstrings( var_0 )
                 var_3 = var_2[1];
                 break;
             case "no_upgrades":
-                self _meth_80DB( "" );
-                self _meth_80DC( "" );
+                self sethintstring( "" );
+                self setsecondaryhintstring( "" );
                 maps\mp\zombies\_util::tokenhintstring( 0 );
                 var_0 waittill( "allow_upgrades" );
                 var_3 = maps\mp\zombies\_util::getplayerweaponzombies( var_0 );
@@ -1657,19 +1657,19 @@ weaponlevelboxupdatehintstrings( var_0 )
         }
 
         var_4 = getweaponbasename( var_3 );
-        self _meth_80DA( "HINT_NOICON" );
+        self setcursorhint( "HINT_NOICON" );
 
         if ( !maps\mp\zombies\_util::haszombieweaponstate( var_0, var_4 ) || !weaponlevelboxisplayerweaponmaxed( var_0, var_4 ) )
         {
-            self _meth_80DB( &"ZOMBIES_WEAPON_LEVEL_BOX" );
-            self _meth_80DC( var_1 );
+            self sethintstring( &"ZOMBIES_WEAPON_LEVEL_BOX" );
+            self setsecondaryhintstring( var_1 );
             maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( 2500 ) );
             maps\mp\zombies\_util::tokenhintstring( 1 );
             continue;
         }
 
-        self _meth_80DB( &"ZOMBIES_WEAPON_LEVEL_MAX" );
-        self _meth_80DC( "" );
+        self sethintstring( &"ZOMBIES_WEAPON_LEVEL_MAX" );
+        self setsecondaryhintstring( "" );
         maps\mp\zombies\_util::tokenhintstring( 0 );
     }
 }
@@ -1731,7 +1731,7 @@ cg_levelboxtriggermonitor( var_0 )
 
     for (;;)
     {
-        while ( !var_0 _meth_80A9( self ) )
+        while ( !var_0 istouching( self ) )
             wait 0.1;
 
         if ( !maps\mp\zombies\_util::haszombieweaponstate( var_0, var_0.baseweapon ) || !weaponlevelboxisplayerweaponmaxed( var_0, var_0.baseweapon ) )
@@ -1750,7 +1750,7 @@ cg_levelboxtriggermonitor( var_0 )
             var_0.storecost settext( "" );
         }
 
-        while ( var_0 _meth_80A9( self ) )
+        while ( var_0 istouching( self ) )
             wait 0.1;
 
         var_0.storedescription settext( "" );
@@ -1778,7 +1778,7 @@ weaponlevelboxthink()
     }
 
     var_0 = self.modelent gettagangles( "tag_origin" );
-    self.modelent _meth_8075( "interact_weapon_upgrade_attract" );
+    self.modelent playloopsound( "interact_weapon_upgrade_attract" );
 
     if ( maps\mp\zombies\_util::isusetriggerprimary( self ) )
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "station_upgrade_weapon_pwr_on" ), self.modelent, "tag_origin" );
@@ -1810,7 +1810,7 @@ weaponlevelboxthink()
     for (;;)
     {
         [var_2, var_8] = maps\mp\zombies\_util::waittilltriggerortokenuse();
-        var_9 = var_2 _meth_8312();
+        var_9 = var_2 getcurrentprimaryweapon();
 
         if ( maps\mp\zombies\_util::isrippedturretweapon( var_9 ) || maps\mp\zombies\_util::iszombiekillstreakweapon( var_9 ) || maps\mp\zombies\_util::arewallbuysdisabled() )
             continue;
@@ -1853,7 +1853,7 @@ weaponlevelboxthink()
             var_16 = findholomodel( var_11 );
             var_15 = spawn( "script_model", self.origin );
             var_15.angles = var_0 - ( 0, 90, 0 );
-            var_15 _meth_80B1( var_16 );
+            var_15 setmodel( var_16 );
             var_17 = [ 15, 0, -6 ];
 
             if ( var_11 == "iw5_exocrossbowzm_mp" )
@@ -1900,7 +1900,7 @@ weaponlevelboxthink()
 
 setweaponlevel( var_0, var_1, var_2 )
 {
-    var_0 _meth_830F( var_1 );
+    var_0 takeweapon( var_1 );
     var_3 = getweaponbasename( var_1 );
     var_0.weaponstate[var_3]["level"] = var_2;
     var_4 = getupgradeweaponname( var_0, var_3 );
@@ -1917,7 +1917,7 @@ setweaponlevel( var_0, var_1, var_2 )
 
 giveweaponlevelachievement( var_0 )
 {
-    var_1 = var_0 _meth_830C();
+    var_1 = var_0 getweaponslistprimaries();
 
     if ( var_1.size < 2 )
         return;
@@ -2167,7 +2167,7 @@ getmagicboxweapondefaultattachment( var_0, var_1 )
 displayrequiredlevelmessage( var_0 )
 {
     var_0 playsoundtoplayer( "ui_button_error", var_0 );
-    var_0 iclientprintlnbold( &"ZOMBIES_REQUIRES_LEVEL_20" );
+    var_0 iprintlnbold( &"ZOMBIES_REQUIRES_LEVEL_20" );
 }
 
 diaplaymaxlevelmessage( var_0 )
@@ -2175,9 +2175,9 @@ diaplaymaxlevelmessage( var_0 )
     var_0 playsoundtoplayer( "ui_button_error", var_0 );
 
     if ( !isspecialweaponbox( self ) )
-        var_0 iclientprintlnbold( &"ZOMBIES_MAX_LEVEL_20" );
+        var_0 iprintlnbold( &"ZOMBIES_MAX_LEVEL_20" );
     else
-        var_0 iclientprintlnbold( &"ZOMBIES_MAX_LEVEL_25" );
+        var_0 iprintlnbold( &"ZOMBIES_MAX_LEVEL_25" );
 }
 
 initcamolevels()

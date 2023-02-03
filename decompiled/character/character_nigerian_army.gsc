@@ -6,7 +6,7 @@ main()
     codescripts\character::setmodelfromarray( xmodelalias\alias_nigerian_army_bodies::main() );
     codescripts\character::attachhead( "alias_nigerian_army_heads", xmodelalias\alias_nigerian_army_heads::main() );
     self.voice = "african";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

@@ -137,14 +137,14 @@ enemy_corpse_saw_behavior()
     }
 
     self.goalradius = 80;
-    self _meth_81A6( self._stealth.logic.corpse.origin );
+    self setgoalpos( self._stealth.logic.corpse.origin );
 }
 
 enemy_corpse_found_behavior()
 {
     if ( self.type == "dog" )
     {
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         return;
     }
 
@@ -175,7 +175,7 @@ player_can_see_corpse( var_0 )
     if ( var_2 > level._stealth.logic.corpse.player_distsqrd )
         return 0;
 
-    return sighttracepassed( var_0 + ( 0, 0, 48 ), var_1 _meth_80A8(), 0, var_1 );
+    return sighttracepassed( var_0 + ( 0, 0, 48 ), var_1 geteye(), 0, var_1 );
 }
 
 enemy_corpse_logic()
@@ -241,7 +241,7 @@ enemy_corpse_logic()
 
                 if ( var_6 < level._stealth.logic.corpse.detect_distsqrd )
                 {
-                    if ( self _meth_81BE( var_2 ) )
+                    if ( self cansee( var_2 ) )
                     {
                         var_1 = 1;
                         break;
@@ -249,13 +249,13 @@ enemy_corpse_logic()
                 }
 
                 var_8 = self gettagangles( "tag_eye" );
-                var_9 = self _meth_80A8();
+                var_9 = self geteye();
                 var_10 = anglestoforward( var_8 );
                 var_11 = vectornormalize( var_2.origin - var_9 );
 
                 if ( vectordot( var_10, var_11 ) > 0.55 )
                 {
-                    if ( self _meth_81BE( var_2 ) )
+                    if ( self cansee( var_2 ) )
                     {
                         var_1 = 1;
                         break;
@@ -321,7 +321,7 @@ remove_corpse_loop_while_stealth_broken()
 
             if ( var_4 < var_5 )
             {
-                var_3 _meth_803E( 10 );
+                var_3 setcorpseremovetimer( 10 );
                 var_3.found = 1;
             }
         }
@@ -373,7 +373,7 @@ enemy_corpse_found( var_0 )
 {
     self endon( "death" );
     level._stealth.logic.corpse.last_pos = var_0.origin;
-    var_0 _meth_803E( level._stealth.logic.corpse.reset_time );
+    var_0 setcorpseremovetimer( level._stealth.logic.corpse.reset_time );
     var_0.found = 1;
 
     if ( self.type == "dog" && maps\_utility::ent_flag_exist( "_stealth_behavior_reaction_anim_in_progress" ) )
@@ -454,5 +454,5 @@ get_corpse_array()
     if ( isdefined( level._stealth.logic.corpse.collect_func ) )
         return [[ level._stealth.logic.corpse.collect_func ]]();
 
-    return _func_0D9();
+    return getcorpsearray();
 }

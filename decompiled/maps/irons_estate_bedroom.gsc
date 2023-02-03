@@ -29,7 +29,7 @@ bedroom_begin()
     common_scripts\utility::flag_set( "bedroom_start" );
     level.play_ally_warning_vo = undefined;
     level.play_ally_callout_vo = undefined;
-    level.ally_vo_org _meth_80AC();
+    level.ally_vo_org stopsounds();
     wait 0.05;
     level.player.grapple["dist_max"] = 800;
     thread balcony_entrance_doors();
@@ -73,21 +73,21 @@ meet_cormack_cormack()
     var_4 = getent( "pent_enter_door_right", "targetname" );
     var_5 = getent( "pent_desk_chair", "targetname" );
     var_6 = getent( "pent_desk_chair_clip", "targetname" );
-    var_6 _meth_804D( var_5 );
+    var_6 linkto( var_5 );
     var_7 = getent( "office_painting", "targetname" );
-    var_7 _meth_804D( var_2, "j_prop_4" );
+    var_7 linkto( var_2, "j_prop_4" );
     wait 0.05;
-    var_3 _meth_804D( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_4 _meth_804D( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_5 _meth_804D( var_2, "j_prop_3", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_2, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 linkto( var_2, "j_prop_2", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 linkto( var_2, "j_prop_3", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     wait 0.05;
     var_8 = getent( "pent_enter_door_left_clip", "targetname" );
     var_9 = getent( "pent_enter_door_right_clip", "targetname" );
 
     if ( isdefined( var_8 ) && isdefined( var_9 ) )
     {
-        var_8 _meth_804D( var_2, "j_prop_1" );
-        var_9 _meth_804D( var_2, "j_prop_2" );
+        var_8 linkto( var_2, "j_prop_1" );
+        var_9 linkto( var_2, "j_prop_2" );
     }
 
     common_scripts\utility::flag_wait( "player_entered_balcony_door" );
@@ -162,7 +162,7 @@ cormack_stealth_takedown_guy_waits()
     self.diequietly = 1;
     self.a.nodeath = 1;
     self.noragdoll = 1;
-    self _meth_8052();
+    self kill();
 }
 
 cormack_stealth_takedown_guard_sounds()
@@ -193,19 +193,19 @@ balcony_entrance_doors()
 {
     var_0 = getent( "balcony_entrance_door_left", "targetname" );
     var_1 = getent( "balcony_entrance_door_right", "targetname" );
-    var_0 _meth_82AE( var_0.origin + anglestoright( var_0.angles ) * 64 * -1, 1.0 );
-    var_1 _meth_82AE( var_1.origin + anglestoright( var_1.angles ) * 64, 1.0 );
+    var_0 moveto( var_0.origin + anglestoright( var_0.angles ) * 64 * -1, 1.0 );
+    var_1 moveto( var_1.origin + anglestoright( var_1.angles ) * 64, 1.0 );
     soundscripts\_snd::snd_message( "aud_penthouse_front_door" );
     wait 1.05;
     var_2 = getent( "balcony_entrance_door_player_clip", "targetname" );
-    var_2 _meth_82BF();
-    var_2 _meth_8058();
+    var_2 notsolid();
+    var_2 connectpaths();
     common_scripts\utility::flag_set( "balcony_entrance_doors_opened" );
     common_scripts\utility::flag_wait( "player_entered_balcony_door" );
-    var_2 _meth_82BE();
-    var_2 _meth_8057();
-    var_0 _meth_82AE( var_0.origin + anglestoright( var_0.angles ) * 64, 1.0 );
-    var_1 _meth_82AE( var_1.origin + anglestoright( var_1.angles ) * 64 * -1, 1.0 );
+    var_2 solid();
+    var_2 disconnectpaths();
+    var_0 moveto( var_0.origin + anglestoright( var_0.angles ) * 64, 1.0 );
+    var_1 moveto( var_1.origin + anglestoright( var_1.angles ) * 64 * -1, 1.0 );
     wait 1.05;
     thread fog_entrance_doors();
 }

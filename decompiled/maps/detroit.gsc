@@ -273,15 +273,15 @@ main()
     level.spotlight_owner = undefined;
     level.give_player_flashlight = 1;
     level.spotlights = [];
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "a_pressed", "+gostand" );
-    level.player _meth_82DD( "b_pressed", "+stance" );
-    level.player _meth_82DD( "y_pressed", "weapnext" );
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "attack_pressed", "+attack" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "b_pressed", "+stance" );
+    level.player notifyonplayercommand( "y_pressed", "weapnext" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "attack_pressed", "+attack" );
 
     if ( level.currentgen )
         maps\detroit_transients_cg::detroit_cg_precache_models();
@@ -326,7 +326,7 @@ main()
     precachemodel( "det_doctor_head_bagA" );
     precachemodel( "vehicle_mil_humvee_cleaner_01_ai" );
     precachemodel( "prop_cigarette" );
-    _func_251( "lag_snipper_laser" );
+    precachelaser( "lag_snipper_laser" );
     precachemodel( "det_school_door_01_anim" );
     precachemodel( "kva_hazmat_body_a_stabbed" );
     precacherumble( "damage_light" );
@@ -352,23 +352,23 @@ main()
         precachemodel( "head_ilana_civilian" );
     }
 
-    precacheitem( "mp7_silencer" );
-    precacheitem( "heli_minigun_so" );
-    precacheitem( "mig_25mm_cannon" );
-    precacheitem( "sidewinder_warhawk_aftermath" );
-    precacheitem( "flash_grenade" );
-    precacheitem( "flash_grenade_var" );
-    precacheitem( "iw5_unarmed_nullattach" );
-    precacheitem( "iw5_unarmeddetroit_nullattach" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27down_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_bal27_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp_opticsthermal" );
-    precacheitem( "iw5_hbra3_sp_opticstargetenhancer" );
+    precacheshellshock( "mp7_silencer" );
+    precacheshellshock( "heli_minigun_so" );
+    precacheshellshock( "mig_25mm_cannon" );
+    precacheshellshock( "sidewinder_warhawk_aftermath" );
+    precacheshellshock( "flash_grenade" );
+    precacheshellshock( "flash_grenade_var" );
+    precacheshellshock( "iw5_unarmed_nullattach" );
+    precacheshellshock( "iw5_unarmeddetroit_nullattach" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27down_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp_opticsthermal" );
+    precacheshellshock( "iw5_hbra3_sp_opticstargetenhancer" );
     precacheshellshock( "paris_scripted_flashbang" );
-    precacheitem( "iw5_mp11_sp" );
-    precacheitem( "iw5_arx160_sp" );
+    precacheshellshock( "iw5_mp11_sp" );
+    precacheshellshock( "iw5_arx160_sp" );
     precacheshader( "s1_railgun_hud_outer_shadow" );
 
     if ( level.nextgen )
@@ -411,8 +411,8 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "7" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.8" );
+        setsaveddvar( "r_gunSightColorEntityScale", "7" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.8" );
     }
 
     var_5 = getdvarint( "demo_itiot", 0 );
@@ -421,7 +421,7 @@ main()
     {
         soundscripts\_snd::snd_message( "e3_demo_fade_in" );
         level.player.auxillary_hud = newclienthudelem( level.player );
-        level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+        level.player.auxillary_hud setshader( "black", 1280, 720 );
         level.player.auxillary_hud.horzalign = "fullscreen";
         level.player.auxillary_hud.vertalign = "fullscreen";
         level.player.auxillary_hud.alpha = 1;
@@ -470,9 +470,9 @@ spawn_bikes()
     var_3.animname = "bones_bike";
     var_1.animname = "burke_bike";
     var_2.animname = "joker_bike";
-    var_3 _meth_822E();
-    var_1 _meth_822E();
-    var_2 _meth_822E();
+    var_3 vehphys_disablecrashing();
+    var_1 vehphys_disablecrashing();
+    var_2 vehphys_disablecrashing();
     level.burke_bike = var_1;
     level.joker_bike = var_2;
     level.bones_bike = var_3;
@@ -483,12 +483,12 @@ debug_ai_count()
 {
     for (;;)
     {
-        var_0 = _func_0D6();
+        var_0 = getaiarray();
         var_1 = 0;
 
         foreach ( var_3 in var_0 )
         {
-            if ( sighttracepassed( var_3 _meth_80A8(), level.player _meth_80A8(), 0, level.player_bike ) )
+            if ( sighttracepassed( var_3 geteye(), level.player geteye(), 0, level.player_bike ) )
             {
                 var_1++;
                 var_3.was_ever_visible = 1;
@@ -518,7 +518,7 @@ stealth_spawn_function()
 
 ai_thermal()
 {
-    self _meth_8029();
+    self thermaldrawenable();
 }
 
 debug_all()
@@ -816,7 +816,7 @@ set_patrol_anim_set( var_0, var_1, var_2 )
     self.script_animation = var_0;
     maps\_patrol::set_patrol_run_anim_array();
     self.goalradius = 32;
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.disablearrivals = 1;
     self.disableexits = 1;
     self.allowdeath = 1;
@@ -836,9 +836,9 @@ start_refugee_camp()
 {
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
-    level.player _meth_83C0( "detroit_intro_1" );
+    level.player lightsetforplayer( "detroit_intro_1" );
     maps\_utility::vision_set_fog_changes( "detroit_intro", 0 );
-    level.player _meth_8490( "clut_detroit_level_start_intro", 0 );
+    level.player setclutforplayer( "clut_detroit_level_start_intro", 0 );
     level notify( "vfx_rain_intro" );
     soundscripts\_snd::snd_message( "start_refugee_camp" );
     thread battle_chatter_off_both();
@@ -858,7 +858,7 @@ start_refugee_camp()
 
 opening_movie_function()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     thread maps\_shg_utility::play_chyron_video( "chyron_text_detroit", 2, 2 );
     common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -869,9 +869,9 @@ opening_movie_function()
 
 debug_start_drive_in()
 {
-    level.player _meth_83C0( "detroit_intro" );
+    level.player lightsetforplayer( "detroit_intro" );
     maps\_utility::vision_set_fog_changes( "detroit_camp", 0 );
-    level.player _meth_8490( "clut_detroit_camp", 0 );
+    level.player setclutforplayer( "clut_detroit_camp", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
     level notify( "vfx_rain_intro" );
@@ -880,7 +880,7 @@ debug_start_drive_in()
     level.playerisonleft = 0;
     thread maps\detroit_refugee_camp::debug_start_bike_ride_in();
     thread give_regular_grenades();
-    level.player _meth_8310();
+    level.player takeallweapons();
     common_scripts\utility::flag_set( "vo_camp_bike_ready" );
     common_scripts\utility::flag_set( "vo_autopilot_engaged" );
     common_scripts\utility::flag_set( "flag_camp_visibility_03" );
@@ -903,34 +903,34 @@ debug_start_school_begin()
     var_0 thread maps\_anim::anim_first_frame_solo( level.bones_bike, "bike_dismount" );
     var_0 thread maps\_anim::anim_first_frame_solo( level.joker_bike, "bike_dismount" );
     level.player_bike.world_body = maps\_utility::spawn_anim_model( "world_body" );
-    level.player_bike.world_body _meth_804D( level.player_bike, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    level.player_bike.world_body _meth_814B( level.player_bike.world_body maps\_utility::getanim( "jetbike_casual_drive_idle" ) );
+    level.player_bike.world_body linkto( level.player_bike, "tag_driver", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.player_bike.world_body setanim( level.player_bike.world_body maps\_utility::getanim( "jetbike_casual_drive_idle" ) );
     thread give_regular_grenades();
     common_scripts\utility::flag_set( "begin_bike_dismount_joker" );
     common_scripts\utility::flag_set( "begin_bike_dismount_bones" );
     common_scripts\utility::flag_set( "begin_bike_dismount_burke" );
     common_scripts\utility::flag_set( "begin_bike_dismount_player" );
     maps\_utility::vision_set_fog_changes( "detroit_garage", 0 );
-    level.player _meth_83C0( "garage" );
+    level.player lightsetforplayer( "garage" );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
     wait 0.1;
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
 }
 
 debug_start_school_interior()
 {
-    level.player _meth_83C0( "city_dark" );
+    level.player lightsetforplayer( "city_dark" );
     maps\_utility::vision_set_fog_changes( "detroit_city_school", 0 );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
     soundscripts\_snd::snd_message( "start_school_interior" );
@@ -942,9 +942,9 @@ debug_start_school_interior()
     thread maps\detroit_school::burke_deadroom_door();
     thread give_regular_grenades();
     thread maps\detroit_school::teleport_burke_to_alley();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     waitframe();
     common_scripts\utility::flag_set( "vo_school_checkpoint_blue" );
@@ -957,9 +957,9 @@ debug_start_school_interior()
 
 debug_start_school_before_fall()
 {
-    level.player _meth_83C0( "school_sun" );
+    level.player lightsetforplayer( "school_sun" );
     maps\_utility::vision_set_fog_changes( "detroit_school_walk", 0 );
-    level.player _meth_8490( "clut_detroit_interior", 0 );
+    level.player setclutforplayer( "clut_detroit_interior", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
     thread give_regular_grenades();
@@ -978,30 +978,30 @@ debug_start_school_before_fall()
     common_scripts\utility::flag_clear( "lightning_on" );
     common_scripts\utility::flag_clear( "lightning_on" );
     thread maps\detroit_school::begin_the_shimmey_for_burke();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
 }
 
 debug_start_school_basement()
 {
-    level.player _meth_83C0( "school" );
+    level.player lightsetforplayer( "school" );
     maps\_utility::vision_set_fog_changes( "detroit_school_basement", 0 );
-    level.player _meth_8490( "clut_detroit_basement", 0 );
+    level.player setclutforplayer( "clut_detroit_basement", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
-    level.player _meth_81E1( 0.6 );
+    level.player setmovespeedscale( 0.6 );
     soundscripts\_snd::snd_message( "start_school_basement" );
     wait 0.05;
     thread maps\detroit_school::setup_school_stealth();
     wait 0.1;
     common_scripts\utility::flag_clear( "lightning_on" );
-    level.player _meth_8304( 0 );
-    level.player _meth_8310();
+    level.player allowsprint( 0 );
+    level.player takeallweapons();
     level.player thread handle_unarmed_viewbob();
-    level.player _meth_830E( "iw5_unarmeddetroit_nullattach" );
-    level.player _meth_8315( "iw5_unarmeddetroit_nullattach" );
+    level.player giveweapon( "iw5_unarmeddetroit_nullattach" );
+    level.player switchtoweapon( "iw5_unarmeddetroit_nullattach" );
     level.player maps\_utility::teleport_player( common_scripts\utility::getstruct( "org_checkpoint_basement_start", "targetname" ) );
     thread maps\detroit_lighting::toggle_lighting_spot01_on_checkpoint();
     thread maps\detroit_lighting::basement_fog_checkpoint();
@@ -1011,8 +1011,8 @@ debug_start_school_basement()
 
 debug_start_school_wall_grab()
 {
-    level.player _meth_83C0( "school" );
-    level.player _meth_8490( "clut_detroit_interior", 0 );
+    level.player lightsetforplayer( "school" );
+    level.player setclutforplayer( "clut_detroit_interior", 0 );
     maps\_utility::vision_set_fog_changes( "detroit_school", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
@@ -1021,11 +1021,11 @@ debug_start_school_wall_grab()
     level.player maps\_utility::teleport_player( var_0 );
     thread maps\detroit_school::setup_school_stealth();
     waittillframeend;
-    level.player _meth_8304( 0 );
-    level.player _meth_8310();
+    level.player allowsprint( 0 );
+    level.player takeallweapons();
     level.player thread handle_unarmed_viewbob();
-    level.player _meth_830E( "iw5_unarmeddetroit_nullattach" );
-    level.player _meth_8315( "iw5_unarmeddetroit_nullattach" );
+    level.player giveweapon( "iw5_unarmeddetroit_nullattach" );
+    level.player switchtoweapon( "iw5_unarmeddetroit_nullattach" );
     wait 0.1;
     common_scripts\utility::flag_clear( "lightning_on" );
     thread maps\detroit_lighting::toggle_lighting_spot01_on_checkpoint();
@@ -1035,7 +1035,7 @@ debug_start_school_wall_grab()
 schoolfall_start()
 {
     debug_start_common();
-    level.player _meth_83C0( "city" );
+    level.player lightsetforplayer( "city" );
     maps\_utility::vision_set_fog_changes( "detroit_city", 0 );
     var_0 = getnode( "school_fall_start", "targetname" );
     wait 0.05;
@@ -1049,30 +1049,30 @@ handle_unarmed_viewbob()
     var_1 = getdvar( "bg_viewBobAmplitudeDucked" );
     var_2 = getdvar( "bg_viewBobMax" );
     waitframe();
-    _func_0D3( "bg_viewBobAmplitudeStanding", "0.005 0.01" );
-    _func_0D3( "bg_viewBobAmplitudeDucked", "0.002 0.005" );
-    _func_0D3( "bg_viewBobMax", 3 );
-    level.player _meth_83F5( 0.8 );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", "0.005 0.01" );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", "0.002 0.005" );
+    setsaveddvar( "bg_viewBobMax", 3 );
+    level.player setbobrate( 0.8 );
     level common_scripts\utility::waittill_any( "player_no_longer_unarmed", "weapon_take_no_longer_needed" );
-    _func_0D3( "bg_viewBobAmplitudeStanding", var_0 );
-    _func_0D3( "bg_viewBobAmplitudeDucked", var_1 );
-    _func_0D3( "bg_viewBobMax", var_2 );
-    level.player _meth_83F5( 1 );
+    setsaveddvar( "bg_viewBobAmplitudeStanding", var_0 );
+    setsaveddvar( "bg_viewBobAmplitudeDucked", var_1 );
+    setsaveddvar( "bg_viewBobMax", var_2 );
+    level.player setbobrate( 1 );
 }
 
 debug_start_alleyway()
 {
-    level.player _meth_83C0( "city" );
+    level.player lightsetforplayer( "city" );
     maps\_utility::vision_set_fog_changes( "detroit_city", 0 );
-    level.player _meth_8490( "clut_detroit_interior", 0 );
+    level.player setclutforplayer( "clut_detroit_interior", 0 );
     level.player maps\_stealth_utility::stealth_default();
     debug_start_common();
     soundscripts\_snd::snd_message( "start_alleyway" );
     street1_teleportplayer();
     street1_ingame();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     var_0 = getglass( "burke_street_glass" );
     destroyglass( var_0 );
@@ -1088,9 +1088,9 @@ give_regular_grenades( var_0 )
 
 debug_start_nightclub()
 {
-    level.player _meth_83C0( "club" );
+    level.player lightsetforplayer( "club" );
     maps\_utility::vision_set_fog_changes( "detroit_club", 0 );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     debug_start_common();
     level.burke maps\_utility::enable_careful();
     soundscripts\_snd::snd_message( "start_office" );
@@ -1100,19 +1100,19 @@ debug_start_nightclub()
     var_1 = getnode( "burke_path_onfoot_01a", "targetname" );
     level.burke maps\_utility::teleport_ai( var_1 );
     var_2 = getnode( "burke_path_onfoot_01a", "targetname" );
-    level.burke _meth_81A5( var_2 );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.burke setgoalnode( var_2 );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     level.burke.ignoreall = 0;
 }
 
 debug_start_exopush()
 {
-    level.player _meth_83C0( "city" );
+    level.player lightsetforplayer( "city" );
     maps\_utility::vision_set_fog_changes( "detroit_city_far_fog", 0 );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     debug_start_common();
     soundscripts\_snd::snd_message( "start_exopush" );
     thread give_regular_grenades();
@@ -1124,9 +1124,9 @@ debug_start_exopush()
     level.bones maps\_utility::teleport_ai( var_2 );
     level.joker maps\_utility::teleport_ai( var_3 );
     level.player maps\_utility::teleport_player( var_0 );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread maps\detroit_streets::preplaced_guys_function();
     thread maps\detroit_streets::begin_exo_push( 1 );
     thread maps\detroit_streets::exo_push_combat_manager();
@@ -1141,14 +1141,14 @@ debug_start_exopush()
 debug_start_hospital()
 {
     maps\_utility::vision_set_fog_changes( "detroit_city_far_fog", 0 );
-    level.player _meth_83C0( "city" );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player lightsetforplayer( "city" );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     debug_start_common();
     common_scripts\utility::flag_set( "exo_push_arrived" );
     soundscripts\_snd::snd_message( "start_hospital" );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     var_0 = getnode( "player_hospital_start", "targetname" );
     var_1 = getnode( "burke_hospital", "targetname" );
@@ -1171,10 +1171,10 @@ debug_start_hospital_capture()
     debug_start_common();
     soundscripts\_snd::snd_message( "start_hospital_capture_animation" );
     maps\_utility::vision_set_fog_changes( "detroit_hospital_top", 0 );
-    level.player _meth_83C0( "hospital" );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player lightsetforplayer( "hospital" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     var_0 = getnode( "hide_node_2", "targetname" );
     var_1 = getnode( "burke_spot_3_hospital", "targetname" );
@@ -1199,13 +1199,13 @@ debug_start_hospital_capture()
 debug_start_sentinel_reveal()
 {
     maps\_utility::vision_set_fog_changes( "detroit_city_top", 0 );
-    level.player _meth_83C0( "city_dark" );
-    level.player _meth_8490( "clut_detroit_hospital", 0 );
+    level.player lightsetforplayer( "city_dark" );
+    level.player setclutforplayer( "clut_detroit_hospital", 0 );
     debug_start_common();
     soundscripts\_snd::snd_message( "start_sentinel_reveal" );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     var_0 = getnode( "player_sentinel_start", "targetname" );
     var_1 = getnode( "burke_post_before_sentinel_room", "targetname" );
@@ -1239,7 +1239,7 @@ debug_start_sentinel_reveal()
     common_scripts\utility::flag_set( "obj_escape_detroit_give" );
     wait 0.5;
     thread maps\detroit_hospital::burke_pre_sentinel_kva_reveal();
-    level.bones _meth_81A5( var_4 );
+    level.bones setgoalnode( var_4 );
     thread maps\detroit_lighting::jetbike_exit_pre_mount_lighting();
     common_scripts\utility::flag_set( "start_exit_trains" );
     var_7 = getent( "breach_clip", "targetname" );
@@ -1251,13 +1251,13 @@ debug_start_sentinel_reveal()
 
 debug_start_exit_drive()
 {
-    level.player _meth_83C0( "city" );
+    level.player lightsetforplayer( "city" );
     maps\_utility::vision_set_fog_changes( "detroit_city_fog_close", 0 );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     debug_start_common();
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
     thread give_regular_grenades();
     soundscripts\_snd::snd_message( "start_exit_drive" );
     var_0 = getent( "player_spawn_exitdrive", "targetname" );
@@ -1290,9 +1290,9 @@ debug_start_exit_drive()
 
 debug_start_exit_drive_end()
 {
-    level.player _meth_83C0( "jetbike_gate" );
+    level.player lightsetforplayer( "jetbike_gate" );
     maps\_utility::vision_set_fog_changes( "detroit_jetbike_end", 0 );
-    level.player _meth_8490( "clut_detroit_exterior", 0 );
+    level.player setclutforplayer( "clut_detroit_exterior", 0 );
     debug_start_common();
     common_scripts\utility::flag_set( "onfoot_segment_complete" );
     common_scripts\utility::flag_set( "exit_drive_cinematic_start" );
@@ -1302,11 +1302,11 @@ debug_start_exit_drive_end()
     common_scripts\utility::flag_set( "exitdrive_ending_approach" );
     waittillframeend;
     level.jetbike attach( level.scr_model["world_body"], "tag_driver" );
-    level.player _meth_80FC( level.jetbike );
+    level.player mountvehicle( level.jetbike );
     common_scripts\utility::flag_set( "exit_drive_ending_begin_player" );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 }
 
 debug_start_demo_with_itiot()
@@ -1321,31 +1321,31 @@ debug_start_demo_with_itiot()
 
 gideon_turntable_demo()
 {
-    level.player _meth_8031( 50, 1 );
+    level.player lerpfov( 50, 1 );
     level.player.auxillary_hud = newclienthudelem( level.player );
-    level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    level.player.auxillary_hud setshader( "black", 1280, 720 );
     level.player.auxillary_hud.horzalign = "fullscreen";
     level.player.auxillary_hud.vertalign = "fullscreen";
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud.alpha = 1;
     level.player.auxillary_hud.foreground = 1;
-    level.player _meth_8031( 50, 1 );
+    level.player lerpfov( 50, 1 );
     level.player maps\_shg_utility::setup_player_for_scene();
     var_0 = getent( "burke_turntable_animorg", "targetname" );
     var_1 = maps\_utility::spawn_anim_model( "world_body" );
     level.burke = maps\_utility::spawn_targetname( "burke_spawner", 1 );
     level.burke.animname = "burke";
     level.burke maps\_utility::forceuseweapon( "iw5_bal27_sp_silencer01_variablereddot", "primary" );
-    level.player _meth_807D( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
     var_0 thread maps\_anim::anim_loop_solo( level.burke, "burke_turntable" );
     var_0 thread maps\_anim::anim_loop_solo( var_1, "player_turntable" );
-    _func_0D3( "objectiveHide", "1" );
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "objectiveHide", "1" );
+    setsaveddvar( "g_friendlyNameDist", 0 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
     }
 
     wait 0.5;
@@ -1362,7 +1362,7 @@ debug_start_common()
 
 street1_teleportplayer()
 {
-    level.player _meth_83C0( "city" );
+    level.player lightsetforplayer( "city" );
     maps\_utility::vision_set_fog_changes( "detroit_city_fog", 0 );
     var_0 = getent( "player_start_school_ext", "targetname" );
     level.player maps\_utility::teleport_player( var_0 );
@@ -1380,7 +1380,7 @@ hasmat_kva_move_in()
     foreach ( var_2 in level.bridge_kva_hasmat )
     {
         if ( isalive( var_2 ) )
-            var_2 _meth_81A9( var_0 );
+            var_2 setgoalvolumeauto( var_0 );
 
         wait 0.05;
     }
@@ -1390,7 +1390,7 @@ setup_cleanup_vehicle()
 {
     self.sirentag = common_scripts\utility::spawn_tag_origin();
     self.sirentag.origin = self.origin + ( 0, 0, 96 );
-    self.sirentag _meth_804D( self, "tag_origin" );
+    self.sirentag linkto( self, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "caution_light_01" ), self.sirentag, "tag_origin" );
     self waittill( "death" );
     stopfxontag( common_scripts\utility::getfx( "caution_light_01" ), self.sirentag, "tag_origin" );
@@ -1400,7 +1400,7 @@ burke_advance()
 {
     maps\_utility::trigger_wait_targetname( "Burke_nightclub_advance" );
     var_0 = getnode( "burke_advanced", "targetname" );
-    level.burke _meth_81A5( var_0 );
+    level.burke setgoalnode( var_0 );
     wait 6;
 
     if ( common_scripts\utility::flag( "burke_nightclub_advance" ) )
@@ -1408,7 +1408,7 @@ burke_advance()
     else
     {
         var_0 = getnode( "burke_advanced_2", "targetname" );
-        level.burke _meth_81A5( var_0 );
+        level.burke setgoalnode( var_0 );
     }
 }
 
@@ -1416,7 +1416,7 @@ spawn_guy_and_firstframe( var_0, var_1, var_2, var_3 )
 {
     var_4 = var_1 maps\_utility::spawn_ai( 1 );
     var_4.animname = "generic";
-    var_4 _meth_81C5( var_0.origin, var_0.angles );
+    var_4 teleport( var_0.origin, var_0.angles );
     var_4 thread maps\_anim::anim_generic_first_frame( var_4, var_0.animation );
 
     if ( !isdefined( var_2 ) )
@@ -1558,7 +1558,7 @@ bloody_death( var_0 )
         wait(randomfloat( 0.1 ));
     }
 
-    self _meth_8051( self.health + 50, self.origin );
+    self dodamage( self.health + 50, self.origin );
 }
 
 bloody_death_fx( var_0, var_1 )
@@ -1595,18 +1595,18 @@ battle_chatter_off_both()
 
 hud_off()
 {
-    _func_0D3( "compass", "0" );
-    _func_0D3( "ammoCounterHide", "1" );
-    _func_0D3( "hud_showstance", "0" );
-    _func_0D3( "actionSlotsHide", "1" );
+    setsaveddvar( "compass", "0" );
+    setsaveddvar( "ammoCounterHide", "1" );
+    setsaveddvar( "hud_showstance", "0" );
+    setsaveddvar( "actionSlotsHide", "1" );
 }
 
 hud_on()
 {
-    _func_0D3( "compass", "1" );
-    _func_0D3( "ammoCounterHide", "0" );
-    _func_0D3( "hud_showstance", "1" );
-    _func_0D3( "actionSlotsHide", "0" );
+    setsaveddvar( "compass", "1" );
+    setsaveddvar( "ammoCounterHide", "0" );
+    setsaveddvar( "hud_showstance", "1" );
+    setsaveddvar( "actionSlotsHide", "0" );
 }
 
 player_health_current()
@@ -1624,16 +1624,16 @@ itiot_logic( var_0, var_1 )
     setdvar( "demo_itiot", "1" );
     soundscripts\_snd::snd_message( "e3_demo_fade_out" );
     level.player.auxillary_hud = newclienthudelem( level.player );
-    level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    level.player.auxillary_hud setshader( "black", 1280, 720 );
     level.player.auxillary_hud.horzalign = "fullscreen";
     level.player.auxillary_hud.vertalign = "fullscreen";
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud fadeovertime( 0.5 );
     level.player.auxillary_hud.alpha = 1;
     level.player.auxillary_hud.foreground = 1;
-    _func_0D3( "objectiveHide", "1" );
+    setsaveddvar( "objectiveHide", "1" );
     wait 0.5;
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player.auxillary_hud.foreground = 0;
     wait 7;
     var_2 = getnode( "guy2_hide_spot", "targetname" );
@@ -1644,52 +1644,52 @@ itiot_logic( var_0, var_1 )
     level.player.auxillary_hud fadeovertime( 0.5 );
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud.foreground = 0;
-    _func_0D3( "objectiveHide", "0" );
-    level.player _meth_831E();
-    level.player _meth_8304( 0 );
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_unarmeddetroit_nullattach" );
-    level.player _meth_8315( "iw5_unarmeddetroit_nullattach" );
+    setsaveddvar( "objectiveHide", "0" );
+    level.player enableweapons();
+    level.player allowsprint( 0 );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_unarmeddetroit_nullattach" );
+    level.player switchtoweapon( "iw5_unarmeddetroit_nullattach" );
 }
 
 controller_rumble_heavy0()
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 controller_rumble_heavy1()
 {
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 }
 
 controller_rumble_heavy2()
 {
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
 }
 
 controller_rumble_heavy3()
 {
-    level.player _meth_80AD( "heavy_3s" );
+    level.player playrumbleonentity( "heavy_3s" );
 }
 
 controller_rumble_light0()
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 controller_rumble_light1()
 {
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
 }
 
 controller_rumble_light2()
 {
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
 }
 
 controller_rumble_light3()
 {
-    level.player _meth_80AD( "light_3s" );
+    level.player playrumbleonentity( "light_3s" );
 }
 
 spawn_doctor()
@@ -1704,5 +1704,5 @@ spawn_doctor()
     level.doctor maps\_utility::disable_surprise();
     level.doctor maps\_utility::disable_pain();
     level.doctor maps\_utility::disable_bulletwhizbyreaction();
-    level.doctor _meth_803F( "Doctor", &"" );
+    level.doctor setlookattext( "Doctor", &"" );
 }

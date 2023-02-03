@@ -39,7 +39,7 @@ attack_drone_queen_audio()
 
     while ( isdefined( var_6 ) && var_6.classname != "script_vehicle_corpse" )
     {
-        var_16 = var_6 _meth_8286();
+        var_16 = var_6 vehicle_getspeed();
 
         if ( var_16 > var_7 )
         {
@@ -53,8 +53,8 @@ attack_drone_queen_audio()
 
         foreach ( var_19 in var_10 )
         {
-            if ( isdefined( var_19 ) && !_func_294( var_19 ) )
-                var_19 _meth_806D( var_17, var_0 );
+            if ( isdefined( var_19 ) && !isremovedentity( var_19 ) )
+                var_19 scalepitch( var_17, var_0 );
         }
 
         wait(var_0);
@@ -72,11 +72,11 @@ attack_drone_kamikaze_audio()
     {
         level waittill( "drone_kamikaze_crash", var_0 );
 
-        if ( _func_294( self ) )
+        if ( isremovedentity( self ) )
             break;
     }
 
-    if ( level.player _meth_8311() == "weapon_suv_door_shield_fl" )
+    if ( level.player getcurrentweapon() == "weapon_suv_door_shield_fl" )
         soundscripts\_snd_playsound::snd_play_at( "seo_drone_suicide_door", var_0 );
 }
 

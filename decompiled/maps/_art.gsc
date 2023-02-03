@@ -54,7 +54,7 @@ create_default_vision_set_fog( var_0 )
 
 get_fog_filename()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
         return "\\share\\raw\\maps\\createart\\" + common_scripts\utility::get_template_level() + "_fog_hdr.gsc";
     else
         return "\\share\\raw\\maps\\createart\\" + common_scripts\utility::get_template_level() + "_fog.gsc";
@@ -107,7 +107,7 @@ dof_blend_interior_generic( var_0 )
 dof_init()
 {
     if ( getdvar( "scr_dof_enable" ) == "" )
-        _func_0D3( "scr_dof_enable", "1" );
+        setsaveddvar( "scr_dof_enable", "1" );
 
     setdvar( "ads_dof_tracedist", 8192 );
     setdvar( "ads_dof_maxEnemyDist", 10000 );
@@ -228,7 +228,7 @@ dof_blend_interior_ads()
 
     if ( var_0 < 1.0 )
     {
-        if ( self adsbuttonpressed() && self _meth_8340() > 0.0 )
+        if ( self adsbuttonpressed() && self playerads() > 0.0 )
             var_0 = min( 1, var_0 + 0.7 );
         else
             var_0 = 0;
@@ -324,7 +324,7 @@ dof_calc_results()
 
 dof_process_ads()
 {
-    var_0 = self _meth_8340();
+    var_0 = self playerads();
 
     if ( var_0 <= 0.0 )
     {
@@ -347,7 +347,7 @@ dof_process_ads()
     var_7 = getdvarfloat( "ads_dof_farEndScale", 3 );
     var_8 = getdvarfloat( "ads_dof_nearBlur", 4 );
     var_9 = getdvarfloat( "ads_dof_farBlur", 2.5 );
-    var_10 = self _meth_80A8();
+    var_10 = self geteye();
     var_11 = self getangles();
 
     if ( isdefined( self.dof_ref_ent ) )
@@ -357,8 +357,8 @@ dof_process_ads()
 
     var_13 = vectornormalize( anglestoforward( var_12 ) );
     var_14 = bullettrace( var_10, var_10 + var_13 * var_1, 1, self, 0, 0, 0, 0, 0 );
-    var_15 = _func_0D6( "axis" );
-    var_16 = self _meth_8311();
+    var_15 = getaiarray( "axis" );
+    var_16 = self getcurrentweapon();
 
     if ( isdefined( level.special_weapon_dof_funcs[var_16] ) )
     {
@@ -381,8 +381,8 @@ dof_process_ads()
 
     foreach ( var_20 in var_15 )
     {
-        var_21 = var_20 _meth_8410();
-        var_22 = var_20 _meth_8411( var_3 );
+        var_21 = var_20 isenemyaware();
+        var_22 = var_20 hasenemybeenseen( var_3 );
 
         if ( !var_21 && !var_22 )
             continue;
@@ -429,7 +429,7 @@ dof_process_physical_ads( var_0 )
     var_1 = getdvarfloat( "ads_dof_tracedist", 4096 );
     var_2 = getdvarfloat( "ads_dof_maxEnemyDist", 0 );
     var_3 = getdvarint( "ads_dof_playerForgetEnemyTime", 5000 );
-    var_4 = self _meth_80A8();
+    var_4 = self geteye();
     var_5 = self getangles();
 
     if ( isdefined( self.dof_ref_ent ) )
@@ -439,8 +439,8 @@ dof_process_physical_ads( var_0 )
 
     var_7 = vectornormalize( anglestoforward( var_6 ) );
     var_8 = bullettrace( var_4, var_4 + var_7 * var_1, 1, self, 0, 1, 0, 0, 0 );
-    var_9 = _func_0D6( "axis" );
-    var_10 = self _meth_8311();
+    var_9 = getaiarray( "axis" );
+    var_10 = self getcurrentweapon();
 
     if ( isdefined( level.special_weapon_dof_funcs[var_10] ) )
         return [[ level.special_weapon_dof_funcs[var_10] ]]( var_8, var_9, var_4, var_7, var_0 );
@@ -450,8 +450,8 @@ dof_process_physical_ads( var_0 )
 
     foreach ( var_13 in var_9 )
     {
-        var_14 = var_13 _meth_8410();
-        var_15 = var_13 _meth_8411( var_3 );
+        var_14 = var_13 isenemyaware();
+        var_15 = var_13 hasenemybeenseen( var_3 );
 
         if ( !var_14 && !var_15 )
             continue;
@@ -562,12 +562,12 @@ dof_update()
 
         if ( getdvarint( "r_dof_physical_enable" ) )
         {
-            var_0 = self _meth_8340();
+            var_0 = self playerads();
 
             if ( var_0 > 0.0 )
             {
                 var_1 = dof_process_physical_ads( var_0 );
-                self _meth_84AC( var_1["start"], var_1["end"] );
+                self setadsphysicaldepthoffield( var_1["start"], var_1["end"] );
             }
 
             continue;
@@ -581,7 +581,7 @@ dof_update()
         var_5 = level.dof["results"]["current"]["farEnd"];
         var_6 = level.dof["results"]["current"]["nearBlur"];
         var_7 = level.dof["results"]["current"]["farBlur"];
-        self _meth_8186( var_2, var_3, var_4, var_5, var_6, var_7 );
+        self setdepthoffield( var_2, var_3, var_4, var_5, var_6, var_7 );
     }
 }
 
@@ -634,10 +634,10 @@ tess_update()
         }
 
         if ( var_0 != level.tess.cutoff_distance_current )
-            _func_0D3( "r_tessellationCutoffDistance", level.tess.cutoff_distance_current );
+            setsaveddvar( "r_tessellationCutoffDistance", level.tess.cutoff_distance_current );
 
         if ( var_1 != level.tess.cutoff_falloff_current )
-            _func_0D3( "r_tessellationCutoffFalloff", level.tess.cutoff_falloff_current );
+            setsaveddvar( "r_tessellationCutoffFalloff", level.tess.cutoff_falloff_current );
     }
 }
 
@@ -734,12 +734,12 @@ ssao_set_target_over_time_internal( var_0, var_1 )
         var_2 += var_4 * ( var_0 - var_2 );
 
         if ( var_5 != var_2 )
-            _func_0D3( "r_ssaoScriptScale", var_2 );
+            setsaveddvar( "r_ssaoScriptScale", var_2 );
 
         waitframe();
     }
 
-    _func_0D3( "r_ssaoScriptScale", var_0 );
+    setsaveddvar( "r_ssaoScriptScale", var_0 );
 }
 
 disable_ssao_over_time( var_0 )

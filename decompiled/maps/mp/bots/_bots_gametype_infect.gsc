@@ -43,7 +43,7 @@ bot_infect_think()
     {
         if ( level.infect_chosefirstinfected )
         {
-            if ( self.team == "axis" && self _meth_8366() != "run_and_gun" )
+            if ( self.team == "axis" && self botgetpersonality() != "run_and_gun" )
                 maps\mp\bots\_bots_util::bot_set_personality( "run_and_gun" );
         }
 
@@ -55,7 +55,7 @@ bot_infect_think()
             var_0 = maps\mp\bots\_bots_strategy::bot_melee_tactical_insertion_check();
 
             if ( !isdefined( var_0 ) || var_0 )
-                self _meth_8356();
+                self botclearscriptgoal();
         }
 
         self [[ self.personality_update_function ]]();
@@ -134,7 +134,7 @@ bot_infect_ai_director_update()
                                 {
                                     if ( isbot( var_13 ) )
                                     {
-                                        var_14 = var_13 _meth_835D();
+                                        var_14 = var_13 botgetscriptgoaltype();
 
                                         if ( var_14 != "tactical" && var_14 != "critical" )
                                         {
@@ -163,9 +163,9 @@ hunt_human( var_0 )
 {
     self endon( "disconnect" );
     self endon( "death" );
-    self _meth_8354( var_0.origin, 0, "critical" );
+    self botsetscriptgoal( var_0.origin, 0, "critical" );
     maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
-    self _meth_8356();
+    self botclearscriptgoal();
 }
 
 bot_infect_retrieve_knife()
@@ -178,16 +178,16 @@ bot_infect_retrieve_knife()
         self.melee_enemy_new_node_time = 0;
         self.melee_self_node = undefined;
         self.melee_self_new_node_time = 0;
-        var_0 = self _meth_837B( "throwKnifeChance" );
+        var_0 = self botgetdifficultysetting( "throwKnifeChance" );
 
         if ( var_0 < 0.25 )
-            self _meth_837A( "throwKnifeChance", 0.25 );
+            self botsetdifficultysetting( "throwKnifeChance", 0.25 );
 
-        self _meth_837A( "allowGrenades", 1 );
+        self botsetdifficultysetting( "allowGrenades", 1 );
 
         for (;;)
         {
-            if ( self _meth_8314( level.infected_knife_name ) )
+            if ( self hasweapon( level.infected_knife_name ) )
             {
                 if ( maps\mp\_utility::isgameparticipant( self.enemy ) )
                 {
@@ -196,18 +196,18 @@ bot_infect_retrieve_knife()
                     if ( !isdefined( self.melee_enemy ) || self.melee_enemy != self.enemy )
                     {
                         self.melee_enemy = self.enemy;
-                        self.melee_enemy_node = self.enemy _meth_8387();
+                        self.melee_enemy_node = self.enemy getnearestnode();
                         self.melee_enemy_new_node_time = var_1;
                     }
                     else
                     {
-                        var_2 = squared( self _meth_837B( "meleeDist" ) );
+                        var_2 = squared( self botgetdifficultysetting( "meleeDist" ) );
 
                         if ( distancesquared( self.enemy.origin, self.origin ) <= var_2 )
                             self.can_melee_enemy_time = var_1;
 
-                        var_3 = self.enemy _meth_8387();
-                        var_4 = self _meth_8387();
+                        var_3 = self.enemy getnearestnode();
+                        var_4 = self getnearestnode();
 
                         if ( !isdefined( self.melee_enemy_node ) || self.melee_enemy_node != var_3 )
                         {
@@ -233,10 +233,10 @@ bot_infect_retrieve_knife()
                                         maps\mp\bots\_bots_util::bot_queued_process( "find_node_can_see_ent", ::bot_infect_find_node_can_see_ent, self.enemy, self.melee_self_node );
 
                                     if ( !self getammocount( level.infected_knife_name ) )
-                                        self _meth_82F6( level.infected_knife_name, 1 );
+                                        self setweaponammoclip( level.infected_knife_name, 1 );
 
                                     maps\mp\_utility::waitfortimeornotify( 30, "enemy" );
-                                    self _meth_8356();
+                                    self botclearscriptgoal();
                                 }
                             }
                         }
@@ -251,7 +251,7 @@ bot_infect_retrieve_knife()
 
 bot_infect_angle_too_steep_for_knife_throw( var_0, var_1 )
 {
-    if ( abs( var_0[2] - var_1[2] ) > 56.0 && _func_220( var_0, var_1 ) < 2304 )
+    if ( abs( var_0[2] - var_1[2] ) > 56.0 && distance2dsquared( var_0, var_1 ) < 2304 )
         return 1;
 
     return 0;
@@ -281,7 +281,7 @@ bot_infect_find_node_can_see_ent( var_0, var_1 )
             if ( bot_infect_angle_too_steep_for_knife_throw( var_6.origin, var_0.origin ) )
                 continue;
 
-            var_7 = self _meth_80A8() - self.origin;
+            var_7 = self geteye() - self.origin;
             var_8 = var_6.origin + var_7;
             var_9 = var_0.origin;
 
@@ -291,7 +291,7 @@ bot_infect_find_node_can_see_ent( var_0, var_1 )
             if ( sighttracepassed( var_8, var_9, 0, self, var_0 ) )
             {
                 var_10 = vectortoyaw( var_9 - var_8 );
-                self _meth_8355( var_6, "critical", var_10 );
+                self botsetscriptgoalnode( var_6, "critical", var_10 );
                 maps\mp\bots\_bots_util::bot_waittill_goal_or_fail( 3.0 );
                 return;
             }

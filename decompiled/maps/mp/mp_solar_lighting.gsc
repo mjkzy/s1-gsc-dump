@@ -12,7 +12,7 @@ main()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
             level waittill( "connected", var_0 );

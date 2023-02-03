@@ -26,7 +26,7 @@ force_patrol_anim_set( var_0, var_1, var_2, var_3 )
 
     maps\_patrol::set_patrol_run_anim_array();
     self.goalradius = 32;
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.disablearrivals = 1;
     self.disableexits = 1;
     self.allowdeath = 1;

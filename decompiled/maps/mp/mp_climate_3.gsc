@@ -17,22 +17,22 @@ main()
 
     if ( level.nextgen )
     {
-        map_restart( "cli_elevator_tower02_car01" );
-        map_restart( "cli_elevator_tower02_car02" );
-        map_restart( "cli_elevator_tower02_car03" );
-        map_restart( "cli_elevator_tower02_car04" );
-        map_restart( "cli_elevator_tower03_car01" );
-        map_restart( "cli_elevator_tower03_car02" );
-        map_restart( "cli_elevator_tower03_car03" );
-        map_restart( "cli_elevator_tower03_car04" );
-        map_restart( "cli_elevator_tower04_car01" );
-        map_restart( "cli_elevator_tower04_car02" );
-        map_restart( "cli_elevator_tower04_car03" );
-        map_restart( "cli_elevator_tower04_car04" );
-        map_restart( "cli_elevator_tower05_car01" );
-        map_restart( "cli_elevator_tower05_car02" );
-        map_restart( "cli_elevator_tower05_car03" );
-        map_restart( "cli_elevator_tower05_car04" );
+        precachempanim( "cli_elevator_tower02_car01" );
+        precachempanim( "cli_elevator_tower02_car02" );
+        precachempanim( "cli_elevator_tower02_car03" );
+        precachempanim( "cli_elevator_tower02_car04" );
+        precachempanim( "cli_elevator_tower03_car01" );
+        precachempanim( "cli_elevator_tower03_car02" );
+        precachempanim( "cli_elevator_tower03_car03" );
+        precachempanim( "cli_elevator_tower03_car04" );
+        precachempanim( "cli_elevator_tower04_car01" );
+        precachempanim( "cli_elevator_tower04_car02" );
+        precachempanim( "cli_elevator_tower04_car03" );
+        precachempanim( "cli_elevator_tower04_car04" );
+        precachempanim( "cli_elevator_tower05_car01" );
+        precachempanim( "cli_elevator_tower05_car02" );
+        precachempanim( "cli_elevator_tower05_car03" );
+        precachempanim( "cli_elevator_tower05_car04" );
     }
 
     level.bots_ignore_water = 1;
@@ -67,10 +67,10 @@ main()
     var_1 = getent( "waterfall_model_large", "targetname" );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_82BF();
+        var_1 notsolid();
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_82BF();
+        var_0 notsolid();
 
     thread trigger_fixes();
     thread clip_fixes();
@@ -311,12 +311,12 @@ linkallbadwater( var_0, var_1 )
     {
         var_3 = var_0[var_2].origin - level.water_bad_link.origin;
         var_4 = var_0[var_2].angles - level.water_bad_link.angles;
-        var_0[var_2] _meth_804D( level.water_bad_link, "", var_3, var_4 );
+        var_0[var_2] linkto( level.water_bad_link, "", var_3, var_4 );
     }
 
     var_3 = var_1.origin - level.water_bad_link.origin;
     var_4 = var_1.angles - level.water_bad_link.angles;
-    var_1 _meth_804D( level.water_bad_link, "", var_3, var_4 );
+    var_1 linkto( level.water_bad_link, "", var_3, var_4 );
 }
 
 moveallbadwater( var_0 )
@@ -346,7 +346,7 @@ setupelevatoranims()
     foreach ( var_17 in var_0 )
     {
         var_18 = spawn( "script_model", var_17.origin );
-        var_18 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_18 setmodel( "cli_vista_tower_elevator_02" );
         var_18.angles = var_17.angles;
         thread startelevatoranims( var_18, "tower02", "car01", 5.56 );
         waitframe();
@@ -355,7 +355,7 @@ setupelevatoranims()
     foreach ( var_17 in var_1 )
     {
         var_21 = spawn( "script_model", var_17.origin );
-        var_21 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_21 setmodel( "cli_vista_tower_elevator_02" );
         var_21.angles = var_17.angles;
         thread startelevatoranims( var_21, "tower02", "car02", 16.73 );
         waitframe();
@@ -364,7 +364,7 @@ setupelevatoranims()
     foreach ( var_17 in var_2 )
     {
         var_24 = spawn( "script_model", var_17.origin );
-        var_24 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_24 setmodel( "cli_vista_tower_elevator_02" );
         var_24.angles = var_17.angles;
         thread startelevatoranims( var_24, "tower02", "car03", 12.23 );
         waitframe();
@@ -373,7 +373,7 @@ setupelevatoranims()
     foreach ( var_17 in var_3 )
     {
         var_27 = spawn( "script_model", var_17.origin );
-        var_27 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_27 setmodel( "cli_vista_tower_elevator_02" );
         var_27.angles = var_17.angles;
         thread startelevatoranims( var_27, "tower02", "car04", 0.0 );
         waitframe();
@@ -382,7 +382,7 @@ setupelevatoranims()
     foreach ( var_17 in var_4 )
     {
         var_18 = spawn( "script_model", var_17.origin );
-        var_18 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_18 setmodel( "cli_vista_tower_elevator_02" );
         var_18.angles = var_17.angles;
         thread startelevatoranims( var_18, "tower03", "car01", 5.56 );
         waitframe();
@@ -391,7 +391,7 @@ setupelevatoranims()
     foreach ( var_17 in var_5 )
     {
         var_21 = spawn( "script_model", var_17.origin );
-        var_21 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_21 setmodel( "cli_vista_tower_elevator_02" );
         var_21.angles = var_17.angles;
         thread startelevatoranims( var_21, "tower03", "car02", 16.73 );
         waitframe();
@@ -400,7 +400,7 @@ setupelevatoranims()
     foreach ( var_17 in var_6 )
     {
         var_24 = spawn( "script_model", var_17.origin );
-        var_24 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_24 setmodel( "cli_vista_tower_elevator_02" );
         var_24.angles = var_17.angles;
         thread startelevatoranims( var_24, "tower03", "car03", 12.23 );
         waitframe();
@@ -409,7 +409,7 @@ setupelevatoranims()
     foreach ( var_17 in var_7 )
     {
         var_27 = spawn( "script_model", var_17.origin );
-        var_27 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_27 setmodel( "cli_vista_tower_elevator_02" );
         var_27.angles = var_17.angles;
         thread startelevatoranims( var_27, "tower03", "car04", 0.0 );
         waitframe();
@@ -418,7 +418,7 @@ setupelevatoranims()
     foreach ( var_17 in var_8 )
     {
         var_18 = spawn( "script_model", var_17.origin );
-        var_18 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_18 setmodel( "cli_vista_tower_elevator_02" );
         var_18.angles = var_17.angles;
         thread startelevatoranims( var_18, "tower04", "car01", 5.56 );
         waitframe();
@@ -427,7 +427,7 @@ setupelevatoranims()
     foreach ( var_17 in var_9 )
     {
         var_21 = spawn( "script_model", var_17.origin );
-        var_21 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_21 setmodel( "cli_vista_tower_elevator_02" );
         var_21.angles = var_17.angles;
         thread startelevatoranims( var_21, "tower04", "car02", 16.73 );
         waitframe();
@@ -436,7 +436,7 @@ setupelevatoranims()
     foreach ( var_17 in var_10 )
     {
         var_24 = spawn( "script_model", var_17.origin );
-        var_24 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_24 setmodel( "cli_vista_tower_elevator_02" );
         var_24.angles = var_17.angles;
         thread startelevatoranims( var_24, "tower04", "car03", 12.23 );
         waitframe();
@@ -445,7 +445,7 @@ setupelevatoranims()
     foreach ( var_17 in var_11 )
     {
         var_27 = spawn( "script_model", var_17.origin );
-        var_27 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_27 setmodel( "cli_vista_tower_elevator_02" );
         var_27.angles = var_17.angles;
         thread startelevatoranims( var_27, "tower04", "car04", 0.0 );
         waitframe();
@@ -454,7 +454,7 @@ setupelevatoranims()
     foreach ( var_17 in var_12 )
     {
         var_18 = spawn( "script_model", var_17.origin );
-        var_18 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_18 setmodel( "cli_vista_tower_elevator_02" );
         var_18.angles = var_17.angles;
         thread startelevatoranims( var_18, "tower05", "car01", 5.56 );
         waitframe();
@@ -463,7 +463,7 @@ setupelevatoranims()
     foreach ( var_17 in var_13 )
     {
         var_21 = spawn( "script_model", var_17.origin );
-        var_21 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_21 setmodel( "cli_vista_tower_elevator_02" );
         var_21.angles = var_17.angles;
         thread startelevatoranims( var_21, "tower05", "car02", 16.73 );
         waitframe();
@@ -472,7 +472,7 @@ setupelevatoranims()
     foreach ( var_17 in var_14 )
     {
         var_24 = spawn( "script_model", var_17.origin );
-        var_24 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_24 setmodel( "cli_vista_tower_elevator_02" );
         var_24.angles = var_17.angles;
         thread startelevatoranims( var_24, "tower05", "car03", 12.23 );
         waitframe();
@@ -481,7 +481,7 @@ setupelevatoranims()
     foreach ( var_17 in var_15 )
     {
         var_27 = spawn( "script_model", var_17.origin );
-        var_27 _meth_80B1( "cli_vista_tower_elevator_02" );
+        var_27 setmodel( "cli_vista_tower_elevator_02" );
         var_27.angles = var_17.angles;
         thread startelevatoranims( var_27, "tower05", "car04", 0.0 );
         waitframe();
@@ -491,7 +491,7 @@ setupelevatoranims()
 startelevatoranims( var_0, var_1, var_2, var_3 )
 {
     wait(var_3);
-    var_0 _meth_8279( "cli_elevator_" + var_1 + "_" + var_2 );
+    var_0 scriptmodelplayanim( "cli_elevator_" + var_1 + "_" + var_2 );
 }
 
 dynamicevent_init()
@@ -573,7 +573,7 @@ startdynamicevent()
     wait 0.1;
     thread aud_toxic_water_boil_activate();
     var_4 = getent( "machine_vent_pristine", "targetname" );
-    var_4 _meth_80B1( "cli_climate_control_machine_vent_dstry2" );
+    var_4 setmodel( "cli_climate_control_machine_vent_dstry2" );
     aud_event_explosion( 3 );
     level.ventishot = 1;
 
@@ -617,11 +617,11 @@ check_vent_damage()
 
     for (;;)
     {
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
         {
-            while ( isalive( self ) && self _meth_80A9( var_0 ) )
+            while ( isalive( self ) && self istouching( var_0 ) )
             {
-                self _meth_8051( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
+                self dodamage( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
                 wait 0.1;
                 maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
             }
@@ -634,7 +634,7 @@ check_vent_damage()
 enddynamicevent()
 {
     var_0 = getent( "machine_vent_pristine", "targetname" );
-    var_0 _meth_80B1( "cli_climate_control_machine_vent_dstry2" );
+    var_0 setmodel( "cli_climate_control_machine_vent_dstry2" );
     level.toxiceventcomplete = 1;
     level.cancelbadwaterspawns = 1;
     thread disconnectnodesslowly();
@@ -687,7 +687,7 @@ disconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        var_0[var_1] _meth_8059();
+        var_0[var_1] disconnectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -698,7 +698,7 @@ disconnectnodesslowly()
 
     for ( var_1 = 0; var_1 < var_2.size; var_1++ )
     {
-        var_2[var_1] _meth_8059();
+        var_2[var_1] disconnectnode();
 
         if ( var_1 % 50 == 0 )
             waitframe();
@@ -746,7 +746,7 @@ handle_ball_water_return()
         {
             foreach ( var_2 in level.balls )
             {
-                if ( isdefined( var_2.visuals[0] ) && var_2.visuals[0] _meth_80A9( var_0 ) )
+                if ( isdefined( var_2.visuals[0] ) && var_2.visuals[0] istouching( var_0 ) )
                     var_2 thread maps\mp\gametypes\_gameobjects::returnhome();
             }
 
@@ -779,18 +779,18 @@ toxic_quake_rumble_player( var_0 )
     var_1 = "tank_rumble";
     var_2 = "heavygun_fire";
     var_3 = "smg_fire";
-    self _meth_80AE( var_1 );
+    self playrumblelooponentity( var_1 );
     thread watch_toxic_rumble_end( var_1, var_0 );
     var_4 = 0;
 
     if ( distancesquared( level.toxicquake.origin, self.origin ) < 1210000 )
     {
-        self _meth_80AD( var_2 );
+        self playrumbleonentity( var_2 );
         var_4 = 1;
     }
 
     if ( !var_4 && distancesquared( level.toxicquake.origin, self.origin ) < 6250000 )
-        self _meth_80AD( var_3 );
+        self playrumbleonentity( var_3 );
 }
 
 watch_toxic_rumble_end( var_0, var_1 )
@@ -805,7 +805,7 @@ watch_toxic_rumble_end( var_0, var_1 )
         wait 0.05;
     }
 
-    self _meth_80AF( var_0 );
+    self stoprumble( var_0 );
     self notify( "Toxic_Quake_Rumble_End" );
 }
 
@@ -814,7 +814,7 @@ watch_toxic_rumble_end_early( var_0 )
     self endon( "Toxic_Quake_Rumble_End" );
     self endon( "disconnect" );
     level waittill( "Toxic_Quake_End" );
-    self _meth_80AF( var_0 );
+    self stoprumble( var_0 );
 }
 
 handle_toxic_water_damage()
@@ -825,11 +825,11 @@ handle_toxic_water_damage()
 
     for (;;)
     {
-        if ( self _meth_80A9( var_0 ) )
+        if ( self istouching( var_0 ) )
         {
             var_1 = 0;
 
-            while ( isalive( self ) && self _meth_80A9( var_0 ) )
+            while ( isalive( self ) && self istouching( var_0 ) )
             {
                 if ( var_1 == 0 )
                 {
@@ -837,12 +837,12 @@ handle_toxic_water_damage()
                     var_1 = 1;
                 }
 
-                self _meth_8051( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
+                self dodamage( 5, self.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
                 wait 0.1;
                 maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
             }
 
-            self _meth_8185();
+            self fadeoutshellshock();
         }
 
         waitframe();
@@ -975,24 +975,24 @@ aud_event_start_loops()
 aud_toxic_water_boil_setup()
 {
     if ( !level.wateristoxic )
-        self _meth_84D7( "mp_pre_event_mix", 1 );
+        self clientaddsoundsubmix( "mp_pre_event_mix", 1 );
     else
-        self _meth_84D7( "mp_post_event_mix", 1 );
+        self clientaddsoundsubmix( "mp_post_event_mix", 1 );
 }
 
 aud_toxic_water_boil_activate()
 {
     foreach ( var_1 in level.players )
     {
-        var_1 _meth_84D8( "mp_pre_event_mix", 1 );
-        var_1 _meth_84D7( "mp_post_event_mix", 1 );
+        var_1 clientclearsoundsubmix( "mp_pre_event_mix", 1 );
+        var_1 clientaddsoundsubmix( "mp_post_event_mix", 1 );
         wait 0.05;
     }
 }
 
 dyneventflash()
 {
-    self _meth_82D4( "mp_climate_3_dynEventFlash", 0.6 );
+    self visionsetnakedforplayer( "mp_climate_3_dynEventFlash", 0.6 );
     thread endvisionondeath();
     wait 0.25;
     level notify( "end_flash" );

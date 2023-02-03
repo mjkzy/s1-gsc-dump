@@ -22,8 +22,8 @@ main( var_0, var_1, var_2 )
 
 init_local()
 {
-    self _meth_8048( "rear_handle_obj_left_jnt" );
-    self _meth_8048( "rear_handle_obj_right_jnt" );
+    self hidepart( "rear_handle_obj_left_jnt" );
+    self hidepart( "rear_handle_obj_right_jnt" );
 }
 
 set_vehicle_anims( var_0 )

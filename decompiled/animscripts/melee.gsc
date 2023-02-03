@@ -74,7 +74,7 @@ melee_tryexecuting()
         return 0;
     }
 
-    self _meth_819A( ::melee_mainloop, ::melee_endscript );
+    self animcustom( ::melee_mainloop, ::melee_endscript );
 }
 
 melee_resetaction()
@@ -129,7 +129,7 @@ melee_updateandvalidatestartpos()
         var_0 = 0;
     }
 
-    var_3 = self _meth_813C( self.melee.startpos );
+    var_3 = self getdroptofloorposition( self.melee.startpos );
 
     if ( !isdefined( var_3 ) )
         return 0;
@@ -142,7 +142,7 @@ melee_updateandvalidatestartpos()
 
     self.melee.startpos = var_3;
 
-    if ( !self _meth_81C3( self.melee.startpos, 1, var_0 ) )
+    if ( !self maymovetopoint( self.melee.startpos, 1, var_0 ) )
         return 0;
 
     if ( isdefined( self.melee.starttotargetcornerangles ) )
@@ -163,10 +163,10 @@ melee_updateandvalidatestartpos()
         var_7 = self.melee.target.origin + var_2 * 32;
     }
 
-    if ( !self _meth_81C4( self.melee.startpos, var_7, 1, 0 ) )
+    if ( !self maymovefrompointtopoint( self.melee.startpos, var_7, 1, 0 ) )
         return 0;
 
-    if ( !self _meth_81C4( var_7, self.melee.target.origin, 1, 1 ) )
+    if ( !self maymovefrompointtopoint( var_7, self.melee.target.origin, 1, 1 ) )
         return 0;
 
     return 1;
@@ -223,7 +223,7 @@ melee_isvalid()
 
     if ( isai( var_0 ) )
     {
-        if ( var_0 _meth_819B() )
+        if ( var_0 isinscriptedstate() )
             return 0;
 
         if ( var_0 maps\_utility::doinglongdeath() || var_0.delayeddeath )
@@ -231,7 +231,7 @@ melee_isvalid()
     }
 
     if ( isplayer( var_0 ) )
-        var_3 = var_0 _meth_817C();
+        var_3 = var_0 getstance();
     else
         var_3 = var_0.a.pose;
 
@@ -274,10 +274,10 @@ melee_startmovement()
 
 melee_stopmovement()
 {
-    self _meth_8142( %body, 0.2 );
+    self clearanim( %body, 0.2 );
     self.melee.playingmovementanim = undefined;
     self.a.movement = "stop";
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
 }
 
 melee_mainloop()
@@ -345,7 +345,7 @@ melee_standard_resetgiveuptime()
 
 melee_standard_main()
 {
-    self _meth_818E( "zonly_physics" );
+    self animmode( "zonly_physics" );
 
     if ( isdefined( self.melee.target ) )
         melee_standard_resetgiveuptime();
@@ -367,9 +367,9 @@ melee_standard_main()
         if ( isdefined( self.team ) )
             maps\_dds::dds_notify( "act_melee", self.team == "allies" );
 
-        self _meth_818F( "face point", self.melee.target.origin );
+        self orientmode( "face point", self.melee.target.origin );
         var_0 = animscripts\utility::lookupanim( "melee", "standard" );
-        self _meth_8110( "meleeanim", var_0, %body, 1, 0.2, 1 );
+        self setflaggedanimknoballrestart( "meleeanim", var_0, %body, 1, 0.2, 1 );
         melee_playfacialanim( var_0 );
         self.melee.inprogress = 1;
 
@@ -380,7 +380,7 @@ melee_standard_main()
         }
     }
 
-    self _meth_818E( "none" );
+    self animmode( "none" );
 }
 
 melee_standard_playattackloop()
@@ -406,7 +406,7 @@ melee_standard_playattackloop()
             if ( isdefined( self.melee.target ) )
             {
                 var_1 = self.melee.target.health;
-                self _meth_81E9();
+                self melee();
 
                 if ( isdefined( self.melee.target ) && self.melee.target.health < var_1 )
                     melee_standard_resetgiveuptime();
@@ -438,7 +438,7 @@ melee_standard_getinposition()
     if ( var_0 <= 4096 )
     {
         var_1 = animscripts\utility::lookupanim( "melee", "standard_stand_to_melee" );
-        self _meth_810F( "readyanim", var_1, %body, 1, 0.3, 1 );
+        self setflaggedanimknoball( "readyanim", var_1, %body, 1, 0.3, 1 );
         melee_playfacialanim( var_1 );
         animscripts\shared::donotetracks( "readyanim" );
         return 1;
@@ -462,11 +462,11 @@ melee_standard_getinposition()
     var_16 = animscripts\utility::lookupanim( "run", "straight" );
 
     if ( isplayer( self.melee.target ) && self.melee.target == self.enemy )
-        self _meth_818F( "face enemy" );
+        self orientmode( "face enemy" );
     else
-        self _meth_818F( "face point", self.melee.target.origin );
+        self orientmode( "face point", self.melee.target.origin );
 
-    self _meth_810F( "chargeanim", var_16, %body, 1, 0.3, 1 );
+    self setflaggedanimknoball( "chargeanim", var_16, %body, 1, 0.3, 1 );
     melee_playfacialanim( var_16 );
     var_17 = 0;
 
@@ -480,7 +480,7 @@ melee_standard_getinposition()
             if ( var_19 )
             {
                 melee_startmovement();
-                self _meth_8110( "chargeanim", var_4, %body, 1, 0.2, 1 );
+                self setflaggedanimknoballrestart( "chargeanim", var_4, %body, 1, 0.2, 1 );
                 melee_playfacialanim( var_4 );
                 var_14 = var_18;
                 var_17 = 1;
@@ -493,7 +493,7 @@ melee_standard_getinposition()
             if ( var_18 - var_14 >= var_12 || !var_19 && !var_20 )
             {
                 melee_startmovement();
-                self _meth_810F( "chargeanim", var_16, %body, 1, 0.3, 1 );
+                self setflaggedanimknoball( "chargeanim", var_16, %body, 1, 0.3, 1 );
                 melee_playfacialanim( var_16 );
                 var_17 = 0;
             }
@@ -823,7 +823,7 @@ melee_aivsai_targetlink( var_0 )
     var_0.syncedmeleetarget = self;
     self.melee.linked = 1;
     var_0.melee.linked = 1;
-    self _meth_804E( var_0, "tag_sync", 1, 1 );
+    self linktoblendtotag( var_0, "tag_sync", 1, 1 );
 }
 
 melee_aivsai_main()
@@ -869,7 +869,7 @@ melee_aivsai_main()
     var_0.melee.weapon = var_0.weapon;
     var_0.melee.weaponslot = var_0 animscripts\utility::getcurrentweaponslotname();
     self.melee.inprogress = 1;
-    var_0 _meth_819A( ::melee_aivsai_execute, ::melee_endscript );
+    var_0 animcustom( ::melee_aivsai_execute, ::melee_endscript );
     var_0 thread melee_aivsai_animcustominterruptionmonitor( self );
     self.melee.target = undefined;
     melee_aivsai_execute();
@@ -936,12 +936,12 @@ melee_aivsai_getinposition_finalize( var_0 )
 
     if ( self.melee.precisepositioning )
     {
-        self _meth_81C6( self.melee.startpos, self.melee.startangles );
+        self forceteleport( self.melee.startpos, self.melee.startangles );
         wait 0.05;
     }
     else
     {
-        self _meth_818F( "face angle", self.melee.startangles[1] );
+        self orientmode( "face angle", self.melee.startangles[1] );
         wait 0.05;
     }
 
@@ -954,9 +954,9 @@ melee_aivsai_getinposition()
         return 0;
 
     melee_startmovement();
-    self _meth_8142( %body, 0.2 );
-    self _meth_8147( animscripts\run::getrunanim(), %body, 1, 0.2 );
-    self _meth_818E( "zonly_physics" );
+    self clearanim( %body, 0.2 );
+    self setanimknoball( animscripts\run::getrunanim(), %body, 1, 0.2 );
+    self animmode( "zonly_physics" );
     self.keepclaimednode = 1;
     var_0 = gettime() + 1500;
     var_1 = self.melee.target.origin;
@@ -966,7 +966,7 @@ melee_aivsai_getinposition()
         if ( melee_aivsai_getinposition_issuccessful( var_1 ) )
             return melee_aivsai_getinposition_finalize( var_1 );
 
-        self _meth_818F( "face point", self.melee.startpos );
+        self orientmode( "face point", self.melee.startpos );
         wait 0.05;
     }
 
@@ -979,37 +979,37 @@ melee_aivsai_execute()
     self endon( "killanimscript" );
     self endon( "end_melee" );
     self notify( "melee_aivsai_execute" );
-    self _meth_818E( "zonly_physics" );
+    self animmode( "zonly_physics" );
     self.a.special = "none";
     self.specialdeathfunc = undefined;
     thread melee_droppedweaponmonitorthread();
     thread melee_partnerendedmeleemonitorthread();
 
     if ( isdefined( self.melee.faceyaw ) )
-        self _meth_818F( "face angle", self.melee.faceyaw );
+        self orientmode( "face angle", self.melee.faceyaw );
     else
-        self _meth_818F( "face current" );
+        self orientmode( "face current" );
 
     self.a.pose = "stand";
-    self _meth_8142( %body, 0.2 );
+    self clearanim( %body, 0.2 );
 
     if ( isdefined( self.melee.death ) )
         melee_disableinterruptions();
 
-    self _meth_8110( "meleeAnim", self.melee.animname, %body, 1, 0.2 );
+    self setflaggedanimknoballrestart( "meleeAnim", self.melee.animname, %body, 1, 0.2 );
     melee_playfacialanim( self.melee.animname );
     var_0 = animscripts\shared::donotetracks( "meleeAnim", ::melee_handlenotetracks );
 
     if ( var_0 == "melee_death" && isdefined( self.melee.survive ) )
     {
         melee_droppedweaponrestore();
-        self _meth_8110( "meleeAnim", self.melee.surviveanimname, %body, 1, 0.2 );
+        self setflaggedanimknoballrestart( "meleeAnim", self.melee.surviveanimname, %body, 1, 0.2 );
         melee_playfacialanim( self.melee.surviveanimname );
         var_0 = animscripts\shared::donotetracks( "meleeAnim", ::melee_handlenotetracks );
     }
 
     if ( isdefined( self.melee ) && isdefined( self.melee.death ) )
-        self _meth_8052();
+        self kill();
 
     self.keepclaimednode = 0;
 }
@@ -1074,7 +1074,7 @@ melee_partnerendedmeleemonitorthread()
     if ( isdefined( self.melee.death ) )
     {
         if ( isdefined( self.melee.animateddeath ) || isdefined( self.melee.interruptdeath ) )
-            self _meth_8052();
+            self kill();
         else
         {
             self.melee.death = undefined;
@@ -1102,15 +1102,15 @@ melee_unlink()
 
 melee_unlinkinternal()
 {
-    self _meth_804F();
+    self unlink();
     self.syncedmeleetarget = undefined;
 
     if ( !isalive( self ) )
         return;
 
     self.melee.linked = undefined;
-    self _meth_818E( "zonly_physics" );
-    self _meth_818F( "face angle", self.angles[1] );
+    self animmode( "zonly_physics" );
+    self orientmode( "face angle", self.angles[1] );
 }
 
 melee_handlenotetracks_unsync()
@@ -1209,7 +1209,7 @@ melee_deathhandler_delayed()
     self endon( "end_melee" );
     animscripts\notetracks::donotetrackswithtimeout( "meleeAnim", 10.0 );
     animscripts\shared::dropallaiweapons();
-    self _meth_8023();
+    self startragdoll();
     return 1;
 }
 
@@ -1232,10 +1232,10 @@ melee_endscript_checkpositionandmovement()
     if ( isdefined( self.melee.playingmovementanim ) )
         melee_stopmovement();
 
-    var_0 = self _meth_813C();
+    var_0 = self getdroptofloorposition();
 
     if ( isdefined( var_0 ) )
-        self _meth_81C6( var_0, self.angles );
+        self forceteleport( var_0, self.angles );
     else
     {
 
@@ -1309,5 +1309,5 @@ melee_playfacialanim( var_0 )
 melee_clearfacialanim()
 {
     self.facialidx = undefined;
-    self _meth_8142( %head, 0.2 );
+    self clearanim( %head, 0.2 );
 }

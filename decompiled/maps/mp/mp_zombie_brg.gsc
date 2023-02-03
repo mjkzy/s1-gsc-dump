@@ -63,7 +63,7 @@ main()
     thread warbirdintro();
     level.spawnanimationnotetrackhandlerassigner = ::spawnanimationnotetrackhandlerassigner;
     level.zombiespawnfxcount = 0;
-    precacheminimapicon( "hud_waypoint_survivor" );
+    precacheheadicon( "hud_waypoint_survivor" );
     thread laddertriggersetup();
     thread exploittrigger();
     thread enablespecialweaponlevelbox();
@@ -168,7 +168,7 @@ ladderdisablethink( var_0 )
 
         foreach ( var_6 in var_3 )
         {
-            if ( var_6 _meth_80A9( var_1 ) && var_0 isonladder() )
+            if ( var_6 istouching( var_1 ) && var_0 isonladder() )
             {
                 var_4 = 0;
                 break;
@@ -177,13 +177,13 @@ ladderdisablethink( var_0 )
 
         if ( var_4 == 1 )
         {
-            var_0 _meth_8302( 1 );
+            var_0 allowladder( 1 );
             var_0.laddercheck = undefined;
             return;
         }
     }
 
-    var_0 _meth_8302( 0 );
+    var_0 allowladder( 0 );
     var_0 thread ladderenablethink();
 }
 
@@ -191,7 +191,7 @@ ladderenablethink()
 {
     level endon( "game_ended" );
     wait 10.0;
-    self _meth_8302( 1 );
+    self allowladder( 1 );
     self.laddercheck = undefined;
 }
 
@@ -218,13 +218,13 @@ disableprone( var_0 )
     self endon( "noprone" );
     self endon( "disconnect" );
 
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
     {
-        self _meth_811A( 0 );
+        self allowprone( 0 );
         wait 0.5;
     }
 
-    self _meth_811A( 1 );
+    self allowprone( 1 );
 }
 
 setstaticscriptmodels()
@@ -232,7 +232,7 @@ setstaticscriptmodels()
     var_0 = getentarray( "static_entity", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8560();
+        var_2 setstatic();
 }
 
 updateburgertowndoorcosts()
@@ -254,7 +254,7 @@ updateburgertowndoorcosts()
             continue;
 
         foreach ( var_7 in var_5.triggers )
-            var_7 _meth_80DC( maps\mp\zombies\_util::getcoststring( var_5.cost ) );
+            var_7 setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( var_5.cost ) );
     }
 }
 
@@ -287,10 +287,10 @@ warbirdintro()
     var_0 = common_scripts\utility::getstructarray( "warbird_intro", "targetname" );
     var_1 = common_scripts\utility::random( var_0 );
     var_2 = spawnhelicopter( level.players[0], var_1.origin, var_1.angles, "warbird_player_mp", "vehicle_xh9_warbird_low_cloaked_in_out_mp_cloak" );
-    var_2 _meth_828B();
-    var_2 _meth_806F( 0 );
-    var_2 _meth_8075( "veh_warbird_fly_over" );
-    var_2 _meth_806F( 1, 5 );
+    var_2 vehicle_turnengineoff();
+    var_2 scalevolume( 0 );
+    var_2 playloopsound( "veh_warbird_fly_over" );
+    var_2 scalevolume( 1, 5 );
     wait 3;
     var_2 thread warbirdintroflightpath( var_1 );
 }
@@ -459,7 +459,7 @@ assignzombiemesh()
     if ( common_scripts\utility::flag( "sewer_to_burgertown" ) && shouldbeburgertownzombie() )
     {
         var_0 = [ "zombies_head_cau_dlc_a", "zombies_head_cau_dlc_b", "zombies_head_cau_dlc_c", "zombies_head_shg_dlc_b" ];
-        self _meth_80B1( "zom_civ_brg_employee_torso_slice" );
+        self setmodel( "zom_civ_brg_employee_torso_slice" );
         var_1 = common_scripts\utility::random( var_0 );
         self attach( var_1 );
         thread burgertownemployeeattachhat();
@@ -990,7 +990,7 @@ trap_console_audio( var_0 )
 
 trap_console_audio_think( var_0 )
 {
-    var_0 _meth_8075( "trap_module_on" );
+    var_0 playloopsound( "trap_module_on" );
 
     for (;;)
     {
@@ -999,7 +999,7 @@ trap_console_audio_think( var_0 )
         if ( var_1 == "no_power" || var_1 == "deactivate" )
         {
             waitframe();
-            var_0 _meth_80AB();
+            var_0 stoploopsound();
             break;
         }
     }
@@ -1146,7 +1146,7 @@ trap_electric_floor_audio( var_0 )
 {
     var_1 = spawn( "script_origin", ( 1958, -1739, 383 ) );
     playsoundatpos( var_1.origin, "electric_floor_start" );
-    var_1 _meth_8075( "electric_floor_loop" );
+    var_1 playloopsound( "electric_floor_loop" );
 
     for (;;)
     {
@@ -1155,9 +1155,9 @@ trap_electric_floor_audio( var_0 )
         if ( var_2 == "cooldown" || var_2 == "no_power" || var_2 == "deactivate" )
         {
             playsoundatpos( var_1.origin, "electric_floor_stop" );
-            var_1 _meth_806F( 0, 0.25 );
+            var_1 scalevolume( 0, 0.25 );
             wait 0.25;
-            var_1 _meth_80AB();
+            var_1 stoploopsound();
             waitframe();
             var_1 delete();
             break;
@@ -1193,9 +1193,9 @@ trap_ambulance_audio( var_0 )
     var_1 = spawn( "script_origin", var_0.origin );
     playsoundatpos( var_1.origin, "ambulance_start" );
     wait 0.3;
-    var_1 _meth_806F( 0 );
-    var_1 _meth_8075( "ambulance_loop" );
-    var_1 _meth_806F( 1, 0.35 );
+    var_1 scalevolume( 0 );
+    var_1 playloopsound( "ambulance_loop" );
+    var_1 scalevolume( 1, 0.35 );
 
     for (;;)
     {
@@ -1204,9 +1204,9 @@ trap_ambulance_audio( var_0 )
         if ( var_2 == "cooldown" || var_2 == "no_power" || var_2 == "deactivate" )
         {
             playsoundatpos( var_1.origin, "ambulance_stop" );
-            var_1 _meth_806F( 0, 0.25 );
+            var_1 scalevolume( 0, 0.25 );
             wait 0.25;
-            var_1 _meth_80AB();
+            var_1 stoploopsound();
             waitframe();
             var_1 delete();
             break;
@@ -1223,7 +1223,7 @@ trap_carwash_audio( var_0 )
 {
     var_1 = spawn( "script_origin", ( 456, -421, 233 ) );
     playsoundatpos( var_1.origin, "carwash_start" );
-    var_1 _meth_8075( "carwash_loop" );
+    var_1 playloopsound( "carwash_loop" );
 
     for (;;)
     {
@@ -1232,9 +1232,9 @@ trap_carwash_audio( var_0 )
         if ( var_2 == "cooldown" || var_2 == "no_power" || var_2 == "deactivate" )
         {
             playsoundatpos( var_1.origin, "carwash_stop" );
-            var_1 _meth_806F( 0, 0.25 );
+            var_1 scalevolume( 0, 0.25 );
             wait 0.25;
-            var_1 _meth_80AB();
+            var_1 stoploopsound();
             waitframe();
             var_1 delete();
             break;
@@ -1291,7 +1291,7 @@ enablespecialweaponlevelbox()
 initrollupdoors()
 {
     var_0 = "dlc_rollup_door_metal_open";
-    map_restart( var_0 );
+    precachempanim( var_0 );
     wait 1.0;
     var_1 = getentarray( "rollup_door", "targetname" );
 
@@ -1303,16 +1303,16 @@ rollupdoorthink( var_0 )
 {
     var_1 = self.script_flag;
     common_scripts\utility::flag_wait( var_1 );
-    self _meth_8279( var_0 );
+    self scriptmodelplayanim( var_0 );
 }
 
 spinningpitbullwheel()
 {
     var_0 = "hms_greece_sniperscramble_pitbull_destroyed_veh";
-    map_restart( var_0 );
+    precachempanim( var_0 );
     wait 1;
     var_1 = getent( "pitbull_veh", "targetname" );
-    var_1 _meth_8279( var_0 );
+    var_1 scriptmodelplayanim( var_0 );
 }
 
 flyoverbink()
@@ -1343,20 +1343,20 @@ setupflyoveranimation( var_0, var_1, var_2, var_3 )
     level.zombiegamepaused = 1;
     wait 1.0;
     var_5 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5 _meth_80B1( "genericprop_x3" );
+    var_5 setmodel( "genericprop_x3" );
     var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_6 _meth_80B1( "tag_player" );
-    var_6 _meth_8446( var_5, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_6 setmodel( "tag_player" );
+    var_6 vehicle_jetbikesethoverforcescale( var_5, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     for (;;)
     {
         while ( getdvarint( var_3, 0 ) == 0 )
             waitframe();
 
-        level.player _meth_807E( var_6, "tag_player", 1, 0, 0, 0, 0, 1 );
-        level.player _meth_80A0( 0 );
+        level.player playerlinkweaponviewtodelta( var_6, "tag_player", 1, 0, 0, 0, 0, 1 );
+        level.player playerlinkedsetviewznear( 0 );
         level.player hide();
-        var_5 _meth_848B( var_0, var_4.origin, var_4.angles, "camera_notetrack" );
+        var_5 scriptmodelplayanimdeltamotionfrompos( var_0, var_4.origin, var_4.angles, "camera_notetrack" );
 
         foreach ( var_8 in var_2 )
             level thread donotetrack( var_5, "camera_notetrack", var_8 );
@@ -1368,8 +1368,8 @@ setupflyoveranimation( var_0, var_1, var_2, var_3 )
 
         var_5 notify( "notetrackDone" );
         level.player show();
-        level.player _meth_804F();
-        var_5 _meth_827A();
+        level.player unlink();
+        var_5 scriptmodelclearanim();
         wait 1;
     }
 }
@@ -1412,7 +1412,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
         var_3 = [];
 
     var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_6 _meth_80B1( var_1 );
+    var_6 setmodel( var_1 );
 
     for (;;)
     {
@@ -1422,7 +1422,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
         if ( isdefined( var_2 ) )
             level waittill( var_2 );
 
-        var_6 _meth_848B( var_0, var_5.origin, var_5.angles, "ent_notetrack" );
+        var_6 scriptmodelplayanimdeltamotionfrompos( var_0, var_5.origin, var_5.angles, "ent_notetrack" );
 
         foreach ( var_8 in var_3 )
             level thread donotetrack( var_6, "ent_notetrack", var_8 );
@@ -1433,7 +1433,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
             waitframe();
 
         var_6 notify( "notetrackDone" );
-        var_6 _meth_827A();
+        var_6 scriptmodelclearanim();
         wait 1;
     }
 }
@@ -1554,7 +1554,7 @@ toxicgaszonefx( var_0 )
     var_2 = toxicgaszonelocstringreturn( var_0 );
     var_3 = common_scripts\utility::getstruct( var_0 + "_ToxicGas", "script_noteworthy" );
     var_4 = spawn( "script_model", var_3.origin );
-    var_4 _meth_80B1( "tag_origin" );
+    var_4 setmodel( "tag_origin" );
     var_4.angles = ( 270, 0, 0 );
     thread toxicgasstartaudio( var_3 );
     thread toxicgascanfx( var_4 );
@@ -1582,7 +1582,7 @@ toxicgaszonefillfx( var_0 )
     foreach ( var_3 in var_1 )
     {
         var_4 = spawn( "script_model", var_3.origin );
-        var_4 _meth_80B1( "tag_origin" );
+        var_4 setmodel( "tag_origin" );
         var_4.angles = var_3.angles;
         maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "Toxic_Gas_Doorways" ), var_4, "tag_origin" );
         thread toxicgascleanupfx( var_4 );
@@ -1647,7 +1647,7 @@ toxicgaszoneinfectiontrigger( var_0 )
 
             if ( maps\mp\zombies\_util::isplayerinfected( var_3 ) )
             {
-                var_3 _meth_8051( 25, var_3.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+                var_3 dodamage( 25, var_3.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
                 continue;
             }
 
@@ -1700,14 +1700,14 @@ toxicgasspewaudio( var_0 )
     wait 4.9;
     playsoundatpos( var_1.origin, "event_gas_steam_2nd_burst" );
     wait 0.25;
-    var_1 _meth_8075( "event_gas_steam_active_lp" );
-    var_1 _meth_806F( 0 );
+    var_1 playloopsound( "event_gas_steam_active_lp" );
+    var_1 scalevolume( 0 );
     waitframe();
-    var_1 _meth_806F( 1, 0.5 );
+    var_1 scalevolume( 1, 0.5 );
     level waittill( "zombie_wave_ended" );
-    var_1 _meth_806F( 0, 5 );
+    var_1 scalevolume( 0, 5 );
     wait 5;
-    var_1 _meth_80AB( "event_gas_steam_active_lp" );
+    var_1 stoploopsound( "event_gas_steam_active_lp" );
 }
 
 spawnanimationnotetrackhandlerassigner( var_0 )
@@ -1960,7 +1960,7 @@ goliathspawnexplosionradiusdamage( var_0 )
             if ( isplayer( var_3 ) || isdefined( var_3.agentteam ) && var_3.agentteam == level.playerteam )
             {
                 var_4 = int( var_3.health * 0.5 );
-                var_3 _meth_8051( var_4, var_0 );
+                var_3 dodamage( var_4, var_0 );
                 continue;
             }
 
@@ -1969,7 +1969,7 @@ goliathspawnexplosionradiusdamage( var_0 )
             if ( isdefined( var_3.maxhealth ) )
                 var_4 = var_3.maxhealth + 10;
 
-            var_3 _meth_8051( var_4, var_0 );
+            var_3 dodamage( var_4, var_0 );
         }
     }
 }
@@ -2044,7 +2044,7 @@ exploittriggermonitor()
                         else
                             var_7 = vectornormalize( ( var_3.origin - var_0.origin ) * ( 1, 1, 0 ) );
 
-                        var_0 _meth_82F1( var_7 * 20 );
+                        var_0 setvelocity( var_7 * 20 );
                         break;
                     }
 
@@ -2064,8 +2064,8 @@ exploittriggerdamage( var_0 )
     var_0 endon( "begin_last_stand" );
     wait 1;
 
-    if ( var_0 _meth_80A9( self ) )
-        var_0 _meth_8051( 10, var_0.origin );
+    if ( var_0 istouching( self ) )
+        var_0 dodamage( 10, var_0.origin );
 }
 
 zombiespawnhudoutline()
@@ -2076,7 +2076,7 @@ zombiespawnhudoutline()
         var_0 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
 
         foreach ( var_2 in var_0 )
-            var_2 _meth_83FA( 0, 0 );
+            var_2 hudoutlineenable( 0, 0 );
     }
 }
 
@@ -2104,7 +2104,7 @@ zombiezonedebugplayerlocation( var_0 )
     {
         wait 0.05;
 
-        if ( !level.players[0] _meth_80A9( self ) )
+        if ( !level.players[0] istouching( self ) )
             continue;
 
         foreach ( var_2 in var_0 )
@@ -2368,7 +2368,7 @@ windowexploitledgelogicthink()
                 if ( var_4 < 75 )
                 {
                     var_5 = vectornormalize( ( var_3.origin - var_0.origin ) * ( 1, 1, 0 ) );
-                    var_0 _meth_82F1( var_5 * 100 );
+                    var_0 setvelocity( var_5 * 100 );
                     break;
                 }
             }
@@ -2401,7 +2401,7 @@ shoveplayer()
         if ( isplayer( var_2 ) )
         {
             var_3 = vectornormalize( ( var_2.origin + ( -100, 0, 0 ) - var_2.origin ) * ( 1, 1, 0 ) );
-            var_2 _meth_82F1( var_3 * 300 );
+            var_2 setvelocity( var_3 * 300 );
         }
     }
 }

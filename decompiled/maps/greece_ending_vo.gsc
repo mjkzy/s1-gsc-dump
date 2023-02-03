@@ -188,7 +188,7 @@ endingfightkvadialogue()
 endinggetenemyspeaker()
 {
     var_0 = maps\_utility::get_living_ai_array( "EndingCineKVA_AI", "targetname" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
     {

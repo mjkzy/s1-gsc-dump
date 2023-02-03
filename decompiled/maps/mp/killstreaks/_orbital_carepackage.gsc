@@ -17,8 +17,8 @@ init()
     level.killstreakfuncs["orbital_carepackage"] = ::tryusedefaultorbitalcarepackage;
     level.killstreakwieldweapons["orbital_carepackage_pod_mp"] = "orbital_carepackage";
     level.killstreakfuncs["orbital_carepackage_juggernaut_exosuit"] = ::tryuseorbitaljuggernautexosuit;
-    map_restart( "orbital_care_package_open" );
-    map_restart( "orbital_care_package_fan_spin" );
+    precachempanim( "orbital_care_package_open" );
+    precachempanim( "orbital_care_package_fan_spin" );
     level.ocp_weap_name = "orbital_carepackage_pod_mp";
 
     if ( !isdefined( level.missileitemclipdelay ) )
@@ -39,7 +39,7 @@ tryuseorbitalcarepackage( var_0, var_1, var_2 )
 {
     if ( common_scripts\utility::array_contains( var_2, "orbital_carepackage_drone" ) && maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + 1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
@@ -69,7 +69,7 @@ playerlaunchcarepackage( var_0, var_1 )
     else
     {
         thread maps\mp\killstreaks\_orbital_util::playerplayinvalidpositioneffect( common_scripts\utility::getfx( "ocp_ground_marker_bad" ) );
-        self _meth_82FB( "ui_invalid_orbital_care_package", 1 );
+        self setclientomnvar( "ui_invalid_orbital_care_package", 1 );
         return 0;
     }
 
@@ -162,7 +162,7 @@ capsule_damage( var_0, var_1, var_2, var_3, var_4, var_5 )
             var_15 = distancesquared( var_14, var_11.origin );
 
             if ( var_15 <= var_9 )
-                var_11 _meth_8051( var_0, var_14, var_5, self, "MOD_EXPLOSIVE", level.ocp_weap_name );
+                var_11 dodamage( var_0, var_14, var_5, self, "MOD_EXPLOSIVE", level.ocp_weap_name );
         }
     }
 }
@@ -171,7 +171,7 @@ setmissilespecialclipmaskdelayed( var_0 )
 {
     self endon( "death" );
     wait(var_0);
-    self _meth_851C( 1 );
+    self setmissilespecialclipmask( 1 );
 }
 
 createplayerdroppod( var_0 )
@@ -200,18 +200,18 @@ createplayerdroppod( var_0 )
 
 rocket_cleanupondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     level.rockets[var_0] = self;
     self waittill( "death" );
 
     if ( isdefined( level.orbitaldropupgrade ) && level.orbitaldropupgrade == 1 )
-        _func_071( "dna_aoe_grenade_throw_zombie_mp", self.origin + ( 0, 0, 64 ), ( 0, 0, 0 ), 3.0, level.player, 1 );
+        magicgrenademanual( "dna_aoe_grenade_throw_zombie_mp", self.origin + ( 0, 0, 64 ), ( 0, 0, 0 ), 3.0, level.player, 1 );
 
     level.rockets[var_0] = undefined;
 
     if ( isdefined( self.killcament ) )
     {
-        self.killcament _meth_804F();
+        self.killcament unlink();
         self.killcament.origin += ( 0, 0, 300 );
     }
 }
@@ -287,7 +287,7 @@ monitordropinternal( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_8 = common_scripts\utility::array_contains( var_2.modules, "orbital_carepackage_drone" );
     var_9 = spawn( "script_model", var_2.droppoint + ( 0, 0, 5 ) );
     var_9.angles = ( -90, 0, 0 );
-    var_9 _meth_80B1( "tag_origin" );
+    var_9 setmodel( "tag_origin" );
     var_9 hide();
     var_9 showtoplayer( var_0 );
     playfxontag( common_scripts\utility::getfx( "ocp_ground_marker" ), var_9, "tag_origin" );
@@ -297,7 +297,7 @@ monitordropinternal( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( var_8 )
         var_0 thread playermonitorfordronedelivery( var_1, var_2, var_9, var_7 );
 
-    var_7 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    var_7 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( -90, 0, 0 ) );
     var_1 waittill( "death", var_10, var_11, var_12 );
 
     if ( isdefined( var_1 ) && !var_8 && var_1.origin[2] > var_2.droppoint[2] && distancesquared( var_1.origin, var_2.droppoint ) > 22500 )
@@ -336,10 +336,10 @@ monitordropinternal( var_0, var_1, var_2, var_3, var_4, var_5 )
     }
 
     var_9 thread carepackagecleanup( var_7 );
-    var_7 _meth_8278( level.airdropcratecollision );
+    var_7 clonebrushmodeltoscriptmodel( level.airdropcratecollision );
     var_7.droppingtoground = 1;
-    var_7 _meth_804F();
-    var_7 _meth_8276( ( 0, 0, 0 ) );
+    var_7 unlink();
+    var_7 physicslaunchserver( ( 0, 0, 0 ) );
     var_7 thread cratedetectstopphysics();
     var_7 thread orbitalphysicswaiter( var_3, var_4, var_0 );
     level thread removepod( var_7, var_2 );
@@ -358,9 +358,9 @@ crateimpactcleanup( var_0 )
         if ( !isalive( var_3 ) )
             continue;
 
-        if ( _func_285( var_3, var_0 ) )
+        if ( isalliedsentient( var_3, var_0 ) )
         {
-            if ( var_3 _meth_80A9( self ) )
+            if ( var_3 istouching( self ) )
             {
                 foreach ( var_5 in var_1 )
                 {
@@ -400,7 +400,7 @@ cratedetectstopphysics()
 
         if ( var_3 >= var_1 )
         {
-            self _meth_84E1();
+            self physicsstop();
             return;
         }
     }
@@ -448,13 +448,13 @@ orbitalphysicswaiter( var_0, var_1, var_2 )
     if ( isdefined( self.enemymodel ) )
     {
         self.enemymodel thread orbitalanimate();
-        self.enemymodel _meth_82BE();
+        self.enemymodel solid();
     }
 
     if ( isdefined( self.friendlymodel ) )
     {
         self.friendlymodel thread orbitalanimate();
-        self.friendlymodel _meth_82BE();
+        self.friendlymodel solid();
     }
 
     thread crateimpactcleanup( var_2 );
@@ -468,9 +468,9 @@ orbitalanimate( var_0 )
         wait 0.75;
 
     if ( isdefined( var_0 ) && var_0 )
-        self _meth_8279( "orbital_care_package_open_loop" );
+        self scriptmodelplayanim( "orbital_care_package_open_loop" );
     else
-        self _meth_8279( "orbital_care_package_open" );
+        self scriptmodelplayanim( "orbital_care_package_open" );
 
     playfxontag( common_scripts\utility::getfx( "ocp_glow" ), self, "TAG_ORIGIN" );
 
@@ -527,7 +527,7 @@ carepackagesetupminimap( var_0, var_1 )
     objective_icon( var_2, var_3 );
 
     if ( !level.teambased )
-        objective_playerteam( var_2, var_1 _meth_81B1() );
+        objective_playerteam( var_2, var_1 getentitynumber() );
     else
         objective_team( var_2, var_1.team );
 
@@ -542,7 +542,7 @@ carepackagesetupminimap( var_0, var_1 )
         objective_icon( var_2, "compass_objpoint_ammo_enemy" );
 
         if ( !level.teambased )
-            objective_playerenemyteam( var_2, var_1 _meth_81B1() );
+            objective_playerenemyteam( var_2, var_1 getentitynumber() );
         else
             objective_team( var_2, level.otherteam[var_1.team] );
 
@@ -604,8 +604,8 @@ disabledamagecallback( var_0 )
 disabledamagecallbackinternal( var_0 )
 {
     var_0.damagecallback = undefined;
-    var_0 _meth_82C0( 0 );
-    var_0 _meth_8495( 0 );
+    var_0 setcandamage( 0 );
+    var_0 setdamagecallbackon( 0 );
 }
 
 cratehandledamagecallback( var_0, var_1, var_2, var_3 )
@@ -641,8 +641,8 @@ playermonitorfordronedelivery( var_0, var_1, var_2, var_3 )
     var_9 = var_1.drone;
     var_9 thread carepackagedronewatchcratedeath( var_3 );
     var_3.oldcontents = var_3 setcontents( 0 );
-    var_3.friendlymodel _meth_82BE();
-    var_3.enemymodel _meth_82BE();
+    var_3.friendlymodel solid();
+    var_3.enemymodel solid();
 
     for (;;)
     {
@@ -681,10 +681,10 @@ playermonitorfordronedelivery( var_0, var_1, var_2, var_3 )
 
     var_9 thread carepackagedronewatchdeath();
     var_9 endon( "death" );
-    var_9 _meth_827C( var_3.origin, var_3.angles, 0, 0 );
-    var_3 _meth_804D( var_9, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_3.friendlymodel _meth_8279( "orbital_care_package_fan_spin", "nothing" );
-    var_3.enemymodel _meth_8279( "orbital_care_package_fan_spin", "nothing" );
+    var_9 vehicle_teleport( var_3.origin, var_3.angles, 0, 0 );
+    var_3 linkto( var_9, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3.friendlymodel scriptmodelplayanim( "orbital_care_package_fan_spin", "nothing" );
+    var_3.enemymodel scriptmodelplayanim( "orbital_care_package_fan_spin", "nothing" );
     maps\mp\killstreaks\_drone_carepackage::setupcarepackagedrone( var_9, 1 );
     var_9.crate = var_3;
 
@@ -699,10 +699,10 @@ playermonitorfordronedelivery( var_0, var_1, var_2, var_3 )
     playfx( common_scripts\utility::getfx( "ocp_midair" ), var_7, getdvarvector( "scr_ocp_forward", ( 0, 0, -1 ) ) );
     var_9 thread drone_thrusterfx();
     var_10 = var_1.droppoint + ( 0, 0, 35 );
-    var_9 _meth_825B( var_10, 1 );
-    var_9 _meth_8284( getdvarfloat( "scr_ocp_dropspeed", 30 ), getdvarfloat( "scr_ocp_dropa", 20 ), getdvarfloat( "scr_ocp_dropd", 1 ) );
-    var_9 _meth_8253( 30, 5, 5 );
-    var_9 _meth_8294( 15, 15 );
+    var_9 setvehgoalpos( var_10, 1 );
+    var_9 vehicle_setspeedimmediate( getdvarfloat( "scr_ocp_dropspeed", 30 ), getdvarfloat( "scr_ocp_dropa", 20 ), getdvarfloat( "scr_ocp_dropd", 1 ) );
+    var_9 sethoverparams( 30, 5, 5 );
+    var_9 setmaxpitchroll( 15, 15 );
 
     while ( distancesquared( var_9.origin, var_10 ) > var_4 && var_3.health > 0 )
         waitframe();
@@ -712,20 +712,20 @@ playermonitorfordronedelivery( var_0, var_1, var_2, var_3 )
 
     if ( var_3.health > 0 )
     {
-        var_2 _meth_804D( var_9, "tag_origin" );
+        var_2 linkto( var_9, "tag_origin" );
         var_2 notify( "linkedToDrone" );
         var_9 thread maps\mp\killstreaks\_drone_carepackage::carepackagedrone_deleteonactivate();
         var_9 carepackagedronefindowner();
     }
 
     disabledamagecallback( var_3 );
-    var_3 _meth_8438( "orbital_pkg_drone_jets_off" );
+    var_3 playsoundonmovingent( "orbital_pkg_drone_jets_off" );
 
     if ( isdefined( var_9 ) )
         var_9 drone_stopthrustereffects();
 
-    var_3.friendlymodel _meth_827A( "orbital_care_package_fan_spin", "nothing" );
-    var_3.enemymodel _meth_827A( "orbital_care_package_fan_spin", "nothing" );
+    var_3.friendlymodel scriptmodelclearanim( "orbital_care_package_fan_spin", "nothing" );
+    var_3.enemymodel scriptmodelclearanim( "orbital_care_package_fan_spin", "nothing" );
     waitframe();
 
     if ( isdefined( var_9 ) )
@@ -769,7 +769,7 @@ carepackagedronefindowner()
         if ( var_3 < gettime() || var_2 )
         {
             var_2 = 0;
-            self _meth_83F9( var_0, ( 0, -100, 15 ) );
+            self setdronegoalpos( var_0, ( 0, -100, 15 ) );
             var_3 = gettime() + 1000;
         }
 

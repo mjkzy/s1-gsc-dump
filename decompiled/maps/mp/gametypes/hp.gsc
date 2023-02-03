@@ -130,7 +130,7 @@ onstartgametype()
     else
         updateobjectivehintmessage( level.objectivehintcapturezone );
 
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
     initspawns();
     var_2[0] = "hp";
     maps\mp\gametypes\_gameobjects::main( var_2 );
@@ -261,7 +261,7 @@ updategameobjecthudindex()
             var_2 = var_1;
 
             if ( var_1.team == "spectator" || var_1.sessionstate == "spectator" )
-                var_2 = var_1 _meth_829D();
+                var_2 = var_1 getspectatingplayer();
 
             if ( !maps\mp\_utility::isreallyalive( var_2 ) )
             {
@@ -305,7 +305,7 @@ setgameobjecthudindex( var_0, var_1 )
 
     if ( var_2 != var_0.gameobjecthudindex )
     {
-        var_0 _meth_82FB( "ui_hardpoint", var_2 );
+        var_0 setclientomnvar( "ui_hardpoint", var_2 );
         var_0.gameobjecthudindex = var_2;
         var_0.objective = var_2;
     }
@@ -398,7 +398,7 @@ onzonecapture( var_0 )
     var_1 = var_0.pers["team"];
     var_2 = maps\mp\_utility::getotherteam( var_1 );
     var_3 = gettime();
-    var_0 _meth_8026( "zone captured" );
+    var_0 logstring( "zone captured" );
     level.zone.gameobject.iscontested = 0;
     level.usestartspawns = 0;
     setteamicons( var_1 );
@@ -695,7 +695,7 @@ matchzonestotriggers( var_0, var_1 )
 
         for ( var_5 = 0; var_5 < var_1.size; var_5++ )
         {
-            if ( var_4 _meth_80A9( var_1[var_5] ) )
+            if ( var_4 istouching( var_1[var_5] ) )
             {
                 if ( isdefined( var_4.trig ) )
                 {
@@ -733,9 +733,9 @@ matchzonestotriggers( var_0, var_1 )
         var_4.gameobject maps\mp\gametypes\_gameobjects::set3dicon( "mlg", undefined );
         var_4.gameobject maps\mp\gametypes\_gameobjects::setmodelvisibility( 0 );
         var_4.trig.useobj = var_4.gameobject;
-        var_4.gameobject.objpoints["allies"] _meth_8523( var_4.trig );
-        var_4.gameobject.objpoints["axis"] _meth_8523( var_4.trig );
-        var_4.gameobject.objpoints["mlg"] _meth_8523( var_4.trig );
+        var_4.gameobject.objpoints["allies"] sethidetrigger( var_4.trig );
+        var_4.gameobject.objpoints["axis"] sethidetrigger( var_4.trig );
+        var_4.gameobject.objpoints["mlg"] sethidetrigger( var_4.trig );
         var_4 setupnearbyspawns();
     }
 
@@ -848,13 +848,13 @@ onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, v
 
     var_11 = 0;
 
-    if ( !level.zone.gameobject.iscontested && var_1 _meth_80A9( level.zone.trig ) )
+    if ( !level.zone.gameobject.iscontested && var_1 istouching( level.zone.trig ) )
     {
         var_11 = 1;
         var_1 thread maps\mp\_events::killwhilecapture( self, var_9 );
     }
 
-    if ( self _meth_80A9( level.zone.trig ) )
+    if ( self istouching( level.zone.trig ) )
     {
         var_1.lastkilltime = gettime();
 

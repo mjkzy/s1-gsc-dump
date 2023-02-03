@@ -69,7 +69,7 @@ tryusetridrone( var_0 )
         self.tridroneammo--;
 
         if ( self.tridroneammo >= 1 )
-            self _meth_830E( "tri_drone_mp" );
+            self giveweapon( "tri_drone_mp" );
     }
 
     return 1;
@@ -154,9 +154,9 @@ spawnmine( var_0 )
     var_11 = vectortoangles( var_10 );
     var_11 += ( 90, 0, 0 );
     var_9.angles = var_11;
-    var_9 _meth_80B1( level.tridronesettings.dronemesh );
+    var_9 setmodel( level.tridronesettings.dronemesh );
     var_9.owner = self;
-    var_9 _meth_8383( self );
+    var_9 setotherent( self );
     var_9.killcamoffset = ( 0, 0, 55 );
     var_9.killcament = spawn( "script_model", var_9.origin + var_9.killcamoffset );
     var_9.stunned = 0;
@@ -188,8 +188,8 @@ showammocount()
 
     for (;;)
     {
-        if ( "tri_drone_mp" == self _meth_8345() )
-            self _meth_82FB( "ui_tri_drone_count", self.tridroneammo );
+        if ( "tri_drone_mp" == self getlethalweapon() )
+            self setclientomnvar( "ui_tri_drone_count", self.tridroneammo );
 
         waitframe();
     }
@@ -201,8 +201,8 @@ createbombsquadmodel( var_0, var_1, var_2 )
     var_3 hide();
     wait 0.05;
     var_3 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( var_2 );
-    var_3 _meth_80B1( var_0 );
-    var_3 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( var_0 );
+    var_3 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 setcontents( 0 );
     self waittill( "death" );
 
@@ -286,7 +286,7 @@ minedamagemonitor()
     self endon( "mine_triggered" );
     self endon( "mine_selfdestruct" );
     self endon( "death" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.maxhealth = 100000;
     self.health = self.maxhealth;
     var_0 = undefined;
@@ -361,7 +361,7 @@ mineexplode( var_0 )
         return;
 
     self hide();
-    self entityradiusdamage( self.origin, 192, 60, 60, var_0, "MOD_EXPLOSIVE", "bouncingbetty_mp" );
+    self radiusdamage( self.origin, 192, 60, 60, var_0, "MOD_EXPLOSIVE", "bouncingbetty_mp" );
 
     foreach ( var_3 in level.players )
     {
@@ -401,7 +401,7 @@ equipmentwatchuse()
     self endon( "spawned_player" );
     self endon( "disconnect" );
     self endon( "change_owner" );
-    self.pickuptrigger _meth_80DA( "HINT_NOICON" );
+    self.pickuptrigger setcursorhint( "HINT_NOICON" );
     var_0 = self.pickuptrigger.owner;
     equipmentenableuse( var_0 );
 
@@ -412,7 +412,7 @@ equipmentwatchuse()
         var_0.tridroneammo++;
 
         if ( var_0.tridroneammo == 1 )
-            var_0 _meth_830E( "tri_drone_mp" );
+            var_0 giveweapon( "tri_drone_mp" );
 
         if ( isdefined( self.pickuptrigger ) )
             self.pickuptrigger delete();
@@ -430,14 +430,14 @@ equipmentenableuse( var_0 )
     self endon( "disconnect" );
     self endon( "equipmentWatchUse" );
     self endon( "change_owner" );
-    self.pickuptrigger _meth_80DA( "HINT_NOICON" );
-    self.pickuptrigger _meth_80DB( &"MP_PICKUP_TRI_DRONE" );
+    self.pickuptrigger setcursorhint( "HINT_NOICON" );
+    self.pickuptrigger sethintstring( &"MP_PICKUP_TRI_DRONE" );
     self.pickuptrigger maps\mp\_utility::setselfusable( var_0 );
 }
 
 equipmentdisableuse( var_0 )
 {
-    self.trigger _meth_80DB( "" );
+    self.trigger sethintstring( "" );
     self.trigger maps\mp\_utility::setselfunusuable();
 }
 
@@ -478,10 +478,10 @@ mineproximitytrigger( var_0 )
                 continue;
         }
 
-        if ( lengthsquared( var_2 _meth_81B2() ) < 10 )
+        if ( lengthsquared( var_2 getentityvelocity() ) < 10 )
             continue;
 
-        if ( var_2 _meth_81D7( self.origin, self ) > 0 )
+        if ( var_2 damageconetrace( self.origin, self ) > 0 )
             break;
     }
 
@@ -492,9 +492,9 @@ mineproximitytrigger( var_0 )
     playfx( level.mine_launch, self.origin );
     var_3 = anglestoup( self.angles );
     var_4 = self.origin + var_3 * 64;
-    self _meth_82AE( var_4, 0.75, 0, 0.25 );
-    self.killcament _meth_82AE( var_4 + self.killcamoffset, 0.75, 0, 0.25 );
-    self _meth_82BD( ( 0, 750, 32 ), 0.7, 0, 0.65 );
+    self moveto( var_4, 0.75, 0, 0.25 );
+    self.killcament moveto( var_4 + self.killcamoffset, 0.75, 0, 0.25 );
+    self rotatevelocity( ( 0, 750, 32 ), 0.7, 0, 0.65 );
     thread playspinnerfx();
 
     if ( isplayer( var_2 ) && var_2 maps\mp\_utility::_hasperk( "specialty_class_engineer" ) )

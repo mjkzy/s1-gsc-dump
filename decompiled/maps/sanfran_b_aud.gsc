@@ -56,7 +56,7 @@ launch_loops()
 
 launch_intro_loops()
 {
-    if ( level.currentgen && !_func_21E( "sanfran_b_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "sanfran_b_intro_tr" ) )
         return;
 
     common_scripts\utility::loop_fx_sound( "emt_fire_crackle_m_01", ( -5971, 72165, -1405 ), 1, "aud_stop_intro" );
@@ -138,7 +138,7 @@ launch_intro_loops()
 
 launch_outro_loops()
 {
-    if ( level.currentgen && !_func_21E( "sanfran_b_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "sanfran_b_outro_tr" ) )
         level waittill( "tff_post_transition_intro_to_outro" );
 
     common_scripts\utility::loop_fx_sound( "emt_fire_roar_l_01", ( -7577, 66734, -1147 ), 1 );
@@ -424,7 +424,7 @@ start_ams_thread( var_0, var_1 )
         if ( level.aud.bump_music_for_burke_takedown )
         {
             var_4 = 0.4;
-            var_5 = _func_0D6( "bad_guys" );
+            var_5 = getaiarray( "bad_guys" );
 
             if ( var_5.size == 0 )
                 level.aud.bump_music_for_burke_takedown = 0;
@@ -448,7 +448,7 @@ get_interior_intensity()
     var_0 = 0;
     var_1 = 7;
     var_2 = 0;
-    var_3 = _func_0D6( "bad_guys" );
+    var_3 = getaiarray( "bad_guys" );
 
     foreach ( var_5 in var_3 )
     {
@@ -574,7 +574,7 @@ shrike_flyby_pair_02( var_0, var_1 )
 warbird_circling_perimeter()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
 }
 
 attack_drone_audio_handler()
@@ -616,7 +616,7 @@ jammer_plant()
 warbird_dropoff_01()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_02" );
     wait 3.0;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_01_hover", undefined, undefined, undefined, undefined, ( 0, 500, 0 ) );
@@ -627,7 +627,7 @@ warbird_dropoff_01()
 warbird_dropoff_02()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_01" );
     var_0 waittill( "unloaded" );
     var_0 soundscripts\_snd_common::snd_air_vehicle_smart_flyby( "warbird_depart_01_current", 2000 );
@@ -652,7 +652,7 @@ hangar_doors_open( var_0, var_1, var_2 )
 warbird_dropoff_03()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_04" );
     wait 3.0;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_04_hover" );
@@ -663,7 +663,7 @@ warbird_dropoff_03()
 warbird_dropoff_04()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_03" );
     wait 3.0;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_03_hover" );
@@ -754,7 +754,7 @@ shrike_hanger_flyby()
 warbird_hanger_dropoff()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     wait 3.39;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "warbird_dropoff_hanger" );
     wait 2.05;
@@ -766,7 +766,7 @@ warbird_hanger_dropoff()
 littlebird_hanger_flyby()
 {
     var_0 = self;
-    var_0 _meth_828B();
+    var_0 vehicle_turnengineoff();
     var_0 soundscripts\_snd_playsound::snd_play_linked( "littlebird_hanger_arrive" );
     wait 3;
     var_1 = soundscripts\_snd_playsound::snd_play_loop_linked( "littlebird_hanger_hover_lp", "littlebird_hanger_hover_stop", 1.15, 2 );

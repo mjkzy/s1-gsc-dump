@@ -125,7 +125,7 @@ move_free_run()
 {
     if ( self.a.pose != "stand" )
     {
-        self _meth_8142( %animscript_root, 0.2 );
+        self clearanim( %animscript_root, 0.2 );
 
         if ( self.a.pose == "prone" )
             animscripts\utility::exitpronewrapper( 1 );
@@ -141,7 +141,7 @@ move_free_run()
     if ( self.movemode == "walk" )
         var_1 *= 0.6;
 
-    self _meth_810F( "runanim", var_0, %walk_and_run_loops, 1, var_2, var_1, 1 );
+    self setflaggedanimknoball( "runanim", var_0, %walk_and_run_loops, 1, var_2, var_1, 1 );
     animscripts\run::setmovenonforwardanims( animscripts\utility::lookupanim( "free_run_move", "move_b" ), animscripts\utility::lookupanim( "free_run_move", "move_l" ), animscripts\utility::lookupanim( "free_run_move", "move_r" ) );
     thread animscripts\run::setcombatstandmoveanimweights( "free_run_move" );
     animscripts\notetracks::donotetracksfortime( 0.2, "runanim" );

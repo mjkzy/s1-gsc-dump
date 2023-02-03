@@ -39,10 +39,10 @@ drag_player_from_current_position( var_0, var_1, var_2, var_3, var_4, var_5 )
 spawn_new_ally( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( var_0.model );
+    var_1 setmodel( var_0.model );
     var_1.angles = var_0.angles;
     var_1.animname = "gideon";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     return var_1;
 }
 
@@ -85,8 +85,8 @@ drag_player_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
     if ( !isdefined( var_2 ) )
         var_2 = maps\_utility::spawn_anim_model( "world_body_damaged" );
 
-    level.player _meth_807D( var_2, "TAG_PLAYER", 1.0, 0, 0, 0, 0, 1, 1 );
-    level.player common_scripts\utility::delaycall( 1, ::_meth_807D, var_2, "TAG_PLAYER", 1.0, 30, 30, 30, 10, 1, 1 );
+    level.player playerlinktodelta( var_2, "TAG_PLAYER", 1.0, 0, 0, 0, 0, 1, 1 );
+    level.player common_scripts\utility::delaycall( 1, ::playerlinktodelta, var_2, "TAG_PLAYER", 1.0, 30, 30, 30, 10, 1, 1 );
     level.player maps\_shg_utility::setup_player_for_scene();
     var_10 = [ var_1, var_2 ];
 
@@ -146,10 +146,10 @@ finish_drag_player_internal( var_0, var_1, var_2, var_3, var_4, var_5 )
     }
 
     if ( isdefined( var_3 ) )
-        level.player _meth_807D( var_3, "TAG_PLAYER", 1.0, 30, 30, 30, 5, 1, 0 );
+        level.player playerlinktodelta( var_3, "TAG_PLAYER", 1.0, 30, 30, 30, 5, 1, 0 );
 
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_831F();
+    level.player disableoffhandweapons();
     return var_3;
 }
 
@@ -170,7 +170,7 @@ waituntil_stop_time_or_posreached( var_0, var_1, var_2, var_3 )
             wait(var_0);
         }
     }
-    else if ( _func_2BA( var_0 ) )
+    else if ( isnumber( var_0 ) )
         wait(var_0);
     else
         waittill_marker_passed( var_0, var_1, var_2, var_3 );
@@ -225,7 +225,7 @@ shooting_head_sway()
 
     for (;;)
     {
-        _func_234( level.player.origin, 2, 3, 1, 2, 0.2, 0.2, 0, 0.3, 0.375, 0.225 );
+        screenshake( level.player.origin, 2, 3, 1, 2, 0.2, 0.2, 0, 0.3, 0.375, 0.225 );
         wait 1.0;
     }
 }

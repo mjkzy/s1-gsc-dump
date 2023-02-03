@@ -12,8 +12,8 @@ crouchstatelistener()
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "unsetCrouchMovement" );
-    self _meth_82DD( "adjustedStance", "+stance" );
-    self _meth_82DD( "adjustedStance", "+goStand" );
+    self notifyonplayercommand( "adjustedStance", "+stance" );
+    self notifyonplayercommand( "adjustedStance", "+goStand" );
 
     for (;;)
     {
@@ -25,7 +25,7 @@ crouchstatelistener()
 
 crouchmovementsetspeed()
 {
-    self.stancecrouchmovement = self _meth_817C();
+    self.stancecrouchmovement = self getstance();
     var_0 = 0;
 
     if ( isdefined( self.adrenaline_speed_scalar ) )
@@ -69,7 +69,7 @@ radarmover( var_0 )
 
     for (;;)
     {
-        var_0 _meth_82AE( self.origin, 0.05 );
+        var_0 moveto( self.origin, 0.05 );
         wait 0.05;
     }
 }
@@ -137,13 +137,13 @@ autospotadswatcher()
     {
         wait 0.05;
 
-        if ( self _meth_8342() )
+        if ( self isusingturret() )
         {
             self autospotoverlayoff();
             continue;
         }
 
-        var_1 = self _meth_8340();
+        var_1 = self playerads();
 
         if ( var_1 < 1 && var_0 )
         {
@@ -174,12 +174,12 @@ unsetregenspeed()
 
 setsharpfocus()
 {
-    self _meth_8309( 0.5 );
+    self setviewkickscale( 0.5 );
 }
 
 unsetsharpfocus()
 {
-    self _meth_8309( 1 );
+    self setviewkickscale( 1 );
 }
 
 setdoubleload()
@@ -192,33 +192,33 @@ setdoubleload()
     for (;;)
     {
         self waittill( "reload" );
-        var_0 = self _meth_82D1( "primary" );
+        var_0 = self getweaponslist( "primary" );
 
         foreach ( var_2 in var_0 )
         {
-            var_3 = self _meth_82F8( var_2 );
+            var_3 = self getweaponammoclip( var_2 );
             var_4 = weaponclipsize( var_2 );
             var_5 = var_4 - var_3;
-            var_6 = self _meth_82F9( var_2 );
+            var_6 = self setweaponammostock( var_2 );
 
             if ( var_3 != var_4 && var_6 > 0 )
             {
                 if ( var_3 + var_6 >= var_4 )
                 {
-                    self _meth_82F6( var_2, var_4 );
-                    self _meth_82F7( var_2, var_6 - var_5 );
+                    self setweaponammoclip( var_2, var_4 );
+                    self setweaponammostock( var_2, var_6 - var_5 );
                     continue;
                 }
 
-                self _meth_82F6( var_2, var_3 + var_6 );
+                self setweaponammoclip( var_2, var_3 + var_6 );
 
                 if ( var_6 - var_5 > 0 )
                 {
-                    self _meth_82F7( var_2, var_6 - var_5 );
+                    self setweaponammostock( var_2, var_6 - var_5 );
                     continue;
                 }
 
-                self _meth_82F7( var_2, 0 );
+                self setweaponammostock( var_2, 0 );
             }
         }
     }
@@ -272,13 +272,13 @@ setsteadyaimpro()
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
-    self _meth_8307( 0.5 );
+    self setaimspreadmovementscale( 0.5 );
 }
 
 unsetsteadyaimpro()
 {
     self notify( "end_SteadyAimPro" );
-    self _meth_8307( 1.0 );
+    self setaimspreadmovementscale( 1.0 );
 }
 
 blastshieldusetracker( var_0, var_1 )
@@ -325,7 +325,7 @@ setendgame()
     self.health = self.maxhealth;
     self.endgame = 1;
     self.attackertable[0] = "";
-    self _meth_82D4( "end_game", 5 );
+    self visionsetnakedforplayer( "end_game", 5 );
     thread endgamedeath( 7 );
     self.hasdonecombat = 1;
 }
@@ -358,7 +358,7 @@ stancestatelistener()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    self _meth_82DD( "adjustedStance", "+stance" );
+    self notifyonplayercommand( "adjustedStance", "+stance" );
 
     for (;;)
     {
@@ -375,7 +375,7 @@ jumpstatelistener()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    self _meth_82DD( "jumped", "+goStand" );
+    self notifyonplayercommand( "jumped", "+goStand" );
 
     for (;;)
     {
@@ -391,10 +391,10 @@ jumpstatelistener()
 unsetsiege()
 {
     self.movespeedscaler = level.baseplayermovescale;
-    self _meth_8306();
+    self resetspreadoverride();
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     self playerrecoilscaleoff();
-    self _meth_8301( 1 );
+    self allowjump( 1 );
 }
 
 setsaboteur()
@@ -457,12 +457,12 @@ unsetdelaymine()
 setlocaljammer()
 {
     if ( !maps\mp\_utility::isemped() )
-        self _meth_8212( 0 );
+        self setmotiontrackervisible( 0 );
 }
 
 unsetlocaljammer()
 {
-    self _meth_8212( 1 );
+    self setmotiontrackervisible( 1 );
 }
 
 setthermal()
@@ -525,7 +525,7 @@ selectonemanarmyclass()
     common_scripts\utility::_disableweaponswitch();
     common_scripts\utility::_disableoffhandweapons();
     common_scripts\utility::_disableusability();
-    self _meth_8323( game["menu_onemanarmy"] );
+    self openpopupmenu( game["menu_onemanarmy"] );
     thread closeomamenuondeath();
     self waittill( "menuresponse", var_0, var_1 );
     common_scripts\utility::_enableweaponswitch();
@@ -534,12 +534,12 @@ selectonemanarmyclass()
 
     if ( var_1 == "back" || !isonemanarmymenu( var_0 ) || maps\mp\_utility::isusingremote() )
     {
-        if ( self _meth_8311() == "onemanarmy_mp" )
+        if ( self getcurrentweapon() == "onemanarmy_mp" )
         {
             common_scripts\utility::_disableweaponswitch();
             common_scripts\utility::_disableoffhandweapons();
             common_scripts\utility::_disableusability();
-            self _meth_8315( common_scripts\utility::getlastweapon() );
+            self switchtoweapon( common_scripts\utility::getlastweapon() );
             self waittill( "weapon_change" );
             common_scripts\utility::_enableweaponswitch();
             common_scripts\utility::_enableoffhandweapons();
@@ -561,7 +561,7 @@ closeomamenuondeath()
     common_scripts\utility::_enableweaponswitch();
     common_scripts\utility::_enableoffhandweapons();
     common_scripts\utility::_enableusability();
-    self _meth_8325();
+    self closepopupmenu();
 }
 
 giveonemanarmyclass( var_0 )
@@ -620,12 +620,12 @@ omausebar( var_0 )
 
 setblastshield()
 {
-    self _meth_821B( "primaryoffhand", "specialty_s1_temp" );
+    self setweaponhudiconoverride( "primaryoffhand", "specialty_s1_temp" );
 }
 
 unsetblastshield()
 {
-    self _meth_821B( "primaryoffhand", "none" );
+    self setweaponhudiconoverride( "primaryoffhand", "none" );
 }
 
 setfreefall()
@@ -641,7 +641,7 @@ unsetfreefall()
 settacticalinsertion()
 {
     maps\mp\_utility::_giveweapon( "s1_tactical_insertion_device_mp", 0 );
-    self _meth_8331( "s1_tactical_insertion_device_mp" );
+    self givestartammo( "s1_tactical_insertion_device_mp" );
     thread monitortiuse();
 }
 
@@ -673,7 +673,7 @@ updatetispawnposition()
 
 isvalidtispawnposition()
 {
-    if ( precachestatusicon( self.origin ) && self _meth_8341() )
+    if ( canspawn( self.origin ) && self isonground() )
         return 1;
     else
         return 0;
@@ -713,9 +713,9 @@ monitortiuse()
         var_3.enemytrigger = spawn( "script_origin", var_2 );
         var_3 thread glowsticksetupandwaitfordeath( self );
         var_3.playerspawnpos = self.tispawnposition;
-        var_3 _meth_8383( self );
+        var_3 setotherent( self );
         var_3 common_scripts\utility::make_entity_sentient_mp( self.team, 1 );
-        var_3 _meth_8075( "tac_insert_spark_lp" );
+        var_3 playloopsound( "tac_insert_spark_lp" );
         self.setspawnpoint = var_3;
         return;
     }
@@ -745,19 +745,19 @@ monitorthirdpersonmodel()
 
 glowsticksetupandwaitfordeath( var_0 )
 {
-    self _meth_80B1( level.spawnglowmodel["enemy"] );
+    self setmodel( level.spawnglowmodel["enemy"] );
     thread maps\mp\gametypes\_damage::setentitydamagecallback( 100, undefined, ::ondeathti, undefined, 0 );
     thread glowstickenemyuselistener( var_0 );
     thread glowstickuselistener( var_0 );
     thread glowstickteamupdater( self.team, level.spawnglow["enemy"], var_0 );
     var_1 = spawn( "script_model", self.origin + ( 0, 0, 0 ) );
     var_1.angles = self.angles;
-    var_1 _meth_80B1( level.spawnglowmodel["friendly"] );
+    var_1 setmodel( level.spawnglowmodel["friendly"] );
     var_1 setcontents( 0 );
     var_1 thread glowstickteamupdater( self.team, level.spawnglow["friendly"], var_0 );
-    var_1 _meth_8075( "tac_insert_spark_lp" );
+    var_1 playloopsound( "tac_insert_spark_lp" );
     self waittill( "death" );
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     var_1 delete();
 }
 
@@ -835,8 +835,8 @@ glowstickuselistener( var_0 )
     self endon( "death" );
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( &"MP_PATCH_PICKUP_TI" );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( &"MP_PATCH_PICKUP_TI" );
     thread updateenemyuse( var_0 );
 
     for (;;)
@@ -864,7 +864,7 @@ deleteti( var_0 )
     if ( isdefined( var_0.enemytrigger ) )
         var_0.enemytrigger delete();
 
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     var_0 delete();
 }
 
@@ -873,8 +873,8 @@ glowstickenemyuselistener( var_0 )
     self endon( "death" );
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
-    self.enemytrigger _meth_80DA( "HINT_NOICON" );
-    self.enemytrigger _meth_80DB( &"MP_PATCH_DESTROY_TI" );
+    self.enemytrigger setcursorhint( "HINT_NOICON" );
+    self.enemytrigger sethintstring( &"MP_PATCH_DESTROY_TI" );
     self.enemytrigger maps\mp\_utility::makeenemyusable( var_0 );
 
     for (;;)
@@ -891,7 +891,7 @@ setpainted( var_0 )
         if ( isdefined( var_0.specialty_paint_time ) && !maps\mp\_utility::_hasperk( "specialty_coldblooded" ) )
         {
             self.painted = 1;
-            self _meth_82A6( "specialty_radararrow", 1, 0 );
+            self setperk( "specialty_radararrow", 1, 0 );
             thread unsetpainted( var_0.specialty_paint_time );
             thread watchpainteddeath();
         }
@@ -916,7 +916,7 @@ unsetpainted( var_0 )
     level endon( "game_ended" );
     wait(var_0);
     self.painted = 0;
-    self _meth_82A9( "specialty_radararrow", 1 );
+    self unsetperk( "specialty_radararrow", 1 );
     self notify( "unsetPainted" );
 }
 
@@ -928,10 +928,10 @@ ispainted()
 setrefillgrenades()
 {
     if ( isdefined( self.primarygrenade ) )
-        self _meth_8332( self.primarygrenade );
+        self givemaxammo( self.primarygrenade );
 
     if ( isdefined( self.secondarygrenade ) )
-        self _meth_8332( self.secondarygrenade );
+        self givemaxammo( self.secondarygrenade );
 }
 
 setfinalstand()
@@ -1019,7 +1019,7 @@ setjuiced( var_0, var_1, var_2 )
     {
         self.juicedtimer = maps\mp\gametypes\_hud_util::createtimer( "hudsmall", 1.0 );
         self.juicedtimer maps\mp\gametypes\_hud_util::setpoint( "CENTER", "CENTER", 0, var_3 );
-        self.juicedtimer _meth_80CF( var_1 );
+        self.juicedtimer settimer( var_1 );
         self.juicedtimer.color = ( 0.8, 0.8, 0 );
         self.juicedtimer.archived = 0;
         self.juicedtimer.foreground = 1;
@@ -1120,14 +1120,14 @@ setlightarmorhp( var_0 )
         if ( isplayer( self ) && isdefined( self.maxlightarmorhp ) && self.maxlightarmorhp > 0 )
         {
             var_1 = clamp( self.lightarmorhp / self.maxlightarmorhp, 0, 1 );
-            self _meth_82FB( "ui_light_armor_percent", var_1 );
+            self setclientomnvar( "ui_light_armor_percent", var_1 );
         }
     }
     else
     {
         self.lightarmorhp = undefined;
         self.maxlightarmorhp = undefined;
-        self _meth_82FB( "ui_light_armor_percent", 0 );
+        self setclientomnvar( "ui_light_armor_percent", 0 );
     }
 }
 

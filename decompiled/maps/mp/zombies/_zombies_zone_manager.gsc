@@ -28,7 +28,7 @@ isplayerinzone( var_0 )
 
         foreach ( var_5 in var_1.volumes )
         {
-            if ( var_3 _meth_80A9( var_5 ) )
+            if ( var_3 istouching( var_5 ) )
                 return 1;
         }
     }
@@ -257,7 +257,7 @@ getplayerzonestruct()
     {
         foreach ( var_3 in var_1.volumes )
         {
-            if ( self _meth_80A9( var_3 ) )
+            if ( self istouching( var_3 ) )
                 return var_1;
         }
     }
@@ -274,7 +274,7 @@ getplayerzone()
     {
         foreach ( var_3 in var_1.volumes )
         {
-            if ( self _meth_80A9( var_3 ) )
+            if ( self istouching( var_3 ) )
                 return var_5;
         }
     }
@@ -314,7 +314,7 @@ iszombieinanyzone( var_0 )
     {
         foreach ( var_4 in var_2.volumes )
         {
-            if ( var_0 _meth_80A9( var_4 ) )
+            if ( var_0 istouching( var_4 ) )
                 return 1;
         }
     }
@@ -328,7 +328,7 @@ getzombiezone()
     {
         foreach ( var_3 in var_1.volumes )
         {
-            if ( self _meth_80A9( var_3 ) )
+            if ( self istouching( var_3 ) )
                 return var_5;
         }
     }
@@ -345,7 +345,7 @@ iszombieinenabledzone( var_0 )
 
         foreach ( var_4 in var_2.volumes )
         {
-            if ( var_0 _meth_80A9( var_4 ) )
+            if ( var_0 istouching( var_4 ) )
                 return 1;
         }
     }
@@ -359,10 +359,10 @@ ispathnodeinanyzone( var_0 )
     {
         foreach ( var_4 in var_2.volumes )
         {
-            if ( _func_22A( var_0.origin, var_4 ) )
+            if ( ispointinvolume( var_0.origin, var_4 ) )
                 return 1;
 
-            if ( _func_22A( var_0.origin + ( 0, 0, 20 ), var_4 ) )
+            if ( ispointinvolume( var_0.origin + ( 0, 0, 20 ), var_4 ) )
                 return 1;
         }
     }
@@ -379,10 +379,10 @@ ispathnodeinenabledzone( var_0 )
 
         foreach ( var_4 in var_2.volumes )
         {
-            if ( _func_22A( var_0.origin, var_4 ) )
+            if ( ispointinvolume( var_0.origin, var_4 ) )
                 return 1;
 
-            if ( _func_22A( var_0.origin + ( 0, 0, 20 ), var_4 ) )
+            if ( ispointinvolume( var_0.origin + ( 0, 0, 20 ), var_4 ) )
                 return 1;
         }
     }
@@ -408,7 +408,7 @@ ispointinanyzonereturn( var_0, var_1 )
 
         foreach ( var_5 in var_3.volumes )
         {
-            if ( _func_22A( var_0, var_5 ) )
+            if ( ispointinvolume( var_0, var_5 ) )
                 return var_3.zone_name;
         }
     }
@@ -422,10 +422,10 @@ getlocationzone( var_0 )
     {
         foreach ( var_4 in var_2.volumes )
         {
-            if ( _func_22A( var_0, var_4 ) )
+            if ( ispointinvolume( var_0, var_4 ) )
                 return var_2.zone_name;
 
-            if ( _func_22A( var_0 + ( 0, 0, 20 ), var_4 ) )
+            if ( ispointinvolume( var_0 + ( 0, 0, 20 ), var_4 ) )
                 return var_2.zone_name;
         }
     }
@@ -446,7 +446,7 @@ anyzombiesinzone( var_0 )
     {
         foreach ( var_6 in var_2.volumes )
         {
-            if ( var_4 _meth_80A9( var_6 ) )
+            if ( var_4 istouching( var_6 ) )
                 return 1;
         }
     }
@@ -469,7 +469,7 @@ getnumberofplayersinzone( var_0 )
 
         foreach ( var_6 in var_1.volumes )
         {
-            if ( var_4 _meth_80A9( var_6 ) )
+            if ( var_4 istouching( var_6 ) )
             {
                 var_2++;
                 break;
@@ -508,7 +508,7 @@ getplayersinzone( var_0, var_1 )
 
         foreach ( var_12 in var_4 )
         {
-            if ( var_10 _meth_80A9( var_12 ) )
+            if ( var_10 istouching( var_12 ) )
                 var_2[var_2.size] = var_10;
         }
     }
@@ -529,7 +529,7 @@ playerisinzone( var_0, var_1 )
 
     foreach ( var_5 in var_3 )
     {
-        if ( var_0 _meth_80A9( var_5 ) )
+        if ( var_0 istouching( var_5 ) )
             return 1;
     }
 
@@ -553,7 +553,7 @@ getnumberofzombiesinzone( var_0 )
 
         foreach ( var_7 in var_2.volumes )
         {
-            if ( var_5 _meth_80A9( var_7 ) )
+            if ( var_5 istouching( var_7 ) )
             {
                 var_3++;
                 break;
@@ -631,7 +631,7 @@ isswitchinzonevolumes( var_0, var_1 )
 {
     foreach ( var_3 in var_1 )
     {
-        if ( _func_22A( var_0.origin, var_3 ) )
+        if ( ispointinvolume( var_0.origin, var_3 ) )
             return 1;
     }
 

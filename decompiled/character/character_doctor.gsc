@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "doctor_body" );
+    self setmodel( "doctor_body" );
     codescripts\character::attachhead( "alias_civ_asi_male_heads", xmodelalias\alias_civ_asi_male_heads::main() );
     self.voice = "atlas";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

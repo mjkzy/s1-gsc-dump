@@ -22,7 +22,7 @@ trap_electrofloor_player_watch( var_0 )
 
         foreach ( var_5 in level.players )
         {
-            if ( !var_5 _meth_80A9( var_0 ) )
+            if ( !var_5 istouching( var_0 ) )
                 continue;
 
             var_5 thread electrofloorplayer();
@@ -63,7 +63,7 @@ trap_electrofloor_trigger_watch( var_0 )
             if ( isdefined( var_5.inspawnanim ) && var_5.inspawnanim == 1 )
                 continue;
 
-            if ( !var_5 _meth_80A9( var_0 ) )
+            if ( !var_5 istouching( var_0 ) )
                 continue;
 
             var_5 maps\mp\zombies\_zombies::addbuff( "electroBuff", var_5 getelectrobuff( self.owner ) );
@@ -98,10 +98,10 @@ updateelectrobuff( var_0 )
 {
     var_1 = var_0.player;
 
-    if ( _func_294( var_1 ) )
+    if ( isremovedentity( var_1 ) )
         var_1 = undefined;
 
-    self _meth_8051( var_0.damageperstep, self.origin, var_1, undefined, "MOD_TRIGGER_HURT", "trap_zm_mp", "none" );
+    self dodamage( var_0.damageperstep, self.origin, var_1, undefined, "MOD_TRIGGER_HURT", "trap_zm_mp", "none" );
 }
 
 removeelectrobuff( var_0 )

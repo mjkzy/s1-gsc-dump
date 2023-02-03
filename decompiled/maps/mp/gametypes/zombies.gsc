@@ -329,16 +329,16 @@ getpickupent()
 
     var_0 show();
     var_0.inuse = 1;
-    var_0 _meth_8092();
-    var_0.trigger _meth_8092();
+    var_0 dontinterpolate();
+    var_0.trigger dontinterpolate();
     return var_0;
 }
 
 spawnpickupent()
 {
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0 _meth_80B1( "dlc_dogtags_zombie_invisible" );
-    var_0 _meth_8510();
+    var_0 setmodel( "dlc_dogtags_zombie_invisible" );
+    var_0 ghost();
     var_0.inuse = 0;
     var_0.trigger = spawn( "trigger_radius", ( 0, 0, 0 ), 0, 32, 32 );
     level.pickupents[level.pickupents.size] = var_0;
@@ -509,7 +509,7 @@ initializematchrules()
 
 onstartgametype()
 {
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
 
     if ( !isdefined( game["switchedsides"] ) )
         game["switchedsides"] = 0;
@@ -641,7 +641,7 @@ playermonitorlastgroundpos()
             continue;
         }
 
-        if ( self _meth_8341() && !maps\mp\zombies\_util::is_true( self.disabletombstonedropinarea ) )
+        if ( self isonground() && !maps\mp\zombies\_util::is_true( self.disabletombstonedropinarea ) )
             self.lastgroundposition = self.origin;
 
         waitframe();
@@ -654,8 +654,8 @@ playermonitortokenuse()
 
     if ( !isbot( self ) )
     {
-        self _meth_82DD( "TokenUseDown", "+actionslot 3" );
-        self _meth_82DD( "TokenUseUp", "-actionslot 3" );
+        self notifyonplayercommand( "TokenUseDown", "+actionslot 3" );
+        self notifyonplayercommand( "TokenUseUp", "-actionslot 3" );
     }
 
     for (;;)
@@ -807,7 +807,7 @@ getcurrentmoney( var_0 )
 
 inittokens()
 {
-    var_0 = self _meth_84D2( "tokensAvailable" );
+    var_0 = self getcommonplayerdatareservedint( "tokensAvailable" );
     settokens( var_0 );
 }
 
@@ -848,13 +848,13 @@ settokens( var_0 )
             var_0 = 0;
 
         self.tokens = var_0;
-        self _meth_84CF( "tokensAvailable", self.tokens );
-        self _meth_82FB( "ui_zm_token_count", self.tokens );
+        self setcommonplayerdatareservedint( "tokensAvailable", self.tokens );
+        self setclientomnvar( "ui_zm_token_count", self.tokens );
     }
     else
     {
         self.tokens = -1;
-        self _meth_82FB( "ui_zm_token_count", -1 );
+        self setclientomnvar( "ui_zm_token_count", -1 );
     }
 }
 
@@ -887,7 +887,7 @@ weaponleveldisplay( var_0 )
         if ( 100 < var_3 )
             var_3 = 100;
 
-        var_0 _meth_82FB( "ui_horde_count", var_3 );
+        var_0 setclientomnvar( "ui_horde_count", var_3 );
     }
 }
 
@@ -952,9 +952,9 @@ onspawnfinished( var_0 )
                 setomnvar( var_2, 1 );
             }
 
-            self _meth_8344( "frag_grenade_throw_zombies_mp" );
-            self _meth_830E( "frag_grenade_throw_zombies_mp" );
-            self _meth_82F6( "frag_grenade_throw_zombies_mp", 4 );
+            self setlethalweapon( "frag_grenade_throw_zombies_mp" );
+            self giveweapon( "frag_grenade_throw_zombies_mp" );
+            self setweaponammoclip( "frag_grenade_throw_zombies_mp", 4 );
             maps\mp\_utility::giveperk( "specialty_pistoldeath", 0 );
             maps\mp\_utility::giveperk( "specialty_wildcard_duallethals", 0 );
             maps\mp\_utility::giveperk( "specialty_coldblooded", 0 );
@@ -975,12 +975,12 @@ onspawnfinished( var_0 )
             else
             {
                 var_1 = maps\mp\zombies\_wall_buys::getupgradeweaponname( self, "iw5_titan45zm_mp" );
-                self _meth_830E( var_1 );
-                self _meth_824F( var_1 );
+                self giveweapon( var_1 );
+                self setspawnweapon( var_1 );
             }
         }
 
-        self _meth_8332( var_1 );
+        self givemaxammo( var_1 );
     }
 }
 
@@ -990,7 +990,7 @@ waittoloadweapons( var_0 )
 
     for (;;)
     {
-        if ( self _meth_8425( self, var_0 ) )
+        if ( self hasloadedcustomizationplayerview( self, var_0 ) )
             break;
 
         waitframe();
@@ -1098,26 +1098,26 @@ playpilotintroweaponflourish()
     var_2[0] = "iw5_titan45zm_mp";
     var_2[1] = var_1;
     var_2[2] = var_0;
-    self _meth_8425( self, var_2 );
-    self _meth_830E( var_0 );
-    self _meth_8316( var_0 );
-    self _meth_8321();
+    self hasloadedcustomizationplayerview( self, var_2 );
+    self giveweapon( var_0 );
+    self switchtoweaponimmediate( var_0 );
+    self disableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 0, "flourish" );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 0.2 );
     thread freezecontrolsduringcharacterintroflourish();
     wait 1;
-    self _meth_830E( var_1 );
-    self _meth_8316( var_1 );
+    self giveweapon( var_1 );
+    self switchtoweaponimmediate( var_1 );
     common_scripts\utility::_disableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 0, "flourish" );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 3.6 );
     waittoloadweapons( var_2 );
     common_scripts\utility::_enableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 1, "flourish" );
-    self _meth_830F( var_0 );
-    self _meth_830F( var_1 );
-    self _meth_830E( "iw5_titan45zm_mp" );
-    self _meth_8316( "iw5_titan45zm_mp" );
+    self takeweapon( var_0 );
+    self takeweapon( var_1 );
+    self giveweapon( "iw5_titan45zm_mp" );
+    self switchtoweaponimmediate( "iw5_titan45zm_mp" );
 }
 
 playintroweaponflourish()
@@ -1135,16 +1135,16 @@ playintroweaponflourish()
     waittoloadweapons( var_1 );
     thread freezecontrolsduringcharacterintroflourish();
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 1 );
-    self _meth_830E( var_0 );
-    self _meth_8316( var_0 );
+    self giveweapon( var_0 );
+    self switchtoweaponimmediate( var_0 );
     common_scripts\utility::_disableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 0, "flourish" );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 3.6 );
     common_scripts\utility::_enableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 1, "flourish" );
-    self _meth_830F( var_0 );
-    self _meth_830E( "iw5_titan45zm_mp" );
-    self _meth_8316( "iw5_titan45zm_mp" );
+    self takeweapon( var_0 );
+    self giveweapon( "iw5_titan45zm_mp" );
+    self switchtoweaponimmediate( "iw5_titan45zm_mp" );
 }
 
 playweaponflourish( var_0, var_1 )
@@ -1154,23 +1154,23 @@ playweaponflourish( var_0, var_1 )
     if ( maps\mp\zombies\_util::isplayerinlaststand( self ) )
         return;
 
-    var_2 = self _meth_8311( 1 );
+    var_2 = self getcurrentweapon( 1 );
 
     if ( maps\mp\zombies\_util::iszombiekillstreakweapon( var_2 ) || maps\mp\zombies\_util::isrippedturretweapon( var_2 ) )
         return;
 
     self.playingweaponflourish = 1;
-    self _meth_830E( var_0 );
-    self _meth_8316( var_0 );
+    self giveweapon( var_0 );
+    self switchtoweaponimmediate( var_0 );
     common_scripts\utility::_disableweaponswitch();
     maps\mp\zombies\_util::playerallowfire( 0, "flourish" );
     maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( var_1 );
     maps\mp\zombies\_util::playerallowfire( 1, "flourish" );
-    self _meth_830F( var_0 );
+    self takeweapon( var_0 );
     common_scripts\utility::_enableweaponswitch();
 
     if ( !maps\mp\zombies\_util::isplayerinlaststand( self ) )
-        self _meth_8316( var_2 );
+        self switchtoweaponimmediate( var_2 );
 
     self.playingweaponflourish = 0;
 }
@@ -1230,7 +1230,7 @@ watchforhostmigrationsetround()
                     continue;
 
                 if ( !isagent( var_2 ) )
-                    var_2 _meth_82FB( "ui_horde_update_perk", var_2.horde_perks[var_4]["index"] );
+                    var_2 setclientomnvar( "ui_horde_update_perk", var_2.horde_perks[var_4]["index"] );
 
                 wait 0.05;
             }
@@ -1292,7 +1292,7 @@ onsuicidedeath( var_0 )
 ongrenadesuicide( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 {
     if ( level.players.size > 1 )
-        var_0 _meth_82C8();
+        var_0 laststanddie();
 
     [[ level.callbackplayerlaststand ]]( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 0 );
 }
@@ -1304,7 +1304,7 @@ disablespawningforplayerfunc( var_0 )
 
 callback_playerdamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
-    if ( ( var_4 == "MOD_MELEE" || var_4 == "MOD_IMPACT" ) && self _meth_83D8() )
+    if ( ( var_4 == "MOD_MELEE" || var_4 == "MOD_IMPACT" ) && self issprinting() )
         thread meleesprintdeactivate();
 
     maps\mp\gametypes\_damage::callback_playerdamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
@@ -1314,11 +1314,11 @@ meleesprintdeactivate()
 {
     self endon( "death" );
     level endon( "game_ended" );
-    self _meth_8304( 0 );
+    self allowsprint( 0 );
     waitframe();
 
     if ( isalive( self ) )
-        self _meth_8304( 1 );
+        self allowsprint( 1 );
 }
 
 playerinvinciblefromcrateorpowerup( var_0, var_1, var_2 )
@@ -1333,7 +1333,7 @@ playerinvinciblefromcrateorpowerup( var_0, var_1, var_2 )
             if ( maps\mp\zombies\_util::is_true( var_1.iszomboni ) )
                 return 0;
 
-            if ( isai( var_1 ) && !_func_2D9( var_1 ) )
+            if ( isai( var_1 ) && !isscriptedagent( var_1 ) )
                 return 0;
         }
 
@@ -1421,7 +1421,7 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
     if ( isdefined( level.damageweapontoweapon[var_12] ) )
         var_12 = level.damageweapontoweapon[var_12];
 
-    if ( isdefined( level.defusedamagemultiplier ) && maps\mp\zombies\_util::is_true( var_0.isdefusing ) && isai( var_2 ) && !_func_2D9( var_2 ) )
+    if ( isdefined( level.defusedamagemultiplier ) && maps\mp\zombies\_util::is_true( var_0.isdefusing ) && isai( var_2 ) && !isscriptedagent( var_2 ) )
         var_9 = int( var_9 * level.defusedamagemultiplier );
 
     if ( isplayer( var_0 ) )
@@ -1459,7 +1459,7 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
         {
             var_13 = 500;
 
-            if ( _func_2D9( var_2 ) && isdefined( var_0.lastzombiedamagetime ) && gettime() - var_0.lastzombiedamagetime < var_13 )
+            if ( isscriptedagent( var_2 ) && isdefined( var_0.lastzombiedamagetime ) && gettime() - var_0.lastzombiedamagetime < var_13 )
                 return 0;
 
             var_14 = level.agentclasses[var_2.agent_type].melee_damage_scale;
@@ -1481,7 +1481,7 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
         }
 
         if ( var_5 == "exploder_zm_large_mp" )
-            var_0 _meth_8552();
+            var_0 addzmexploderbloodfx();
     }
 
     if ( isai( var_0 ) && !isplayer( var_0 ) && !isdefined( var_2 ) )
@@ -1498,7 +1498,7 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
 
     if ( isai( var_0 ) && !isplayer( var_0 ) && isai( var_2 ) )
     {
-        if ( !_func_2D9( var_2 ) && _func_285( var_0, var_2 ) )
+        if ( !isscriptedagent( var_2 ) && isalliedsentient( var_0, var_2 ) )
             return 0;
 
         if ( isdefined( var_0.agent_type ) && var_0.agent_type == "sq_character" && var_0.godmode )
@@ -1549,7 +1549,7 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
 
         if ( isdefined( var_4 ) && var_4 == "MOD_MELEE" )
         {
-            if ( var_2 _meth_854A() )
+            if ( var_2 ishighjumpallowed() )
                 var_9 = level.playerexomeleedamage;
             else
                 var_9 = level.playermeleedamage;
@@ -1593,10 +1593,10 @@ modifyplayerdamagezombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_
     {
         var_0 maps\mp\zombies\_zombies_audio::player_hurt( var_2, var_9, var_4 );
 
-        if ( isdefined( var_2 ) && isai( var_2 ) && _func_2D9( var_2 ) )
+        if ( isdefined( var_2 ) && isai( var_2 ) && isscriptedagent( var_2 ) )
             var_0.lastzombiedamagetime = gettime();
     }
-    else if ( isai( var_0 ) && _func_2D9( var_0 ) )
+    else if ( isai( var_0 ) && isscriptedagent( var_0 ) )
         var_0 maps\mp\zombies\_zombies_audio::zombie_hurt( var_2, var_9 );
 
     return var_9;
@@ -1860,8 +1860,8 @@ givepointsforevent( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) && var_2 )
     {
         var_4 = common_scripts\utility::tostring( var_3 );
-        var_4 = _func_2D8( var_4 );
-        self iclientprintlnbold( &"ZOMBIES_PLUS_CREDITS", var_4 );
+        var_4 = strinsertnumericdelimiters( var_4 );
+        self iprintlnbold( &"ZOMBIES_PLUS_CREDITS", var_4 );
     }
 
     givemoney( var_3 );
@@ -1899,7 +1899,7 @@ attempttobuy( var_0, var_1 )
 displayneedmoremoneymessage( var_0 )
 {
     var_0 playsoundtoplayer( "ui_button_error", var_0 );
-    var_0 iclientprintlnbold( &"ZOMBIES_NEED_MORE_MONEY" );
+    var_0 iprintlnbold( &"ZOMBIES_NEED_MORE_MONEY" );
 }
 
 monitorpointnotifylua( var_0 )
@@ -1912,7 +1912,7 @@ monitorpointnotifylua( var_0 )
         if ( var_0.pointnotifylua.size > 0 )
         {
             if ( !isagent( var_0 ) )
-                var_0 _meth_82FB( "ui_zm_award_points", var_0.pointnotifylua[var_0.pointnotifylua.size - 1] );
+                var_0 setclientomnvar( "ui_zm_award_points", var_0.pointnotifylua[var_0.pointnotifylua.size - 1] );
 
             var_0.pointnotifylua = removelastelement( var_0.pointnotifylua );
         }
@@ -1951,7 +1951,7 @@ shouldsavetombstoneweapon()
 {
     if ( !maps\mp\zombies\_util::is_true( self.laststand ) && !maps\mp\zombies\_util::is_true( self.infected ) )
     {
-        var_0 = self _meth_8312();
+        var_0 = self getcurrentprimaryweapon();
         return !maps\mp\_utility::iskillstreakweapon( var_0 );
     }
 
@@ -1988,17 +1988,17 @@ dropweaponfordeathzombies( var_0, var_1, var_2 )
 
     var_5 = ( 0, 0, 18 );
     var_6 = spawn( "script_model", var_4 + var_5 );
-    var_6 _meth_80B1( "dlc_dogtags_zombie_invisible" );
-    var_6 _meth_8279( "mp_dogtag_spin" );
+    var_6 setmodel( "dlc_dogtags_zombie_invisible" );
+    var_6 scriptmodelplayanim( "mp_dogtag_spin" );
     var_6 hide();
     var_6.owner = self;
     var_6.curorigin = var_4 + var_5;
     var_6.trackingweaponname = var_3;
     var_6.visuals = spawn( "script_model", var_4 + var_5 );
-    var_6.visuals _meth_80B1( "pickups_zombies_01_tombstone" );
+    var_6.visuals setmodel( "pickups_zombies_01_tombstone" );
     var_6.visuals hide();
-    var_6.visuals _meth_83FA( 1, 0 );
-    var_6.visuals _meth_804D( var_6, "j_dogtag", ( 0, 0, -12 ), ( 0, 0, 0 ) );
+    var_6.visuals hudoutlineenable( 1, 0 );
+    var_6.visuals linkto( var_6, "j_dogtag", ( 0, 0, -12 ), ( 0, 0, 0 ) );
     var_6.trigger = spawn( "trigger_radius", var_4 + var_5, 0, 32, 32 );
 
     foreach ( var_8 in level.players )
@@ -2181,7 +2181,7 @@ handlezombieshostmigration()
         level waittill( "host_migration_begin" );
 
         if ( level.wavecounter > 4 || maps\mp\zombies\_util::iszombieshardmode() )
-            _func_25F( 1 );
+            setnojipscore( 1 );
 
         level.dismemberedbodyparts = [];
         level.nextdismemberedbodypartindex = 0;
@@ -2196,7 +2196,7 @@ horde_audio()
 
     for (;;)
     {
-        level.horde_audio_ent _meth_806F( 0 );
+        level.horde_audio_ent scalevolume( 0 );
         level waittill( "zombie_wave_started" );
         wait 0.5;
 
@@ -2204,24 +2204,24 @@ horde_audio()
         {
             level.horde_audio_ent playsound( "zmb_dog_round_start" );
             wait 1.5;
-            level.horde_audio_ent _meth_8075( "zmb_horde_dog" );
+            level.horde_audio_ent playloopsound( "zmb_horde_dog" );
         }
         else if ( level.roundtype == "zombie_host" )
         {
             level.horde_audio_ent playsound( "zmb_hst_round_start" );
             wait 1.5;
-            level.horde_audio_ent _meth_8075( "zmb_horde_host" );
+            level.horde_audio_ent playloopsound( "zmb_horde_host" );
         }
         else if ( level.roundtype == "normal" )
         {
             level.horde_audio_ent playsound( "zmb_gen_round_start" );
             wait 1.5;
-            level.horde_audio_ent _meth_8075( "zmb_horde_general" );
+            level.horde_audio_ent playloopsound( "zmb_horde_general" );
         }
 
-        level.horde_audio_ent _meth_806F( 1, 3 );
+        level.horde_audio_ent scalevolume( 1, 3 );
         level waittill( "zombie_wave_ended" );
-        level.horde_audio_ent _meth_80AB();
+        level.horde_audio_ent stoploopsound();
     }
 }
 
@@ -2249,7 +2249,7 @@ updatezombiesettings()
         level.specialroundnumber = calculatenextspecialround();
 
     if ( level.wavecounter > 4 )
-        _func_25F( 1 );
+        setnojipscore( 1 );
 
     giveroundachievement();
     level notify( "zombie_round_count_update" );
@@ -2513,7 +2513,7 @@ chancetospawnpickup( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_3 ) && maps\mp\zombies\_util::istrapweapon( var_3 ) )
         return;
 
-    if ( isdefined( var_0 ) && isagent( var_0 ) && !_func_2D9( var_0 ) )
+    if ( isdefined( var_0 ) && isagent( var_0 ) && !isscriptedagent( var_0 ) )
         return;
 
     if ( isdefined( level.nopickuppenalty ) && level.nopickuppenalty == 1 )
@@ -2577,12 +2577,12 @@ spawnpickupmodel( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7[0] = getpickupent();
 
     if ( isdefined( var_3 ) )
-        var_7[0] _meth_80B1( "dlc_dogtags_zombie_invisible" );
+        var_7[0] setmodel( "dlc_dogtags_zombie_invisible" );
     else
-        var_7[0] _meth_80B1( var_1 );
+        var_7[0] setmodel( var_1 );
 
     if ( isdefined( var_6 ) && var_6 )
-        var_7[0] _meth_83FA( 0, 0 );
+        var_7[0] hudoutlineenable( 0, 0 );
 
     var_8 = var_7[0].trigger;
     var_9 = maps\mp\gametypes\_gameobjects::createuseobject( level.playerteam, var_8, var_7, ( 0, 0, 16 ), 1 );
@@ -2605,7 +2605,7 @@ spawnpickupmodel( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     if ( isdefined( var_3 ) )
     {
-        var_9.visuals[0] _meth_8279( "mp_dogtag_spin" );
+        var_9.visuals[0] scriptmodelplayanim( "mp_dogtag_spin" );
         var_9.visuals[0].origin = var_10 + ( 0, 0, -12 );
         var_9.fx = level._effect[var_3];
         var_9.fxtag = "j_dogtag";
@@ -2640,11 +2640,11 @@ pickupbounce()
 
     for (;;)
     {
-        var_0 _meth_82AE( var_2, var_3, 0.15, 0.15 );
-        var_0 _meth_82B7( 180, var_3 );
+        var_0 moveto( var_2, var_3, 0.15, 0.15 );
+        var_0 rotateyaw( 180, var_3 );
         wait(var_3);
-        var_0 _meth_82AE( var_1, var_3, 0.15, 0.15 );
-        var_0 _meth_82B7( 180, var_3 );
+        var_0 moveto( var_1, var_3, 0.15, 0.15 );
+        var_0 rotateyaw( 180, var_3 );
         wait(var_3);
     }
 }
@@ -2663,9 +2663,9 @@ pickuptimer()
 pickupexpiringsound( var_0 )
 {
     var_1 = spawn( "script_origin", var_0 );
-    var_1 _meth_8075( "zmb_pickup_timer" );
+    var_1 playloopsound( "zmb_pickup_timer" );
     self waittill( "deleted" );
-    var_1 _meth_80AB();
+    var_1 stoploopsound();
     waitframe();
     var_1 delete();
 }
@@ -2679,7 +2679,7 @@ pickupstartflashing()
         if ( isdefined( self.fx ) )
             stopfxontag( self.fx, self.visuals[0], self.fxtag );
         else if ( isdefined( self.visuals ) && isdefined( self.visuals[0] ) )
-            self.visuals[0] _meth_8510();
+            self.visuals[0] ghost();
 
         wait 0.25;
 
@@ -2699,7 +2699,7 @@ removepickup( var_0 )
 
     var_0 notify( "deleted" );
     var_0.visuals[0] show();
-    var_0.visuals[0] _meth_8510();
+    var_0.visuals[0] ghost();
 
     if ( isdefined( var_0.fx ) )
         stopfxontag( var_0.fx, var_0.visuals[0], var_0.fxtag );
@@ -2736,9 +2736,9 @@ activatemaxammo()
 
 refillammozombies( var_0, var_1 )
 {
-    var_2 = var_0 _meth_830C();
-    var_2[var_2.size] = var_0 _meth_8345();
-    var_2[var_2.size] = var_0 _meth_831A();
+    var_2 = var_0 getweaponslistprimaries();
+    var_2[var_2.size] = var_0 getlethalweapon();
+    var_2[var_2.size] = var_0 gettacticalweapon();
 
     if ( !isdefined( var_1 ) )
         var_1 = 0;
@@ -2761,12 +2761,12 @@ refillammozombies( var_0, var_1 )
             continue;
         }
 
-        var_0 _meth_8332( var_4 );
+        var_0 givemaxammo( var_4 );
 
         if ( issubstr( var_4, "dlcgun1" ) )
         {
             var_5 = weaponclipsize( var_4 );
-            var_0 _meth_82F6( var_4, var_5, "right" );
+            var_0 setweaponammoclip( var_4, var_5, "right" );
         }
     }
 
@@ -2878,8 +2878,8 @@ turnonfiresalemachine( var_0 )
     while ( var_0.isdispensingweapon )
         wait 0.05;
 
-    var_0 _meth_80DB( &"ZOMBIES_FIRE_SALE_MAGIC_BOX" );
-    var_0 _meth_80DC( var_0 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
+    var_0 sethintstring( &"ZOMBIES_FIRE_SALE_MAGIC_BOX" );
+    var_0 setsecondaryhintstring( var_0 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
     var_0 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_0.cost ) );
     var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
 
@@ -2905,17 +2905,17 @@ turnofffiresalemachine( var_0 )
 
     if ( !var_0.active )
     {
-        var_0 _meth_80DB( maps\mp\zombies\_wall_buys::getmagicboxhintsting( 1 ) );
-        var_0 _meth_80DC( maps\mp\zombies\_wall_buys::getmagicboxhintstringcost( 1 ) );
+        var_0 sethintstring( maps\mp\zombies\_wall_buys::getmagicboxhintsting( 1 ) );
+        var_0 setsecondaryhintstring( maps\mp\zombies\_wall_buys::getmagicboxhintstringcost( 1 ) );
         var_0 maps\mp\zombies\_util::tokenhintstring( 0 );
         var_0 maps\mp\zombies\_wall_buys::deactivatemagicboxeffects( var_0.modelent, var_0.light );
         var_0 notify( "fireSaleOver" );
     }
     else
     {
-        var_0 _meth_80DB( maps\mp\zombies\_wall_buys::getmagicboxhintsting() );
-        var_0 _meth_80DC( maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
-        var_0 _meth_80DC( var_0 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
+        var_0 sethintstring( maps\mp\zombies\_wall_buys::getmagicboxhintsting() );
+        var_0 setsecondaryhintstring( maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
+        var_0 setsecondaryhintstring( var_0 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
         var_0 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_0.cost ) );
         var_0 maps\mp\zombies\_util::tokenhintstring( 1 );
     }
@@ -2975,11 +2975,11 @@ activatenukepickup( var_0 )
         {
             var_7 = "MOD_EXPLOSIVE";
 
-            if ( !_func_2D9( var_6 ) )
+            if ( !isscriptedagent( var_6 ) )
                 var_7 = "MOD_ENERGY";
 
             var_6.killedbynuke = 1;
-            var_6 _meth_8051( var_6.health, var_6.origin, undefined, undefined, var_7, level.ocp_weap_name );
+            var_6 dodamage( var_6.health, var_6.origin, undefined, undefined, var_7, level.ocp_weap_name );
         }
     }
 }
@@ -3004,14 +3004,14 @@ zombievignette()
         var_0.horzalign = "fullscreen";
         var_0.vertalign = "fullscreen";
         var_0.sort = 3;
-        var_0 _meth_80CC( level.zombievignette, 640, 480 );
+        var_0 setshader( level.zombievignette, 640, 480 );
     }
 }
 
 playermonitorweapon()
 {
     self endon( "disconnect" );
-    self _meth_82FB( "ui_energy_ammo", 1 );
+    self setclientomnvar( "ui_energy_ammo", 1 );
 
     for (;;)
     {
@@ -3034,17 +3034,17 @@ playerdoem1logic( var_0 )
     }
 
     playersetem1ammo();
-    self _meth_82F7( var_0, 0 );
+    self setweaponammostock( var_0, 0 );
     thread playersetupem1ammo();
     self waittill( "weapon_change" );
     maps\mp\zombies\_util::playerallowfire( 1, "em1" );
-    self _meth_849C( "fire_em1_weapon", "+attack" );
-    self _meth_849C( "fire_em1_weapon", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "fire_em1_weapon", "+attack" );
+    self notifyonplayercommandremove( "fire_em1_weapon", "+attack_akimbo_accessible" );
 }
 
 playerhasem1()
 {
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
@@ -3060,7 +3060,7 @@ playerupdateem1omnvar()
     var_0 = getem1maxammo( 1 );
     var_1 = maps\mp\zombies\_util::playergetem1ammo();
     var_2 = var_1 / var_0;
-    self _meth_82FB( "ui_energy_ammo", var_2 );
+    self setclientomnvar( "ui_energy_ammo", var_2 );
 }
 
 playersetupem1ammo()
@@ -3068,8 +3068,8 @@ playersetupem1ammo()
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "weapon_change" );
-    self _meth_82DD( "fire_em1_weapon", "+attack" );
-    self _meth_82DD( "fire_em1_weapon", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "fire_em1_weapon", "+attack" );
+    self notifyonplayercommand( "fire_em1_weapon", "+attack_akimbo_accessible" );
     var_0 = maps\mp\zombies\_util::playergetem1ammo();
     playerupdateem1omnvar();
 
@@ -3081,9 +3081,9 @@ playersetupem1ammo()
         if ( !self attackbuttonpressed() )
             self waittill( "fire_em1_weapon" );
 
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
 
-        if ( self _meth_8337() || !issubstr( var_1, "iw5_em1zm_mp" ) || !self _meth_812D() || self _meth_84E0() )
+        if ( self isreloading() || !issubstr( var_1, "iw5_em1zm_mp" ) || !self isfiring() || self isusingoffhand() )
         {
             waitframe();
             continue;
@@ -3094,13 +3094,13 @@ playersetupem1ammo()
 
         if ( var_0 <= 0 )
         {
-            var_2 = self _meth_830C();
+            var_2 = self getweaponslistprimaries();
             var_3 = maps\mp\_utility::getbaseweaponname( var_2[0] );
 
             if ( var_3 != "iw5_em1zm" )
             {
                 maps\mp\zombies\_util::playerallowfire( 0, "em1" );
-                self _meth_8315( var_2[0] );
+                self switchtoweapon( var_2[0] );
                 waitframe();
                 continue;
             }
@@ -3111,7 +3111,7 @@ playersetupem1ammo()
 
                 if ( var_3 != "iw5_em1zm" )
                 {
-                    self _meth_8315( var_2[1] );
+                    self switchtoweapon( var_2[1] );
                     maps\mp\zombies\_util::playerallowfire( 0, "em1" );
                     waitframe();
                     continue;
@@ -3150,7 +3150,7 @@ getem1maxammo( var_0 )
 
     var_1 = 1.0;
 
-    if ( !var_0 && self _meth_82A7( "specialty_stockpile", 1 ) )
+    if ( !var_0 && self hasperk( "specialty_stockpile", 1 ) )
         var_1 *= 1.2;
 
     return 1800.0 * var_1;
@@ -3277,7 +3277,7 @@ givezombieachievement( var_0 )
             break;
     }
 
-    self _meth_80F9( var_0 );
+    self giveachievement( var_0 );
 }
 
 setendtimeomnvarwithhostmigration( var_0, var_1 )
@@ -3312,7 +3312,7 @@ hurtplayersthink()
     {
         foreach ( var_1 in level.players )
         {
-            if ( var_1 _meth_80A9( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
+            if ( var_1 istouching( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
             {
                 var_2 = "ui_zm_character_" + var_1.characterindex + "_alive";
                 setomnvar( var_2, 0 );

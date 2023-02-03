@@ -40,7 +40,7 @@ destructable_think()
         self.fx = loadfx( self.script_fxid );
 
     var_4 = 0;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {

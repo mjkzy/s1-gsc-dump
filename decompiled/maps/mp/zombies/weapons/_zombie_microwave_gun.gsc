@@ -53,14 +53,14 @@ updatebeamrange( var_0 )
     for (;;)
     {
         wait 0.5;
-        var_1 = self _meth_8311( 0 );
+        var_1 = self getcurrentweapon( 0 );
 
         if ( !issubstr( var_1, "iw5_microwavezm_mp" ) )
             continue;
 
         var_2 = self getangles();
         var_3 = anglestoforward( var_2 );
-        var_4 = self _meth_80A8();
+        var_4 = self geteye();
         var_5 = var_4 + var_3 * 850;
         var_6 = bullettrace( var_4, var_5, 0, self, 0, 0, 0, 0, 0, 1, 0 );
 
@@ -78,12 +78,12 @@ cookenemiesinrange( var_0, var_1 )
 {
     var_2 = var_0.beamrange;
 
-    if ( self _meth_8340() < 0.3 )
+    if ( self playerads() < 0.3 )
         var_2 = min( var_2, 650 );
 
     var_3 = squared( var_2 + var_0.beamwidth * 2 );
     var_4 = squared( var_0.beamwidth );
-    var_5 = self _meth_80A8();
+    var_5 = self geteye();
     var_6 = self getangles();
     var_7 = anglestoforward( var_6 );
     var_8 = var_5 + var_7 * var_0.beamwidth;
@@ -102,7 +102,7 @@ cookenemiesinrange( var_0, var_1 )
         if ( vectordot( var_12, var_7 * ( 1, 1, 0 ) ) < 0 )
             continue;
 
-        var_13 = pointdistancetolinesq( var_11 _meth_80A8(), var_8, var_9 );
+        var_13 = pointdistancetolinesq( var_11 geteye(), var_8, var_9 );
         var_14 = pointdistancetolinesq( var_11 gettagorigin( "J_Spine4" ), var_8, var_9 );
         var_15 = min( var_13, var_14 );
 
@@ -115,7 +115,7 @@ cookenemiesinrange( var_0, var_1 )
             continue;
         }
 
-        var_11 _meth_8051( 30, var_11 _meth_80A8(), self, undefined, "MOD_EXPLOSIVE", "iw5_microwavezm_mp", "none" );
+        var_11 dodamage( 30, var_11 geteye(), self, undefined, "MOD_EXPLOSIVE", "iw5_microwavezm_mp", "none" );
 
         if ( !isdefined( var_11 ) || !isalive( var_11 ) )
             continue;
@@ -157,7 +157,7 @@ cookzombieburger( var_0, var_1, var_2 )
 {
     var_3 = squared( var_0.beamrange + var_0.beamwidth * 2 );
     var_4 = squared( var_0.beamwidth );
-    var_5 = self _meth_80A8();
+    var_5 = self geteye();
     var_6 = self getangles();
     var_7 = anglestoforward( var_6 );
     var_8 = var_5 + var_7 * var_0.beamwidth;
@@ -254,16 +254,16 @@ audio_flesh_bubble( var_0 )
     if ( !isdefined( self.fleshbubblesound ) )
         self.fleshbubblesound = spawn( "script_origin", self.origin );
 
-    self.fleshbubblesound _meth_804D( self );
+    self.fleshbubblesound linkto( self );
     thread common_scripts\utility::delete_on_death( self.fleshbubblesound );
-    self.fleshbubblesound _meth_8075( "npc_mwave_flesh_bubble" );
-    self.fleshbubblesound _meth_806F( clamp( var_0, 0, 1 ), 0 );
+    self.fleshbubblesound playloopsound( "npc_mwave_flesh_bubble" );
+    self.fleshbubblesound scalevolume( clamp( var_0, 0, 1 ), 0 );
 }
 
 audio_flesh_bubble_volume( var_0 )
 {
     if ( isdefined( self.fleshbubblesound ) )
-        self.fleshbubblesound _meth_806F( clamp( var_0, 0, 1 ), 0 );
+        self.fleshbubblesound scalevolume( clamp( var_0, 0, 1 ), 0 );
 }
 
 audio_stop_flesh_bubble()
@@ -274,9 +274,9 @@ audio_stop_flesh_bubble()
     var_0 = self.fleshbubblesound;
     var_0 endon( "death" );
     wait 1.3;
-    var_0 _meth_806F( 0, 1.0 );
+    var_0 scalevolume( 0, 1.0 );
     wait 1.0;
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     waitframe();
     var_0 delete();
     var_0 = undefined;
@@ -312,7 +312,7 @@ spawnmicrowavebuff( var_0 )
 explodezombie( var_0 )
 {
     earthquake( randomfloatrange( 0.5, 1 ), randomfloatrange( 0.5, 1 ), self.origin, 128 );
-    self _meth_8051( self.maxhealth + 10, self _meth_80A8(), var_0, undefined, "MOD_EXPLOSIVE", "iw5_microwavezm_mp", "none" );
+    self dodamage( self.maxhealth + 10, self geteye(), var_0, undefined, "MOD_EXPLOSIVE", "iw5_microwavezm_mp", "none" );
 }
 
 givezombiescookedachievement( var_0, var_1 )
@@ -356,7 +356,7 @@ removemicrowavebuff( var_0 )
 playermonitormicrowaveweapon( var_0 )
 {
     self endon( "disconnect" );
-    self _meth_82FB( "ui_energy_ammo", 1 );
+    self setclientomnvar( "ui_energy_ammo", 1 );
 
     for (;;)
     {
@@ -379,17 +379,17 @@ playerdomicrowavelogic( var_0, var_1 )
     }
 
     playersetmicrowaveammo();
-    self _meth_82F7( var_0, 0 );
+    self setweaponammostock( var_0, 0 );
     thread playersetupmicrowaveammo( var_1 );
     self waittill( "weapon_change" );
-    self _meth_8131( 1 );
-    self _meth_849C( "fire_microwave_weapon", "+attack" );
-    self _meth_849C( "fire_microwave_weapon", "+attack_akimbo_accessible" );
+    self allowfire( 1 );
+    self notifyonplayercommandremove( "fire_microwave_weapon", "+attack" );
+    self notifyonplayercommandremove( "fire_microwave_weapon", "+attack_akimbo_accessible" );
 }
 
 playerhasmicrowave()
 {
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     foreach ( var_2 in var_0 )
     {
@@ -405,7 +405,7 @@ playerupdatemicrowaveomnvar()
     var_0 = getmicrowavemaxammo();
     var_1 = playergetmicrowaveammo();
     var_2 = var_1 / var_0;
-    self _meth_82FB( "ui_energy_ammo", var_2 );
+    self setclientomnvar( "ui_energy_ammo", var_2 );
 }
 
 playersetupmicrowaveammo( var_0 )
@@ -413,22 +413,22 @@ playersetupmicrowaveammo( var_0 )
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "weapon_change" );
-    self _meth_82DD( "fire_microwave_weapon", "+attack" );
-    self _meth_82DD( "fire_microwave_weapon", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "fire_microwave_weapon", "+attack" );
+    self notifyonplayercommand( "fire_microwave_weapon", "+attack_akimbo_accessible" );
     var_1 = playergetmicrowaveammo();
     playerupdatemicrowaveomnvar();
 
     if ( var_1 <= 0 )
-        self _meth_8131( 0 );
+        self allowfire( 0 );
 
     for (;;)
     {
         if ( !self attackbuttonpressed() )
             self waittill( "fire_microwave_weapon" );
 
-        var_2 = self _meth_8311();
+        var_2 = self getcurrentweapon();
 
-        if ( self _meth_8337() || !issubstr( var_2, "iw5_microwavezm_mp" ) || !self _meth_812D() || self _meth_84E0() || self _meth_812E() )
+        if ( self isreloading() || !issubstr( var_2, "iw5_microwavezm_mp" ) || !self isfiring() || self isusingoffhand() || self ismeleeing() )
         {
             waitframe();
             continue;
@@ -440,13 +440,13 @@ playersetupmicrowaveammo( var_0 )
 
         if ( var_1 <= 0 )
         {
-            var_3 = self _meth_830C();
+            var_3 = self getweaponslistprimaries();
             var_4 = maps\mp\_utility::getbaseweaponname( var_3[0] );
 
             if ( var_4 != "iw5_microwavezm" )
             {
-                self _meth_8131( 0 );
-                self _meth_8315( var_3[0] );
+                self allowfire( 0 );
+                self switchtoweapon( var_3[0] );
                 waitframe();
                 continue;
             }
@@ -457,14 +457,14 @@ playersetupmicrowaveammo( var_0 )
 
                 if ( var_4 != "iw5_microwavezm" )
                 {
-                    self _meth_8315( var_3[1] );
-                    self _meth_8131( 0 );
+                    self switchtoweapon( var_3[1] );
+                    self allowfire( 0 );
                     waitframe();
                     continue;
                 }
             }
 
-            self _meth_8131( 0 );
+            self allowfire( 0 );
             waitframe();
             continue;
         }
@@ -485,7 +485,7 @@ playersetmicrowaveammo()
     {
         self.pers["microwaveAmmo"] = spawnstruct();
         playersetmicrowavemaxammo();
-        self _meth_8131( 1 );
+        self allowfire( 1 );
     }
 }
 
@@ -499,8 +499,8 @@ playersetmicrowavemaxammo()
     if ( isdefined( self.pers["microwaveAmmo"] ) )
     {
         self.pers["microwaveAmmo"].ammo = getmicrowavemaxammo();
-        self _meth_82FB( "ui_energy_ammo", 1 );
-        self _meth_8131( 1 );
+        self setclientomnvar( "ui_energy_ammo", 1 );
+        self allowfire( 1 );
     }
 }
 
@@ -531,12 +531,12 @@ update_microwave_heat_omnvar()
 
     for (;;)
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( issubstr( var_0, "iw5_microwavezm_mp" ) )
         {
-            var_1 = self _meth_83B9( var_0 );
-            self _meth_82FB( "ui_em1_heat", var_1 );
+            var_1 = self getweaponheatlevel( var_0 );
+            self setclientomnvar( "ui_em1_heat", var_1 );
         }
 
         wait 0.05;
@@ -550,7 +550,7 @@ playzombiekilledmicrowavefx()
     playfx( var_0, self.body gettagorigin( var_1 ) );
     self.body playsound( "npc_mwave_flesh_expl_front" );
     self.body hide();
-    self.body _meth_804A();
+    self.body hideallparts();
 }
 
 setmicrowaveweaponlevel( var_0 )

@@ -41,8 +41,8 @@ callback_playerlaststandhorde( var_0, var_1, var_2, var_3, var_4, var_5, var_6, 
 
             if ( isdefined( self.underwater ) )
             {
-                var_9 = self _meth_8312();
-                self _meth_830F( var_9 );
+                var_9 = self getcurrentprimaryweapon();
+                self takeweapon( var_9 );
             }
 
             thread laststandmonitorabandonment();
@@ -55,11 +55,11 @@ callback_playerlaststandhorde( var_0, var_1, var_2, var_3, var_4, var_5, var_6, 
     self.laststand = 1;
     self.ignoreme = 1;
     self.health = 1;
-    self _meth_8130( 0 );
+    self allowmelee( 0 );
     thread leaveremotekillstreaks();
     thread laststandexoabilitymonitor();
     self waittill( "last_stand_offhand_secondary_disabled" );
-    var_10 = self _meth_830C();
+    var_10 = self getweaponslistprimaries();
     self.primaryweapons = [];
 
     foreach ( var_12 in var_10 )
@@ -68,47 +68,47 @@ callback_playerlaststandhorde( var_0, var_1, var_2, var_3, var_4, var_5, var_6, 
             self.primaryweapons[self.primaryweapons.size] = var_12;
     }
 
-    self.lastequippedweapon = self _meth_8312();
+    self.lastequippedweapon = self getcurrentprimaryweapon();
 
     if ( self.lastequippedweapon == "iw5_carrydrone_mp" || self.lastequippedweapon == "search_dstry_bomb_defuse_mp" || issubstr( self.lastequippedweapon, "killstreak" ) || issubstr( self.lastequippedweapon, "turrethead" ) && !isdefined( self.pers["rippableSentry"] ) )
         self.lastequippedweapon = self.primaryweapons[0];
 
     foreach ( var_12 in self.primaryweapons )
     {
-        self.primaryweaponsammo[var_12]["ammoclip"] = self _meth_82F8( var_12 );
-        self.primaryweaponsammo[var_12]["ammostock"] = self _meth_82F9( var_12 );
+        self.primaryweaponsammo[var_12]["ammoclip"] = self getweaponammoclip( var_12 );
+        self.primaryweaponsammo[var_12]["ammostock"] = self setweaponammostock( var_12 );
 
         if ( issubstr( var_12, "exoxmg" ) && !issubstr( var_12, "alt_" ) || issubstr( var_12, "sac3" ) )
-            self.primaryweaponsammo[var_12]["ammoclipleft"] = self _meth_82F8( var_12, "left" );
+            self.primaryweaponsammo[var_12]["ammoclipleft"] = self getweaponammoclip( var_12, "left" );
     }
 
     foreach ( var_17 in self.primaryweapons )
     {
         if ( !issubstr( var_17, "titan" ) )
-            self _meth_830F( var_17 );
+            self takeweapon( var_17 );
     }
 
     var_19 = hordelaststandweapon();
     maps\mp\gametypes\_weapons::saveweapon( "laststand", self.lastequippedweapon, var_19 );
 
     if ( !haslaststandweapon( var_19 ) )
-        self _meth_830E( var_19 );
+        self giveweapon( var_19 );
 
     self.wasunderwater = isdefined( self.underwater );
 
     if ( !isdefined( self.underwater ) )
     {
         if ( !issubstr( self.lastequippedweapon, "titan" ) )
-            self _meth_8316( var_19 );
+            self switchtoweaponimmediate( var_19 );
     }
 
     thread maps\mp\gametypes\_horde_util::hordeallowallboost( 0, "laststand" );
-    self _meth_82FB( "ui_horde_show_armory", 0 );
-    self _meth_82FB( "ui_horde_laststand", 1 );
-    self _meth_83FA( 1, 0 );
+    self setclientomnvar( "ui_horde_show_armory", 0 );
+    self setclientomnvar( "ui_horde_laststand", 1 );
+    self hudoutlineenable( 1, 0 );
     common_scripts\utility::_disableusability();
-    self _meth_8321();
-    self _meth_831F();
+    self disableweaponswitch();
+    self disableoffhandweapons();
     thread laststandrevivehorde( var_0, var_1, var_4, var_7, var_3 );
 }
 
@@ -161,7 +161,7 @@ startspectatemode( var_0, var_1, var_2 )
     self.lastperks = self.horde_perks;
     maps\mp\_utility::_clearperks();
     self.lastkillstreaks = [];
-    var_3 = self _meth_8447( "ui_horde_player_class" );
+    var_3 = self getclientomnvar( "ui_horde_player_class" );
     var_4 = self.classsettings[var_3]["killstreak"];
     var_5 = 0;
 
@@ -188,7 +188,7 @@ startspectatemode( var_0, var_1, var_2 )
     self.ignoreme = 1;
 
     if ( var_2 )
-        thread maps\mp\gametypes\_playerlogic::spawnspectator( self _meth_80A8() - ( 0, 0, 8 ), self getangles() );
+        thread maps\mp\gametypes\_playerlogic::spawnspectator( self geteye() - ( 0, 0, 8 ), self getangles() );
     else
         thread maps\mp\gametypes\_playerlogic::spawnspectator();
 
@@ -199,31 +199,31 @@ laststandsaveloadoutinfo( var_0, var_1, var_2 )
 {
     if ( var_0 )
     {
-        self.lastequippedweapon = self _meth_8312();
-        self.primaryweapons = self _meth_830C();
+        self.lastequippedweapon = self getcurrentprimaryweapon();
+        self.primaryweapons = self getweaponslistprimaries();
         self.wasunderwater = isdefined( self.underwater );
 
         foreach ( var_4 in self.primaryweapons )
         {
-            self.primaryweaponsammo[var_4]["ammoclip"] = self _meth_82F8( var_4 );
-            self.primaryweaponsammo[var_4]["ammostock"] = self _meth_82F9( var_4 );
+            self.primaryweaponsammo[var_4]["ammoclip"] = self getweaponammoclip( var_4 );
+            self.primaryweaponsammo[var_4]["ammostock"] = self setweaponammostock( var_4 );
 
             if ( issubstr( var_4, "exoxmg" ) && !issubstr( var_4, "alt_" ) || issubstr( var_4, "sac3" ) )
-                self.primaryweaponsammo[var_4]["ammoclipleft"] = self _meth_82F8( var_4, "left" );
+                self.primaryweaponsammo[var_4]["ammoclipleft"] = self getweaponammoclip( var_4, "left" );
         }
     }
 
     if ( var_2 )
     {
-        self.lastlethalweapon = self _meth_8345();
-        self.lastlethalweaponammoclip = self _meth_82F8( self.lastlethalweapon );
+        self.lastlethalweapon = self getlethalweapon();
+        self.lastlethalweaponammoclip = self getweaponammoclip( self.lastlethalweapon );
     }
 
     if ( var_1 )
     {
-        var_6 = self _meth_8447( "ui_horde_player_class" );
-        self.lasttacticalweapon = self _meth_831A();
-        self.lasttacticalweaponammoclip = self _meth_84A2( self.lasttacticalweapon );
+        var_6 = self getclientomnvar( "ui_horde_player_class" );
+        self.lasttacticalweapon = self gettacticalweapon();
+        self.lasttacticalweaponammoclip = self batterygetcharge( self.lasttacticalweapon );
         self.classsettings[var_6]["battery"] = self.lasttacticalweaponammoclip;
     }
 }
@@ -238,7 +238,7 @@ haslaststandweapon( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = hordelaststandweapon();
 
-    var_1 = self _meth_830C();
+    var_1 = self getweaponslistprimaries();
 
     foreach ( var_3 in var_1 )
     {
@@ -289,7 +289,7 @@ hordeendgame( var_0 )
     setomnvar( "horde_game_ended", 1 );
 
     foreach ( var_2 in level.players )
-        var_2 _meth_82FB( "ui_horde_show_armory", 0 );
+        var_2 setclientomnvar( "ui_horde_show_armory", 0 );
 
     foreach ( var_5 in level.carepackages )
         var_5 maps\mp\killstreaks\_airdrop::deletecrate();
@@ -309,7 +309,7 @@ hordeendgame( var_0 )
         level thread maps\mp\gametypes\_gamelogic::endgame( level.playerteam, game["end_reason"]["zombies_completed"] );
 
     if ( level.currentroundnumber > 4 )
-        _func_25F( 0 );
+        setnojipscore( 0 );
 }
 
 maydolaststandhorde( var_0 )
@@ -333,8 +333,8 @@ registerlaststandparameter( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7.shitloc = var_6;
     var_7.laststandstarttime = gettime();
 
-    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_8312() != "none" )
-        var_7.sprimaryweapon = var_1 _meth_8312();
+    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 getcurrentprimaryweapon() != "none" )
+        var_7.sprimaryweapon = var_1 getcurrentprimaryweapon();
     else
         var_7.sprimaryweapon = undefined;
 
@@ -357,9 +357,9 @@ laststandrevivehorde( var_0, var_1, var_2, var_3, var_4 )
     thread laststandkeepoverlayhorde();
     thread laststandmonitorabandonment();
     var_5 = spawn( "script_model", self.origin );
-    var_5 _meth_80B1( "tag_origin" );
-    var_5 _meth_80DA( "HINT_NOICON" );
-    var_5 _meth_80DB( &"PLATFORM_REVIVE" );
+    var_5 setmodel( "tag_origin" );
+    var_5 setcursorhint( "HINT_NOICON" );
+    var_5 sethintstring( &"PLATFORM_REVIVE" );
     var_5 makeusable();
     var_5.inuse = 0;
     var_5.curprogress = 0;
@@ -368,12 +368,12 @@ laststandrevivehorde( var_0, var_1, var_2, var_3, var_4 )
     var_5.id = "last_stand";
     var_5.targetname = "revive_trigger";
     var_5.owner = self;
-    var_5 _meth_804D( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
+    var_5 linkto( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
     var_5 thread maps\mp\gametypes\_damage::deleteonreviveordeathordisconnect();
     var_6 = newteamhudelem( self.team );
-    var_6 _meth_80CC( "waypoint_revive", 8, 8 );
-    var_6 _meth_80D8( 1, 1 );
-    var_6 _meth_80CD( self );
+    var_6 setshader( "waypoint_revive", 8, 8 );
+    var_6 setwaypoint( 1, 1 );
+    var_6 settargetent( self );
     var_6.color = ( 0.33, 0.75, 0.24 );
     var_6 thread maps\mp\gametypes\_damage::destroyonreviveentdeath( var_5 );
     thread laststandupdatereviveiconcolorhorde( var_5, var_6, 25 );
@@ -396,8 +396,8 @@ laststandrevivehorde( var_0, var_1, var_2, var_3, var_4 )
     while ( isdefined( var_5.inuse ) && var_5.inuse )
         waitframe();
 
-    self _meth_83FB();
-    self _meth_831D();
+    self hudoutlinedisable();
+    self disableweapons();
     self.movespeedscaler = 0.05;
 
     if ( level.players.size > 1 )
@@ -407,8 +407,8 @@ laststandrevivehorde( var_0, var_1, var_2, var_3, var_4 )
 laststandselfrevive()
 {
     self endon( "disconnect" );
-    self _meth_82FB( "ui_use_bar_text", 3 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
+    self setclientomnvar( "ui_use_bar_text", 3 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
     self.curprogress = 0;
     self.userate = 1;
     self.usetime = 8000;
@@ -426,7 +426,7 @@ laststandselfrevive()
                 var_1 = gettime();
                 var_2 = self.curprogress / self.usetime;
                 var_3 = var_1 + ( 1 - var_2 ) * self.usetime / self.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_3 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_3 ) );
             }
 
             var_0 = self.userate;
@@ -435,7 +435,7 @@ laststandselfrevive()
         wait 0.05;
     }
 
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
 }
 
 selfrevivethinkloop( var_0 )
@@ -466,7 +466,7 @@ revivetriggerthinkhorde()
         self.owner.beingrevived = 1;
         var_0 freezecontrols( 1 );
         var_0 common_scripts\utility::_disableweaponswitch();
-        var_0 _meth_8131( 0 );
+        var_0 allowfire( 0 );
         var_0.isreviving = 1;
         thread revivetriggerthinkhorde_cleanup( var_0 );
         var_1 = maps\mp\gametypes\_damage::reviveholdthink( var_0, undefined, 0 );
@@ -506,7 +506,7 @@ revivetriggerthinkhorde_cleanup( var_0 )
 {
     common_scripts\utility::waittill_any_ents( self, "death", self, "reviveTriggerThinkHorde_cleanup" );
     var_0 freezecontrols( 0 );
-    var_0 _meth_8131( 1 );
+    var_0 allowfire( 1 );
     var_0 common_scripts\utility::_enableweaponswitch();
     var_0.isreviving = 0;
 }
@@ -523,9 +523,9 @@ laststandwaittillliferecived()
     if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 != var_0 )
         var_0 thread maps\mp\gametypes\_hud_message::playercardsplashnotify( "revived", var_1 );
 
-    if ( var_0 _meth_8336() )
+    if ( var_0 isreloading() )
     {
-        while ( var_0 _meth_8336() )
+        while ( var_0 isreloading() )
             waitframe();
 
         waitframe();
@@ -544,7 +544,7 @@ reviveentmonitor()
 laststandrespawnplayerhorde()
 {
     self notify( "revive" );
-    var_0 = self _meth_8447( "ui_horde_player_class" );
+    var_0 = self getclientomnvar( "ui_horde_player_class" );
     var_1 = level.classsettings[var_0]["speed"];
     self.laststand = undefined;
     self.inlaststand = 0;
@@ -557,17 +557,17 @@ laststandrespawnplayerhorde()
     if ( maps\mp\_utility::_hasperk( "specialty_lightweight" ) )
         self.movespeedscaler = maps\mp\_utility::lightweightscalar();
 
-    self _meth_83FB();
-    self _meth_82C7();
+    self hudoutlinedisable();
+    self laststandrevive();
 
     if ( !isdefined( self.underwater ) )
-        self _meth_817D( "crouch" );
+        self setstance( "crouch" );
 
     if ( !self.hadlaststandweapon )
     {
         var_2 = hordelaststandweapon();
-        self _meth_830F( var_2 );
-        self _meth_8511( var_2 );
+        self takeweapon( var_2 );
+        self loadweapons( var_2 );
     }
 
     if ( !self.wasunderwater && isdefined( self.underwater ) )
@@ -575,15 +575,15 @@ laststandrespawnplayerhorde()
 
     if ( isdefined( self.underwater ) )
     {
-        self _meth_830E( level.shallow_water_weapon );
-        self _meth_8316( level.shallow_water_weapon );
+        self giveweapon( level.shallow_water_weapon );
+        self switchtoweaponimmediate( level.shallow_water_weapon );
     }
 
     thread maps\mp\gametypes\_horde_util::hordeallowallboost( 1, "laststand" );
-    self _meth_8130( 1 );
-    self _meth_831E();
+    self allowmelee( 1 );
+    self enableweapons();
     common_scripts\utility::_enableusability();
-    self _meth_8320();
+    self enableoffhandweapons();
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     maps\mp\_utility::clearlowermessage( "last_stand" );
     maps\mp\_utility::giveperk( "specialty_pistoldeath", 0 );
@@ -594,9 +594,9 @@ laststandrespawnplayerhorde()
 
         if ( isdefined( self.underwater ) || issubstr( self.lastequippedweapon, "turret" ) )
         {
-            self _meth_830E( self.lastequippedweapon );
+            self giveweapon( self.lastequippedweapon );
 
-            while ( !self _meth_8511( [ self.lastequippedweapon ] ) )
+            while ( !self loadweapons( [ self.lastequippedweapon ] ) )
                 waitframe();
         }
     }
@@ -606,17 +606,17 @@ laststandrespawnplayerhorde()
     maps\mp\gametypes\_weapons::restoreweapon( "laststand" );
 
     if ( level.hordeweaponsjammed == 0 && !isdefined( self.underwater ) )
-        self _meth_8322();
+        self enableweaponswitch();
 
-    if ( !precachestatusicon( self.origin ) )
+    if ( !canspawn( self.origin ) )
         maps\mp\_movers::unresolved_collision_nearest_node( self, 0 );
 }
 
 givestoredweapon( var_0, var_1, var_2 )
 {
     maps\mp\gametypes\_horde_util::trygivehordeweapon( self, var_0, 1, var_2, undefined, var_1 );
-    self _meth_82F6( var_0, self.primaryweaponsammo[var_0]["ammoclip"] );
-    self _meth_82F7( var_0, self.primaryweaponsammo[var_0]["ammostock"] );
+    self setweaponammoclip( var_0, self.primaryweaponsammo[var_0]["ammoclip"] );
+    self setweaponammostock( var_0, self.primaryweaponsammo[var_0]["ammostock"] );
 }
 
 givebackstoredplayerweapons( var_0, var_1, var_2 )
@@ -625,12 +625,12 @@ givebackstoredplayerweapons( var_0, var_1, var_2 )
     {
         foreach ( var_4 in self.primaryweapons )
         {
-            self _meth_830E( var_4 );
-            self _meth_82F7( var_4, self.primaryweaponsammo[var_4]["ammostock"] );
-            self _meth_82F6( var_4, self.primaryweaponsammo[var_4]["ammoclip"] );
+            self giveweapon( var_4 );
+            self setweaponammostock( var_4, self.primaryweaponsammo[var_4]["ammostock"] );
+            self setweaponammoclip( var_4, self.primaryweaponsammo[var_4]["ammoclip"] );
         }
 
-        self _meth_8316( self.lastequippedweapon );
+        self switchtoweaponimmediate( self.lastequippedweapon );
         return;
     }
 
@@ -643,10 +643,10 @@ givebackstoredplayerweapons( var_0, var_1, var_2 )
     foreach ( var_4 in self.primaryweapons )
     {
         if ( issubstr( var_4, "exoxmg" ) && !issubstr( var_4, "alt_" ) || issubstr( var_4, "sac3" ) )
-            self _meth_82F6( var_4, self.primaryweaponsammo[var_4]["ammoclipleft"], "left" );
+            self setweaponammoclip( var_4, self.primaryweaponsammo[var_4]["ammoclipleft"], "left" );
     }
 
-    var_11 = self _meth_830C();
+    var_11 = self getweaponslistprimaries();
 
     foreach ( var_4 in var_11 )
     {
@@ -656,7 +656,7 @@ givebackstoredplayerweapons( var_0, var_1, var_2 )
         if ( var_4 != self.hordeclassweapons[var_0]["primary"] && var_4 != self.hordeclassweapons[var_0]["secondary"] )
         {
             if ( !issubstr( var_4, "alt_iw5_" ) )
-                self _meth_830F( var_4 );
+                self takeweapon( var_4 );
         }
     }
 
@@ -765,7 +765,7 @@ laststandtimerhorde( var_0, var_1 )
     var_3.color = ( 0.804, 0.804, 0.035 );
     var_3.archived = 0;
     var_3.showinkillcam = 0;
-    var_3 _meth_80CF( var_0 - 1 );
+    var_3 settimer( var_0 - 1 );
     var_1 common_scripts\utility::waittill_any_timeout( var_0, "death" );
 
     if ( !isdefined( var_3 ) )
@@ -785,16 +785,16 @@ laststandammowacher()
     for (;;)
     {
         wait 1.5;
-        var_0 = self _meth_8312();
+        var_0 = self getcurrentprimaryweapon();
 
         if ( !maps\mp\gametypes\_weapons::isprimaryweapon( var_0 ) )
             continue;
 
-        var_1 = self _meth_82F9( var_0 );
+        var_1 = self setweaponammostock( var_0 );
         var_2 = weaponclipsize( var_0 );
 
         if ( var_1 < var_2 )
-            self _meth_82F7( var_0, var_2 );
+            self setweaponammostock( var_0, var_2 );
     }
 }
 
@@ -804,9 +804,9 @@ laststandexoabilitymonitor()
     self endon( "disconnect" );
     self endon( "becameSpectator" );
     level endon( "game_ended" );
-    var_0 = self _meth_8447( "ui_horde_player_class" );
-    self.lasttacticalweapon = self _meth_831A();
-    self.lasttacticalweaponammoclip = self _meth_84A2( self.lasttacticalweapon );
+    var_0 = self getclientomnvar( "ui_horde_player_class" );
+    self.lasttacticalweapon = self gettacticalweapon();
+    self.lasttacticalweaponammoclip = self batterygetcharge( self.lasttacticalweapon );
     self.classsettings[var_0]["battery"] = self.lasttacticalweaponammoclip;
 
     switch ( self.lasttacticalweapon )
@@ -820,7 +820,7 @@ laststandexoabilitymonitor()
         case "exoshieldhorde_equipment_mp":
             if ( isdefined( self.exo_shield_on ) && self.exo_shield_on )
             {
-                self _meth_84A3( "exoshieldhorde_equipment_mp", 0 );
+                self batterysetcharge( "exoshieldhorde_equipment_mp", 0 );
                 self waittillmatch( "battery_discharge_end" );
             }
 
@@ -839,7 +839,7 @@ laststandexoabilitymonitor()
 
     waitframe();
     self notify( "last_stand_offhand_secondary_disabled" );
-    self _meth_84BF();
+    self disableoffhandsecondaryweapons();
     self waittill( "revive" );
 
     switch ( self.lasttacticalweapon )
@@ -864,9 +864,9 @@ laststandexoabilitymonitor()
             break;
     }
 
-    self _meth_84A3( self.lasttacticalweapon, self.lasttacticalweaponammoclip );
-    self _meth_82FB( "ui_exo_battery_level0", self.lasttacticalweaponammoclip );
-    self _meth_84C0();
+    self batterysetcharge( self.lasttacticalweapon, self.lasttacticalweaponammoclip );
+    self setclientomnvar( "ui_exo_battery_level0", self.lasttacticalweaponammoclip );
+    self enableoffhandsecondaryweapons();
     level thread maps\mp\gametypes\_horde_armory::hordebatterylevel( self );
 }
 
@@ -882,22 +882,22 @@ hordehandlejuggdeath()
     if ( isdefined( self.barrel ) )
         self.barrel hide();
 
-    self _meth_830F( "iw5_exominigun_mp" );
+    self takeweapon( "iw5_exominigun_mp" );
     maps\mp\killstreaks\_juggernaut::playerreset( self.heavyexodata );
-    self _meth_83FB();
+    self hudoutlinedisable();
     self playerhide();
     self notify( "horde_cancel_goliath" );
     waittillframeend;
     startspectatemode( 0, 0, 1 );
-    self _meth_8506( 1 );
+    self setmlgspectator( 1 );
     self freezecontrols( 1 );
-    self _meth_82FB( "ui_hide_hud", 1 );
+    self setclientomnvar( "ui_hide_hud", 1 );
     wait 2.5;
-    self _meth_8506( 0 );
+    self setmlgspectator( 0 );
     self freezecontrols( 0 );
-    self _meth_82FB( "ui_hide_hud", 0 );
+    self setclientomnvar( "ui_hide_hud", 0 );
     self detachall();
-    self _meth_84BA( self.costume );
+    self setcostumemodels( self.costume );
     self playershow();
     level thread maps\mp\gametypes\horde::respawnplayer( self );
 

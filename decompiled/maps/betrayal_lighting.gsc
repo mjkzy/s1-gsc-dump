@@ -20,23 +20,23 @@ main2()
     thread setup_lighting_boat_crash();
     thread setup_lighting_climb_start();
     thread setup_vfx_sunflare();
-    _func_0D3( "r_disablelightsets", 0 );
+    setsaveddvar( "r_disablelightsets", 0 );
     thread lightset_triggers();
-    _func_0D3( "r_chromaticAberrationTweaks", 1 );
-    _func_0D3( "r_chromaticAberration", 1 );
-    _func_0D3( "r_chromaticSeparationR", 0.5 );
-    _func_0D3( "r_chromaticSeparationG", -0.5 );
-    _func_0D3( "r_chromaticSeparationB", 0 );
-    _func_0D3( "r_chromaticAberrationAlpha", 0.5 );
-    _func_0D3( "r_veilFallOffWeight1", ( 2, 2, 2 ) );
-    _func_0D3( "r_aoDiminish", 0.3 );
+    setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+    setsaveddvar( "r_chromaticAberration", 1 );
+    setsaveddvar( "r_chromaticSeparationR", 0.5 );
+    setsaveddvar( "r_chromaticSeparationG", -0.5 );
+    setsaveddvar( "r_chromaticSeparationB", 0 );
+    setsaveddvar( "r_chromaticAberrationAlpha", 0.5 );
+    setsaveddvar( "r_veilFallOffWeight1", ( 2, 2, 2 ) );
+    setsaveddvar( "r_aoDiminish", 0.3 );
     level.player_dof_aperture = 4.0;
     thread autofocus_loop();
     thread riverbounce_hideents();
     thread lightbox_hideents();
 
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 }
 
 init_level_lighting_flags()
@@ -70,14 +70,14 @@ init_level_lighting_flags()
 
 set_level_lighting_values()
 {
-    _func_0D3( "r_disablelightsets", 0 );
+    setsaveddvar( "r_disablelightsets", 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_mdao", 1 );
+        setsaveddvar( "r_mdao", 1 );
 
-    level.player _meth_83C0( "betrayal_interior" );
+    level.player lightsetforplayer( "betrayal_interior" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_int_intro", 0 );
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
     common_scripts\utility::flag_set( "flag_autofocus_on" );
     level.player_dof_aperture = 2.2;
     level.player_dof_distance = 53;
@@ -95,9 +95,9 @@ setup_dof_presets()
 dof_triggers()
 {
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     common_scripts\utility::run_thread_on_targetname( "dof_enable_interior", ::dof_enable_interior );
     common_scripts\utility::run_thread_on_targetname( "dof_enable_exterior", ::dof_enable_exterior );
     common_scripts\utility::run_thread_on_targetname( "dof_enable_start", ::dof_enable_start );
@@ -160,8 +160,8 @@ mblur_enable_trigger()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -171,9 +171,9 @@ mblur_cam_enable_trigger()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -183,9 +183,9 @@ mblur_disable_trigger()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_mbVelocityScalar", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbVelocityScalar", "0" );
     }
 }
 
@@ -193,8 +193,8 @@ mblur_enable()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -202,9 +202,9 @@ mblur_cam_enable()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -212,18 +212,18 @@ mblur_disable()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_mbVelocityScalar", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbVelocityScalar", "0" );
     }
 }
 
 autofocus_loop()
 {
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_enable", 1 );
+        setsaveddvar( "r_dof_physical_enable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     var_0 = level.player_dof_aperture;
 
     for (;;)
@@ -243,7 +243,7 @@ autofocus_loop()
             var_0 = level.player_dof_aperture;
 
         if ( level.nextgen )
-            level.player _meth_84AB( var_0, var_1, 4, 2 );
+            level.player setphysicaldepthoffield( var_0, var_1, 4, 2 );
     }
 }
 
@@ -254,7 +254,7 @@ riverbounce_hideents()
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
         var_0[var_1] hide();
-        var_0[var_1] _meth_82BF();
+        var_0[var_1] notsolid();
     }
 }
 
@@ -264,10 +264,10 @@ lightbox_hideents()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        var_0[var_1] _meth_8058();
+        var_0[var_1] connectpaths();
         var_0[var_1] hide();
         var_2 = ( 0, 0, 0 );
-        var_0[var_1] _meth_82AE( var_2, 0.1, 0.02, 0.02 );
+        var_0[var_1] moveto( var_2, 0.1, 0.02, 0.02 );
     }
 
     var_0 = getentarray( "hide_screens", "targetname" );
@@ -276,7 +276,7 @@ lightbox_hideents()
     {
         var_0[var_1] hide();
         var_2 = ( 0, 0, 0 );
-        var_0[var_1] _meth_82AE( var_2, 0.1, 0.02, 0.02 );
+        var_0[var_1] moveto( var_2, 0.1, 0.02, 0.02 );
     }
 }
 
@@ -299,7 +299,7 @@ blastdoor_showents()
 trace_distance()
 {
     var_0 = 4096;
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
     var_2 = level.player getangles();
 
     if ( isdefined( level.player.dof_ref_ent ) )
@@ -320,26 +320,26 @@ setup_dof_viewmodel_presets()
 setup_lighting_office_start()
 {
     common_scripts\utility::flag_wait( "office_start_lighting" );
-    level.player _meth_8490( "clut_betrayal_c3_02", 2 );
+    level.player setclutforplayer( "clut_betrayal_c3_02", 2 );
 
     if ( level.nextgen )
     {
         level.player_dof_aperture = 3.5;
         level.player_dof_distance = 53;
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
         thread mblur_disable();
-        level.player _meth_83C0( "betrayal_interior_lobby" );
+        level.player lightsetforplayer( "betrayal_interior_lobby" );
         maps\_utility::vision_set_fog_changes( "betrayal_grungy_int_intro", 0.5 );
-        level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+        level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
         var_0 = getent( "btr_lobby_light_gideon_key", "targetname" );
         var_1 = getent( "btr_lobby_light_gideon_rim", "targetname" );
         var_2 = getent( "btr_lobby_light_ground_source", "targetname" );
         var_3 = getent( "btr_lobby_light_elevator", "targetname" );
-        var_2 _meth_81DF( 2000000 );
-        var_2 _meth_8044( ( 1, 1, 1 ) );
-        var_1 _meth_81DF( 38000 );
-        var_0 _meth_81DF( 28000 );
-        var_0 _meth_8046( 170 );
+        var_2 setlightintensity( 2000000 );
+        var_2 setlightcolor( ( 1, 1, 1 ) );
+        var_1 setlightintensity( 38000 );
+        var_0 setlightintensity( 28000 );
+        var_0 setlightradius( 170 );
         wait 15;
         maps\_lighting::lerp_spot_intensity( "btr_lobby_light_gideon_key", 13, 22000 );
         maps\_lighting::lerp_spot_intensity( "btr_lobby_light_gideon_rim", 4, 5000 );
@@ -349,8 +349,8 @@ setup_lighting_office_start()
         level.player_dof_distance = 53;
         maps\_lighting::lerp_spot_intensity( "btr_lobby_light_gideon_key", 8, 0 );
         var_4 = getent( "betr_light_vista_rim", "targetname" );
-        var_4 _meth_81DF( 100000000 );
-        var_4 _meth_8498( "force_on" );
+        var_4 setlightintensity( 100000000 );
+        var_4 setlightshadowstate( "force_on" );
         level.player_dof_aperture = 8.0;
     }
 }
@@ -361,16 +361,16 @@ setup_lighting_basement_start()
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "betrayal_interior" );
+        level.player lightsetforplayer( "betrayal_interior" );
         maps\_utility::vision_set_fog_changes( "betrayal_interior", 0.5 );
     }
     else
     {
-        level.player _meth_83C0( "betrayal_interior_darker" );
+        level.player lightsetforplayer( "betrayal_interior_darker" );
         maps\_utility::vision_set_fog_changes( "betrayal_interior", 0.5 );
     }
 
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
     level.player_dof_max_distance = 600;
     thread mblur_disable();
 }
@@ -381,8 +381,8 @@ setup_lighting_confrontation_start()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_subdiv", "1" );
-        _func_0D3( "r_adaptiveSubdivBaseFactor", "0.5" );
+        setsaveddvar( "r_subdiv", "1" );
+        setsaveddvar( "r_adaptiveSubdivBaseFactor", "0.5" );
     }
 
     thread blastdoor_hideents();
@@ -392,35 +392,35 @@ setup_lighting_confrontation_start()
     if ( level.nextgen )
     {
         maps\_utility::fog_set_changes( "betrayal_interior_darker", 1 );
-        level.player _meth_83C0( "betrayal_interior_confrontation_1" );
+        level.player lightsetforplayer( "betrayal_interior_confrontation_1" );
     }
     else
     {
         maps\_utility::vision_set_fog_changes( "betrayal_interior_darker", 1 );
-        level.player _meth_83C0( "betrayal_interior_darker" );
+        level.player lightsetforplayer( "betrayal_interior_darker" );
     }
 
-    level.player _meth_8490( "clut_betrayal_c3_03", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_03", 1 );
     common_scripts\utility::flag_set( "flag_dialogue_start_confrontation" );
 
     if ( level.nextgen )
     {
         level.player_dof_aperture = 2.5;
         level.player_dof_max_distance = 400;
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
         var_0 = getent( "btr_basement_key1", "targetname" );
         var_1 = getent( "btr_basement_key2", "targetname" );
-        var_0 _meth_83DF( ( 15, 0, 0 ), 0.1 );
-        var_1 _meth_83DF( ( 15, 0, 0 ), 0.1 );
+        var_0 rotateby( ( 15, 0, 0 ), 0.1 );
+        var_1 rotateby( ( 15, 0, 0 ), 0.1 );
         var_2 = getent( "btr_basement_hall_light", "targetname" );
-        var_2 _meth_81DF( 0 );
+        var_2 setlightintensity( 0 );
         var_3 = getent( "btr_basement_key4", "targetname" );
-        var_3 _meth_81DF( 4000 );
+        var_3 setlightintensity( 4000 );
 
         if ( level.nextgen )
             maps\_lighting::lerp_spot_intensity( "btr_basement_key4", 5, 600 );
 
-        var_3 _meth_8046( 150 );
+        var_3 setlightradius( 150 );
         wait 4;
         wait 1;
         var_4 = getent( "betr_emergency_alarm_model_1", "targetname" );
@@ -445,34 +445,34 @@ setup_lighting_confrontation_start()
         var_18 = getent( "betr_emergency_power_light_off", "targetname" );
         var_19 = getent( "betr_emergency_power_light_on", "targetname" );
         var_19 hide();
-        var_0 _meth_81DF( 4000 );
-        var_1 _meth_81DF( 6000 );
+        var_0 setlightintensity( 4000 );
+        var_1 setlightintensity( 6000 );
         wait 9;
         level.player_dof_aperture = 1.0;
         maps\_lighting::lerp_spot_intensity( "btr_basement_key1", 10, 6000 );
         maps\_lighting::lerp_spot_intensity( "btr_basement_key2", 10, 3000 );
-        level.player _meth_83C0( "betrayal_interior_confrontation_2" );
+        level.player lightsetforplayer( "betrayal_interior_confrontation_2" );
         maps\_lighting::lerp_spot_intensity( "btr_basement_key2", 10, 4000 );
         maps\_lighting::lerp_spot_intensity( "btr_basement_key1", 10, 2000 );
-        var_3 _meth_81DF( 10 );
-        var_3 _meth_8044( ( 1, 0.87, 0.85 ) );
-        var_3 _meth_83DF( ( 60, 0, 0 ), 1.0 );
+        var_3 setlightintensity( 10 );
+        var_3 setlightcolor( ( 1, 0.87, 0.85 ) );
+        var_3 rotateby( ( 60, 0, 0 ), 1.0 );
         wait 5;
         common_scripts\utility::flag_clear( "flag_autofocus_on" );
         level.player_dof_aperture = 7;
         level.player_dof_max_distance = 400;
         wait 20;
-        level.player _meth_83C0( "betrayal_interior_confrontation_3" );
+        level.player lightsetforplayer( "betrayal_interior_confrontation_3" );
         wait 24;
         var_20 = var_0 getorigin();
         var_20 += ( 40, -20, 0 );
-        var_0 _meth_82AE( var_20, 4 );
-        var_0 _meth_83DF( ( 10, 0, 0 ), 4 );
+        var_0 moveto( var_20, 4 );
+        var_0 rotateby( ( 10, 0, 0 ), 4 );
         maps\_lighting::lerp_spot_intensity( "btr_basement_key1", 5, 3000 );
         wait 1;
-        var_3 _meth_81DF( 30000 );
+        var_3 setlightintensity( 30000 );
         common_scripts\utility::flag_wait( "escape_lighting" );
-        level.player _meth_8490( "clut_betrayal_c3_04", 0.02 );
+        level.player setclutforplayer( "clut_betrayal_c3_04", 0.02 );
         common_scripts\_exploder::exploder( 2001 );
         var_11 show();
         var_12 show();
@@ -482,61 +482,61 @@ setup_lighting_confrontation_start()
         var_19 show();
         var_18 hide();
         maps\_utility::stop_exploder( 1999 );
-        level.player _meth_83C0( "betrayal_interior" );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        level.player lightsetforplayer( "betrayal_interior" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
         level.player_dof_aperture = 3.5;
-        var_0 _meth_81DF( 15000 );
-        var_1 _meth_81DF( 30000 );
-        var_3 _meth_81DF( 60000 );
-        var_0 _meth_8020( 85, 60 );
-        var_1 _meth_8020( 85, 60 );
-        var_3 _meth_8020( 80, 50 );
-        var_0 _meth_8044( ( 1, 0.98, 0.95 ) );
-        var_1 _meth_8044( ( 1, 0.05, 0.05 ) );
-        var_3 _meth_8044( ( 1, 0.05, 0.05 ) );
-        var_2 _meth_81DF( 12000 );
-        var_0 _meth_83DF( ( -15, 0, 0 ), 0.1 );
-        var_0 _meth_83DF( ( -10, 0, 0 ), 0.1 );
-        var_1 _meth_83DF( ( -15, 0, 0 ), 0.1 );
-        var_3 _meth_83DF( ( -60, 0, 0 ), 0.1 );
-        var_0 _meth_83DF( ( 0, 0, 90 ), 0.1 );
-        var_0 _meth_83DF( ( 45, 45, 0 ), 0.1 );
-        var_1 _meth_83DF( ( 0, 0, 90 ), 0.1 );
-        var_3 _meth_83DF( ( -50, 0, 0 ), 0.1 );
-        var_1 _meth_83DF( ( -30, 0, 0 ), 0.1 );
-        var_20 = var_11 _meth_8096();
+        var_0 setlightintensity( 15000 );
+        var_1 setlightintensity( 30000 );
+        var_3 setlightintensity( 60000 );
+        var_0 setlightfovrange( 85, 60 );
+        var_1 setlightfovrange( 85, 60 );
+        var_3 setlightfovrange( 80, 50 );
+        var_0 setlightcolor( ( 1, 0.98, 0.95 ) );
+        var_1 setlightcolor( ( 1, 0.05, 0.05 ) );
+        var_3 setlightcolor( ( 1, 0.05, 0.05 ) );
+        var_2 setlightintensity( 12000 );
+        var_0 rotateby( ( -15, 0, 0 ), 0.1 );
+        var_0 rotateby( ( -10, 0, 0 ), 0.1 );
+        var_1 rotateby( ( -15, 0, 0 ), 0.1 );
+        var_3 rotateby( ( -60, 0, 0 ), 0.1 );
+        var_0 rotateby( ( 0, 0, 90 ), 0.1 );
+        var_0 rotateby( ( 45, 45, 0 ), 0.1 );
+        var_1 rotateby( ( 0, 0, 90 ), 0.1 );
+        var_3 rotateby( ( -50, 0, 0 ), 0.1 );
+        var_1 rotateby( ( -30, 0, 0 ), 0.1 );
+        var_20 = var_11 getcentroid();
         var_20 += ( -5, 0, 0 );
-        var_1 _meth_82AE( var_20, 0.1 );
-        var_20 = var_12 _meth_8096();
+        var_1 moveto( var_20, 0.1 );
+        var_20 = var_12 getcentroid();
         var_20 += ( -2, 0, 0 );
-        var_3 _meth_82AE( var_20, 0.1 );
-        var_20 = var_19 _meth_8096();
+        var_3 moveto( var_20, 0.1 );
+        var_20 = var_19 getcentroid();
         var_20 += ( -5, 10, 0 );
-        var_0 _meth_82AE( var_20, 0.02 );
-        var_1 _meth_8020( 70, 10 );
-        var_3 _meth_8020( 70, 10 );
+        var_0 moveto( var_20, 0.02 );
+        var_1 setlightfovrange( 70, 10 );
+        var_3 setlightfovrange( 70, 10 );
 
         if ( level.nextgen )
         {
             maps\_utility::fog_set_changes( "betrayal_escape", 7 );
-            _func_0D3( "r_dof_physical_bokehEnable", 0 );
+            setsaveddvar( "r_dof_physical_bokehEnable", 0 );
         }
         else
             maps\_utility::vision_set_fog_changes( "betrayal_escape", 7 );
 
-        var_16 _meth_81DF( 300000 );
-        var_17 _meth_81DF( 300000 );
-        var_20 = var_16 _meth_8096();
+        var_16 setlightintensity( 300000 );
+        var_17 setlightintensity( 300000 );
+        var_20 = var_16 getcentroid();
         var_20 += ( 0, 0, 200 );
-        var_16 _meth_82AE( var_20, 0.02 );
-        var_20 = var_17 _meth_8096();
+        var_16 moveto( var_20, 0.02 );
+        var_20 = var_17 getcentroid();
         var_20 += ( 0, 0, 200 );
-        var_17 _meth_82AE( var_20, 0.02 );
-        var_16 _meth_8020( 90, 30 );
-        var_17 _meth_8020( 90, 30 );
-        var_16 _meth_83DF( ( 90, 0, 0 ), 0.02 );
-        var_17 _meth_83DF( ( 90, 0, 0 ), 0.02 );
+        var_17 moveto( var_20, 0.02 );
+        var_16 setlightfovrange( 90, 30 );
+        var_17 setlightfovrange( 90, 30 );
+        var_16 rotateby( ( 90, 0, 0 ), 0.02 );
+        var_17 rotateby( ( 90, 0, 0 ), 0.02 );
         var_21 = [ var_1, var_3 ];
 
         for ( var_22 = 60; var_22 > 0; var_22-- )
@@ -546,15 +546,15 @@ setup_lighting_confrontation_start()
             while ( var_23 > 0 )
             {
                 var_24 = abs( cos( gettime() * 0.08 ) ) * 26000;
-                var_1 _meth_81DF( var_24 );
-                var_3 _meth_81DF( var_24 * 2 );
+                var_1 setlightintensity( var_24 );
+                var_3 setlightintensity( var_24 * 2 );
                 var_23--;
                 wait 0.1;
             }
 
-            var_16 _meth_83DF( ( 0, 360, 0 ), 2.0 );
-            var_17 _meth_83DF( ( 0, 360, 0 ), 2.0 );
-            var_4 _meth_83DF( ( 0, 360, 0 ), 2.0 );
+            var_16 rotateby( ( 0, 360, 0 ), 2.0 );
+            var_17 rotateby( ( 0, 360, 0 ), 2.0 );
+            var_4 rotateby( ( 0, 360, 0 ), 2.0 );
 
             if ( var_22 == 40 )
                 maps\_utility::vision_set_fog_changes( "betrayal_escape_elevator_interior", 20 );
@@ -565,18 +565,18 @@ setup_lighting_confrontation_start()
     maps\_utility::stop_exploder( 2001 );
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptiveSubdivBaseFactor", "1.5" );
+        setsaveddvar( "r_adaptiveSubdivBaseFactor", "1.5" );
 
     level.player_dof_aperture = 8.0;
 }
 
 lighting_confrontation_auto_dof( var_0, var_1 )
 {
-    for ( var_2 = 715; var_2 > 0 && !_func_294( var_1 ); var_2-- )
+    for ( var_2 = 715; var_2 > 0 && !isremovedentity( var_1 ); var_2-- )
     {
         var_3 = distance2d( var_0.origin, var_1.origin );
 
-        if ( !_func_294( var_1 ) && maps\_utility::player_looking_at( var_1.origin ) )
+        if ( !isremovedentity( var_1 ) && maps\_utility::player_looking_at( var_1.origin ) )
         {
             level.player_dof_distance = var_3;
             common_scripts\utility::flag_clear( "flag_autofocus_on" );
@@ -604,9 +604,9 @@ lighting_confrontation_auto_dof( var_0, var_1 )
 lighting_irons_dof( var_0, var_1 )
 {
     if ( level.currentgen )
-        _func_08A( 500 );
+        setculldist( 500 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     common_scripts\utility::flag_wait( "confrontation2_start_lighting" );
 
@@ -656,9 +656,9 @@ lighting_target_dof( var_0, var_1, var_2, var_3 )
 setup_lighting_escape_start()
 {
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     common_scripts\utility::flag_wait( "escape_start_lighting" );
     common_scripts\utility::flag_set( "flag_autofocus_on" );
@@ -666,12 +666,12 @@ setup_lighting_escape_start()
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "betrayal_interior_confrontation_1" );
-        level.player _meth_8490( "clut_betrayal_c3_04", 1 );
+        level.player lightsetforplayer( "betrayal_interior_confrontation_1" );
+        level.player setclutforplayer( "clut_betrayal_c3_04", 1 );
     }
     else
     {
-        level.player _meth_83C0( "betrayal_interior_darker" );
+        level.player lightsetforplayer( "betrayal_interior_darker" );
         maps\_utility::vision_set_fog_changes( "betrayal_interior_darker", 0.5 );
     }
 
@@ -704,58 +704,58 @@ setup_lighting_escape_start()
     var_19 show();
     var_18 hide();
     maps\_utility::stop_exploder( 1999 );
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbVelocityScalar", "1" );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbVelocityScalar", "1" );
     common_scripts\utility::flag_set( "flag_autofocus_on" );
     level.player_dof_aperture = 3.5;
-    var_0 _meth_81DF( 10000 );
-    var_1 _meth_81DF( 60000 );
-    var_2 _meth_81DF( 100000 );
-    var_0 _meth_8020( 85, 60 );
-    var_1 _meth_8020( 85, 60 );
-    var_2 _meth_8020( 80, 50 );
-    var_0 _meth_8044( ( 1, 0.98, 0.95 ) );
-    var_1 _meth_8044( ( 1, 0.05, 0.05 ) );
-    var_2 _meth_8044( ( 1, 0.05, 0.05 ) );
-    var_17 _meth_81DF( 12000 );
+    var_0 setlightintensity( 10000 );
+    var_1 setlightintensity( 60000 );
+    var_2 setlightintensity( 100000 );
+    var_0 setlightfovrange( 85, 60 );
+    var_1 setlightfovrange( 85, 60 );
+    var_2 setlightfovrange( 80, 50 );
+    var_0 setlightcolor( ( 1, 0.98, 0.95 ) );
+    var_1 setlightcolor( ( 1, 0.05, 0.05 ) );
+    var_2 setlightcolor( ( 1, 0.05, 0.05 ) );
+    var_17 setlightintensity( 12000 );
     var_20 = 60;
-    var_0 _meth_83DF( ( 0, 0, 90 ), 0.1 );
-    var_0 _meth_83DF( ( 45, 45, 0 ), 0.1 );
-    var_1 _meth_83DF( ( 0, 0, 90 ), 0.1 );
-    var_2 _meth_83DF( ( 30, 0, 0 ), 0.1 );
-    var_1 _meth_83DF( ( -30, 0, 0 ), 0.1 );
-    var_21 = var_10 _meth_8096();
+    var_0 rotateby( ( 0, 0, 90 ), 0.1 );
+    var_0 rotateby( ( 45, 45, 0 ), 0.1 );
+    var_1 rotateby( ( 0, 0, 90 ), 0.1 );
+    var_2 rotateby( ( 30, 0, 0 ), 0.1 );
+    var_1 rotateby( ( -30, 0, 0 ), 0.1 );
+    var_21 = var_10 getcentroid();
     var_21 += ( -5, 0, 0 );
-    var_1 _meth_82AE( var_21, 0.1 );
-    var_21 = var_11 _meth_8096();
+    var_1 moveto( var_21, 0.1 );
+    var_21 = var_11 getcentroid();
     var_21 += ( -2, 0, 0 );
-    var_2 _meth_82AE( var_21, 0.1 );
-    var_21 = var_19 _meth_8096();
+    var_2 moveto( var_21, 0.1 );
+    var_21 = var_19 getcentroid();
     var_21 += ( -5, 10, 0 );
-    var_0 _meth_82AE( var_21, 0.02 );
-    var_1 _meth_8020( 70, 10 );
-    var_2 _meth_8020( 70, 10 );
+    var_0 moveto( var_21, 0.02 );
+    var_1 setlightfovrange( 70, 10 );
+    var_2 setlightfovrange( 70, 10 );
 
     if ( level.nextgen )
     {
         maps\_utility::fog_set_changes( "betrayal_escape", 7 );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
     }
     else
         maps\_utility::vision_set_fog_changes( "betrayal_escape", 7 );
 
-    var_15 _meth_81DF( 300000 );
-    var_16 _meth_81DF( 300000 );
-    var_21 = var_15 _meth_8096();
+    var_15 setlightintensity( 300000 );
+    var_16 setlightintensity( 300000 );
+    var_21 = var_15 getcentroid();
     var_21 += ( 0, 0, 200 );
-    var_15 _meth_82AE( var_21, 0.02 );
-    var_21 = var_16 _meth_8096();
+    var_15 moveto( var_21, 0.02 );
+    var_21 = var_16 getcentroid();
     var_21 += ( 0, 0, 200 );
-    var_16 _meth_82AE( var_21, 0.02 );
-    var_15 _meth_8020( 90, 30 );
-    var_16 _meth_8020( 90, 30 );
-    var_15 _meth_83DF( ( 90, 0, 0 ), 0.02 );
-    var_16 _meth_83DF( ( 90, 0, 0 ), 0.02 );
+    var_16 moveto( var_21, 0.02 );
+    var_15 setlightfovrange( 90, 30 );
+    var_16 setlightfovrange( 90, 30 );
+    var_15 rotateby( ( 90, 0, 0 ), 0.02 );
+    var_16 rotateby( ( 90, 0, 0 ), 0.02 );
 
     for ( var_22 = [ var_1, var_2 ]; var_20 > 0; var_20-- )
     {
@@ -764,15 +764,15 @@ setup_lighting_escape_start()
         while ( var_23 > 0 )
         {
             var_24 = abs( cos( gettime() * 0.08 ) ) * 26000;
-            var_1 _meth_81DF( var_24 );
-            var_2 _meth_81DF( var_24 * 2 );
+            var_1 setlightintensity( var_24 );
+            var_2 setlightintensity( var_24 * 2 );
             var_23--;
             wait 0.1;
         }
 
-        var_15 _meth_83DF( ( 0, 360, 0 ), 2.0 );
-        var_16 _meth_83DF( ( 0, 360, 0 ), 2.0 );
-        var_3 _meth_83DF( ( 0, 360, 0 ), 2.0 );
+        var_15 rotateby( ( 0, 360, 0 ), 2.0 );
+        var_16 rotateby( ( 0, 360, 0 ), 2.0 );
+        var_3 rotateby( ( 0, 360, 0 ), 2.0 );
 
         if ( var_20 == 40 )
             maps\_utility::vision_set_fog_changes( "betrayal_escape_elevator_interior", 20 );
@@ -789,7 +789,7 @@ blink_lights( var_0, var_1, var_2, var_3, var_4 )
         var_5 = abs( cos( gettime() * 0.08 * var_4 ) ) * var_5 + var_6;
 
         foreach ( var_9 in var_0 )
-            var_9 _meth_81DF( var_5 );
+            var_9 setlightintensity( var_5 );
 
         wait 0.1;
     }
@@ -805,7 +805,7 @@ blink_lights_flicker( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_6 = abs( cos( gettime() * 0.08 * var_4 ) ) * var_6 + var_7;
 
         foreach ( var_10 in var_0 )
-            var_10 _meth_81DF( var_6 );
+            var_10 setlightintensity( var_6 );
 
         if ( var_5 > 0 )
             wait(randomfloatrange( 0.0, 0.3 * var_5 ));
@@ -817,9 +817,9 @@ blink_lights_flicker( var_0, var_1, var_2, var_3, var_4, var_5 )
 setup_lighting_roof_start()
 {
     if ( level.currentgen )
-        _func_08A( 0 );
+        setculldist( 0 );
     else
-        _func_08A( 0 );
+        setculldist( 0 );
 
     common_scripts\utility::flag_wait( "roof_start_lighting" );
     level.player_dof_aperture = 8.0;
@@ -828,8 +828,8 @@ setup_lighting_roof_start()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
     }
 
     common_scripts\_exploder::exploder( 3001 );
@@ -842,18 +842,18 @@ setup_lighting_roof_start()
         var_3 = getent( "siren_light_model_2", "targetname" );
         var_4 = getent( "siren_light_3", "targetname" );
         var_5 = getent( "siren_light_model_3", "targetname" );
-        var_0 _meth_81DF( 500000 );
-        var_2 _meth_81DF( 500000 );
-        var_4 _meth_81DF( 500000 );
+        var_0 setlightintensity( 500000 );
+        var_2 setlightintensity( 500000 );
+        var_4 setlightintensity( 500000 );
 
         for ( var_6 = 80; var_6 > 0; var_6-- )
         {
-            var_1 _meth_83DF( ( 0, 360, 0 ), 1.0 );
-            var_0 _meth_83DF( ( 0, 360, 0 ), 1.0 );
-            var_3 _meth_83DF( ( 0, 360, 0 ), 1.0 );
-            var_2 _meth_83DF( ( 0, 360, 0 ), 1.0 );
-            var_5 _meth_83DF( ( 0, 360, 0 ), 1.0 );
-            var_4 _meth_83DF( ( 0, 360, 0 ), 1.0 );
+            var_1 rotateby( ( 0, 360, 0 ), 1.0 );
+            var_0 rotateby( ( 0, 360, 0 ), 1.0 );
+            var_3 rotateby( ( 0, 360, 0 ), 1.0 );
+            var_2 rotateby( ( 0, 360, 0 ), 1.0 );
+            var_5 rotateby( ( 0, 360, 0 ), 1.0 );
+            var_4 rotateby( ( 0, 360, 0 ), 1.0 );
             wait 1;
         }
     }
@@ -865,10 +865,10 @@ setup_lighting_swim_start()
 {
     common_scripts\utility::flag_wait( "swim_start_lighting" );
     wait 0.5;
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_betrayal_c3_05", 1 );
+        level.player setclutforplayer( "clut_betrayal_c3_05", 1 );
 
     maps\_utility::vision_set_fog_changes( "betrayal_grungy", 0.5 );
     level.player_dof_aperture = 1.2;
@@ -883,16 +883,16 @@ setup_lighting_sewer_start()
     wait 0.5;
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_betrayal_c3_05", 1 );
+        level.player setclutforplayer( "clut_betrayal_c3_05", 1 );
     else
     {
-        level.player _meth_83C0( "betrayal_sewer" );
+        level.player lightsetforplayer( "betrayal_sewer" );
         maps\_utility::vision_set_fog_changes( "betrayal_sewer", 1 );
     }
 
     level.player_dof_aperture = 8.0;
     level.player_dof_max_distance = 600;
-    level.player _meth_83C0( "betrayal_sewer" );
+    level.player lightsetforplayer( "betrayal_sewer" );
     maps\_utility::vision_set_fog_changes( "betrayal_sewer", 3 );
     thread mblur_disable();
     var_0 = getentarray( "sewer_light_1", "targetname" );
@@ -903,15 +903,15 @@ setup_lighting_old_town_start()
 {
     common_scripts\utility::flag_wait( "oldtown_start_lighting" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_market", 0.5 );
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
     level.player_dof_aperture = 8.0;
     level.player_dof_max_distance = 600;
-    level.player _meth_8490( "clut_betrayal_c3_01", 6 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 6 );
     maps\_utility::stop_exploder( 3002 );
     var_0 = getentarray( "betr_lighting_market_tvs", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8044( ( 0.92, 0.9, 1 ) );
+        var_2 setlightcolor( ( 0.92, 0.9, 1 ) );
 
     thread blink_lights_flicker( var_0, 4000, 3200, 1000, 5, 1 );
     thread mblur_disable();
@@ -922,14 +922,14 @@ setup_lighting_boat_start()
     common_scripts\utility::flag_wait( "boat_start_lighting" );
     level.player_dof_aperture = 8.0;
     level.player_dof_max_distance = 600;
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
-    level.player _meth_83C0( "betrayal_grungy_boat_chase" );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
+    level.player lightsetforplayer( "betrayal_grungy_boat_chase" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_boat_chase", 2.0 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -938,25 +938,25 @@ setup_lighting_boat_crash()
     common_scripts\utility::flag_wait( "boat_crash_lighting" );
 
     if ( level.nextgen )
-        _func_0D3( "r_subdiv", "1" );
+        setsaveddvar( "r_subdiv", "1" );
 
     common_scripts\utility::flag_clear( "flag_autofocus_on" );
     level.player_dof_aperture = 1.1;
     level.player_dof_distance = 15;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
-    level.player _meth_83C0( "betrayal_crash_cine" );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
+    level.player lightsetforplayer( "betrayal_crash_cine" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy", 2.0 );
 
     if ( level.nextgen )
     {
         var_0 = getent( "btr_crash_light_rim", "targetname" );
         var_1 = getent( "btr_crash_light_fill", "targetname" );
-        var_0 _meth_81DF( 1200000 );
-        var_1 _meth_81DF( 35000 );
+        var_0 setlightintensity( 1200000 );
+        var_1 setlightintensity( 35000 );
     }
 
     wait 6;
@@ -967,19 +967,19 @@ setup_lighting_boat_crash()
     level.player_dof_max_distance = 400;
     level.player_dof_aperture = 8.0;
     wait 15;
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
     wait 45;
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_climb", 20 );
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
 }
 
 setup_lighting_climb_start()
 {
     common_scripts\utility::flag_wait( "climb_start_lighting" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_climb", 6 );
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
     level.player_dof_aperture = 9.0;
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
     level.player_dof_max_distance = 400;
     thread mblur_disable();
 }
@@ -987,9 +987,9 @@ setup_lighting_climb_start()
 setup_lighting_finale_start( var_0 )
 {
     if ( level.nextgen )
-        _func_0D3( "r_subdiv", "1" );
+        setsaveddvar( "r_subdiv", "1" );
 
-    level.player _meth_83C0( "betrayal_outro" );
+    level.player lightsetforplayer( "betrayal_outro" );
 
     if ( level.nextgen )
     {
@@ -999,7 +999,7 @@ setup_lighting_finale_start( var_0 )
     else
         maps\_utility::vision_set_fog_changes( "betrayal_grungy_climb", 1.5 );
 
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
     var_1 = -60;
     var_2 = 160;
     var_3 = ( var_1, var_2, 0 );
@@ -1007,15 +1007,15 @@ setup_lighting_finale_start( var_0 )
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "1" );
         common_scripts\utility::flag_clear( "flag_autofocus_on" );
         level.player_dof_aperture = 4.1;
         level.player_dof_distance = 1;
         level.player_dof_max_distance = 400;
 
         if ( level.nextgen )
-            _func_0D3( "r_dof_physical_bokehEnable", 1 );
+            setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
         wait 0.3;
         level.player_dof_distance = 97;
@@ -1027,15 +1027,15 @@ setup_lighting_finale_start( var_0 )
         maps\_lighting::lerp_spot_intensity( "btr_finale_rim_top", 4, 3000000 );
         thread lighting_target_dof( level.player, var_0[1], 3.2, 8 );
         wait 6;
-        level.player _meth_83C0( "betrayal_outro_helicopter" );
+        level.player lightsetforplayer( "betrayal_outro_helicopter" );
         wait 2;
         thread lighting_target_dof( level.player, var_0[2], 3.2, 20 );
         var_5 = var_4 getorigin();
         var_5 += ( 100, -230, 0 );
-        var_4 _meth_82AE( var_5, 5 );
-        var_4 _meth_83DF( ( 1, -50, 0 ), 5 );
+        var_4 moveto( var_5, 5 );
+        var_4 rotateby( ( 1, -50, 0 ), 5 );
         maps\_lighting::lerp_spot_intensity( "btr_finale_rim_top", 5, 3000000 );
-        level.player _meth_83C0( "betrayal_outro" );
+        level.player lightsetforplayer( "betrayal_outro" );
         level.player_dof_distance = 53;
         wait 10;
         common_scripts\_exploder::exploder( 9000 );
@@ -1078,21 +1078,21 @@ lightset_betrayal()
 {
     self waittill( "trigger" );
     wait 1.0;
-    level.player _meth_83C0( "betrayal" );
+    level.player lightsetforplayer( "betrayal" );
 }
 
 lightset_betrayal_mall()
 {
     self waittill( "trigger" );
     wait 1.0;
-    level.player _meth_83C0( "betrayal_mall" );
+    level.player lightsetforplayer( "betrayal_mall" );
 }
 
 lightset_betrayal_subway()
 {
     self waittill( "trigger" );
     wait 1.0;
-    level.player _meth_83C0( "betrayal_subway" );
+    level.player lightsetforplayer( "betrayal_subway" );
 }
 
 lightset_betrayal_interior()
@@ -1100,14 +1100,14 @@ lightset_betrayal_interior()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "betrayal_interior" );
+        level.player lightsetforplayer( "betrayal_interior" );
 
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "betrayal_interior", 1 );
         else
             maps\_utility::vision_set_fog_changes( "betrayal_interior", 1 );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1117,7 +1117,7 @@ betrayal_interior_clut()
     self waittill( "trigger" );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_betrayal_interior_grungy", 12 );
+        level.player setclutforplayer( "clut_betrayal_interior_grungy", 12 );
 }
 
 lightset_betrayal_race()
@@ -1126,10 +1126,10 @@ lightset_betrayal_race()
 
     if ( level.nextgen )
     {
-        level.player _meth_83C0( "betrayal_grungy_boat_chase" );
+        level.player lightsetforplayer( "betrayal_grungy_boat_chase" );
         maps\_utility::vision_set_fog_changes( "betrayal_grungy_boat_chase", 2.0 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbVelocityScalar", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbVelocityScalar", "2" );
     }
 }
 
@@ -1139,9 +1139,9 @@ lightset_betrayal_grungy()
     {
         self waittill( "trigger" );
         maps\_utility::vision_set_fog_changes( "betrayal_grungy", 1 );
-        level.player _meth_83C0( "betrayal_grungy" );
+        level.player lightsetforplayer( "betrayal_grungy" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
     }
 }
@@ -1150,26 +1150,26 @@ betrayal_interior_darker_fog()
 {
     self waittill( "trigger" );
     maps\_utility::vision_set_fog_changes( "betrayal_interior_darker", 3 );
-    level.player _meth_83C0( "betrayal_interior_darker" );
+    level.player lightsetforplayer( "betrayal_interior_darker" );
 }
 
 betrayal_roof_transition()
 {
     self waittill( "trigger" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy", 1 );
-    level.player _meth_8490( "clut_betrayal_c3_01", 1 );
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player setclutforplayer( "clut_betrayal_c3_01", 1 );
+    level.player lightsetforplayer( "betrayal_grungy" );
     wait 3;
-    level.player _meth_83C0( "betrayal_grungy_inside" );
+    level.player lightsetforplayer( "betrayal_grungy_inside" );
     wait 2;
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
 }
 
 lightset_betrayal_grungy_int()
 {
     self waittill( "trigger" );
     maps\_utility::vision_set_fog_changes( "betrayal_grungy_market_int", 0.4 );
-    level.player _meth_83C0( "betrayal_grungy_inside" );
+    level.player lightsetforplayer( "betrayal_grungy_inside" );
 }
 
 lightset_betrayal_grungy_out()
@@ -1181,7 +1181,7 @@ lightset_betrayal_grungy_out()
     else
         maps\_utility::vision_set_fog_changes( "betrayal_grungy_market", 0.4 );
 
-    level.player _meth_83C0( "betrayal_grungy_market" );
+    level.player lightsetforplayer( "betrayal_grungy_market" );
 }
 
 visionset_betrayal_swim_tube()
@@ -1192,7 +1192,7 @@ visionset_betrayal_swim_tube()
     {
         maps\_utility::vision_set_fog_changes( "betrayal_swim_tube", 1 );
         wait 8;
-        level.player _meth_83C0( "betrayal_sewer" );
+        level.player lightsetforplayer( "betrayal_sewer" );
         maps\_utility::vision_set_fog_changes( "betrayal_sewer", 3 );
         var_0 = getentarray( "sewer_light_1", "targetname" );
         thread blink_lights_flicker( var_0, 9000, 7000, 100, 5, 1 );
@@ -1211,14 +1211,14 @@ lightset_betrayal_river_int()
 {
     self waittill( "trigger" );
     betrayal_boat_vision_set_fog_changes( "betrayal_boat_int", 3 );
-    level.player _meth_83C0( "betrayal_grungy_inside" );
+    level.player lightsetforplayer( "betrayal_grungy_inside" );
 }
 
 lightset_betrayal_river_out()
 {
     self waittill( "trigger" );
     betrayal_boat_vision_set_fog_changes( "betrayal_grungy_boat_chase", 3 );
-    level.player _meth_83C0( "betrayal_grungy" );
+    level.player lightsetforplayer( "betrayal_grungy" );
 }
 
 update_sun_flare_position()
@@ -1252,12 +1252,12 @@ underwater_visionset_change( var_0 )
     var_2 = "tag_origin";
     var_3 = level.player common_scripts\utility::spawn_tag_origin();
     var_3.angles = ( 0, 0, 0 );
-    var_3.origin = level.player _meth_80A8() - ( 0, 0, 0 );
-    var_3 _meth_80A6( level.player, "tag_origin", ( 70, 0, -1 ), ( -90, 0, 0 ), 0 );
+    var_3.origin = level.player geteye() - ( 0, 0, 0 );
+    var_3 linktoplayerview( level.player, "tag_origin", ( 70, 0, -1 ), ( -90, 0, 0 ), 0 );
 
     if ( var_0 )
     {
-        var_3.origin = level.player _meth_80A8() - ( 0, 0, 0 );
+        var_3.origin = level.player geteye() - ( 0, 0, 0 );
         maps\_utility::vision_set_fog_changes( "betrayal_swim", 0.02 );
         common_scripts\_exploder::exploder( 666 );
         level.player_dof_aperture = 1.1;
@@ -1265,17 +1265,17 @@ underwater_visionset_change( var_0 )
 
         if ( level.nextgen )
         {
-            _func_0D3( "r_chromaticAberration", 1 );
-            _func_0D3( "r_chromaticSeparationR", 2.0 );
-            _func_0D3( "r_chromaticSeparationG", -2.0 );
-            _func_0D3( "r_chromaticSeparationB", 0 );
-            _func_0D3( "r_chromaticAberrationAlpha", 0.7 );
+            setsaveddvar( "r_chromaticAberration", 1 );
+            setsaveddvar( "r_chromaticSeparationR", 2.0 );
+            setsaveddvar( "r_chromaticSeparationG", -2.0 );
+            setsaveddvar( "r_chromaticSeparationB", 0 );
+            setsaveddvar( "r_chromaticAberrationAlpha", 0.7 );
         }
 
         playfxontag( common_scripts\utility::getfx( "screen_fx_plunge" ), var_3, var_2 );
 
         if ( level.nextgen )
-            level.player _meth_83C0( "betrayal_boat" );
+            level.player lightsetforplayer( "betrayal_boat" );
 
         maps\_water::setunderwateraudiozone();
         self playlocalsound( "underwater_enter" );
@@ -1296,16 +1296,16 @@ underwater_visionset_change( var_0 )
 
         if ( level.nextgen )
         {
-            _func_0D3( "r_chromaticAberration", 1 );
-            _func_0D3( "r_chromaticSeparationR", 0.5 );
-            _func_0D3( "r_chromaticSeparationG", -0.5 );
-            _func_0D3( "r_chromaticSeparationB", 0 );
-            _func_0D3( "r_chromaticAberrationAlpha", 0.5 );
+            setsaveddvar( "r_chromaticAberration", 1 );
+            setsaveddvar( "r_chromaticSeparationR", 0.5 );
+            setsaveddvar( "r_chromaticSeparationG", -0.5 );
+            setsaveddvar( "r_chromaticSeparationB", 0 );
+            setsaveddvar( "r_chromaticAberrationAlpha", 0.5 );
         }
 
         killfxontag( common_scripts\utility::getfx( "screen_fx_plunge" ), var_3, var_2 );
         playfxontag( common_scripts\utility::getfx( "screen_fx_emerge" ), var_3, var_2 );
-        level.player _meth_83C0( "betrayal_grungy" );
+        level.player lightsetforplayer( "betrayal_grungy" );
         maps\_water::clearunderwateraudiozone();
         self playlocalsound( "breathing_better" );
         self playlocalsound( "underwater_exit" );
@@ -1327,7 +1327,7 @@ underwater_visionset_change( var_0 )
 underwater_visionset_change_cleanup()
 {
     level common_scripts\utility::waittill_any_timeout( 1.0, "stop_swimming_change_fx" );
-    self _meth_804F();
+    self unlink();
     self delete();
 }
 
@@ -1342,15 +1342,15 @@ underwater_boat_visionset_change()
     var_0 = 0;
     var_1 = "tag_origin";
     var_2 = level.player_boat common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( level.player_boat, "tag_origin", ( 100, 0, 0 ), ( -90, 0, 0 ) );
+    var_2 linkto( level.player_boat, "tag_origin", ( 100, 0, 0 ), ( -90, 0, 0 ) );
     var_3 = level.player_boat common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( level.player_boat, "tag_origin", ( 800, 0, -80 ), ( -90, 0, 0 ) );
+    var_3 linkto( level.player_boat, "tag_origin", ( 800, 0, -80 ), ( -90, 0, 0 ) );
     var_4 = level.player_boat common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( level.player_boat, "tag_origin", ( 1800, 0, -80 ), ( -90, 0, 0 ) );
+    var_4 linkto( level.player_boat, "tag_origin", ( 1800, 0, -80 ), ( -90, 0, 0 ) );
     var_5 = level.player_boat common_scripts\utility::spawn_tag_origin();
-    var_5 _meth_804D( level.player_boat, "tag_origin", ( 800, -1000, -80 ), ( -90, 0, 0 ) );
+    var_5 linkto( level.player_boat, "tag_origin", ( 800, -1000, -80 ), ( -90, 0, 0 ) );
     var_6 = level.player_boat common_scripts\utility::spawn_tag_origin();
-    var_6 _meth_804D( level.player_boat, "tag_origin", ( 800, 1000, -80 ), ( -90, 0, 0 ) );
+    var_6 linkto( level.player_boat, "tag_origin", ( 800, 1000, -80 ), ( -90, 0, 0 ) );
 
     if ( isdefined( level.current_betrayal_boat_vision_fog ) )
         var_7 = level.current_betrayal_boat_vision_fog;
@@ -1361,7 +1361,7 @@ underwater_boat_visionset_change()
     {
         if ( isdefined( level.player_boat ) )
         {
-            var_8 = level.player_boat _meth_84C7();
+            var_8 = level.player_boat vehicle_diveboatissubmerged();
 
             if ( var_8 != var_0 )
             {
@@ -1382,14 +1382,14 @@ underwater_boat_visionset_change()
 
                     if ( level.nextgen )
                     {
-                        _func_0D3( "r_chromaticAberration", 1 );
-                        _func_0D3( "r_chromaticSeparationR", 2.0 );
-                        _func_0D3( "r_chromaticSeparationG", -2.0 );
-                        _func_0D3( "r_chromaticSeparationB", 0 );
-                        _func_0D3( "r_chromaticAberrationAlpha", 0.7 );
+                        setsaveddvar( "r_chromaticAberration", 1 );
+                        setsaveddvar( "r_chromaticSeparationR", 2.0 );
+                        setsaveddvar( "r_chromaticSeparationG", -2.0 );
+                        setsaveddvar( "r_chromaticSeparationB", 0 );
+                        setsaveddvar( "r_chromaticAberrationAlpha", 0.7 );
                     }
 
-                    level.player _meth_83C0( "betrayal_boat" );
+                    level.player lightsetforplayer( "betrayal_boat" );
                     level.player_boat thread maps\betrayal_fx::vm_boat_submerge_fx();
                 }
                 else
@@ -1399,18 +1399,18 @@ underwater_boat_visionset_change()
                         betrayal_boat_vision_set_fog_changes( var_7, 0.02 );
                         level.player_dof_aperture = 8;
                         level.player_dof_max_distance = 400;
-                        _func_0D3( "r_chromaticAberration", 1 );
-                        _func_0D3( "r_chromaticSeparationR", 0.5 );
-                        _func_0D3( "r_chromaticSeparationG", -0.5 );
-                        _func_0D3( "r_chromaticSeparationB", 0 );
-                        _func_0D3( "r_chromaticAberrationAlpha", 0.5 );
+                        setsaveddvar( "r_chromaticAberration", 1 );
+                        setsaveddvar( "r_chromaticSeparationR", 0.5 );
+                        setsaveddvar( "r_chromaticSeparationG", -0.5 );
+                        setsaveddvar( "r_chromaticSeparationB", 0 );
+                        setsaveddvar( "r_chromaticAberrationAlpha", 0.5 );
                     }
 
                     if ( level.nextgen )
-                        level.player _meth_83C0( "betrayal_grungy_boat_chase" );
+                        level.player lightsetforplayer( "betrayal_grungy_boat_chase" );
                     else
                     {
-                        level.player _meth_83C0( "betrayal_grungy_boat_chase" );
+                        level.player lightsetforplayer( "betrayal_grungy_boat_chase" );
                         betrayal_boat_vision_set_fog_changes( "betrayal_boat_chase", 0.02 );
                     }
 
@@ -1441,5 +1441,5 @@ manhole_lighting()
 {
     var_0 = getent( "manhole_cover_2", "targetname" );
     var_1 = getent( "oldtown_sewer_lid", "targetname" );
-    var_1 _meth_847B( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
 }

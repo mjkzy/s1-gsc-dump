@@ -1930,14 +1930,14 @@ draw_entity_bounds( var_0, var_1, var_2, var_3, var_4 )
 
     for ( var_9 = var_8 + var_1 * 1000; var_8 < var_9 && isdefined( var_0 ); var_8 = gettime() )
     {
-        var_6[0] = var_0 _meth_8216( 1, 1, 1 );
-        var_6[1] = var_0 _meth_8216( 1, 1, -1 );
-        var_6[2] = var_0 _meth_8216( -1, 1, -1 );
-        var_6[3] = var_0 _meth_8216( -1, 1, 1 );
-        var_7[0] = var_0 _meth_8216( 1, -1, 1 );
-        var_7[1] = var_0 _meth_8216( 1, -1, -1 );
-        var_7[2] = var_0 _meth_8216( -1, -1, -1 );
-        var_7[3] = var_0 _meth_8216( -1, -1, 1 );
+        var_6[0] = var_0 getpointinbounds( 1, 1, 1 );
+        var_6[1] = var_0 getpointinbounds( 1, 1, -1 );
+        var_6[2] = var_0 getpointinbounds( -1, 1, -1 );
+        var_6[3] = var_0 getpointinbounds( -1, 1, 1 );
+        var_7[0] = var_0 getpointinbounds( 1, -1, 1 );
+        var_7[1] = var_0 getpointinbounds( 1, -1, -1 );
+        var_7[2] = var_0 getpointinbounds( -1, -1, -1 );
+        var_7[3] = var_0 getpointinbounds( -1, -1, 1 );
 
         for ( var_10 = 0; var_10 < 4; var_10++ )
         {
@@ -2010,7 +2010,7 @@ _disableusability()
         self.disabledusability = 0;
 
     self.disabledusability++;
-    self _meth_832A();
+    self disableusability();
 }
 
 _enableusability()
@@ -2022,14 +2022,14 @@ _enableusability()
         self.disabledusability--;
 
         if ( self.disabledusability == 0 )
-            self _meth_832B();
+            self enableusability();
     }
 }
 
 resetusability()
 {
     self.disabledusability = 0;
-    self _meth_832B();
+    self enableusability();
 }
 
 _disableweapon()
@@ -2038,7 +2038,7 @@ _disableweapon()
         self.disabledweapon = 0;
 
     self.disabledweapon++;
-    self _meth_831D();
+    self disableweapons();
 }
 
 _enableweapon()
@@ -2049,7 +2049,7 @@ _enableweapon()
     self.disabledweapon--;
 
     if ( !self.disabledweapon )
-        self _meth_831E();
+        self enableweapons();
 }
 
 isweaponenabled()
@@ -2063,7 +2063,7 @@ _disableweaponswitch()
         self.disabledweaponswitch = 0;
 
     self.disabledweaponswitch++;
-    self _meth_8321();
+    self disableweaponswitch();
 }
 
 _enableweaponswitch()
@@ -2078,7 +2078,7 @@ _enableweaponswitch()
         if ( isdefined( level.hordeweaponsjammed ) && level.hordeweaponsjammed == 1 )
             return;
         else
-            self _meth_8322();
+            self enableweaponswitch();
     }
 }
 
@@ -2093,7 +2093,7 @@ _disableoffhandweapons()
         self.disabledoffhandweapons = 0;
 
     self.disabledoffhandweapons++;
-    self _meth_831F();
+    self disableoffhandweapons();
 }
 
 _enableoffhandweapons()
@@ -2104,7 +2104,7 @@ _enableoffhandweapons()
     self.disabledoffhandweapons--;
 
     if ( !self.disabledoffhandweapons )
-        self _meth_8320();
+        self enableoffhandweapons();
 }
 
 isoffhandweaponenabled()
@@ -2114,13 +2114,13 @@ isoffhandweaponenabled()
 
 _enabledetonate( var_0, var_1 )
 {
-    if ( !self _meth_8314( var_0 ) )
+    if ( !self hasweapon( var_0 ) )
         return;
 
-    if ( self _meth_84C4( var_0 ) == var_1 )
+    if ( self getdetonateenabled( var_0 ) == var_1 )
         return;
 
-    self _meth_84C3( var_0, var_1 );
+    self enabledetonate( var_0, var_1 );
 
     if ( var_1 )
         self notify( "WeaponDetonateEnabled", var_0 );
@@ -2158,7 +2158,7 @@ random_weight_sorted( var_0 )
 spawn_tag_origin()
 {
     var_0 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_0 _meth_80B1( "tag_origin" );
+    var_0 setmodel( "tag_origin" );
     var_0 hide();
 
     if ( isdefined( self.origin ) )
@@ -2332,7 +2332,7 @@ play_loopsound_in_space( var_0, var_1 )
         var_1 = self.origin;
 
     var_2.origin = var_1;
-    var_2 _meth_8075( var_0 );
+    var_2 playloopsound( var_0 );
     return var_2;
 }
 
@@ -2352,14 +2352,14 @@ play_sound_in_space_with_angles( var_0, var_1, var_2, var_3 )
     if ( issp() )
     {
         if ( isdefined( var_3 ) && var_3 )
-            var_4 _meth_8074( var_0, "sounddone" );
+            var_4 playsoundasmaster( var_0, "sounddone" );
         else
             var_4 playsound( var_0, "sounddone" );
 
         var_4 waittill( "sounddone" );
     }
     else if ( isdefined( var_3 ) && var_3 )
-        var_4 _meth_8074( var_0 );
+        var_4 playsoundasmaster( var_0 );
     else
         var_4 playsound( var_0 );
 
@@ -2392,8 +2392,8 @@ loop_fx_sound( var_0, var_1, var_2, var_3, var_4 )
         }
 
         var_5.origin = var_1;
-        var_5 _meth_8075( var_0 );
-        var_5 _meth_80E1();
+        var_5 playloopsound( var_0 );
+        var_5 willneverchange();
     }
 }
 
@@ -2422,12 +2422,12 @@ loop_fx_sound_with_angles( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
         var_7.origin = var_1;
         var_7.angles = var_2;
-        var_7 _meth_8075( var_0 );
+        var_7 playloopsound( var_0 );
 
         if ( isdefined( level.createfx_enabled ) && level.createfx_enabled )
             var_5.loopsound_ent = var_7;
         else
-            var_7 _meth_80E1();
+            var_7 willneverchange();
     }
 }
 
@@ -2550,18 +2550,18 @@ play_loop_sound_on_entity( var_0, var_1 )
     {
         var_2.origin = self.origin + var_1;
         var_2.angles = self.angles;
-        var_2 _meth_8446( self );
+        var_2 vehicle_jetbikesethoverforcescale( self );
     }
     else
     {
         var_2.origin = self.origin;
         var_2.angles = self.angles;
-        var_2 _meth_8446( self );
+        var_2 vehicle_jetbikesethoverforcescale( self );
     }
 
-    var_2 _meth_8075( var_0 );
+    var_2 playloopsound( var_0 );
     self waittill( "stop sound" + var_0 );
-    var_2 _meth_80AB( var_0 );
+    var_2 stoploopsound( var_0 );
     var_2 delete();
 }
 
@@ -2767,7 +2767,7 @@ is_player_gamepad_enabled()
 {
     if ( !level.console )
     {
-        var_0 = self _meth_834E();
+        var_0 = self usinggamepad();
 
         if ( isdefined( var_0 ) )
             return var_0;
@@ -2850,9 +2850,9 @@ entity_path_disconnect_thread( var_0 )
         if ( var_4 != var_1 || var_5 )
         {
             if ( var_4 )
-                self _meth_8057();
+                self disconnectpaths();
             else
-                self _meth_8058();
+                self connectpaths();
 
             var_1 = var_4;
         }
@@ -2940,15 +2940,15 @@ getfarthest( var_0, var_1, var_2 )
 missile_settargetandflightmode( var_0, var_1, var_2 )
 {
     var_2 = ter_op( isdefined( var_2 ), var_2, ( 0, 0, 0 ) );
-    self _meth_81D9( var_0, var_2 );
+    self missile_settargetent( var_0, var_2 );
 
     switch ( var_1 )
     {
         case "direct":
-            self _meth_81DC();
+            self missile_setflightmodedirect();
             break;
         case "top":
-            self _meth_81DD();
+            self missile_setflightmodetop();
             break;
     }
 }
@@ -2970,7 +2970,7 @@ convertlegacyfog( var_0 )
 {
     if ( !isdefined( var_0.hdrcolorintensity ) )
     {
-        if ( _func_235() )
+        if ( isusinghdr() )
         {
             var_1 = max( var_0.red, max( var_0.green, var_0.blue ) );
             var_2 = evfromluminancenits( var_1 * getradiometricunit() );
@@ -2996,7 +2996,7 @@ convertlegacyfog( var_0 )
     {
         if ( !isdefined( var_0.hdrsuncolorintensity ) )
         {
-            if ( _func_235() )
+            if ( isusinghdr() )
             {
                 var_1 = max( var_0.red, var_0.green, var_0.blue );
                 var_2 = evfromluminancenits( var_1 * getradiometricunit() );
@@ -3060,12 +3060,12 @@ set_fog_to_ent_values_dfog( var_0, var_1 )
         if ( !isplayer( self ) )
             setexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
         else
-            self _meth_821E( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
+            self playersetexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.sunred, var_0.sungreen, var_0.sunblue, var_0.hdrsuncolorintensity, var_0.sundir, var_0.sunbeginfadeangle, var_0.sunendfadeangle, var_0.normalfogscale, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
     }
     else if ( !isplayer( self ) )
         setexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
     else
-        self _meth_821E( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
+        self playersetexpfogext( var_0.startdist, var_0.halfwaydist, var_0.red, var_0.green, var_0.blue, var_0.hdrcolorintensity, var_0.maxopacity, var_1, var_0.skyfogintensity, var_0.skyfogminangle, var_0.skyfogmaxangle, var_0.heightfogenabled, var_0.heightfogbaseheight, var_0.heightfoghalfplanedistance );
 }
 
 set_fog_to_ent_values( var_0, var_1 )
@@ -3095,7 +3095,7 @@ set_fog_to_ent_values( var_0, var_1 )
         if ( level.nextgen && var_0.atmosfogenabled )
         {
             if ( isplayer( self ) )
-                self _meth_8220( var_1, var_0.atmosfogsunfogcolor, var_0.atmosfoghazecolor, var_0.atmosfoghazestrength, var_0.atmosfoghazespread, var_0.atmosfogextinctionstrength, var_0.atmosfoginscatterstrength, var_0.atmosfoghalfplanedistance, var_0.atmosfogstartdistance, var_0.atmosfogdistancescale, int( var_0.atmosfogskydistance ), var_0.atmosfogskyangularfalloffenabled, var_0.atmosfogskyfalloffstartangle, var_0.atmosfogskyfalloffanglerange, var_0.atmosfogsundirection, var_0.atmosfogheightfogenabled, var_0.atmosfogheightfogbaseheight, var_0.atmosfogheightfoghalfplanedistance );
+                self playersetatmosfog( var_1, var_0.atmosfogsunfogcolor, var_0.atmosfoghazecolor, var_0.atmosfoghazestrength, var_0.atmosfoghazespread, var_0.atmosfogextinctionstrength, var_0.atmosfoginscatterstrength, var_0.atmosfoghalfplanedistance, var_0.atmosfogstartdistance, var_0.atmosfogdistancescale, int( var_0.atmosfogskydistance ), var_0.atmosfogskyangularfalloffenabled, var_0.atmosfogskyfalloffstartangle, var_0.atmosfogskyfalloffanglerange, var_0.atmosfogsundirection, var_0.atmosfogheightfogenabled, var_0.atmosfogheightfogbaseheight, var_0.atmosfogheightfoghalfplanedistance );
             else
                 setatmosfog( var_1, var_0.atmosfogsunfogcolor, var_0.atmosfoghazecolor, var_0.atmosfoghazestrength, var_0.atmosfoghazespread, var_0.atmosfogextinctionstrength, var_0.atmosfoginscatterstrength, var_0.atmosfoghalfplanedistance, var_0.atmosfogstartdistance, var_0.atmosfogdistancescale, int( var_0.atmosfogskydistance ), var_0.atmosfogskyangularfalloffenabled, var_0.atmosfogskyfalloffstartangle, var_0.atmosfogskyfalloffanglerange, var_0.atmosfogsundirection, var_0.atmosfogheightfogenabled, var_0.atmosfogheightfogbaseheight, var_0.atmosfogheightfoghalfplanedistance );
         }
@@ -3164,7 +3164,7 @@ hide_notsolid()
 show_solid()
 {
     if ( !isai( self ) )
-        self _meth_82BE();
+        self solid();
 
     if ( isdefined( self.oldcontents ) )
         self setcontents( self.oldcontents );

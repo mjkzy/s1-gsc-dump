@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "kva_body_assault" );
+    self setmodel( "kva_body_assault" );
     self attach( "head_hero_gideon_mask", "", 1 );
     self.headmodel = "head_hero_gideon_mask";
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

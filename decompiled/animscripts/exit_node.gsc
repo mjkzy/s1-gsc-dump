@@ -157,7 +157,7 @@ checktransitionpreconditions()
     if ( !isdefined( self.pathgoalpos ) )
         return 0;
 
-    if ( !self _meth_8191() )
+    if ( !self shouldfacemotion() )
         return 0;
 
     if ( self.a.pose == "prone" )
@@ -169,7 +169,7 @@ checktransitionpreconditions()
     if ( self.stairsstate != "none" )
         return 0;
 
-    if ( !self _meth_81CB( "stand" ) && !isdefined( self.heat ) )
+    if ( !self isstanceallowed( "stand" ) && !isdefined( self.heat ) )
         return 0;
 
     if ( distancesquared( self.origin, self.pathgoalpos ) < 10000 )
@@ -314,10 +314,10 @@ checknodeexitpos( var_0, var_1, var_2, var_3, var_4 )
     var_11 = var_0 + var_9 - var_10;
     self.coverexitpos = var_11;
 
-    if ( !var_3 && !self _meth_81E6( var_11 ) )
+    if ( !var_3 && !self checkcoverexitposwithpath( var_11 ) )
         return 0;
 
-    if ( !self _meth_81C4( self.origin, var_11 ) )
+    if ( !self maymovefrompointtopoint( self.origin, var_11 ) )
         return 0;
 
     if ( var_4 <= 6 || var_3 )
@@ -328,7 +328,7 @@ checknodeexitpos( var_0, var_1, var_2, var_3, var_4 )
     var_10 = var_7 * var_12[1];
     var_13 = var_11 + var_9 - var_10;
     self.coverexitpos = var_13;
-    return self _meth_81C4( var_11, var_13 );
+    return self maymovefrompointtopoint( var_11, var_13 );
 }
 
 #using_animtree("generic_human");
@@ -344,22 +344,22 @@ donodeexitanimation( var_0, var_1 )
     var_4 = 0.2;
 
     if ( self.swimmer )
-        self _meth_818E( "nogravity", 0 );
+        self animmode( "nogravity", 0 );
     else
-        self _meth_818E( "zonly_physics", 0 );
+        self animmode( "zonly_physics", 0 );
 
-    self _meth_818F( "face angle", self.angles[1] );
-    self _meth_8110( "coverexit", var_2, %body, 1, var_4, self.movetransitionrate );
+    self orientmode( "face angle", self.angles[1] );
+    self setflaggedanimknoballrestart( "coverexit", var_2, %body, 1, var_4, self.movetransitionrate );
     animscripts\shared::donotetracks( "coverexit" );
     self.a.pose = "stand";
     self.a.movement = "run";
     self.ignorepathchange = undefined;
-    self _meth_818F( "face motion" );
-    self _meth_818E( "none", 0 );
+    self orientmode( "face motion" );
+    self animmode( "none", 0 );
     finishcoverexitnotetracks( "coverexit" );
-    self _meth_8142( %animscript_root, 0.2 );
-    self _meth_818F( "face default" );
-    self _meth_818E( "normal", 0 );
+    self clearanim( %animscript_root, 0.2 );
+    self orientmode( "face default" );
+    self animmode( "normal", 0 );
 }
 
 finishcoverexitnotetracks( var_0 )
@@ -416,9 +416,9 @@ custommovetransition()
     if ( !isdefined( var_1 ) )
         var_1 = 0.2;
 
-    self _meth_8142( %animscript_root, var_1 );
-    self _meth_818F( "face default" );
-    self _meth_818E( "none", 0 );
+    self clearanim( %animscript_root, var_1 );
+    self orientmode( "face default" );
+    self animmode( "none", 0 );
 }
 
 debug_arrival( var_0 )

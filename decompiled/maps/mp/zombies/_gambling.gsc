@@ -205,7 +205,7 @@ plinko_sq_grenade_helper()
         var_11 = var_5[5];
         var_12 = var_2 + rotatevector( var_10, var_3 );
         var_13 = spawn( "script_model", var_12 );
-        var_13 _meth_80B1( var_7 );
+        var_13 setmodel( var_7 );
         var_13.angles = var_3 + var_11;
         var_13 hide();
         var_13.type = var_6;
@@ -255,7 +255,7 @@ plinko_sq_grenade_cylce( var_0 )
 plinko_init_gate( var_0 )
 {
     if ( isdefined( var_0.spawnflags ) && var_0.spawnflags & 1 )
-        var_0 _meth_8058();
+        var_0 connectpaths();
 
     var_0.activateexplosivedrone = 1;
     var_0.close_origin = var_0.origin;
@@ -308,7 +308,7 @@ plinko_move_gate( var_0, var_1, var_2 )
     var_3 = var_0.close_origin + var_0.move_dir * var_1;
 
     if ( var_3 != var_0.origin )
-        var_0 _meth_82AE( var_3, var_2 );
+        var_0 moveto( var_3, var_2 );
 }
 
 plinko_move_gates( var_0, var_1, var_2, var_3, var_4 )
@@ -396,7 +396,7 @@ plinko_gates_pattern_close_when_looked_at( var_0, var_1, var_2, var_3, var_4, va
         foreach ( var_11 in level.players )
         {
             var_12 = anglestoforward( var_11 getangles() );
-            var_13 = vectornormalize( var_8 - var_11 _meth_845C() );
+            var_13 = vectornormalize( var_8 - var_11 getvieworigin() );
             var_14 = vectordot( var_12, var_13 );
 
             if ( var_14 > var_7 )
@@ -767,7 +767,7 @@ plinko_do_grenade_in_hopper_test( var_0, var_1, var_2 )
 {
     foreach ( var_4 in self.grenade_hoppers )
     {
-        if ( _func_22A( var_0.origin, var_4 ) )
+        if ( ispointinvolume( var_0.origin, var_4 ) )
         {
             thread plinko_grenade_in_hopper( var_0, var_1, var_2, var_4 );
             return 1;
@@ -890,7 +890,7 @@ plinko_frag_grenade_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_5 = "npc_exo_launcher_grenade";
-    var_4 _meth_80B1( var_5 );
+    var_4 setmodel( var_5 );
     var_4.angles = ( 0, -90, 0 );
     plinko_grenade_fx_play( var_4, "plinko_fraggrenade_trail", "tag_fx" );
     var_4.object_offset = ( 0, 0, 2 );
@@ -906,7 +906,7 @@ plinko_contact_grenade_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_5 = "npc_exo_launcher_grenade";
-    var_4 _meth_80B1( var_5 );
+    var_4 setmodel( var_5 );
     var_4.angles = ( 0, -90, 0 );
     plinko_grenade_fx_play( var_4, "plinko_contactgrenade_trail", "tag_fx" );
     var_4.object_offset = ( 0, 0, 2 );
@@ -922,7 +922,7 @@ plinko_explosive_drone_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_5 = "npc_drone_explosive_main";
-    var_4 _meth_80B1( var_5 );
+    var_4 setmodel( var_5 );
     var_4.angles = ( 0, 90, -90 );
     plinko_grenade_fx_play( var_4, "plinko_explosive_drone_trail", "TAG_BEACON" );
     var_4.object_type = "explosive_drone";
@@ -944,7 +944,7 @@ plinko_distraction_drone_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_5 = "dlc_distraction_drone_01_scaled_closed";
-    var_4 _meth_80B1( var_5 );
+    var_4 setmodel( var_5 );
     var_4.angles = ( 45, -90, 90 );
     plinko_grenade_fx_play( var_4, "plinko_distract_drone_trail", "tag_weapon" );
     var_4.object_type = "distraction_drone";
@@ -962,7 +962,7 @@ plinko_distraction_drone_in_hopper( var_0, var_1, var_2, var_3 )
     }
     else
     {
-        var_4 _meth_80B1( "dlc_distraction_drone_01_scaled_open" );
+        var_4 setmodel( "dlc_distraction_drone_01_scaled_open" );
         thread plinko_distraction_drone_spin( var_4 );
     }
 }
@@ -975,14 +975,14 @@ plinko_distraction_drone_spin( var_0 )
 
     for (;;)
     {
-        var_0 _meth_82BD( var_1, 600 );
+        var_0 rotatevelocity( var_1, 600 );
         wait 600;
     }
 }
 
 plinko_ent_linked_to_gates( var_0 )
 {
-    var_1 = var_0 _meth_83EC();
+    var_1 = var_0 getlinkedparent();
 
     if ( isdefined( var_1 ) )
     {
@@ -998,7 +998,7 @@ plinko_ent_linked_to_gates( var_0 )
 
 audio_distraction_drone_sound()
 {
-    self _meth_8075( "plinko_dist_gren_spin_lp" );
+    self playloopsound( "plinko_dist_gren_spin_lp" );
 }
 
 plinko_aoe_grenade_in_hopper( var_0, var_1, var_2, var_3 )
@@ -1008,7 +1008,7 @@ plinko_aoe_grenade_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_5 = "npc_exo_launcher_grenade";
-    var_4 _meth_80B1( var_5 );
+    var_4 setmodel( var_5 );
     var_4.angles = ( 0, -90, 0 );
     plinko_grenade_fx_play( var_4, "plinko_dnagrenade_trail", "tag_fx" );
     var_4.object_type = "aoe_grenade";
@@ -1027,7 +1027,7 @@ plinko_aoe_grenade_in_hopper( var_0, var_1, var_2, var_3 )
 
 audio_aoe_grenade_socketed()
 {
-    self _meth_8075( "plinko_aoe_lp" );
+    self playloopsound( "plinko_aoe_lp" );
 }
 
 plinko_teleport_grenade_in_hopper( var_0, var_1, var_2, var_3 )
@@ -1054,7 +1054,7 @@ plinko_teleport_grenade_in_hopper( var_0, var_1, var_2, var_3 )
     var_0 delete();
     waitframe();
     var_8 = "dlc3_teleport_grenade_01";
-    var_7 _meth_80B1( var_8 );
+    var_7 setmodel( var_8 );
     var_7.angles = ( 0, -90, 0 );
     plinko_grenade_fx_play( var_7, "plinko_teleportgrenade_trail", "tag_fx" );
     var_7.object_offset = ( 0, 0, 3 );
@@ -1071,9 +1071,9 @@ plinko_run_use_trigger()
 
     for (;;)
     {
-        self.trigger _meth_80DA( "HINT_NOICON" );
-        self.trigger _meth_80DB( "Activate Plinko" );
-        self.trigger _meth_80DC( maps\mp\zombies\_util::getcoststring( var_0 ) );
+        self.trigger setcursorhint( "HINT_NOICON" );
+        self.trigger sethintstring( "Activate Plinko" );
+        self.trigger setsecondaryhintstring( maps\mp\zombies\_util::getcoststring( var_0 ) );
         self.trigger waittill( "trigger", var_2 );
         var_3 = plinko_get_available_token();
 
@@ -1083,8 +1083,8 @@ plinko_run_use_trigger()
         if ( !var_2 maps\mp\gametypes\zombies::attempttobuy( var_0 ) )
             continue;
 
-        self.trigger _meth_80DB( "" );
-        self.trigger _meth_80DC( "" );
+        self.trigger sethintstring( "" );
+        self.trigger setsecondaryhintstring( "" );
         thread plinko_run_token( var_3, var_2 );
         plinko_use_wait();
     }
@@ -1119,7 +1119,7 @@ plinko_run_token( var_0, var_1 )
     var_0.inuse = 1;
     var_0 show();
     var_2 = common_scripts\utility::random( self.starts );
-    var_0 _meth_8092();
+    var_0 dontinterpolate();
     var_0.origin = var_2.origin;
     wait 1;
     plinko_run_move( var_2, var_0, var_1 );
@@ -1192,8 +1192,8 @@ plinko_run_move( var_0, var_1, var_2 )
             var_13 += 0.1;
 
         var_13 = ceil( var_13 / 0.05 ) * 0.05;
-        var_14 = _func_223( var_9, var_10, var_3, var_13 );
-        var_1 _meth_82B2( var_14, var_13 );
+        var_14 = trajectorycalculateinitialvelocity( var_9, var_10, var_3, var_13 );
+        var_1 movegravity( var_14, var_13 );
         wait(var_13 + 0.05);
 
         if ( !isdefined( var_1 ) )
@@ -1393,9 +1393,9 @@ plinko_sq_geo( var_0 )
     var_2 = common_scripts\utility::getstruct( var_0.target, "targetname" ).origin;
     var_0.origin = var_2;
     common_scripts\utility::flag_wait( "sq_plinko" );
-    var_0 _meth_82AE( var_1, 1.0 );
+    var_0 moveto( var_1, 1.0 );
     common_scripts\utility::flag_waitopen( "sq_plinko" );
-    var_0 _meth_82AE( var_2, 1.0 );
+    var_0 moveto( var_2, 1.0 );
 }
 
 discoverplinkologic( var_0 )
@@ -1424,7 +1424,7 @@ discoverplinkologic( var_0 )
             if ( !maps\mp\zombies\_zombies_zone_manager::playerisinzone( var_4, var_7 ) )
                 continue;
 
-            var_9 = _func_220( var_4.origin, var_0.origin );
+            var_9 = distance2dsquared( var_4.origin, var_0.origin );
 
             if ( var_9 > var_1 )
                 continue;

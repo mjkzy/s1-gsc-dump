@@ -6,8 +6,8 @@ init()
     level.mp_prison_killstreak_duration = 25;
     precachelocationselector( "map_artillery_selector" );
     precachestring( &"KILLSTREAKS_MP_PRISON" );
-    precacheitem( "prison_turret_mp" );
-    _func_251( "prison_laser" );
+    precacheshellshock( "prison_turret_mp" );
+    precachelaser( "prison_laser" );
     level.mp_prison_inuse = 0;
     level.prison_turrets_alive = 0;
     level.prison_turret_alarm_sfx = "mp_prison_ks_alarm";
@@ -55,7 +55,7 @@ tryusempprison( var_0, var_1 )
 {
     if ( level.mp_prison_inuse )
     {
-        self iclientprintlnbold( &"MP_PRISON_IN_USE" );
+        self iprintlnbold( &"MP_PRISON_IN_USE" );
         return 0;
     }
 
@@ -84,7 +84,7 @@ setupprisonturrets()
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
     {
         var_0[var_2].spawned_turret = spawnturret( "misc_turret", var_0[var_2].origin, level.sentrysettings[var_1].weaponinfo, 0 );
-        var_0[var_2].spawned_turret _meth_8136();
+        var_0[var_2].spawned_turret maketurretsolid();
         var_0[var_2].spawned_turret sentry_initsentry( var_1 );
         var_0[var_2].spawned_turret.angles = var_0[var_2].angles;
         var_0[var_2].spawned_turret.alarm_on = 0;
@@ -100,10 +100,10 @@ sentry_initsentry( var_0 )
 {
     self.sentrytype = var_0;
     self.canbeplaced = 1;
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
-    self _meth_8138();
-    self _meth_815A( 0.0 );
-    self _meth_817A( 1 );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
+    self maketurretinoperable();
+    self setdefaultdroppitch( 0.0 );
+    self setturretmodechangewait( 1 );
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
     thread maps\mp\killstreaks\_autosentry::sentry_handleuse();
 }
@@ -122,8 +122,8 @@ setprisonturretplayer( var_0 )
         level.prison_turrets[var_1].spawned_turret.shouldsplash = 0;
         level.prison_turrets[var_1].spawned_turret.carriedby = var_0;
         level.prison_turrets[var_1].spawned_turret sentry_setplaced();
-        level.prison_turrets[var_1].spawned_turret _meth_82C0( 1 );
-        level.prison_turrets[var_1].spawned_turret _meth_82C1( 1 );
+        level.prison_turrets[var_1].spawned_turret setcandamage( 1 );
+        level.prison_turrets[var_1].spawned_turret setcanradiusdamage( 1 );
         level.prison_turrets[var_1].spawned_turret thread sentry_handledamage();
         level.prison_turrets[var_1].spawned_turret thread sentry_handledeath();
         level.prison_turrets[var_1].spawned_turret.alarm_on = 0;
@@ -165,12 +165,12 @@ prisonturrettimer()
 sentry_setowner( var_0 )
 {
     self.owner = var_0;
-    self _meth_8103( self.owner );
+    self setsentryowner( self.owner );
 
     if ( level.teambased && isdefined( var_0 ) )
     {
         self.team = self.owner.team;
-        self _meth_8135( self.team );
+        self setturretteam( self.team );
     }
 
     thread sentry_handleownerdisconnect();
@@ -178,8 +178,8 @@ sentry_setowner( var_0 )
 
 sentry_setplaced()
 {
-    self _meth_8104( undefined );
-    self.carriedby _meth_80DE();
+    self setsentrycarrier( undefined );
+    self.carriedby forceusehintoff();
     self.carriedby = undefined;
 
     if ( isdefined( self.owner ) )
@@ -269,8 +269,8 @@ sentry_handledeath()
         return;
 
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
 
     if ( level.sentrysettings[self.sentrytype].headicon )
     {
@@ -281,8 +281,8 @@ sentry_handledeath()
     }
 
     level.prison_turrets_alive--;
-    self _meth_82C0( 0 );
-    self _meth_82C1( 0 );
+    self setcandamage( 0 );
+    self setcanradiusdamage( 0 );
 
     if ( self.alarm_on == 1 )
         self.alarm_on = 0;
@@ -307,7 +307,7 @@ sentry_handledeath()
 
 sentry_setactive()
 {
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
 
     if ( level.sentrysettings[self.sentrytype].headicon )
     {
@@ -342,9 +342,9 @@ monitorprisonkillstreakownership()
 
         for ( var_1 = 0; var_1 < level.players.size; var_1++ )
         {
-            level.players[var_1].laser_tag_array[var_0] _meth_80B3();
+            level.players[var_1].laser_tag_array[var_0] laseroff();
             stopfxontag( level.prison_turret_laser_glow, level.players[var_1].laser_tag_array[var_0], "tag_laser" );
-            level.players[var_1].laser_tag_array[var_0] _meth_846B();
+            level.players[var_1].laser_tag_array[var_0] clearlookattarget();
             level.players[var_1].laser_tag_array[var_0].laserfxactive = 0;
         }
     }
@@ -353,8 +353,8 @@ monitorprisonkillstreakownership()
     {
         level.players[var_2].numnearbyprisonturrets = 0;
 
-        if ( level.players[var_2] _meth_82A7( "specialty_radararrow", 1 ) )
-            level.players[var_2] _meth_82A9( "specialty_radararrow", 1 );
+        if ( level.players[var_2] hasperk( "specialty_radararrow", 1 ) )
+            level.players[var_2] unsetperk( "specialty_radararrow", 1 );
 
         level.players[var_2] notify( "player_not_tracked" );
         level.players[var_2].is_being_tracked = 0;
@@ -395,8 +395,8 @@ applyprisonturretradararrow()
                     {
                         if ( level.players[var_1].laser_tag_array[var_0].laserfxactive == 1 )
                         {
-                            level.players[var_1].laser_tag_array[var_0] _meth_80B3();
-                            level.players[var_1].laser_tag_array[var_0] _meth_846B();
+                            level.players[var_1].laser_tag_array[var_0] laseroff();
+                            level.players[var_1].laser_tag_array[var_0] clearlookattarget();
                             level.players[var_1].laser_tag_array[var_0].laserfxactive = 0;
                         }
                     }
@@ -412,9 +412,9 @@ applyprisonturretradararrow()
                     var_3 = 10;
                     var_4 = ( randomfloat( var_3 ), randomfloat( var_3 ), randomfloat( var_3 ) ) - ( 5, 5, 5 );
 
-                    if ( level.players[var_1] _meth_817C() == "stand" )
+                    if ( level.players[var_1] getstance() == "stand" )
                         var_5 = ( 0, 0, 50 ) + var_4;
-                    else if ( level.players[var_1] _meth_817C() == "crouch" )
+                    else if ( level.players[var_1] getstance() == "crouch" )
                         var_5 = ( 0, 0, 35 ) + var_4;
                     else
                         var_5 = ( 0, 0, 10 ) + var_4;
@@ -435,9 +435,9 @@ applyprisonturretradararrow()
                         if ( level.players[var_1].laser_tag_array[var_0].laserfxactive == 0 )
                         {
                             level.players[var_1].laser_tag_array[var_0].laserfxactive = 1;
-                            level.players[var_1].laser_tag_array[var_0] _meth_80B2( "prison_laser" );
+                            level.players[var_1].laser_tag_array[var_0] laseron( "prison_laser" );
                             playfxontag( level.prison_turret_laser_glow, level.players[var_1].laser_tag_array[var_0], "tag_laser" );
-                            level.players[var_1].laser_tag_array[var_0] _meth_846A( level.players[var_1], "bone", "tag_eye", "randomoffset" );
+                            level.players[var_1].laser_tag_array[var_0] setlookattarget( level.players[var_1], "bone", "tag_eye", "randomoffset" );
                         }
 
                         level.players[var_1].numnearbyprisonturrets++;
@@ -448,9 +448,9 @@ applyprisonturretradararrow()
                     if ( level.players[var_1].laser_tag_array[var_0].laserfxactive == 1 )
                     {
                         level.players[var_1].laser_tag_array[var_0].laserfxactive = 0;
-                        level.players[var_1].laser_tag_array[var_0] _meth_80B3();
+                        level.players[var_1].laser_tag_array[var_0] laseroff();
                         stopfxontag( level.prison_turret_laser_glow, level.players[var_1].laser_tag_array[var_0], "tag_laser" );
-                        level.players[var_1].laser_tag_array[var_0] _meth_846B();
+                        level.players[var_1].laser_tag_array[var_0] clearlookattarget();
                     }
                 }
 
@@ -470,15 +470,15 @@ applyprisonturretradararrow()
             {
                 if ( level.players[var_7].numnearbyprisonturrets > 0 )
                 {
-                    level.players[var_7] _meth_82A6( "specialty_radararrow", 1, 0 );
+                    level.players[var_7] setperk( "specialty_radararrow", 1, 0 );
 
                     if ( level.players[var_7].is_being_tracked == 0 )
                         level.players[var_7].is_being_tracked = 1;
                 }
                 else
                 {
-                    if ( level.players[var_7] _meth_82A7( "specialty_radararrow", 1 ) )
-                        level.players[var_7] _meth_82A9( "specialty_radararrow", 1 );
+                    if ( level.players[var_7] hasperk( "specialty_radararrow", 1 ) )
+                        level.players[var_7] unsetperk( "specialty_radararrow", 1 );
 
                     level.players[var_7] notify( "player_not_tracked" );
                     level.players[var_7].is_being_tracked = 0;
@@ -502,7 +502,7 @@ createlasertagarray()
         {
             var_1 = level.prison_turrets[var_0].spawned_turret.origin;
             self.laser_tag_array[var_0] = spawn( "script_model", var_1 );
-            self.laser_tag_array[var_0] _meth_80B1( "tag_laser" );
+            self.laser_tag_array[var_0] setmodel( "tag_laser" );
             self.laser_tag_array[var_0].laserfxactive = 0;
         }
     }
@@ -514,7 +514,7 @@ deletelasertagarray()
     {
         for ( var_0 = 0; var_0 < level.prison_turrets.size; var_0++ )
         {
-            self.laser_tag_array[var_0] _meth_846B();
+            self.laser_tag_array[var_0] clearlookattarget();
             self.laser_tag_array[var_0] delete();
         }
     }
@@ -548,7 +548,7 @@ createprisonturrettrackingoverlay()
         self.prisonturrettrackingoverlay = newclienthudelem( self );
         self.prisonturrettrackingoverlay.x = -80;
         self.prisonturrettrackingoverlay.y = -60;
-        self.prisonturrettrackingoverlay _meth_80CC( "tracking_drone_targeted_overlay", 800, 600 );
+        self.prisonturrettrackingoverlay setshader( "tracking_drone_targeted_overlay", 800, 600 );
         self.prisonturrettrackingoverlay.alignx = "left";
         self.prisonturrettrackingoverlay.aligny = "top";
         self.prisonturrettrackingoverlay.horzalign = "fullscreen";

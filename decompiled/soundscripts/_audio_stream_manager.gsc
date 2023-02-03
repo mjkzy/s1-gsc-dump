@@ -57,11 +57,11 @@ sm_start_music( var_0, var_1, var_2, var_3, var_4 )
 
     if ( isdefined( var_4 ) )
     {
-        _func_074( var_7, var_4 );
-        _func_073( var_0, var_6, var_8, 0 );
+        musicstop( var_7, var_4 );
+        musicplay( var_0, var_6, var_8, 0 );
     }
     else
-        _func_073( var_0, var_6, var_8 );
+        musicplay( var_0, var_6, var_8 );
 }
 
 sm_stop_ambient_alias( var_0, var_1 )
@@ -106,7 +106,7 @@ sm_stop_music_alias( var_0, var_1 )
     else if ( level._audio.stream.ambience.prev.name == var_0 )
         smx_clear_struct( level._audio.stream.music.prev );
 
-    _func_074( var_3, var_0 );
+    musicstop( var_3, var_0 );
 }
 
 sm_stop_ambience( var_0 )
@@ -128,7 +128,7 @@ sm_stop_music( var_0 )
 
     smx_clear_struct( level._audio.stream.music.curr );
     smx_clear_struct( level._audio.stream.music.prev );
-    _func_074( var_1 );
+    musicstop( var_1 );
 }
 
 sm_mix_ambience( var_0 )

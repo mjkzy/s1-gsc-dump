@@ -292,16 +292,16 @@ zone_handler( var_0, var_1 )
         case "int_hallway":
             if ( var_2 == "int_betrayal_room" )
             {
-                _func_2CC( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-                _func_2CC( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+                soundsettraceflags( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+                soundsettraceflags( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
             }
 
             break;
         case "int_elevator_shaft":
             if ( var_3 == "ext_rooftop" )
             {
-                _func_2CC( "weapons" );
-                _func_2CC( "foley" );
+                soundsettraceflags( "weapons" );
+                soundsettraceflags( "foley" );
             }
 
             break;
@@ -727,7 +727,7 @@ bet_conf_flash_bang_exp()
 bet_conf_slo_mo_kick_start()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "slomo" );
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_snd_timescale::snd_set_timescale( "slomo_timescale" );
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_enter", "kill_slo_mo" );
@@ -738,14 +738,14 @@ bet_conf_slo_mo_kick_stop()
     level notify( "kill_slo_mo" );
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_exit" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     soundscripts\_audio_mix_manager::mm_clear_submix( "slomo" );
 }
 
 bet_conf_slo_mo_shoot_start()
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "slomo" );
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_enter", "kill_slo_mo" );
 }
@@ -756,7 +756,7 @@ bet_conf_slo_mo_shoot_stop()
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_exit" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
     soundscripts\_snd_timescale::snd_set_timescale( "all_on" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     soundscripts\_audio_mix_manager::mm_clear_submix( "slomo" );
 }
 
@@ -831,8 +831,8 @@ bet_escape_additional_steam()
 fire_door_1_open( var_0 )
 {
     var_0 soundscripts\_snd_playsound::snd_play_linked( "bet_fire_doors_open" );
-    _func_2CC( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-    _func_2CC( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+    soundsettraceflags( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+    soundsettraceflags( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
 }
 
 fire_door_1_close( var_0 )
@@ -844,8 +844,8 @@ open_firedoor_for_guards()
 {
     var_0 = self;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "bet_fire_doors_open_long" );
-    _func_2CC( "weapons" );
-    _func_2CC( "foley" );
+    soundsettraceflags( "weapons" );
+    soundsettraceflags( "foley" );
 }
 
 big_fire_door_open( var_0 )
@@ -856,8 +856,8 @@ big_fire_door_open( var_0 )
 big_fire_door_close( var_0 )
 {
     var_0 soundscripts\_snd_playsound::snd_play_linked( "bet_big_fire_doors_close" );
-    _func_2CC( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-    _func_2CC( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+    soundsettraceflags( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+    soundsettraceflags( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
 }
 
 open_elevator_doors( var_0 )
@@ -876,8 +876,8 @@ atlas_building_roof_walla( var_0 )
 {
     common_scripts\utility::flag_wait( var_0 );
     soundscripts\_snd_playsound::snd_play_at( "bet_walla_atlas_building_roof", ( 2674, 59238, -28 ) );
-    _func_2CC( "weapons" );
-    _func_2CC( "foley" );
+    soundsettraceflags( "weapons" );
+    soundsettraceflags( "foley" );
 }
 
 bet_roof_raise_blast_doors( var_0 )
@@ -1026,7 +1026,7 @@ monitor_oldtown_doc_civs( var_0 )
             var_3 += distance2d( level.player.origin, var_5.origin );
 
         var_7 = get_oldtown_doc_civ_vol( var_2, var_3 );
-        var_0 _meth_806F( var_7, var_1 );
+        var_0 scalevolume( var_7, var_1 );
         wait(var_1);
     }
 
@@ -1121,7 +1121,7 @@ aud_impact_system_diveboat( var_0 )
 
 aud_ambient_helicopter( var_0 )
 {
-    self _meth_828B();
+    self vehicle_turnengineoff();
 
     if ( var_0 == "spawner_boat_chase_warbird" )
     {
@@ -1511,7 +1511,7 @@ bet_boat_dive_watcher( var_0 )
 
     for (;;)
     {
-        if ( var_0 _meth_84C7() )
+        if ( var_0 vehicle_diveboatissubmerged() )
         {
             if ( var_1 == 0 )
             {

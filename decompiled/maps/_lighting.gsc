@@ -62,7 +62,7 @@ scriptable_primary_light_think( var_0, var_1 )
             var_22 = vectornormalize( anglestoright( var_0.attach_tag.angles ) );
             var_23 = vectornormalize( var_20 * var_8[0] + var_21 * var_8[2] - var_22 * var_8[1] );
             var_24 = var_20 * var_6[0] + var_21 * var_6[2] - var_22 * var_6[1];
-            var_0.primary_light _meth_804F();
+            var_0.primary_light unlink();
             var_0.primary_light.angles = vectortoangles( var_23 );
             var_0.primary_light.origin = var_19 + var_24;
 
@@ -75,7 +75,7 @@ scriptable_primary_light_think( var_0, var_1 )
             if ( isdefined( var_0.coi_pos ) )
                 var_0.primary_light.angles = vectortoangles( vectornormalize( var_0.coi_pos - var_0.primary_light.origin ) );
 
-            var_0.primary_light _meth_804D( var_0.attach_tag );
+            var_0.primary_light linkto( var_0.attach_tag );
         }
         else
         {
@@ -93,10 +93,10 @@ scriptable_primary_light_think( var_0, var_1 )
             var_0.primary_light.origin = var_6;
         }
 
-        var_0.primary_light _meth_81DF( var_10 );
-        var_0.primary_light _meth_8044( var_11 );
-        var_0.primary_light _meth_8020( var_13, var_12 );
-        var_0.primary_light _meth_8046( var_14 );
+        var_0.primary_light setlightintensity( var_10 );
+        var_0.primary_light setlightcolor( var_11 );
+        var_0.primary_light setlightfovrange( var_13, var_12 );
+        var_0.primary_light setlightradius( var_14 );
         wait 0.05;
     }
 }
@@ -138,7 +138,7 @@ stop_scriptable_primary_light( var_0 )
     if ( isdefined( var_1.attach_ent ) )
     {
         if ( isdefined( var_1.primary_light ) )
-            var_1.primary_light _meth_804F();
+            var_1.primary_light unlink();
     }
 }
 
@@ -218,12 +218,12 @@ setup_scriptable_primary_light( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
         if ( isdefined( var_9 ) )
         {
             var_11.attach_tag.origin = var_12 gettagorigin( var_9 );
-            var_11.attach_tag _meth_804D( var_12, var_9, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+            var_11.attach_tag linkto( var_12, var_9, ( 0, 0, 0 ), ( 0, 0, 0 ) );
         }
         else
         {
             var_11.attach_tag.origin = var_12.origin;
-            var_11.attach_tag _meth_804D( var_12 );
+            var_11.attach_tag linkto( var_12 );
         }
 
         var_13 = var_11.attach_tag.origin;
@@ -238,10 +238,10 @@ setup_scriptable_primary_light( var_0, var_1, var_2, var_3, var_4, var_5, var_6,
         if ( !isdefined( var_11.primary_light.linkedtotag ) )
         {
             var_11.primary_light.linkedtotag = 1;
-            var_11.primary_light _meth_8069();
+            var_11.primary_light enablelinkto();
         }
 
-        var_11.primary_light _meth_804D( var_11.attach_tag );
+        var_11.primary_light linkto( var_11.attach_tag );
     }
     else
     {
@@ -348,43 +348,43 @@ scriptable_primary_light_setstate( var_0, var_1, var_2, var_3, var_4, var_5, var
 
 light_setup_global_dvars()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_veil", 1 );
-        _func_0D3( "r_veilStrength", 0.087 );
-        _func_0D3( "r_tonemap", 2 );
-        _func_0D3( "r_tonemapBlack", 0.0 );
-        _func_0D3( "r_tonemapCrossover", 1.0 );
-        _func_0D3( "r_tonemapHighlightRange", 16.0 );
-        _func_0D3( "r_tonemapDarkEv", 2.84 );
-        _func_0D3( "r_tonemapMidEv", 7.823 );
-        _func_0D3( "r_tonemapLightEv", 12.81 );
-        _func_0D3( "r_tonemapDarkExposureAdjust", -3.17 );
-        _func_0D3( "r_tonemapMidExposureAdjust", -0.0651 );
-        _func_0D3( "r_tonemapLightExposureAdjust", 1.47 );
-        _func_0D3( "r_tonemapMinExposureAdjust", -3.17 );
-        _func_0D3( "r_tonemapMaxExposureAdjust", 2.3 );
+        setsaveddvar( "r_veil", 1 );
+        setsaveddvar( "r_veilStrength", 0.087 );
+        setsaveddvar( "r_tonemap", 2 );
+        setsaveddvar( "r_tonemapBlack", 0.0 );
+        setsaveddvar( "r_tonemapCrossover", 1.0 );
+        setsaveddvar( "r_tonemapHighlightRange", 16.0 );
+        setsaveddvar( "r_tonemapDarkEv", 2.84 );
+        setsaveddvar( "r_tonemapMidEv", 7.823 );
+        setsaveddvar( "r_tonemapLightEv", 12.81 );
+        setsaveddvar( "r_tonemapDarkExposureAdjust", -3.17 );
+        setsaveddvar( "r_tonemapMidExposureAdjust", -0.0651 );
+        setsaveddvar( "r_tonemapLightExposureAdjust", 1.47 );
+        setsaveddvar( "r_tonemapMinExposureAdjust", -3.17 );
+        setsaveddvar( "r_tonemapMaxExposureAdjust", 2.3 );
 
         if ( level.ps4 )
-            _func_0D3( "r_tonemapShoulder", 0.4 );
+            setsaveddvar( "r_tonemapShoulder", 0.4 );
         else
-            _func_0D3( "r_tonemapShoulder", 0.94 );
+            setsaveddvar( "r_tonemapShoulder", 0.94 );
 
-        _func_0D3( "r_tonemapToe", 0.0 );
-        _func_0D3( "r_tonemapWhite", 512 );
-        _func_0D3( "r_tonemapAdaptSpeed", 0.02 );
-        _func_0D3( "r_tonemapLockAutoExposureAdjust", 0 );
-        _func_0D3( "r_tonemapAutoExposureAdjust", 0.0 );
-        _func_0D3( "r_tonemapExposure", -10.0 );
-        _func_0D3( "r_tonemapMaxExposure", -10.0 );
+        setsaveddvar( "r_tonemapToe", 0.0 );
+        setsaveddvar( "r_tonemapWhite", 512 );
+        setsaveddvar( "r_tonemapAdaptSpeed", 0.02 );
+        setsaveddvar( "r_tonemapLockAutoExposureAdjust", 0 );
+        setsaveddvar( "r_tonemapAutoExposureAdjust", 0.0 );
+        setsaveddvar( "r_tonemapExposure", -10.0 );
+        setsaveddvar( "r_tonemapMaxExposure", -10.0 );
     }
 
-    if ( _func_236() )
+    if ( isusingssao() )
     {
-        _func_0D3( "r_ssaoPower", 12.0 );
-        _func_0D3( "r_ssaoStrength", 0.45 );
-        _func_0D3( "r_ssaominstrengthdepth", 25.0 );
-        _func_0D3( "r_ssaomaxstrengthdepth", 40.0 );
+        setsaveddvar( "r_ssaoPower", 12.0 );
+        setsaveddvar( "r_ssaoStrength", 0.45 );
+        setsaveddvar( "r_ssaominstrengthdepth", 25.0 );
+        setsaveddvar( "r_ssaomaxstrengthdepth", 40.0 );
     }
 }
 
@@ -415,10 +415,10 @@ screen_effect_base( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( isarray( var_1 ) )
     {
         foreach ( var_10 in var_1 )
-            var_8 _meth_80CC( var_10, 640, 480 );
+            var_8 setshader( var_10, 640, 480 );
     }
     else
-        var_8 _meth_80CC( var_1, 640, 480 );
+        var_8 setshader( var_1, 640, 480 );
 
     if ( var_0 > 0 )
     {
@@ -493,10 +493,10 @@ dirt_splatter_simple()
     var_0 = newclienthudelem( level.player );
     var_0.x = 0;
     var_0.y = 0;
-    var_0 _meth_80CC( "fullscreen_dirt_bottom", 640, 480 );
-    var_0 _meth_80CC( "fullscreen_dirt_bottom_b", 640, 480 );
-    var_0 _meth_80CC( "fullscreen_dirt_left", 640, 480 );
-    var_0 _meth_80CC( "fullscreen_dirt_right", 640, 480 );
+    var_0 setshader( "fullscreen_dirt_bottom", 640, 480 );
+    var_0 setshader( "fullscreen_dirt_bottom_b", 640, 480 );
+    var_0 setshader( "fullscreen_dirt_left", 640, 480 );
+    var_0 setshader( "fullscreen_dirt_right", 640, 480 );
     var_0.splatter = 1;
     var_0.alignx = "left";
     var_0.aligny = "top";
@@ -529,7 +529,7 @@ bob_mask( var_0 )
             var_10 = var_9[2];
             var_9 -= var_9 * ( 0, 0, 1 );
             var_11 = length( var_9 );
-            var_12 = level.player _meth_817C();
+            var_12 = level.player getstance();
             var_13 = clamp( var_11, 0, 280 ) / 280;
             var_14 = 0.1 + var_13 * 0.25;
             var_15 = 0.1 + var_13 * 0.25;
@@ -546,7 +546,7 @@ bob_mask( var_0 )
 
             var_17 = 5.0;
             var_18 = 0.9;
-            var_19 = level.player _meth_8340();
+            var_19 = level.player playerads();
             var_20 = var_17 * ( 1.0 - var_19 ) + var_18 * var_19;
             var_20 *= ( 1 + var_13 * 2 );
             var_21 = 5;
@@ -598,7 +598,7 @@ gasmask_on_player( var_0, var_1, var_2, var_3 )
     self.gasmask_hud_elem.vertalign = "fullscreen";
     self.gasmask_hud_elem.foreground = 0;
     self.gasmask_hud_elem.sort = -1;
-    self.gasmask_hud_elem _meth_80CC( "gasmask_overlay_delta2_top", 650, 138 );
+    self.gasmask_hud_elem setshader( "gasmask_overlay_delta2_top", 650, 138 );
     self.gasmask_hud_elem.alpha = 1.0;
     self.gasmask_hud_elem1 = newclienthudelem( self );
     self.gasmask_hud_elem1.x = 0;
@@ -607,7 +607,7 @@ gasmask_on_player( var_0, var_1, var_2, var_3 )
     self.gasmask_hud_elem1.vertalign = "fullscreen";
     self.gasmask_hud_elem1.foreground = 0;
     self.gasmask_hud_elem1.sort = -1;
-    self.gasmask_hud_elem1 _meth_80CC( "gasmask_overlay_delta2_bottom", 650, 138 );
+    self.gasmask_hud_elem1 setshader( "gasmask_overlay_delta2_bottom", 650, 138 );
     self.gasmask_hud_elem1.alpha = 1.0;
     level.player maps\_utility::delaythread( 1.0, ::gasmask_breathing );
     thread bob_mask( self.gasmask_hud_elem );
@@ -657,8 +657,8 @@ gasmask_breathing()
 gasmask_on_npc()
 {
     self.gasmask = spawn( "script_model", ( 0, 0, 0 ) );
-    self.gasmask _meth_80B1( "prop_sas_gasmask" );
-    self.gasmask _meth_804D( self, "tag_eye", ( -4, 0, 2 ), ( 120, 0, 0 ) );
+    self.gasmask setmodel( "prop_sas_gasmask" );
+    self.gasmask linkto( self, "tag_eye", ( -4, 0, 2 ), ( 120, 0, 0 ) );
 }
 
 gasmask_off_npc()
@@ -715,7 +715,7 @@ play_flickerlight_motion_preset( var_0, var_1 )
     if ( !isdefined( var_3 ) )
         return;
 
-    var_2 _meth_81DF( var_3.intensity );
+    var_2 setlightintensity( var_3.intensity );
     var_2.islightflickering = 1;
     var_2.islightflickerpaused = 0;
     var_2 thread dyn_motion_flickerlight( var_3.color, var_3.intensity, var_3.maxmove, var_3.mindelay, var_3.maxdelay );
@@ -764,7 +764,7 @@ play_flickerlight_preset( var_0, var_1, var_2 )
         var_4.intensity = var_2;
     }
 
-    var_3 _meth_81DF( var_4.intensity );
+    var_3 setlightintensity( var_4.intensity );
     var_3.islightflickering = 1;
     var_3.islightflickerpaused = 0;
     var_3 thread dyn_flickerlight( var_4.color0, var_4.color1, var_4.mindelay, var_4.maxdelay );
@@ -787,7 +787,7 @@ stop_flickerlight( var_0, var_1, var_2 )
             var_2 = 0;
     }
 
-    var_3 _meth_81DF( var_2 );
+    var_3 setlightintensity( var_2 );
     var_3 notify( "kill_flicker" );
     var_3.islightflickering = undefined;
 }
@@ -845,7 +845,7 @@ dyn_flickerlight( var_0, var_1, var_2, var_3 )
 
         for ( var_7 = ( var_6 - var_4 ) * 1 / var_5; var_5 > 0 && !self.islightflickerpaused; var_5 -= 0.05 )
         {
-            self _meth_8044( var_4 + var_7 * var_5 );
+            self setlightcolor( var_4 + var_7 * var_5 );
             wait 0.05;
         }
     }
@@ -854,8 +854,8 @@ dyn_flickerlight( var_0, var_1, var_2, var_3 )
 dyn_motion_flickerlight( var_0, var_1, var_2, var_3, var_4 )
 {
     self endon( "kill_flicker" );
-    self _meth_8044( var_0 );
-    self _meth_81DF( var_1 );
+    self setlightcolor( var_0 );
+    self setlightintensity( var_1 );
     thread fire_flicker();
     var_5 = self.origin;
     var_6 = var_2;
@@ -871,7 +871,7 @@ dyn_motion_flickerlight( var_0, var_1, var_2, var_3, var_4 )
         var_13 = var_7 * randomfloatrange( 0.1, 1 );
         var_14 = var_8 * randomfloatrange( 0.1, 1 );
         var_15 = var_5 + ( var_12, var_13, var_14 );
-        self _meth_82AE( var_15, var_11 );
+        self moveto( var_15, var_11 );
         wait(var_11);
 
         while ( self.islightflickerpaused )
@@ -881,7 +881,7 @@ dyn_motion_flickerlight( var_0, var_1, var_2, var_3, var_4 )
 
 fire_flicker()
 {
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     self endon( "kill_flicker" );
     var_1 = var_0;
 
@@ -897,7 +897,7 @@ fire_flicker()
         for ( var_4 = 0; var_4 < var_3; var_4++ )
         {
             var_5 = var_2 * var_4 / var_3 + var_1 * ( var_3 - var_4 ) / var_3;
-            self _meth_81DF( var_5 );
+            self setlightintensity( var_5 );
             wait 0.05;
         }
 
@@ -929,8 +929,8 @@ light_object_set_intensity( var_0, var_1, var_2 )
 {
     foreach ( var_4 in self.lightents )
     {
-        var_4 _meth_81DF( var_0 );
-        var_4 _meth_8044( var_1 );
+        var_4 setlightintensity( var_0 );
+        var_4 setlightcolor( var_1 );
     }
 
     if ( var_2 && !isdefined( self.was_on ) )
@@ -1008,7 +1008,7 @@ lerp_spot_intensity( var_0, var_1, var_2 )
     if ( level.currentgen && isdefined( var_3 ) == 0 )
         return;
 
-    var_4 = var_3 _meth_81DE();
+    var_4 = var_3 getlightintensity();
     var_3.endintensity = var_2;
     var_5 = 0;
 
@@ -1016,11 +1016,11 @@ lerp_spot_intensity( var_0, var_1, var_2 )
     {
         var_6 = var_4 + ( var_2 - var_4 ) * var_5 / var_1;
         var_5 += 0.05;
-        var_3 _meth_81DF( var_6 );
+        var_3 setlightintensity( var_6 );
         wait 0.05;
     }
 
-    var_3 _meth_81DF( var_2 );
+    var_3 setlightintensity( var_2 );
 }
 
 lerp_spot_intensity_array( var_0, var_1, var_2 )
@@ -1029,7 +1029,7 @@ lerp_spot_intensity_array( var_0, var_1, var_2 )
 
     foreach ( var_5 in var_3 )
     {
-        var_6 = var_5 _meth_81DE();
+        var_6 = var_5 getlightintensity();
         var_5.endintensity = var_2;
         var_7 = 0;
 
@@ -1037,11 +1037,11 @@ lerp_spot_intensity_array( var_0, var_1, var_2 )
         {
             var_8 = var_6 + ( var_2 - var_6 ) * var_7 / var_1;
             var_7 += 0.05;
-            var_5 _meth_81DF( var_8 );
+            var_5 setlightintensity( var_8 );
             wait 0.05;
         }
 
-        var_5 _meth_81DF( var_2 );
+        var_5 setlightintensity( var_2 );
     }
 }
 
@@ -1052,7 +1052,7 @@ lerp_spot_radius( var_0, var_1, var_2 )
     if ( level.currentgen && isdefined( var_3 ) == 0 )
         return;
 
-    var_4 = var_3 _meth_8045();
+    var_4 = var_3 getlightradius();
     var_3.endradius = var_2;
     var_5 = 0;
 
@@ -1060,11 +1060,11 @@ lerp_spot_radius( var_0, var_1, var_2 )
     {
         var_6 = var_4 + ( var_2 - var_4 ) * var_5 / var_1;
         var_5 += 0.05;
-        var_3 _meth_8046( var_6 );
+        var_3 setlightradius( var_6 );
         wait 0.05;
     }
 
-    var_3 _meth_8046( var_2 );
+    var_3 setlightradius( var_2 );
 }
 
 set_spot_intensity( var_0, var_1 )
@@ -1074,7 +1074,7 @@ set_spot_intensity( var_0, var_1 )
     if ( level.currentgen && isdefined( var_2 ) == 0 )
         return;
 
-    var_2 _meth_81DF( var_1 );
+    var_2 setlightintensity( var_1 );
 }
 
 lerp_spot_color( var_0, var_1, var_2 )
@@ -1084,7 +1084,7 @@ lerp_spot_color( var_0, var_1, var_2 )
     if ( level.currentgen && isdefined( var_3 ) == 0 )
         return;
 
-    var_4 = var_3 _meth_8043();
+    var_4 = var_3 getlightcolor();
     var_3.endcolor = var_2;
     var_5 = 0;
 
@@ -1092,17 +1092,17 @@ lerp_spot_color( var_0, var_1, var_2 )
     {
         var_6 = var_4 + ( var_2 - var_4 ) * var_5 / var_1;
         var_5 += 0.05;
-        var_3 _meth_8044( var_6 );
+        var_3 setlightcolor( var_6 );
         wait 0.05;
     }
 
-    var_3 _meth_8044( var_2 );
+    var_3 setlightcolor( var_2 );
 }
 
 set_spot_color( var_0, var_1 )
 {
     var_2 = getent( var_0, "targetname" );
-    var_2 _meth_8044( var_1 );
+    var_2 setlightcolor( var_1 );
 }
 
 light_setup_pulse_presets()
@@ -1159,10 +1159,10 @@ play_pulse_preset( var_0, var_1, var_2, var_3 )
         var_6.intensity = var_2;
     }
 
-    var_5 _meth_81DF( var_6.intensity );
-    var_5 _meth_8044( var_6.color01 );
+    var_5 setlightintensity( var_6.intensity );
+    var_5 setlightcolor( var_6.color01 );
     var_7 = var_6.num;
-    var_8 = var_5 _meth_81DE();
+    var_8 = var_5 getlightintensity();
     var_9 = 0.05;
     var_10 = var_8;
     var_11 = var_6.transition_on;
@@ -1180,7 +1180,7 @@ play_pulse_preset( var_0, var_1, var_2, var_3 )
         {
             var_10 -= var_14;
             var_10 = clamp( var_10, 0, 1000000000 );
-            var_5 _meth_81DF( var_10 );
+            var_5 setlightintensity( var_10 );
             var_17 += 0.05;
             wait 0.05;
         }
@@ -1195,7 +1195,7 @@ play_pulse_preset( var_0, var_1, var_2, var_3 )
         {
             var_10 += var_13;
             var_10 = clamp( var_10, 0, 1000000000 );
-            var_5 _meth_81DF( var_10 );
+            var_5 setlightintensity( var_10 );
             var_17 += 0.05;
             wait 0.05;
         }
@@ -1213,7 +1213,7 @@ play_pulse_preset( var_0, var_1, var_2, var_3 )
             {
                 var_10 -= var_14;
                 var_10 = clamp( var_10, 0, 300000 );
-                var_5 _meth_81DF( var_10 );
+                var_5 setlightintensity( var_10 );
                 var_17 += 0.05;
                 wait 0.05;
             }
@@ -1225,7 +1225,7 @@ play_pulse_preset( var_0, var_1, var_2, var_3 )
             {
                 var_10 += var_13;
                 var_10 = clamp( var_10, 0, 300000 );
-                var_5 _meth_81DF( var_10 );
+                var_5 setlightintensity( var_10 );
                 var_17 += 0.05;
                 wait 0.05;
             }
@@ -1266,7 +1266,7 @@ model_flicker_preset( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
             if ( var_3 > var_2 )
                 var_18 = randomfloatrange( var_2, var_3 );
 
-            var_17 _meth_81DF( var_18 );
+            var_17 setlightintensity( var_18 );
         }
     }
 
@@ -1339,8 +1339,8 @@ model_flicker_preset( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
         foreach ( var_40 in var_14 )
         {
-            var_28 = var_40 _meth_81DE();
-            var_40 _meth_81DF( var_29 );
+            var_28 = var_40 getlightintensity();
+            var_40 setlightintensity( var_29 );
         }
 
         wait(var_32);
@@ -1354,7 +1354,7 @@ model_flicker_preset( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
                 if ( var_3 > var_2 )
                     var_18 = randomfloatrange( var_2, var_3 );
 
-                var_34 _meth_81DF( var_18 );
+                var_34 setlightintensity( var_18 );
 
                 if ( isdefined( var_21 ) && !var_20 )
                 {
@@ -1378,7 +1378,7 @@ model_flicker_preset( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
             var_37 show();
 
         foreach ( var_40 in var_14 )
-            var_40 _meth_81DF( var_28 );
+            var_40 setlightintensity( var_28 );
 
         wait(var_31);
 
@@ -1521,7 +1521,7 @@ lerp_viewmodel_dof( var_0, var_1, var_2 )
             }
         }
 
-        level.player _meth_8187( level.player.viewmodel_dof_start, level.player.viewmodel_dof_end );
+        level.player setviewmodeldepthoffield( level.player.viewmodel_dof_start, level.player.viewmodel_dof_end );
         wait 0.05;
     }
 }
@@ -1561,7 +1561,7 @@ lerp_light_fov_range( var_0, var_1, var_2, var_3, var_4 )
     for ( var_5 = 0; var_5 <= var_4; var_5 += 0.05 )
     {
         var_6 = var_5 / var_4;
-        self _meth_8020( maps\_utility::linear_interpolate( var_6, var_0, var_2 ), maps\_utility::linear_interpolate( var_6, var_1, var_3 ) );
+        self setlightfovrange( maps\_utility::linear_interpolate( var_6, var_0, var_2 ), maps\_utility::linear_interpolate( var_6, var_1, var_3 ) );
         waitframe();
     }
 }

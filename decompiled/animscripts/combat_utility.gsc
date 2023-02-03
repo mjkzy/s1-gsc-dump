@@ -3,7 +3,7 @@
 
 gettargetangleoffset( var_0 )
 {
-    var_1 = self _meth_8097() + ( 0, 0, -3 );
+    var_1 = self getshootatpos() + ( 0, 0, -3 );
     var_2 = ( var_1[0] - var_0[0], var_1[1] - var_0[1], var_1[2] - var_0[2] );
     var_2 = vectornormalize( var_2 );
     var_3 = var_2[2] * -1;
@@ -108,7 +108,7 @@ cheatammoifnecessary()
     if ( gettime() - self.ammocheattime < self.ammocheatinterval )
         return 0;
 
-    if ( !self _meth_81BE( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) > 65536 )
+    if ( !self cansee( self.enemy ) && distancesquared( self.origin, self.enemy.origin ) > 65536 )
         return 0;
 
     self.bulletsinclip = int( weaponclipsize( self.weapon ) / 2 );
@@ -221,12 +221,12 @@ getuniqueflagnameindex()
 
 setupaim( var_0 )
 {
-    self _meth_814B( %exposed_aiming, 1, var_0 );
-    self _meth_8144( animscripts\utility::animarray( "straight_level" ), 1, var_0 );
-    self _meth_8144( animscripts\utility::animarray( "add_aim_up" ), 1, var_0 );
-    self _meth_8144( animscripts\utility::animarray( "add_aim_down" ), 1, var_0 );
-    self _meth_8144( animscripts\utility::animarray( "add_aim_left" ), 1, var_0 );
-    self _meth_8144( animscripts\utility::animarray( "add_aim_right" ), 1, var_0 );
+    self setanim( %exposed_aiming, 1, var_0 );
+    self setanimknoblimited( animscripts\utility::animarray( "straight_level" ), 1, var_0 );
+    self setanimknoblimited( animscripts\utility::animarray( "add_aim_up" ), 1, var_0 );
+    self setanimknoblimited( animscripts\utility::animarray( "add_aim_down" ), 1, var_0 );
+    self setanimknoblimited( animscripts\utility::animarray( "add_aim_left" ), 1, var_0 );
+    self setanimknoblimited( animscripts\utility::animarray( "add_aim_right" ), 1, var_0 );
     self.facialidx = animscripts\face::playfacialanim( undefined, "aim", self.facialidx );
 }
 
@@ -250,24 +250,24 @@ startfireandaimidlethread()
 endfireandanimidlethread()
 {
     endaimidlethread();
-    self _meth_8142( %add_fire, 0.1 );
+    self clearanim( %add_fire, 0.1 );
     self notify( "stop tracking" );
 }
 
 showfirehideaimidle()
 {
     if ( isdefined( self.a.aimidlethread ) )
-        self _meth_814B( %add_idle, 0, 0.2 );
+        self setanim( %add_idle, 0, 0.2 );
 
-    self _meth_814B( %add_fire, 1, 0.1 );
+    self setanim( %add_fire, 1, 0.1 );
 }
 
 hidefireshowaimidle()
 {
     if ( isdefined( self.a.aimidlethread ) )
-        self _meth_814B( %add_idle, 1, 0.2 );
+        self setanim( %add_idle, 1, 0.2 );
 
-    self _meth_814B( %add_fire, 0, 0.1 );
+    self setanim( %add_fire, 0, 0.1 );
 }
 
 aimidlethread( var_0 )
@@ -280,7 +280,7 @@ aimidlethread( var_0 )
 
     self.a.aimidlethread = 1;
     wait 0.1;
-    self _meth_814C( %add_idle, 1, 0.2 );
+    self setanimlimited( %add_idle, 1, 0.2 );
     var_1 = %add_idle;
     var_2 = 0;
 
@@ -299,23 +299,23 @@ aimidlethread( var_0 )
         }
 
         if ( var_4 == var_1 )
-            self _meth_8114( var_3, var_4, 1, 0.2 );
+            self setflaggedanimlimitedrestart( var_3, var_4, 1, 0.2 );
         else
-            self _meth_810E( var_3, var_4, 1, 0.2 );
+            self setflaggedanimknoblimitedrestart( var_3, var_4, 1, 0.2 );
 
         var_1 = var_4;
         self waittillmatch( var_3, "end" );
         var_2++;
     }
 
-    self _meth_8142( %add_idle, 0.1 );
+    self clearanim( %add_idle, 0.1 );
 }
 
 endaimidlethread()
 {
     self notify( "end_aim_idle_thread" );
     self.a.aimidlethread = undefined;
-    self _meth_8142( %add_idle, 0.1 );
+    self clearanim( %add_idle, 0.1 );
 }
 
 shotgunfirerate()
@@ -351,8 +351,8 @@ fireuntiloutofammo( var_0, var_1, var_2 )
     else if ( animscripts\utility::usingshotgun() )
         var_4 = shotgunfirerate();
 
-    self _meth_810D( var_3, var_0, 1, 0.2, var_4 );
-    self _meth_81EA();
+    self setflaggedanimknobrestart( var_3, var_0, 1, 0.2, var_4 );
+    self updateplayersightaccuracy();
     var_5 = weaponfiretime( self.weapon );
     fireuntiloutofammointernal( var_3, var_0, var_1, var_2, var_5 );
     hidefireshowaimidle();
@@ -372,7 +372,7 @@ fireuntiloutofammo_waittillended()
 
         if ( !isdefined( var_0 ) )
         {
-            self _meth_83DA();
+            self shootstopsound();
             return;
         }
 
@@ -434,7 +434,7 @@ fireuntiloutofammointernal( var_0, var_1, var_2, var_3, var_4 )
 
             if ( issubstr( tolower( self.weapon ), "rpg" ) || issubstr( tolower( self.weapon ), "panzerfaust" ) )
             {
-                self _meth_8048( "tag_rocket" );
+                self hidepart( "tag_rocket" );
                 self.a.rocketvisible = 0;
             }
         }
@@ -449,7 +449,7 @@ fireuntiloutofammointernal( var_0, var_1, var_2, var_3, var_4 )
             self waittillmatch( var_0, "end" );
     }
 
-    self _meth_83DA();
+    self shootstopsound();
 
     if ( var_2 )
         self notify( "fireAnimEnd" );
@@ -460,7 +460,7 @@ aimedatshootentorpos()
     if ( !isdefined( self.shootpos ) )
         return 1;
 
-    var_0 = self _meth_81B9();
+    var_0 = self getmuzzleangle();
     var_1 = animscripts\shared::getshootfrompos();
     var_2 = vectortoangles( self.shootpos - var_1 );
     var_3 = anim.aimyawdifffartolerance;
@@ -472,7 +472,7 @@ aimedatshootentorpos()
 
     if ( var_4 > var_3 )
     {
-        if ( distancesquared( self _meth_80A8(), self.shootpos ) > anim.aimyawdiffclosedistsq || var_4 > anim.aimyawdiffclosetolerance )
+        if ( distancesquared( self geteye(), self.shootpos ) > anim.aimyawdiffclosedistsq || var_4 > anim.aimyawdiffclosetolerance )
             return 0;
     }
 
@@ -594,7 +594,7 @@ reload( var_0, var_1 )
 
     if ( isdefined( var_1 ) )
     {
-        self _meth_810F( "reloadanim", var_1, %body, 1, 0.1, 1 );
+        self setflaggedanimknoball( "reloadanim", var_1, %body, 1, 0.1, 1 );
         animscripts\shared::donotetracks( "reloadanim" );
         animscripts\weaponlist::refillclip();
         self.a.needstorechamber = 0;
@@ -603,8 +603,8 @@ reload( var_0, var_1 )
     {
         if ( self.a.pose == "prone" )
         {
-            self _meth_810F( "reloadanim", %prone_reload, %body, 1, 0.1, 1 );
-            self _meth_81FB( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
+            self setflaggedanimknoball( "reloadanim", %prone_reload, %body, 1, 0.1, 1 );
+            self updateprone( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
         }
         else
         {
@@ -769,20 +769,20 @@ getgrenadetimertime( var_0 )
 
 considerchangingtarget( var_0 )
 {
-    if ( !isplayer( var_0 ) && self _meth_813D() )
+    if ( !isplayer( var_0 ) && self isbadguy() )
     {
         if ( gettime() < getgrenadetimertime( self.activegrenadetimer ) )
         {
             if ( level.player.ignoreme )
                 return var_0;
 
-            var_1 = self _meth_8178();
-            var_2 = level.player _meth_8178();
+            var_1 = self getthreatbiasgroup();
+            var_2 = level.player getthreatbiasgroup();
 
             if ( var_1 != "" && var_2 != "" && getthreatbias( var_2, var_1 ) < -10000 )
                 return var_0;
 
-            if ( self _meth_81BE( level.player ) || isai( var_0 ) && var_0 _meth_81BE( level.player ) )
+            if ( self cansee( level.player ) || isai( var_0 ) && var_0 cansee( level.player ) )
             {
                 if ( isdefined( self.covernode ) )
                 {
@@ -853,7 +853,7 @@ grenadecooldownelapsed( var_0 )
 
 trygrenadeposproc( var_0, var_1, var_2, var_3 )
 {
-    if ( !self _meth_81CF( var_0, var_1 ) )
+    if ( !self isgrenadepossafe( var_0, var_1 ) )
         return 0;
     else if ( distancesquared( self.origin, var_1 ) < 40000 )
         return 0;
@@ -890,7 +890,7 @@ trygrenade( var_0, var_1 )
 
         if ( animscripts\utility::canseeenemyfromexposed() )
         {
-            if ( !self _meth_81CF( var_0, var_0.origin ) )
+            if ( !self isgrenadepossafe( var_0, var_0.origin ) )
                 return 0;
 
             return trygrenadethrow( var_0, undefined, var_1, var_2 );
@@ -900,11 +900,11 @@ trygrenade( var_0, var_1 )
         else
         {
             if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
-                var_3 = self _meth_81C1( var_0 );
+                var_3 = self lastknownpos( var_0 );
             else
                 var_3 = var_0.origin;
 
-            if ( !self _meth_81CF( var_0, var_3 ) )
+            if ( !self isgrenadepossafe( var_0, var_3 ) )
                 return 0;
 
             return trygrenadethrow( var_0, undefined, var_1, var_2 );
@@ -915,7 +915,7 @@ trygrenade( var_0, var_1 )
     else
     {
         if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
-            var_3 = self _meth_81C1( var_0 );
+            var_3 = self lastknownpos( var_0 );
         else
             var_3 = var_0.origin;
 
@@ -968,12 +968,12 @@ trygrenadethrow( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( isdefined( var_1 ) )
     {
         if ( !isdefined( var_4 ) )
-            var_9 = self _meth_81A4( var_3, var_1, var_5, "min energy", "min time", "max time" );
+            var_9 = self checkgrenadethrowpos( var_3, var_1, var_5, "min energy", "min time", "max time" );
         else
-            var_9 = self _meth_81A4( var_3, var_1, var_5, "min time", "min energy" );
+            var_9 = self checkgrenadethrowpos( var_3, var_1, var_5, "min time", "min energy" );
     }
     else if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
-        var_9 = self _meth_81A4( var_3, self _meth_81C1( var_0 ), var_5, "min energy", "min time", "max time" );
+        var_9 = self checkgrenadethrowpos( var_3, self lastknownpos( var_0 ), var_5, "min energy", "min time", "max time" );
     else
     {
         var_10 = distance( var_0.origin, self.origin );
@@ -988,9 +988,9 @@ trygrenadethrow( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         }
 
         if ( !isdefined( var_4 ) )
-            var_9 = self _meth_81D0( var_3, var_11, "min energy", "min time", "max time" );
+            var_9 = self checkgrenadethrow( var_3, var_11, "min energy", "min time", "max time" );
         else
-            var_9 = self _meth_81D0( var_3, var_11, "min time", "min energy" );
+            var_9 = self checkgrenadethrow( var_3, var_11, "min time", "min energy" );
     }
 
     self.a.nextgrenadetrytime = gettime() + randomintrange( 1000, 2000 );
@@ -1047,12 +1047,12 @@ dogrenadethrow( var_0, var_1, var_2, var_3 )
     self endon( "killanimscript" );
 
     if ( self.script == "combat" || self.script == "move" )
-        self _meth_818F( "face direction", var_1 );
+        self orientmode( "face direction", var_1 );
 
     animscripts\battlechatter_ai::evaluateattackevent( self.grenadeweapon );
     maps\_dds::dds_notify_grenade( self.grenadeweapon, self.team == "allies", 0 );
     self notify( "stop_aiming_at_enemy" );
-    self _meth_8110( "throwanim", var_0, %body, fasteranimspeed(), 0.1, 1 );
+    self setflaggedanimknoballrestart( "throwanim", var_0, %body, fasteranimspeed(), 0.1, 1 );
     thread animscripts\notetracks::donotetracksforever( "throwanim", "killanimscript" );
     var_4 = animscripts\utility::getgrenademodel();
     var_5 = "none";
@@ -1083,7 +1083,7 @@ dogrenadethrow( var_0, var_1, var_2, var_3 )
     if ( usingplayergrenadetimer() )
         thread watchgrenadetowardsplayer( self.activegrenadetimer.player, var_2 );
 
-    self _meth_81D3();
+    self throwgrenade();
 
     if ( !usingplayergrenadetimer() )
         setgrenadetimer( self.activegrenadetimer, var_2 );
@@ -1111,9 +1111,9 @@ dogrenadethrow( var_0, var_1, var_2, var_3 )
     self waittillmatch( "throwanim", "end" );
     self notify( "done_grenade_throw" );
     self notify( "weapon_switch_done" );
-    self _meth_814B( %exposed_modern, 1, 0.2 );
-    self _meth_814B( %exposed_aiming, 1 );
-    self _meth_8142( var_0, 0.2 );
+    self setanim( %exposed_modern, 1, 0.2 );
+    self setanim( %exposed_aiming, 1 );
+    self clearanim( var_0, 0.2 );
 }
 
 watchgrenadetowardsplayer( var_0, var_1 )
@@ -1272,7 +1272,7 @@ dropgrenade()
 {
     var_0 = self gettagorigin( "tag_inhand" );
     var_1 = getgrenadedropvelocity();
-    self _meth_8038( var_0, var_1, 3 );
+    self magicgrenademanual( var_0, var_1, 3 );
 }
 
 lookforbettercover()
@@ -1293,7 +1293,7 @@ lookforbettercover()
 
 getbestcovernodeifavailable()
 {
-    var_0 = self _meth_81EE();
+    var_0 = self findbestcovernode();
 
     if ( !isdefined( var_0 ) )
         return undefined;
@@ -1316,7 +1316,7 @@ usecovernodeifpossible( var_0 )
     self.keepclaimednodeifvalid = 0;
     self.keepclaimednode = 0;
 
-    if ( self _meth_81F0( var_0 ) )
+    if ( self usecovernode( var_0 ) )
         return 1;
     else
     {
@@ -1368,7 +1368,7 @@ checkadvanceonenemyconditions()
 
     var_0 = isdefined( self.advance_regardless_of_numbers ) && self.advance_regardless_of_numbers;
 
-    if ( !var_0 && _func_0D5( self.team ) < _func_0D5( self.enemy.team ) )
+    if ( !var_0 && getaicount( self.team ) < getaicount( self.enemy.team ) )
         return 0;
 
     return 1;
@@ -1385,7 +1385,7 @@ tryrunningtoenemy( var_0 )
     if ( self.combatmode == "ambush" || self.combatmode == "ambush_nodes_only" )
         return 0;
 
-    if ( !self _meth_815F( self.enemy.origin ) )
+    if ( !self isingoal( self.enemy.origin ) )
         return 0;
 
     if ( islongrangeai() )
@@ -1394,9 +1394,9 @@ tryrunningtoenemy( var_0 )
     if ( !checkadvanceonenemyconditions() )
         return 0;
 
-    self _meth_81F3( var_0 );
+    self findreacquiredirectpath( var_0 );
 
-    if ( self _meth_81F5() )
+    if ( self reacquiremove() )
     {
         self.keepclaimednodeifvalid = 0;
         self.keepclaimednode = 0;
@@ -1455,7 +1455,7 @@ getgunyawtoshootentorpos()
     if ( !isdefined( self.shootpos ) )
         return 0;
 
-    var_0 = self _meth_81B9()[1] - animscripts\utility::getyaw( self.shootpos );
+    var_0 = self getmuzzleangle()[1] - animscripts\utility::getyaw( self.shootpos );
     var_0 = angleclamp180( var_0 );
     return var_0;
 }
@@ -1465,7 +1465,7 @@ getgunpitchtoshootentorpos()
     if ( !isdefined( self.shootpos ) )
         return 0;
 
-    var_0 = self _meth_81B9()[0] - vectortoangles( self.shootpos - self _meth_81B8() )[0];
+    var_0 = self getmuzzleangle()[0] - vectortoangles( self.shootpos - self getmuzzlepos() )[0];
     var_0 = angleclamp180( var_0 );
     return var_0;
 }
@@ -1478,9 +1478,9 @@ getpitchtoenemy()
     if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
         var_0 = get_last_known_shoot_pos( self.enemy );
     else
-        var_0 = self.enemy _meth_8097();
+        var_0 = self.enemy getshootatpos();
 
-    var_1 = var_0 - self _meth_8097();
+    var_1 = var_0 - self getshootatpos();
     var_1 = vectornormalize( var_1 );
     var_2 = 360 - vectortoangles( var_1 )[0];
     return angleclamp180( var_2 );
@@ -1491,7 +1491,7 @@ getpitchtospot( var_0 )
     if ( !isdefined( var_0 ) )
         return 0;
 
-    var_1 = var_0 - self _meth_8097();
+    var_1 = var_0 - self getshootatpos();
     var_1 = vectornormalize( var_1 );
     var_2 = 360 - vectortoangles( var_1 )[0];
     return angleclamp180( var_2 );
@@ -1523,7 +1523,7 @@ watchreloading()
     for (;;)
     {
         self waittill( "reload_start" );
-        maps\_dds::dds_notify_reload( self _meth_8311(), self.team == "allies" );
+        maps\_dds::dds_notify_reload( self getcurrentweapon(), self.team == "allies" );
         self.isreloading = 1;
         self.lastreloadstarttime = gettime();
         waittillreloadfinished();
@@ -1540,12 +1540,12 @@ waittillreloadfinished()
     for (;;)
     {
         self waittill( "reload" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( var_0 == "none" )
             break;
 
-        if ( self _meth_82F0() >= weaponclipsize( var_0 ) )
+        if ( self getcurrentweaponclipammo() >= weaponclipsize( var_0 ) )
             break;
     }
 
@@ -1674,14 +1674,14 @@ getrandomcovermode( var_0 )
 
 player_sees_my_scope()
 {
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
 
     foreach ( var_2 in level.players )
     {
-        if ( !self _meth_81BE( var_2 ) )
+        if ( !self cansee( var_2 ) )
             continue;
 
-        var_3 = var_2 _meth_80A8();
+        var_3 = var_2 geteye();
         var_4 = vectortoangles( var_0 - var_3 );
         var_5 = anglestoforward( var_4 );
         var_6 = var_2 getangles();
@@ -1702,7 +1702,7 @@ player_sees_my_scope()
 
 get_last_known_shoot_pos( var_0 )
 {
-    var_1 = self _meth_81C1( var_0 );
-    var_2 = var_0 _meth_8097() - var_0.origin;
+    var_1 = self lastknownpos( var_0 );
+    var_2 = var_0 getshootatpos() - var_0.origin;
     return var_1 + var_2;
 }

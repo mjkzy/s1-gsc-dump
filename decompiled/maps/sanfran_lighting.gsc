@@ -24,17 +24,17 @@ main()
     thread set_cargo_ship_drone_view_lighting();
 
     if ( level.nextgen )
-        _func_0D3( "r_subdiv", "1" );
+        setsaveddvar( "r_subdiv", "1" );
 }
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         if ( level.nextgen )
         {
-            _func_0D3( "r_disableLightSets", 0 );
-            _func_0D3( "r_hemiAoEnable", 1 );
+            setsaveddvar( "r_disableLightSets", 0 );
+            setsaveddvar( "r_hemiAoEnable", 1 );
         }
 
         if ( level.currentgen )
@@ -42,7 +42,7 @@ set_level_lighting_values()
 
         }
 
-        level.player _meth_83C0( "set_level_lighting_values" );
+        level.player lightsetforplayer( "set_level_lighting_values" );
     }
 }
 
@@ -50,7 +50,7 @@ set_intro_lighting()
 {
     common_scripts\utility::flag_wait( "start_intro_lighting" );
     maps\_utility::vision_set_fog_changes( "sanfran_drone_view", 0.0 );
-    level.player _meth_83C0( "sanfran_drone_view_0" );
+    level.player lightsetforplayer( "sanfran_drone_view_0" );
     thread move_sunflare_back_startpoints();
     maps\_utility::delaythread( 1.8, ::overexposed_effect );
 }
@@ -65,14 +65,14 @@ set_cargo_ship_drone_view_lighting()
     thread overexposed_effect();
     maps\_utility::vision_set_fog_changes( "sanfran_drone_view_1", 0.0 );
     wait 1.0;
-    level.player _meth_83C0( "sanfran_drone_view_1" );
+    level.player lightsetforplayer( "sanfran_drone_view_1" );
 }
 
 overexposed_effect()
 {
-    level.player _meth_83C0( "overexposed_effect_0" );
+    level.player lightsetforplayer( "overexposed_effect_0" );
     wait 0.25;
-    level.player _meth_83C0( "overexposed_effect_1" );
+    level.player lightsetforplayer( "overexposed_effect_1" );
 }
 
 flickering_tunnel_light()
@@ -86,12 +86,12 @@ flickering_tunnel_light()
         var_4 = getent( "light_wall_on_1", "targetname" );
         var_5 = getent( "light_wall_off_2", "targetname" );
         var_6 = getent( "light_wall_on_2", "targetname" );
-        var_2 _meth_847B( var_0.origin );
-        var_1 _meth_847B( var_0.origin );
-        var_4 _meth_847B( var_0.origin );
-        var_3 _meth_847B( var_0.origin );
-        var_6 _meth_847B( var_0.origin );
-        var_5 _meth_847B( var_0.origin );
+        var_2 overridelightingorigin( var_0.origin );
+        var_1 overridelightingorigin( var_0.origin );
+        var_4 overridelightingorigin( var_0.origin );
+        var_3 overridelightingorigin( var_0.origin );
+        var_6 overridelightingorigin( var_0.origin );
+        var_5 overridelightingorigin( var_0.origin );
         thread maps\_lighting::model_flicker_preset( "light_flicker_test", 0, 30000, 50000, undefined, undefined, 0.1, 0.4, 0.2, 0.4 );
         thread maps\_lighting::model_flicker_preset( "light_flicker_test_1", 0, 10000, 50000, undefined, undefined, 0.2, 0.6, 0.2, 0.4 );
         thread maps\_lighting::model_flicker_preset( "light_flicker_test_2", 0, 10000, 50000, undefined, undefined, 0.2, 0.5, 0.4, 0.6 );
@@ -100,20 +100,20 @@ flickering_tunnel_light()
 
 mblur_rotation_on()
 {
-    _func_0D3( "r_mbEnable", "2" );
-    _func_0D3( "r_mbCameraRotationInfluence", "1" );
+    setsaveddvar( "r_mbEnable", "2" );
+    setsaveddvar( "r_mbCameraRotationInfluence", "1" );
 }
 
 mblur_on()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 }
 
 mblur_off()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 set_tunnel_lighting_1()
@@ -123,7 +123,7 @@ set_tunnel_lighting_1()
     else
         wait 0.125;
 
-    level.player _meth_83C0( "set_tunnel_lighting_1" );
+    level.player lightsetforplayer( "set_tunnel_lighting_1" );
 
     if ( level.nextgen )
         thread lerp_sun();
@@ -132,7 +132,7 @@ set_tunnel_lighting_1()
 set_tunnel_lighting_2()
 {
     wait 13.5;
-    level.player _meth_83C0( "set_tunnel_lighting_2" );
+    level.player lightsetforplayer( "set_tunnel_lighting_2" );
 }
 
 showboatshadows()
@@ -164,13 +164,13 @@ set_tunnel_lighting()
     thread tunnel_sequence_dof();
 
     if ( level.nextgen )
-        level.player _meth_83C0( "set_tunnel_lighting_0" );
+        level.player lightsetforplayer( "set_tunnel_lighting_0" );
 
     if ( level.nextgen )
     {
         thread mblur_rotation_on();
         thread maps\_lighting::set_spot_intensity( "intro_car_light", 100500 );
-        level.player _meth_8490( "clut_sanfran_tunnel", 0 );
+        level.player setclutforplayer( "clut_sanfran_tunnel", 0 );
         wait 3;
         maps\_utility::vision_set_changes( "sanfran_neutral", 1 );
         maps\_utility::fog_set_changes( "sanfran_tunnel", 1 );
@@ -193,7 +193,7 @@ setup_hud_lighting()
     var_0 = ( 3, -40, -2 );
     var_1 = ( 3, 3, -2 );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_0, ( 0, 0, 0 ) );
+    var_2 linkto( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_0, ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "lt_pt_pitbull_hud" ), var_2, "TAG_ORIGIN" );
     wait 0.5;
     var_3 = 0.5;
@@ -202,7 +202,7 @@ setup_hud_lighting()
     {
         var_5 = var_4 / var_3;
         var_6 = vectorlerp( var_0, var_1, var_5 );
-        var_2 _meth_804D( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
+        var_2 linkto( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
         wait 0.05;
     }
 
@@ -215,7 +215,7 @@ setup_hud_lighting()
     {
         var_5 = var_4 / var_3;
         var_6 = vectorlerp( var_0, var_1, var_5 );
-        var_2 _meth_804D( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
+        var_2 linkto( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
         wait 0.05;
     }
 
@@ -228,7 +228,7 @@ setup_hud_lighting()
     {
         var_5 = var_4 / var_3;
         var_6 = vectorlerp( var_0, var_1, var_5 );
-        var_2 _meth_804D( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
+        var_2 linkto( level.player_pitbull.fake_vehicle_model, "tag_lt_window_hud", var_6, ( 0, 0, 0 ) );
         wait 0.05;
     }
 
@@ -242,7 +242,7 @@ setup_hud_lighting()
 setup_car_passing_lights()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( self, "TAG_BRAKELIGHT_LEFT", ( 0, 0, 0 ), ( 0, -90, 0 ) );
+    var_0 linkto( self, "TAG_BRAKELIGHT_LEFT", ( 0, 0, 0 ), ( 0, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "lt_pt_tunnel_car_pass" ), var_0, "TAG_ORIGIN" );
     common_scripts\utility::flag_wait( "kill_vehicle_lights" );
     stopfxontag( common_scripts\utility::getfx( "lt_pt_tunnel_car_pass" ), var_0, "TAG_ORIGIN" );
@@ -255,7 +255,7 @@ set_oncoming_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 0 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran_oncoming", 1.0 );
         thread mblur_on();
@@ -263,7 +263,7 @@ set_oncoming_lighting()
     else
         maps\_utility::vision_set_changes( "sanfran_oncoming", 1.0 );
 
-    level.player _meth_83C0( "setup_drive_shadows" );
+    level.player lightsetforplayer( "setup_drive_shadows" );
     thread setup_pitbull_vfx_lights();
     thread setup_vfx_sunflare();
     thread move_sunflare_back_startpoints();
@@ -278,7 +278,7 @@ set_bridge_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 0 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran_oncoming", 1.0 );
         thread mblur_on();
@@ -286,7 +286,7 @@ set_bridge_lighting()
     else
         maps\_utility::vision_set_changes( "sanfran_oncoming", 1.0 );
 
-    level.player _meth_83C0( "setup_drive_shadows" );
+    level.player lightsetforplayer( "setup_drive_shadows" );
     thread setup_pitbull_vfx_lights();
     thread setup_vfx_sunflare();
     thread move_sunflare_back_startpoints();
@@ -301,14 +301,14 @@ set_street_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 0 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran", 1.0 );
     }
     else
         maps\_utility::vision_set_changes( "sanfran_oncoming", 1.0 );
 
-    level.player _meth_83C0( "set_street_lighting" );
+    level.player lightsetforplayer( "set_street_lighting" );
     thread setup_vfx_sunflare();
     thread move_sunflare_back_startpoints();
 }
@@ -319,14 +319,14 @@ set_van_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 0 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran", 1.0 );
     }
     else
         maps\_utility::vision_set_changes( "sanfran_oncoming", 1.0 );
 
-    level.player _meth_83C0( "set_street_lighting" );
+    level.player lightsetforplayer( "set_street_lighting" );
     thread setup_vfx_sunflare();
     thread move_sunflare_back_startpoints();
 }
@@ -337,14 +337,14 @@ set_boost_lighting()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 0 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran", 1.0 );
     }
     else
         maps\_utility::vision_set_changes( "sanfran_oncoming", 1.0 );
 
-    level.player _meth_83C0( "set_boost_lighting" );
+    level.player lightsetforplayer( "set_boost_lighting" );
     thread setup_vfx_sunflare();
     thread move_sunflare_back_startpoints();
     thread boost_setup_desat();
@@ -401,14 +401,14 @@ intro_zoom_in_out_fleet()
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.0, 23.0 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.0, 23.0 );
         wait 6.5;
-        level.player _meth_84AB( 2.0, 23.0 );
+        level.player setphysicaldepthoffield( 2.0, 23.0 );
         wait 2.5;
-        level.player _meth_84AB( 2.0, 23.0 );
+        level.player setphysicaldepthoffield( 2.0, 23.0 );
         wait 2.5;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -437,16 +437,16 @@ intro_rack_focus_cargo_dof()
 
 bc_explosion_vision()
 {
-    level.player _meth_83C0( "overexposed_effect_2" );
+    level.player lightsetforplayer( "overexposed_effect_2" );
     wait 0.05;
-    level.player _meth_83C0( "set_van_lighting" );
+    level.player lightsetforplayer( "set_van_lighting" );
 }
 
 bc_initial_blur()
 {
-    _func_072( 2, 0 );
+    setblur( 2, 0 );
     wait 0.5;
-    _func_072( 0, 1 );
+    setblur( 0, 1 );
 }
 
 headless_shadow_tweak()
@@ -461,29 +461,29 @@ headless_shadow_tweak()
 
 car_hit_shadows()
 {
-    level.player _meth_83C0( "car_hit_shadows_0" );
+    level.player lightsetforplayer( "car_hit_shadows_0" );
     wait 3.0;
-    level.player _meth_83C0( "car_hit_shadows_1" );
+    level.player lightsetforplayer( "car_hit_shadows_1" );
     wait 27;
-    level.player _meth_83C0( "car_hit_shadows_2" );
+    level.player lightsetforplayer( "car_hit_shadows_2" );
     wait 8;
-    level.player _meth_83C0( "car_hit_shadows_1" );
+    level.player lightsetforplayer( "car_hit_shadows_1" );
     wait 12.2;
-    level.player _meth_83C0( "car_hit_shadows_2" );
+    level.player lightsetforplayer( "car_hit_shadows_2" );
 }
 
 car_hit_blur()
 {
-    _func_072( 3, 0 );
+    setblur( 3, 0 );
     wait 0.5;
-    _func_072( 0, 1 );
+    setblur( 0, 1 );
 }
 
 van_knockback_blur()
 {
-    _func_072( 3, 0 );
+    setblur( 3, 0 );
     wait 0.5;
-    _func_072( 0, 1.5 );
+    setblur( 0, 1.5 );
 }
 
 bc_shadow_tweak()
@@ -501,22 +501,22 @@ tunnel_sequence_dof()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.5, 20, 30 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.5, 20, 30 );
         wait 3.5;
-        level.player _meth_84AB( 2.5, 40, 2 );
+        level.player setphysicaldepthoffield( 2.5, 40, 2 );
         wait 11.0;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.8, 38, 30 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.8, 38, 30 );
         wait 3.5;
-        level.player _meth_84AB( 2.5, 40, 2 );
+        level.player setphysicaldepthoffield( 2.5, 40, 2 );
         wait 11.0;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 
     if ( level.nextgen )
@@ -527,11 +527,11 @@ tunnel_sequence_dof()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
-        _func_0D3( "r_dof_physical_hipEnable", 1 );
-        _func_0D3( "r_dof_physical_hipFstop", 6 );
-        _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_hipEnable", 1 );
+        setsaveddvar( "r_dof_physical_hipFstop", 6 );
+        setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
     else
     {
@@ -545,9 +545,9 @@ pitbull_drive_dof()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_hipEnable", 1 );
-        _func_0D3( "r_dof_physical_hipFstop", 6 );
-        _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+        setsaveddvar( "r_dof_physical_hipEnable", 1 );
+        setsaveddvar( "r_dof_physical_hipFstop", 6 );
+        setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
     }
     else
     {
@@ -581,43 +581,43 @@ pitbull_crashed_dof()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
-        _func_0D3( "r_dof_physical_hipEnable", 0 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 1.5, 25, 5 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_hipEnable", 0 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 1.5, 25, 5 );
         wait 15;
-        level.player _meth_84AB( 0.75, 88, 3 );
+        level.player setphysicaldepthoffield( 0.75, 88, 3 );
         wait 7.5;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
         thread mblur_off();
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 1.5, 25, 5 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 1.5, 25, 5 );
         wait 15;
-        level.player _meth_84AB( 0.75, 88, 3 );
+        level.player setphysicaldepthoffield( 0.75, 88, 3 );
         wait 7.5;
         thread mblur_off();
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 pitbull_impact_blur()
 {
-    _func_072( 3, 0 );
+    setblur( 3, 0 );
     wait 0.6;
-    _func_072( 0, 0.8 );
+    setblur( 0, 0.8 );
 }
 
 pitbull_impact_blur_long()
 {
-    _func_072( 3, 0 );
+    setblur( 3, 0 );
     wait 1.2;
-    _func_072( 0, 2 );
+    setblur( 0, 2 );
 }
 
 pitbull_headlights_on()
@@ -625,7 +625,7 @@ pitbull_headlights_on()
     common_scripts\utility::flag_wait( "kill_vehicle_lights" );
     wait 0.6;
     level.origin_pitbull_headlight = common_scripts\utility::spawn_tag_origin();
-    level.origin_pitbull_headlight _meth_804D( level.player_pitbull.fake_vehicle_model, "tag_headlight_right", ( 5, 10, 3 ), ( 7, 0, 0 ) );
+    level.origin_pitbull_headlight linkto( level.player_pitbull.fake_vehicle_model, "tag_headlight_right", ( 5, 10, 3 ), ( 7, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_sanfran_pitbull_headlight" ), level.origin_pitbull_headlight, "TAG_ORIGIN" );
 }
 
@@ -640,7 +640,7 @@ friendly_pitbull_headlights_on()
 {
     common_scripts\utility::flag_wait( "kill_vehicle_lights" );
     level.origin_friendly_pitbull_headlight = common_scripts\utility::spawn_tag_origin();
-    level.origin_friendly_pitbull_headlight _meth_804D( level.friendly_pitbull, "tag_headlight_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.origin_friendly_pitbull_headlight linkto( level.friendly_pitbull, "tag_headlight_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_sanfran_pitbull_headlight" ), level.origin_friendly_pitbull_headlight, "TAG_ORIGIN" );
 }
 
@@ -654,7 +654,7 @@ friendly_pitbull_headlights_off()
 disable_bokeh()
 {
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 van_open_bridge_collapse_dof()
@@ -662,57 +662,57 @@ van_open_bridge_collapse_dof()
     if ( level.nextgen )
     {
         thread mblur_rotation_on();
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 3.5, 23, 10 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 3.5, 23, 10 );
         wait 3;
-        level.player _meth_84AB( 3.5, 13, 10 );
+        level.player setphysicaldepthoffield( 3.5, 13, 10 );
         wait 5.2;
         thread van_knockback_blur();
         wait 1.5;
-        level.player _meth_84AB( 1.5, 123, 5 );
+        level.player setphysicaldepthoffield( 1.5, 123, 5 );
         wait 11;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 7;
-        level.player _meth_84AB( 2.5, 40, 5 );
+        level.player setphysicaldepthoffield( 2.5, 40, 5 );
         wait 3.5;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 21;
-        level.player _meth_84AB( 2, 35, 5 );
+        level.player setphysicaldepthoffield( 2, 35, 5 );
         wait 13;
-        level.player _meth_84AB( 2.5, 40, 5 );
+        level.player setphysicaldepthoffield( 2.5, 40, 5 );
         wait 5;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 8;
-        level.player _meth_84AB( 1.5, 64, 5 );
+        level.player setphysicaldepthoffield( 1.5, 64, 5 );
         wait 10;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 3.5, 23, 10 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 3.5, 23, 10 );
         wait 3;
-        level.player _meth_84AB( 3.5, 13, 10 );
+        level.player setphysicaldepthoffield( 3.5, 13, 10 );
         wait 5.2;
         wait 1.5;
-        level.player _meth_84AB( 1.5, 123, 5 );
+        level.player setphysicaldepthoffield( 1.5, 123, 5 );
         wait 11;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 7;
-        level.player _meth_84AB( 2.5, 40, 5 );
+        level.player setphysicaldepthoffield( 2.5, 40, 5 );
         wait 3.5;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 21;
-        level.player _meth_84AB( 2, 35, 5 );
+        level.player setphysicaldepthoffield( 2, 35, 5 );
         wait 13;
-        level.player _meth_84AB( 2.5, 40, 5 );
+        level.player setphysicaldepthoffield( 2.5, 40, 5 );
         wait 5;
-        level.player _meth_84AB( 2.5, 1500, 5 );
+        level.player setphysicaldepthoffield( 2.5, 1500, 5 );
         wait 8;
-        level.player _meth_84AB( 1.5, 64, 5 );
+        level.player setphysicaldepthoffield( 1.5, 64, 5 );
         wait 10;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -721,13 +721,13 @@ bridge_collapse_sequence()
     common_scripts\_exploder::exploder( 9521 );
 
     if ( level.nextgen )
-        level.player _meth_8490( "clut_sanfran_exterior", 6.0 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 6.0 );
 
     wait 8;
     wait 14.5;
 
     if ( level.currentgen )
-        level.player _meth_83C0( "set_boost_lighting" );
+        level.player lightsetforplayer( "set_boost_lighting" );
 
     wait 20;
     wait 8.75;
@@ -745,7 +745,7 @@ attach_light_to_police_car( var_0 )
 
     var_0.car_light = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.car_light;
-    var_1 _meth_804D( var_0, "TAG_ORIGIN", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "TAG_ORIGIN", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "light_sedan_police_scroll" ), var_1, "tag_origin" );
     level waittill( "kill_barricade_copcar_lights" );
     stopfxontag( common_scripts\utility::getfx( "light_sedan_police_scroll" ), var_1, "tag_origin" );
@@ -765,8 +765,8 @@ burke_rim_lights()
     var_1 = var_0.helmet_tag;
     var_0.helmet_tag2 = common_scripts\utility::spawn_tag_origin();
     var_2 = var_0.helmet_tag2;
-    var_1 _meth_804D( var_0, "J_Head", ( 3, -5, 5 ), ( 0, 0, 0 ), 0 );
-    var_2 _meth_804D( var_0, "J_Head", ( 3, -5, -5 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 3, -5, 5 ), ( 0, 0, 0 ), 0 );
+    var_2 linkto( var_0, "J_Head", ( 3, -5, -5 ), ( 0, 0, 0 ), 0 );
 }
 
 boost_setup_desat()
@@ -819,13 +819,13 @@ setup_crash_events()
         maps\_utility::vision_set_fog_changes( "sanfran", 0.0 );
 
     thread pitbull_crashed_dof();
-    level.player _meth_83C0( "setup_crash_events" );
+    level.player lightsetforplayer( "setup_crash_events" );
     wait 5;
     wait 9.25;
-    level.player _meth_83C0( "after_crash" );
+    level.player lightsetforplayer( "after_crash" );
     wait 7.5;
     lerpsunangles( ( -24.5, 125, 0 ), level.defaultsundir, 0.25 );
-    level.player _meth_83C0( "set_street_lighting" );
+    level.player lightsetforplayer( "set_street_lighting" );
     wait 2.5;
     resetsundirection();
 }
@@ -843,40 +843,40 @@ lerp_sun_cargo_ship()
 script_probe_pitbull_tunnel_interior()
 {
     var_0 = getent( "refl_pitbull_tunnel_interior", "targetname" );
-    level.burke _meth_83AB( var_0.origin );
-    level.saint _meth_83AB( var_0.origin );
-    level.player_pitbull.fake_vehicle_model _meth_83AB( var_0.origin );
-    level.player_pitbull.player_rig _meth_83AB( var_0.origin );
+    level.burke overridereflectionprobe( var_0.origin );
+    level.saint overridereflectionprobe( var_0.origin );
+    level.player_pitbull.fake_vehicle_model overridereflectionprobe( var_0.origin );
+    level.player_pitbull.player_rig overridereflectionprobe( var_0.origin );
     var_1 = getent( "lighting_centroid_burke", "targetname" );
-    level.burke _meth_847B( var_1.origin );
+    level.burke overridelightingorigin( var_1.origin );
 }
 
 script_probe_pitbull_tunnel_exterior()
 {
     self waittill( "trigger" );
     var_0 = getent( "refl_pitbull_tunnel_exterior", "targetname" );
-    level.burke _meth_83AB( var_0.origin );
-    level.burke _meth_847C();
-    level.saint _meth_83AB( var_0.origin );
-    level.player_pitbull.fake_vehicle_model _meth_83AB( var_0.origin );
-    level.player_pitbull.player_rig _meth_83AB( var_0.origin );
+    level.burke overridereflectionprobe( var_0.origin );
+    level.burke defaultlightingorigin();
+    level.saint overridereflectionprobe( var_0.origin );
+    level.player_pitbull.fake_vehicle_model overridereflectionprobe( var_0.origin );
+    level.player_pitbull.player_rig overridereflectionprobe( var_0.origin );
 }
 
 script_probe_pitbull_tunnel_exterior_no_trigger()
 {
     var_0 = getent( "refl_pitbull_tunnel_exterior", "targetname" );
-    level.burke _meth_83AB( var_0.origin );
-    level.saint _meth_83AB( var_0.origin );
-    level.player_pitbull.fake_vehicle_model _meth_83AB( var_0.origin );
-    level.player_pitbull.player_rig _meth_83AB( var_0.origin );
+    level.burke overridereflectionprobe( var_0.origin );
+    level.saint overridereflectionprobe( var_0.origin );
+    level.player_pitbull.fake_vehicle_model overridereflectionprobe( var_0.origin );
+    level.player_pitbull.player_rig overridereflectionprobe( var_0.origin );
 }
 
 script_probe_pitbull_default()
 {
-    level.burke _meth_83AC();
-    level.saint _meth_83AC();
-    level.player_pitbull.fake_vehicle_model _meth_83AC();
-    level.player_pitbull.player_rig _meth_83AC();
+    level.burke defaultreflectionprobe();
+    level.saint defaultreflectionprobe();
+    level.player_pitbull.fake_vehicle_model defaultreflectionprobe();
+    level.player_pitbull.player_rig defaultreflectionprobe();
 }
 
 setup_pitbull_vfx_lights()
@@ -888,7 +888,7 @@ setup_pitbull_vfx_lights()
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_804D( var_0, "J_Head", ( 5, -10, 0 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 5, -10, 0 ), ( 0, 0, 0 ), 0 );
 }
 
 setup_vfx_sunflare()
@@ -913,7 +913,7 @@ vision_set_sanfran()
 
     if ( level.nextgen )
     {
-        level.player _meth_8490( "clut_sanfran_exterior", 1 );
+        level.player setclutforplayer( "clut_sanfran_exterior", 1 );
         maps\_utility::vision_set_changes( "sanfran_neutral", 1.0 );
         maps\_utility::fog_set_changes( "sanfran_oncoming", 1.0 );
     }
@@ -924,5 +924,5 @@ vision_set_sanfran()
 setup_drive_shadows()
 {
     self waittill( "trigger" );
-    level.player _meth_83C0( "setup_drive_shadows" );
+    level.player lightsetforplayer( "setup_drive_shadows" );
 }

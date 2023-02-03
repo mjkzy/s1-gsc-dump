@@ -90,9 +90,9 @@ pdrone_deploy_check( var_0, var_1, var_2 )
     if ( !isdefined( var_2 ) )
         var_2 = 45;
 
-    var_3 = level.player _meth_80A8();
+    var_3 = level.player geteye();
     var_4 = 1;
-    var_5 = common_scripts\utility::flat_angle( level.player _meth_8036() );
+    var_5 = common_scripts\utility::flat_angle( level.player getgunangles() );
     var_6 = 0;
 
     for ( var_7 = 0; var_7 <= 5; var_7++ )
@@ -138,16 +138,16 @@ pdrone_deploy( var_0, var_1, var_2 )
     var_3 = maps\_utility::spawn_anim_model( "drone_deploy_player_arms", level.player.origin );
     var_4 = maps\_utility::spawn_anim_model( "drone_deploy_drone", level.player.origin );
     var_5 = level.player common_scripts\utility::spawn_tag_origin();
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
     level.player maps\_shg_utility::setup_player_for_scene();
     var_6 = common_scripts\utility::spawn_tag_origin();
-    var_6 _meth_804D( var_3, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_6 linkto( var_3, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
-    if ( level.player _meth_817C() == "prone" )
+    if ( level.player getstance() == "prone" )
     {
-        while ( level.player _meth_817C() != "crouch" )
+        while ( level.player getstance() != "crouch" )
         {
-            level.player _meth_817D( "crouch" );
+            level.player setstance( "crouch" );
             waitframe();
         }
 
@@ -156,10 +156,10 @@ pdrone_deploy( var_0, var_1, var_2 )
 
     var_7 = 0;
 
-    if ( level.player _meth_817C() == "crouch" )
+    if ( level.player getstance() == "crouch" )
         var_7 = 20;
 
-    level.player.dronedeploystance = level.player _meth_817C();
+    level.player.dronedeploystance = level.player getstance();
     var_3.origin = level.player.origin - ( 0, 0, var_7 );
     var_4.origin = level.player.origin - ( 0, 0, var_7 );
     var_5.origin = level.player.origin - ( 0, 0, var_7 );
@@ -167,25 +167,25 @@ pdrone_deploy( var_0, var_1, var_2 )
     soundscripts\_snd::snd_message( "snd_player_drone_deploy", var_4 );
     var_3 hide();
     var_8 = 0.5;
-    level.player _meth_8080( var_6, "tag_origin", var_8 );
+    level.player playerlinktoblend( var_6, "tag_origin", var_8 );
     wait(var_8);
     var_3 show();
     thread introscreen_fade_in();
     var_5 maps\_anim::anim_single( [ var_3, var_4 ], "deploy" );
     var_9 = var_0 maps\_utility::spawn_vehicle();
-    var_9 _meth_80B1( "vehicle_pdrone_player" );
+    var_9 setmodel( "vehicle_pdrone_player" );
 
     if ( isdefined( var_2 ) )
-        var_9 _meth_827C( var_2.origin, var_2.angles );
+        var_9 vehicle_teleport( var_2.origin, var_2.angles );
     else
-        var_9 _meth_827C( var_4.origin, var_4.angles );
+        var_9 vehicle_teleport( var_4.origin, var_4.angles );
 
-    level.player _meth_804F();
+    level.player unlink();
     var_3 delete();
     var_4 delete();
     var_5 delete();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
 
     if ( isdefined( var_1 ) && var_1 )
         var_9 thread pdrone_orient_to_closest_ai_target();
@@ -204,13 +204,13 @@ pdrone_orient_to_closest_target( var_0 )
     {
         var_2 = var_1.origin - self.origin;
         var_3 = vectortoangles( var_2 );
-        self _meth_827C( self.origin, var_3 );
+        self vehicle_teleport( self.origin, var_3 );
     }
 }
 
 pdrone_orient_to_closest_ai_target()
 {
-    pdrone_orient_to_closest_target( _func_0D6( "axis" ) );
+    pdrone_orient_to_closest_target( getaiarray( "axis" ) );
 }
 
 pdrone_orient_to_closest_ent_target()
@@ -233,10 +233,10 @@ _pdrone_stop_use_anim()
 {
     var_0 = maps\_utility::spawn_anim_model( "drone_deploy_player_arms", level.player.origin );
     var_1 = level.player common_scripts\utility::spawn_tag_origin();
-    level.player _meth_807F( var_0, "tag_player" );
+    level.player playerlinktoabsolute( var_0, "tag_player" );
     var_1 maps\_anim::anim_single_solo( var_0, "stop_use" );
-    level.player _meth_804F();
-    var_2 = level.player _meth_813C( level.player.origin + ( 0, 0, 60 ) );
+    level.player unlink();
+    var_2 = level.player getdroptofloorposition( level.player.origin + ( 0, 0, 60 ) );
 
     if ( isdefined( var_2 ) )
         level.player setorigin( var_2 );
@@ -284,7 +284,7 @@ _pdrone_player_proxy( var_0 )
     var_2.no_friendly_fire_penalty = 1;
     var_2 disableaimassist();
     var_2 thread maps\_utility::magic_bullet_shield( 1 );
-    var_2 _meth_83FA( 3, 1, 1 );
+    var_2 hudoutlineenable( 3, 1, 1 );
     var_2 attach( "dem_tablet_pc_01", "tag_weapon_left" );
     var_3 = self.saved.return_tag;
 
@@ -294,7 +294,7 @@ _pdrone_player_proxy( var_0 )
     self.player_proxy = var_2;
     self.player_proxy_org = var_3;
     childthread _pdrone_player_proxy_delicate_flower( var_2 );
-    var_2 _meth_81C6( var_3.origin, var_3.angles );
+    var_2 forceteleport( var_3.origin, var_3.angles );
     var_3 maps\_anim::anim_loop_solo( var_2, "loop", "stop_loop" );
 }
 
@@ -330,7 +330,7 @@ pdrone_player_use( var_0, var_1, var_2, var_3 )
 
     var_0.data.player_command_for_exit = "stance";
 
-    if ( !level.player _meth_834E() )
+    if ( !level.player usinggamepad() )
         var_0.data.player_command_for_exit = "activate";
 }
 
@@ -357,28 +357,28 @@ _save_dvars()
 
 _reset_dvars()
 {
-    _func_0D3( "vehHelicopterControlsAltitude", self.saved.vehhelicoptercontrolsaltitude );
-    _func_0D3( "vehHelicopterControlSystem", self.saved.vehhelicoptercontrolsystem );
-    _func_0D3( "r_hudoutlineenable", self.saved.r_hudoutlineenable );
-    _func_0D3( "r_hudoutlinepostmode", self.saved.r_hudoutlinepostmode );
-    _func_0D3( "r_hudoutlinehalolumscale", self.saved.r_hudoutlinehalolumscale );
-    _func_0D3( "r_hudoutlinehaloblurradius", self.saved.r_hudoutlinehaloblurradius );
-    _func_0D3( "aim_turnrate_pitch", self.saved.aim_turnrate_pitch );
-    _func_0D3( "aim_turnrate_yaw", self.saved.aim_turnrate_yaw );
+    setsaveddvar( "vehHelicopterControlsAltitude", self.saved.vehhelicoptercontrolsaltitude );
+    setsaveddvar( "vehHelicopterControlSystem", self.saved.vehhelicoptercontrolsystem );
+    setsaveddvar( "r_hudoutlineenable", self.saved.r_hudoutlineenable );
+    setsaveddvar( "r_hudoutlinepostmode", self.saved.r_hudoutlinepostmode );
+    setsaveddvar( "r_hudoutlinehalolumscale", self.saved.r_hudoutlinehalolumscale );
+    setsaveddvar( "r_hudoutlinehaloblurradius", self.saved.r_hudoutlinehaloblurradius );
+    setsaveddvar( "aim_turnrate_pitch", self.saved.aim_turnrate_pitch );
+    setsaveddvar( "aim_turnrate_yaw", self.saved.aim_turnrate_yaw );
     level.player.gs.playerhealth_regularregendelay = self.saved.playerhealth_regularregendelay;
     level.player.gs.longregentime = self.saved.playerhealth_regularregendelay;
 }
 
 _set_dvars()
 {
-    _func_0D3( "vehHelicopterControlsAltitude", 1 );
-    _func_0D3( "vehHelicopterControlSystem", 1 );
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinehalolumscale", 1 );
-    _func_0D3( "r_hudoutlinehaloblurradius", 0.7 );
-    _func_0D3( "aim_turnrate_pitch", 100 );
-    _func_0D3( "aim_turnrate_yaw", 130 );
+    setsaveddvar( "vehHelicopterControlsAltitude", 1 );
+    setsaveddvar( "vehHelicopterControlSystem", 1 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinehalolumscale", 1 );
+    setsaveddvar( "r_hudoutlinehaloblurradius", 0.7 );
+    setsaveddvar( "aim_turnrate_pitch", 100 );
+    setsaveddvar( "aim_turnrate_yaw", 130 );
     level.player.gs.playerhealth_regularregendelay /= 500;
     level.player.gs.longregentime /= 500;
 }
@@ -387,12 +387,12 @@ _set_dvars()
 
 _vmodel_anims( var_0, var_1 )
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     var_2 = getanimlength( var_1 );
 
     for (;;)
     {
-        self _meth_8143( var_0 );
+        self setanimknob( var_0 );
         level.player waittill( "weapon_fired" );
 
         if ( 1 )
@@ -400,7 +400,7 @@ _vmodel_anims( var_0, var_1 )
 
         while ( level.player attackbuttonpressed() )
         {
-            self _meth_8145( var_1 );
+            self setanimknobrestart( var_1 );
             wait(var_2 / 6);
         }
 
@@ -418,7 +418,7 @@ _vmodel_sway()
 {
     for (;;)
     {
-        var_0 = self _meth_8288();
+        var_0 = self vehicle_getbodyvelocity();
         var_1 = length( var_0 );
 
         if ( 1 )
@@ -471,10 +471,10 @@ _vmodel_sway()
         }
 
         var_14 = -1 * var_9 * var_11 + var_10 * var_11;
-        self.vmodelbarrel _meth_80A7( level.player );
-        self.vmodelouter _meth_80A7( level.player );
-        self.vmodelbarrel _meth_80A6( level.player, "tag_origin", ( -5, 0, -1.75 ), ( var_14, 0, var_8 ), 1 );
-        self.vmodelouter _meth_80A6( level.player, "tag_origin", ( 6, 0, -3 ), ( var_14, 0, var_8 ), 1 );
+        self.vmodelbarrel unlinkfromplayerview( level.player );
+        self.vmodelouter unlinkfromplayerview( level.player );
+        self.vmodelbarrel linktoplayerview( level.player, "tag_origin", ( -5, 0, -1.75 ), ( var_14, 0, var_8 ), 1 );
+        self.vmodelouter linktoplayerview( level.player, "tag_origin", ( 6, 0, -3 ), ( var_14, 0, var_8 ), 1 );
         waitframe();
     }
 }
@@ -482,13 +482,13 @@ _vmodel_sway()
 _vmodel_enter()
 {
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "vehicle_sniper_drone_outerparts" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 6, 0, -3 ), ( 0, 0, 0 ), 1 );
+    var_0 setmodel( "vehicle_sniper_drone_outerparts" );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 6, 0, -3 ), ( 0, 0, 0 ), 1 );
     var_0 childthread _vmodel_anims( %sniper_drone_outerparts_idle, %sniper_drone_outerparts_fire );
     self.vmodelouter = var_0;
     var_1 = spawn( "script_model", self.origin );
-    var_1 _meth_80B1( "vehicle_vm_sniper_drone" );
-    var_1 _meth_80A6( level.player, "tag_origin", ( -5, 0, -1.75 ), ( 0, 0, 0 ), 1 );
+    var_1 setmodel( "vehicle_vm_sniper_drone" );
+    var_1 linktoplayerview( level.player, "tag_origin", ( -5, 0, -1.75 ), ( 0, 0, 0 ), 1 );
     var_1 childthread _vmodel_anims( %sniper_drone_vm_idle, %sniper_drone_vm_fire );
     self.vmodelbarrel = var_1;
     childthread _vmodel_sway();
@@ -496,9 +496,9 @@ _vmodel_enter()
 
 _vmodel_exit()
 {
-    self.vmodelouter _meth_80A7( level.player );
+    self.vmodelouter unlinkfromplayerview( level.player );
     self.vmodelouter delete();
-    self.vmodelbarrel _meth_80A7( level.player );
+    self.vmodelbarrel unlinkfromplayerview( level.player );
     self.vmodelbarrel delete();
 }
 
@@ -524,7 +524,7 @@ _reduce_hud_target_count_on_death( var_0 )
 
 _sethudoutline( var_0 )
 {
-    var_0 _meth_83FA( 1, 1, 0 );
+    var_0 hudoutlineenable( 1, 1, 0 );
     childthread _reduce_hud_target_count_on_death( var_0 );
 }
 
@@ -540,7 +540,7 @@ _sethudoutline_on_spawn( var_0 )
 
 _mark_newlyspawned()
 {
-    var_0 = common_scripts\utility::array_combine( _func_0D8(), vehicle_getspawnerarray() );
+    var_0 = common_scripts\utility::array_combine( getspawnerarray(), vehicle_getspawnerarray() );
 
     foreach ( var_2 in var_0 )
         childthread _sethudoutline_on_spawn( var_2 );
@@ -548,8 +548,8 @@ _mark_newlyspawned()
 
 _set_hudoutline_on_enemies()
 {
-    self.hud_targets = _func_0D6( "axis" );
-    self.hud_allies = _func_0D6( "allies" );
+    self.hud_targets = getaiarray( "axis" );
+    self.hud_allies = getaiarray( "allies" );
 
     if ( isdefined( self.vehicle_targets ) )
     {
@@ -578,7 +578,7 @@ _set_hudoutline_on_enemies()
     childthread _monitor_threat_count();
 
     foreach ( var_11 in self.hud_allies )
-        var_11 _meth_83FA( 6, 1, 0 );
+        var_11 hudoutlineenable( 6, 1, 0 );
 }
 
 _remove_hudoutline_on_enemies()
@@ -587,8 +587,8 @@ _remove_hudoutline_on_enemies()
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) )
-            var_2 _meth_83FB();
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
+            var_2 hudoutlinedisable();
     }
 }
 
@@ -598,7 +598,7 @@ pdrone_player_enter( var_0, var_1, var_2 )
     _save_dvars();
     _set_dvars();
     level.cansave = 0;
-    level.player _meth_80EF();
+    level.player enableinvulnerability();
 
     if ( isdefined( var_0 ) && var_0 )
         childthread _pdrone_player_proxy( var_1 );
@@ -610,7 +610,7 @@ pdrone_player_enter( var_0, var_1, var_2 )
 
     self.no_threat_return_node = var_2;
     level.player maps\_utility::teleport_player( self );
-    level.player _meth_820B( self, 0 );
+    level.player drivevehicleandcontrolturret( self, 0 );
 
     if ( 1 )
     {
@@ -618,12 +618,12 @@ pdrone_player_enter( var_0, var_1, var_2 )
         level.player.rumble_entity.intensity = 0.088;
     }
 
-    self.turret _meth_8099( level.player );
+    self.turret useby( level.player );
     self.turret makeunusable();
-    level.player _meth_80F4();
+    level.player disableturretdismount();
     level.player.is_driving_pdrone = 1;
     self hide();
-    self _meth_8139( "allies" );
+    self makeentitysentient( "allies" );
     _vmodel_enter();
     maps\_shg_utility::hide_player_hud();
     _setup_overlay_static();
@@ -674,7 +674,7 @@ pdrone_player_exit( var_0 )
 
         if ( 1 )
         {
-            level.player _meth_80AF( "steady_rumble" );
+            level.player stoprumble( "steady_rumble" );
 
             if ( isdefined( level.player.rumble_entity ) )
                 level.player.rumble_entity delete();
@@ -682,12 +682,12 @@ pdrone_player_exit( var_0 )
 
         if ( level.player.is_driving_pdrone )
         {
-            level.player _meth_820C( self );
+            level.player drivevehicleandcontrolturretoff( self );
             level.player.is_driving_pdrone = 0;
             self.turret delete();
         }
 
-        level.player _meth_80F0();
+        level.player disableinvulnerability();
         _vmodel_exit();
         _remove_hudoutline_on_enemies();
 
@@ -700,7 +700,7 @@ pdrone_player_exit( var_0 )
         if ( isdefined( self.player_proxy_took_damage ) && self.player_proxy_took_damage )
         {
             var_1 = level.player.health * 0.2 / level.player.damagemultiplier;
-            level.player _meth_8051( var_1, self.origin, level.player );
+            level.player dodamage( var_1, self.origin, level.player );
         }
 
         if ( self.customhealth <= 0 && distance( self.saved.return_tag.origin, self.origin ) > 150 )
@@ -731,7 +731,7 @@ _make_overlay( var_0, var_1, var_2, var_3 )
     }
 
     var_4.sort = var_3;
-    var_4 _meth_80CC( var_0, 640, 480 );
+    var_4 setshader( var_0, 640, 480 );
     var_4.alpha = var_1;
     return var_4;
 }
@@ -787,7 +787,7 @@ _do_a_lil_damage_and_heal( var_0 )
     if ( !isdefined( var_0 ) )
         return;
 
-    level.player _meth_8051( 1, var_0.origin, var_0 );
+    level.player dodamage( 1, var_0.origin, var_0 );
 }
 
 _monitor_volume_array()
@@ -800,7 +800,7 @@ _monitor_volume_array()
     {
         var_1.origin = self.origin;
         var_1.angles = self.angles;
-        var_2 = var_1 _meth_80AA( self.data.volume_array );
+        var_2 = var_1 getistouchingentities( self.data.volume_array );
 
         if ( !isdefined( var_2 ) || !isarray( var_2 ) || var_2.size == 0 )
         {
@@ -879,9 +879,9 @@ _monitor_touch()
             self notify( "damage", 4000 );
 
             if ( isdefined( var_0.targetname ) && issubstr( var_0.targetname, "pdrone_player_proxy" ) )
-                var_0 _meth_8051( 100, self.origin, level.player );
+                var_0 dodamage( 100, self.origin, level.player );
             else if ( var_0.team != "allies" )
-                var_0 _meth_8052();
+                var_0 kill();
         }
 
         waitframe();
@@ -940,14 +940,14 @@ _monitor_controls()
 
     while ( !var_0 maps\_utility::ent_flag( "move_done" ) || !var_0 maps\_utility::ent_flag( "steer_done" ) || !var_0 maps\_utility::ent_flag( "attack_done" ) || !var_0 maps\_utility::ent_flag( "ads_done" ) || !var_0 maps\_utility::ent_flag( "up_done" ) || !var_0 maps\_utility::ent_flag( "down_done" ) )
     {
-        var_1 = level.player _meth_82F3();
+        var_1 = level.player getnormalizedmovement();
 
         if ( length( var_1 ) > 0.1 )
             var_0 maps\_utility::ent_flag_set( "move_done" );
 
-        var_1 = level.player _meth_830D();
+        var_1 = level.player getnormalizedcameramovements();
 
-        if ( length( var_1 ) > 0.1 || !level.player _meth_834E() )
+        if ( length( var_1 ) > 0.1 || !level.player usinggamepad() )
             var_0 maps\_utility::ent_flag_set( "steer_done" );
 
         if ( level.player attackbuttonpressed() )
@@ -956,10 +956,10 @@ _monitor_controls()
         if ( level.player adsbuttonpressed() )
             var_0 maps\_utility::ent_flag_set( "ads_done" );
 
-        if ( level.player _meth_82EE() )
+        if ( level.player fragbuttonpressed() )
             var_0 maps\_utility::ent_flag_set( "up_done" );
 
-        if ( level.player _meth_82EF() )
+        if ( level.player secondaryoffhandbuttonpressed() )
             var_0 maps\_utility::ent_flag_set( "down_done" );
 
         waitframe();
@@ -1060,7 +1060,7 @@ _listen_for_hold_to_exit()
 
         for ( var_1 = 0; var_0 maps\_utility::ent_flag( "exit_button_pressed" ); var_1 += 0.05 )
         {
-            if ( var_1 >= 1.0 || !level.player _meth_834E() )
+            if ( var_1 >= 1.0 || !level.player usinggamepad() )
             {
                 level.player notify( "drone_exit" );
                 break;
@@ -1073,13 +1073,13 @@ _listen_for_hold_to_exit()
 
 _listen_drone_input()
 {
-    level.player _meth_82DD( "weapon_fired", "+attack" );
+    level.player notifyonplayercommand( "weapon_fired", "+attack" );
 
     if ( isdefined( self.data.player_command_for_exit ) )
     {
         wait 2;
-        level.player _meth_82DD( "hold_to_exit_start", "+" + self.data.player_command_for_exit );
-        level.player _meth_82DD( "hold_to_exit_stop", "-" + self.data.player_command_for_exit );
+        level.player notifyonplayercommand( "hold_to_exit_start", "+" + self.data.player_command_for_exit );
+        level.player notifyonplayercommand( "hold_to_exit_stop", "-" + self.data.player_command_for_exit );
         childthread _listen_for_hold_to_exit();
     }
 }
@@ -1088,7 +1088,7 @@ _remove_drone_control()
 {
     if ( isdefined( self.data.player_command_for_exit ) )
     {
-        _func_28B( "hold_to_exit_start", "+" + self.data.player_command_for_exit );
-        _func_28B( "hold_to_exit_stop", "-" + self.data.player_command_for_exit );
+        notifyoncommandremove( "hold_to_exit_start", "+" + self.data.player_command_for_exit );
+        notifyoncommandremove( "hold_to_exit_stop", "-" + self.data.player_command_for_exit );
     }
 }

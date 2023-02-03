@@ -332,17 +332,17 @@ sniperscramblegondolaanimations()
 scramblejumprumblelight( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 scramblejumprumbleheavy( var_0 )
 {
     earthquake( 0.5, 0.5, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 scrambletruckpushrumbleheavy( var_0 )
 {
     earthquake( 0.5, 0.5, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }

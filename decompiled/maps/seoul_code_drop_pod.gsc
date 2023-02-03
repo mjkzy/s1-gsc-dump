@@ -34,7 +34,7 @@ handle_reentry_fx()
     var_1 = getentarray( "reentry_fire_brush", "targetname" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_804D( level.center_universe, "tag_origin" );
+        var_3 linkto( level.center_universe, "tag_origin" );
 
     common_scripts\utility::array_call( var_1, ::hide );
     level waittill( "entering_upper_atmosphere" );
@@ -97,11 +97,11 @@ setup_galaxy_hatch()
     var_2 = var_1 common_scripts\utility::spawn_tag_origin();
 
     foreach ( var_4 in var_0 )
-        var_4 _meth_804D( var_2, "tag_origin" );
+        var_4 linkto( var_2, "tag_origin" );
 
     level waittill( "open_hatch" );
     var_6 = ( -90, var_2.angles[1], var_2.angles[2] );
-    var_2 _meth_82B5( var_6, 8, 3, 1 );
+    var_2 rotateto( var_6, 8, 3, 1 );
 }
 
 setup_lower_atmosphere_fall()
@@ -140,7 +140,7 @@ handle_sun_spotlight()
     var_1.angles = vectortoangles( level.center_universe.origin - var_1.origin );
     level waittill( "begin_deorbit" );
     playfxontag( common_scripts\utility::getfx( "player_light" ), var_1, "tag_origin" );
-    var_1 _meth_804D( level.center_universe, "tag_origin" );
+    var_1 linkto( level.center_universe, "tag_origin" );
     level waittill( "reentry" );
     stopfxontag( common_scripts\utility::getfx( "player_light" ), var_1, "tag_origin" );
 }
@@ -158,7 +158,7 @@ handle_space_sky()
     var_0 = getentarray( "space_brush", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_804D( level.center_universe, "tag_origin" );
+        var_2 linkto( level.center_universe, "tag_origin" );
 
     level waittill( "dropped_from_pod" );
 
@@ -176,11 +176,11 @@ handle_atmospheric_transition()
 
 handle_drop_pod_screen_start()
 {
-    _func_05C();
-    level.pod_screen _meth_804B( level.pod_screen.tag_screen_off );
+    stopcinematicingame();
+    level.pod_screen showpart( level.pod_screen.tag_screen_off );
     level waittill( "screen_intialize" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "drop_pod_glass_reboot" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "drop_pod_glass_reboot" );
     wait 3.0;
     drop_pod_screen_on();
     common_scripts\utility::flag_wait( "turn_on_seo_advertisement" );
@@ -198,7 +198,7 @@ drop_pod_screen_on()
 
     if ( level.pod_screen.video_idle )
     {
-        _func_059( "drop_pod_glass_idle" );
+        cinematicingameloop( "drop_pod_glass_idle" );
         level.pod_screen.video_idle = 0;
     }
 }
@@ -206,13 +206,13 @@ drop_pod_screen_on()
 drop_pod_screen_off( var_0 )
 {
     level notify( "pod_screen_off" );
-    _func_059( "drop_pod_glass_evacuate" );
+    cinematicingameloop( "drop_pod_glass_evacuate" );
     level notify( "portal_vista_off" );
 }
 
 drop_pod_screen_off_damage( var_0 )
 {
-    _func_059( "drop_pod_glass_damaged" );
+    cinematicingameloop( "drop_pod_glass_damaged" );
     level notify( "pod_screen_off" );
 }
 
@@ -220,7 +220,7 @@ drop_pod_screen_chrome_abber( var_0 )
 {
     if ( level.pod_screen.video_cab_count < 2 )
     {
-        _func_059( "drop_pod_glass_glitch" );
+        cinematicingameloop( "drop_pod_glass_glitch" );
         waitframe();
         level.pod_screen.video_cab_count++;
     }
@@ -228,13 +228,13 @@ drop_pod_screen_chrome_abber( var_0 )
 
 drop_pod_screen_bootup( var_0 )
 {
-    _func_059( "drop_pod_glass_reboot" );
+    cinematicingameloop( "drop_pod_glass_reboot" );
     level thread maps\seoul_fx::intro_droppod_velocity_streaks( var_0 );
 }
 
 drop_pod_screen_on_warning( var_0 )
 {
-    _func_059( "drop_pod_glass_warning" );
+    cinematicingameloop( "drop_pod_glass_warning" );
     level notify( "pod_screen_bootup" );
 }
 
@@ -251,10 +251,10 @@ handle_pod_screen_show( var_0 )
     for (;;)
     {
         level waittill( "pod_screen_on" );
-        level.pod_screen _meth_804B( level.pod_screen.tag_screen_on );
-        level.pod_screen _meth_804B( level.pod_screen.tag_screen_load );
-        var_0 _meth_8048( "TAG_ROOF" );
-        level.pod_screen _meth_8048( level.pod_screen.tag_screen_off );
+        level.pod_screen showpart( level.pod_screen.tag_screen_on );
+        level.pod_screen showpart( level.pod_screen.tag_screen_load );
+        var_0 hidepart( "TAG_ROOF" );
+        level.pod_screen hidepart( level.pod_screen.tag_screen_off );
     }
 }
 
@@ -263,8 +263,8 @@ handle_pod_screen_off( var_0 )
     for (;;)
     {
         level waittill( "pod_screen_off" );
-        level.pod_screen _meth_804B( level.pod_screen.tag_screen_off );
-        var_0 _meth_804B( "TAG_ROOF" );
+        level.pod_screen showpart( level.pod_screen.tag_screen_off );
+        var_0 showpart( "TAG_ROOF" );
     }
 }
 
@@ -273,24 +273,24 @@ handle_pod_screen_bootup( var_0 )
     for (;;)
     {
         level waittill( "pod_screen_bootup" );
-        level.pod_screen _meth_8048( level.pod_screen.tag_screen_off );
-        var_0 _meth_8048( "TAG_ROOF" );
+        level.pod_screen hidepart( level.pod_screen.tag_screen_off );
+        var_0 hidepart( "TAG_ROOF" );
     }
 }
 
 fov_screen( var_0 )
 {
     if ( level.pod_screen.fov_screen_count == 0 )
-        level.player _meth_8031( 85, 3 );
+        level.player lerpfov( 85, 3 );
     else
-        level.player _meth_8031( 85, 0.3 );
+        level.player lerpfov( 85, 0.3 );
 
     level.pod_screen.fov_screen_count++;
 }
 
 fov_face( var_0 )
 {
-    level.player _meth_8031( 65, 0.3 );
+    level.player lerpfov( 65, 0.3 );
 }
 
 drop_pod_chromatic_abberation( var_0 )
@@ -298,18 +298,18 @@ drop_pod_chromatic_abberation( var_0 )
     var_1 = 8;
     var_2 = 1;
     var_3 = 8;
-    _func_0D3( "r_chromaticAberrationTweaks", 1 );
-    _func_0D3( "r_chromaticAberrationAlpha", 0.85 );
+    setsaveddvar( "r_chromaticAberrationTweaks", 1 );
+    setsaveddvar( "r_chromaticAberrationAlpha", 0.85 );
 
     for ( var_4 = 0; var_4 < var_0; var_4++ )
     {
-        _func_0D3( "r_chromaticAberration", 1 );
+        setsaveddvar( "r_chromaticAberration", 1 );
         var_5 = perlinnoise2d( gettime() * 0.001 * var_0, var_1, 4, 5, 2 );
-        _func_0D3( "r_chromaticSeparationR", perlinnoise2d( gettime() * 0.001 * var_0, var_1, 4, 5, 2 ) );
-        _func_0D3( "r_chromaticSeparationG", perlinnoise2d( gettime() * 0.001 * var_0, var_2, 4, 5, 2 ) );
-        _func_0D3( "r_chromaticSeparationB", perlinnoise2d( gettime() * 0.001 * var_0, var_3, 4, 5, 2 ) );
+        setsaveddvar( "r_chromaticSeparationR", perlinnoise2d( gettime() * 0.001 * var_0, var_1, 4, 5, 2 ) );
+        setsaveddvar( "r_chromaticSeparationG", perlinnoise2d( gettime() * 0.001 * var_0, var_2, 4, 5, 2 ) );
+        setsaveddvar( "r_chromaticSeparationB", perlinnoise2d( gettime() * 0.001 * var_0, var_3, 4, 5, 2 ) );
         waitframe();
-        _func_0D3( "r_chromaticAberration", 0 );
+        setsaveddvar( "r_chromaticAberration", 0 );
     }
 }
 
@@ -318,15 +318,15 @@ handle_pod_crash_building1()
     level waittill( "pod_crash_hide_floor1" );
 
     if ( level.currentgen )
-        level.player _meth_83C0( "space_entry_crash" );
+        level.player lightsetforplayer( "space_entry_crash" );
 
     delete_pod_crash_floor( getentarray( "pod_crash_hide_floor1", "targetname" ) );
-    _func_059( "drop_pod_glass_warning" );
+    cinematicingameloop( "drop_pod_glass_warning" );
 
     if ( level.currentgen )
     {
         wait 0.5;
-        level.player _meth_83C0( "seoul_vista" );
+        level.player lightsetforplayer( "seoul_vista" );
     }
 }
 
@@ -339,9 +339,9 @@ handle_portal_scripting_vista( var_0 )
 {
     var_1 = getent( var_0, "targetname" );
     level waittill( "portal_vista_off" );
-    var_1 _meth_8070( 0 );
+    var_1 enableportalgroup( 0 );
     level waittill( "player_drop_pod_door_kick" );
-    var_1 _meth_8070( 1 );
+    var_1 enableportalgroup( 1 );
 }
 
 setup_space_transport()
@@ -365,7 +365,7 @@ setup_rocket_pieces( var_0, var_1 )
         var_5.pieces = getentarray( var_4.target, "targetname" );
 
         foreach ( var_7 in var_5.pieces )
-            var_7 _meth_804D( var_5, "tag_origin" );
+            var_7 linkto( var_5, "tag_origin" );
 
         var_5 thread rotate_space_debris();
     }
@@ -400,7 +400,7 @@ rotate_space_debris()
                 var_7 = 1;
                 level notify( "begin_universe_twirl" );
                 var_8 = var_0 common_scripts\utility::spawn_tag_origin();
-                var_8 _meth_804D( level.center_universe, "tag_origin" );
+                var_8 linkto( level.center_universe, "tag_origin" );
             }
 
             var_0.origin = var_8.origin + ( var_9[0], var_9[1], var_2 * var_4 );
@@ -458,7 +458,7 @@ rotate_the_universe( var_0 )
 
 setup_player_pod()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     var_0 = getent( "player_pod_seat", "targetname" );
 
     if ( !isdefined( var_0 ) )
@@ -478,8 +478,8 @@ setup_player_pod()
 
     level.player maps\_utility::teleport_player( var_0 );
     level.player.seattag = level.player common_scripts\utility::spawn_tag_origin();
-    level.player _meth_807D( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
-    level.player _meth_8119( 0 );
+    level.player playerlinktodelta( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
+    level.player allowcrouch( 0 );
     level.podsquad = [];
 
     foreach ( var_5 in var_2 )
@@ -545,13 +545,13 @@ setup_player_pod_b()
     }
 
     level waittill( "should_telport_player" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player.seattag delete();
     var_8 = getent( "player_pod_seat_x", "targetname" );
     level.player.seattag = level.player common_scripts\utility::spawn_tag_origin();
     var_9 = level.player getangles();
-    level.player _meth_807D( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
-    level.player _meth_8118( 0 );
+    level.player playerlinktodelta( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
+    level.player allowstand( 0 );
     level.player setangles( var_9 );
     var_10 = getent( "earth_disc_upper_atmosphere", "targetname" );
     var_10 notify( "stop_earth_movement" );
@@ -563,23 +563,23 @@ setup_player_pod_b()
     level waittill( "should_telport_player" );
     level notify( "dropped_from_pod" );
     level waittill( "should_telport_player" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player.seattag delete();
     var_12 = getent( "player_pod_seat_c", "targetname" );
     level.player.seattag = var_12 common_scripts\utility::spawn_tag_origin();
-    level.player _meth_807D( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
-    level.player _meth_8118( 0 );
+    level.player playerlinktodelta( level.player.seattag, "tag_origin", 1, 60, 60, 60, 60, 1, 1 );
+    level.player allowstand( 0 );
     wait 2;
     var_13 = getent( "player_pod_door_01", "targetname" );
-    var_13 _meth_82B5( var_13.angles + ( 0, 0, -95 ), 2, 0.2, 1 );
+    var_13 rotateto( var_13.angles + ( 0, 0, -95 ), 2, 0.2, 1 );
     wait 3;
     var_14 = getent( "player_pod_seat_c2", "targetname" );
-    level.player.seattag _meth_82AE( var_14.origin, 3, 0.2, 0.5 );
-    level.player.seattag _meth_82B5( var_14.angles, 1, 0.2, 0.5 );
+    level.player.seattag moveto( var_14.origin, 3, 0.2, 0.5 );
+    level.player.seattag rotateto( var_14.angles, 1, 0.2, 0.5 );
     wait 4;
-    level.player _meth_804F();
-    level.player _meth_831E();
-    level.player _meth_8118( 1 );
+    level.player unlink();
+    level.player enableweapons();
+    level.player allowstand( 1 );
 }
 
 move_earth_with_pod( var_0 )
@@ -587,7 +587,7 @@ move_earth_with_pod( var_0 )
     level endon( "ok_to_teleport_player" );
     var_1 = 80;
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "tag_origin" );
+    var_2 linkto( var_0, "tag_origin" );
     var_3 = common_scripts\utility::spawn_tag_origin();
     thread monitor_dist_from_earth( self );
     level.earth_tag = var_2;

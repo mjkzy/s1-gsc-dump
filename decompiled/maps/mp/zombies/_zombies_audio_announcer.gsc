@@ -193,7 +193,7 @@ playannouncerdialog( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
     level notify( "done_speaking" );
 
     if ( isdefined( self.classname ) )
-        self _meth_80AC();
+        self stopsounds();
 
     self.isspeaking = 0;
 
@@ -235,7 +235,7 @@ playannouncementwaituntildone( var_0, var_1, var_2 )
         else
             self show();
 
-        self _meth_8438( var_0 );
+        self playsoundonmovingent( var_0 );
     }
 
     var_8 = maps\mp\zombies\_zombies_audio::volength( var_0, var_1 );

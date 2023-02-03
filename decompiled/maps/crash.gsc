@@ -12,7 +12,7 @@ main()
     maps\crash_anim::main();
     maps\crash_vo::main();
     maps\crash_precache::main();
-    _func_081();
+    precachesonarvisioncodeassets();
     thread init_water();
 
     if ( getdvar( "createfx" ) != "" )
@@ -23,7 +23,7 @@ main()
 
     maps\_load::main();
     thread maps\_player_exo::main( "assault", 0, 0 );
-    _func_0D3( "use_new_sva_system", 1 );
+    setsaveddvar( "use_new_sva_system", 1 );
     thread maps\crash_fx::setup_footstep_fx();
     maps\crash_lighting::main();
     maps\crash_aud::main();
@@ -41,12 +41,12 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", 0.8 );
-        _func_0D3( "r_gunSightColorNoneScale", 0.8 );
+        setsaveddvar( "r_gunSightColorEntityScale", 0.8 );
+        setsaveddvar( "r_gunSightColorNoneScale", 0.8 );
     }
 
-    _func_0D3( "high_jump_double_tap", "1" );
-    _func_0D3( "high_jump_auto_mantle", "1" );
+    setsaveddvar( "high_jump_double_tap", "1" );
+    setsaveddvar( "high_jump_auto_mantle", "1" );
     level.player.drowning_deadquote = &"CRASH_DEATH_BY_DROWNING";
     level.player.drowning_warning = &"CRASH_DROWNING_WARNING";
 
@@ -147,28 +147,28 @@ tff_blocker_caves()
     var_0 = getentarray( "tff_blocker_caves", "targetname" );
     var_1 = getent( "tff_blocker_caves_coll", "targetname" );
     var_2 = ( 0, 0, 380 );
-    var_1 _meth_8058();
+    var_1 connectpaths();
     var_1.origin -= var_2;
 
     foreach ( var_4 in var_0 )
         var_4 common_scripts\utility::hide_notsolid();
 
-    if ( !_func_21E( "crash_lake_tr" ) )
+    if ( !istransientloaded( "crash_lake_tr" ) )
         level waittill( "tff_pre_caves_to_lake" );
 
     foreach ( var_4 in var_0 )
         var_4 common_scripts\utility::show_solid();
 
     var_1.origin += var_2;
-    var_1 _meth_8057();
+    var_1 disconnectpaths();
 }
 
 tff_transitions()
 {
-    if ( !_func_21E( "crash_caves_tr" ) )
+    if ( !istransientloaded( "crash_caves_tr" ) )
         thread tff_trans_site_to_caves();
 
-    if ( !_func_21E( "crash_lake_tr" ) )
+    if ( !istransientloaded( "crash_lake_tr" ) )
         thread tff_trans_caves_to_lake();
 }
 
@@ -177,10 +177,10 @@ tff_trans_site_to_caves()
     common_scripts\utility::flag_wait( "cave_entry_anim_start" );
     wait 5.0;
     level notify( "tff_pre_site_to_caves" );
-    _func_219( "crash_site_tr" );
-    _func_218( "crash_caves_tr" );
+    unloadtransient( "crash_site_tr" );
+    loadtransient( "crash_caves_tr" );
 
-    while ( !_func_21E( "crash_caves_tr" ) )
+    while ( !istransientloaded( "crash_caves_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_site_to_caves" );
@@ -221,7 +221,7 @@ tff_ally_check( var_0, var_1, var_2 )
 
 tff_trans_ally_check_touching( var_0 )
 {
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.05;
 
     level.tff_trans_ally_check_count--;
@@ -236,15 +236,15 @@ tff_trans_caves_to_lake()
     {
         var_0 = getent( "tff_cave_unload_ally_teleport_01", "targetname" );
         var_1 = getent( "tff_cave_unload_ally_teleport_02", "targetname" );
-        level.ilana _meth_81C5( var_0.origin, var_0.angles );
-        level.cormack _meth_81C5( var_1.origin, var_1.angles );
+        level.ilana teleport( var_0.origin, var_0.angles );
+        level.cormack teleport( var_1.origin, var_1.angles );
     }
 
     level notify( "tff_pre_caves_to_lake" );
-    _func_219( "crash_caves_tr" );
-    _func_218( "crash_lake_tr" );
+    unloadtransient( "crash_caves_tr" );
+    loadtransient( "crash_lake_tr" );
 
-    while ( !_func_21E( "crash_lake_tr" ) )
+    while ( !istransientloaded( "crash_lake_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_caves_to_lake" );
@@ -276,8 +276,8 @@ set_completed_flags()
     if ( var_0 == "cave_entry" )
         return;
 
-    _func_0D3( "r_gunSightColorEntityScale", 0 );
-    _func_0D3( "r_gunSightColorNoneScale", 0 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0 );
     common_scripts\utility::flag_set( "player_loading_cargo" );
     common_scripts\utility::flag_set( "obj_update_goto_razorback" );
     common_scripts\utility::flag_set( "obj_end_goto_razorback" );
@@ -745,7 +745,7 @@ obj_destroy_vtol()
     common_scripts\utility::flag_wait( "obj_start_exfil" );
     objective_add( 10, "current", &"CRASH_OBJ_DESTROY_WARBIRD" );
     var_0 = level.end_vtol common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_804D( level.end_vtol );
+    var_0 linkto( level.end_vtol );
     objective_onentity( 10, var_0, ( 0, 0, 160 ) );
     objective_setpointertextoverride( 10, &"CRASH_OBJ_DESTROY" );
     common_scripts\utility::flag_wait( "obj_end_exfil" );
@@ -764,7 +764,7 @@ create_fx_ent_setup()
     waitframe();
     level.crash_site_animnode thread maps\_anim::anim_single_solo( var_0, "atlas_plane_crash_plane" );
     wait 1;
-    var_0 _meth_8117( var_0 maps\_utility::getanim( "atlas_plane_crash_plane" ), 1.0 );
+    var_0 setanimtime( var_0 maps\_utility::getanim( "atlas_plane_crash_plane" ), 1.0 );
     var_1 show();
     var_2 = getent( "runway_shell_geo_01", "targetname" );
     var_3 = getent( "runway_shell_geo_02", "targetname" );

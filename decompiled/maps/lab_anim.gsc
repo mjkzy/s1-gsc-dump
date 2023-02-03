@@ -7,11 +7,11 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "lab_intro_tr" ) )
+        if ( istransientloaded( "lab_intro_tr" ) )
             var_0 = "intro";
-        else if ( _func_21E( "lab_middle_tr" ) )
+        else if ( istransientloaded( "lab_middle_tr" ) )
             var_0 = "middle";
-        else if ( _func_21E( "lab_outro_tr" ) )
+        else if ( istransientloaded( "lab_outro_tr" ) )
             var_0 = "outro";
     }
 
@@ -652,7 +652,7 @@ ai_kill( var_0 )
     var_0.a.nodeath = 1;
     var_0 maps\_utility::set_battlechatter( 0 );
     wait 0.05;
-    var_0 _meth_8052();
+    var_0 kill();
 }
 
 transition_to_hovertank_fov( var_0 )
@@ -702,7 +702,7 @@ lerp_pupil_over_time( var_0, var_1 )
     while ( var_4 < var_1 )
     {
         var_6 += var_5;
-        _func_0D3( "r_eyePupil", var_6 );
+        setsaveddvar( "r_eyePupil", var_6 );
         var_4 += var_3;
         wait(var_3);
     }

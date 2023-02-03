@@ -8,12 +8,7 @@ credits_start()
     level.used_credits = [];
     level.credits_alpha = 0.85;
     var_0 = 16;
-
-    if ( level.console )
-        var_1 = [ 33, 110, var_0 + 2, "left", "middle", "left", "middle" ];
-    else
-        var_1 = [ 76, 110, var_0 + 2, "left", "middle", "left", "middle" ];
-
+    var_1 = [ -350, 110, var_0 + 2, "left", "middle" ];
     var_2 = [ -350, -110, var_0, "left", "middle" ];
     var_3 = [ 300, -110, var_0, "right", "middle" ];
     var_4 = [ -350, 150, var_0, "left", "middle" ];
@@ -91,7 +86,7 @@ show_exec_title_credits( var_0 )
 get_title_credit( var_0, var_1, var_2, var_3 )
 {
     var_4 = 18;
-    var_5 = maps\_shg_design_tools::get_standard_glow_text( var_0[0], var_0[1], var_0[2], var_0[3], var_0[4], var_2 * -1, ( 0.75, 0.85, 0.87 ), ( 0.25, 0.25, 0.3 ), var_0[5], var_0[6] );
+    var_5 = maps\_shg_design_tools::get_standard_glow_text( var_0[0], var_0[1], var_0[2], var_0[3], var_0[4], var_2 * -1, ( 0.75, 0.85, 0.87 ), ( 0.25, 0.25, 0.3 ) );
     var_5.textstring = var_1;
     var_5.alpha = 0;
     var_5 fadeovertime( 1.25 );

@@ -3,7 +3,7 @@
 
 init()
 {
-    _func_080();
+    precachedigitaldistortcodeassets();
     thread onplayerconnect();
     precachestring( &"MP_EMP_REBOOTING" );
 }
@@ -130,8 +130,8 @@ digitaldistort( var_0, var_1 )
     self endon( "disconnect" );
     self endon( "faux_spawn" );
     self endon( "joined_team" );
-    self _meth_84BE( "digital_distort_mp" );
-    self _meth_8064( 1.0, 1.0 );
+    self digitaldistortsetmaterial( "digital_distort_mp" );
+    self digitaldistortsetparams( 1.0, 1.0 );
     thread watchdistortdisconnectdeath( var_1 );
     wait 0.1;
     var_2 = var_0;
@@ -144,12 +144,12 @@ digitaldistort( var_0, var_1 )
     while ( var_2 > 0 )
     {
         var_7 = var_5 * var_2 / var_0 + var_4;
-        self _meth_8064( var_7, 1.0 );
+        self digitaldistortsetparams( var_7, 1.0 );
         var_2 -= var_6;
         wait(var_6);
     }
 
-    self _meth_8064( 0.0, 0.0 );
+    self digitaldistortsetparams( 0.0, 0.0 );
 }
 
 watchdistortdisconnectdeath( var_0 )
@@ -158,7 +158,7 @@ watchdistortdisconnectdeath( var_0 )
 
     if ( isdefined( self ) )
     {
-        self _meth_8064( 0.0, 0.0 );
+        self digitaldistortsetparams( 0.0, 0.0 );
         emp_hide_hud( var_0 );
     }
 }
@@ -186,7 +186,7 @@ checktoturnoffemp( var_0 )
         maps\mp\_utility::playerallowdodge( 1, "empgrenade" );
     }
 
-    self _meth_8064( 0.0, 0.0 );
+    self digitaldistortsetparams( 0.0, 0.0 );
     emp_hide_hud( var_0 );
 }
 
@@ -198,7 +198,7 @@ emprumbleloop( var_0 )
 
     while ( gettime() < var_1 )
     {
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         wait 0.05;
     }
 }

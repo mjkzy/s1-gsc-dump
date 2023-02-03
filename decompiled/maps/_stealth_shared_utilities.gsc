@@ -285,7 +285,7 @@ enemy_go_back()
 
     if ( isdefined( self.custommovetransition ) && isdefined( self.pathgoalpos ) )
     {
-        self _meth_81A6( self.origin );
+        self setgoalpos( self.origin );
         wait 0.05;
     }
 
@@ -320,7 +320,7 @@ enemy_go_back()
 
         self.disablearrivals = 1;
         self.disableexits = 1;
-        self _meth_81A6( var_0 );
+        self setgoalpos( var_0 );
         self.goalradius = 40;
     }
 
@@ -474,9 +474,9 @@ enemy_runto_and_lookaround( var_0, var_1 )
     maps\_utility::ent_flag_set( "_stealth_override_goalpos" );
 
     if ( isdefined( var_0 ) )
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
     else
-        self _meth_81A6( var_1 );
+        self setgoalpos( var_1 );
 
     self.goalradius = 64;
     self waittill( "goal" );
@@ -498,7 +498,7 @@ enemy_reactto_and_lookaround( var_0 )
     var_1 = group_get_flagname( "_stealth_spotted" );
     level endon( var_1 );
     self notify( "stop_loop" );
-    self _meth_818F( "face angle", vectortoyaw( var_0 - self.origin ) );
+    self orientmode( "face angle", vectortoyaw( var_0 - self.origin ) );
 
     if ( self.type != "dog" )
         maps\_anim::anim_generic_custom_animmode( self, "gravity", "_stealth_look_around" );
@@ -847,7 +847,7 @@ ai_clear_custom_animation_reaction_and_idle( var_0 )
     self._stealth.behavior.event.custom_animation.node notify( "stop_loop" );
 
     if ( !isdefined( var_0 ) || var_0 == 0 )
-        self _meth_8141();
+        self stopanimscripted();
 
     ai_clear_custom_animation_reaction();
 }

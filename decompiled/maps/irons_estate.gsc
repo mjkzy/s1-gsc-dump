@@ -40,7 +40,7 @@ main()
     level.visionset_underwater = "irons_estate_underwater";
     level.player.no_breath_hud = 1;
     maps\_grapple::main( "viewbody_sentinel_udt_mitchell_grapple", "viewhands_sentinel_udt_mitchell" );
-    level.player _meth_82A6( "specialty_exo_blastsuppressor", 1, 0 );
+    level.player setperk( "specialty_exo_blastsuppressor", 1, 0 );
     maps\_stealth_display::main();
     maps\_stealth_display::stealth_display_on();
     maps\_tagging::main();
@@ -56,8 +56,8 @@ main()
 
     if ( !isdefined( self.high_jump_enabled ) )
     {
-        _func_0D3( "bg_fallDamageMinHeight", 400 );
-        _func_0D3( "bg_fallDamageMaxHeight", 550 );
+        setsaveddvar( "bg_fallDamageMinHeight", 400 );
+        setsaveddvar( "bg_fallDamageMaxHeight", 550 );
     }
 
     setdvar( "grapple_magnet_required", 1 );
@@ -122,16 +122,16 @@ setup_start_transients()
 
 setup_transient_transitions()
 {
-    if ( !_func_21E( "irons_estate_cliffs_tr" ) )
+    if ( !istransientloaded( "irons_estate_cliffs_tr" ) )
         thread tff_trans_briefing_to_cliffs();
 
-    if ( !_func_21E( "irons_estate_lower_tr" ) )
+    if ( !istransientloaded( "irons_estate_lower_tr" ) )
         thread tff_trans_cliffs_to_lower();
 
-    if ( !_func_21E( "irons_estate_upper_tr" ) )
+    if ( !istransientloaded( "irons_estate_upper_tr" ) )
         thread tff_trans_lower_to_upper();
 
-    if ( !_func_21E( "irons_estate_cliffs_tr" ) || level.start_point == "intro" || level.start_point == "grapple" )
+    if ( !istransientloaded( "irons_estate_cliffs_tr" ) || level.start_point == "intro" || level.start_point == "grapple" )
         thread tff_trans_upper_to_lower_cliffs();
 }
 
@@ -139,24 +139,24 @@ tff_trans_briefing_to_cliffs()
 {
     common_scripts\utility::flag_wait( "teleport_to_base" );
     level notify( "tff_pre_briefing_to_cliffs" );
-    _func_219( "irons_estate_briefing_tr" );
-    _func_218( "irons_estate_cliffs_tr" );
+    unloadtransient( "irons_estate_briefing_tr" );
+    loadtransient( "irons_estate_cliffs_tr" );
 
-    while ( !_func_21E( "irons_estate_cliffs_tr" ) )
+    while ( !istransientloaded( "irons_estate_cliffs_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_briefing_to_cliffs" );
-    _func_218( "irons_estate_lower_tr" );
+    loadtransient( "irons_estate_lower_tr" );
 }
 
 tff_trans_cliffs_to_lower()
 {
     common_scripts\utility::flag_wait( "flag_tff_trans_cliffs_to_lower" );
     level notify( "tff_pre_cliffs_to_lower" );
-    _func_219( "irons_estate_cliffs_tr" );
-    _func_218( "irons_estate_penthouse_tr" );
+    unloadtransient( "irons_estate_cliffs_tr" );
+    loadtransient( "irons_estate_penthouse_tr" );
 
-    while ( !_func_21E( "irons_estate_penthouse_tr" ) )
+    while ( !istransientloaded( "irons_estate_penthouse_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_cliffs_to_lower" );
@@ -167,10 +167,10 @@ tff_trans_lower_to_upper()
     common_scripts\utility::flag_wait( "flag_tff_trans_lower_to_upper" );
     common_scripts\utility::flag_set( "post_penthouse_trees" );
     level notify( "tff_pre_lower_to_upper" );
-    _func_219( "irons_estate_lower_tr" );
-    _func_218( "irons_estate_upper_tr" );
+    unloadtransient( "irons_estate_lower_tr" );
+    loadtransient( "irons_estate_upper_tr" );
 
-    while ( !_func_21E( "irons_estate_upper_tr" ) )
+    while ( !istransientloaded( "irons_estate_upper_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_lower_to_upper" );
@@ -180,10 +180,10 @@ tff_trans_upper_to_lower_cliffs()
 {
     common_scripts\utility::flag_wait( "player_started_vtol_grapple" );
     level notify( "tff_pre_upper_to_cliffs" );
-    _func_219( "irons_estate_upper_tr" );
-    _func_218( "irons_estate_cliffs_tr" );
+    unloadtransient( "irons_estate_upper_tr" );
+    loadtransient( "irons_estate_cliffs_tr" );
 
-    while ( !_func_21E( "irons_estate_cliffs_tr" ) )
+    while ( !istransientloaded( "irons_estate_cliffs_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_upper_to_cliffs" );
@@ -284,9 +284,9 @@ irons_estate_precache()
     precachemodel( "viewhands_sentinel_udt_mitchell" );
     precachemodel( "viewbody_sentinel_udt_mitchell_grapple" );
     precachemodel( "viewhands_sentinel_udt_mitchell_noscreen" );
-    precacheitem( "s1_unarmed" );
-    precacheitem( "iw5_pbwsingleshot_sp" );
-    precacheitem( "iw5_kf5fullauto_sp" );
+    precacheshellshock( "s1_unarmed" );
+    precacheshellshock( "iw5_pbwsingleshot_sp" );
+    precacheshellshock( "iw5_kf5fullauto_sp" );
     precachemodel( "worldhands_sentinel_udt_mitchell_screen" );
     precachemodel( "worldhands_sentinel_udt_mitchell_grapple" );
     precachemodel( "foliage_fan_palm_tree_01_anim" );
@@ -369,9 +369,9 @@ irons_estate_precache()
     precacheshader( "cinematic_screen_add" );
     precachemodel( "civ_humvee_ai" );
     precachemodel( "mil_gaz_chassis_vm" );
-    precacheitem( "rsass_silenced" );
+    precacheshellshock( "rsass_silenced" );
     precachemodel( "tag_laser" );
-    _func_251( "ie_ilona_laser" );
+    precachelaser( "ie_ilona_laser" );
     precachemodel( "tracking_device" );
     precachemodel( "udt_respirator_small" );
     precachemodel( "machinery_welder_handle" );
@@ -578,7 +578,7 @@ hint_abandon_warning_off()
 
 hint_rappel_off()
 {
-    return common_scripts\utility::flag( "descend_end" ) || abs( level.player _meth_82F3()[0] ) > 0;
+    return common_scripts\utility::flag( "descend_end" ) || abs( level.player getnormalizedmovement()[0] ) > 0;
 }
 
 hint_mark_and_execute_off()
@@ -588,7 +588,7 @@ hint_mark_and_execute_off()
 
 hint_prone_off()
 {
-    return level.player _meth_817C() == "prone";
+    return level.player getstance() == "prone";
 }
 
 hint_cover_mouth_off()

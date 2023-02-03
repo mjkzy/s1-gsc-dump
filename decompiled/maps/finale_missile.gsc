@@ -17,7 +17,7 @@ setup_complete_missile_prefab( var_0, var_1 )
     waitframe();
 
     foreach ( var_6 in var_2 )
-        var_6 _meth_804D( var_0, "missile" );
+        var_6 linkto( var_0, "missile" );
 
     thread custom_health_think( var_1, var_0 );
 }
@@ -29,7 +29,7 @@ setup_complete_missile_not_prefab( var_0, var_1 )
 
     foreach ( var_4 in var_2 )
     {
-        var_4 _meth_80B1( "fin_side_missile_02" );
+        var_4 setmodel( "fin_side_missile_02" );
         var_4 attach_or_link( "fin_side_missile_white_panel_top_r_01", "dyna_White_panel_top_R_01" );
         var_4 attach_or_link( "fin_side_missile_white_panel_top_l_01", "dyna_White_panel_top_L_01" );
         var_4 attach_or_link( "fin_side_missile_white_panel_bottom_r_01", "dyna_White_panel_bottom_R_01" );
@@ -39,7 +39,7 @@ setup_complete_missile_not_prefab( var_0, var_1 )
         var_4 attach_or_link( "fin_side_missile_engine_brace_piece_01", "dyna_Engine_brace_piece_01" );
         var_4 attach_or_link( "fin_side_missile_side_box_piece_r_01", "dyna_Black_R_side_box_piece_01" );
         var_4 attach_or_link( "fin_side_missile_side_box_piece_l_01", "dyna_Black_L_side_box_piece_02" );
-        var_4 _meth_804D( var_0, "missile" );
+        var_4 linkto( var_0, "missile" );
         var_5 = undefined;
         thread clip_missle_damage_think( var_5, 4000, var_1 );
     }
@@ -47,9 +47,9 @@ setup_complete_missile_not_prefab( var_0, var_1 )
 
 clip_missle_damage_think( var_0, var_1, var_2 )
 {
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
     var_0.maxhealth = var_1;
-    var_0 _meth_8050( var_0.maxhealth );
+    var_0 setnormalhealth( var_0.maxhealth );
     var_3 = var_0.maxhealth * 0.5;
     var_4 = 0;
     var_5 = 0;
@@ -70,7 +70,7 @@ clip_missle_damage_think( var_0, var_1, var_2 )
         }
 
         if ( isdefined( var_2 ) )
-            var_2 _meth_8051( 1, var_9, var_7, var_7, var_10, var_15 );
+            var_2 dodamage( 1, var_9, var_7, var_7, var_10, var_15 );
 
         if ( var_0.health < 0 )
         {
@@ -83,12 +83,12 @@ clip_missle_damage_think( var_0, var_1, var_2 )
 
                 if ( var_0.classname == "script_brushmodel" )
                 {
-                    var_0 _meth_82BF();
+                    var_0 notsolid();
                     return;
                 }
             }
 
-            var_0 _meth_8050( 99999 );
+            var_0 setnormalhealth( 99999 );
         }
 
         waitframe();
@@ -129,9 +129,9 @@ setup_main_missile( var_0, var_1 )
 {
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_82C0( 1 );
+        var_1 setcandamage( 1 );
         var_1.maxhealth = 40000;
-        var_1 _meth_8050( var_1.maxhealth );
+        var_1 setnormalhealth( var_1.maxhealth );
         var_1.healthcustom = 20.0;
         var_1.count_swarm = 0;
         var_1.count_rocket = 0;
@@ -144,7 +144,7 @@ setup_main_missile( var_0, var_1 )
 
     foreach ( var_4 in var_2 )
     {
-        var_4 _meth_804D( var_0, "missile" );
+        var_4 linkto( var_0, "missile" );
         thread clip_missle_damage_think( var_4, 9999999, var_1 );
     }
 
@@ -217,7 +217,7 @@ setup_side_missile_prefab( var_0, var_1 )
         if ( var_13 != var_2 )
         {
             var_13.assigned_parent = var_2;
-            var_13 _meth_804D( var_2 );
+            var_13 linkto( var_2 );
         }
     }
 
@@ -366,7 +366,7 @@ custom_health_think( var_0, var_1 )
 
         if ( var_0.healthcustom < 0 )
         {
-            var_0 _meth_8052();
+            var_0 kill();
             continue;
         }
 

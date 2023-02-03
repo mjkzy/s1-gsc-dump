@@ -12,7 +12,7 @@ bot_killstreak_sentry( var_0, var_1, var_2, var_3 )
     while ( isdefined( self.sentry_place_delay ) && gettime() < self.sentry_place_delay )
         wait 1;
 
-    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
+    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self botcanseeentity( self.enemy ) )
         return 1;
 
     var_4 = self.origin;
@@ -70,7 +70,7 @@ bot_sentry_should_abort( var_0 )
     self endon( "disconnect" );
     level endon( "game_ended" );
 
-    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
+    if ( isdefined( self.enemy ) && self.enemy.health > 0 && self botcanseeentity( self.enemy ) )
         return 1;
 
     self.sentry_place_delay = gettime() + 1000;
@@ -87,7 +87,7 @@ bot_sentry_cancel_failsafe()
 
     for (;;)
     {
-        if ( isdefined( self.enemy ) && self.enemy.health > 0 && self _meth_836F( self.enemy ) )
+        if ( isdefined( self.enemy ) && self.enemy.health > 0 && self botcanseeentity( self.enemy ) )
             thread bot_sentry_cancel();
 
         wait 0.05;
@@ -138,16 +138,16 @@ bot_sentry_choose_target( var_0 )
 
     if ( var_0 != "turret" )
     {
-        if ( self _meth_837B( "strategyLevel" ) == 1 )
+        if ( self botgetdifficultysetting( "strategyLevel" ) == 1 )
             var_3 = 10;
-        else if ( self _meth_837B( "strategyLevel" ) == 0 )
+        else if ( self botgetdifficultysetting( "strategyLevel" ) == 0 )
             var_3 = 15;
     }
 
     if ( var_0 == "turret_air" )
-        var_4 = self _meth_8364( var_2, var_3, "node_traffic", "ignore_no_sky" );
+        var_4 = self botnodepick( var_2, var_3, "node_traffic", "ignore_no_sky" );
     else
-        var_4 = self _meth_8364( var_2, var_3, "node_traffic" );
+        var_4 = self botnodepick( var_2, var_3, "node_traffic" );
 
     if ( isdefined( var_4 ) )
         return var_4.origin;
@@ -161,20 +161,20 @@ bot_sentry_choose_placement( var_0, var_1, var_2, var_3 )
 
     if ( var_2 != "turret" )
     {
-        if ( self _meth_837B( "strategyLevel" ) == 1 )
+        if ( self botgetdifficultysetting( "strategyLevel" ) == 1 )
             var_6 = 10;
-        else if ( self _meth_837B( "strategyLevel" ) == 0 )
+        else if ( self botgetdifficultysetting( "strategyLevel" ) == 0 )
             var_6 = 15;
     }
 
     if ( var_2 == "turret_air" )
-        var_7 = self _meth_8364( var_5, var_6, "node_sentry", var_1, "ignore_no_sky" );
+        var_7 = self botnodepick( var_5, var_6, "node_sentry", var_1, "ignore_no_sky" );
     else if ( var_2 == "trap" )
-        var_7 = self _meth_8364( var_5, var_6, "node_traffic" );
+        var_7 = self botnodepick( var_5, var_6, "node_traffic" );
     else if ( var_2 == "hide_nonlethal" )
-        var_7 = self _meth_8364( var_5, var_6, "node_hide" );
+        var_7 = self botnodepick( var_5, var_6, "node_hide" );
     else
-        var_7 = self _meth_8364( var_5, var_6, "node_sentry", var_1 );
+        var_7 = self botnodepick( var_5, var_6, "node_sentry", var_1 );
 
     if ( isdefined( var_7 ) )
     {
@@ -238,8 +238,8 @@ bot_sentry_activate( var_0 )
                 if ( var_12 < var_8 )
                 {
                     var_8 = var_12;
-                    self _meth_8353( var_10, var_4 );
-                    self _meth_836D( var_0.object.node.origin, var_4, "script_forced" );
+                    self botsetscriptmove( var_10, var_4 );
+                    self botlookatpoint( var_0.object.node.origin, var_4, "script_forced" );
                 }
             }
 
@@ -278,9 +278,9 @@ bot_send_place_notify()
 
 bot_send_cancel_notify()
 {
-    self _meth_8315( "none" );
-    self _meth_831E();
-    self _meth_8322();
+    self switchtoweapon( "none" );
+    self enableweapons();
+    self enableweaponswitch();
     self notify( "cancel_sentry" );
     self notify( "cancel_turret" );
     self notify( "cancelPlaceable" );
@@ -301,11 +301,11 @@ bot_sentry_ensure_exit()
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
-    self _meth_8315( "none" );
-    self _meth_8356();
-    self _meth_8352( "none" );
-    self _meth_831E();
-    self _meth_8322();
+    self switchtoweapon( "none" );
+    self botclearscriptgoal();
+    self botsetstance( "none" );
+    self enableweapons();
+    self enableweaponswitch();
     wait 0.25;
     var_0 = 0;
 
@@ -336,7 +336,7 @@ bot_sentry_force_cancel()
     self.carriedsentry = undefined;
     self.carriedturret = undefined;
     self.carrieditem = undefined;
-    self _meth_8315( "none" );
-    self _meth_831E();
-    self _meth_8322();
+    self switchtoweapon( "none" );
+    self enableweapons();
+    self enableweaponswitch();
 }

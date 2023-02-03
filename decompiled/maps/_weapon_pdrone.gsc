@@ -3,10 +3,10 @@
 
 initialize()
 {
-    _func_0D3( "vehHelicopterControlsAltitude", 1 );
+    setsaveddvar( "vehHelicopterControlsAltitude", 1 );
     precachemodel( "tag_laser" );
-    precacheitem( "pdrone_weapon" );
-    precacheitem( "pdrone_weapon_bullet" );
+    precacheshellshock( "pdrone_weapon" );
+    precacheshellshock( "pdrone_weapon_bullet" );
     precacheshader( "dpad_killstreak_remote_uav" );
     precacheshader( "dpad_laser_designator" );
 }
@@ -15,42 +15,42 @@ give_player_pdrone( var_0 )
 {
     self.pdroneactive = 0;
     self.pdronereturning = 0;
-    self _meth_821B( "actionslot4", "dpad_killstreak_remote_uav" );
-    self _meth_82DD( "use_pdrone", "+actionslot 4" );
+    self setweaponhudiconoverride( "actionslot4", "dpad_killstreak_remote_uav" );
+    self notifyonplayercommand( "use_pdrone", "+actionslot 4" );
 
     for (;;)
     {
         self waittill( "use_pdrone" );
 
-        if ( self _meth_812C() )
+        if ( self isthrowinggrenade() )
             continue;
 
         if ( !self.pdroneactive )
         {
-            self _meth_8131( 0 );
-            var_1 = self _meth_8312();
-            self _meth_830F( var_1 );
-            self _meth_830E( "pdrone_weapon_bullet" );
-            self _meth_8316( "pdrone_weapon_bullet" );
-            self _meth_8332( "pdrone_weapon_bullet" );
+            self allowfire( 0 );
+            var_1 = self getcurrentprimaryweapon();
+            self takeweapon( var_1 );
+            self giveweapon( "pdrone_weapon_bullet" );
+            self switchtoweaponimmediate( "pdrone_weapon_bullet" );
+            self givemaxammo( "pdrone_weapon_bullet" );
             wait_til_pdrone_launched();
-            self _meth_8131( 1 );
+            self allowfire( 1 );
 
             if ( isdefined( self.pdrone_launched ) && self.pdrone_launched )
             {
-                self _meth_8321();
-                self _meth_831F();
+                self disableweaponswitch();
+                self disableoffhandweapons();
                 wait 1.75;
                 pdrone_launch( var_0 );
                 self.pdrone_launched = undefined;
                 wait 0.25;
-                self _meth_8320();
-                self _meth_8322();
+                self enableoffhandweapons();
+                self enableweaponswitch();
             }
 
-            self _meth_830F( "pdrone_weapon_bullet" );
-            self _meth_830E( var_1 );
-            self _meth_8316( var_1 );
+            self takeweapon( "pdrone_weapon_bullet" );
+            self giveweapon( var_1 );
+            self switchtoweaponimmediate( var_1 );
             continue;
         }
 
@@ -74,12 +74,12 @@ pdrone_return_pathing()
 {
     self endon( "goal" );
     self.goalradius = 40;
-    self _meth_8283( 20, 20, 20 );
-    self _meth_8265( self.owner );
+    self vehicle_setspeed( 20, 20, 20 );
+    self setlookatent( self.owner );
 
     for (;;)
     {
-        self _meth_825B( self.owner.origin + ( 0, 0, 84 ), 0 );
+        self setvehgoalpos( self.owner.origin + ( 0, 0, 84 ), 0 );
         wait 0.05;
     }
 }
@@ -89,7 +89,7 @@ wait_til_pdrone_launched()
     self endon( "death" );
     self endon( "use_pdrone" );
     self endon( "weapon_switch_started" );
-    self _meth_82DD( "launch_pdrone", "+attack" );
+    self notifyonplayercommand( "launch_pdrone", "+attack" );
     self waittill( "launch_pdrone" );
     self.pdrone_launched = 1;
 }
@@ -101,7 +101,7 @@ pdrone_launch( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_8139( self.team );
+        var_1 makeentitysentient( self.team );
         var_1.team = self.team;
         var_1.pov_mode = 0;
         var_1.owner = self;
@@ -166,9 +166,9 @@ pd_laser_targeting_device( var_0 )
     var_0 endon( "remove_laser_targeting_device" );
     var_0.lastusedweapon = undefined;
     var_0.laserforceon = 0;
-    var_0 _meth_821B( "actionslot4", "dpad_laser_designator" );
-    var_0 _meth_82DD( "use_laser", "+actionslot 4" );
-    var_0 _meth_82DD( "fired_laser", "+attack" );
+    var_0 setweaponhudiconoverride( "actionslot4", "dpad_laser_designator" );
+    var_0 notifyonplayercommand( "use_laser", "+actionslot 4" );
+    var_0 notifyonplayercommand( "fired_laser", "+attack" );
     var_0 childthread pd_monitorlaseroff();
 
     for (;;)
@@ -178,15 +178,15 @@ pd_laser_targeting_device( var_0 )
         if ( var_0.laserforceon || var_0 pd_shouldforcedisablelaser() )
         {
             var_0 notify( "cancel_laser" );
-            var_0 _meth_80B3();
+            var_0 laseroff();
             var_0.laserforceon = 0;
             wait 0.2;
-            var_0 _meth_8131( 1 );
+            var_0 allowfire( 1 );
         }
         else
         {
-            var_0 _meth_80B2();
-            var_0 _meth_8131( 0 );
+            var_0 laseron();
+            var_0 allowfire( 0 );
             var_0.laserforceon = 1;
             var_0 thread pd_laser_designate_target();
         }
@@ -197,7 +197,7 @@ pd_laser_targeting_device( var_0 )
 
 pd_shouldforcedisablelaser()
 {
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( var_0 == "rpg" )
         return 1;
@@ -220,10 +220,10 @@ pd_shouldforcedisablelaser()
         }
     }
 
-    if ( self _meth_8336() )
+    if ( self isreloading() )
         return 1;
 
-    if ( self _meth_812C() )
+    if ( self isthrowinggrenade() )
         return 1;
 
     return 0;
@@ -262,7 +262,7 @@ pd_laser_designate_target()
 
 pd_get_laser_designated_trace()
 {
-    var_0 = self _meth_80A8();
+    var_0 = self geteye();
     var_1 = self getangles();
     var_2 = anglestoforward( var_1 );
     var_3 = var_0 + var_2 * 7000;

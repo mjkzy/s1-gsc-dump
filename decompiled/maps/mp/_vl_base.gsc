@@ -25,7 +25,7 @@ vl_main()
     setdvar( "r_eyePupil", 0.15 );
     setdvar( "r_uiblurdstmode", 3 );
     setdvar( "r_blurdstgaussianblurradius", 1.5 );
-    _func_2D5();
+    resetentplayerxuidforemblems();
     level.partymembers_cb = maps\mp\_vl_camera::party_members;
     level.vlavatars = [];
     level.xuid2ownerid = [];
@@ -64,14 +64,14 @@ init_avatars()
     {
         var_3 = maps\mp\agents\_agent_utility::getfreeagent();
         level.vlavatarpool[var_2] = var_3;
-        var_3 _meth_838A( ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_3 spawnagent( ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_3 maps\mp\_vl_camera::set_agent_values( "spectator", "none" );
         var_3 maps\mp\agents\_agent_common::set_agent_health( 100 );
-        var_3 _meth_8358();
-        var_3 _meth_8356();
+        var_3 botclearscriptenemy();
+        var_3 botclearscriptgoal();
         var_3 maps\mp\_vl_camera::bot_disable_tactical_goals();
-        var_3 _meth_8351( "disable_movement", 1 );
-        var_3 _meth_8351( "disable_rotation", 1 );
+        var_3 botsetflag( "disable_movement", 1 );
+        var_3 botsetflag( "disable_rotation", 1 );
         var_3.isfree = 1;
     }
 }
@@ -109,7 +109,7 @@ onspawnplayer()
     thread monitor_move_btn_fr_vl( self );
     disable_player_controls();
     self setdemigod( 1 );
-    self _meth_8506( 0 );
+    self setmlgspectator( 0 );
 }
 
 on_agent_player_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
@@ -121,7 +121,7 @@ player_sticks_in_lefty_config()
 {
     if ( common_scripts\utility::is_player_gamepad_enabled() )
     {
-        var_0 = self _meth_820E( "gpadSticksConfig" );
+        var_0 = self getlocalplayerprofiledata( "gpadSticksConfig" );
         return isdefined( var_0 ) && ( var_0 == "thumbstick_southpaw" || var_0 == "thumbstick_legacy" );
     }
 
@@ -148,7 +148,7 @@ player_get_right_stick_y( var_0 )
     }
     else
     {
-        var_1 = self _meth_844D();
+        var_1 = self getunnormalizedcameramovement();
         return var_1[1];
     }
 }
@@ -160,7 +160,7 @@ player_update_right_stick_y( var_0 )
     if ( player_sticks_in_lefty_config() )
     {
         player_setup_lefty_angle( var_0 );
-        var_2 = self _meth_82F3();
+        var_2 = self getnormalizedmovement();
         var_3 = -12;
         var_4 = var_2[1] * var_3;
         var_0.fakeangle = angleclamp( var_0.fakeangle + var_4 );
@@ -168,7 +168,7 @@ player_update_right_stick_y( var_0 )
     }
     else
     {
-        var_2 = self _meth_844D();
+        var_2 = self getunnormalizedcameramovement();
         var_1 = var_2[1];
 
         if ( isdefined( var_0.fakeangle ) )
@@ -233,7 +233,7 @@ reuse_avatar( var_0 )
     {
         var_1 = level.vlavatars[var_3];
         level.vlavatars[var_3] = undefined;
-        _func_2D4( var_1, var_4, 1 );
+        setentplayerxuidforemblem( var_1, var_4, 1 );
         level.xuid2ownerid[var_4] = undefined;
     }
 
@@ -243,7 +243,7 @@ reuse_avatar( var_0 )
 
     if ( isdefined( var_1 ) )
     {
-        _func_2D4( var_1, var_0 );
+        setentplayerxuidforemblem( var_1, var_0 );
         level.vlavatars[0] = var_1;
     }
 }
@@ -368,7 +368,7 @@ playerhastouchedstick( var_0 )
 disable_player_controls()
 {
     self notify( "kill_enable_weapons" );
-    self _meth_8131( 0 );
+    self allowfire( 0 );
 }
 
 enable_player_controls()
@@ -378,7 +378,7 @@ enable_player_controls()
     var_0 = getdvarint( "virtualLobbyInFiringRange", 0 );
 
     if ( var_0 == 1 && level.in_firingrange == 1 )
-        self _meth_8131( 1 );
+        self allowfire( 1 );
 }
 
 enter_vlobby( var_0 )
@@ -386,16 +386,16 @@ enter_vlobby( var_0 )
     maps\mp\_vl_firingrange::deactivate_targets();
     var_1 = var_0.camera;
     var_0 setorigin( var_1.origin );
-    var_0 _meth_807C( var_1, "tag_player" );
-    var_0 _meth_81E2( var_1, "tag_player" );
-    var_0 _meth_82FC( "cg_fovscale", "0.6153" );
-    var_0 _meth_82D4( "mp_virtual_lobby_cac", 0 );
+    var_0 playerlinkto( var_1, "tag_player" );
+    var_0 cameralinkto( var_1, "tag_player" );
+    var_0 setclientdvar( "cg_fovscale", "0.6153" );
+    var_0 visionsetnakedforplayer( "mp_virtual_lobby_cac", 0 );
 
     if ( isdefined( level.vlavatars ) && isdefined( level.old_vl_focus ) && isdefined( level.vlavatars[level.old_vl_focus] ) )
         var_0 prep_for_controls( level.vlavatars[level.old_vl_focus], level.vlavatars[level.old_vl_focus].angles );
 
     level.in_firingrange = 0;
-    var_0 _meth_8131( 0 );
+    var_0 allowfire( 0 );
     maps\mp\_utility::updatesessionstate( "spectator" );
 }
 
@@ -428,7 +428,7 @@ monitor_move_btn_fr_vl( var_0 )
 
                 while ( var_7.size > 0 )
                 {
-                    var_8 = var_0 _meth_8511( var_7 );
+                    var_8 = var_0 loadweapons( var_7 );
 
                     if ( var_8 == 1 )
                         break;
@@ -436,9 +436,9 @@ monitor_move_btn_fr_vl( var_0 )
                     wait 0.05;
                 }
 
-                var_0 _meth_8481();
+                var_0 showviewmodel();
                 maps\mp\_vl_firingrange::enter_firingrange( var_0 );
-                var_0 _meth_84D8( "mp_no_foley", 1 );
+                var_0 clientclearsoundsubmix( "mp_no_foley", 1 );
                 setdvar( "r_dof_physical_bokehEnable", 0 );
                 setdvar( "r_dof_physical_enable", 0 );
                 setdvar( "r_uiblurdstmode", 0 );
@@ -446,16 +446,16 @@ monitor_move_btn_fr_vl( var_0 )
             }
             else if ( var_1 == 0 && level.in_firingrange )
             {
-                var_0 _meth_8482();
+                var_0 hideviewmodel();
                 var_0 firingrangecleanup();
                 var_0 disable_player_controls();
 
                 if ( isdefined( var_0.primaryweapon ) )
-                    var_0 _meth_8315( var_0.primaryweapon );
+                    var_0 switchtoweapon( var_0.primaryweapon );
 
                 var_0 notify( "enter_lobby" );
                 enter_vlobby( var_0 );
-                var_0 _meth_84D7( "mp_no_foley", 1 );
+                var_0 clientaddsoundsubmix( "mp_no_foley", 1 );
                 setdvar( "r_dof_physical_enable", 1 );
                 setdvar( "r_dof_physical_bokehEnable", 1 );
                 setdvar( "r_uiblurdstmode", 3 );
@@ -472,7 +472,7 @@ firingrangecleanup()
     var_0 = self;
     var_0 maps\mp\_vl_firingrange::grenadecleanup();
     var_0 thread maps\mp\_vl_firingrange::riotshieldcleanup();
-    var_1 = var_0 _meth_82CE();
+    var_1 = var_0 getweaponslistoffhands();
 
     foreach ( var_3 in var_1 )
         var_0 maps\mp\gametypes\_class::takeoffhand( var_3 );

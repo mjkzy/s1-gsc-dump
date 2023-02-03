@@ -47,10 +47,10 @@ grenade_earthquake()
         if ( distancesquared( var_0, var_2.origin ) > 360000 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }
 
@@ -70,7 +70,7 @@ dirteffect( var_0 )
     var_5 = vectordot( var_3, var_2 );
     var_6 = [ "death", "damage" ];
 
-    if ( var_4 > 0 && var_4 > 0.5 && self _meth_8311() != "iw6_riotshield_mp" )
+    if ( var_4 > 0 && var_4 > 0.5 && self getcurrentweapon() != "iw6_riotshield_mp" )
         common_scripts\utility::waittill_any_in_array_or_timeout( var_6, 2.0 );
     else if ( abs( var_4 ) < 0.866 )
     {
@@ -133,10 +133,10 @@ c4_earthquake()
         if ( distance( var_0, var_2.origin ) > 512 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }
 
@@ -154,10 +154,10 @@ barrel_earthquake()
         if ( distance( var_0, var_2.origin ) > 512 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }
 
@@ -175,10 +175,10 @@ artillery_earthquake()
         if ( distance( var_0, var_2.origin ) > 600 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }
 
@@ -195,10 +195,10 @@ stealthairstrike_earthquake( var_0 )
         if ( distance( var_0, var_2.origin ) > 1000 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }
 
@@ -215,9 +215,9 @@ airstrike_earthquake( var_0 )
         if ( distance( var_0, var_2.origin ) > 900 )
             continue;
 
-        if ( var_2 _meth_81D7( var_0 ) )
+        if ( var_2 damageconetrace( var_0 ) )
             var_2 thread dirteffect( var_0 );
 
-        var_2 _meth_82FB( "ui_hud_shake", 1 );
+        var_2 setclientomnvar( "ui_hud_shake", 1 );
     }
 }

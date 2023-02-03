@@ -8,16 +8,16 @@ takedown_qte( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var
     if ( !common_scripts\utility::flag( "takedown_underwater" ) )
     {
         maps\lagos_utility::start_end_takedown_highway_path_player_side();
-        level.player _meth_8300( 1 );
+        level.player allowads( 1 );
         var_8 hide();
         level.player maps\_shg_utility::setup_player_for_scene();
-        level.player _meth_8310();
+        level.player takeallweapons();
         var_11 = 1;
-        level.player _meth_8080( var_8, "tag_player", var_11 );
-        level.player common_scripts\utility::delaycall( var_11, ::_meth_807D, var_8, "tag_player", 1, 7, 7, 5, 5, 1 );
+        level.player playerlinktoblend( var_8, "tag_player", var_11 );
+        level.player common_scripts\utility::delaycall( var_11, ::playerlinktodelta, var_8, "tag_player", 1, 7, 7, 5, 5, 1 );
         var_8 common_scripts\utility::delaycall( var_11, ::show );
-        level.player _meth_80EF();
-        level.player _meth_82DD( "gunFired", "+attack" );
+        level.player enableinvulnerability();
+        level.player notifyonplayercommand( "gunFired", "+attack" );
         var_12 = [ var_2, var_3, var_8 ];
         var_13 = [ var_1, var_2, var_3, var_8 ];
         var_14 = [ var_2, var_3, var_8 ];
@@ -29,7 +29,7 @@ takedown_qte( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var
         thread truck_takedown_player_hold_check( "flag_player_hold_on", var_9 );
 
         foreach ( var_19 in var_13 )
-            var_19 _meth_804D( var_9, "tag_body" );
+            var_19 linkto( var_9, "tag_body" );
 
         var_9 maps\_anim::anim_single( var_12, "hostage_truck_takedown_pt1", "tag_body" );
         level thread maps\lagos_fx::fake_tread_fx_hostage_truck( var_9 );
@@ -43,9 +43,9 @@ takedown_qte( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var
             var_0 thread maps\_anim::anim_single_solo( var_9, "hostage_truck_takedown_pt2" );
             var_9 thread maps\_anim::anim_single( var_12, "hostage_truck_takedown_pt2", "tag_body" );
             wait 0.4;
-            level.player _meth_804F();
+            level.player unlink();
             level.player thread truck_takedown_player_hold_fail( var_8 gettagorigin( "tag_player" ), var_8 gettagangles( "tag_player" ), ( -400, 500, -200 ), ( -320, 128, 0 ) );
-            var_8 _meth_8141();
+            var_8 stopanimscripted();
             var_8 delete();
             hostage_truck_gameover();
             return;
@@ -78,18 +78,18 @@ takedown_qte( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var
             waitframe();
             var_9 thread maps\_anim::anim_single_solo( var_8, "hostage_truck_takedown_fail_pt2", "tag_body" );
             wait 0.3;
-            level.player _meth_83E8( undefined );
-            level.player _meth_804F();
+            level.player forcemovingplatformentity( undefined );
+            level.player unlink();
             level.burke hide();
             level.player thread truck_takedown_player_hold_fail( var_8 gettagorigin( "tag_player" ), var_8 gettagangles( "tag_player" ), ( 0, 500, -200 ), ( -96, 360, 0 ) );
-            var_8 _meth_8141();
+            var_8 stopanimscripted();
             var_8 delete();
             hostage_truck_gameover();
             return;
         }
 
         soundscripts\_snd::snd_printlnbold( "Shoot Driver Success" );
-        level.player common_scripts\utility::delaycall( 6, ::_meth_80A2, 1, 1, 0, 0, 0, 0, 0 );
+        level.player common_scripts\utility::delaycall( 6, ::lerpviewangleclamp, 1, 1, 0, 0, 0, 0, 0 );
         var_9 thread maps\_anim::anim_single_solo( level.burke, "hostage_truck_takedown_pt3", "tag_body" );
         var_0 thread maps\_anim::anim_single_solo( var_10, "hostage_truck_takedown_pt3" );
         var_0 thread maps\_anim::anim_single_solo( var_9, "hostage_truck_takedown_pt3" );
@@ -110,56 +110,56 @@ shootblankthread( var_0 )
 {
     if ( var_0 )
     {
-        self _meth_81E8();
+        self shootblank();
         waitframe();
-        self _meth_81E8();
+        self shootblank();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
-        self _meth_81E7();
-        waitframe();
-        waitframe();
-        waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        waitframe();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
+        waitframe();
+        waitframe();
+        self shoot();
     }
     else
     {
-        self _meth_81E8();
+        self shootblank();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
-        self _meth_81E7();
-        waitframe();
-        waitframe();
-        waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        waitframe();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
         waitframe();
         waitframe();
-        self _meth_81E7();
+        self shoot();
+        waitframe();
+        waitframe();
+        self shoot();
     }
 }
 
@@ -186,7 +186,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
 {
     level endon( "missionfailed" );
     level endon( var_2 );
-    level.player _meth_834C( 1 );
+    level.player enablemousesteer( 1 );
     var_0 childthread viewmodel_swim_handle_notetracks();
     var_4 = %wm_unarmed_underwater_swim_idle_loop;
     var_5 = %wm_unarmed_underwater_swim_loop_into;
@@ -202,15 +202,15 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
     var_15 = 3;
     var_16 = 4;
     var_17 = var_13;
-    var_0 _meth_8152( "swim_notes", var_8, 1, 0.0 );
-    var_0 _meth_8152( "swim_notes", var_4, 1, 0.5 );
+    var_0 setflaggedanimknob( "swim_notes", var_8, 1, 0.0 );
+    var_0 setflaggedanimknob( "swim_notes", var_4, 1, 0.5 );
     var_18 = 0.0;
 
     for (;;)
     {
-        level.player _meth_8482();
-        var_19 = level.player _meth_82F3();
-        var_20 = level.player _meth_830D();
+        level.player hideviewmodel();
+        var_19 = level.player getnormalizedmovement();
+        var_20 = level.player getnormalizedcameramovements();
         var_21 = 0;
 
         if ( var_19[0] > 0.2 )
@@ -228,7 +228,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
         {
             setdvar( "ui_deadquote", &"LAGOS_SWIM_FAIL" );
             maps\_utility::missionfailedwrapper();
-            level.player _meth_834C( 0 );
+            level.player enablemousesteer( 0 );
             return;
         }
 
@@ -238,15 +238,15 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
         if ( !var_21 && var_3 )
             var_25 = ( 0, 0, -10 );
 
-        var_0 _meth_82AE( var_0.origin + anglestoforward( var_0.angles ) * var_19[0] * var_24 * var_21 + var_25, 0.1, 0.05, 0.05 );
+        var_0 moveto( var_0.origin + anglestoforward( var_0.angles ) * var_19[0] * var_24 * var_21 + var_25, 0.1, 0.05, 0.05 );
         var_26 = 5;
-        var_0 _meth_82B5( var_0.angles - ( 0, 1, 0 ) * var_20[1] * var_26 - ( 1, 0, 0 ) * var_20[0] * var_26, 0.1, 0.05, 0.05 );
+        var_0 rotateto( var_0.angles - ( 0, 1, 0 ) * var_20[1] * var_26 - ( 1, 0, 0 ) * var_20[0] * var_26, 0.1, 0.05, 0.05 );
 
         if ( common_scripts\utility::flag( "player_swimming_drown" ) )
         {
             if ( var_17 == var_15 )
             {
-                var_27 = var_0 _meth_814F( var_6 );
+                var_27 = var_0 getanimtime( var_6 );
 
                 foreach ( var_29 in var_9 )
                 {
@@ -284,7 +284,7 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
             }
             else
             {
-                var_27 = var_0 _meth_814F( var_6 );
+                var_27 = var_0 getanimtime( var_6 );
 
                 foreach ( var_29 in var_9 )
                 {
@@ -299,19 +299,19 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
             if ( var_17 == var_13 )
             {
                 if ( var_22 == var_15 || var_22 == var_14 )
-                    var_0 _meth_810D( "swim_notes", var_4, 1, 1.0 );
+                    var_0 setflaggedanimknobrestart( "swim_notes", var_4, 1, 1.0 );
                 else
-                    var_0 _meth_810D( "swim_notes", var_4 );
+                    var_0 setflaggedanimknobrestart( "swim_notes", var_4 );
             }
             else if ( var_17 == var_14 )
             {
                 soundscripts\_snd::snd_message( "lagos_swimming_into_stroke" );
-                var_0 _meth_810D( "swim_notes", var_5 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_5 );
             }
             else if ( var_17 == var_15 )
-                var_0 _meth_810D( "swim_notes", var_6 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_6 );
             else if ( var_17 == var_16 )
-                var_0 _meth_810D( "swim_notes", var_7, 1, 0.75 );
+                var_0 setflaggedanimknobrestart( "swim_notes", var_7, 1, 0.75 );
 
             var_18 = 0.05;
         }
@@ -320,32 +320,32 @@ viewmodel_swim_animations_loop( var_0, var_1, var_2, var_3 )
         var_18 += 0.05;
     }
 
-    level.player _meth_834C( 0 );
+    level.player enablemousesteer( 0 );
 }
 
 viewmodel_swim_animations( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawn( "script_model", level.player.origin );
-    var_4 _meth_80B1( "worldhands_atlas_pmc_smp" );
-    var_4 _meth_808E();
+    var_4 setmodel( "worldhands_atlas_pmc_smp" );
+    var_4 dontcastshadows();
 
     if ( isdefined( var_3 ) )
         var_4.angles = var_3.angles;
     else
         var_4.angles = level.player.angles;
 
-    var_4 _meth_8115( #animtree );
-    level.player _meth_807D( var_4, "tag_player", 1, 0, 0, 0, 0 );
+    var_4 useanimtree( #animtree );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 0, 0, 0, 0 );
     viewmodel_swim_animations_loop( var_4, var_0, var_1, var_2 );
 
     if ( !common_scripts\utility::flag( "missionfailed" ) )
     {
-        var_4 _meth_810D( "swim_notes", %wm_unarmed_underwater_swim_arms_off_screen );
+        var_4 setflaggedanimknobrestart( "swim_notes", %wm_unarmed_underwater_swim_arms_off_screen );
         var_5 = getanimlength( %wm_unarmed_underwater_swim_arms_off_screen );
         wait(var_5);
     }
 
-    var_4 _meth_804F();
+    var_4 unlink();
     var_4 delete();
 }
 
@@ -388,8 +388,8 @@ takedown_underwater_portion( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_10 = common_scripts\utility::getstruct( "van_takedown_underwater_player", "targetname" );
     var_2 hide();
     var_1 hide();
-    level.player _meth_83E8( undefined );
-    level.player _meth_804F();
+    level.player forcemovingplatformentity( undefined );
+    level.player unlink();
     level.player maps\_utility::teleport_player( var_10 );
     var_11 = ( 13, 0, 0 );
     level.player.origin = ( -34194, 76524, 130 );
@@ -403,16 +403,16 @@ takedown_underwater_portion( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     thread viewmodel_swim_animations( var_9, "latch_opened", 1, undefined );
     level.player waittill_player_uses_truck_latch( var_9, var_7 );
     level notify( "swimming_end" );
-    level.player _meth_831D();
+    level.player disableweapons();
     var_4 hide();
     var_5 hide();
     var_6 hide();
-    var_4 _meth_804D( var_9, "tag_body" );
-    var_5 _meth_804D( var_9, "tag_body" );
-    var_6 _meth_804D( var_9, "tag_body" );
+    var_4 linkto( var_9, "tag_body" );
+    var_5 linkto( var_9, "tag_body" );
+    var_6 linkto( var_9, "tag_body" );
     var_12 = 0.75;
-    level.player _meth_8080( var_1, "tag_player", var_12, 0.5 );
-    level.player common_scripts\utility::delaycall( var_12, ::_meth_807D, var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player playerlinktoblend( var_1, "tag_player", var_12, 0.5 );
+    level.player common_scripts\utility::delaycall( var_12, ::playerlinktodelta, var_1, "tag_player", 1, 7, 7, 5, 5, 1 );
     var_1 common_scripts\utility::delaycall( var_12, ::show );
     var_2 common_scripts\utility::delaycall( var_12, ::show );
     var_4 common_scripts\utility::delaycall( var_12, ::show );
@@ -423,7 +423,7 @@ takedown_underwater_portion( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     soundscripts\_snd::snd_message( "underwater_rescue" );
 
     foreach ( var_14 in var_8 )
-        var_14 _meth_804D( var_9, "tag_body" );
+        var_14 linkto( var_9, "tag_body" );
 
     var_7 = getanimlength( var_1 maps\_utility::getanim( "hostage_truck_takedown_pt4_into" ) );
     wait(var_7);
@@ -435,7 +435,7 @@ takedown_underwater_portion( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_1 waittillmatch( "single anim", "unlink_from_truck" );
     level thread maps\lagos_fx::player_gasping_breath();
     common_scripts\utility::flag_set( "obj_progress_pursue_hostage_truck_highway_rescue" );
-    level.player _meth_804F();
+    level.player unlink();
     var_1 hide();
     thread viewmodel_swim_animations( var_9, "swimming_end", 0, var_1 );
     level thread maps\lagos_fx::player_drown_end_vm_transition();
@@ -448,10 +448,10 @@ takedown_underwater_portion( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     foreach ( var_14 in var_8 )
     {
         if ( isdefined( var_14 ) )
-            var_14 _meth_8141();
+            var_14 stopanimscripted();
     }
 
-    level.player _meth_8300( 1 );
+    level.player allowads( 1 );
 }
 
 hostage_truck_anim_single_break_when_timeout_or_fail( var_0, var_1, var_2 )
@@ -470,8 +470,8 @@ hostage_truck_scripted_descent( var_0 )
     var_2 = common_scripts\utility::getstruct( var_1.target, "targetname" );
     self.origin = var_1.origin;
     self.angles = var_1.angles;
-    self _meth_82AE( var_2.origin, var_0, 0, var_0 );
-    self _meth_82B5( var_2.angles, var_0 );
+    self moveto( var_2.origin, var_0, 0, var_0 );
+    self rotateto( var_2.angles, var_0 );
 }
 
 printorigin3duntilnotify( var_0, var_1, var_2, var_3, var_4 )
@@ -508,12 +508,12 @@ truck_takedown_player_hold_check( var_0, var_1 )
 
 truck_takedown_player_hold_fail( var_0, var_1, var_2, var_3 )
 {
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
     var_4 = common_scripts\utility::spawn_tag_origin();
     var_4.origin = var_0;
     var_4.angles = var_1;
-    self _meth_807F( var_4, "tag_origin" );
-    var_5 = bullettrace( level.player _meth_80A8(), level.player _meth_80A8() + var_2, 0 );
+    self playerlinktoabsolute( var_4, "tag_origin" );
+    var_5 = bullettrace( level.player geteye(), level.player geteye() + var_2, 0 );
     var_6 = 0.25;
     var_7 = 25;
     var_8 = 360;
@@ -526,7 +526,7 @@ truck_takedown_player_hold_fail( var_0, var_1, var_2, var_3 )
     var_9 = 255;
     var_10 += var_3;
     var_4 truck_takedown_player_fall( var_6, var_7, var_8, var_9, var_10, "light" );
-    level.player _meth_8052();
+    level.player kill();
     var_6 = 0.6;
     var_7 = 95;
     var_8 = 200;
@@ -537,17 +537,17 @@ truck_takedown_player_hold_fail( var_0, var_1, var_2, var_3 )
 
 truck_takedown_player_fall( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    self _meth_82AE( var_4, var_0, 0, 0 );
-    self _meth_83DF( ( var_1, var_2, var_3 ), var_0, 0, 0 );
+    self moveto( var_4, var_0, 0, 0 );
+    self rotateby( ( var_1, var_2, var_3 ), var_0, 0, 0 );
     earthquake( 1, var_0 * 2, self.origin, 500 );
-    level.player _meth_8051( 34, self.origin + ( 0, 0, -32 ) );
+    level.player dodamage( 34, self.origin + ( 0, 0, -32 ) );
 
     if ( isdefined( var_5 ) )
     {
         if ( var_5 == "heavy" )
-            level.player _meth_80AD( "damage_heavy" );
+            level.player playrumbleonentity( "damage_heavy" );
         else if ( var_5 == "light" )
-            level.player _meth_80AD( "damage_light" );
+            level.player playrumbleonentity( "damage_light" );
     }
 
     wait(var_0);
@@ -606,12 +606,12 @@ kva_fake_death_checker( var_0, var_1 )
     self waittill( "damage", var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11 );
     self.fake_death = 1;
 
-    if ( !isdefined( self _meth_83EC() ) )
-        self _meth_804D( var_0.tag_driver );
+    if ( !isdefined( self getlinkedparent() ) )
+        self linkto( var_0.tag_driver );
 
     if ( isdefined( var_0 ) && isdefined( var_1 ) )
     {
-        self _meth_8141();
+        self stopanimscripted();
         var_0 thread maps\_anim::anim_single_solo( self, var_1, "tag_body" );
     }
 }
@@ -624,7 +624,7 @@ kva_fake_death_checker_bloodfx()
     {
         self waittill( "damage", var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 );
         var_10 = common_scripts\utility::spawn_tag_origin();
-        var_10 _meth_804D( self, var_7, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_10 linkto( self, var_7, ( 0, 0, 0 ), ( 0, 0, 0 ) );
         playfxontag( common_scripts\utility::getfx( "lag_tkdown_truck_blood_impact" ), var_10, "TAG_ORIGIN" );
     }
 }
@@ -632,13 +632,13 @@ kva_fake_death_checker_bloodfx()
 doclamping()
 {
     wait 3;
-    level.player _meth_80A2( 1, 0.25, 0.25, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1, 0.25, 0.25, 0, 0, 0, 0 );
 }
 
 doclampingrelease()
 {
     wait 0.6;
-    level.player _meth_80A2( 0.05, 0.25, 0.25, 35, 35, 22.5, 22.5 );
+    level.player lerpviewangleclamp( 0.05, 0.25, 0.25, 35, 35, 22.5, 22.5 );
 }
 
 player_free_aim( var_0, var_1, var_2 )
@@ -647,26 +647,26 @@ player_free_aim( var_0, var_1, var_2 )
     level.player waittill( "do_viewmodel_swap" );
     thread doclampingrelease();
     var_3 = "iw5_titan45lagostrucktakedown_sp";
-    level.player _meth_831E();
-    level.player _meth_8482();
-    level.player _meth_830E( var_3 );
-    level.player _meth_8315( var_3 );
+    level.player enableweapons();
+    level.player hideviewmodel();
+    level.player giveweapon( var_3 );
+    level.player switchtoweapon( var_3 );
     wait 0.3;
-    level.player _meth_8481();
+    level.player showviewmodel();
     soundscripts\_snd::snd_message( "final_takedown_gun_up" );
     common_scripts\utility::flag_set( "van_takedown_shoot_lighting" );
-    level.player _meth_83E8( var_0 );
-    level.player _meth_83E8( var_1 );
+    level.player forcemovingplatformentity( var_0 );
+    level.player forcemovingplatformentity( var_1 );
     level.player playerrecoilscaleon( 0 );
     level.player waittill( "part2_done" );
-    level.player _meth_831D();
+    level.player disableweapons();
     wait 1;
     level.player playerrecoilscaleon( 1 );
     common_scripts\utility::flag_set( "van_takedown_impact_lighting" );
-    level.player _meth_830F( var_3 );
+    level.player takeweapon( var_3 );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_804C();
+        var_0 showallparts();
 }
 
 waittill_player_uses_truck_latch( var_0, var_1 )
@@ -674,11 +674,11 @@ waittill_player_uses_truck_latch( var_0, var_1 )
     var_2 = var_0 maps\_shg_utility::hint_button_tag( "x", "latch_jnt", 150, 900 );
     var_3 = common_scripts\utility::spawn_tag_origin();
     var_3.origin = var_0 gettagorigin( "latch_jnt" ) - 32 * anglestoforward( var_0.angles );
-    var_3 _meth_804D( var_0, "latch_jnt" );
+    var_3 linkto( var_0, "latch_jnt" );
     var_3 makeusable();
     level.obj_tag = common_scripts\utility::spawn_tag_origin();
     level.obj_tag.origin = var_0 gettagorigin( "latch_jnt" );
-    level.obj_tag _meth_804D( var_0, "latch_jnt" );
+    level.obj_tag linkto( var_0, "latch_jnt" );
     var_4 = getent( "trigger_player_ready_for_van_open", "targetname" );
     var_5 = getent( "swim_latch_open_trigger", "targetname" );
     var_4 maps\lagos_utility::fake_linkto( var_0 );
@@ -704,7 +704,7 @@ waittill_player_uses_truck_latch( var_0, var_1 )
 truck_latch_rumble()
 {
     wait 5;
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 truck_swim_latch_open_player_validation()
@@ -763,17 +763,17 @@ setup_vehicles_for_takedown()
 {
     level.hostage_truck = maps\_vehicle::spawn_vehicle_from_targetname( "KVA_hostage_truck_takedown" );
     level.hostage_truck.vehicle_stays_alive = 1;
-    level.hostage_truck _meth_80B1( "vehicle_civ_boxtruck_highres_ai" );
+    level.hostage_truck setmodel( "vehicle_civ_boxtruck_highres_ai" );
     level.hostage_truck.animname = "hostage_truck";
-    level.hostage_truck _meth_8115( #animtree );
+    level.hostage_truck useanimtree( #animtree );
     thread maps\_vehicle_traffic::add_script_car( level.hostage_truck );
     level.hostage_truck.tag_driver = spawn( "script_origin", ( 0, 0, 0 ) );
     level.hostage_truck.tag_driver.origin = level.hostage_truck gettagorigin( "tag_driver" );
     level.hostage_truck.tag_driver.angles = level.hostage_truck gettagangles( "tag_driver" );
-    level.hostage_truck.tag_driver _meth_804D( level.hostage_truck );
+    level.hostage_truck.tag_driver linkto( level.hostage_truck );
     level.hostage_truck_oncoming = maps\_vehicle::spawn_vehicle_from_targetname( "oncoming_hostage_truck_takedown" );
     level.hostage_truck_oncoming.animname = "oncoming_truck";
-    level.hostage_truck_oncoming _meth_8115( #animtree );
+    level.hostage_truck_oncoming useanimtree( #animtree );
 }
 
 hostage_truck_slomo_start( var_0, var_1, var_2 )
@@ -786,7 +786,7 @@ hostage_truck_slomo_start( var_0, var_1, var_2 )
     var_3 thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     var_3 thread player_heartbeat();
     maps\_utility::slowmo_start();
-    var_3 _meth_8130( 0 );
+    var_3 allowmelee( 0 );
     maps\_utility::slowmo_setspeed_norm( var_0 );
     maps\_utility::slowmo_setspeed_slow( var_1 );
     maps\_utility::slowmo_setlerptime_in( var_2 );
@@ -876,7 +876,7 @@ hostage_truck_slomo_start_pt4( var_0 )
 
 hostage_truck_viewmodel_swap( var_0 )
 {
-    level.player _meth_8130( 0 );
+    level.player allowmelee( 0 );
     level.player notify( "do_viewmodel_swap" );
 }
 
@@ -945,9 +945,9 @@ wait_for_flag_or_player_command_aux( var_0, var_1 )
 
 wait_for_flag_or_player_command( var_0, var_1 )
 {
-    level.player _meth_82DD( "qte_success_message", var_1 );
+    level.player notifyonplayercommand( "qte_success_message", var_1 );
     var_2 = wait_for_flag_or_player_command_aux( var_0, var_1 );
-    level.player _meth_849C( "qte_success_message", var_1 );
+    level.player notifyonplayercommandremove( "qte_success_message", var_1 );
 }
 
 display_hint_timeout_override_old( var_0, var_1 )
@@ -971,7 +971,7 @@ qte_shoot_kva_off()
     if ( !level.console && !level.player common_scripts\utility::is_player_gamepad_enabled() )
         var_0 = "mouse2";
 
-    if ( level.player _meth_824C( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_SHOOT_KVA" )
+    if ( level.player buttonpressed( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_SHOOT_KVA" )
         return 1;
 
     return 0;
@@ -987,7 +987,7 @@ qte_pry_open_off()
 
 qte_swim_off()
 {
-    if ( level.player _meth_82F3() > 0.01 || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_SWIM" )
+    if ( level.player getnormalizedmovement() > 0.01 || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_SWIM" )
         return 1;
 
     return 0;

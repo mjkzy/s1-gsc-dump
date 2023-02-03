@@ -41,12 +41,12 @@ bulletwhizbyreaction()
     self.lastreacttime = gettime();
     self.a.movement = "stop";
     var_0 = isdefined( self.whizbyenemy ) && distancesquared( self.origin, self.whizbyenemy.origin ) < 160000;
-    self _meth_818E( "gravity" );
-    self _meth_818F( "face current" );
+    self animmode( "gravity" );
+    self orientmode( "face current" );
 
     if ( var_0 || common_scripts\utility::cointoss() )
     {
-        self _meth_8142( %animscript_root, 0.1 );
+        self clearanim( %animscript_root, 0.1 );
         var_1 = [];
 
         if ( animscripts\utility::usingsmg() )
@@ -71,15 +71,15 @@ bulletwhizbyreaction()
         else
             var_3 = 0.2 + randomfloat( 0.5 );
 
-        self _meth_810D( "reactanim", var_2, 1, 0.1, 1 );
+        self setflaggedanimknobrestart( "reactanim", var_2, 1, 0.1, 1 );
         animscripts\notetracks::donotetracksfortime( var_3, "reactanim" );
-        self _meth_8142( %animscript_root, 0.1 );
+        self clearanim( %animscript_root, 0.1 );
 
         if ( !var_0 && self.stairsstate == "none" && !isdefined( self.disable_dive_whizby_react ) )
         {
             var_4 = 1 + randomfloat( 0.2 );
             var_5 = animscripts\utility::randomanimoftwo( %exposed_dive_grenade_b, %exposed_dive_grenade_f );
-            self _meth_810D( "dive", var_5, 1, 0.1, var_4 );
+            self setflaggedanimknobrestart( "dive", var_5, 1, 0.1, var_4 );
             animscripts\shared::donotetracks( "dive" );
         }
     }
@@ -90,8 +90,8 @@ bulletwhizbyreaction()
 
         if ( self.a.pose == "stand" )
         {
-            self _meth_8142( %animscript_root, 0.1 );
-            self _meth_810D( "crouch", %exposed_stand_2_crouch, 1, 0.1, var_4 );
+            self clearanim( %animscript_root, 0.1 );
+            self setflaggedanimknobrestart( "crouch", %exposed_stand_2_crouch, 1, 0.1, var_4 );
             animscripts\shared::donotetracks( "crouch" );
         }
 
@@ -105,23 +105,23 @@ bulletwhizbyreaction()
         if ( vectordot( var_7, var_6 ) > 0 )
         {
             var_8 = animscripts\utility::randomanimoftwo( %exposed_crouch_idle_twitch_v2, %exposed_crouch_idle_twitch_v3 );
-            self _meth_8142( %animscript_root, 0.1 );
-            self _meth_810D( "twitch", var_8, 1, 0.1, 1 );
+            self clearanim( %animscript_root, 0.1 );
+            self setflaggedanimknobrestart( "twitch", var_8, 1, 0.1, 1 );
             animscripts\shared::donotetracks( "twitch" );
         }
         else
         {
             var_9 = animscripts\utility::randomanimoftwo( %exposed_crouch_turn_180_left, %exposed_crouch_turn_180_right );
-            self _meth_8142( %animscript_root, 0.1 );
-            self _meth_810D( "turn", var_9, 1, 0.1, 1 );
+            self clearanim( %animscript_root, 0.1 );
+            self setflaggedanimknobrestart( "turn", var_9, 1, 0.1, 1 );
             animscripts\shared::donotetracks( "turn" );
         }
     }
 
-    self _meth_8142( %animscript_root, 0.1 );
+    self clearanim( %animscript_root, 0.1 );
     self.whizbyenemy = undefined;
-    self _meth_818E( "normal" );
-    self _meth_818F( "face default" );
+    self animmode( "normal" );
+    self orientmode( "face default" );
 }
 
 bulletwhizbycheckloop()
@@ -148,7 +148,7 @@ bulletwhizbycheckloop()
             continue;
 
         self.whizbyenemy = var_0;
-        self _meth_819A( ::bulletwhizbyreaction );
+        self animcustom( ::bulletwhizbyreaction );
     }
 }
 
@@ -156,14 +156,14 @@ clearlookatthread()
 {
     self endon( "killanimscript" );
     wait 0.3;
-    self _meth_81FF();
+    self setlookatentity();
 }
 
 getnewenemyreactionanim()
 {
     var_0 = undefined;
 
-    if ( self _meth_8163() )
+    if ( self nearclaimnodeandangle() )
     {
         var_1 = animscripts\utility::lookupanimarray( "cover_reactions" );
 
@@ -174,7 +174,7 @@ getnewenemyreactionanim()
 
             if ( vectordot( var_2, var_3 ) < -0.5 )
             {
-                self _meth_818F( "face current" );
+                self orientmode( "face current" );
                 var_4 = randomint( var_1[self.prevscript].size );
                 var_0 = var_1[self.prevscript][var_4];
             }
@@ -202,9 +202,9 @@ getnewenemyreactionanim()
         }
 
         if ( isdefined( self.enemy ) && distancesquared( self.enemy.origin, self.reactiontargetpos ) < 65536 )
-            self _meth_818F( "face enemy" );
+            self orientmode( "face enemy" );
         else
-            self _meth_818F( "face point", self.reactiontargetpos );
+            self orientmode( "face point", self.reactiontargetpos );
 
         if ( self.a.pose == "crouch" )
         {
@@ -213,7 +213,7 @@ getnewenemyreactionanim()
 
             if ( vectordot( var_6, var_3 ) < -0.5 )
             {
-                self _meth_818F( "face current" );
+                self orientmode( "face current" );
                 var_5[0] = %crouch_cover_reaction_a;
                 var_5[1] = %crouch_cover_reaction_b;
             }
@@ -227,24 +227,24 @@ getnewenemyreactionanim()
 
 stealthnewenemyreactanim()
 {
-    self _meth_8142( %animscript_root, 0.2 );
+    self clearanim( %animscript_root, 0.2 );
 
     if ( randomint( 4 ) < 3 )
     {
-        self _meth_818F( "face enemy" );
+        self orientmode( "face enemy" );
         var_0 = %exposed_idle_reactb;
 
         if ( animscripts\utility::usingsmg() )
             var_0 = %smg_exposed_idle_reactb;
 
-        self _meth_810D( "reactanim", var_0, 1, 0.2, 1 );
+        self setflaggedanimknobrestart( "reactanim", var_0, 1, 0.2, 1 );
         var_1 = getanimlength( var_0 );
         animscripts\notetracks::donotetracksfortime( var_1 * 0.8, "reactanim" );
-        self _meth_818F( "face current" );
+        self orientmode( "face current" );
     }
     else
     {
-        self _meth_818F( "face enemy" );
+        self orientmode( "face enemy" );
         var_2 = %exposed_backpedal;
         var_3 = %exposed_backpedal_v2;
 
@@ -254,12 +254,12 @@ stealthnewenemyreactanim()
             var_3 = %smg_exposed_backpedal_v2;
         }
 
-        self _meth_810D( "reactanim", var_2, 1, 0.2, 1 );
+        self setflaggedanimknobrestart( "reactanim", var_2, 1, 0.2, 1 );
         var_1 = getanimlength( var_2 );
         animscripts\notetracks::donotetracksfortime( var_1 * 0.8, "reactanim" );
-        self _meth_818F( "face current" );
-        self _meth_8142( %animscript_root, 0.2 );
-        self _meth_810D( "reactanim", var_3, 1, 0.2, 1 );
+        self orientmode( "face current" );
+        self clearanim( %animscript_root, 0.2 );
+        self setflaggedanimknobrestart( "reactanim", var_3, 1, 0.2, 1 );
         animscripts\shared::donotetracks( "reactanim" );
     }
 }
@@ -277,8 +277,8 @@ newenemyreactionanim()
     else
     {
         var_0 = getnewenemyreactionanim();
-        self _meth_8142( %animscript_root, 0.2 );
-        self _meth_810D( "reactanim", var_0, 1, 0.2, 1 );
+        self clearanim( %animscript_root, 0.2 );
+        self setflaggedanimknobrestart( "reactanim", var_0, 1, 0.2, 1 );
         animscripts\shared::donotetracks( "reactanim" );
     }
 
@@ -299,7 +299,7 @@ newenemysurprisedreaction()
     if ( self.a.pose == "prone" || isdefined( self.a.onback ) )
         return;
 
-    self _meth_818E( "gravity" );
+    self animmode( "gravity" );
 
     if ( isdefined( self.enemy ) )
         newenemyreactionanim();

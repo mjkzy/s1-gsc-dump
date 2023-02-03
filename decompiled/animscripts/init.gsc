@@ -7,7 +7,7 @@ initweapon( var_0 )
     self.weaponinfo[var_0].position = "none";
     self.weaponinfo[var_0].hasclip = 1;
 
-    if ( _func_0DB( var_0 ) != "" )
+    if ( getweaponclipmodel( var_0 ) != "" )
         self.weaponinfo[var_0].useclip = 1;
     else
         self.weaponinfo[var_0].useclip = 0;
@@ -65,7 +65,7 @@ main()
     initweapon( self.primaryweapon );
     initweapon( self.secondaryweapon );
     initweapon( self.sidearm );
-    self _meth_8173();
+    self setdefaultaimlimits();
     self.a.weaponpos["left"] = "none";
     self.a.weaponpos["right"] = "none";
     self.a.weaponpos["chest"] = "none";
@@ -103,7 +103,7 @@ main()
     self.a.combatendtime = gettime();
     self.a.lastenemytime = gettime();
     self.a.suppressingenemy = 0;
-    self.a.disablelongdeath = !self _meth_813D();
+    self.a.disablelongdeath = !self isbadguy();
     self.a.lookangle = 0;
     self.a.paintime = 0;
     self.a.lastshoottime = 0;
@@ -213,7 +213,7 @@ pollallowedstancesthread()
 {
     for (;;)
     {
-        if ( self _meth_81CB( "stand" ) )
+        if ( self isstanceallowed( "stand" ) )
         {
             var_0[0] = "stand allowed";
             var_1[0] = ( 0, 1, 0 );
@@ -224,7 +224,7 @@ pollallowedstancesthread()
             var_1[0] = ( 1, 0, 0 );
         }
 
-        if ( self _meth_81CB( "crouch" ) )
+        if ( self isstanceallowed( "crouch" ) )
         {
             var_0[1] = "crouch allowed";
             var_1[1] = ( 0, 1, 0 );
@@ -235,7 +235,7 @@ pollallowedstancesthread()
             var_1[1] = ( 1, 0, 0 );
         }
 
-        if ( self _meth_81CB( "prone" ) )
+        if ( self isstanceallowed( "prone" ) )
         {
             var_0[2] = "prone allowed";
             var_1[2] = ( 0, 1, 0 );
@@ -246,7 +246,7 @@ pollallowedstancesthread()
             var_1[2] = ( 1, 0, 0 );
         }
 
-        var_2 = self _meth_8097() + ( 0, 0, 30 );
+        var_2 = self getshootatpos() + ( 0, 0, 30 );
         var_3 = ( 0, 0, -10 );
 
         for ( var_4 = 0; var_4 < var_0.size; var_4++ )
@@ -476,7 +476,7 @@ aiturnnotifies()
 
     for (;;)
     {
-        var_2 = _func_0D6();
+        var_2 = getaiarray();
 
         if ( var_2.size == 0 )
         {

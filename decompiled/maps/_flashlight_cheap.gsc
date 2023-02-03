@@ -17,9 +17,9 @@ add_cheap_flashlight( var_0, var_1, var_2 )
         var_5 = self gettagorigin( "tag_inhand" );
         var_6 = self gettagangles( "tag_inhand" );
         self.flashlight = spawn( "script_model", var_5 );
-        self.flashlight _meth_80B1( "com_flashlight_on_physics" );
+        self.flashlight setmodel( "com_flashlight_on_physics" );
         self.flashlight.angles = var_6;
-        self.flashlight _meth_804D( self, "tag_inhand" );
+        self.flashlight linkto( self, "tag_inhand" );
         var_3 = self.flashlight;
         var_4 = "tag_light";
     }

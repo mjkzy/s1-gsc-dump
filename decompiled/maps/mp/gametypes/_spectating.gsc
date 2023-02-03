@@ -39,12 +39,12 @@ onjoinedspectators()
         self waittill( "joined_spectators" );
         setspectatepermissions();
 
-        if ( !maps\mp\_utility::invirtuallobby() && ( self _meth_8432() || isdefined( self.pers["mlgSpectator"] ) && self.pers["mlgSpectator"] ) )
+        if ( !maps\mp\_utility::invirtuallobby() && ( self ismlgspectator() || isdefined( self.pers["mlgSpectator"] ) && self.pers["mlgSpectator"] ) )
         {
-            self _meth_8506( 1 );
+            self setmlgspectator( 1 );
 
             if ( game["roundsPlayed"] > 0 )
-                self _meth_82FB( "ui_use_mlg_hud", 1 );
+                self setclientomnvar( "ui_use_mlg_hud", 1 );
         }
     }
 }
@@ -53,7 +53,7 @@ updatemlgicons()
 {
     self endon( "disconnect" );
 
-    if ( self _meth_8432() )
+    if ( self ismlgspectator() )
     {
         for (;;)
         {
@@ -63,10 +63,10 @@ updatemlgicons()
             if ( isdefined( var_1 ) )
             {
                 if ( isdefined( var_1.primary ) )
-                    self _meth_8539( var_1.primary );
+                    self precachekillcamiconforweapon( var_1.primary );
 
                 if ( isdefined( var_1.secondary ) )
-                    self _meth_8539( var_1.secondary );
+                    self precachekillcamiconforweapon( var_1.secondary );
             }
         }
     }
@@ -80,13 +80,13 @@ onspectatingclient()
     for (;;)
     {
         self waittill( "spectating_cycle" );
-        var_0 = self _meth_829D();
+        var_0 = self getspectatingplayer();
 
         if ( isdefined( var_0 ) )
         {
-            self _meth_82C5( var_0, 6 );
+            self setcarddisplayslot( var_0, 6 );
 
-            if ( self _meth_8432() )
+            if ( self ismlgspectator() )
                 updatespectatedloadout( var_0 );
         }
     }
@@ -109,23 +109,23 @@ setspectatepermissions()
         if ( level.multiteambased )
         {
             for ( var_1 = 0; var_1 < level.teamnamelist.size; var_1++ )
-                self _meth_8273( level.teamnamelist[var_1], 0 );
+                self allowspectateteam( level.teamnamelist[var_1], 0 );
         }
         else
         {
-            self _meth_8273( "allies", 0 );
-            self _meth_8273( "axis", 0 );
+            self allowspectateteam( "allies", 0 );
+            self allowspectateteam( "axis", 0 );
         }
 
-        self _meth_8273( "freelook", 0 );
-        self _meth_8273( "none", 1 );
+        self allowspectateteam( "freelook", 0 );
+        self allowspectateteam( "none", 1 );
         return;
     }
 
     var_2 = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "spectatetype" );
     var_3 = maps\mp\gametypes\_tweakables::gettweakablevalue( "game", "lockspectatepov" );
 
-    if ( self _meth_8432() && !maps\mp\_utility::invirtuallobby() )
+    if ( self ismlgspectator() && !maps\mp\_utility::invirtuallobby() )
         var_2 = 2;
 
     if ( isdefined( level.iszombiegame ) && level.iszombiegame )
@@ -137,31 +137,31 @@ setspectatepermissions()
             if ( level.multiteambased )
             {
                 for ( var_1 = 0; var_1 < level.teamnamelist.size; var_1++ )
-                    self _meth_8273( level.teamnamelist[var_1], 0 );
+                    self allowspectateteam( level.teamnamelist[var_1], 0 );
             }
             else
             {
-                self _meth_8273( "allies", 0 );
-                self _meth_8273( "axis", 0 );
+                self allowspectateteam( "allies", 0 );
+                self allowspectateteam( "axis", 0 );
             }
 
-            self _meth_8273( "freelook", 0 );
-            self _meth_8273( "none", 0 );
+            self allowspectateteam( "freelook", 0 );
+            self allowspectateteam( "none", 0 );
             break;
         case 1:
             if ( !level.teambased )
             {
-                self _meth_8273( "allies", 1 );
-                self _meth_8273( "axis", 1 );
-                self _meth_8273( "none", 1 );
-                self _meth_8273( "freelook", 0 );
+                self allowspectateteam( "allies", 1 );
+                self allowspectateteam( "axis", 1 );
+                self allowspectateteam( "none", 1 );
+                self allowspectateteam( "freelook", 0 );
             }
             else if ( isdefined( var_0 ) && ( var_0 == "allies" || var_0 == "axis" ) && !level.multiteambased )
             {
-                self _meth_8273( var_0, 1 );
-                self _meth_8273( maps\mp\_utility::getotherteam( var_0 ), 0 );
-                self _meth_8273( "freelook", 0 );
-                self _meth_8273( "none", 0 );
+                self allowspectateteam( var_0, 1 );
+                self allowspectateteam( maps\mp\_utility::getotherteam( var_0 ), 0 );
+                self allowspectateteam( "freelook", 0 );
+                self allowspectateteam( "none", 0 );
             }
             else if ( isdefined( var_0 ) && issubstr( var_0, "team_" ) && level.multiteambased )
             {
@@ -169,31 +169,31 @@ setspectatepermissions()
                 {
                     if ( var_0 == level.teamnamelist[var_1] )
                     {
-                        self _meth_8273( level.teamnamelist[var_1], 1 );
+                        self allowspectateteam( level.teamnamelist[var_1], 1 );
                         continue;
                     }
 
-                    self _meth_8273( level.teamnamelist[var_1], 0 );
+                    self allowspectateteam( level.teamnamelist[var_1], 0 );
                 }
 
-                self _meth_8273( "freelook", 0 );
-                self _meth_8273( "none", 0 );
+                self allowspectateteam( "freelook", 0 );
+                self allowspectateteam( "none", 0 );
             }
             else
             {
                 if ( level.multiteambased )
                 {
                     for ( var_1 = 0; var_1 < level.teamnamelist.size; var_1++ )
-                        self _meth_8273( level.teamnamelist[var_1], 0 );
+                        self allowspectateteam( level.teamnamelist[var_1], 0 );
                 }
                 else
                 {
-                    self _meth_8273( "allies", 0 );
-                    self _meth_8273( "axis", 0 );
+                    self allowspectateteam( "allies", 0 );
+                    self allowspectateteam( "axis", 0 );
                 }
 
-                self _meth_8273( "freelook", 0 );
-                self _meth_8273( "none", 0 );
+                self allowspectateteam( "freelook", 0 );
+                self allowspectateteam( "none", 0 );
             }
 
             break;
@@ -201,37 +201,37 @@ setspectatepermissions()
             if ( level.multiteambased )
             {
                 for ( var_1 = 0; var_1 < level.teamnamelist.size; var_1++ )
-                    self _meth_8273( level.teamnamelist[var_1], 1 );
+                    self allowspectateteam( level.teamnamelist[var_1], 1 );
             }
             else
             {
-                self _meth_8273( "allies", 1 );
-                self _meth_8273( "axis", 1 );
+                self allowspectateteam( "allies", 1 );
+                self allowspectateteam( "axis", 1 );
             }
 
-            self _meth_8273( "freelook", 1 );
-            self _meth_8273( "none", 1 );
+            self allowspectateteam( "freelook", 1 );
+            self allowspectateteam( "none", 1 );
             break;
     }
 
-    var_4 = self _meth_8297();
+    var_4 = self getxuid();
 
-    if ( !self _meth_8432() )
+    if ( !self ismlgspectator() )
     {
         switch ( var_3 )
         {
             case 0:
-                self _meth_8274( var_4, "freelook" );
+                self forcespectatepov( var_4, "freelook" );
                 break;
             case 1:
-                self _meth_8273( "none", 0 );
-                self _meth_8273( "freelook", 0 );
-                self _meth_8274( var_4, "first_person" );
+                self allowspectateteam( "none", 0 );
+                self allowspectateteam( "freelook", 0 );
+                self forcespectatepov( var_4, "first_person" );
                 break;
             case 2:
-                self _meth_8273( "none", 0 );
-                self _meth_8273( "freelook", 0 );
-                self _meth_8274( var_4, "third_person" );
+                self allowspectateteam( "none", 0 );
+                self allowspectateteam( "freelook", 0 );
+                self forcespectatepov( var_4, "third_person" );
                 break;
         }
     }
@@ -239,10 +239,10 @@ setspectatepermissions()
     if ( isdefined( var_0 ) && ( var_0 == "axis" || var_0 == "allies" ) )
     {
         if ( isdefined( level.spectateoverride[var_0].allowfreespectate ) )
-            self _meth_8273( "freelook", 1 );
+            self allowspectateteam( "freelook", 1 );
 
         if ( isdefined( level.spectateoverride[var_0].allowenemyspectate ) )
-            self _meth_8273( maps\mp\_utility::getotherteam( var_0 ), 1 );
+            self allowspectateteam( maps\mp\_utility::getotherteam( var_0 ), 1 );
     }
 }
 
@@ -257,7 +257,7 @@ updatespectatedloadoutweapon( var_0, var_1, var_2 )
     if ( !isdefined( var_1 ) )
         var_1 = 0;
 
-    self _meth_82FB( var_0 + "weapon", var_1 );
+    self setclientomnvar( var_0 + "weapon", var_1 );
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
@@ -272,7 +272,7 @@ updatespectatedloadoutweapon( var_0, var_1, var_2 )
         if ( !isdefined( var_4 ) )
             var_4 = 0;
 
-        self _meth_82FB( var_0 + "attachment_" + var_3, var_4 );
+        self setclientomnvar( var_0 + "attachment_" + var_3, var_4 );
     }
 }
 
@@ -289,7 +289,7 @@ updatespectatedloadout( var_0 )
     if ( !isdefined( var_2 ) )
         var_2 = 0;
 
-    self _meth_82FB( "ui_mlg_loadout_equipment_0", var_2 );
+    self setclientomnvar( "ui_mlg_loadout_equipment_0", var_2 );
     var_3 = var_1.equipment;
 
     if ( isdefined( var_3 ) )
@@ -298,12 +298,12 @@ updatespectatedloadout( var_0 )
     if ( !isdefined( var_3 ) )
         var_3 = 0;
 
-    self _meth_82FB( "ui_mlg_loadout_equipment_1", var_3 );
+    self setclientomnvar( "ui_mlg_loadout_equipment_1", var_3 );
 
     if ( var_1.equipmentextra )
-        self _meth_82FB( "ui_mlg_loadout_equipment_2", var_3 );
+        self setclientomnvar( "ui_mlg_loadout_equipment_2", var_3 );
     else
-        self _meth_82FB( "ui_mlg_loadout_equipment_2", -1 );
+        self setclientomnvar( "ui_mlg_loadout_equipment_2", -1 );
 
     var_4 = [ var_1.killstreak1, var_1.killstreak2, var_1.killstreak3, var_1.killstreak4 ];
 
@@ -317,7 +317,7 @@ updatespectatedloadout( var_0 )
         if ( !isdefined( var_6 ) )
             var_7 = 0;
 
-        self _meth_82FB( "ui_mlg_loadout_streak_" + var_5, var_6 );
+        self setclientomnvar( "ui_mlg_loadout_streak_" + var_5, var_6 );
     }
 
     for ( var_5 = 0; var_5 < 6; var_5++ )
@@ -330,6 +330,6 @@ updatespectatedloadout( var_0 )
         if ( !isdefined( var_8 ) )
             var_8 = 0;
 
-        self _meth_82FB( "ui_mlg_loadout_perk_" + var_5, var_8 );
+        self setclientomnvar( "ui_mlg_loadout_perk_" + var_5, var_8 );
     }
 }

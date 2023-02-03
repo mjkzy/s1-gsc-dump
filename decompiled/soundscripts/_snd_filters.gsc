@@ -12,7 +12,7 @@ snd_filters_init()
 snd_set_filter_lerp( var_0 )
 {
     level._snd.current_filters.lerp = var_0;
-    level.player _meth_812A( var_0, 0 );
+    level.player seteqlerp( var_0, 0 );
 }
 
 snd_get_current_filter_lerp()
@@ -110,7 +110,7 @@ snd_set_filter( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) || isdefined( var_0 ) && ( var_0 == "" || var_0 == "none" ) )
     {
         snd_set_current_filter_name( var_3, "" );
-        level.player _meth_8129( var_3 );
+        level.player deactivateeq( var_3 );
         return;
     }
 
@@ -222,7 +222,7 @@ snd_set_filter_threaded( var_0, var_1 )
 
     foreach ( var_13 in var_3 )
     {
-        level.player _meth_8127( var_13.dsp_bus, var_13.index, var_13.type, var_13.gain, var_13.freq, var_13.q );
+        level.player seteq( var_13.dsp_bus, var_13.index, var_13.type, var_13.gain, var_13.freq, var_13.q );
         var_2 soundscripts\_snd::snd_throttle_wait();
     }
 }
@@ -292,7 +292,7 @@ snd_set_occlusion_threaded( var_0 )
 
             foreach ( var_7 in var_5 )
             {
-                level.player _meth_811D( var_7, var_3["freq"], var_3["type"], var_3["gain"], var_3["q"] );
+                level.player setocclusion( var_7, var_3["freq"], var_3["type"], var_3["gain"], var_3["q"] );
                 var_1 soundscripts\_snd::snd_throttle_wait();
             }
 
@@ -301,7 +301,7 @@ snd_set_occlusion_threaded( var_0 )
         else
         {
             if ( snd_is_dsp_bus( var_4 ) )
-                level.player _meth_811D( var_4, var_3["freq"], var_3["type"], var_3["gain"], var_3["q"] );
+                level.player setocclusion( var_4, var_3["freq"], var_3["type"], var_3["gain"], var_3["q"] );
             else
             {
 
@@ -324,7 +324,7 @@ snd_disable_occlusion_threaded()
 
     foreach ( var_3 in var_1 )
     {
-        level.player _meth_811F( var_3 );
+        level.player deactivateocclusion( var_3 );
         var_0 soundscripts\_snd::snd_throttle_wait();
     }
 }

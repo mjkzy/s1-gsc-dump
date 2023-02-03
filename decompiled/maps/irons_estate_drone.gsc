@@ -197,10 +197,10 @@ drones_can_see_enemy_test()
                 {
                     var_3 = var_2.origin;
 
-                    if ( var_2 _meth_8442( "tag_flash" ) != -1 )
+                    if ( var_2 gettagindex( "tag_flash" ) != -1 )
                         var_3 = var_2 gettagorigin( "tag_flash" );
 
-                    if ( sighttracepassed( var_3, level.player _meth_80A8(), 0, var_2, level.player ) )
+                    if ( sighttracepassed( var_3, level.player geteye(), 0, var_2, level.player ) )
                     {
                         var_0 = 1;
                         break;
@@ -246,8 +246,8 @@ drone_fly_away()
     self.pacifist = 1;
     maps\_utility::ent_flag_set( "fire_disabled" );
     var_0 = self.origin + ( 0, 0, 1000 );
-    self _meth_8283( 20, 20, 20 );
-    self _meth_825B( var_0, 1 );
+    self vehicle_setspeed( 20, 20, 20 );
+    self setvehgoalpos( var_0, 1 );
     common_scripts\utility::waittill_any( "near_goal", "goal" );
     level.stealth_spotted_drones = common_scripts\utility::array_remove( level.stealth_spotted_drones, self );
     self delete();

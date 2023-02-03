@@ -1,0 +1,17 @@
+// S1 GSC SOURCE
+// Dumped by https://github.com/xensik/gsc-tool
+
+main()
+{
+    self setmodel( "civ_scientist" );
+    self attach( "head_m_act_cau_bedrosian_base", "", 1 );
+    self.headmodel = "head_m_act_cau_bedrosian_base";
+    self.voice = "american";
+    self setclothtype( "vestlight" );
+}
+
+precache()
+{
+    precachemodel( "civ_scientist" );
+    precachemodel( "head_m_act_cau_bedrosian_base" );
+}

@@ -40,7 +40,7 @@ rvb_apply_reverb( var_0, var_1 )
         else
             var_2 = var_0.fadetime;
 
-        level.player _meth_832E( var_0.priority, var_0.roomtype, var_0.drylevel, var_0.wetlevel, var_2 );
+        level.player setreverb( var_0.priority, var_0.roomtype, var_0.drylevel, var_0.wetlevel, var_2 );
     }
 }
 
@@ -75,7 +75,7 @@ rvb_start_preset( var_0, var_1 )
 
     if ( ( isdefined( var_0 ) && var_0 == "none" || !isdefined( var_0 ) ) && isdefined( level._audio.current_reverb ) )
     {
-        level.player _meth_832F( "snd_enveffectsprio_level", 1 );
+        level.player deactivatereverb( "snd_enveffectsprio_level", 1 );
         level._audio.current_reverb = undefined;
         level._audio.reverb.current_reverb = "";
         return;
@@ -126,7 +126,7 @@ rvbx_store_current_reverb_track( var_0, var_1 )
 rvb_deactive_reverb()
 {
     level.reverb_track = "";
-    level.player _meth_832F( "snd_enveffectsprio_level", 2 );
+    level.player deactivatereverb( "snd_enveffectsprio_level", 2 );
     level._audio.current_reverb = undefined;
     level._audio.reverb.current_reverb = "";
 }
@@ -164,7 +164,7 @@ rvbx_get_reverb_preset_from_stringtable_internal( var_0, var_1 )
     var_2 = [];
     var_3 = "";
     var_4 = "";
-    var_5 = _func_28F( var_0, "reverb_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
+    var_5 = packedtablesectionlookup( var_0, "reverb_names", "zone_names;reverb_names;filter_names;occlusion_names;timescale_names;dynamic_ambience_names;components;loop_defs;whizby_preset_names;mix_names;healthfx_params" );
 
     if ( isdefined( var_5 ) )
     {
@@ -172,8 +172,8 @@ rvbx_get_reverb_preset_from_stringtable_internal( var_0, var_1 )
 
         for ( var_7 = 1; var_7 < var_6; var_7++ )
         {
-            var_3 = _func_290( var_0, 0, "reverb_names", var_7, var_5[0], var_5[1] );
-            var_4 = _func_290( var_0, 0, var_1, var_7, var_5[0], var_5[1] );
+            var_3 = packedtablelookupwithrange( var_0, 0, "reverb_names", var_7, var_5[0], var_5[1] );
+            var_4 = packedtablelookupwithrange( var_0, 0, var_1, var_7, var_5[0], var_5[1] );
 
             if ( var_3 != "comments" && var_4 != "" )
             {

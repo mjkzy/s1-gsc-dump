@@ -57,13 +57,13 @@ tryuseorbitalstrike( var_0, var_1 )
 {
     if ( checkorbitallaserusage() )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
     if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + 1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
@@ -195,15 +195,15 @@ zoomslam( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin + ( 0, 0, 3000 ) );
     var_1.angles = vectortoangles( ( 0, 0, 1 ) );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1 thread waitanddelete( 5 );
     var_2 = common_scripts\utility::array_add( maps\mp\_utility::get_players_watching(), self );
 
     foreach ( var_4 in var_2 )
     {
-        var_4 _meth_82FB( "cam_scene_name", "odin_zoom_down" );
-        var_4 _meth_82FB( "cam_scene_lead", var_0 _meth_81B1() );
-        var_4 _meth_82FB( "cam_scene_support", var_1 _meth_81B1() );
+        var_4 setclientomnvar( "cam_scene_name", "odin_zoom_down" );
+        var_4 setclientomnvar( "cam_scene_lead", var_0 getentitynumber() );
+        var_4 setclientomnvar( "cam_scene_support", var_1 getentitynumber() );
         var_4 playlocalsound( "vulcan_hud_transition" );
         var_4 thread clouds( var_0 );
     }
@@ -214,7 +214,7 @@ clouds( var_0 )
     level endon( "game_ended" );
     var_1 = spawn( "script_model", var_0.origin + ( 0, 0, -1000 ) );
     var_1.angles = vectortoangles( ( 0, 0, 1 ) );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1 thread waitanddelete( 5 );
     playfxontagforclients( level._effect["orbital_laser_clouds"], var_1, "tag_origin", self );
 }
@@ -229,18 +229,18 @@ waitanddelete( var_0 )
 
 turnonandhideorbitalhud()
 {
-    self _meth_82FB( "ui_orbital_laser", 1 );
-    self _meth_82FB( "ui_orbital_laser_mode", 0 );
-    self _meth_82FB( "ui_orbital_laser_charge", 0 );
-    self _meth_82FB( "ui_orbital_laser_bursts", 0 );
+    self setclientomnvar( "ui_orbital_laser", 1 );
+    self setclientomnvar( "ui_orbital_laser_mode", 0 );
+    self setclientomnvar( "ui_orbital_laser_charge", 0 );
+    self setclientomnvar( "ui_orbital_laser_bursts", 0 );
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
 }
 
 showorbitalstrikehud( var_0 )
 {
     thread activatethermal();
-    self _meth_82FB( "ui_orbital_laser_mode", 1 );
-    self _meth_82FB( "ui_orbital_laser_bursts", var_0.numcharges );
+    self setclientomnvar( "ui_orbital_laser_mode", 1 );
+    self setclientomnvar( "ui_orbital_laser_bursts", var_0.numcharges );
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
 }
 
@@ -249,9 +249,9 @@ orbitalstrikebeginchargeup( var_0, var_1 )
     self endon( "disconnect" );
     self endon( "OrbitalStrikeStreakComplete" );
     var_2 = gettime() + var_1 * 1000;
-    self _meth_82FB( "ui_orbital_laser_charge", var_2 );
-    self _meth_82FB( "ui_orbital_laser_mode", 1 );
-    self _meth_80AD( "orbital_laser_charge" );
+    self setclientomnvar( "ui_orbital_laser_charge", var_2 );
+    self setclientomnvar( "ui_orbital_laser_mode", 1 );
+    self playrumbleonentity( "orbital_laser_charge" );
     playwarmupsounds( var_0, 0 );
     wait 0.1;
     playwarmupeffects( var_0 );
@@ -260,18 +260,18 @@ orbitalstrikebeginchargeup( var_0, var_1 )
 orbitalstrikchargeupspeedup( var_0, var_1 )
 {
     var_2 = gettime() + var_1 * 1000;
-    self _meth_82FB( "ui_orbital_laser_charge", var_2 );
-    self _meth_80AF( "orbital_laser_charge" );
-    self _meth_80AD( "orbital_laser_charge_quick" );
+    self setclientomnvar( "ui_orbital_laser_charge", var_2 );
+    self stoprumble( "orbital_laser_charge" );
+    self playrumbleonentity( "orbital_laser_charge_quick" );
     playwarmupsounds( var_0, 1 );
 }
 
 orbitalstrikechargeupcomplete( var_0 )
 {
-    self _meth_82FB( "ui_orbital_laser_charge", 0 );
-    self _meth_80AF( "orbital_laser_charge" );
-    self _meth_80AF( "orbital_laser_charge_quick" );
-    self _meth_80AE( "orbital_laser_fire" );
+    self setclientomnvar( "ui_orbital_laser_charge", 0 );
+    self stoprumble( "orbital_laser_charge" );
+    self stoprumble( "orbital_laser_charge_quick" );
+    self playrumblelooponentity( "orbital_laser_fire" );
 }
 
 createorbitaltimer( var_0, var_1 )
@@ -294,12 +294,12 @@ createorbitaltimer( var_0, var_1 )
 
 hidefirehud( var_0 )
 {
-    self _meth_82FB( "ui_orbital_laser_mode", 2 );
+    self setclientomnvar( "ui_orbital_laser_mode", 2 );
 }
 
 sethudnumbursts( var_0 )
 {
-    self _meth_82FB( "ui_orbital_laser_bursts", var_0.numcharges );
+    self setclientomnvar( "ui_orbital_laser_bursts", var_0.numcharges );
 }
 
 getorbitallaserzheight()
@@ -356,17 +356,17 @@ playercontrolorbitalstrike( var_0 )
     maps\mp\killstreaks\_aerial_utility::playershowfullstatic();
     thread maps\mp\_utility::freezecontrolswrapper( 0 );
     maps\mp\_utility::_giveweapon( "orbital_laser_fov_mp" );
-    self _meth_8315( "orbital_laser_fov_mp" );
+    self switchtoweapon( "orbital_laser_fov_mp" );
     common_scripts\utility::_disableweaponswitch();
-    self _meth_804F();
-    var_0 _meth_8253( 0, 0, 0 );
-    var_0 _meth_8252( ( 0, 0, 0 ), 0, 0 );
+    self unlink();
+    var_0 sethoverparams( 0, 0, 0 );
+    var_0 setjitterparams( ( 0, 0, 0 ), 0, 0 );
     thread leaveorbitalstrikeearly( var_0 );
     thread playinteriorsound( var_0 );
     self setangles( ( 0, 0, 0 ) );
-    self _meth_8206( var_0 );
+    self remotecontrolvehicle( var_0 );
     wait 0.05;
-    self _meth_81E2( var_0, "tag_origin" );
+    self cameralinkto( var_0, "tag_origin" );
     wait 0.55;
     maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
     var_0.killcamstarttime = gettime();
@@ -376,8 +376,8 @@ playercontrolorbitalstrike( var_0 )
 
 setplayerstance()
 {
-    if ( self _meth_817C() == "prone" )
-        self _meth_817D( "crouch" );
+    if ( self getstance() == "prone" )
+        self setstance( "crouch" );
 }
 
 leaveorbitalstrikeearly( var_0 )
@@ -418,7 +418,7 @@ cancelpossessbuttonpressmonitor()
 
 activatethermal()
 {
-    self _meth_851A( 0 );
+    self setshadowrendering( 0 );
     self thermalvisionfofoverlayon();
     self setblurforplayer( 1.1, 0 );
     var_0 = 0.125;
@@ -447,9 +447,9 @@ weaponlistenforstopfire( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
     var_1 = gettime() + var_0.fireduration * 1000;
-    self _meth_82FB( "ui_orbital_laser_fire", var_1 );
+    self setclientomnvar( "ui_orbital_laser_fire", var_1 );
     wait(var_0.fireduration);
-    self _meth_82FB( "ui_orbital_laser_fire", 0 );
+    self setclientomnvar( "ui_orbital_laser_fire", 0 );
     var_0 notify( "stop_charge" );
 }
 
@@ -472,19 +472,19 @@ weaponsetup( var_0 )
     var_7 = var_6["position"];
     var_8 = getlaserradius( var_0 );
     var_0.weaponlinker = spawn( "script_model", var_3 );
-    var_0.weaponlinker _meth_80B1( "generic_prop_raven" );
-    var_0.weaponlinker _meth_8446( var_0, "tag_origin" );
+    var_0.weaponlinker setmodel( "generic_prop_raven" );
+    var_0.weaponlinker vehicle_jetbikesethoverforcescale( var_0, "tag_origin" );
     var_9 = var_7;
     var_10 = vectortoangles( var_9 - var_3 );
     var_11 = spawn( "script_model", var_3 );
-    var_11 _meth_80B1( "tag_origin" );
+    var_11 setmodel( "tag_origin" );
     var_11.angles = var_10;
-    var_11 _meth_8446( var_0.weaponlinker, "tag_origin" );
+    var_11 vehicle_jetbikesethoverforcescale( var_0.weaponlinker, "tag_origin" );
     var_0.weapontag01 = var_11;
     var_12 = spawn( "script_model", var_9 );
     var_12.angles = ( -90, 0, 0 );
-    var_12 _meth_80B1( "tag_origin" );
-    var_12 _meth_8383( var_11 );
+    var_12 setmodel( "tag_origin" );
+    var_12 setotherent( var_11 );
     var_12 show();
     var_0.weapontag01.targetedent = var_12;
 
@@ -493,14 +493,14 @@ weaponsetup( var_0 )
         var_9 = var_7 + var_1 * var_8;
         var_10 = vectortoangles( var_9 - var_3 );
         var_13 = spawn( "script_model", var_3 );
-        var_13 _meth_80B1( "tag_origin" );
+        var_13 setmodel( "tag_origin" );
         var_13.angles = var_10;
-        var_13 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_13 vehicle_jetbikesethoverforcescale( var_0.weaponlinker, "j_prop_1" );
         var_0.weapontag02 = var_13;
         var_14 = spawn( "script_model", var_9 );
         var_14.angles = ( -90, 0, 0 );
-        var_14 _meth_80B1( "tag_origin" );
-        var_14 _meth_8383( var_13 );
+        var_14 setmodel( "tag_origin" );
+        var_14 setotherent( var_13 );
         var_14 show();
         var_0.weapontag02.targetedent = var_14;
         var_15 = sin( 60 ) * var_8;
@@ -508,27 +508,27 @@ weaponsetup( var_0 )
         var_9 = var_7 - var_1 * var_16 + var_2 * var_15;
         var_10 = vectortoangles( var_9 - var_3 );
         var_17 = spawn( "script_model", var_3 );
-        var_17 _meth_80B1( "tag_origin" );
+        var_17 setmodel( "tag_origin" );
         var_17.angles = var_10;
-        var_17 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_17 vehicle_jetbikesethoverforcescale( var_0.weaponlinker, "j_prop_1" );
         var_0.weapontag03 = var_17;
         var_18 = spawn( "script_model", var_9 );
         var_18.angles = ( -90, 0, 0 );
-        var_18 _meth_80B1( "tag_origin" );
-        var_18 _meth_8383( var_17 );
+        var_18 setmodel( "tag_origin" );
+        var_18 setotherent( var_17 );
         var_18 show();
         var_0.weapontag03.targetedent = var_18;
         var_9 = var_7 - var_1 * var_16 - var_2 * var_15;
         var_10 = vectortoangles( var_9 - var_3 );
         var_19 = spawn( "script_model", var_3 );
-        var_19 _meth_80B1( "tag_origin" );
+        var_19 setmodel( "tag_origin" );
         var_19.angles = var_10;
-        var_19 _meth_8446( var_0.weaponlinker, "j_prop_1" );
+        var_19 vehicle_jetbikesethoverforcescale( var_0.weaponlinker, "j_prop_1" );
         var_0.weapontag04 = var_19;
         var_20 = spawn( "script_model", var_9 );
         var_20.angles = ( -90, 0, 0 );
-        var_20 _meth_80B1( "tag_origin" );
-        var_20 _meth_8383( var_19 );
+        var_20 setmodel( "tag_origin" );
+        var_20 setotherent( var_19 );
         var_20 show();
         var_0.weapontag04.targetedent = var_20;
     }
@@ -561,13 +561,13 @@ deleteweaponmodels( var_0 )
 
 spinthelasers( var_0 )
 {
-    var_0.weaponlinker _meth_8279( "mp_generic_prop_spin", "hello" );
+    var_0.weaponlinker scriptmodelplayanim( "mp_generic_prop_spin", "hello" );
 }
 
 monitororbitalstrikeweapon( var_0 )
 {
     self endon( "OrbitalStrikeStreakComplete" );
-    var_0 _meth_8263();
+    var_0 clearturrettarget();
     wait 1;
     var_1 = 6;
 
@@ -591,8 +591,8 @@ oneshotsoundonmovingent( var_0, var_1 )
         var_1 = 5.0;
 
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_80B1( "tag_origin" );
-    var_2 _meth_8446( self );
+    var_2 setmodel( "tag_origin" );
+    var_2 vehicle_jetbikesethoverforcescale( self );
     var_2 playsound( var_0 );
     var_2 thread waitanddelete( var_1 );
 }
@@ -603,7 +603,7 @@ oneshotsoundonstationaryent( var_0, var_1 )
         var_1 = 5.0;
 
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_2 playsound( var_0 );
     var_2 thread waitanddelete( var_1 );
 }
@@ -699,9 +699,9 @@ laserweapon( var_0 )
     thread lasersurfacequake( var_0 );
     thread laserdophysics( var_0 );
     thread laserdodamge( var_0 );
-    self _meth_84E2( 0.3 );
+    self setremotehelicopterthrottlescale( 0.3 );
     var_0 waittill( "stop_charge" );
-    self _meth_84E2( 1.0 );
+    self setremotehelicopterthrottlescale( 1.0 );
 }
 
 laserdodamge( var_0 )
@@ -715,22 +715,22 @@ laserdodamge( var_0 )
 
     for (;;)
     {
-        var_0 entityradiusdamage( var_0.weapontag01.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+        var_0 radiusdamage( var_0.weapontag01.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
 
         if ( isdefined( level.ishorde ) && level.ishorde && isdefined( level.flying_attack_drones ) )
         {
             foreach ( var_3 in level.flying_attack_drones )
             {
-                if ( var_3.origin[2] > var_0.weapontag01.targetedent.origin[2] && _func_220( var_3.origin, var_0.weapontag01.targetedent.origin ) < int( var_1 * var_1 / 9 ) )
-                    var_3 _meth_8051( 90, var_0.weapontag01.targetedent.origin, self, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+                if ( var_3.origin[2] > var_0.weapontag01.targetedent.origin[2] && distance2dsquared( var_3.origin, var_0.weapontag01.targetedent.origin ) < int( var_1 * var_1 / 9 ) )
+                    var_3 dodamage( 90, var_0.weapontag01.targetedent.origin, self, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
             }
         }
 
         if ( var_0.beams )
         {
-            var_0 entityradiusdamage( var_0.weapontag02.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
-            var_0 entityradiusdamage( var_0.weapontag03.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
-            var_0 entityradiusdamage( var_0.weapontag04.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 radiusdamage( var_0.weapontag02.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 radiusdamage( var_0.weapontag03.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
+            var_0 radiusdamage( var_0.weapontag04.targetedent.origin + ( 0, 0, 8 ), var_1, 90, 90, self, "MOD_TRIGGER_HURT", "orbital_laser_fov_mp" );
         }
 
         glassradiusdamage( var_0.weapontag01.targetedent.origin + ( 0, 0, 32 ), var_1 * 2, 200, 200 );
@@ -847,7 +847,7 @@ playeffectongroundent( var_0, var_1, var_2 )
 {
     level endon( "game_ended" );
     self endon( "death" );
-    var_3 = self _meth_850D();
+    var_3 = self isgroundentoverwater();
 
     if ( var_3 )
         playfxontag( var_1, self, "tag_origin" );
@@ -857,7 +857,7 @@ playeffectongroundent( var_0, var_1, var_2 )
     for (;;)
     {
         var_4 = var_3;
-        var_3 = self _meth_850D();
+        var_3 = self isgroundentoverwater();
 
         if ( var_3 != var_4 )
         {
@@ -957,13 +957,13 @@ playwarmupsounds( var_0, var_1 )
         var_3 = "vulcan_charge_up_plr";
     }
 
-    var_0.weapontag01.targetedent _meth_8438( var_2 );
+    var_0.weapontag01.targetedent playsoundonmovingent( var_2 );
 
     if ( var_0.beams )
     {
-        var_0.weapontag02.targetedent _meth_8438( var_2 );
-        var_0.weapontag03.targetedent _meth_8438( var_2 );
-        var_0.weapontag04.targetedent _meth_8438( var_2 );
+        var_0.weapontag02.targetedent playsoundonmovingent( var_2 );
+        var_0.weapontag03.targetedent playsoundonmovingent( var_2 );
+        var_0.weapontag04.targetedent playsoundonmovingent( var_2 );
     }
 
     self playlocalsound( var_3 );
@@ -973,13 +973,13 @@ stopwarmupsounds( var_0 )
 {
     if ( isdefined( var_0.weapontag01 ) )
     {
-        var_0.weapontag01.targetedent _meth_80AC();
+        var_0.weapontag01.targetedent stopsounds();
 
         if ( var_0.beams )
         {
-            var_0.weapontag02.targetedent _meth_80AC();
-            var_0.weapontag03.targetedent _meth_80AC();
-            var_0.weapontag04.targetedent _meth_80AC();
+            var_0.weapontag02.targetedent stopsounds();
+            var_0.weapontag03.targetedent stopsounds();
+            var_0.weapontag04.targetedent stopsounds();
         }
     }
 
@@ -1032,7 +1032,7 @@ playlaserendingeffect( var_0 )
 {
     var_1 = var_0.weapontag01.targetedent;
 
-    if ( var_1 _meth_850D() )
+    if ( var_1 isgroundentoverwater() )
         playfx( level._effect["orbital_laser_ending_water"], var_1.origin, anglestoforward( var_1.angles ), anglestoup( var_1.angles ) );
     else
         playfx( level._effect["orbital_laser_ending"], var_1.origin, anglestoforward( var_1.angles ), anglestoup( var_1.angles ) );
@@ -1151,34 +1151,34 @@ givecontrolback( var_0 )
 {
     if ( isdefined( var_0 ) && isdefined( var_0.weapontag01 ) )
     {
-        var_0.weapontag01.targetedent _meth_8383( undefined );
+        var_0.weapontag01.targetedent setotherent( undefined );
 
         if ( var_0.beams )
         {
-            var_0.weapontag02.targetedent _meth_8383( undefined );
-            var_0.weapontag03.targetedent _meth_8383( undefined );
-            var_0.weapontag04.targetedent _meth_8383( undefined );
+            var_0.weapontag02.targetedent setotherent( undefined );
+            var_0.weapontag03.targetedent setotherent( undefined );
+            var_0.weapontag04.targetedent setotherent( undefined );
         }
     }
 
-    self _meth_82FB( "ui_orbital_laser_charge", 0 );
-    self _meth_82FB( "ui_orbital_laser_mode", 0 );
-    self _meth_82FB( "ui_orbital_laser_bursts", 0 );
-    self _meth_82FB( "ui_orbital_laser_fire", 0 );
-    self _meth_82FB( "ui_orbital_laser", 0 );
+    self setclientomnvar( "ui_orbital_laser_charge", 0 );
+    self setclientomnvar( "ui_orbital_laser_mode", 0 );
+    self setclientomnvar( "ui_orbital_laser_bursts", 0 );
+    self setclientomnvar( "ui_orbital_laser_fire", 0 );
+    self setclientomnvar( "ui_orbital_laser", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
-    self _meth_830F( "orbital_laser_fov_mp" );
+    self takeweapon( "orbital_laser_fov_mp" );
 
     if ( self.disabledweaponswitch > 0 )
         common_scripts\utility::_enableweaponswitch();
 
     self setblurforplayer( 0, 0 );
-    self _meth_851A( 1 );
+    self setshadowrendering( 1 );
     maps\mp\killstreaks\_aerial_utility::disableorbitalthermal( self );
     self thermalvisionfofoverlayoff();
-    self _meth_8207();
-    self _meth_8201();
-    self _meth_81E3();
+    self remotecontrolvehicleoff();
+    self controlsunlink();
+    self cameraunlink();
 
     if ( maps\mp\_utility::isusingremote() )
         maps\mp\_utility::clearusingremote();
@@ -1256,27 +1256,27 @@ orbitalstrikecleanup( var_0, var_1 )
 
     if ( isdefined( self ) )
     {
-        self _meth_80AF( "orbital_laser_charge" );
-        self _meth_80AF( "orbital_laser_charge_quick" );
+        self stoprumble( "orbital_laser_charge" );
+        self stoprumble( "orbital_laser_charge_quick" );
     }
 
     waitframe();
 
     if ( isdefined( self ) )
-        self _meth_80AF( "orbital_laser_fire" );
+        self stoprumble( "orbital_laser_fire" );
 }
 
 playeraddnotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self _meth_82DD( "SwitchVisionMode", "+actionslot 1" );
-        self _meth_82DD( "ToggleControlState", "+activate" );
-        self _meth_82DD( "ToggleControlCancel", "-activate" );
-        self _meth_82DD( "ToggleControlState", "+usereload" );
-        self _meth_82DD( "ToggleControlCancel", "-usereload" );
-        self _meth_82DD( "StartFire", "+attack" );
-        self _meth_82DD( "StartFire", "+attack_akimbo_accessible" );
+        self notifyonplayercommand( "SwitchVisionMode", "+actionslot 1" );
+        self notifyonplayercommand( "ToggleControlState", "+activate" );
+        self notifyonplayercommand( "ToggleControlCancel", "-activate" );
+        self notifyonplayercommand( "ToggleControlState", "+usereload" );
+        self notifyonplayercommand( "ToggleControlCancel", "-usereload" );
+        self notifyonplayercommand( "StartFire", "+attack" );
+        self notifyonplayercommand( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
@@ -1284,13 +1284,13 @@ playerremovenotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self _meth_849C( "SwitchVisionMode", "+actionslot 1" );
-        self _meth_849C( "ToggleControlState", "+activate" );
-        self _meth_849C( "ToggleControlCancel", "-activate" );
-        self _meth_849C( "ToggleControlState", "+usereload" );
-        self _meth_849C( "ToggleControlCancel", "-usereload" );
-        self _meth_849C( "StartFire", "+attack" );
-        self _meth_849C( "StartFire", "+attack_akimbo_accessible" );
+        self notifyonplayercommandremove( "SwitchVisionMode", "+actionslot 1" );
+        self notifyonplayercommandremove( "ToggleControlState", "+activate" );
+        self notifyonplayercommandremove( "ToggleControlCancel", "-activate" );
+        self notifyonplayercommandremove( "ToggleControlState", "+usereload" );
+        self notifyonplayercommandremove( "ToggleControlCancel", "-usereload" );
+        self notifyonplayercommandremove( "StartFire", "+attack" );
+        self notifyonplayercommandremove( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
@@ -1302,17 +1302,17 @@ setvulcanvisionandlightsetpermap( var_0 )
     wait(var_0);
 
     if ( isdefined( level.vulcanvisionset ) )
-        self _meth_847A( level.vulcanvisionset, 0 );
+        self setclienttriggervisionset( level.vulcanvisionset, 0 );
 
     if ( isdefined( level.vulcanlightset ) )
-        self _meth_83C0( level.vulcanlightset );
+        self lightsetforplayer( level.vulcanlightset );
 
     maps\mp\killstreaks\_aerial_utility::handle_player_starting_aerial_view();
 }
 
 removevulcanvisionandlightsetpermap( var_0 )
 {
-    self _meth_847A( "", var_0 );
-    self _meth_83C0( "" );
+    self setclienttriggervisionset( "", var_0 );
+    self lightsetforplayer( "" );
     maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
 }

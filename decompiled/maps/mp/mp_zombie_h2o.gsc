@@ -70,7 +70,7 @@ main()
 
     level.ammodroneillegalzones[level.ammodroneillegalzones.size] = "bus";
     level.ammodroneillegalzones[level.ammodroneillegalzones.size] = "easter_egg";
-    _func_29C( 60 );
+    activatepersistentclientexploder( 60 );
     level thread outsiderailshove();
     level thread waterfallshove();
     fixupcratepositions();
@@ -122,17 +122,17 @@ zombieh2opatchshove( var_0, var_1 )
     {
         if ( self.currentzone == "start" || self.currentzone == "zone_04" )
         {
-            var_2 = self _meth_8557();
+            var_2 = self getgroundentity();
 
             if ( isdefined( var_2 ) && isdefined( var_2.cratetype ) && var_2.cratetype == "juggernaut" )
             {
                 var_3 = randomfloat( 360.0 );
-                self _meth_82F1( anglestoforward( ( 0.0, var_3, 0.0 ) ) * 200.0 );
+                self setvelocity( anglestoforward( ( 0.0, var_3, 0.0 ) ) * 200.0 );
             }
         }
 
         if ( self.currentzone == "zone_04" && self.origin[2] > 865.0 && self.origin[2] < 900.0 && self.origin[0] >= -1095 )
-            self _meth_82F1( ( 200, 0, 0 ) );
+            self setvelocity( ( 200, 0, 0 ) );
     }
 }
 
@@ -607,7 +607,7 @@ teleporterfx()
 {
     if ( !isdefined( self.teleportchutefx ) )
     {
-        self.teleportchutefx = _func_272( common_scripts\utility::getfx( "dlc_teleport_tunnel_player" ), self.origin, self );
+        self.teleportchutefx = spawnfxforclient( common_scripts\utility::getfx( "dlc_teleport_tunnel_player" ), self.origin, self );
         self.teleportchutefx thread teleportfxdelete( self );
     }
 
@@ -635,25 +635,25 @@ zmteleporterplayers( var_0 )
 teleporter_device( var_0 )
 {
     self.device = var_0;
-    var_0 _meth_8048( "TAG_FX_ON" );
-    var_0 _meth_8048( "TAG_FX_OFF" );
-    var_0 _meth_804B( "TAG_FX_GLOW" );
+    var_0 hidepart( "TAG_FX_ON" );
+    var_0 hidepart( "TAG_FX_OFF" );
+    var_0 showpart( "TAG_FX_GLOW" );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin", 0 );
     self waittill( "teleportReady" );
-    var_0 _meth_804B( "TAG_FX_ON" );
-    var_0 _meth_8048( "TAG_FX_OFF" );
-    var_0 _meth_8048( "TAG_FX_GLOW" );
+    var_0 showpart( "TAG_FX_ON" );
+    var_0 hidepart( "TAG_FX_OFF" );
+    var_0 hidepart( "TAG_FX_GLOW" );
     maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin" );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_on" ), var_0, "tag_origin", 0 );
 }
 
 teleporter_light( var_0 )
 {
-    var_0 _meth_8044( ( 0.941176, 0, 0 ) );
-    var_0 _meth_81DF( 250 );
+    var_0 setlightcolor( ( 0.941176, 0, 0 ) );
+    var_0 setlightintensity( 250 );
     self waittill( "teleportReady" );
-    var_0 _meth_8044( ( 0.501961, 1, 1 ) );
-    var_0 _meth_81DF( 3500 );
+    var_0 setlightcolor( ( 0.501961, 1, 1 ) );
+    var_0 setlightintensity( 3500 );
 }
 
 getteleporterlightcoloron()
@@ -688,7 +688,7 @@ getteleporterlightintensityoff()
 
 lightning()
 {
-    var_0 = _func_231( "lightning_pos", "targetname" );
+    var_0 = getscriptablearray( "lightning_pos", "targetname" );
 
     if ( !var_0.size )
         return;
@@ -699,14 +699,14 @@ lightning()
 
         foreach ( var_2 in var_0 )
         {
-            var_2 _meth_83F6( 0, 1 );
+            var_2 setscriptablepartstate( 0, 1 );
             var_3 = randomfloatrange( 5, 7 );
             wait(var_3);
 
             while ( maps\mp\zombies\_util::is_true( level.zmbpauselightningflashes ) )
                 waitframe();
 
-            var_2 _meth_83F6( 0, 0 );
+            var_2 setscriptablepartstate( 0, 0 );
         }
 
         while ( maps\mp\zombies\_util::is_true( level.zmbpauselightningflashes ) )
@@ -729,12 +729,12 @@ exo_reveal_run()
         var_0 = getentarray( self.target, "targetname" );
 
         foreach ( var_2 in var_0 )
-            var_2 _meth_804D( self );
+            var_2 linkto( self );
     }
 
     level waittill( "power_atrium" );
-    self _meth_8058();
-    self _meth_82AE( self.origin + ( 0, 0, 216 ), 2 );
+    self connectpaths();
+    self moveto( self.origin + ( 0, 0, 216 ), 2 );
 }
 
 tidalgeneratorblade()
@@ -749,7 +749,7 @@ tidalgeneratorblade()
 
     for (;;)
     {
-        var_0 _meth_82BD( ( 0, var_2, 0 ), var_1 );
+        var_0 rotatevelocity( ( 0, var_2, 0 ), var_1 );
         wait(var_1);
     }
 }
@@ -768,7 +768,7 @@ windtowerbladespin( var_0 )
 
     for (;;)
     {
-        self _meth_82BD( var_0, var_1 );
+        self rotatevelocity( var_0, var_1 );
         wait(var_1);
     }
 }
@@ -787,11 +787,11 @@ ambientmantarays()
         var_0.angles = ( 0, 0, 0 );
 
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_80B1( "h2o_mantaray_01_anim" );
-    var_1 _meth_848B( "zom_h2o_manta_ray_flyby_01", var_0.origin, var_0.angles, "manta_ray_1" );
+    var_1 setmodel( "h2o_mantaray_01_anim" );
+    var_1 scriptmodelplayanimdeltamotionfrompos( "zom_h2o_manta_ray_flyby_01", var_0.origin, var_0.angles, "manta_ray_1" );
     var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_2 _meth_80B1( "h2o_mantaray_01_anim" );
-    var_2 _meth_848B( "zom_h2o_manta_ray_flyby_02", var_0.origin, var_0.angles, "manta_ray_2" );
+    var_2 setmodel( "h2o_mantaray_01_anim" );
+    var_2 scriptmodelplayanimdeltamotionfrompos( "zom_h2o_manta_ray_flyby_02", var_0.origin, var_0.angles, "manta_ray_2" );
 }
 
 onplayerfadetoblackonwaterdeath()
@@ -828,7 +828,7 @@ istouchingwatertrigger()
 
     foreach ( var_2 in var_0 )
     {
-        if ( self _meth_80A9( var_2 ) )
+        if ( self istouching( var_2 ) )
             return 1;
     }
 
@@ -840,7 +840,7 @@ underwateroverlay()
     var_0 = newclienthudelem( self );
     var_0.x = 0;
     var_0.y = 0;
-    var_0 _meth_80CC( "black", 640, 480 );
+    var_0 setshader( "black", 640, 480 );
     var_0.horzalign = "fullscreen";
     var_0.vertalign = "fullscreen";
     var_0.alpha = 0.0;
@@ -931,25 +931,25 @@ setupflyoveranimation( var_0, var_1, var_2, var_3 )
     foreach ( var_7 in var_5 )
     {
         var_7.bypasscorpse = 1;
-        var_7 _meth_8051( var_7.health + 500000, var_7.origin, level.players[0], undefined, "MOD_EXPLOSIVE", "repulsor_zombie_mp" );
+        var_7 dodamage( var_7.health + 500000, var_7.origin, level.players[0], undefined, "MOD_EXPLOSIVE", "repulsor_zombie_mp" );
     }
 
     wait 2;
     var_9 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_9 _meth_80B1( "genericprop_x3" );
+    var_9 setmodel( "genericprop_x3" );
     var_10 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_10 _meth_80B1( "tag_player" );
-    var_10 _meth_8446( var_9, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_10 setmodel( "tag_player" );
+    var_10 vehicle_jetbikesethoverforcescale( var_9, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     for (;;)
     {
         while ( getdvarint( var_3, 0 ) == 0 )
             waitframe();
 
-        level.player _meth_807E( var_10, "tag_player", 1, 0, 0, 0, 0, 1 );
-        level.player _meth_80A0( 0 );
+        level.player playerlinkweaponviewtodelta( var_10, "tag_player", 1, 0, 0, 0, 0, 1 );
+        level.player playerlinkedsetviewznear( 0 );
         level.player hide();
-        var_9 _meth_848B( var_0, var_4.origin, var_4.angles, "camera_notetrack" );
+        var_9 scriptmodelplayanimdeltamotionfrompos( var_0, var_4.origin, var_4.angles, "camera_notetrack" );
 
         foreach ( var_12 in var_2 )
             level thread donotetrack( var_9, "camera_notetrack", var_12 );
@@ -961,8 +961,8 @@ setupflyoveranimation( var_0, var_1, var_2, var_3 )
 
         var_9 notify( "notetrackDone" );
         level.player show();
-        level.player _meth_804F();
-        var_9 _meth_827A();
+        level.player unlink();
+        var_9 scriptmodelclearanim();
         wait 1;
     }
 }
@@ -1001,7 +1001,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
         var_3 = [];
 
     var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_6 _meth_80B1( var_1 );
+    var_6 setmodel( var_1 );
 
     for (;;)
     {
@@ -1011,7 +1011,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
         if ( isdefined( var_2 ) )
             level waittill( var_2 );
 
-        var_6 _meth_848B( var_0, var_5.origin, var_5.angles, "ent_notetrack" );
+        var_6 scriptmodelplayanimdeltamotionfrompos( var_0, var_5.origin, var_5.angles, "ent_notetrack" );
 
         foreach ( var_8 in var_3 )
             level thread donotetrack( var_6, "ent_notetrack", var_8 );
@@ -1022,7 +1022,7 @@ setupscriptmodelanimation( var_0, var_1, var_2, var_3, var_4 )
             waitframe();
 
         var_6 notify( "notetrackDone" );
-        var_6 _meth_827A();
+        var_6 scriptmodelclearanim();
         wait 1;
     }
 }
@@ -1044,7 +1044,7 @@ outsiderailshove()
                     if ( isdefined( var_2 ) )
                     {
                         var_3 = vectornormalize( ( var_2.origin - var_1.origin ) * ( 1, 1, 0 ) );
-                        var_1 _meth_82F1( var_3 * 200 );
+                        var_1 setvelocity( var_3 * 200 );
                     }
                 }
                 else
@@ -1066,7 +1066,7 @@ playerisonarailing()
         return 0;
     else if ( self.origin[2] > 712 && self.origin[2] < 713 )
         return 0;
-    else if ( !self _meth_8341() || self _meth_83B3() )
+    else if ( !self isonground() || self isjumping() )
         return 0;
 
     var_0 = getentarray( "railing_exploit", "targetname" );
@@ -1075,7 +1075,7 @@ playerisonarailing()
     {
         foreach ( var_2 in var_0 )
         {
-            if ( self _meth_80A9( var_2 ) )
+            if ( self istouching( var_2 ) )
                 return 1;
         }
 
@@ -1091,7 +1091,7 @@ playerisonarailing()
 
 playergetnearestnode()
 {
-    var_0 = self _meth_8387();
+    var_0 = self getnearestnode();
 
     if ( !isdefined( var_0 ) )
     {
@@ -1116,7 +1116,7 @@ waterfallshove()
             if ( var_2.origin[2] > 88 && var_2.origin[2] < 89 && var_2.origin[1] > 940 && var_2.origin[1] < 1010 && var_2.origin[0] > 1230 && var_2.origin[0] < 1255 )
             {
                 if ( maps\mp\zombies\_util::is_true( var_2.onwaterfalledge ) )
-                    var_2 _meth_82F1( var_0 * 150 );
+                    var_2 setvelocity( var_0 * 150 );
                 else
                     var_2.onwaterfalledge = 1;
 

@@ -255,8 +255,8 @@ init_local()
 spawn_turret_model( var_0, var_1 )
 {
     var_2 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_2 _meth_80B1( var_1 );
-    var_2 _meth_804D( self, var_0, ( 0, 0, 14 ), ( -8, 0, 0 ) );
+    var_2 setmodel( var_1 );
+    var_2 linkto( self, var_0, ( 0, 0, 14 ), ( -8, 0, 0 ) );
 
     if ( !isdefined( self.turret_models ) )
         self.turret_models = [];
@@ -269,12 +269,12 @@ spawn_turret_model( var_0, var_1 )
 show_blurry_rotors()
 {
     self.blurry_rotors_on = 1;
-    self _meth_8048( "TAG_STATIC_MAIN_ROTOR_L" );
-    self _meth_8048( "TAG_STATIC_MAIN_ROTOR_R" );
-    self _meth_8048( "TAG_STATIC_TAIL_ROTOR" );
-    self _meth_804B( "TAG_SPIN_MAIN_ROTOR_L" );
-    self _meth_804B( "TAG_SPIN_MAIN_ROTOR_R" );
-    self _meth_804B( "TAG_SPIN_TAIL_ROTOR" );
+    self hidepart( "TAG_STATIC_MAIN_ROTOR_L" );
+    self hidepart( "TAG_STATIC_MAIN_ROTOR_R" );
+    self hidepart( "TAG_STATIC_TAIL_ROTOR" );
+    self showpart( "TAG_SPIN_MAIN_ROTOR_L" );
+    self showpart( "TAG_SPIN_MAIN_ROTOR_R" );
+    self showpart( "TAG_SPIN_TAIL_ROTOR" );
 }
 
 #using_animtree("vehicles");
@@ -288,13 +288,13 @@ handle_rotors()
     if ( isdefined( self.no_anim_rotors ) && self.no_anim_rotors )
         return;
 
-    self _meth_814B( %warbird_rotors_spin, 1, 0.2, 1 );
+    self setanim( %warbird_rotors_spin, 1, 0.2, 1 );
     var_0 = 0;
     var_1 = 0;
 
     for (;;)
     {
-        var_2 = self _meth_8287();
+        var_2 = self vehicle_getvelocity();
         var_3 = anglestoforward( self.angles );
         var_4 = vectordot( var_2, var_3 );
 
@@ -324,18 +324,18 @@ handle_rotors()
 
         if ( var_0 > 0 )
         {
-            self _meth_8143( %warbird_rotors_forward, 1, 0.2, 0 );
-            self _meth_8117( %warbird_rotors_forward, var_0 );
-            self _meth_814B( %rotors_tilt, 1, 0.2, 1 );
+            self setanimknob( %warbird_rotors_forward, 1, 0.2, 0 );
+            self setanimtime( %warbird_rotors_forward, var_0 );
+            self setanim( %rotors_tilt, 1, 0.2, 1 );
         }
         else if ( var_0 < 0 )
         {
-            self _meth_8143( %warbird_rotors_backward, 1, 0.2, 0 );
-            self _meth_8117( %warbird_rotors_backward, var_0 * -1 );
-            self _meth_814B( %rotors_tilt, 1, 0.2, 1 );
+            self setanimknob( %warbird_rotors_backward, 1, 0.2, 0 );
+            self setanimtime( %warbird_rotors_backward, var_0 * -1 );
+            self setanim( %rotors_tilt, 1, 0.2, 1 );
         }
         else
-            self _meth_8142( %rotors_tilt, 0.2 );
+            self clearanim( %rotors_tilt, 0.2 );
 
         wait 0.1;
     }
@@ -362,8 +362,8 @@ open_right_door()
     if ( !isdefined( self.right_door_anim ) || self.right_door_anim != "opening" )
     {
         self.right_door_anim = "opening";
-        self _meth_814B( %warbird_doors, 1, 0.2, 1 );
-        self _meth_814B( %warbird_door_r_open, 1, 0.2, 1 );
+        self setanim( %warbird_doors, 1, 0.2, 1 );
+        self setanim( %warbird_door_r_open, 1, 0.2, 1 );
         var_0 = getanimlength( %warbird_door_r_open );
         wait(var_0);
         maps\_utility::ent_flag_set( "right_door_open" );
@@ -375,8 +375,8 @@ open_left_door()
     if ( !isdefined( self.left_door_anim ) || self.left_door_anim != "opening" )
     {
         self.left_door_anim = "opening";
-        self _meth_814B( %warbird_doors, 1, 0.2, 1 );
-        self _meth_814B( %warbird_door_l_open, 1, 0.2, 1 );
+        self setanim( %warbird_doors, 1, 0.2, 1 );
+        self setanim( %warbird_door_l_open, 1, 0.2, 1 );
         var_0 = getanimlength( %warbird_door_l_open );
         wait(var_0);
         maps\_utility::ent_flag_set( "left_door_open" );
@@ -388,7 +388,7 @@ copy_animation_to_model( var_0 )
     if ( !isdefined( var_0 ) )
         return;
 
-    var_0 _meth_83BF( self );
+    var_0 copyanimtreestate( self );
 }
 
 copy_animation_to_cloak_models()
@@ -422,13 +422,13 @@ spawn_script_model_turret( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_4 ) )
     {
         var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_6 _meth_80B1( "npc_optics_zipline_gun" );
-        var_6 _meth_804D( var_5, "TAG_DE_TECH", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_6 setmodel( "npc_optics_zipline_gun" );
+        var_6 linkto( var_5, "TAG_DE_TECH", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_5.attachment = var_6;
     }
 
-    var_5 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_5 _meth_814B( level.scr_anim[var_0]["folded_idle"], 1, 0, 1 );
+    var_5 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 setanim( level.scr_anim[var_0]["folded_idle"], 1, 0, 1 );
 
     if ( !isdefined( self.zipline_gun_model ) )
         self.zipline_gun_model = [];
@@ -503,11 +503,11 @@ show_attached_clone_model( var_0, var_1 )
     if ( !isdefined( var_0 ) )
     {
         var_0 = spawn( "script_model", self getorigin() );
-        var_0 _meth_80B1( var_1 );
-        var_0 _meth_8115( #animtree );
+        var_0 setmodel( var_1 );
+        var_0 useanimtree( #animtree );
     }
 
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     copy_animation_to_cloak_models();
     var_0 show();
     return var_0;
@@ -534,17 +534,17 @@ cloak_warbird()
     else if ( isdefined( level.cloak_new ) && level.cloak_new )
     {
         self.uncloak_model = self.model;
-        self _meth_80B1( "vehicle_xh9_warbird_low_cloak" );
+        self setmodel( "vehicle_xh9_warbird_low_cloak" );
     }
     else
     {
         self.uncloak_model = self.model;
-        self _meth_80B1( "vehicle_xh9_warbird_cloaked_in_out" );
+        self setmodel( "vehicle_xh9_warbird_cloaked_in_out" );
 
         if ( issubstr( self.classname, "_stealth_col" ) )
         {
             wait 0.25;
-            self _meth_80B1( "vehicle_xh9_warbird_cloaked_mp" );
+            self setmodel( "vehicle_xh9_warbird_cloaked_mp" );
         }
     }
 
@@ -577,13 +577,13 @@ cloak_warbird()
 set_cloak_parameter( var_0, var_1 )
 {
     if ( isdefined( self.uncloak_model ) )
-        self _meth_83A7( var_0, var_1 );
+        self setmaterialscriptparam( var_0, var_1 );
 
     if ( isdefined( self.cloaked_model ) )
-        self.cloaked_model _meth_83A7( var_0, var_1 );
+        self.cloaked_model setmaterialscriptparam( var_0, var_1 );
 
     if ( isdefined( self.decloaking_model ) )
-        self.decloaking_model _meth_83A7( var_0, var_1 );
+        self.decloaking_model setmaterialscriptparam( var_0, var_1 );
 }
 
 setmodel_warbird( var_0 )
@@ -604,7 +604,7 @@ setmodel_warbird( var_0 )
         self notify( "stop_cloaked_models_animation" );
     }
     else if ( isdefined( self.uncloak_model ) )
-        self _meth_80B1( self.uncloak_model );
+        self setmodel( self.uncloak_model );
 
     maps\_vehicle::vehicle_lights_on( "running" );
     show_blurry_rotors();
@@ -618,7 +618,7 @@ uncloak_warbird( var_0 )
         var_1 = var_0;
 
     if ( issubstr( self.classname, "_stealth_col" ) && !is_using_model_memory_sharing() )
-        self _meth_80B1( "vehicle_xh9_warbird_cloaked_in_out" );
+        self setmodel( "vehicle_xh9_warbird_cloaked_in_out" );
 
     if ( is_using_model_memory_sharing() )
     {
@@ -673,7 +673,7 @@ warbird_emp_death( var_0, var_1 )
     maps\_vehicle::vehicle_lights_off( "all" );
     self.emp_crash = 1;
     self.vehicle_stays_alive = 1;
-    var_2 = self _meth_8287();
+    var_2 = self vehicle_getvelocity();
     var_3 = 250;
 
     if ( isdefined( level.get_warbird_crash_location_override ) )
@@ -688,9 +688,9 @@ warbird_emp_death( var_0, var_1 )
     self notify( "deathspin" );
     thread warbird_deathspin();
     var_6 = 1000;
-    self _meth_8283( var_6, 40, 1000 );
-    self _meth_825A( var_3 );
-    self _meth_825B( var_4, 0 );
+    self vehicle_setspeed( var_6, 40, 1000 );
+    self setneargoalnotifydist( var_3 );
+    self setvehgoalpos( var_4, 0 );
     thread warbird_emp_crash_movement( var_4, var_3, var_6 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     self notify( "stop_crash_loop_sound" );
@@ -703,7 +703,7 @@ warbird_emp_death( var_0, var_1 )
 
 kill_and_delete( var_0 )
 {
-    self _meth_8052( self.origin, var_0 );
+    self kill( self.origin, var_0 );
     self delete();
 }
 
@@ -716,12 +716,12 @@ warbird_deathspin()
     level.scr_anim["warbird_dummy"]["roll_right"][0] = %rotate_x_r;
     var_0 = spawn( "script_model", self.origin );
     var_0.angles = self.angles;
-    var_0 _meth_804D( self );
+    var_0 linkto( self );
 
     if ( isdefined( self.death_model_override ) )
-        var_0 _meth_80B1( self.death_model_override );
+        var_0 setmodel( self.death_model_override );
     else
-        var_0 _meth_80B1( self.model );
+        var_0 setmodel( self.model );
 
     var_0 endon( "death" );
     self hide();
@@ -743,7 +743,7 @@ warbird_deathspin()
 
     while ( var_2 < var_3 )
     {
-        var_0 _meth_83C7( level.scr_anim[var_0.animname][var_1][0], var_2 );
+        var_0 setanimrate( level.scr_anim[var_0.animname][var_1][0], var_2 );
         var_2 += var_4;
         wait 0.05;
     }
@@ -752,8 +752,8 @@ warbird_deathspin()
 warbird_emp_crash_movement( var_0, var_1, var_2 )
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8292( 400, 100, 100 );
+    self clearlookatent();
+    self setyawspeed( 400, 100, 100 );
     var_3 = 400;
     var_4 = 100;
     var_5 = undefined;
@@ -861,17 +861,17 @@ fastzip_unload( var_0, var_1 )
 
     var_11 hide();
     var_12 show();
-    var_12 _meth_8067( 1 );
-    self _meth_818A( var_12 );
-    var_12 _meth_8106( var_14 );
-    var_13 _meth_8106( var_14 );
+    var_12 setturretignoregoals( 1 );
+    self useturret( var_12 );
+    var_12 settargetentity( var_14 );
+    var_13 settargetentity( var_14 );
     var_12 waittill( "turret_on_target" );
 
     if ( !isdefined( self ) || !isalive( self ) )
         return 1;
 
-    self _meth_818B();
-    self _meth_804D( var_0, var_8 );
+    self stopuseturret();
+    self linkto( var_0, var_8 );
     var_0 thread maps\_anim::anim_single_solo( self, "fire", var_8, undefined, self.zipline_animname );
     var_15 = var_13 fire_rope( var_12, var_14.origin, var_11 );
     var_11 show();
@@ -980,10 +980,10 @@ calculate_rope_target( var_0, var_1, var_2 )
     var_7.animname = var_6.animname;
     var_7.angles = var_5;
     var_7 maps\_utility::assign_animtree();
-    var_7 _meth_80B1( var_6.rope_model );
+    var_7 setmodel( var_6.rope_model );
     var_7 hide();
     var_8 = var_7 maps\_utility::getanim( "fastzip_fire" );
-    var_7 _meth_8143( var_8, 1, 0, 0 );
+    var_7 setanimknob( var_8, 1, 0, 0 );
     [var_10, var_11] = var_7 get_ai_fastzip_pos();
     var_12 = var_2.origin - var_10;
     var_7.origin += var_12;
@@ -1025,11 +1025,11 @@ play_rest_anim( var_0, var_1, var_2 )
 {
     self notify( "newanim" );
     maps\_utility::anim_stopanimscripted();
-    self _meth_804F();
+    self unlink();
     var_1 clear_script_model_anim( 0 );
-    var_1 _meth_814B( var_1 maps\_utility::getanim( "rest_idle" ), 1, 0, 0 );
+    var_1 setanim( var_1 maps\_utility::getanim( "rest_idle" ), 1, 0, 0 );
     var_0 maps\_anim::anim_first_frame_solo( self, "rest_idle", var_2, self.zipline_animname );
-    self _meth_804D( var_0, var_2 );
+    self linkto( var_0, var_2 );
 }
 
 play_ready_up_anim( var_0, var_1, var_2 )
@@ -1099,15 +1099,15 @@ aim_test( var_0, var_1, var_2 )
 spawn_zipline_turret( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawnturret( "misc_turret", ( 0, 0, 0 ), var_0 );
-    var_4 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_4 _meth_80B1( var_2 );
+    var_4 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 setmodel( var_2 );
     var_4.angles = self.angles;
     var_4.script_team = self.script_team;
     maps\_vehicle_code::set_turret_team( var_4 );
-    var_4 _meth_815A( 0 );
-    var_4 _meth_8065( "manual" );
+    var_4 setdefaultdroppitch( 0 );
+    var_4 setmode( "manual" );
     var_4 makeunusable();
-    var_4 _meth_8115( #animtree );
+    var_4 useanimtree( #animtree );
     var_4.animname = var_3;
     return var_4;
 }
@@ -1120,17 +1120,17 @@ setup_zipline_gun( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_6 attach( var_4 );
 
     var_6 hide();
-    var_6 _meth_815A( 0 );
+    var_6 setdefaultdroppitch( 0 );
     var_6 maps\_utility::anim_stopanimscripted();
     var_6 clear_script_model_anim( 0 );
-    var_6 _meth_814B( var_6 maps\_utility::getanim( "fastzip_aim_idle" ), 1, 0, 0 );
+    var_6 setanim( var_6 maps\_utility::getanim( "fastzip_aim_idle" ), 1, 0, 0 );
     var_1 thread common_scripts\utility::delete_on_death( var_6 );
     return var_6;
 }
 
 clear_script_model_anim( var_0 )
 {
-    self _meth_8142( %root, var_0 );
+    self clearanim( %root, var_0 );
 }
 
 fire_rope( var_0, var_1, var_2 )
@@ -1155,15 +1155,15 @@ fire_rope( var_0, var_1, var_2 )
     var_11 = maps\_utility::getanim( "fastzip_fire" );
     var_12 = getanimlength( var_11 );
     var_13 = var_12 / var_4 * var_10;
-    self _meth_8143( var_11, 1, 0.2, var_4 );
-    var_0 _meth_8143( var_11, 1, 0.2, 1 );
+    self setanimknob( var_11, 1, 0.2, var_4 );
+    var_0 setanimknob( var_11, 1, 0.2, 1 );
     var_13 -= 0.05;
 
     if ( var_13 > 0.05 )
         wait(var_13);
 
-    self _meth_814B( var_11, 1, 0, 0 );
-    self _meth_8117( var_11, var_10 );
+    self setanim( var_11, 1, 0, 0 );
+    self setanimtime( var_11, var_10 );
     return var_9;
 }
 
@@ -1180,22 +1180,22 @@ sndxt_fastzip_fire( var_0 )
 fastzip_slide( var_0, var_1 )
 {
     var_2 = var_0 maps\_utility::getanim( "fastzip_slide" );
-    var_0 _meth_814C( %add_slide, 1, 0, 0 );
-    var_0 _meth_814C( var_2, 1, 0, 0 );
+    var_0 setanimlimited( %add_slide, 1, 0, 0 );
+    var_0 setanimlimited( var_2, 1, 0, 0 );
     thread maps\_anim::anim_loop_solo( self, var_1, "stop_loop", undefined, self.zipline_animname );
     [var_4, var_5] = var_0 get_ai_fastzip_pos();
     var_6 = common_scripts\utility::spawn_tag_origin();
     var_6.origin = self.origin;
     var_6.angles = self.angles;
-    self _meth_804D( var_6, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_6 _meth_82AE( var_4, 0.2, 0.1, 0 );
-    var_6 _meth_82B5( var_5, 0.2, 0.1, 0 );
+    self linkto( var_6, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_6 moveto( var_4, 0.2, 0.1, 0 );
+    var_6 rotateto( var_5, 0.2, 0.1, 0 );
     var_6 waittill( "movedone" );
-    self _meth_81C6( var_4, var_5 );
-    self _meth_804D( var_0, "jnt_shuttleRoot", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self forceteleport( var_4, var_5 );
+    self linkto( var_0, "jnt_shuttleRoot", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_6 delete();
-    var_0 _meth_814C( %add_slide, 1, 0, 1.2 );
-    var_0 _meth_814C( var_2, 1, 0, 1.2 );
+    var_0 setanimlimited( %add_slide, 1, 0, 1.2 );
+    var_0 setanimlimited( var_2, 1, 0, 1.2 );
 }
 
 fastzip_land( var_0, var_1, var_2 )
@@ -1231,17 +1231,17 @@ fastzip_land( var_0, var_1, var_2 )
             var_14 = common_scripts\utility::spawn_tag_origin();
             var_14.origin = self.origin;
             var_14.angles = self.angles;
-            self _meth_804D( var_14, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+            self linkto( var_14, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
             var_15 = ( 0, self.angles[1], 0 );
-            var_14 _meth_82AE( var_1, 0.2, 0.1, 0 );
-            var_14 _meth_82B5( var_15, 0.2, 0.1, 0 );
+            var_14 moveto( var_1, 0.2, 0.1, 0 );
+            var_14 rotateto( var_15, 0.2, 0.1, 0 );
             var_14 waittill( "movedone" );
 
             if ( isalive( self ) )
             {
-                self _meth_804F();
+                self unlink();
                 self notify( "stop_loop" );
-                self _meth_81C6( var_1, var_15 );
+                self forceteleport( var_1, var_15 );
                 thread maps\_anim::anim_single_solo( self, var_2, undefined, undefined, self.zipline_animname );
             }
 
@@ -1250,7 +1250,7 @@ fastzip_land( var_0, var_1, var_2 )
     }
 
     var_16 = var_0 maps\_utility::getanim( "fastzip_slide" );
-    var_0 _meth_814C( var_16, 1, 0, 0 );
+    var_0 setanimlimited( var_16, 1, 0, 0 );
 
     if ( isdefined( self ) && isalive( self ) )
     {
@@ -1258,7 +1258,7 @@ fastzip_land( var_0, var_1, var_2 )
         self waittill( var_2 );
 
         if ( maps\_vehicle_aianim::guy_resets_goalpos( self ) )
-            self _meth_81A6( self.origin );
+            self setgoalpos( self.origin );
     }
 }
 
@@ -1269,8 +1269,8 @@ retract_rope( var_0 )
     var_2 = 30;
     var_3 = 1;
     var_4 = maps\_utility::getanim( "retract_rope" );
-    self _meth_8143( var_4, 1, 0.2, var_3 );
-    self _meth_8117( var_4, var_1 );
+    self setanimknob( var_4, 1, 0.2, var_3 );
+    self setanimtime( var_4, var_1 );
     var_5 = var_2 * ( 1 - var_1 ) / 30 * var_3;
     wait(var_5 + 0.05);
 }
@@ -1296,17 +1296,17 @@ guy_death_inside_warbird()
 
     if ( isdefined( var_0 ) )
     {
-        if ( !self _meth_81E0() )
+        if ( !self isragdoll() )
         {
             if ( ( self.damagemod == "MOD_PROJECTILE_SPLASH" || self.damagemod == "MOD_EXPLOSIVE" ) && isdefined( self.death_flop_dir ) )
             {
                 var_1 = length( self.death_flop_dir );
-                var_2 = vectornormalize( var_0 _meth_81B0( self.death_flop_dir ) - self.origin );
-                self _meth_8024( "torso_lower", var_2 * var_1 );
+                var_2 = vectornormalize( var_0 localtoworldcoords( self.death_flop_dir ) - self.origin );
+                self startragdollfromimpact( "torso_lower", var_2 * var_1 );
             }
             else
             {
-                self _meth_804D( var_0 );
+                self linkto( var_0 );
                 self.noragdoll = 1;
                 var_0 waittill( "death" );
 

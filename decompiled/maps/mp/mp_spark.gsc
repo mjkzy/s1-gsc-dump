@@ -67,12 +67,12 @@ animateassemblyarms()
     var_1 = getentarray( "lab_assembly_robot_arm_02_scaled_anim", "targetname" );
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
-        var_1[var_2] _meth_848B( "mp_spark_assembly_arm_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
+        var_1[var_2] scriptmodelplayanimdeltamotionfrompos( "mp_spark_assembly_arm_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
 
     var_3 = getentarray( "spk_exolab_track_exo_hanger2", "targetname" );
 
     for ( var_2 = 0; var_2 < var_3.size; var_2++ )
-        var_3[var_2] _meth_848B( "mp_spark_assembly_exo_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
+        var_3[var_2] scriptmodelplayanimdeltamotionfrompos( "mp_spark_assembly_exo_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
 }
 
 animaterobotline()
@@ -88,7 +88,7 @@ animaterobotline()
     var_1 = getentarray( "spk_exolab_track_robot_hanger", "targetname" );
 
     for ( var_2 = 0; var_2 < var_1.size; var_2++ )
-        var_1[var_2] _meth_848B( "mp_spark_robot_line_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
+        var_1[var_2] scriptmodelplayanimdeltamotionfrompos( "mp_spark_robot_line_0" + ( var_2 + 1 ), var_0.origin, var_0.angles, "nothing" );
 }
 
 animatehangingexos()
@@ -106,16 +106,16 @@ animatehangingexos()
     if ( var_1.size < 3 )
         return;
 
-    var_1[0] _meth_848B( "mp_spark_exo_line_01", var_0.origin, var_0.angles, "nothing" );
-    var_1[1] _meth_848B( "mp_spark_exo_line_03", var_0.origin, var_0.angles, "nothing" );
-    var_1[2] _meth_848B( "mp_spark_exo_line_05", var_0.origin, var_0.angles, "nothing" );
+    var_1[0] scriptmodelplayanimdeltamotionfrompos( "mp_spark_exo_line_01", var_0.origin, var_0.angles, "nothing" );
+    var_1[1] scriptmodelplayanimdeltamotionfrompos( "mp_spark_exo_line_03", var_0.origin, var_0.angles, "nothing" );
+    var_1[2] scriptmodelplayanimdeltamotionfrompos( "mp_spark_exo_line_05", var_0.origin, var_0.angles, "nothing" );
     var_1 = getentarray( "spk_exolab_track_hanger", "targetname" );
 
     if ( var_1.size < 2 )
         return;
 
-    var_1[0] _meth_848B( "mp_spark_exo_line_02", var_0.origin, var_0.angles, "nothing" );
-    var_1[1] _meth_848B( "mp_spark_exo_line_04", var_0.origin, var_0.angles, "nothing" );
+    var_1[0] scriptmodelplayanimdeltamotionfrompos( "mp_spark_exo_line_02", var_0.origin, var_0.angles, "nothing" );
+    var_1[1] scriptmodelplayanimdeltamotionfrompos( "mp_spark_exo_line_04", var_0.origin, var_0.angles, "nothing" );
 }
 
 vistadroppods()
@@ -136,7 +136,7 @@ vistadroppods()
         for ( var_4 = 0; var_4 < 4; var_4++ )
         {
             var_5 = spawn( "script_model", ( 0, 0, -10000 ) );
-            var_5 _meth_80B1( "spk_vehicle_mil_drop_pod" );
+            var_5 setmodel( "spk_vehicle_mil_drop_pod" );
             level.sparkdroppods[level.sparkdroppods.size] = var_5;
         }
     }
@@ -179,7 +179,7 @@ firepod( var_0, var_1 )
         wait(var_1);
 
     playfxontag( common_scripts\utility::getfx( "mp_spark_drop_pod" ), var_0, "tag_fx" );
-    var_0 _meth_8075( "incoming_ambient_pods_lp" );
+    var_0 playloopsound( "incoming_ambient_pods_lp" );
 
     if ( level.sparkdroplocationindex >= level.sparkdroplocations.size )
     {
@@ -189,13 +189,13 @@ firepod( var_0, var_1 )
 
     var_3 = level.sparkdroplocations[level.sparkdroplocationindex];
     level.sparkdroplocationindex++;
-    var_0 _meth_8092();
+    var_0 dontinterpolate();
     var_0.origin = var_3.start;
     var_0.angles = var_3.startangles;
-    var_0 _meth_82AE( var_3.end, var_2, var_2, 0 );
+    var_0 moveto( var_3.end, var_2, var_2, 0 );
     wait(var_2);
     killfxontag( common_scripts\utility::getfx( "mp_spark_drop_pod" ), var_0, "tag_fx" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     playfx( common_scripts\utility::getfx( "mp_spark_drop_pod_impact" ), var_3.end );
     level notify( "podComplete", var_0 );
 }
@@ -218,7 +218,7 @@ fan1spin()
 
     for (;;)
     {
-        self _meth_82BD( ( var_0, 0, 0 ), var_1 );
+        self rotatevelocity( ( var_0, 0, 0 ), var_1 );
         wait(var_1);
     }
 }
@@ -251,19 +251,19 @@ playerhandleuplinkvisionset()
 
     for (;;)
     {
-        var_0 = self _meth_8312();
+        var_0 = self getcurrentprimaryweapon();
 
         if ( isdefined( var_0 ) )
         {
             if ( issubstr( var_0, "iw5_carrydrone" ) )
             {
-                self _meth_847A( "mp_spark_uplink_inview", 0.3 );
-                self _meth_83C1( "mp_spark_uplink_inview", 0.3 );
+                self setclienttriggervisionset( "mp_spark_uplink_inview", 0.3 );
+                self lightsetoverrideenableforplayer( "mp_spark_uplink_inview", 0.3 );
             }
             else
             {
-                self _meth_847A( "", 0.5 );
-                self _meth_83C2( 0.5 );
+                self setclienttriggervisionset( "", 0.5 );
+                self lightsetoverrideenableforplayer( 0.5 );
             }
         }
 

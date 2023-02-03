@@ -198,7 +198,7 @@ atlas_suv_rider_think()
     var_0 = self.ridingvehicle;
     var_1 = maps\_vehicle_aianim::anim_pos( var_0, self.vehicle_position );
     setup_rider_anims( var_1.sittag );
-    self _meth_8147( %atlas_suv, %root, 1.0, 0.0 );
+    self setanimknoball( %atlas_suv, %root, 1.0, 0.0 );
     thread rider_think_loop( var_0, var_1.sittag );
 }
 
@@ -253,7 +253,7 @@ find_threat( var_0 )
         if ( isdefined( self.enemy ) )
         {
             var_1 = self.enemy;
-            var_2 = var_1 _meth_80A8() - self _meth_80A8();
+            var_2 = var_1 geteye() - self geteye();
             var_3 = vectornormalize( var_2 );
             var_4 = anglestoforward( self.angles );
             var_5 = vectordot( var_3, var_4 );
@@ -307,7 +307,7 @@ play_combat_state( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) )
         play_aim_anim( var_1, var_2 );
 
-    self _meth_8142( %atlas_suv_aiming, 0.2 );
+    self clearanim( %atlas_suv_aiming, 0.2 );
 
     if ( isdefined( self.rider_anims["popin"] ) )
         var_0 maps\_vehicle_aianim::animontag( self, var_1, self.rider_anims["popin"] );
@@ -329,8 +329,8 @@ custom_aim_notetracks( var_0 )
 custom_aim_animscript()
 {
     self endon( "killanimscript" );
-    self _meth_8142( %atlas_suv_actions, 0.2 );
-    self _meth_814B( %atlas_suv_aiming, 1, 0, 1 );
+    self clearanim( %atlas_suv_actions, 0.2 );
+    self setanim( %atlas_suv_aiming, 1, 0, 1 );
     var_0 = "combat_aim";
     thread custom_aim_notetracks( var_0 );
     var_1 = 0;
@@ -367,7 +367,7 @@ custom_aim_animscript()
 
         if ( isdefined( self.animscript_target ) )
         {
-            var_7 = self.animscript_target _meth_80A8() - self _meth_80A8();
+            var_7 = self.animscript_target geteye() - self geteye();
             var_8 = vectornormalize( var_7 );
             var_9 = anglestoforward( self.angles );
             var_10 = vectordot( var_8, var_9 );
@@ -432,7 +432,7 @@ custom_aim_animscript()
             {
                 var_6 = getanimlength( var_20 );
                 var_6 += randomfloatrange( 0, 2 );
-                self _meth_810D( var_0, var_20, 1, 0, 1 );
+                self setflaggedanimknobrestart( var_0, var_20, 1, 0, 1 );
             }
         }
 
@@ -467,7 +467,7 @@ open_window( var_0, var_1 )
     {
         if ( !var_0 maps\_utility::ent_flag( var_2 ) )
         {
-            var_0 _meth_814B( var_3, 1, 0, 1 );
+            var_0 setanim( var_3, 1, 0, 1 );
             var_0 maps\_utility::ent_flag_set( var_2 );
         }
     }
@@ -475,7 +475,7 @@ open_window( var_0, var_1 )
 
 update_anim_weight( var_0, var_1 )
 {
-    self _meth_814B( var_0, var_1, 0, 1 );
+    self setanim( var_0, var_1, 0, 1 );
 }
 
 play_aim_anim( var_0, var_1 )
@@ -483,7 +483,7 @@ play_aim_anim( var_0, var_1 )
     thread notify_kill_aim_anim( var_1 );
     self.animscript_sittag = var_0;
     self.animscript_target = var_1;
-    self _meth_819A( ::custom_aim_animscript );
+    self animcustom( ::custom_aim_animscript );
     wait 0.05;
     self waittill( "kill_aim_anim" );
     self notify( "killanimscript" );
@@ -511,5 +511,5 @@ notify_kill_aim_anim( var_0 )
 clear_anim_on_death()
 {
     self waittill( "death_finished" );
-    self _meth_8142( %root, 0 );
+    self clearanim( %root, 0 );
 }

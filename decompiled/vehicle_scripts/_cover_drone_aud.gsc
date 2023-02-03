@@ -526,7 +526,7 @@ input_cdrn_in_use()
 input_cdrn_speed()
 {
     var_0 = soundscripts\_audio_vehicle_manager::avmx_get_vehicle_entity();
-    var_1 = var_0 _meth_8286();
+    var_1 = var_0 vehicle_getspeed();
     return var_1;
 }
 

@@ -4,7 +4,7 @@
 drone_give_soul()
 {
     assign_drone_tree();
-    self _meth_805B();
+    self startusingheroonlylighting();
 
     if ( isdefined( self.script_moveplaybackrate ) )
         self.moveplaybackrate = self.script_moveplaybackrate;
@@ -16,7 +16,7 @@ drone_give_soul()
         maps\_names::get_name();
 
         if ( isdefined( self.name ) )
-            self _meth_803F( self.name, &"" );
+            self setlookattext( self.name, &"" );
     }
 
     if ( isdefined( level.dronecallbackthread ) )
@@ -49,7 +49,7 @@ thermaldrawenabledrone()
     }
 
     if ( var_0 )
-        self _meth_8029();
+        self thermaldrawenable();
 }
 
 drone_init_path()
@@ -181,12 +181,12 @@ assign_drone_tree()
 
 assign_generic_human_tree()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 }
 
 #using_animtree("animals");
 
 assign_animals_tree()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 }

@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 15 ) )
@@ -86,7 +86,7 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
@@ -94,21 +94,21 @@ precache()
     character\character_kva_civ_a::precache();
     character\character_kva_civ_b::precache();
     character\character_kva_civ_c::precache();
-    precacheitem( "iw5_ak12_sp" );
-    precacheitem( "iw5_ak12_sp_opticsacog2" );
-    precacheitem( "iw5_ak12_sp_opticsreddot" );
-    precacheitem( "iw5_ak12_sp_variablereddot" );
-    precacheitem( "iw5_ak12_sp_opticstargetenhancer" );
-    precacheitem( "iw5_arx160_sp" );
-    precacheitem( "iw5_arx160_sp_opticsacog2" );
-    precacheitem( "iw5_arx160_sp_opticsreddot" );
-    precacheitem( "iw5_arx160_sp_variablereddot" );
-    precacheitem( "iw5_arx160_sp_opticstargetenhancer" );
-    precacheitem( "iw5_m182spr_sp" );
-    precacheitem( "iw5_m182spr_sp_opticsacog2" );
-    precacheitem( "iw5_m182spr_sp_opticsreddot" );
-    precacheitem( "iw5_m182spr_sp_variablereddot" );
-    precacheitem( "iw5_m182spr_sp_opticstargetenhancer" );
-    precacheitem( "iw5_vbr_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_ak12_sp" );
+    precacheshellshock( "iw5_ak12_sp_opticsacog2" );
+    precacheshellshock( "iw5_ak12_sp_opticsreddot" );
+    precacheshellshock( "iw5_ak12_sp_variablereddot" );
+    precacheshellshock( "iw5_ak12_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_arx160_sp" );
+    precacheshellshock( "iw5_arx160_sp_opticsacog2" );
+    precacheshellshock( "iw5_arx160_sp_opticsreddot" );
+    precacheshellshock( "iw5_arx160_sp_variablereddot" );
+    precacheshellshock( "iw5_arx160_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_m182spr_sp" );
+    precacheshellshock( "iw5_m182spr_sp_opticsacog2" );
+    precacheshellshock( "iw5_m182spr_sp_opticsreddot" );
+    precacheshellshock( "iw5_m182spr_sp_variablereddot" );
+    precacheshellshock( "iw5_m182spr_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_vbr_sp" );
+    precacheshellshock( "fraggrenade" );
 }

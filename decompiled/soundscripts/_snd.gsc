@@ -104,7 +104,7 @@ snd_new_guid()
 
 snd_map( var_0, var_1 )
 {
-    return _func_246( var_0, var_1 );
+    return piecewiselinearlookup( var_0, var_1 );
 }
 
 snd_flash_white()
@@ -112,7 +112,7 @@ snd_flash_white()
     var_0 = newhudelem();
     var_0.x = 0;
     var_0.y = 0;
-    var_0 _meth_80CC( "white", 640, 480 );
+    var_0 setshader( "white", 640, 480 );
     var_0.alignx = "left";
     var_0.aligny = "top";
     var_0.sort = 1;
@@ -199,7 +199,7 @@ snd_parse_soundtables( var_0, var_1, var_2, var_3, var_4 )
         var_11 = 0;
         var_12 = undefined;
         var_13 = "";
-        var_14 = _func_28F( var_7, var_3, var_4 );
+        var_14 = packedtablesectionlookup( var_7, var_3, var_4 );
 
         if ( isdefined( var_14 ) )
         {

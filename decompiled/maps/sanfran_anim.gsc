@@ -7,11 +7,11 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "sanfran_intro_tr" ) )
+        if ( istransientloaded( "sanfran_intro_tr" ) )
             level.transient_zone = "intro";
-        else if ( _func_21E( "sanfran_bigm_tr" ) )
+        else if ( istransientloaded( "sanfran_bigm_tr" ) )
             level.transient_zone = "bigm";
-        else if ( _func_21E( "sanfran_outro_tr" ) )
+        else if ( istransientloaded( "sanfran_outro_tr" ) )
             level.transient_zone = "outro";
     }
 
@@ -456,7 +456,7 @@ setup_tanker_crash_notetrack()
 {
     if ( level.currentgen )
     {
-        if ( _func_21E( "sanfran_outro_tr" ) )
+        if ( istransientloaded( "sanfran_outro_tr" ) )
             level waittill( "tff_transition_outro_to_intro" );
     }
 

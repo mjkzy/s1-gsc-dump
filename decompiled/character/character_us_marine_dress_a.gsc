@@ -7,7 +7,7 @@ main()
     self attach( "head_m_gen_cau_clark_marines_dress", "", 1 );
     self.headmodel = "head_m_gen_cau_clark_marines_dress";
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

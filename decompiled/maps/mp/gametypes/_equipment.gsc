@@ -30,7 +30,7 @@ watchtrophyusage()
                 if ( var_3["fraction"] == 1 )
                 {
                     var_0 delete();
-                    self _meth_82F7( "trophy_mp", self _meth_82F9( "trophy_mp" ) + 1 );
+                    self setweaponammostock( "trophy_mp", self setweaponammostock( "trophy_mp" ) + 1 );
                     continue;
                 }
 
@@ -44,7 +44,7 @@ watchtrophyusage()
                 self.trophyarray[0] thread trophybreak();
 
             var_4 = spawn( "script_model", var_0.origin );
-            var_4 _meth_80B1( "mp_trophy_system" );
+            var_4 setmodel( "mp_trophy_system" );
             var_4 thread maps\mp\gametypes\_weapons::createbombsquadmodel( "mp_trophy_system_bombsquad", "tag_origin", self );
             var_4.angles = var_0.angles;
             self.trophyarray[self.trophyarray.size] = var_4;
@@ -122,8 +122,8 @@ trophyuselistener( var_0 )
     level endon( "game_ended" );
     var_0 endon( "disconnect" );
     var_0 endon( "death" );
-    self.trigger _meth_80DA( "HINT_NOICON" );
-    self.trigger _meth_80DB( &"MP_PICKUP_TROPHY" );
+    self.trigger setcursorhint( "HINT_NOICON" );
+    self.trigger sethintstring( &"MP_PICKUP_TROPHY" );
     self.trigger maps\mp\_utility::setselfusable( var_0 );
     self.trigger thread maps\mp\_utility::notusableforjoiningplayers( var_0 );
 
@@ -131,8 +131,8 @@ trophyuselistener( var_0 )
     {
         self.trigger waittill( "trigger", var_0 );
         var_0 playlocalsound( "scavenger_pack_pickup" );
-        var_1 = var_0 _meth_82F8( "trophy_mp" );
-        var_0 _meth_82F6( "trophy_mp", var_1 + 1 );
+        var_1 = var_0 getweaponammoclip( "trophy_mp" );
+        var_0 setweaponammoclip( "trophy_mp", var_1 + 1 );
         var_0.trophyremainingammo = self.ammo;
         self.trigger delete();
         self delete();
@@ -318,15 +318,15 @@ trophyhandlelaser( var_0, var_1 )
     self notify( "trophyDelayClearLaser" );
     self endon( "trophyDelayClearLaser" );
     self.laserent.angles = vectortoangles( var_1.origin - self.laserent.origin );
-    self.laserent _meth_80B2( "tracking_drone_laser" );
+    self.laserent laseron( "tracking_drone_laser" );
     wait 0.7;
-    self.laserent _meth_80B3();
+    self.laserent laseroff();
 }
 
 trophyaddlaser( var_0, var_1 )
 {
     self.laserent = spawn( "script_model", self.origin );
-    self.laserent _meth_80B1( "tag_laser" );
+    self.laserent setmodel( "tag_laser" );
     self.laserent.angles = self.angles;
     self.laserent.laseroriginoffset = var_0;
     self.laserent.laserforwardangles = var_1;
@@ -374,7 +374,7 @@ trophydamage( var_0 )
     self endon( "death" );
     var_0 endon( "death" );
     self endon( "change_owner" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.health = 999999;
     self.maxhealth = 100;
     self.damagetaken = 0;

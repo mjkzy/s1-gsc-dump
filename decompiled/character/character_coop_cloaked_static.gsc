@@ -3,10 +3,10 @@
 
 main()
 {
-    self _meth_80B1( "body_coop_cloaked_static" );
+    self setmodel( "body_coop_cloaked_static" );
     codescripts\character::attachhead( "alias_coop_cloaked_static_heads", xmodelalias\alias_coop_cloaked_static_heads::main() );
     self.voice = "russian";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

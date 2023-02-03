@@ -131,9 +131,9 @@ stickexplosivegel( var_0 )
     var_11 = vectortoangles( var_10 );
     var_11 += ( 90, 0, 0 );
     var_9.angles = var_11;
-    var_9 _meth_80B1( level.explosivegelsettings.stuckmesh );
+    var_9 setmodel( level.explosivegelsettings.stuckmesh );
     var_9.owner = self;
-    var_9 _meth_8383( self );
+    var_9 setotherent( self );
     var_9.killcamoffset = ( 0, 0, 55 );
     var_9.killcament = spawn( "script_model", var_9.origin + var_9.killcamoffset );
     var_9.stunned = 0;
@@ -154,8 +154,8 @@ createbombsquadmodel( var_0, var_1, var_2 )
     var_3 hide();
     wait 0.05;
     var_3 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( var_2 );
-    var_3 _meth_80B1( var_0 );
-    var_3 _meth_804D( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( var_0 );
+    var_3 linkto( self, var_1, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3 setcontents( 0 );
     self waittill( "death" );
 
@@ -239,7 +239,7 @@ minedamagemonitor()
     self endon( "mine_triggered" );
     self endon( "mine_selfdestruct" );
     self endon( "death" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.maxhealth = 100000;
     self.health = self.maxhealth;
     var_0 = undefined;
@@ -313,7 +313,7 @@ mineexplode( var_0 )
         return;
 
     self hide();
-    self entityradiusdamage( self.origin, 192, 100, 100, var_0, "MOD_EXPLOSIVE" );
+    self radiusdamage( self.origin, 192, 100, 100, var_0, "MOD_EXPLOSIVE" );
 
     if ( isdefined( self.owner ) && isdefined( level.leaderdialogonplayer_func ) )
         self.owner thread [[ level.leaderdialogonplayer_func ]]( "mine_destroyed", undefined, undefined, self.origin );

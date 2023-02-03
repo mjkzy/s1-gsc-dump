@@ -42,10 +42,10 @@ matchstarted()
     if ( getdvar( "mapname" ) == getdvar( "virtualLobbyMap" ) )
         return;
 
-    _func_2B6( "MatchStarted: Completed" );
-    var_0 = _func_2C3();
+    sysprint( "MatchStarted: Completed" );
+    var_0 = getplaylistname();
     setmatchdata( "playlistName", var_0 );
-    var_1 = _func_2C4();
+    var_1 = getlocaltimestring();
     setmatchdata( "localTimeStringAtMatchStart", var_1 );
 
     if ( getmatchstarttimeutc() == 0 )
@@ -95,7 +95,7 @@ logbreadcrumbdata()
                 if ( isdefined( var_2.lastshotby ) )
                     var_3 = var_2.lastshotby;
 
-                _func_2B3( var_2, var_2.lifeid, var_0, var_3 );
+                recordbreadcrumbdataforplayer( var_2, var_2.lifeid, var_0, var_3 );
                 var_2.lastshotby = undefined;
             }
         }
@@ -124,7 +124,7 @@ accumulateplayerpingdata()
             if ( !isdefined( var_1.pers["pingAccumulation"] ) || !isdefined( var_1.pers["minPing"] ) || !isdefined( var_1.pers["maxPing"] ) || !isdefined( var_1.pers["pingSampleCount"] ) )
                 continue;
 
-            var_2 = var_1 _meth_8522();
+            var_2 = var_1 getcurrentping();
             var_1.pers["pingAccumulation"] += var_2;
             var_1.pers["pingSampleCount"]++;
 
@@ -588,21 +588,21 @@ logplayerandkilleradsandfov( var_0, var_1 )
 
     if ( isplayer( var_1 ) )
     {
-        if ( var_1 _meth_8340() > 0.5 )
+        if ( var_1 playerads() > 0.5 )
             setmatchdata( "lives", var_0, "killerWasADS", 1 );
 
-        var_2 = var_1 _meth_80A8();
+        var_2 = var_1 geteye();
 
         if ( common_scripts\utility::within_fov( var_2, var_1.angles, self.origin, cos( getdvarfloat( "cg_fov" ) ) ) )
             setmatchdata( "lives", var_0, "victimWasInKillersFOV", 1 );
 
-        var_3 = self _meth_80A8();
+        var_3 = self geteye();
 
         if ( common_scripts\utility::within_fov( var_3, self.angles, var_1.origin, cos( getdvarfloat( "cg_fov" ) ) ) )
             setmatchdata( "lives", var_0, "killerWasInVictimsFOV", 1 );
     }
 
-    if ( self _meth_8340() > 0.5 )
+    if ( self playerads() > 0.5 )
         setmatchdata( "lives", var_0, "victimWasADS", 1 );
 }
 
@@ -620,7 +620,7 @@ logplayerandkillershieldcloakhoveractive( var_0, var_1 )
     if ( isdefined( self.exo_hover_on ) && self.exo_hover_on )
         setmatchdata( "lives", var_0, "victimHoverActive", 1 );
 
-    if ( self _meth_84F8() )
+    if ( self iscloaked() )
         setmatchdata( "lives", var_0, "victimCloakingActive", 1 );
 
     if ( isplayer( var_1 ) )
@@ -631,7 +631,7 @@ logplayerandkillershieldcloakhoveractive( var_0, var_1 )
         if ( isdefined( var_1.exo_hover_on ) && var_1.exo_hover_on )
             setmatchdata( "lives", var_0, "killerHoverActive", 1 );
 
-        if ( var_1 _meth_84F8() )
+        if ( var_1 iscloaked() )
             setmatchdata( "lives", var_0, "killerCloakingActive", 1 );
     }
 }
@@ -648,7 +648,7 @@ determineweaponnameandattachments( var_0, var_1 )
     }
     else
     {
-        var_2 = _func_1DF( var_0 );
+        var_2 = weaponinventorytype( var_0 );
         var_3 = weaponclass( var_0 );
     }
 
@@ -776,13 +776,13 @@ logplayerandkillerstanceandmotionstate( var_0, var_1 )
 
     if ( isplayer( self ) && canlogclient( self ) )
     {
-        var_2 = _func_2BE( self );
+        var_2 = getstanceandmotionstateforplayer( self );
         setmatchdata( "lives", var_0, "victimStanceAndMotionState", var_2 );
     }
 
     if ( isplayer( var_1 ) && canlogclient( var_1 ) )
     {
-        var_2 = _func_2BE( var_1 );
+        var_2 = getstanceandmotionstateforplayer( var_1 );
         setmatchdata( "lives", var_0, "killerStanceAndMotionState", var_2 );
     }
 }
@@ -1005,7 +1005,7 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     var_26 = gettime();
 
     if ( isplayer( var_1 ) )
-        var_23 = var_1 _meth_8340();
+        var_23 = var_1 playerads();
 
     var_27 = var_1.clientid;
 
@@ -1022,8 +1022,8 @@ logplayerdeath( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     if ( self.damage_info.size > 1 )
         var_17 = 0;
 
-    if ( isdefined( self.damage_info[var_1 _meth_81B1()] ) )
-        var_18 = self.damage_info[var_1 _meth_81B1()].num_shots;
+    if ( isdefined( self.damage_info[var_1 getentitynumber()] ) )
+        var_18 = self.damage_info[var_1 getentitynumber()].num_shots;
 
     var_30 = self.pers["primaryWeapon"] + "_mp";
     var_31 = weaponclass( var_30 );
@@ -1124,7 +1124,7 @@ endofgamesummarylogger()
         logplayerping( var_1 );
 
         if ( isdefined( var_1.detectedexploit ) && var_1.detectedexploit && var_1 maps\mp\_utility::rankingenabled() )
-            var_1 _meth_8244( "restXPGoal", var_1.detectedexploit );
+            var_1 setrankedplayerdata( "restXPGoal", var_1.detectedexploit );
 
         var_2 = undefined;
         var_3 = 0;
@@ -1138,29 +1138,29 @@ endofgamesummarylogger()
 
             if ( var_2.size > 0 )
             {
-                var_1 _meth_8247( "round", "challengeNumCompleted", var_2.size );
+                var_1 setcommonplayerdata( "round", "challengeNumCompleted", var_2.size );
                 var_4 = maps\mp\_utility::clamptobyte( var_2.size );
                 setmatchdata( "players", var_1.clientid, "challengesCompleted", var_4 );
             }
             else
-                var_1 _meth_8247( "round", "challengeNumCompleted", 0 );
+                var_1 setcommonplayerdata( "round", "challengeNumCompleted", 0 );
         }
         else
-            var_1 _meth_8247( "round", "challengeNumCompleted", 0 );
+            var_1 setcommonplayerdata( "round", "challengeNumCompleted", 0 );
 
         for ( var_5 = 0; var_5 < 20; var_5++ )
         {
             if ( isdefined( var_2 ) && isdefined( var_2[var_5] ) && var_2[var_5] != 8000 )
             {
-                var_1 _meth_8247( "round", "challengesCompleted", var_5, var_2[var_5] );
+                var_1 setcommonplayerdata( "round", "challengesCompleted", var_5, var_2[var_5] );
                 continue;
             }
 
-            var_1 _meth_8247( "round", "challengesCompleted", var_5, 0 );
+            var_1 setcommonplayerdata( "round", "challengesCompleted", var_5, 0 );
         }
 
-        var_1 _meth_8247( "round", "gameMode", level.gametype );
-        var_1 _meth_8247( "round", "map", tolower( getdvar( "mapname" ) ) );
+        var_1 setcommonplayerdata( "round", "gameMode", level.gametype );
+        var_1 setcommonplayerdata( "round", "map", tolower( getdvar( "mapname" ) ) );
     }
 }
 
@@ -1197,7 +1197,7 @@ gameendlistener()
         if ( var_1.totallifetime > 0 )
         {
             var_4 = var_1 maps\mp\_utility::getpersstat( "score" ) / ( var_1.totallifetime / 60000 );
-            _func_241( var_1.xuid, var_4, var_1.team );
+            tournamentreportplayerspm( var_1.xuid, var_4, var_1.team );
         }
 
         var_1.totallifetime = 0;
@@ -1298,20 +1298,20 @@ loginitialstats()
 {
     if ( getdvarint( "mdsd" ) > 0 )
     {
-        var_0 = self _meth_8223( "experience" );
+        var_0 = self getrankedplayerdata( "experience" );
         setmatchdata( "players", self.clientid, "startXp", var_0 );
-        setmatchdata( "players", self.clientid, "startKills", self _meth_8223( "kills" ) );
-        setmatchdata( "players", self.clientid, "startDeaths", self _meth_8223( "deaths" ) );
-        setmatchdata( "players", self.clientid, "startWins", self _meth_8223( "wins" ) );
-        setmatchdata( "players", self.clientid, "startLosses", self _meth_8223( "losses" ) );
-        setmatchdata( "players", self.clientid, "startHits", self _meth_8223( "hits" ) );
-        setmatchdata( "players", self.clientid, "startMisses", self _meth_8223( "misses" ) );
-        setmatchdata( "players", self.clientid, "startGamesPlayed", self _meth_8223( "gamesPlayed" ) );
-        setmatchdata( "players", self.clientid, "startScore", self _meth_8223( "score" ) );
-        setmatchdata( "players", self.clientid, "startUnlockPoints", self _meth_8223( "unlockPoints" ) );
-        setmatchdata( "players", self.clientid, "startPrestige", self _meth_8223( "prestige" ) );
-        setmatchdata( "players", self.clientid, "startDP", self _meth_8223( "division" ) );
-        var_1 = self _meth_8223( "mmr" );
+        setmatchdata( "players", self.clientid, "startKills", self getrankedplayerdata( "kills" ) );
+        setmatchdata( "players", self.clientid, "startDeaths", self getrankedplayerdata( "deaths" ) );
+        setmatchdata( "players", self.clientid, "startWins", self getrankedplayerdata( "wins" ) );
+        setmatchdata( "players", self.clientid, "startLosses", self getrankedplayerdata( "losses" ) );
+        setmatchdata( "players", self.clientid, "startHits", self getrankedplayerdata( "hits" ) );
+        setmatchdata( "players", self.clientid, "startMisses", self getrankedplayerdata( "misses" ) );
+        setmatchdata( "players", self.clientid, "startGamesPlayed", self getrankedplayerdata( "gamesPlayed" ) );
+        setmatchdata( "players", self.clientid, "startScore", self getrankedplayerdata( "score" ) );
+        setmatchdata( "players", self.clientid, "startUnlockPoints", self getrankedplayerdata( "unlockPoints" ) );
+        setmatchdata( "players", self.clientid, "startPrestige", self getrankedplayerdata( "prestige" ) );
+        setmatchdata( "players", self.clientid, "startDP", self getrankedplayerdata( "division" ) );
+        var_1 = self getrankedplayerdata( "mmr" );
         setmatchdata( "players", self.clientid, "startMMR", var_1 );
     }
 }
@@ -1320,19 +1320,19 @@ logfinalstats()
 {
     if ( getdvarint( "mdsd" ) > 0 )
     {
-        var_0 = self _meth_8223( "experience" );
+        var_0 = self getrankedplayerdata( "experience" );
         setmatchdata( "players", self.clientid, "endXp", var_0 );
-        setmatchdata( "players", self.clientid, "endKills", self _meth_8223( "kills" ) );
-        setmatchdata( "players", self.clientid, "endDeaths", self _meth_8223( "deaths" ) );
-        setmatchdata( "players", self.clientid, "endWins", self _meth_8223( "wins" ) );
-        setmatchdata( "players", self.clientid, "endLosses", self _meth_8223( "losses" ) );
-        setmatchdata( "players", self.clientid, "endHits", self _meth_8223( "hits" ) );
-        setmatchdata( "players", self.clientid, "endMisses", self _meth_8223( "misses" ) );
-        setmatchdata( "players", self.clientid, "endGamesPlayed", self _meth_8223( "gamesPlayed" ) );
-        setmatchdata( "players", self.clientid, "endScore", self _meth_8223( "score" ) );
-        setmatchdata( "players", self.clientid, "endUnlockPoints", self _meth_8223( "unlockPoints" ) );
-        setmatchdata( "players", self.clientid, "endPrestige", self _meth_8223( "prestige" ) );
-        var_1 = self _meth_8223( "mmr" );
+        setmatchdata( "players", self.clientid, "endKills", self getrankedplayerdata( "kills" ) );
+        setmatchdata( "players", self.clientid, "endDeaths", self getrankedplayerdata( "deaths" ) );
+        setmatchdata( "players", self.clientid, "endWins", self getrankedplayerdata( "wins" ) );
+        setmatchdata( "players", self.clientid, "endLosses", self getrankedplayerdata( "losses" ) );
+        setmatchdata( "players", self.clientid, "endHits", self getrankedplayerdata( "hits" ) );
+        setmatchdata( "players", self.clientid, "endMisses", self getrankedplayerdata( "misses" ) );
+        setmatchdata( "players", self.clientid, "endGamesPlayed", self getrankedplayerdata( "gamesPlayed" ) );
+        setmatchdata( "players", self.clientid, "endScore", self getrankedplayerdata( "score" ) );
+        setmatchdata( "players", self.clientid, "endUnlockPoints", self getrankedplayerdata( "unlockPoints" ) );
+        setmatchdata( "players", self.clientid, "endPrestige", self getrankedplayerdata( "prestige" ) );
+        var_1 = self getrankedplayerdata( "mmr" );
         setmatchdata( "players", self.clientid, "endMMR", var_1 );
 
         if ( isdefined( self.pers["rank"] ) )

@@ -69,7 +69,7 @@ launch_threads()
 
 launch_loops()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_audio_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_audio_tr" ) )
         return;
 
     common_scripts\utility::loop_fx_sound( "heli_fire_lrg_lp", ( -11258, -1660, 3 ), 1, "aud_stop_intro" );
@@ -95,7 +95,7 @@ launch_loops()
 
 launch_line_emitters()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_audio_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_audio_tr" ) )
         return;
 
     wait 0.1;
@@ -116,7 +116,7 @@ launch_line_emitters()
 
 aud_handle_river_sfx()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_audio_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_audio_tr" ) )
         return;
 
     var_0 = ( -9716, 3329, -502 );
@@ -495,7 +495,7 @@ mus_submixer_thread( var_0 )
             var_7 = var_3;
 
         var_4 += var_7 * ( var_6 - var_4 );
-        var_8 = _func_246( var_4, level.aud.envs["player_speed_to_music_vol"] );
+        var_8 = piecewiselinearlookup( var_4, level.aud.envs["player_speed_to_music_vol"] );
         soundscripts\_audio::aud_set_music_submix( var_8 * var_0, var_1 );
         wait(var_1);
     }
@@ -691,13 +691,13 @@ chopper_sniper_shot( var_0, var_1 )
     wait(var_5);
     var_6 = soundscripts\_snd_playsound::snd_play_2d( "helo_sniper_tail" );
     var_7 = soundscripts\_snd::snd_map( var_4, level.aud.envs["snipe_report_volume"] );
-    var_6 _meth_806F( var_7, 0.05 );
+    var_6 scalevolume( var_7, 0.05 );
 }
 
 aud_chopper_sniper_whizby( var_0, var_1 )
 {
     var_2 = soundscripts\_snd_playsound::snd_play_at( "whizby_sniper", var_0 );
-    var_2 _meth_82AE( var_1, 0.2 );
+    var_2 moveto( var_1, 0.2 );
 }
 
 aud_chopper_sniper_bullet( var_0, var_1 )
@@ -784,7 +784,7 @@ aud_burke_river_over_log()
 
 setup_burke_river_cross_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "burke", "aud_burke_water_jump", ::aud_burke_water_jump, "burke_river_cross" );
@@ -901,7 +901,7 @@ forest_climb_wall_start()
 
 aud_forest_ambient_loops()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_audio_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_audio_tr" ) )
         return;
 
     var_0 = [];
@@ -916,7 +916,7 @@ aud_forest_ambient_loops()
 
         foreach ( var_6 in var_0 )
         {
-            var_6 _meth_80AB();
+            var_6 stoploopsound();
             var_6 delete();
         }
     }
@@ -930,7 +930,7 @@ aud_burke_wall_climb()
 
 setup_gideon_climb_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "burke", "gideon_wall_cloak_on", ::gideon_wall_cloak_on, "burke_says_exo_is_on" );
@@ -1020,7 +1020,7 @@ drone_detect( var_0 )
 
 setup_deer_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "search_drone", "dronefirstturn", ::drone_turn, "search_drone" );
@@ -1072,7 +1072,7 @@ burke_slide_02()
 
 setup_player_takedown_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "player_rig", "plyr_forest_takedown_gun_wrestle", ::plyr_forest_takedown_gun_wrestle, "forest_disarm" );
@@ -1204,7 +1204,7 @@ gideon_knife_takedown_unmute_foley()
 
 setup_npc_cloak_button_anims()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "burke", "crch_lft_npc_cloak_buttons", ::crch_lft_npc_cloak_buttons, "cornercrouch_left_cloak_toggle" );
@@ -1262,7 +1262,7 @@ truck_takedown_radio( var_0 )
     wait 0.5;
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_806F( 0, 0.05 );
+        var_1 scalevolume( 0, 0.05 );
 }
 
 truck_takedown()
@@ -1349,7 +1349,7 @@ skr_distant_pull_up_and_scan()
 
 start_seeker_audio()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_audio_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_audio_tr" ) )
         return;
 
     var_0 = self;
@@ -1384,7 +1384,7 @@ monitor_seeker_pos( var_0 )
 
 start_fixed_scanner_audio()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     var_0 = self;
@@ -1458,7 +1458,7 @@ aud_burke_nearing_cliff()
 
 setup_cormack_meetup_scene_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_intro_tr" ) )
         return;
 
     maps\_anim::addnotetrack_customfunction( "cormack", "aud_cormack_approach", ::aud_cormack_approach, "cliff_meetup" );
@@ -1511,16 +1511,16 @@ aud_rappel_player_movement_start( var_0 )
         }
 
         level.player soundscripts\_snd_playsound::snd_play( "rappel_player_descend_start" );
-        level.aud.ropesound _meth_806F( 1, 0.5 );
-        level.aud.ropesound _meth_806D( 1, 2 );
+        level.aud.ropesound scalevolume( 1, 0.5 );
+        level.aud.ropesound scalepitch( 1, 2 );
         var_1 = var_0 common_scripts\utility::waittill_any_return( "start_cliff_jump", "aud_faded_loop" );
 
         if ( var_1 == "start_cliff_jump" )
         {
             if ( isdefined( level.aud.ropesound ) )
             {
-                level.aud.ropesound _meth_806F( 0.0, 0.15 );
-                level.aud.ropesound _meth_806D( 0.5, 0.15 );
+                level.aud.ropesound scalevolume( 0.0, 0.15 );
+                level.aud.ropesound scalepitch( 0.5, 0.15 );
             }
 
             level.player soundscripts\_snd_playsound::snd_play( "rappel_player_land" );
@@ -1532,7 +1532,7 @@ aud_watch_for_anim_end()
 {
     for (;;)
     {
-        var_0 = self _meth_814F( level.scr_anim["player_rig"]["cliff_jump"] );
+        var_0 = self getanimtime( level.scr_anim["player_rig"]["cliff_jump"] );
 
         if ( var_0 > 0.94 )
         {
@@ -1553,8 +1553,8 @@ aud_rappel_player_movement_stop( var_0 )
 
         if ( isdefined( level.aud.ropesound ) )
         {
-            level.aud.ropesound _meth_806F( 0.0, 0.05 );
-            level.aud.ropesound _meth_806D( 0.5, 0.05 );
+            level.aud.ropesound scalevolume( 0.0, 0.05 );
+            level.aud.ropesound scalepitch( 0.5, 0.05 );
             wait 0.05;
             var_0 notify( "aud_faded_loop" );
         }
@@ -1567,13 +1567,13 @@ aud_player_rappel_complete()
 
     if ( isdefined( level.aud.ropesound ) )
     {
-        level.aud.ropesound _meth_806F( 0.0, 0.05 );
-        level.aud.ropesound _meth_806D( 0.5, 0.05 );
+        level.aud.ropesound scalevolume( 0.0, 0.05 );
+        level.aud.ropesound scalepitch( 0.5, 0.05 );
         wait 0.05;
 
         if ( isdefined( level.aud.ropesound ) )
         {
-            level.aud.ropesound _meth_80AB();
+            level.aud.ropesound stoploopsound();
             wait 0.05;
 
             if ( isdefined( level.aud.ropesound ) )
@@ -1591,7 +1591,7 @@ aud_facility_breach_start()
 {
     level notify( "aud_stop_forest_ext_damb" );
     var_0 = self;
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "mute" );
     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_activate", 0.5 );
     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_step_back", 1.5 );
@@ -1610,12 +1610,12 @@ aud_stop_mute_device_for_vo()
     level waittill( "flag_post_breach_patrol" );
     self notify( "turn_off" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "mute" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
 }
 
 aud_lab_ambient_emitters()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     var_0 = spawn( "script_origin", ( -14293, 12048, -1336 ) );
@@ -1676,7 +1676,7 @@ aud_lab_phone_wait()
 
 aud_server_room_door_crack()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     wait 1;
@@ -1736,7 +1736,7 @@ aud_server_room_door_enter()
 
 setup_server_room_scene_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     maps\_anim::addnotetrack_customfunction( "player_rig", "aud_player_computer", ::aud_player_computer, "server_room_exit" );
@@ -1853,7 +1853,7 @@ aud_server_thermite_burn_loop()
 
 aud_foam_room_emitters()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     var_0 = ( -11120, 15628, -1266 );
@@ -1925,7 +1925,7 @@ aud_post_courtyard_emitters()
     var_13 thread soundscripts\_snd_playsound::snd_play_loop_linked( "post_courtyard_ventilation_03", undefined, 0.3, undefined, 1 );
     var_14 thread soundscripts\_snd_playsound::snd_play_loop_linked( "post_courtyard_ventilation_01", undefined, 0.3, undefined, 1 );
 
-    if ( level.currentgen && !_func_21E( "lab_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_post_middle_to_outro" );
 
     var_9 thread soundscripts\_snd_playsound::snd_play_loop_linked( "hangar_comp_close_02", undefined, 0.3, undefined, 1 );
@@ -1945,27 +1945,27 @@ aud_post_courtyard_emitters()
     var_25 thread soundscripts\_snd_playsound::snd_play_loop_linked( "hangar_transformer_02", undefined, 0.1, undefined, 1 );
     var_26 thread soundscripts\_snd_playsound::snd_play_loop_linked( "hangar_comp_low_drone", undefined, 1.0, undefined, 1 );
     var_27 thread soundscripts\_snd_playsound::snd_play_loop_linked( "hangar_comp_high_drone", undefined, 1.0, undefined, 1 );
-    var_26 _meth_806C( 0.5 );
-    var_27 _meth_806C( 0.4 );
+    var_26 setpitch( 0.5 );
+    var_27 setpitch( 0.4 );
     waitframe();
-    var_26 _meth_806D( 1, 4 );
-    var_27 _meth_806D( 1, 2.5 );
+    var_26 scalepitch( 1, 4 );
+    var_27 scalepitch( 1, 2.5 );
     wait 1;
     var_28 thread soundscripts\_snd_playsound::snd_play_loop_linked( "hangar_comp_bg", undefined, 5.0, undefined, 1 );
     common_scripts\utility::flag_wait( "flag_hovertank_reveal_scene_started" );
     wait 4;
-    var_12 _meth_806F( 0.1, 4 );
-    var_13 _meth_806F( 0.1, 4 );
-    var_14 _meth_806F( 0.1, 4 );
-    var_18 _meth_806F( 0.1, 4 );
-    var_19 _meth_806F( 0.1, 4 );
-    var_20 _meth_806F( 0.1, 4 );
-    var_21 _meth_806F( 0.1, 4 );
-    var_22 _meth_806F( 0.1, 4 );
-    var_23 _meth_806F( 0.1, 4 );
-    var_26 _meth_806F( 0.3, 4 );
-    var_27 _meth_806F( 0.3, 4 );
-    var_28 _meth_806F( 0.3, 4 );
+    var_12 scalevolume( 0.1, 4 );
+    var_13 scalevolume( 0.1, 4 );
+    var_14 scalevolume( 0.1, 4 );
+    var_18 scalevolume( 0.1, 4 );
+    var_19 scalevolume( 0.1, 4 );
+    var_20 scalevolume( 0.1, 4 );
+    var_21 scalevolume( 0.1, 4 );
+    var_22 scalevolume( 0.1, 4 );
+    var_23 scalevolume( 0.1, 4 );
+    var_26 scalevolume( 0.3, 4 );
+    var_27 scalevolume( 0.3, 4 );
+    var_28 scalevolume( 0.3, 4 );
 
     for ( var_29 = 0; var_29 <= 3; var_29++ )
     {
@@ -2097,7 +2097,7 @@ hangar_lights_on()
 
 setup_hangar_notetracks()
 {
-    if ( level.currentgen && !_func_21E( "lab_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_post_middle_to_outro" );
 
     maps\_anim::addnotetrack_customfunction( "knox", "aud_knox_control_panel", ::hovertank_control_panel, "hovertank_reveal_approach" );
@@ -2291,7 +2291,7 @@ courtyard_door_hack_start_dialogue()
 
 courtyard_start_dish()
 {
-    if ( level.currentgen && !_func_21E( "lab_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_middle_tr" ) )
         level waittill( "tff_post_intro_to_middle" );
 
     var_0 = spawn( "script_origin", ( -12332, 13331, -1093 ) );
@@ -2303,9 +2303,9 @@ courtyard_start_dish()
     var_2 thread soundscripts\_snd_playsound::snd_play_loop_linked( "courtyard_jammer_emi_wide", undefined, 1.0, undefined, 1 );
     common_scripts\utility::flag_wait( "flag_obj_jammer_interact" );
     wait 2;
-    var_0 _meth_806D( 0.5, 3 );
+    var_0 scalepitch( 0.5, 3 );
     thread soundscripts\_audio::aud_fade_loop_out_and_delete( var_1, 1 );
-    var_2 _meth_806D( 0.1, 2 );
+    var_2 scalepitch( 0.1, 2 );
     wait 1;
     thread soundscripts\_audio::aud_fade_loop_out_and_delete( var_0, 2 );
     thread soundscripts\_audio::aud_fade_loop_out_and_delete( var_2, 1 );
@@ -2342,7 +2342,7 @@ aud_courtyard_hangar_door_hack_idle( var_0, var_1 )
 
     for (;;)
     {
-        var_3 = var_1 _meth_814F( var_0 );
+        var_3 = var_1 getanimtime( var_0 );
 
         if ( var_3 < var_2 )
             maps\_utility::delaythread( 3.45, ::play_sound_stop_on_notify, "lab_hangar_door_hack_foley", level.knox, "hack_success" );
@@ -2559,7 +2559,7 @@ tank_exit()
 
 set_up_tank_exit_anims()
 {
-    if ( level.currentgen && !_func_21E( "lab_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_post_middle_to_outro" );
 
     maps\_anim::addnotetrack_customfunction( "burke", "lab_tank_exit_gid_stand", ::lab_tank_exit_gid_stand, "hovertank_exit" );
@@ -2687,12 +2687,12 @@ razorback_land()
     var_3 = soundscripts\_snd_playsound::snd_play_loop_at( "razorback_ext_idle_jet", var_0, "kill_jet_loop" );
     level waittill( "player_enters_razorback" );
     soundscripts\_snd_playsound::snd_play_2d( "razorback_int_takeoff" );
-    var_3 _meth_806F( 0, 2 );
+    var_3 scalevolume( 0, 2 );
     wait 2;
     level notify( "kill_jet_loop" );
-    var_2 _meth_806F( 0.5, 4 );
+    var_2 scalevolume( 0.5, 4 );
     wait 5;
-    var_2 _meth_806F( 0, 3 );
+    var_2 scalevolume( 0, 3 );
     wait 3;
     level notify( "kill_engine_loop" );
 }
@@ -2710,7 +2710,7 @@ aud_start_exfil_foley()
 
 lab_exfil_detonate_anims()
 {
-    if ( level.currentgen && !_func_21E( "lab_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "lab_outro_tr" ) )
         level waittill( "tff_post_middle_to_outro" );
 
     maps\_anim::addnotetrack_customfunction( "burke", "lab_exfil_wrist_panel", ::lab_exfil_wrist_panel, "exfil_enter" );
@@ -2969,7 +2969,7 @@ alarm_start_loops()
     foreach ( var_5 in var_0.loops )
     {
         var_5.ent = spawn( "script_origin", var_0.emitter_origin );
-        var_5.ent _meth_806F( var_3, 0 );
+        var_5.ent scalevolume( var_3, 0 );
         var_5.ent soundscripts\_snd_playsound::snd_play_loop( var_5.alias );
     }
 
@@ -2989,7 +2989,7 @@ alarm_stop_loops()
 
         if ( isdefined( var_4 ) )
         {
-            var_4 _meth_806F( 0, var_0.loop_fade_time );
+            var_4 scalevolume( 0, var_0.loop_fade_time );
             var_1[var_1.size] = var_4;
         }
     }
@@ -3016,8 +3016,8 @@ alarm_update_loops()
         {
             if ( isdefined( var_2.ent ) )
             {
-                var_3 = _func_246( var_0.curr_dist, var_2.env );
-                var_2.ent _meth_806F( var_3 * var_0.volume, var_0.update_rate );
+                var_3 = piecewiselinearlookup( var_0.curr_dist, var_2.env );
+                var_2.ent scalevolume( var_3 * var_0.volume, var_0.update_rate );
             }
         }
     }
@@ -3192,14 +3192,14 @@ aud_jeep_death_listener()
 
 wait_for_anim_start( var_0, var_1 )
 {
-    while ( var_1 _meth_814F( var_0 ) == 0 )
+    while ( var_1 getanimtime( var_0 ) == 0 )
         waitframe();
 }
 
 play_sound_stop_on_notify( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", var_1.origin );
-    var_3 _meth_804D( var_1 );
+    var_3 linkto( var_1 );
     var_3 soundscripts\_snd_playsound::snd_play( var_0, "sounddone" );
     common_scripts\utility::waittill_any_ents( var_3, "sounddone", level, var_2 );
     soundscripts\_audio::aud_fade_out_and_delete( var_3, 0.1 );

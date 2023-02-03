@@ -45,7 +45,7 @@ beginningoflevelsave()
 
     common_scripts\utility::flag_set( "game_saving" );
     var_0 = "levelshots / autosave / autosave_" + level.script + "start";
-    _func_083( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
+    savegame( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
     setdvar( "ui_grenade_death", "0" );
     common_scripts\utility::flag_clear( "game_saving" );
 }
@@ -135,7 +135,7 @@ autosave_timeout( var_0 )
 _autosave_game_now_nochecks()
 {
     var_0 = "levelshots / autosave / autosave_" + level.script + "start";
-    _func_083( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
+    savegame( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
     autosave_recon( 0 );
 }
 
@@ -145,7 +145,7 @@ _autosave_game_now_notrestart()
 
     if ( getdvarint( "g_reloading" ) == 0 )
     {
-        _func_083( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
+        savegame( "levelstart", &"AUTOSAVE_LEVELSTART", var_0, 1 );
         autosave_recon( 0 );
     }
 }
@@ -170,13 +170,13 @@ _autosave_game_now( var_0 )
     var_4 = getdescription();
 
     if ( isdefined( var_0 ) )
-        var_5 = _func_086( var_3, var_4, "$default", 1 );
+        var_5 = savegamenocommit( var_3, var_4, "$default", 1 );
     else
-        var_5 = _func_086( var_3, var_4 );
+        var_5 = savegamenocommit( var_3, var_4 );
 
     wait 0.05;
 
-    if ( _func_085() )
+    if ( issaverecentlyloaded() )
     {
         level.lastautosavetime = gettime();
         return 0;
@@ -192,13 +192,13 @@ _autosave_game_now( var_0 )
     wait 2;
     common_scripts\utility::flag_clear( "game_saving" );
 
-    if ( !_func_088( var_5 ) )
+    if ( !commitwouldbevalid( var_5 ) )
         return 0;
 
     if ( try_to_autosave_now() )
     {
         autosave_recon( var_5 );
-        _func_087( var_5 );
+        commitsave( var_5 );
         setdvar( "ui_grenade_death", "0" );
     }
 
@@ -213,7 +213,7 @@ autosave_now_trigger( var_0 )
 
 try_to_autosave_now()
 {
-    if ( !_func_084() )
+    if ( !issavesuccessful() )
         return 0;
 
     for ( var_0 = 0; var_0 < level.players.size; var_0++ )
@@ -274,14 +274,14 @@ tryautosave( var_0, var_1, var_2, var_3, var_4, var_5 )
     {
         if ( autosavecheck( undefined, var_4 ) )
         {
-            var_10 = _func_086( var_0, var_8, var_2, var_5 );
+            var_10 = savegamenocommit( var_0, var_8, var_2, var_5 );
 
             if ( var_10 < 0 )
                 break;
 
             wait 0.05;
 
-            if ( _func_085() )
+            if ( issaverecentlyloaded() )
             {
                 level.lastautosavetime = gettime();
                 break;
@@ -306,14 +306,14 @@ tryautosave( var_0, var_1, var_2, var_3, var_4, var_5 )
             if ( !common_scripts\utility::flag( "can_save" ) )
                 break;
 
-            if ( !_func_088( var_10 ) )
+            if ( !commitwouldbevalid( var_10 ) )
             {
                 common_scripts\utility::flag_clear( "game_saving" );
                 return 0;
             }
 
             autosave_recon( var_10 );
-            _func_087( var_10 );
+            commitsave( var_10 );
             level.lastsavetime = gettime();
             setdvar( "ui_grenade_death", "0" );
             break;
@@ -402,7 +402,7 @@ autosavecheck( var_0, var_1 )
     if ( extra_autosave_checks_failed() )
         return 0;
 
-    if ( !_func_084() )
+    if ( !issavesuccessful() )
     {
         autosaveprint( "autosave failed: save call was unsuccessful" );
         return 0;
@@ -416,19 +416,19 @@ autosaveplayercheck( var_0 )
     if ( isdefined( level.ac130gunner ) && level.ac130gunner == self )
         return 1;
 
-    if ( self _meth_812E() && var_0 )
+    if ( self ismeleeing() && var_0 )
     {
         autosaveprint( "autosave failed:player is meleeing" );
         return 0;
     }
 
-    if ( self _meth_812C() && var_0 )
+    if ( self isthrowinggrenade() && var_0 )
     {
         autosaveprint( "autosave failed:player is throwing a grenade" );
         return 0;
     }
 
-    if ( self _meth_812D() && var_0 )
+    if ( self isfiring() && var_0 )
     {
         autosaveprint( "autosave failed:player is firing" );
         return 0;
@@ -457,11 +457,11 @@ autosaveammocheck()
     if ( isdefined( level.ac130gunner ) && level.ac130gunner == self )
         return 1;
 
-    var_0 = self _meth_830C();
+    var_0 = self getweaponslistprimaries();
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        var_2 = self _meth_8334( var_0[var_1] );
+        var_2 = self getfractionmaxammo( var_0[var_1] );
 
         if ( var_2 > 0.1 )
             return 1;
@@ -498,7 +498,7 @@ autosavethreatcheck( var_0 )
     if ( isdefined( level.ac130gunner ) && level.ac130gunner == self )
         return 1;
 
-    var_1 = _func_0D7( "bad_guys", "all" );
+    var_1 = getaispeciesarray( "bad_guys", "all" );
 
     foreach ( var_3 in var_1 )
     {
@@ -538,11 +538,11 @@ autosavethreatcheck( var_0 )
 
         if ( var_3.a.lastshoottime > gettime() - 500 )
         {
-            if ( var_0 || var_3 animscripts\utility::canseeenemy( 0 ) && var_3 _meth_81BD( 0 ) )
+            if ( var_0 || var_3 animscripts\utility::canseeenemy( 0 ) && var_3 canshootenemy( 0 ) )
                 return 0;
         }
 
-        if ( isdefined( var_3.a.aimidlethread ) && var_3 animscripts\utility::canseeenemy( 0 ) && var_3 _meth_81BD( 0 ) )
+        if ( isdefined( var_3.a.aimidlethread ) && var_3 animscripts\utility::canseeenemy( 0 ) && var_3 canshootenemy( 0 ) )
             return 0;
     }
 

@@ -19,7 +19,7 @@ waittill_trigger_activate_looking_at( var_0, var_1, var_2, var_3, var_4, var_5 )
     {
         if ( isdefined( var_0.force_off ) && var_0.force_off )
             var_0 common_scripts\utility::trigger_off();
-        else if ( level.player _meth_817C() == "prone" )
+        else if ( level.player getstance() == "prone" )
             var_0 common_scripts\utility::trigger_off();
         else if ( level.player player_looking_at_relative( var_1.origin, var_2, var_6, level.player, var_5 ) )
             var_0 common_scripts\utility::trigger_on();
@@ -37,12 +37,12 @@ _trigger_handle_triggering( var_0 )
     for (;;)
     {
         self waittill( "trigger" );
-        var_1 = !level.player _meth_812E();
-        var_2 = !level.player _meth_8435();
-        var_3 = level.player _meth_8341() || level.player _meth_8068();
+        var_1 = !level.player ismeleeing();
+        var_2 = !level.player issprintsliding();
+        var_3 = level.player isonground() || level.player islinked();
         var_4 = !isdefined( self.force_off ) || !self.force_off;
-        var_5 = level.player _meth_817C() != "prone";
-        var_6 = !level.player _meth_812C();
+        var_5 = level.player getstance() != "prone";
+        var_6 = !level.player isthrowinggrenade();
 
         if ( var_4 && var_1 && var_2 && var_3 && var_5 && var_6 )
             break;
@@ -62,7 +62,7 @@ player_looking_at_relative( var_0, var_1, var_2, var_3, var_4 )
         var_1 = 0.8;
 
     var_5 = maps\_utility::get_player_from_self();
-    var_6 = var_5 _meth_80A8();
+    var_6 = var_5 geteye();
     var_7 = vectortoangles( var_0 - var_6 );
     var_8 = anglestoforward( var_7 );
     var_9 = var_5 getangles();

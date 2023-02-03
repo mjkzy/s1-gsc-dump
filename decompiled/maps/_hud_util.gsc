@@ -219,7 +219,7 @@ updatebar( var_0 )
         var_1 = 1;
 
     self.bar.frac = var_0;
-    self.bar _meth_80CC( self.bar.shader, var_1, self.height - self.ypadding * 2 );
+    self.bar setshader( self.bar.shader, var_1, self.height - self.ypadding * 2 );
 }
 
 hidebar( var_0 )
@@ -346,7 +346,7 @@ createicon_hudelem( var_0, var_1, var_2, var_3 )
     var_0 setparent( level.uiparent );
 
     if ( isdefined( var_1 ) )
-        var_0 _meth_80CC( var_1, var_2, var_3 );
+        var_0 setshader( var_1, var_2, var_3 );
 
     return var_0;
 }
@@ -371,7 +371,7 @@ createbar( var_0, var_1, var_2, var_3, var_4 )
     var_5.frac = 0.25;
     var_5.shader = var_0;
     var_5.sort = -1;
-    var_5 _meth_80CC( var_0, var_2 - 2, var_3 - 2 );
+    var_5 setshader( var_0, var_2 - 2, var_3 - 2 );
 
     if ( isdefined( var_4 ) )
     {
@@ -393,7 +393,7 @@ createbar( var_0, var_1, var_2, var_3, var_4 )
     var_6.sort = -2;
     var_6.alpha = 0.5;
     var_6 setparent( level.uiparent );
-    var_6 _meth_80CC( var_1, var_2, var_3 );
+    var_6 setshader( var_1, var_2, var_3 );
     return var_6;
 }
 
@@ -426,7 +426,7 @@ createclientbar( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7.frac = 0.25;
     var_7.shader = var_0;
     var_7.sort = -1;
-    var_7 _meth_80CC( var_0, var_2 - var_5 * 2, var_3 - var_6 * 2 );
+    var_7 setshader( var_0, var_2 - var_5 * 2, var_3 - var_6 * 2 );
 
     if ( isdefined( var_4 ) )
     {
@@ -449,7 +449,7 @@ createclientbar( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_8.sort = -2;
     var_8.alpha = 0.5;
     var_8 setparent( level.uiparent );
-    var_8 _meth_80CC( var_1, var_2, var_3 );
+    var_8 setshader( var_1, var_2, var_3 );
     return var_8;
 }
 
@@ -513,7 +513,7 @@ destroyelem()
 
 seticonshader( var_0 )
 {
-    self _meth_80CC( var_0, self.width, self.height );
+    self setshader( var_0, self.width, self.height );
 }
 
 setwidth( var_0 )
@@ -552,7 +552,7 @@ stance_carry_icon_enable( var_0 )
     if ( isdefined( level.stance_carry ) )
         level.stance_carry destroy();
 
-    _func_0D3( "hud_showStance", "0" );
+    setsaveddvar( "hud_showStance", "0" );
     level.stance_carry = newhudelem();
     level.stance_carry.x = -75;
 
@@ -561,7 +561,7 @@ stance_carry_icon_enable( var_0 )
     else
         level.stance_carry.y = -10;
 
-    level.stance_carry _meth_80CC( "stance_carry", 64, 64 );
+    level.stance_carry setshader( "stance_carry", 64, 64 );
     level.stance_carry.alignx = "right";
     level.stance_carry.aligny = "bottom";
     level.stance_carry.horzalign = "right";
@@ -581,7 +581,7 @@ stance_carry_icon_disable()
         level.stance_carry destroy();
     }
 
-    _func_0D3( "hud_showStance", "1" );
+    setsaveddvar( "hud_showStance", "1" );
 }
 
 create_mantle()
@@ -709,7 +709,7 @@ create_client_overlay( var_0, var_1, var_2 )
 
     var_3.x = 0;
     var_3.y = 0;
-    var_3 _meth_80CC( var_0, 640, 480 );
+    var_3 setshader( var_0, 640, 480 );
     var_3.alignx = "left";
     var_3.aligny = "top";
     var_3.sort = 1;
@@ -736,7 +736,7 @@ create_client_overlay_custom_size( var_0, var_1, var_2, var_3, var_4 )
 
     var_6.x = var_2;
     var_6.y = var_3;
-    var_6 _meth_80CC( var_0, int( 640 * var_4 ), int( 480 * var_4 ) );
+    var_6 setshader( var_0, int( 640 * var_4 ), int( 480 * var_4 ) );
     var_6.alignx = "center";
     var_6.aligny = "middle";
     var_6.sort = 1;
@@ -757,7 +757,7 @@ create_client_overlay_fullscreen( var_0, var_1, var_2, var_3, var_4 )
 
     var_6.x = var_2;
     var_6.y = var_3;
-    var_6 _meth_80CC( var_0, int( 640 * var_4 ), int( 480 * var_4 ) );
+    var_6 setshader( var_0, int( 640 * var_4 ), int( 480 * var_4 ) );
     var_6.alignx = "center";
     var_6.aligny = "middle";
     var_6.sort = 1;

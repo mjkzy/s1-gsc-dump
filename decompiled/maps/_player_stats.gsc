@@ -51,12 +51,12 @@ register_difficulty( var_0, var_1 )
     if ( var_1 )
     {
         var_2.stats["start_difficulty"] = var_0;
-        _func_2A3( "start_difficulty", var_0 );
+        setspmatchdata( "start_difficulty", var_0 );
     }
     else
     {
         var_2.stats["final_difficulty"] = var_0;
-        _func_2A3( "final_difficulty", var_0 );
+        setspmatchdata( "final_difficulty", var_0 );
     }
 }
 
@@ -71,7 +71,7 @@ register_level_name( var_0 )
         return;
 
     var_1.stats["level_name"] = var_0;
-    _func_2A3( "level_name", var_0 );
+    setspmatchdata( "level_name", var_0 );
 }
 
 toggle_register_kills_for_vehicle_occupants( var_0 )
@@ -184,13 +184,13 @@ register_kill( var_0, var_1, var_2, var_3 )
     }
 
     if ( !isdefined( var_2 ) )
-        var_2 = var_4 _meth_8311();
+        var_2 = var_4 getcurrentweapon();
 
     if ( issubstr( tolower( var_1 ), "melee" ) )
     {
         var_4.stats["kills_melee"]++;
 
-        if ( _func_1DF( var_2 ) == "primary" )
+        if ( weaponinventorytype( var_2 ) == "primary" )
             return;
     }
 
@@ -228,8 +228,8 @@ career_stat_increment( var_0, var_1 )
     if ( !maps\_utility::is_specialop() )
         return;
 
-    var_2 = int( self _meth_8222( "career", var_0 ) ) + var_1;
-    self _meth_8243( "career", var_0, var_2 );
+    var_2 = int( self getplayerdata( "career", var_0 ) ) + var_1;
+    self setplayerdata( "career", var_0, var_2 );
 }
 
 register_shot_hit()
@@ -243,7 +243,7 @@ register_shot_hit()
     self.registeringshothit = 1;
     self.stats["shots_hit"]++;
     career_stat_increment( "bullets_hit", 1 );
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( is_new_weapon( var_0 ) )
         register_new_weapon( var_0 );
@@ -261,7 +261,7 @@ shots_fired_recorder()
     for (;;)
     {
         self waittill( "weapon_fired" );
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( !isdefined( var_0 ) || !maps\_utility::isprimaryweapon( var_0 ) )
             continue;

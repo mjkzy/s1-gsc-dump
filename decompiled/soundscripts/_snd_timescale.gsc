@@ -59,14 +59,14 @@ snd_set_timescale_threaded( var_0 )
 
             foreach ( var_7 in var_5 )
             {
-                _func_07C( var_7, var_3["scalefactor"] );
+                soundsettimescalefactor( var_7, var_3["scalefactor"] );
                 var_1 soundscripts\_snd::snd_throttle_wait();
             }
 
             continue;
         }
 
-        _func_07C( var_4, var_3["scalefactor"] );
+        soundsettimescalefactor( var_4, var_3["scalefactor"] );
     }
 }
 
@@ -82,7 +82,7 @@ snd_set_timescale_all_threaded( var_0 )
 
     foreach ( var_4 in var_2 )
     {
-        _func_07C( var_4, var_0 );
+        soundsettimescalefactor( var_4, var_0 );
         var_1 soundscripts\_snd::snd_throttle_wait();
     }
 }
@@ -98,7 +98,7 @@ snd_set_timescale_array_to_value_threaded( var_0, var_1 )
 
     foreach ( var_4 in var_0 )
     {
-        _func_07C( var_4, var_1 );
+        soundsettimescalefactor( var_4, var_1 );
         var_2 soundscripts\_snd::snd_throttle_wait();
     }
 }

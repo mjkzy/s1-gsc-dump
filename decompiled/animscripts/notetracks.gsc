@@ -54,7 +54,7 @@ handledogfootstepnotetracks( var_0 )
             if ( !isdefined( var_2 ) )
                 var_2 = "run";
 
-            var_3 = self _meth_83CD() || isdefined( self.controlling_dog );
+            var_3 = self isdogbeingdriven() || isdefined( self.controlling_dog );
 
             if ( var_3 )
                 self playsound( "dogstep_plr_" + var_2 + "_" + var_1 );
@@ -114,7 +114,7 @@ handledogsoundnotetracks( var_0 )
         if ( isalive( self ) )
             thread maps\_utility::play_sound_on_tag_endon_death( var_2, "tag_eye" );
         else
-            thread common_scripts\utility::play_sound_in_space( var_2, self _meth_80A8() );
+            thread common_scripts\utility::play_sound_in_space( var_2, self geteye() );
     }
 
     return 1;
@@ -236,7 +236,7 @@ unlinknextframe()
     wait 0.1;
 
     if ( isdefined( self ) )
-        self _meth_804F();
+        self unlink();
 }
 
 notetrackstartragdoll( var_0, var_1 )
@@ -250,7 +250,7 @@ notetrackstartragdoll( var_0, var_1 )
     if ( !isdefined( self.dont_unlink_ragdoll ) )
         thread unlinknextframe();
 
-    self _meth_8023();
+    self startragdoll();
 }
 
 notetrackmovementstop( var_0, var_1 )
@@ -303,7 +303,7 @@ notetrackposestand( var_0, var_1 )
 {
     if ( self.a.pose == "prone" )
     {
-        self _meth_818F( "face default" );
+        self orientmode( "face default" );
         animscripts\utility::exitpronewrapper( 1.0 );
     }
 
@@ -314,7 +314,7 @@ notetrackposecrouch( var_0, var_1 )
 {
     if ( self.a.pose == "prone" )
     {
-        self _meth_818F( "face default" );
+        self orientmode( "face default" );
         animscripts\utility::exitpronewrapper( 1.0 );
     }
 
@@ -328,7 +328,7 @@ notetrackposeprone( var_0, var_1 )
     if ( !issentient( self ) )
         return;
 
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( 1.0 );
     setpose( "prone" );
 
@@ -343,7 +343,7 @@ notetrackposecrawl( var_0, var_1 )
     if ( !issentient( self ) )
         return;
 
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( 1.0 );
     setpose( "prone" );
     self.a.proneaiming = undefined;
@@ -357,7 +357,7 @@ notetrackposeback( var_0, var_1 )
     setpose( "crouch" );
     self.a.onback = 1;
     self.a.movement = "stop";
-    self _meth_81FA( -90, 90, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -90, 90, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( 1.0 );
 }
 
@@ -433,9 +433,9 @@ notetrackpistolrechamber( var_0, var_1 )
 notetrackgravity( var_0, var_1 )
 {
     if ( issubstr( var_0, "on" ) )
-        self _meth_818E( "gravity" );
+        self animmode( "gravity" );
     else if ( issubstr( var_0, "off" ) )
-        self _meth_818E( "nogravity" );
+        self animmode( "nogravity" );
 }
 
 notetrackfootstep( var_0, var_1 )
@@ -642,7 +642,7 @@ notetrackfootscrape( var_0, var_1 )
     else
         var_2 = "default";
 
-    self _meth_807A( "scrape", var_2 );
+    self playfoley( "scrape", var_2 );
 }
 
 notetrackland( var_0, var_1 )
@@ -652,7 +652,7 @@ notetrackland( var_0, var_1 )
     else
         var_2 = "default";
 
-    self _meth_807A( "land", var_2 );
+    self playfoley( "land", var_2 );
 }
 
 notetrackcodemove( var_0, var_1 )
@@ -663,11 +663,11 @@ notetrackcodemove( var_0, var_1 )
 notetrackfaceenemy( var_0, var_1 )
 {
     if ( self.script != "reactions" )
-        self _meth_818F( "face enemy" );
+        self orientmode( "face enemy" );
     else if ( isdefined( self.enemy ) && distancesquared( self.enemy.origin, self.reactiontargetpos ) < 4096 )
-        self _meth_818F( "face enemy" );
+        self orientmode( "face enemy" );
     else
-        self _meth_818F( "face point", self.reactiontargetpos );
+        self orientmode( "face point", self.reactiontargetpos );
 }
 
 notetrackbodyfall( var_0, var_1 )
@@ -719,11 +719,11 @@ notetrackrocketlauncherammoattach()
     self.rocketlauncherammo = spawn( "script_model", self.origin );
 
     if ( issubstr( tolower( self.weapon ), "panzerfaust" ) )
-        self.rocketlauncherammo _meth_80B1( "weapon_panzerfaust3_missle" );
+        self.rocketlauncherammo setmodel( "weapon_panzerfaust3_missle" );
     else
-        self.rocketlauncherammo _meth_80B1( "projectile_rpg7" );
+        self.rocketlauncherammo setmodel( "projectile_rpg7" );
 
-    self.rocketlauncherammo _meth_804D( self, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    self.rocketlauncherammo linkto( self, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     thread handlerocketlauncherammoondeath();
 }
 
@@ -740,7 +740,7 @@ notetrackrocketlauncherammodelete()
         return;
 
     if ( maps\_utility::hastag( getweaponmodel( self.weapon ), "tag_rocket" ) )
-        self _meth_804B( "tag_rocket" );
+        self showpart( "tag_rocket" );
 }
 
 handlenotetrack( var_0, var_1, var_2, var_3 )
@@ -983,7 +983,7 @@ playfootstep( var_0, var_1 )
         {
             if ( !isdefined( self.lastgroundtype ) )
             {
-                self _meth_807A( var_2, "default" );
+                self playfoley( var_2, "default" );
                 return;
             }
 
@@ -1009,7 +1009,7 @@ playfootstep( var_0, var_1 )
             var_5 = var_6["position"];
         }
 
-        self _meth_807A( var_2, var_3 );
+        self playfoley( var_2, var_3 );
 
         if ( var_1 )
         {
@@ -1085,15 +1085,15 @@ fire_straight()
     }
 
     var_0 = self gettagorigin( "tag_weapon" );
-    var_1 = anglestoforward( self _meth_81B9() );
+    var_1 = anglestoforward( self getmuzzleangle() );
     var_2 = var_0 + var_1 * 1000;
-    self _meth_81E7( 1, var_2 );
+    self shoot( 1, var_2 );
     animscripts\combat_utility::decrementbulletsinclip();
 }
 
 notetrackfirespray( var_0, var_1 )
 {
-    if ( !isalive( self ) && self _meth_813D() )
+    if ( !isalive( self ) && self isbadguy() )
     {
         if ( isdefined( self.changed_team ) )
             return;
@@ -1113,8 +1113,8 @@ notetrackfirespray( var_0, var_1 )
     if ( self.a.weaponpos["right"] == "none" )
         return;
 
-    var_3 = self _meth_81B8();
-    var_4 = anglestoforward( self _meth_81B9() );
+    var_3 = self getmuzzlepos();
+    var_4 = anglestoforward( self getmuzzleangle() );
     var_5 = 10;
 
     if ( isdefined( self.isrambo ) )
@@ -1122,9 +1122,9 @@ notetrackfirespray( var_0, var_1 )
 
     var_6 = 0;
 
-    if ( isalive( self.enemy ) && issentient( self.enemy ) && self _meth_81BD() )
+    if ( isalive( self.enemy ) && issentient( self.enemy ) && self canshootenemy() )
     {
-        var_7 = vectornormalize( self.enemy _meth_80A8() - var_3 );
+        var_7 = vectornormalize( self.enemy geteye() - var_3 );
 
         if ( vectordot( var_4, var_7 ) > cos( var_5 ) )
             var_6 = 1;

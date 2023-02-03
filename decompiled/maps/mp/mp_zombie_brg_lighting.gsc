@@ -10,7 +10,7 @@ main()
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
         return;
 }
 
@@ -24,7 +24,7 @@ lightintensityflicker( var_0, var_1, var_2, var_3, var_4 )
     for (;;)
     {
         var_6 = randomfloatrange( var_1, var_2 );
-        var_5 _meth_81DF( var_6 );
+        var_5 setlightintensity( var_6 );
         wait(randomfloatrange( var_3, var_4 ));
     }
 }

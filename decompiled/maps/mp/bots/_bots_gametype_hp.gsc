@@ -30,7 +30,7 @@ setup_bot_hp()
             var_2 = 1;
         }
 
-        var_1.nodes = _func_1FE( var_1.trig );
+        var_1.nodes = getnodesintrigger( var_1.trig );
         maps\mp\bots\_bots_gametype_common::bot_add_missing_nodes( var_1, var_1.trig );
 
         if ( var_2 )
@@ -101,7 +101,7 @@ zone_get_node_nearest_2d_bounds( var_0, var_1, var_2 )
 
     foreach ( var_7 in var_0.nodes )
     {
-        var_8 = _func_220( var_7.origin, var_3 );
+        var_8 = distance2dsquared( var_7.origin, var_3 );
 
         if ( var_8 < var_5 )
         {
@@ -126,7 +126,7 @@ monitor_zone_control()
 
         if ( var_0 != "neutral" && var_0 != "none" )
         {
-            var_1 = _func_202( self.origin );
+            var_1 = getzonenearest( self.origin );
 
             if ( isdefined( var_1 ) )
                 botzonesetteam( var_1, var_0 );
@@ -147,8 +147,8 @@ bot_hp_think()
     while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    self _meth_8351( "separation", 0 );
-    self _meth_8351( "grenade_objectives", 1 );
+    self botsetflag( "separation", 0 );
+    self botsetflag( "grenade_objectives", 1 );
     var_0 = undefined;
     var_1 = level.zone;
 
@@ -217,7 +217,7 @@ bot_should_cap_next_zone()
         return 0;
     else
     {
-        var_0 = self _meth_837B( "strategyLevel" );
+        var_0 = self botgetdifficultysetting( "strategyLevel" );
         var_1 = 0;
 
         if ( var_0 == 1 )
@@ -242,9 +242,9 @@ bot_get_teammates_capturing_zone( var_0 )
 
     foreach ( var_3 in level.participants )
     {
-        if ( var_3 != self && maps\mp\_utility::isteamparticipant( var_3 ) && _func_285( self, var_3 ) )
+        if ( var_3 != self && maps\mp\_utility::isteamparticipant( var_3 ) && isalliedsentient( self, var_3 ) )
         {
-            if ( var_3 _meth_80A9( level.zone.trig ) )
+            if ( var_3 istouching( level.zone.trig ) )
             {
                 if ( !isai( var_3 ) || var_3 bot_is_capturing_zone( var_0 ) )
                     var_1[var_1.size] = var_3;

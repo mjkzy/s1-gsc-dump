@@ -13,7 +13,7 @@ onplayerconnectedaudio()
     for (;;)
     {
         level waittill( "connected", var_0 );
-        var_0 _meth_84D7( "master_mix" );
+        var_0 clientaddsoundsubmix( "master_mix" );
     }
 }
 
@@ -40,29 +40,29 @@ customzombiemusicstates()
 sndbossozstartstage1()
 {
     foreach ( var_1 in level.players )
-        var_1 _meth_84D7( "boss_oz" );
+        var_1 clientaddsoundsubmix( "boss_oz" );
 
     level waittill( "teleport_players_back" );
 
     foreach ( var_1 in level.players )
-        var_1 _meth_84D8( "boss_oz" );
+        var_1 clientclearsoundsubmix( "boss_oz" );
 }
 
 sndbossozstartstage2()
 {
     foreach ( var_1 in level.players )
-        var_1 _meth_84D7( "boss_oz_2" );
+        var_1 clientaddsoundsubmix( "boss_oz_2" );
 
     level waittill( "boss_oz_killed" );
 
     foreach ( var_1 in level.players )
-        var_1 _meth_84D8( "boss_oz_2" );
+        var_1 clientclearsoundsubmix( "boss_oz_2" );
 }
 
 sndbossozfire( var_0 )
 {
     var_1 = spawn( "script_origin", var_0 );
-    var_1 _meth_8075( "boss_fire_large" );
+    var_1 playloopsound( "boss_fire_large" );
 }
 
 sndtubestart( var_0, var_1 )
@@ -88,13 +88,13 @@ sndvalvelight( var_0 )
     var_1 = var_0 + ( 0, 0, 20 );
     playsoundatpos( var_1, "ee_marker_light_off" );
     var_2 = spawn( "script_origin", var_1 );
-    var_2 _meth_8075( "ee_lightbulb_buzz_int_lp" );
+    var_2 playloopsound( "ee_lightbulb_buzz_int_lp" );
 }
 
 sndcomputerloop()
 {
     var_0 = spawn( "script_origin", ( -1781, 5415, 448 ) );
-    var_0 _meth_8075( "ee_computer_loop" );
+    var_0 playloopsound( "ee_computer_loop" );
 }
 
 sndcomputeracknowledge( var_0 )
@@ -112,13 +112,13 @@ snddepressurizeloopstart( var_0 )
     var_0 endon( "depressurize_cancelled" );
     playsoundatpos( var_0.origin, "ee_depressurize_start" );
     wait 1;
-    var_0 _meth_8075( "ee_depressurize_loop" );
+    var_0 playloopsound( "ee_depressurize_loop" );
 }
 
 snddepressurizeloopend( var_0 )
 {
     var_0 notify( "depressurize_cancelled" );
-    var_0 _meth_80AB( "ee_depressurize_loop" );
+    var_0 stoploopsound( "ee_depressurize_loop" );
     playsoundatpos( var_0.origin, "ee_depressurize_loop_end" );
 }
 
@@ -147,7 +147,7 @@ snddrainwater()
 
 sndunderwaterenter( var_0 )
 {
-    var_0 _meth_8426( "underwater", "underwater", 0 );
+    var_0 setclienttriggeraudiozonelerp( "underwater", "underwater", 0 );
     var_0 playlocalsound( "ee_underwater_enter" );
 }
 
@@ -156,7 +156,7 @@ sndunderwaterexit( var_0 )
     if ( isalive( var_0 ) )
         var_0 playlocalsound( "ee_underwater_exit" );
 
-    var_0 _meth_83F1( 0 );
+    var_0 clearclienttriggeraudiozone( 0 );
 }
 
 sndunderwaterpanelaccessed( var_0 )
@@ -246,9 +246,9 @@ sndusememorymachine( var_0 )
 sndteleporttobuszone()
 {
     self endon( "disconnect" );
-    self _meth_8426( "mp_zombie_h2o_bus_sequence", "mp_zombie_h2o_bus_sequence", 0 );
+    self setclienttriggeraudiozonelerp( "mp_zombie_h2o_bus_sequence", "mp_zombie_h2o_bus_sequence", 0 );
     level waittill( "sq_teleport_players_back" );
-    self _meth_83F1();
+    self clearclienttriggeraudiozone();
 }
 
 sndbusmusic()
@@ -256,12 +256,12 @@ sndbusmusic()
     var_0 = spawn( "script_origin", ( 0, 0, 0 ) );
     level waittill( "sq_player_teleport_to_bus_zone" );
     wait 0.5;
-    var_0 _meth_8075( "zmb_mus_memory_bus" );
+    var_0 playloopsound( "zmb_mus_memory_bus" );
     level waittill( "sq_teleport_players_back" );
     maps\mp\zombies\_zombies_music::enablemusicstatechanges();
     wait 5.7;
     maps\mp\zombies\_zombies_music::changezombiemusic( "ee_bus_end" );
-    var_0 _meth_806F( 0, 2 );
+    var_0 scalevolume( 0, 2 );
     wait 2.3;
     var_0 delete();
 }

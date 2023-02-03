@@ -182,7 +182,7 @@ streamprimaryweapons()
             var_0[var_0.size] = var_4.primaryname;
         }
 
-        self _meth_8511( var_0 );
+        self loadweapons( var_0 );
     }
 }
 
@@ -224,13 +224,13 @@ streamclassweapons( var_0, var_1, var_2 )
         while ( isdefined( self.loadingplayerweapons ) && self.loadingplayerweapons )
             wait 0.05;
 
-        var_0 = !self _meth_8511( var_3 ) && var_0;
-        self _meth_8538( 1 );
+        var_0 = !self loadweapons( var_3 ) && var_0;
+        self onlystreamactiveweapon( 1 );
 
-        for ( self.classweaponswait = var_0; var_0; var_0 = !self _meth_8511( var_3 ) )
+        for ( self.classweaponswait = var_0; var_0; var_0 = !self loadweapons( var_3 ) )
             waitframe();
 
-        self _meth_8538( 0 );
+        self onlystreamactiveweapon( 0 );
     }
 
     self.classweaponswait = 0;
@@ -310,7 +310,7 @@ waitandspawnclient()
 
     if ( var_6 > 0 )
     {
-        self _meth_82FB( "ui_killcam_time_until_spawn", gettime() + var_6 * 1000 );
+        self setclientomnvar( "ui_killcam_time_until_spawn", gettime() + var_6 * 1000 );
 
         if ( !var_0 )
             thread respawn_asspectator( var_2.origin, var_2.angles );
@@ -382,7 +382,7 @@ removespawnmessageshortly( var_0 )
 
 laststandrespawnplayer()
 {
-    self _meth_82C7();
+    self laststandrevive();
 
     if ( maps\mp\_utility::_hasperk( "specialty_finalstand" ) && !level.diehardmode )
         maps\mp\_utility::_unsetperk( "specialty_finalstand" );
@@ -390,7 +390,7 @@ laststandrespawnplayer()
     if ( level.diehardmode )
         self.headicon = "";
 
-    self _meth_817D( "crouch" );
+    self setstance( "crouch" );
     self.revived = 1;
     self notify( "revive" );
 
@@ -419,7 +419,7 @@ showspawnnotifies()
 
 getspawnorigin( var_0 )
 {
-    if ( !getstarttime( var_0.origin ) )
+    if ( !positionwouldtelefrag( var_0.origin ) )
         return var_0.origin;
 
     if ( !isdefined( var_0.alternates ) )
@@ -427,7 +427,7 @@ getspawnorigin( var_0 )
 
     foreach ( var_2 in var_0.alternates )
     {
-        if ( !getstarttime( var_2 ) )
+        if ( !positionwouldtelefrag( var_2 ) )
             return var_2;
     }
 
@@ -466,10 +466,10 @@ setuioptionsmenu( var_0 )
     self endon( "disconnect" );
     self endon( "joined_spectators" );
 
-    while ( self _meth_8432() && !maps\mp\_utility::invirtuallobby() )
+    while ( self ismlgspectator() && !maps\mp\_utility::invirtuallobby() )
         waitframe();
 
-    self _meth_82FB( "ui_options_menu", var_0 );
+    self setclientomnvar( "ui_options_menu", var_0 );
 }
 
 gather_spawn_weapons()
@@ -529,10 +529,10 @@ spawnplayer( var_0, var_1 )
     var_2 = undefined;
     self.ti_spawn = 0;
     thread setuioptionsmenu( 0 );
-    self _meth_82FB( "ui_hud_shake", 0 );
-    self _meth_82FB( "ui_exo_cooldown_in_use", 0 );
+    self setclientomnvar( "ui_hud_shake", 0 );
+    self setclientomnvar( "ui_exo_cooldown_in_use", 0 );
     self setdemigod( 0 );
-    self _meth_8533();
+    self disableforcefirstpersonwhenfollowed();
 
     if ( !level.ingraceperiod && !self.hasdonecombat )
     {
@@ -559,21 +559,21 @@ spawnplayer( var_0, var_1 )
         var_4 = gather_spawn_weapons();
         self.loadingplayerweapons = 1;
 
-        if ( !self _meth_8425( self, var_4 ) )
+        if ( !self hasloadedcustomizationplayerview( self, var_4 ) )
         {
             self.waitingtospawnamortize = 1;
-            self _meth_8538( 1 );
+            self onlystreamactiveweapon( 1 );
 
             for (;;)
             {
                 waitframe();
                 var_4 = gather_spawn_weapons();
 
-                if ( self _meth_8425( self, var_4 ) )
+                if ( self hasloadedcustomizationplayerview( self, var_4 ) )
                     break;
             }
 
-            self _meth_8538( 0 );
+            self onlystreamactiveweapon( 0 );
             self.waitingtospawnamortize = 0;
         }
 
@@ -650,9 +650,9 @@ spawnplayer( var_0, var_1 )
         }
 
         maps\mp\gametypes\_battlebuddy::cleanupbuddyspawn();
-        self _meth_82FB( "cam_scene_name", "battle_spawn" );
-        self _meth_82FB( "cam_scene_lead", self.battlebuddy _meth_81B1() );
-        self _meth_82FB( "cam_scene_support", self _meth_81B1() );
+        self setclientomnvar( "cam_scene_name", "battle_spawn" );
+        self setclientomnvar( "cam_scene_lead", self.battlebuddy getentitynumber() );
+        self setclientomnvar( "cam_scene_support", self getentitynumber() );
     }
     else if ( isdefined( self.helispawning ) && ( !isdefined( self.firstspawn ) || isdefined( self.firstspawn ) && self.firstspawn ) && level.prematchperiod > 0 && self.team == "allies" )
     {
@@ -763,7 +763,7 @@ spawnplayer( var_0, var_1 )
     }
 
     if ( level.console )
-        self _meth_82FC( "cg_fov", "65" );
+        self setclientdvar( "cg_fov", "65" );
 
     resetuidvarsonspawn();
 
@@ -777,12 +777,12 @@ spawnplayer( var_0, var_1 )
         self.lastspawntime = gettime();
 
     self.spawnpos = var_5;
-    self _meth_826F( var_5, var_6 );
+    self spawn( var_5, var_6 );
     maps\mp\_utility::setdof( level.dofdefault );
 
     if ( var_0 && isdefined( self.faux_spawn_stance ) )
     {
-        self _meth_817D( self.faux_spawn_stance );
+        self setstance( self.faux_spawn_stance );
         self.faux_spawn_stance = undefined;
     }
 
@@ -844,7 +844,7 @@ spawnplayer( var_0, var_1 )
         maps\mp\gametypes\_gamelogic::freezeplayerforroundend();
 
     if ( isdefined( level.matchrules_switchteamdisabled ) && level.matchrules_switchteamdisabled )
-        self _meth_82FB( "ui_disable_team_change", 1 );
+        self setclientomnvar( "ui_disable_team_change", 1 );
 }
 
 monitordelayedspawnloadouts()
@@ -896,7 +896,7 @@ in_spawnspectator( var_0, var_1 )
     onspawnspectator( var_0, var_1 );
 
     if ( level.teambased && !level.splitscreen && !self issplitscreenplayer() )
-        self _meth_8186( 0, 128, 512, 4000, 6, 1.8 );
+        self setdepthoffield( 0, 128, 512, 4000, 6, 1.8 );
 }
 
 getplayerfromclientnum( var_0 )
@@ -906,7 +906,7 @@ getplayerfromclientnum( var_0 )
 
     for ( var_1 = 0; var_1 < level.players.size; var_1++ )
     {
-        if ( level.players[var_1] _meth_81B1() == var_0 )
+        if ( level.players[var_1] getentitynumber() == var_0 )
             return level.players[var_1];
     }
 
@@ -925,14 +925,14 @@ onspawnspectator( var_0, var_1 )
 {
     if ( isdefined( var_0 ) && isdefined( var_1 ) )
     {
-        self _meth_82C9( var_0, var_1 );
-        self _meth_826F( var_0, var_1 );
+        self setspectatedefaults( var_0, var_1 );
+        self spawn( var_0, var_1 );
         return;
     }
 
     var_2 = getrandomspectatorspawnpoint();
-    self _meth_82C9( var_2.origin, var_2.angles );
-    self _meth_826F( var_2.origin, var_2.angles );
+    self setspectatedefaults( var_2.origin, var_2.angles );
+    self spawn( var_2.origin, var_2.angles );
 }
 
 spawnintermission()
@@ -944,7 +944,7 @@ spawnintermission()
     maps\mp\_utility::clearlowermessages();
     maps\mp\_utility::freezecontrolswrapper( 1 );
     self disableammogeneration();
-    self _meth_82FC( "cg_everyoneHearsEveryone", 1 );
+    self setclientdvar( "cg_everyoneHearsEveryone", 1 );
     var_0 = self.pers["postGameChallenges"];
 
     if ( level.rankedmatch && ( self.postgamepromotion || isdefined( var_0 ) && var_0 ) )
@@ -977,8 +977,8 @@ spawnintermission()
     self.friendlydamage = undefined;
     var_2 = getentarray( "mp_global_intermission", "classname" );
     var_3 = var_2[0];
-    self _meth_826F( var_3.origin, var_3.angles );
-    self _meth_8186( 0, 128, 512, 4000, 6, 1.8 );
+    self spawn( var_3.origin, var_3.angles );
+    self setdepthoffield( 0, 128, 512, 4000, 6, 1.8 );
 }
 
 spawnendofgame()
@@ -997,25 +997,25 @@ spawnendofgame()
     self notify( "end_respawn" );
     setspawnvariables();
     maps\mp\_utility::clearlowermessages();
-    self _meth_82FC( "cg_everyoneHearsEveryone", 1 );
+    self setclientdvar( "cg_everyoneHearsEveryone", 1 );
     maps\mp\_utility::updatesessionstate( "dead" );
     maps\mp\_utility::clearkillcamstate();
     self.friendlydamage = undefined;
     var_0 = getentarray( "mp_global_intermission", "classname" );
     var_1 = maps\mp\gametypes\_spawnlogic::getspawnpoint_random( var_0 );
-    self _meth_826F( var_1.origin, var_1.angles );
-    var_1 _meth_80B1( "tag_origin" );
-    self _meth_807C( var_1 );
+    self spawn( var_1.origin, var_1.angles );
+    var_1 setmodel( "tag_origin" );
+    self playerlinkto( var_1 );
     self playerhide();
     maps\mp\_utility::freezecontrolswrapper( 1 );
     self disableammogeneration();
-    self _meth_8186( 0, 128, 512, 4000, 6, 1.8 );
+    self setdepthoffield( 0, 128, 512, 4000, 6, 1.8 );
 }
 
 setspawnvariables()
 {
     self stopshellshock();
-    self _meth_80AF( "damage_heavy" );
+    self stoprumble( "damage_heavy" );
     self.deathposition = undefined;
 }
 
@@ -1074,7 +1074,7 @@ logplayerstats()
 
         for ( var_3 = 0; var_3 < var_1; var_3++ )
         {
-            var_4 = self _meth_8223( "xpMultiplier", var_3 );
+            var_4 = self getrankedplayerdata( "xpMultiplier", var_3 );
 
             if ( isdefined( var_4 ) && var_4 > var_2 )
                 var_2 = var_4;
@@ -1146,7 +1146,7 @@ callback_playerdisconnect( var_0 )
     removeplayerondisconnect();
     maps\mp\gametypes\_spawnlogic::removefromparticipantsarray();
     maps\mp\gametypes\_spawnlogic::removefromcharactersarray();
-    var_2 = self _meth_81B1();
+    var_2 = self getentitynumber();
 
     if ( !level.teambased )
         game["roundsWon"][self.guid] = undefined;
@@ -1169,13 +1169,13 @@ callback_playerdisconnect( var_0 )
         if ( maps\mp\_utility::getminutespassed() )
             var_4 = self.score / maps\mp\_utility::getminutespassed();
 
-        _func_173( self, self.clientid, int( var_4 ) );
+        setplayerteamrank( self, self.clientid, int( var_4 ) );
     }
 
     reconevent( "script_mp_playerquit: player_name %s, player %d, gameTime %d", self.name, self.clientid, gettime() );
-    var_5 = self _meth_81B1();
+    var_5 = self getentitynumber();
     var_6 = self.guid;
-    obituary( "Q;" + var_6 + ";" + var_5 + ";" + self.name + "\\n" );
+    logprint( "Q;" + var_6 + ";" + var_5 + ";" + self.name + "\\n" );
     thread maps\mp\_events::disconnected();
 
     if ( level.gameended )
@@ -1210,9 +1210,9 @@ removeplayerondisconnect()
 initclientdvarssplitscreenspecific()
 {
     if ( level.splitscreen || self issplitscreenplayer() )
-        self _meth_82FD( "cg_hudGrenadeIconHeight", "37.5", "cg_hudGrenadeIconWidth", "37.5", "cg_hudGrenadeIconOffset", "75", "cg_hudGrenadePointerHeight", "18", "cg_hudGrenadePointerWidth", "37.5", "cg_hudGrenadePointerPivot", "18 40.5", "cg_fovscale", "0.75" );
+        self setclientdvars( "cg_hudGrenadeIconHeight", "37.5", "cg_hudGrenadeIconWidth", "37.5", "cg_hudGrenadeIconOffset", "75", "cg_hudGrenadePointerHeight", "18", "cg_hudGrenadePointerWidth", "37.5", "cg_hudGrenadePointerPivot", "18 40.5", "cg_fovscale", "0.75" );
     else
-        self _meth_82FD( "cg_hudGrenadeIconHeight", "75", "cg_hudGrenadeIconWidth", "75", "cg_hudGrenadeIconOffset", "50", "cg_hudGrenadePointerHeight", "36", "cg_hudGrenadePointerWidth", "75", "cg_hudGrenadePointerPivot", "36 81", "cg_fovscale", "1" );
+        self setclientdvars( "cg_hudGrenadeIconHeight", "75", "cg_hudGrenadeIconWidth", "75", "cg_hudGrenadeIconOffset", "50", "cg_hudGrenadePointerHeight", "36", "cg_hudGrenadePointerWidth", "75", "cg_hudGrenadePointerPivot", "36 81", "cg_fovscale", "1" );
 }
 
 initclientdvars()
@@ -1238,17 +1238,17 @@ initclientdvars()
     initclientdvarssplitscreenspecific();
 
     if ( maps\mp\_utility::getgametypenumlives() )
-        self _meth_82FD( "cg_deadChatWithDead", 1, "cg_deadChatWithTeam", 0, "cg_deadHearTeamLiving", 0, "cg_deadHearAllLiving", 0 );
+        self setclientdvars( "cg_deadChatWithDead", 1, "cg_deadChatWithTeam", 0, "cg_deadHearTeamLiving", 0, "cg_deadHearAllLiving", 0 );
     else
-        self _meth_82FD( "cg_deadChatWithDead", 0, "cg_deadChatWithTeam", 1, "cg_deadHearTeamLiving", 1, "cg_deadHearAllLiving", 0 );
+        self setclientdvars( "cg_deadChatWithDead", 0, "cg_deadChatWithTeam", 1, "cg_deadHearTeamLiving", 1, "cg_deadHearAllLiving", 0 );
 
     if ( level.teambased )
-        self _meth_82FD( "cg_everyonehearseveryone", 0 );
+        self setclientdvars( "cg_everyonehearseveryone", 0 );
 
     if ( getdvarint( "scr_hitloc_debug" ) )
     {
         for ( var_0 = 0; var_0 < 6; var_0++ )
-            self _meth_82FC( "ui_hitloc_" + var_0, "" );
+            self setclientdvar( "ui_hitloc_" + var_0, "" );
 
         self.hitlocinited = 1;
     }
@@ -1303,9 +1303,9 @@ setupsavedactionslots()
 
 logplayerconsoleidandonwifiinmatchdata()
 {
-    var_0 = _func_2CE();
-    var_1 = self _meth_8226( "consoleIDChunkLow", var_0 );
-    var_2 = self _meth_8226( "consoleIDChunkHigh", var_0 );
+    var_0 = getcodanywherecurrentplatform();
+    var_1 = self getcommonplayerdata( "consoleIDChunkLow", var_0 );
+    var_2 = self getcommonplayerdata( "consoleIDChunkHigh", var_0 );
 
     if ( isdefined( var_1 ) && var_1 != 0 )
         setmatchdata( "players", self.clientid, "consoleIDChunkLow", var_1 );
@@ -1320,8 +1320,8 @@ logplayerconsoleidandonwifiinmatchdata()
     {
         for ( var_5 = 0; var_5 < var_3; var_5++ )
         {
-            var_6 = self _meth_8226( "deviceConnectionHistory", var_5, "device_id_high" );
-            var_7 = self _meth_8226( "deviceConnectionHistory", var_5, "device_id_low" );
+            var_6 = self getcommonplayerdata( "deviceConnectionHistory", var_5, "device_id_high" );
+            var_7 = self getcommonplayerdata( "deviceConnectionHistory", var_5, "device_id_low" );
 
             if ( var_6 == var_2 && var_7 == var_1 )
             {
@@ -1337,7 +1337,7 @@ logplayerconsoleidandonwifiinmatchdata()
 
         for ( var_5 = 0; var_5 < var_3; var_5++ )
         {
-            var_9 = self _meth_8226( "deviceConnectionHistory", var_5, "deviceUseFrequency" );
+            var_9 = self getcommonplayerdata( "deviceConnectionHistory", var_5, "deviceUseFrequency" );
 
             if ( var_9 > var_8 )
             {
@@ -1350,7 +1350,7 @@ logplayerconsoleidandonwifiinmatchdata()
     if ( var_4 == -1 )
         var_4 = 0;
 
-    var_10 = self _meth_8226( "deviceConnectionHistory", var_4, "onWifi" );
+    var_10 = self getcommonplayerdata( "deviceConnectionHistory", var_4, "onWifi" );
 
     if ( var_10 )
         setmatchdata( "players", self.clientid, "playingOnWifi", 1 );
@@ -1372,14 +1372,14 @@ truncateplayername( var_0 )
 callback_playerconnect()
 {
     var_0 = getrandomspectatorspawnpoint();
-    self _meth_82C9( var_0.origin, var_0.angles );
+    self setspectatedefaults( var_0.origin, var_0.angles );
     thread notifyconnecting();
     self waittill( "begin" );
     self.connecttime = gettime();
     level notify( "connected", self );
     self.connected = 1;
 
-    if ( self _meth_829C() )
+    if ( self ishost() )
         level.player = self;
 
     if ( !level.splitscreen && !isdefined( self.pers["score"] ) )
@@ -1392,8 +1392,8 @@ callback_playerconnect()
     if ( getdvar( "r_reflectionProbeGenerate" ) == "1" )
         level waittill( "eternity" );
 
-    self.guid = self _meth_8275();
-    self.xuid = self _meth_8297();
+    self.guid = self getguid();
+    self.xuid = self getxuid();
     self.totallifetime = 0;
     var_1 = 0;
 
@@ -1426,7 +1426,7 @@ callback_playerconnect()
     if ( var_1 )
         reconevent( "script_mp_playerjoin: player_name %s, player %d, gameTime %d", self.name, self.clientid, gettime() );
 
-    obituary( "J;" + self.guid + ";" + self _meth_81B1() + ";" + self.name + "\\n" );
+    logprint( "J;" + self.guid + ";" + self getentitynumber() + ";" + self.name + "\\n" );
 
     if ( game["clientid"] <= 30 && game["clientid"] != getmatchdata( "playerCount" ) )
     {
@@ -1434,30 +1434,30 @@ callback_playerconnect()
         var_3 = 0;
 
         if ( !isai( self ) && maps\mp\_utility::matchmakinggame() )
-            self _meth_82AA( self.clientid );
+            self registerparty( self.clientid );
 
         setmatchdata( "playerCount", game["clientid"] );
-        setmatchdata( "players", self.clientid, "playerID", "xuid", self _meth_8297() );
-        setmatchdata( "players", self.clientid, "playerID", "ucdIDHigh", self _meth_8298() );
-        setmatchdata( "players", self.clientid, "playerID", "ucdIDLow", self _meth_8299() );
-        setmatchdata( "players", self.clientid, "playerID", "clanIDHigh", self _meth_829A() );
-        setmatchdata( "players", self.clientid, "playerID", "clanIDLow", self _meth_829B() );
+        setmatchdata( "players", self.clientid, "playerID", "xuid", self getxuid() );
+        setmatchdata( "players", self.clientid, "playerID", "ucdIDHigh", self getucdidhigh() );
+        setmatchdata( "players", self.clientid, "playerID", "ucdIDLow", self getucdidlow() );
+        setmatchdata( "players", self.clientid, "playerID", "clanIDHigh", self getclanidhigh() );
+        setmatchdata( "players", self.clientid, "playerID", "clanIDLow", self getclanidlow() );
         setmatchdata( "players", self.clientid, "gamertag", truncateplayername( self.name ) );
         setmatchdata( "players", self.clientid, "isBot", isai( self ) );
-        var_4 = self _meth_81B1();
+        var_4 = self getentitynumber();
         setmatchdata( "players", self.clientid, "codeClientNum", maps\mp\_utility::clamptobyte( var_4 ) );
-        var_5 = _func_2CE();
-        var_3 = self _meth_8226( "connectionIDChunkLow", var_5 );
-        var_2 = self _meth_8226( "connectionIDChunkHigh", var_5 );
+        var_5 = getcodanywherecurrentplatform();
+        var_3 = self getcommonplayerdata( "connectionIDChunkLow", var_5 );
+        var_2 = self getcommonplayerdata( "connectionIDChunkHigh", var_5 );
         setmatchdata( "players", self.clientid, "connectionIDChunkLow", var_3 );
         setmatchdata( "players", self.clientid, "connectionIDChunkHigh", var_2 );
         setmatchclientip( self, self.clientid );
-        setmatchdata( "players", self.clientid, "joinType", self _meth_84D3() );
+        setmatchdata( "players", self.clientid, "joinType", self getjointype() );
         setmatchdata( "players", self.clientid, "connectTimeUTC", getsystemtime() );
         setmatchdata( "players", self.clientid, "isSplitscreen", issplitscreen() );
         logplayerconsoleidandonwifiinmatchdata();
 
-        if ( self _meth_829C() )
+        if ( self ishost() )
             setmatchdata( "players", self.clientid, "wasAHost", 1 );
 
         if ( maps\mp\_utility::rankingenabled() )
@@ -1528,7 +1528,7 @@ callback_playerconnect()
     maps\mp\gametypes\_spawnlogic::addtocharactersarray();
 
     if ( level.teambased )
-        self _meth_829F();
+        self updatescores();
 
     if ( game["state"] == "postgame" )
     {
@@ -1628,10 +1628,10 @@ callback_playermigrated()
         maps\mp\_utility::updatemainmenu();
 
         if ( level.teambased )
-            self _meth_829F();
+            self updatescores();
     }
 
-    if ( self _meth_829C() )
+    if ( self ishost() )
     {
         initclientdvarssplitscreenspecific();
         setmatchdata( "players", self.clientid, "wasAHost", 1 );
@@ -1689,7 +1689,7 @@ kickifdontspawn()
     var_1 = getdvarfloat( "scr_kick_mintime", 45 );
     var_2 = gettime();
 
-    if ( self _meth_829C() )
+    if ( self ishost() )
         kickwait( 120 );
     else
         kickwait( var_0 );
@@ -1705,7 +1705,7 @@ kickifdontspawn()
     if ( self.pers["team"] == "spectator" )
         return;
 
-    kick( self _meth_81B1(), "EXE_PLAYERKICKED_INACTIVE" );
+    kick( self getentitynumber(), "EXE_PLAYERKICKED_INACTIVE" );
     level thread maps\mp\gametypes\_gamelogic::updategameevents();
 }
 
@@ -1851,10 +1851,10 @@ initplayerstats()
     if ( maps\mp\_utility::rankingenabled() )
     {
         if ( !isdefined( self.pers["previous_shots"] ) )
-            self.pers["previous_shots"] = self _meth_8223( "totalShots" );
+            self.pers["previous_shots"] = self getrankedplayerdata( "totalShots" );
 
         if ( !isdefined( self.pers["previous_hits"] ) )
-            self.pers["previous_hits"] = self _meth_8223( "hits" );
+            self.pers["previous_hits"] = self getrankedplayerdata( "hits" );
     }
 
     if ( !isdefined( self.pers["mpWeaponStats"] ) )
@@ -1992,29 +1992,29 @@ removeallfromlivescount()
 
 resetuidvarsonspawn()
 {
-    self _meth_82FB( "ui_carrying_bomb", 0 );
-    self _meth_82FB( "ui_capture_icon", 0 );
-    self _meth_82FB( "ui_light_armor", 0 );
-    self _meth_82FB( "ui_killcam_end_milliseconds", 0 );
-    self _meth_82FB( "ui_uplink_can_pass", 0 );
-    self _meth_82FB( "ui_light_armor_percent", 0 );
-    self _meth_82FB( "ui_killcam_time_until_spawn", 0 );
+    self setclientomnvar( "ui_carrying_bomb", 0 );
+    self setclientomnvar( "ui_capture_icon", 0 );
+    self setclientomnvar( "ui_light_armor", 0 );
+    self setclientomnvar( "ui_killcam_end_milliseconds", 0 );
+    self setclientomnvar( "ui_uplink_can_pass", 0 );
+    self setclientomnvar( "ui_light_armor_percent", 0 );
+    self setclientomnvar( "ui_killcam_time_until_spawn", 0 );
 }
 
 resetuidvarsonconnect()
 {
-    self _meth_82FB( "ui_carrying_bomb", 0 );
-    self _meth_82FB( "ui_capture_icon", 0 );
-    self _meth_82FB( "ui_light_armor", 0 );
-    self _meth_82FB( "ui_killcam_end_milliseconds", 0 );
+    self setclientomnvar( "ui_carrying_bomb", 0 );
+    self setclientomnvar( "ui_capture_icon", 0 );
+    self setclientomnvar( "ui_light_armor", 0 );
+    self setclientomnvar( "ui_killcam_end_milliseconds", 0 );
 }
 
 resetuidvarsonspectate()
 {
-    self _meth_82FB( "ui_carrying_bomb", 0 );
-    self _meth_82FB( "ui_capture_icon", 0 );
-    self _meth_82FB( "ui_light_armor", 0 );
-    self _meth_82FB( "ui_killcam_end_milliseconds", 0 );
+    self setclientomnvar( "ui_carrying_bomb", 0 );
+    self setclientomnvar( "ui_capture_icon", 0 );
+    self setclientomnvar( "ui_light_armor", 0 );
+    self setclientomnvar( "ui_killcam_end_milliseconds", 0 );
 }
 
 resetuidvarsondeath()
@@ -2122,7 +2122,7 @@ writesegmentdata( var_0 )
         return;
 
     var_5 = 50;
-    var_6 = var_0 _meth_8223( "combatRecord", "numPlayStyleTrends" );
+    var_6 = var_0 getrankedplayerdata( "combatRecord", "numPlayStyleTrends" );
     var_6++;
 
     if ( var_6 > var_5 )
@@ -2133,18 +2133,18 @@ writesegmentdata( var_0 )
         {
             for ( var_7 = 0; var_7 < var_5 - 1; var_7++ )
             {
-                var_8 = var_0 _meth_8223( "combatRecord", "playStyleTimeStamp", var_7 + 1 );
-                var_9 = var_0 _meth_8223( "combatRecord", "playStyle", var_7 + 1 );
-                var_0 _meth_8244( "combatRecord", "playStyleTimeStamp", var_7, var_8 );
-                var_0 _meth_8244( "combatRecord", "playStyle", var_7, var_9 );
+                var_8 = var_0 getrankedplayerdata( "combatRecord", "playStyleTimeStamp", var_7 + 1 );
+                var_9 = var_0 getrankedplayerdata( "combatRecord", "playStyle", var_7 + 1 );
+                var_0 setrankedplayerdata( "combatRecord", "playStyleTimeStamp", var_7, var_8 );
+                var_0 setrankedplayerdata( "combatRecord", "playStyle", var_7, var_9 );
             }
         }
     }
 
     var_8 = maps\mp\_utility::gettimeutc_for_stat_recording();
-    var_0 _meth_8244( "combatRecord", "playStyleTimeStamp", var_6 - 1, var_8 );
-    var_0 _meth_8244( "combatRecord", "playStyle", var_6 - 1, var_4 );
-    var_0 _meth_8244( "combatRecord", "numPlayStyleTrends", var_6 );
+    var_0 setrankedplayerdata( "combatRecord", "playStyleTimeStamp", var_6 - 1, var_8 );
+    var_0 setrankedplayerdata( "combatRecord", "playStyle", var_6 - 1, var_4 );
+    var_0 setrankedplayerdata( "combatRecord", "numPlayStyleTrends", var_6 );
 }
 
 calculatematchplaystyle( var_0, var_1, var_2 )
@@ -2184,10 +2184,10 @@ getcentroiddistance( var_0, var_1 )
 
 clearpracticeroundlockoutdata( var_0, var_1 )
 {
-    var_0 _meth_8247( "practiceRoundLockoutTime", 0 );
+    var_0 setcommonplayerdata( "practiceRoundLockoutTime", 0 );
 
     for ( var_2 = 0; var_2 < var_1; var_2++ )
-        var_0 _meth_8247( "practiceRoundLockoutMatchTimes", var_2, 0 );
+        var_0 setcommonplayerdata( "practiceRoundLockoutMatchTimes", var_2, 0 );
 }
 
 checkpracticeroundlockout( var_0 )
@@ -2200,13 +2200,13 @@ checkpracticeroundlockout( var_0 )
     var_3 = 5.0;
     var_4 = int( 86400 );
     var_5 = int( 86400 );
-    var_6 = var_0 _meth_8226( "practiceRoundLockoutTime" );
+    var_6 = var_0 getcommonplayerdata( "practiceRoundLockoutTime" );
 
     if ( var_6 > 0 )
         clearpracticeroundlockoutdata( var_0, var_1 );
 
-    var_7 = var_0 _meth_8226( "round", "kills" );
-    var_8 = var_0 _meth_8226( "round", "deaths" );
+    var_7 = var_0 getcommonplayerdata( "round", "kills" );
+    var_8 = var_0 getcommonplayerdata( "round", "deaths" );
     var_8 = max( var_8, 1 );
     var_9 = var_7 / var_8;
 
@@ -2225,7 +2225,7 @@ checkpracticeroundlockout( var_0 )
 
         for ( var_15 = 0; var_15 < var_1; var_15++ )
         {
-            var_16 = var_0 _meth_8226( "practiceRoundLockoutMatchTimes", var_15 );
+            var_16 = var_0 getcommonplayerdata( "practiceRoundLockoutMatchTimes", var_15 );
 
             if ( var_16 < var_13 )
             {
@@ -2237,12 +2237,12 @@ checkpracticeroundlockout( var_0 )
                 var_14++;
         }
 
-        var_0 _meth_8247( "practiceRoundLockoutMatchTimes", var_12, var_10 );
+        var_0 setcommonplayerdata( "practiceRoundLockoutMatchTimes", var_12, var_10 );
 
         if ( var_14 >= var_2 )
         {
             var_17 = var_10 + var_5;
-            var_0 _meth_8247( "practiceRoundLockoutTime", var_17 );
+            var_0 setcommonplayerdata( "practiceRoundLockoutTime", var_17 );
         }
     }
 }

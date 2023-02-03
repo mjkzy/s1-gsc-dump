@@ -205,7 +205,7 @@ shownotifymessage( var_0 )
     {
         if ( isdefined( var_0.type ) && var_0.type == "rank" )
         {
-            self _meth_82FC( "ui_promotion", 1 );
+            self setclientdvar( "ui_promotion", 1 );
             self.postgamepromotion = 1;
         }
 
@@ -244,7 +244,7 @@ shownotifymessage( var_0 )
             self.notifytitle.label = &"";
 
         if ( isdefined( var_0.titlelabel ) && !isdefined( var_0.titleisstring ) )
-            self.notifytitle _meth_80D7( var_0.titletext );
+            self.notifytitle setvalue( var_0.titletext );
         else
             self.notifytitle settext( var_0.titletext );
 
@@ -267,7 +267,7 @@ shownotifymessage( var_0 )
             self.notifytext.label = &"";
 
         if ( isdefined( var_0.textlabel ) && !isdefined( var_0.textisstring ) )
-            self.notifytext _meth_80D7( var_0.notifytext );
+            self.notifytext setvalue( var_0.notifytext );
         else
             self.notifytext settext( var_0.notifytext );
 
@@ -305,9 +305,9 @@ shownotifymessage( var_0 )
         self.notifyicon maps\mp\gametypes\_hud_util::setparent( var_4 );
 
         if ( level.splitscreen || self issplitscreenplayer() )
-            self.notifyicon _meth_80CC( var_0.iconname, 30, 30 );
+            self.notifyicon setshader( var_0.iconname, 30, 30 );
         else
-            self.notifyicon _meth_80CC( var_0.iconname, 60, 60 );
+            self.notifyicon setshader( var_0.iconname, 60, 60 );
 
         self.notifyicon.alpha = 0;
 
@@ -318,7 +318,7 @@ shownotifymessage( var_0 )
             var_0.overlayoffsety = 0;
             self.notifyoverlay maps\mp\gametypes\_hud_util::setparent( self.notifyicon );
             self.notifyoverlay maps\mp\gametypes\_hud_util::setpoint( "CENTER", "CENTER", 0, var_0.overlayoffsety );
-            self.notifyoverlay _meth_80CC( var_0.iconoverlay, 511, 511 );
+            self.notifyoverlay setshader( var_0.iconoverlay, 511, 511 );
             self.notifyoverlay.alpha = 0;
             self.notifyoverlay.color = game["colors"]["orange"];
             self.notifyoverlay fadeovertime( 0.4 );
@@ -570,11 +570,11 @@ actionnotify( var_0 )
                 self.notifytext.alpha = 0;
                 self.notifytext2.alpha = 0;
                 self.notifyicon.alpha = 0;
-                self _meth_82FB( "ui_splash_idx", -1 );
-                self _meth_82FB( "ui_splash_killstreak_mod_1", -1 );
-                self _meth_82FB( "ui_splash_killstreak_mod_2", -1 );
-                self _meth_82FB( "ui_splash_killstreak_mod_3", -1 );
-                self _meth_82FB( "ui_splash_killstreak_idx", -1 );
+                self setclientomnvar( "ui_splash_idx", -1 );
+                self setclientomnvar( "ui_splash_killstreak_mod_1", -1 );
+                self setclientomnvar( "ui_splash_killstreak_mod_2", -1 );
+                self setclientomnvar( "ui_splash_killstreak_mod_3", -1 );
+                self setclientomnvar( "ui_splash_killstreak_idx", -1 );
                 thread actionnotifymessage( var_0 );
                 return;
             case "killstreak_splash":
@@ -613,13 +613,13 @@ actionnotifymessage( var_0 )
     {
         if ( isdefined( var_0.type ) && ( var_0.type == "promotion_splash" || var_0.type == "promotion_weapon_splash" ) )
         {
-            self _meth_82FC( "ui_promotion", 1 );
+            self setclientdvar( "ui_promotion", 1 );
             self.postgamepromotion = 1;
         }
         else if ( isdefined( var_0.type ) && var_0.type == "challenge_splash" )
         {
             self.pers["postGameChallenges"]++;
-            self _meth_82FC( "ui_challenge_" + self.pers["postGameChallenges"] + "_ref", var_0.name );
+            self setclientdvar( "ui_challenge_" + self.pers["postGameChallenges"] + "_ref", var_0.name );
         }
 
         if ( self.splashqueue[var_1].size )
@@ -641,78 +641,78 @@ actionnotifymessage( var_0 )
             case "killstreak_splash":
             case "killstreak_coop_splash":
                 if ( isdefined( var_0.killstreakslot ) && !level.console )
-                    self _meth_82FB( "ui_splash_killstreak_slot_idx", var_0.killstreakslot );
+                    self setclientomnvar( "ui_splash_killstreak_slot_idx", var_0.killstreakslot );
 
-                self _meth_82FB( "ui_splash_killstreak_idx", var_2 );
+                self setclientomnvar( "ui_splash_killstreak_idx", var_2 );
 
                 if ( isdefined( var_0.playercardplayer ) && var_0.playercardplayer != self )
-                    self _meth_82FB( "ui_splash_killstreak_clientnum", var_0.playercardplayer _meth_81B1() );
+                    self setclientomnvar( "ui_splash_killstreak_clientnum", var_0.playercardplayer getentitynumber() );
                 else
-                    self _meth_82FB( "ui_splash_killstreak_clientnum", -1 );
+                    self setclientomnvar( "ui_splash_killstreak_clientnum", -1 );
 
                 if ( isdefined( var_0.optionalnumber ) )
-                    self _meth_82FB( "ui_splash_killstreak_optional_number", var_0.optionalnumber );
+                    self setclientomnvar( "ui_splash_killstreak_optional_number", var_0.optionalnumber );
                 else
-                    self _meth_82FB( "ui_splash_killstreak_optional_number", 0 );
+                    self setclientomnvar( "ui_splash_killstreak_optional_number", 0 );
 
                 if ( isdefined( var_0.module1idx ) )
-                    self _meth_82FB( "ui_splash_killstreak_mod_1", var_0.module1idx );
+                    self setclientomnvar( "ui_splash_killstreak_mod_1", var_0.module1idx );
                 else
-                    self _meth_82FB( "ui_splash_killstreak_mod_1", -1 );
+                    self setclientomnvar( "ui_splash_killstreak_mod_1", -1 );
 
                 if ( isdefined( var_0.module2idx ) )
-                    self _meth_82FB( "ui_splash_killstreak_mod_2", var_0.module2idx );
+                    self setclientomnvar( "ui_splash_killstreak_mod_2", var_0.module2idx );
                 else
-                    self _meth_82FB( "ui_splash_killstreak_mod_2", -1 );
+                    self setclientomnvar( "ui_splash_killstreak_mod_2", -1 );
 
                 if ( isdefined( var_0.module3idx ) )
-                    self _meth_82FB( "ui_splash_killstreak_mod_3", var_0.module3idx );
+                    self setclientomnvar( "ui_splash_killstreak_mod_3", var_0.module3idx );
                 else
-                    self _meth_82FB( "ui_splash_killstreak_mod_3", -1 );
+                    self setclientomnvar( "ui_splash_killstreak_mod_3", -1 );
 
                 break;
             case "playercard_splash":
                 if ( isdefined( var_0.playercardplayer ) )
                 {
-                    self _meth_82FB( "ui_splash_playercard_idx", var_2 );
+                    self setclientomnvar( "ui_splash_playercard_idx", var_2 );
 
                     if ( isplayer( var_0.playercardplayer ) )
-                        self _meth_82FB( "ui_splash_playercard_clientnum", var_0.playercardplayer _meth_81B1() );
+                        self setclientomnvar( "ui_splash_playercard_clientnum", var_0.playercardplayer getentitynumber() );
 
                     if ( isdefined( var_0.optionalnumber ) )
-                        self _meth_82FB( "ui_splash_playercard_optional_number", var_0.optionalnumber );
+                        self setclientomnvar( "ui_splash_playercard_optional_number", var_0.optionalnumber );
                 }
 
                 break;
             case "intel_splash":
             case "urgent_splash":
             case "splash":
-                self _meth_82FB( "ui_splash_idx", var_2 );
+                self setclientomnvar( "ui_splash_idx", var_2 );
 
                 if ( isdefined( var_0.optionalnumber ) )
-                    self _meth_82FB( "ui_splash_optional_number", var_0.optionalnumber );
+                    self setclientomnvar( "ui_splash_optional_number", var_0.optionalnumber );
 
                 break;
             case "rankup_splash":
-                self _meth_82FB( "ui_rankup_splash_idx", var_2 );
+                self setclientomnvar( "ui_rankup_splash_idx", var_2 );
 
                 if ( isdefined( var_0.rank ) )
-                    self _meth_82FB( "ui_rank_splash_rank", var_0.rank );
+                    self setclientomnvar( "ui_rank_splash_rank", var_0.rank );
 
                 if ( isdefined( var_0.prestige ) )
-                    self _meth_82FB( "ui_rank_splash_prestige", var_0.prestige );
+                    self setclientomnvar( "ui_rank_splash_prestige", var_0.prestige );
 
                 break;
             case "perk_challenge_splash":
             case "challenge_splash":
                 var_2 = int( tablelookup( "mp/allchallengestable.csv", 0, var_0.name, 27 ) );
-                self _meth_82FB( "ui_challenge_splash_idx", var_2 );
+                self setclientomnvar( "ui_challenge_splash_idx", var_2 );
 
                 if ( isdefined( var_0.challengetier ) )
-                    self _meth_82FB( "ui_challenge_splash_tier", var_0.challengetier );
+                    self setclientomnvar( "ui_challenge_splash_tier", var_0.challengetier );
 
                 if ( isdefined( var_0.optionalnumber ) )
-                    self _meth_82FB( "ui_challenge_splash_optional_number", var_0.optionalnumber );
+                    self setclientomnvar( "ui_challenge_splash_optional_number", var_0.optionalnumber );
 
                 break;
             default:
@@ -926,7 +926,7 @@ teamoutcomenotify( var_0, var_1, var_2, var_3 )
 
     if ( var_0 == "halftime" )
     {
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["halftime"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["halftime"] );
         var_0 = "allies";
 
         if ( level.gametype == "ctf" )
@@ -934,19 +934,19 @@ teamoutcomenotify( var_0, var_1, var_2, var_3 )
     }
     else if ( var_0 == "intermission" )
     {
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["intermission"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["intermission"] );
         var_0 = "allies";
     }
     else if ( var_0 == "roundend" )
     {
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["roundend"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["roundend"] );
         var_0 = "allies";
     }
     else if ( var_0 == "none" && maps\mp\_utility::practiceroundgame() )
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["game_end"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["game_end"] );
     else if ( maps\mp\_utility::isovertimetext( var_0 ) )
     {
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["overtime"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["overtime"] );
 
         if ( level.gametype == "ctf" && var_0 == "overtime" )
             var_5 = 1;
@@ -956,53 +956,53 @@ teamoutcomenotify( var_0, var_1, var_2, var_3 )
     else if ( var_0 == "tie" )
     {
         if ( var_1 )
-            self _meth_82FB( "ui_round_end_title", game["round_end"]["round_draw"] );
+            self setclientomnvar( "ui_round_end_title", game["round_end"]["round_draw"] );
         else
-            self _meth_82FB( "ui_round_end_title", game["round_end"]["draw"] );
+            self setclientomnvar( "ui_round_end_title", game["round_end"]["draw"] );
 
         var_0 = "allies";
     }
-    else if ( self _meth_8432() )
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["spectator"] );
+    else if ( self ismlgspectator() )
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["spectator"] );
     else if ( isdefined( self.pers["team"] ) && var_0 == var_4 )
     {
         if ( var_1 )
-            self _meth_82FB( "ui_round_end_title", game["round_end"]["round_win"] );
+            self setclientomnvar( "ui_round_end_title", game["round_end"]["round_win"] );
         else if ( isdefined( level.iszombiegame ) && level.iszombiegame && isdefined( level.zmbtransitiontohardmode ) && level.zmbtransitiontohardmode )
-            self _meth_82FB( "ui_round_end_title", game["round_end"]["zombies_hard_mode"] );
+            self setclientomnvar( "ui_round_end_title", game["round_end"]["zombies_hard_mode"] );
         else
-            self _meth_82FB( "ui_round_end_title", game["round_end"]["victory"] );
+            self setclientomnvar( "ui_round_end_title", game["round_end"]["victory"] );
     }
     else if ( var_1 )
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["round_loss"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["round_loss"] );
     else
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["defeat"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["defeat"] );
 
-    self _meth_82FB( "ui_round_end_reason", var_2 );
+    self setclientomnvar( "ui_round_end_reason", var_2 );
 
     if ( var_5 && !level.winbycaptures )
     {
-        self _meth_82FB( "ui_round_end_friendly_score", game["roundsWon"][var_4] );
-        self _meth_82FB( "ui_round_end_enemy_score", game["roundsWon"][level.otherteam[var_4]] );
+        self setclientomnvar( "ui_round_end_friendly_score", game["roundsWon"][var_4] );
+        self setclientomnvar( "ui_round_end_enemy_score", game["roundsWon"][level.otherteam[var_4]] );
     }
     else if ( !maps\mp\_utility::isroundbased() || !maps\mp\_utility::isobjectivebased() )
     {
-        self _meth_82FB( "ui_round_end_friendly_score", maps\mp\gametypes\_gamescore::_getteamscore( var_4 ) );
-        self _meth_82FB( "ui_round_end_enemy_score", maps\mp\gametypes\_gamescore::_getteamscore( level.otherteam[var_4] ) );
+        self setclientomnvar( "ui_round_end_friendly_score", maps\mp\gametypes\_gamescore::_getteamscore( var_4 ) );
+        self setclientomnvar( "ui_round_end_enemy_score", maps\mp\gametypes\_gamescore::_getteamscore( level.otherteam[var_4] ) );
     }
     else
     {
-        self _meth_82FB( "ui_round_end_friendly_score", game["roundsWon"][var_4] );
-        self _meth_82FB( "ui_round_end_enemy_score", game["roundsWon"][level.otherteam[var_4]] );
+        self setclientomnvar( "ui_round_end_friendly_score", game["roundsWon"][var_4] );
+        self setclientomnvar( "ui_round_end_enemy_score", game["roundsWon"][level.otherteam[var_4]] );
     }
 
     if ( isdefined( self.matchbonus ) )
-        self _meth_82FB( "ui_round_end_match_bonus", self.matchbonus );
+        self setclientomnvar( "ui_round_end_match_bonus", self.matchbonus );
 
     if ( isdefined( game["round_time_to_beat"] ) )
-        self _meth_82FB( "ui_round_end_stopwatch", int( game["round_time_to_beat"] * 60 ) );
+        self setclientomnvar( "ui_round_end_stopwatch", int( game["round_time_to_beat"] * 60 ) );
 
-    self _meth_82FB( "ui_round_end", 1 );
+    self setclientomnvar( "ui_round_end", 1 );
 }
 
 outcomenotify( var_0, var_1 )
@@ -1029,18 +1029,18 @@ outcomenotify( var_0, var_1 )
     }
 
     if ( var_6 )
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["tie"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["tie"] );
     else if ( isdefined( var_3 ) && self == var_3 )
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["victory"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["victory"] );
     else
-        self _meth_82FB( "ui_round_end_title", game["round_end"]["defeat"] );
+        self setclientomnvar( "ui_round_end_title", game["round_end"]["defeat"] );
 
-    self _meth_82FB( "ui_round_end_reason", var_1 );
+    self setclientomnvar( "ui_round_end_reason", var_1 );
 
     if ( isdefined( self.matchbonus ) )
-        self _meth_82FB( "ui_round_end_match_bonus", self.matchbonus );
+        self setclientomnvar( "ui_round_end_match_bonus", self.matchbonus );
 
-    self _meth_82FB( "ui_round_end", 1 );
+    self setclientomnvar( "ui_round_end", 1 );
     self waittill( "update_outcome" );
 }
 

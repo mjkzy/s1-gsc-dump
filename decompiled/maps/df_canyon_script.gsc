@@ -143,7 +143,7 @@ begin_canyon()
     wait 0.1;
     thread maps\df_fly_flight_code::steering_hack();
     var_1 = getent( "canyon_run_start", "targetname" );
-    level.plane _meth_827C( var_1.origin, var_1.angles, 1 );
+    level.plane vehicle_teleport( var_1.origin, var_1.angles, 1 );
     spawn_allies( "canyon_ally" );
     level.player thread maps\df_fly::wait_for_stick_press();
     var_2 = 0;
@@ -246,7 +246,7 @@ begin_canyon()
 
 show_brake_hint()
 {
-    if ( level.player _meth_834E() )
+    if ( level.player usinggamepad() )
         level.player thread maps\_utility::display_hint_timeout( "airbrake_hint", 5 );
     else if ( maps\_utility::is_command_bound( "toggleprone" ) )
         level.player thread maps\_utility::display_hint_timeout( "airbrake_hint_pc_toggle", 5 );
@@ -304,7 +304,7 @@ invert_controls_prompt()
 {
     common_scripts\utility::flag_wait( "hint_time" );
     wait 0.05;
-    level.player _meth_84F6( &"flight_controls_setting_popmenu" );
+    level.player luiopenmenu( &"flight_controls_setting_popmenu" );
     wait 0.5;
     maps\_utility::autosave_now( 1 );
 }
@@ -316,7 +316,7 @@ tanker_crash()
     var_2 = maps\_utility::spawn_anim_model( "refueler" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     playfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     waitframe();
@@ -331,7 +331,7 @@ tanker_crash()
     stopfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     stopfxontag( common_scripts\utility::getfx( "bagh_hoodoo_dust_trail" ), var_2, "TAG_ORIGIN" );
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2 delete();
 }
 
@@ -537,8 +537,8 @@ handle_dam_targets()
     if ( !isdefined( level.enemy_units ) )
         level.enemy_units = [];
 
-    level.dam_targ _meth_82C0( 1 );
-    level.dam_targ _meth_82C1( 1 );
+    level.dam_targ setcandamage( 1 );
+    level.dam_targ setcanradiusdamage( 1 );
     level.dam_targ.default_hud = "hud_fofbox_hostile_obstructed";
     level.dam_targ.health = 100;
     level.dam_targ.ground_target = 1;
@@ -685,7 +685,7 @@ handle_train_bridge()
     foreach ( var_2 in var_0 )
     {
         var_2.animname = var_2.animation;
-        var_2 _meth_8115( level.scr_animtree[var_2.animation] );
+        var_2 useanimtree( level.scr_animtree[var_2.animation] );
     }
 
     common_scripts\utility::flag_wait( "bridge_fall" );
@@ -695,7 +695,7 @@ handle_train_bridge()
     foreach ( var_2 in var_0 )
     {
         var_2 thread maps\_anim::anim_single_solo( var_2, "destroy" );
-        var_2 _meth_83C7( var_2 maps\_utility::getanim( "destroy" ), 1.5 );
+        var_2 setanimrate( var_2 maps\_utility::getanim( "destroy" ), 1.5 );
     }
 
     wait 0.5;
@@ -847,7 +847,7 @@ switch_path( var_0 )
     var_4 = var_1.script_parameters + var_3;
     var_5 = getvehiclenode( var_4, "targetname" );
     var_2 thread maps\_vehicle::vehicle_paths( var_5 );
-    var_2 _meth_827F( var_5 );
+    var_2 startpath( var_5 );
 }
 
 flare_warning()
@@ -909,12 +909,12 @@ flak_explode()
         if ( level.player_boosting )
         {
             level.plane notify( "damage", 100, undefined, var_0, level.plane.origin, "flak_pepper" );
-            level.plane _meth_827C( level.plane.origin, level.plane.angles + ( 0, 0, 25 ) );
+            level.plane vehicle_teleport( level.plane.origin, level.plane.angles + ( 0, 0, 25 ) );
         }
         else
         {
             level.plane notify( "damage", 100, undefined, var_0, level.plane.origin, "flak_hit" );
-            level.plane _meth_827C( level.plane.origin, level.plane.angles + ( 0, 0, 45 ) );
+            level.plane vehicle_teleport( level.plane.origin, level.plane.angles + ( 0, 0, 45 ) );
         }
     }
     else
@@ -1096,7 +1096,7 @@ redshirt_death_vo()
 
 begin_canyon_exit()
 {
-    _func_0D3( "vehPlanePathAllowance", 20 );
+    setsaveddvar( "vehPlanePathAllowance", 20 );
     thread maps\df_fly_flight_code::process_flight_path( "canyon_end_close" );
     thread jet_shakes();
     common_scripts\utility::flag_wait( "canyon_finished" );
@@ -1214,9 +1214,9 @@ stay_low_nags()
 
 canopy_fade_in_cinematic()
 {
-    _func_057( "df_canopy_transition" );
+    cinematicingame( "df_canopy_transition" );
 
-    while ( _func_22C() < 2 )
+    while ( cinematicgetframe() < 2 )
         waitframe();
 
     pausecinematicingame( 1 );
@@ -1224,19 +1224,19 @@ canopy_fade_in_cinematic()
 
 deploy_sequence()
 {
-    var_0 = level.plane _meth_8286();
+    var_0 = level.plane vehicle_getspeed();
     maps\df_fly_flight_code::fighter_jet_set_shake( 4, 0.25 );
     level.player notify( "toggle_chase_cam" );
     level notify( "end_canyon" );
     level.plane notify( "end_canyon" );
     level.player notify( "remove_jet_hud" );
     level.player notify( "end_canyon" );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
     thread canopy_fade_in_cinematic();
-    _func_23F( &"plane_hud_fade_out", 1, 5000 );
+    luinotifyevent( &"plane_hud_fade_out", 1, 5000 );
     var_1 = maps\_utility::spawn_anim_model( "pod" );
     level.finale_pod = var_1;
-    level.finale_pod _meth_8048( "TAG_TRANSFER_AR" );
+    level.finale_pod hidepart( "TAG_TRANSFER_AR" );
     var_2 = maps\_utility::spawn_anim_model( "pod_l" );
     var_3 = maps\_utility::spawn_anim_model( "pod_r" );
     var_4 = maps\_utility::spawn_anim_model( "jet" );
@@ -1246,7 +1246,7 @@ deploy_sequence()
     var_6 = maps\_utility::spawn_anim_model( "jet_r" );
     var_7 = maps\_utility::spawn_anim_model( "player_rig" );
     var_8 = maps\_utility::spawn_anim_model( "finale_genProp" );
-    level.fake_plane _meth_80A7( level.player );
+    level.fake_plane unlinkfromplayerview( level.player );
     var_1.origin = level.fake_plane.origin;
     var_1.angles = level.fake_plane.angles;
     var_1 thread maps\_anim::anim_loop_solo( var_1, "idle", "stop_loop" );
@@ -1254,12 +1254,12 @@ deploy_sequence()
     var_9 = [ var_7, var_2, var_3, var_4, var_5, var_6 ];
     common_scripts\utility::array_call( var_9, ::hide );
     var_10 = common_scripts\utility::getstruct( "finale_struct", "targetname" );
-    level.player _meth_80FD();
-    level.player _meth_804F();
-    level.player _meth_831D();
-    level.player _meth_8119( 0 );
-    level.player _meth_831F();
-    level.player _meth_8321();
+    level.player dismountvehicle();
+    level.player unlink();
+    level.player disableweapons();
+    level.player allowcrouch( 0 );
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
     level.plane hide();
 
     if ( isdefined( level.allies ) )
@@ -1274,13 +1274,13 @@ deploy_sequence()
     thread deploy_vo();
     var_9 = common_scripts\utility::array_add( var_9, var_1 );
     var_10 maps\_anim::anim_first_frame_solo( var_8, "deploy" );
-    level.player _meth_807F( var_1, "tag_player" );
-    _func_0D3( "sv_znear", "1" );
+    level.player playerlinktoabsolute( var_1, "tag_player" );
+    setsaveddvar( "sv_znear", "1" );
     var_14 = maps\_utility::make_array( var_1 );
     var_15 = spawn( "script_model", var_1.origin );
     var_15.angles = var_1.angles;
     var_15.origin = var_1.origin;
-    var_1 _meth_804D( var_15 );
+    var_1 linkto( var_15 );
     var_16 = var_8 maps\_anim::get_anim_position( "j_prop_1" );
     var_17 = var_16["origin"];
     var_18 = var_16["angles"];
@@ -1290,26 +1290,26 @@ deploy_sequence()
     var_22 = var_21 / var_0 * 60 * 60;
     var_23 = vectortoangles( var_19 - var_15.origin );
     thread fake_cockpit_jitter( var_1, var_22 );
-    var_15 _meth_82AE( var_19, var_22, 0, 0 );
-    var_15 _meth_82B5( var_23, var_22 / 4, var_22 / 16, var_22 / 4 - var_22 / 16 );
-    var_1 _meth_8092();
-    var_8 _meth_8092();
+    var_15 moveto( var_19, var_22, 0, 0 );
+    var_15 rotateto( var_23, var_22 / 4, var_22 / 16, var_22 / 4 - var_22 / 16 );
+    var_1 dontinterpolate();
+    var_8 dontinterpolate();
     var_10 maps\_anim::anim_first_frame_solo( var_8, "deploy" );
     var_8 maps\_anim::anim_first_frame( var_9, "deploy", "j_prop_1" );
     wait(var_22 / 2);
-    var_15 _meth_82B5( var_20, var_22 / 2, var_22 / 4, var_22 / 4 );
+    var_15 rotateto( var_20, var_22 / 2, var_22 / 4, var_22 / 4 );
     wait(var_22 / 2);
     level.plane delete();
 
     foreach ( var_25 in var_9 )
     {
-        var_25 _meth_804D( var_8, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_25 linkto( var_8, "j_prop_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
         if ( var_25 != level.finale_jet )
             var_25 show();
     }
 
-    level.player _meth_807D( var_7, "tag_player", 0.9, 10, 10, 10, 10, 1 );
+    level.player playerlinktodelta( var_7, "tag_player", 0.9, 10, 10, 10, 10, 1 );
     var_27 = common_scripts\utility::getfx( "s19_engineeffect" );
     playfxontag( var_27, var_5, "tag_engine_left" );
     playfxontag( var_27, var_6, "tag_engine_left" );
@@ -1333,7 +1333,7 @@ fake_cockpit_jitter( var_0, var_1 )
     for ( var_4 = var_3; var_2 < var_1; var_4 = var_6 )
     {
         var_5 = randomfloatrange( 0.05, 0.1 );
-        level.player _meth_807D( var_0, "tag_player", 0.9, 10, 10, 10, 10, 1 );
+        level.player playerlinktodelta( var_0, "tag_player", 0.9, 10, 10, 10, 10, 1 );
         wait(var_5);
         var_6 = gettime();
         var_2 += ( var_6 - var_4 ) / 1000;
@@ -1359,7 +1359,7 @@ do_fly_screen()
     var_0 = getent( "fly_screen_start", "targetname" );
     var_1 = getent( "fly_screen_mid", "targetname" );
     var_2 = getent( "fly_screen_end", "targetname" );
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     level.player maps\_utility::teleport_player( var_0 );
     waitframe();
@@ -1378,7 +1378,7 @@ do_hoodoo_voodoo()
 deathspin()
 {
     var_0 = maps\_utility::spawn_anim_model( "enemy_jet" );
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     self hide();
     var_0 maps\_anim::anim_single_solo( var_0, "deathspin" );
 }
@@ -1532,7 +1532,7 @@ tanker_mountain_crash()
     var_2 = maps\_utility::spawn_anim_model( "refueler" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     playfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     waitframe();
@@ -1547,7 +1547,7 @@ tanker_mountain_crash()
     stopfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     stopfxontag( common_scripts\utility::getfx( "bagh_hoodoo_dust_trail" ), var_2, "TAG_ORIGIN" );
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2 delete();
 }
 
@@ -1559,7 +1559,7 @@ tanker_mountain_crash2()
     var_2 = maps\_utility::spawn_anim_model( "refueler" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     playfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     waitframe();
@@ -1574,7 +1574,7 @@ tanker_mountain_crash2()
     stopfxontag( common_scripts\utility::getfx( "bagh_tanker_crash" ), var_2, "TAG_ORIGIN" );
     stopfxontag( common_scripts\utility::getfx( "bagh_hoodoo_dust_trail" ), var_2, "TAG_ORIGIN" );
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
     var_2 delete();
 }
 
@@ -1586,10 +1586,10 @@ mothership_fly()
     var_2 = maps\_utility::spawn_anim_model( "osp" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
 }
 
 mothership_fly2()
@@ -1600,10 +1600,10 @@ mothership_fly2()
     var_2 = maps\_utility::spawn_anim_model( "osp" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
 }
 
 mothership_fly3()
@@ -1614,10 +1614,10 @@ mothership_fly3()
     var_2 = maps\_utility::spawn_anim_model( "osp" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
 }
 
 mothership_fly4()
@@ -1628,10 +1628,10 @@ mothership_fly4()
     var_2 = maps\_utility::spawn_anim_model( "osp" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
 }
 
 mothership_fly5()
@@ -1642,8 +1642,8 @@ mothership_fly5()
     var_2 = maps\_utility::spawn_anim_model( "osp" );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
-    var_2 _meth_804D( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_2 linkto( var_1, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_1 hide();
     var_1 waittill( "death" );
-    var_2 _meth_804F();
+    var_2 unlink();
 }

@@ -614,9 +614,9 @@ vm_boat_wake()
 
     while ( isdefined( self ) && isalive( self ) )
     {
-        var_0 = self _meth_8286();
+        var_0 = self vehicle_getspeed();
 
-        if ( self _meth_84C7() )
+        if ( self vehicle_diveboatissubmerged() )
         {
             stopfxontag( common_scripts\utility::getfx( "boat_wake_speedboat_front_splash_vm_fast" ), self, "tag_fx_bow" );
             stopfxontag( common_scripts\utility::getfx( "boat_wake_speedboat_front_splash_vm_slow" ), self, "tag_fx_bow" );
@@ -700,11 +700,11 @@ ai_boat_bow_splash_fx( var_0, var_1, var_2, var_3 )
 {
     self endon( "death" );
     var_4 = common_scripts\utility::spawn_tag_origin();
-    var_4 _meth_804D( self, "tag_origin", ( 0, 0, 0 ) + var_2, ( 0, 0, 0 ) + var_3 );
+    var_4 linkto( self, "tag_origin", ( 0, 0, 0 ) + var_2, ( 0, 0, 0 ) + var_3 );
 
     while ( isalive( self ) && isdefined( self ) )
     {
-        var_5 = self _meth_8286();
+        var_5 = self vehicle_getspeed();
 
         if ( var_5 > 10 )
         {
@@ -755,7 +755,7 @@ vm_crash_transition()
 quick_transition_flash()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( level.player, "tag_origin", ( 10, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 10, 0, 0 ), ( 0, 0, 0 ), 1 );
     waitframe();
     playfxontag( common_scripts\utility::getfx( "distortion_vm_transition_fast" ), var_0, "tag_origin" );
     wait 1.5;

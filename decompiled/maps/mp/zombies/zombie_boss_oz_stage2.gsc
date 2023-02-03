@@ -108,10 +108,10 @@ bossozstage2teleportout()
     playfx( common_scripts\utility::getfx( "oz_stage2_teleport" ), self.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
     bossozstage2disableai();
     self hide();
-    self _meth_8398( "noclip" );
+    self scragentsetphysicsmode( "noclip" );
     var_0 = common_scripts\utility::getstructarray( "boss_oz_spot", "targetname" );
     self setorigin( var_0[0].origin, 1 );
-    self _meth_8390( self.origin );
+    self scragentsetgoalpos( self.origin );
 }
 
 bossozstage2teleportbackin( var_0 )
@@ -129,12 +129,12 @@ bossozstage2teleportbackin( var_0 )
     var_4 = vectortoangles( var_3.origin - var_2.origin );
     self setangles( var_4 );
     self.angles = var_4;
-    self _meth_8396( "face angle abs", ( 0, var_4[1], 0 ) );
+    self scragentsetorientmode( "face angle abs", ( 0, var_4[1], 0 ) );
     playfx( common_scripts\utility::getfx( "oz_stage2_teleport" ), var_2.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
-    self _meth_8390( var_2.origin );
+    self scragentsetgoalpos( var_2.origin );
     self playsound( "zmb_gol_round_start_front" );
     self show();
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
     wait 0.05;
     bossozstage2startfx();
     var_5 = "teleport_in";
@@ -149,17 +149,17 @@ bossozstage2teleportbackin( var_0 )
 
 bossozstage2playscriptedanim( var_0, var_1 )
 {
-    self _meth_839D( 1 );
-    self _meth_8397( "anim deltas" );
+    self scragentsetscripted( 1 );
+    self scragentsetanimmode( "anim deltas" );
 
     if ( isdefined( var_1 ) )
-        self _meth_8396( "face angle abs", ( 0, var_1[1], 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, var_1[1], 0 ) );
     else
-        self _meth_8396( "face angle abs", ( 0, self.angles[1], 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, self.angles[1], 0 ) );
 
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "OzS2Scripted" );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_0, 0, 1.0, "scripted_anim" );
-    self _meth_839D( 0 );
+    self scragentsetscripted( 0 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "OzS2Scripted" );
 }
 
@@ -294,20 +294,20 @@ onzombiebossozstage2spawn( var_0, var_1, var_2 )
 {
     maps\mp\zombies\_util::onspawnscriptagenthumanoid( var_0, var_1, var_2 );
     playfx( common_scripts\utility::getfx( "oz_stage2_teleport" ), var_0, ( 1, 0, 0 ), ( 0, 0, 1 ) );
-    self _meth_853C( "mech" );
-    self _meth_853D( 1 );
+    self scragentsetspecies( "mech" );
+    self scragentallowboost( 1 );
     thread bossozhealthbar();
     level notify( "onZombiebossOzStage2Spawn", self );
 }
 
 bossozstage2postspawn( var_0 )
 {
-    var_0 _meth_8399( "agent" );
+    var_0 scragentsetclipmode( "agent" );
     var_1 = int( var_0.health * maps\mp\zombies\_util::getnumplayers() );
     var_0 maps\mp\agents\_agent_common::set_agent_health( var_1 );
     setomnvar( "ui_zm_fight_health_max", var_1 );
     setomnvar( "ui_zm_fight_health_current", var_1 );
-    var_0 _meth_8177( "zombie_boss_oz_stage2" );
+    var_0 setthreatbiasgroup( "zombie_boss_oz_stage2" );
     level thread bossozstage2playerthreats();
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "oz_stage2_blood_spit_loop" ), var_0, "J_Head" );
     var_0.postspawnfinished = 1;
@@ -358,10 +358,10 @@ bossozstage2playerthreats()
             var_6 = var_1;
 
         foreach ( var_4 in var_6 )
-            var_4 _meth_8177( "non_infected_players" );
+            var_4 setthreatbiasgroup( "non_infected_players" );
 
         foreach ( var_4 in var_7 )
-            var_4 _meth_8177( "infected_players" );
+            var_4 setthreatbiasgroup( "infected_players" );
 
         var_12 = level common_scripts\utility::waittill_any_return( "connected", "player_disconnected", "player_infected", "player_cured", "player_left_goliath_suit" );
 
@@ -392,7 +392,7 @@ setupbossozstage2state()
     self.meleeradiusbasesq = squared( self.meleeradiusbase );
     maps\mp\zombies\_util::setmeleeradius( self.meleeradiusbase );
     self.defaultgoalradius = self.radius + 1;
-    self _meth_8394( self.defaultgoalradius );
+    self scragentsetgoalradius( self.defaultgoalradius );
     self.meleedot = 0.5;
     self.ignoreexpiretime = 1;
     self.ignorezombierecycling = 1;
@@ -549,7 +549,7 @@ bossozstage2_begin_melee()
     if ( !isdefined( self.lastmeleepos ) || distancesquared( self.lastmeleepos, self.origin ) > self.meleeradiusbasesq * 1.5 * 1.5 )
         self.meleemovemode = self.movemode;
 
-    self _meth_839C( self.curmeleetarget );
+    self scragentbeginmelee( self.curmeleetarget );
     return 1;
 }
 
@@ -576,7 +576,7 @@ bossozstage2_destroy_distraction_drone()
         return 0;
 
     self.curmeleetarget = self.distractiondrone;
-    self _meth_839C( self.distractiondrone );
+    self scragentbeginmelee( self.distractiondrone );
     return 1;
 }
 
@@ -682,8 +682,8 @@ bossozstage2doattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     self.lastmeleefailedmypos = undefined;
     self.lastmeleefailedpos = undefined;
-    var_6 = randomint( self _meth_83D6( var_2 ) );
-    var_7 = self _meth_83D3( var_2, var_6 );
+    var_6 = randomint( self getanimentrycount( var_2 ) );
+    var_7 = self getanimentry( var_2, var_6 );
     var_8 = getanimlength( var_7 );
     var_9 = getnotetracktimes( var_7, "hit_left" );
     var_10 = getnotetracktimes( var_7, "hit_right" );
@@ -691,16 +691,16 @@ bossozstage2doattack( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_12 = getfirsthittime( var_8, var_5, var_9, undefined );
     var_12 = getfirsthittime( var_8, var_5, var_10, var_12 );
     var_12 = getfirsthittime( var_8, var_5, var_11, var_12 );
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
 
     if ( var_4 == "enemy" )
-        self _meth_8396( "face enemy" );
+        self scragentsetorientmode( "face enemy" );
     else if ( var_4 == "angle abs enemy" )
-        self _meth_8396( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
     else if ( var_4 == "angle abs self" )
-        self _meth_8396( "face angle abs", ( 0, self.angles[1], 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, self.angles[1], 0 ) );
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_2, var_6, var_5 );
     thread bossozstage2meleecomplete( var_2, var_8 );
     var_13 = undefined;
@@ -710,13 +710,13 @@ bossozstage2doattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     if ( var_3 )
     {
-        self _meth_8395( 0, 1 );
-        self _meth_839F( self.origin, var_1, var_12 );
+        self scragentsetanimscale( 0, 1 );
+        self scragentdoanimlerp( self.origin, var_1, var_12 );
         childthread maps\mp\agents\humanoid\_humanoid_melee::updatelerppos( var_0, var_12, 1, var_13 );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoAttack" );
     }
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
     if ( var_11.size > 0 )
         childthread empblast( var_12 );
@@ -728,8 +728,8 @@ bossozstage2doattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     wait(var_12);
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -741,8 +741,8 @@ bossozstage2doattack( var_0, var_1, var_2, var_3, var_4, var_5 )
         maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "attack_anim", "end", var_14 );
 
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -825,7 +825,7 @@ checkmeleesweeperhit( var_0, var_1 )
         if ( maps\mp\zombies\_util::isplayerinlaststand( var_6 ) )
             continue;
 
-        if ( _func_285( var_6, self ) )
+        if ( isalliedsentient( var_6, self ) )
             continue;
 
         checkmeleesweeperhittarget( var_6, var_2, var_3, var_4, self.meleedamage, var_1 );
@@ -862,7 +862,7 @@ checkmeleeheight( var_0, var_1 )
     var_2 = self.origin[2] + 105;
     var_3 = max( var_2, var_1 );
     var_4 = self.origin[2];
-    var_5 = var_0 _meth_80A8()[2];
+    var_5 = var_0 geteye()[2];
     var_6 = var_0.origin[2];
 
     if ( var_5 >= var_4 && var_5 <= var_3 )
@@ -1014,9 +1014,9 @@ onbossozstage2killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
 playersetcinematicunlockedcoopdatah2o()
 {
-    var_0 = self _meth_8554( "eggData" );
+    var_0 = self getcoopplayerdatareservedint( "eggData" );
     var_0 |= 256;
-    self _meth_8555( "eggData", var_0 );
+    self setcoopplayerdatareservedint( "eggData", var_0 );
 }
 
 bossozstage2dodeath()
@@ -1026,7 +1026,7 @@ bossozstage2dodeath()
     earthquake( randomfloatrange( 0.75, 1.25 ), 0.35, var_0.origin, 256 );
     var_0 playsound( "zmb_goliath_death_destruct" );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "zombie_eye_boss_oz_fade" ), var_0, "tag_eye" );
-    var_1 = self _meth_83D3();
+    var_1 = self getanimentry();
     var_2 = getanimlength( var_1 );
     var_3 = 1;
     var_4 = getnotetracktimes( var_1, "puke_start" );
@@ -1125,7 +1125,7 @@ recycleagent( var_0 )
 ragdollagent( var_0, var_1, var_2, var_3, var_4 )
 {
     var_0.ragdollimmediately = 1;
-    var_0 _meth_8051( var_0.health + 1000, var_0 _meth_80A8(), self, undefined, var_2, "bossOzStage2FriendlyFire", "none" );
+    var_0 dodamage( var_0.health + 1000, var_0 geteye(), self, undefined, var_2, "bossOzStage2FriendlyFire", "none" );
     var_5 = self.origin - var_1 + ( 0, 0, 8 );
     wait 0.1;
     var_6 = randomfloatrange( 3, 5 );
@@ -1188,7 +1188,7 @@ updateweaponready()
 
 missilestartlocation()
 {
-    return self _meth_80A8() + ( 0, 0, 45 );
+    return self geteye() + ( 0, 0, 45 );
 }
 
 firemissile( var_0 )
@@ -1196,9 +1196,9 @@ firemissile( var_0 )
     var_1 = 32;
     var_2 = missilestartlocation();
     var_3 = ( randomintrange( -1 * var_1, var_1 ), randomintrange( -1 * var_1, var_1 ), randomintrange( -1 * var_1, var_1 ) );
-    var_4 = var_0 _meth_80A8() + var_3;
+    var_4 = var_0 geteye() + var_3;
     var_5 = magicbullet( "boss_oz_rocket_mp", var_2, var_4, self );
-    var_5 _meth_81D9( var_0, ( 0, 0, 32 ) );
+    var_5 missile_settargetent( var_0, ( 0, 0, 32 ) );
     var_5.owner = self;
     var_5 thread empmissile();
 }
@@ -1223,7 +1223,7 @@ empmissile()
         if ( maps\mp\zombies\_util::isplayerinlaststand( var_3 ) )
             continue;
 
-        if ( _func_285( var_3, self.owner ) )
+        if ( isalliedsentient( var_3, self.owner ) )
             continue;
 
         if ( isdefined( var_3.exosuitonline ) && var_3.exosuitonline )
@@ -1332,10 +1332,10 @@ evaluate_threat_valid_threat( var_0 )
     if ( isdefined( var_0.ignoreme ) && var_0.ignoreme == 1 )
         return -1;
 
-    if ( var_0 _meth_8546() )
+    if ( var_0 isnotarget() )
         return -1;
 
-    if ( _func_285( var_0, self ) )
+    if ( isalliedsentient( var_0, self ) )
         return -1;
 
     if ( maps\mp\zombies\_util::shouldignoreent( var_0 ) )
@@ -1362,7 +1362,7 @@ evaluate_threat_los( var_0 )
 
 trace_to_enemy( var_0, var_1, var_2 )
 {
-    var_3 = bullettrace( var_0, var_1 _meth_80A8(), 0, undefined, 0, 0, 0, 0, 0 );
+    var_3 = bullettrace( var_0, var_1 geteye(), 0, undefined, 0, 0, 0, 0, 0 );
     return var_3["fraction"] == 1;
 }
 
@@ -1442,7 +1442,7 @@ bossozstage2curestationactivated( var_0, var_1 )
         return;
 
     self.lastcurestationstun = gettime();
-    self _meth_839D( 1 );
+    self scragentsetscripted( 1 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoStopHitReaction" );
     self.inpain = 1;
     self.incurestationstun = 1;
@@ -1450,8 +1450,8 @@ bossozstage2curestationactivated( var_0, var_1 )
     self playsound( "zmb_gol_round_start_front" );
     self.disablemissile = 1;
     self.ignoreall = 1;
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", self.angles );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( "stun_enter", 0, 1.0, "scripted_anim" );
 
     if ( !maps\mp\zombies\_util::is_true( self.godmode ) )
@@ -1466,7 +1466,7 @@ bossozstage2curestationactivated( var_0, var_1 )
     self.incurestationstun = undefined;
     setomnvar( "ui_zm_fight_shield", 1 );
     bossozstage2enableai();
-    self _meth_839D( 0 );
+    self scragentsetscripted( 0 );
 }
 
 bossozstage2waituntiloutofcurestationstun()
@@ -1491,7 +1491,7 @@ bossozstage2getleaptarget()
 
     if ( isplayer( self.curmeleetarget ) )
     {
-        if ( !self.curmeleetarget _meth_8341() || self.curmeleetarget _meth_8558() )
+        if ( !self.curmeleetarget isonground() || self.curmeleetarget isnoclip() )
             var_0.valid = 0;
     }
 
@@ -1566,7 +1566,7 @@ bossozstage2startinvalidationtrap( var_0, var_1, var_2 )
 
         if ( isdefined( level.ammocrate ) )
         {
-            if ( _func_22A( level.ammocrate.origin + ( 0, 0, 35 ), var_6 ) )
+            if ( ispointinvolume( level.ammocrate.origin + ( 0, 0, 35 ), var_6 ) )
                 level.ammocrate delete();
         }
     }

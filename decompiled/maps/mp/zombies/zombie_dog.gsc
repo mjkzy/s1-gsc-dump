@@ -135,7 +135,7 @@ calculatedoghealth()
 
 spawn_zombie_dog( var_0, var_1, var_2 )
 {
-    self _meth_80B1( "tag_origin" );
+    self setmodel( "tag_origin" );
     self.species = "dog";
     self.onenteranimstate = maps\mp\agents\_scripted_agent_anim_util::onenteranimstate;
 
@@ -155,19 +155,19 @@ spawn_zombie_dog( var_0, var_1, var_2 )
     self.spawntime = gettime();
     self.lastspawntime = gettime();
     maps\mp\agents\dog\_zombie_dog_think::init();
-    self _meth_838A( var_3, var_4, self.animclass, self.radius, self.height, var_2 );
+    self spawnagent( var_3, var_4, self.animclass, self.radius, self.height, var_2 );
     level notify( "spawned_agent", self );
     maps\mp\agents\_agent_common::set_agent_health( 100 );
 
     if ( isdefined( var_2 ) )
         maps\mp\agents\_agent_utility::set_agent_team( var_2.team, var_2 );
 
-    self _meth_8177( "Dogs" );
-    self _meth_8310();
-    self _meth_853E( 1 );
-    self _meth_8545( 1 );
-    self _meth_8542( 1 );
-    self _meth_8543( 0 );
-    self _meth_8541( 0 );
+    self setthreatbiasgroup( "Dogs" );
+    self takeallweapons();
+    self scragentsetnopenetrate( 1 );
+    self scragentsetpathteamspread( 1 );
+    self scragentsetallowragdoll( 1 );
+    self scragentsetobstacleavoid( 0 );
+    self scragentsetorienttoground( 0 );
     self thread [[ maps\mp\agents\_agent_utility::agentfunc( "think" ) ]]();
 }

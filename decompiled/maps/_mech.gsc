@@ -19,8 +19,8 @@ main()
     if ( !getdvarint( "r_reflectionProbeGenerate" ) )
         maps\_mech_aud::main();
 
-    precacheitem( "mech_rocket" );
-    precacheitem( "mech_rocket_deploy" );
+    precacheshellshock( "mech_rocket" );
+    precacheshellshock( "mech_rocket_deploy" );
     precachemodel( "npc_exo_armor_minigun_whole" );
     precachemodel( "npc_exo_armor_minigun_barrel" );
     precachemodel( "npc_exo_armor_minigun_handle" );
@@ -55,14 +55,14 @@ subclass_mech()
     {
         self attach( "npc_exo_armor_minigun_barrel", "TAG_BARREL" );
         self attach( "npc_exo_armor_minigun_handle", "TAG_HANDLE" );
-        self _meth_814B( %s1_mechgun, 1, 1, 1 );
+        self setanim( %s1_mechgun, 1, 1, 1 );
     }
 
     if ( animscripts\utility::aihasweapon( "exo_minigun_scaled" ) )
     {
         self attach( "npc_exo_armor_minigun_barrel", "TAG_BARREL" );
         self attach( "npc_exo_armor_minigun_handle", "TAG_HANDLE" );
-        self _meth_814B( %s1_mechgun, 1, 1, 1 );
+        self setanim( %s1_mechgun, 1, 1, 1 );
     }
 
     level.scr_anim["generic"]["patrol_idle_mech"] = %mech_unaware_idle;
@@ -70,7 +70,7 @@ subclass_mech()
     level.scr_anim["generic"]["patrol_stop_mech"] = %mech_unaware_walk_stop;
     level.scr_anim["generic"]["patrol_start_mech"] = %mech_unaware_walk_start;
     level.scr_anim["generic"]["patrol_walk_weights"] = %mech_unaware_walk;
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     self.maxhealth = self.health;
     self.minpaindamage = 100;
     self.walkdist = 500;
@@ -95,7 +95,7 @@ subclass_mech()
     self.disablereactionanims = 1;
     self.dontmelee = 1;
     self.meleechargedistsq = 9216;
-    self _meth_84E3();
+    self actorusemodelcollisionbounds();
     self.standingturnrate = 0.2;
     self.walkingturnrate = 0.07;
     self.runingturnrate = 0.5;
@@ -117,7 +117,7 @@ subclass_mech()
         self.repulsornumber = 3;
 
     self.largesparkdistance = 600;
-    self _meth_84FB( 0 );
+    self setstompbreakthrough( 0 );
     self.scriptedarrivalententity = common_scripts\utility::spawn_tag_origin();
     self.scriptedarrivalententity.type = "scripted_arrival_ent";
     self.scriptedarrivalententity.arrivalstance = "stand";
@@ -142,7 +142,7 @@ subclass_mech()
     if ( isdefined( level.mech_grapple_setup_function ) )
         [[ level.mech_grapple_setup_function ]]( self );
 
-    if ( !self _meth_813D() )
+    if ( !self isbadguy() )
         return;
 
     self.bullet_resistance = 40;
@@ -192,7 +192,7 @@ subclass_mech()
 
 mech_set_goal_node( var_0 )
 {
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self.scriptedarrivalententity.origin = var_0.origin;
     self.scriptedarrivalententity.angles = var_0.angles;
     self.scriptedarrivalent = self.scriptedarrivalententity;
@@ -214,10 +214,10 @@ process_melee_notetracks()
         {
             if ( isdefined( self.enemy ) )
             {
-                var_1 = self _meth_81E9();
+                var_1 = self melee();
 
                 if ( isai( var_1 ) )
-                    var_1 _meth_8051( 999999999, self.origin, self, self, "MOD_MELEE" );
+                    var_1 dodamage( 999999999, self.origin, self, self, "MOD_MELEE" );
             }
 
             continue;
@@ -232,29 +232,29 @@ process_melee_notetracks()
 
 mech_do_melee()
 {
-    self _meth_818E( "zonly_physics" );
+    self animmode( "zonly_physics" );
     var_0 = vectortoyaw( self.enemy.origin - self.origin );
     var_1 = angleclamp180( self.angles[1] - var_0 );
 
     if ( var_1 < -90 )
     {
         var_2 = self.origin + self.origin - self.enemy.origin;
-        self _meth_818F( "face point", var_2 );
+        self orientmode( "face point", var_2 );
         var_3 = %mech_stand_melee_left;
     }
     else if ( var_1 > 90 )
     {
         var_2 = self.origin + self.origin - self.enemy.origin;
-        self _meth_818F( "face point", var_2 );
+        self orientmode( "face point", var_2 );
         var_3 = %mech_stand_melee_right;
     }
     else
     {
-        self _meth_818F( "face point", self.enemy.origin );
+        self orientmode( "face point", self.enemy.origin );
         var_3 = %mech_stand_melee_front;
     }
 
-    self _meth_8110( "meleeAnim", var_3, %body, 1, 0.5, 1 );
+    self setflaggedanimknoballrestart( "meleeAnim", var_3, %body, 1, 0.5, 1 );
     var_4 = getanimlength( var_3 );
     thread process_melee_notetracks();
     thread kill_clipping_enemy();
@@ -270,7 +270,7 @@ kill_clipping_enemy()
     for (;;)
     {
         if ( isdefined( self.enemy ) && distance( self.origin, self.enemy.origin ) < 32 && !isplayer( self.enemy ) )
-            self.enemy _meth_8051( 999999999, self.origin, self, self, "MOD_MELEE" );
+            self.enemy dodamage( 999999999, self.origin, self, self, "MOD_MELEE" );
 
         waitframe();
     }
@@ -278,14 +278,14 @@ kill_clipping_enemy()
 
 mech_melee_endscript()
 {
-    self _meth_818E( "none" );
-    self _meth_8142( %body, 0.2 );
+    self animmode( "none" );
+    self clearanim( %body, 0.2 );
     self.a.movement = "stop";
-    self _meth_818F( "face default" );
-    var_0 = self _meth_813C();
+    self orientmode( "face default" );
+    var_0 = self getdroptofloorposition();
 
     if ( isdefined( var_0 ) )
-        self _meth_81C6( var_0, self.angles );
+        self forceteleport( var_0, self.angles );
     else
     {
 
@@ -298,8 +298,8 @@ mech_death_function()
 {
     if ( isdefined( self ) && isdefined( self.mech ) && self.mech )
     {
-        self _meth_8048( "TAG_BARREL", "npc_exo_armor_minigun_barrel" );
-        self _meth_8048( "TAG_HANDLE", "npc_exo_armor_minigun_handle" );
+        self hidepart( "TAG_BARREL", "npc_exo_armor_minigun_barrel" );
+        self hidepart( "TAG_HANDLE", "npc_exo_armor_minigun_handle" );
         self detach( "npc_exo_armor_minigun_barrel", "TAG_BARREL" );
         self detach( "npc_exo_armor_minigun_handle", "TAG_HANDLE" );
     }
@@ -392,12 +392,12 @@ mech_turn_loop()
 
     for (;;)
     {
-        if ( !_func_294( self ) && isdefined( self ) )
+        if ( !isremovedentity( self ) && isdefined( self ) )
         {
             if ( isdefined( self.script ) && self.script == "death" || !isalive( self ) )
             {
-                self _meth_814B( %idle_combat, 0, 1, 1, 1 );
-                self _meth_814C( %mech_combat_idle, 0, 0.2, 1 );
+                self setanim( %idle_combat, 0, 1, 1, 1 );
+                self setanimlimited( %mech_combat_idle, 0, 0.2, 1 );
                 break;
             }
         }
@@ -447,13 +447,13 @@ mech_turn_loop()
         {
             if ( self.movemode == "stop" && animscripts\utility::isincombat() && self.script != "scripted" )
             {
-                self _meth_814B( %idle_combat, 1, 1, 1, 1 );
-                self _meth_814C( %mech_combat_idle, 0.5, 0.2, 1 );
+                self setanim( %idle_combat, 1, 1, 1, 1 );
+                self setanimlimited( %mech_combat_idle, 0.5, 0.2, 1 );
             }
             else
             {
-                self _meth_814B( %idle_combat, 0, 1, 1, 1 );
-                self _meth_814C( %mech_combat_idle, 0, 0.2, 1 );
+                self setanim( %idle_combat, 0, 1, 1, 1 );
+                self setanimlimited( %mech_combat_idle, 0, 0.2, 1 );
             }
 
             var_2 = animscripts\utility::isincombat();
@@ -471,7 +471,7 @@ mech_wait_for_drop()
 
     if ( isdefined( var_0 ) && var_0.classname == "weapon_exo_minigun" )
     {
-        var_0 _meth_80B1( "npc_exo_armor_minigun_whole" );
+        var_0 setmodel( "npc_exo_armor_minigun_whole" );
         var_0 makeunusable();
     }
 }
@@ -503,7 +503,7 @@ mech_vfx_loop()
     {
         if ( self.health < self.maxhealth / 2 )
         {
-            if ( self _meth_8442( "tag_vfx_chest_light" ) != -1 )
+            if ( self gettagindex( "tag_vfx_chest_light" ) != -1 )
             {
 
             }
@@ -522,7 +522,7 @@ mech_vfx_loop()
     {
         if ( self.health < self.maxhealth / 4 )
         {
-            if ( self _meth_8442( "tag_vfx_chest_light" ) != -1 )
+            if ( self gettagindex( "tag_vfx_chest_light" ) != -1 )
             {
 
             }
@@ -583,7 +583,7 @@ mech_badplace_behavior()
     var_0 = 1.0;
     var_1 = 240;
     var_2 = 120;
-    var_3 = "mech_bad_place" + self _meth_81B1();
+    var_3 = "mech_bad_place" + self getentitynumber();
 
     for (;;)
     {
@@ -647,7 +647,7 @@ mech_melee_is_valid()
 
     if ( isai( self.enemy ) )
     {
-        if ( self.enemy _meth_819B() )
+        if ( self.enemy isinscriptedstate() )
             return 0;
 
         if ( self.enemy maps\_utility::doinglongdeath() || self.enemy.delayeddeath )
@@ -693,7 +693,7 @@ mech_melee_behavior()
     {
         if ( mech_melee_is_valid() )
         {
-            self _meth_819A( ::mech_do_melee, ::mech_melee_endscript );
+            self animcustom( ::mech_do_melee, ::mech_melee_endscript );
             self waittill( "melee_complete" );
         }
 
@@ -734,7 +734,7 @@ mech_rocket_launcher_behavior( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     for (;;)
     {
-        if ( !isdefined( self.enemy ) || !self _meth_81BD() )
+        if ( !isdefined( self.enemy ) || !self canshootenemy() )
         {
             wait(var_7);
             continue;
@@ -752,7 +752,7 @@ mech_rocket_launcher_behavior( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
             self.mechrocketdebug = 0;
 
         var_10 = self gettagorigin( "tag_eye" );
-        var_11 = self.enemy _meth_8097() - var_10;
+        var_11 = self.enemy getshootatpos() - var_10;
         var_12 = vectornormalize( anglestoforward( self gettagangles( "tag_eye" ) ) );
         var_13 = vectornormalize( var_11 );
         var_14 = vectordot( var_12, var_13 );
@@ -771,7 +771,7 @@ mech_rocket_launcher_behavior( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
         if ( isdefined( self.team ) && self.team == "allies" )
         {
-            var_16 = pointonsegmentnearesttopoint( self.enemy _meth_8097(), var_10, level.player.origin );
+            var_16 = pointonsegmentnearesttopoint( self.enemy getshootatpos(), var_10, level.player.origin );
 
             if ( distance( level.player.origin, var_16 ) < var_6 )
             {
@@ -1005,9 +1005,9 @@ mech_rocket_projectile_think( var_0, var_1, var_2 )
     if ( isdefined( self ) )
     {
         if ( isdefined( var_0 ) )
-            self _meth_81D9( var_0, ( 0, 0, 32 ) );
+            self missile_settargetent( var_0, ( 0, 0, 32 ) );
         else
-            self _meth_81DA( var_1 );
+            self missile_settargetpos( var_1 );
 
         self hide();
         var_3 = randomintrange( 0, 3 );
@@ -1027,7 +1027,7 @@ mech_raise_rocket_pod( var_0 )
 {
     var_1 = 0.2;
     var_2 = %mech_add_rocketpack_raise;
-    self _meth_8145( var_2, 1, var_1 );
+    self setanimknobrestart( var_2, 1, var_1 );
     soundscripts\_snd::snd_message( "snd_mech_add_rocketpack_raise" );
 
     if ( isdefined( var_0 ) && var_0 )
@@ -1040,7 +1040,7 @@ mech_lower_rocket_pod( var_0 )
 {
     var_1 = 0.2;
     var_2 = %mech_add_rocketpack_lower;
-    self _meth_8145( var_2, 1, var_1 );
+    self setanimknobrestart( var_2, 1, var_1 );
     soundscripts\_snd::snd_message( "snd_mech_add_rocketpack_lower" );
 
     if ( isdefined( var_0 ) && var_0 )
@@ -1074,8 +1074,8 @@ mech_target_attacker( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     {
         self.usechokepoints = 0;
 
-        if ( isdefined( var_1 ) && self _meth_81BE( var_1 ) )
-            self _meth_81A6( var_1.origin );
+        if ( isdefined( var_1 ) && self cansee( var_1 ) )
+            self setgoalpos( var_1.origin );
     }
 }
 
@@ -1103,7 +1103,7 @@ mech_hunt_stealth_behavior()
 
         if ( isdefined( self.enemy ) )
         {
-            self _meth_81A6( self _meth_81C1( self.enemy ) );
+            self setgoalpos( self lastknownpos( self.enemy ) );
             self.goalradius = 400;
             self.goalheight = 81;
         }
@@ -1127,7 +1127,7 @@ mech_hunt_immediately_behavior()
 
         if ( isdefined( self.enemy ) )
         {
-            self _meth_81A6( self.enemy.origin );
+            self setgoalpos( self.enemy.origin );
             self.goalradius = 200;
             self.goalheight = 81;
         }
@@ -1169,13 +1169,13 @@ empanim( var_0 )
     maps\_utility::disable_pain();
     var_2 = getanimlength( %mech_emp_react );
     wait(var_2);
-    self _meth_8143( %mech_emp_idle, 1, 0.2, 1 );
+    self setanimknob( %mech_emp_idle, 1, 0.2, 1 );
     var_3 = getanimlength( %mech_emp_restart );
     wait(var_0 - var_3 + var_2);
 
     if ( common_scripts\utility::isflashed() )
     {
-        self _meth_8143( %mech_emp_restart, 1, 1, 1 );
+        self setanimknob( %mech_emp_restart, 1, 1, 1 );
         soundscripts\_snd::snd_message( "snd_mech_emp_restart" );
     }
 

@@ -12,15 +12,15 @@ stock_think()
     {
         if ( !self.has_stock )
         {
-            if ( self _meth_82A7( "specialty_stalker", 1 ) )
-                self _meth_82A9( "specialty_stalker", 1 );
+            if ( self hasperk( "specialty_stalker", 1 ) )
+                self unsetperk( "specialty_stalker", 1 );
 
             wait 0.05;
             continue;
         }
 
-        if ( !self _meth_82A7( "specialty_stalker", 1 ) )
-            self _meth_82A6( "specialty_stalker", 1, 0 );
+        if ( !self hasperk( "specialty_stalker", 1 ) )
+            self setperk( "specialty_stalker", 1, 0 );
 
         wait 0.05;
     }

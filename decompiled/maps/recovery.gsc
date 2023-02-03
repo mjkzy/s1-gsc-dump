@@ -29,7 +29,7 @@ main()
     level.player maps\_tagging::tagging_set_enabled( 0 );
 
     if ( level.nextgen )
-        _func_0D3( "r_adaptiveSubdiv", "0" );
+        setsaveddvar( "r_adaptiveSubdiv", "0" );
 
     level.player maps\_stealth_utility::stealth_plugin_basic();
     set_completed_flags();
@@ -65,16 +65,16 @@ main()
 
 setup_button_notifies()
 {
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "a_pressed", "+gostand" );
-    level.player _meth_82DD( "b_pressed", "+stance" );
-    level.player _meth_82DD( "y_pressed", "weapnext" );
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "attack_pressed", "+attack" );
-    level.player _meth_82DD( "ads_pressed", "+speed_throw" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "b_pressed", "+stance" );
+    level.player notifyonplayercommand( "y_pressed", "weapnext" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "attack_pressed", "+attack" );
+    level.player notifyonplayercommand( "ads_pressed", "+speed_throw" );
 }
 
 stop_hint()
@@ -521,7 +521,7 @@ tff_ally_check( var_0, var_1, var_2 )
 
 tff_trans_ally_check_touching( var_0 )
 {
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.05;
 
     level.tff_trans_ally_check_count--;
@@ -530,19 +530,19 @@ tff_trans_ally_check_touching( var_0 )
 
 setup_tff_transitions()
 {
-    if ( !_func_21E( "recovery_tour_ride_tr" ) )
+    if ( !istransientloaded( "recovery_tour_ride_tr" ) )
         thread tff_trans_training_to_tour_ride();
 
-    if ( !_func_21E( "recovery_tour_exo_tr" ) )
+    if ( !istransientloaded( "recovery_tour_exo_tr" ) )
         thread tff_trans_tour_ride_to_tour_exo();
 
-    if ( !_func_21E( "recovery_tour_firing_range_tr" ) )
+    if ( !istransientloaded( "recovery_tour_firing_range_tr" ) )
         thread tff_trans_tour_exo_to_tour_firing_range();
 
-    if ( !_func_21E( "recovery_tour_augmented_reality_tr" ) )
+    if ( !istransientloaded( "recovery_tour_augmented_reality_tr" ) )
         thread tff_trans_tour_firing_range_to_tour_augmented_reality();
 
-    if ( !_func_21E( "recovery_training_tr" ) || level.start_point == "training_begin" || level.start_point == "training_lodge_begin" || level.start_point == "training_lodge_exit" || level.start_point == "training_golf_course" || level.start_point == "training_end" )
+    if ( !istransientloaded( "recovery_training_tr" ) || level.start_point == "training_begin" || level.start_point == "training_lodge_begin" || level.start_point == "training_lodge_exit" || level.start_point == "training_golf_course" || level.start_point == "training_end" )
         thread tff_trans_tour_augmented_reality_to_training();
 }
 
@@ -550,15 +550,15 @@ tff_trans_training_to_tour_ride()
 {
     common_scripts\utility::flag_wait( "training_s1_end_anim_started" );
     level notify( "tff_pre_training_to_tour_ride" );
-    _func_219( "recovery_training_tr" );
-    _func_218( "recovery_base_tr" );
+    unloadtransient( "recovery_training_tr" );
+    loadtransient( "recovery_base_tr" );
 
-    while ( !_func_21E( "recovery_base_tr" ) )
+    while ( !istransientloaded( "recovery_base_tr" ) )
         wait 0.05;
 
-    _func_218( "recovery_tour_ride_tr" );
+    loadtransient( "recovery_tour_ride_tr" );
 
-    while ( !_func_21E( "recovery_tour_ride_tr" ) )
+    while ( !istransientloaded( "recovery_tour_ride_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_training_to_tour_ride" );
@@ -569,10 +569,10 @@ tff_trans_tour_ride_to_tour_exo()
     common_scripts\utility::flag_wait( "flag_tff_trans_tour_ride_to_tour_exo" );
     common_scripts\utility::flag_set( "tff_tour_ride_over" );
     level notify( "tff_pre_tour_ride_to_tour_exo" );
-    _func_219( "recovery_tour_ride_tr" );
-    _func_218( "recovery_tour_exo_tr" );
+    unloadtransient( "recovery_tour_ride_tr" );
+    loadtransient( "recovery_tour_exo_tr" );
 
-    while ( !_func_21E( "recovery_tour_exo_tr" ) )
+    while ( !istransientloaded( "recovery_tour_exo_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_tour_ride_to_tour_exo" );
@@ -589,13 +589,13 @@ tff_trans_tour_exo_to_tour_firing_range()
     var_2 = common_scripts\utility::getstruct( "tour_glass_door_02_closed", "targetname" );
     var_3 = 0.6;
     soundscripts\_snd::snd_message( "rec_star_trek_door_close", var_0, var_1 );
-    var_0 _meth_82AE( var_2.origin, var_3, 0.2, 0.2 );
-    var_1 _meth_82AE( var_2.origin, var_3, 0.2, 0.2 );
+    var_0 moveto( var_2.origin, var_3, 0.2, 0.2 );
+    var_1 moveto( var_2.origin, var_3, 0.2, 0.2 );
     wait(var_3);
-    _func_219( "recovery_tour_exo_tr" );
-    _func_218( "recovery_tour_firing_range_tr" );
+    unloadtransient( "recovery_tour_exo_tr" );
+    loadtransient( "recovery_tour_firing_range_tr" );
 
-    while ( !_func_21E( "recovery_tour_firing_range_tr" ) )
+    while ( !istransientloaded( "recovery_tour_firing_range_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_tour_exo_to_tour_firing_range" );
@@ -612,13 +612,13 @@ tff_trans_tour_firing_range_to_tour_augmented_reality()
     var_2 = common_scripts\utility::getstruct( "tour_glass_door_04_closed", "targetname" );
     var_3 = 0.6;
     soundscripts\_snd::snd_message( "rec_star_trek_door_close", var_0, var_1 );
-    var_0 _meth_82AE( var_2.origin, var_3, 0.2, 0.2 );
-    var_1 _meth_82AE( var_2.origin, var_3, 0.2, 0.2 );
+    var_0 moveto( var_2.origin, var_3, 0.2, 0.2 );
+    var_1 moveto( var_2.origin, var_3, 0.2, 0.2 );
     wait(var_3);
-    _func_219( "recovery_tour_firing_range_tr" );
-    _func_218( "recovery_tour_augmented_reality_tr" );
+    unloadtransient( "recovery_tour_firing_range_tr" );
+    loadtransient( "recovery_tour_augmented_reality_tr" );
 
-    while ( !_func_21E( "recovery_tour_augmented_reality_tr" ) )
+    while ( !istransientloaded( "recovery_tour_augmented_reality_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_tour_firing_range_to_tour_aug_reality" );
@@ -628,18 +628,18 @@ tff_trans_tour_augmented_reality_to_training()
 {
     common_scripts\utility::flag_wait( "elevator_room_interior" );
 
-    if ( _func_21E( "recovery_tour_augmented_reality_tr" ) )
+    if ( istransientloaded( "recovery_tour_augmented_reality_tr" ) )
     {
         level notify( "tff_pre_tour_aug_reality_to_training" );
-        _func_219( "recovery_tour_augmented_reality_tr" );
+        unloadtransient( "recovery_tour_augmented_reality_tr" );
     }
 
     common_scripts\utility::flag_waitopen( "tour_glass_door_05" );
     wait 2.0;
-    _func_219( "recovery_base_tr" );
-    _func_218( "recovery_training_tr" );
+    unloadtransient( "recovery_base_tr" );
+    loadtransient( "recovery_training_tr" );
 
-    while ( !_func_21E( "recovery_training_tr" ) )
+    while ( !istransientloaded( "recovery_training_tr" ) )
         wait 0.05;
 
     level notify( "tff_post_tour_aug_reality_to_training" );
@@ -661,7 +661,7 @@ tff_cleanup_tour_ride_ambient_vehicles()
         {
             if ( !isspawner( var_2 ) )
             {
-                var_2 _meth_8255();
+                var_2 freevehicle();
                 var_2 delete();
             }
         }
@@ -1067,7 +1067,7 @@ obj_rescue_2()
     common_scripts\utility::flag_wait( "flag_obj_rescue2_breach" );
     var_4 = getent( "training_s2_breach_trigger", "targetname" );
     var_5 = getent( "training_s2_breach_trigger_use", "targetname" );
-    var_5 _meth_80DB( &"RECOVERY_PROMPT_BREACH" );
+    var_5 sethintstring( &"RECOVERY_PROMPT_BREACH" );
     objective_position( maps\_utility::obj( "Rescue2" ), var_4.origin );
     objective_setpointertextoverride( maps\_utility::obj( "Rescue2" ), &"RECOVERY_BREACH" );
     common_scripts\utility::flag_wait( "flag_obj_rescue2_breach_clear" );
@@ -1114,7 +1114,7 @@ obj_rescue_2()
 
 funeral()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     thread maps\_shg_utility::play_chyron_video( "chyron_text_recovery", 2, 2 );
     common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -1376,24 +1376,24 @@ setup_precache()
     precacherumble( "steady_rumble" );
     precacherumble( "steady_h" );
     precacherumble( "steady_l" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_silencerpistol" );
-    precacheitem( "iw5_titan45_sp_opticstargetenhancer" );
-    precacheitem( "iw5_m990_sp_m990scope" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_opticstargetenhancer" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_bal27_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp_opticsthermal" );
-    precacheitem( "iw5_himar_sp" );
-    precacheitem( "iw5_m182spr_sp" );
-    precacheitem( "iw5_ak12_sp" );
-    precacheitem( "iw5_gm6_sp" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "iw5_unarmed_nullattach" );
-    precacheitem( "smoke_grenade_cheap" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_silencerpistol" );
+    precacheshellshock( "iw5_titan45_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_m990_sp_m990scope" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp_opticsthermal" );
+    precacheshellshock( "iw5_himar_sp" );
+    precacheshellshock( "iw5_m182spr_sp" );
+    precacheshellshock( "iw5_ak12_sp" );
+    precacheshellshock( "iw5_gm6_sp" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_unarmed_nullattach" );
+    precacheshellshock( "smoke_grenade_cheap" );
     precachemodel( "genericprop" );
     precachemodel( "worldhands_atlas_pmc_smp" );
     precachemodel( "head_hero_gideon_mask_down" );
@@ -1503,7 +1503,7 @@ setup_allies( var_0 )
             level.ally_squad_member_3 thread training_s1_allies_setup( "lodge_breach_squad_3_start_point", "training_s1_end" );
             level.ally_squad_member_4 thread training_s1_allies_setup( "lodge_breach_squad_4_start_point", "training_s1_end" );
             level.ally_squad_member_3 maps\_utility::stop_magic_bullet_shield();
-            level.ally_squad_member_3 _meth_8052();
+            level.ally_squad_member_3 kill();
             level.ally_squad_member_2.animname = "rivers";
             maps\_utility::activate_trigger( "training_s1_color_trigger_breach", "targetname" );
             maps\recovery_utility::training_s1_squad_allow_run();
@@ -1521,7 +1521,7 @@ setup_allies( var_0 )
             level.ally_squad_member_3 thread training_s1_allies_setup( "lodge_breach_squad_3_start_point", "training_s1_end" );
             level.ally_squad_member_4 thread training_s1_allies_setup( "lodge_exit_squad_4_start_point", "training_s1_end" );
             level.ally_squad_member_3 maps\_utility::stop_magic_bullet_shield();
-            level.ally_squad_member_3 _meth_8052();
+            level.ally_squad_member_3 kill();
             level.ally_squad_member_2.animname = "rivers";
             wait 1;
             maps\recovery_utility::training_s1_squad_allow_run();
@@ -1542,9 +1542,9 @@ setup_allies( var_0 )
             level.ally_squad_member_1 maps\_utility::stop_magic_bullet_shield();
             level.ally_squad_member_3 maps\_utility::stop_magic_bullet_shield();
             level.ally_squad_member_4 maps\_utility::stop_magic_bullet_shield();
-            level.ally_squad_member_1 _meth_8052();
-            level.ally_squad_member_3 _meth_8052();
-            level.ally_squad_member_4 _meth_8052();
+            level.ally_squad_member_1 kill();
+            level.ally_squad_member_3 kill();
+            level.ally_squad_member_4 kill();
             level.ally_squad_member_2.animname = "rivers";
             wait 1;
             thread maps\recovery_utility::training_s1_squad_allow_run();
@@ -1565,9 +1565,9 @@ setup_allies( var_0 )
             level.ally_squad_member_1 maps\_utility::stop_magic_bullet_shield();
             level.ally_squad_member_3 maps\_utility::stop_magic_bullet_shield();
             level.ally_squad_member_4 maps\_utility::stop_magic_bullet_shield();
-            level.ally_squad_member_1 _meth_8052();
-            level.ally_squad_member_3 _meth_8052();
-            level.ally_squad_member_4 _meth_8052();
+            level.ally_squad_member_1 kill();
+            level.ally_squad_member_3 kill();
+            level.ally_squad_member_4 kill();
             level.ally_squad_member_2.animname = "rivers";
             wait 1;
             thread maps\recovery_utility::training_s1_squad_allow_run();
@@ -1578,7 +1578,7 @@ setup_allies( var_0 )
         {
             maps\_shg_utility::spawn_friendlies( var_0, "gideon", 0 );
             var_6 = common_scripts\utility::getstruct( var_0, "targetname" );
-            level.gideon _meth_81C5( var_6.origin + anglestoforward( var_6.angles ) * 200, var_6.angles );
+            level.gideon teleport( var_6.origin + anglestoforward( var_6.angles ) * 200, var_6.angles );
             level.gideon maps\_utility::gun_remove();
         }
 
@@ -1674,29 +1674,29 @@ setup_allies( var_0 )
 
 set_up_player_s1()
 {
-    level.player _meth_830E( "iw5_bal27_sp_silencer01_variablereddot" );
-    level.player _meth_830E( "iw5_titan45_sp_silencerpistol" );
+    level.player giveweapon( "iw5_bal27_sp_silencer01_variablereddot" );
+    level.player giveweapon( "iw5_titan45_sp_silencerpistol" );
     maps\_variable_grenade::give_player_variable_grenade();
     maps\_variable_grenade::set_variable_grenades_with_no_switch( "tracking_grenade_var", "paint_grenade_var" );
-    level.player _meth_8316( "iw5_bal27_sp_silencer01_variablereddot" );
+    level.player switchtoweaponimmediate( "iw5_bal27_sp_silencer01_variablereddot" );
 
     if ( level.nextgen )
-        level.player _meth_846F( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
     else
-        level.player _meth_846F( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
 
-    level.player _meth_831E();
-    level.player _meth_8131( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_8130( 1 );
+    level.player enableweapons();
+    level.player allowfire( 1 );
+    level.player allowads( 1 );
+    level.player allowmelee( 1 );
 }
 
 training_s1_allies_setup( var_0, var_1 )
 {
     self endon( "death" );
     var_2 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_2.origin, var_2.angles );
-    self _meth_81A6( self.origin );
+    self forceteleport( var_2.origin, var_2.angles );
+    self setgoalpos( self.origin );
     maps\_utility::forceuseweapon( "iw5_bal27_sp_silencer01_variablereddot", "primary" );
     maps\_utility::disable_surprise();
 
@@ -1715,8 +1715,8 @@ training_s1_allies_setup( var_0, var_1 )
 training_s2_allies_setup( var_0 )
 {
     var_1 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_1.origin, var_1.angles );
-    self _meth_81A6( self.origin );
+    self forceteleport( var_1.origin, var_1.angles );
+    self setgoalpos( self.origin );
     maps\_utility::disable_surprise();
 
     if ( !isdefined( level.allies_s2 ) )
@@ -1744,7 +1744,7 @@ set_up_president( var_0, var_1 )
     maps\_utility::clear_color_order( "y", "allies" );
     maps\_utility::set_force_color( "y" );
     var_2 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_2.origin, var_2.angles );
+    self forceteleport( var_2.origin, var_2.angles );
     common_scripts\utility::flag_wait( var_1 );
     maps\_utility::stop_magic_bullet_shield();
     self delete();
@@ -1770,35 +1770,35 @@ set_up_president_s2( var_0 )
     maps\_utility::clear_color_order( "y", "allies" );
     maps\_utility::set_force_color( "y" );
     var_1 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_1.origin, var_1.angles );
-    self _meth_81A6( self.origin );
+    self forceteleport( var_1.origin, var_1.angles );
+    self setgoalpos( self.origin );
 }
 
 set_up_player_gundown()
 {
-    level.player _meth_8310();
+    level.player takeallweapons();
     common_scripts\utility::flag_set( "flag_disable_exo" );
-    level.player _meth_8131( 0 );
-    level.player _meth_8300( 0 );
-    level.player _meth_8130( 0 );
+    level.player allowfire( 0 );
+    level.player allowads( 0 );
+    level.player allowmelee( 0 );
 }
 
 set_up_player_s2()
 {
-    level.player _meth_8310();
-    level.player _meth_830E( "iw5_titan45_sp" );
-    level.player _meth_830E( "iw5_bal27_sp_variablereddot" );
-    level.player _meth_8316( "iw5_bal27_sp_variablereddot" );
+    level.player takeallweapons();
+    level.player giveweapon( "iw5_titan45_sp" );
+    level.player giveweapon( "iw5_bal27_sp_variablereddot" );
+    level.player switchtoweaponimmediate( "iw5_bal27_sp_variablereddot" );
 
     if ( level.nextgen )
-        level.player _meth_846F( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
     else
-        level.player _meth_846F( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
 
-    level.player _meth_831E();
-    level.player _meth_8131( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_8130( 1 );
+    level.player enableweapons();
+    level.player allowfire( 1 );
+    level.player allowads( 1 );
+    level.player allowmelee( 1 );
     maps\_variable_grenade::give_player_variable_grenade();
 }
 
@@ -1822,11 +1822,11 @@ setup_gideon()
 gideon_outfit_manager()
 {
     level.gideon.outfit_initial = level.gideon.model;
-    level.gideon _meth_80B1( "kva_body_assault" );
+    level.gideon setmodel( "kva_body_assault" );
     common_scripts\utility::flag_wait( "arm_swapped" );
 
     if ( isdefined( level.gideon.outfit_initial ) )
-        level.gideon _meth_80B1( level.gideon.outfit_initial );
+        level.gideon setmodel( level.gideon.outfit_initial );
 }
 
 disable_gideon_jog_when_turning()
@@ -1854,7 +1854,7 @@ speed_up_gideon_when_u_cant_see_him()
 
     for (;;)
     {
-        if ( !isdefined( level.gideon ) || _func_294( level.gideon ) )
+        if ( !isdefined( level.gideon ) || isremovedentity( level.gideon ) )
         {
             iprintlnbold( "Warning : Gideon ent is removed or not defined!" );
             waitframe();
@@ -1864,8 +1864,8 @@ speed_up_gideon_when_u_cant_see_him()
         if ( !common_scripts\utility::flag( "gideon_jog_and_speedup" ) )
             common_scripts\utility::flag_wait( "gideon_jog_and_speedup" );
 
-        var_3 = level.player maps\_utility::player_looking_at( level.gideon _meth_80A8(), 0.6 );
-        var_4 = level.gideon _meth_80A8() - level.player _meth_80A8();
+        var_3 = level.player maps\_utility::player_looking_at( level.gideon geteye(), 0.6 );
+        var_4 = level.gideon geteye() - level.player geteye();
         var_5 = length( var_4 );
         var_6 = vectornormalize( level.gideon.goalpos - level.gideon.origin );
         var_7 = vectordot( var_6, vectornormalize( level.gideon.lookaheaddir ) );
@@ -1888,12 +1888,12 @@ speed_up_gideon_when_u_cant_see_him()
             else if ( var_5 > 500 )
                 var_9 = 1.5;
 
-            var_10 = level.gideon _meth_84F4();
+            var_10 = level.gideon getactiveanimations();
 
             foreach ( var_12 in var_10 )
             {
                 if ( var_12["animation"] == var_1 )
-                    level.gideon _meth_83C7( var_12["animation"], var_9 );
+                    level.gideon setanimrate( var_12["animation"], var_9 );
             }
         }
 
@@ -1916,8 +1916,8 @@ training_s1_startpoint_guy_think( var_0, var_1 )
 {
     self endon( "death" );
     var_2 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_2.origin, var_2.angles );
-    self _meth_81A6( self.origin );
+    self forceteleport( var_2.origin, var_2.angles );
+    self setgoalpos( self.origin );
     maps\_stealth_utility::stealth_plugin_basic();
     maps\_stealth_utility::stealth_plugin_accuracy();
     maps\_stealth_utility::stealth_plugin_smart_stance();
@@ -1933,8 +1933,8 @@ training_s1_startpoint_guy_think( var_0, var_1 )
 training_s2_startpoint_guy_think( var_0 )
 {
     var_1 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_1.origin, var_1.angles );
-    self _meth_81A6( self.origin );
+    self forceteleport( var_1.origin, var_1.angles );
+    self setgoalpos( self.origin );
     maps\_stealth_utility::stealth_plugin_basic();
     maps\_stealth_utility::stealth_plugin_accuracy();
     maps\_stealth_utility::stealth_plugin_smart_stance();
@@ -2000,6 +2000,6 @@ setup_portal_scripting()
 
 tv_movie2()
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_059( "business_card_master" );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingameloop( "business_card_master" );
 }

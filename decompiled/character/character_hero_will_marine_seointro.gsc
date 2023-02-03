@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "body_hero_will_marine_drop_pod" );
+    self setmodel( "body_hero_will_marine_drop_pod" );
     self attach( "head_hero_will_marines", "", 1 );
     self.headmodel = "head_hero_will_marines";
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

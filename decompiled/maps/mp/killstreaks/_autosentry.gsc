@@ -117,16 +117,16 @@ setcarryingsentry( var_0, var_1 )
 
     if ( !isai( self ) )
     {
-        self _meth_82DD( "place_sentry", "+attack" );
-        self _meth_82DD( "place_sentry", "+attack_akimbo_accessible" );
-        self _meth_82DD( "cancel_sentry", "+actionslot 4" );
+        self notifyonplayercommand( "place_sentry", "+attack" );
+        self notifyonplayercommand( "place_sentry", "+attack_akimbo_accessible" );
+        self notifyonplayercommand( "cancel_sentry", "+actionslot 4" );
 
         if ( !level.console )
         {
-            self _meth_82DD( "cancel_sentry", "+actionslot 5" );
-            self _meth_82DD( "cancel_sentry", "+actionslot 6" );
-            self _meth_82DD( "cancel_sentry", "+actionslot 7" );
-            self _meth_82DD( "cancel_sentry", "+actionslot 8" );
+            self notifyonplayercommand( "cancel_sentry", "+actionslot 5" );
+            self notifyonplayercommand( "cancel_sentry", "+actionslot 6" );
+            self notifyonplayercommand( "cancel_sentry", "+actionslot 7" );
+            self notifyonplayercommand( "cancel_sentry", "+actionslot 8" );
         }
     }
 
@@ -143,7 +143,7 @@ setcarryingsentry( var_0, var_1 )
             {
                 var_3 = maps\mp\_utility::getkillstreakweapon( level.sentrysettings[var_0.sentrytype].streakname );
 
-                if ( isdefined( self.killstreakindexweapon ) && var_3 == maps\mp\_utility::getkillstreakweapon( self.pers["killstreaks"][self.killstreakindexweapon].streakname ) && !self _meth_82CF().size )
+                if ( isdefined( self.killstreakindexweapon ) && var_3 == maps\mp\_utility::getkillstreakweapon( self.pers["killstreaks"][self.killstreakindexweapon].streakname ) && !self getweaponslistitems().size )
                 {
                     maps\mp\_utility::_giveweapon( var_3, 0 );
                     maps\mp\_utility::_setactionslot( 4, "weapon", var_3 );
@@ -166,10 +166,10 @@ setcarryingsentry( var_0, var_1 )
 
 removeweapons()
 {
-    if ( self _meth_8314( "riotshield_mp" ) )
+    if ( self hasweapon( "riotshield_mp" ) )
     {
         self.restoreweapon = "riotshield_mp";
-        self _meth_830F( "riotshield_mp" );
+        self takeweapon( "riotshield_mp" );
     }
 }
 
@@ -221,31 +221,31 @@ sentry_initsentry( var_0, var_1 )
 {
     self.sentrytype = var_0;
     self.canbeplaced = 1;
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
     self.shouldsplash = 1;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     switch ( var_0 )
     {
         case "sam_turret":
-            self _meth_8138();
-            self _meth_8156( 180 );
-            self _meth_8155( 180 );
-            self _meth_8157( 80 );
-            self _meth_815A( -89.0 );
+            self maketurretinoperable();
+            self setleftarc( 180 );
+            self setrightarc( 180 );
+            self settoparc( 80 );
+            self setdefaultdroppitch( -89.0 );
             self.laser_on = 0;
             var_2 = spawn( "script_model", self gettagorigin( "tag_laser" ) );
-            var_2 _meth_804D( self );
+            var_2 linkto( self );
             self.killcament = var_2;
-            self.killcament _meth_834D( "explosive" );
+            self.killcament setscriptmoverkillcam( "explosive" );
             break;
         default:
-            self _meth_8138();
-            self _meth_815A( -89.0 );
+            self maketurretinoperable();
+            self setdefaultdroppitch( -89.0 );
             break;
     }
 
-    self _meth_817A( 1 );
+    self setturretmodechangewait( 1 );
     sentry_setinactive();
     sentry_setowner( var_1 );
     thread sentry_handledeath();
@@ -275,12 +275,12 @@ sentry_watchdisabled()
     {
         self waittill( "emp_damage", var_0, var_1 );
         playfxontag( common_scripts\utility::getfx( "sentry_stunned" ), self, "tag_aim" );
-        self _meth_815A( 40 );
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+        self setdefaultdroppitch( 40 );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
         wait(var_1);
         stopfxontag( common_scripts\utility::getfx( "sentry_stunned" ), self, "tag_aim" );
-        self _meth_815A( -89.0 );
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+        self setdefaultdroppitch( -89.0 );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
     }
 }
 
@@ -298,8 +298,8 @@ sentry_directhacked()
 
     playfxontag( common_scripts\utility::getfx( "sentry_stunned" ), self, "tag_aim" );
     self.directhackendtime = gettime() + self.directhackduration * 1000;
-    self _meth_815A( 40 );
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+    self setdefaultdroppitch( 40 );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
 
     for (;;)
     {
@@ -309,8 +309,8 @@ sentry_directhacked()
         wait 0.05;
     }
 
-    self _meth_815A( -89.0 );
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setdefaultdroppitch( -89.0 );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
     stopfxontag( common_scripts\utility::getfx( "sentry_stunned" ), self, "tag_aim" );
 }
 
@@ -321,11 +321,11 @@ sentry_handledeath()
     if ( !isdefined( self ) )
         return;
 
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modeldestroyed );
+    self setmodel( level.sentrysettings[self.sentrytype].modeldestroyed );
     sentry_setinactive();
-    self _meth_815A( 40 );
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setdefaultdroppitch( 40 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
 
     if ( isdefined( self.ownertrigger ) )
         self.ownertrigger delete();
@@ -378,7 +378,7 @@ sentry_handleuse()
             continue;
 
         if ( self.sentrytype == "sam_turret" )
-            self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+            self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
 
         var_0 setcarryingsentry( self, 0 );
     }
@@ -397,7 +397,7 @@ turret_handlepickup( var_0 )
 
     for (;;)
     {
-        if ( isalive( self ) && self _meth_80A9( var_0.ownertrigger ) && !isdefined( var_0.inuseby ) && !isdefined( var_0.carriedby ) && self _meth_8341() )
+        if ( isalive( self ) && self istouching( var_0.ownertrigger ) && !isdefined( var_0.inuseby ) && !isdefined( var_0.carriedby ) && self isonground() )
         {
             if ( self usebuttonpressed() )
             {
@@ -432,7 +432,7 @@ turret_handlepickup( var_0 )
                 if ( isdefined( self.using_remote_turret ) && self.using_remote_turret )
                     continue;
 
-                var_0 _meth_8065( level.sentrysettings[var_0.sentrytype].sentrymodeoff );
+                var_0 setmode( level.sentrysettings[var_0.sentrytype].sentrymodeoff );
                 thread setcarryingsentry( var_0, 0 );
                 var_0.ownertrigger delete();
                 return;
@@ -470,9 +470,9 @@ turret_handleuse()
         var_3 removeperks();
         var_3 removeweapons();
         self.inuseby = var_3;
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
         sentry_setowner( var_3 );
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
         var_3 thread turret_shotmonitor( self );
         var_3.turret_overheat_bar = var_3 maps\mp\gametypes\_hud_util::createbar( var_0, 100, 6 );
         var_3.turret_overheat_bar maps\mp\gametypes\_hud_util::setpoint( "CENTER", "BOTTOM", 0, -70 );
@@ -489,17 +489,17 @@ turret_handleuse()
                 break;
             }
 
-            if ( !var_3 _meth_8342() )
+            if ( !var_3 isusingturret() )
             {
                 self notify( "player_dismount" );
                 self.inuseby = undefined;
                 var_3.turret_overheat_bar maps\mp\gametypes\_hud_util::destroyelem();
                 var_3 restoreperks();
                 var_3 restoreweapons();
-                self _meth_80DB( level.sentrysettings[self.sentrytype].hintstring );
-                self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+                self sethintstring( level.sentrysettings[self.sentrytype].hintstring );
+                self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
                 sentry_setowner( self.originalowner );
-                self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+                self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
                 break;
             }
 
@@ -512,14 +512,14 @@ turret_handleuse()
 
             if ( self.forcedisable || self.overheated )
             {
-                self _meth_815C();
+                self turretfiredisable();
                 var_3.turret_overheat_bar.bar.color = var_2;
                 var_4 = 0;
             }
             else
             {
                 var_3.turret_overheat_bar.bar.color = var_0;
-                self _meth_8179();
+                self turretfireenable();
                 var_4 = 0;
                 self notify( "not_overheated" );
             }
@@ -527,7 +527,7 @@ turret_handleuse()
             wait 0.05;
         }
 
-        self _meth_815A( 0.0 );
+        self setdefaultdroppitch( 0.0 );
     }
 }
 
@@ -544,13 +544,13 @@ sentry_handleownerdisconnect()
 sentry_setowner( var_0 )
 {
     self.owner = var_0;
-    self _meth_8103( self.owner );
-    self _meth_8105( 1, self.sentrytype );
+    self setsentryowner( self.owner );
+    self setturretminimapvisible( 1, self.sentrytype );
 
     if ( level.teambased )
     {
         self.team = self.owner.team;
-        self _meth_8135( self.team );
+        self setturretteam( self.team );
     }
 
     thread sentry_handleownerdisconnect();
@@ -558,15 +558,15 @@ sentry_setowner( var_0 )
 
 sentry_setplaced()
 {
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
 
-    if ( self _meth_8066() == "manual" )
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+    if ( self getmode() == "manual" )
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
 
-    self _meth_8104( undefined );
-    self _meth_82C0( 1 );
+    self setsentrycarrier( undefined );
+    self setcandamage( 1 );
     sentry_makesolid();
-    self.carriedby _meth_80DE();
+    self.carriedby forceusehintoff();
     self.carriedby = undefined;
 
     if ( isdefined( self.owner ) )
@@ -579,7 +579,7 @@ sentry_setplaced()
 
 sentry_setcancelled()
 {
-    self.carriedby _meth_80DE();
+    self.carriedby forceusehintoff();
 
     if ( isdefined( self.owner ) )
         self.owner.iscarrying = 0;
@@ -598,9 +598,9 @@ sentry_setcarried( var_0 )
 
     }
 
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelplacement );
-    self _meth_8104( var_0 );
-    self _meth_82C0( 0 );
+    self setmodel( level.sentrysettings[self.sentrytype].modelplacement );
+    self setsentrycarrier( var_0 );
+    self setcandamage( 0 );
     sentry_makenotsolid();
     self.carriedby = var_0;
     var_0.iscarrying = 1;
@@ -609,7 +609,7 @@ sentry_setcarried( var_0 )
     thread sentry_oncarrierdisconnect( var_0 );
     thread sentry_oncarrierchangedteam( var_0 );
     thread sentry_ongameended();
-    self _meth_815A( -89.0 );
+    self setdefaultdroppitch( -89.0 );
     sentry_setinactive();
     self notify( "carried" );
 }
@@ -626,22 +626,22 @@ updatesentryplacement( var_0 )
 
     for (;;)
     {
-        var_2 = self _meth_82D2( 1, 22 );
+        var_2 = self canplayerplacesentry( 1, 22 );
         var_0.origin = var_2["origin"];
         var_0.angles = var_2["angles"];
-        var_0.canbeplaced = self _meth_8341() && var_2["result"] && abs( var_0.origin[2] - self.origin[2] ) < 30;
+        var_0.canbeplaced = self isonground() && var_2["result"] && abs( var_0.origin[2] - self.origin[2] ) < 30;
 
         if ( var_0.canbeplaced != var_1 )
         {
             if ( var_0.canbeplaced )
             {
-                var_0 _meth_80B1( level.sentrysettings[var_0.sentrytype].modelplacement );
-                self _meth_80DD( &"SENTRY_PLACE" );
+                var_0 setmodel( level.sentrysettings[var_0.sentrytype].modelplacement );
+                self forceusehinton( &"SENTRY_PLACE" );
             }
             else
             {
-                var_0 _meth_80B1( level.sentrysettings[var_0.sentrytype].modelplacementfailed );
-                self _meth_80DD( &"SENTRY_CANNOT_PLACE" );
+                var_0 setmodel( level.sentrysettings[var_0.sentrytype].modelplacementfailed );
+                self forceusehinton( &"SENTRY_CANNOT_PLACE" );
             }
         }
 
@@ -688,9 +688,9 @@ sentry_ongameended( var_0 )
 
 sentry_setactive()
 {
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( level.sentrysettings[self.sentrytype].hintstring );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( level.sentrysettings[self.sentrytype].hintstring );
 
     if ( level.sentrysettings[self.sentrytype].headicon )
     {
@@ -704,7 +704,7 @@ sentry_setactive()
 
     foreach ( var_1 in level.players )
     {
-        var_2 = self _meth_81B1();
+        var_2 = self getentitynumber();
         addtoturretlist( var_2 );
 
         if ( var_1 == self.owner )
@@ -730,10 +730,10 @@ sentry_setactive()
 
 sentry_setinactive()
 {
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
     self makeunusable();
-    self _meth_813A();
-    var_0 = self _meth_81B1();
+    self freeentitysentient();
+    var_0 = self getentitynumber();
     removefromturretlist( var_0 );
 
     if ( level.teambased )
@@ -744,7 +744,7 @@ sentry_setinactive()
 
 sentry_makesolid()
 {
-    self _meth_8136();
+    self maketurretsolid();
 }
 
 sentry_makenotsolid()
@@ -783,7 +783,7 @@ sentry_attacktargets()
     {
         common_scripts\utility::waittill_either( "turretstatechange", "cooled" );
 
-        if ( self _meth_80E4() )
+        if ( self isfiringturret() )
         {
             thread sentry_burstfirestart();
             continue;
@@ -864,7 +864,7 @@ sentry_burstfirestart()
 
         for ( var_6 = 0; var_6 < var_5 && !self.overheated; var_6++ )
         {
-            self _meth_80EA();
+            self shootturret();
             self.heatlevel += var_0;
             wait(var_0);
         }
@@ -1180,14 +1180,14 @@ sam_acquiretarget()
             }
         }
 
-        self _meth_8108();
+        self cleartargetentity();
         return undefined;
     }
     else
     {
         if ( !sighttracepassed( var_0, self.samtargetent.origin, 0, self, self.samtargetent ) )
         {
-            self _meth_8108();
+            self cleartargetentity();
             return undefined;
         }
 
@@ -1202,11 +1202,11 @@ sam_fireontarget()
         if ( self.samtargetent == level.ac130.planemodel && !isdefined( level.ac130player ) || isdefined( level.orbitalsupport_planemodel ) && self.samtargetent == level.orbitalsupport_planemodel && !isdefined( level.orbitalsupport_player ) )
         {
             self.samtargetent = undefined;
-            self _meth_8108();
+            self cleartargetentity();
             return;
         }
 
-        self _meth_8106( self.samtargetent );
+        self settargetentity( self.samtargetent );
         self waittill( "turret_on_target" );
 
         if ( !isdefined( self.samtargetent ) )
@@ -1228,7 +1228,7 @@ sam_fireontarget()
         if ( self.samtargetent == level.ac130.planemodel && !isdefined( level.ac130player ) )
         {
             self.samtargetent = undefined;
-            self _meth_8108();
+            self cleartargetentity();
             return;
         }
 
@@ -1247,10 +1247,10 @@ sam_fireontarget()
             if ( isdefined( self.carriedby ) )
                 return;
 
-            self _meth_80EA();
+            self shootturret();
             var_3 = magicbullet( "sam_projectile_mp", var_0[var_2], self.samtargetent.origin, self.owner );
-            var_3 _meth_81D9( self.samtargetent );
-            var_3 _meth_81DC();
+            var_3 missile_settargetent( self.samtargetent );
+            var_3 missile_setflightmodedirect();
             var_3.samturret = self;
             var_3.sammissilegroup = var_1;
             self.sammissilegroups[var_1][var_2] = var_3;
@@ -1273,13 +1273,13 @@ sam_watchlineofsight()
     self endon( "death" );
     self endon( "fakedeath" );
 
-    while ( isdefined( self.samtargetent ) && isdefined( self _meth_8109( 1 ) ) && self _meth_8109( 1 ) == self.samtargetent )
+    while ( isdefined( self.samtargetent ) && isdefined( self getturrettarget( 1 ) ) && self getturrettarget( 1 ) == self.samtargetent )
     {
         var_0 = self gettagorigin( "tag_laser" );
 
         if ( !sighttracepassed( var_0, self.samtargetent.origin, 0, self, self.samtargetent ) )
         {
-            self _meth_8108();
+            self cleartargetentity();
             self.samtargetent = undefined;
             break;
         }
@@ -1291,14 +1291,14 @@ sam_watchlineofsight()
 sam_watchlaser()
 {
     self endon( "death" );
-    self _meth_80B2();
+    self laseron();
     self.laser_on = 1;
     self notify( "laser_on" );
 
-    while ( isdefined( self.samtargetent ) && isdefined( self _meth_8109( 1 ) ) && self _meth_8109( 1 ) == self.samtargetent )
+    while ( isdefined( self.samtargetent ) && isdefined( self getturrettarget( 1 ) ) && self getturrettarget( 1 ) == self.samtargetent )
         wait 0.05;
 
-    self _meth_80B3();
+    self laseroff();
     self.laser_on = 0;
     self notify( "laser_off" );
 }
@@ -1313,7 +1313,7 @@ sam_watchcrashing()
         return;
 
     self.samtargetent waittill( "crashing" );
-    self _meth_8108();
+    self cleartargetentity();
     self.samtargetent = undefined;
 }
 
@@ -1329,7 +1329,7 @@ sam_watchleaving()
     if ( self.samtargetent.model == "vehicle_uav_static_mp" )
     {
         self.samtargetent waittill( "leaving" );
-        self _meth_8108();
+        self cleartargetentity();
         self.samtargetent = undefined;
     }
 }

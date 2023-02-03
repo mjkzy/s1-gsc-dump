@@ -62,11 +62,11 @@ spawnoz()
 {
     level.bossozstage1 = spawn( "script_model", ( 0, 0, 0 ) );
     level.bossozstage1.team = "axis";
-    level.bossozstage1 _meth_80B1( "zom_oz_boss_stage1" );
+    level.bossozstage1 setmodel( "zom_oz_boss_stage1" );
     level.bossozstage1 maps\mp\zombies\_util::zombie_set_eyes( "zombie_eye_host_janitor" );
     level.bossozstage1.health = 999999;
     level.bossozstage1.maxhealth = 999999;
-    level.bossozstage1 _meth_8029();
+    level.bossozstage1 thermaldrawenable();
 
     foreach ( var_1 in level.players )
         level.bossozstage1 threatdetectedtoplayer( var_1 );
@@ -107,9 +107,9 @@ initozrooms()
 
         if ( level.nextgen )
         {
-            var_6 = _func_231( "scriptable_boss_oz_room", "targetname" );
+            var_6 = getscriptablearray( "scriptable_boss_oz_room", "targetname" );
             var_1.scriptablelight = common_scripts\utility::get_array_of_closest( var_1.origin, var_6 )[0];
-            var_1.scriptablelight _meth_83F6( 0, 6 );
+            var_1.scriptablelight setscriptablepartstate( 0, 6 );
         }
 
         foreach ( var_8 in var_1.fire_locations )
@@ -154,7 +154,7 @@ moveoztoroom( var_0 )
     playfx( common_scripts\utility::getfx( "oz_teleport" ), level.bossozstage1.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
 
     if ( level.nextgen )
-        var_0.scriptablelight _meth_83F6( 0, 0 );
+        var_0.scriptablelight setscriptablepartstate( 0, 0 );
 }
 
 taunttoolongtodamage()
@@ -299,7 +299,7 @@ runwave( var_0 )
             playsoundatpos( var_3.origin, "oz_s1_location_destroyed" );
 
             if ( level.nextgen )
-                var_3.scriptablelight _meth_83F6( 0, 7 );
+                var_3.scriptablelight setscriptablepartstate( 0, 7 );
 
             if ( var_6 != 3 )
                 level thread maps\mp\zombies\zombie_boss_oz::zmbaudiobossozplayvo( "progress", 0, undefined, 2 );
@@ -328,23 +328,23 @@ getstage1phase()
 oz_room_open_door( var_0, var_1 )
 {
     if ( var_0 )
-        self.doorbrushmodel _meth_82AE( self.doorbrushmodel.startorigin + ( 0, 0, 160 ), var_1 );
+        self.doorbrushmodel moveto( self.doorbrushmodel.startorigin + ( 0, 0, 160 ), var_1 );
     else
-        self.doorbrushmodel _meth_82AE( self.doorbrushmodel.startorigin, var_1 );
+        self.doorbrushmodel moveto( self.doorbrushmodel.startorigin, var_1 );
 }
 
 make_oz_damageable( var_0 )
 {
     if ( var_0 )
     {
-        level.bossozstage1 _meth_82C0( 1 );
-        level.bossozstage1 _meth_8495( 1 );
+        level.bossozstage1 setcandamage( 1 );
+        level.bossozstage1 setdamagecallbackon( 1 );
         level.bossozstage1.damagecallback = ::ozhandledamagecallback;
     }
     else
     {
-        level.bossozstage1 _meth_82C0( 0 );
-        level.bossozstage1 _meth_8495( 0 );
+        level.bossozstage1 setcandamage( 0 );
+        level.bossozstage1 setdamagecallbackon( 0 );
         level.bossozstage1.damagecallback = undefined;
     }
 }
@@ -461,7 +461,7 @@ ozplaytrapanim( var_0 )
 
 ozplayanim( var_0 )
 {
-    self _meth_848B( var_0, self.animnode.origin, self.animnode.angles, undefined, 1 );
+    self scriptmodelplayanimdeltamotionfrompos( var_0, self.animnode.origin, self.animnode.angles, undefined, 1 );
     self notify( "playAnim" );
 }
 
@@ -486,7 +486,7 @@ ozplayanimuntilnotetrack( var_0, var_1 )
     var_3 = getnotetracktimes( var_2, var_1 )[0];
     ozplayanim( var_0 );
     wait(var_3);
-    self _meth_827A();
+    self scriptmodelclearanim();
 }
 
 ozplaydefaultidle()

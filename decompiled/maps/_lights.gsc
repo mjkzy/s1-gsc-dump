@@ -48,7 +48,7 @@ flickerlight( var_0, var_1, var_2, var_3 )
 
         for ( var_7 = ( var_6 - var_4 ) * 1 / var_5; var_5 > 0 && !maps\_utility::ent_flag( "stop_flicker" ); var_5 -= 0.05 )
         {
-            self _meth_8044( var_4 + var_7 * var_5 );
+            self setlightcolor( var_4 + var_7 * var_5 );
             wait 0.05;
         }
     }
@@ -76,7 +76,7 @@ kill_flicker_when_damaged( var_0 )
         var_2 waittill( "damage", var_8, var_9, var_10, var_11, var_12, var_13, var_14 );
         self notify( "kill_flicker" );
         wait 0.05;
-        self _meth_8044( ( 0, 0, 0 ) );
+        self setlightcolor( ( 0, 0, 0 ) );
     }
 }
 
@@ -84,11 +84,11 @@ generic_pulsing()
 {
     if ( getdvar( "r_reflectionProbeGenerate" ) == "1" )
     {
-        self _meth_81DF( 0 );
+        self setlightintensity( 0 );
         return;
     }
 
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     var_1 = 0.05;
     var_2 = var_0;
     var_3 = 0.3;
@@ -104,7 +104,7 @@ generic_pulsing()
         {
             var_2 -= var_6;
             var_2 = clamp( var_2, 0, 100 );
-            self _meth_81DF( var_2 );
+            self setlightintensity( var_2 );
             var_7 += 0.05;
             wait 0.05;
         }
@@ -116,7 +116,7 @@ generic_pulsing()
         {
             var_2 += var_5;
             var_2 = clamp( var_2, 0, 100 );
-            self _meth_81DF( var_2 );
+            self setlightintensity( var_2 );
             var_7 += 0.05;
             wait 0.05;
         }
@@ -129,11 +129,11 @@ generic_double_strobe()
 {
     if ( getdvar( "r_reflectionProbeGenerate" ) == "1" )
     {
-        self _meth_81DF( 0 );
+        self setlightintensity( 0 );
         return;
     }
 
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     var_1 = 0.05;
     var_2 = 0;
     var_3 = undefined;
@@ -164,7 +164,7 @@ generic_double_strobe()
 
     for (;;)
     {
-        self _meth_81DF( var_1 );
+        self setlightintensity( var_1 );
 
         if ( var_2 )
         {
@@ -173,7 +173,7 @@ generic_double_strobe()
         }
 
         wait 0.8;
-        self _meth_81DF( var_0 );
+        self setlightintensity( var_0 );
 
         if ( var_2 )
         {
@@ -182,7 +182,7 @@ generic_double_strobe()
         }
 
         wait 0.1;
-        self _meth_81DF( var_1 );
+        self setlightintensity( var_1 );
 
         if ( var_2 )
         {
@@ -191,7 +191,7 @@ generic_double_strobe()
         }
 
         wait 0.12;
-        self _meth_81DF( var_0 );
+        self setlightintensity( var_0 );
 
         if ( var_2 )
         {
@@ -219,7 +219,7 @@ generic_flickering()
 {
     if ( getdvar( "r_reflectionProbeGenerate" ) == "1" )
     {
-        self _meth_81DF( 0 );
+        self setlightintensity( 0 );
         return;
     }
 
@@ -374,7 +374,7 @@ generic_flicker_msg_watcher()
 
 generic_flicker_pause()
 {
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
 
     if ( !maps\_utility::ent_flag( "flicker_on" ) )
     {
@@ -398,21 +398,21 @@ generic_flicker_pause()
             }
         }
 
-        self _meth_81DF( 0 );
+        self setlightintensity( 0 );
 
         if ( self.linked_lights )
         {
             for ( var_7 = 0; var_7 < self.linked_light_ents.size; var_7++ )
-                self.linked_light_ents[var_7] _meth_81DF( 0 );
+                self.linked_light_ents[var_7] setlightintensity( 0 );
         }
 
         maps\_utility::ent_flag_wait( "flicker_on" );
-        self _meth_81DF( var_0 );
+        self setlightintensity( var_0 );
 
         if ( self.linked_lights )
         {
             for ( var_7 = 0; var_7 < self.linked_light_ents.size; var_7++ )
-                self.linked_light_ents[var_7] _meth_81DF( var_0 );
+                self.linked_light_ents[var_7] setlightintensity( var_0 );
         }
 
         if ( self.linked_models )
@@ -443,7 +443,7 @@ generic_flicker()
     self endon( "death" );
     var_0 = 0.2;
     var_1 = 1.5;
-    var_2 = self _meth_81DE();
+    var_2 = self getlightintensity();
     var_3 = 0;
     var_4 = var_2;
     var_5 = 0;
@@ -506,22 +506,22 @@ generic_flicker()
                 }
             }
 
-            self _meth_81DF( var_4 );
+            self setlightintensity( var_4 );
 
             if ( self.linked_lights )
             {
                 for ( var_16 = 0; var_16 < self.linked_light_ents.size; var_16++ )
-                    self.linked_light_ents[var_16] _meth_81DF( var_4 );
+                    self.linked_light_ents[var_16] setlightintensity( var_4 );
             }
         }
 
         generic_flicker_pause();
-        self _meth_81DF( var_2 );
+        self setlightintensity( var_2 );
 
         if ( self.linked_lights )
         {
             for ( var_16 = 0; var_16 < self.linked_light_ents.size; var_16++ )
-                self.linked_light_ents[var_16] _meth_81DF( var_2 );
+                self.linked_light_ents[var_16] setlightintensity( var_2 );
         }
 
         if ( self.linked_models )
@@ -556,7 +556,7 @@ generic_spot()
 
 flickerlightintensity( var_0, var_1 )
 {
-    var_2 = self _meth_81DE();
+    var_2 = self getlightintensity();
     var_3 = 0;
     var_4 = var_2;
     var_5 = 0;
@@ -572,10 +572,10 @@ flickerlightintensity( var_0, var_1 )
             else
                 var_4 = var_2;
 
-            self _meth_81DF( var_4 );
+            self setlightintensity( var_4 );
         }
 
-        self _meth_81DF( var_2 );
+        self setlightintensity( var_2 );
         wait(randomfloatrange( var_0, var_1 ));
     }
 }
@@ -584,11 +584,11 @@ burning_trash_fire()
 {
     if ( getdvar( "r_reflectionProbeGenerate" ) == "1" )
     {
-        self _meth_81DF( 0 );
+        self setlightintensity( 0 );
         return;
     }
 
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     var_1 = var_0;
 
     for (;;)
@@ -600,7 +600,7 @@ burning_trash_fire()
         for ( var_4 = 0; var_4 < var_3; var_4++ )
         {
             var_5 = var_2 * var_4 / var_3 + var_1 * ( var_3 - var_4 ) / var_3;
-            self _meth_81DF( var_5 );
+            self setlightintensity( var_5 );
             wait 0.05;
         }
 
@@ -616,7 +616,7 @@ strobelight( var_0, var_1, var_2, var_3 )
     for (;;)
     {
         var_6 = sin( var_5 * var_4 ) * 0.5 + 0.5;
-        self _meth_81DF( var_0 + ( var_1 - var_0 ) * var_6 );
+        self setlightintensity( var_0 + ( var_1 - var_0 ) * var_6 );
         wait 0.05;
         var_5 += 0.05;
 
@@ -644,7 +644,7 @@ changelightcolorto( var_0, var_1, var_2, var_3 )
 
 changelightcolortoworkerthread( var_0, var_1, var_2, var_3 )
 {
-    var_4 = self _meth_8043();
+    var_4 = self getlightcolor();
     var_5 = 1 / ( var_1 * 2 - var_2 + var_3 );
     var_6 = 0;
 
@@ -653,7 +653,7 @@ changelightcolortoworkerthread( var_0, var_1, var_2, var_3 )
         for ( var_7 = var_5 / var_2; var_6 < var_2; var_6 += 0.05 )
         {
             var_8 = var_7 * var_6 * var_6;
-            self _meth_8044( vectorlerp( var_4, var_0, var_8 ) );
+            self setlightcolor( vectorlerp( var_4, var_0, var_8 ) );
             wait 0.05;
         }
     }
@@ -661,7 +661,7 @@ changelightcolortoworkerthread( var_0, var_1, var_2, var_3 )
     while ( var_6 < var_1 - var_3 )
     {
         var_8 = var_5 * ( 2 * var_6 - var_2 );
-        self _meth_8044( vectorlerp( var_4, var_0, var_8 ) );
+        self setlightcolor( vectorlerp( var_4, var_0, var_8 ) );
         wait 0.05;
         var_6 += 0.05;
     }
@@ -673,12 +673,12 @@ changelightcolortoworkerthread( var_0, var_1, var_2, var_3 )
         for ( var_7 = var_5 / var_3; var_6 > 0; var_6 -= 0.05 )
         {
             var_8 = 1 - var_7 * var_6 * var_6;
-            self _meth_8044( vectorlerp( var_4, var_0, var_8 ) );
+            self setlightcolor( vectorlerp( var_4, var_0, var_8 ) );
             wait 0.05;
         }
     }
 
-    self _meth_8044( var_0 );
+    self setlightcolor( var_0 );
 }
 
 television()
@@ -690,7 +690,7 @@ television()
 tv_changes_intensity()
 {
     self endon( "light_off" );
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     var_1 = var_0;
 
     for (;;)
@@ -702,7 +702,7 @@ tv_changes_intensity()
         for ( var_4 = 0; var_4 < var_3; var_4++ )
         {
             var_5 = var_2 * var_4 / var_3 + var_1 * ( var_3 - var_4 ) / var_3;
-            self _meth_81DF( var_5 );
+            self setlightintensity( var_5 );
             wait 0.05;
         }
 
@@ -742,7 +742,7 @@ tv_changes_color()
             for ( var_7 = 0; var_7 < var_2.size; var_7++ )
                 var_6[var_7] = var_2[var_7] * var_4 / var_5 + var_3[var_7] * ( var_5 - var_4 ) / var_5;
 
-            self _meth_8044( ( var_6[0], var_6[1], var_6[2] ) );
+            self setlightcolor( ( var_6[0], var_6[1], var_6[2] ) );
             wait 0.05;
         }
     }
@@ -760,7 +760,7 @@ sun_shadow_trigger( var_0 )
         var_0 waittill( "trigger", var_2 );
         var_0 set_sun_shadow_params( var_1 );
 
-        while ( var_2 _meth_80A9( var_0 ) )
+        while ( var_2 istouching( var_0 ) )
             wait 0.25;
     }
 }
@@ -794,10 +794,10 @@ set_sun_shadow_params( var_0 )
     var_7 = getdvarfloat( "sm_sunshadowscale", 1.0 );
     var_8 = getdvarint( "sm_spotlimit", 4 );
     var_9 = getdvarint( "sm_qualityspotshadow", 1.0 );
-    _func_0D3( "sm_sunenable", var_1 );
-    _func_0D3( "sm_sunshadowscale", var_2 );
-    _func_0D3( "sm_spotlimit", var_3 );
-    _func_0D3( "sm_qualityspotshadow", var_5 );
+    setsaveddvar( "sm_sunenable", var_1 );
+    setsaveddvar( "sm_sunshadowscale", var_2 );
+    setsaveddvar( "sm_spotlimit", var_3 );
+    setsaveddvar( "sm_qualityspotshadow", var_5 );
     lerp_sunsamplesizenear_overtime( var_4, var_0 );
 }
 
@@ -821,12 +821,12 @@ lerp_sunsamplesizenear_overtime( var_0, var_1 )
         for ( var_7 = 0; var_7 < var_4; var_7++ )
         {
             var_6 += var_5;
-            _func_0D3( "sm_sunSampleSizeNear", var_6 );
+            setsaveddvar( "sm_sunSampleSizeNear", var_6 );
             wait 0.05;
         }
     }
 
-    _func_0D3( "sm_sunSampleSizeNear", var_0 );
+    setsaveddvar( "sm_sunSampleSizeNear", var_0 );
 }
 
 init_scripted_light()
@@ -960,13 +960,13 @@ pulse_think()
 lerp_intensity( var_0, var_1 )
 {
     var_2 = int( var_1 * 20 );
-    var_3 = self _meth_81DE();
+    var_3 = self getlightintensity();
     var_4 = ( var_0 - var_3 ) / var_2;
 
     for ( var_5 = 0; var_5 < var_2; var_5++ )
     {
         thread handle_linked_ents( var_0 );
-        self _meth_81DF( var_3 + var_5 * var_4 );
+        self setlightintensity( var_3 + var_5 * var_4 );
         wait 0.05;
     }
 
@@ -978,7 +978,7 @@ lerp_intensity( var_0, var_1 )
     foreach ( var_8 in var_6 )
     {
         var_8 thread handle_linked_ents( var_0 );
-        var_8 _meth_81DF( var_0 );
+        var_8 setlightintensity( var_0 );
     }
 }
 
@@ -1045,7 +1045,7 @@ def_pulse()
     set_waits( 1, 4 );
     set_counts( 3, 6 );
     set_threshold( 0.5 );
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     set_intensities( var_0 * 0.25, var_0 );
     thread pulse_think();
 }
@@ -1056,7 +1056,7 @@ def_neon()
     set_waits( 2, 5 );
     set_counts( 1, 3 );
     set_threshold( 0.5 );
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     set_intensities( var_0 * 0.1, var_0 );
     thread pulse_think();
 }
@@ -1067,7 +1067,7 @@ def_fire()
     set_waits( 0.05, 0.1 );
     set_counts( 1, 2 );
     set_threshold( 0.5 );
-    var_0 = self _meth_81DE();
+    var_0 = self getlightintensity();
     set_intensities( var_0 * 0.75, var_0 );
     thread pulse_think();
 }

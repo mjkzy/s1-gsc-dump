@@ -10,7 +10,7 @@ friendly_bubbles()
     thread friendly_bubbles_cleanup_on_death();
     var_0 = "TAG_EYE";
     self.scuba_org = common_scripts\utility::spawn_tag_origin();
-    self.scuba_org _meth_804D( self, "tag_eye", ( 5, 0, -6 ), ( -90, 0, 0 ) );
+    self.scuba_org linkto( self, "tag_eye", ( 5, 0, -6 ), ( -90, 0, 0 ) );
 
     for (;;)
     {
@@ -44,13 +44,13 @@ underwater_hud_enable( var_0 )
 
     if ( var_0 == 1 )
     {
-        _func_0D3( "hud_drawhud", "1" );
-        _func_0D3( "hud_showStance", "0" );
+        setsaveddvar( "hud_drawhud", "1" );
+        setsaveddvar( "hud_showStance", "0" );
     }
     else
     {
-        _func_0D3( "hud_drawhud", "1" );
-        _func_0D3( "hud_showStance", "1" );
+        setsaveddvar( "hud_drawhud", "1" );
+        setsaveddvar( "hud_showStance", "1" );
     }
 }
 
@@ -102,7 +102,7 @@ player_scuba_breathe_sound()
         wait 0.05;
         self notify( "scuba_breathe_sound_starting" );
 
-        if ( self _meth_83D8() )
+        if ( self issprinting() )
             self playlocalsound( "scuba_breathe_player_sprint", "scuba_breathe_sound_done" );
         else
             self playlocalsound( "scuba_breathe_player", "scuba_breathe_sound_done" );
@@ -126,10 +126,10 @@ player_scuba_bubbles()
     self endon( "stop_scuba_breathe" );
     waittillframeend;
     self.playerfxorg = spawn( "script_model", self.origin + ( 0, 0, 0 ) );
-    self.playerfxorg _meth_80B1( "tag_origin" );
+    self.playerfxorg setmodel( "tag_origin" );
     self.playerfxorg.angles = self.angles;
-    self.playerfxorg.origin = self _meth_80A8() - ( 0, 0, 10 );
-    self.playerfxorg _meth_80A6( self, "tag_origin", ( 5, 0, -55 ), ( 0, 0, 0 ), 1 );
+    self.playerfxorg.origin = self geteye() - ( 0, 0, 10 );
+    self.playerfxorg linktoplayerview( self, "tag_origin", ( 5, 0, -55 ), ( 0, 0, 0 ), 1 );
     thread scuba_fx_cleanup( self.playerfxorg );
 
     for (;;)
@@ -146,7 +146,7 @@ player_scuba_bubbles()
 scuba_fx_cleanup( var_0 )
 {
     self waittill( "stop_scuba_breathe" );
-    var_0 _meth_80A7( self );
+    var_0 unlinkfromplayerview( self );
     var_0 delete();
 }
 
@@ -173,13 +173,13 @@ player_scuba_mask( var_0, var_1 )
     self.hud_scubamask.foreground = 0;
     self.hud_scubamask.sort = -99;
     self.scubamask_distortion = spawn( "script_model", level.player.origin );
-    self.scubamask_distortion _meth_80B1( "tag_origin" );
+    self.scubamask_distortion setmodel( "tag_origin" );
     self.scubamask_distortion.origin = self.origin;
-    self.scubamask_distortion _meth_80A6( self, "tag_origin", ( 10, 0, 0 ), ( 0, 180, 0 ), 1 );
+    self.scubamask_distortion linktoplayerview( self, "tag_origin", ( 10, 0, 0 ), ( 0, 180, 0 ), 1 );
     playfxontag( common_scripts\utility::getfx( "scuba_mask_distortion" ), self.scubamask_distortion, "tag_origin" );
-    self.hud_scubamask_model = spawn( "script_model", level.player _meth_80A8() );
-    self.hud_scubamask_model _meth_80B1( "shpg_udt_headgear_player_a" );
-    self.hud_scubamask_model _meth_80A6( self, "tag_origin", ( -0.3, 0, -1.2 ), ( 0, 90, -4 ), 1 );
+    self.hud_scubamask_model = spawn( "script_model", level.player geteye() );
+    self.hud_scubamask_model setmodel( "shpg_udt_headgear_player_a" );
+    self.hud_scubamask_model linktoplayerview( self, "tag_origin", ( -0.3, 0, -1.2 ), ( 0, 90, -4 ), 1 );
 
     if ( getdvarint( "demo_mode" ) )
     {
@@ -199,9 +199,9 @@ player_scuba_mask_disable( var_0 )
     if ( isdefined( self.hud_scubamask ) )
     {
         self.hud_scubamask maps\_hud_util::destroyelem();
-        self.scubamask_distortion _meth_80A7( self );
+        self.scubamask_distortion unlinkfromplayerview( self );
         self.scubamask_distortion delete();
-        self.hud_scubamask_model _meth_80A7( self );
+        self.hud_scubamask_model unlinkfromplayerview( self );
         self.hud_scubamask_model delete();
     }
 }
@@ -348,7 +348,7 @@ player_drowning_damage_thread()
 
     self.is_drowning = 1;
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     soundscripts\_snd::snd_message( "player_drowning_start" );
 
     if ( self == level.player && isdefined( self.drowning_warning ) )
@@ -362,9 +362,9 @@ player_drowning_damage_thread()
     for (;;)
     {
         if ( isdefined( self.drowning_damage ) )
-            self _meth_8051( self.drowning_damage, self.origin );
+            self dodamage( self.drowning_damage, self.origin );
         else
-            self _meth_8051( 25, self.origin );
+            self dodamage( 25, self.origin );
 
         playfxontag( common_scripts\utility::getfx( "water_vm_gasping_breath" ), var_0, "tag_origin" );
         wait 0.5;

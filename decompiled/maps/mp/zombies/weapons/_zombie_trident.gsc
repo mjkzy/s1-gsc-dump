@@ -82,18 +82,18 @@ addattractor()
 
 firetrident()
 {
-    var_0 = self _meth_8340();
+    var_0 = self playerads();
     var_1 = self getangles();
     var_2 = ( var_1[0], var_1[1], 0 );
     var_3 = randomfloatrange( -1.0, 1.0 ) * ( 1.0 - var_0 );
     var_4 = randomfloatrange( -1.0, 1.0 ) * ( 1.0 - var_0 );
     var_5 = var_2 + ( level.trident.hipfireangles[0] * var_3, level.trident.hipfireangles[1] * var_4, 0 );
     var_6 = anglestoforward( var_5 );
-    var_7 = self _meth_845C();
+    var_7 = self getvieworigin();
     var_8 = var_7 + self getvelocity() * 0.05 + rotatevector( level.trident.startoffset, var_2 );
     var_9 = tridentgetprojectileent( var_8, self.angles );
     var_10 = level.trident.maxdist / level.trident.movespeed;
-    var_9 _meth_82AE( var_7 + var_6 * level.trident.maxdist, var_10 );
+    var_9 moveto( var_7 + var_6 * level.trident.maxdist, var_10 );
     var_11 = var_7;
     var_12 = var_8 + level.trident.movespeed * 0.05 * var_6;
     var_13 = self;
@@ -216,7 +216,7 @@ firetrident()
 
                 var_9 playsound( "wpn_trident_bounce_snap" );
                 var_10 = level.trident.maxdist / level.trident.movespeed;
-                var_9 _meth_82AE( var_9.origin + var_6 * level.trident.maxdist, var_10 );
+                var_9 moveto( var_9.origin + var_6 * level.trident.maxdist, var_10 );
             }
 
             break;
@@ -263,13 +263,13 @@ tridentdamageent( var_0, var_1, var_2, var_3 )
     if ( isagent( var_0 ) )
     {
         var_0.ragdollimmediately = 1;
-        var_0 _meth_8051( level.trident.damage, var_1, self, self, "MOD_PROJECTILE", level.trident.name, var_3 );
+        var_0 dodamage( level.trident.damage, var_1, self, self, "MOD_PROJECTILE", level.trident.name, var_3 );
         var_0.ragdollimmediately = 0;
         level thread tridentphysicsexplosion( var_1 );
     }
     else
     {
-        var_0 _meth_8051( level.trident.damage, var_1, self, self, "MOD_PROJECTILE", level.trident.name );
+        var_0 dodamage( level.trident.damage, var_1, self, self, "MOD_PROJECTILE", level.trident.name );
         return;
     }
 }
@@ -290,7 +290,7 @@ tridentgetprojectileent( var_0, var_1 )
         if ( !isdefined( var_5.inuse ) || !var_5.inuse )
         {
             var_2 = var_5;
-            var_2 _meth_8092();
+            var_2 dontinterpolate();
             var_2 show();
             break;
         }
@@ -302,7 +302,7 @@ tridentgetprojectileent( var_0, var_1 )
         var_2.targetname = "trident_projectile";
     }
 
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_2 setcontents( 0 );
     var_2.origin = var_0;
     var_2.angles = var_1;
@@ -316,17 +316,17 @@ tridentgetprojectileent( var_0, var_1 )
     var_2.fxname = self.tridentfx;
     var_2.fxtag = "tag_origin";
     playfxontag( common_scripts\utility::getfx( var_2.fxname ), var_2, var_2.fxtag );
-    var_2 _meth_8075( "wpn_trident_prj_loop" );
+    var_2 playloopsound( "wpn_trident_prj_loop" );
     var_2.inuse = 1;
     return var_2;
 }
 
 tridentreleaseprojectileent( var_0 )
 {
-    var_0 _meth_80B1( "tag_origin" );
+    var_0 setmodel( "tag_origin" );
     var_0 notify( "released" );
     stopfxontag( common_scripts\utility::getfx( var_0.fxname ), var_0, var_0.fxtag );
-    var_0 _meth_80AB( "wpn_trident_prj_loop" );
+    var_0 stoploopsound( "wpn_trident_prj_loop" );
     wait 1.0;
     var_0.inuse = 0;
 }

@@ -45,18 +45,18 @@ init_level_lighting_flags()
 set_level_lighting_values()
 {
     if ( level.nextgen )
-        _func_0D3( "r_hemiAoEnable", 1 );
+        setsaveddvar( "r_hemiAoEnable", 1 );
 
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disableLightSets", 0 );
+        setsaveddvar( "r_disableLightSets", 0 );
         setsunflareposition( ( -30, 110, 0 ) );
 
         if ( level.currentgen )
-            level.player _meth_83C0( "crash_hut" );
+            level.player lightsetforplayer( "crash_hut" );
 
         if ( level.nextgen )
-            _func_0D3( "r_dynamicOpl", 1 );
+            setsaveddvar( "r_dynamicOpl", 1 );
     }
 }
 
@@ -67,10 +67,10 @@ setup_flickerlight_presets()
 
 lab()
 {
-    level.player _meth_83C0( "lab" );
+    level.player lightsetforplayer( "lab" );
     thread enable_motion_blur_rotation();
     thread maps\_utility::vision_set_fog_changes( "lab", 0 );
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
     thread intro_dof();
     thread crash_fire_light();
     thread hill_slide();
@@ -82,15 +82,15 @@ intro_dof()
     wait 5;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 33.0 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 33.0 );
     wait 15;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 crash_fire_light()
@@ -98,8 +98,8 @@ crash_fire_light()
     if ( level.nextgen )
     {
         var_0 = getent( "crash_fire_light", "targetname" );
-        var_0 _meth_8044( ( 1, 0.4, 0.1 ) );
-        var_0 _meth_81DF( 1000000 );
+        var_0 setlightcolor( ( 1, 0.4, 0.1 ) );
+        var_0 setlightintensity( 1000000 );
     }
 
     wait 12;
@@ -113,7 +113,7 @@ heli_spotlight_exposure_change()
     wait 14;
 
     if ( level.nextgen )
-        level.player _meth_83C0( "heli_spot_on" );
+        level.player lightsetforplayer( "heli_spot_on" );
 }
 
 hill_slide()
@@ -121,24 +121,24 @@ hill_slide()
     common_scripts\utility::flag_wait( "flag_player_slide_start" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 320.0, 30, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 320.0, 30, 30 );
     earthquake( 0.25, 3, level.player.origin, 400 );
     wait 6.0;
-    level.player _meth_84AB( 2.0, 500, 30, 30 );
+    level.player setphysicaldepthoffield( 2.0, 500, 30, 30 );
     wait 2;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 enter_forest()
 {
-    level.player _meth_83C0( "enter_forest" );
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player lightsetforplayer( "enter_forest" );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
     thread maps\_utility::vision_set_fog_changes( "lab_enter_forest", 0.01 );
     thread enable_motion_blur_rotation();
 }
@@ -163,7 +163,7 @@ lt_root_climb_rim_intensity_init()
     {
         var_0 = getent( "lt_root_climb_rim", "targetname" );
         wait 0.1;
-        var_0 _meth_81DF( 40000 );
+        var_0 setlightintensity( 40000 );
     }
 }
 
@@ -173,7 +173,7 @@ lt_root_climb_key_intensity_init()
     {
         var_0 = getent( "lt_root_climb_key", "targetname" );
         wait 0.1;
-        var_0 _meth_81DF( 14000 );
+        var_0 setlightintensity( 14000 );
     }
 }
 
@@ -184,7 +184,7 @@ lt_root_climb_key_shadow_res()
     if ( level.nextgen )
     {
         var_0 = getent( "lt_root_climb_key", "targetname" );
-        var_0 _meth_8020( 40, 30 );
+        var_0 setlightfovrange( 40, 30 );
     }
 
     common_scripts\utility::flag_wait( "flag_forest_climb_wall_complete_lighting" );
@@ -203,8 +203,8 @@ lab_root_climb_vision()
 
 lab_root_climb_dof()
 {
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 58.0 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 58.0 );
 }
 
 lab_climb_rim_lighting_off()
@@ -212,20 +212,20 @@ lab_climb_rim_lighting_off()
     common_scripts\utility::flag_wait( "flag_player_cloak_on_pressed" );
 
     if ( level.nextgen )
-        level.player _meth_83C0( "climb_shadow_tweak" );
+        level.player lightsetforplayer( "climb_shadow_tweak" );
 
-    level.player _meth_84AB( 3.0, 20.0, 3, 3 );
+    level.player setphysicaldepthoffield( 3.0, 20.0, 3, 3 );
     wait 2;
 
     if ( level.nextgen )
         thread maps\_lighting::lerp_spot_intensity( "lt_root_climb_rim", 1.0, 0.0 );
 
     common_scripts\utility::flag_wait( "flag_forest_climb_wall_complete_lighting" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     thread disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 tree_roots_lighting()
@@ -233,13 +233,13 @@ tree_roots_lighting()
     var_0 = getent( "lighting_reflection_tree", "targetname" );
     var_1 = getent( "lighting_centroid_tree", "targetname" );
     var_2 = getent( "wallclimb_roots", "targetname" );
-    var_2 _meth_83AB( var_0.origin );
-    var_2 _meth_847B( var_1.origin );
+    var_2 overridereflectionprobe( var_0.origin );
+    var_2 overridelightingorigin( var_1.origin );
 }
 
 forest_takedown()
 {
-    level.player _meth_83C0( "logging_road" );
+    level.player lightsetforplayer( "logging_road" );
     maps\_utility::vision_set_fog_changes( "lab_logging_road", 0 );
     thread forest_takedown_dof();
 }
@@ -250,25 +250,25 @@ forest_takedown_dof()
     thread enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 25.0, 30, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 25.0, 30, 30 );
     wait 5.5;
-    level.player _meth_84AB( 2.0, 75.0, 5, 5 );
+    level.player setphysicaldepthoffield( 2.0, 75.0, 5, 5 );
     wait 1.5;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     thread disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 logging_road()
 {
-    level.player _meth_83C0( "logging_road" );
+    level.player lightsetforplayer( "logging_road" );
     maps\_utility::vision_set_fog_changes( "lab_logging_road", 0 );
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
 }
 
 vrap_takedown_lights_on()
@@ -279,7 +279,7 @@ vrap_takedown_lights_on()
         var_0 = getent( "head_lights_vrap_takedown_b", "targetname" );
         var_1 = getent( "head_lights_vrap_takedown_c", "targetname" );
         wait 1;
-        var_0 _meth_81DF( 1000000 );
+        var_0 setlightintensity( 1000000 );
     }
 }
 
@@ -291,8 +291,8 @@ vrap_takedown_lights_off( var_0 )
         var_1 = getent( "head_lights_vrap_takedown_b", "targetname" );
         var_2 = getent( "head_lights_vrap_takedown_c", "targetname" );
         wait 0.1;
-        var_1 _meth_81DF( 0 );
-        var_2 _meth_81DF( 0 );
+        var_1 setlightintensity( 0 );
+        var_2 setlightintensity( 0 );
     }
 
     soundscripts\_snd::snd_message( "takedown_truck_lights_off" );
@@ -309,9 +309,9 @@ lighting_vehicle_takedown_01_on()
         var_0 = getent( "take_down_light_01", "targetname" );
         var_1 = getent( "take_down_light_02", "targetname" );
         wait 0.05;
-        var_0 _meth_81DF( 10000 );
+        var_0 setlightintensity( 10000 );
         wait 0.05;
-        var_1 _meth_81DF( 10000 );
+        var_1 setlightintensity( 10000 );
         level waittill( "takedown_lights_off" );
     }
 
@@ -336,7 +336,7 @@ lighting_vehicle_takedown_01( var_0 )
 
     var_0.helmet_tag = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.helmet_tag;
-    var_1 _meth_804D( var_0, "J_Head", ( 0, 55, 0 ), ( 0, 0, 0 ), 0 );
+    var_1 linkto( var_0, "J_Head", ( 0, 55, 0 ), ( 0, 0, 0 ), 0 );
     thread vehicle_takedown_01_dof();
     wait 0.5;
     playfxontag( common_scripts\utility::getfx( "point_blue_fill" ), var_1, "tag_origin" );
@@ -349,40 +349,40 @@ vehicle_takedown_01_dof()
     thread enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 3.0, 65, 30, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 3.0, 65, 30, 30 );
     wait 2.7;
-    level.player _meth_84AB( 2.0, 115, 30, 30 );
+    level.player setphysicaldepthoffield( 2.0, 115, 30, 30 );
     wait 7.0;
     thread disable_motion_blur();
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 logging_road_gaz_headlight_moment()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "headlight_gaz_spotlight" ), var_0, "tag_origin" );
-    var_0 _meth_804D( self, "TAG_HEADLIGHT_LEFT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( self, "TAG_HEADLIGHT_LEFT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     wait 20;
     killfxontag( common_scripts\utility::getfx( "headlight_gaz_spotlight" ), var_0, "tag_origin" );
 }
 
 logging_road_post_vrap()
 {
-    level.player _meth_83C0( "logging_road_post_vrap" );
+    level.player lightsetforplayer( "logging_road_post_vrap" );
     maps\_utility::vision_set_fog_changes( "lab_logging_road_post_vrap", 0 );
 }
 
 cliff_rappel()
 {
-    level.player _meth_83C0( "cliff_rappel" );
+    level.player lightsetforplayer( "cliff_rappel" );
     thread maps\_utility::vision_set_fog_changes( "lab_cliff_rappel", 0 );
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
 }
 
 cliff_rappel_lighting_setup()
@@ -400,13 +400,13 @@ cliff_rappel_lighting_init()
         var_1 = getent( "cliff_light_fill", "targetname" );
         var_2 = getent( "cliff_light_rim", "targetname" );
         thread maps\_lighting::lerp_spot_intensity( "cliff_light_key", 1, 200000 );
-        var_0 _meth_8044( ( 1, 1, 1 ) );
+        var_0 setlightcolor( ( 1, 1, 1 ) );
         thread maps\_lighting::lerp_spot_intensity( "cliff_light_fill", 1, 600000 );
         thread maps\_lighting::lerp_spot_intensity( "cliff_light_rim", 1, 500000 );
         common_scripts\utility::flag_wait( "flag_rappel_start_lighting" );
-        var_0 _meth_8020( 28, 24 );
-        var_1 _meth_8020( 40, 33 );
-        var_2 _meth_8020( 45, 40 );
+        var_0 setlightfovrange( 28, 24 );
+        var_1 setlightfovrange( 40, 33 );
+        var_2 setlightfovrange( 45, 40 );
     }
 }
 
@@ -418,31 +418,31 @@ cliff_rappel_moment()
     thread enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     wait 1.5;
-    level.player _meth_84AB( 2.0, 15.0, 30, 30 );
+    level.player setphysicaldepthoffield( 2.0, 15.0, 30, 30 );
     wait 4.0;
-    level.player _meth_84AB( 2.0, 38, 30, 30 );
+    level.player setphysicaldepthoffield( 2.0, 38, 30, 30 );
     wait 5.5;
-    level.player _meth_84AB( 5, 50, 30, 30 );
+    level.player setphysicaldepthoffield( 5, 50, 30, 30 );
 }
 
 cliff_rappel_shadow_tweaks()
 {
     wait 0.45;
-    level.player _meth_83C0( "cliff_rappel_spike" );
+    level.player lightsetforplayer( "cliff_rappel_spike" );
     wait 5.5;
-    level.player _meth_83C0( "cliff_rappel_moment" );
+    level.player lightsetforplayer( "cliff_rappel_moment" );
     wait 3.5;
-    level.player _meth_83C0( "cliff_rappel_jump" );
+    level.player lightsetforplayer( "cliff_rappel_jump" );
     wait 3;
-    level.player _meth_83C0( "cliff_rappel_moment" );
+    level.player lightsetforplayer( "cliff_rappel_moment" );
     common_scripts\utility::flag_wait( "flag_rappel_player_input_start" );
 
     if ( level.nextgen )
-        level.player _meth_83C0( "facility_breach" );
+        level.player lightsetforplayer( "facility_breach" );
 }
 
 cliff_rappel_lerpsun()
@@ -461,11 +461,11 @@ cliff_rappel_landing()
     level waittill( "cliff_rappel_landing" );
     thread maps\_utility::vision_set_fog_changes( "lab_facility_breach", 2 );
     thread lab_camera_light();
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     thread disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 lab_camera_light()
@@ -473,18 +473,18 @@ lab_camera_light()
     if ( level.nextgen )
     {
         var_0 = getent( "lab_camera_light", "targetname" );
-        var_0 _meth_81DF( 500000 );
-        var_0 _meth_8044( ( 0.3, 0.5, 1 ) );
+        var_0 setlightintensity( 500000 );
+        var_0 setlightcolor( ( 0.3, 0.5, 1 ) );
         common_scripts\utility::flag_wait( "flag_light_security_camera_off" );
-        var_0 _meth_81DF( 0 );
+        var_0 setlightintensity( 0 );
     }
 }
 
 facility_breach()
 {
-    level.player _meth_83C0( "facility_breach" );
+    level.player lightsetforplayer( "facility_breach" );
     maps\_utility::vision_set_fog_changes( "lab_facility_breach", 0 );
-    level.player _meth_8490( "clut_lab_exterior", 0 );
+    level.player setclutforplayer( "clut_lab_exterior", 0 );
     thread lab_camera_light();
 }
 
@@ -508,11 +508,11 @@ breach_lighting()
         thread maps\_lighting::lerp_spot_intensity( "lab_breach_rim", 2, 300000 );
         wait 1.8;
         thread maps\_utility::vision_set_fog_changes( "lab_facility_breach_moment", 0.1 );
-        level.player _meth_83C0( "facility_breach_moment" );
+        level.player lightsetforplayer( "facility_breach_moment" );
         wait 10.25;
         thread disable_motion_blur();
-        level.player _meth_83C0( "breach_room" );
-        level.player _meth_8490( "clut_lab_breach_brick_interior", 0.25 );
+        level.player lightsetforplayer( "breach_room" );
+        level.player setclutforplayer( "clut_lab_breach_brick_interior", 0.25 );
         thread maps\_utility::vision_set_fog_changes( "lab_facility_breach_room", 5 );
     }
 
@@ -522,11 +522,11 @@ breach_lighting()
         common_scripts\utility::flag_wait( "breach_start" );
         wait 1.8;
         thread maps\_utility::vision_set_fog_changes( "lab_facility_breach_moment", 0.1 );
-        level.player _meth_83C0( "facility_breach_moment" );
+        level.player lightsetforplayer( "facility_breach_moment" );
         wait 8.0;
-        level.player _meth_83C0( "breach_fx" );
+        level.player lightsetforplayer( "breach_fx" );
         wait 2;
-        level.player _meth_83C0( "breach_room" );
+        level.player lightsetforplayer( "breach_room" );
     }
 }
 
@@ -535,19 +535,19 @@ breach_dof()
     common_scripts\utility::flag_wait( "breach_start" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.0, 61, 30, 30 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.0, 61, 30, 30 );
     wait 1.5;
-    level.player _meth_84AB( 1.5, 19, 30, 30 );
+    level.player setphysicaldepthoffield( 1.5, 19, 30, 30 );
     wait 2;
-    level.player _meth_84AB( 1.5, 93, 30, 30 );
+    level.player setphysicaldepthoffield( 1.5, 93, 30, 30 );
     wait 10.0;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 setup_dof_default_interior()
@@ -566,9 +566,9 @@ setup_dof_default_interior_volume()
 
 building_1()
 {
-    level.player _meth_83C0( "building_1_bright" );
+    level.player lightsetforplayer( "building_1_bright" );
     maps\_utility::vision_set_fog_changes( "lab_building_1", 0 );
-    level.player _meth_8490( "clut_lab_breach_interior", 0.25 );
+    level.player setclutforplayer( "clut_lab_breach_interior", 0.25 );
 }
 
 setup_server_room_lighting()
@@ -614,25 +614,25 @@ setup_dof_server_room()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
     }
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 1.2, 200.0 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 1.2, 200.0 );
     wait 25.9;
-    level.player _meth_84AB( 1.2, 57.0 );
+    level.player setphysicaldepthoffield( 1.2, 57.0 );
     wait 7.4;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 }
 
 setup_server_room_door_open_lighting()
@@ -644,9 +644,9 @@ setup_server_room_door_open_lighting()
 
     common_scripts\utility::flag_wait( "open_server_room_door_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "after_server_room_bright" );
+    level.player lightsetforplayer( "after_server_room_bright" );
     wait 5.0;
-    level.player _meth_83C0( "building_1" );
+    level.player lightsetforplayer( "building_1" );
 }
 
 setup_orange_room_enter_volume()
@@ -685,9 +685,9 @@ setup_orange_room_exit()
 
 building_research_bridge()
 {
-    level.player _meth_83C0( "building_1" );
+    level.player lightsetforplayer( "building_1" );
     maps\_utility::vision_set_fog_changes( "lab_connecting_hallway", 0 );
-    level.player _meth_8490( "clut_lab_orange_interior", 0.25 );
+    level.player setclutforplayer( "clut_lab_orange_interior", 0.25 );
 }
 
 setup_dof_mini_atrium()
@@ -727,9 +727,9 @@ setup_sunlight_off_volume()
 
 foam_room()
 {
-    level.player _meth_83C0( "foam_room_frost" );
+    level.player lightsetforplayer( "foam_room_frost" );
     maps\_utility::vision_set_fog_changes( "lab_foam_room_frost", 0 );
-    level.player _meth_8490( "clut_lab_blue_interior", 0.25 );
+    level.player setclutforplayer( "clut_lab_blue_interior", 0.25 );
 }
 
 foam_plant_dof()
@@ -738,18 +738,18 @@ foam_plant_dof()
     wait 1;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 3.5, 10, 5, 5 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 3.5, 10, 5, 5 );
     wait 2.0;
-    level.player _meth_84AB( 3.5, 20, 30, 30 );
+    level.player setphysicaldepthoffield( 3.5, 20, 30, 30 );
     level waittill( "reset_plant_dof" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 
     if ( level.nextgen )
         setsunlight( 0, 0, 0 );
@@ -757,9 +757,9 @@ foam_plant_dof()
 
 courtyard()
 {
-    level.player _meth_83C0( "locker_room" );
+    level.player lightsetforplayer( "locker_room" );
     maps\_utility::vision_set_fog_changes( "lab_locker_room", 0 );
-    level.player _meth_8490( "clut_lab_blue_interior", 0.25 );
+    level.player setclutforplayer( "clut_lab_blue_interior", 0.25 );
 
     if ( level.nextgen )
         setsunlight( 0, 0, 0 );
@@ -767,9 +767,9 @@ courtyard()
 
 courtyard_jammer()
 {
-    level.player _meth_83C0( "enter_courtyard" );
+    level.player lightsetforplayer( "enter_courtyard" );
     maps\_utility::vision_set_fog_changes( "lab_enter_courtyard", 0 );
-    level.player _meth_8490( "clut_lab_courtyard", 0.25 );
+    level.player setclutforplayer( "clut_lab_courtyard", 0.25 );
 
     if ( level.nextgen )
         setsunlight( 0, 0, 0 );
@@ -782,18 +782,18 @@ courtyard_jammer_plant_dof()
     enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.5, 14, 2, 2 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.5, 14, 2, 2 );
     wait 2.5;
-    level.player _meth_84AB( 3.5, 25, 2, 2 );
+    level.player setphysicaldepthoffield( 3.5, 25, 2, 2 );
     level waittill( "reset_jammer_plant_dof" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 }
 
 courtyard_sun_off()
@@ -807,8 +807,8 @@ courtyard_sun_off()
 tank_hangar()
 {
     maps\_utility::vision_set_fog_changes( "lab_courtyard_walkway", 0 );
-    level.player _meth_83C0( "courtyard_walkway" );
-    level.player _meth_8490( "clut_lab_courtyard", 0.25 );
+    level.player lightsetforplayer( "courtyard_walkway" );
+    level.player setclutforplayer( "clut_lab_courtyard", 0.25 );
 
     if ( level.nextgen )
         setsunlight( 0, 0, 0 );
@@ -831,7 +831,7 @@ tank_reveal_models()
     var_10 = getent( "tank_top_light_04", "targetname" );
 
     if ( level.nextgen )
-        var_10 _meth_8498( "force_on" );
+        var_10 setlightshadowstate( "force_on" );
 
     var_11 = getent( "tank_top_light_bounce_01", "targetname" );
     var_12 = getent( "tank_top_light_bounce_02", "targetname" );
@@ -840,30 +840,30 @@ tank_reveal_models()
     common_scripts\utility::flag_wait( "tank_reveal_volume" );
 
     if ( level.nextgen )
-        var_10 _meth_8498( "force_on" );
+        var_10 setlightshadowstate( "force_on" );
 
     common_scripts\_exploder::exploder( 7913 );
 
     if ( level.nextgen )
     {
         wait 1;
-        var_9 _meth_81DF( 1000000 );
-        var_13 _meth_81DF( 5000 );
+        var_9 setlightintensity( 1000000 );
+        var_13 setlightintensity( 5000 );
         wait 1;
-        var_10 _meth_81DF( 1000000 );
-        var_14 _meth_81DF( 5000 );
+        var_10 setlightintensity( 1000000 );
+        var_14 setlightintensity( 5000 );
         wait 1;
-        var_7 _meth_81DF( 1000000 );
-        var_11 _meth_81DF( 5000 );
+        var_7 setlightintensity( 1000000 );
+        var_11 setlightintensity( 5000 );
         wait 1;
-        var_8 _meth_81DF( 1000000 );
-        var_12 _meth_81DF( 5000 );
+        var_8 setlightintensity( 1000000 );
+        var_12 setlightintensity( 5000 );
     }
 
     common_scripts\utility::flag_wait( "player_entering_hovertank" );
 
     if ( level.nextgen )
-        var_10 _meth_8498( "force_off" );
+        var_10 setlightshadowstate( "force_off" );
 }
 
 tank_reveal_models_start_point()
@@ -890,19 +890,19 @@ tank_reveal_models_start_point()
     foreach ( var_6 in var_1 )
     {
         foreach ( var_17 in getentarray( var_6, "targetname" ) )
-            var_17 _meth_81DF( 100000 );
+            var_17 setlightintensity( 100000 );
     }
 
     foreach ( var_6 in var_2 )
     {
         foreach ( var_17 in getentarray( var_6, "targetname" ) )
-            var_17 _meth_81DF( 1000000 );
+            var_17 setlightintensity( 1000000 );
     }
 
     foreach ( var_6 in var_3 )
     {
         foreach ( var_17 in getentarray( var_6, "targetname" ) )
-            var_17 _meth_81DF( 5000 );
+            var_17 setlightintensity( 5000 );
     }
 
     common_scripts\_exploder::exploder( 7011 );
@@ -939,7 +939,7 @@ tank_reveal_lighting()
     common_scripts\_exploder::exploder( 7021 );
 
     foreach ( var_17 in var_0 )
-        var_17 _meth_81DF( 100000 );
+        var_17 setlightintensity( 100000 );
 
     foreach ( var_20 in var_6 )
         var_20 show();
@@ -949,7 +949,7 @@ tank_reveal_lighting()
     common_scripts\_exploder::exploder( 7022 );
 
     foreach ( var_17 in var_1 )
-        var_17 _meth_81DF( 100000 );
+        var_17 setlightintensity( 100000 );
 
     foreach ( var_20 in var_7 )
         var_20 show();
@@ -961,8 +961,8 @@ tank_reveal_lighting()
 
     if ( isdefined( var_28 ) )
     {
-        var_28 _meth_81DF( 55000 );
-        var_28 _meth_8498( "force_on" );
+        var_28 setlightintensity( 55000 );
+        var_28 setlightshadowstate( "force_on" );
     }
 
     wait 1;
@@ -970,7 +970,7 @@ tank_reveal_lighting()
     common_scripts\_exploder::exploder( 7023 );
 
     foreach ( var_17 in var_2 )
-        var_17 _meth_81DF( 100000 );
+        var_17 setlightintensity( 100000 );
 
     foreach ( var_20 in var_8 )
         var_20 show();
@@ -982,7 +982,7 @@ tank_reveal_lighting()
     common_scripts\_exploder::exploder( 7014 );
 
     foreach ( var_17 in var_3 )
-        var_17 _meth_81DF( 100000 );
+        var_17 setlightintensity( 100000 );
 
     foreach ( var_20 in var_9 )
         var_20 show();
@@ -994,10 +994,10 @@ tank_reveal_lighting()
     common_scripts\_exploder::exploder( 7015 );
 
     foreach ( var_17 in var_4 )
-        var_17 _meth_81DF( 100000 );
+        var_17 setlightintensity( 100000 );
 
     foreach ( var_17 in var_5 )
-        var_17 _meth_81DF( 10000 );
+        var_17 setlightintensity( 10000 );
 
     foreach ( var_20 in var_10 )
         var_20 show();
@@ -1018,7 +1018,7 @@ tank_reveal_lighting()
     common_scripts\utility::flag_wait( "player_entering_hovertank" );
 
     if ( isdefined( var_28 ) )
-        var_28 _meth_8498( "force_off" );
+        var_28 setlightshadowstate( "force_off" );
 }
 
 stair_wait()
@@ -1029,15 +1029,15 @@ stair_wait()
 
 tank_field_nightvision()
 {
-    level.player _meth_83C0( "tank_nightvision" );
+    level.player lightsetforplayer( "tank_nightvision" );
     maps\_utility::vision_set_fog_changes( "lab_tank_thermal", 0 );
 }
 
 tank_board()
 {
-    level.player _meth_83C0( "tank_hangar" );
+    level.player lightsetforplayer( "tank_hangar" );
     maps\_utility::vision_set_fog_changes( "lab_tank_hangar", 0 );
-    level.player _meth_8490( "clut_lab_tank_hangar", 0.25 );
+    level.player setclutforplayer( "clut_lab_tank_hangar", 0.25 );
 
     if ( level.nextgen )
         setsunlight( 0, 0, 0 );
@@ -1048,26 +1048,26 @@ tank_board_enter()
     wait 0.1;
     common_scripts\_exploder::exploder( 7122 );
     resetsunlight();
-    level.player _meth_83C0( "tank_board" );
+    level.player lightsetforplayer( "tank_board" );
     enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 3, 36, 2, 2 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 3, 36, 2, 2 );
     wait 2;
     common_scripts\_exploder::kill_exploder( 7622 );
     level waittill( "tank_switch" );
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     wait 1.5;
     common_scripts\_exploder::kill_exploder( 7122 );
     disable_motion_blur();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 
-    level.player _meth_83C0( "enter_courtyard_2" );
+    level.player lightsetforplayer( "enter_courtyard_2" );
 }
 
 tank_board_enter_top_lights()
@@ -1078,34 +1078,34 @@ tank_board_enter_top_lights()
     var_1 = getent( "tank_top_light_02", "targetname" );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_81DF( 0 );
+        var_1 setlightintensity( 0 );
 
     var_2 = getent( "tank_top_light_03", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_81DF( 0 );
+        var_2 setlightintensity( 0 );
 
     wait 0.05;
     var_3 = getent( "tank_top_light_04", "targetname" );
 
     if ( isdefined( var_3 ) )
     {
-        var_3 _meth_8498( "normal" );
-        var_3 _meth_81DF( 0 );
+        var_3 setlightshadowstate( "normal" );
+        var_3 setlightintensity( 0 );
     }
 
     wait 3.5;
     var_4 = getent( "tank_top_light_01", "targetname" );
 
     if ( isdefined( var_4 ) )
-        var_4 _meth_81DF( 0 );
+        var_4 setlightintensity( 0 );
 }
 
 hovertank_turrent_light( var_0 )
 {
     var_0.spot_main = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.spot_main;
-    var_1 _meth_804D( var_0, "barrel", ( 80, 50, 0 ), ( 180, 90, 0 ), 0 );
+    var_1 linkto( var_0, "barrel", ( 80, 50, 0 ), ( 180, 90, 0 ), 0 );
     wait 1.5;
     playfxontag( common_scripts\utility::getfx( "point_blue_fill_tank_gun" ), var_1, "TAG_ORIGIN" );
 }
@@ -1113,23 +1113,23 @@ hovertank_turrent_light( var_0 )
 hovertank_turrent_reflection( var_0 )
 {
     var_1 = getent( "reflection_dark", "targetname" );
-    var_0 common_scripts\utility::delaycall( 0.05, ::_meth_83AB, var_1.origin );
+    var_0 common_scripts\utility::delaycall( 0.05, ::overridereflectionprobe, var_1.origin );
 }
 
 tank_road()
 {
     resetsunlight();
-    level.player _meth_83C0( "tank_field" );
+    level.player lightsetforplayer( "tank_field" );
     maps\_utility::vision_set_fog_changes( "lab_tank_field", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 tank_field()
 {
     resetsunlight();
-    level.player _meth_83C0( "tank_field" );
+    level.player lightsetforplayer( "tank_field" );
     maps\_utility::vision_set_fog_changes( "lab_tank_field", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 tank_exit_dof_reset()
@@ -1139,7 +1139,7 @@ tank_exit_dof_reset()
     enable_motion_blur_rotation();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
     var_0 = getent( "tank_exit_light", "targetname" );
     var_1 = getent( "tank_exit_light_char", "targetname" );
@@ -1148,10 +1148,10 @@ tank_exit_dof_reset()
 
     if ( level.nextgen )
     {
-        var_0 _meth_8044( ( 0.5, 0.8, 1 ) );
-        var_0 _meth_81DF( 300000 );
-        var_1 _meth_8044( ( 0.5, 0.8, 1 ) );
-        var_1 _meth_81DF( 40000 );
+        var_0 setlightcolor( ( 0.5, 0.8, 1 ) );
+        var_0 setlightintensity( 300000 );
+        var_1 setlightcolor( ( 0.5, 0.8, 1 ) );
+        var_1 setlightintensity( 40000 );
     }
 
     wait 2;
@@ -1165,44 +1165,44 @@ tank_exit_dof_reset()
     wait 7;
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 0 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 0 );
 
     disable_motion_blur();
 
     if ( level.nextgen )
     {
-        var_0 _meth_81DF( 0 );
-        var_1 _meth_81DF( 0 );
+        var_0 setlightintensity( 0 );
+        var_1 setlightintensity( 0 );
     }
 }
 
 tank_field_lft_frk()
 {
-    level.player _meth_83C0( "tank_field_lft_frk" );
+    level.player lightsetforplayer( "tank_field_lft_frk" );
     maps\_utility::vision_set_fog_changes( "lab_tank_field_lft_frk", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 tank_field_rgt_frk()
 {
-    level.player _meth_83C0( "tank_field_rgt_frk" );
+    level.player lightsetforplayer( "tank_field_rgt_frk" );
     maps\_utility::vision_set_fog_changes( "lab_tank_field_rgt_frk", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 tank_ascent()
 {
-    level.player _meth_83C0( "tank_ascent" );
+    level.player lightsetforplayer( "tank_ascent" );
     maps\_utility::vision_set_fog_changes( "lab_tank_ascent", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 exfil()
 {
-    level.player _meth_83C0( "exfil" );
+    level.player lightsetforplayer( "exfil" );
     common_scripts\_exploder::exploder( 9157 );
     maps\_utility::vision_set_fog_changes( "lab_tank_exfil", 0 );
-    level.player _meth_8490( "clut_lab_tank", 0 );
+    level.player setclutforplayer( "clut_lab_tank", 0 );
 }
 
 sun_light_reset()
@@ -1225,17 +1225,17 @@ red_light_strobe_courtyard()
 
     foreach ( var_3 in var_1 )
     {
-        var_3 _meth_81DF( 300000 );
-        var_3 _meth_8044( ( 1, 0, 0 ) );
+        var_3 setlightintensity( 300000 );
+        var_3 setlightcolor( ( 1, 0, 0 ) );
     }
 
     for (;;)
     {
         foreach ( var_6 in var_0 )
-            var_6 _meth_83DF( ( 360, 0, 0 ), 1.0 );
+            var_6 rotateby( ( 360, 0, 0 ), 1.0 );
 
         foreach ( var_3 in var_1 )
-            var_3 _meth_83DF( ( 360, 0, 0 ), 1.0 );
+            var_3 rotateby( ( 360, 0, 0 ), 1.0 );
 
         wait 1;
     }
@@ -1244,21 +1244,21 @@ red_light_strobe_courtyard()
 exfil_dof()
 {
     enable_motion_blur_rotation();
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehEnable", 1 );
+        setsaveddvar( "r_dof_physical_bokehEnable", 1 );
 
-    level.player _meth_84AB( 4, 40 );
+    level.player setphysicaldepthoffield( 4, 40 );
     wait 12;
-    level.player _meth_84AB( 4, 20 );
+    level.player setphysicaldepthoffield( 4, 20 );
     common_scripts\utility::flag_wait( "flag_burke_destroy_tank" );
     wait 2;
-    level.player _meth_84AB( 2, 1100 );
+    level.player setphysicaldepthoffield( 2, 1100 );
     wait 3.7;
-    level.player _meth_84AB( 1.5, 40 );
+    level.player setphysicaldepthoffield( 1.5, 40 );
     wait 4;
-    level.player _meth_84AB( 1.5, 20 );
+    level.player setphysicaldepthoffield( 1.5, 20 );
 }
 
 razorback_lighting( var_0 )
@@ -1267,34 +1267,34 @@ razorback_lighting( var_0 )
     level waittill( "thruster_front_off" );
 
     if ( level.nextgen )
-        _func_0D3( "r_subdiv", "1" );
+        setsaveddvar( "r_subdiv", "1" );
 
     var_0.point_inside = common_scripts\utility::spawn_tag_origin();
     var_1 = var_0.point_inside;
-    var_1 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -20, 0, 0 ), ( 30, -125, 0 ), 0 );
+    var_1 linkto( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -20, 0, 0 ), ( 30, -125, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "spot_red_heli_in" ), var_1, "tag_origin" );
     var_0.spot_main = common_scripts\utility::spawn_tag_origin();
     var_2 = var_0.spot_main;
-    var_2 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
+    var_2 linkto( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 0, 0, 0 ), ( 0, 0, 0 ), 0 );
     var_0.spot_tag4 = common_scripts\utility::spawn_tag_origin();
     var_3 = var_0.spot_tag4;
-    var_3 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 40, -20, 0 ), ( 10, 110, 0 ), 0 );
+    var_3 linkto( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 40, -20, 0 ), ( 10, 110, 0 ), 0 );
     var_0.spot_tag3 = common_scripts\utility::spawn_tag_origin();
     var_4 = var_0.spot_tag3;
-    var_4 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 30, 0, 0 ), ( 0, 45, 0 ), 0 );
+    var_4 linkto( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 30, 0, 0 ), ( 0, 45, 0 ), 0 );
     var_0.spot_tag = common_scripts\utility::spawn_tag_origin();
     var_5 = var_0.spot_tag;
-    var_5 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_POINT", ( 0, 80, 0 ), ( 0, 90, 0 ), 0 );
+    var_5 linkto( var_0, "TAG_LIGHT_INTERIOR_POINT", ( 0, 80, 0 ), ( 0, 90, 0 ), 0 );
     playfxontag( common_scripts\utility::getfx( "spot_red_heli_in_lrg" ), var_5, "tag_origin" );
     var_0.spot_tag2 = common_scripts\utility::spawn_tag_origin();
     var_6 = var_0.spot_tag2;
-    var_6 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 70, 30, 0 ), ( 180, 0, 0 ), 0 );
+    var_6 linkto( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 70, 30, 0 ), ( 180, 0, 0 ), 0 );
     var_0.point_tag = common_scripts\utility::spawn_tag_origin();
     var_7 = var_0.point_tag;
-    var_7 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -20, 20, 0 ), ( 0, 0, 0 ), 0 );
+    var_7 linkto( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -20, 20, 0 ), ( 0, 0, 0 ), 0 );
     var_0.point_tag2 = common_scripts\utility::spawn_tag_origin();
     var_8 = var_0.point_tag2;
-    var_8 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -55, -15, -40 ), ( 90, 0, 0 ), 0 );
+    var_8 linkto( var_0, "TAG_LIGHT_INTERIOR_POINT", ( -55, -15, -40 ), ( 90, 0, 0 ), 0 );
     common_scripts\utility::flag_wait( "flag_exfil_dialogue" );
     killfxontag( common_scripts\utility::getfx( "spot_red_heli_in_lrg" ), var_5, "tag_origin" );
     common_scripts\_exploder::kill_exploder( 9157 );
@@ -1310,18 +1310,18 @@ razorback_lighting( var_0 )
     wait 5;
     common_scripts\utility::flag_wait( "flag_burke_destroy_tank" );
     wait 5.5;
-    level.player _meth_83C0( "exfil_pre_explosion" );
+    level.player lightsetforplayer( "exfil_pre_explosion" );
     wait 0.15;
     earthquake( 0.25, 1.0, level.player.origin, 1600 );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     var_0.spot_tag4 = common_scripts\utility::spawn_tag_origin();
     var_3 = var_0.spot_tag4;
-    var_3 _meth_804D( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 0, 0, 50 ), ( 30, 0, 0 ), 0 );
+    var_3 linkto( var_0, "TAG_LIGHT_INTERIOR_SPOT", ( 0, 0, 50 ), ( 30, 0, 0 ), 0 );
     thread maps\_utility::vision_set_fog_changes( "lab_building_power", 0.2 );
-    level.player _meth_83C0( "exfil_explosion" );
+    level.player lightsetforplayer( "exfil_explosion" );
     wait 0.5;
     thread maps\_utility::vision_set_fog_changes( "lab_tank_exfil", 0.5 );
-    level.player _meth_83C0( "exfil" );
+    level.player lightsetforplayer( "exfil" );
     wait 1;
 
     if ( isdefined( var_0.spot_tag2 ) )
@@ -1336,28 +1336,28 @@ burke_exfil_lighting()
 tank_turrent_reflection( var_0, var_1 )
 {
     var_2 = getent( "reflection_orange", "targetname" );
-    var_0 _meth_83AB( var_2.origin );
+    var_0 overridereflectionprobe( var_2.origin );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_83AB( var_2.origin );
+        var_4 overridereflectionprobe( var_2.origin );
 }
 
 turn_off_top_tank_lights()
 {
     earthquake( 0.2, 1.0, level.player.origin, 1600 );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     var_0 = [ "tank_top_light_01", "tank_top_light_02", "tank_top_light_03" ];
 
     foreach ( var_2 in var_0 )
     {
         foreach ( var_4 in getentarray( var_2, "targetname" ) )
-            var_4 _meth_81DF( 300000 );
+            var_4 setlightintensity( 300000 );
     }
 
     var_7 = getent( "tank_top_light_04", "targetname" );
 
     if ( isdefined( var_7 ) )
-        var_7 _meth_81DF( 50000 );
+        var_7 setlightintensity( 50000 );
 
     if ( level.nextgen )
         maps\_lighting::play_flickerlight_preset( "blue_fire", "blue_flicker", 500000 );
@@ -1365,15 +1365,15 @@ turn_off_top_tank_lights()
     level waittill( "msg_vfx_htank_thrust_regular" );
     wait 0.5;
     earthquake( 0.25, 1.0, level.player.origin, 1600 );
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
 }
 
 enable_motion_blur_rotation()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 }
 
@@ -1381,14 +1381,14 @@ disable_motion_blur()
 {
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
 enable_physical_dof_hip()
 {
-    _func_0D3( "r_dof_physical_hipEnable", 1 );
-    _func_0D3( "r_dof_physical_hipFstop", 1.5 );
-    _func_0D3( "r_dof_physical_hipSharpCocDiameter", 0.03 );
+    setsaveddvar( "r_dof_physical_hipEnable", 1 );
+    setsaveddvar( "r_dof_physical_hipFstop", 1.5 );
+    setsaveddvar( "r_dof_physical_hipSharpCocDiameter", 0.03 );
 }

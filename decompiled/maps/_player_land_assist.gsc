@@ -68,16 +68,16 @@ setup_reminder_volumes()
     {
         foreach ( var_2 in var_0 )
         {
-            if ( level.player _meth_80A9( var_2 ) & !level.player.land_assist_activated & level.player.show_land_assist_help )
+            if ( level.player istouching( var_2 ) & !level.player.land_assist_activated & level.player.show_land_assist_help )
             {
                 thread maps\_utility::display_hint( "player_land_assist_hint" );
                 level.land_assist_current_vol = var_2;
 
-                while ( !level.player.land_assist_activated && level.player _meth_80A9( var_2 ) )
+                while ( !level.player.land_assist_activated && level.player istouching( var_2 ) )
                     waitframe();
             }
 
-            if ( level.player _meth_80A9( var_2 ) && level.player.land_assist_activated && level.player.show_land_assist_help )
+            if ( level.player istouching( var_2 ) && level.player.land_assist_activated && level.player.show_land_assist_help )
                 level notify( "land_assist_reminder", var_2 );
 
             waitframe();
@@ -90,7 +90,7 @@ land_assist_hint_breakout()
     if ( !isdefined( level.land_assist_current_vol ) )
         return 0;
 
-    if ( !level.player.land_assist_activated && level.player _meth_80A9( level.land_assist_current_vol ) )
+    if ( !level.player.land_assist_activated && level.player istouching( level.land_assist_current_vol ) )
         return 0;
 
     return 1;
@@ -100,11 +100,11 @@ clear_land_assist()
 {
     self waittill( "clear_land_assist_process" );
     self notify( "end_jump_assist" );
-    level.player _meth_84CC();
+    level.player resetgravityoverride();
     self notify( "kill_land_assist_process" );
     self.land_assist_activated = 0;
-    level.player _meth_82C0( 1 );
-    level.player _meth_850C( 1 );
+    level.player setcandamage( 1 );
+    level.player enablereload( 1 );
     disable_boost_hud();
 }
 
@@ -159,7 +159,7 @@ waittill_player_fall()
     var_0 = undefined;
     var_1 = undefined;
 
-    while ( level.player _meth_8341() )
+    while ( level.player isonground() )
     {
         var_0 = level.player.origin;
         waitframe();
@@ -183,8 +183,8 @@ init_land_assist_player_rig()
     {
         level.player.land_assist_rig = maps\_utility::spawn_anim_model( "player_rig" );
         level.player.land_assist_rig hide();
-        level.player.land_assist_rig.angles = level.player _meth_8036();
-        level.player.land_assist_rig _meth_80A6( level.player, "tag_origin", ( 32, 0, 0 ), ( -90, 0, 0 ), 1 );
+        level.player.land_assist_rig.angles = level.player getgunangles();
+        level.player.land_assist_rig linktoplayerview( level.player, "tag_origin", ( 32, 0, 0 ), ( -90, 0, 0 ), 1 );
     }
 
     for (;;)
@@ -200,9 +200,9 @@ player_soft_land_alt()
 {
     self endon( "death" );
     self endon( "end_jump_assist" );
-    level.player _meth_850C( 0 );
+    level.player enablereload( 0 );
     var_0 = ( 0, 0, 0 );
-    level.player _meth_8091( undefined );
+    level.player playersetgroundreferenceent( undefined );
 
     if ( !isdefined( self.land_assist_light ) )
         self.land_assist_light = common_scripts\utility::spawn_tag_origin();
@@ -211,9 +211,9 @@ player_soft_land_alt()
     level.player.land_assist_available_startime = 0.0;
     thread process_screen_shake();
 
-    while ( !level.player _meth_8341() )
+    while ( !level.player isonground() )
     {
-        level.player _meth_82C0( 0 );
+        level.player setcandamage( 0 );
         var_0 = level.player getvelocity();
         var_2 = 0;
 
@@ -236,7 +236,7 @@ player_soft_land_alt()
                 var_0 = level.player getvelocity();
                 var_4 = max( var_4, var_0[2] + 20 );
                 var_10 = ( var_4 - var_0[2] ) / var_5;
-                level.player _meth_84CB( -1 * int( var_10 ) );
+                level.player setgravityoverride( -1 * int( var_10 ) );
 
                 while ( is_land_assist_activated() )
                 {
@@ -244,7 +244,7 @@ player_soft_land_alt()
 
                     if ( gettime() > var_8 )
                     {
-                        level.player _meth_84CB( int( var_7 ) );
+                        level.player setgravityoverride( int( var_7 ) );
 
                         if ( gettime() > var_9 )
                             break;
@@ -258,10 +258,10 @@ player_soft_land_alt()
                 }
             }
 
-            if ( level.player _meth_8341() )
+            if ( level.player isonground() )
                 break;
 
-            level.player _meth_84CB( int( var_1 ) );
+            level.player setgravityoverride( int( var_1 ) );
 
             while ( is_land_assist_activated() )
             {
@@ -269,12 +269,12 @@ player_soft_land_alt()
                 var_11 = perlinnoise2d( 0, gettime() * 0.001 * 0.5, 2, 2, 0.5 ) * 75;
                 var_12 = perlinnoise2d( 1, gettime() * 0.001 * 0.5, 2, 2, 0.5 ) * 10;
                 var_13 = perlinnoise2d( 2, gettime() * 0.001 * 0.5, 2, 2, 0.5 ) * 10;
-                var_14 = self _meth_82F3();
+                var_14 = self getnormalizedmovement();
 
                 if ( length( var_14 ) <= 0.01 )
-                    self _meth_82F1( ( var_0[0] * 0.3, var_0[1] * 0.3, var_0[2] + var_11 ) );
+                    self setvelocity( ( var_0[0] * 0.3, var_0[1] * 0.3, var_0[2] + var_11 ) );
                 else
-                    self _meth_82F1( ( var_0[0], var_0[1], var_0[2] + var_11 ) );
+                    self setvelocity( ( var_0[0], var_0[1], var_0[2] + var_11 ) );
 
                 self.land_assist_light.origin = self.origin;
                 do_exhaust_fx();
@@ -286,7 +286,7 @@ player_soft_land_alt()
 
         if ( !is_land_assist_activated() )
         {
-            level.player _meth_84CC();
+            level.player resetgravityoverride();
             level notify( "snd_boost_land_lp_stop_notify" );
         }
 
@@ -294,9 +294,9 @@ player_soft_land_alt()
             waitframe();
     }
 
-    level.player _meth_82C0( 1 );
-    level.player _meth_850C( 1 );
-    level.player _meth_84CC();
+    level.player setcandamage( 1 );
+    level.player enablereload( 1 );
+    level.player resetgravityoverride();
     level.player do_custom_fall_damage( var_0[2] );
     thread delayed_delete_light( 1 );
     level notify( "snd_boost_land_lp_stop_notify" );
@@ -319,7 +319,7 @@ do_custom_fall_damage( var_0, var_1 )
     if ( var_3 > 0 )
     {
         var_4 = level.player.health;
-        var_2 = level.player _meth_8051( var_3, self.origin, self, level.player, "MOD_FALLING" );
+        var_2 = level.player dodamage( var_3, self.origin, self, level.player, "MOD_FALLING" );
     }
 
     if ( var_1 )
@@ -336,16 +336,16 @@ process_screen_shake()
     var_0 = 1.0;
     var_1 = 1.0;
 
-    while ( !level.player _meth_8341() )
+    while ( !level.player isonground() )
     {
         if ( is_land_assist_activated() )
         {
-            _func_234( self.origin, 2, 0.5, 0.5, var_0, 0.01, 0.2, 1000, 5, 3.175, 3.125 );
+            screenshake( self.origin, 2, 0.5, 0.5, var_0, 0.01, 0.2, 1000, 5, 3.175, 3.125 );
             wait(var_0);
 
             while ( is_land_assist_activated() )
             {
-                _func_234( self.origin, 0.5, 0.25, 0.25, var_1, 0.01, 0.2, 1000, 5, 1.175, 1.125 );
+                screenshake( self.origin, 0.5, 0.25, 0.25, var_1, 0.01, 0.2, 1000, 5, 1.175, 1.125 );
                 wait(var_1);
             }
 
@@ -358,7 +358,7 @@ process_screen_shake()
 
 do_rumble()
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 do_exhaust_fx()
@@ -383,7 +383,7 @@ do_exhaust_fx()
 
 is_land_assist_activated()
 {
-    return self usebuttonpressed() && !level.player _meth_8341() && level.player.land_assist["boost_fuel"] > 0 && level.player getvelocity()[2] < -26.6 && gettime() - level.player.last_exo_movement_time > 1500.0;
+    return self usebuttonpressed() && !level.player isonground() && level.player.land_assist["boost_fuel"] > 0 && level.player getvelocity()[2] < -26.6 && gettime() - level.player.last_exo_movement_time > 1500.0;
 }
 
 delayed_delete_light( var_0 )
@@ -428,7 +428,7 @@ track_player_height()
         var_1 = var_0[2];
         self.land_assist["current_height"] = self.origin[2] - var_1;
         self.land_assist["ground_location"] = var_0;
-        _func_23F( &"update_landassist_elevation", 1, int( self.land_assist["current_height"] ) );
+        luinotifyevent( &"update_landassist_elevation", 1, int( self.land_assist["current_height"] ) );
         waitframe();
     }
 }
@@ -447,7 +447,7 @@ monitor_on_ground()
     {
         var_4 = var_3;
 
-        if ( self _meth_8341() )
+        if ( self isonground() )
         {
             var_3 = var_0;
             self notify( "player_is_on_ground" );
@@ -491,35 +491,35 @@ precache_player_land_assist()
 
 monitor_player_input()
 {
-    level.player _meth_82DD( "dpad_down", "+actionslot 2" );
-    level.player _meth_82DD( "dpad_left", "+actionslot 3" );
-    level.player _meth_82DD( "dpad_right", "+actionslot 4" );
-    level.player _meth_82DD( "dpad_up", "+actionslot 1" );
-    level.player _meth_82DD( "a_pressed", "+gostand" );
-    level.player _meth_82DD( "b_pressed", "+stance" );
-    level.player _meth_82DD( "y_pressed", "weapnext" );
-    level.player _meth_82DD( "x_pressed", "+usereload" );
-    level.player _meth_82DD( "attack_pressed", "+attack" );
+    level.player notifyonplayercommand( "dpad_down", "+actionslot 2" );
+    level.player notifyonplayercommand( "dpad_left", "+actionslot 3" );
+    level.player notifyonplayercommand( "dpad_right", "+actionslot 4" );
+    level.player notifyonplayercommand( "dpad_up", "+actionslot 1" );
+    level.player notifyonplayercommand( "a_pressed", "+gostand" );
+    level.player notifyonplayercommand( "b_pressed", "+stance" );
+    level.player notifyonplayercommand( "y_pressed", "weapnext" );
+    level.player notifyonplayercommand( "x_pressed", "+usereload" );
+    level.player notifyonplayercommand( "attack_pressed", "+attack" );
 }
 
 enable_boost_hud()
 {
     var_0 = level.player.land_assist["boost_fuel"] / 1000;
-    level.player _meth_82FB( "ui_meterhud_toggle", 1 );
-    level.player _meth_82FB( "ui_meterhud_level", var_0 );
+    level.player setclientomnvar( "ui_meterhud_toggle", 1 );
+    level.player setclientomnvar( "ui_meterhud_level", var_0 );
     level.player soundscripts\_snd::snd_message( "boost_land_hud_enable" );
 }
 
 disable_boost_hud()
 {
-    level.player _meth_82FB( "ui_meterhud_toggle", 0 );
+    level.player setclientomnvar( "ui_meterhud_toggle", 0 );
     level.player soundscripts\_snd::snd_message( "boost_land_hud_disable" );
 }
 
 fuel_update_hud()
 {
     var_0 = level.player.land_assist["boost_fuel"] / 1000;
-    level.player _meth_82FB( "ui_meterhud_level", var_0 );
+    level.player setclientomnvar( "ui_meterhud_level", var_0 );
 }
 
 int_clamp( var_0, var_1, var_2 )
@@ -608,7 +608,7 @@ track_player_movement()
 
     for (;;)
     {
-        var_0 = self _meth_82F3();
+        var_0 = self getnormalizedmovement();
         var_0 = ( var_0[0], var_0[1] * -1, 0 );
         var_1 = self.angles;
         var_2 = vectortoangles( var_0 );

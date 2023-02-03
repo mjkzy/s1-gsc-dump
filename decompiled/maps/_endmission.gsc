@@ -45,20 +45,20 @@ _nextmission()
 {
     if ( maps\_utility::is_demo() )
     {
-        _func_0D3( "ui_nextMission", "0" );
+        setsaveddvar( "ui_nextMission", "0" );
 
         if ( isdefined( level.nextmission_exit_time ) )
-            _func_053( "", 0, level.nextmission_exit_time );
+            changelevel( "", 0, level.nextmission_exit_time );
         else
-            _func_053( "", 0 );
+            changelevel( "", 0 );
     }
     else
     {
         level notify( "nextmission" );
         level.nextmission = 1;
-        level.player _meth_80EF();
+        level.player enableinvulnerability();
         var_0 = undefined;
-        _func_0D3( "ui_nextMission", "1" );
+        setsaveddvar( "ui_nextMission", "1" );
         setdvar( "ui_showPopup", "0" );
         setdvar( "ui_popupString", "" );
         setdvar( "ui_prev_map", level.script );
@@ -86,7 +86,7 @@ _nextmission()
 
         if ( !isdefined( var_0 ) )
         {
-            _func_054( level.script );
+            missionsuccess( level.script );
             return;
         }
 
@@ -96,7 +96,7 @@ _nextmission()
             maps\_utility::level_end_save();
 
         level.missionsettings setlevelcompleted( var_0 );
-        var_2 = level.player _meth_820D( "gameskill" );
+        var_2 = level.player getplayersetting( "gameskill" );
         maps\_player_stats::register_difficulty( level.difficultytype[int( var_2 )], 0 );
         maps\_sp_matchdata::level_complete( level.script );
         var_3 = updatesppercent();
@@ -106,7 +106,7 @@ _nextmission()
 
         if ( level.script == "finale" )
         {
-            _func_054( "", 0 );
+            missionsuccess( "", 0 );
             return;
         }
 
@@ -116,8 +116,8 @@ _nextmission()
         {
             if ( !getdvarint( "arcademode_full" ) )
             {
-                _func_0D3( "ui_nextMission", "0" );
-                _func_054( level.script );
+                setsaveddvar( "ui_nextMission", "0" );
+                missionsuccess( level.script );
                 return;
             }
         }
@@ -126,16 +126,16 @@ _nextmission()
         {
             if ( isdefined( level.missionsettings getfadetime( var_0 ) ) )
             {
-                _func_053( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ), level.missionsettings getfadetime( var_0 ) );
+                changelevel( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ), level.missionsettings getfadetime( var_0 ) );
                 return;
             }
 
-            _func_053( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ) );
+            changelevel( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ) );
             return;
             return;
         }
 
-        _func_054( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ) );
+        missionsuccess( level.missionsettings getlevelname( var_4 ), level.missionsettings getkeepweapons( var_0 ) );
     }
 }
 
@@ -144,7 +144,7 @@ updatesppercent()
     var_0 = int( gettotalpercentcompletesp() * 100 );
 
     if ( getdvarint( "mis_cheat" ) == 0 )
-        level.player _meth_820F( "percentCompleteSP", var_0 );
+        level.player setlocalplayerprofiledata( "percentCompleteSP", var_0 );
 
     return var_0;
 }
@@ -169,7 +169,7 @@ gettotalpercentcompletesp()
 
 getstat_progression( var_0 )
 {
-    var_1 = level.player _meth_820E( "missionHighestDifficulty" );
+    var_1 = level.player getlocalplayerprofiledata( "missionHighestDifficulty" );
     var_2 = 0;
     var_3 = [];
     var_4 = 0;
@@ -211,23 +211,23 @@ getstat_veteran()
 getstat_intel()
 {
     var_0 = 45;
-    var_1 = level.player _meth_820E( "cheatPoints" ) / var_0 * 100;
+    var_1 = level.player getlocalplayerprofiledata( "cheatPoints" ) / var_0 * 100;
     return var_1;
 }
 
 getlevelcompleted( var_0 )
 {
-    return int( level.player _meth_820E( "missionHighestDifficulty" )[var_0] );
+    return int( level.player getlocalplayerprofiledata( "missionHighestDifficulty" )[var_0] );
 }
 
 getsolevelcompleted( var_0 )
 {
-    return int( level.player _meth_820E( "missionSOHighestDifficulty" )[var_0] );
+    return int( level.player getlocalplayerprofiledata( "missionSOHighestDifficulty" )[var_0] );
 }
 
 setlevelcompleted( var_0 )
 {
-    var_1 = level.player _meth_820E( "missionHighestDifficulty" );
+    var_1 = level.player getlocalplayerprofiledata( "missionHighestDifficulty" );
     var_2 = "";
 
     for ( var_3 = 0; var_3 < var_1.size; var_3++ )
@@ -273,7 +273,7 @@ _sethighestmissionifnotcheating( var_0 )
     if ( getdvar( "mis_cheat" ) == "1" )
         return;
 
-    level.player _meth_820F( "highestMission", var_0 );
+    level.player setlocalplayerprofiledata( "highestMission", var_0 );
 }
 
 _setmissiondiffstringifnotcheating( var_0 )
@@ -281,12 +281,12 @@ _setmissiondiffstringifnotcheating( var_0 )
     if ( getdvar( "mis_cheat" ) == "1" )
         return;
 
-    level.player _meth_820F( "missionHighestDifficulty", var_0 );
+    level.player setlocalplayerprofiledata( "missionHighestDifficulty", var_0 );
 }
 
 getlevelskill( var_0 )
 {
-    var_1 = level.player _meth_820E( "missionHighestDifficulty" );
+    var_1 = level.player getlocalplayerprofiledata( "missionHighestDifficulty" );
     return int( var_1[var_0] );
 }
 
@@ -300,7 +300,7 @@ getmissiondvarstring( var_0 )
 
 getlowestskill()
 {
-    var_0 = level.player _meth_820E( "missionHighestDifficulty" );
+    var_0 = level.player getlocalplayerprofiledata( "missionHighestDifficulty" );
     var_1 = 4;
 
     for ( var_2 = 0; var_2 < self.levels.size; var_2++ )
@@ -425,7 +425,7 @@ check_campaign_completion()
     {
         maps\_utility::giveachievement_wrapper( "CAMPAIGN_VETERAN" );
         var_0 = 1;
-        level.player _meth_820F( "sp_mpGearUnlocks", 0, "1" );
+        level.player setlocalplayerprofiledata( "sp_mpGearUnlocks", 0, "1" );
     }
 
     if ( getstat_hardened() >= 100 || var_0 )
@@ -472,7 +472,7 @@ getnextlevelindex()
 
 force_all_complete()
 {
-    var_0 = level.player _meth_820E( "missionHighestDifficulty" );
+    var_0 = level.player getlocalplayerprofiledata( "missionHighestDifficulty" );
     var_1 = "";
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
@@ -486,19 +486,19 @@ force_all_complete()
         var_1 += 0;
     }
 
-    level.player _meth_820F( "missionHighestDifficulty", var_1 );
-    level.player _meth_820F( "highestMission", 20 );
+    level.player setlocalplayerprofiledata( "missionHighestDifficulty", var_1 );
+    level.player setlocalplayerprofiledata( "highestMission", 20 );
 }
 
 clearall()
 {
-    level.player _meth_820F( "missionHighestDifficulty", "00000000000000000000000000000000000000000000000000" );
-    level.player _meth_820F( "highestMission", 1 );
+    level.player setlocalplayerprofiledata( "missionHighestDifficulty", "00000000000000000000000000000000000000000000000000" );
+    level.player setlocalplayerprofiledata( "highestMission", 1 );
 }
 
 credits_end()
 {
-    _func_053( "airplane", 0 );
+    changelevel( "airplane", 0 );
 }
 
 end_mission_fade_audio_and_video( var_0 )

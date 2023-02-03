@@ -6,7 +6,7 @@ main()
     maps\mp\mp_lab2_precache::main();
     maps\createart\mp_lab2_art::main();
     maps\mp\mp_lab2_fx::main();
-    maps\mp\_utility::setlightingstate_patched( 1 );
+    common_scripts\utility::setlightingstate( 1 );
     maps\mp\_load::main();
     thread setup_audio();
     thread set_lighting_values();
@@ -27,11 +27,11 @@ main()
 
     precachemodel( "lab2_cannister_holder_01" );
     precachemodel( "lab2_industrial_crane_01" );
-    map_restart( "lab2_dynamic_event_helicopter_anim" );
-    map_restart( "lab2_dynamic_event_harness_anim" );
-    map_restart( "lab2_dynamic_event_building_anim" );
-    map_restart( "lab2_industrial_crane_anim" );
-    map_restart( "lab2_dynamic_event_harness_invis_anim" );
+    precachempanim( "lab2_dynamic_event_helicopter_anim" );
+    precachempanim( "lab2_dynamic_event_harness_anim" );
+    precachempanim( "lab2_dynamic_event_building_anim" );
+    precachempanim( "lab2_industrial_crane_anim" );
+    precachempanim( "lab2_dynamic_event_harness_invis_anim" );
     precacheshellshock( "mp_lab_gas" );
     precacheshader( "lab_gas_overlay" );
     level.missileparticles = spawnstruct();
@@ -68,64 +68,6 @@ main()
     thread lab2customairstrike();
     thread lab2botkilltrigger();
     thread lab2playerkilltrigger();
-    thread lab2playerkilltrigger_snowledge();
-    thread scriptpatchclip();
-}
-
-scriptpatchclip()
-{
-    thread patchclipvehiclelowercanyon();
-    thread patchclipdoorway();
-    thread patchclipelevatorcage();
-    thread wallledgefromcranecontrolbuilding();
-}
-
-wallledgefromcranecontrolbuilding()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 45, -1670, 329 ), ( 0, 269.2, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 45, -1670, 585 ), ( 0, 269.2, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 45, -1670, 841 ), ( 0, 269.2, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -203.5, -1704, 329 ), ( 0, 286.4, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -203.5, -1704, 585 ), ( 0, 286.4, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -203.5, -1704, 841 ), ( 0, 286.4, 0 ) );
-}
-
-patchclipvehiclelowercanyon()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2068, 829, -306 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2068, 805, -178 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2028, 665, -42 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2028, 641, 86 ), ( 0, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2112, 576, 98 ), ( 0, 0, 48.5 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2240, 576, 98 ), ( 0, 0, 48.5 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_128_128_128", ( -2149, 652, 40 ), ( 0, 0, 37.7 ) );
-}
-
-patchclipdoorway()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 2, 871, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 2, 862, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 2, 846, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -362, 871, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -362, 862, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -362, 846, 296 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 2, 871, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( 2, 846, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -362, 846, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -362, 871, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -176, 871, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -176, 862, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_256_256", ( -176, 846, 552 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( -362, 846, 348 ), ( 0, 270, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_vehicle_16_256_256", ( 2, 846, 348 ), ( 0, 270, 0 ) );
-}
-
-patchclipelevatorcage()
-{
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -2117.6, 1517, 317.168 ), ( 13.8, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -2117.6, 1577, 317.168 ), ( 13.8, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -2103.33, 1517, 378.821 ), ( 13.8, 0, 0 ) );
-    maps\mp\_utility::spawnpatchclip( "patchclip_player_16_64_64", ( -2103.33, 1577, 378.821 ), ( 13.8, 0, 0 ) );
 }
 
 set_umbra_values()
@@ -200,7 +142,7 @@ watchcarryobjects()
         {
             while ( level.flyingbuildingent.flying == 1 )
             {
-                if ( self.visuals[0] _meth_80A9( level.flyingbuildingent.triggerhurtlower ) || self.visuals[0] _meth_80A9( level.flyingbuildingent.triggerhurtupper ) )
+                if ( self.visuals[0] istouching( level.flyingbuildingent.triggerhurtlower ) || self.visuals[0] istouching( level.flyingbuildingent.triggerhurtupper ) )
                 {
                     maps\mp\gametypes\_gameobjects::returnhome();
                     break;
@@ -218,7 +160,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+        if ( !self.visuals[0] istouching( var_0[var_1] ) )
             continue;
 
         return 1;
@@ -228,7 +170,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_2.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_2[var_1] ) )
+        if ( !self.visuals[0] istouching( var_2[var_1] ) )
             continue;
 
         return 1;
@@ -238,17 +180,27 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_3.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_3[var_1] ) )
+        if ( !self.visuals[0] istouching( var_3[var_1] ) )
             continue;
 
         return 1;
     }
 
-    var_4 = getentarray( "object_out_of_bounds", "targetname" );
+    var_4 = getentarray( "boost_jump_border_trig", "targetname" );
 
     for ( var_1 = 0; var_1 < var_4.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_4[var_1] ) )
+        if ( !self.visuals[0] istouching( var_4[var_1] ) )
+            continue;
+
+        return 1;
+    }
+
+    var_5 = getentarray( "object_out_of_bounds", "targetname" );
+
+    for ( var_1 = 0; var_1 < var_5.size; var_1++ )
+    {
+        if ( !self.visuals[0] istouching( var_5[var_1] ) )
             continue;
 
         return 1;
@@ -270,7 +222,7 @@ setupdynamicevent()
     foreach ( var_5 in var_1 )
         var_5 hide();
 
-    maps\mp\_utility::setlightingstate_patched( 2 );
+    common_scripts\utility::setlightingstate( 2 );
     var_9 = getentarray( "dynamic_building_master_prefab", "targetname" );
     var_10 = undefined;
     var_11 = [];
@@ -310,12 +262,12 @@ setupdynamicevent()
         else if ( isdefined( var_13.script_noteworthy ) && var_13.script_noteworthy == "trigger_origin_02" )
             var_10.triggerupperorigin = var_13;
 
-        var_13 _meth_8446( var_10 );
+        var_13 vehicle_jetbikesethoverforcescale( var_10 );
     }
 
     var_10.dynamicpathblock = getent( "flying_building_paths_unblock", "targetname" );
     var_10.dynamicpathrampswitch = getent( "flying_building_path_ramp_switch", "targetname" );
-    var_10.dynamicpathblock _meth_8446( var_10 );
+    var_10.dynamicpathblock vehicle_jetbikesethoverforcescale( var_10 );
     var_10.og_spawn = ( 15959.8, -24712.9, 5209.89 );
     var_10.og_heli_spawn = ( 15940.7, -24711.6, 5888.01 );
     var_10.origin = var_10.og_spawn;
@@ -342,7 +294,7 @@ setupdynamicevent()
 opendynamicbuildingplatformpath( var_0 )
 {
     var_0.dynamicpathrampswitch.origin += ( 0, 0, -10000 );
-    var_0.dynamicpathblock _meth_8058();
+    var_0.dynamicpathblock connectpaths();
 
     foreach ( var_2 in var_0.parts )
     {
@@ -350,10 +302,10 @@ opendynamicbuildingplatformpath( var_0 )
         {
             if ( var_2.script_noteworthy == "flying_building_collision_shell" || var_2.script_noteworthy == "collision" || var_2.script_noteworthy == "building_brush_geo" )
             {
-                var_2 _meth_8058();
+                var_2 connectpaths();
 
                 if ( var_2.script_noteworthy == "flying_building_collision_shell" )
-                    var_2 _meth_8384( 0 );
+                    var_2 setaisightlinevisible( 0 );
             }
         }
     }
@@ -380,19 +332,19 @@ dynamiceventendfunc()
 
     if ( isdefined( level.flyingbuildingent ) )
     {
-        level.flyingbuildingent.dynamicpathblock _meth_804F();
+        level.flyingbuildingent.dynamicpathblock unlink();
         level.flyingbuildingent.dynamicpathblock.origin += ( 0, 0, -10000 );
-        level.flyingbuildingent _meth_8092();
+        level.flyingbuildingent dontinterpolate();
         level.flyingbuildingent.origin = level.flyingbuildingent.radiant_pos;
         wait 0.05;
-        level.flyingbuildingent.triggerhurtlower _meth_8092();
-        level.flyingbuildingent.triggerhurtupper _meth_8092();
+        level.flyingbuildingent.triggerhurtlower dontinterpolate();
+        level.flyingbuildingent.triggerhurtupper dontinterpolate();
         level.flyingbuildingent.triggerhurtlower.origin += ( 0, 0, -10000 );
         level.flyingbuildingent.triggerhurtupper.origin += ( 0, 0, -10000 );
 
         foreach ( var_3 in level.flyingbuildingent.parts )
         {
-            var_3 _meth_804F();
+            var_3 unlink();
             var_3 show();
             var_3.unresolved_collision_kill = 0;
 
@@ -400,8 +352,8 @@ dynamiceventendfunc()
             {
                 if ( var_3.script_noteworthy == "flying_building_collision_shell" )
                 {
-                    var_3 _meth_8057();
-                    var_3 _meth_8384( 1 );
+                    var_3 disconnectpaths();
+                    var_3 setaisightlinevisible( 1 );
                     continue;
                 }
 
@@ -410,7 +362,7 @@ dynamiceventendfunc()
             }
         }
 
-        level.flyingbuildingent.dynamicpathrampswitch _meth_8058();
+        level.flyingbuildingent.dynamicpathrampswitch connectpaths();
         level thread common_scripts\_exploder::activate_clientside_exploder( 100 );
     }
 
@@ -479,13 +431,13 @@ moveflyingbuilding()
     self.heavy_lifter = spawn( "script_model", self.og_heli_spawn + ( var_2, var_1, var_0 ) );
     var_3 = getnetquantizedangle( 36.078 );
     self.heavy_lifter.angles = ( 0, 36.044, 0 );
-    self.heavy_lifter _meth_80B1( "vehicle_heavy_lift_helicopter_01" );
+    self.heavy_lifter setmodel( "vehicle_heavy_lift_helicopter_01" );
     self.harness = spawn( "script_model", self.heavy_lifter gettagorigin( "tag_crane" ) );
     self.harness.angles = self.heavy_lifter gettagangles( "tag_crane" ) + ( 0, 0, 0 );
-    self.harness _meth_80B1( "heavy_lift_wires" );
+    self.harness setmodel( "heavy_lift_wires" );
     self.building_bone = spawn( "script_model", self.og_spawn + ( 0, 0, var_0 ) );
     self.building_bone.angles = self.harness gettagangles( "tag_cargo" ) + ( 0, 180, 0 );
-    self.building_bone _meth_80B1( "tag_origin_animate" );
+    self.building_bone setmodel( "tag_origin_animate" );
     self.flying = 1;
     wait 0.05;
     self.triggerkillvehiclesheli thread maps\mp\killstreaks\_aerial_utility::setup_kill_drone_trig();
@@ -503,10 +455,10 @@ moveflyingbuilding()
 
     self.origin = self.og_spawn + ( 0, 0, var_0 );
     self.angles = self.harness gettagangles( "tag_cargo" ) + ( 0, 180, 0 );
-    self _meth_8446( self.harness, "tag_cargo" );
+    self vehicle_jetbikesethoverforcescale( self.harness, "tag_cargo" );
     wait 0.05;
-    self.heavy_lifter _meth_827B( "lab2_dynamic_event_helicopter_anim", "building_unlink_notify" );
-    self.harness _meth_827B( "lab2_dynamic_event_harness_anim" );
+    self.heavy_lifter scriptmodelplayanimdeltamotion( "lab2_dynamic_event_helicopter_anim", "building_unlink_notify" );
+    self.harness scriptmodelplayanimdeltamotion( "lab2_dynamic_event_harness_anim" );
     self.heavy_lifter thread aud_transport_chopper();
     thread movebuildingdeathtriggers();
     self.heavy_lifter thread maps\mp\mp_lab2_fx::startheavylifterfx();
@@ -521,7 +473,7 @@ moveflyingbuilding()
     {
         if ( isdefined( var_5.script_noteworthy ) && var_5.script_noteworthy == "collision" )
         {
-            var_5 _meth_804F();
+            var_5 unlink();
             var_5 delete();
             continue;
         }
@@ -530,7 +482,7 @@ moveflyingbuilding()
     }
 
     self.parts = var_10;
-    self.dynamicpathblock _meth_804F();
+    self.dynamicpathblock unlink();
     self.dynamicpathblock delete();
     self.heavy_lifter thread aud_building_pre_drop();
     self.heavy_lifter waittillmatch( "building_unlink_notify", "vfx_crane_sparks_stop" );
@@ -544,28 +496,28 @@ moveflyingbuilding()
     var_14 = getentarray( "ground_shadow_patch_after", "targetname" );
     var_14[0] show();
     var_13[0] hide();
-    self _meth_804F();
+    self unlink();
     self.flying = 0;
 
     foreach ( var_5 in self.parts )
     {
         if ( isdefined( var_5 ) )
         {
-            var_5 _meth_804F();
+            var_5 unlink();
             var_5.unresolved_collision_kill = 0;
 
             if ( isdefined( var_5.script_noteworthy ) )
             {
                 if ( var_5.script_noteworthy == "flying_building_collision_shell" )
                 {
-                    var_5 _meth_8057();
-                    var_5 _meth_8384( 1 );
+                    var_5 disconnectpaths();
+                    var_5 setaisightlinevisible( 1 );
                 }
             }
         }
     }
 
-    self.dynamicpathrampswitch _meth_8058();
+    self.dynamicpathrampswitch connectpaths();
 
     if ( level.gametype == "dom" )
         dom_b_move();
@@ -590,7 +542,7 @@ killwarbirds( var_0 )
                 {
                     if ( isdefined( var_2 ) )
                     {
-                        if ( var_2 _meth_80A9( var_0 ) )
+                        if ( var_2 istouching( var_0 ) )
                             var_2 thread maps\mp\killstreaks\_aerial_utility::heli_explode( 1 );
                     }
                 }
@@ -620,10 +572,10 @@ movebuildingdeathtriggers()
         wait 0.05;
     }
 
-    self.triggerhurtlower _meth_8092();
-    self.triggerhurtupper _meth_8092();
-    self.triggerkillvehiclesheli _meth_8092();
-    self.triggerkillvehiclesbuilding _meth_8092();
+    self.triggerhurtlower dontinterpolate();
+    self.triggerhurtupper dontinterpolate();
+    self.triggerkillvehiclesheli dontinterpolate();
+    self.triggerkillvehiclesbuilding dontinterpolate();
     self.triggerhurtlower.origin += ( 0, 0, -10000 );
     self.triggerhurtupper.origin += ( 0, 0, -10000 );
     self.triggerkillvehiclesheli.origin += ( 0, 0, -10000 );
@@ -666,7 +618,7 @@ lab2botkilltrigger()
         var_0 waittill( "trigger", var_1 );
 
         if ( isbot( var_1 ) || isagent( var_1 ) )
-            var_1 _meth_8051( var_1.health + 999, var_0.origin );
+            var_1 dodamage( var_1.health + 999, var_0.origin );
     }
 }
 
@@ -678,19 +630,7 @@ lab2playerkilltrigger()
     for (;;)
     {
         var_0 waittill( "trigger", var_1 );
-        var_1 _meth_8051( var_1.health + 999, var_0.origin );
-    }
-}
-
-lab2playerkilltrigger_snowledge()
-{
-    level endon( "game_ended" );
-    var_0 = spawn( "trigger_radius", ( -174, 2022, 192 ), 0, 300, 64 );
-
-    for (;;)
-    {
-        var_0 waittill( "trigger", var_1 );
-        var_1 _meth_8051( var_1.health + 999, var_0.origin );
+        var_1 dodamage( var_1.health + 999, var_0.origin );
     }
 }
 
@@ -708,12 +648,12 @@ onplayerconnectfucntions()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
         for (;;)
         {
             level waittill( "connected", var_0 );
-            var_0 _meth_82FD( "r_tonemap", "1" );
+            var_0 setclientdvars( "r_tonemap", "1" );
         }
     }
 }
@@ -722,7 +662,7 @@ rotatemeshes( var_0 )
 {
     for (;;)
     {
-        self _meth_82B7( 360, var_0 );
+        self rotateyaw( 360, var_0 );
         wait(var_0);
     }
 }
@@ -846,7 +786,7 @@ watchcranenotetrack( var_0, var_1 )
             {
                 if ( isdefined( self ) && self.paused == 0 )
                 {
-                    self _meth_84BD( 1 );
+                    self scriptmodelpauseanim( 1 );
                     self.paused = 1;
                     checkforunpause();
                 }
@@ -907,7 +847,7 @@ checkforunpause()
             {
                 if ( self.paused == 1 )
                 {
-                    self _meth_84BD( 0 );
+                    self scriptmodelpauseanim( 0 );
                     self.paused = 0;
                     thread maps\mp\_audio::snd_play_linked( "emt_conveyor_belt_gears", self );
                     thread maps\mp\_audio::snd_play_linked( "emt_conveyor_belt_sparks", self );
@@ -930,7 +870,7 @@ setuprobotarmnotetracks()
     foreach ( var_2 in var_0 )
     {
         wait(randomfloatrange( 0.0, 1 ));
-        var_2 _meth_827B( "lab2_robot_arm_01_idle_anim", "emt_servo_sparks" );
+        var_2 scriptmodelplayanimdeltamotion( "lab2_robot_arm_01_idle_anim", "emt_servo_sparks" );
         var_2 thread watchrobotarmnotetrack();
     }
 }
@@ -957,7 +897,7 @@ watchrobotarmnotetrack()
 
 stopcranesound()
 {
-    self _meth_80AC();
+    self stopsounds();
     wait 0.05;
     thread maps\mp\_audio::snd_play_linked( "mp_lab_missilerack_stop01", self );
 }
@@ -979,7 +919,7 @@ rotatethink( var_0 )
 
 rotatedryerfan()
 {
-    level.gasmachine.dryerfan _meth_82BD( level.gasmachine.dryerfanrotatevelocity, 7, 1, 5 );
+    level.gasmachine.dryerfan rotatevelocity( level.gasmachine.dryerfanrotatevelocity, 7, 1, 5 );
 }
 
 spraycans( var_0, var_1 )
@@ -1003,14 +943,14 @@ spawncrane( var_0, var_1 )
 
     if ( isdefined( var_4 ) && isdefined( var_4.collision ) )
     {
-        var_3 _meth_80B1( "lab2_industrial_crane_01" );
+        var_3 setmodel( "lab2_industrial_crane_01" );
         var_3.paused = 0;
         var_3.cranecollision = var_4.collision;
         level.gasmachine.cranecollision = var_4.pool;
         var_3.cranecollision.origin = var_3.origin;
         var_3.cranecollision.angles = var_3.angles;
-        var_3.cranecollision _meth_8446( var_3 );
-        var_3 _meth_82BE();
+        var_3.cranecollision vehicle_jetbikesethoverforcescale( var_3 );
+        var_3 solid();
     }
     else
     {
@@ -1033,11 +973,11 @@ spawncrane( var_0, var_1 )
         {
             var_3.chemical_rack = spawn( "script_model", var_3 gettagorigin( "tag_cargo" ) );
             var_3.exploding = 0;
-            var_3.chemical_rack _meth_80B1( "lab2_cannister_holder_01" );
-            var_3.chemical_rack _meth_804D( var_3, "tag_cargo" );
+            var_3.chemical_rack setmodel( "lab2_cannister_holder_01" );
+            var_3.chemical_rack linkto( var_3, "tag_cargo" );
             var_3.chemical_rack addtototalspawned();
             var_3.has_chemicals = 1;
-            var_3.chemical_rack _meth_82BE();
+            var_3.chemical_rack solid();
             thread playorangegoo( var_3.chemical_rack );
             var_3.chemical_rack.damageradius = level.gasmachine.damageradius;
             var_3.chemical_rack.maxdamageamount = level.gasmachine.maxdamageamount;
@@ -1048,7 +988,7 @@ spawncrane( var_0, var_1 )
             var_3.chemical_rack.cranechemcollision thread common_scripts\utility::entity_path_disconnect_thread( 1 );
             var_3.chemical_rack.cranechemcollision.origin = var_3.chemical_rack.origin;
             var_3.chemical_rack.cranechemcollision.angles = var_3.chemical_rack.angles;
-            var_3.chemical_rack.cranechemcollision _meth_8446( var_3.chemical_rack );
+            var_3.chemical_rack.cranechemcollision vehicle_jetbikesethoverforcescale( var_3.chemical_rack );
         }
         else
             var_3.has_chemicals = 0;
@@ -1056,7 +996,7 @@ spawncrane( var_0, var_1 )
     else
         var_3.has_chemicals = 0;
 
-    var_3 _meth_827B( "lab2_industrial_crane_anim", "crane_note_track" );
+    var_3 scriptmodelplayanimdeltamotion( "lab2_industrial_crane_anim", "crane_note_track" );
     return var_3;
 }
 
@@ -1068,7 +1008,7 @@ playorangegoo( var_0 )
     {
         wait 0.05;
 
-        if ( isdefined( var_0 ) && !_func_294( var_0 ) )
+        if ( isdefined( var_0 ) && !isremovedentity( var_0 ) )
         {
             var_0 show();
 
@@ -1117,7 +1057,7 @@ getcollision( var_0 )
 addcollisiontopool( var_0 )
 {
     self notify( "entity_path_disconnect_thread" );
-    self _meth_804F();
+    self unlink();
     self.origin = ( 0, 0, -5000 );
     var_0 = common_scripts\utility::add_to_array( var_0, self );
     return var_0;
@@ -1129,8 +1069,8 @@ watchdamagechemical( var_0 )
     self endon( "death" );
     self.health = 10000000;
     self.fakehealth = level.gasmachine.totalchemcanhealth;
-    self _meth_82C0( 1 );
-    self _meth_82C1( 1 );
+    self setcandamage( 1 );
+    self setcanradiusdamage( 1 );
     self.leaking = 0;
 
     for (;;)
@@ -1220,12 +1160,12 @@ blowitup( var_0, var_1 )
     var_0.exploding = 1;
     var_3 = self.origin;
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
         if ( isdefined( self.cranechemcollision ) )
         {
             self notify( "entity_path_disconnect_thread" );
-            self.cranechemcollision _meth_8058();
+            self.cranechemcollision connectpaths();
         }
     }
 
@@ -1233,17 +1173,17 @@ blowitup( var_0, var_1 )
     var_5 = level.gasmachine.explosionangleoffset;
     var_6 = thread common_scripts\utility::spawn_tag_origin();
     var_6 show();
-    var_6 _meth_8092();
+    var_6 dontinterpolate();
     var_6.origin = var_0.origin + ( 0, 0, var_4 );
     var_6.angles = var_5;
-    var_6 _meth_8446( var_0, "tag_origin" );
+    var_6 vehicle_jetbikesethoverforcescale( var_0, "tag_origin" );
     playfxontag( level.missileparticles.missileexplosion, var_6, "tag_origin" );
     var_6 thread deleteexplosiontag( var_0, self, 0.05 );
     var_7 = var_0.origin + ( 0, 0, var_4 );
     thread aud_play_tank_explosion( var_7 );
     wait 0.05;
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
         if ( isdefined( self.cranechemcollision ) )
             level.gasmachine.cranechemcollision = self.cranechemcollision addcollisiontopool( level.gasmachine.cranechemcollision );
@@ -1252,7 +1192,7 @@ blowitup( var_0, var_1 )
         maps\mp\_utility::delaythread( var_2, ::unlinkanddelete );
     }
 
-    if ( isdefined( var_0 ) && !_func_294( var_0 ) )
+    if ( isdefined( var_0 ) && !isremovedentity( var_0 ) )
         var_0.has_chemicals = 0;
 
     wait(var_2 + 0.05);
@@ -1265,7 +1205,7 @@ deleteexplosiontag( var_0, var_1, var_2 )
     var_1 common_scripts\utility::waittill_any( "death", "deleted" );
     wait(var_2);
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
         self delete();
 }
 
@@ -1274,21 +1214,21 @@ killchemrackvfx()
     self endon( "death" );
     wait 0.05;
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
         killfxontag( common_scripts\utility::getfx( "lab_canister_liquid_orange" ), self, "tag_origin" );
         wait 0.05;
 
-        if ( isdefined( self ) && !_func_294( self ) )
+        if ( isdefined( self ) && !isremovedentity( self ) )
             self delete();
     }
 }
 
 unlinkanddelete()
 {
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
-        self _meth_804F();
+        self unlink();
         self delete();
     }
 }
@@ -1328,7 +1268,7 @@ chemdamagethink( var_0, var_1, var_2 )
     for (;;)
     {
         if ( isdefined( var_2 ) )
-            var_2 entityradiusdamage( var_1, level.gasmachine.gasrange, 10, 10, var_2, "MOD_TRIGGER_HURT", "mp_lab_gas" );
+            var_2 radiusdamage( var_1, level.gasmachine.gasrange, 10, 10, var_2, "MOD_TRIGGER_HURT", "mp_lab_gas" );
         else
             radiusdamage( var_1, level.gasmachine.gasrange, 10, 10, undefined, "MOD_TRIGGER_HURT", "mp_lab_gas" );
 
@@ -1443,21 +1383,21 @@ sprayerdrip( var_0, var_1, var_2 )
 
 removerack()
 {
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
     {
-        if ( isdefined( self.chemical_rack ) && !_func_294( self.chemical_rack ) )
+        if ( isdefined( self.chemical_rack ) && !isremovedentity( self.chemical_rack ) )
             killfxontag( common_scripts\utility::getfx( "lab_canister_liquid_orange" ), self.chemical_rack, "tag_origin" );
 
         wait 0.05;
 
-        if ( isdefined( self ) && !_func_294( self ) )
+        if ( isdefined( self ) && !isremovedentity( self ) )
         {
-            if ( isdefined( self.chemical_rack ) && !_func_294( self.chemical_rack ) )
+            if ( isdefined( self.chemical_rack ) && !isremovedentity( self.chemical_rack ) )
             {
                 if ( isdefined( self.chemical_rack.cranechemcollision ) )
                     level.gasmachine.cranechemcollision = self.chemical_rack.cranechemcollision addcollisiontopool( level.gasmachine.cranechemcollision );
 
-                self.chemical_rack _meth_804F();
+                self.chemical_rack unlink();
                 self.chemical_rack delete();
             }
 
@@ -1502,15 +1442,15 @@ spinalarmsstart()
 spinalarmsstop()
 {
     self show();
-    _func_292( 200 );
+    stopclientexploder( 200 );
 }
 
 playalarmloop()
 {
     var_0 = spawn( "script_origin", level.alarmsystem.alarmsoundent.origin );
-    var_0 _meth_8075( "mp_lab_alarm_shutdown01" );
+    var_0 playloopsound( "mp_lab_alarm_shutdown01" );
     wait 5;
-    var_0 _meth_80AC();
+    var_0 stopsounds();
     wait 0.05;
     var_0 delete();
 }
@@ -1522,7 +1462,7 @@ creategastrackingoverlay()
         self.gastrackingoverlay = newclienthudelem( self );
         self.gastrackingoverlay.x = 0;
         self.gastrackingoverlay.y = 0;
-        self.gastrackingoverlay _meth_80CC( "lab_gas_overlay", 640, 480 );
+        self.gastrackingoverlay setshader( "lab_gas_overlay", 640, 480 );
         self.gastrackingoverlay.alignx = "left";
         self.gastrackingoverlay.aligny = "top";
         self.gastrackingoverlay.horzalign = "fullscreen";

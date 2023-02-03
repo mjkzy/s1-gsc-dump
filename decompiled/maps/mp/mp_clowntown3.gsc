@@ -12,12 +12,12 @@ main()
     maps\mp\mp_clowntown3_aud::main();
     maps\mp\_compass::setupminimap( "compass_map_mp_clowntown3" );
     maps\mp\_water::init();
-    precacheitem( "iw5_dlcgun12loot9_mp" );
-    precacheitem( "iw5_dlcgun12loot8_mp" );
-    map_restart( "ct_motel_sign_idle" );
-    map_restart( "ct_motel_sign_hat_off" );
-    map_restart( "ct_motel_sign_hat_off_idle" );
-    map_restart( "ct_motel_sign_hat_on" );
+    precacheshellshock( "iw5_dlcgun12loot9_mp" );
+    precacheshellshock( "iw5_dlcgun12loot8_mp" );
+    precachempanim( "ct_motel_sign_idle" );
+    precachempanim( "ct_motel_sign_hat_off" );
+    precachempanim( "ct_motel_sign_hat_off_idle" );
+    precachempanim( "ct_motel_sign_hat_on" );
     game["attackers"] = "allies";
     game["defenders"] = "axis";
     thread aud_event_sign_mech_idle();
@@ -175,7 +175,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+        if ( !self.visuals[0] istouching( var_0[var_1] ) )
             continue;
 
         return 1;
@@ -221,9 +221,9 @@ rotating_bed_setup()
     thread aud_bed_sfx( var_1 );
 
     foreach ( var_4 in var_0 )
-        var_4 _meth_804D( var_1 );
+        var_4 linkto( var_1 );
 
-    var_1 _meth_82BD( ( 0, -10, 0 ), var_2 );
+    var_1 rotatevelocity( ( 0, -10, 0 ), var_2 );
 }
 
 rotating_fans_setup()
@@ -233,7 +233,7 @@ rotating_fans_setup()
     foreach ( var_3, var_1 in level.fans )
     {
         var_2 = common_scripts\utility::mod( var_3, 3 ) + 1;
-        var_1 _meth_8279( "ct_ceiling_fan_idle_" + var_2 );
+        var_1 scriptmodelplayanim( "ct_ceiling_fan_idle_" + var_2 );
         wait 0.2;
     }
 }
@@ -309,14 +309,14 @@ sign_startup_sequence()
 
 sign_off()
 {
-    level.sign_on _meth_8510();
+    level.sign_on ghost();
     level.sign_off show();
 }
 
 sign_on()
 {
     level.sign_on show();
-    level.sign_off _meth_8510();
+    level.sign_off ghost();
 }
 
 cannon_firing_event()
@@ -324,8 +324,8 @@ cannon_firing_event()
     var_0 = level.bombsonstandby.size;
     level.bomb_targets = common_scripts\utility::array_randomize( level.bomb_targets );
     level.anim_sign waittillmatch( "motel_sign_idle_notify", "ct_motel_sign_idle_start" );
-    level.anim_sign _meth_827A();
-    level.anim_sign _meth_8279( "ct_motel_sign_hat_off", "anim_end" );
+    level.anim_sign scriptmodelclearanim();
+    level.anim_sign scriptmodelplayanim( "ct_motel_sign_hat_off", "anim_end" );
     var_1 = 20;
     aud_event_sign_hat_off( var_1 );
     wait 6.96;
@@ -335,14 +335,14 @@ cannon_firing_event()
         if ( isdefined( level.bombsonstandby[0] ) )
         {
             level.bombsonstandby[0] bomb_fires( var_2 );
-            level.anim_sign _meth_827A();
-            level.anim_sign _meth_8279( "ct_motel_sign_hat_off_idle", "anim_end" );
+            level.anim_sign scriptmodelclearanim();
+            level.anim_sign scriptmodelplayanim( "ct_motel_sign_hat_off_idle", "anim_end" );
             wait 4;
         }
     }
 
-    level.anim_sign _meth_827A();
-    level.anim_sign _meth_8279( "ct_motel_sign_hat_on", "anim_end" );
+    level.anim_sign scriptmodelclearanim();
+    level.anim_sign scriptmodelplayanim( "ct_motel_sign_hat_on", "anim_end" );
     aud_event_sign_hat_on( var_1 );
     wait 7.7;
     scriptmodelplayanimwithnotifycheap( level.anim_sign, "ct_motel_sign_idle", "motel_sign_idle_notify", "ct_motel_sign_idle_start", "ct3_cannon_idle_mech", "aud_stop_01", "aud_stop_02", "aud_stop_03" );
@@ -361,7 +361,7 @@ bombs_init()
     for ( var_0 = 0; var_0 < level.bomb_count_max; var_0++ )
     {
         var_1 = spawn( "script_model", ( 0, 0, -10 ) );
-        var_1 _meth_80B1( "npc_bomb_clown" );
+        var_1 setmodel( "npc_bomb_clown" );
         var_1 thread bomb_physics_impact_watch();
         var_2 = 24;
         var_3 = getent( "bomb_pickup_" + ( var_0 + 1 ), "targetname" );
@@ -371,8 +371,8 @@ bombs_init()
         else
             var_3 = spawn( "trigger_radius", var_1.origin - ( 0, 0, var_2 / 2 ), 0, var_2, var_2 );
 
-        var_3 _meth_8069();
-        var_3 _meth_804D( var_1 );
+        var_3 enablelinkto();
+        var_3 linkto( var_1 );
         var_3.no_moving_platfrom_unlink = 1;
         var_4 = [ var_1 ];
         var_5 = maps\mp\gametypes\_gameobjects::createcarryobject( "any", var_3, var_4, ( 0, 0, 32 ) );
@@ -407,15 +407,15 @@ bomb_fires( var_0 )
     var_1 = level.bomb_targets[var_0];
     var_2 = self.visuals[0];
     var_2 show();
-    var_2 _meth_8092();
+    var_2 dontinterpolate();
     self.bomb_fx_active = 0;
-    var_2 _meth_84E1();
+    var_2 physicsstop();
     var_2.origin = level.launch_point.origin;
     level.mines[level.mines.size] = var_2;
     var_3 = var_1.origin + ( randomfloatrange( -10, 10 ), randomfloatrange( -10, 10 ), randomfloatrange( -10, 10 ) );
     var_4 = ( var_3 - var_2.origin ) * 2;
     var_5 = ( 0, 0, 0 );
-    var_2 _meth_8276( var_2.origin + var_5, var_4 );
+    var_2 physicslaunchserver( var_2.origin + var_5, var_4 );
     aud_event_fire_bomb();
     thread bomb_fuse_default();
     level.bombsonstandby = common_scripts\utility::array_remove( level.bombsonstandby, self );
@@ -443,7 +443,7 @@ bomb_fuse_default()
         var_0 -= 1;
     }
 
-    _func_071( "iw5_dlcgun12loot8_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
+    magicgrenademanual( "iw5_dlcgun12loot8_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
     thread bomb_cleanup();
 }
 
@@ -460,7 +460,7 @@ bomb_fuse_short()
         wait 1;
     }
 
-    _func_071( "iw5_dlcgun12loot8_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
+    magicgrenademanual( "iw5_dlcgun12loot8_mp", self.visuals[0].origin, ( 0, 0, 0 ), 0 );
     thread bomb_cleanup();
 }
 
@@ -478,13 +478,13 @@ bomb_can_pickup( var_0 )
     if ( !var_0 common_scripts\utility::isweaponenabled() )
         return 0;
 
-    if ( var_0 _meth_8342() )
+    if ( var_0 isusingturret() )
         return 0;
 
     if ( isdefined( var_0.manuallyjoiningkillstreak ) && var_0.manuallyjoiningkillstreak )
         return 0;
 
-    var_1 = var_0 _meth_8311();
+    var_1 = var_0 getcurrentweapon();
 
     if ( isdefined( var_1 ) )
     {
@@ -494,7 +494,7 @@ bomb_can_pickup( var_0 )
 
     var_2 = var_0.changingweapon;
 
-    if ( isdefined( var_2 ) && var_0 _meth_8337() )
+    if ( isdefined( var_2 ) && var_0 isreloading() )
     {
         if ( !valid_bomb_pickup_weapon( var_2 ) )
             return 0;
@@ -542,18 +542,18 @@ bomb_on_pickup( var_0 )
     level.usestartspawns = 0;
     self notify( "pickup_object" );
     level.mines = common_scripts\utility::array_remove( level.mines, self.visuals[0] );
-    var_1 = self.visuals[0] _meth_83EC();
+    var_1 = self.visuals[0] getlinkedparent();
 
     if ( isdefined( var_1 ) )
-        self.visuals[0] _meth_804F();
+        self.visuals[0] unlink();
 
-    self.visuals[0] _meth_84E1();
+    self.visuals[0] physicsstop();
     self.visuals[0] maps\mp\_movers::notify_moving_platform_invalid();
     self.visuals[0] show();
-    self.visuals[0] _meth_8510();
+    self.visuals[0] ghost();
     self.trigger maps\mp\_movers::stop_handling_moving_platforms();
     bomb_fx_stop();
-    var_0 _meth_82F6( "iw5_dlcgun12loot9_mp", 1 );
+    var_0 setweaponammoclip( "iw5_dlcgun12loot9_mp", 1 );
     var_0 maps\mp\_utility::giveperk( "specialty_ballcarrier", 0 );
     var_0 common_scripts\utility::_disableusability();
     var_0 maps\mp\killstreaks\_coop_util::playerstoppromptforstreaksupport();
@@ -622,12 +622,12 @@ bomb_throw_active()
     self endon( "death" );
     self endon( "disconnect" );
     self.pass_or_throw_active = 1;
-    self _meth_8130( 0 );
+    self allowmelee( 0 );
 
-    while ( "iw5_dlcgun12loot9_mp" == self _meth_8311() )
+    while ( "iw5_dlcgun12loot9_mp" == self getcurrentweapon() )
         waitframe();
 
-    self _meth_8130( 1 );
+    self allowmelee( 1 );
     self.pass_or_throw_active = 0;
 }
 
@@ -645,8 +645,8 @@ bomb_physics_launch( var_0, var_1 )
     var_2.origin_prev = undefined;
     bomb_cleanup();
     var_3 = anglestoforward( var_1 getangles() ) * 940 + anglestoup( var_1 getangles() ) * 120;
-    var_4 = var_1 _meth_80A8();
-    var_5 = _func_071( "iw5_dlcgun12loot8_mp", var_4, var_3, 2, var_1 );
+    var_4 = var_1 geteye();
+    var_5 = magicgrenademanual( "iw5_dlcgun12loot8_mp", var_4, var_3, 2, var_1 );
 }
 
 bomb_create_killcam_ent()
@@ -655,9 +655,9 @@ bomb_create_killcam_ent()
         self.killcament delete();
 
     self.killcament = spawn( "script_model", self.visuals[0].origin );
-    self.killcament _meth_804D( self.visuals[0] );
+    self.killcament linkto( self.visuals[0] );
     self.killcament setcontents( 0 );
-    self.killcament _meth_834D( "explosive" );
+    self.killcament setscriptmoverkillcam( "explosive" );
 }
 
 bomb_set_dropped( var_0 )
@@ -678,7 +678,7 @@ bomb_set_dropped( var_0 )
     var_3 = self.visuals[0];
     var_3.origin = var_2;
     var_3 show();
-    var_3 _meth_8276( var_3.origin + ( 0, 1, 0 ) );
+    var_3 physicslaunchserver( var_3.origin + ( 0, 1, 0 ) );
     level.mines[level.mines.size] = var_3;
     thread bomb_fuse_short();
     bomb_carrier_cleanup();
@@ -701,7 +701,7 @@ bomb_carrier_cleanup()
 
 bomb_dont_interpolate()
 {
-    self.visuals[0] _meth_8092();
+    self.visuals[0] dontinterpolate();
     self.bomb_fx_active = 0;
 }
 
@@ -709,9 +709,9 @@ bomb_cleanup()
 {
     self notify( "stop_fuse" );
     bomb_fx_stop();
-    self.visuals[0] _meth_8092();
+    self.visuals[0] dontinterpolate();
     self.bomb_fx_active = 0;
-    self.visuals[0] _meth_84E1();
+    self.visuals[0] physicsstop();
     self.visuals[0].origin = ( 0, 0, 0 );
     level.mines = common_scripts\utility::array_remove( level.mines, self.visuals[0] );
     level.bombsonstandby = common_scripts\utility::array_add( level.bombsonstandby, self );
@@ -724,9 +724,9 @@ bomb_fx_start()
         var_0 = self.visuals[0];
         playfxontag( common_scripts\utility::getfx( "ball_trail" ), var_0, "body_animate_jnt" );
         playfxontag( common_scripts\utility::getfx( "ball_idle" ), var_0, "body_animate_jnt" );
-        var_0 _meth_83FA( 0, 0 );
+        var_0 hudoutlineenable( 0, 0 );
         self.bomb_fx_active = 1;
-        var_0 _meth_8075( "mp_clown_bomb_fuse_lp_world" );
+        var_0 playloopsound( "mp_clown_bomb_fuse_lp_world" );
     }
 }
 
@@ -738,8 +738,8 @@ bomb_fx_stop()
         stopfxontag( common_scripts\utility::getfx( "ball_trail" ), var_0, "body_animate_jnt" );
         killfxontag( common_scripts\utility::getfx( "ball_idle" ), var_0, "body_animate_jnt" );
         killfxontag( common_scripts\utility::getfx( "mp_clowntown_bomb_fuse" ), var_0, "tag_fx" );
-        var_0 _meth_83FB();
-        var_0 _meth_80AC();
+        var_0 hudoutlinedisable();
+        var_0 stopsounds();
     }
 
     self.bomb_fx_active = 0;
@@ -801,54 +801,54 @@ ct_vista_cars()
     level.car22 = spawncar( var_1, ( 0, 252, 0 ) );
     level.car23 = spawncar( var_1, ( 0, 252, 0 ) );
     level.car24 = spawncar( var_0, ( 0, 252, 0 ) );
-    level.car01 _meth_80B1( "vehicle_ct_civ_vista_cars_01" );
-    level.car02 _meth_80B1( "vehicle_ct_civ_vista_cars_02" );
-    level.car03 _meth_80B1( "vehicle_ct_civ_vista_cars_03" );
-    level.car04 _meth_80B1( "vehicle_ct_civ_vista_cars_04" );
-    level.car05 _meth_80B1( "vehicle_ct_civ_vista_cars_05" );
-    level.car06 _meth_80B1( "vehicle_ct_civ_vista_cars_06" );
-    level.car07 _meth_80B1( "vehicle_ct_civ_vista_cars_06" );
-    level.car08 _meth_80B1( "vehicle_ct_civ_vista_cars_05" );
-    level.car09 _meth_80B1( "vehicle_ct_civ_vista_cars_04" );
-    level.car10 _meth_80B1( "vehicle_ct_civ_vista_cars_03" );
-    level.car11 _meth_80B1( "vehicle_ct_civ_vista_cars_02" );
-    level.car12 _meth_80B1( "vehicle_ct_civ_vista_cars_01" );
-    level.car13 _meth_80B1( "vehicle_ct_civ_vista_cars_03" );
-    level.car14 _meth_80B1( "vehicle_ct_civ_vista_cars_01" );
-    level.car15 _meth_80B1( "vehicle_ct_civ_vista_cars_02" );
-    level.car16 _meth_80B1( "vehicle_ct_civ_vista_cars_06" );
-    level.car17 _meth_80B1( "vehicle_ct_civ_vista_cars_04" );
-    level.car18 _meth_80B1( "vehicle_ct_civ_vista_cars_05" );
-    level.car19 _meth_80B1( "vehicle_ct_civ_vista_cars_02" );
-    level.car20 _meth_80B1( "vehicle_ct_civ_vista_cars_04" );
-    level.car21 _meth_80B1( "vehicle_ct_civ_vista_cars_06" );
-    level.car22 _meth_80B1( "vehicle_ct_civ_vista_cars_01" );
-    level.car23 _meth_80B1( "vehicle_ct_civ_vista_cars_03" );
-    level.car24 _meth_80B1( "vehicle_ct_civ_vista_cars_05" );
-    level.car01 _meth_82BF();
-    level.car02 _meth_82BF();
-    level.car03 _meth_82BF();
-    level.car04 _meth_82BF();
-    level.car05 _meth_82BF();
-    level.car06 _meth_82BF();
-    level.car07 _meth_82BF();
-    level.car08 _meth_82BF();
-    level.car09 _meth_82BF();
-    level.car10 _meth_82BF();
-    level.car11 _meth_82BF();
-    level.car12 _meth_82BF();
-    level.car13 _meth_82BF();
-    level.car14 _meth_82BF();
-    level.car15 _meth_82BF();
-    level.car16 _meth_82BF();
-    level.car17 _meth_82BF();
-    level.car18 _meth_82BF();
-    level.car19 _meth_82BF();
-    level.car20 _meth_82BF();
-    level.car21 _meth_82BF();
-    level.car22 _meth_82BF();
-    level.car23 _meth_82BF();
-    level.car24 _meth_82BF();
+    level.car01 setmodel( "vehicle_ct_civ_vista_cars_01" );
+    level.car02 setmodel( "vehicle_ct_civ_vista_cars_02" );
+    level.car03 setmodel( "vehicle_ct_civ_vista_cars_03" );
+    level.car04 setmodel( "vehicle_ct_civ_vista_cars_04" );
+    level.car05 setmodel( "vehicle_ct_civ_vista_cars_05" );
+    level.car06 setmodel( "vehicle_ct_civ_vista_cars_06" );
+    level.car07 setmodel( "vehicle_ct_civ_vista_cars_06" );
+    level.car08 setmodel( "vehicle_ct_civ_vista_cars_05" );
+    level.car09 setmodel( "vehicle_ct_civ_vista_cars_04" );
+    level.car10 setmodel( "vehicle_ct_civ_vista_cars_03" );
+    level.car11 setmodel( "vehicle_ct_civ_vista_cars_02" );
+    level.car12 setmodel( "vehicle_ct_civ_vista_cars_01" );
+    level.car13 setmodel( "vehicle_ct_civ_vista_cars_03" );
+    level.car14 setmodel( "vehicle_ct_civ_vista_cars_01" );
+    level.car15 setmodel( "vehicle_ct_civ_vista_cars_02" );
+    level.car16 setmodel( "vehicle_ct_civ_vista_cars_06" );
+    level.car17 setmodel( "vehicle_ct_civ_vista_cars_04" );
+    level.car18 setmodel( "vehicle_ct_civ_vista_cars_05" );
+    level.car19 setmodel( "vehicle_ct_civ_vista_cars_02" );
+    level.car20 setmodel( "vehicle_ct_civ_vista_cars_04" );
+    level.car21 setmodel( "vehicle_ct_civ_vista_cars_06" );
+    level.car22 setmodel( "vehicle_ct_civ_vista_cars_01" );
+    level.car23 setmodel( "vehicle_ct_civ_vista_cars_03" );
+    level.car24 setmodel( "vehicle_ct_civ_vista_cars_05" );
+    level.car01 notsolid();
+    level.car02 notsolid();
+    level.car03 notsolid();
+    level.car04 notsolid();
+    level.car05 notsolid();
+    level.car06 notsolid();
+    level.car07 notsolid();
+    level.car08 notsolid();
+    level.car09 notsolid();
+    level.car10 notsolid();
+    level.car11 notsolid();
+    level.car12 notsolid();
+    level.car13 notsolid();
+    level.car14 notsolid();
+    level.car15 notsolid();
+    level.car16 notsolid();
+    level.car17 notsolid();
+    level.car18 notsolid();
+    level.car19 notsolid();
+    level.car20 notsolid();
+    level.car21 notsolid();
+    level.car22 notsolid();
+    level.car23 notsolid();
+    level.car24 notsolid();
     level.car01 hide();
     level.car02 hide();
     level.car03 hide();
@@ -874,12 +874,12 @@ ct_vista_cars()
     level.car23 hide();
     level.car24 hide();
     wait 0.05;
-    level.car01 _meth_8279( "ct_vista_car_1" );
-    level.car02 _meth_8279( "ct_vista_car_2" );
-    level.car03 _meth_8279( "ct_vista_car_3" );
-    level.car04 _meth_8279( "ct_vista_car_4" );
-    level.car05 _meth_8279( "ct_vista_car_5" );
-    level.car06 _meth_8279( "ct_vista_car_6" );
+    level.car01 scriptmodelplayanim( "ct_vista_car_1" );
+    level.car02 scriptmodelplayanim( "ct_vista_car_2" );
+    level.car03 scriptmodelplayanim( "ct_vista_car_3" );
+    level.car04 scriptmodelplayanim( "ct_vista_car_4" );
+    level.car05 scriptmodelplayanim( "ct_vista_car_5" );
+    level.car06 scriptmodelplayanim( "ct_vista_car_6" );
     level.car01 thread unhidecar();
     level.car02 thread unhidecar();
     level.car03 thread unhidecar();
@@ -887,12 +887,12 @@ ct_vista_cars()
     level.car05 thread unhidecar();
     level.car06 thread unhidecar();
     wait 5;
-    level.car07 _meth_8279( "ct_vista_car_1" );
-    level.car08 _meth_8279( "ct_vista_car_2" );
-    level.car09 _meth_8279( "ct_vista_car_3" );
-    level.car10 _meth_8279( "ct_vista_car_4" );
-    level.car11 _meth_8279( "ct_vista_car_5" );
-    level.car12 _meth_8279( "ct_vista_car_6" );
+    level.car07 scriptmodelplayanim( "ct_vista_car_1" );
+    level.car08 scriptmodelplayanim( "ct_vista_car_2" );
+    level.car09 scriptmodelplayanim( "ct_vista_car_3" );
+    level.car10 scriptmodelplayanim( "ct_vista_car_4" );
+    level.car11 scriptmodelplayanim( "ct_vista_car_5" );
+    level.car12 scriptmodelplayanim( "ct_vista_car_6" );
     level.car07 thread unhidecar();
     level.car08 thread unhidecar();
     level.car09 thread unhidecar();
@@ -900,12 +900,12 @@ ct_vista_cars()
     level.car11 thread unhidecar();
     level.car12 thread unhidecar();
     wait 5;
-    level.car13 _meth_8279( "ct_vista_car_1" );
-    level.car14 _meth_8279( "ct_vista_car_2" );
-    level.car15 _meth_8279( "ct_vista_car_3" );
-    level.car16 _meth_8279( "ct_vista_car_4" );
-    level.car17 _meth_8279( "ct_vista_car_5" );
-    level.car18 _meth_8279( "ct_vista_car_6" );
+    level.car13 scriptmodelplayanim( "ct_vista_car_1" );
+    level.car14 scriptmodelplayanim( "ct_vista_car_2" );
+    level.car15 scriptmodelplayanim( "ct_vista_car_3" );
+    level.car16 scriptmodelplayanim( "ct_vista_car_4" );
+    level.car17 scriptmodelplayanim( "ct_vista_car_5" );
+    level.car18 scriptmodelplayanim( "ct_vista_car_6" );
     level.car13 thread unhidecar();
     level.car14 thread unhidecar();
     level.car15 thread unhidecar();
@@ -913,12 +913,12 @@ ct_vista_cars()
     level.car17 thread unhidecar();
     level.car18 thread unhidecar();
     wait 5;
-    level.car19 _meth_8279( "ct_vista_car_1" );
-    level.car20 _meth_8279( "ct_vista_car_2" );
-    level.car21 _meth_8279( "ct_vista_car_3" );
-    level.car22 _meth_8279( "ct_vista_car_4" );
-    level.car23 _meth_8279( "ct_vista_car_5" );
-    level.car24 _meth_8279( "ct_vista_car_6" );
+    level.car19 scriptmodelplayanim( "ct_vista_car_1" );
+    level.car20 scriptmodelplayanim( "ct_vista_car_2" );
+    level.car21 scriptmodelplayanim( "ct_vista_car_3" );
+    level.car22 scriptmodelplayanim( "ct_vista_car_4" );
+    level.car23 scriptmodelplayanim( "ct_vista_car_5" );
+    level.car24 scriptmodelplayanim( "ct_vista_car_6" );
     level.car19 thread unhidecar();
     level.car20 thread unhidecar();
     level.car21 thread unhidecar();
@@ -1021,7 +1021,7 @@ scriptmodelplayanimwithnotifycheap( var_0, var_1, var_2, var_3, var_4, var_5, va
     if ( isdefined( var_5 ) )
         level endon( var_5 );
 
-    var_0 _meth_827B( var_1, var_2 );
+    var_0 scriptmodelplayanimdeltamotion( var_1, var_2 );
     thread scriptmodelplayanimwithnotifycheap_notetracks( var_0, var_2, var_3, var_4, var_5, var_6, var_7 );
 }
 

@@ -19,18 +19,18 @@ endingprecache()
     precachemodel( "vb_civilian_mitchell" );
     precachemodel( "viewbody_atlas_military" );
     precachemodel( "greece_finale_truck" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    precacheitem( "iw5_arx160_sp" );
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "rpg_player" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    precacheshellshock( "iw5_arx160_sp" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "rpg_player" );
     precacheshader( "fullscreen_lit_bloodsplat_01" );
     precacheshader( "waypoint_threat_tagged" );
     precachemodel( "breach_charge" );
@@ -42,7 +42,7 @@ endingprecache()
     precachemodel( "kva_leader_head_cut_throat" );
     precacheshellshock( "greece_finale_car_impact" );
     precacheshellshock( "greece_finale_car_recovery" );
-    precacheitem( "iw5_microdronelauncher_sp" );
+    precacheshellshock( "iw5_microdronelauncher_sp" );
     precacherumble( "grenade_rumble" );
     precacherumble( "artillery_rumble" );
     precachestring( &"GREECE_HINT_ENDING_PLACE_CHARGE" );
@@ -64,7 +64,7 @@ endingprecache()
     maps\_utility::add_control_based_hint_strings( "player_grab_gun", &"GREECE_HINT_ENDING_GRAB_GUN", ::hintgrabgunoff, &"GREECE_HINT_ENDING_GRAB_GUN_KB" );
     precachemodel( "kva_heavy_head" );
     precachemodel( "kva_heavy_body" );
-    precacheitem( "iw5_maul_sp" );
+    precacheshellshock( "iw5_maul_sp" );
     precachemodel( "datachit_greece" );
     maps\_hms_door_interact::precachedooranimations();
 }
@@ -312,10 +312,10 @@ objintercepthades()
     objective_position( maps\_utility::obj( "InterceptHades" ), var_2.origin );
     objective_setpointertextoverride( maps\_utility::obj( "InterceptHades" ), &"GREECE_OBJ_ENDING_HADESVEHICLE" );
     var_3 = getent( "hades_vehicle", "targetname" );
-    var_3 _meth_83FA( 3, 1, 0 );
+    var_3 hudoutlineenable( 3, 1, 0 );
     common_scripts\utility::flag_wait( "FlagEndingClearObjInterceptHades" );
     maps\_utility::objective_complete( maps\_utility::obj( "InterceptHades" ) );
-    var_3 _meth_83FB();
+    var_3 hudoutlinedisable();
 }
 
 endingbegin()
@@ -475,7 +475,7 @@ monitorsetupambushtimer()
     level.ambushtimer.alignx = "left";
     level.ambushtimer.horzalign = "center";
     level.ambushtimer.color = ( 0.95, 0.95, 1 );
-    level.ambushtimer _meth_80D2( var_0 );
+    level.ambushtimer settenthstimer( var_0 );
     level.ambushtimer setpulsefx( 30, 900000, 700 );
     soundscripts\_snd::snd_music_message( "start_finale_ied_setup_music" );
     thread successsetupambushtimer( level.ambushtimer );
@@ -495,7 +495,7 @@ monitorsetupambushtimer()
     thread endinghadesconvoyenter();
     thread maps\_hms_utility::allyredirectgotonode( "Ilona", "AllyEndingAmbush2Cover" );
     var_3 = getent( "hades_vehicle", "targetname" );
-    level.allies["Ilona"] _meth_8167( var_3 );
+    level.allies["Ilona"] setentitytarget( var_3 );
 }
 
 failsetupambushtimerexpire()
@@ -549,7 +549,7 @@ monitorleaveareawarning()
     {
         waitframe();
 
-        if ( level.player _meth_80A9( var_1 ) == 1 || level.player _meth_80A9( var_2 ) == 1 )
+        if ( level.player istouching( var_1 ) == 1 || level.player istouching( var_2 ) == 1 )
         {
             if ( var_3 == 1 )
             {
@@ -565,7 +565,7 @@ monitorleaveareawarning()
             continue;
         }
 
-        if ( level.player _meth_80A9( var_1 ) == 0 && level.player _meth_80A9( var_2 ) == 0 )
+        if ( level.player istouching( var_1 ) == 0 && level.player istouching( var_2 ) == 0 )
         {
             var_3 = 1;
             common_scripts\utility::flag_set( "FlagEndingLeavingAreaHintOff" );
@@ -591,7 +591,7 @@ monitorplaceambushinteract()
     thread monitorleaveareawarning();
     var_0 = getent( "UseTriggerEndingSetupAmbushInteract", "targetname" );
     var_0 makeusable();
-    var_0 _meth_80DA( "HINT_NOICON" );
+    var_0 setcursorhint( "HINT_NOICON" );
     var_0 maps\_utility::addhinttrigger( &"GREECE_HINT_ENDING_PLACE_CHARGE", &"GREECE_HINT_ENDING_PLACE_CHARGE_KB" );
     thread monitorplacebreachhint();
     var_0 waittill( "trigger", var_1 );
@@ -613,19 +613,19 @@ monitorplaceambushinteract()
     var_4 hide();
     var_2 maps\_anim::anim_first_frame_solo( var_4, "ied_enter" );
     var_5 = [ var_3, var_4 ];
-    level.player _meth_8080( var_3, "tag_player", 0.3 );
+    level.player playerlinktoblend( var_3, "tag_player", 0.3 );
     soundscripts\_snd::snd_message( "player_place_ied_foley" );
     wait 0.3;
     var_3 show();
     var_4 show();
     thread monitordetonateambushinteract();
     var_6 = spawn( "script_model", var_3.origin );
-    var_6 _meth_80B1( "kva_leader_head_cut_throat" );
+    var_6 setmodel( "kva_leader_head_cut_throat" );
     var_7 = var_3 gettagorigin( "TAG_WEAPON_RIGHT" );
     var_8 = var_3 gettagangles( "TAG_WEAPON_RIGHT" );
     var_6.origin = var_7;
     var_6.angles = var_8;
-    var_6 _meth_804D( var_3, "TAG_WEAPON_RIGHT", ( -15, 7, -3 ), ( 0, -20, 180 ) );
+    var_6 linkto( var_3, "TAG_WEAPON_RIGHT", ( -15, 7, -3 ), ( 0, -20, 180 ) );
     var_2 maps\_anim::anim_single( var_5, "ied_enter" );
     var_6 delete();
     level notify( "EndingAmbushWindowEnd" );
@@ -661,7 +661,7 @@ successdetonateambushinteract( var_0, var_1, var_2, var_3 )
     common_scripts\utility::flag_set( "Init_FlagEndingSetAmbushInteractBeginLighting" );
     thread maps\greece_ending_fx::endingambushbreachexplosionfx();
     var_0 maps\_anim::anim_single( var_1, "ied_success" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player thread maps\_shg_utility::setup_player_for_gameplay();
     var_2 delete();
     var_3 delete();
@@ -757,16 +757,16 @@ endinghadesconvoyenter()
     var_0 = getent( "EndingPlayerHadesVehicleOrg", "targetname" );
     var_1 = getent( "hades_vehicle", "targetname" );
     var_2 = getent( "hades_vehicle_clip", "targetname" );
-    var_2 _meth_804D( var_1 );
+    var_2 linkto( var_1 );
     var_3 = getent( "convoy_vehicle_2", "targetname" );
     var_4 = getent( "convoy_vehicle_2_clip", "targetname" );
-    var_4 _meth_804D( var_3 );
+    var_4 linkto( var_3 );
     var_5 = getent( "convoy_vehicle_3", "targetname" );
     var_6 = getent( "convoy_vehicle_3_clip", "targetname" );
-    var_6 _meth_804D( var_5 );
+    var_6 linkto( var_5 );
     var_7 = getent( "convoy_vehicle_4", "targetname" );
     var_8 = getent( "convoy_vehicle_4_clip", "targetname" );
-    var_8 _meth_804D( var_7 );
+    var_8 linkto( var_7 );
     var_9 = [ var_1, var_3, var_5, var_7 ];
     thread endinghadesconvoyhitplayer();
     var_0 maps\_anim::anim_single( var_9, "convoy_enter" );
@@ -832,8 +832,8 @@ endinghadesconvoyhitplayer()
     {
         foreach ( var_2 in var_0 )
         {
-            if ( level.player _meth_80A9( var_2 ) )
-                level.player _meth_8052();
+            if ( level.player istouching( var_2 ) )
+                level.player kill();
         }
 
         waitframe();
@@ -919,14 +919,14 @@ spawnendingenemies01flood()
     var_2 = getent( "EndingEnemyVolLowerRight01", "targetname" );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_81A9( var_2 );
+        var_4 setgoalvolumeauto( var_2 );
 
     common_scripts\utility::flag_wait( "FlagEndingPlayerAdvanceFight4" );
     var_1 = maps\_utility::get_living_ai_array( "EndingEnemy01flood_AI", "targetname" );
     var_6 = getent( "EndingEnemyVolCenter03", "targetname" );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_81A9( var_6 );
+        var_4 setgoalvolumeauto( var_6 );
 
     thread maps\_utility::ai_delete_when_out_of_sight( var_1, 256 );
 }
@@ -981,14 +981,14 @@ spawnendingenemies02flood()
     var_2 = getent( "EndingEnemyVolUpperLeft02", "targetname" );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_81A9( var_2 );
+        var_4 setgoalvolumeauto( var_2 );
 
     common_scripts\utility::flag_wait( "FlagEndingPlayerAdvanceFight4" );
     var_1 = maps\_utility::get_living_ai_array( "EndingEnemy02flood_AI", "targetname" );
     var_6 = getent( "EndingEnemyVolCenter02", "targetname" );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_81A9( var_6 );
+        var_4 setgoalvolumeauto( var_6 );
 
     thread maps\_utility::ai_delete_when_out_of_sight( var_1, 256 );
 }
@@ -1073,7 +1073,7 @@ spawnendingenemies04flood()
     var_2 = getent( "EndingEnemyVolCenter03", "targetname" );
 
     foreach ( var_4 in var_1 )
-        var_4 _meth_81A9( var_2 );
+        var_4 setgoalvolumeauto( var_2 );
 
     thread maps\_utility::ai_delete_when_out_of_sight( var_1, 256 );
 }
@@ -1197,7 +1197,7 @@ shotgunabortdefendgoalonflag( var_0, var_1, var_2 )
 monitorforceshotgunspawn()
 {
     wait 1;
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_1 = maps\_utility::get_living_ai_array( "EndingCineKVA_AI", "targetname" );
     var_0 = common_scripts\utility::array_remove_array( var_0, var_1 );
     var_0 = maps\_utility::array_removedead_or_dying( var_0 );
@@ -1231,7 +1231,7 @@ endingenemystumblethread( var_0 )
     var_2 maps\_anim::anim_single_solo( self, var_0 );
 
     if ( isdefined( self ) )
-        self _meth_8052( self.origin, level.player );
+        self kill( self.origin, level.player );
 }
 
 endingenemycrawlthread( var_0, var_1 )
@@ -1251,7 +1251,7 @@ endingenemycrawlthread( var_0, var_1 )
     maps\_utility::set_run_anim( var_0, 1 );
     var_2 = self.script_noteworthy + "Org";
     var_3 = common_scripts\utility::getstruct( var_2, "script_noteworthy" );
-    self _meth_81C6( var_3.origin, var_3.angles );
+    self forceteleport( var_3.origin, var_3.angles );
     var_4 = self.script_noteworthy + "Goal";
     var_5 = common_scripts\utility::getstruct( var_4, "script_noteworthy" );
     maps\_utility::set_goal_pos( var_5.origin );
@@ -1260,7 +1260,7 @@ endingenemycrawlthread( var_0, var_1 )
     maps\_anim::anim_single_solo( self, var_1 );
 
     if ( isdefined( self ) )
-        self _meth_8052( self.origin, level.player );
+        self kill( self.origin, level.player );
 }
 
 monitorenemycrawlplayerdist()
@@ -1283,7 +1283,7 @@ endingenemyfloatersteleport( var_0, var_1 )
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
     {
         var_3 = var_1[var_2];
-        var_0[var_2] _meth_81C6( var_3.origin, var_3.angles );
+        var_0[var_2] forceteleport( var_3.origin, var_3.angles );
 
         if ( isdefined( var_3.target ) )
         {
@@ -1291,7 +1291,7 @@ endingenemyfloatersteleport( var_0, var_1 )
             var_5 = getent( var_4, "targetname" );
 
             if ( isdefined( var_5 ) )
-                var_0[var_2] _meth_81A9( var_5 );
+                var_0[var_2] setgoalvolumeauto( var_5 );
             else
             {
                 var_6 = common_scripts\utility::getstruct( var_4, "targetname" );
@@ -1306,7 +1306,7 @@ endingenemyshotgunnersteleport( var_0, var_1, var_2 )
     for ( var_3 = 0; var_3 < var_0.size; var_3++ )
     {
         var_4 = var_1[var_3];
-        var_0[var_3] _meth_81C6( var_4.origin, var_4.angles );
+        var_0[var_3] forceteleport( var_4.origin, var_4.angles );
 
         if ( isdefined( var_4.target ) )
         {
@@ -1334,7 +1334,7 @@ explosiveragdolldeath()
     if ( !isdefined( self ) )
         return;
 
-    self _meth_8141();
+    self stopanimscripted();
 
     if ( isdefined( var_1 ) && var_1 == "MOD_MELEE" || var_1 == "MOD_RIFLE_BULLET" || var_1 == "MOD_PISTOL_BULLET" )
         self.ragdoll_immediate = undefined;
@@ -1361,7 +1361,7 @@ explosivedamagemonitor()
             var_5 = var_0 * 0.5;
 
         if ( var_5 > 0 )
-            self _meth_8051( var_5, self.origin, level.player );
+            self dodamage( var_5, self.origin, level.player );
     }
 }
 
@@ -1402,7 +1402,7 @@ endingenemysetupsuperguy()
     self.disablereactionanims = 1;
     self.no_pistol_switch = 1;
     self.dontmelee = 1;
-    self _meth_80B1( "kva_heavy_body" );
+    self setmodel( "kva_heavy_body" );
     thread codescripts\character::setheadmodel( "kva_heavy_head" );
     maps\_utility::set_battlechatter( 0 );
     thread maps\_hms_ai_utility::painmanagement();
@@ -1434,14 +1434,14 @@ endingcrashglaunchercorpse( var_0, var_1, var_2 )
         var_3 maps\greece_code::kill_no_react( 0 );
     }
     else
-        var_3 _meth_8052();
+        var_3 kill();
 
     var_4 = getentarray( "EndingCrashGlauncherPickup", "targetname" );
 
     foreach ( var_6 in var_4 )
     {
         var_6 show();
-        var_6 _meth_83FA( 2 );
+        var_6 hudoutlineenable( 2 );
         var_6 thread monitorplayerpickupglauncher();
         var_6 thread glaunchericonthink();
     }
@@ -1453,7 +1453,7 @@ monitorplayerpickupglauncher( var_0 )
 {
     for (;;)
     {
-        if ( level.player _meth_8314( "iw5_microdronelauncher_sp" ) )
+        if ( level.player hasweapon( "iw5_microdronelauncher_sp" ) )
         {
             self notify( "remove_glauncher_icon" );
             break;
@@ -1462,8 +1462,8 @@ monitorplayerpickupglauncher( var_0 )
         waitframe();
     }
 
-    level.player _meth_8332( "iw5_microdronelauncher_sp" );
-    level.player _meth_82F6( "iw5_microdronelauncher_sp", weaponclipsize( "iw5_microdronelauncher_sp" ) );
+    level.player givemaxammo( "iw5_microdronelauncher_sp" );
+    level.player setweaponammoclip( "iw5_microdronelauncher_sp", weaponclipsize( "iw5_microdronelauncher_sp" ) );
 }
 
 glaunchericonthink()
@@ -1472,13 +1472,13 @@ glaunchericonthink()
     common_scripts\utility::flag_wait( "FlagEndingFightStart" );
     var_0 = spawn( "trigger_radius", self.origin, 0, 320, 72 );
     var_1 = newhudelem();
-    var_1 _meth_80CC( "waypoint_threat_tagged", 1, 1 );
+    var_1 setshader( "waypoint_threat_tagged", 1, 1 );
     var_1.alpha = 0;
     var_1.color = ( 1, 1, 1 );
     var_1.x = self.origin[0];
     var_1.y = self.origin[1];
     var_1.z = self.origin[2] + 16;
-    var_1 _meth_80D8( 1, 1 );
+    var_1 setwaypoint( 1, 1 );
     self.glauncher_icon = var_1;
     self.glauncher_icon_trig = var_0;
 
@@ -1497,11 +1497,11 @@ glaunchericonthink()
         if ( !isplayer( var_2 ) )
             continue;
 
-        while ( var_2 _meth_80A9( var_0 ) )
+        while ( var_2 istouching( var_0 ) )
         {
             var_3 = 1;
 
-            if ( level.player _meth_8314( "iw5_microdronelauncher_sp" ) )
+            if ( level.player hasweapon( "iw5_microdronelauncher_sp" ) )
                 var_3 = 0;
 
             if ( isdefined( self ) && maps\_utility::player_looking_at( self.origin, 0.8, 1 ) && var_3 )
@@ -1544,7 +1544,7 @@ monitorplayerleftlowerpassage()
 
 sendallenemiesintriggertogoalvol( var_0, var_1 )
 {
-    var_2 = _func_0D6( "axis" );
+    var_2 = getaiarray( "axis" );
     var_3 = getent( var_0, "targetname" );
     var_4 = getent( var_1, "targetname" );
     var_5 = [];
@@ -1552,10 +1552,10 @@ sendallenemiesintriggertogoalvol( var_0, var_1 )
 
     foreach ( var_7 in var_2 )
     {
-        if ( isdefined( var_7 ) && var_7 _meth_80A9( var_3 ) )
+        if ( isdefined( var_7 ) && var_7 istouching( var_3 ) )
         {
             var_5 = common_scripts\utility::add_to_array( var_5, var_7 );
-            var_7 _meth_81A9( var_4 );
+            var_7 setgoalvolumeauto( var_4 );
             var_7.favoriteenemy = level.player;
         }
     }
@@ -1633,7 +1633,7 @@ monitorhadesvehicleinteract()
     var_0 = getent( "UseTriggerEndingHadesVehicleInteract", "targetname" );
     var_0 common_scripts\utility::trigger_on();
     var_0 makeusable();
-    var_0 _meth_80DA( "HINT_NOICON" );
+    var_0 setcursorhint( "HINT_NOICON" );
     var_0 maps\_utility::addhinttrigger( &"GREECE_HINT_ENDING_OPEN_DOOR", &"GREECE_HINT_ENDING_OPEN_DOOR_KB" );
     thread monitorhadesvehiclehint();
     var_0 waittill( "trigger", var_1 );
@@ -1660,15 +1660,15 @@ bigfinale()
     maps\_utility::battlechatter_off( "axis" );
     maps\_utility::battlechatter_off( "allies" );
     thread endinghidebigfinaleents();
-    level.endinghades _meth_84ED( "disable" );
+    level.endinghades setthreatdetection( "disable" );
     var_0 = maps\_utility::get_living_ai( "EndingNPC1", "script_noteworthy" );
-    var_0 _meth_84ED( "disable" );
+    var_0 setthreatdetection( "disable" );
     level notify( "EndingStartBigFinale" );
     var_1 = getent( "EndingPlayerHadesVehicleOrg", "targetname" );
     var_2 = maps\_utility::spawn_anim_model( "player_ending_rig", var_1.origin, var_1.angles );
     var_2 hide();
     var_1 maps\_anim::anim_first_frame_solo( var_2, "start_action" );
-    level.player _meth_8080( var_2, "tag_player", 0.3 );
+    level.player playerlinktoblend( var_2, "tag_player", 0.3 );
     wait 0.3;
     var_2 show();
     var_3 = getent( "hades_vehicle", "targetname" );
@@ -1686,6 +1686,7 @@ bigfinale()
     var_1 maps\_anim::anim_single( var_7, "start_action" );
     level notify( "EndingFinalePlayerHit" );
     soundscripts\_snd::snd_message( "start_finale_suv_damage" );
+    thread maps\_utility::autosave_by_name( "ending_finale_player_hit" );
     thread bigfinaleplayerstab();
     thread bigfinaleplayergrabgun( var_1, var_2 );
     var_6 maps\_utility::anim_stopanimscripted();
@@ -1724,16 +1725,16 @@ setupbigfinaleguys()
     var_6.animname = "npc2";
     var_6.health = 999999999;
     var_6 setupaiforendinganim();
-    var_6 _meth_804D( var_0, "TAG_DRIVER", var_5, ( 0, 0, 0 ) );
-    var_6 _meth_81C6( var_1 + var_5, var_2 );
+    var_6 linkto( var_0, "TAG_DRIVER", var_5, ( 0, 0, 0 ) );
+    var_6 forceteleport( var_1 + var_5, var_2 );
     var_6 maps\_utility::forceuseweapon( "iw5_titan45_sp", "primary" );
     var_6 thread maps\_anim::anim_single_solo( var_6, "veh_idle" );
     var_7 = maps\_utility::spawn_script_noteworthy( "EndingNPC3", 1 );
     var_7.animname = "npc3";
     var_7.health = 999999999;
     var_7 setupaiforendinganim();
-    var_7 _meth_804D( var_0, "TAG_PASSENGER", var_5, ( 0, 0, 0 ) );
-    var_7 _meth_81C6( var_3 + var_5, var_4 );
+    var_7 linkto( var_0, "TAG_PASSENGER", var_5, ( 0, 0, 0 ) );
+    var_7 forceteleport( var_3 + var_5, var_4 );
     var_7 thread maps\_anim::anim_single_solo( var_7, "veh_idle" );
     level waittill( "EndingFinalePlayerHit" );
     var_6 thread maps\_anim::anim_single_solo( var_6, "veh_death" );
@@ -1744,28 +1745,28 @@ bigfinaleplayershoot( var_0, var_1 )
 {
     var_0 thread maps\_anim::anim_single_solo( var_1, "start_action" );
     level waittill( "EndingFinaleShootSlomoStart" );
-    level.player _meth_8310();
-    level.player _meth_8321();
-    level.player _meth_807D( var_1, "tag_player", 0, 30, 30, 15, 15, 0, 0 );
-    level.player _meth_80FE( 0.75, 0.75 );
-    level.player _meth_831E();
-    level.player _meth_830E( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    level.player _meth_8316( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    level.player takeallweapons();
+    level.player disableweaponswitch();
+    level.player playerlinktodelta( var_1, "tag_player", 0, 30, 30, 15, 15, 0, 0 );
+    level.player enableslowaim( 0.75, 0.75 );
+    level.player enableweapons();
+    level.player giveweapon( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    level.player switchtoweaponimmediate( "iw5_titan45_sp_opticsreddot_silencerpistol" );
     soundscripts\_snd::snd_message( "start_hades_suv_extraction" );
     setslowmotion( 1.0, 0.25, 0.25 );
     level waittill( "EndingFinaleShootSlomoEnd" );
     soundscripts\_snd::snd_message( "stop_hades_suv_extraction" );
     setslowmotion( 0.25, 1.0, 0.25 );
     level waittill( "EndingFinalePlayerHit" );
-    level.player _meth_8080( var_1, "tag_player", 0.0 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.0 );
     thread bigfinalehadesknife();
     thread bigfinalehitflash();
-    level.player _meth_831D();
-    level.player _meth_8310();
+    level.player disableweapons();
+    level.player takeallweapons();
     level.player shellshock( "greece_finale_car_impact", 0.5 );
     earthquake( 0.65, 0.6, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
-    level.player _meth_8051( level.player.health - 1, ( 0, 0, 0 ) );
+    level.player playrumbleonentity( "damage_heavy" );
+    level.player dodamage( level.player.health - 1, ( 0, 0, 0 ) );
     wait 0.5;
     level.player shellshock( "greece_finale_car_recovery", 10.0 );
 }
@@ -1781,12 +1782,12 @@ bigfinalehitflash()
 bigfinaleplayerlosegun( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "npc_titan45_base_loot" );
+    var_1 setmodel( "npc_titan45_base_loot" );
     var_2 = var_0 gettagorigin( "TAG_WEAPON_RIGHT" );
     var_3 = var_0 gettagangles( "TAG_WEAPON_RIGHT" );
     var_1.origin = var_2;
     var_1.angles = var_3;
-    var_1 _meth_804D( var_0, "TAG_WEAPON_RIGHT" );
+    var_1 linkto( var_0, "TAG_WEAPON_RIGHT" );
     level waittill( "EndingFinaleHidePlayerGun" );
     var_1 delete();
 }
@@ -1800,12 +1801,12 @@ bigfinaleilanashoot()
     var_2 = getent( "enemy_vehicle", "targetname" );
     var_3 = maps\_utility::get_living_ai( "EndingNPC2", "script_noteworthy" );
     var_0.favoriteenemy = var_3;
-    var_0 _meth_8167( var_2 );
+    var_0 setentitytarget( var_2 );
     var_0 thread bigfinaleilanamagicshoot( var_3 );
     level waittill( "EndingFinaleVehCrashGate" );
     waitframe();
     var_0.favoriteenemy = undefined;
-    var_0 _meth_8168( var_2 );
+    var_0 clearentitytarget( var_2 );
     var_4 = getnode( "AllyEndingHadesTruckCover2", "targetname" );
     var_0 thread maps\_hms_ai_utility::gototogoal( var_4, "default", 1 );
 }
@@ -1813,12 +1814,12 @@ bigfinaleilanashoot()
 bigfinaleilanamagicshoot( var_0 )
 {
     level endon( "EndingFinaleVehCrashGate" );
-    var_1 = self _meth_80A8();
+    var_1 = self geteye();
 
     for (;;)
     {
-        var_2 = var_0 _meth_80A8();
-        self _meth_81E7();
+        var_2 = var_0 geteye();
+        self shoot();
         wait(randomfloatrange( 0.1, 0.2 ));
     }
 }
@@ -1827,12 +1828,12 @@ bigfinaleplayerknife( var_0 )
 {
     level waittill( "EndingFinalePlayerShowKnife" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "npc_mp_tactical_knife" );
+    var_1 setmodel( "npc_mp_tactical_knife" );
     var_2 = var_0 gettagorigin( "TAG_WEAPON_LEFT" );
     var_3 = var_0 gettagangles( "TAG_WEAPON_LEFT" );
     var_1.origin = var_2;
     var_1.angles = var_3;
-    var_1 _meth_804D( var_0, "TAG_WEAPON_LEFT" );
+    var_1 linkto( var_0, "TAG_WEAPON_LEFT" );
     level waittill( "EndingFinalePlayerHideKnife" );
     var_0 notify( "EndingFinaleCheckGun" );
     var_1 delete();
@@ -1841,12 +1842,12 @@ bigfinaleplayerknife( var_0 )
 bigfinalehadesknife()
 {
     var_0 = spawn( "script_model", level.endinghades.origin );
-    var_0 _meth_80B1( "npc_mp_tactical_knife" );
+    var_0 setmodel( "npc_mp_tactical_knife" );
     var_1 = level.endinghades gettagorigin( "tag_weapon_right" );
     var_2 = level.endinghades gettagangles( "tag_weapon_right" );
     var_0.origin = var_1;
     var_0.angles = var_2;
-    var_0 _meth_804D( level.endinghades, "TAG_WEAPON_RIGHT" );
+    var_0 linkto( level.endinghades, "TAG_WEAPON_RIGHT" );
     level waittill( "EndingFinalePlayerHideKnife" );
     var_0 delete();
 }
@@ -1922,8 +1923,8 @@ bigfinaleplayerstabfail( var_0, var_1, var_2 )
     soundscripts\_snd::snd_message( "start_hades_kill_interact_fail" );
     level notify( "failBloodDrips" );
     earthquake( 0.65, 0.6, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
-    level.player _meth_8051( level.player.health - 1, ( 0, 0, 0 ) );
+    level.player playrumbleonentity( "damage_heavy" );
+    level.player dodamage( level.player.health - 1, ( 0, 0, 0 ) );
     thread endingfinalebloodsplat( var_3, 0.05, 1, 1 );
     var_0 thread maps\_anim::anim_single_solo( var_2, "fight_fail" );
     thread failhadesstabplayer( var_3 );
@@ -1959,7 +1960,7 @@ endingsetupcivilians()
 
 endingcivfleesetup()
 {
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     maps\_utility::set_ignoreall( 1 );
     maps\_utility::set_ignoreme( 1 );
     self.allowdeath = 1;
@@ -2020,7 +2021,7 @@ delete_on_goal()
     self endon( "death" );
     self waittill( "goal" );
 
-    while ( self _meth_81BE( level.player ) )
+    while ( self cansee( level.player ) )
         wait 1;
 
     self delete();
@@ -2029,8 +2030,8 @@ delete_on_goal()
 monitorconvoyvehicle3()
 {
     var_0 = getent( "convoy_vehicle_3", "targetname" );
-    var_0 _meth_82C0( 1 );
-    var_0 _meth_82C1( 1 );
+    var_0 setcandamage( 1 );
+    var_0 setcanradiusdamage( 1 );
     var_0 thread monitorconvoyvehicle3damage();
     var_0 common_scripts\utility::waittill_either( "player_damage", "force_explosion" );
     maps\greece_ending_fx::endingcrashtruckexplosionfx();
@@ -2098,7 +2099,7 @@ endingfinalebloodsplat( var_0, var_1, var_2, var_3 )
     var_4 = newhudelem();
     var_4.x = 0;
     var_4.y = 0;
-    var_4 _meth_80CC( "fullscreen_lit_bloodsplat_01", 640, 480 );
+    var_4 setshader( "fullscreen_lit_bloodsplat_01", 640, 480 );
     var_4.splatter = 1;
     var_4.alignx = "left";
     var_4.aligny = "top";
@@ -2162,7 +2163,7 @@ endingtruckclip( var_0 )
     {
         var_5 = var_4.origin;
         var_6 = var_5 + ( 0, 0, var_2 );
-        var_4 _meth_82AE( var_6, 0.1 );
+        var_4 moveto( var_6, 0.1 );
     }
 }
 
@@ -2221,7 +2222,7 @@ endingtruckfiredamagevol()
     for (;;)
     {
         var_0 waittill( "trigger", var_1 );
-        var_1 _meth_8051( 5, var_0.origin, var_0, var_0, "MOD_CRUSH" );
+        var_1 dodamage( 5, var_0.origin, var_0, var_0, "MOD_CRUSH" );
         wait 0.1;
     }
 }
@@ -2244,32 +2245,32 @@ endingburningsniper()
 
 bigfinaleenemytruckdamagesetup( var_0 )
 {
-    var_0 _meth_8048( "TAG_HOOD_damage1a", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage1b", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage1c", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage2", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage3", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_GLASS_damage1", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_GRILL_damage1", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_GRILL_damage2", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1a", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1b", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1c", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage2", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage3", "greece_finale_truck" );
+    var_0 hidepart( "TAG_GLASS_damage1", "greece_finale_truck" );
+    var_0 hidepart( "TAG_GRILL_damage1", "greece_finale_truck" );
+    var_0 hidepart( "TAG_GRILL_damage2", "greece_finale_truck" );
     level waittill( "show_damage1" );
-    var_0 _meth_804B( "TAG_HOOD_damage1a", "greece_finale_truck" );
-    var_0 _meth_804B( "TAG_HOOD_damage1b", "greece_finale_truck" );
-    var_0 _meth_804B( "TAG_HOOD_damage1c", "greece_finale_truck" );
-    var_0 _meth_804B( "TAG_GLASS_damage1", "greece_finale_truck" );
-    var_0 _meth_804B( "TAG_GRILL_damage1", "greece_finale_truck" );
-    var_0 _meth_804B( "TAG_GRILL_damage2", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_healthy", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_GLASS_FRONT", "greece_finale_truck" );
+    var_0 showpart( "TAG_HOOD_damage1a", "greece_finale_truck" );
+    var_0 showpart( "TAG_HOOD_damage1b", "greece_finale_truck" );
+    var_0 showpart( "TAG_HOOD_damage1c", "greece_finale_truck" );
+    var_0 showpart( "TAG_GLASS_damage1", "greece_finale_truck" );
+    var_0 showpart( "TAG_GRILL_damage1", "greece_finale_truck" );
+    var_0 showpart( "TAG_GRILL_damage2", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_healthy", "greece_finale_truck" );
+    var_0 hidepart( "TAG_GLASS_FRONT", "greece_finale_truck" );
     level waittill( "show_damage2" );
-    var_0 _meth_804B( "TAG_HOOD_damage2", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage1a", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage1b", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage1c", "greece_finale_truck" );
+    var_0 showpart( "TAG_HOOD_damage2", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1a", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1b", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage1c", "greece_finale_truck" );
     level waittill( "show_damage3" );
-    var_0 _meth_804B( "TAG_HOOD_damage3", "greece_finale_truck" );
-    var_0 _meth_8048( "TAG_HOOD_damage2", "greece_finale_truck" );
-    var_0 _meth_8048( "left_wheel_01_jnt", "greece_finale_truck" );
+    var_0 showpart( "TAG_HOOD_damage3", "greece_finale_truck" );
+    var_0 hidepart( "TAG_HOOD_damage2", "greece_finale_truck" );
+    var_0 hidepart( "left_wheel_01_jnt", "greece_finale_truck" );
 }
 
 endingautosavetacticalthread()

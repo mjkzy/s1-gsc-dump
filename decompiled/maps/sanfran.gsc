@@ -14,12 +14,12 @@ main()
 
     if ( level.currentgen )
     {
-        _func_0D3( "r_gunSightColorEntityScale", "0.95" );
-        _func_0D3( "r_gunSightColorNoneScale", "0.95" );
+        setsaveddvar( "r_gunSightColorEntityScale", "0.95" );
+        setsaveddvar( "r_gunSightColorNoneScale", "0.95" );
         maps\_utility::tff_sync_setup();
     }
 
-    _func_0D3( "high_jump_double_tap", "1" );
+    setsaveddvar( "high_jump_double_tap", "1" );
     init_level_flags();
     init_lighting_flags();
     setup_start_points();
@@ -42,8 +42,8 @@ main()
     thread maps\sanfran_vo::play_dialog();
     thread global_spawn_functions();
     level.default_goalradius = 1024;
-    _func_0D3( "bg_fallDamageMinHeight", 490 );
-    _func_0D3( "bg_fallDamageMaxHeight", 640 );
+    setsaveddvar( "bg_fallDamageMinHeight", 490 );
+    setsaveddvar( "bg_fallDamageMaxHeight", 640 );
     setup_portal_scripting();
     common_scripts\utility::array_thread( getentarray( "trigger_boost_down_color", "targetname" ), common_scripts\utility::trigger_off );
     thread maps\sanfran_util::setup_dont_leave_failure();
@@ -54,14 +54,14 @@ main()
     {
         soundscripts\_snd::snd_message( "e3_demo_fade_in" );
         level.player.auxillary_hud = newclienthudelem( level.player );
-        level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+        level.player.auxillary_hud setshader( "black", 1280, 720 );
         level.player.auxillary_hud.horzalign = "fullscreen";
         level.player.auxillary_hud.vertalign = "fullscreen";
         level.player.auxillary_hud.alpha = 1;
         level.player.auxillary_hud fadeovertime( 0.5 );
         level.player.auxillary_hud.alpha = 0;
         level.player.auxillary_hud.foreground = 1;
-        _func_0D3( "objectiveHide", "0" );
+        setsaveddvar( "objectiveHide", "0" );
     }
 
     if ( level.currentgen )
@@ -107,13 +107,13 @@ precache_main()
     precachemodel( "vehicle_civ_smartcar_static_dstry" );
     precachemodel( "ind_semi_truck_fuel_tank_destroy" );
     precachemodel( "ind_semi_truck_03_destroy" );
-    precacheitem( "rpg_nodamage" );
-    precacheitem( "pitbull_magicbullet" );
-    precacheitem( "iw5_mors_sp" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "iw5_uts19_sp" );
-    precacheitem( "iw5_pbw_sp" );
-    precacheitem( "iw5_rhino_sp" );
+    precacheshellshock( "rpg_nodamage" );
+    precacheshellshock( "pitbull_magicbullet" );
+    precacheshellshock( "iw5_mors_sp" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_uts19_sp" );
+    precacheshellshock( "iw5_pbw_sp" );
+    precacheshellshock( "iw5_rhino_sp" );
     precacheshellshock( "default" );
     precachestring( &"SANFRAN_DRIVE_HINT" );
     precachestring( &"SANFRAN_SHOOT_HINT" );
@@ -142,13 +142,7 @@ precache_main()
     maps\_utility::add_hint_string( "boost_hint", &"SANFRAN_BOOST_HINT", maps\sanfran_util::player_has_jumped );
     maps\_utility::add_hint_string( "hint_dont_leave_mission", &"SANFRAN_WARNING_SKIP_OBJECTIVE", maps\sanfran_util::should_break_dont_leave );
     maps\_utility::add_hint_string( "no_target_hint", &"SANFRAN_NO_TARGET_HINT" );
-    var_0 = getdvarint( "loc_language", 0 );
-
-    if ( ( level.ps3 || level.ps4 ) && ( var_0 == 10 || var_0 == 5 ) )
-        maps\_utility::add_control_based_hint_strings( "reverse_hint", &"SANFRAN_REVERSE_HINT_J", maps\sanfran_code::show_reverse_tutorial_check, &"SANFRAN_REVERSE_HINT_PC" );
-    else
-        maps\_utility::add_control_based_hint_strings( "reverse_hint", &"SANFRAN_REVERSE_HINT", maps\sanfran_code::show_reverse_tutorial_check, &"SANFRAN_REVERSE_HINT_PC" );
-
+    maps\_utility::add_control_based_hint_strings( "reverse_hint", &"SANFRAN_REVERSE_HINT", maps\sanfran_code::show_reverse_tutorial_check, &"SANFRAN_REVERSE_HINT_PC" );
     maps\_utility::add_control_based_hint_strings( "too_far_hint", &"SANFRAN_WARNING_CHASE", maps\sanfran_util::player_has_caught_up );
     maps\_utility::add_control_based_hint_strings( "left_road_hint", &"SANFRAN_WARNING_LEAVING_ROAD", maps\sanfran_util::player_has_returned_to_road );
     maps\_utility::add_hint_string( "left_squad_hint", &"SANFRAN_WARNING_LEAVING_SQUAD", maps\sanfran_util::player_has_returned_to_squad );
@@ -313,16 +307,16 @@ setup_start_points()
 
 tff_transitions()
 {
-    if ( !_func_21E( "sanfran_bigm_tr" ) )
+    if ( !istransientloaded( "sanfran_bigm_tr" ) )
         thread tff_trans_load_bigm();
 }
 
 tff_trans_load_bigm()
 {
     common_scripts\utility::flag_wait( "flag_tff_load_bigm" );
-    _func_218( "sanfran_bigm_tr" );
+    loadtransient( "sanfran_bigm_tr" );
 
-    while ( !_func_21E( "sanfran_bigm_tr" ) )
+    while ( !istransientloaded( "sanfran_bigm_tr" ) )
         wait 0.05;
 
     level notify( "tff_transition_outro_to_bigm" );
@@ -337,7 +331,7 @@ intro_title_text()
 
 intro_title_text_start( var_0 )
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player freezecontrols( 1 );
     thread maps\_shg_utility::play_chyron_video( "chyron_text_sanfran", 1, 1 );
     common_scripts\utility::flag_wait( "chyron_video_done" );
@@ -357,7 +351,7 @@ intro_title_text_end( var_0 )
 start_intro()
 {
     soundscripts\_snd::snd_message( "start_intro" );
-    level.player _meth_83C0( "set_tunnel_lighting_0" );
+    level.player lightsetforplayer( "set_tunnel_lighting_0" );
     common_scripts\utility::flag_set( "start_intro_lighting" );
     intro_title_text();
     level thread maps\sanfran_code::handle_drone_opening();
@@ -601,7 +595,7 @@ start_bridge_capture()
     level thread objectives();
     level thread maps\sanfran_code::rock_mob();
     level thread maps\sanfran_code::handle_boost_jump();
-    _func_0D3( "objectiveHide", "1" );
+    setsaveddvar( "objectiveHide", "1" );
     common_scripts\utility::flag_set( "portal_on_collapse" );
     common_scripts\utility::flag_clear( "portal_on_collapse" );
 
@@ -610,10 +604,10 @@ start_bridge_capture()
 
     maps\_utility::delaythread( 1, maps\_utility::pauseexploder, 100 );
     maps\_utility::delaythread( 1, maps\_utility::pauseexploder, 200 );
-    level.player _meth_8310();
+    level.player takeallweapons();
     var_3 = common_scripts\utility::spawn_tag_origin();
     level.player maps\_utility::teleport_player( var_3 );
-    level.player _meth_807F( var_3, "tag_origin" );
+    level.player playerlinktoabsolute( var_3, "tag_origin" );
 
     for (;;)
     {
@@ -751,18 +745,18 @@ handle_sanfran_portal_groups_on( var_0, var_1, var_2 )
         level endon( var_2 );
 
     var_3 = getentarray( var_0, "targetname" );
-    var_3[0] _meth_8070( 0 );
+    var_3[0] enableportalgroup( 0 );
 
     for (;;)
     {
         common_scripts\utility::flag_wait( var_1 );
-        var_3[0] _meth_8070( 1 );
+        var_3[0] enableportalgroup( 1 );
 
         if ( isdefined( var_2 ) )
             level notify( var_2 );
 
         common_scripts\utility::flag_waitopen( var_1 );
-        var_3[0] _meth_8070( 0 );
+        var_3[0] enableportalgroup( 0 );
     }
 }
 
@@ -772,14 +766,14 @@ itiot_logic( var_0, var_1 )
     setdvar( "demo_itiot", "1" );
     soundscripts\_snd::snd_message( "e3_demo_fade_out" );
     level.player.auxillary_hud = newclienthudelem( level.player );
-    level.player.auxillary_hud _meth_80CC( "black", 1280, 720 );
+    level.player.auxillary_hud setshader( "black", 1280, 720 );
     level.player.auxillary_hud.horzalign = "fullscreen";
     level.player.auxillary_hud.vertalign = "fullscreen";
     level.player.auxillary_hud.alpha = 0;
     level.player.auxillary_hud fadeovertime( 0.5 );
     level.player.auxillary_hud.alpha = 1;
     level.player.auxillary_hud.foreground = 1;
-    _func_0D3( "objectiveHide", "1" );
+    setsaveddvar( "objectiveHide", "1" );
     wait 0.5;
     level.player.auxillary_hud.foreground = 0;
     wait 7;
@@ -795,8 +789,8 @@ itiot_logic( var_0, var_1 )
 
 prep_cinematic( var_0 )
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( var_0, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( var_0, 1 );
     level.current_cinematic = var_0;
 }
 
@@ -805,20 +799,20 @@ play_cinematic( var_0, var_1, var_2 )
     if ( isdefined( level.current_cinematic ) )
     {
         pausecinematicingame( 0 );
-        _func_0D3( "cg_cinematicFullScreen", "1" );
+        setsaveddvar( "cg_cinematicFullScreen", "1" );
         level.current_cinematic = undefined;
     }
     else
-        _func_057( var_0 );
+        cinematicingame( var_0 );
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "1" );
+        setsaveddvar( "cg_cinematicCanPause", "1" );
 
     wait 1;
 
-    while ( _func_05B() )
+    while ( iscinematicplaying() )
         wait 0.05;
 
     if ( !isdefined( var_2 ) || !var_2 )
-        _func_0D3( "cg_cinematicCanPause", "0" );
+        setsaveddvar( "cg_cinematicCanPause", "0" );
 }

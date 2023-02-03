@@ -114,7 +114,7 @@ initbotlevelvariables()
     level.bot_respawn_launcher_name["hardened"] = "iw5_stingerm7";
     level.bot_respawn_launcher_name["veteran"] = "iw5_stingerm7";
     level.bot_fallback_weapon = "iw5_combatknife";
-    level.zonecount = _func_201();
+    level.zonecount = getzonecount();
     initbotmapextents();
 }
 
@@ -330,10 +330,10 @@ bot_connect_monitor( var_0, var_1 )
         }
 
         var_3 = isdefined( level.bots_ignore_team_balance ) || !level.teambased;
-        var_4 = _func_271( 0 );
-        var_5 = _func_271( 1 );
-        var_6 = _func_273( 0 );
-        var_7 = _func_273( 1 );
+        var_4 = botgetteamlimit( 0 );
+        var_5 = botgetteamlimit( 1 );
+        var_6 = botgetteamdifficulty( 0 );
+        var_7 = botgetteamdifficulty( 1 );
         var_11 = "allies";
         var_12 = "axis";
         var_13 = bot_client_counts();
@@ -613,7 +613,7 @@ bot_get_host_team()
 {
     foreach ( var_1 in level.players )
     {
-        if ( !isai( var_1 ) && var_1 _meth_829C() )
+        if ( !isai( var_1 ) && var_1 ishost() )
             return var_1 bot_get_player_team();
     }
 
@@ -630,14 +630,14 @@ bot_get_human_picked_team()
     {
         if ( !isai( var_4 ) )
         {
-            if ( var_4 _meth_829C() )
+            if ( var_4 ishost() )
                 var_0 = 1;
 
             if ( player_picked_team( var_4 ) )
             {
                 var_1 = 1;
 
-                if ( var_4 _meth_829C() )
+                if ( var_4 ishost() )
                     var_2 = 1;
             }
         }
@@ -654,7 +654,7 @@ player_picked_team( var_0 )
     if ( isdefined( var_0.spectating_actively ) && var_0.spectating_actively )
         return 1;
 
-    if ( var_0 _meth_8432() )
+    if ( var_0 ismlgspectator() )
         return 1;
 
     return 0;
@@ -747,7 +747,7 @@ bots_update_difficulty( var_0, var_1 )
 
         if ( isdefined( var_3.connected ) && var_3.connected && isbot( var_3 ) && var_3.team == var_0 )
         {
-            if ( var_1 != var_3 _meth_836B() )
+            if ( var_1 != var_3 botgetdifficulty() )
                 var_3 maps\mp\bots\_bots_util::bot_set_difficulty( var_1 );
         }
     }
@@ -808,7 +808,7 @@ spawn_bot_latent( var_0, var_1, var_2 )
 {
     var_3 = gettime() + 60000;
 
-    while ( !self _meth_841A() )
+    while ( !self canspawntestclient() )
     {
         if ( gettime() >= var_3 )
         {
@@ -834,7 +834,7 @@ spawn_bot_latent( var_0, var_1, var_2 )
         return;
     }
 
-    self _meth_841B();
+    self spawntestclient();
     self.equipment_enabled = 1;
     self.bot_team = var_0;
 
@@ -857,7 +857,7 @@ spawn_bots( var_0, var_1, var_2, var_3, var_4, var_5 )
     while ( level.players.size < maps\mp\bots\_bots_util::bot_get_client_limit() && var_7.size < var_0 && gettime() < var_6 )
     {
         maps\mp\gametypes\_hostmigration::waitlongdurationwithhostmigrationpause( 0.05 );
-        var_9 = _func_281( "", 0, 0, 0 );
+        var_9 = addbot( "", 0, 0, 0 );
 
         if ( !isdefined( var_9 ) )
         {
@@ -943,7 +943,7 @@ bot_think()
     if ( !isdefined( var_0 ) )
         var_0 = self.pers["team"];
 
-    self.entity_number = self _meth_81B1();
+    self.entity_number = self getentitynumber();
     var_1 = 0;
 
     if ( !isdefined( self.bot_spawned_before ) )
@@ -971,8 +971,8 @@ bot_think()
 
     for (;;)
     {
-        maps\mp\bots\_bots_util::bot_set_difficulty( self _meth_836B() );
-        var_3 = self _meth_837B( "advancedPersonality" );
+        maps\mp\bots\_bots_util::bot_set_difficulty( self botgetdifficulty() );
+        var_3 = self botgetdifficultysetting( "advancedPersonality" );
 
         if ( var_1 && isdefined( var_3 ) && var_3 != 0 )
             maps\mp\bots\_bots_personality::bot_balance_personality();
@@ -1017,7 +1017,7 @@ respawn_watcher()
             if ( self.sessionstate == "spectator" )
             {
                 if ( getdvarint( "numlives" ) == 0 || self.pers["lives"] > 0 )
-                    self _meth_837E( "use", 0.5 );
+                    self botpressbutton( "use", 0.5 );
             }
 
             wait 1.0;
@@ -1027,7 +1027,7 @@ respawn_watcher()
 
 bot_israndom()
 {
-    return self _meth_837D();
+    return self botisrandomized();
 }
 
 bot_get_rank_xp_and_prestige()
@@ -1047,7 +1047,7 @@ bot_get_rank_xp_and_prestige()
         return var_0;
     }
 
-    var_1 = self _meth_836B();
+    var_1 = self botgetdifficulty();
     var_2 = "bot_rank_" + var_1;
     var_3 = "bot_prestige_" + var_1;
     var_4 = self.pers[var_2];
@@ -1097,8 +1097,8 @@ bot_3d_sighting_model_thread( var_0 )
 
     for (;;)
     {
-        if ( isalive( self ) && !self _meth_836F( var_0 ) && common_scripts\utility::within_fov( self.origin, self.angles, var_0.origin, self _meth_8373() ) )
-            self _meth_8377( var_0, var_0.origin );
+        if ( isalive( self ) && !self botcanseeentity( var_0 ) && common_scripts\utility::within_fov( self.origin, self.angles, var_0.origin, self botgetfovdot() ) )
+            self botgetimperfectenemyinfo( var_0, var_0.origin );
 
         wait 0.1;
     }
@@ -1201,14 +1201,14 @@ bot_damage_callback( var_0, var_1, var_2, var_3, var_4, var_5 )
         var_6 = maps\mp\bots\_bots_util::bot_get_known_attacker( var_0, var_4 );
 
         if ( isdefined( var_6 ) )
-            self _meth_8359( var_6 );
+            self botsetattacker( var_6 );
     }
 }
 
 on_bot_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9 )
 {
-    self _meth_8358();
-    self _meth_8356();
+    self botclearscriptenemy();
+    self botclearscriptgoal();
     var_10 = maps\mp\bots\_bots_util::bot_get_known_attacker( var_1, var_0 );
 
     if ( isdefined( var_10 ) && var_10.classname == "misc_turret" && isdefined( var_10.chopper ) )
@@ -1216,7 +1216,7 @@ on_bot_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, va
 
     if ( isdefined( var_10 ) && ( var_10.classname == "script_vehicle" || var_10.classname == "script_model" ) && isdefined( var_10.helitype ) )
     {
-        var_11 = self _meth_837B( "launcherRespawnChance" );
+        var_11 = self botgetdifficultysetting( "launcherRespawnChance" );
 
         if ( randomfloat( 1.0 ) < var_11 )
             self.respawn_with_launcher = 1;
@@ -1226,7 +1226,7 @@ on_bot_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, va
 bot_should_do_killcam()
 {
     var_0 = 0.0;
-    var_1 = self _meth_836B();
+    var_1 = self botgetdifficulty();
 
     if ( var_1 == "recruit" )
         var_0 = 0.1;
@@ -1279,7 +1279,7 @@ bot_think_watch_enemy( var_0 )
     {
         if ( isdefined( self.enemy ) )
         {
-            if ( self _meth_836F( self.enemy ) )
+            if ( self botcanseeentity( self.enemy ) )
                 self.last_enemy_sight_time = gettime();
         }
 
@@ -1324,7 +1324,7 @@ bot_seek_dropped_weapon( var_0 )
         if ( var_0.targetname == "dropped_weapon" )
         {
             var_2 = 1;
-            var_3 = self _meth_830C();
+            var_3 = self getweaponslistprimaries();
 
             foreach ( var_5 in var_3 )
             {
@@ -1347,7 +1347,7 @@ bot_seek_dropped_weapon( var_0 )
 
 bot_pickup_weapon( var_0 )
 {
-    self _meth_837E( "use", 2 );
+    self botpressbutton( "use", 2 );
     wait 2;
 }
 
@@ -1415,7 +1415,7 @@ bot_think_level_actions( var_0 )
 
             if ( isdefined( var_0 ) )
                 var_6 = var_0;
-            else if ( self _meth_835D() == "hunt" && self _meth_8375() )
+            else if ( self botgetscriptgoaltype() == "hunt" && self botpursuingscriptgoal() )
                 var_6 = 512;
 
             if ( distancesquared( self.origin, var_5[0].origin ) > var_6 * var_6 )
@@ -1444,7 +1444,7 @@ bot_think_level_actions( var_0 )
                 }
             }
 
-            var_10 = weaponclass( self _meth_8311() );
+            var_10 = weaponclass( self getcurrentweapon() );
 
             if ( var_10 == "spread" )
             {
@@ -1528,7 +1528,7 @@ bot_think_level_actions( var_0 )
 
 bot_should_melee_level_damage_target( var_0 )
 {
-    var_1 = self _meth_8311();
+    var_1 = self getcurrentweapon();
     var_2 = maps\mp\bots\_bots_util::bot_out_of_ammo() || maps\mp\_riotshield::hasriotshieldequipped() || isdefined( self.isjuggernautmaniac ) && self.isjuggernautmaniac == 1 || weaponclass( var_1 ) == "grenade" || var_1 == "iw5_combatknife_mp";
     return var_2;
 }
@@ -1540,7 +1540,7 @@ monitor_node_visible( var_0 )
 
     for (;;)
     {
-        if ( weaponclass( self _meth_8311() ) == "spread" )
+        if ( weaponclass( self getcurrentweapon() ) == "spread" )
         {
             if ( distancesquared( self.origin, var_0.origin ) > 90000 )
             {
@@ -1549,11 +1549,11 @@ monitor_node_visible( var_0 )
             }
         }
 
-        var_1 = self _meth_8387();
+        var_1 = self getnearestnode();
 
         if ( isdefined( var_1 ) )
         {
-            if ( _func_1FF( var_1, var_0, 1 ) )
+            if ( nodesvisible( var_1, var_0, 1 ) )
             {
                 if ( sighttracepassed( self.origin + ( 0, 0, 55 ), var_0.origin + ( 0, 0, 55 ), 0, self ) )
                     self notify( "goal" );
@@ -1566,32 +1566,32 @@ monitor_node_visible( var_0 )
 
 attack_damage_trigger( var_0 )
 {
-    if ( var_0.object.origin[2] - self _meth_80A8()[2] > 55 )
+    if ( var_0.object.origin[2] - self geteye()[2] > 55 )
     {
-        if ( _func_220( var_0.object.origin, self.origin ) < 225 )
+        if ( distance2dsquared( var_0.object.origin, self.origin ) < 225 )
             return;
     }
 
-    self _meth_8351( "disable_movement", 1 );
+    self botsetflag( "disable_movement", 1 );
     look_at_damage_trigger( var_0.object, 0.3 );
-    self _meth_837E( "ads", 0.3 );
+    self botpressbutton( "ads", 0.3 );
     wait 0.25;
     var_1 = gettime();
 
     while ( isdefined( var_0.object ) && !isdefined( var_0.object.already_used ) && gettime() - var_1 < 5000 )
     {
         look_at_damage_trigger( var_0.object, 0.15 );
-        self _meth_837E( "ads", 0.15 );
-        self _meth_837E( "attack" );
+        self botpressbutton( "ads", 0.15 );
+        self botpressbutton( "attack" );
         wait 0.1;
     }
 
-    self _meth_8351( "disable_movement", 0 );
+    self botsetflag( "disable_movement", 0 );
 }
 
 melee_damage_trigger( var_0 )
 {
-    self _meth_8351( "disable_movement", 1 );
+    self botsetflag( "disable_movement", 1 );
     look_at_damage_trigger( var_0.object, 0.3 );
     wait 0.25;
     var_1 = gettime();
@@ -1599,21 +1599,21 @@ melee_damage_trigger( var_0 )
     while ( isdefined( var_0.object ) && !isdefined( var_0.object.already_used ) && gettime() - var_1 < 5000 )
     {
         look_at_damage_trigger( var_0.object, 0.15 );
-        self _meth_837E( "melee" );
+        self botpressbutton( "melee" );
         wait 0.1;
     }
 
-    self _meth_8351( "disable_movement", 0 );
+    self botsetflag( "disable_movement", 0 );
 }
 
 look_at_damage_trigger( var_0, var_1 )
 {
     var_2 = var_0.origin;
 
-    if ( _func_220( self.origin, var_2 ) < 100 )
-        var_2 = ( var_2[0], var_2[1], self _meth_80A8()[2] );
+    if ( distance2dsquared( self.origin, var_2 ) < 100 )
+        var_2 = ( var_2[0], var_2[1], self geteye()[2] );
 
-    self _meth_836D( var_2, var_1, "script_forced" );
+    self botlookatpoint( var_2, var_1, "script_forced" );
 }
 
 use_use_trigger( var_0 )
@@ -1626,7 +1626,7 @@ use_use_trigger( var_0 )
     }
 
     var_1 = var_0.object.use_time;
-    self _meth_837E( "use", var_1 );
+    self botpressbutton( "use", var_1 );
     wait(var_1);
 
     if ( isagent( self ) )
@@ -1710,7 +1710,7 @@ bot_crate_valid( var_0 )
         if ( isdefined( level.boxsettings ) && isdefined( level.boxsettings[var_0.boxtype] ) && ![[ level.boxsettings[var_0.boxtype].canusecallback ]]() )
             return 0;
 
-        if ( isdefined( var_0.disabled_use_for ) && isdefined( var_0.disabled_use_for[self _meth_81B1()] ) && var_0.disabled_use_for[self _meth_81B1()] )
+        if ( isdefined( var_0.disabled_use_for ) && isdefined( var_0.disabled_use_for[self getentitynumber()] ) && var_0.disabled_use_for[self getentitynumber()] )
             return 0;
 
         if ( !self [[ level.bot_can_use_box_by_type[var_0.boxtype] ]]( var_0 ) )
@@ -1796,7 +1796,7 @@ crate_calculate_on_path_grid( var_0 )
     {
         var_4 = getdvarfloat( "player_useRadius" );
         var_5 = getnodesinradiussorted( var_0.origin, var_4 * 2, 0 )[0];
-        var_6 = var_0 _meth_8216( 0, 0, -1 );
+        var_6 = var_0 getpointinbounds( 0, 0, -1 );
         var_7 = undefined;
 
         if ( isdefined( var_0.boxtype ) && var_0.boxtype == "scavenger_bag" )
@@ -1805,9 +1805,9 @@ crate_calculate_on_path_grid( var_0 )
                 var_7 = var_0.origin;
         }
         else
-            var_7 = _func_1FD( var_0.origin, var_4 );
+            var_7 = botgetclosestnavigablepoint( var_0.origin, var_4 );
 
-        if ( isdefined( var_5 ) && !var_5 _meth_8386() && isdefined( var_7 ) && abs( var_5.origin[2] - var_6[2] ) < 30 )
+        if ( isdefined( var_5 ) && !var_5 nodeisdisconnected() && isdefined( var_7 ) && abs( var_5.origin[2] - var_6[2] ) < 30 )
         {
             var_0.nearest_points = [ var_7 ];
             var_0.nearest_nodes = [ var_5 ];
@@ -1848,7 +1848,7 @@ crate_get_nearest_valid_nodes( var_0 )
         if ( !isdefined( var_6 ) || !isdefined( var_0 ) )
             continue;
 
-        if ( var_6 _meth_8386() )
+        if ( var_6 nodeisdisconnected() )
             continue;
 
         if ( !node_within_use_radius_of_crate( var_6, var_0 ) )
@@ -1920,7 +1920,7 @@ crate_get_bot_target( var_0 )
 
     if ( isdefined( var_0.nearest_nodes ) && var_0.nearest_nodes.size > 0 )
     {
-        var_1 = common_scripts\utility::array_reverse( self _meth_8380( var_0.nearest_nodes, "node_exposed" ) );
+        var_1 = common_scripts\utility::array_reverse( self botnodescoremultiple( var_0.nearest_nodes, "node_exposed" ) );
         return common_scripts\utility::random_weight_sorted( var_1 ).origin;
     }
 }
@@ -1961,7 +1961,7 @@ bot_think_crate()
         if ( var_2.size == 0 )
             continue;
 
-        if ( maps\mp\bots\_bots_strategy::bot_has_tactical_goal( "airdrop_crate" ) || self _meth_835D() == "tactical" || maps\mp\bots\_bots_util::bot_is_remote_or_linked() )
+        if ( maps\mp\bots\_bots_strategy::bot_has_tactical_goal( "airdrop_crate" ) || self botgetscriptgoaltype() == "tactical" || maps\mp\bots\_bots_util::bot_is_remote_or_linked() )
             continue;
 
         var_6 = [];
@@ -1978,7 +1978,7 @@ bot_think_crate()
             continue;
 
         var_6 = common_scripts\utility::get_array_of_closest( self.origin, var_6 );
-        var_10 = self _meth_8387();
+        var_10 = self getnearestnode();
 
         if ( !isdefined( var_10 ) )
             continue;
@@ -2009,14 +2009,14 @@ bot_think_crate()
 
                 if ( var_16.size > 0 )
                 {
-                    var_20 = var_16[0] _meth_8387();
+                    var_20 = var_16[0] getnearestnode();
 
                     if ( isdefined( var_20 ) )
                     {
                         var_15 = 0;
 
                         foreach ( var_22 in var_8.nearest_nodes )
-                            var_15 |= _func_1FF( var_20, var_22, 1 );
+                            var_15 |= nodesvisible( var_20, var_22, 1 );
                     }
                 }
             }
@@ -2027,7 +2027,7 @@ bot_think_crate()
                 var_25 = 0;
 
                 foreach ( var_22 in var_8.nearest_nodes )
-                    var_25 |= _func_1FF( var_10, var_22, 1 );
+                    var_25 |= nodesvisible( var_10, var_22, 1 );
 
                 if ( var_25 || var_12 && !var_24 )
                 {
@@ -2118,7 +2118,7 @@ crate_low_ammo_check()
 
 bot_should_use_ammo_crate( var_0 )
 {
-    if ( self _meth_8311() == level.boxsettings[var_0.boxtype].minigunweapon )
+    if ( self getcurrentweapon() == level.boxsettings[var_0.boxtype].minigunweapon )
         return 0;
 
     return 1;
@@ -2126,27 +2126,27 @@ bot_should_use_ammo_crate( var_0 )
 
 bot_pre_use_ammo_crate( var_0 )
 {
-    self _meth_8315( self.secondaryweapon );
+    self switchtoweapon( self.secondaryweapon );
     wait 1.0;
 }
 
 bot_post_use_ammo_crate( var_0 )
 {
-    self _meth_8315( "none" );
-    self.secondaryweapon = self _meth_8311();
+    self switchtoweapon( "none" );
+    self.secondaryweapon = self getcurrentweapon();
 }
 
 bot_should_use_scavenger_bag( var_0 )
 {
     if ( maps\mp\bots\_bots_util::bot_get_low_on_ammo( 0.66 ) )
     {
-        var_1 = self _meth_8387();
+        var_1 = self getnearestnode();
 
         if ( isdefined( var_0.nearest_nodes ) && isdefined( var_0.nearest_nodes[0] ) && isdefined( var_1 ) )
         {
-            if ( _func_1FF( var_1, var_0.nearest_nodes[0], 1 ) )
+            if ( nodesvisible( var_1, var_0.nearest_nodes[0], 1 ) )
             {
-                if ( common_scripts\utility::within_fov( self.origin, self.angles, var_0.origin, self _meth_8373() ) )
+                if ( common_scripts\utility::within_fov( self.origin, self.angles, var_0.origin, self botgetfovdot() ) )
                     return 1;
             }
         }
@@ -2157,11 +2157,11 @@ bot_should_use_scavenger_bag( var_0 )
 
 bot_should_use_grenade_crate( var_0 )
 {
-    var_1 = self _meth_82CE();
+    var_1 = self getweaponslistoffhands();
 
     foreach ( var_3 in var_1 )
     {
-        if ( self _meth_82F9( var_3 ) == 0 )
+        if ( self setweaponammostock( var_3 ) == 0 )
             return 1;
     }
 
@@ -2215,8 +2215,8 @@ use_crate( var_0 )
     if ( maps\mp\killstreaks\_juggernaut::is_goliath_drop_pod( var_0.object ) )
     {
         var_0.was_goliath_pod_goal = 1;
-        self _meth_8352( "stand" );
-        self _meth_836D( var_0.object.origin + ( 0, 0, self _meth_82F2() ), level.cratenonownerusetime / 1000 + 1.0, "script_forced" );
+        self botsetstance( "stand" );
+        self botlookatpoint( var_0.object.origin + ( 0, 0, self getplayerviewheight() ), level.cratenonownerusetime / 1000 + 1.0, "script_forced" );
     }
 
     if ( isagent( self ) )
@@ -2233,7 +2233,7 @@ use_crate( var_0 )
     else
         var_1 = level.cratenonownerusetime / 1000 + 1.0;
 
-    self _meth_837E( "use", var_1 );
+    self botpressbutton( "use", var_1 );
     wait(var_1);
 
     if ( isagent( self ) )
@@ -2272,7 +2272,7 @@ use_box( var_0 )
         if ( isdefined( var_0.object ) )
         {
             var_2 = level.boxsettings[var_0.object.boxtype].usetime / 1000 + 0.5;
-            self _meth_837E( "use", var_2 );
+            self botpressbutton( "use", var_2 );
             wait(var_2);
 
             if ( isdefined( level.bot_post_use_box_of_type[var_1] ) )
@@ -2298,8 +2298,8 @@ stop_using_crate( var_0 )
 {
     if ( isdefined( var_0.was_goliath_pod_goal ) && var_0.was_goliath_pod_goal )
     {
-        self _meth_8352( "none" );
-        self _meth_836D( undefined );
+        self botsetstance( "none" );
+        self botlookatpoint( undefined );
     }
 
     if ( isdefined( var_0.object ) )
@@ -2353,16 +2353,16 @@ bot_think_crate_blocking_path()
                 {
                     var_4 = spawnstruct();
                     var_4.object = var_3;
-                    self _meth_8351( "disable_movement", 1 );
+                    self botsetflag( "disable_movement", 1 );
                     use_crate( var_4 );
                     stop_using_crate( var_4 );
-                    self _meth_8351( "disable_movement", 0 );
+                    self botsetflag( "disable_movement", 0 );
                 }
 
                 continue;
             }
 
-            var_5 = self _meth_84C5();
+            var_5 = self playergetuseent();
 
             if ( !isdefined( var_5 ) || var_5 != var_3 )
                 continue;
@@ -2371,11 +2371,11 @@ bot_think_crate_blocking_path()
             {
                 if ( isdefined( var_3.owner ) && var_3.owner == self )
                 {
-                    self _meth_837E( "use", level.crateownerusetime / 1000 + 0.5 );
+                    self botpressbutton( "use", level.crateownerusetime / 1000 + 0.5 );
                     continue;
                 }
 
-                self _meth_837E( "use", level.cratenonownerusetime / 1000 + 0.5 );
+                self botpressbutton( "use", level.cratenonownerusetime / 1000 + 0.5 );
             }
         }
     }
@@ -2515,7 +2515,7 @@ revive_player( var_0 )
 
     var_1 = self.team;
     self notify( "bot_reviving" );
-    self _meth_837E( "use", level.laststandusetime / 1000 + 0.5 );
+    self botpressbutton( "use", level.laststandusetime / 1000 + 0.5 );
     wait(level.laststandusetime / 1000 + 1.5);
 
     if ( isdefined( var_0.object.owner ) )
@@ -2544,7 +2544,7 @@ bot_can_revive()
     if ( maps\mp\bots\_bots_util::bot_is_bodyguarding() )
         return 1;
 
-    var_0 = self _meth_835D();
+    var_0 = self botgetscriptgoaltype();
 
     if ( var_0 == "none" || var_0 == "hunt" || var_0 == "guard" )
         return 1;
@@ -2581,7 +2581,7 @@ bot_know_enemies_on_start()
     {
         var_3 = level.players[var_2];
 
-        if ( isdefined( var_3 ) && isdefined( self.team ) && isdefined( var_3.team ) && !_func_285( self, var_3 ) )
+        if ( isdefined( var_3 ) && isdefined( self.team ) && isdefined( var_3.team ) && !isalliedsentient( self, var_3 ) )
         {
             if ( !isdefined( var_3.bot_start_known_by_enemy ) )
                 var_0 = var_3;
@@ -2595,23 +2595,23 @@ bot_know_enemies_on_start()
     {
         self.bot_start_know_enemy = 1;
         var_0.bot_start_known_by_enemy = 1;
-        self _meth_8165( var_0 );
+        self getenemyinfo( var_0 );
     }
 
     if ( isdefined( var_1 ) )
     {
         var_1.bot_start_know_enemy = 1;
         self.bot_start_known_by_enemy = 1;
-        var_1 _meth_8165( self );
+        var_1 getenemyinfo( self );
     }
 }
 
 bot_make_entity_sentient( var_0, var_1 )
 {
     if ( isdefined( var_1 ) )
-        return self _meth_8139( var_0, var_1 );
+        return self makeentitysentient( var_0, var_1 );
     else
-        return self _meth_8139( var_0 );
+        return self makeentitysentient( var_0 );
 }
 
 bot_think_gametype()
@@ -2654,21 +2654,21 @@ handle_smoke( var_0 )
     var_4 = getent( "smoke_grenade_sight_clip_64_short", "targetname" );
 
     if ( isdefined( var_4 ) )
-        var_2 _meth_8278( var_4 );
+        var_2 clonebrushmodeltoscriptmodel( var_4 );
 
     wait(var_3);
     var_3 = 0.6;
     var_5 = getent( "smoke_grenade_sight_clip_64_tall", "targetname" );
 
     if ( isdefined( var_5 ) )
-        var_2 _meth_8278( var_5 );
+        var_2 clonebrushmodeltoscriptmodel( var_5 );
 
     wait(var_3);
     var_3 = var_0;
     var_6 = getent( "smoke_grenade_sight_clip_256", "targetname" );
 
     if ( isdefined( var_6 ) )
-        var_2 _meth_8278( var_6 );
+        var_2 clonebrushmodeltoscriptmodel( var_6 );
 
     wait(var_3);
     var_2 delete();
@@ -2727,7 +2727,7 @@ bot_flag_trigger( var_0 )
         if ( maps\mp\_utility::isaigameparticipant( var_1 ) )
         {
             var_1 notify( "flag_trigger_set_" + var_0 );
-            var_1 _meth_8351( var_0, 1 );
+            var_1 botsetflag( var_0, 1 );
             var_1 thread bot_flag_trigger_clear( var_0 );
         }
     }
@@ -2741,5 +2741,5 @@ bot_flag_trigger_clear( var_0 )
     level endon( "game_ended" );
     waitframe();
     waittillframeend;
-    self _meth_8351( var_0, 0 );
+    self botsetflag( var_0, 0 );
 }

@@ -11,7 +11,7 @@ exo_repulsor_think()
     self endon( "faux_spawn" );
     self endon( "exo_repulsor_taken" );
 
-    if ( !self _meth_8314( "exorepulsor_equipment_mp" ) )
+    if ( !self hasweapon( "exorepulsor_equipment_mp" ) )
         return;
 
     exorepulsorinit();
@@ -30,21 +30,21 @@ exo_repulsor_think()
 exorepulsorinit()
 {
     self.repulsoractive = 0;
-    self _meth_84A6( "exorepulsor_equipment_mp", 1.0 );
-    var_0 = self _meth_84A5( "exorepulsor_equipment_mp" );
+    self batterysetdischargescale( "exorepulsor_equipment_mp", 1.0 );
+    var_0 = self batterygetsize( "exorepulsor_equipment_mp" );
     self.projectilesstopped = 0;
 
-    if ( self _meth_831A() == "exorepulsor_equipment_mp" )
+    if ( self gettacticalweapon() == "exorepulsor_equipment_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req0", 0 );
-        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
-        self _meth_82FB( "ui_exo_battery_level0", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req0", 0 );
+        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
+        self setclientomnvar( "ui_exo_battery_level0", var_0 );
     }
-    else if ( self _meth_8345() == "exorepulsor_equipment_mp" )
+    else if ( self getlethalweapon() == "exorepulsor_equipment_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req1", 0 );
-        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
-        self _meth_82FB( "ui_exo_battery_level1", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req1", 0 );
+        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
+        self setclientomnvar( "ui_exo_battery_level1", var_0 );
     }
 
     if ( !isdefined( level.exo_repulsor_impact ) )
@@ -105,7 +105,7 @@ start_repulsor()
     self endon( "exo_repulsor_taken" );
     self.repulsoractive = 1;
     thread do_exo_repulsor();
-    self _meth_849F( "exorepulsor_equipment_mp" );
+    self batterydischargebegin( "exorepulsor_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exorepulsor_equipment_mp", "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( "exorepulsor_equipment_mp" );
     maps\mp\_snd_common_mp::snd_message( "mp_exo_repulsor_activate" );
@@ -113,7 +113,7 @@ start_repulsor()
 
     if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
     {
-        self.repulsor_fx = _func_2C1( level.exo_repulsor_player_vfx_active, self, getrepulsortag() );
+        self.repulsor_fx = spawnlinkedfx( level.exo_repulsor_player_vfx_active, self, getrepulsortag() );
         triggerfx( self.repulsor_fx );
     }
 
@@ -136,7 +136,7 @@ stop_repulsor( var_0 )
 
     self notify( "stop_exo_repulsor" );
     self.repulsoractive = 0;
-    self _meth_84A0( "exorepulsor_equipment_mp" );
+    self batterydischargeend( "exorepulsor_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exorepulsor_equipment_mp", "ui_exo_battery_toggle", 0 );
     killrepulsorfx();
 
@@ -146,7 +146,7 @@ stop_repulsor( var_0 )
 
         if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
         {
-            self.repulsor_fx = _func_2C1( level.exo_repulsor_player_vfx_inactive, self, getrepulsortag() );
+            self.repulsor_fx = spawnlinkedfx( level.exo_repulsor_player_vfx_inactive, self, getrepulsortag() );
             triggerfx( self.repulsor_fx );
         }
 
@@ -168,7 +168,7 @@ monitorplayerdeath()
 
 update_exo_battery_hud()
 {
-    var_0 = self _meth_84A2( "exorepulsor_equipment_mp" );
+    var_0 = self batterygetcharge( "exorepulsor_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exorepulsor_equipment_mp", "ui_exo_battery_level", var_0 );
 }
 
@@ -182,7 +182,7 @@ do_exo_repulsor()
     self endon( "stop_exo_repulsor" );
     self endon( "exo_repulsor_taken" );
 
-    while ( self _meth_84A2( "exorepulsor_equipment_mp" ) > 0 )
+    while ( self batterygetcharge( "exorepulsor_equipment_mp" ) > 0 )
     {
         for ( var_0 = 0; var_0 < level.grenades.size; var_0++ )
         {
@@ -207,7 +207,7 @@ do_exo_repulsor()
 
             if ( var_2 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_1.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_1.origin, 0, self ) )
                 {
                     var_3 = var_1.origin - self.origin;
                     var_4 = vectortoangles( var_3 );
@@ -233,7 +233,7 @@ do_exo_repulsor()
 
                     self.projectilesstopped++;
                     maps\mp\gametypes\_missions::processchallenge( "ch_exoability_repulser" );
-                    self _meth_84A1( "exorepulsor_equipment_mp", int( self _meth_84A5( "exorepulsor_equipment_mp" ) / 2 ) );
+                    self batterydischargeonce( "exorepulsor_equipment_mp", int( self batterygetsize( "exorepulsor_equipment_mp" ) / 2 ) );
                     update_exo_battery_hud();
                 }
             }
@@ -256,7 +256,7 @@ do_exo_repulsor()
 
             if ( var_10 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_9.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_9.origin, 0, self ) )
                 {
                     var_11 = var_9.origin - self.origin;
                     var_12 = vectortoangles( var_11 );
@@ -273,7 +273,7 @@ do_exo_repulsor()
                     var_9 delete();
                     self.projectilesstopped++;
                     maps\mp\gametypes\_missions::processchallenge( "ch_exoability_repulser" );
-                    self _meth_84A1( "exorepulsor_equipment_mp", int( self _meth_84A5( "exorepulsor_equipment_mp" ) / 2 ) );
+                    self batterydischargeonce( "exorepulsor_equipment_mp", int( self batterygetsize( "exorepulsor_equipment_mp" ) / 2 ) );
                     update_exo_battery_hud();
                 }
             }
@@ -298,7 +298,7 @@ do_exo_repulsor()
 
                 if ( var_17 < 385 )
                 {
-                    if ( sighttracepassed( self _meth_80A8(), var_16.origin, 0, self ) )
+                    if ( sighttracepassed( self geteye(), var_16.origin, 0, self ) )
                     {
                         var_18 = var_16.origin - self.origin;
                         var_19 = vectortoangles( var_18 );
@@ -315,7 +315,7 @@ do_exo_repulsor()
                         var_16 delete();
                         self.projectilesstopped++;
                         maps\mp\gametypes\_missions::processchallenge( "ch_exoability_repulser" );
-                        self _meth_84A1( "exorepulsor_equipment_mp", int( self _meth_84A5( "exorepulsor_equipment_mp" ) / 2 ) );
+                        self batterydischargeonce( "exorepulsor_equipment_mp", int( self batterygetsize( "exorepulsor_equipment_mp" ) / 2 ) );
                         update_exo_battery_hud();
                     }
                 }
@@ -337,7 +337,7 @@ do_exo_repulsor()
 
             if ( var_25 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_24.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_24.origin, 0, self ) )
                 {
                     var_26 = var_24.origin - self.origin;
                     var_27 = vectortoangles( var_26 );
@@ -348,7 +348,7 @@ do_exo_repulsor()
                     playfx( level.exo_repulsor_impact, var_8, var_30, var_28 );
                     var_24 maps\mp\_snd_common_mp::snd_message( "mp_exo_repulsor_repel" );
 
-                    if ( !_func_294( var_24 ) && isdefined( var_24 ) )
+                    if ( !isremovedentity( var_24 ) && isdefined( var_24 ) )
                     {
                         var_24 notify( "death" );
                         maps\mp\_utility::decrementfauxvehiclecount();
@@ -356,7 +356,7 @@ do_exo_repulsor()
 
                     self.projectilesstopped++;
                     maps\mp\gametypes\_missions::processchallenge( "ch_exoability_repulser" );
-                    self _meth_84A1( "exorepulsor_equipment_mp", int( self _meth_84A5( "exorepulsor_equipment_mp" ) / 2 ) );
+                    self batterydischargeonce( "exorepulsor_equipment_mp", int( self batterygetsize( "exorepulsor_equipment_mp" ) / 2 ) );
                     update_exo_battery_hud();
                 }
             }
@@ -380,12 +380,12 @@ take_exo_repulsor()
 {
     self notify( "kill_battery" );
     self notify( "exo_repulsor_taken" );
-    self _meth_830F( "exorepulsor_equipment_mp" );
+    self takeweapon( "exorepulsor_equipment_mp" );
 }
 
 give_exo_repulsor()
 {
-    self _meth_830E( "exorepulsor_equipment_mp" );
+    self giveweapon( "exorepulsor_equipment_mp" );
     thread exo_repulsor_think();
 }
 

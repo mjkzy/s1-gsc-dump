@@ -13,8 +13,8 @@ dotraverse()
 {
     self endon( "killanimscript" );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoTraverse" );
-    var_0 = self _meth_819D();
-    var_1 = self _meth_819E();
+    var_0 = self getnegotiationstartnode();
+    var_1 = self getnegotiationendnode();
     self.traversalvector = vectornormalize( var_1.origin - var_0.origin );
 
     if ( var_0.animscript == "bot_walk_forward" )
@@ -23,10 +23,10 @@ dotraverse()
         var_3 = length( var_2 ) / 64;
         var_4 = ( var_2[0], var_2[1], 0 );
         var_5 = vectortoangles( var_4 );
-        self _meth_8396( "face angle abs", var_5 );
-        self _meth_839F( var_0.origin, var_1.origin, var_3 );
-        self _meth_8398( "noclip" );
-        maps\mp\agents\_scripted_agent_anim_util::playanimnatratefortime( self.movemode, randomint( self _meth_83D6( self.movemode ) ), self.moveratescale, var_3 );
+        self scragentsetorientmode( "face angle abs", var_5 );
+        self scragentdoanimlerp( var_0.origin, var_1.origin, var_3 );
+        self scragentsetphysicsmode( "noclip" );
+        maps\mp\agents\_scripted_agent_anim_util::playanimnatratefortime( self.movemode, randomint( self getanimentrycount( self.movemode ) ), self.moveratescale, var_3 );
     }
     else
     {
@@ -56,7 +56,7 @@ dotraverse()
             }
         }
         else
-            var_7 = randomint( self _meth_83D6( var_6 ) );
+            var_7 = randomint( self getanimentrycount( var_6 ) );
 
         var_2 = var_1.origin - var_0.origin;
         var_4 = ( var_2[0], var_2[1], 0 );
@@ -67,13 +67,13 @@ dotraverse()
         if ( var_12 )
             maps\mp\agents\humanoid\_humanoid_util::play_boost_fx( level._effect["boost_jump"] );
 
-        self _meth_8396( "face angle abs", var_5 );
-        self _meth_8397( "anim deltas" );
+        self scragentsetorientmode( "face angle abs", var_5 );
+        self scragentsetanimmode( "anim deltas" );
 
         if ( maps\mp\zombies\_util::getzombieslevelnum() >= 4 )
-            self _meth_82F1( ( 0, 0, 0 ) );
+            self setvelocity( ( 0, 0, 0 ) );
 
-        var_13 = self _meth_83D3( var_6, var_7 );
+        var_13 = self getanimentry( var_6, var_7 );
         var_14 = getnotetracktimes( var_13, "code_move" );
 
         if ( var_14.size > 0 )
@@ -87,7 +87,7 @@ dotraverse()
         if ( var_17 )
             var_16.xy = 1.0;
 
-        self _meth_8398( "noclip" );
+        self scragentsetphysicsmode( "noclip" );
 
         if ( maps\mp\zombies\_util::getzombieslevelnum() >= 3 && var_11 && abs( var_2[2] ) < 48 )
         {
@@ -96,12 +96,12 @@ dotraverse()
             var_20 = getanimlength( var_13 );
             var_21 = var_18[0] * var_20;
             var_22 = var_19[0] * var_20;
-            self _meth_8395( var_16.xy, 1 );
+            self scragentsetanimscale( var_16.xy, 1 );
             maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, self.traverseratescale, "traverse", "traverse_jump_start" );
-            self _meth_8395( var_16.xy, 0 );
+            self scragentsetanimscale( var_16.xy, 0 );
             childthread traverse_lerp_z_over_time( var_0.origin[2], var_1.origin[2], ( var_22 - var_21 ) / self.traverseratescale );
             maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6 + "_norestart", var_7, self.traverseratescale, "traverse", "traverse_jump_end" );
-            self _meth_8395( var_16.xy, 1 );
+            self scragentsetanimscale( var_16.xy, 1 );
             maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6 + "_norestart", var_7, self.traverseratescale, "traverse" );
         }
         else if ( var_2[2] > 16 )
@@ -110,7 +110,7 @@ dotraverse()
             {
                 if ( var_12 )
                 {
-                    self _meth_8395( var_16.xy, var_16.z );
+                    self scragentsetanimscale( var_16.xy, var_16.z );
                     var_23 = clamp( 2 / var_16.z, 0.5, 1 );
 
                     if ( animhasnotetrack( var_13, "traverse_jump_end" ) )
@@ -126,7 +126,7 @@ dotraverse()
                     else
                         maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, self.traverseratescale, "traverse" );
 
-                    self _meth_8395( 1, 1 );
+                    self scragentsetanimscale( 1, 1 );
                 }
                 else
                 {
@@ -140,7 +140,7 @@ dotraverse()
                         if ( !var_17 && length2dsquared( var_4 ) < 0.64 * length2dsquared( var_15 ) )
                             var_16.xy = 0.4;
 
-                        self _meth_8395( var_16.xy, var_16.z );
+                        self scragentsetanimscale( var_16.xy, var_16.z );
                         maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, self.traverseratescale, "traverse", "traverse_jump_start" );
                         var_19 = getnotetracktimes( var_13, "traverse_jump_end" );
                         var_25 = getmovedelta( var_13, 0, var_18[0] );
@@ -169,16 +169,16 @@ dotraverse()
                         if ( var_35[2] <= 0 )
                             var_16.z = 0.0;
 
-                        self _meth_8395( var_16.xy, var_16.z );
+                        self scragentsetanimscale( var_16.xy, var_16.z );
                         maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "traverse", "traverse_jump_end" );
                         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoTraverse" );
                         var_16 = var_36;
-                        self _meth_8395( var_16.xy, var_16.z );
+                        self scragentsetanimscale( var_16.xy, var_16.z );
                         maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "traverse", "code_move" );
                     }
                     else
                     {
-                        self _meth_8395( var_16.xy, var_16.z );
+                        self scragentsetanimscale( var_16.xy, var_16.z );
 
                         if ( maps\mp\zombies\_util::getzombieslevelnum() >= 4 )
                             maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, self.traverseratescale, "traverse", "code_move" );
@@ -194,7 +194,7 @@ dotraverse()
         }
         else if ( abs( var_2[2] ) < 16 || var_15[2] == 0 )
         {
-            self _meth_8395( var_16.xy, var_16.z );
+            self scragentsetanimscale( var_16.xy, var_16.z );
             var_23 = clamp( 2 / var_16.z, 0.5, 1 );
 
             if ( animhasnotetrack( var_13, "traverse_jump_end" ) )
@@ -210,11 +210,11 @@ dotraverse()
             else
                 maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, self.traverseratescale, "traverse" );
 
-            self _meth_8395( 1, 1 );
+            self scragentsetanimscale( 1, 1 );
         }
         else if ( var_15[2] < 0 )
         {
-            self _meth_8395( var_16.xy, var_16.z );
+            self scragentsetanimscale( var_16.xy, var_16.z );
             var_23 = clamp( 2 / var_16.z, 0.5, 1 );
             var_38 = var_6 + "_norestart";
 
@@ -240,7 +240,7 @@ dotraverse()
             else
                 maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_6, var_7, 1.0, "traverse" );
 
-            self _meth_8395( 1, 1 );
+            self scragentsetanimscale( 1, 1 );
         }
     }
 }
@@ -265,7 +265,7 @@ traverse_lerp_z_over_time( var_0, var_1, var_2 )
 
 end_script()
 {
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "Traverse end_script" );
     self.hastraversed = 1;
     self.traversalvector = undefined;

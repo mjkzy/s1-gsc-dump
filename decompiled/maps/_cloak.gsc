@@ -108,7 +108,7 @@ init_player_cloak_overlay()
     level.cloak_overlay.horzalign = "fullscreen";
     level.cloak_overlay.vertalign = "fullscreen";
     level.cloak_overlay.color = ( 1, 0, 0 );
-    level.cloak_overlay _meth_80CC( "overlay_static", 640, 480 );
+    level.cloak_overlay setshader( "overlay_static", 640, 480 );
     level.cloak_overlay.alpha = 0.0;
 }
 
@@ -126,295 +126,295 @@ _cloak_toggle_internal( var_0 )
 _play_view_model_cloak_toggle_anim()
 {
     level._cloaked_stealth_settings.playing_view_model_cloak_toggle_anim = 1;
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player waittill( "weapon_change" );
     var_0 = maps\_utility::spawn_anim_model( "cloak_view_model" );
     level._cloaked_stealth_settings.player_rig = var_0;
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
-    var_0 _meth_8448();
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 drawpostresolve();
 
     if ( level._cloaked_stealth_settings.cloak_on == 1 )
-        var_0 _meth_83A7( 0.0, 0.0 );
+        var_0 setmaterialscriptparam( 0.0, 0.0 );
     else
-        var_0 _meth_83A7( 1.0, 0.0 );
+        var_0 setmaterialscriptparam( 1.0, 0.0 );
 
     soundscripts\_snd::snd_message( "exo_cloak_button_press" );
     level.player maps\_anim::anim_single_solo( var_0, "cloak_on" );
-    level.player _meth_831E();
-    var_0 _meth_804F();
+    level.player enableweapons();
+    var_0 unlink();
     level._cloaked_stealth_settings.player_rig = undefined;
     var_0 delete();
 
     if ( level._cloaked_stealth_settings.cloak_on == 0 )
-        level.player _meth_8470();
+        level.player overrideviewmodelmaterialreset();
 
     level._cloaked_stealth_settings.playing_view_model_cloak_toggle_anim = 0;
 }
 
 set_cloak_material_for_vm_weapon()
 {
-    if ( level.player _meth_8311() != "iw5_unarmed" )
+    if ( level.player getcurrentweapon() != "iw5_unarmed" )
     {
-        level.player _meth_8470();
+        level.player overrideviewmodelmaterialreset();
 
-        if ( issubstr( level.player _meth_8311(), "iw5_ak12_sp" ) )
-            level.player _meth_846F( "mtl_ak12_base_nocamo", "mtl_ak12_base_nocamo_cloak" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_ak12_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_ak12_base_nocamo", "mtl_ak12_base_nocamo_cloak" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_arx160_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_arx160_sp" ) )
         {
-            level.player _meth_846F( "mtl_arx160_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_arx160_iron_sights_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_arx160_strap_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_arx160_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_arx160_iron_sights_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_arx160_strap_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_asm1_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_asm1_sp" ) )
         {
-            level.player _meth_846F( "mtl_asm1_base_nocamo", "mtl_asm1_base_nocamo_cloak" );
-            level.player _meth_846F( "mtl_asm1_magazine_02_base", "mtl_asm1_magazine_02_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_asm1_base_nocamo", "mtl_asm1_base_nocamo_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_asm1_magazine_02_base", "mtl_asm1_magazine_02_base_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_bal27_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_bal27_sp" ) )
         {
-            level.player _meth_846F( "_base_black", "mtl_bal27_base_black_cloak" );
-            level.player _meth_846F( "mtl_bal27_screen_a_green", "cloak_generic" );
-            level.player _meth_846F( "mtl_bal27_magazine_out", "cloak_generic" );
-            level.player _meth_846F( "mtl_bal27_magazine_inside", "cloak_generic" );
-            level.player _meth_846F( "mtl_bal27_iron_sights", "mtl_bal27_base_black_cloak" );
+            level.player overrideviewmodelmaterial( "_base_black", "mtl_bal27_base_black_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_bal27_screen_a_green", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_bal27_magazine_out", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_bal27_magazine_inside", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_bal27_iron_sights", "mtl_bal27_base_black_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_em1_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_em1_sp" ) )
         {
-            level.player _meth_846F( "mtl_em1_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_en_base_damage", "cloak_generic" );
-            level.player _meth_846F( "mtl_em1_iron_sights_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_em1_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_en_base_damage", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_em1_iron_sights_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_gm6_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_gm6_sp" ) )
         {
-            level.player _meth_846F( "mtl_gm6_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_gm6_scope_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_gm6_sight_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_gm6_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_gm6_scope_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_gm6_sight_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_hbra3_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_hbra3_sp" ) )
         {
-            level.player _meth_846F( "mtl_hbra3_base_nocamo", "mtl_hbra3_base_nocamo_cloak" );
-            level.player _meth_846F( "mtl_hbra3_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_hbra3_sight", "cloak_generic" );
-            level.player _meth_846F( "mtl_hbra3_screen", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hbra3_base_nocamo", "mtl_hbra3_base_nocamo_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_hbra3_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hbra3_sight", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hbra3_screen", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_himar_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_himar_sp" ) )
         {
-            level.player _meth_846F( "mtl_himar_base", "mtl_himar_base_cloak" );
-            level.player _meth_846F( "mtl_himar_glass_base", "mtl_himar_glass_base_cloak" );
-            level.player _meth_846F( "mtl_ar_base_handling_01", "mtl_ar_base_handling_01_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_himar_base", "mtl_himar_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_himar_glass_base", "mtl_himar_glass_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_ar_base_handling_01", "mtl_ar_base_handling_01_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_hmr9_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_hmr9_sp" ) )
         {
-            level.player _meth_846F( "mtl_hmr9_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_hmr9_bungee_chord", "cloak_generic" );
-            level.player _meth_846F( "mtl_mag_dual_clip_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_hmr9_ironsights_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_hmr9_screen", "cloak_generic" );
-            level.player _meth_846F( "mtl_hmr9_text_decals", "cloak_generic" );
-            level.player _meth_846F( "mtl_hmr9_stock_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_bungee_chord", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mag_dual_clip_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_ironsights_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_screen", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_text_decals", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_hmr9_stock_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_kf5_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_kf5_sp" ) )
         {
-            level.player _meth_846F( "mtl_kf5_base", "mtl_kf5_base_nocamo_cloak" );
-            level.player _meth_846F( "mtl_kf5_iron_sights_base", "mtl_kf5_iron_sights_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_kf5_base", "mtl_kf5_base_nocamo_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_kf5_iron_sights_base", "mtl_kf5_iron_sights_base_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_lsat_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_lsat_sp" ) )
         {
-            level.player _meth_846F( "mtl_lsat_base", "mtl_lsat_base_cloak" );
-            level.player _meth_846F( "mtl_lsat_iron_sights_base", "mtl_lsat_iron_sights_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_lsat_base", "mtl_lsat_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_lsat_iron_sights_base", "mtl_lsat_iron_sights_base_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_m990_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_m990_sp" ) )
         {
-            level.player _meth_846F( "mtl_m990_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_m990_scope", "cloak_generic" );
-            level.player _meth_846F( "mtl_m990_sight", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_m990_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_m990_scope", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_m990_sight", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_maaws_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_maaws_sp" ) )
         {
-            level.player _meth_846F( "mtl_maaws_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_maaws_missile_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_maaws_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_maaws_missile_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_maul_sp" ) )
-            level.player _meth_846F( "mtl_maul_base_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_maul_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_maul_base_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_mdl_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_mdl_sp" ) )
         {
-            level.player _meth_846F( "mtl_mdl_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_mdl_optic", "cloak_generic" );
-            level.player _meth_846F( "mtl_mdl_optic_glass", "mtl_mdl_optic_glass" );
-            level.player _meth_846F( "mtl_mdl_optic_glow", "mtl_mdl_optic_glow" );
+            level.player overrideviewmodelmaterial( "mtl_mdl_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mdl_optic", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mdl_optic_glass", "mtl_mdl_optic_glass" );
+            level.player overrideviewmodelmaterial( "mtl_mdl_optic_glow", "mtl_mdl_optic_glow" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_mk14_sp" ) )
-            level.player _meth_846F( "mtl_mk14_ebr_base_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_mk14_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_mk14_ebr_base_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_mors_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_mors_sp" ) )
         {
-            level.player _meth_846F( "mtl_mors_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_mors_scope", "cloak_generic" );
-            level.player _meth_846F( "mtl_mors_sights", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mors_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mors_scope", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_mors_sights", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_mp11_sp" ) )
-            level.player _meth_846F( "mtl_cbj_ms_base", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_mp11_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_cbj_ms_base", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_mp443_sp" ) )
-            level.player _meth_846F( "mtl_mp443_base_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_mp443_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_mp443_base_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_rhino_sp" ) )
-            level.player _meth_846F( "mtl_rhino_base_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_rhino_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_rhino_base_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_rw1_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_rw1_sp" ) )
         {
-            level.player _meth_846F( "mtl_rw1_main_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_rw1_scope_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_rw1_main_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_rw1_scope_base", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_sac3_sp" ) )
-            level.player _meth_846F( "mtl_sac3_base", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_sac3_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_sac3_base", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_sn6_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_sn6_sp" ) )
         {
-            level.player _meth_846F( "mtl_sn6_base_black", "mtl_sn6_base_black_nocamo_cloak" );
-            level.player _meth_846F( "mtl_sn6_iron_sights_black", "mtl_sn6_iron_sights_black_nocamo_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_sn6_base_black", "mtl_sn6_base_black_nocamo_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_sn6_iron_sights_black", "mtl_sn6_iron_sights_black_nocamo_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_stinger_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_stinger_sp" ) )
         {
-            level.player _meth_846F( "mtl_npc_stingerm7_base_black_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_base_bottom_black_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_base_top_black_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_missile_01", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_screens_green", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_iron_sight_black", "cloak_generic" );
-            level.player _meth_846F( "mtl_stingerm7_glass", "mtl_stingerm7_glass" );
+            level.player overrideviewmodelmaterial( "mtl_npc_stingerm7_base_black_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_base_bottom_black_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_base_top_black_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_missile_01", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_screens_green", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_iron_sight_black", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_stingerm7_glass", "mtl_stingerm7_glass" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_thor_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_thor_sp" ) )
         {
-            level.player _meth_846F( "mtl_thor_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_thor_scope_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_thor_scope_lens", "mtl_thor_scope_lens" );
+            level.player overrideviewmodelmaterial( "mtl_thor_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_thor_scope_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_thor_scope_lens", "mtl_thor_scope_lens" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "iw5_titan45_sp" ) )
-            level.player _meth_846F( "mtl_titan45_base_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_titan45_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_titan45_base_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_uts19_sp" ) )
-            level.player _meth_846F( "mtl_uts_19_add_on_nocamo", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "iw5_uts19_sp" ) )
+            level.player overrideviewmodelmaterial( "mtl_uts_19_add_on_nocamo", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "iw5_vbr_sp" ) )
+        if ( issubstr( level.player getcurrentweapon(), "iw5_vbr_sp" ) )
         {
-            level.player _meth_846F( "mtl_vbr_base_nocamo", "cloak_generic" );
-            level.player _meth_846F( "mtl_vbr_siderail", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_vbr_base_nocamo", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_vbr_siderail", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "opticsacog2" ) )
+        if ( issubstr( level.player getcurrentweapon(), "opticsacog2" ) )
         {
-            level.player _meth_846F( "mtl_acog2_base", "mtl_acog2_base_cloak" );
-            level.player _meth_846F( "mtl_mors_lens", "mtl_mors_lens_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_acog2_base", "mtl_acog2_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_mors_lens", "mtl_mors_lens_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "himarscope" ) )
+        if ( issubstr( level.player getcurrentweapon(), "himarscope" ) )
         {
-            level.player _meth_846F( "mtl_himar_computer_base", "mtl_himar_computer_base_cloak" );
-            level.player _meth_846F( "mtl_himar_reddot_body", "mtl_himar_reddot_body_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_himar_computer_base", "mtl_himar_computer_base_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_himar_reddot_body", "mtl_himar_reddot_body_cloak" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "opticsreddot" ) )
+        if ( issubstr( level.player getcurrentweapon(), "opticsreddot" ) )
         {
-            level.player _meth_846F( "mtl_weapon_reddot_body", "cloak_generic" );
-            level.player _meth_846F( "mtl_weapon_reddot_lens", "mtl_weapon_reddot_lens" );
-            level.player _meth_846F( "mtl_optics_red_dot_small", "mtl_optics_red_dot_small" );
-            level.player _meth_846F( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_reddot_body", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_reddot_lens", "mtl_weapon_reddot_lens" );
+            level.player overrideviewmodelmaterial( "mtl_optics_red_dot_small", "mtl_optics_red_dot_small" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "silencer01" ) || issubstr( level.player _meth_8311(), "silencerpistol" ) )
-            level.player _meth_846F( "mtl_weapon_silencer_01", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "silencer01" ) || issubstr( level.player getcurrentweapon(), "silencerpistol" ) )
+            level.player overrideviewmodelmaterial( "mtl_weapon_silencer_01", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "opticstargetenhancer" ) )
-            level.player _meth_846F( "mtl_optics_target_enhancer_body", "mtl_optics_target_enhancer_body_cloak" );
+        if ( issubstr( level.player getcurrentweapon(), "opticstargetenhancer" ) )
+            level.player overrideviewmodelmaterial( "mtl_optics_target_enhancer_body", "mtl_optics_target_enhancer_body_cloak" );
 
-        if ( issubstr( level.player _meth_8311(), "variablereddot" ) )
+        if ( issubstr( level.player getcurrentweapon(), "variablereddot" ) )
         {
-            level.player _meth_846F( "mtl_optics_variable_red_dot", "mtl_optics_variable_red_dot_cloak" );
-            level.player _meth_846F( "mtl_optics_variable_red_dot_square", "mtl_optics_variable_red_dot_square" );
-            level.player _meth_846F( "mtl_optics_variable_red_dot_glass02", "mtl_optics_variable_red_dot_glass02_nodraw" );
-            level.player _meth_846F( "mtl_optics_variable_red_dot_reticle", "mtl_optics_variable_red_dot_reticle" );
-            level.player _meth_846F( "mtl_optics_variable_red_dot_cross_reticle", "mtl_optics_variable_red_dot_cross_reticle" );
-            level.player _meth_846F( "mtl_optics_variable_red_dot_small", "mtl_optics_variable_red_dot_small" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot", "mtl_optics_variable_red_dot_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot_square", "mtl_optics_variable_red_dot_square" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot_glass02", "mtl_optics_variable_red_dot_glass02_nodraw" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot_reticle", "mtl_optics_variable_red_dot_reticle" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot_cross_reticle", "mtl_optics_variable_red_dot_cross_reticle" );
+            level.player overrideviewmodelmaterial( "mtl_optics_variable_red_dot_small", "mtl_optics_variable_red_dot_small" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "directhack" ) )
-            level.player _meth_846F( "mtl_directhack", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "directhack" ) )
+            level.player overrideviewmodelmaterial( "mtl_directhack", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "foregrip" ) )
-            level.player _meth_846F( "mtl_foregrip", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "foregrip" ) )
+            level.player overrideviewmodelmaterial( "mtl_foregrip", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "parabolicmicrophone" ) )
-            level.player _meth_846F( "mtl_mic_parabolic", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "parabolicmicrophone" ) )
+            level.player overrideviewmodelmaterial( "mtl_mic_parabolic", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "detech" ) )
+        if ( issubstr( level.player getcurrentweapon(), "detech" ) )
         {
-            level.player _meth_846F( "mtl_optics_de_tech", "cloak_generic" );
-            level.player _meth_846F( "mtl_optics_de_tech_led", "mtl_optics_de_tech_led" );
-            level.player _meth_846F( "mtl_optics_de_tech_lens", "mtl_optics_de_tech_lens" );
-            level.player _meth_846F( "mtl_optics_de_tech_reticle_base", "mtl_optics_de_tech_reticle_base" );
-            level.player _meth_846F( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
+            level.player overrideviewmodelmaterial( "mtl_optics_de_tech", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_optics_de_tech_led", "mtl_optics_de_tech_led" );
+            level.player overrideviewmodelmaterial( "mtl_optics_de_tech_lens", "mtl_optics_de_tech_lens" );
+            level.player overrideviewmodelmaterial( "mtl_optics_de_tech_reticle_base", "mtl_optics_de_tech_reticle_base" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "lasersight" ) )
-            level.player _meth_846F( "mtl_weapon_lasersight_01", "cloak_generic" );
+        if ( issubstr( level.player getcurrentweapon(), "lasersight" ) )
+            level.player overrideviewmodelmaterial( "mtl_weapon_lasersight_01", "cloak_generic" );
 
-        if ( issubstr( level.player _meth_8311(), "ironsights" ) )
+        if ( issubstr( level.player getcurrentweapon(), "ironsights" ) )
         {
-            level.player _meth_846F( "_iron_sights_black", "cloak_generic" );
-            level.player _meth_846F( "_iron_sights_color", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "_iron_sights_black", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "_iron_sights_color", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "opticseotech" ) )
+        if ( issubstr( level.player getcurrentweapon(), "opticseotech" ) )
         {
-            level.player _meth_846F( "mtl_weapon_eotech_body", "mtl_weapon_eotech_body_cloak" );
-            level.player _meth_846F( "mtl_weapon_eotech_lense", "mtl_weapon_eotech_lense_nodraw" );
-            level.player _meth_846F( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_eotech_body", "mtl_weapon_eotech_body_cloak" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_eotech_lense", "mtl_weapon_eotech_lense_nodraw" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_reflex_red_dot", "mtl_weapon_reflex_red_dot" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "opticsthermal" ) )
+        if ( issubstr( level.player getcurrentweapon(), "opticsthermal" ) )
         {
-            level.player _meth_846F( "mtl_weapon_thermal_scope_iw5", "cloak_generic" );
-            level.player _meth_846F( "mtl_weapon_thermal_scope_iw5_lens", "cloak_generic" );
-            level.player _meth_846F( "mtl_weapon_thermal_scope_scanlines", "mtl_weapon_thermal_scope_scanlines" );
-            level.player _meth_846F( "mtl_weapon_thermal_scope_screen", "mtl_weapon_thermal_scope_screen" );
-            level.player _meth_846F( "scope_overlay_m14_night", "scope_overlay_m14_night" );
-            level.player _meth_846F( "scope_overlay_m14_night_low_res", "scope_overlay_m14_night_low_res" );
-            level.player _meth_846F( "scope_overlay_m14_night_emp", "scope_overlay_m14_night_emp" );
-            level.player _meth_846F( "scope_overlay_m14_night_emp_low_res", "scope_overlay_m14_night_emp_low_res" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_thermal_scope_iw5", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_thermal_scope_iw5_lens", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_thermal_scope_scanlines", "mtl_weapon_thermal_scope_scanlines" );
+            level.player overrideviewmodelmaterial( "mtl_weapon_thermal_scope_screen", "mtl_weapon_thermal_scope_screen" );
+            level.player overrideviewmodelmaterial( "scope_overlay_m14_night", "scope_overlay_m14_night" );
+            level.player overrideviewmodelmaterial( "scope_overlay_m14_night_low_res", "scope_overlay_m14_night_low_res" );
+            level.player overrideviewmodelmaterial( "scope_overlay_m14_night_emp", "scope_overlay_m14_night_emp" );
+            level.player overrideviewmodelmaterial( "scope_overlay_m14_night_emp_low_res", "scope_overlay_m14_night_emp_low_res" );
         }
 
-        if ( issubstr( level.player _meth_8313(), "grenade" ) )
+        if ( issubstr( level.player getcurrentoffhand(), "grenade" ) )
         {
-            level.player _meth_846F( "mtl_variable_grenade_lethal", "cloak_generic" );
-            level.player _meth_846F( "mtl_variable_grenade_nonlethal", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_variable_grenade_lethal", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_variable_grenade_nonlethal", "cloak_generic" );
         }
 
-        if ( issubstr( level.player _meth_8311(), "exo_shield" ) )
+        if ( issubstr( level.player getcurrentweapon(), "exo_shield" ) )
         {
-            level.player _meth_846F( "mtl_exo_riot_shield_base", "cloak_generic" );
-            level.player _meth_846F( "mtl_exo_riot_shield_canvas", "cloak_generic" );
-            level.player _meth_846F( "mtl_exo_riot_shield_mesh", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_exo_riot_shield_base", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_exo_riot_shield_canvas", "cloak_generic" );
+            level.player overrideviewmodelmaterial( "mtl_exo_riot_shield_mesh", "cloak_generic" );
         }
     }
 }
@@ -424,248 +424,248 @@ set_cloak_material_for_npc_weapon()
     if ( self.weapon != "iw5_unarmed" )
     {
         if ( issubstr( self.weapon, "iw5_ak12_sp" ) )
-            self _meth_846C( "mtl_ak12_base_nocamo", "mtl_ak12_base_nocamo_cloak" );
+            self overridematerial( "mtl_ak12_base_nocamo", "mtl_ak12_base_nocamo_cloak" );
 
         if ( issubstr( self.weapon, "iw5_arx160_sp" ) )
         {
-            level.player _meth_846C( "mtl_arx160_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_arx160_iron_sights_base", "cloak_generic" );
-            self _meth_846C( "mtl_arx160_strap_base", "cloak_generic" );
+            level.player overridematerial( "mtl_arx160_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_arx160_iron_sights_base", "cloak_generic" );
+            self overridematerial( "mtl_arx160_strap_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_asm1_sp" ) )
         {
-            self _meth_846C( "mtl_asm1_base_nocamo", "mtl_asm1_base_nocamo_cloak" );
-            self _meth_846C( "mtl_asm1_magazine_02_base", "mtl_asm1_magazine_02_base_cloak" );
+            self overridematerial( "mtl_asm1_base_nocamo", "mtl_asm1_base_nocamo_cloak" );
+            self overridematerial( "mtl_asm1_magazine_02_base", "mtl_asm1_magazine_02_base_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_bal27_sp" ) )
         {
-            self _meth_846C( "_base_black", "mtl_bal27_base_black_cloak" );
-            self _meth_846C( "mtl_bal27_screen_a_green", "cloak_generic" );
-            self _meth_846C( "mtl_bal27_magazine_out", "cloak_generic" );
-            self _meth_846C( "mtl_bal27_magazine_inside", "cloak_generic" );
-            self _meth_846C( "mtl_bal27_iron_sights", "mtl_bal27_base_black_cloak" );
+            self overridematerial( "_base_black", "mtl_bal27_base_black_cloak" );
+            self overridematerial( "mtl_bal27_screen_a_green", "cloak_generic" );
+            self overridematerial( "mtl_bal27_magazine_out", "cloak_generic" );
+            self overridematerial( "mtl_bal27_magazine_inside", "cloak_generic" );
+            self overridematerial( "mtl_bal27_iron_sights", "mtl_bal27_base_black_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_em1_sp" ) )
         {
-            self _meth_846C( "mtl_em1_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_en_base_damage", "cloak_generic" );
-            self _meth_846C( "mtl_em1_iron_sights_base", "cloak_generic" );
+            self overridematerial( "mtl_em1_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_en_base_damage", "cloak_generic" );
+            self overridematerial( "mtl_em1_iron_sights_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_gm6_sp" ) )
         {
-            self _meth_846C( "mtl_gm6_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_gm6_scope_base", "cloak_generic" );
-            self _meth_846C( "mtl_gm6_sight_base", "cloak_generic" );
+            self overridematerial( "mtl_gm6_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_gm6_scope_base", "cloak_generic" );
+            self overridematerial( "mtl_gm6_sight_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_hbra3_sp" ) )
         {
-            self _meth_846C( "mtl_hbra3_base_nocamo", "mtl_hbra3_base_nocamo_cloak" );
-            self _meth_846C( "mtl_hbra3_base", "mtl_hbra3_base_cloak" );
-            self _meth_846C( "mtl_hbra3_sight", "mtl_hbra3_sight_cloak" );
-            self _meth_846C( "mtl_hbra3_screen", "cloak_generic" );
+            self overridematerial( "mtl_hbra3_base_nocamo", "mtl_hbra3_base_nocamo_cloak" );
+            self overridematerial( "mtl_hbra3_base", "mtl_hbra3_base_cloak" );
+            self overridematerial( "mtl_hbra3_sight", "mtl_hbra3_sight_cloak" );
+            self overridematerial( "mtl_hbra3_screen", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_himar_sp" ) )
         {
-            self _meth_846C( "mtl_himar_base", "mtl_himar_base_cloak" );
-            self _meth_846C( "mtl_himar_glass_base", "mtl_himar_glass_base_cloak" );
-            self _meth_846C( "mtl_ar_base_handling_01", "mtl_ar_base_handling_01_cloak" );
-            self _meth_846C( "mtl_himar_iron_sights_base", "mtl_himar_iron_sights_base_cloak" );
+            self overridematerial( "mtl_himar_base", "mtl_himar_base_cloak" );
+            self overridematerial( "mtl_himar_glass_base", "mtl_himar_glass_base_cloak" );
+            self overridematerial( "mtl_ar_base_handling_01", "mtl_ar_base_handling_01_cloak" );
+            self overridematerial( "mtl_himar_iron_sights_base", "mtl_himar_iron_sights_base_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_hmr9_sp" ) )
         {
-            self _meth_846C( "mtl_hmr9_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_hmr9_ironsights_base", "cloak_generic" );
-            self _meth_846C( "mtl_hmr9_screen", "cloak_generic" );
-            self _meth_846C( "mtl_hmr9_text_decals", "cloak_generic" );
-            self _meth_846C( "mtl_hmr9_stock_base", "cloak_generic" );
+            self overridematerial( "mtl_hmr9_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_hmr9_ironsights_base", "cloak_generic" );
+            self overridematerial( "mtl_hmr9_screen", "cloak_generic" );
+            self overridematerial( "mtl_hmr9_text_decals", "cloak_generic" );
+            self overridematerial( "mtl_hmr9_stock_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_kf5_sp" ) )
         {
-            self _meth_846C( "mtl_kf5_base", "mtl_kf5_base_nocamo_cloak" );
-            self _meth_846C( "mtl_kf5_iron_sights_base", "mtl_kf5_iron_sights_base_cloak" );
+            self overridematerial( "mtl_kf5_base", "mtl_kf5_base_nocamo_cloak" );
+            self overridematerial( "mtl_kf5_iron_sights_base", "mtl_kf5_iron_sights_base_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_lsat_sp" ) )
         {
-            self _meth_846C( "mtl_lsat_base_nocamo", "mtl_lsat_base_nocamo_cloak" );
-            self _meth_846C( "mtl_lsat_iron_sights_base", "mtl_lsat_iron_sights_base_cloak" );
+            self overridematerial( "mtl_lsat_base_nocamo", "mtl_lsat_base_nocamo_cloak" );
+            self overridematerial( "mtl_lsat_iron_sights_base", "mtl_lsat_iron_sights_base_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_m990_sp" ) )
         {
-            self _meth_846C( "mtl_m990_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_m990_scope", "cloak_generic" );
-            self _meth_846C( "mtl_m990_sight", "cloak_generic" );
+            self overridematerial( "mtl_m990_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_m990_scope", "cloak_generic" );
+            self overridematerial( "mtl_m990_sight", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_maaws_sp" ) )
         {
-            self _meth_846C( "mtl_maaws_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_maaws_missile_base", "cloak_generic" );
+            self overridematerial( "mtl_maaws_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_maaws_missile_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_maul_sp" ) )
-            self _meth_846C( "mtl_maul_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_maul_base_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_mdl_sp" ) )
         {
-            self _meth_846C( "mtl_mdl_base", "cloak_generic" );
-            self _meth_846C( "mtl_mdl_optic", "cloak_generic" );
+            self overridematerial( "mtl_mdl_base", "cloak_generic" );
+            self overridematerial( "mtl_mdl_optic", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_mk14_sp" ) )
-            self _meth_846C( "mtl_mk14_ebr_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_mk14_ebr_base_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_mors_sp" ) )
         {
-            self _meth_846C( "mtl_mors_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_mors_scope", "cloak_generic" );
-            self _meth_846C( "mtl_mors_sights", "cloak_generic" );
+            self overridematerial( "mtl_mors_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_mors_scope", "cloak_generic" );
+            self overridematerial( "mtl_mors_sights", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_mp11_sp" ) )
-            self _meth_846C( "mtl_cbj_ms_base", "cloak_generic" );
+            self overridematerial( "mtl_cbj_ms_base", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_mp443_sp" ) )
-            self _meth_846C( "mtl_mp443_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_mp443_base_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_rhino_sp" ) )
-            self _meth_846C( "mtl_rhino_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_rhino_base_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_rw1_sp" ) )
         {
-            self _meth_846C( "mtl_rw1_main_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_rw1_scope_base", "cloak_generic" );
+            self overridematerial( "mtl_rw1_main_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_rw1_scope_base", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "iw5_sac3_sp" ) )
-            self _meth_846C( "mtl_sac3_base", "cloak_generic" );
+            self overridematerial( "mtl_sac3_base", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_sn6_sp" ) )
         {
-            self _meth_846C( "mtl_sn6_base_black", "mtl_sn6_base_black_nocamo_cloak" );
-            self _meth_846C( "mtl_sn6_iron_sights_black", "mtl_sn6_iron_sights_black_nocamo_cloak" );
+            self overridematerial( "mtl_sn6_base_black", "mtl_sn6_base_black_nocamo_cloak" );
+            self overridematerial( "mtl_sn6_iron_sights_black", "mtl_sn6_iron_sights_black_nocamo_cloak" );
         }
 
         if ( issubstr( self.weapon, "iw5_stinger_sp" ) )
         {
-            self _meth_846C( "mtl_npc_stingerm7_base_black_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_base_bottom_black_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_base_top_black_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_missile_01", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_screens_green", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_iron_sight_black", "cloak_generic" );
-            self _meth_846C( "mtl_stingerm7_glass", "mtl_stingerm7_glass" );
+            self overridematerial( "mtl_npc_stingerm7_base_black_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_base_bottom_black_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_base_top_black_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_missile_01", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_screens_green", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_iron_sight_black", "cloak_generic" );
+            self overridematerial( "mtl_stingerm7_glass", "mtl_stingerm7_glass" );
         }
 
         if ( issubstr( self.weapon, "iw5_thor_sp" ) )
         {
-            self _meth_846C( "mtl_thor_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_thor_scope_base", "cloak_generic" );
-            self _meth_846C( "mtl_thor_scope_lens", "mtl_thor_scope_lens" );
+            self overridematerial( "mtl_thor_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_thor_scope_base", "cloak_generic" );
+            self overridematerial( "mtl_thor_scope_lens", "mtl_thor_scope_lens" );
         }
 
         if ( issubstr( self.weapon, "iw5_titan45_sp" ) )
-            self _meth_846C( "mtl_titan45_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_titan45_base_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_uts19_sp" ) )
-            self _meth_846C( "mtl_uts_19_add_on_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_uts_19_add_on_nocamo", "cloak_generic" );
 
         if ( issubstr( self.weapon, "iw5_vbr_sp" ) )
         {
-            self _meth_846C( "mtl_vbr_base_nocamo", "cloak_generic" );
-            self _meth_846C( "mtl_vbr_siderail", "cloak_generic" );
+            self overridematerial( "mtl_vbr_base_nocamo", "cloak_generic" );
+            self overridematerial( "mtl_vbr_siderail", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "opticsacog2" ) )
-            self _meth_846C( "mtl_acog2_base", "mtl_acog2_base_cloak" );
+            self overridematerial( "mtl_acog2_base", "mtl_acog2_base_cloak" );
 
         if ( issubstr( self.weapon, "himarscope" ) )
         {
-            self _meth_846C( "mtl_himar_computer_base", "mtl_himar_computer_base_cloak" );
-            self _meth_846C( "mtl_himar_reddot_body", "mtl_himar_reddot_body_cloak" );
+            self overridematerial( "mtl_himar_computer_base", "mtl_himar_computer_base_cloak" );
+            self overridematerial( "mtl_himar_reddot_body", "mtl_himar_reddot_body_cloak" );
         }
 
         if ( issubstr( self.weapon, "opticsreddot" ) )
-            self _meth_846C( "mtl_weapon_reddot_body", "mtl_weapon_reddot_body_cloak" );
+            self overridematerial( "mtl_weapon_reddot_body", "mtl_weapon_reddot_body_cloak" );
 
         if ( issubstr( self.weapon, "silencer01" ) )
-            self _meth_846C( "mtl_weapon_silencer_01", "mtl_weapon_silencer_01_cloak" );
+            self overridematerial( "mtl_weapon_silencer_01", "mtl_weapon_silencer_01_cloak" );
 
         if ( issubstr( self.weapon, "opticstargetenhancer" ) )
-            self _meth_846C( "mtl_optics_target_enhancer_body", "mtl_optics_target_enhancer_body_cloak" );
+            self overridematerial( "mtl_optics_target_enhancer_body", "mtl_optics_target_enhancer_body_cloak" );
 
         if ( issubstr( self.weapon, "variablereddot" ) )
         {
-            self _meth_846C( "mtl_optics_variable_red_dot", "mtl_optics_variable_red_dot_cloak" );
-            self _meth_846C( "mtl_optics_variable_red_dot_glass02", "mtl_optics_variable_red_dot_glass02_nodraw" );
+            self overridematerial( "mtl_optics_variable_red_dot", "mtl_optics_variable_red_dot_cloak" );
+            self overridematerial( "mtl_optics_variable_red_dot_glass02", "mtl_optics_variable_red_dot_glass02_nodraw" );
         }
 
         if ( issubstr( self.weapon, "directhack" ) )
-            self _meth_846C( "mtl_directhack", "cloak_generic" );
+            self overridematerial( "mtl_directhack", "cloak_generic" );
 
         if ( issubstr( self.weapon, "foregrip" ) )
-            self _meth_846C( "mtl_foregrip", "cloak_generic" );
+            self overridematerial( "mtl_foregrip", "cloak_generic" );
 
         if ( issubstr( self.weapon, "parabolicmicrophone" ) )
-            self _meth_846C( "mtl_mic_parabolic", "cloak_generic" );
+            self overridematerial( "mtl_mic_parabolic", "cloak_generic" );
 
         if ( issubstr( self.weapon, "detech" ) )
-            self _meth_846C( "mtl_optics_de_tech", "cloak_generic" );
+            self overridematerial( "mtl_optics_de_tech", "cloak_generic" );
 
         if ( issubstr( self.weapon, "lasersight" ) )
-            self _meth_846C( "mtl_weapon_lasersight_01", "cloak_generic" );
+            self overridematerial( "mtl_weapon_lasersight_01", "cloak_generic" );
 
         if ( issubstr( self.weapon, "ironsights" ) )
         {
-            self _meth_846C( "_iron_sights_black", "cloak_generic" );
-            self _meth_846C( "_iron_sights_color", "cloak_generic" );
+            self overridematerial( "_iron_sights_black", "cloak_generic" );
+            self overridematerial( "_iron_sights_color", "cloak_generic" );
         }
 
         if ( issubstr( self.weapon, "opticseotech" ) )
-            self _meth_846C( "mtl_weapon_eotech_body", "mtl_weapon_eotech_body_cloak" );
+            self overridematerial( "mtl_weapon_eotech_body", "mtl_weapon_eotech_body_cloak" );
 
         if ( issubstr( self.weapon, "opticsthermal" ) )
-            self _meth_846C( "mtl_weapon_thermal_scope", "mtl_weapon_thermal_scope_cloak" );
+            self overridematerial( "mtl_weapon_thermal_scope", "mtl_weapon_thermal_scope_cloak" );
     }
 }
 
 cloak_vm_weapon_instantaneous()
 {
     set_cloak_material_for_vm_weapon();
-    level.player _meth_8472( 0.0, 0.0 );
+    level.player setviewmodelmaterialscriptparam( 0.0, 0.0 );
 }
 
 cloak_vm_weapon_blend()
 {
     wait 0.1;
     set_cloak_material_for_vm_weapon();
-    level.player _meth_8472( 1.0, 0.0 );
+    level.player setviewmodelmaterialscriptparam( 1.0, 0.0 );
     wait 0.05;
-    level.player _meth_8472( 0.0, 0.75 );
+    level.player setviewmodelmaterialscriptparam( 0.0, 0.75 );
 }
 
 cloak_npc_weapon_instantaneous()
 {
     set_cloak_material_for_npc_weapon();
-    self _meth_83A7( 0.0, 0.0 );
+    self setmaterialscriptparam( 0.0, 0.0 );
 }
 
 monitor_player_weapon_for_cloak()
 {
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
 
     for (;;)
     {
-        var_1 = level.player _meth_8311();
+        var_1 = level.player getcurrentweapon();
 
         if ( var_1 != var_0 )
         {
@@ -678,7 +678,7 @@ monitor_player_weapon_for_cloak()
             var_0 = var_1;
         }
 
-        if ( level.player _meth_812E() )
+        if ( level.player ismeleeing() )
         {
             if ( level._cloaked_stealth_settings.cloak_on )
             {
@@ -727,16 +727,16 @@ turn_on_the_cloak_effect_when_able()
 
     level._cloaked_stealth_settings.cloaking_visual_effect_in_progress = 1;
     var_0 = 0.0;
-    level.player _meth_8343( "viewhands_s1_pmc_cloak" );
+    level.player setviewmodel( "viewhands_s1_pmc_cloak" );
     thread cloak_vm_weapon_blend();
-    level.player _meth_8448();
-    level.player _meth_83FA( 0 );
+    level.player drawpostresolve();
+    level.player hudoutlineenable( 0 );
 
     if ( isdefined( level._cloaked_stealth_settings.player_rig ) )
     {
-        level._cloaked_stealth_settings.player_rig _meth_83A7( 0.0, 0.3 );
+        level._cloaked_stealth_settings.player_rig setmaterialscriptparam( 0.0, 0.3 );
         var_0 = 0.3;
-        level._cloaked_stealth_settings.player_rig _meth_83FA( 0 );
+        level._cloaked_stealth_settings.player_rig hudoutlineenable( 0 );
     }
 
     if ( isdefined( level.scr_model["player_rig"] ) )
@@ -744,11 +744,11 @@ turn_on_the_cloak_effect_when_able()
 
     if ( isdefined( level.player_rig ) )
     {
-        level.player_rig _meth_80B1( level.scr_model["player_rig"] );
-        level.player_rig _meth_8448();
-        level.player_rig _meth_83A7( 0.0, 0.3 );
+        level.player_rig setmodel( level.scr_model["player_rig"] );
+        level.player_rig drawpostresolve();
+        level.player_rig setmaterialscriptparam( 0.0, 0.3 );
         var_0 = 0.3;
-        level.player_rig _meth_83FA( 0 );
+        level.player_rig hudoutlineenable( 0 );
     }
 
     wait(var_0);
@@ -768,35 +768,35 @@ turn_on_the_cloak_effect()
 
 turn_off_the_cloak_effect_when_able()
 {
-    while ( level.player _meth_812E() || isdefined( level._cloaked_stealth_settings.cloaking_visual_effect_in_progress ) )
+    while ( level.player ismeleeing() || isdefined( level._cloaked_stealth_settings.cloaking_visual_effect_in_progress ) )
         wait 0.05;
 
     level._cloaked_stealth_settings.cloaking_visual_effect_in_progress = 1;
     var_0 = 0.0;
-    level.player _meth_8343( "viewhands_player_sentinel" );
-    level.player _meth_8449();
-    level.player _meth_83FB();
+    level.player setviewmodel( "viewhands_player_sentinel" );
+    level.player drawpostresolveoff();
+    level.player hudoutlinedisable();
 
     if ( isdefined( level._cloaked_stealth_settings.player_rig ) )
     {
-        level._cloaked_stealth_settings.player_rig _meth_83A7( 1.0, 0.2 );
+        level._cloaked_stealth_settings.player_rig setmaterialscriptparam( 1.0, 0.2 );
         var_0 = 0.2;
-        level._cloaked_stealth_settings.player_rig _meth_83FB();
+        level._cloaked_stealth_settings.player_rig hudoutlinedisable();
         soundscripts\_snd::snd_message( "exo_cloak_disable" );
     }
 
-    level.player _meth_8470();
+    level.player overrideviewmodelmaterialreset();
 
     if ( isdefined( level.scr_model["player_rig"] ) )
         level.scr_model["player_rig"] = "viewbody_sentinel_covert";
 
     if ( isdefined( level.player_rig ) )
     {
-        level.player_rig _meth_8449();
-        level.player_rig _meth_83A7( 1.0, 0.3 );
+        level.player_rig drawpostresolveoff();
+        level.player_rig setmaterialscriptparam( 1.0, 0.3 );
         var_0 = 0.3;
-        level.player_rig _meth_80B1( level.scr_model["player_rig"] );
-        level.player_rig _meth_83FB();
+        level.player_rig setmodel( level.scr_model["player_rig"] );
+        level.player_rig hudoutlinedisable();
     }
 
     wait(var_0);
@@ -1058,19 +1058,19 @@ cloak_battery_hud()
 
         if ( isdefined( level._cloaked_stealth_settings.battery_hud_is_visible ) && level._cloaked_stealth_settings.battery_hud_is_visible == 1 )
         {
-            level.player _meth_82FB( "ui_cloak", common_scripts\utility::flag( "flag_player_cloak_enabled" ) );
-            level.player _meth_82FB( "ui_cloak_cinematic", 0 );
-            level.player _meth_82FB( "ui_cloak_on", level._cloaked_stealth_settings.cloak_on );
-            level.player _meth_82FB( "ui_cloak_health", var_9 );
-            level.player _meth_82FB( "ui_meterhud_toggle", common_scripts\utility::flag( "flag_player_cloak_enabled" ) );
-            level.player _meth_82FB( "ui_meterhud_text", level._cloaked_stealth_settings.cloak_on );
-            level.player _meth_82FB( "ui_meterhud_level", level._cloaked_stealth_settings.cloak_battery_level );
+            level.player setclientomnvar( "ui_cloak", common_scripts\utility::flag( "flag_player_cloak_enabled" ) );
+            level.player setclientomnvar( "ui_cloak_cinematic", 0 );
+            level.player setclientomnvar( "ui_cloak_on", level._cloaked_stealth_settings.cloak_on );
+            level.player setclientomnvar( "ui_cloak_health", var_9 );
+            level.player setclientomnvar( "ui_meterhud_toggle", common_scripts\utility::flag( "flag_player_cloak_enabled" ) );
+            level.player setclientomnvar( "ui_meterhud_text", level._cloaked_stealth_settings.cloak_on );
+            level.player setclientomnvar( "ui_meterhud_level", level._cloaked_stealth_settings.cloak_battery_level );
         }
         else
         {
-            level.player _meth_82FB( "ui_cloak", 0 );
-            level.player _meth_82FB( "ui_meterhud_toggle", 0 );
-            level.player _meth_82FB( "ui_meterhud_text", level._cloaked_stealth_settings.cloak_on );
+            level.player setclientomnvar( "ui_cloak", 0 );
+            level.player setclientomnvar( "ui_meterhud_toggle", 0 );
+            level.player setclientomnvar( "ui_meterhud_text", level._cloaked_stealth_settings.cloak_on );
         }
 
         wait(var_0);
@@ -1080,8 +1080,8 @@ cloak_battery_hud()
 cloak_hud()
 {
     level.player endon( "death" );
-    level.player _meth_82DD( "cloak_button_pressed", "+actionslot 4" );
-    level.player _meth_821B( "actionslot4", "dpad_icon_cloak" );
+    level.player notifyonplayercommand( "cloak_button_pressed", "+actionslot 4" );
+    level.player setweaponhudiconoverride( "actionslot4", "dpad_icon_cloak" );
     thread cloak_battery_hud();
     level._cloaked_stealth_settings.playing_view_model_cloak_toggle_anim = 0;
 
@@ -1135,7 +1135,7 @@ disable_cloak_system( var_0 )
 {
     common_scripts\utility::flag_clear( "flag_player_cloak_enabled" );
     cloaked_stealth_disable_battery_hud();
-    level.player _meth_821B( "actionslot4", "dpad_icon_cloak_off" );
+    level.player setweaponhudiconoverride( "actionslot4", "dpad_icon_cloak_off" );
 
     if ( isdefined( var_0 ) && var_0 )
         thread _ensure_player_is_decloaked();
@@ -1417,15 +1417,15 @@ is_player_cloaked()
 
 set_cloak_on_model()
 {
-    self _meth_8448();
-    self _meth_83A7( 0.0, 0.3 );
+    self drawpostresolve();
+    self setmaterialscriptparam( 0.0, 0.3 );
 }
 
 set_event_distance( var_0, var_1 )
 {
-    _func_0D3( var_0, var_1 );
+    setsaveddvar( var_0, var_1 );
     var_2 = "ai_busyEvent" + getsubstr( var_0, 8 );
-    _func_0D3( var_2, var_1 );
+    setsaveddvar( var_2, var_1 );
 }
 
 override_event_distances_for_mute_volume()
@@ -1529,26 +1529,26 @@ setalertstencilstate( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        _func_0D3( "r_hudoutlinecloaklumscale", 0 );
+        setsaveddvar( "r_hudoutlinecloaklumscale", 0 );
         thread maps\_utility::lerp_saveddvar( "r_hudoutlinecloaklumscale", 0.75, var_0 );
     }
     else
-        _func_0D3( "r_hudoutlinecloaklumscale", 0.75 );
+        setsaveddvar( "r_hudoutlinecloaklumscale", 0.75 );
 
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    _func_0D3( "r_hudoutlinepostmode", 4 );
-    _func_0D3( "r_hudoutlinecloakblurradius", 0.35 );
-    self _meth_83FA( 6, 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    setsaveddvar( "r_hudoutlinepostmode", 4 );
+    setsaveddvar( "r_hudoutlinecloakblurradius", 0.35 );
+    self hudoutlineenable( 6, 1 );
 }
 
 clearalertstencilstate()
 {
     if ( isdefined( self ) )
     {
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
-        self _meth_83FB();
-        _func_0D3( "r_hudoutlinewidth", 1 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
+        self hudoutlinedisable();
+        setsaveddvar( "r_hudoutlinewidth", 1 );
     }
 }
 
@@ -1556,16 +1556,16 @@ clearstencilstateondeath()
 {
     if ( isdefined( self ) )
     {
-        self _meth_83FB();
-        self _meth_83FA( 0, 0 );
+        self hudoutlinedisable();
+        self hudoutlineenable( 0, 0 );
     }
 }
 
 setalertstencilstate_axis()
 {
     self endon( "death" );
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    self _meth_83FA( 4, 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    self hudoutlineenable( 4, 1 );
 }
 
 temp_cloak_gauge()
@@ -1582,7 +1582,7 @@ temp_cloak_gauge()
     var_4.horzalign = "fullscreen";
     var_4.vertalign = "fullscreen";
     var_4.color = ( 0.1, 0.6, 0.1 );
-    var_4 _meth_80CC( "white", var_3, int( var_2 * level._cloaked_stealth_settings.cloak_battery_level ) );
+    var_4 setshader( "white", var_3, int( var_2 * level._cloaked_stealth_settings.cloak_battery_level ) );
     var_5 = newhudelem();
     var_5.x = var_0;
     var_5.y = var_1;
@@ -1591,7 +1591,7 @@ temp_cloak_gauge()
     var_5.horzalign = var_4.horzalign;
     var_5.vertalign = var_4.vertalign;
     var_5.color = ( 1, 1, 1 );
-    var_5 _meth_80CC( "hud_temperature_gauge", 20, 200 );
+    var_5 setshader( "hud_temperature_gauge", 20, 200 );
     var_6 = 0.05;
 
     for (;;)

@@ -13,7 +13,7 @@ target_enhancer_think()
 
     for (;;)
     {
-        while ( self.has_target_enhancer && self _meth_8340() < var_2 )
+        while ( self.has_target_enhancer && self playerads() < var_2 )
             wait 0.05;
 
         if ( !self.has_target_enhancer )
@@ -22,7 +22,7 @@ target_enhancer_think()
             continue;
         }
 
-        if ( self _meth_8342() )
+        if ( self isusingturret() )
         {
             wait 0.05;
             continue;

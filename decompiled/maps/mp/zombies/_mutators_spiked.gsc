@@ -33,7 +33,7 @@ mutatorspiked()
     var_16 = randomint( var_9.size );
     self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap();
     self detachall();
-    self _meth_80B1( var_0[var_11] );
+    self setmodel( var_0[var_11] );
     self.swapbody = var_1[var_11];
     self attach( var_2[var_12] );
     self.headmodel = var_2[var_12];
@@ -76,7 +76,7 @@ spikeblast( var_0 )
     self.spikeblastready = 0;
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1.origin = self gettagorigin( "J_Spine4" );
-    var_1 _meth_804D( self, "J_Spine4" );
+    var_1 linkto( self, "J_Spine4" );
     wait 0.05;
     playfx( common_scripts\utility::getfx( "mut_spiked_explosion_2" ), var_1.origin );
     playsoundatpos( var_1.origin, "zmb_mut_spiked_explo_overkill" );
@@ -89,9 +89,9 @@ spikeblast( var_0 )
             var_4 = clamp( 25 * level.wavecounter / 9, 25, 50 );
 
             if ( isdefined( var_0 ) && var_3 == var_0 )
-                var_3 _meth_8051( var_4, self.origin );
+                var_3 dodamage( var_4, self.origin );
             else
-                var_3 _meth_8051( var_4 * 0.5, self.origin );
+                var_3 dodamage( var_4 * 0.5, self.origin );
         }
     }
 

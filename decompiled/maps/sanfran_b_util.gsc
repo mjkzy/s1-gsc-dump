@@ -23,13 +23,13 @@ teleport_to_scriptstruct( var_0 )
     {
         if ( var_7 < var_6.size )
         {
-            var_2[var_7] _meth_81C6( var_6[var_7].origin, var_6[var_7].angles );
-            var_2[var_7] _meth_81A6( var_6[var_7].origin );
+            var_2[var_7] forceteleport( var_6[var_7].origin, var_6[var_7].angles );
+            var_2[var_7] setgoalpos( var_6[var_7].origin );
             continue;
         }
 
-        var_2[var_7] _meth_81C6( level.player.origin, level.player.angles );
-        var_2[var_7] _meth_81A6( level.player.origin );
+        var_2[var_7] forceteleport( level.player.origin, level.player.angles );
+        var_2[var_7] setgoalpos( level.player.origin );
     }
 }
 
@@ -45,14 +45,14 @@ add_to_threat_bias( var_0 )
         return;
 
     createthreatbiasgroup( var_0 );
-    self _meth_8177( var_0 );
+    self setthreatbiasgroup( var_0 );
 }
 
 set_flag_when_in_volume( var_0, var_1 )
 {
     self endon( "death" );
 
-    while ( !self _meth_80A9( var_0 ) )
+    while ( !self istouching( var_0 ) )
         wait 0.05;
 
     common_scripts\utility::flag_set( var_1 );
@@ -90,7 +90,7 @@ bloody_death( var_0 )
         wait(randomfloat( 0.1 ));
     }
 
-    self _meth_8051( self.health + 50, self.origin );
+    self dodamage( self.health + 50, self.origin );
 }
 
 bloody_death_fx( var_0, var_1 )
@@ -105,7 +105,7 @@ wait_for_number_enemies_alive( var_0 )
 {
     level.player endon( "death" );
 
-    while ( _func_0D5( "axis" ) > var_0 )
+    while ( getaicount( "axis" ) > var_0 )
         wait 0.05;
 }
 
@@ -171,7 +171,7 @@ kill_no_react()
     self.allowdeath = 1;
     self.a.nodeath = 1;
     thread maps\_utility::set_battlechatter( 0 );
-    self _meth_8052();
+    self kill();
 }
 
 drone_track_player()
@@ -182,15 +182,15 @@ drone_track_player()
     {
         var_0 = anglestoforward( level.player getangles() ) * 512;
         var_0 += ( randomintrange( -300, 300 ), randomintrange( -300, 300 ), randomintrange( 96, 164 ) );
-        var_1 = level.player _meth_80A8() + var_0;
+        var_1 = level.player geteye() + var_0;
         var_2 = 3;
 
         if ( bullettracepassed( self gettagorigin( "tag_flash" ), var_1, 0, self ) )
         {
-            self _meth_8284( 40 );
-            self _meth_825B( var_1 );
+            self vehicle_setspeedimmediate( 40 );
+            self setvehgoalpos( var_1 );
             self waittill( "goal" );
-            self _meth_8284( 0 );
+            self vehicle_setspeedimmediate( 0 );
         }
         else
         {
@@ -234,8 +234,8 @@ warbird_shooting_think( var_0 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -259,7 +259,7 @@ warbird_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_4 = _func_0D6( "allies" );
+        var_4 = getaiarray( "allies" );
 
         if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
         {
@@ -293,7 +293,7 @@ warbird_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_12 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_13 = var_8 _meth_80A8();
+                var_13 = var_8 geteye();
                 var_14 = vectornormalize( var_13 - var_12 );
                 var_15 = var_13 + var_14 * 20;
 
@@ -307,24 +307,24 @@ warbird_fire( var_0 )
 
         if ( isdefined( var_10 ) )
         {
-            var_1 _meth_8106( var_10 );
-            var_2 _meth_8106( var_10 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_10 );
+            var_2 settargetentity( var_10 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_10, var_0 );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait(var_3);
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 wait_for_warbird_fire_target_done( var_0, var_1 )
@@ -348,7 +348,7 @@ wait_for_warbird_fire_target_done( var_0, var_1 )
         if ( isdefined( var_1 ) && var_1 )
         {
             var_4 = self.mgturret[0] gettagorigin( "tag_flash" );
-            var_5 = var_0 _meth_80A8();
+            var_5 = var_0 geteye();
             var_6 = vectornormalize( var_5 - var_4 );
             var_7 = var_4 + var_6 * 20;
 
@@ -391,8 +391,8 @@ ambient_warbird_wait_to_fire()
 ambient_warbird_shooting_think( var_0 )
 {
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -422,17 +422,17 @@ ambient_warbird_fire()
 
         if ( isdefined( var_4 ) )
         {
-            var_0 _meth_8106( var_4 );
-            var_1 _meth_8106( var_4 );
-            var_0 _meth_8179();
-            var_1 _meth_8179();
-            var_0 _meth_80E2();
-            var_1 _meth_80E2();
+            var_0 settargetentity( var_4 );
+            var_1 settargetentity( var_4 );
+            var_0 turretfireenable();
+            var_1 turretfireenable();
+            var_0 startfiring();
+            var_1 startfiring();
             wait(var_2);
-            var_0 _meth_8108();
-            var_1 _meth_8108();
-            var_0 _meth_815C();
-            var_1 _meth_815C();
+            var_0 cleartargetentity();
+            var_1 cleartargetentity();
+            var_0 turretfiredisable();
+            var_1 turretfiredisable();
         }
 
         wait 0.05;
@@ -501,7 +501,7 @@ setup_atlas_drone( var_0 )
 {
     self endon( "death" );
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
     thread drone_fire_timing();
     maps\_utility::add_damage_function( ::atlas_drone_damage_function );
     soundscripts\_snd::snd_message( "attack_drone_audio_handler" );
@@ -512,7 +512,7 @@ setup_atlas_drone( var_0 )
     level.deck_drones = common_scripts\utility::array_add( level.deck_drones, self );
     common_scripts\utility::flag_wait( var_0 );
     level.deck_drones = common_scripts\utility::array_remove( level.deck_drones, self );
-    self _meth_8052();
+    self kill();
 }
 
 atlas_drone_damage_function( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
@@ -521,13 +521,13 @@ atlas_drone_damage_function( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     if ( isdefined( var_1 ) && isplayer( var_1 ) && isdefined( var_4 ) && ( var_4 == "MOD_IMPACT" || var_4 == "MOD_PROJECTILE" ) )
     {
-        var_7 = var_1 _meth_8311();
+        var_7 = var_1 getcurrentweapon();
 
         if ( isdefined( var_7 ) && issubstr( var_7, "microdronelauncher" ) )
         {
             maps\_vehicle::vehicle_set_health( 1 );
             level.deck_drones = common_scripts\utility::array_remove( level.deck_drones, self );
-            self _meth_8051( 99999, self.origin, var_1 );
+            self dodamage( 99999, self.origin, var_1 );
         }
     }
 }
@@ -554,7 +554,7 @@ setup_corpses( var_0 )
         var_5.allowdeath = 0;
         var_5.animname = "generic";
         var_5.name = " ";
-        var_5 _meth_82BF();
+        var_5 notsolid();
 
         if ( isdefined( var_5.weapon ) && var_5.weapon != "none" )
             var_5 maps\_utility::gun_remove();
@@ -565,7 +565,7 @@ setup_corpses( var_0 )
         {
             var_4 thread maps\_anim::anim_single_solo( var_5, var_4.script_parameters );
             var_6 = var_5 maps\_utility::getanim( var_4.script_parameters );
-            var_5 common_scripts\utility::delaycall( 0.05, ::_meth_8117, var_6, 1.0 );
+            var_5 common_scripts\utility::delaycall( 0.05, ::setanimtime, var_6, 1.0 );
             continue;
         }
 
@@ -585,9 +585,9 @@ water_sheeting_think()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( self ) )
+        if ( level.player istouching( self ) )
         {
-            level.player _meth_8218( 1, 1.5 );
+            level.player setwatersheeting( 1, 1.5 );
             wait 0.5;
             continue;
         }
@@ -659,7 +659,7 @@ hanger_reinforcements_think()
 
 postspawn_rpg_vehicle()
 {
-    self _meth_80B1( "projectile_rpg7" );
+    self setmodel( "projectile_rpg7" );
     var_0 = common_scripts\utility::getfx( "rpg_trail" );
     playfxontag( var_0, self, "tag_origin" );
     var_0 = common_scripts\utility::getfx( "rpg_muzzle" );
@@ -674,7 +674,7 @@ postspawn_rpg_vehicle()
             self playsound( self.script_sound );
     }
     else
-        self _meth_8075( "weap_rpg_loop" );
+        self playloopsound( "weap_rpg_loop" );
 
     self waittill( "reached_end_node" );
     self notify( "explode", self.origin );
@@ -756,20 +756,20 @@ hanger_bad_path()
 
 prep_cinematic( var_0 )
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( var_0, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( var_0, 1 );
     level.current_cinematic = var_0;
 }
 
 ending_fade_out( var_0 )
 {
-    _func_072( 10, var_0 );
+    setblur( 10, var_0 );
     var_1 = newhudelem();
     var_1.x = 0;
     var_1.y = 0;
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
-    var_1 _meth_80CC( "black", 640, 480 );
+    var_1 setshader( "black", 640, 480 );
 
     if ( isdefined( var_0 ) && var_0 > 0 )
     {
@@ -794,7 +794,7 @@ fall_fail()
         if ( var_0 == level.player )
         {
             setdvar( "ui_deadquote", "" );
-            _func_072( 30, 2 );
+            setblur( 30, 2 );
             maps\_utility::missionfailedwrapper();
         }
     }
@@ -804,8 +804,8 @@ warbird_heavy_shooting_think( var_0 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -837,7 +837,7 @@ warbird_heavy_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_6 = _func_0D6( var_5 );
+        var_6 = getaiarray( var_5 );
 
         if ( isdefined( level.flying_attack_drones ) )
             var_7 = level.flying_attack_drones;
@@ -875,7 +875,7 @@ warbird_heavy_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_14 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_15 = var_10 _meth_80A8();
+                var_15 = var_10 geteye();
                 var_16 = vectornormalize( var_15 - var_14 );
                 var_17 = var_14 + var_16 * 20;
 
@@ -889,26 +889,26 @@ warbird_heavy_fire( var_0 )
 
         if ( isdefined( var_12 ) )
         {
-            var_1 _meth_8106( var_12 );
-            var_2 _meth_8106( var_12 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_12 );
+            var_2 settargetentity( var_12 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_12, var_0 );
             var_1 notify( "stop_firing" );
             var_2 notify( "stop_firing" );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait 0.05;
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 burst_fire_warbird( var_0, var_1 )
@@ -926,7 +926,7 @@ burst_fire_warbird( var_0, var_1 )
     {
         var_8 = ( var_6 - gettime() ) * 0.001;
 
-        if ( self _meth_80E4() && var_8 <= 0 )
+        if ( self isfiringturret() && var_8 <= 0 )
         {
             if ( var_7 != "fire" )
             {
@@ -960,7 +960,7 @@ doshoottuned( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_80EA();
+        self shootturret();
         wait(var_0);
     }
 }

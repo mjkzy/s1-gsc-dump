@@ -261,11 +261,11 @@ create_dynamicambience()
         common_scripts\utility::flag_wait( "createfx_started" );
 
     if ( isdefined( self.dambinfostruct ) )
-        level.player _meth_847E( self.dambinfostruct.unique_id );
+        level.player stopdynamicambience( self.dambinfostruct.unique_id );
 
     self.dambinfostruct = spawnstruct();
     self.dambinfostruct common_scripts\utility::assign_unique_id();
-    level.player _meth_847D( self.v["ambiencename"], self.v["origin"], self.v["dynamic_distance"], self.dambinfostruct.unique_id );
+    level.player playdynamicambience( self.v["ambiencename"], self.v["origin"], self.v["dynamic_distance"], self.dambinfostruct.unique_id );
     return;
 }
 
@@ -347,7 +347,7 @@ loopsoundthread( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", var_1 );
     var_3.origin = var_1;
-    var_3 _meth_8075( var_0 );
+    var_3 playloopsound( var_0 );
 }
 
 gunfireloopfx( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
@@ -392,7 +392,7 @@ gunfireloopfxthread( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
     var_15 = spawnfx( level._effect[var_0], var_1 );
 
     if ( !level.createfx_enabled )
-        var_15 _meth_80E1();
+        var_15 willneverchange();
 
     for (;;)
     {
@@ -451,7 +451,7 @@ gunfireloopfxvecthread( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
     var_16 = spawnfx( level._effect[var_0], var_1, var_2 );
 
     if ( !level.createfx_enabled )
-        var_16 _meth_80E1();
+        var_16 willneverchange();
 
     for (;;)
     {
@@ -552,7 +552,7 @@ create_triggerfx()
     triggerfx( self.looper, self.v["delay"] );
 
     if ( !level.createfx_enabled )
-        self.looper _meth_80E1();
+        self.looper willneverchange();
 
     create_loopsound();
 }

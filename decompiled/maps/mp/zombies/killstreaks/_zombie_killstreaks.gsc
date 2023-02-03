@@ -309,7 +309,7 @@ dropcratephysics( var_0, var_1 )
     var_2 = "airdrop_assault";
     var_3 = getcrate( var_2 );
     var_4 = var_0 maps\mp\killstreaks\_airdrop::createairdropcrate( var_0, var_2, var_3, var_1.origin, undefined, 0, 1 );
-    var_4 _meth_8276( ( 0, 0, 0 ) );
+    var_4 physicslaunchserver( ( 0, 0, 0 ) );
     var_4 thread maps\mp\killstreaks\_orbital_carepackage::cratedetectstopphysics();
     var_4 maps\mp\killstreaks\_airdrop::physicswaiter( var_2, var_3 );
     return var_3;
@@ -421,7 +421,7 @@ handlekillstreaklimit( var_0 )
 
 showstreaklimitreached( var_0 )
 {
-    var_0 iclientprintlnbold( &"ZOMBIES_STREAK_LIMIT" );
+    var_0 iprintlnbold( &"ZOMBIES_STREAK_LIMIT" );
 }
 
 closetomarker( var_0, var_1 )
@@ -444,7 +444,7 @@ closetomarker( var_0, var_1 )
             var_7 += var_2;
 
         var_8 = var_7 * var_7;
-        var_9 = _func_220( var_6.origin, var_0 );
+        var_9 = distance2dsquared( var_6.origin, var_0 );
 
         if ( var_9 < var_8 )
             return 1;
@@ -463,7 +463,7 @@ carepackagetrace( var_0, var_1, var_2 )
     else
         var_5 = var_3;
 
-    return _func_2AB( var_0 + ( 0, 0, 6 ), var_5, var_5 * 2, var_1, 0 );
+    return capsuletracepassed( var_0 + ( 0, 0, 6 ), var_5, var_5 * 2, var_1, 0 );
 }
 
 killstreakcratethink( var_0 )
@@ -559,10 +559,10 @@ killstreakcratethink( var_0 )
             var_8 = 0;
 
             if ( isdefined( var_12.friendlymodel ) )
-                var_12.friendlymodel _meth_82BE();
+                var_12.friendlymodel solid();
 
             if ( isdefined( var_12.enemymodel ) )
-                var_12.enemymodel _meth_82BE();
+                var_12.enemymodel solid();
         }
 
         maps\mp\killstreaks\_airdrop::deletecrate( var_8 );
@@ -599,10 +599,10 @@ crateothercapturethink( var_0, var_1, var_2 )
         if ( !var_1 && handlekillstreaklimit( var_4 ) )
             continue;
 
-        if ( var_4 _meth_83B3() || isdefined( var_4.exo_hover_on ) && var_4.exo_hover_on )
+        if ( var_4 isjumping() || isdefined( var_4.exo_hover_on ) && var_4.exo_hover_on )
             continue;
 
-        if ( !var_4 _meth_8341() && !maps\mp\killstreaks\_airdrop::waitplayerstuckoncarepackagereturn( var_4 ) )
+        if ( !var_4 isonground() && !maps\mp\killstreaks\_airdrop::waitplayerstuckoncarepackagereturn( var_4 ) )
             continue;
 
         if ( !maps\mp\killstreaks\_airdrop::validateopenconditions( var_4 ) )

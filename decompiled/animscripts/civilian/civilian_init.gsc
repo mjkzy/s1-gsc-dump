@@ -16,9 +16,9 @@ civilian_init()
     self.disableexits = 1;
     self.neverenablecqb = 1;
     self.alwaysrunforward = 1;
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
     self.combatmode = "no_cover";
-    self _meth_81A3( 0 );
+    self pushplayer( 0 );
     self.a.reacttobulletchance = 1;
 
     if ( !isdefined( level.initialized_civilian_animations ) )
@@ -91,8 +91,8 @@ detachprops()
         self detach( self.attachedpropmodel, self.attachedproptag );
         var_0 = spawn( "script_model", self gettagorigin( self.attachedproptag ) );
         var_0.angles = self gettagangles( self.attachedproptag );
-        var_0 _meth_80B1( self.attachedpropmodel );
-        var_0 _meth_82C2();
+        var_0 setmodel( self.attachedpropmodel );
+        var_0 physicslaunchclient();
         var_0 thread waitforcleanup();
         self.hasattachedprops = undefined;
         self.attachedpropmodel = undefined;

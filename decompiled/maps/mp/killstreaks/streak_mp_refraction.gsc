@@ -52,7 +52,7 @@ tryusemprefraction( var_0, var_1 )
 {
     if ( isdefined( level.mp_refraction_owner ) || level.mp_refraction_inuse )
     {
-        self iclientprintlnbold( &"MP_REFRACTION_IN_USE" );
+        self iprintlnbold( &"MP_REFRACTION_IN_USE" );
         return 0;
     }
 
@@ -120,9 +120,9 @@ setrefractionturretplayer( var_0 )
         level.refraction_turrets_alive++;
         level.refraction_turrets_moved_down = 0;
         level.refraction_turrets[var_2] sentry_setowner( var_0 );
-        level.refraction_turrets[var_2] _meth_8156( 45 );
-        level.refraction_turrets[var_2] _meth_8155( 45 );
-        level.refraction_turrets[var_2] _meth_8157( 10 );
+        level.refraction_turrets[var_2] setleftarc( 45 );
+        level.refraction_turrets[var_2] setrightarc( 45 );
+        level.refraction_turrets[var_2] settoparc( 10 );
         level.refraction_turrets[var_2].shouldsplash = 0;
         level.refraction_turrets[var_2].carriedby = var_0;
         level.refraction_turrets[var_2] sentry_setplaced();
@@ -219,13 +219,13 @@ turret_setup()
 
         var_2.sound_tag = common_scripts\utility::spawn_tag_origin();
         var_2.sound_tag.origin = var_2.origin + ( 0, 0, 24 );
-        var_2 _meth_815A( 0 );
+        var_2 setdefaultdroppitch( 0 );
         var_11 = level.sentrysettings["refraction_turret"].sentrytype;
         var_2 sentry_initsentry( var_11 );
-        var_2 _meth_8136();
+        var_2 maketurretsolid();
         var_2 hide();
         var_2.laser_tag = spawn( "script_model", var_2.origin );
-        var_2.laser_tag _meth_80B1( "tag_laser" );
+        var_2.laser_tag setmodel( "tag_laser" );
     }
 
     return var_0;
@@ -236,36 +236,36 @@ linkcollisiontoturret( var_0, var_1 )
     if ( var_1 == 0 )
     {
         if ( isdefined( var_0.collision.col_body ) )
-            var_0.collision.col_body _meth_804F();
+            var_0.collision.col_body unlink();
 
         if ( isdefined( var_0.collision.col_head ) )
-            var_0.collision.col_head _meth_804F();
+            var_0.collision.col_head unlink();
 
         if ( isdefined( var_0.collision.col_leg_r ) )
-            var_0.collision.col_leg_r _meth_804F();
+            var_0.collision.col_leg_r unlink();
 
         if ( isdefined( var_0.collision.col_leg_l ) )
-            var_0.collision.col_leg_l _meth_804F();
+            var_0.collision.col_leg_l unlink();
 
         if ( isdefined( var_0.collision.col_gun ) )
-            var_0.collision.col_gun _meth_804F();
+            var_0.collision.col_gun unlink();
     }
     else if ( var_1 == 1 )
     {
         if ( isdefined( var_0.collision.col_body ) )
-            var_0.collision.col_body _meth_804D( self, "tag_origin" );
+            var_0.collision.col_body linkto( self, "tag_origin" );
 
         if ( isdefined( var_0.collision.col_head ) )
-            var_0.collision.col_head _meth_804D( self, "tag_aim_animated" );
+            var_0.collision.col_head linkto( self, "tag_aim_animated" );
 
         if ( isdefined( var_0.collision.col_leg_r ) )
-            var_0.collision.col_leg_r _meth_804D( self, "arm_r" );
+            var_0.collision.col_leg_r linkto( self, "arm_r" );
 
         if ( isdefined( var_0.collision.col_leg_l ) )
-            var_0.collision.col_leg_l _meth_804D( self, "arm_l" );
+            var_0.collision.col_leg_l linkto( self, "arm_l" );
 
         if ( isdefined( var_0.collision.col_gun ) )
-            var_0.collision.col_gun _meth_804D( self, "tag_barrel" );
+            var_0.collision.col_gun linkto( self, "tag_barrel" );
     }
 }
 
@@ -273,19 +273,19 @@ sentry_lasermark()
 {
     level endon( "game_ended" );
     self waittill( "refraction_turret_moved_up" );
-    self.laser_tag _meth_80B2();
+    self.laser_tag laseron();
     self.laser_tag.origin = self gettagorigin( "tag_flash" );
     self.laser_tag.angles = self gettagangles( "tag_flash" );
-    self.laser_tag _meth_804D( self, "tag_flash" );
+    self.laser_tag linkto( self, "tag_flash" );
     self waittill( "fake_refraction_death" );
-    self.laser_tag _meth_80B3();
+    self.laser_tag laseroff();
 }
 
 turret_moveup()
 {
     wait(randomfloatrange( 1, 1.5 ));
     self.killcament = spawn( "script_model", self gettagorigin( "tag_player" ) );
-    self.killcament _meth_834D( "explosive" );
+    self.killcament setscriptmoverkillcam( "explosive" );
     self.lifter linkcollisiontoturret( self, 1 );
     var_0 = [];
     var_0["ref_turret_raise_doors_start"] = "ref_turret_raise_doors_start";
@@ -296,8 +296,8 @@ turret_moveup()
     var_0["ref_turret_doors_close_end"] = "ref_turret_doors_close_end";
     var_0["ref_turret_barrell_ext_start"] = "ref_turret_barrell_ext_start";
     var_0["ref_turret_barrell_ext_end"] = "ref_turret_barrell_ext_end";
-    self.hatch _meth_827B( self.hatch.animup );
-    self.lifter _meth_827B( self.lifter.animup, "ref_turret_raise_doors_start" );
+    self.hatch scriptmodelplayanimdeltamotion( self.hatch.animup );
+    self.lifter scriptmodelplayanimdeltamotion( self.lifter.animup, "ref_turret_raise_doors_start" );
     self.lifter thread maps\mp\_audio::snd_play_on_notetrack( var_0, "ref_turret_raise_doors_start" );
     thread playfxturretmoveup();
     thread playaudioturretmoveup();
@@ -348,8 +348,8 @@ turret_movedown( var_0 )
     var_1["ref_turret_doors_lock_end"] = "ref_turret_doors_lock_end";
     var_2 = self.hatch.angles + ( -90, 0, 0 );
     common_scripts\utility::noself_delaycall( 4.1, ::playfx, common_scripts\utility::getfx( "mp_ref_turret_steam_off" ), self.hatch.origin, anglestoforward( var_2 ), anglestoup( var_2 ) );
-    self.hatch _meth_827B( self.hatch.animdown );
-    self.lifter _meth_827B( self.lifter.animdown, "ref_turret_down_end" );
+    self.hatch scriptmodelplayanimdeltamotion( self.hatch.animdown );
+    self.lifter scriptmodelplayanimdeltamotion( self.lifter.animdown, "ref_turret_down_end" );
     self.lifter thread maps\mp\_audio::snd_play_on_notetrack( var_1, "ref_turret_down_end" );
     wait 4.64;
     waittillframeend;
@@ -359,8 +359,8 @@ turret_movedown( var_0 )
 
 sentry_setplaced()
 {
-    self _meth_8104( undefined );
-    self.carriedby _meth_80DE();
+    self setsentrycarrier( undefined );
+    self.carriedby forceusehintoff();
     self.carriedby = undefined;
 
     if ( isdefined( self.owner ) )
@@ -374,9 +374,9 @@ sentry_setplaced()
 sentry_setactive()
 {
     turret_moveup();
-    self _meth_82C0( 1 );
-    self _meth_82C1( 1 );
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setcandamage( 1 );
+    self setcanradiusdamage( 1 );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
 
     if ( level.sentrysettings[self.sentrytype].headicon )
     {
@@ -391,10 +391,10 @@ sentry_initsentry( var_0 )
 {
     self.sentrytype = var_0;
     self.canbeplaced = 1;
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
-    self _meth_8138();
-    self _meth_815A( 0.0 );
-    self _meth_817A( 1 );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
+    self maketurretinoperable();
+    self setdefaultdroppitch( 0.0 );
+    self setturretmodechangewait( 1 );
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
     thread maps\mp\killstreaks\_autosentry::sentry_handleuse();
     thread maps\mp\killstreaks\_autosentry::sentry_attacktargets();
@@ -408,11 +408,11 @@ sentry_handledeath()
         return;
 
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
-    self _meth_82C0( 0 );
-    self _meth_82C1( 0 );
-    self.laser_tag _meth_80B3();
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
+    self setcandamage( 0 );
+    self setcanradiusdamage( 0 );
+    self.laser_tag laseroff();
     turret_movedown();
     level.refraction_turrets_alive--;
 
@@ -423,13 +423,13 @@ sentry_handledeath()
 sentry_setowner( var_0 )
 {
     self.owner = var_0;
-    self _meth_8103( self.owner );
-    self _meth_8105( 1, self.sentrytype );
+    self setsentryowner( self.owner );
+    self setturretminimapvisible( 1, self.sentrytype );
 
     if ( level.teambased && isdefined( var_0 ) )
     {
         self.team = self.owner.team;
-        self _meth_8135( self.team );
+        self setturretteam( self.team );
     }
 
     thread sentry_handleownerdisconnect();

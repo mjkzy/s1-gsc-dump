@@ -16,7 +16,7 @@ post_load()
 
 start( var_0, var_1 )
 {
-    _func_0D3( "g_friendlyNameDist", 0 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
     level.player maps\captured_util::warp_to_start( var_0 );
     level.allies maps\captured_util::warp_allies( var_1, 1 );
     level._exit.final_player_rig = maps\_utility::spawn_anim_model( "player_rig" );
@@ -48,23 +48,23 @@ main_end_escape()
         var_5 = common_scripts\utility::array_add( var_5, maps\_utility::spawn_anim_model( "exit_helo_" + maps\_utility::string( var_6 ), level.player.origin ) );
 
     level.player freezecontrols( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8130( 0 );
-    level.player _meth_831D();
-    level.player _meth_8481();
+    level.player allowstand( 1 );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player allowjump( 0 );
+    level.player allowsprint( 0 );
+    level.player allowmelee( 0 );
+    level.player disableweapons();
+    level.player showviewmodel();
     level notify( "truck_dof" );
     common_scripts\utility::array_thread( common_scripts\utility::getstructarray( "ee_rpg_end", "targetname" ), ::ee_rpg_fire, var_2 );
     thread maps\captured_fx::fx_end_amb_fx();
-    level.player common_scripts\utility::delaycall( 1.15, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 9.75, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 10.2, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 11.0, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 32.5, ::_meth_80AD, "light_2s" );
-    level.player _meth_807D( var_4, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( 1.15, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 9.75, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 10.2, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 11.0, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 32.5, ::playrumbleonentity, "light_2s" );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 0, 0, 0, 0, 1 );
     var_4 show();
     level._exit.node maps\_anim::anim_single( var_5, "end_escape" );
     common_scripts\utility::flag_set( "flag_end_escape_end" );
@@ -87,5 +87,5 @@ end_fade_to_black( var_0 )
 
 end_change_fov( var_0 )
 {
-    level.player _meth_8031( 50, 3 );
+    level.player lerpfov( 50, 3 );
 }

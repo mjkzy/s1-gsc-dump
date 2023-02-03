@@ -58,12 +58,12 @@ onplayerspawn()
 {
     self.zm_perks = [];
     maps\mp\_utility::playerallowhighjumpdrop( 0, "exoSlam" );
-    self _meth_82FB( "ui_zm_exo_slam_next_time", 0 );
+    self setclientomnvar( "ui_zm_exo_slam_next_time", 0 );
 
     foreach ( var_1 in level.terminalitems )
     {
         if ( isdefined( var_1.omnvar ) )
-            self _meth_82FB( var_1.omnvar, 0 );
+            self setclientomnvar( var_1.omnvar, 0 );
     }
 
     perkupdatesortorder();
@@ -86,9 +86,9 @@ precacheterminalanims()
 {
     if ( getiteminmap( "host_cure" ) )
     {
-        map_restart( "xom_host_cure_station_start" );
-        map_restart( "xom_host_cure_station_loop" );
-        map_restart( "xom_host_cure_station_stop" );
+        precachempanim( "xom_host_cure_station_start" );
+        precachempanim( "xom_host_cure_station_loop" );
+        precachempanim( "xom_host_cure_station_stop" );
     }
 }
 
@@ -480,12 +480,12 @@ terminalhintstringupdate( var_0 )
     {
         waittillframeend;
         var_1 = getterminalhintstring( var_0 );
-        self _meth_80DB( var_1 );
+        self sethintstring( var_1 );
         var_2 = getterminalsecondaryhintstring( var_0 );
-        self _meth_80DC( var_2 );
+        self setsecondaryhintstring( var_2 );
         maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( getitemcost( self.itemtype ) ) );
         maps\mp\zombies\_util::tokenhintstring( self.showtokenstring );
-        self _meth_80DA( "HINT_NOICON" );
+        self setcursorhint( "HINT_NOICON" );
         var_0 common_scripts\utility::waittill_any( "terminal_activated", "terminalPlayerConnected", "terminalPlayerDisconnected", "terminalPowerActivated", "player_infected", "take_perk" );
     }
 }
@@ -511,7 +511,7 @@ cg_terminalhintstringupdate( var_0 )
 
     for (;;)
     {
-        while ( !var_0 _meth_80A9( self ) )
+        while ( !var_0 istouching( self ) )
             wait 0.1;
 
         waittillframeend;
@@ -528,7 +528,7 @@ cg_terminalwaittilltriggerexit( var_0 )
     var_0 endon( "terminalStateChange" );
     childthread cg_terminalwaittillstatechange( var_0 );
 
-    while ( var_0 _meth_80A9( self ) )
+    while ( var_0 istouching( self ) )
         wait 0.1;
 
     return;
@@ -548,11 +548,11 @@ terminalupdatehintstringsmulticlient()
     for (;;)
     {
         waittillframeend;
-        self _meth_80DA( "HINT_NOICON" );
+        self setcursorhint( "HINT_NOICON" );
         var_0 = getterminalhintstring();
-        self _meth_80DB( var_0 );
+        self sethintstring( var_0 );
         var_1 = getterminalsecondaryhintstring();
-        self _meth_80DC( var_1 );
+        self setsecondaryhintstring( var_1 );
         maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( getitemcost( self.itemtype ) ) );
         maps\mp\zombies\_util::tokenhintstring( self.showtokenstring );
         level common_scripts\utility::waittill_any( "terminal_activated", "terminalPlayerConnected", "terminalPowerActivated", "player_infected", "terminal_cooldown_ended", "terminal_cooldown_started", "terminal_disabled", "terminal_reenabled" );
@@ -627,7 +627,7 @@ initterminals( var_0, var_1, var_2 )
             var_6 = var_5 getterminallight();
 
             if ( isdefined( var_6 ) )
-                var_6 _meth_81DF( 0 );
+                var_6 setlightintensity( 0 );
 
             var_5 delete();
             continue;
@@ -723,11 +723,11 @@ atmterminalthink()
     for (;;)
     {
         self.active = 0;
-        self _meth_80DB( &"ZOMBIES_EMPTY_STRING" );
+        self sethintstring( &"ZOMBIES_EMPTY_STRING" );
         self waittill( "atm_on" );
         self.activationcount++;
         self.active = 1;
-        self _meth_80DB( getitemlocbuy( self.itemtype ) );
+        self sethintstring( getitemlocbuy( self.itemtype ) );
         self waittill( "trigger", var_1 );
         self.usedcount++;
         var_2 = randomfloat( 1 ) < var_0 || self.forcejackpot;
@@ -735,7 +735,7 @@ atmterminalthink()
         if ( var_2 )
         {
             self.forcejackpot = 0;
-            self _meth_80DB( &"ZOMBIES_EMPTY_STRING" );
+            self sethintstring( &"ZOMBIES_EMPTY_STRING" );
             atmjackpot();
         }
         else
@@ -755,7 +755,7 @@ atmjackpot()
     playsoundatpos( self.modelent.origin, "cash_machine_malfunction" );
     maps\mp\zombies\_zombies_audio_announcer::announcerjackpotdialog( self.modelent.origin );
     wait 5;
-    var_0 _meth_8075( "cash_machine_malfunction_loop" );
+    var_0 playloopsound( "cash_machine_malfunction_loop" );
     var_1 = 120;
     var_2 = var_1 * var_1;
     var_3 = 0.5;
@@ -765,7 +765,7 @@ atmjackpot()
     {
         foreach ( var_7 in level.players )
         {
-            var_8 = _func_220( var_7.origin, self.modelent.origin );
+            var_8 = distance2dsquared( var_7.origin, self.modelent.origin );
 
             if ( var_8 > var_2 )
                 continue;
@@ -785,7 +785,7 @@ atmjackpot()
     }
 
     playsoundatpos( self.modelent.origin, "cash_machine_malfunction_end" );
-    var_0 _meth_80AB();
+    var_0 stoploopsound();
     waitframe();
     var_0 delete();
 }
@@ -794,34 +794,34 @@ atmterminalfx()
 {
     for (;;)
     {
-        self.modelent _meth_8048( "TAG_SCREEN_ON" );
-        self.modelent _meth_804B( "TAG_SCREEN_OFF" );
+        self.modelent hidepart( "TAG_SCREEN_ON" );
+        self.modelent showpart( "TAG_SCREEN_OFF" );
         thread audio_stop_atm_attract();
         self waittill( "atm_on" );
-        self.modelent _meth_8048( "TAG_SCREEN_OFF" );
-        self.modelent _meth_804B( "TAG_SCREEN_ON" );
-        self _meth_806F( 1, 1 );
-        self _meth_8075( "interact_credit_machine_attract" );
+        self.modelent hidepart( "TAG_SCREEN_OFF" );
+        self.modelent showpart( "TAG_SCREEN_ON" );
+        self scalevolume( 1, 1 );
+        self playloopsound( "interact_credit_machine_attract" );
         self waittill( "atm_off" );
     }
 }
 
 audio_stop_atm_attract()
 {
-    self _meth_806F( 0, 1 );
+    self scalevolume( 0, 1 );
     wait 1;
-    self _meth_80AB();
+    self stoploopsound();
 }
 
 perkterminalhas( var_0 )
 {
-    return self _meth_82A7( var_0, 1 );
+    return self hasperk( var_0, 1 );
 }
 
 perkterminalset( var_0, var_1 )
 {
     maps\mp\_utility::giveperk( var_0, 0 );
-    self _meth_80AD( "damage_heavy" );
+    self playrumbleonentity( "damage_heavy" );
 }
 
 perkterminaltake( var_0 )
@@ -855,7 +855,7 @@ perkterminaltakeexohealth( var_0 )
 
 perkterminalhasexostabilizer( var_0 )
 {
-    return self _meth_82A7( "specialty_bulletaccuracy", 1 );
+    return self hasperk( "specialty_bulletaccuracy", 1 );
 }
 
 perkterminalsetexostabilizer( var_0, var_1 )
@@ -908,7 +908,7 @@ perkterminalsetexoslam( var_0, var_1 )
 {
     self.isexoslamactive = 1;
     maps\mp\_utility::playerallowhighjumpdrop( 1, "exoSlam" );
-    self _meth_82FB( "ui_zm_exo_slam_next_time", 0 );
+    self setclientomnvar( "ui_zm_exo_slam_next_time", 0 );
     var_2 = maps\mp\gametypes\zombies::getexosuitperkweaponname( "slam" );
     var_3 = maps\mp\gametypes\zombies::getexosuitperkweaponduration();
     maps\mp\gametypes\zombies::playweaponflourish( var_2, var_3 );
@@ -919,12 +919,12 @@ perkterminaltakeexoslam( var_0 )
     self.isexoslamactive = 0;
     self.exoslamnextusetime = undefined;
     maps\mp\_utility::playerallowhighjumpdrop( 0, "exoSlam" );
-    self _meth_82FB( "ui_zm_exo_slam_next_time", 0 );
+    self setclientomnvar( "ui_zm_exo_slam_next_time", 0 );
 }
 
 perkterminalhasexofastreload( var_0 )
 {
-    return self _meth_82A7( "specialty_fastreload", 1 );
+    return self hasperk( "specialty_fastreload", 1 );
 }
 
 perkterminalsetexofastreload( var_0, var_1 )
@@ -944,7 +944,7 @@ perkterminaltakeexofastreload( var_0 )
 
 perkterminalhasexotacticalarmor( var_0 )
 {
-    return self _meth_82A7( "specialty_stockpile", 1 );
+    return self hasperk( "specialty_stockpile", 1 );
 }
 
 perkterminalsetexotacticalarmor( var_0, var_1 )
@@ -962,23 +962,23 @@ perkterminaltakeexotacticalarmor( var_0 )
     maps\mp\_utility::_unsetperk( "specialty_stockpile" );
     maps\mp\_utility::_unsetperk( "specialty_extralethal" );
     maps\mp\_utility::_unsetperk( "specialty_extratactical" );
-    var_1 = self _meth_830B();
+    var_1 = self getweaponslistall();
 
     foreach ( var_3 in var_1 )
     {
-        var_4 = self _meth_82F8( var_3 );
+        var_4 = self getweaponammoclip( var_3 );
         var_5 = weaponclipsize( var_3, self );
 
         if ( var_4 > var_5 )
-            self _meth_82F6( var_3, var_4 );
+            self setweaponammoclip( var_3, var_4 );
 
-        if ( !_func_1E3( var_3 ) )
+        if ( !isweaponcliponly( var_3 ) )
         {
-            var_6 = self _meth_82F9( var_3 );
-            var_7 = _func_1E1( var_3, self );
+            var_6 = self setweaponammostock( var_3 );
+            var_7 = weaponmaxammo( var_3, self );
 
             if ( var_6 > var_7 )
-                self _meth_82F7( var_3, var_6 );
+                self setweaponammostock( var_3, var_6 );
         }
     }
 
@@ -1004,9 +1004,9 @@ perkterminaltakeexotacticalarmor( var_0 )
             if ( common_scripts\utility::string_find( var_14, "akimbo" ) && isdefined( var_11["ammoclipleft"] ) && var_11["ammoclipleft"] > var_12 )
                 self.primaryweaponsammo[var_14]["ammoclipleft"] = var_12;
 
-            if ( !_func_1E3( var_14 ) )
+            if ( !isweaponcliponly( var_14 ) )
             {
-                var_13 = _func_1E1( var_14, self );
+                var_13 = weaponmaxammo( var_14, self );
 
                 if ( var_11["ammostock"] > var_13 )
                     self.primaryweaponsammo[var_14]["ammostock"] = var_13;
@@ -1021,7 +1021,7 @@ perkterminalusershostcure()
 
     foreach ( var_2 in level.players )
     {
-        if ( maps\mp\zombies\_util::isplayerinfected( var_2 ) && var_2 _meth_80A9( self.curetrigger ) )
+        if ( maps\mp\zombies\_util::isplayerinfected( var_2 ) && var_2 istouching( self.curetrigger ) )
             var_0[var_0.size] = var_2;
     }
 
@@ -1029,10 +1029,10 @@ perkterminalusershostcure()
 
     foreach ( var_6 in var_4 )
     {
-        if ( isdefined( var_6.agent_type ) && var_6.agent_type == "zombie_host" && var_6 _meth_80A9( self.curetrigger ) )
+        if ( isdefined( var_6.agent_type ) && var_6.agent_type == "zombie_host" && var_6 istouching( self.curetrigger ) )
             var_0[var_0.size] = var_6;
 
-        if ( isdefined( level.hostcurefuncoverride ) && isdefined( level.hostcurefuncoverride[var_6.agent_type] ) && var_6 _meth_80A9( self.curetrigger ) )
+        if ( isdefined( level.hostcurefuncoverride ) && isdefined( level.hostcurefuncoverride[var_6.agent_type] ) && var_6 istouching( self.curetrigger ) )
             var_0[var_0.size] = var_6;
     }
 
@@ -1052,13 +1052,13 @@ perkterminalactivatehostcureanim( var_0 )
 
     level notify( "cure_station_active" );
     var_1 = gettime();
-    self.curemodel _meth_8279( "xom_host_cure_station_start", "curestation" );
+    self.curemodel scriptmodelplayanim( "xom_host_cure_station_start", "curestation" );
     self.curemodel playsound( "interact_decontam_zone" );
     self.curemodel waittillmatch( "curestation", "end" );
     thread audio_decontam_attract_in_use_start( self.curemodel );
-    self.curemodel _meth_8279( "xom_host_cure_station_loop" );
+    self.curemodel scriptmodelplayanim( "xom_host_cure_station_loop" );
     wait(var_0 - ( gettime() - var_1 ) / 1000);
-    self.curemodel _meth_8279( "xom_host_cure_station_stop" );
+    self.curemodel scriptmodelplayanim( "xom_host_cure_station_stop" );
     wait 10;
     self.curemodel playsound( "interact_decontam_zone_ready" );
     thread audio_decontam_attract_in_use_stop( self.curemodel );
@@ -1076,13 +1076,13 @@ perkterminalactivatehostcurefx( var_0 )
 perkterminalsethostcure( var_0, var_1 )
 {
     self notify( "cured", 1 );
-    self _meth_8218( 1, 0.5 );
+    self setwatersheeting( 1, 0.5 );
     var_2 = common_scripts\utility::getstructarray( "host_cure_teleport", "targetname" );
 
     if ( var_2.size )
     {
         var_3 = common_scripts\utility::random( var_2 );
-        self _meth_8092();
+        self dontinterpolate();
         self setorigin( var_3.origin );
         self setangles( var_3.angles );
     }
@@ -1107,7 +1107,7 @@ perkterminalsethostcurezombie( var_0, var_1 )
 
     level.zombiehostcures++;
     level.lastzombiehostcuretime = gettime();
-    self _meth_826B();
+    self suicide();
 }
 
 givecurestationachievement()
@@ -1132,28 +1132,28 @@ perkterminalhostcuredisabled()
 
 audio_decontam_attract_on( var_0 )
 {
-    var_0 _meth_806F( 1, 0.25 );
-    var_0 _meth_8075( "interact_decontam_zone_attract" );
+    var_0 scalevolume( 1, 0.25 );
+    var_0 playloopsound( "interact_decontam_zone_attract" );
 }
 
 audio_decontam_attract_in_use_start( var_0 )
 {
-    var_0 _meth_806F( 0, 0.5 );
+    var_0 scalevolume( 0, 0.5 );
 }
 
 audio_decontam_attract_in_use_stop( var_0 )
 {
-    var_0 _meth_806F( 1, 1 );
+    var_0 scalevolume( 1, 1 );
 }
 
 audio_decontam_attract_disable( var_0 )
 {
-    var_0 _meth_806F( 0, 0.5 );
+    var_0 scalevolume( 0, 0.5 );
 }
 
 playergivepostexoequipment()
 {
-    var_0 = self _meth_8345();
+    var_0 = self getlethalweapon();
 
     if ( isdefined( var_0 ) )
     {
@@ -1161,13 +1161,13 @@ playergivepostexoequipment()
 
         if ( isdefined( var_1 ) && var_1 != var_0 )
         {
-            var_2 = self _meth_82F8( var_0 );
+            var_2 = self getweaponammoclip( var_0 );
             maps\mp\zombies\_wall_buys::givezombieequipment( self, var_1, 0 );
-            self _meth_82F6( var_1, var_2 );
+            self setweaponammoclip( var_1, var_2 );
         }
     }
 
-    var_3 = self _meth_831A();
+    var_3 = self gettacticalweapon();
 
     if ( isdefined( var_3 ) )
     {
@@ -1175,9 +1175,9 @@ playergivepostexoequipment()
 
         if ( isdefined( var_4 ) && var_4 != var_3 )
         {
-            var_2 = self _meth_82F8( var_3 );
+            var_2 = self getweaponammoclip( var_3 );
             maps\mp\zombies\_wall_buys::givezombieequipment( self, var_4, 0 );
-            self _meth_82F6( var_4, var_2 );
+            self setweaponammoclip( var_4, var_2 );
         }
     }
 }
@@ -1296,13 +1296,13 @@ perkterminalofffx()
 perkterminallighton()
 {
     if ( isdefined( self.light ) )
-        self.light _meth_8044( ( 0.501, 1, 1 ) );
+        self.light setlightcolor( ( 0.501, 1, 1 ) );
 }
 
 perkterminallightoff()
 {
     if ( isdefined( self.light ) )
-        self.light _meth_8044( ( 1, 0, 0 ) );
+        self.light setlightcolor( ( 1, 0, 0 ) );
 }
 
 perkterminaltriggerthink()
@@ -1377,26 +1377,26 @@ perkterminalattractaudioon()
         switch ( self.itemtype )
         {
             case "exo_health":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             case "exo_revive":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             case "exo_slam":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             case "exo_suit":
-                self _meth_8075( "interact_exo_buy_attract" );
+                self playloopsound( "interact_exo_buy_attract" );
                 self playsound( "exo_station_restored" );
                 break;
             case "exo_stabilizer":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             case "specialty_fastreload":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             case "exo_tacticalArmor":
-                self _meth_8075( "interact_exo_upgrade_attract" );
+                self playloopsound( "interact_exo_upgrade_attract" );
                 break;
             default:
                 break;
@@ -1413,7 +1413,7 @@ perkterminalcuremodellighton()
 {
     if ( isdefined( self.light ) && isdefined( self.light.lightonintensity ) && isdefined( self.light.ison ) && !self.light.ison )
     {
-        self.light _meth_81DF( self.light.lightonintensity );
+        self.light setlightintensity( self.light.lightonintensity );
         self.light.ison = 1;
     }
 }
@@ -1422,7 +1422,7 @@ perkterminalcuremodellightoff()
 {
     if ( isdefined( self.light ) && isdefined( self.light.lightoffintensity ) && isdefined( self.light.ison ) && self.light.ison )
     {
-        self.light _meth_81DF( self.light.lightoffintensity );
+        self.light setlightintensity( self.light.lightoffintensity );
         self.light.ison = 0;
     }
 }
@@ -1461,7 +1461,7 @@ perkterminalupdatehostcure()
         if ( isdefined( var_0 ) && var_0.code_classname == "light" )
         {
             self.curemodel.light = var_0;
-            self.curemodel.light.lightonintensity = self.curemodel.light _meth_81DE();
+            self.curemodel.light.lightonintensity = self.curemodel.light getlightintensity();
             self.curemodel.light.lightoffintensity = 0.1;
             self.curemodel.light.ison = 1;
             self.curemodel perkterminalcuremodellightoff();
@@ -1565,8 +1565,8 @@ perkterminalupdatehostcureicon()
         if ( !var_0 && var_3 )
         {
             var_1 = newhudelem();
-            var_1 _meth_80CC( "waypoint_cure_zone", 8, 8 );
-            var_1 _meth_80D8( 1, 1 );
+            var_1 setshader( "waypoint_cure_zone", 8, 8 );
+            var_1 setwaypoint( 1, 1 );
             var_1.x = self.curemodel.origin[0];
             var_1.y = self.curemodel.origin[1];
             var_1.z = self.curemodel.origin[2] + 70;
@@ -1678,14 +1678,14 @@ perkterminalgive( var_0, var_1, var_2, var_3 )
     {
         var_0 thread maps\mp\zombies\_zombies_audio::playerexosuitrejected( var_1, "no_suit" );
         var_0 playsoundtoplayer( "ui_button_error", var_0 );
-        var_0 iclientprintlnbold( &"ZOMBIES_NEED_EXO_SUIT" );
+        var_0 iprintlnbold( &"ZOMBIES_NEED_EXO_SUIT" );
         return;
     }
 
     if ( isdefined( var_14 ) && var_0 [[ var_14 ]]( var_1 ) )
     {
         if ( isdefined( var_4 ) )
-            var_0 iclientprintlnbold( var_4 );
+            var_0 iprintlnbold( var_4 );
 
         return;
     }
@@ -1699,9 +1699,9 @@ perkterminalgive( var_0, var_1, var_2, var_3 )
         var_17 = ceil( var_17 / 1000 );
 
         if ( var_17 > 1 )
-            var_0 iclientprintlnbold( &"ZOMBIES_TERMINAL_COOLDOWN_SECS", var_17 );
+            var_0 iprintlnbold( &"ZOMBIES_TERMINAL_COOLDOWN_SECS", var_17 );
         else
-            var_0 iclientprintlnbold( &"ZOMBIES_TERMINAL_COOLDOWN_SEC", var_17 );
+            var_0 iprintlnbold( &"ZOMBIES_TERMINAL_COOLDOWN_SEC", var_17 );
 
         return;
     }
@@ -1752,12 +1752,12 @@ perkterminalgive( var_0, var_1, var_2, var_3 )
                 var_23 = getitemomnvar( var_1 );
 
                 if ( isdefined( var_23 ) )
-                    var_22 _meth_82FB( var_23, 1 );
+                    var_22 setclientomnvar( var_23, 1 );
 
                 if ( var_1 != "exo_suit" )
                     var_0 thread maps\mp\zombies\_zombies_audio::moneyspend();
 
-                var_22 iclientprintlnbold( getitemlocname( var_1 ) );
+                var_22 iprintlnbold( getitemlocname( var_1 ) );
                 var_22 [[ var_15 ]]( var_1, var_0 );
                 level notify( "terminal_player", var_1, self.origin, var_0 );
 
@@ -1818,7 +1818,7 @@ perkupdatesortorder()
         var_1 *= 10;
     }
 
-    self _meth_82FB( "ui_zm_perk_order", var_0 );
+    self setclientomnvar( "ui_zm_perk_order", var_0 );
 }
 
 perkgetindex( var_0 )
@@ -1866,7 +1866,7 @@ perkterminaltakewait( var_0, var_1, var_2 )
     var_3 = getitemomnvar( var_0 );
 
     if ( isdefined( var_3 ) )
-        self _meth_82FB( var_3, 0 );
+        self setclientomnvar( var_3, 0 );
 
     perkupdatesortorder();
 }
@@ -2006,7 +2006,7 @@ zombiegroundslamcommon( var_0, var_1 )
 
         if ( isdefined( var_1 ) && !var_1 maps\mp\zombies\_util::instakillimmune() )
         {
-            var_1 _meth_8051( var_1.health, self.origin, self, self, "MOD_TRIGGER_HURT", "boost_slam_mp" );
+            var_1 dodamage( var_1.health, self.origin, self, self, "MOD_TRIGGER_HURT", "boost_slam_mp" );
             playfx( common_scripts\utility::getfx( "gib_full_body" ), var_1.origin, ( 1, 0, 0 ) );
         }
 
@@ -2018,12 +2018,12 @@ zombiegroundslamcommon( var_0, var_1 )
 
         thread groudslamcooldown( var_8 );
         self.exoslamnextusetime = gettime() + int( var_8 * 1000 );
-        self _meth_82FB( "ui_zm_exo_slam_next_time", self.exoslamnextusetime );
+        self setclientomnvar( "ui_zm_exo_slam_next_time", self.exoslamnextusetime );
         var_9 = ( var_0 - var_2 ) / ( var_3 - var_2 );
         var_9 = clamp( var_9, 0.0, 1.0 );
         var_10 = ( var_7 - var_6 ) * var_9 + var_6;
         var_11 = level.agentclasses["zombie_generic"].roundhealth;
-        self entityradiusdamage( self.origin, var_10, var_5 * var_11, var_4 * var_11, self, "MOD_EXPLOSIVE", "boost_slam_mp" );
+        self radiusdamage( self.origin, var_10, var_5 * var_11, var_4 * var_11, self, "MOD_EXPLOSIVE", "boost_slam_mp" );
         physicsexplosionsphere( self.origin, var_10, 20, 1 );
         playfx( common_scripts\utility::getfx( "zombie_exo_slam" ), self.origin );
     }

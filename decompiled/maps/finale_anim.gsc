@@ -150,7 +150,6 @@ load_player_anims()
     maps\_anim::addnotetrack_customfunction( "world_body_damaged_no_exo", "fade_black", ::bridge_takedown_fail_fade, "bridge_takedown_fail" );
     level.scr_anim["world_body_damaged_no_exo"]["bridge_takedown_success"] = %fin_bridge_takedown_success_vm;
     maps\_anim::addnotetrack_customfunction( "world_body_damaged_no_exo", "end_slo_mo", ::ending_slowmo_end, "bridge_takedown_success" );
-    maps\_anim::addnotetrack_customfunction( "world_body_damaged_no_exo", "end_slo_mo", maps\finale_code::rooftop_rpg_wave_2, "bridge_takedown_success" );
     level.scr_anim["world_body"]["irons_end"] = %fin_final_vm;
     level.scr_anim["world_body"]["irons_end_pt2"] = %fin_final_pt2_vm;
     level.scr_anim["world_body"]["rocket_body"] = %finale_rocket_pushback;
@@ -485,7 +484,7 @@ mech_exit_fade_out( var_0 )
 
 will_reveal_fov_default( var_0 )
 {
-    level.player _meth_8031( 65, 2.5 );
+    level.player lerpfov( 65, 2.5 );
 }
 
 bridge_takedown_fail_fade( var_0 )
@@ -620,7 +619,7 @@ notetrack_aud_shoot_missile_start( var_0 )
 
 notetrack_irons_reveal_lerp_fov_out( var_0 )
 {
-    level.player _meth_8031( 65, 1 );
+    level.player lerpfov( 65, 1 );
 }
 
 notetrack_close_elevator_doors( var_0 )
@@ -656,7 +655,7 @@ notetrack_final_part5_success_slomo( var_0 )
 
 notrack_final_part5_body_swap( var_0 )
 {
-    level.player_rig _meth_80B1( "viewbody_sentinel_pilot_mitchell_nub" );
+    level.player_rig setmodel( "viewbody_sentinel_pilot_mitchell_nub" );
 }
 
 notetrack_final_fail_slowmo( var_0 )
@@ -672,7 +671,7 @@ notetrack_fade_to_white_fail( var_0 )
     level.player.strikewhitefade = newclienthudelem( level.player );
     level.player.strikewhitefade.x = 0;
     level.player.strikewhitefade.y = 0;
-    level.player.strikewhitefade _meth_80CC( "white", 640, 480 );
+    level.player.strikewhitefade setshader( "white", 640, 480 );
     level.player.strikewhitefade.alignx = "left";
     level.player.strikewhitefade.aligny = "top";
     level.player.strikewhitefade.horzalign = "fullscreen";
@@ -684,27 +683,27 @@ notetrack_fade_to_white_fail( var_0 )
 
 notetrack_fov_end( var_0 )
 {
-    level.player _meth_8031( 50, 1 );
+    level.player lerpfov( 50, 1 );
 }
 
 notetrack_rumble_light( var_0 )
 {
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 notetrack_rumble_moderate( var_0 )
 {
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 notetrack_rumble_heavy( var_0 )
 {
-    level.player _meth_80AD( "light_1s" );
+    level.player playrumbleonentity( "light_1s" );
 }
 
 notetrack_rumble_intense( var_0 )
 {
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 }
 
 notetrack_rumble_moderate_on_gideon( var_0 )
@@ -712,11 +711,11 @@ notetrack_rumble_moderate_on_gideon( var_0 )
     var_1 = distance( level.player.origin, level.gideon.origin );
 
     if ( var_1 < 75 )
-        level.player _meth_80AD( "heavy_1s" );
+        level.player playrumbleonentity( "heavy_1s" );
     else if ( var_1 < 125 )
-        level.player _meth_80AD( "light_1s" );
+        level.player playrumbleonentity( "light_1s" );
     else if ( var_1 < 175 )
-        level.player _meth_80AD( "damage_heavy" );
+        level.player playrumbleonentity( "damage_heavy" );
     else if ( var_1 < 225 )
-        level.player _meth_80AD( "damage_light" );
+        level.player playrumbleonentity( "damage_light" );
 }

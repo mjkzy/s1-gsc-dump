@@ -249,7 +249,7 @@ training_escape_gideon_punch( var_0 )
 {
     wait 0.005;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "j_mid_le_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "j_mid_le_1", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "recovery_gideon_hit" ), var_1, "tag_origin" );
     wait 3;
     var_1 delete();
@@ -301,7 +301,7 @@ titan_gate_tread_fx( var_0 )
 {
     wait 2;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "ankle_fr", ( -50, 0, 10 ), ( 0, 0, 0 ) );
+    var_1 linkto( var_0, "ankle_fr", ( -50, 0, 10 ), ( 0, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "titan_tread_kickup_front" ), var_1, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "titan_tread_kickup_front" ), var_0, "ankle_fl" );
     playfxontag( common_scripts\utility::getfx( "titan_tread_kickup_back" ), var_0, "ankle_KR" );
@@ -315,7 +315,7 @@ titan_impact_fx_fl( var_0 )
 {
     wait 0.3;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "frontWheelTread07_FL", ( 0, 0, 0 ), ( -16, 180, -10 ) );
+    var_1 linkto( var_0, "frontWheelTread07_FL", ( 0, 0, 0 ), ( -16, 180, -10 ) );
     playfxontag( common_scripts\utility::getfx( "walker_tank_footstep_dust" ), var_1, "tag_origin" );
     earthquake( 0.15, 1.8, var_0.origin, 2000 );
     level notify( "titan_rumble" );
@@ -327,7 +327,7 @@ titan_impact_fx_fr( var_0 )
 {
     wait 0.3;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "frontWheelTread07_FR", ( 0, 0, 0 ), ( 45, 0, 0 ) );
+    var_1 linkto( var_0, "frontWheelTread07_FR", ( 0, 0, 0 ), ( 45, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "walker_tank_footstep_dust" ), var_1, "tag_origin" );
     earthquake( 0.15, 1.8, var_0.origin, 2000 );
     level notify( "titan_rumble" );
@@ -339,7 +339,7 @@ titan_impact_fx_rr( var_0 )
 {
     wait 0.3;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "frontWheelTread06_kR", ( 0, 0, 0 ), ( 0, 180, 0 ) );
+    var_1 linkto( var_0, "frontWheelTread06_kR", ( 0, 0, 0 ), ( 0, 180, 0 ) );
     playfxontag( common_scripts\utility::getfx( "walker_tank_footstep_dust" ), var_1, "tag_origin" );
     earthquake( 0.15, 1.8, var_0.origin, 2000 );
     wait 90;
@@ -350,7 +350,7 @@ titan_impact_fx_rl( var_0 )
 {
     wait 0.3;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "frontWheelTread06_KL", ( 100, 0, 100 ), ( 0, 180, 0 ) );
+    var_1 linkto( var_0, "frontWheelTread06_KL", ( 100, 0, 100 ), ( 0, 180, 0 ) );
     playfxontag( common_scripts\utility::getfx( "walker_tank_footstep_dust" ), var_1, "tag_origin" );
     earthquake( 0.15, 1.8, var_0.origin, 2000 );
     wait 90;
@@ -368,10 +368,10 @@ exo_push_sparks01( var_0 )
     level endon( "flag_obj_firing_range_pre" );
     wait 0.8;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "hook_t", ( -46, 111, -125 ), ( 0, -90, 0 ) );
+    var_1 linkto( var_0, "hook_t", ( -46, 111, -125 ), ( 0, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sparks_friction" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "hook_t", ( -46, -18, -125 ), ( 0, -90, 0 ) );
+    var_2 linkto( var_0, "hook_t", ( -46, -18, -125 ), ( 0, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sparks_friction" ), var_2, "tag_origin" );
     wait 3.5;
     var_1 delete();
@@ -389,10 +389,10 @@ exo_push_sparks02( var_0 )
     level endon( "flag_obj_firing_range_pre" );
     wait 0.6;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "hook_t", ( -46, 111, -125 ), ( 0, -90, 0 ) );
+    var_1 linkto( var_0, "hook_t", ( -46, 111, -125 ), ( 0, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sparks_friction" ), var_1, "tag_origin" );
     var_2 = common_scripts\utility::spawn_tag_origin();
-    var_2 _meth_804D( var_0, "hook_t", ( -46, -15, -125 ), ( 0, -90, 0 ) );
+    var_2 linkto( var_0, "hook_t", ( -46, -15, -125 ), ( 0, -90, 0 ) );
     playfxontag( common_scripts\utility::getfx( "sparks_friction" ), var_2, "tag_origin" );
     wait 7;
     var_1 delete();

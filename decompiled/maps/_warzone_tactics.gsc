@@ -45,7 +45,7 @@ monitor_tactics_mode()
 
     for (;;)
     {
-        if ( level.player _meth_824C( "DPAD_UP" ) )
+        if ( level.player buttonpressed( "DPAD_UP" ) )
         {
             foreach ( var_1 in level.tactics_objects )
             {
@@ -91,7 +91,7 @@ change_to_tactics_models()
     foreach ( var_1 in level.tactics_objects )
     {
         if ( isdefined( var_1 ) )
-            var_1 _meth_80B1( var_1.tactics_model );
+            var_1 setmodel( var_1.tactics_model );
     }
 }
 
@@ -100,7 +100,7 @@ change_to_original_models()
     foreach ( var_1 in level.tactics_objects )
     {
         if ( isdefined( var_1 ) )
-            var_1 _meth_80B1( var_1.original_model );
+            var_1 setmodel( var_1.original_model );
     }
 }
 
@@ -142,7 +142,7 @@ draw_text_hud_objective( var_0 )
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1 linkto_with_world_offset( self, undefined, ( 0, 0, 72 ) );
     var_2 = newclienthudelem( var_0 );
-    var_2 _meth_80CD( var_1 );
+    var_2 settargetent( var_1 );
     var_2.positioninworld = 1;
     var_2 settext( self.description );
     var_2.color = ( 1, 0.44, 0.39 );
@@ -168,7 +168,7 @@ draw_text_hud_tool( var_0 )
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1 linkto_with_world_offset( self, undefined, ( 0, 0, 72 ) );
     var_2 = newclienthudelem( var_0 );
-    var_2 _meth_80CD( var_1 );
+    var_2 settargetent( var_1 );
     var_2.positioninworld = 1;
     var_2 settext( self.description );
     var_2.color = ( 0.3, 1, 0.6 );
@@ -179,7 +179,7 @@ draw_text_hud_tool( var_0 )
     var_2 thread scale_3d_hud_elem( var_1, var_0 );
     var_2 setpulsefx( 60, 999999, 0 );
     var_3 = newclienthudelem( var_0 );
-    var_3 _meth_80CD( var_1 );
+    var_3 settargetent( var_1 );
     var_3.positioninworld = 1;
     var_3.color = ( 0.3, 1, 0.6 );
     var_3.alpha = 0.5;
@@ -211,7 +211,7 @@ scale_3d_hud_elem( var_0, var_1 )
 
     for (;;)
     {
-        self.fontscale = maps\_shg_utility::linear_map_clamp( distance( var_0.origin, var_1 _meth_80A8() ), 16, 1024, 2.5, 1.5 );
+        self.fontscale = maps\_shg_utility::linear_map_clamp( distance( var_0.origin, var_1 geteye() ), 16, 1024, 2.5, 1.5 );
         waitframe();
     }
 }
@@ -223,7 +223,7 @@ hud_elem_update_distance( var_0, var_1 )
 
     for (;;)
     {
-        var_2 = distance( var_0.origin, var_1 _meth_80A8() ) / 39.3701;
+        var_2 = distance( var_0.origin, var_1 geteye() ) / 39.3701;
         self settext( int( var_2 + 0.5 ) );
         waitframe();
     }

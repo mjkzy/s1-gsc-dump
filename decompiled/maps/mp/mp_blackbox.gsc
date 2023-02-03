@@ -218,7 +218,7 @@ isoutofbounds()
 
     for ( var_1 = 0; var_1 < var_0.size; var_1++ )
     {
-        if ( !self.visuals[0] _meth_80A9( var_0[var_1] ) )
+        if ( !self.visuals[0] istouching( var_0[var_1] ) )
             continue;
 
         return 1;

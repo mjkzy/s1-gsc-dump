@@ -31,7 +31,7 @@ init_local()
     thread vehicle_scripts\_attack_drone_aud::attack_drone_queen_audio();
     thread attack_drone_queen_flying_fx();
     self hide();
-    self _meth_83F3();
+    self makevehiclenotcollidewithplayers();
 }
 
 attack_drone_queen_flying_fx()

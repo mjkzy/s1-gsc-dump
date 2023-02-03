@@ -3,7 +3,7 @@
 
 init()
 {
-    precacheitem( "s1_exo_shield_sp" );
+    precacheshellshock( "s1_exo_shield_sp" );
     precacheshader( "dpad_icon_shield" );
     precacheshader( "dpad_icon_shield_off" );
     level.player maps\_utility::set_unstorable_weapon( "s1_exo_shield_sp" );
@@ -71,7 +71,7 @@ enable_shield_ability()
     state_change( "idle" );
     var_0 = get_exo_shield_params();
     update_exo_shield_icon();
-    level.player _meth_82DD( "exo_shield_toggle", "+actionslot 2" );
+    level.player notifyonplayercommand( "exo_shield_toggle", "+actionslot 2" );
 
     for (;;)
     {
@@ -93,7 +93,7 @@ enable_shield_ability()
 disable_shield_ability()
 {
     var_0 = get_exo_shield_params();
-    level.player _meth_821B( "actionslot2", "dpad_icon_shield_off" );
+    level.player setweaponhudiconoverride( "actionslot2", "dpad_icon_shield_off" );
 
     switch ( var_0.state )
     {
@@ -105,7 +105,7 @@ disable_shield_ability()
 
     level.player notify( "exo_shield_disabled" );
 
-    if ( level.player _meth_8314( var_0.weapon_name ) )
+    if ( level.player hasweapon( var_0.weapon_name ) )
     {
         level.player endon( "exo_shield_enabled" );
         level.player waittill( "exo_shield_removed" );
@@ -119,15 +119,15 @@ try_raise_shield()
     var_0 = get_exo_shield_params();
     var_1 = 0;
 
-    if ( level.player _meth_817C() == "prone" )
-        level.player _meth_817D( "crouch" );
+    if ( level.player getstance() == "prone" )
+        level.player setstance( "crouch" );
 
-    if ( level.player _meth_817C() == "prone" )
+    if ( level.player getstance() == "prone" )
     {
         maps\_utility::display_hint( "EXO_SHIELD_CROUCH_BLOCKED_WEAPON", undefined, undefined, undefined, 200 );
         var_1 = 1;
     }
-    else if ( level.player _meth_812C() || level.player isonladder() )
+    else if ( level.player isthrowinggrenade() || level.player isonladder() )
         var_1 = 1;
     else if ( maps\_player_exo::batteryspend( var_0.activation_cost ) )
         raise_shield();
@@ -144,24 +144,24 @@ raise_shield()
     level.player maps\_utility::ent_flag_set( "exo_shield_on" );
     var_0 = get_exo_shield_params();
     state_change( "equipping" );
-    var_0.previous_weapon = level.player _meth_8312();
-    level.player _meth_830E( var_0.weapon_name );
+    var_0.previous_weapon = level.player getcurrentprimaryweapon();
+    level.player giveweapon( var_0.weapon_name );
     soundscripts\_snd::snd_message( "exo_raise_shield" );
     level.player thread monitor_equip_interrupt();
-    level.player _meth_8315( var_0.weapon_name );
+    level.player switchtoweapon( var_0.weapon_name );
     var_1 = undefined;
 
-    for ( var_2 = level.player _meth_8311( 1 ); !isdefined( var_1 ) || var_1 || var_2 == "none"; var_2 = level.player _meth_8311( 1 ) )
+    for ( var_2 = level.player getcurrentweapon( 1 ); !isdefined( var_1 ) || var_1 || var_2 == "none"; var_2 = level.player getcurrentweapon( 1 ) )
     {
         level.player waittill( "weapon_change" );
         var_1 = level.player isonladder();
     }
 
-    var_3 = level.player _meth_8311( 0 ) == var_0.weapon_name;
+    var_3 = level.player getcurrentweapon( 0 ) == var_0.weapon_name;
 
     if ( !var_3 )
     {
-        var_2 = level.player _meth_8311();
+        var_2 = level.player getcurrentweapon();
 
         if ( var_2 == var_0.weapon_name || var_2 == "none" )
             switch_to_previous_weapon();
@@ -209,7 +209,7 @@ lower_shield( var_0 )
     level.player notify( "exo_shield_lower" );
     soundscripts\_snd::snd_message( "exo_lower_shield" );
     level.player maps\_utility::ent_flag_clear( "exo_shield_on" );
-    var_2 = level.player _meth_8311();
+    var_2 = level.player getcurrentweapon();
 
     if ( var_2 == "none" || var_2 == var_1.weapon_name || var_1.state == "equipping" )
         switch_to_previous_weapon( var_0 );
@@ -218,7 +218,7 @@ lower_shield( var_0 )
 _remove_shield()
 {
     var_0 = get_exo_shield_params();
-    level.player _meth_830F( var_0.weapon_name );
+    level.player takeweapon( var_0.weapon_name );
     state_change( "idle" );
     level.player notify( "exo_shield_removed" );
 }
@@ -228,7 +228,7 @@ switch_to_previous_weapon( var_0 )
     var_1 = get_exo_shield_params();
     var_2 = undefined;
 
-    if ( isdefined( var_1.previous_weapon ) && level.player _meth_8314( var_1.previous_weapon ) )
+    if ( isdefined( var_1.previous_weapon ) && level.player hasweapon( var_1.previous_weapon ) )
         var_2 = var_1.previous_weapon;
     else
         var_2 = level.player maps\_utility::get_first_storable_weapon();
@@ -241,9 +241,9 @@ switch_to_previous_weapon( var_0 )
     if ( isdefined( var_2 ) )
     {
         if ( isdefined( var_0 ) && var_0 )
-            level.player _meth_8316( var_2 );
+            level.player switchtoweaponimmediate( var_2 );
         else
-            level.player _meth_8315( var_2 );
+            level.player switchtoweapon( var_2 );
     }
 }
 
@@ -256,11 +256,11 @@ monitor_shield_timeout()
 
     if ( var_0.state == "raised" )
     {
-        if ( level.player _meth_84E0() )
+        if ( level.player isusingoffhand() )
             offhand_switchout();
         else
         {
-            var_2 = level.player _meth_8311( 0 ) == var_0.weapon_name;
+            var_2 = level.player getcurrentweapon( 0 ) == var_0.weapon_name;
             lower_shield( !var_2 );
         }
     }
@@ -275,10 +275,10 @@ monitor_shield_switchout()
     while ( !var_1 )
     {
         level.player common_scripts\utility::waittill_any( "weapon_switch_started", "weapon_change", "exo_shield_toggle" );
-        var_2 = level.player _meth_8311( 0 ) == var_0.weapon_name;
-        var_3 = !var_2 && level.player _meth_8311( 1 ) == var_0.weapon_name;
-        var_4 = level.player _meth_84E0() || level.player _meth_812C();
-        var_5 = level.player _meth_8314( var_0.weapon_name );
+        var_2 = level.player getcurrentweapon( 0 ) == var_0.weapon_name;
+        var_3 = !var_2 && level.player getcurrentweapon( 1 ) == var_0.weapon_name;
+        var_4 = level.player isusingoffhand() || level.player isthrowinggrenade();
+        var_5 = level.player hasweapon( var_0.weapon_name );
         var_6 = !var_3 && var_5 && level.player isonladder();
 
         switch ( var_0.state )
@@ -291,7 +291,7 @@ monitor_shield_switchout()
                         if ( var_3 )
                             lower_shield( 1 );
 
-                        level.player _meth_830F( var_0.weapon_name );
+                        level.player takeweapon( var_0.weapon_name );
                     }
 
                     state_change( "idle" );
@@ -335,9 +335,9 @@ monitor_unauthorized_shield()
     {
         level.player waittill( "weapon_switch_started", var_1 );
 
-        if ( ( var_0.state == "disabled" || var_0.state == "idle" ) && level.player _meth_8314( var_0.weapon_name ) )
+        if ( ( var_0.state == "disabled" || var_0.state == "idle" ) && level.player hasweapon( var_0.weapon_name ) )
         {
-            level.player _meth_830F( var_0.weapon_name );
+            level.player takeweapon( var_0.weapon_name );
 
             if ( isdefined( var_1 ) && var_1 == var_0.weapon_name )
                 switch_to_previous_weapon( 0 );
@@ -349,7 +349,7 @@ offhand_switchout()
 {
     var_0 = get_exo_shield_params();
 
-    for ( var_1 = level.player _meth_84E0(); !var_1; var_1 = level.player _meth_84E0() )
+    for ( var_1 = level.player isusingoffhand(); !var_1; var_1 = level.player isusingoffhand() )
         waitframe();
 
     lower_shield( 1 );
@@ -359,9 +359,9 @@ offhand_switchout()
 update_exo_shield_icon()
 {
     if ( !maps\_player_exo::player_exo_is_active() )
-        level.player _meth_821B( "actionslot2", "none" );
+        level.player setweaponhudiconoverride( "actionslot2", "none" );
     else if ( maps\_player_exo::get_exo_battery_percent() > 0 )
-        level.player _meth_821B( "actionslot2", "dpad_icon_shield" );
+        level.player setweaponhudiconoverride( "actionslot2", "dpad_icon_shield" );
     else
-        level.player _meth_821B( "actionslot2", "dpad_icon_shield_off" );
+        level.player setweaponhudiconoverride( "actionslot2", "dpad_icon_shield_off" );
 }

@@ -87,14 +87,14 @@ handle_player_pitbull( var_0 )
         var_1 = maps\_utility::spawn_anim_model( "_pitbull" );
         var_1.origin = self.origin;
         var_1.angles = self.angles;
-        var_1 _meth_8048( "TAG_WINDSHIELD1" );
-        var_1 _meth_8048( "TAG_WINDSHIELD2" );
-        var_1 _meth_8048( "TAG_WINDSHIELD3" );
-        var_1 _meth_804D( self );
+        var_1 hidepart( "TAG_WINDSHIELD1" );
+        var_1 hidepart( "TAG_WINDSHIELD2" );
+        var_1 hidepart( "TAG_WINDSHIELD3" );
+        var_1 linkto( self );
         self.fake_vehicle_model = var_1;
 
         if ( isdefined( self.player_rig ) )
-            self.player_rig _meth_804D( self.fake_vehicle_model, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+            self.player_rig linkto( self.fake_vehicle_model, "tag_player", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     self.fake_vehicle_model show();
@@ -129,19 +129,19 @@ mount_player_pitbull( var_0 )
 {
     setomnvar( "ui_pitbull", 1 );
     level.player maps\_utility::player_mount_vehicle( self );
-    level.player _meth_8031( 65, 0.2 );
+    level.player lerpfov( 65, 0.2 );
     self.player_rig show();
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_807D( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
-    level.player _meth_8235();
-    level.player _meth_80A2( 0, 0, 0, 0, 0, 0, 0 );
+    level.player playerlinktodelta( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinkedvehicleanglesenable();
+    level.player lerpviewangleclamp( 0, 0, 0, 0, 0, 0, 0 );
 }
 
 dismount_player_pitbull( var_0 )
 {
     if ( isdefined( var_0 ) )
     {
-        level.player _meth_804F();
+        level.player unlink();
         level.player maps\_shg_utility::setup_player_for_gameplay();
         self notify( "stop_loop" );
         var_0 hide();
@@ -154,7 +154,7 @@ dismount_player_pitbull( var_0 )
     if ( !maps\_utility::ent_flag( "pitbull_disconnected" ) )
         level.player maps\_utility::player_dismount_vehicle();
 
-    level.player _meth_8031( 65, 0.2 );
+    level.player lerpfov( 65, 0.2 );
     self notify( "dismount_player_pitbull" );
 }
 
@@ -163,13 +163,13 @@ disconnect_fake_pitbull()
     if ( !maps\_utility::ent_flag( "pitbull_disconnected" ) )
     {
         level.player maps\_utility::player_dismount_vehicle();
-        self.fake_vehicle_model _meth_804F();
+        self.fake_vehicle_model unlink();
         self.fake_vehicle_model notify( "stop_loop" );
         self.fake_vehicle_model maps\_utility::anim_stopanimscripted();
-        level.player _meth_807D( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+        level.player playerlinktodelta( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
         maps\_utility::ent_flag_set( "pitbull_disconnected" );
         thread fake_vehicle_fake_collision();
-        self _meth_822E();
+        self vehphys_disablecrashing();
     }
 
     return self.fake_vehicle_model;
@@ -179,16 +179,16 @@ reconnect_fake_pitbull()
 {
     if ( maps\_utility::ent_flag( "pitbull_disconnected" ) )
     {
-        self _meth_827C( self.fake_vehicle_model.origin, self.fake_vehicle_model.angles, 1 );
+        self vehicle_teleport( self.fake_vehicle_model.origin, self.fake_vehicle_model.angles, 1 );
         level.player maps\_utility::player_mount_vehicle( self );
-        self.fake_vehicle_model _meth_8092();
+        self.fake_vehicle_model dontinterpolate();
         self.fake_vehicle_model.origin = self.origin;
         self.fake_vehicle_model.angles = self.angles;
-        self.fake_vehicle_model _meth_804D( self );
-        level.player _meth_807D( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
-        level.player _meth_8235();
+        self.fake_vehicle_model linkto( self );
+        level.player playerlinktodelta( self.player_rig, "tag_player", 1, 0, 0, 0, 0, 1 );
+        level.player playerlinkedvehicleanglesenable();
         maps\_utility::ent_flag_clear( "pitbull_disconnected" );
-        self _meth_822F();
+        self vehphys_enablecrashing();
     }
 }
 
@@ -267,8 +267,8 @@ remove_passenger_from_player_pitbull( var_0 )
             self.fake_usedpositions[var_0.vehicle_pos] = 0;
             var_0 notify( "pitbull_get_out" );
             var_0 notify( "newanim" );
-            var_0 _meth_8141();
-            var_0 _meth_804F();
+            var_0 stopanimscripted();
+            var_0 unlink();
             var_0.vehicle_pos = undefined;
             var_0.vehicle_idle = undefined;
             return;
@@ -443,7 +443,7 @@ update_target_hud( var_0 )
         }
 
         var_1 = self.current_turret_target.origin + ( 0, 0, 50 );
-        var_2 = vectornormalize( var_1 - level.player _meth_80A8() );
+        var_2 = vectornormalize( var_1 - level.player geteye() );
         var_0.origin = var_1;
         var_0.angles = vectortoangles( var_2 * -1 );
         waitframe();
@@ -458,8 +458,8 @@ pitbull_turret_set_target( var_0, var_1, var_2 )
     self endon( "dismount_player_pitbull" );
     self endon( "pitbull_allow_shooting" );
     var_3 = self.current_turret_target;
-    self.mgturret[0] _meth_8106( var_3, ( 0, 0, 50 ) );
-    self.mgturret[0] _meth_8107( var_3, ( 0, 0, 50 ) );
+    self.mgturret[0] settargetentity( var_3, ( 0, 0, 50 ) );
+    self.mgturret[0] snaptotargetentity( var_3, ( 0, 0, 50 ) );
     wait_until_new_target( var_3, var_1, var_2 );
     self.current_turret_target = undefined;
 }
@@ -491,10 +491,10 @@ pitbull_turret_targeting( var_0 )
         if ( isdefined( self.current_turret_target ) )
         {
             pitbull_turret_set_target( var_0, var_2, var_1 );
-            _func_23F( &"pitbull_target_locked", 1, 1 );
+            luinotifyevent( &"pitbull_target_locked", 1, 1 );
         }
         else
-            _func_23F( &"pitbull_target_locked", 1, 0 );
+            luinotifyevent( &"pitbull_target_locked", 1, 0 );
 
         wait 0.05;
     }
@@ -531,7 +531,7 @@ wait_until_new_target( var_0, var_1, var_2 )
 
 pitbull_update_lui_charge( var_0 )
 {
-    _func_23F( &"pitbull_charge", 1, int( clamp( var_0, 0, 1 ) * 100 ) );
+    luinotifyevent( &"pitbull_charge", 1, int( clamp( var_0, 0, 1 ) * 100 ) );
 }
 
 pitbull_turret_fire()
@@ -558,8 +558,8 @@ pitbull_turret_fire()
                 {
                     var_2 = 1;
                     soundscripts\_snd_playsound::snd_play( "wpn_railgun_shot" );
-                    self.mgturret[0] _meth_80EA();
-                    level.player _meth_80AD( "heavygun_fire" );
+                    self.mgturret[0] shootturret();
+                    level.player playrumbleonentity( "heavygun_fire" );
                     var_1 = 0;
                 }
                 else if ( common_scripts\utility::flag( "flag_player_can_fire" ) == 1 )
@@ -614,13 +614,13 @@ handle_player_pitbull_hud()
 
     for (;;)
     {
-        var_0 = self _meth_8286();
+        var_0 = self vehicle_getspeed();
         var_0 = int( var_0 );
 
         if ( var_0 > 0 )
             var_0 += 1;
 
-        _func_23F( &"pitbull_update_speed", 1, var_0 );
+        luinotifyevent( &"pitbull_update_speed", 1, var_0 );
 
         if ( level.currentgen )
             level.oncoming_pitbull_speed = var_0;
@@ -670,7 +670,7 @@ get_pitbull_shake_value()
 {
     var_0 = 0;
     var_1 = 12;
-    return self _meth_8286() / var_1;
+    return self vehicle_getspeed() / var_1;
 }
 
 pitbull_rumble_stop()
@@ -757,18 +757,18 @@ manage_windshield_states()
 
 pitbull_hide_part( var_0 )
 {
-    self _meth_8048( var_0 );
+    self hidepart( var_0 );
 
     if ( isdefined( self.fake_vehicle_model ) )
-        self.fake_vehicle_model _meth_8048( var_0 );
+        self.fake_vehicle_model hidepart( var_0 );
 }
 
 pitbull_show_part( var_0 )
 {
-    self _meth_804B( var_0 );
+    self showpart( var_0 );
 
     if ( isdefined( self.fake_vehicle_model ) )
-        self.fake_vehicle_model _meth_804B( var_0 );
+        self.fake_vehicle_model showpart( var_0 );
 }
 
 handle_friendly_pitbull_shooting()
@@ -789,7 +789,7 @@ friendly_pitbull_aim()
 
         if ( isdefined( var_1 ) )
         {
-            self.mgturret[0] _meth_8106( var_1, ( 0, 0, 50 ) );
+            self.mgturret[0] settargetentity( var_1, ( 0, 0, 50 ) );
             wait_until_new_target( var_1, 45, 5 );
         }
 
@@ -808,11 +808,11 @@ friendly_pitbull_fire()
 
         if ( maps\_utility::ent_flag( "pitbull_allow_shooting" ) )
         {
-            for ( var_0 = self.mgturret[0] _meth_8109( 1 ); !isdefined( var_0 ); var_0 = self.mgturret[0] _meth_8109( 1 ) )
+            for ( var_0 = self.mgturret[0] getturrettarget( 1 ); !isdefined( var_0 ); var_0 = self.mgturret[0] getturrettarget( 1 ) )
                 wait 0.2;
 
             wait(randomfloatrange( 2, 5 ));
-            self.mgturret[0] _meth_80EA();
+            self.mgturret[0] shootturret();
             self.mgturret[0] soundscripts\_snd::snd_message( "npc_pitbull_shot" );
             wait 0.5;
         }
@@ -826,7 +826,7 @@ player_pitbull_physics_wake_up()
     for (;;)
     {
         if ( level.nextgen )
-            _func_244( self.origin, 240 );
+            wakeupphysicssphere( self.origin, 240 );
         else
         {
             physicsexplosionsphere( self.origin, 240, 200, 0.15, 0 );
@@ -880,5 +880,5 @@ autosave_check_pitbull_upright()
 autosave_check_pitbull_moving()
 {
     var_0 = 20;
-    return !common_scripts\utility::flag( "flag_intro_give_player_driving" ) || level.player_pitbull _meth_8286() > var_0;
+    return !common_scripts\utility::flag( "flag_intro_give_player_driving" ) || level.player_pitbull vehicle_getspeed() > var_0;
 }

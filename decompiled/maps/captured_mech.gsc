@@ -58,7 +58,7 @@ post_load()
 
         foreach ( var_1 in level._mb.lifts )
         {
-            common_scripts\utility::array_call( getentarray( var_1.target, "targetname" ), ::_meth_804D, var_1 );
+            common_scripts\utility::array_call( getentarray( var_1.target, "targetname" ), ::linkto, var_1 );
             var_1.fx = [];
 
             foreach ( var_3 in common_scripts\utility::getstructarray( var_1.target, "targetname" ) )
@@ -116,7 +116,7 @@ start( var_0, var_1 )
     if ( level.start_point != "mb1_intro" )
     {
         mb_setup();
-        level.allies[0] _meth_83FA( 3, 1 );
+        level.allies[0] hudoutlineenable( 3, 1 );
     }
 
     if ( level.start_point == "mb1_jump" )
@@ -136,8 +136,8 @@ start( var_0, var_1 )
         else
         {
             thread ambient_mb2_cranes();
-            level._mb.slide_gate_right _meth_8058();
-            level._mb.slide_gate_left _meth_8058();
+            level._mb.slide_gate_right connectpaths();
+            level._mb.slide_gate_left connectpaths();
             level._mb.slide_gate_right delete();
             level._mb.slide_gate_left delete();
             common_scripts\utility::array_call( level._mb.slide_gate_destroyed, ::show );
@@ -188,7 +188,7 @@ mb_setup()
 
     if ( maps\captured_util::start_point_is_before( "mb1", 1 ) )
     {
-        level.player _meth_80EF();
+        level.player enableinvulnerability();
         level.allies maps\captured_util::warp_allies( "struct_allystart_mb1", 1 );
         level.ally maps\captured_util::ignore_everything();
         maps\_utility::activate_trigger_with_targetname( "trig_mb_ally_1" );
@@ -208,18 +208,18 @@ main_mb1_intro()
     level.ally.anim_node = level._mb.node common_scripts\utility::spawn_tag_origin();
     level.player.rig = maps\_utility::spawn_anim_model( "player_rig" );
     level.player freezecontrols( 1 );
-    level.player _meth_831D();
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_807F( level.player.rig, "tag_player" );
+    level.player disableweapons();
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
+    level.player playerlinktoabsolute( level.player.rig, "tag_player" );
     level.player.rig show();
     soundscripts\_snd::snd_message( "aud_wakeup_mix" );
     thread maps\captured_fx::fx_heli_crash_godrays_on();
-    level.player common_scripts\utility::delaycall( 17.5, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 18.4, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 19.3, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 20.6, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 21.5, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 17.5, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 18.4, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 19.3, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 20.6, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 21.5, ::playrumbleonentity, "heavy_1s" );
     var_1 = getent( "mech_intro_feet", "targetname" );
     var_1 hide();
     level notify( "anim_mech_wakeup" );
@@ -231,15 +231,15 @@ main_mb1_intro()
     thread maps\captured_fx::fx_heli_crash_godrays_off();
     var_1 show();
     soundscripts\_snd::snd_message( "aud_wakeup_mech_cooldown_pings" );
-    _func_0D3( "g_friendlyNameDist", level.friendlynamedist );
+    setsaveddvar( "g_friendlyNameDist", level.friendlynamedist );
     level.player freezecontrols( 0 );
     level.player.rig hide();
     level.player maps\_utility::blend_movespeedscale( 0.2 );
     level.player maps\_utility::blend_movespeedscale( 0.5, 6 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_804F();
+    level.player allowjump( 1 );
+    level.player allowmelee( 1 );
+    level.player allowsprint( 1 );
+    level.player unlink();
     level.player.rig delete();
     var_0 delete();
 }
@@ -256,19 +256,19 @@ main_mb1_mech()
     thread maps\captured_actions::mech_entry_action();
     level notify( "objective_player_can_get_into_mech" );
     var_2 = getdvar( "mechCrouchtime" );
-    _func_0D3( "mechCrouchtime", 3000 );
+    setsaveddvar( "mechCrouchtime", 3000 );
     var_1 maps\_utility::addhinttrigger( &"CAPTURED_HINT_ENTER_CONSOLE", &"CAPTURED_HINT_ENTER_PC" );
     var_1 thread maps\captured_actions::prompt_show_hide( "flag_waittill_entity_activate_looking_at", "captured_action_complete" );
     maps\captured_util::waittill_entity_activate_looking_at( level._mb.dead_mech_enemy, undefined, undefined, 72, 0.4, 0 );
     common_scripts\utility::flag_set( "flag_getting_into_mech" );
     var_3 = getent( "mech_intro_feet", "targetname" );
     var_3 hide();
-    level.player common_scripts\utility::delaycall( 17.5, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 19.55, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 21.05, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 22.75, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 17.5, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 19.55, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 21.05, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 22.75, ::playrumbleonentity, "heavy_1s" );
     level notify( "captured_action_complete" );
-    level.player _meth_817D( "stand" );
+    level.player setstance( "stand" );
     var_1 delete();
 
     if ( isdefined( level.ally.anim_node ) )
@@ -280,10 +280,10 @@ main_mb1_mech()
     level.player maps\_utility::blend_movespeedscale( 1.0 );
     level.player notify( "stop_one_handed_gunplay" );
     common_scripts\utility::array_call( getentarray( "opfor_bh_helo", "targetname" ), ::delete );
-    common_scripts\utility::array_call( _func_0D6( "axis", "neutral", "team3" ), ::delete );
+    common_scripts\utility::array_call( getaiarray( "axis", "neutral", "team3" ), ::delete );
     level.player event_mb1_climb_in_mech();
     level.player.rig delete();
-    _func_0D3( "mechCrouchtime", var_2 );
+    setsaveddvar( "mechCrouchtime", var_2 );
     var_4 = getent( "mech_intro_blocker", "targetname" );
     var_4 delete();
     var_3 delete();
@@ -292,7 +292,7 @@ main_mb1_mech()
 
 main_mb1_jump()
 {
-    level.player _meth_8130( 0 );
+    level.player allowmelee( 0 );
 
     if ( isdefined( level._mb.suit ) )
     {
@@ -332,7 +332,7 @@ main_mb2()
     thread dialogue_mb2();
     thread ambient_mb2_tanks();
     common_scripts\utility::flag_wait( "flag_mb2_gateclose" );
-    level._exit.gate_inner.col _meth_8057();
+    level._exit.gate_inner.col disconnectpaths();
     soundscripts\_snd::snd_message( "scn_cap_mech_door_closes" );
     level._exit.node maps\_anim::anim_single( [ level._exit.gate_inner, level._exit.lock ], "anim_exit_gateclose" );
     common_scripts\utility::flag_wait( "flag_mb2_end" );
@@ -388,7 +388,7 @@ ai_mb1()
             if ( !isalive( var_4 ) )
                 continue;
 
-            var_4 _meth_816C( 512, 512 );
+            var_4 setengagementmindist( 512, 512 );
             var_4 maps\_utility::set_baseaccuracy( 0.7 );
             var_4 thread maps\captured_mech_code::spawnfunc_mech_crush();
         }
@@ -400,7 +400,7 @@ ai_mb1()
     {
         foreach ( var_4 in var_8 )
         {
-            if ( isalive( var_4 ) && var_4 _meth_80A9( var_6 ) )
+            if ( isalive( var_4 ) && var_4 istouching( var_6 ) )
                 var_4 mb_run_to_goal();
         }
     }
@@ -733,8 +733,8 @@ spawnfunc_mb()
 spawnfunc_mb_civilians( var_0 )
 {
     add_to_group_civilian( self.script_noteworthy );
-    self _meth_83FA( 3, 1 );
-    self _meth_8177( "team3" );
+    self hudoutlineenable( 3, 1 );
+    self setthreatbiasgroup( "team3" );
     self.no_friendly_fire_penalty = 1;
     self.a.disablelongdeath = 1;
     thread maps\captured_mech_code::spawnfunc_mech_crush();
@@ -757,7 +757,7 @@ spawnfunc_mb_enemies()
     if ( issubstr( self.classname, "jet" ) )
         self.canjumppath = 1;
 
-    self _meth_816C( 512, 512 );
+    self setengagementmindist( 512, 512 );
     maps\_utility::set_baseaccuracy( 0.7 );
     self.a.disablelongdeath = 1;
     thread maps\captured_mech_code::spawnfunc_mech_crush();
@@ -803,7 +803,7 @@ spawnfunc_mb2_final()
     if ( issubstr( self.classname, "jet" ) )
         self.canjumppath = 1;
 
-    self _meth_816C( 512, 512 );
+    self setengagementmindist( 512, 512 );
     self.a.disablelongdeath = 1;
     thread maps\captured_mech_code::spawnfunc_mech_crush();
     self.noclosemechrun = 1;
@@ -829,8 +829,8 @@ spawnfunc_mb_drone()
         self waittill( "reached_dynamic_path_end" );
 
     self.at_start = 1;
-    self _meth_8284( 15 );
-    self _meth_80B2();
+    self vehicle_setspeedimmediate( 15 );
+    self laseron();
     dronepath( level._mb.drone_paths );
 
     for (;;)
@@ -860,7 +860,7 @@ dronepath( var_0 )
 
     maps\_utility::vehicle_detachfrompath();
     thread maps\_utility::vehicle_dynamicpath( self.path_chosen );
-    self _meth_8284( 15 );
+    self vehicle_setspeedimmediate( 15 );
 }
 
 spawnfunc_mb1_vrap()
@@ -890,7 +890,7 @@ spawnfunc_mb2_mech()
     self.health = 6000;
     maps\_utility::set_baseaccuracy( 3 );
     var_0 = level._mb.lifts[self.script_index];
-    self _meth_804D( var_0 );
+    self linkto( var_0 );
     var_0 thread mb2_lift( self );
     self endon( "death" );
     common_scripts\utility::flag_wait( "flag_mb2_mech_stencil_on" );
@@ -898,7 +898,7 @@ spawnfunc_mb2_mech()
     level.player maps\_playermech_code::enable_stencil( self );
     var_0 waittill( "lift_up" );
     maps\captured_util::ignore_everything();
-    self _meth_804F();
+    self unlink();
     wait(randomintrange( 1, 3 ));
     maps\captured_util::unignore_everything();
     wait(randomintrange( 1, 5 ));
@@ -931,7 +931,7 @@ two_mech_hunt()
                 self._mech_node = var_1[var_1.size - 1];
 
             self._mech_node._mech_occupied = self;
-            self _meth_81A6( self._mech_node.origin );
+            self setgoalpos( self._mech_node.origin );
             self.goalradius = 200;
             self.goalheight = 81;
 
@@ -951,15 +951,15 @@ mb2_lift( var_0 )
         thread mb2_lift_enemydeath( var_0 );
 
     var_1 = self.origin;
-    self _meth_82AE( var_1 + ( 0, 0, 32 ), 0.5, 0, 0.5 );
+    self moveto( var_1 + ( 0, 0, 32 ), 0.5, 0, 0.5 );
     wait 0.5;
-    self _meth_82AE( self.goal.origin, 3 );
+    self moveto( self.goal.origin, 3 );
     wait 2;
     common_scripts\utility::flag_set( "flag_mb2_mech_stencil_on" );
     wait 1;
     self notify( "lift_up" );
     wait 3;
-    self _meth_82AE( var_1, 3 );
+    self moveto( var_1, 3 );
     wait 3;
     self notify( "lift_down" );
 }
@@ -1042,7 +1042,7 @@ mb_run_to_goal( var_0, var_1, var_2 )
     self notify( "stop_mb_run_to_goal" );
     self endon( "stop_mb_run_to_goal" );
     self endon( "death" );
-    self _meth_81AB();
+    self cleargoalvolume();
     self.running_to_goal = 1;
     self.goalradius = 256;
 
@@ -1072,7 +1072,7 @@ mb_run_to_goal( var_0, var_1, var_2 )
             else
                 var_4 = common_scripts\utility::random( var_5 );
 
-            self _meth_81A9( var_4 );
+            self setgoalvolumeauto( var_4 );
         }
         else
         {
@@ -1282,7 +1282,7 @@ go_to_vol( var_0, var_1 )
 
     if ( isdefined( self._vol ) )
     {
-        self _meth_81AB();
+        self cleargoalvolume();
         maps\_spawner::go_to_node( self._vol, "entity" );
         return 1;
     }
@@ -1354,7 +1354,7 @@ setup_vols( var_0 )
         {
             var_2.origin = var_6.origin;
 
-            if ( var_2 _meth_80A9( var_4 ) )
+            if ( var_2 istouching( var_4 ) )
             {
                 if ( issubstr( var_6.type, "Cover" ) || issubstr( var_6.type, "Conceal" ) || issubstr( var_6.type, "Exposed" ) )
                     var_4.nodes = common_scripts\utility::array_add( var_4.nodes, var_6 );
@@ -1450,20 +1450,20 @@ event_mb1_climb_in_mech()
 {
     thread dialogue_mb1_bootup();
     self freezecontrols( 1 );
-    self _meth_831D();
-    self _meth_811A( 0 );
-    self _meth_8119( 0 );
+    self disableweapons();
+    self allowprone( 0 );
+    self allowcrouch( 0 );
     soundscripts\_snd::snd_message( "start_mech" );
-    self _meth_8080( self.rig, "tag_player", 0.5 );
+    self playerlinktoblend( self.rig, "tag_player", 0.5 );
     wait 0.5;
-    self _meth_807D( self.rig, "tag_player", 0, 0, 0, 0, 0, 1 );
+    self playerlinktodelta( self.rig, "tag_player", 0, 0, 0, 0, 0, 1 );
     self.rig show();
     thread take_weapon_delayed();
     level thread maps\captured_util::waittill_notify_func( "notify_mech_enable", maps\_playermech_code::playermech_start, "base_noweap_bootup" );
     thread event_mb1_climb_in_mech_gideon();
     level._mb.node maps\_anim::anim_single( common_scripts\utility::array_combine( level._mb.suit, [ level._mb.dead_mech_enemy, self.rig ] ), "mech_enter" );
     thread maps\_playermech_code::playermech_start( "base_noweap" );
-    self _meth_80A2( 0, 0, 0, 30, 30, 30, 30 );
+    self lerpviewangleclamp( 0, 0, 0, 30, 30, 30, 30 );
     common_scripts\utility::flag_set( "flag_mech_enabled" );
 }
 
@@ -1481,8 +1481,8 @@ event_mb1_climb_in_mech_gideon()
 take_weapon_delayed()
 {
     wait 1.0;
-    var_0 = self _meth_8311();
-    self _meth_830F( var_0 );
+    var_0 = self getcurrentweapon();
+    self takeweapon( var_0 );
 }
 
 event_mb1_jumpdown()
@@ -1509,16 +1509,16 @@ event_mb1_jumpdown()
     level.dopickyautosavechecks = 0;
     maps\_utility::autosave_by_name( "mb_jumpdown_start" );
     level.dopickyautosavechecks = 1;
-    level.player common_scripts\utility::delaycall( 0.55, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 1.85, ::_meth_80AD, "heavy_1s" );
-    _func_231( "intro_wall_scrtble", "targetname" )[0] _meth_83F6( 0, 1 );
+    level.player common_scripts\utility::delaycall( 0.55, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 1.85, ::playrumbleonentity, "heavy_1s" );
+    getscriptablearray( "intro_wall_scrtble", "targetname" )[0] setscriptablepartstate( 0, 1 );
     maps\_utility::delaythread( 1.75, common_scripts\_exploder::exploder, "mech_intro_land" );
     level.player maps\_utility::delaythread( 1.75, maps\_playermech_code::enable_stencil, getentarray( "mb1_nostencil", "script_noteworthy" ) );
     soundscripts\_snd::snd_music_message( "mus_captured_mech" );
     common_scripts\utility::flag_set( "flag_mb1_start" );
     var_1 waittill( "mech_anim_done" );
     common_scripts\utility::flag_clear( "flag_force_hud_ready" );
-    self _meth_804F();
+    self unlink();
     self.rig delete();
     var_1 delete();
     common_scripts\utility::flag_set( "flag_mb1_jump_done" );
@@ -1527,7 +1527,7 @@ event_mb1_jumpdown()
 event_mb1_weapons_come_online()
 {
     common_scripts\utility::flag_wait( "flag_mb1_jump_done" );
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
     thread maps\_playermech_code::playermech_start( "base_transition" );
 
     while ( maps\_playermech_code::get_mech_state() != "base_transition" )
@@ -1553,8 +1553,8 @@ event_mb2_gatesmash()
     thread maps\captured_mech_code::spawn_mech_rig( 1, 0.2 );
     soundscripts\_snd::snd_message( "mech_warehouse_door_smash" );
     playfx( level._effect["playermech_cannon_default"], ( 9041, -1195, 260 ), ( 0, 1, 0.5 ) );
-    level._mb.slide_gate_right _meth_8058();
-    level._mb.slide_gate_left _meth_8058();
+    level._mb.slide_gate_right connectpaths();
+    level._mb.slide_gate_left connectpaths();
     level._mb.slide_gate_right delete();
     level._mb.slide_gate_left delete();
     common_scripts\utility::flag_set( "flag_mb2_mech_smashing_doors" );
@@ -1563,13 +1563,13 @@ event_mb2_gatesmash()
     common_scripts\utility::array_call( level._mb.slide_gate_destroyed, ::show );
     self waittill( "mech_anim_done" );
     common_scripts\utility::flag_clear( "flag_force_hud_ready" );
-    self _meth_804F();
+    self unlink();
     self.rig delete();
 }
 
 ambient_mb1_crane()
 {
-    var_0 = _func_231( "scriptable_mb1_crane", "targetname" )[0];
+    var_0 = getscriptablearray( "scriptable_mb1_crane", "targetname" )[0];
     var_1 = common_scripts\utility::getstruct( "struct_mb1_crane", "targetname" );
     var_2 = common_scripts\utility::getstruct( var_1.target, "targetname" );
     var_0 waittill( "death" );
@@ -1591,8 +1591,8 @@ ambient_mb2_claw_platform( var_0 )
             var_2 = var_4;
     }
 
-    var_2 _meth_82C0( 1 );
-    var_2 _meth_82C1( 1 );
+    var_2 setcandamage( 1 );
+    var_2 setcanradiusdamage( 1 );
     var_6 = undefined;
     var_7 = undefined;
 
@@ -1656,7 +1656,7 @@ ambient_mb2_crane( var_0, var_1, var_2, var_3 )
         {
             var_6 = var_10 common_scripts\utility::spawn_tag_origin();
             var_6.main_model = var_10;
-            var_10 _meth_804D( var_6 );
+            var_10 linkto( var_6 );
             continue;
         }
         else if ( issubstr( var_10.classname, "brushmodel" ) )
@@ -1685,7 +1685,7 @@ ambient_mb2_crane( var_0, var_1, var_2, var_3 )
     if ( isdefined( var_7 ) )
     {
         var_6.brush = var_7;
-        var_7 _meth_804D( var_6 );
+        var_7 linkto( var_6 );
         var_6 childthread tank_damage_detection( 1 );
     }
 
@@ -1693,20 +1693,20 @@ ambient_mb2_crane( var_0, var_1, var_2, var_3 )
 
     if ( common_scripts\utility::random( [ 0, 1 ] ) && level._mb.cargo[var_6._id_5763] < level._mb.cargo_total )
     {
-        common_scripts\utility::array_call( var_8, ::_meth_804D, var_6 );
+        common_scripts\utility::array_call( var_8, ::linkto, var_6 );
         var_6.parts = var_8;
         level._mb.cargo[var_6._id_5763]++;
     }
     else
     {
         common_scripts\utility::array_call( var_8, ::delete );
-        var_6.brush _meth_82BF();
+        var_6.brush notsolid();
         var_6.parts = [];
     }
 
     var_15 = var_3 * distance2d( var_6.origin, var_5.origin ) / distance2d( var_4.origin, var_5.origin );
     var_6 thread soundscripts\_snd::snd_message( "aud_warehouse_roof_machines", var_15 );
-    var_6 _meth_82AE( ( var_5.origin[0], var_6.origin[1], var_6.origin[2] ), var_15 );
+    var_6 moveto( ( var_5.origin[0], var_6.origin[1], var_6.origin[2] ), var_15 );
     wait(var_15);
 
     for (;;)
@@ -1720,12 +1720,12 @@ ambient_mb2_crane( var_0, var_1, var_2, var_3 )
                 foreach ( var_13 in var_6.templates )
                 {
                     var_10 = spawn( "script_model", var_4.origin );
-                    var_10 _meth_80B1( var_13.model );
-                    var_10 _meth_804D( var_6, "tag_origin", var_13.offset, ( 0, 0, 0 ) );
+                    var_10 setmodel( var_13.model );
+                    var_10 linkto( var_6, "tag_origin", var_13.offset, ( 0, 0, 0 ) );
                     var_6.parts = common_scripts\utility::array_add( var_6.parts, var_10 );
                 }
 
-                var_6.brush _meth_82BE();
+                var_6.brush solid();
                 level._mb.cargo[var_6._id_5763]++;
             }
         }
@@ -1740,7 +1740,7 @@ ambient_mb2_crane( var_0, var_1, var_2, var_3 )
         playfxontag( level._effect["cap_crane_light"], var_6.main_model, "crane_T" );
         common_scripts\utility::array_call( var_6.parts, ::show );
         var_6 thread soundscripts\_snd::snd_message( "aud_warehouse_roof_machines", var_3 );
-        var_6 _meth_82AE( ( var_5.origin[0], var_6.origin[1], var_6.origin[2] ), var_3 );
+        var_6 moveto( ( var_5.origin[0], var_6.origin[1], var_6.origin[2] ), var_3 );
         wait(var_3);
     }
 }
@@ -1775,8 +1775,8 @@ tank_damage_detection( var_0 )
 {
     level endon( "flag_exit_lock_broken" );
     self endon( "death" );
-    self.brush _meth_82C0( 1 );
-    self.brush _meth_82C1( 1 );
+    self.brush setcandamage( 1 );
+    self.brush setcanradiusdamage( 1 );
 
     if ( !isdefined( var_0 ) )
         var_0 = 0;
@@ -1792,16 +1792,16 @@ tank_damage_detection( var_0 )
             continue;
 
         playfx( level._effect["fireball_explosion_cluster_parent_02"], self.origin, ( 0, 0, -1 ) );
-        self entityradiusdamage( self.origin, 512, 300, 300, level.player );
+        self radiusdamage( self.origin, 512, 300, 300, level.player );
         common_scripts\utility::array_call( self.parts, ::delete );
 
-        if ( !_func_294( self ) )
+        if ( !isremovedentity( self ) )
             self.parts = [];
 
         if ( isdefined( self._id_5763 ) )
             level._mb.cargo[self._id_5763]--;
 
-        self.brush _meth_82BF();
+        self.brush notsolid();
 
         if ( !var_0 )
             break;
@@ -1837,7 +1837,7 @@ player_can_see_point( var_0, var_1 )
     if ( !common_scripts\utility::within_fov( level.player.origin, var_3, var_0, var_2 ) )
         return 0;
 
-    var_4 = level.player _meth_80A8();
+    var_4 = level.player geteye();
 
     if ( sighttracepassed( var_4, var_0, 1, level.player ) )
         return 1;
@@ -1855,7 +1855,7 @@ player_can_see_ai_bones( var_0, var_1 )
     if ( !common_scripts\utility::within_fov( level.player.origin, level.player.angles, var_0.origin, var_2 ) )
         return 0;
 
-    var_3 = level.player _meth_80A8();
+    var_3 = level.player geteye();
     var_4 = var_0 gettagorigin( "j_head" );
 
     if ( sighttracepassed( var_3, var_4, 1, level.player, var_0 ) )
@@ -1900,7 +1900,7 @@ dialogue_mb1_bootup()
     wait 7;
     wait 1;
     wait 0.3;
-    level.allies[0] _meth_83FA( 3, 1 );
+    level.allies[0] hudoutlineenable( 3, 1 );
 }
 
 dialogue_mb1_jumpdown()

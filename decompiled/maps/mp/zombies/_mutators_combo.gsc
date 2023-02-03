@@ -72,7 +72,7 @@ mutatorcombospiketeleportmodelsetup()
     var_14 = randomint( var_7.size );
     self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap;
     self detachall();
-    self _meth_80B1( var_0[var_9] );
+    self setmodel( var_0[var_9] );
     self.swapbody = var_1[var_9];
     self attach( var_2[var_10] );
     self.headmodel = var_2[var_10];
@@ -128,7 +128,7 @@ mutatorcombospikeblast( var_0 )
     self.spikeblastready = 0;
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_1.origin = self gettagorigin( "J_Spine4" );
-    var_1 _meth_804D( self, "J_Spine4" );
+    var_1 linkto( self, "J_Spine4" );
     wait 0.05;
 
     if ( maps\mp\zombies\_util::checkactivemutator( "combo_emz_spike" ) )
@@ -146,9 +146,9 @@ mutatorcombospikeblast( var_0 )
             var_4 = clamp( 25 * level.wavecounter / 9, 25, 50 );
 
             if ( isdefined( var_0 ) && var_3 == var_0 )
-                var_3 _meth_8051( var_4, self.origin );
+                var_3 dodamage( var_4, self.origin );
             else
-                var_3 _meth_8051( var_4 * 0.5, self.origin );
+                var_3 dodamage( var_4 * 0.5, self.origin );
         }
     }
 
@@ -185,7 +185,7 @@ mutatorcomboexploderteleportmodelsetup()
     var_12 = randomint( var_6.size );
     self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap;
     self detachall();
-    self _meth_80B1( var_0[var_7] );
+    self setmodel( var_0[var_7] );
     self.swapbody = var_1[var_7];
     self attach( var_2[var_8] );
     self.headmodel = var_2[var_8];
@@ -199,7 +199,7 @@ mutatorcomboexploderteleportmodelsetup()
     self.limbmodels["left_arm"] = var_6[var_12];
     mutatorcomboexploderteleporteyefx();
     self.eyefxfunc = ::mutatorcomboexploderteleporteyefx;
-    self _meth_83E4( "bark" );
+    self setsurfacetype( "bark" );
     self.teleportprefxoverride = level._effect["mut_combo_exploder_teleport_pre"];
     self.teleportpostfxoverride = level._effect["mut_combo_exploder_teleport_post"];
     self.detonatechargefxoverride = level._effect["mut_combo_exploder_detonate_charge"];
@@ -242,15 +242,15 @@ mutatorcomboarmoremzmodelsetup()
     self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap;
     self detachall();
     self.limbmodels = undefined;
-    self _meth_80B1( var_0[var_3] );
+    self setmodel( var_0[var_3] );
     self.swapbody = var_1[var_3];
     self attach( var_2[var_4] );
     self.headmodel = var_2[var_4];
     var_5 = maps\mp\gametypes\zombies::geteyeeffectforzombie( "combo_armor_emz", self.headmodel );
     maps\mp\zombies\_util::zombie_set_eyes( var_5 );
     maps\mp\zombies\_mutators::torso_effects_apply( "mut_emz" );
-    self _meth_83E4( "bark" );
-    self _meth_8075( "zmb_emz_crackle_loop" );
+    self setsurfacetype( "bark" );
+    self playloopsound( "zmb_emz_crackle_loop" );
 }
 
 mutatorcomboarmoremzbehavior()
@@ -282,9 +282,9 @@ mutatorcomboarmoremzkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var
 
     if ( isdefined( self.hashelmet ) && isdefined( self.helmet ) )
     {
-        self.helmet _meth_804F();
-        self.helmet _meth_80B1( "zombie_helmet_collision" );
-        self.helmet _meth_82C2( self.helmet.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
+        self.helmet unlink();
+        self.helmet setmodel( "zombie_helmet_collision" );
+        self.helmet physicslaunchclient( self.helmet.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
     }
 }
 
@@ -299,8 +299,8 @@ mutatorcomboaddhelmet()
     var_3 = spawn( "script_model", var_1 );
     self.helmet = var_3;
     var_3.angles = var_2;
-    var_3 _meth_80B1( "zombie_helmet" );
-    var_3 _meth_804D( self, var_0, ( -0.2, -0.45, -4.7 ), ( 0, 90, 0 ) );
+    var_3 setmodel( "zombie_helmet" );
+    var_3 linkto( self, var_0, ( -0.2, -0.45, -4.7 ), ( 0, 90, 0 ) );
     thread mutatorcombohelmetdetach( var_3 );
     self waittill( "death" );
     self.hashelmet = undefined;
@@ -318,9 +318,9 @@ mutatorcombohelmetdetach( var_0 )
     self.moverateroundmod += 5;
     playfx( common_scripts\utility::getfx( "mut_helmet_impact" ), var_0.origin );
     var_0 playsound( "zmb_mut_armor_helmet_ping" );
-    var_0 _meth_804F();
-    var_0 _meth_80B1( "zombie_helmet_collision" );
-    var_0 _meth_82C2( var_0.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
+    var_0 unlink();
+    var_0 setmodel( "zombie_helmet_collision" );
+    var_0 physicslaunchclient( var_0.origin, ( randomintrange( -5, 5 ), randomintrange( -5, 5 ), randomintrange( -5, 5 ) ) );
     physicsexplosionsphere( var_0.origin - ( 0, 0, 2 ), 16, 1, 5 );
     thread mutatorcombohelmetcleanup( var_0 );
 }
@@ -361,7 +361,7 @@ mutatorcomboemzspikemodelsetup()
     var_14 = randomint( var_7.size );
     self.precloneswapfunc = maps\mp\zombies\_mutators::mutator_precloneswap;
     self detachall();
-    self _meth_80B1( var_0[var_9] );
+    self setmodel( var_0[var_9] );
     self.swapbody = var_1[var_9];
     self attach( var_2[var_10] );
     self.headmodel = var_2[var_10];
@@ -383,8 +383,8 @@ mutatorcomboemzspikemodelsetup()
     var_15 = maps\mp\gametypes\zombies::geteyeeffectforzombie( "combo_emz_spike", self.headmodel );
     maps\mp\zombies\_util::zombie_set_eyes( var_15 );
     maps\mp\zombies\_mutators::torso_effects_apply( "mut_emz" );
-    self _meth_83E4( "bark" );
-    self _meth_8075( "zmb_emz_crackle_loop" );
+    self setsurfacetype( "bark" );
+    self playloopsound( "zmb_emz_crackle_loop" );
 }
 
 mutatorcomboemzspikebehavior()

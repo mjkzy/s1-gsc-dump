@@ -62,7 +62,7 @@ trackloop( var_0, var_1, var_2, var_3, var_4 )
     {
         incranimaimweight();
 
-        if ( self _meth_8442( "tag_flash" ) == -1 )
+        if ( self gettagindex( "tag_flash" ) == -1 )
         {
             wait 0.05;
             continue;
@@ -76,7 +76,7 @@ trackloop( var_0, var_1, var_2, var_3, var_4 )
             if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
                 var_24 = animscripts\combat_utility::get_last_known_shoot_pos( self.shootent );
             else
-                var_24 = self.shootent _meth_8097();
+                var_24 = self.shootent getshootatpos();
         }
 
         if ( !isdefined( var_24 ) && animscripts\utility::shouldcqb() )
@@ -95,7 +95,7 @@ trackloop( var_0, var_1, var_2, var_3, var_4 )
         if ( var_29 )
             var_28 = self.stepoutyaw;
 
-        var_7 = self _meth_81BB( var_23, var_27, var_26, var_12, var_28, var_29, var_25 );
+        var_7 = self getaimangle( var_23, var_27, var_26, var_12, var_28, var_29, var_25 );
         var_30 = var_7[0];
         var_31 = var_7[1];
         var_7 = undefined;
@@ -165,7 +165,7 @@ trackloop_cqbshootpos( var_0 )
         if ( common_scripts\utility::flag( "_cloaked_stealth_enabled" ) )
             var_1 = animscripts\combat_utility::get_last_known_shoot_pos( self.cqb_target );
         else
-            var_1 = self.cqb_target _meth_8097();
+            var_1 = self.cqb_target getshootatpos();
 
         if ( isdefined( self.cqb_wide_target_track ) )
         {
@@ -196,8 +196,8 @@ trackloop_anglesfornoshootpos( var_0, var_1 )
 {
     if ( animscripts\utility::recentlysawenemy() )
     {
-        var_2 = self.enemy _meth_8097() - self.enemy.origin;
-        var_3 = self _meth_81C1( self.enemy ) + var_2;
+        var_2 = self.enemy getshootatpos() - self.enemy.origin;
+        var_3 = self lastknownpos( self.enemy ) + var_2;
         return trackloop_getdesiredangles( var_3 - var_0, var_1 );
     }
 
@@ -208,7 +208,7 @@ trackloop_anglesfornoshootpos( var_0, var_1 )
         var_5 = angleclamp180( self.angles[1] - self.node.angles[1] );
     else
     {
-        var_6 = self _meth_8192();
+        var_6 = self getanglestolikelyenemypath();
 
         if ( isdefined( var_6 ) )
         {
@@ -317,13 +317,13 @@ trackloop_setanimweights( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
         var_9 = 1;
     }
 
-    self _meth_814C( var_0, var_7, var_12, 1, 1 );
-    self _meth_814C( var_1, var_8, var_12, 1, 1 );
-    self _meth_814C( var_2, var_10, var_12, 1, 1 );
-    self _meth_814C( var_3, var_11, var_12, 1, 1 );
+    self setanimlimited( var_0, var_7, var_12, 1, 1 );
+    self setanimlimited( var_1, var_8, var_12, 1, 1 );
+    self setanimlimited( var_2, var_10, var_12, 1, 1 );
+    self setanimlimited( var_3, var_11, var_12, 1, 1 );
 
     if ( isdefined( var_4 ) )
-        self _meth_814C( var_4, var_9, var_12, 1, 1 );
+        self setanimlimited( var_4, var_9, var_12, 1, 1 );
 }
 
 setanimaimweight( var_0, var_1 )

@@ -110,8 +110,8 @@ script_mover_init()
 
                 self.origin_ent = spawn( "script_model", var_2.origin );
                 self.origin_ent.angles = var_2.angles;
-                self.origin_ent _meth_80B1( "tag_origin" );
-                self.origin_ent _meth_804D( self );
+                self.origin_ent setmodel( "tag_origin" );
+                self.origin_ent linkto( self );
                 break;
             case "scene_node":
             case "scripted_node":
@@ -142,15 +142,15 @@ script_mover_init()
             switch ( var_8 )
             {
                 case "use_trigger_link":
-                    var_2 _meth_8069();
-                    var_2 _meth_804D( self );
+                    var_2 enablelinkto();
+                    var_2 linkto( self );
                 case "use_trigger":
                     var_2 script_mover_parse_targets();
                     thread script_mover_use_trigger( var_2 );
                     self.use_triggers[self.use_triggers.size] = var_2;
                     break;
                 case "link":
-                    var_2 _meth_804D( self );
+                    var_2 linkto( self );
                     self.linked_ents[self.linked_ents.size] = var_2;
                     break;
                 default:
@@ -193,7 +193,7 @@ script_mover_reset( var_0 )
     self notify( "mover_reset" );
 
     if ( script_mover_is_animated() )
-        self _meth_827A();
+        self scriptmodelclearanim();
 
     self.origin = self.mover_reset_origin;
     self.angles = self.mover_reset_angles;
@@ -333,7 +333,7 @@ script_mover_parse_ent( var_0 )
                 thread script_mover_func_on_notify( var_0, var_6, ::script_mover_disconnectpaths, ::script_mover_connectpaths );
                 break;
             case "solid":
-                var_0 _meth_82BF();
+                var_0 notsolid();
                 thread script_mover_func_on_notify( var_0, var_6, ::script_mover_solid, ::script_mover_notsolid );
                 break;
             case "notsolid":
@@ -367,13 +367,13 @@ script_mover_parse_ent( var_0 )
 
 script_mover_trigger_off( var_0 )
 {
-    self _meth_8092();
+    self dontinterpolate();
     common_scripts\utility::trigger_off();
 }
 
 script_mover_trigger_on( var_0 )
 {
-    self _meth_8092();
+    self dontinterpolate();
     common_scripts\utility::trigger_on();
 }
 
@@ -389,22 +389,22 @@ script_mover_levelnotify( var_0, var_1 )
 
 script_mover_connectpaths( var_0 )
 {
-    self _meth_8058();
+    self connectpaths();
 }
 
 script_mover_disconnectpaths( var_0 )
 {
-    self _meth_8057( var_0 );
+    self disconnectpaths( var_0 );
 }
 
 script_mover_solid( var_0 )
 {
-    self _meth_82BE();
+    self solid();
 }
 
 script_mover_notsolid( var_0 )
 {
-    self _meth_82BF();
+    self notsolid();
 }
 
 script_mover_delete( var_0 )
@@ -507,9 +507,9 @@ script_mover_play_animation( var_0, var_1 )
         thread script_mover_handle_notetracks();
 
     if ( isdefined( self.scripted_node ) )
-        self _meth_848B( var_0.animname, self.scripted_node.origin, self.scripted_node.angles, "script_mover_anim" );
+        self scriptmodelplayanimdeltamotionfrompos( var_0.animname, self.scripted_node.origin, self.scripted_node.angles, "script_mover_anim" );
     else
-        self _meth_827B( var_0.animname, "script_mover_anim" );
+        self scriptmodelplayanimdeltamotion( var_0.animname, "script_mover_anim" );
 }
 
 script_mover_handle_notetracks()
@@ -574,11 +574,11 @@ script_mover_move_to_target( var_0 )
 
             if ( var_3 <= 0 )
             {
-                var_2 _meth_8092();
+                var_2 dontinterpolate();
                 var_2.origin = var_8["origin"];
             }
             else
-                var_2 _meth_82AE( var_8["origin"], var_3, var_4, var_5 );
+                var_2 moveto( var_8["origin"], var_3, var_4, var_5 );
 
             var_6 = 1;
         }
@@ -587,11 +587,11 @@ script_mover_move_to_target( var_0 )
         {
             if ( var_3 <= 0 )
             {
-                var_2 _meth_8092();
+                var_2 dontinterpolate();
                 var_2.angles = var_8["angles"];
             }
             else
-                var_2 _meth_82B5( var_8["angles"], var_3, var_4, var_5 );
+                var_2 rotateto( var_8["angles"], var_3, var_4, var_5 );
 
             var_7 = 1;
         }
@@ -638,9 +638,9 @@ script_mover_move_to_target( var_0 )
         if ( isdefined( var_2.params["solid"] ) )
         {
             if ( var_2.params["solid"] )
-                var_2 _meth_82BE();
+                var_2 solid();
             else
-                var_2 _meth_82BF();
+                var_2 notsolid();
         }
 
         foreach ( var_11 in var_1.movers )
@@ -791,8 +791,8 @@ script_mover_set_usable( var_0, var_1 )
     if ( var_1 )
     {
         var_0 makeusable();
-        var_0 _meth_80DA( "HINT_ACTIVATE" );
-        var_0 _meth_80DB( level.script_mover_hintstrings[self.params["hintstring"]] );
+        var_0 setcursorhint( "HINT_ACTIVATE" );
+        var_0 sethintstring( level.script_mover_hintstrings[self.params["hintstring"]] );
     }
     else
         var_0 makeunusable();
@@ -873,7 +873,7 @@ player_unresolved_collision_watch()
 
         if ( isagent( self ) && isdefined( self.animclass ) )
         {
-            if ( self _meth_855A() == "noclip" )
+            if ( self scragentgetphysicsmode() == "noclip" )
                 continue;
         }
 
@@ -943,7 +943,7 @@ unresolved_collision_owner_damage( var_0 )
     if ( isdefined( var_1.unresolved_collision_damage ) )
         var_3 = var_1.unresolved_collision_damage;
 
-    var_0 _meth_8051( var_3, var_1.origin, var_1.owner, var_1, "MOD_CRUSH" );
+    var_0 dodamage( var_3, var_1.origin, var_1.owner, var_1, "MOD_CRUSH" );
 }
 
 unresolved_collision_nearest_node( var_0, var_1 )
@@ -959,8 +959,8 @@ unresolved_collision_nearest_node( var_0, var_1 )
     }
 
     var_3 = ( 0, 0, -100 );
-    var_0 _meth_8439();
-    var_0 _meth_8092();
+    var_0 cancelmantle();
+    var_0 dontinterpolate();
     var_0 setorigin( var_0.origin + var_3 );
 
     for ( var_4 = 0; var_4 < var_2.size; var_4++ )
@@ -968,14 +968,14 @@ unresolved_collision_nearest_node( var_0, var_1 )
         var_5 = var_2[var_4];
         var_6 = var_5.origin;
 
-        if ( !precachestatusicon( var_6 ) )
+        if ( !canspawn( var_6 ) )
             continue;
 
-        if ( getstarttime( var_6 ) )
+        if ( positionwouldtelefrag( var_6 ) )
             continue;
 
-        if ( var_0 _meth_817C() == "prone" )
-            var_0 _meth_817D( "crouch" );
+        if ( var_0 getstance() == "prone" )
+            var_0 setstance( "crouch" );
 
         var_0 setorigin( var_6 );
         return;
@@ -1032,7 +1032,7 @@ stop_player_pushed_kill()
 
 notify_moving_platform_invalid()
 {
-    var_0 = self _meth_8436( 0 );
+    var_0 = self getlinkedchildren( 0 );
 
     if ( !isdefined( var_0 ) )
         return;
@@ -1042,7 +1042,7 @@ notify_moving_platform_invalid()
         if ( isdefined( var_2.no_moving_platfrom_unlink ) && var_2.no_moving_platfrom_unlink )
             continue;
 
-        var_2 _meth_804F();
+        var_2 unlink();
         var_2 notify( "invalid_parent", self );
     }
 }
@@ -1072,7 +1072,7 @@ handle_moving_platform_touch( var_0 )
 
         if ( isdefined( var_0.validateaccuratetouching ) && var_0.validateaccuratetouching )
         {
-            if ( !self _meth_80A9( var_1 ) )
+            if ( !self istouching( var_1 ) )
             {
                 wait 0.05;
                 continue;
@@ -1109,7 +1109,7 @@ handle_moving_platforms( var_0 )
         self endon( var_0.endonstring );
 
     if ( isdefined( var_0.linkparent ) )
-        self _meth_804D( var_0.linkparent );
+        self linkto( var_0.linkparent );
 
     childthread handle_moving_platform_touch( var_0 );
     childthread handle_moving_platform_invalid( var_0 );

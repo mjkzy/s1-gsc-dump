@@ -19,7 +19,7 @@ anim_single_solo_vm( var_0, var_1, var_2 )
     var_0 common_scripts\utility::waittill_any_timeout( var_3, var_2 );
 
     if ( gettime() < var_4 - 50 )
-        var_0 _meth_84B6( 1.0 );
+        var_0 setviewmodelanimtime( 1.0 );
 }
 
 anim_single_solo_internal_vm( var_0, var_1, var_2 )
@@ -30,7 +30,7 @@ anim_single_solo_internal_vm( var_0, var_1, var_2 )
     var_0 endon( "kill_duplicate_anim_single_solo_vm" );
     var_0 endon( var_2 );
     var_3 = getanimlength( var_0 getanim_vm( var_1 ) );
-    var_0 _meth_84B5( getanim_vm_index( var_1 ) );
+    var_0 setviewmodelanim( getanim_vm_index( var_1 ) );
     wait(var_3 - 0.05);
 }
 
@@ -55,7 +55,7 @@ anim_loop_solo_vm( var_0, var_1, var_2, var_3 )
             var_0 waittill( var_2 );
 
         if ( !isdefined( var_0.viewmodel_hidden ) || !var_0.viewmodel_hidden )
-            var_0 _meth_84B6( 1.0 );
+            var_0 setviewmodelanimtime( 1.0 );
 
         break;
     }
@@ -79,9 +79,9 @@ hack_fake_loop_because_you_cant_play_looping_vm_anims( var_0, var_1, var_2 )
 
     for (;;)
     {
-        var_0 _meth_84B5( getanim_vm_index( var_1 ) );
+        var_0 setviewmodelanim( getanim_vm_index( var_1 ) );
         wait(var_3 - 0.05);
-        var_0 _meth_84B6( 1.0 );
+        var_0 setviewmodelanimtime( 1.0 );
     }
 }
 

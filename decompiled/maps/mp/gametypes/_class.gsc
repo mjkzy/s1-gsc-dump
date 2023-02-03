@@ -248,10 +248,10 @@ logclasschoice( var_0, var_1, var_2, var_3 )
     if ( var_0 == self.lastclass )
         return;
 
-    self _meth_8026( "choseclass: " + var_0 + " weapon: " + var_1 + " special: " + var_2 );
+    self logstring( "choseclass: " + var_0 + " weapon: " + var_1 + " special: " + var_2 );
 
     for ( var_4 = 0; var_4 < var_3.size; var_4++ )
-        self _meth_8026( "perk" + var_4 + ": " + var_3[var_4] );
+        self logstring( "perk" + var_4 + ": " + var_3[var_4] );
 
     self.lastclass = var_0;
 }
@@ -259,97 +259,97 @@ logclasschoice( var_0, var_1, var_2, var_3 )
 cac_getweapon( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "weapon" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "weapon" );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "weapon" );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "weapon" );
 }
 
 cac_getweaponattachment( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 0 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 0 );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 0 );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 0 );
 }
 
 cac_getweaponattachmenttwo( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 1 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 1 );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 1 );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 1 );
 }
 
 cac_getweaponattachmentthree( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 2 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "attachment", 2 );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "attachment", 2 );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "attachment", 2 );
 }
 
 cac_getweaponcamo( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "camo" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "camo" );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "camo" );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "camo" );
 }
 
 cac_getweaponreticle( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "reticle" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "weaponSetups", var_1, "reticle" );
     else
-        return self _meth_8248( var_0, "weaponSetups", var_1, "reticle" );
+        return self getcacplayerdata( var_0, "weaponSetups", var_1, "reticle" );
 }
 
 cac_getperk( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "perkSlots", var_1 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "perkSlots", var_1 );
     else
-        return self _meth_8248( var_0, "perkSlots", var_1 );
+        return self getcacplayerdata( var_0, "perkSlots", var_1 );
 }
 
 cac_getwildcard( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "wildcardSlots", var_1 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "wildcardSlots", var_1 );
     else
-        return self _meth_8248( var_0, "wildcardSlots", var_1 );
+        return self getcacplayerdata( var_0, "wildcardSlots", var_1 );
 }
 
 cac_getkillstreak( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "streak" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "streak" );
     else
-        return self _meth_8248( var_0, "assaultStreaks", var_1, "streak" );
+        return self getcacplayerdata( var_0, "assaultStreaks", var_1, "streak" );
 }
 
 cac_getkillstreakmodule( var_0, var_1, var_2 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "modules", var_2 );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "assaultStreaks", var_1, "modules", var_2 );
     else
-        return self _meth_8248( var_0, "assaultStreaks", var_1, "modules", var_2 );
+        return self getcacplayerdata( var_0, "assaultStreaks", var_1, "modules", var_2 );
 }
 
 cac_getequipment( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "equipment" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "equipment" );
     else
-        return self _meth_8248( var_0, "equipmentSetups", var_1, "equipment" );
+        return self getcacplayerdata( var_0, "equipmentSetups", var_1, "equipment" );
 }
 
 cac_getequipmentextra( var_0, var_1 )
 {
     if ( isdefined( level.forcecustomclassloc ) )
-        return self _meth_844A( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "extra" );
+        return self getcacplayerdataforgroup( level.forcecustomclassloc, var_0, "equipmentSetups", var_1, "extra" );
     else
-        return self _meth_8248( var_0, "equipmentSetups", var_1, "extra" );
+        return self getcacplayerdata( var_0, "equipmentSetups", var_1, "extra" );
 }
 
 cac_getoffhand( var_0 )
@@ -364,27 +364,27 @@ cao_isglobalcostumecategory( var_0 )
 
 cao_getglobalcostumecategory( var_0 )
 {
-    return self _meth_8226( "globalCostume", var_0 );
+    return self getcommonplayerdata( "globalCostume", var_0 );
 }
 
 cao_getpercostumecategory( var_0, var_1 )
 {
-    return self _meth_8226( "costumes", var_1, var_0 );
+    return self getcommonplayerdata( "costumes", var_1, var_0 );
 }
 
 cao_setglobalcostumecategory( var_0, var_1 )
 {
-    return self _meth_8247( "globalCostume", var_0, var_1 );
+    return self setcommonplayerdata( "globalCostume", var_0, var_1 );
 }
 
 cao_setpercostumecategory( var_0, var_1, var_2 )
 {
-    return self _meth_8247( "costumes", var_2, var_0, var_1 );
+    return self setcommonplayerdata( "costumes", var_2, var_0, var_1 );
 }
 
 cao_getactivecostumeindex()
 {
-    return self _meth_8226( "activeCostume" );
+    return self getcommonplayerdata( "activeCostume" );
 }
 
 cao_getcostumebyindex( var_0 )
@@ -415,7 +415,7 @@ cao_getactivecostume()
 
 cao_setcostumebyindex( var_0, var_1 )
 {
-    var_0 = _func_29E( var_0 );
+    var_0 = validatecostume( var_0 );
 
     for ( var_2 = 0; var_2 < level.costumecategories.size; var_2++ )
     {
@@ -1414,10 +1414,10 @@ getloadout( var_0, var_1, var_2, var_3 )
 
         if ( var_13 )
         {
-            var_6 = self _meth_8248( self.class_num, var_11, 0, "streak" );
-            var_7 = self _meth_8248( self.class_num, var_11, 1, "streak" );
-            var_8 = self _meth_8248( self.class_num, var_11, 2, "streak" );
-            var_9 = self _meth_8248( self.class_num, var_11, 3, "streak" );
+            var_6 = self getcacplayerdata( self.class_num, var_11, 0, "streak" );
+            var_7 = self getcacplayerdata( self.class_num, var_11, 1, "streak" );
+            var_8 = self getcacplayerdata( self.class_num, var_11, 2, "streak" );
+            var_9 = self getcacplayerdata( self.class_num, var_11, 3, "streak" );
         }
 
         if ( issubstr( var_1, "juggernaut" ) || var_20 )
@@ -1467,16 +1467,16 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isdefined( var_9 ) || var_9 == "" )
             var_9 = "none";
 
-        if ( !isvalidkillstreak( var_6 ) || var_52 && !self _meth_8221( var_6 ) )
+        if ( !isvalidkillstreak( var_6 ) || var_52 && !self isitemunlocked( var_6 ) )
             var_6 = table_getkillstreak( level.classtablename, 0, 0 );
 
-        if ( !isvalidkillstreak( var_7 ) || var_52 && !self _meth_8221( var_7 ) )
+        if ( !isvalidkillstreak( var_7 ) || var_52 && !self isitemunlocked( var_7 ) )
             var_7 = table_getkillstreak( level.classtablename, 0, 1 );
 
-        if ( !isvalidkillstreak( var_8 ) || var_52 && !self _meth_8221( var_8 ) )
+        if ( !isvalidkillstreak( var_8 ) || var_52 && !self isitemunlocked( var_8 ) )
             var_8 = table_getkillstreak( level.classtablename, 0, 2 );
 
-        if ( !isvalidkillstreak( var_9 ) || var_52 && !self _meth_8221( var_9 ) )
+        if ( !isvalidkillstreak( var_9 ) || var_52 && !self isitemunlocked( var_9 ) )
             var_9 = table_getkillstreak( level.classtablename, 0, 3 );
     }
     else if ( !level.killstreakrewards )
@@ -1827,7 +1827,7 @@ getloadout( var_0, var_1, var_2, var_3 )
 
     if ( !var_20 && !var_53 && !( isdefined( self.pers["copyCatLoadout"] ) && self.pers["copyCatLoadout"]["inUse"] && var_2 ) )
     {
-        if ( !isvalidprimary( var_23 ) || level.rankedmatch && var_52 && !self _meth_8221( var_23 ) && !var_54 )
+        if ( !isvalidprimary( var_23 ) || level.rankedmatch && var_52 && !self isitemunlocked( var_23 ) && !var_54 )
         {
             var_23 = table_getweapon( level.classtablename, 10, 0 );
             var_24 = "none";
@@ -1887,7 +1887,7 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isvalidreticle( var_28 ) )
             var_28 = table_getweaponreticle( level.classtablenum, 10, 0 );
 
-        if ( !isvalidsecondary( var_29, var_65["specialty_wildcard_dualprimaries"] ) || level.rankedmatch && var_52 && !self _meth_8221( var_29 ) && !var_54 )
+        if ( !isvalidsecondary( var_29, var_65["specialty_wildcard_dualprimaries"] ) || level.rankedmatch && var_52 && !self isitemunlocked( var_29 ) && !var_54 )
         {
             var_29 = table_getweapon( level.classtablename, 10, 1 );
             var_30 = "none";
@@ -1919,7 +1919,7 @@ getloadout( var_0, var_1, var_2, var_3 )
         if ( !isvalidreticle( var_34 ) )
             var_34 = table_getweaponreticle( level.classtablename, 10, 1 );
 
-        if ( !isvalidequipment( var_35, var_65["specialty_wildcard_dualtacticals"] ) || level.rankedmatch && var_52 && !self _meth_8221( var_35 ) && !var_54 )
+        if ( !isvalidequipment( var_35, var_65["specialty_wildcard_dualtacticals"] ) || level.rankedmatch && var_52 && !self isitemunlocked( var_35 ) && !var_54 )
             var_35 = table_getequipment( level.classtablename, 10 );
 
         if ( var_35 == var_37 )
@@ -2003,7 +2003,7 @@ applyloadout()
 
     self.loadout = undefined;
     self.spectatorviewloadout = var_0;
-    self _meth_8310();
+    self takeallweapons();
     maps\mp\_utility::_clearperks();
     _detachall();
     self.changingweapon = undefined;
@@ -2064,12 +2064,12 @@ applyloadout()
     loadoutallperks( var_0.equipment, var_0.perks );
     maps\mp\perks\_perks::applyperks();
     givedefaultperks();
-    self _meth_8344( var_0.equipment );
+    self setlethalweapon( var_0.equipment );
 
-    if ( var_0.equipment != "specialty_null" && self _meth_8314( var_0.equipment ) )
+    if ( var_0.equipment != "specialty_null" && self hasweapon( var_0.equipment ) )
     {
-        var_2 = self _meth_82F8( var_0.equipment );
-        self _meth_82F6( var_0.equipment, var_2 + 1 );
+        var_2 = self getweaponammoclip( var_0.equipment );
+        self setweaponammoclip( var_0.equipment, var_2 + 1 );
     }
     else
         giveoffhand( var_0.equipment );
@@ -2077,32 +2077,32 @@ applyloadout()
     if ( isdefined( var_0.equipmentextra ) && var_0.equipmentextra )
     {
         maps\mp\_utility::giveperk( "specialty_extralethal", 0 );
-        var_2 = self _meth_82F8( var_0.equipment );
-        self _meth_82F6( var_0.equipment, var_2 + 1 );
+        var_2 = self getweaponammoclip( var_0.equipment );
+        self setweaponammoclip( var_0.equipment, var_2 + 1 );
     }
 
     var_3 = var_0.primaryname;
     maps\mp\_utility::_giveweapon( var_3 );
 
     if ( !isai( self ) )
-        self _meth_8315( var_3 );
+        self switchtoweapon( var_3 );
 
     if ( var_3 == "riotshield_mp" && level.ingraceperiod )
         self notify( "weapon_change", "riotshield_mp" );
 
     if ( var_0.setprimaryspawnweapon )
-        self _meth_824F( maps\mp\_utility::get_spawn_weapon_name( var_0 ) );
+        self setspawnweapon( maps\mp\_utility::get_spawn_weapon_name( var_0 ) );
 
     self.pers["primaryWeapon"] = maps\mp\_utility::getbaseweaponname( var_3 );
     self.loadoutoffhand = var_0.offhand;
-    self _meth_8319( var_0.offhand );
+    self settacticalweapon( var_0.offhand );
     giveoffhand( var_0.offhand );
 
     if ( isdefined( var_0.offhandextra ) && var_0.offhandextra )
     {
         maps\mp\_utility::giveperk( "specialty_extratactical", 0 );
-        var_2 = self _meth_82F8( var_0.offhand );
-        self _meth_82F6( var_0.offhand, var_2 + 1 );
+        var_2 = self getweaponammoclip( var_0.offhand );
+        self setweaponammoclip( var_0.offhand, var_2 + 1 );
     }
 
     thread loadouttrackvariablegrenades( var_0.class, var_0.equipment, var_0.offhand );
@@ -2112,8 +2112,8 @@ applyloadout()
 
     if ( var_0.clearammo )
     {
-        self _meth_82F6( self.primaryweapon, 0 );
-        self _meth_82F7( self.primaryweapon, 0 );
+        self setweaponammoclip( self.primaryweapon, 0 );
+        self setweaponammostock( self.primaryweapon, 0 );
     }
 
     self.issniper = weaponclass( self.primaryweapon ) == "sniper";
@@ -2131,13 +2131,13 @@ applyloadout()
 
     if ( maps\mp\_utility::_hasperk( "specialty_extraammo" ) )
     {
-        var_5 = self _meth_82F9( var_3 );
-        self _meth_82F7( var_3, var_5 * 2 );
+        var_5 = self setweaponammostock( var_3 );
+        self setweaponammostock( var_3, var_5 * 2 );
 
         if ( var_1 != "none" && maps\mp\_utility::getweaponclass( var_1 ) != "weapon_projectile" )
         {
-            var_5 = self _meth_82F9( var_1 );
-            self _meth_82F7( var_1, var_5 * 2 );
+            var_5 = self setweaponammostock( var_1 );
+            self setweaponammostock( var_1, var_5 * 2 );
         }
     }
 
@@ -2375,7 +2375,7 @@ giveoffhand( var_0 )
         case "scrambler_mp":
         case "s1_tactical_insertion_device_mp":
         case "portable_radar_mp":
-            self _meth_830E( var_0 );
+            self giveweapon( var_0 );
             break;
         case "exoshield_equipment_mp":
             maps\mp\_exo_shield::give_exo_shield();
@@ -2447,7 +2447,7 @@ takeoffhand( var_0 )
         case "flash_grenade_mp":
         case "scrambler_mp":
         case "portable_radar_mp":
-            self _meth_830F( var_0 );
+            self takeweapon( var_0 );
             break;
         case "exoshield_equipment_mp":
             maps\mp\_exo_shield::take_exo_shield();
@@ -2515,9 +2515,9 @@ loadouttrackvariablegrenades( var_0, var_1, var_2 )
             if ( isdefined( self.prevlethalvarclass ) && self.prevlethalvarclass == var_0 && isdefined( self.prevlethalvartype ) && self.prevlethalvartype != var_1 )
             {
                 var_3 = self.prevlethalvartype;
-                self _meth_830F( var_1 );
+                self takeweapon( var_1 );
                 self.loadoutequipment = var_3;
-                self _meth_8344( var_3 );
+                self setlethalweapon( var_3 );
                 maps\mp\_utility::giveperk( var_3, 0 );
                 var_1 = var_3;
             }
@@ -2545,9 +2545,9 @@ loadouttrackvariablegrenades( var_0, var_1, var_2 )
             if ( isdefined( self.prevtacticalvarclass ) && self.prevtacticalvarclass == var_0 && isdefined( self.prevtacticalvartype ) && self.prevtacticalvartype != var_2 )
             {
                 var_5 = self.prevtacticalvartype;
-                self _meth_830F( var_2 );
+                self takeweapon( var_2 );
                 self.loadoutoffhand = var_5;
-                self _meth_8319( var_5 );
+                self settacticalweapon( var_5 );
                 maps\mp\_utility::giveperk( var_5, 0 );
                 var_2 = var_5;
             }
@@ -2953,7 +2953,7 @@ setkillstreaks( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, v
             {
                 for ( var_16 = 0; var_16 < var_15; var_16++ )
                 {
-                    var_17 = self _meth_8248( self.class_num, "assaultStreaks", var_12, "modules", var_16 );
+                    var_17 = self getcacplayerdata( self.class_num, "assaultStreaks", var_12, "modules", var_16 );
 
                     if ( isdefined( var_17 ) && var_17 != "none" )
                     {
@@ -3050,23 +3050,23 @@ replenishloadout()
 {
     var_0 = self.pers["team"];
     var_1 = self.pers["class"];
-    var_2 = self _meth_830B();
+    var_2 = self getweaponslistall();
 
     for ( var_3 = 0; var_3 < var_2.size; var_3++ )
     {
         var_4 = var_2[var_3];
-        self _meth_8332( var_4 );
-        self _meth_82F6( var_4, 9999 );
+        self givemaxammo( var_4 );
+        self setweaponammoclip( var_4, 9999 );
 
         if ( var_4 == "claymore_mp" || var_4 == "claymore_detonator_mp" )
-            self _meth_82F7( var_4, 2 );
+            self setweaponammostock( var_4, 2 );
     }
 
     if ( self getammocount( level.classgrenades[var_1]["primary"]["type"] ) < level.classgrenades[var_1]["primary"]["count"] )
-        self _meth_82F6( level.classgrenades[var_1]["primary"]["type"], level.classgrenades[var_1]["primary"]["count"] );
+        self setweaponammoclip( level.classgrenades[var_1]["primary"]["type"], level.classgrenades[var_1]["primary"]["count"] );
 
     if ( self getammocount( level.classgrenades[var_1]["secondary"]["type"] ) < level.classgrenades[var_1]["secondary"]["count"] )
-        self _meth_82F6( level.classgrenades[var_1]["secondary"]["type"], level.classgrenades[var_1]["secondary"]["count"] );
+        self setweaponammoclip( level.classgrenades[var_1]["secondary"]["type"], level.classgrenades[var_1]["secondary"]["count"] );
 }
 
 onplayerconnecting()
@@ -3107,7 +3107,7 @@ assignpracticeroundclasses()
     {
         level.practiceroundclasses = [];
         level.practiceroundclassorder = [];
-        var_0 = _func_296( level.practiceroundclasstablename );
+        var_0 = tablegetcolumncount( level.practiceroundclasstablename );
 
         for ( var_1 = 1; var_1 < var_0; var_1++ )
         {
@@ -3145,7 +3145,7 @@ assignpracticeroundclasses()
             var_7 = var_5[var_8];
 
         self.pers["practiceRoundClasses"][var_6] = var_7;
-        self _meth_8244( "practiceRoundClassMap", var_6, self.pers["practiceRoundClasses"][var_6] );
+        self setrankedplayerdata( "practiceRoundClassMap", var_6, self.pers["practiceRoundClasses"][var_6] );
     }
 }
 
@@ -3574,7 +3574,7 @@ isattachmentunlocked( var_0, var_1 )
 
     var_3 = var_2 + " " + var_1;
 
-    if ( !self _meth_8221( var_3 ) )
+    if ( !self isitemunlocked( var_3 ) )
         return 0;
 
     return 1;
@@ -3712,7 +3712,7 @@ iscamounlocked( var_0, var_1 )
 
     var_3 = var_2 + " " + var_1;
 
-    if ( !self _meth_8221( var_3 ) )
+    if ( !self isitemunlocked( var_3 ) )
         return 0;
 
     return 1;

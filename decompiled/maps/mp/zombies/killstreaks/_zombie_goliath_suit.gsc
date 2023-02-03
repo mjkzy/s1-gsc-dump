@@ -111,9 +111,9 @@ givejuggernaut( var_0, var_1 )
         maps\mp\_utility::giveperk( "specialty_hardline", 0 );
 
     thread playersetupjuggernautexo( var_1, var_0 );
-    self.saved_lastweapon = self _meth_830C()[0];
+    self.saved_lastweapon = self getweaponslistprimaries()[0];
     maps\mp\gametypes\_weapons::updatemovespeedscale();
-    self _meth_8438( "goliath_suit_up_mp" );
+    self playsoundonmovingent( "goliath_suit_up_mp" );
     level thread announcerglobalplaysuitvo( "gol_start", 5, self );
     level notify( "juggernaut_equipped", self );
     maps\mp\_matchdata::logkillstreakevent( "juggernaut", self.origin );
@@ -130,7 +130,7 @@ cggoliathroverlay()
     thread cggoliathoverlaycleanup( var_1 );
     var_1.x = 0;
     var_1.y = 0;
-    var_1 _meth_80CC( "black", 640, 480 );
+    var_1 setshader( "black", 640, 480 );
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
     var_1.alpha = 0.0;
@@ -152,7 +152,7 @@ removeweapons()
 {
     maps\mp\zombies\_zombies_laststand::savelaststandweapons( "", 0 );
     self.primarytorestore = common_scripts\utility::getlastweapon();
-    var_0 = self _meth_830B();
+    var_0 = self getweaponslistall();
 
     foreach ( var_2 in var_0 )
     {
@@ -160,13 +160,13 @@ removeweapons()
 
         if ( var_3[0] == "alt" )
         {
-            self.restoreweaponclipammo[var_2] = self _meth_82F8( var_2 );
-            self.restoreweaponstockammo[var_2] = self _meth_82F9( var_2 );
+            self.restoreweaponclipammo[var_2] = self getweaponammoclip( var_2 );
+            self.restoreweaponstockammo[var_2] = self setweaponammostock( var_2 );
             continue;
         }
 
-        self.restoreweaponclipammo[var_2] = self _meth_82F8( var_2 );
-        self.restoreweaponstockammo[var_2] = self _meth_82F9( var_2 );
+        self.restoreweaponclipammo[var_2] = self getweaponammoclip( var_2 );
+        self.restoreweaponstockammo[var_2] = self setweaponammostock( var_2 );
     }
 
     self.weaponstorestore = [];
@@ -182,27 +182,27 @@ removeweapons()
             continue;
 
         self.weaponstorestore[self.weaponstorestore.size] = var_2;
-        self _meth_830F( var_2 );
+        self takeweapon( var_2 );
     }
 }
 
 restoreweapons()
 {
-    var_0 = self _meth_830B();
+    var_0 = self getweaponslistall();
 
     foreach ( var_2 in var_0 )
     {
         if ( maps\mp\_utility::iskillstreakweapon( var_2 ) && !iskillstreakgoliathweapon( var_2 ) )
             continue;
 
-        self _meth_830F( var_2 );
+        self takeweapon( var_2 );
     }
 
     if ( !isdefined( self.restoreweaponclipammo ) || !isdefined( self.restoreweaponstockammo ) || !isdefined( self.weaponstorestore ) )
         return;
 
-    self _meth_8344( "none" );
-    self _meth_8319( "none" );
+    self setlethalweapon( "none" );
+    self settacticalweapon( "none" );
     var_4 = [];
 
     foreach ( var_2 in self.weaponstorestore )
@@ -216,26 +216,26 @@ restoreweapons()
         }
 
         if ( maps\mp\zombies\_util::iszombielethal( var_2 ) )
-            self _meth_8344( var_2 );
+            self setlethalweapon( var_2 );
         else if ( maps\mp\zombies\_util::iszombietactical( var_2 ) )
-            self _meth_8319( var_2 );
+            self settacticalweapon( var_2 );
 
         maps\mp\_utility::_giveweapon( var_2 );
 
         if ( isdefined( self.restoreweaponclipammo[var_2] ) )
-            self _meth_82F6( var_2, self.restoreweaponclipammo[var_2] );
+            self setweaponammoclip( var_2, self.restoreweaponclipammo[var_2] );
 
         if ( isdefined( self.restoreweaponstockammo[var_2] ) )
-            self _meth_82F7( var_2, self.restoreweaponstockammo[var_2] );
+            self setweaponammostock( var_2, self.restoreweaponstockammo[var_2] );
     }
 
     foreach ( var_9 in var_4 )
     {
         if ( isdefined( self.restoreweaponclipammo[var_9] ) )
-            self _meth_82F6( var_9, self.restoreweaponclipammo[var_9] );
+            self setweaponammoclip( var_9, self.restoreweaponclipammo[var_9] );
 
         if ( isdefined( self.restoreweaponstockammo[var_9] ) )
-            self _meth_82F7( var_9, self.restoreweaponstockammo[var_9] );
+            self setweaponammostock( var_9, self.restoreweaponstockammo[var_9] );
     }
 
     self.restoreweaponclipammo = undefined;
@@ -281,20 +281,20 @@ playersetupjuggernautexo( var_0, var_1 )
     if ( var_2.hascoopsentry )
         var_3 += 32;
 
-    self _meth_82FB( "ui_exo_suit_modules_on", var_3 );
+    self setclientomnvar( "ui_exo_suit_modules_on", var_3 );
     maps\mp\_utility::playerallowpowerslide( 0, "heavyexo" );
     maps\mp\_utility::playerallowdodge( 0, "heavyexo" );
     maps\mp\_utility::playerallowboostjump( 0, "heavyexo" );
     maps\mp\_utility::playerallowhighjump( 0, "heavyexo" );
     maps\mp\_utility::playerallowhighjumpdrop( 0, "heavyexo" );
-    self _meth_8301( 0 );
-    self _meth_8119( 0 );
-    self _meth_8302( 0 );
-    self _meth_8303( 0 );
+    self allowjump( 0 );
+    self allowcrouch( 0 );
+    self allowladder( 0 );
+    self allowmantle( 0 );
     self.inliveplayerkillstreak = 1;
     self.mechhealth = 600;
     self setdemigod( 1 );
-    self _meth_82FB( "ui_exo_suit_health", 1 );
+    self setclientomnvar( "ui_exo_suit_health", 1 );
     playersetjuggexomodel( var_2 );
     thread playershowjuggernauthud( var_2 );
     thread playercleanupondeath( var_2 );
@@ -382,7 +382,7 @@ juggernautmodifydamage( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
         var_10 = var_0.mechhealth / 600;
         var_0.mechhealth -= var_9;
         var_11 = var_0.mechhealth / 600;
-        var_0 _meth_82FB( "ui_exo_suit_health", var_11 );
+        var_0 setclientomnvar( "ui_exo_suit_health", var_11 );
         level thread dogoliathintegrityvo( var_10, var_11, self );
 
         if ( isdefined( var_1 ) && isplayer( var_1 ) )
@@ -439,14 +439,14 @@ delaysetweapon( var_0 )
 {
     var_0 endon( "death" );
     var_0 endon( "disconnect" );
-    var_0 _meth_830E( "iw5_exominigunzm_mp" );
-    var_0 _meth_8315( "iw5_exominigunzm_mp" );
+    var_0 giveweapon( "iw5_exominigunzm_mp" );
+    var_0 switchtoweapon( "iw5_exominigunzm_mp" );
     waitframe();
-    var_0 _meth_8494( 1 );
+    var_0 setplayermech( 1 );
     var_0 common_scripts\utility::_disableweaponswitch();
 
-    if ( var_0 _meth_8314( "iw5_combatknifegoliath_mp" ) )
-        var_0 _meth_830F( "iw5_combatknifegoliath_mp" );
+    if ( var_0 hasweapon( "iw5_combatknifegoliath_mp" ) )
+        var_0 takeweapon( "iw5_combatknifegoliath_mp" );
 }
 
 playercleanupondeath( var_0 )
@@ -474,7 +474,7 @@ playerreset()
     self notify( "exit_mech" );
     self.heavyexodata = undefined;
     self.isjuggernaut = 0;
-    self _meth_82A9( "specialty_radarjuggernaut", 1 );
+    self unsetperk( "specialty_radarjuggernaut", 1 );
     self.movespeedscaler = 1;
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     maps\mp\_utility::playerallowpowerslide( 1, "heavyexo" );
@@ -482,18 +482,18 @@ playerreset()
     maps\mp\_utility::playerallowboostjump( 1, "heavyexo" );
     maps\mp\_utility::playerallowhighjump( 1, "heavyexo" );
     maps\mp\_utility::playerallowhighjumpdrop( 1, "heavyexo" );
-    self _meth_8301( 1 );
-    self _meth_8119( 1 );
-    self _meth_8302( 1 );
-    self _meth_8303( 1 );
+    self allowjump( 1 );
+    self allowcrouch( 1 );
+    self allowladder( 1 );
+    self allowmantle( 1 );
     self.inliveplayerkillstreak = undefined;
     self.mechhealth = undefined;
     self setdemigod( 0 );
     playerresetomnvars();
-    self _meth_8494( 0 );
+    self setplayermech( 0 );
     common_scripts\utility::_enableweaponswitch();
-    self _meth_8320();
-    self _meth_84C0();
+    self enableoffhandweapons();
+    self enableoffhandsecondaryweapons();
     self.restoreweaponclipammo = undefined;
     self.restoreweaponstockammo = undefined;
 
@@ -503,22 +503,22 @@ playerreset()
 
 playerresetomnvars()
 {
-    self _meth_82FB( "ui_exo_suit_enabled", 0 );
-    self _meth_82FB( "ui_exo_suit_modules_on", 0 );
-    self _meth_82FB( "ui_exo_suit_health", 0 );
-    self _meth_82FB( "ui_exo_suit_recon_cd", 0 );
-    self _meth_82FB( "ui_exo_suit_punch_cd", 0 );
-    self _meth_82FB( "ui_exo_suit_rockets_cd", 0 );
-    self _meth_82FB( "ui_playermech_swarmrecharge", 0 );
-    self _meth_82FB( "ui_playermech_rocketrecharge", 0 );
+    self setclientomnvar( "ui_exo_suit_enabled", 0 );
+    self setclientomnvar( "ui_exo_suit_modules_on", 0 );
+    self setclientomnvar( "ui_exo_suit_health", 0 );
+    self setclientomnvar( "ui_exo_suit_recon_cd", 0 );
+    self setclientomnvar( "ui_exo_suit_punch_cd", 0 );
+    self setclientomnvar( "ui_exo_suit_rockets_cd", 0 );
+    self setclientomnvar( "ui_playermech_swarmrecharge", 0 );
+    self setclientomnvar( "ui_playermech_rocketrecharge", 0 );
 }
 
 playersetjuggexomodel( var_0 )
 {
     self detachall();
-    self _meth_80B1( "npc_exo_armor_mp_base" );
+    self setmodel( "npc_exo_armor_mp_base" );
     self attach( self.characterhead );
-    self _meth_8343( "vm_view_arms_mech_mp" );
+    self setviewmodel( "vm_view_arms_mech_mp" );
     self attach( "npc_exo_armor_minigun_handle", "TAG_HANDLE" );
 }
 
@@ -528,23 +528,23 @@ playerhandlebarrel()
     self endon( "disconnect" );
     self endon( "ejectedFromJuggernaut" );
     thread playercleanupbarrel();
-    self _meth_82DD( "goliathAttack", "+attack" );
-    self _meth_82DD( "goliathAttackDone", "-attack" );
+    self notifyonplayercommand( "goliathAttack", "+attack" );
+    self notifyonplayercommand( "goliathAttackDone", "-attack" );
     self.barrellinker = spawn( "script_model", self gettagorigin( "tag_barrel" ) );
-    self.barrellinker _meth_80B1( "generic_prop_raven" );
-    self.barrellinker _meth_8446( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
+    self.barrellinker setmodel( "generic_prop_raven" );
+    self.barrellinker vehicle_jetbikesethoverforcescale( self, "tag_barrel", ( 12.7, 0, -2.9 ), ( 90, 0, 0 ) );
     self.barrel = spawn( "script_model", self.barrellinker gettagorigin( "j_prop_1" ) );
-    self.barrel _meth_80B1( "npc_exo_armor_minigun_barrel" );
-    self.barrel _meth_8446( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
-    self.barrellinker _meth_827B( "mp_generic_prop_spin_02" );
-    self.barrellinker _meth_84BD( 1 );
+    self.barrel setmodel( "npc_exo_armor_minigun_barrel" );
+    self.barrel vehicle_jetbikesethoverforcescale( self.barrellinker, "j_prop_1", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    self.barrellinker scriptmodelplayanimdeltamotion( "mp_generic_prop_spin_02" );
+    self.barrellinker scriptmodelpauseanim( 1 );
 
     for (;;)
     {
         self waittill( "goliathAttack" );
-        self.barrellinker _meth_84BD( 0 );
+        self.barrellinker scriptmodelpauseanim( 0 );
         self waittill( "goliathAttackDone" );
-        self.barrellinker _meth_84BD( 1 );
+        self.barrellinker scriptmodelpauseanim( 1 );
     }
 }
 
@@ -594,16 +594,16 @@ setupcoopturret( var_0, var_1 )
 {
     var_2 = var_1 gettagorigin( "tag_turret" );
     var_3 = spawnattachment( "juggernaut_sentry_mg_zm_mp", "npc_heavy_exo_armor_turret_base", var_2, 200, var_1, &"KILLSTREAKS_HEAVY_EXO_SENTRY_LOST" );
-    var_3 _meth_8065( "sentry_offline" );
-    var_3 _meth_8103( var_1 );
-    var_3 _meth_8156( 180 );
-    var_3 _meth_8155( 180 );
-    var_3 _meth_8157( 55 );
-    var_3 _meth_8158( 30 );
-    var_3 _meth_815A( 0.0 );
-    var_3 _meth_817A( 1 );
+    var_3 setmode( "sentry_offline" );
+    var_3 setsentryowner( var_1 );
+    var_3 setleftarc( 180 );
+    var_3 setrightarc( 180 );
+    var_3 settoparc( 55 );
+    var_3 setbottomarc( 30 );
+    var_3 setdefaultdroppitch( 0.0 );
+    var_3 setturretmodechangewait( 1 );
     var_3 makeunusable();
-    var_3 _meth_8136();
+    var_3 maketurretsolid();
     var_3.rocketturret = 0;
     var_3.energyturret = 0;
     var_3.turrettype = "mg_turret";
@@ -614,14 +614,14 @@ setupcoopturret( var_0, var_1 )
     var_3.baseowner = var_1;
 
     if ( level.teambased )
-        var_3 _meth_8135( var_1.team );
+        var_3 setturretteam( var_1.team );
 
     var_3 common_scripts\utility::make_entity_sentient_mp( var_1.team );
-    var_3 maps\mp\killstreaks\_autosentry::addtoturretlist( var_3 _meth_81B1() );
+    var_3 maps\mp\killstreaks\_autosentry::addtoturretlist( var_3 getentitynumber() );
     var_3 thread maps\mp\killstreaks\_remoteturret::turret_watchdisabled();
-    var_3 _meth_804D( var_1, "tag_turret", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_1, "tag_turret", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3.effect = spawnattachmenteffect( var_2, var_1 );
-    var_3.effect _meth_804D( var_3, "tag_player", ( 29, -7, -6 ), ( 0, 0, 0 ) );
+    var_3.effect linkto( var_3, "tag_player", ( 29, -7, -6 ), ( 0, 0, 0 ) );
     var_3.effect hide();
     var_0.coopturret = var_3;
     thread stopturret( var_0, var_3, var_1 );
@@ -642,14 +642,14 @@ stopturret( var_0, var_1, var_2 )
         stopfxonattachment( var_1, common_scripts\utility::getfx( "green_light_mp" ), 1 );
         var_1 playsound( "sentry_explode" );
         var_1 thread maps\mp\killstreaks\_remoteturret::sentry_stopattackingtargets();
-        var_1 maps\mp\killstreaks\_autosentry::removefromturretlist( var_1 _meth_81B1() );
-        var_1 _meth_8065( "sentry_offline" );
+        var_1 maps\mp\killstreaks\_autosentry::removefromturretlist( var_1 getentitynumber() );
+        var_1 setmode( "sentry_offline" );
         var_1.damagecallback = undefined;
-        var_1 _meth_82C0( 0 );
-        var_1 _meth_8495( 0 );
-        var_1 _meth_813A();
-        var_1 _meth_815A( 35 );
-        var_1 _meth_8103( undefined );
+        var_1 setcandamage( 0 );
+        var_1 setdamagecallbackon( 0 );
+        var_1 freeentitysentient();
+        var_1 setdefaultdroppitch( 35 );
+        var_1 setsentryowner( undefined );
         level thread doturretdeatheffects( var_1 );
     }
 }
@@ -667,7 +667,7 @@ handlecoopshooting( var_0, var_1, var_2 )
             continue;
         }
 
-        if ( var_1.owner attackbuttonpressed() && !var_1 _meth_844F() )
+        if ( var_1.owner attackbuttonpressed() && !var_1 isturretoverheated() )
         {
             var_1 turretshootblank( var_1.baseowner );
             wait(var_3);
@@ -680,7 +680,7 @@ handlecoopshooting( var_0, var_1, var_2 )
 
 turretshoot()
 {
-    self _meth_80EA();
+    self shootturret();
     turretshootblank( self.baseowner );
 }
 
@@ -698,7 +698,7 @@ turretshootblank( var_0 )
         self.nexttracer = 5;
     }
 
-    _func_2A0( var_1, var_3, "juggernaut_sentry_mg_zm_mp", var_4, var_0 );
+    shootblank( var_1, var_3, "juggernaut_sentry_mg_zm_mp", var_4, var_0 );
 }
 
 doturretdeatheffects( var_0 )
@@ -727,7 +727,7 @@ handleturretonplayerdone( var_0, var_1, var_2 )
     thread attachmentdeath( var_0, var_1, var_2 );
     waittillattachmentdone( var_2 );
     stopfxonattachment( var_1, common_scripts\utility::getfx( "green_light_mp" ) );
-    var_1 maps\mp\killstreaks\_autosentry::removefromturretlist( var_1 _meth_81B1() );
+    var_1 maps\mp\killstreaks\_autosentry::removefromturretlist( var_1 getentitynumber() );
     var_1.issentry = 0;
     var_2 notify( "turretDead" );
     removecoopturretbuddy( var_0 );
@@ -736,8 +736,8 @@ handleturretonplayerdone( var_0, var_1, var_2 )
 
 setuplongpunch( var_0, var_1 )
 {
-    var_0 _meth_8344( "playermech_rocket_zm_mp" );
-    var_0 _meth_830E( "playermech_rocket_zm_mp" );
+    var_0 setlethalweapon( "playermech_rocket_zm_mp" );
+    var_0 giveweapon( "playermech_rocket_zm_mp" );
     var_2 = "tag_origin";
     var_0 thread playerwatchnoobtubeuse( var_1 );
     waittillattachmentdone( var_0 );
@@ -786,7 +786,7 @@ waitattachmentcooldown( var_0, var_1 )
         var_2 += 0.05;
         var_3 = 1 - var_2 / var_0;
         var_3 = clamp( var_3, 0, 1 );
-        self _meth_82FB( var_1, var_3 );
+        self setclientomnvar( var_1, var_3 );
 
         if ( var_3 <= 0 )
             break;
@@ -796,8 +796,8 @@ waitattachmentcooldown( var_0, var_1 )
 setuprocketswarm( var_0, var_1 )
 {
     var_2 = "playermech_rocket_swarm_zm_mp";
-    var_0 _meth_8319( var_2 );
-    var_0 _meth_830E( var_2 );
+    var_0 settacticalweapon( var_2 );
+    var_0 giveweapon( var_2 );
     var_3 = "tag_origin";
     var_4 = var_0 gettagorigin( var_3 );
     var_5 = spawnattachment( "rocketAttachment", "npc_heavy_exo_armor_missile_pack_base", var_4, undefined, var_0 );
@@ -806,7 +806,7 @@ setuprocketswarm( var_0, var_1 )
     var_5.enemytargets = [];
     var_5.rockets = [];
     var_5.icons = [];
-    var_5 _meth_804D( var_0, var_3, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 linkto( var_0, var_3, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_5 hide();
     var_0.rocketattachment = var_5;
     thread scanforrocketenemies( var_5, var_0 );
@@ -851,7 +851,7 @@ getbestenemies( var_0, var_1 )
 {
     var_2 = 0.843391;
     var_3 = anglestoforward( var_0 getangles() );
-    var_4 = var_0 _meth_80A8();
+    var_4 = var_0 geteye();
     var_5 = undefined;
     var_6 = [];
     var_7 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
@@ -861,14 +861,14 @@ getbestenemies( var_0, var_1 )
 
     foreach ( var_9 in var_7 )
     {
-        if ( issentient( var_9 ) && _func_285( var_9, var_0 ) )
+        if ( issentient( var_9 ) && isalliedsentient( var_9, var_0 ) )
             continue;
 
         if ( !maps\mp\_utility::isreallyalive( var_9 ) )
             continue;
 
         if ( issentient( var_9 ) )
-            var_10 = var_9 _meth_80A8();
+            var_10 = var_9 geteye();
         else
             var_10 = var_9.origin + ( 0, 0, 55 );
 
@@ -899,7 +899,7 @@ getbestenemies( var_0, var_1 )
         var_17 = var_4;
 
         if ( issentient( var_16 ) )
-            var_18 = var_16 _meth_80A8();
+            var_18 = var_16 geteye();
         else
             var_18 = var_16.origin + ( 0, 0, 55 );
 
@@ -1004,7 +1004,7 @@ rockettargetent( var_0, var_1, var_2 )
     var_0 endon( "death" );
 
     if ( isdefined( var_1 ) )
-        self _meth_81D9( var_1, var_2 );
+        self missile_settargetent( var_1, var_2 );
 
     self waittill( "death" );
     var_0.rockets = common_scripts\utility::array_remove( var_0.rockets, self );
@@ -1139,7 +1139,7 @@ spawnattachment( var_0, var_1, var_2, var_3, var_4, var_5 )
     else
         var_6 = spawn( "script_model", var_2 );
 
-    var_6 _meth_80B1( var_1 );
+    var_6 setmodel( var_1 );
     var_6.attachmenttype = var_0;
 
     if ( isdefined( var_3 ) )
@@ -1151,7 +1151,7 @@ spawnattachment( var_0, var_1, var_2, var_3, var_4, var_5 )
         if ( isdefined( var_5 ) )
             var_6 thread handleattachmentdeath( var_0, var_4, var_5 );
 
-        var_6 _meth_8495( 1 );
+        var_6 setdamagecallbackon( 1 );
     }
 
     var_6 hidefromplayer( var_4 );
@@ -1169,7 +1169,7 @@ spawnattachmenteffect( var_0, var_1, var_2 )
         var_2 = 0;
 
     var_3 = spawn( "script_model", var_0 );
-    var_3 _meth_80B1( "tag_origin" );
+    var_3 setmodel( "tag_origin" );
     var_3 hidefromplayer( var_1 );
     thread delayplayfx( var_3, common_scripts\utility::getfx( "green_light_mp" ) );
     return var_3;
@@ -1324,8 +1324,8 @@ playerremotecoopturret( var_0 )
     var_0.coopturret endon( "death" );
     var_0.streakplayer endon( "death" );
     var_0.streakplayer endon( "disconnect" );
-    var_0.coopturret _meth_8103( undefined );
-    var_0.coopturret _meth_8103( self );
+    var_0.coopturret setsentryowner( undefined );
+    var_0.coopturret setsentryowner( self );
     var_0.coopturret.owner = self;
     var_0.coopturret.effect hidefromplayers( [ self, var_0.streakplayer ] );
     self.using_remote_turret = 1;
@@ -1361,15 +1361,15 @@ removecoopturretbuddy( var_0 )
 
     }
 
-    var_1 _meth_8322();
+    var_1 enableweaponswitch();
 
     if ( isdefined( var_0.streakplayer ) && maps\mp\_utility::isreallyalive( var_0.streakplayer ) )
     {
         if ( isdefined( var_0.coopturret.effect ) )
             var_0.coopturret.effect hide();
 
-        var_0.coopturret _meth_8103( undefined );
-        var_0.coopturret _meth_8103( var_0.streakplayer );
+        var_0.coopturret setsentryowner( undefined );
+        var_0.coopturret setsentryowner( var_0.streakplayer );
         var_0.coopturret.owner = var_0.streakplayer;
         var_0.streakplayer notify( "buddyLeftCoopTurret" );
     }
@@ -1377,7 +1377,7 @@ removecoopturretbuddy( var_0 )
 
 playershowjuggernauthud( var_0 )
 {
-    self _meth_82FB( "ui_exo_suit_enabled", 1 );
+    self setclientomnvar( "ui_exo_suit_enabled", 1 );
     thread playermech_state_manager();
 }
 
@@ -1454,7 +1454,7 @@ firedroppod( var_0, var_1, var_2 )
     var_6.team = var_5;
     var_7 = spawn( "script_model", var_4 + ( 0, 0, 5 ) );
     var_7.angles = ( -90, 0, 0 );
-    var_7 _meth_80B1( "tag_origin" );
+    var_7 setmodel( "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "jugg_droppod_marker" ), var_7, "tag_origin" );
     maps\mp\killstreaks\_orbital_util::adddropmarker( var_7, "goliath_suit" );
 
@@ -1495,14 +1495,14 @@ firedroppod( var_0, var_1, var_2 )
     var_10 = spawn( "script_model", var_4 );
     var_10.angles = ( 90, 0, 0 );
     var_10.targetname = "goliath_pod_model";
-    var_10 _meth_80B1( "vehicle_drop_pod" );
+    var_10 setmodel( "vehicle_drop_pod" );
     var_10 thread handle_goliath_drop_pod_removal( var_9 );
     var_10 maps\mp\_entityheadicons::setheadicon( var_5, maps\mp\killstreaks\_killstreaks::getkillstreakcrateicon( "zm_goliath_suit", [] ), ( 0, 0, 140 ), 14, 14, undefined, undefined, undefined, undefined, undefined, 0 );
     var_9.owner = undefined;
     var_9.cratetype = "juggernaut";
     var_9.droptype = "juggernaut";
     var_9 thread control_goliath_usability();
-    var_9 _meth_80DB( &"KILLSTREAKS_HEAVY_EXO_PICKUP" );
+    var_9 sethintstring( &"KILLSTREAKS_HEAVY_EXO_PICKUP" );
     var_9 thread cratecapturethink();
     var_9 thread usegoliathupdater();
     var_11 = spawnstruct();
@@ -1512,7 +1512,7 @@ firedroppod( var_0, var_1, var_2 )
     var_11.touchingplatformvalid = ::movingplatformtouchvalid;
     var_9 thread maps\mp\_movers::handle_moving_platforms( var_11 );
     var_9 droppodmovenearbyallies( var_5 );
-    var_9 _meth_8057();
+    var_9 disconnectpaths();
     var_12 = var_9 playerwaittillgoliathactivated();
 
     if ( isdefined( var_12 ) && isalive( var_12 ) )
@@ -1520,7 +1520,7 @@ firedroppod( var_0, var_1, var_2 )
         maps\mp\gametypes\_gamelogic::sethasdonecombat( var_12, 1 );
         var_12.enteringgoliath = 1;
         var_12 playerswitchtosuitupweapon();
-        var_12 _meth_804F();
+        var_12 unlink();
         var_12 maps\mp\_utility::freezecontrolswrapper( 1 );
         var_13 = var_4 - var_12.origin;
         var_14 = vectortoangles( var_13 );
@@ -1531,11 +1531,11 @@ firedroppod( var_0, var_1, var_2 )
 
         if ( level.nextgen )
         {
-            var_17 _meth_80B1( "npc_exo_armor_ingress" );
-            var_17 _meth_827B( "mp_goliath_spawn" );
+            var_17 setmodel( "npc_exo_armor_ingress" );
+            var_17 scriptmodelplayanimdeltamotion( "mp_goliath_spawn" );
         }
         else
-            var_17 _meth_80B1( "npc_exo_armor_mp_base" );
+            var_17 setmodel( "npc_exo_armor_mp_base" );
 
         var_12 maps\mp\_snd_common_mp::snd_message( "goliath_pod_burst" );
 
@@ -1550,10 +1550,10 @@ firedroppod( var_0, var_1, var_2 )
         {
             var_12 setorigin( var_4, 1 );
             var_12 setangles( var_17.angles );
-            var_12 _meth_831E();
+            var_12 enableweapons();
             var_12 givejuggernaut( "juggernaut_exosuit", var_1 );
             var_17 delete();
-            var_12 _meth_8517();
+            var_12 playgoliathtoidleleanim();
             wait 1;
 
             if ( isdefined( var_12 ) )
@@ -1572,8 +1572,8 @@ firedroppod( var_0, var_1, var_2 )
 playerswitchtosuitupweapon()
 {
     removeweapons();
-    self _meth_830E( "iw5_combatknifegoliath_mp", 0, 0, 0, 1 );
-    self _meth_8315( "iw5_combatknifegoliath_mp" );
+    self giveweapon( "iw5_combatknifegoliath_mp", 0, 0, 0, 1 );
+    self switchtoweapon( "iw5_combatknifegoliath_mp" );
 }
 
 cratecapturethink( var_0 )
@@ -1597,10 +1597,10 @@ cratecapturethink( var_0 )
         if ( isdefined( self.owner ) && var_2 == self.owner )
             continue;
 
-        if ( var_2 _meth_83B3() || isdefined( var_2.exo_hover_on ) && var_2.exo_hover_on )
+        if ( var_2 isjumping() || isdefined( var_2.exo_hover_on ) && var_2.exo_hover_on )
             continue;
 
-        if ( !var_2 _meth_8341() && !maps\mp\killstreaks\_airdrop::waitplayerstuckoncarepackagereturn( var_2 ) )
+        if ( !var_2 isonground() && !maps\mp\killstreaks\_airdrop::waitplayerstuckoncarepackagereturn( var_2 ) )
             continue;
 
         if ( !maps\mp\killstreaks\_airdrop::validateopenconditions( var_2 ) )
@@ -1629,11 +1629,11 @@ cratecapturethink( var_0 )
 useholdthink( var_0, var_1, var_2 )
 {
     if ( isplayer( var_0 ) )
-        var_0 _meth_807C( self );
+        var_0 playerlinkto( self );
     else
-        var_0 _meth_804D( self );
+        var_0 linkto( self );
 
-    var_0 _meth_8081();
+    var_0 playerlinkedoffsetenable();
 
     if ( !var_0 maps\mp\_utility::isjuggernaut() )
         var_0 common_scripts\utility::_disableweapon();
@@ -1685,8 +1685,8 @@ useholdthinkplayerreset( var_0 )
         if ( !var_0 maps\mp\_utility::isjuggernaut() )
             var_0 common_scripts\utility::_enableweapon();
 
-        if ( var_0 _meth_8068() )
-            var_0 _meth_804F();
+        if ( var_0 islinked() )
+            var_0 unlink();
     }
 }
 
@@ -1697,8 +1697,8 @@ personalusebar( var_0, var_1 )
     if ( isdefined( var_1 ) )
         iprintlnbold( "Fixme @agersant " + var_1 );
 
-    self _meth_82FB( "ui_use_bar_text", 1 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
+    self setclientomnvar( "ui_use_bar_text", 1 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
     var_2 = -1;
 
     while ( maps\mp\_utility::isreallyalive( self ) && isdefined( var_0 ) && var_0.inuse && !level.gameended )
@@ -1713,7 +1713,7 @@ personalusebar( var_0, var_1 )
                 var_3 = gettime();
                 var_4 = var_0.curprogress / var_0.usetime;
                 var_5 = var_3 + ( 1 - var_4 ) * var_0.usetime / var_0.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_5 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_5 ) );
             }
 
             var_2 = var_0.userate;
@@ -1722,7 +1722,7 @@ personalusebar( var_0, var_1 )
         wait 0.05;
     }
 
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
 }
 
 ishordelaststand( var_0 )
@@ -1813,11 +1813,11 @@ control_goliath_usability()
         {
             var_4 = 0;
 
-            if ( var_1 _meth_8341() && !var_1 isonladder() && !var_1 _meth_83B3() && !var_1 ismantling() && maps\mp\_utility::isreallyalive( var_1 ) && var_1 _meth_817C() == "stand" )
+            if ( var_1 isonground() && !var_1 isonladder() && !var_1 isjumping() && !var_1 ismantling() && maps\mp\_utility::isreallyalive( var_1 ) && var_1 getstance() == "stand" )
             {
                 if ( distancesquared( self.origin, var_1.origin ) < 6000 )
                 {
-                    if ( var_1 _meth_8215( self.origin + ( 0, 0, 50 ), 65, 400, 600 ) )
+                    if ( var_1 worldpointinreticle_rect( self.origin + ( 0, 0, 50 ), 65, 400, 600 ) )
                         var_4 = 1;
                 }
             }
@@ -1846,8 +1846,8 @@ is_entering_goliath( var_0, var_1 )
         thread cggoliathroverlay();
 
     wait 0.05;
-    var_0 _meth_827B( "mp_goliath_enter" );
-    self _meth_8516();
+    var_0 scriptmodelplayanimdeltamotion( "mp_goliath_enter" );
+    self playgoliathentryanim();
     wait 2.3;
 }
 
@@ -1856,14 +1856,14 @@ createcollision( var_0 )
     var_1 = getent( "goliath_collision", "targetname" );
 
     if ( isdefined( var_1 ) )
-        self _meth_8278( var_1 );
+        self clonebrushmodeltoscriptmodel( var_1 );
 }
 
 playerwaittillgoliathactivated()
 {
     self endon( "death" );
     self waittill( "captured", var_0 );
-    var_0 _meth_817D( "stand" );
+    var_0 setstance( "stand" );
     return var_0;
 }
 
@@ -1926,8 +1926,8 @@ adjustlink( var_0, var_1, var_2, var_3, var_4 )
 
         var_5 = var_7;
         var_6 = var_8;
-        var_0 _meth_804F();
-        var_0 _meth_804D( var_2, var_1, var_6, var_5 );
+        var_0 unlink();
+        var_0 linkto( var_2, var_1, var_6, var_5 );
     }
 }
 
@@ -2032,19 +2032,19 @@ playermech_ui_weapon_feedback( var_0, var_1 )
     self endon( "disconnect" );
     self endon( "exit_mech" );
     self endon( "ejectedFromJuggernaut" );
-    self _meth_82FB( var_1, 0 );
+    self setclientomnvar( var_1, 0 );
 
     for (;;)
     {
         while ( !self call [[ var_0 ]]() )
             wait 0.05;
 
-        self _meth_82FB( var_1, 1 );
+        self setclientomnvar( var_1, 1 );
 
         while ( self call [[ var_0 ]]() )
             wait 0.05;
 
-        self _meth_82FB( var_1, 0 );
+        self setclientomnvar( var_1, 0 );
         wait 0.05;
     }
 }
@@ -2058,10 +2058,10 @@ playermech_ui_update_lui( var_0 )
         var_2 = 1;
 
     if ( self.heavyexodata.hasrockets )
-        self _meth_82FB( "ui_playermech_swarmrecharge", var_0.swarm.recharge );
+        self setclientomnvar( "ui_playermech_swarmrecharge", var_0.swarm.recharge );
 
     if ( self.heavyexodata.haslongpunch )
-        self _meth_82FB( "ui_playermech_rocketrecharge", var_0.rocket.recharge );
+        self setclientomnvar( "ui_playermech_rocketrecharge", var_0.rocket.recharge );
 }
 
 playermech_invalid_gun_callback()
@@ -2121,16 +2121,16 @@ playermech_invalid_weapon_instance( var_0, var_1 )
 playermech_invalid_weapon_watcher()
 {
     thread playermech_invalid_weapon_instance( ::attackbuttonpressed, ::playermech_invalid_gun_callback );
-    thread playermech_invalid_weapon_instance( ::_meth_82EE, ::playermech_invalid_rocket_callback );
-    thread playermech_invalid_weapon_instance( ::_meth_82EF, ::playermech_invalid_swarm_callback );
+    thread playermech_invalid_weapon_instance( ::fragbuttonpressed, ::playermech_invalid_rocket_callback );
+    thread playermech_invalid_weapon_instance( ::secondaryoffhandbuttonpressed, ::playermech_invalid_swarm_callback );
 }
 
 state_chaingun_pump()
 {
     var_0 = get_mech_chaingun_state();
-    var_1 = self _meth_8311();
-    self.mechuistate.chaingun.heatlevel = self _meth_83B9( var_1 );
-    self.mechuistate.chaingun.overheated = self _meth_83BA( var_1 );
+    var_1 = self getcurrentweapon();
+    self.mechuistate.chaingun.heatlevel = self getweaponheatlevel( var_1 );
+    self.mechuistate.chaingun.overheated = self isweaponoverheated( var_1 );
 
     if ( var_0 == "ready" )
     {
@@ -2267,9 +2267,9 @@ playermech_monitor_rocket_recharge()
     for (;;)
     {
         self waittill( "mech_rocket_fire" );
-        self _meth_831F();
+        self disableoffhandweapons();
         playermech_monitor_update_recharge( self.mechuistate.rocket, playergetrocketreloadtime() );
-        self _meth_8320();
+        self enableoffhandweapons();
         wait 0.05;
     }
 }
@@ -2285,9 +2285,9 @@ playermech_monitor_swarm_recharge()
     for (;;)
     {
         self waittill( "mech_swarm_fire" );
-        self _meth_84BF();
+        self disableoffhandsecondaryweapons();
         playermech_monitor_update_recharge( self.mechuistate.swarm, playergetswarmreloadtime() );
-        self _meth_84C0();
+        self enableoffhandsecondaryweapons();
         wait 0.05;
     }
 }
@@ -2305,7 +2305,7 @@ play_goliath_death_fx()
 
         if ( isagent( self ) && isdefined( self.hideondeath ) && self.hideondeath == 1 )
         {
-            var_0 = self _meth_842C();
+            var_0 = self getcorpseentity();
 
             if ( isdefined( var_0 ) )
                 var_0 hide();
@@ -2330,7 +2330,7 @@ playermechtimeout()
         var_1 = self.mechhealth / 600;
         self.mechhealth -= var_0;
         var_2 = self.mechhealth / 600;
-        self _meth_82FB( "ui_exo_suit_health", var_2 );
+        self setclientomnvar( "ui_exo_suit_health", var_2 );
         level thread dogoliathintegrityvo( var_1, var_2, self );
 
         if ( self.mechhealth < 0 )
@@ -2403,7 +2403,7 @@ setupeject( var_0, var_1 )
     var_1 endon( "ejectedFromJuggernaut" );
 
     if ( !isbot( var_1 ) )
-        var_1 _meth_82DD( "juggernautEject", "+goStand" );
+        var_1 notifyonplayercommand( "juggernautEject", "+goStand" );
 
     for (;;)
     {
@@ -2411,7 +2411,7 @@ setupeject( var_0, var_1 )
         waitframe();
         var_2 = 0;
 
-        while ( var_1 _meth_83DE() )
+        while ( var_1 jumpbuttonpressed() )
         {
             var_2 += 0.05;
 
@@ -2435,8 +2435,8 @@ playereject( var_0 )
     self notify( "ejectedFromJuggernaut" );
     level thread juggernautsuitexplode( self );
     self detachall();
-    self _meth_80B1( self.charactermodel );
-    self _meth_8343( self.characterviewmodel );
+    self setmodel( self.charactermodel );
+    self setviewmodel( self.characterviewmodel );
     self attach( self.characterhead );
     restoreweapons();
     thread playersetpreviousweapon();
@@ -2451,13 +2451,13 @@ playerhandlejump()
 {
     self endon( "disconnect" );
     self endon( "death" );
-    self _meth_8301( 0 );
+    self allowjump( 0 );
     wait 1;
 
-    while ( !self _meth_8341() )
+    while ( !self isonground() )
         waitframe();
 
-    self _meth_8301( 1 );
+    self allowjump( 1 );
 }
 
 playersetpreviousweapon()
@@ -2467,9 +2467,9 @@ playersetpreviousweapon()
     var_0 = self.primarytorestore;
     self.primarytorestore = undefined;
 
-    while ( self _meth_8311() != var_0 )
+    while ( self getcurrentweapon() != var_0 )
     {
-        self _meth_8315( var_0 );
+        self switchtoweapon( var_0 );
         wait 0.1;
     }
 }
@@ -2485,7 +2485,7 @@ juggernautsuitexplode( var_0, var_1 )
 
     if ( isdefined( var_0 ) )
     {
-        var_0 entityradiusdamage( var_2, 400, 200, 50, var_0, "MOD_EXPLOSIVE", "iw5_juggernautrocketszm_mp" );
+        var_0 radiusdamage( var_2, 400, 200, 50, var_0, "MOD_EXPLOSIVE", "iw5_juggernautrocketszm_mp" );
         var_0 maps\mp\_snd_common_mp::snd_message( "goliath_self_destruct" );
     }
 

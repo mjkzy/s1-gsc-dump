@@ -164,7 +164,7 @@ precache_presets()
 config_system()
 {
     soundscripts\_audio::set_stringtable_mapname( "shg" );
-    level.player _meth_811F( "voices_critical" );
+    level.player deactivateocclusion( "voices_critical" );
     soundscripts\_audio_whizby::whiz_set_radii( 50, 100, 5000 );
     soundscripts\_audio_whizby::whiz_set_offset( 15 );
     soundscripts\_audio_whizby::whiz_set_probabilities( 50, 50, 100 );
@@ -217,7 +217,7 @@ launch_loops()
 
 launch_intro_loops()
 {
-    if ( level.currentgen && !_func_21E( "fusion_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "fusion_intro_tr" ) )
         return;
 
     common_scripts\utility::loop_fx_sound( "metal_detector_hum_lp", ( 657, 3291, 60 ), 1, "aud_stop_intro" );
@@ -234,7 +234,7 @@ launch_intro_loops()
 
 launch_middle_loops()
 {
-    if ( level.currentgen && !_func_21E( "fusion_middle_tr" ) )
+    if ( level.currentgen && !istransientloaded( "fusion_middle_tr" ) )
         level waittill( "tff_post_transition_intro_to_middle" );
 
     common_scripts\utility::loop_fx_sound( "computer_main_frame_lp", ( 1105, 2566, -484 ), 1, "aud_stop_middle" );
@@ -322,7 +322,7 @@ launch_middle_loops()
 
 launch_outro_loops()
 {
-    if ( level.currentgen && !_func_21E( "fusion_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "fusion_outro_tr" ) )
         level waittill( "tff_post_transition_middle_to_outro" );
 
     common_scripts\utility::loop_fx_sound( "steam_broken_pipe_lp", ( 5295, 1252, -36 ), 1 );
@@ -638,11 +638,11 @@ rooftop_strafe_start()
     var_0 thread soundscripts\_snd_common::snd_air_vehicle_smart_flyby( "fus_warbird_roof_strafe_by", 1700 );
     wait 5;
     var_1 = var_0 soundscripts\_snd_playsound::snd_play_loop_linked( "fus_warbird_plr_chop_lp", "stop_warbird_chop", undefined, undefined, 0, ( 0, 0, 0 ) );
-    var_1 _meth_806F( 0.0 );
-    var_1 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 1, 4 );
+    var_1 scalevolume( 0.0 );
+    var_1 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 1, 4 );
     common_scripts\utility::flag_wait( "flag_squad_heli_01_zip_complete" );
     var_0 thread soundscripts\_snd_common::snd_air_vehicle_smart_flyby( "fus_warbird_roof_strafe_depart", 1000 );
-    var_1 _meth_806F( 0, 5 );
+    var_1 scalevolume( 0, 5 );
     wait 5.05;
     level notify( "stop_warbird_chop" );
 }
@@ -652,14 +652,14 @@ player_warbird_spawn()
     level waittill( "aud_roof_combat_complete" );
     var_0 = self;
     var_1 = var_0 soundscripts\_snd_playsound::snd_play_loop_linked( "fus_warbird_plr_blades_lp", "stop_warbird_plr_blades", undefined, undefined, 0, ( -50, 200, 100 ) );
-    var_1 _meth_806F( 0.0 );
-    var_1 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 0.75, 2 );
+    var_1 scalevolume( 0.0 );
+    var_1 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 0.75, 2 );
     var_2 = var_0 soundscripts\_snd_playsound::snd_play_loop_linked( "fus_warbird_plr_interior_lp", "stop_warbird_plr_interior", undefined, undefined, 0, ( -50, -200, 100 ) );
-    var_2 _meth_806F( 0.0 );
-    var_2 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 0.75, 2 );
+    var_2 scalevolume( 0.0 );
+    var_2 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 0.75, 2 );
     level waittill( "aud_fastzip_end" );
-    var_1 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 0, 5 );
-    var_2 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 0, 5 );
+    var_1 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 0, 5 );
+    var_2 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 0, 5 );
     wait 5.05;
     level notify( "stop_warbird_plr_blades" );
     level notify( "stop_warbird_plr_interior" );
@@ -693,7 +693,7 @@ fastzip_rappel()
     soundscripts\_snd_playsound::snd_play_2d( "tac_fastzip_land" );
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_806F( 0, 0.01 );
+        var_0 scalevolume( 0, 0.01 );
 }
 
 fastzip_explosion_seq()
@@ -848,7 +848,7 @@ x4_walker_fire_missile( var_0 )
         var_1 = var_0;
         var_2 = self;
         thread soundscripts\_snd_playsound::snd_play_2d( "x4_walker_missile_fire" );
-        var_2 _meth_8075( "x4_walker_missile_loop" );
+        var_2 playloopsound( "x4_walker_missile_loop" );
         var_2 waittill( "explode", var_3 );
         var_4 = spawnstruct();
         var_4.pos = var_3;
@@ -886,7 +886,7 @@ mobile_turret_missile( var_0 )
         var_1 = var_0;
         var_2 = self;
         thread soundscripts\_snd_playsound::snd_play_2d( "x4_walker_missile_fire_npc" );
-        var_2 _meth_8075( "x4_walker_missile_loop" );
+        var_2 playloopsound( "x4_walker_missile_loop" );
         var_2 waittill( "explode", var_3 );
         var_4 = spawnstruct();
         var_4.pos = var_3;
@@ -1034,7 +1034,7 @@ titan_fire_wait()
         var_10 = [ var_2, var_3, var_4, var_6, var_5 ];
 
         foreach ( var_12 in var_10 )
-            var_12 _meth_806E( var_1, 0 );
+            var_12 setvolume( var_1, 0 );
 
         wait 0.05;
     }
@@ -1046,8 +1046,8 @@ trophy_system_explosion( var_0 )
     var_2 = soundscripts\_snd::snd_map( var_1, level.aud.envs["titan_tank_cannon"] );
     var_3 = level.player soundscripts\_snd_playsound::snd_play_linked( "titan_trophy_system_explode" );
     var_4 = level.player soundscripts\_snd_playsound::snd_play_linked( "titan_trophy_system_explode_impact" );
-    var_3 _meth_806F( var_2, 0 );
-    var_4 _meth_806F( var_2, 0 );
+    var_3 scalevolume( var_2, 0 );
+    var_4 scalevolume( var_2, 0 );
 }
 
 titan_take_damage_from_smaw( var_0 )
@@ -1055,7 +1055,7 @@ titan_take_damage_from_smaw( var_0 )
     var_1 = distance( self.origin, level.player.origin );
     var_2 = soundscripts\_snd::snd_map( var_1, level.aud.envs["titan_tank_cannon"] );
     var_3 = soundscripts\_snd_playsound::snd_play_linked( "titan_take_smaw_dmg" );
-    var_3 _meth_806F( var_2 * 2, 0 );
+    var_3 scalevolume( var_2 * 2, 0 );
     var_4 = self.origin + ( 500, 0, 0 );
     var_5 = spawnstruct();
     var_5.pos = var_4;
@@ -1158,7 +1158,7 @@ security_checkpoint_trigger_play_beep( var_0 )
     var_1 = aud_create_linked_entity( self );
     var_1 aud_play( "beep_metal_detector_alert" );
 
-    while ( var_0 _meth_80A9( self ) )
+    while ( var_0 istouching( self ) )
         wait 0.1;
 
     self.instigators = common_scripts\utility::array_remove( self.instigators, var_0 );
@@ -1354,8 +1354,8 @@ start_reactor_airlock_open( var_0 )
     var_0 soundscripts\_snd_playsound::snd_play_linked( "fus_reactor_airlock_open" );
     wait 4.0;
     var_1 = var_0 soundscripts\_snd_playsound::snd_play_loop_linked( "fus_reactor_airlock_servo_lp", "stop_airlock_door_loop" );
-    var_1 _meth_806F( 0.0 );
-    var_1 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 1, 4 );
+    var_1 scalevolume( 0.0 );
+    var_1 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 1, 4 );
     wait 21.0;
     var_0 soundscripts\_snd_playsound::snd_play_linked( "fus_reactor_airlock_stop" );
     wait 0.5;
@@ -1437,7 +1437,7 @@ crane_claw_drop_start( var_0 )
 {
     var_0 endon( "stop_claw_beep" );
     var_0 playsound( "crane_rctr_claw_drop_start" );
-    var_0 _meth_8075( "crane_rctr_claw_drop_lp" );
+    var_0 playloopsound( "crane_rctr_claw_drop_lp" );
     var_0 thread crane_check_for_stop_command();
     var_0 thread crane_force_stop_command();
 
@@ -1451,7 +1451,7 @@ crane_claw_drop_start( var_0 )
 crane_claw_drop_stop( var_0 )
 {
     var_0 notify( "stop_claw_beep" );
-    var_0 _meth_80AB( "crane_rctr_claw_drop_lp" );
+    var_0 stoploopsound( "crane_rctr_claw_drop_lp" );
     var_0 playsound( "crane_rctr_claw_drop_stop" );
     var_0 thread crane_check_for_stop_command();
     var_0 thread crane_force_stop_command();
@@ -1460,14 +1460,14 @@ crane_claw_drop_stop( var_0 )
 crane_claw_rise_start( var_0 )
 {
     var_0 playsound( "crane_rctr_claw_rise_start" );
-    var_0 _meth_8075( "crane_rctr_claw_rise_lp" );
+    var_0 playloopsound( "crane_rctr_claw_rise_lp" );
     var_0 thread crane_check_for_stop_command();
     var_0 thread crane_force_stop_command();
 }
 
 crane_claw_rise_stop( var_0 )
 {
-    var_0 _meth_80AB( "crane_rctr_claw_rise_lp" );
+    var_0 stoploopsound( "crane_rctr_claw_rise_lp" );
     var_0 playsound( "crane_rctr_claw_rise_stop" );
     var_0 thread crane_check_for_stop_command();
     var_0 thread crane_force_stop_command();
@@ -1500,7 +1500,7 @@ crane_check_for_stop_command()
     if ( !isdefined( self ) )
         return;
 
-    self _meth_80AC();
+    self stopsounds();
 }
 
 crane_force_stop_command()
@@ -1519,29 +1519,29 @@ crane_force_stop_command()
         if ( !isdefined( self ) )
             return;
 
-        self _meth_80AC();
+        self stopsounds();
     }
 }
 
 reactor_bot_drive_shelf_start( var_0 )
 {
-    var_0 _meth_8075( "fus_reactor_robot_drive_with_shelf" );
+    var_0 playloopsound( "fus_reactor_robot_drive_with_shelf" );
 }
 
 reactor_bot_drive_shelf_stop( var_0 )
 {
-    var_0 _meth_80AB( "fus_reactor_robot_drive_with_shelf" );
+    var_0 stoploopsound( "fus_reactor_robot_drive_with_shelf" );
     var_0 playsound( "fus_reactor_robot_stop_with_shelf" );
 }
 
 reactor_bot_drive_self_start( var_0 )
 {
-    var_0 _meth_8075( "fus_reactor_robot_drive_no_shelf" );
+    var_0 playloopsound( "fus_reactor_robot_drive_no_shelf" );
 }
 
 reactor_bot_drive_self_stop( var_0 )
 {
-    var_0 _meth_80AB( "fus_reactor_robot_drive_no_shelf" );
+    var_0 stoploopsound( "fus_reactor_robot_drive_no_shelf" );
     var_0 playsound( "fus_reactor_robot_stop_with_shelf" );
 }
 
@@ -1571,9 +1571,9 @@ reactor_bot_shelf_drop( var_0 )
 
 reactor_bot_elevator_start_lp( var_0 )
 {
-    var_0 _meth_806F( 0.0, 0.0 );
-    var_0 _meth_8075( "fus_reactor_robot_elevator_lp" );
-    var_0 _meth_806F( 1.0, 1.0 );
+    var_0 scalevolume( 0.0, 0.0 );
+    var_0 playloopsound( "fus_reactor_robot_elevator_lp" );
+    var_0 scalevolume( 1.0, 1.0 );
 }
 
 reactor_bot_elevator_stop_lp( var_0, var_1 )
@@ -1581,7 +1581,7 @@ reactor_bot_elevator_stop_lp( var_0, var_1 )
     if ( isdefined( var_1 ) )
         wait(var_1);
 
-    var_0 _meth_80AB( "fus_reactor_robot_elevator_lp" );
+    var_0 stoploopsound( "fus_reactor_robot_elevator_lp" );
 }
 
 reactor_bot_initial_elevator_start( var_0, var_1 )
@@ -1727,13 +1727,13 @@ rec_player_drone_start( var_0 )
     soundscripts\_audio_mix_manager::mm_add_submix( "fusion_playable_drone", 0.25 );
     level endon( "pdrone_end" );
     var_1 = var_0.origin;
-    var_2 = level.player _meth_8340();
+    var_2 = level.player playerads();
     var_3 = 0;
 
     for (;;)
     {
         var_4 = var_0.origin;
-        var_5 = level.player _meth_8340();
+        var_5 = level.player playerads();
         var_6 = abs( length( var_4 - var_1 ) );
         var_7 = var_5 - var_2;
 
@@ -1819,8 +1819,8 @@ turbine_explo()
     var_0 = common_scripts\utility::getstruct( "turbine_3_sound_source_upper", "targetname" );
     var_1 = common_scripts\utility::getstruct( "turbine_3_sound_source_lower", "targetname" );
     thread common_scripts\utility::play_sound_in_space( "turbine_expl_windup", var_1.origin );
-    level.aud.damaged_turbine_1 _meth_80AB();
-    level.aud.damaged_turbine_2 _meth_80AB();
+    level.aud.damaged_turbine_1 stoploopsound();
+    level.aud.damaged_turbine_2 stoploopsound();
     level.aud.damaged_turbine_1 delete();
     level.aud.damaged_turbine_2 delete();
     wait 4;
@@ -2032,11 +2032,11 @@ extraction_chopper_spawn()
     var_0 soundscripts\_snd_playsound::snd_play_delayed_linked( "fus_warbird_extract_turn", 5.2 );
     wait 12;
     var_1 = var_0 soundscripts\_snd_playsound::snd_play_loop_linked( "fus_warbird_extract_chop_lp", "stop_warbird_chop", undefined, undefined, 0, ( 0, 0, 0 ) );
-    var_1 _meth_806F( 0.0 );
-    var_1 thread common_scripts\utility::delaycall( 0.05, ::_meth_806F, 1.0, 4 );
+    var_1 scalevolume( 0.0 );
+    var_1 thread common_scripts\utility::delaycall( 0.05, ::scalevolume, 1.0, 4 );
     level waittill( "aud_extract_warbird_move" );
     var_0 soundscripts\_snd_playsound::snd_play_linked( "fus_warbird_extract_move" );
-    var_1 _meth_806F( 0, 5 );
+    var_1 scalevolume( 0, 5 );
     wait 5.05;
     level notify( "stop_warbird_chop" );
 }
@@ -2355,7 +2355,7 @@ monitor_2d_reverb_volume()
 
     for (;;)
     {
-        self _meth_806F( level.aud.reverb_alarm_volume, level.aud.reverb_alarm_volume_update_rate );
+        self scalevolume( level.aud.reverb_alarm_volume, level.aud.reverb_alarm_volume_update_rate );
         wait(level.aud.reverb_alarm_volume_update_rate);
     }
 }
@@ -2366,7 +2366,7 @@ play_2d_reverb_alarm_sound()
     var_0 playsound( "alarm_horn_1shot_verb_ver_04", "sounddone" );
     var_0 thread monitor_2d_reverb_volume();
     var_0 waittill( "sounddone" );
-    var_0 _meth_80AC();
+    var_0 stopsounds();
     wait 0.05;
     var_0 delete();
 }
@@ -2477,7 +2477,7 @@ start_loading_bay_alarms()
 
 start_looping_intro_alarm_sounds()
 {
-    if ( level.currentgen && !_func_21E( "fusion_intro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "fusion_intro_tr" ) )
         return;
 
     common_scripts\utility::loop_fx_sound( "alarm_small_outside_loop_ver_05", ( -2733, -219, 60 ), 1, "aud_stop_intro_alarms" );
@@ -2495,7 +2495,7 @@ start_looping_intro_alarm_sounds()
 
 start_looping_outro_alarm_sounds()
 {
-    if ( level.currentgen && !_func_21E( "fusion_outro_tr" ) )
+    if ( level.currentgen && !istransientloaded( "fusion_outro_tr" ) )
         level waittill( "tff_post_transition_middle_to_outro" );
 
     common_scripts\utility::loop_fx_sound( "alarm_inside_ver_02", ( 5574, 4255, 406 ), 1 );
@@ -2510,7 +2510,7 @@ do_inside_bombshake()
     level thread maps\fusion_fx::dust_falling_control_room();
     earthquake( 0.3, 3, level.player.origin, 850 );
     var_0 waittill( "sounddone" );
-    var_0 _meth_80AC();
+    var_0 stopsounds();
     wait 0.05;
     var_0 delete();
 }
@@ -2613,7 +2613,7 @@ aud_play( var_0, var_1 )
         var_2 = var_1;
 
     if ( var_2 )
-        self _meth_8075( var_0 );
+        self playloopsound( var_0 );
     else
     {
         self playsound( var_0, "sounddone" );
@@ -2629,7 +2629,7 @@ aud_fade_in( var_0, var_1, var_2 )
         var_3 = var_2;
 
     if ( var_3 )
-        self _meth_8075( var_0 );
+        self playloopsound( var_0 );
     else
     {
         self playsound( var_0, "sounddone" );
@@ -2642,13 +2642,13 @@ aud_fade_in( var_0, var_1, var_2 )
 
 audx_fade_in_internal( var_0 )
 {
-    self _meth_806F( 0.0 );
+    self scalevolume( 0.0 );
     wait 0.05;
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_806F( 1.0, var_0 );
+    self scalevolume( 1.0, var_0 );
 }
 
 aud_fade_out( var_0 )
@@ -2658,14 +2658,14 @@ aud_fade_out( var_0 )
 
 audx_fade_out_internal( var_0 )
 {
-    self _meth_806F( 0.0, var_0 );
+    self scalevolume( 0.0, var_0 );
     wait(var_0 + 0.05);
 
     if ( !isdefined( self ) )
         return;
 
-    self _meth_80AC();
-    self _meth_80AB();
+    self stopsounds();
+    self stoploopsound();
     wait 0.05;
 
     if ( !isdefined( self ) )
@@ -2710,7 +2710,7 @@ audx_play_distance_attenuated_2d_internal( var_0, var_1, var_2 )
     {
         var_3 = distance( self.origin, level.player.origin );
         var_4 = audx_attenuate( var_3, var_0, var_1, var_2 );
-        self _meth_806F( var_4 );
+        self scalevolume( var_4 );
         wait 0.05;
     }
 }
@@ -2736,9 +2736,9 @@ aud_create_linked_entity( var_0, var_1 )
     var_2 = spawn( "script_origin", var_0.origin );
 
     if ( isdefined( var_1 ) )
-        var_2 _meth_804D( var_0, "", var_1, ( 0, 0, 0 ) );
+        var_2 linkto( var_0, "", var_1, ( 0, 0, 0 ) );
     else
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
 
     return var_2;
 }

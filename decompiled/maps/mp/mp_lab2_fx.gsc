@@ -116,16 +116,16 @@ setupholograms()
                 playfxontag( common_scripts\utility::getfx( "hologram_lab_chemical_vat" ), var_2, "tag_origin" );
                 var_4 = spawnfx( common_scripts\utility::getfx( "hologram_lab2_chemical_vat_child_tablegfx" ), var_1.origin, ( 0, 0, 270 ) );
                 triggerfx( var_4 );
-                var_5 = _func_231( "hologram_blue_light", "targetname" );
+                var_5 = getscriptablearray( "hologram_blue_light", "targetname" );
 
                 foreach ( var_7 in var_5 )
-                    var_7 _meth_83F6( "bluelgt", "blue_off" );
+                    var_7 setscriptablepartstate( "bluelgt", "blue_off" );
 
                 wait 0.1;
-                var_5 = _func_231( "hologram_yellow_light", "targetname" );
+                var_5 = getscriptablearray( "hologram_yellow_light", "targetname" );
 
                 foreach ( var_7 in var_5 )
-                    var_7 _meth_83F6( "yellgt", "yel_on" );
+                    var_7 setscriptablepartstate( "yellgt", "yel_on" );
 
                 wait(var_0);
                 stopfxontag( common_scripts\utility::getfx( "hologram_lab_chemical_vat" ), var_2, "tag_origin" );
@@ -133,16 +133,16 @@ setupholograms()
                 playfxontag( common_scripts\utility::getfx( "hologram_bio_lab_canister" ), var_2, "tag_origin" );
                 var_3 = spawnfx( common_scripts\utility::getfx( "hologram_bio_lab_canister_child_tablegfx" ), var_1.origin, ( 0, 0, 270 ) );
                 triggerfx( var_3 );
-                var_5 = _func_231( "hologram_yellow_light", "targetname" );
+                var_5 = getscriptablearray( "hologram_yellow_light", "targetname" );
 
                 foreach ( var_7 in var_5 )
-                    var_7 _meth_83F6( "yellgt", "yel_off" );
+                    var_7 setscriptablepartstate( "yellgt", "yel_off" );
 
                 wait 0.1;
-                var_5 = _func_231( "hologram_blue_light", "targetname" );
+                var_5 = getscriptablearray( "hologram_blue_light", "targetname" );
 
                 foreach ( var_7 in var_5 )
-                    var_7 _meth_83F6( "bluelgt", "blue_on" );
+                    var_7 setscriptablepartstate( "bluelgt", "blue_on" );
             }
         }
     }

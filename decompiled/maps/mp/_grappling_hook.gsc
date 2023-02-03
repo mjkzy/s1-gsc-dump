@@ -59,23 +59,23 @@ give_grappling_hook()
 {
     var_0 = get_grappling_hook_weapon();
 
-    if ( self _meth_8314( var_0 ) )
+    if ( self hasweapon( var_0 ) )
         return;
 
-    self _meth_8319( var_0 );
-    self _meth_830E( var_0 );
+    self settacticalweapon( var_0 );
+    self giveweapon( var_0 );
     self notify( "grappling_hook_reset" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_8385( self );
-    var_1 _meth_8383( self );
-    self _meth_8550( var_1 );
+    var_1 setentityowner( self );
+    var_1 setotherent( self );
+    self setgrapplinghooktarget( var_1 );
     thread common_scripts\utility::delete_on_death( var_1 );
     thread delete_on_reset( var_1 );
-    var_2 = self _meth_84A5( level.grapplinghookweapon );
-    self _meth_82FB( "ui_exo_battery_level0", var_2 );
-    self _meth_82FB( "exo_ability_nrg_req0", _func_298( level.grapplinghookweapon ) );
-    self _meth_82FB( "exo_ability_nrg_total0", var_2 );
-    self _meth_82FB( "ui_invalid_grapple", 0 );
+    var_2 = self batterygetsize( level.grapplinghookweapon );
+    self setclientomnvar( "ui_exo_battery_level0", var_2 );
+    self setclientomnvar( "exo_ability_nrg_req0", batteryreqtouse( level.grapplinghookweapon ) );
+    self setclientomnvar( "exo_ability_nrg_total0", var_2 );
+    self setclientomnvar( "ui_invalid_grapple", 0 );
     thread wait_for_grappling_hook_pressed();
 }
 
@@ -88,11 +88,11 @@ wait_for_full_battery()
     self endon( "joined_team" );
     self endon( "grappling_hook_reset" );
     self endon( "grappling_hook_battery_hud_reset" );
-    var_0 = self _meth_84A5( level.grapplinghookweapon );
+    var_0 = self batterygetsize( level.grapplinghookweapon );
 
     for (;;)
     {
-        var_1 = self _meth_84A2( level.grapplinghookweapon );
+        var_1 = self batterygetcharge( level.grapplinghookweapon );
 
         if ( var_1 >= var_0 )
         {
@@ -157,24 +157,24 @@ pulse_grapple_hud_message( var_0 )
 {
     level endon( "game_ended" );
     self endon( "disconnect" );
-    self _meth_82FB( "ui_invalid_grapple", var_0 );
+    self setclientomnvar( "ui_invalid_grapple", var_0 );
 
     if ( var_0 == 1 )
     {
-        self _meth_82FB( "ui_border_warning_toggle", 0 );
+        self setclientomnvar( "ui_border_warning_toggle", 0 );
         wait 0.6;
     }
     else if ( var_0 == 2 )
         wait 1.0;
 
-    self _meth_82FB( "ui_invalid_grapple", 0 );
+    self setclientomnvar( "ui_invalid_grapple", 0 );
 }
 
 take_grappling_hook()
 {
     var_0 = get_grappling_hook_weapon();
-    self _meth_8319( "none" );
-    self _meth_830F( var_0 );
+    self settacticalweapon( "none" );
+    self takeweapon( var_0 );
     self notify( "grappling_hook_reset" );
 }
 

@@ -5,9 +5,9 @@
 
 controllable_drone_swarm_init()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 20 );
-    _func_0D3( "r_hudoutlinecloakblurradius", 0.35 );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 20 );
+    setsaveddvar( "r_hudoutlinecloakblurradius", 0.35 );
 
     if ( !isdefined( level.boid_settings_presets ) )
         level.boid_settings_presets = [];
@@ -47,14 +47,14 @@ controllable_drone_swarm_init()
     common_scripts\utility::flag_init( "controlling_drones_first_time" );
     level.controllable_drones = [];
     level.expected_drones = level.attack_drones_num_queens * level.attack_drones_num_drones_per_queen;
-    precacheitem( "iw5_attackdronemagicbullet" );
+    precacheshellshock( "iw5_attackdronemagicbullet" );
     precacheshader( level.controllable_drone_hud );
     precacheshader( level.controllable_drone_activated );
     precacheshader( level.controllable_hud_target_shader );
     precacheshader( "sat_hud_xray_blue" );
     precacheshader( "jet_hud_hex_orange" );
     precacheshader( "jet_hud_missile_circle" );
-    precacheitem( "remote_missile_drone" );
+    precacheshellshock( "remote_missile_drone" );
     precache_icons();
     vehicle_scripts\_attack_drone_common::drone_fx();
     level.scr_animtree["drone_control_view_model"] = #animtree;
@@ -168,7 +168,7 @@ make_drone_crate_group( var_0 )
 
     foreach ( var_2 in var_0 )
     {
-        if ( var_2 _meth_80A9( self ) )
+        if ( var_2 istouching( self ) )
             self.drone_spawners[self.drone_spawners.size] = var_2;
     }
 
@@ -179,7 +179,7 @@ make_drone_crate_group( var_0 )
     {
         var_5.origin = var_7.origin;
 
-        if ( var_5 _meth_80A9( self ) )
+        if ( var_5 istouching( self ) )
             self.path = var_7;
     }
 }
@@ -199,7 +199,7 @@ make_drone_crate( var_0 )
 
 waittill_crate_activated()
 {
-    while ( !level.player _meth_80A9( self ) )
+    while ( !level.player istouching( self ) )
         waitframe();
 
     drone_cloud_controllable();
@@ -216,7 +216,7 @@ handle_controllable_cloud_queen_pathing()
         if ( !level.controllable_cloud_queen.is_player_controlled )
         {
             var_1.origin = level.player.origin;
-            var_1.angles = level.player _meth_8036();
+            var_1.angles = level.player getgunangles();
             var_2 = var_1 maps\_shg_design_tools::offset_position_from_tag( "forward", "tag_origin", 300 );
             var_3 = maps\_shg_design_tools::getclosestauto( var_2, var_0, 1000 );
 
@@ -268,8 +268,8 @@ queen_change_path( var_0, var_1 )
 
         level.controllable_cloud_queen notify( "end_queen_think" );
         level.controllable_cloud_queen.attachedpath = undefined;
-        var_2 = level.player _meth_8036()[1];
-        level.controllable_cloud_queen _meth_8260( var_0.origin, var_1, var_1 / 2, var_1 * 2, 0, 1, var_2, 0, 0, 1, 0, 0, 1 );
+        var_2 = level.player getgunangles()[1];
+        level.controllable_cloud_queen vehicle_helisetai( var_0.origin, var_1, var_1 / 2, var_1 * 2, 0, 1, var_2, 0, 0, 1, 0, 0, 1 );
     }
 }
 
@@ -325,7 +325,7 @@ _id_4137( var_0, var_1, var_2 )
         else
             var_7 = var_6;
 
-        if ( var_7 _meth_80A9( var_1 ) )
+        if ( var_7 istouching( var_1 ) )
             var_4[var_4.size] = var_6;
     }
 
@@ -344,28 +344,28 @@ player_linkto_drone_missile( var_0 )
     }
 
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_807F( var_0, "tag_origin" );
+    level.player playerlinktoabsolute( var_0, "tag_origin" );
 }
 
 player_unlink_from_drone_missile()
 {
-    level.player _meth_804F();
+    level.player unlink();
     level.player maps\_shg_utility::setup_player_for_gameplay();
 }
 
 prep_user_for_dronecrate()
 {
-    self _meth_831D();
+    self disableweapons();
     self.ignoreme = 1;
-    self _meth_80EF();
-    var_0 = _func_0D6( "axis" );
+    self enableinvulnerability();
+    var_0 = getaiarray( "axis" );
 }
 
 remove_user_from_dronecrate()
 {
-    self _meth_831E();
+    self enableweapons();
     self.ignoreme = 0;
-    self _meth_80F0();
+    self disableinvulnerability();
 }
 
 monitor_drone_depletion( var_0 )
@@ -389,7 +389,7 @@ swarm_drone_hud_on( var_0 )
     var_1 = 50000;
     var_2 = 60;
     self.dronecrate_hud["overlay1"] = newclienthudelem( self );
-    self.dronecrate_hud["overlay1"] _meth_80CC( var_0, 640, 480 );
+    self.dronecrate_hud["overlay1"] setshader( var_0, 640, 480 );
     self.dronecrate_hud["overlay1"].alignx = "left";
     self.dronecrate_hud["overlay1"].aligny = "top";
     self.dronecrate_hud["overlay1"].x = 0;
@@ -417,7 +417,7 @@ monitor_num_activated_drones()
 
 swarm_drone_hud_change( var_0 )
 {
-    self.dronecrate_hud["overlay1"] _meth_80CC( var_0, 640, 480 );
+    self.dronecrate_hud["overlay1"] setshader( var_0, 640, 480 );
 }
 
 swarm_drone_hud_off( var_0 )
@@ -430,7 +430,7 @@ get_drones_into_start_positions( var_0, var_1, var_2, var_3, var_4 )
     wait(randomfloat( var_1 / 2 ));
     var_0 = self.origin + ( randomintrange( -20, 20 ), randomintrange( -20, 20 ), 20 + var_1 * 12 );
     vehicle_scripts\_attack_drone_common::drone_lerp_to_position( ( self.origin[0], self.origin[1], var_0[2] ), 50 );
-    self _meth_82B5( var_2.angles, 1, 0.1, 0.5 );
+    self rotateto( var_2.angles, 1, 0.1, 0.5 );
     wait 1;
     vehicle_scripts\_attack_drone_common::drone_lerp_to_position( var_0, 50 );
     var_3 vehicle_scripts\_attack_drone_common::add_to_flock( self );
@@ -450,13 +450,13 @@ attack_hint_display()
 
 drone_enabled_animation()
 {
-    level.player _meth_831D();
+    level.player disableweapons();
     level.player waittill( "weapon_change" );
     var_0 = maps\_utility::spawn_anim_model( "drone_control_view_model" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     level.player maps\_anim::anim_single_solo( var_0, "drone_control_on" );
-    level.player _meth_831E();
-    var_0 _meth_804F();
+    level.player enableweapons();
+    var_0 unlink();
     var_0 delete();
 }
 
@@ -467,14 +467,14 @@ setup_drone_mode()
         if ( isdefined( var_1 ) )
         {
             var_1 maps\_vehicle::godon();
-            var_1 _meth_8029();
+            var_1 thermaldrawenable();
         }
     }
 
     foreach ( var_4 in level.controllable_drone_swarm_target )
     {
         if ( isdefined( var_4 ) )
-            var_4 _meth_8029();
+            var_4 thermaldrawenable();
     }
 
     waitframe();
@@ -488,8 +488,8 @@ remove_drone_mode()
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && _func_0A3( var_2 ) )
-            _func_09B( var_2 );
+        if ( isdefined( var_2 ) && target_istarget( var_2 ) )
+            target_remove( var_2 );
     }
 
     level.player.drone_locked_targets = [];
@@ -499,7 +499,7 @@ remove_drone_mode()
 
 handle_drone_target_selection()
 {
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     level.controllable_drone_swarm_target = maps\_utility::array_removedead( level.controllable_drone_swarm_target );
     var_1 = common_scripts\utility::array_combine( level.controllable_drone_swarm_target, var_0 );
     var_1 = common_scripts\utility::array_removeundefined( var_1 );
@@ -516,8 +516,8 @@ handle_drone_target_selection()
 
     foreach ( var_3 in var_1 )
     {
-        if ( isdefined( var_3 ) && _func_0A3( var_3 ) )
-            _func_09B( var_3 );
+        if ( isdefined( var_3 ) && target_istarget( var_3 ) )
+            target_remove( var_3 );
     }
 
     if ( common_scripts\utility::flag( "drone_swarm_launched" ) )
@@ -530,8 +530,8 @@ handle_drone_target_selection_internal( var_0 )
     level endon( "drone_swarm_launched" );
     level.player endon( "drone_killed_by_death" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    _func_09A( var_1 );
-    _func_0A6( var_1, level.player );
+    target_set( var_1 );
+    target_hidefromplayer( var_1, level.player );
 
     foreach ( var_3 in var_0 )
         var_3.lock_on_stage = 0;
@@ -546,36 +546,36 @@ handle_drone_target_selection_internal( var_0 )
             var_1.origin = var_3.origin;
             var_6 = level.controllable_cloud_queen vehicle_scripts\_pdrone_player::pdrone_player_get_current_fov();
             var_7 = 60;
-            var_8 = _func_09F( var_1, level.player, var_6, var_7 );
+            var_8 = target_isincircle( var_1, level.player, var_6, var_7 );
             var_8 = var_8 && level.player.drone_locked_targets.size < level.controllable_drones.size;
 
             if ( var_8 )
             {
                 if ( var_3.lock_on_stage == 0 )
-                    _func_09A( var_3, ( 0, 0, 32 ) );
+                    target_set( var_3, ( 0, 0, 32 ) );
 
                 var_3.lock_on_stage++;
 
                 if ( var_3.lock_on_stage == level.drone_lockon_icons.size )
                 {
                     if ( var_3 maps\_vehicle::isvehicle() )
-                        _func_09C( var_3, "drone_hud_veh_lockon" );
+                        target_setshader( var_3, "drone_hud_veh_lockon" );
                     else
-                        _func_09C( var_3, "drone_hud_npc_lockon" );
+                        target_setshader( var_3, "drone_hud_npc_lockon" );
 
                     level.player.drone_locked_targets[level.player.drone_locked_targets.size] = var_3;
                     level.player notify( "drone_target_aquired" );
                 }
                 else
-                    _func_09C( var_3, level.drone_lockon_icons[var_3.lock_on_stage] );
+                    target_setshader( var_3, level.drone_lockon_icons[var_3.lock_on_stage] );
 
                 continue;
             }
 
-            if ( _func_0A3( var_3 ) )
+            if ( target_istarget( var_3 ) )
             {
                 var_3.lock_on_stage = 0;
-                _func_09B( var_3 );
+                target_remove( var_3 );
             }
         }
 
@@ -651,7 +651,7 @@ player_attack_think()
             vehicle_scripts\_pdrone_player::pdrone_player_use( var_1, undefined, 0, undefined, undefined, "LT", "ui_sniperdrone" );
             thread maps\_introscreen::introscreen_generic_fade_in( "black", 0.5, 0.5 );
             var_1 vehicle_scripts\_pdrone_player::pdrone_player_enter();
-            var_1 _meth_80C6();
+            var_1 returnplayercontrol();
             thread waittill_attack_and_launch_drones();
 
             if ( isdefined( level.controllable_drone_allowed_vols ) )
@@ -675,7 +675,7 @@ player_attack_think()
 drone_missile_make( var_0, var_1 )
 {
     var_2 = spawn( "script_model", var_0 );
-    var_2 _meth_80B1( "vehicle_sentinel_survey_drone" );
+    var_2 setmodel( "vehicle_sentinel_survey_drone" );
     var_2 drone_missile_init( var_0, var_1 );
     return var_2;
 }
@@ -704,7 +704,7 @@ drone_missile_loop()
         wait 0.05;
     }
 
-    _func_071( "fraggrenade", self.origin, ( 0, 0, 0 ), 0.05, level.player );
+    magicgrenademanual( "fraggrenade", self.origin, ( 0, 0, 0 ), 0.05, level.player );
     self delete();
     level notify( "drone_missile_loop_complete", self );
 }
@@ -745,8 +745,8 @@ launch_drone_missiles( var_0 )
         {
             var_6[var_6.size] = var_8;
 
-            if ( _func_0A3( var_8 ) )
-                _func_09B( var_8 );
+            if ( target_istarget( var_8 ) )
+                target_remove( var_8 );
         }
     }
 
@@ -774,14 +774,14 @@ launch_drone_missiles( var_0 )
         var_13 notify( "im_attacking" );
         var_13.remove_from_flock = 1;
         var_16 = var_13.origin;
-        var_16 = level.player _meth_80A8();
+        var_16 = level.player geteye();
         var_17 = level.player getangles();
         var_13 delete();
         level.controllable_drones = common_scripts\utility::array_removeundefined( level.controllable_drones );
         var_18 = ( randomintrange( -100, 100 ), randomintrange( -100, 100 ), 0 );
         var_19 = drone_missile_make( var_16, var_12.origin );
         var_10++;
-        var_19 _meth_8029();
+        var_19 thermaldrawenable();
         var_19 thread drone_missile_loop();
     }
 
@@ -806,21 +806,21 @@ drone_lockon_missile_fire( var_0, var_1 )
     var_2 = common_scripts\utility::spawn_tag_origin();
 
     if ( issentient( "target" ) )
-        var_2.origin = var_1 _meth_80A8();
+        var_2.origin = var_1 geteye();
     else
         var_2.origin = var_1.origin;
 
-    var_2 _meth_804D( var_1 );
-    _func_09A( var_2 );
-    _func_0A6( var_2, level.player );
+    var_2 linkto( var_1 );
+    target_set( var_2 );
+    target_hidefromplayer( var_2, level.player );
 
     if ( issentient( "target" ) )
-        var_3 = magicbullet( "remote_missile_drone_light", var_0, var_1 _meth_80A8() + ( 0, 0, 200 ), level.player );
+        var_3 = magicbullet( "remote_missile_drone_light", var_0, var_1 geteye() + ( 0, 0, 200 ), level.player );
     else
         var_3 = magicbullet( "remote_missile_drone_light", var_0, var_1.origin + ( 0, 0, 200 ), level.player );
 
-    var_3 _meth_81D9( var_2 );
-    var_3 _meth_81DD();
+    var_3 missile_settargetent( var_2 );
+    var_3 missile_setflightmodetop();
     thread cleanup_missile( var_3, var_2 );
     return var_3;
 }
@@ -899,7 +899,7 @@ send_swarm_to_chopper( var_0 )
 {
     while ( isdefined( var_0 ) && isdefined( self ) )
     {
-        self _meth_825B( var_0.origin, 1 );
+        self setvehgoalpos( var_0.origin, 1 );
         wait 0.05;
     }
 }
@@ -917,7 +917,7 @@ create_drone_kamikazes( var_0 )
     foreach ( var_4 in var_2 )
     {
         var_5 = spawn( "script_model", var_4 );
-        var_5 _meth_80B1( "vehicle_sentinel_survey_drone" );
+        var_5 setmodel( "vehicle_sentinel_survey_drone" );
         var_5.angles = var_1.angles;
         var_5 thread vehicle_scripts\_attack_drone_common::lerp_drone_to_position( var_0.origin, randomintrange( 600, 700 ) );
         var_5 thread simple_drone_health();
@@ -958,13 +958,13 @@ queen_drone_fly( var_0, var_1 )
     {
         var_3 = position_in_circle( var_0.origin, self.radii );
         var_2 = var_3;
-        var_4 = var_0 _meth_8286() * 1.75;
+        var_4 = var_0 vehicle_getspeed() * 1.75;
 
         if ( var_4 <= 0 )
             var_4 = 1;
 
-        self _meth_8283( var_4, var_4, var_4 * 1.5 );
-        self _meth_825B( var_3 );
+        self vehicle_setspeed( var_4, var_4, var_4 * 1.5 );
+        self setvehgoalpos( var_3 );
 
         if ( !common_scripts\utility::flag( "cloud_in_formation" ) )
         {
@@ -1018,7 +1018,7 @@ make_crate_boidcloud( var_0, var_1 )
     for ( var_3 = 0; var_3 < var_0.size; var_3++ )
     {
         var_4 = spawn( "script_model", var_0[var_3].origin );
-        var_4 _meth_80B1( "vehicle_mil_attack_drone_static" );
+        var_4 setmodel( "vehicle_mil_attack_drone_static" );
         var_4.angles = var_0[var_3].angles;
         var_4 thread get_drones_into_start_positions( var_0[var_3], var_3, var_2.queen, var_2 );
         var_0[var_3] hide();
@@ -1049,7 +1049,7 @@ will_boid_clip_camera( var_0 )
 
 simple_drone_health()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.can_be_damaged = 1;
 
     for (;;)
@@ -1081,7 +1081,7 @@ monitor_controllable_drone_cloud_health( var_0 )
     if ( !var_0 )
         wait(randomfloat( 1.0 ));
 
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.can_be_damaged = 1;
     var_1 = 0;
 

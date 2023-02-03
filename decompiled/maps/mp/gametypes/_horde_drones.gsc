@@ -18,13 +18,13 @@ hordecreatedrone( var_0, var_1, var_2 )
     var_5.maxtrackingrange = 2000;
     var_5.maxlaserrange = 300;
     var_5.trackedplayer = undefined;
-    var_5 _meth_8253( 0, 0, 0 );
-    var_5 _meth_8294( 90, 90 );
-    var_5 _meth_8283( 40, 40, 40 );
-    var_5 _meth_84B1( 90, 180, 90 );
-    var_5 _meth_84B2( 1000 );
-    var_5 _meth_825A( 5 );
-    var_5 _meth_8292( 1000, 250, 100, 0.1 );
+    var_5 sethoverparams( 0, 0, 0 );
+    var_5 setmaxpitchroll( 90, 90 );
+    var_5 vehicle_setspeed( 40, 40, 40 );
+    var_5 vehicle_helicoptersetmaxangularvelocity( 90, 180, 90 );
+    var_5 vehicle_helicoptersetmaxangularacceleration( 1000 );
+    var_5 setneargoalnotifydist( 5 );
+    var_5 setyawspeed( 1000, 250, 100, 0.1 );
     var_5 thread horde_drone_flying_fx();
     var_5 thread hordedrone_handledamage();
     var_5 thread hordedrone_watchdeath();
@@ -68,17 +68,17 @@ hordedroneshoot()
         if ( isdefined( self.targetenemy ) )
         {
             if ( isdefined( self.targetenemy.isaerialassaultdrone ) && self.targetenemy.isaerialassaultdrone )
-                self.droneturret _meth_8106( self.targetenemy, ( 0, 0, -20 ) );
+                self.droneturret settargetentity( self.targetenemy, ( 0, 0, -20 ) );
             else
-                self.droneturret _meth_8106( self.targetenemy );
+                self.droneturret settargetentity( self.targetenemy );
 
-            if ( isdefined( self.droneturret _meth_8109( 0 ) ) )
+            if ( isdefined( self.droneturret getturrettarget( 0 ) ) )
             {
                 var_0 = randomintrange( 5, 10 );
 
                 for ( var_1 = 0; var_1 < var_0; var_1++ )
                 {
-                    self.droneturret _meth_80EA();
+                    self.droneturret shootturret();
                     wait 0.08;
                 }
 
@@ -118,7 +118,7 @@ hordedrone_handledamage()
 {
     self endon( "death" );
     level endon( "game_ended" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -264,32 +264,32 @@ hordespawndroneturret( var_0, var_1, var_2 )
 {
     var_3 = spawnturret( "misc_turret", self gettagorigin( var_2 ), var_0, 0 );
     var_3.angles = self gettagangles( var_2 );
-    var_3 _meth_80B1( var_1 );
-    var_3 _meth_815A( -45.0 );
-    var_3 _meth_804D( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 setmodel( var_1 );
+    var_3 setdefaultdroppitch( -45.0 );
+    var_3 linkto( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_3.owner = self.owner;
     var_3.health = 10000;
     var_3.maxhealth = 10000;
     var_3.damagetaken = 0;
     var_3.stunned = 0;
     var_3.stunnedtime = 0.0;
-    var_3 _meth_82C0( 1 );
-    var_3 _meth_82C1( 1 );
-    var_3 _meth_8158( 180 );
+    var_3 setcandamage( 1 );
+    var_3 setcanradiusdamage( 1 );
+    var_3 setbottomarc( 180 );
     var_3.team = self.team;
     var_3.pers["team"] = self.team;
 
     if ( level.teambased )
-        var_3 _meth_8135( self.team );
+        var_3 setturretteam( self.team );
 
-    var_3 _meth_8065( "auto_nonai" );
-    var_3 _meth_8103( undefined );
-    var_3 _meth_8105( 0 );
+    var_3 setmode( "auto_nonai" );
+    var_3 setsentryowner( undefined );
+    var_3 setturretminimapvisible( 0 );
     var_3.chopper = self;
-    var_3 _meth_8156( 180 );
-    var_3 _meth_8155( 180 );
-    var_3 _meth_8138();
-    var_3 _meth_8136();
+    var_3 setleftarc( 180 );
+    var_3 setrightarc( 180 );
+    var_3 maketurretinoperable();
+    var_3 maketurretsolid();
     var_3 makeunusable();
     var_3 thread hordedroneturret_setupdamagecallback();
     return var_3;
@@ -298,8 +298,8 @@ hordespawndroneturret( var_0, var_1, var_2 )
 hordedroneturret_setupdamagecallback()
 {
     self.damagecallback = ::hordedroneturret_handledamagecallback;
-    self _meth_82C0( 1 );
-    self _meth_8495( 1 );
+    self setcandamage( 1 );
+    self setdamagecallbackon( 1 );
 }
 
 hordedroneturret_handledamagecallback( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11 )
@@ -337,8 +337,8 @@ init_drone_motion()
     else
         var_0 = self.script_airspeed;
 
-    self _meth_825A( 30 );
-    self _meth_8283( var_0, var_0 / 4, var_0 / 4 );
+    self setneargoalnotifydist( 30 );
+    self vehicle_setspeed( var_0, var_0 / 4, var_0 / 4 );
 }
 
 flying_attack_drone_logic( var_0 )
@@ -401,7 +401,7 @@ flying_attack_drone_move_think()
 
         if ( isdefined( var_0 ) )
         {
-            self _meth_8265( var_0 );
+            self setlookatent( var_0 );
             self.targetenemy = var_0;
             var_1 = get_target_air_space( var_0 );
         }
@@ -434,7 +434,7 @@ calc_flock_goal_pos()
 {
     var_0 = self.origin;
 
-    if ( !_func_22A( var_0, self.current_air_space ) )
+    if ( !ispointinvolume( var_0, self.current_air_space ) )
         var_0 = get_random_point_in_air_space( self.current_air_space );
     else
     {
@@ -517,17 +517,17 @@ tactical_move_to_goal_pos()
         }
     }
 
-    self _meth_8260( var_0, 60, 50, 50, undefined, var_1, var_2, 0, 0, 0, 0, 0, 1 );
+    self vehicle_helisetai( var_0, 60, 50, 50, undefined, var_1, var_2, 0, 0, 0, 0, 0, 1 );
 }
 
 update_flying_attack_drone_goal_pos()
 {
-    self _meth_825B( calc_flock_goal_pos(), 1 );
+    self setvehgoalpos( calc_flock_goal_pos(), 1 );
 }
 
 get_random_point_in_air_space( var_0 )
 {
-    for ( var_1 = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !_func_22A( var_1, var_0 ); var_1 = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
+    for ( var_1 = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !ispointinvolume( var_1, var_0 ); var_1 = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
     {
 
     }

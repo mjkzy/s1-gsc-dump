@@ -17,7 +17,7 @@ main()
 
 end_script()
 {
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
 }
 
 getmeleeanimstate()
@@ -33,8 +33,8 @@ doattackstandard( var_0, var_1 )
     var_5 = 0;
     self.lastmeleefailedmypos = undefined;
     self.lastmeleefailedpos = undefined;
-    var_6 = randomint( self _meth_83D6( var_2 ) );
-    var_7 = self _meth_83D3( var_2, var_6 );
+    var_6 = randomint( self getanimentrycount( var_2 ) );
+    var_7 = self getanimentry( var_2, var_6 );
     var_8 = getanimlength( var_7 );
     var_9 = getnotetracktimes( var_7, "dog_melee" );
     var_10 = var_8 / var_3 * 0.33;
@@ -42,30 +42,30 @@ doattackstandard( var_0, var_1 )
     if ( var_9.size > 0 )
         var_10 = var_8 / var_3 * var_9[0];
 
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
 
     if ( var_5 )
-        self _meth_8396( "face enemy" );
+        self scragentsetorientmode( "face enemy" );
     else
-        self _meth_8396( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_2, var_6, var_3 );
 
     if ( var_4 )
     {
-        self _meth_8395( 0, 1 );
-        self _meth_839F( self.origin, var_1, var_10 );
+        self scragentsetanimscale( 0, 1 );
+        self scragentdoanimlerp( self.origin, var_1, var_10 );
         childthread updatelerppos( var_0, var_10, 1, self.lungelerprange );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoAttackStandard" );
     }
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
     wait(var_10);
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_4 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttackStandard" );
@@ -119,7 +119,7 @@ updatelerppos( var_0, var_1, var_2 )
         if ( !isdefined( var_5 ) )
             break;
 
-        self _meth_839F( self.origin, var_5, var_3 );
+        self scragentdoanimlerp( self.origin, var_5, var_3 );
     }
 }
 

@@ -299,7 +299,7 @@ build_missile_launcher( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, 
         level.vehicle_missile_launcher[var_12] = [];
 
     precachemodel( var_2 );
-    precacheitem( var_3 );
+    precacheshellshock( var_3 );
     var_13 = spawnstruct();
     var_13.tag = var_1;
     var_13.missile_model = var_2;
@@ -368,15 +368,15 @@ move_truck_junk_here( var_0 )
         if ( var_2 == var_0 )
             continue;
 
-        var_2 _meth_804F();
+        var_2 unlink();
 
         if ( isdefined( var_2.script_ghettotag ) )
         {
-            var_2 _meth_804D( var_0, var_2.script_ghettotag, var_2.base_origin, var_2.base_angles );
+            var_2 linkto( var_0, var_2.script_ghettotag, var_2.base_origin, var_2.base_angles );
             continue;
         }
 
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
     }
 }
 
@@ -425,12 +425,12 @@ move_riders_here( var_0 )
         if ( isdefined( var_4.passenger_2_turret_func ) )
             continue;
 
-        var_3 _meth_804F();
-        var_3 _meth_804D( var_0, var_4.sittag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_3 unlink();
+        var_3 linkto( var_0, var_4.sittag, ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
         if ( isai( var_3 ) )
         {
-            var_3 _meth_81C6( var_0 gettagorigin( var_4.sittag ) );
+            var_3 forceteleport( var_0 gettagorigin( var_4.sittag ) );
             continue;
         }
 
@@ -858,7 +858,7 @@ spawn_vehicle_and_gopath()
     if ( isdefined( self.script_speed ) )
     {
         if ( !ishelicopter() )
-            var_0 _meth_8230( self.script_speed );
+            var_0 vehphys_setspeed( self.script_speed );
     }
 
     var_0 thread gopath( var_0 );
@@ -1025,7 +1025,7 @@ vehicle_single_light_off( var_0 )
 
 vehicle_switch_paths( var_0, var_1 )
 {
-    self _meth_8280( var_0, var_1 );
+    self setswitchnode( var_0, var_1 );
     self.attachedpath = var_1;
     thread vehicle_paths();
 }
@@ -1111,10 +1111,10 @@ get_dummy()
 vehicle_to_dummy()
 {
     self.modeldummy = spawn( "script_model", self.origin );
-    self.modeldummy _meth_80B1( self.model );
+    self.modeldummy setmodel( self.model );
     self.modeldummy.origin = self.origin;
     self.modeldummy.angles = self.angles;
-    self.modeldummy _meth_8115( #animtree );
+    self.modeldummy useanimtree( #animtree );
     self hide();
     thread maps\_vehicle_code::model_dummy_death();
     move_riders_here( self.modeldummy );

@@ -46,8 +46,8 @@ initpillars()
                     var_4 delete();
                 else if ( var_4.script_noteworthy == "visuals" )
                 {
-                    var_4 _meth_8058();
-                    var_4 _meth_8384( 1 );
+                    var_4 connectpaths();
+                    var_4 setaisightlinevisible( 1 );
                     var_4 common_scripts\utility::hide_notsolid();
                     var_4 common_scripts\utility::show_solid();
                     var_1.sightlineent = var_4;
@@ -55,14 +55,14 @@ initpillars()
                 }
                 else if ( var_4.script_noteworthy == "pillar_path_blocker_top" )
                 {
-                    var_4 _meth_82BF();
-                    var_4 _meth_8058();
+                    var_4 notsolid();
+                    var_4 connectpaths();
                     var_1.pathblockertop = var_4;
                 }
                 else if ( var_4.script_noteworthy == "pillar_path_blocker_ground" )
                 {
-                    var_4 _meth_82BE();
-                    var_4 _meth_8057();
+                    var_4 solid();
+                    var_4 disconnectpaths();
                     var_1.pathblockerbottom = var_4;
                 }
 
@@ -91,17 +91,17 @@ getrandomactivepillar()
 
 destroypillar()
 {
-    self.pathblockertop _meth_82BE();
-    self.pathblockertop _meth_8057();
-    self.pathblockertop _meth_82BF();
-    self.pathblockerbottom _meth_8058();
-    self.pathblockerbottom _meth_82BF();
-    self.sightlineent _meth_8384( 0 );
+    self.pathblockertop solid();
+    self.pathblockertop disconnectpaths();
+    self.pathblockertop notsolid();
+    self.pathblockerbottom connectpaths();
+    self.pathblockerbottom notsolid();
+    self.sightlineent setaisightlinevisible( 0 );
 
     foreach ( var_1 in self.visuals )
     {
         var_1 common_scripts\utility::hide_notsolid();
-        var_1 _meth_82BF();
+        var_1 notsolid();
     }
 
     self.destroyed = 1;
@@ -358,8 +358,8 @@ handlemagicbox()
         {
             var_1 thread maps\mp\zombies\_wall_buys::activatemagicboxeffects( var_1.modelent, var_1.light );
             level thread maps\mp\zombies\_wall_buys::watchmagicboxtrigger( var_1, 0 );
-            var_1 _meth_80DB( maps\mp\zombies\_wall_buys::getmagicboxhintsting() );
-            var_1 _meth_80DC( var_1 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
+            var_1 sethintstring( maps\mp\zombies\_wall_buys::getmagicboxhintsting() );
+            var_1 setsecondaryhintstring( var_1 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost() );
             var_1 maps\mp\zombies\_util::settokencost( maps\mp\zombies\_util::creditstotokens( var_1.cost ) );
             var_1 maps\mp\zombies\_util::tokenhintstring( 1 );
             var_1.active = 1;
@@ -375,8 +375,8 @@ handlemagicbox()
         {
             var_1 thread maps\mp\zombies\_wall_buys::deactivatemagicboxeffects( var_1.modelent, var_1.light );
             var_1 maps\mp\zombies\_wall_buys::deactivatemagicbox();
-            var_1 _meth_80DB( maps\mp\zombies\_wall_buys::getmagicboxhintsting( 1 ) );
-            var_1 _meth_80DC( var_1 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost( 1 ) );
+            var_1 sethintstring( maps\mp\zombies\_wall_buys::getmagicboxhintsting( 1 ) );
+            var_1 setsecondaryhintstring( var_1 maps\mp\zombies\_wall_buys::getmagicboxhintstringcost( 1 ) );
             var_1 maps\mp\zombies\_util::tokenhintstring( 0 );
             var_1.active = 0;
         }
@@ -524,10 +524,10 @@ teleporttostructandbackatend( var_0 )
 
     self notify( "stop_useHoldThinkLoop" );
 
-    while ( self _meth_8068() )
+    while ( self islinked() )
         waitframe();
 
-    self _meth_8439();
+    self cancelmantle();
     self.prebossorigin = self.lastgroundposition;
     self.disabletombstonedropinarea = 1;
     maps\mp\zombies\_teleport::teleport_players_through_chute( [ self ], 0 );
@@ -545,7 +545,7 @@ teleporttostructandbackatend( var_0 )
     level notify( "teleport_to_arena_complete" );
     level waittill( "teleport_players_back" );
     self notify( "stop_useHoldThinkLoop" );
-    self _meth_8439();
+    self cancelmantle();
     maps\mp\zombies\_teleport::teleport_players_through_chute( [ self ], 0 );
     thread maps\mp\zombies\_teleport::reset_teleport_flag_after_time( [ self ], 0.75 );
     var_2 = playerphysicstrace( self.prebossorigin, self.prebossorigin + ( 0, 0, 1 ) );
@@ -627,7 +627,7 @@ giverewardtoplayer( var_0 )
         var_2 = var_0 maps\mp\killstreaks\_airdrop::createairdropcrate( var_0, "airdrop_assault", "ozMoney", var_1.origin, undefined, 0, 1 );
         playfx( common_scripts\utility::getfx( "crate_teleport" ), var_1.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
         var_2 thread [[ level.cratetypes["airdrop_assault"]["ozMoney"].func ]]( "airdrop_assault" );
-        var_2 _meth_8057();
+        var_2 disconnectpaths();
         var_2 thread deletecrateonteleport();
 
         while ( isdefined( var_2 ) )
@@ -689,7 +689,7 @@ handleammodrops()
         level.ammocrate = var_1 maps\mp\killstreaks\_airdrop::createairdropcrate( var_1, "airdrop_assault", "ammo", var_2.origin, undefined, 0, 1 );
         playfx( common_scripts\utility::getfx( "crate_teleport" ), var_2.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
         level.ammocrate thread [[ level.cratetypes["airdrop_assault"]["ammo"].func ]]( "airdrop_assault" );
-        level.ammocrate _meth_8057();
+        level.ammocrate disconnectpaths();
 
         while ( isdefined( level.ammocrate ) )
             wait 0.05;
@@ -706,7 +706,7 @@ findammocratedrop( var_0 )
 
         foreach ( var_6 in level.noammodroptriggers )
         {
-            if ( _func_22A( var_3.origin + ( 0, 0, 35 ), var_6 ) )
+            if ( ispointinvolume( var_3.origin + ( 0, 0, 35 ), var_6 ) )
             {
                 var_4 = 0;
                 break;

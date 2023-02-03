@@ -46,8 +46,8 @@ givegrenadesafterrounds()
 {
     foreach ( var_1 in level.players )
     {
-        var_2 = var_1 _meth_8345();
-        var_3 = var_1 _meth_831A();
+        var_2 = var_1 getlethalweapon();
+        var_3 = var_1 gettacticalweapon();
         var_4 = [ var_2, var_3 ];
 
         foreach ( var_6 in var_4 )
@@ -55,7 +55,7 @@ givegrenadesafterrounds()
             if ( var_6 == "none" )
                 continue;
 
-            var_1 _meth_82F6( var_6, var_1 _meth_82F8( var_6 ) + 1 );
+            var_1 setweaponammoclip( var_6, var_1 getweaponammoclip( var_6 ) + 1 );
         }
     }
 }

@@ -774,7 +774,7 @@ captured_ambient_animation_setup( var_0 )
                 }
 
                 var_5 = spawn( "script_origin", var_3.origin );
-                var_5 _meth_804D( var_4[0] );
+                var_5 linkto( var_4[0] );
                 var_5 thread captured_ambient_animation_function( var_0, var_3 );
                 continue;
             }
@@ -916,7 +916,7 @@ captured_ambient_animation_function( var_0, var_1 )
     var_20 = getent( var_18.targetname, "target" );
     var_20 waittill( "trigger" );
     var_21 = spawn( "script_model", var_18.origin );
-    var_21 _meth_80B1( var_14 );
+    var_21 setmodel( var_14 );
     var_21 attach( var_15 );
     var_21.angles = var_18.angles;
     var_21.animname = var_16;
@@ -961,9 +961,9 @@ captured_ambient_animation_function( var_0, var_1 )
     soundscripts\_snd::snd_message( "aud_ambient_animations", var_18.animation );
 
     if ( isdefined( var_18.script_side ) )
-        var_21 common_scripts\utility::delaycall( 0.05, ::_meth_8117, level.scr_anim[var_16][var_18.animation][0], var_23 );
+        var_21 common_scripts\utility::delaycall( 0.05, ::setanimtime, level.scr_anim[var_16][var_18.animation][0], var_23 );
     else
-        var_21 common_scripts\utility::delaycall( 0.05, ::_meth_8117, level.scr_anim[var_16][var_18.animation], var_23 );
+        var_21 common_scripts\utility::delaycall( 0.05, ::setanimtime, level.scr_anim[var_16][var_18.animation], var_23 );
 
     var_25 = undefined;
 
@@ -971,7 +971,7 @@ captured_ambient_animation_function( var_0, var_1 )
     {
         if ( isdefined( var_18.script_stance ) )
         {
-            var_21 _meth_804D( var_19 );
+            var_21 linkto( var_19 );
             var_19 thread maps\_anim::anim_loop_solo( var_21, var_18.animation, var_18.script_side );
             level waittill( var_18.script_side );
             var_19 notify( var_18.script_side );
@@ -987,7 +987,7 @@ captured_ambient_animation_function( var_0, var_1 )
     {
         if ( isdefined( var_18.script_stance ) )
         {
-            var_21 _meth_804D( var_19 );
+            var_21 linkto( var_19 );
             var_19 thread maps\_anim::anim_single_solo( var_21, var_18.animation );
             var_26 = getanimlength( var_21 maps\_utility::getanim( var_18.animation ) );
 
@@ -1069,7 +1069,7 @@ anim_single_to_loop_solo( var_0, var_1, var_2, var_3, var_4 )
 
     if ( isdefined( var_0 ) )
     {
-        if ( !_func_294( var_0 ) )
+        if ( !isremovedentity( var_0 ) )
         {
             var_5 maps\_anim::anim_single_solo( var_0, var_1 );
 

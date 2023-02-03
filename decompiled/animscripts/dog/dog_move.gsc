@@ -18,7 +18,7 @@ main()
     self endon( "killanimscript" );
     thread handlefootstepnotetracks();
 
-    if ( self _meth_83CD() )
+    if ( self isdogbeingdriven() )
         continuedrivenmovement();
     else
     {
@@ -63,15 +63,15 @@ continuemovement()
 {
     self.moveratemultiplier = 1;
     setupmovement();
-    self _meth_818E( "none" );
-    self _meth_818F( "face motion" );
-    self _meth_8142( %body, 0.2 );
+    self animmode( "none" );
+    self orientmode( "face motion" );
+    self clearanim( %body, 0.2 );
     setmoveanim( self.movemode, self.stairsstate, 1 );
 }
 
 continuedrivenmovement()
 {
-    self _meth_8142( %body, 0.5 );
+    self clearanim( %body, 0.5 );
     self.drivenmovemode = getdesireddrivenmovemode( "walk" );
     setdrivenanim( self.drivenmovemode, 1 );
     thread waitfordrivenchange();
@@ -80,14 +80,14 @@ continuedrivenmovement()
 
 startturntoangle( var_0, var_1 )
 {
-    self _meth_8142( %body, 0.2 );
+    self clearanim( %body, 0.2 );
     animscripts\dog\dog_stop::turntoangle( var_0, var_1 );
 }
 
 startmove()
 {
     self.bfirstmoveanim = 1;
-    var_0 = self _meth_819D();
+    var_0 = self getnegotiationstartnode();
 
     if ( isdefined( var_0 ) )
         var_1 = var_0.origin;
@@ -100,7 +100,7 @@ startmove()
     if ( isdefined( self.disableexits ) && self.disableexits )
         return;
 
-    if ( self _meth_83CD() )
+    if ( self isdogbeingdriven() )
         return;
 
     var_2 = vectortoangles( self.lookaheaddir );
@@ -141,7 +141,7 @@ startmove()
         var_10 = getmovedelta( var_7 );
         var_11 = rotatevector( var_10, self.angles ) + self.origin;
 
-        if ( self _meth_81C4( self.origin, var_11, 1, 1 ) )
+        if ( self maymovefrompointtopoint( self.origin, var_11, 1, 1 ) )
             break;
     }
 
@@ -160,9 +160,9 @@ startmove()
     if ( var_12.size > 0 )
         var_13 = var_12[0];
 
-    var_14 = _func_221( var_7, 0, var_13 );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face angle", angleclamp180( var_2[1] - var_14[1] ) );
+    var_14 = getangledelta3d( var_7, 0, var_13 );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face angle", angleclamp180( var_2[1] - var_14[1] ) );
     var_15 = getanimlength( var_7 ) * var_13;
     var_16 = 0.01 + abs( angleclamp180( var_3 - var_14[1] ) ) / var_15 / 1000;
 
@@ -176,14 +176,14 @@ startmove()
     if ( animscripts\dog\dog_stop::getdefaultidlestate() != "attackidle" )
         var_17 = 0.4;
 
-    self _meth_8110( "dog_start_move", var_7, %body, 1, var_17, self.moveplaybackrate );
+    self setflaggedanimknoballrestart( "dog_start_move", var_7, %body, 1, var_17, self.moveplaybackrate );
     thread startmove_updateangle( var_7, var_13, var_15 );
     animscripts\shared::donotetracks( "dog_start_move" );
     self notify( "end_startmove_updateangle" );
     self.turnrate = self.prevturnrate;
     self.prevturnrate = undefined;
-    self _meth_818E( "none", 0 );
-    self _meth_818F( "face motion" );
+    self animmode( "none", 0 );
+    self orientmode( "face motion" );
 }
 
 startmove_updateangle( var_0, var_1, var_2 )
@@ -194,11 +194,11 @@ startmove_updateangle( var_0, var_1, var_2 )
 
     for (;;)
     {
-        var_3 = self _meth_814F( var_0 );
+        var_3 = self getanimtime( var_0 );
         var_4 = vectortoangles( self.lookaheaddir );
-        var_5 = _func_221( var_0, var_3, var_1 );
+        var_5 = getangledelta3d( var_0, var_3, var_1 );
         var_6 = angleclamp180( var_4[1] - self.angles[1] );
-        self _meth_818F( "face angle", angleclamp180( var_4[1] - var_5[1] ) );
+        self orientmode( "face angle", angleclamp180( var_4[1] - var_5[1] ) );
         self.turnrate = 0.01 + abs( angleclamp180( var_6 - var_5[1] ) ) / var_2 / 1000;
 
         if ( self.turnrate < 0.01 )
@@ -212,7 +212,7 @@ startdrivenmovement()
 {
     var_0 = getdogmoveanim( "run_start" );
     var_1 = var_0[4];
-    self _meth_8110( "dog_start_move", var_1, %body );
+    self setflaggedanimknoballrestart( "dog_start_move", var_1, %body );
     animscripts\shared::donotetracks( "dog_start_move" );
 }
 
@@ -220,11 +220,11 @@ waitfordrivenchange()
 {
     self endon( "dogmove_endwait_drivenchange" );
     self endon( "killanimscript" );
-    var_0 = self _meth_83CD();
+    var_0 = self isdogbeingdriven();
 
     for (;;)
     {
-        var_1 = self _meth_83CD();
+        var_1 = self isdogbeingdriven();
 
         if ( var_0 != var_1 )
         {
@@ -256,7 +256,7 @@ waitforrunwalkslopechange()
     {
         if ( var_0 != self.movemode || var_1 != self.stairsstate || hasmovementtypechanged( var_4 ) || hasoverrideanimchanged( var_2, var_3 ) )
         {
-            self _meth_8142( %dog_move, 0.2 );
+            self clearanim( %dog_move, 0.2 );
 
             if ( isdefined( self.script_nostairs ) )
                 setmoveanim( self.movemode, "none", 1 );
@@ -307,7 +307,7 @@ waitforsharpturn()
 
 shoulddosharpturns()
 {
-    if ( isdefined( self.script_noturnanim ) || self _meth_83CD() )
+    if ( isdefined( self.script_noturnanim ) || self isdogbeingdriven() )
         return 0;
 
     if ( isdefined( self.movementtype ) && ( self.movementtype == "walk" || self.movementtype == "walk_fast" ) )
@@ -366,12 +366,12 @@ dosharpturn( var_0, var_1 )
 
     self.prevturnrate = self.turnrate;
     self.turnrate = var_12;
-    self _meth_8142( %dog_move, 0.1 );
-    self _meth_818E( "zonly_physics", 0 );
-    self _meth_818F( "face angle", angleclamp180( var_3[1] - var_10 ) );
-    self _meth_8110( "dog_sharp_turn", var_7, %body, 1, 0.2, self.moveplaybackrate );
+    self clearanim( %dog_move, 0.1 );
+    self animmode( "zonly_physics", 0 );
+    self orientmode( "face angle", angleclamp180( var_3[1] - var_10 ) );
+    self setflaggedanimknoballrestart( "dog_sharp_turn", var_7, %body, 1, 0.2, self.moveplaybackrate );
     animscripts\shared::donotetracks( "dog_sharp_turn" );
-    self _meth_8142( %dog_move_turn, 0.2 );
+    self clearanim( %dog_move_turn, 0.2 );
     self.turnrate = self.prevturnrate;
     self.prevturnrate = undefined;
     self notify( "dogmove_endwait_sharpturnduringsharpturn" );
@@ -408,7 +408,7 @@ shoulddoarrivals()
     if ( isdefined( self.disablearrivals ) && self.disablearrivals )
         return 0;
 
-    if ( self _meth_83CD() )
+    if ( self isdogbeingdriven() )
         return 0;
 
     if ( isdefined( self.movementtype ) && ( self.movementtype == "walk" || self.movementtype == "walk_fast" ) )
@@ -490,7 +490,7 @@ waitforstop()
         return;
     }
 
-    if ( !self _meth_81C4( var_13.pos, var_15 ) )
+    if ( !self maymovefrompointtopoint( var_13.pos, var_15 ) )
     {
         thread waitforstop();
         return;
@@ -501,7 +501,7 @@ waitforstop()
     if ( distancesquared( var_14, self.origin ) > 4 )
     {
         thread waitforpathsetwhilestopping();
-        self _meth_8160( var_14 );
+        self setruntopos( var_14 );
         self waittill( "runto_arrived" );
         self notify( "dogmove_endwait_pathsetwhilestopping" );
     }
@@ -528,7 +528,7 @@ waitforstop()
         var_18 = ( 0, var_16[1] - var_11, 0 );
 
     self.dogarrivalanim = var_9;
-    self _meth_81E4( var_14, var_18[1], 0 );
+    self startcoverarrival( var_14, var_18[1], 0 );
 }
 
 waitforpathsetwhilestopping()
@@ -539,7 +539,7 @@ waitforpathsetwhilestopping()
     self waittill( "path_set" );
     var_1 = self.goalpos;
 
-    if ( _func_220( var_0, var_1 ) < 1 )
+    if ( distance2dsquared( var_0, var_1 ) < 1 )
     {
         thread waitforpathsetwhilestopping();
         return;
@@ -587,7 +587,7 @@ waitforfollowspeed()
         var_4 = self.moveratemultiplier;
         self.moveratemultiplier = 1;
 
-        if ( self _meth_83CB() && self.movemode == "run" )
+        if ( self isdogfollowinghandler() && self.movemode == "run" )
         {
             if ( isdefined( self.doghandler.pathgoalpos ) )
             {
@@ -610,7 +610,7 @@ waitforfollowspeed()
         else
         {
             var_8 = 1;
-            var_9 = self _meth_843E();
+            var_9 = self getdogavoident();
 
             if ( isdefined( var_9 ) )
             {
@@ -621,7 +621,7 @@ waitforfollowspeed()
                 if ( var_12 > 0 )
                 {
                     if ( isplayer( var_9 ) )
-                        var_13 = lengthsquared( var_9 _meth_81B2() );
+                        var_13 = lengthsquared( var_9 getentityvelocity() );
                     else
                         var_13 = lengthsquared( var_9.velocity );
 
@@ -697,17 +697,17 @@ getstopdata()
 playmoveanim( var_0, var_1, var_2, var_3 )
 {
     if ( var_1 )
-        self _meth_8110( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
+        self setflaggedanimknoballrestart( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
     else
-        self _meth_810F( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
+        self setflaggedanimknoball( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
 }
 
 playmoveanimknob( var_0, var_1, var_2, var_3 )
 {
     if ( var_1 )
-        self _meth_8110( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
+        self setflaggedanimknoballrestart( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
     else
-        self _meth_810F( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
+        self setflaggedanimknoball( "dog_move", var_0, %dog_move, 1, var_2, var_3 );
 }
 
 setmoveanim( var_0, var_1, var_2 )
@@ -719,7 +719,7 @@ setmoveanim( var_0, var_1, var_2 )
 
     if ( var_0 == "walk" )
     {
-        self _meth_8143( %dog_walk, 1 );
+        self setanimknob( %dog_walk, 1 );
 
         if ( isdefined( self.walk_overrideanim ) )
             var_6 = self.walk_overrideanim;
@@ -735,28 +735,28 @@ setmoveanim( var_0, var_1, var_2 )
     {
         if ( var_1 == "up" )
         {
-            self _meth_8143( %dog_slope, 1 );
+            self setanimknob( %dog_slope, 1 );
             var_6 = getdogmoveanim( "run_up" );
             playmoveanimknob( var_6, var_3, 0.5, self.moveplaybackrate * self.moveratemultiplier );
             self.moveanimtype = "run";
         }
         else if ( var_1 == "down" )
         {
-            self _meth_8143( %dog_slope, 1 );
+            self setanimknob( %dog_slope, 1 );
             var_6 = getdogmoveanim( "run_down" );
             playmoveanimknob( var_6, var_3, 0.5, self.moveplaybackrate * self.moveratemultiplier );
             self.moveanimtype = "run";
         }
         else if ( isdefined( self.sprint ) && self.sprint )
         {
-            self _meth_8143( %dog_run, 1 );
+            self setanimknob( %dog_run, 1 );
             var_6 = getdogmoveanim( "sprint" );
             playmoveanim( var_6, var_3, 0.3, self.moveplaybackrate * self.moveratemultiplier );
             self.moveanimtype = "sprint";
         }
         else
         {
-            self _meth_8143( %dog_run, 1 );
+            self setanimknob( %dog_run, 1 );
             self.moveanimtype = "run";
             var_7 = isdefined( self.movementtype );
             var_8 = 0.3;
@@ -828,7 +828,7 @@ loopmovesound( var_0 )
     self endon( "killanimscript" );
     var_1 = spawn( "script_origin", self.origin );
     var_1.angles = self.angles;
-    var_1 _meth_804D( self );
+    var_1 linkto( self );
     self.movesoundorigin = var_1;
     self.moveoverridesound = var_0;
 
@@ -854,9 +854,9 @@ stopmovesound()
 {
     if ( isdefined( self.movesoundorigin ) )
     {
-        if ( self.movesoundorigin _meth_8079() )
+        if ( self.movesoundorigin iswaitingonsound() )
         {
-            self.movesoundorigin _meth_80AC();
+            self.movesoundorigin stopsounds();
             wait 0.05;
         }
 
@@ -892,7 +892,7 @@ setdrivenanim( var_0, var_1, var_2 )
 {
     self.bfirstmoveanim = undefined;
     var_3 = 0.5;
-    self _meth_8142( %dog_move, var_3 );
+    self clearanim( %dog_move, var_3 );
 
     if ( !isdefined( var_2 ) )
         var_2 = 1;
@@ -1021,7 +1021,7 @@ droppostoground( var_0 )
     var_2 = var_0 + ( 0, 0, -64 );
     var_3 = 15;
     var_4 = 45;
-    var_5 = self _meth_83E5( var_1, var_2, var_3, var_4, 1 );
+    var_5 = self aiphysicstrace( var_1, var_2, var_3, var_4, 1 );
 
     if ( abs( var_5[2] - var_1[2] ) < 0.5 )
         return undefined;
@@ -1064,7 +1064,7 @@ getarrivalnode()
     if ( isdefined( self.node ) )
         return self.node;
 
-    if ( isdefined( self.prevnode ) && isdefined( self.pathgoalpos ) && _func_220( self.prevnode.origin, self.pathgoalpos ) < 36 )
+    if ( isdefined( self.prevnode ) && isdefined( self.pathgoalpos ) && distance2dsquared( self.prevnode.origin, self.pathgoalpos ) < 36 )
         return self.prevnode;
 
     return undefined;

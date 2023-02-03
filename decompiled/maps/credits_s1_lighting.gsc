@@ -8,6 +8,6 @@ main()
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_disablelightsets", 0 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_disablelightsets", 0 );
 }

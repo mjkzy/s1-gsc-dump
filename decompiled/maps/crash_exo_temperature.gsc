@@ -15,14 +15,14 @@ precache_exo_temperature()
 create_exo_temperature_hud( var_0 )
 {
     setomnvar( "ui_temperaturegauge_hud", 1 );
-    level.player _meth_82FB( "ui_temperaturegauge_external", var_0 );
+    level.player setclientomnvar( "ui_temperaturegauge_external", var_0 );
     level.body_temp = 98.6;
     level.exo_temp = var_0 + 25.0;
     level.exo_temperature_hud = [];
     level.exo_temperature_hud["overlay"] = newhudelem();
     level.exo_temperature_hud["overlay"].x = 0;
     level.exo_temperature_hud["overlay"].y = 0;
-    level.exo_temperature_hud["overlay"] _meth_80CC( "overlay_frozen_2", 640, 480 );
+    level.exo_temperature_hud["overlay"] setshader( "overlay_frozen_2", 640, 480 );
     level.exo_temperature_hud["overlay"].sort = 50;
     level.exo_temperature_hud["overlay"].lowresbackground = 1;
     level.exo_temperature_hud["overlay"].alignx = "left";
@@ -43,7 +43,7 @@ remove_exo_temperature_hud( var_0 )
 
     if ( isdefined( var_0 ) && var_0 > 0.0 )
     {
-        _func_23F( &"temperature_fade_out", 1, int( var_0 * 1000 ) );
+        luinotifyevent( &"temperature_fade_out", 1, int( var_0 * 1000 ) );
 
         foreach ( var_2 in level.exo_temperature_hud )
         {
@@ -77,12 +77,12 @@ monitor_temperature()
 
         if ( level.body_temp < var_1 && !var_5 )
         {
-            _func_23F( &"temperature_warning_blink", 1, 500 );
+            luinotifyevent( &"temperature_warning_blink", 1, 500 );
             var_5 = 1;
         }
         else if ( level.body_temp > var_1 && var_5 )
         {
-            _func_23F( &"temperature_warning_hide", 1, 100 );
+            luinotifyevent( &"temperature_warning_hide", 1, 100 );
             var_5 = 0;
         }
 
@@ -139,14 +139,14 @@ set_external_temperature_over_time( var_0, var_1 )
     level notify( "set_external_temperature" );
     level endon( "set_external_temperature" );
     level endon( "remove_exo_temperature_hud" );
-    var_2 = ( var_0 - level.player _meth_8447( "ui_temperaturegauge_external" ) ) / var_1 * 0.05;
+    var_2 = ( var_0 - level.player getclientomnvar( "ui_temperaturegauge_external" ) ) / var_1 * 0.05;
 
     while ( var_1 > 0 )
     {
-        level.player _meth_82FB( "ui_temperaturegauge_external", level.player _meth_8447( "ui_temperaturegauge_external" ) + var_2 );
+        level.player setclientomnvar( "ui_temperaturegauge_external", level.player getclientomnvar( "ui_temperaturegauge_external" ) + var_2 );
         var_1 -= 0.05;
         wait 0.05;
     }
 
-    level.player _meth_82FB( "ui_temperaturegauge_external", var_0 );
+    level.player setclientomnvar( "ui_temperaturegauge_external", var_0 );
 }

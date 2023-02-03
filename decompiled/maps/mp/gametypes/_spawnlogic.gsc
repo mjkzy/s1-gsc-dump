@@ -64,7 +64,7 @@ startclientspawnpointtraces( var_0 )
         return;
 
     wait 0.05;
-    var_0 _meth_82FE( level.clienttracespawnclass );
+    var_0 setclientspawnsighttraces( level.clienttracespawnclass );
 }
 
 canperformclienttraces( var_0 )
@@ -78,7 +78,7 @@ canperformclienttraces( var_0 )
     if ( isai( var_0 ) || istestclient( var_0 ) )
         return 0;
 
-    if ( var_0 _meth_829C() )
+    if ( var_0 ishost() )
     {
         if ( getdvarint( "enableS1TUSpawnSightTraces" ) > 0 )
             return 1;
@@ -194,7 +194,7 @@ addalternatespawnpoint( var_0, var_1 )
     if ( var_5 != var_4 )
         return;
 
-    var_6 = _func_24F( var_4 );
+    var_6 = droptoground( var_4 );
 
     if ( abs( var_6[2] - var_1[2] ) > 128 )
         return;
@@ -232,7 +232,7 @@ getspawnpoint_random( var_0 )
     {
         var_1 = var_3;
 
-        if ( precachestatusicon( var_1.origin ) && !getstarttime( var_1.origin ) )
+        if ( canspawn( var_1.origin ) && !positionwouldtelefrag( var_1.origin ) )
             break;
     }
 
@@ -420,7 +420,7 @@ getactiveplayerlist()
             if ( !( var_5 == "orbitalsupport" || var_5 == "Warbird" ) )
             {
                 var_6 = getplayertraceheight( var_4 );
-                var_7 = var_4 _meth_80A8();
+                var_7 = var_4 geteye();
                 var_7 = ( var_7[0], var_7[1], var_4.origin[2] + var_6 );
                 var_4.spawnlogictraceheight = var_6;
                 var_4.spawntracelocation = var_7;
@@ -472,11 +472,11 @@ spawnpointsightupdate()
 
                 if ( var_10.canperformclienttraces )
                 {
-                    var_10 _meth_82FE( level.clienttracespawnclass );
+                    var_10 setclientspawnsighttraces( level.clienttracespawnclass );
                     continue;
                 }
 
-                var_10 _meth_82FE();
+                var_10 setclientspawnsighttraces();
             }
 
             var_5 = var_8;
@@ -504,7 +504,7 @@ spawnpointsightupdate()
                     continue;
 
                 if ( var_10.canperformclienttraces )
-                    var_18 = var_10 _meth_82FF( var_15.index );
+                    var_18 = var_10 clientspawnsighttracepassed( var_15.index );
                 else
                 {
                     if ( var_8 )
@@ -530,7 +530,7 @@ spawnpointsightupdate()
 
                 if ( var_8 )
                 {
-                    var_22 = var_10 _meth_81B1();
+                    var_22 = var_10 getentitynumber();
 
                     if ( !isdefined( var_15.fullsightdelay ) || !isdefined( var_15.fullsightdelay[var_22] ) )
                         var_15.fullsightdelay[var_22] = 0;
@@ -745,7 +745,7 @@ getplayertraceheight( var_0, var_1 )
     if ( isdefined( var_1 ) && var_1 )
         return 64;
 
-    var_2 = var_0 _meth_817C();
+    var_2 = var_0 getstance();
 
     if ( var_2 == "stand" )
         return 64;

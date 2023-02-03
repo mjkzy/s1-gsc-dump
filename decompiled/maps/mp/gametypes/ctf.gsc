@@ -119,12 +119,12 @@ onstartgametype()
     if ( !level.winbycaptures )
     {
         game["teamScores"][game["attackers"]] = 0;
-        updateclientnames( game["attackers"], 0 );
+        setteamscore( game["attackers"], 0 );
         game["teamScores"][game["defenders"]] = 0;
-        updateclientnames( game["defenders"], 0 );
+        setteamscore( game["defenders"], 0 );
     }
 
-    getteamplayersalive( "auto_change" );
+    setclientnamemode( "auto_change" );
     level.flagstowedfxid["sentinel"]["friendly"] = loadfx( "vfx/unique/vfx_flag_project_stowed_sentinel_friendly" );
     level.flagstowedfxid["sentinel"]["enemy"] = loadfx( "vfx/unique/vfx_flag_project_stowed_sentinel_enemy" );
     level.flagstowedfxid["atlas"]["friendly"] = loadfx( "vfx/unique/vfx_flag_project_stowed_atlas_friendly" );
@@ -283,13 +283,13 @@ onpickupflaghudstatus( var_0 )
     {
         var_0.objective = 1;
         level.axisflagstatus = 2;
-        level.axisflagcarrierclientnum = var_0 _meth_81B1();
+        level.axisflagcarrierclientnum = var_0 getentitynumber();
     }
     else
     {
         var_0.objective = 2;
         level.alliesflagstatus = 2;
-        level.alliesflagcarrierclientnum = var_0 _meth_81B1();
+        level.alliesflagcarrierclientnum = var_0 getentitynumber();
     }
 
     level notify( "update_flag_status" );
@@ -338,11 +338,11 @@ playerupdateflagstatus()
     else
         return;
 
-    self _meth_82FB( "ui_ctf_friendly_status", var_0 );
-    self _meth_82FB( "ui_ctf_friendly_carrier_clientnum", var_1 );
-    self _meth_82FB( "ui_ctf_enemy_status", var_2 );
-    self _meth_82FB( "ui_ctf_enemy_carrier_clientnum", var_3 );
-    self _meth_82FB( "ui_ctf_status_changed", 1 );
+    self setclientomnvar( "ui_ctf_friendly_status", var_0 );
+    self setclientomnvar( "ui_ctf_friendly_carrier_clientnum", var_1 );
+    self setclientomnvar( "ui_ctf_enemy_status", var_2 );
+    self setclientomnvar( "ui_ctf_enemy_carrier_clientnum", var_3 );
+    self setclientomnvar( "ui_ctf_status_changed", 1 );
 }
 
 playerupdateflagstatusonjointeam()
@@ -423,7 +423,7 @@ createteamflag( var_0, var_1 )
 
         var_6 = spawn( "trigger_radius", var_2.origin, 0, 96, var_2.height );
         var_2 = var_6;
-        var_4[0] _meth_80B1( level.flagmodel[var_0] );
+        var_4[0] setmodel( level.flagmodel[var_0] );
         var_4[0].oldcontents = var_4[0] setcontents( 0 );
         var_7 = var_4[0].origin + ( 0, 0, 32 );
         var_8 = var_4[0].origin + ( 0, 0, -32 );
@@ -596,7 +596,7 @@ onpickup( var_0 )
             level.capzones[var_2] maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconmissingblue );
             maps\mp\gametypes\_gameobjects::set2dicon( "mlg", level.iconawayblue );
             maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconawayblue );
-            setomnvar( "ui_mlg_game_mode_status_1", var_0 _meth_81B1() );
+            setomnvar( "ui_mlg_game_mode_status_1", var_0 getentitynumber() );
         }
         else
         {
@@ -604,7 +604,7 @@ onpickup( var_0 )
             level.capzones[var_2] maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconmissingred );
             maps\mp\gametypes\_gameobjects::set2dicon( "mlg", level.iconawayred );
             maps\mp\gametypes\_gameobjects::set3dicon( "mlg", level.iconawayred );
-            setomnvar( "ui_mlg_game_mode_status_2", var_0 _meth_81B1() );
+            setomnvar( "ui_mlg_game_mode_status_2", var_0 getentitynumber() );
         }
 
         var_0 thread maps\mp\_events::flagpickupevent();
@@ -927,10 +927,10 @@ applyflagcarrierclass( var_0 )
 
 refillbattery()
 {
-    var_0 = self _meth_82CE();
+    var_0 = self getweaponslistoffhands();
 
     foreach ( var_2 in var_0 )
-        self _meth_84A4( var_2 );
+        self batteryfullrecharge( var_2 );
 }
 
 waitattachflag( var_0 )
@@ -996,8 +996,8 @@ onplayerkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, v
 
         foreach ( var_12 in level.capzones )
         {
-            var_13 = _func_220( var_1.origin, var_12.curorigin );
-            var_14 = _func_220( self.origin, var_12.curorigin );
+            var_13 = distance2dsquared( var_1.origin, var_12.curorigin );
+            var_14 = distance2dsquared( self.origin, var_12.curorigin );
 
             if ( var_12.ownerteam == var_1.team )
             {
@@ -1265,7 +1265,7 @@ friendlyenemyeffects( var_0, var_1, var_2 )
 
 spawnlinkedfxshowtoteam( var_0, var_1, var_2, var_3 )
 {
-    var_4 = _func_2C1( var_0, var_2, var_3 );
+    var_4 = spawnlinkedfx( var_0, var_2, var_3 );
     var_4 maps\mp\_utility::fxshowtoteam( var_1 );
     return var_4;
 }

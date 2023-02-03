@@ -3,9 +3,9 @@
 
 initextractionwarbird()
 {
-    precacheitem( "warbird_remote_turret_mp" );
-    map_restart( "zom_civ_extraction_air_warbird" );
-    map_restart( "zom_civ_extraction_air_rope" );
+    precacheshellshock( "warbird_remote_turret_mp" );
+    precachempanim( "zom_civ_extraction_air_warbird" );
+    precachempanim( "zom_civ_extraction_air_rope" );
     precachemodel( "vehicle_xh9_warbird_pulley" );
     maps\mp\zombies\_civilians::registerextractioninitevent( "warbird", ::warbirdextractioninit );
     maps\mp\zombies\_civilians::registerextractionescortevent( "warbird", ::warbirdextractionescort );
@@ -28,8 +28,8 @@ warbirdextraction()
     var_1 = spawnhelicopter( level.players[0], var_0.origin, var_0.angles, "warbird_player_mp", "vehicle_xh9_warbird_low_cloaked_in_out_mp_cloak" );
     var_1.warbirdturret = var_1 spawn_warbird_turret( "warbird_remote_turret_mp", "vehicle_xh9_warbird_turret_cloaked_inout_killstreak_mp_cloak", "tag_player_mp", 0 );
     thread warbirdfire( var_1 );
-    var_1 _meth_828B();
-    var_1 _meth_8075( "veh_warbird_fly_over_civ_extract" );
+    var_1 vehicle_turnengineoff();
+    var_1 playloopsound( "veh_warbird_fly_over_civ_extract" );
     var_2 = var_0;
     var_3 = 40;
 
@@ -56,22 +56,22 @@ spawn_warbird_turret( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawnturret( "misc_turret", self gettagorigin( var_2 ), var_0, 0 );
     var_4.angles = self gettagangles( var_2 );
-    var_4 _meth_80B1( var_1 );
-    var_4 _meth_815A( 55.0 );
-    var_4 _meth_804D( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_4 setmodel( var_1 );
+    var_4 setdefaultdroppitch( 55.0 );
+    var_4 linkto( self, var_2, ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_4.owner = self.owner;
     var_4.health = 99999;
     var_4.maxhealth = 1000;
     var_4.damagetaken = 0;
     var_4.stunned = 0;
     var_4.stunnedtime = 0.0;
-    var_4 _meth_82C0( 0 );
-    var_4 _meth_82C1( 0 );
+    var_4 setcandamage( 0 );
+    var_4 setcanradiusdamage( 0 );
     var_4.team = level.players[0].team;
     var_4.pers["team"] = level.players[0].team;
-    var_4 _meth_8065( "auto_nonai" );
-    var_4 _meth_8103( self.owner );
-    var_4 _meth_8105( 0 );
+    var_4 setmode( "auto_nonai" );
+    var_4 setsentryowner( self.owner );
+    var_4 setturretminimapvisible( 0 );
     var_4.chopper = self;
     return var_4;
 }
@@ -129,8 +129,8 @@ fireatzombie( var_0 )
 {
     var_0 endon( "warbirdExtractionComplete" );
     var_0 endon( "pickNewTarget" );
-    var_0.warbirdturret _meth_8065( "manual" );
-    var_0.warbirdturret _meth_8106( var_0.enemy_target );
+    var_0.warbirdturret setmode( "manual" );
+    var_0.warbirdturret settargetentity( var_0.enemy_target );
     var_1 = 0;
     var_2 = randomfloatrange( 2, 3 );
     wait(randomfloatrange( 3, 5 ));
@@ -140,7 +140,7 @@ fireatzombie( var_0 )
         if ( !isdefined( var_0.enemy_target ) || !isalive( var_0.enemy_target ) )
             break;
 
-        var_0.warbirdturret _meth_80EA();
+        var_0.warbirdturret shootturret();
         wait(randomfloatrange( 0.15, 0.25 ));
         var_1 += 0.15;
     }
@@ -157,7 +157,7 @@ checkwarbirdtargetlos( var_0 )
     var_0.enemy_target endon( "death" );
     var_0.enemy_target endon( "disconnect" );
     var_1 = var_0 gettagorigin( "TAG_FLASH1" );
-    var_2 = var_0.enemy_target _meth_80A8();
+    var_2 = var_0.enemy_target geteye();
     var_3 = vectornormalize( var_2 - var_1 );
     var_4 = var_1 + var_3 * 20;
     var_5 = bullettrace( var_4, var_2, 0, var_0, 0, 0, 0, 0, 0 );
@@ -197,40 +197,40 @@ checktargetisinvision( var_0 )
 
 warbirdmovetoattackpoint( var_0, var_1, var_2 )
 {
-    var_0 _meth_83F3( 1 );
+    var_0 makevehiclenotcollidewithplayers( 1 );
 
     if ( !isdefined( var_0.rope ) )
     {
         var_0.rope = spawn( "script_model", ( 0, 0, 0 ) );
-        var_0.rope _meth_80B1( "vehicle_xh9_warbird_pulley" );
-        var_0.rope _meth_8446( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_0.rope setmodel( "vehicle_xh9_warbird_pulley" );
+        var_0.rope vehicle_jetbikesethoverforcescale( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_0.rope hide();
     }
 
-    var_0 _meth_8283( var_2, var_2 / 4, var_2 / 4 );
-    var_0 _meth_825A( 100 );
+    var_0 vehicle_setspeed( var_2, var_2 / 4, var_2 / 4 );
+    var_0 setneargoalnotifydist( 100 );
 
     if ( isdefined( var_1.target ) && var_1.target == "ExtractionHoverPosition" )
-        var_0 _meth_825A( 10 );
+        var_0 setneargoalnotifydist( 10 );
 
-    var_0 _meth_825B( var_1.origin, isdefined( var_1.script_parameters ) );
+    var_0 setvehgoalpos( var_1.origin, isdefined( var_1.script_parameters ) );
     var_0 waittill( "near_goal" );
 
     if ( isdefined( var_1.script_parameters ) )
     {
-        if ( _func_2D9( self ) && isalive( self ) )
+        if ( isscriptedagent( self ) && isalive( self ) )
         {
             self notify( "extraction_started" );
             self.agentname = undefined;
             self.ignoreme = 1;
-            self _meth_83FB();
+            self hudoutlinedisable();
             self.extractionsuccessful = 1;
-            self _meth_839D( 1 );
+            self scragentsetscripted( 1 );
             maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "SynchronizedAnim" );
-            self _meth_8398( "noclip" );
+            self scragentsetphysicsmode( "noclip" );
             var_0.rope show();
-            var_0.rope _meth_8279( "zom_civ_extraction_air_rope", "dummy" );
-            self _meth_8561( 1, 0.2, var_0.rope, "tag_attach", "tag_weapon_left" );
+            var_0.rope scriptmodelplayanim( "zom_civ_extraction_air_rope", "dummy" );
+            self scragentsynchronizeanims( 1, 0.2, var_0.rope, "tag_attach", "tag_weapon_left" );
             maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( "zom_civ_extraction_air_civ", 0, "synchronized" );
             thread civilianplayidleoutroanim();
             maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "SynchronizedAnim" );
@@ -242,12 +242,12 @@ warbirdmovetoattackpoint( var_0, var_1, var_2 )
             level notify( "extraction_complete" );
     }
 
-    var_0 _meth_83F3( 0 );
+    var_0 makevehiclenotcollidewithplayers( 0 );
 }
 
 civilianplayidleoutroanim()
 {
-    while ( _func_2D9( self ) && isalive( self ) )
+    while ( isscriptedagent( self ) && isalive( self ) )
         maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( "zom_civ_extraction_air_civ_idle", 0, "synchronized" );
 }
 
@@ -258,7 +258,7 @@ warbirdlookatenemy( var_0 )
         if ( isdefined( var_0.enemy_target ) )
         {
             monitorlookatent( var_0 );
-            var_0.warbirdturret _meth_8108();
+            var_0.warbirdturret cleartargetentity();
         }
 
         waitframe();
@@ -268,8 +268,8 @@ warbirdlookatenemy( var_0 )
 monitorlookatent( var_0 )
 {
     var_0 endon( "pickNewTarget" );
-    var_0 _meth_8265( var_0.enemy_target );
-    var_0.warbirdturret _meth_8106( var_0.enemy_target );
+    var_0 setlookatent( var_0.enemy_target );
+    var_0.warbirdturret settargetentity( var_0.enemy_target );
     var_0.enemy_target common_scripts\utility::waittill_either( "death", "disconnect" );
     var_0.picknewtarget = 1;
     var_0.lineofsight = 0;

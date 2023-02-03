@@ -17,10 +17,10 @@ post_load()
 
 start()
 {
-    level.player _meth_831D();
-    level.player _meth_831F();
-    level.player _meth_8321();
-    _func_0D3( "g_friendlyNameDist", 0 );
+    level.player disableweapons();
+    level.player disableoffhandweapons();
+    level.player disableweaponswitch();
+    setsaveddvar( "g_friendlyNameDist", 0 );
     thread maps\_utility::battlechatter_off( "allies" );
     thread maps\_utility::battlechatter_off( "axis" );
 
@@ -46,8 +46,8 @@ main_introdrive()
     soundscripts\_snd::snd_music_message( "mus_captured_intro" );
     soundscripts\_snd::snd_message( "start_intro_drive" );
     soundscripts\_snd::snd_message( "aud_mech_idle_sfx" );
-    _func_0D3( "g_friendlyNameDist", 0 );
-    level.player _meth_80FE( 0.3, 0.15 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
+    level.player enableslowaim( 0.3, 0.15 );
     common_scripts\utility::flag_set( "lgt_flag_introdrive" );
     var_0 = getent( "model_introdrive_playertruck", "targetname" );
     thread player_truck( var_0 );
@@ -69,7 +69,7 @@ main_introdrive()
         thread maps\captured_util::captured_caravan_spawner( "intro_drive_trucks", undefined, 18.0, 23.0, "intro_drive" );
 
     common_scripts\utility::flag_wait( "flag_introdrive_end" );
-    level.player _meth_80FF();
+    level.player disableslowaim();
 }
 
 intro_ambient_cleanup()
@@ -90,7 +90,7 @@ player_truck( var_0 )
     soundscripts\_snd::snd_message( "entrance_alarm" );
     var_2 = maps\_vehicle::spawn_vehicle_from_targetname( "vehicle_introdrive_player" );
     var_2 hide();
-    var_0 _meth_804D( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_0 linkto( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
     if ( level.currentgen )
     {
@@ -100,8 +100,8 @@ player_truck( var_0 )
 
     soundscripts\_snd::snd_message( "entrance_alarm_fast2" );
     var_3 = getvehiclenode( "intro_drive_player_vehicle_entrance_start", "targetname" );
-    var_2 _meth_827D( var_3 );
-    var_2 _meth_827F();
+    var_2 attachpath( var_3 );
+    var_2 startpath();
     var_2 waittill( "reached_end_node" );
     wait 7.0;
     soundscripts\_snd::snd_message( "entrance_alarm_fast" );
@@ -118,7 +118,7 @@ s1_drive_and_elevator_scene( var_0 )
         return;
 
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+    var_3 linkto( var_0, "tag_origin", ( 0, 0, 0 ), ( 0, 90, 0 ) );
     var_4 = level.allies[2];
     var_5 = level.allies;
     common_scripts\utility::array_thread( var_5, maps\captured_util::ignore_everything );
@@ -129,7 +129,7 @@ s1_drive_and_elevator_scene( var_0 )
     {
         var_4 attach( "s1_captured_handcuffs", "tag_weapon_left" );
         var_4.hasattachedprops = 1;
-        var_4 _meth_804D( var_3 );
+        var_4 linkto( var_3 );
     }
 
     var_9 = maps\_utility::array_spawn_noteworthy( "truck_to_s1elevator_guards" );
@@ -163,7 +163,7 @@ s1_drive_and_elevator_scene( var_0 )
     for ( var_10 = 0; var_10 < var_17.size; var_10++ )
     {
         var_17[var_10] maps\captured_util::ignore_everything();
-        var_17[var_10] _meth_804D( var_3 );
+        var_17[var_10] linkto( var_3 );
         var_11 = var_10 + 1;
 
         if ( var_11 > 4 )
@@ -209,15 +209,15 @@ s1_drive_and_elevator_scene( var_0 )
     var_3 thread s1_truck_unload_main_guards_anims( var_29, var_9[0], var_12, var_1, var_33, var_2, var_19, var_32, var_0 );
     var_40 = maps\_utility::spawn_anim_model( "player_rig_noexo" );
     var_41 = var_40 thread maps\captured_util::captured_player_cuffs();
-    var_40 _meth_804D( var_3 );
+    var_40 linkto( var_3 );
     thread player_look_limit_controller( var_40 );
     thread prisoner_6_shadow_and_loop( var_19, var_3, var_1 );
-    level.player common_scripts\utility::delaycall( 31.55, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 48.85, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 31.55, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 48.85, ::playrumbleonentity, "heavy_1s" );
     level.player thread maps\_utility::blend_movespeedscale( 0.075 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
+    level.player allowsprint( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
     level.player freezecontrols( 0 );
     var_3 maps\_anim::anim_single_solo( var_40, "truck_to_s1elevator_unload", "tag_origin" );
     common_scripts\utility::flag_set( "flag_introdrive_end" );
@@ -228,21 +228,21 @@ s1_drive_and_elevator_scene( var_0 )
 
 player_fov_controller()
 {
-    level.player _meth_8031( 52, 1 );
+    level.player lerpfov( 52, 1 );
     wait 13.0;
-    level.player _meth_8031( 40, 5 );
+    level.player lerpfov( 40, 5 );
     level waittill( "s1_drive_guards_start" );
-    level.player common_scripts\utility::delaycall( 2, ::_meth_8031, 65, 3 );
+    level.player common_scripts\utility::delaycall( 2, ::lerpfov, 65, 3 );
 }
 
 player_look_limit_controller( var_0 )
 {
-    level.player _meth_807D( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
     wait 12.0;
-    level.player _meth_807D( var_0, "tag_player", 1, 25, 25, 12, 12, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 25, 25, 12, 12, 1 );
     level waittill( "s1_drive_guards_start" );
     wait 1;
-    level.player _meth_8080( var_0, "tag_player", 3, 1.5, 1.5 );
+    level.player playerlinktoblend( var_0, "tag_player", 3, 1.5, 1.5 );
 }
 
 s1_deleted_prisoners_anims( var_0 )
@@ -253,9 +253,9 @@ s1_deleted_prisoners_anims( var_0 )
 
 prisoner_6_shadow_and_loop( var_0, var_1, var_2 )
 {
-    var_0 _meth_804D( var_1 );
+    var_0 linkto( var_1 );
     var_1 maps\_anim::anim_single_solo( var_0, "truck_drive_player_shadow" );
-    var_0 _meth_804F();
+    var_0 unlink();
     var_2 maps\_anim::anim_loop_solo( var_0, "s1_truck_start_loop", "prisoner_truck_start_loop_ender" );
 }
 
@@ -264,7 +264,7 @@ s1_truck_unload_main_allies_anims( var_0, var_1, var_2, var_3 )
     var_4 = self;
     var_5 = maps\_utility::spawn_script_noteworthy( "introdrive_driver", 1 );
     var_5.animname = "driver";
-    var_5 _meth_804D( var_4, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_5 linkto( var_4, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_5 maps\captured_util::ignore_everything();
     var_4 thread maps\_anim::anim_single_solo( var_5, "truck_drive" );
     var_4 thread maps\_anim::anim_single( var_0, "truck_drive" );
@@ -274,16 +274,16 @@ s1_truck_unload_main_allies_anims( var_0, var_1, var_2, var_3 )
     wait 2;
 
     foreach ( var_8 in level.allies )
-        var_8 _meth_804F();
+        var_8 unlink();
 
     var_1 thread maps\captured_anim::anim_single_to_loop( level.allies, "truck_to_s1elevator_unload", "truck_to_s1elevator_loop", "truck_to_s1elevator_ally_loop_ender", var_2 );
     var_2 thread maps\captured_anim::anim_single_to_loop( var_3, "truck_to_s1elevator_unload", "truck_to_s1elevator_loop", "loop_forever_ender" );
-    level.player common_scripts\utility::delaycall( 9.65, ::_meth_80AD, "light_1s" );
+    level.player common_scripts\utility::delaycall( 9.65, ::playrumbleonentity, "light_1s" );
     wait 6;
     var_3 show();
     var_10 = getent( "s1_intro_elevator_door", "targetname" );
     var_10 soundscripts\_snd::snd_message( "s2_elevator_door_open_top" );
-    var_10 _meth_82AE( var_10.origin + ( 0, 0, 192 ), 4 );
+    var_10 moveto( var_10.origin + ( 0, 0, 192 ), 4 );
 }
 
 s1_truck_unload_main_guards_anims( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
@@ -296,7 +296,7 @@ s1_truck_unload_main_guards_anims( var_0, var_1, var_2, var_3, var_4, var_5, var
     var_8 thread maps\_anim::anim_single_solo( var_8, "introdrive_truckopen" );
     var_3 notify( var_4 );
     var_3 notify( "prisoner_truck_start_loop_ender" );
-    level.player common_scripts\utility::delaycall( 2, ::_meth_8031, 65, 3 );
+    level.player common_scripts\utility::delaycall( 2, ::lerpfov, 65, 3 );
     var_9 thread introdrive_truck_throw_guard( var_0[0], getanimlength( var_0[0] maps\_utility::getanim( "truck_to_s1elevator_unload" ) ) );
     var_3 thread maps\captured_anim::anim_single_to_loop( var_0[2], "truck_to_s1elevator_unload", "truck_to_s1elevator_loop", "truck_to_s1elevator_loop_ender" );
     var_3 thread maps\captured_anim::anim_single_to_loop( var_6, "truck_to_s1elevator_unload", "truck_to_s1elevator_loop", "truck_to_s1elevator_loop_ender" );
@@ -334,8 +334,8 @@ truck_to_s1elevator_scene( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_11 maps\_utility::delaythread( 30, ::_id_9092 );
     level.cover_warnings_disabled = 1;
     var_1 hide();
-    level.player _meth_804F();
-    var_1 _meth_804F();
+    level.player unlink();
+    var_1 unlink();
     var_6 hide();
     thread soundscripts\_snd::snd_message( "aud_intro_caravan_unmute" );
     level.player thread maps\_utility::blend_movespeedscale( 0.4, 7 );
@@ -349,7 +349,7 @@ truck_to_s1elevator_scene( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     common_scripts\utility::flag_set( "flag_entered_s1elevator" );
     soundscripts\_snd::snd_message( "s2_elevator_ride_down" );
     soundscripts\_snd::snd_message( "aud_stop_cormack_foley" );
-    level.player _meth_817D( "stand" );
+    level.player setstance( "stand" );
     var_13 = [ var_1, var_3 ];
     var_8 thread maps\_anim::anim_single( var_13, "truck_to_s1elevator_push" );
     var_7 thread maps\_anim::anim_single_solo( var_2, "truck_to_s1elevator_push" );
@@ -357,16 +357,16 @@ truck_to_s1elevator_scene( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( level.currentgen )
         thread maps\_utility::tff_sync( 6 );
 
-    level.player _meth_8080( var_1, "tag_player", 0.5 );
+    level.player playerlinktoblend( var_1, "tag_player", 0.5 );
     wait 0.5;
     maps\captured_s2walk::player_hands_idle_stop( 1 );
     var_1 show();
     var_6 show();
-    level.player _meth_807D( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
-    level.player common_scripts\utility::delaycall( 0.3, ::_meth_80AD, "light_1s" );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player common_scripts\utility::delaycall( 0.3, ::playrumbleonentity, "light_1s" );
     level waittill( "s1_elevator_player_fall" );
-    level.player _meth_80FE( 0.3, 0.15 );
-    level.player common_scripts\utility::delaycall( 3.0, ::_meth_807D, var_1, "tag_player", 0.5, 20, 30, 15, 15, 1 );
+    level.player enableslowaim( 0.3, 0.15 );
+    level.player common_scripts\utility::delaycall( 3.0, ::playerlinktodelta, var_1, "tag_player", 0.5, 20, 30, 15, 15, 1 );
     var_7 notify( "truck_to_s1elevator_ally_loop_ender" );
     var_8 notify( "truck_to_s1elevator_ally_loop_ender" );
     var_8 thread maps\captured_anim::anim_single_to_loop( var_9, "truck_to_s1elevator_push", "s2walk_wait_intro_loop_allies", "s2walk_all_wait_loop_ender" );
@@ -380,13 +380,13 @@ truck_to_s1elevator_scene( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
     foreach ( var_15 in var_5 )
     {
-        if ( !_func_294( var_15 ) )
+        if ( !isremovedentity( var_15 ) )
             var_15 delete();
     }
 
     foreach ( var_18 in var_4 )
     {
-        if ( !_func_294( var_18 ) )
+        if ( !isremovedentity( var_18 ) )
             var_18 delete();
     }
 }
@@ -412,7 +412,7 @@ _id_9093( var_0 )
     var_5 = common_scripts\utility::array_randomize( [ "cap_gr4_inline", "cap_gr4_getinline" ] );
     var_2 maps\_utility::smart_dialogue_generic( var_5[0] );
     wait 3;
-    _func_250( self, 0 );
+    setdemigodmode( self, 0 );
     maps\_utility::set_ignoreme( 0 );
     self waittill( "damage", var_1, var_2, var_3, var_4 );
     var_2 thread maps\_utility::smart_dialogue_generic( var_5[1] );
@@ -423,19 +423,19 @@ _id_9093( var_0 )
 
 _id_9092()
 {
-    self _meth_8058();
+    self connectpaths();
     self delete();
 }
 
 set_demigod_while( var_0 )
 {
     self endon( "death" );
-    _func_250( self, 1 );
+    setdemigodmode( self, 1 );
 
     while ( common_scripts\utility::flag( var_0 ) )
         wait 0.05;
 
-    _func_250( self, 0 );
+    setdemigodmode( self, 0 );
 }
 
 s1_elevator_boundary_function( var_0 )
@@ -451,8 +451,8 @@ s1_elevator_boundary_function( var_0 )
         if ( !common_scripts\utility::flag( "s1_elevator_boundary" ) )
         {
             var_1 = common_scripts\utility::getclosest( level.player.origin, var_0 );
-            magicbullet( "iw5_titan45_sp", var_1 _meth_80A8(), level.player _meth_80A8() );
-            level.player _meth_8052( ( 5352, -5148, 32 ), var_1 );
+            magicbullet( "iw5_titan45_sp", var_1 geteye(), level.player geteye() );
+            level.player kill( ( 5352, -5148, 32 ), var_1 );
         }
     }
 }
@@ -490,32 +490,32 @@ elevator_ride_s1s2( var_0, var_1 )
     var_7 = common_scripts\utility::array_add( var_7, var_3 );
     var_7 = common_scripts\utility::array_add( var_7, var_4 );
     var_7 = common_scripts\utility::array_combine( var_7, var_5 );
-    var_0 _meth_804D( var_6 );
+    var_0 linkto( var_6 );
 
     foreach ( var_13 in var_7 )
-        var_13 _meth_804D( var_6 );
+        var_13 linkto( var_6 );
 
     common_scripts\utility::flag_set( "flag_start_s1elevator" );
     var_15 = spawn( "script_model", ( 5520, -5705, 75 ) );
-    var_15 _meth_80B1( "tag_origin" );
+    var_15 setmodel( "tag_origin" );
     playfxontag( level._effect["cap_intro_elevator_light_soft"], var_15, "tag_origin" );
-    var_15 _meth_804D( var_6 );
+    var_15 linkto( var_6 );
     wait 5.8;
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_s2walk_tr" ) )
+        if ( !istransientloaded( "captured_s2walk_tr" ) )
             level waittill( "tff_post_intro_drive_to_s2walk" );
     }
 
     level notify( "stop_elevator_push" );
     level notify( "start_elevator_sounds" );
     thread scene_enemy_walk_setup_loops( var_0, var_1 );
-    var_6 _meth_82AE( var_6.origin - ( 0, 0, 593 ), 18.5 );
+    var_6 moveto( var_6.origin - ( 0, 0, 593 ), 18.5 );
     wait 14.0;
     common_scripts\utility::flag_set( "flag_s1elevator_end" );
     wait 4.5;
-    var_4 _meth_804F();
+    var_4 unlink();
     level notify( "stop_elevator_sounds" );
 }
 
@@ -542,12 +542,12 @@ player_push_impulse( var_0, var_1 )
     {
         var_3 = clamp( var_2 / var_1, 0, 1 );
         var_4 = var_0 * var_3;
-        level.player _meth_83D7( var_4 );
+        level.player pushplayervector( var_4 );
         var_2 -= 0.05;
         wait 0.05;
     }
 
-    level.player _meth_83D7( ( 0, 0, 0 ) );
+    level.player pushplayervector( ( 0, 0, 0 ) );
 }
 
 scene_s1_in_elevator()

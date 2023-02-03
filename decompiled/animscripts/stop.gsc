@@ -56,7 +56,7 @@ main()
     {
         if ( self.a.weaponpos["right"] == "none" && self.a.weaponpos["left"] == "none" )
             var_0 = 1;
-        else if ( angleclamp180( self _meth_81B9()[0] ) > 20 )
+        else if ( angleclamp180( self getmuzzleangle()[0] ) > 20 )
             var_0 = 1;
     }
 
@@ -66,11 +66,11 @@ main()
 
         if ( isdefined( var_1 ) )
         {
-            self _meth_8110( "idle", self.customidleanimset["stand"], %body, 1, 0.5, self.animplaybackrate );
+            self setflaggedanimknoballrestart( "idle", self.customidleanimset["stand"], %body, 1, 0.5, self.animplaybackrate );
             turntoangle( var_1.angles[1] );
         }
         else
-            self _meth_818F( "face angle", self.angles[1] );
+            self orientmode( "face angle", self.angles[1] );
     }
 
     for (;;)
@@ -86,7 +86,7 @@ main()
 
         if ( self.a.pose != var_2 )
         {
-            self _meth_8142( %animscript_root, 0.3 );
+            self clearanim( %animscript_root, 0.3 );
             var_0 = 0;
         }
 
@@ -129,15 +129,15 @@ turntoangle( var_0 )
     var_6 = abs( var_2 ) / self.turnrate;
     var_6 /= 1000;
     var_7 = var_5 / var_6;
-    self _meth_818F( "face angle", var_0 );
-    self _meth_8113( "swim_turn", var_4, 1, 0.2, var_7 * self.moveplaybackrate );
+    self orientmode( "face angle", var_0 );
+    self setflaggedanimrestart( "swim_turn", var_4, 1, 0.2, var_7 * self.moveplaybackrate );
     animscripts\shared::donotetracks( "swim_turn" );
-    self _meth_8142( var_4, 0.2 );
+    self clearanim( var_4, 0.2 );
 }
 
 rotatetoangle( var_0, var_1 )
 {
-    self _meth_818F( "face angle", var_0 );
+    self orientmode( "face angle", var_0 );
 
     while ( angleclamp( var_0 - self.angles[1] ) > var_1 )
         wait 0.1;
@@ -155,9 +155,9 @@ specialidleloop()
     self endon( "stop_specialidle" );
     self.a.movement = "stop";
     var_0 = self.specialidleanim;
-    self _meth_818E( "gravity" );
-    self _meth_818F( "face current" );
-    self _meth_8142( %animscript_root, 0.2 );
+    self animmode( "gravity" );
+    self orientmode( "face current" );
+    self clearanim( %animscript_root, 0.2 );
 
     if ( var_0.size == 0 )
         return;
@@ -176,12 +176,12 @@ specialidleloop()
             var_2 = var_1[0];
 
         var_1 = common_scripts\utility::array_remove( var_1, var_2 );
-        self _meth_8113( "special_idle", var_2, 1, 0.2, self.animplaybackrate );
+        self setflaggedanimrestart( "special_idle", var_2, 1, 0.2, self.animplaybackrate );
         childthread animscripts\shared::donotetracks( "special_idle" );
         self waittillmatch( "special_idle", "end" );
 
         if ( var_0.size > 1 )
-            self _meth_8142( var_2, 0.2 );
+            self clearanim( var_2, 0.2 );
     }
 }
 
@@ -225,7 +225,7 @@ transitiontoidle( var_0, var_1 )
     if ( isdefined( var_2[var_0] ) )
     {
         var_3 = var_2[var_0];
-        self _meth_8110( "idle_transition", var_3, %body, 1, 0.2, self.animplaybackrate );
+        self setflaggedanimknoballrestart( "idle_transition", var_3, %body, 1, 0.2, self.animplaybackrate );
         animscripts\shared::donotetracks( "idle_transition" );
     }
 }
@@ -267,12 +267,12 @@ playidle( var_0, var_1 )
 
     if ( isdefined( var_2 ) )
     {
-        self _meth_8147( var_3, %body, 1, var_7, 1 );
-        self _meth_814B( %add_idle );
-        self _meth_8110( "idle", var_2, %add_idle, 1, var_7, self.animplaybackrate );
+        self setanimknoball( var_3, %body, 1, var_7, 1 );
+        self setanim( %add_idle );
+        self setflaggedanimknoballrestart( "idle", var_2, %add_idle, 1, var_7, self.animplaybackrate );
     }
     else
-        self _meth_8110( "idle", var_3, %body, 1, var_7, self.animplaybackrate );
+        self setflaggedanimknoballrestart( "idle", var_3, %body, 1, var_7, self.animplaybackrate );
 
     animscripts\shared::donotetracks( "idle" );
 }
@@ -284,10 +284,10 @@ pronestill()
         var_0["stand_2_prone"] = %stand_2_prone;
         var_0["crouch_2_prone"] = %crouch_2_prone;
         var_1 = var_0[self.a.pose + "_2_prone"];
-        self _meth_8110( "trans", var_1, %body, 1, 0.2, 1.0 );
+        self setflaggedanimknoballrestart( "trans", var_1, %body, 1, 0.2, 1.0 );
         animscripts\shared::donotetracks( "trans" );
         self.a.movement = "stop";
-        self _meth_81FA( -45, 45, %prone_legs_down, %exposed_modern, %prone_legs_up );
+        self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_modern, %prone_legs_up );
         return;
     }
 
@@ -297,12 +297,12 @@ pronestill()
     {
         var_2 = animscripts\utility::lookupanim( "cover_prone", "twitch" );
         var_3 = var_2[randomint( var_2.size )];
-        self _meth_810F( "prone_idle", var_3, %exposed_modern, 1, 0.2 );
+        self setflaggedanimknoball( "prone_idle", var_3, %exposed_modern, 1, 0.2 );
     }
     else
     {
-        self _meth_8147( animscripts\utility::lookupanim( "cover_prone", "straight_level" ), %exposed_modern, 1, 0.2 );
-        self _meth_8152( "prone_idle", animscripts\utility::lookupanim( "cover_prone", "exposed_idle" )[0], 1, 0.2 );
+        self setanimknoball( animscripts\utility::lookupanim( "cover_prone", "straight_level" ), %exposed_modern, 1, 0.2 );
+        self setflaggedanimknob( "prone_idle", animscripts\utility::lookupanim( "cover_prone", "exposed_idle" )[0], 1, 0.2 );
     }
 
     self waittillmatch( "prone_idle", "end" );

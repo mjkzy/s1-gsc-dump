@@ -36,7 +36,7 @@ enemy_threat_logic()
 
         while ( isdefined( self.enemy ) && maps\_utility::ent_flag( "_stealth_enabled" ) )
         {
-            var_0 = gettime() - self _meth_81C0( self.enemy );
+            var_0 = gettime() - self lastknowntime( self.enemy );
 
             if ( 20000 > var_0 )
             {
@@ -58,7 +58,7 @@ enemy_threat_logic()
         if ( isdefined( self.enemy ) )
             maps\_stealth_shared_utilities::enemy_alert_level_forget( self.enemy, 0 );
 
-        self _meth_8166();
+        self clearenemy();
         maps\_stealth_threat_enemy::enemy_alert_level_change( "reset" );
     }
 }
@@ -86,9 +86,9 @@ enemy_alert_level_logic( var_0 )
         thread maps\_stealth_shared_utilities::enemy_alert_level_forget( var_0 );
         enemy_alert_level_waittime( var_0 );
 
-        if ( !isdefined( var_0 ) || gettime() - self _meth_81C0( var_0 ) > 500 )
+        if ( !isdefined( var_0 ) || gettime() - self lastknowntime( var_0 ) > 500 )
         {
-            self _meth_8166();
+            self clearenemy();
             return 0;
         }
     }
@@ -129,12 +129,12 @@ enemy_alert_level_waittime( var_0 )
 enemy_event_listeners_logic()
 {
     self endon( "death" );
-    self _meth_8041( "grenade danger" );
-    self _meth_8041( "gunshot" );
-    self _meth_8041( "gunshot_teammate" );
-    self _meth_8041( "silenced_shot" );
-    self _meth_8041( "bulletwhizby" );
-    self _meth_8041( "projectile_impact" );
+    self addaieventlistener( "grenade danger" );
+    self addaieventlistener( "gunshot" );
+    self addaieventlistener( "gunshot_teammate" );
+    self addaieventlistener( "silenced_shot" );
+    self addaieventlistener( "bulletwhizby" );
+    self addaieventlistener( "projectile_impact" );
 
     for (;;)
     {
@@ -273,7 +273,7 @@ event_awareness_waitclear_ai_proc()
     maps\_utility::add_wait( maps\_utility::waittill_msg, "going_back" );
     maps\_utility::do_wait_any();
     self endon( "goal" );
-    var_2 = common_scripts\utility::array_combine( _func_0D6( "allies" ), level.players );
+    var_2 = common_scripts\utility::array_combine( getaiarray( "allies" ), level.players );
     var_3 = level._stealth.logic.detect_range["hidden"]["crouch"];
     var_4 = var_3 * var_3;
     var_5 = 1;
@@ -329,7 +329,7 @@ enemy_event_declare_to_team( var_0, var_1 )
     if ( !isdefined( self ) )
         return;
 
-    var_6 = _func_0D7( "bad_guys", "all" );
+    var_6 = getaispeciesarray( "bad_guys", "all" );
     var_7 = int( level._stealth.logic.ai_event[var_1][level._stealth.logic.detection_level] );
 
     for ( var_8 = 0; var_8 < var_6.size; var_8++ )
@@ -352,7 +352,7 @@ enemy_event_declare_to_team( var_0, var_1 )
 
 enemy_init()
 {
-    self _meth_8166();
+    self clearenemy();
     self._stealth = spawnstruct();
     self._stealth.logic = spawnstruct();
     maps\_utility::ent_flag_init( "_stealth_enabled" );

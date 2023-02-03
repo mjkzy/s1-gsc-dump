@@ -36,7 +36,7 @@ precache_crash_site()
     precachemodel( "csh_entry_shelf_ice_floor_01_anim" );
     precachemodel( "npc_exo_armor_rocket_large" );
     precachemodel( "csh_drone_parachute_01" );
-    precacheitem( "iw5_microdronelauncher_sp" );
+    precacheshellshock( "iw5_microdronelauncher_sp" );
     precacherumble( "warbird_flyby" );
     precachestring( &"CRASH_INTROSCREEN_ANTARCTICA" );
     precachestring( &"CRASH_DONT_LEAVE" );
@@ -45,7 +45,7 @@ precache_crash_site()
     var_0 = getentarray( "drop_pod_clips", "script_noteworthy" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_82BF();
+        var_2 notsolid();
 
     var_4 = getent( "crash_site_plane_snow", "targetname" );
     var_4 hide();
@@ -156,14 +156,14 @@ debug_start_crash_site()
     level.player maps\_utility::fog_set_changes( "crash_skyjack_heavy_fog", 0 );
     thread maps\_high_speed_clouds::cloudfastinit( "heavy", ( 0, 90, 0 ), 5, 1 );
     level.cormack maps\_utility::gun_remove();
-    level.player _meth_831D();
-    level.player _meth_8332( "iw5_hbra3_sp_opticstargetenhancer" );
-    level.player _meth_8119( 0 );
-    level.player _meth_8301( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8300( 0 );
-    level.player _meth_8130( 0 );
+    level.player disableweapons();
+    level.player givemaxammo( "iw5_hbra3_sp_opticstargetenhancer" );
+    level.player allowcrouch( 0 );
+    level.player allowjump( 0 );
+    level.player allowsprint( 0 );
+    level.player allowprone( 0 );
+    level.player allowads( 0 );
+    level.player allowmelee( 0 );
 }
 
 debug_start_cave_entry()
@@ -200,21 +200,21 @@ debug_start_cave_entry()
         level.bunker_guy01.animname = "bunker_guy01";
         var_6 = getnode( "bunker_ally_01_node", "targetname" );
         level.bunker_guy01 thread maps\_utility::magic_bullet_shield();
-        level.bunker_guy01 _meth_81C6( var_6.origin, var_6.angles );
-        level.bunker_guy01 _meth_81A5( var_6 );
+        level.bunker_guy01 forceteleport( var_6.origin, var_6.angles );
+        level.bunker_guy01 setgoalnode( var_6 );
         level.bunker_guy02 = maps\_utility::get_living_ai( "bunker_ally_02", "script_noteworthy" );
         level.bunker_guy02.animname = "bunker_guy02";
         var_7 = getnode( "bunker_ally_02_node", "targetname" );
         level.bunker_guy02 thread maps\_utility::magic_bullet_shield();
-        level.bunker_guy02 _meth_81C6( var_7.origin, var_7.angles );
-        level.bunker_guy02 _meth_81A5( var_7 );
+        level.bunker_guy02 forceteleport( var_7.origin, var_7.angles );
+        level.bunker_guy02 setgoalnode( var_7 );
     }
 
     level.bunker_guy03 = maps\_utility::get_living_ai( "bunker_ally_03", "script_noteworthy" );
     level.bunker_guy03.animname = "bunker_guy03";
     var_8 = getnode( "bunker_ally_03_node", "targetname" );
-    level.bunker_guy03 _meth_81C6( var_8.origin, var_8.angles );
-    level.bunker_guy03 _meth_81A5( var_8 );
+    level.bunker_guy03 forceteleport( var_8.origin, var_8.angles );
+    level.bunker_guy03 setgoalnode( var_8 );
     level.bunker_guy03 thread maps\_utility::magic_bullet_shield();
     thread razorback_trigger_handler();
     thread razorback_cargo_player();
@@ -222,9 +222,9 @@ debug_start_cave_entry()
     thread razorback_cargo();
     common_scripts\utility::flag_set( "razorback_start" );
     common_scripts\_exploder::exploder( 1474 );
-    level.player _meth_83C0( "crash_crash_site" );
+    level.player lightsetforplayer( "crash_crash_site" );
     maps\_utility::vision_set_fog_changes( "crash_crash_site", 0 );
-    level.player _meth_8490( "clut_crash_crash_site", 0 );
+    level.player setclutforplayer( "clut_crash_crash_site", 0 );
     setsunflareposition( ( -10.08, -87.9, 0 ) );
     common_scripts\_exploder::exploder( 1999 );
     thread background_drop_pods();
@@ -241,18 +241,18 @@ begin_crash_site()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "crash_site_tr" ) )
+        if ( !istransientloaded( "crash_site_tr" ) )
         {
-            level.player _meth_84CB( 0 );
+            level.player setgravityoverride( 0 );
             level notify( "tff_pre_sky_to_site" );
-            _func_219( "crash_sky_tr" );
-            _func_218( "crash_site_tr" );
+            unloadtransient( "crash_sky_tr" );
+            loadtransient( "crash_site_tr" );
 
-            while ( !_func_21E( "crash_site_tr" ) )
+            while ( !istransientloaded( "crash_site_tr" ) )
                 wait 0.05;
 
             level notify( "tff_post_sky_to_site" );
-            level.player _meth_84CC();
+            level.player resetgravityoverride();
         }
     }
 
@@ -266,7 +266,7 @@ begin_crash_site()
     common_scripts\utility::flag_set( "begin_crash_site_lighting" );
     common_scripts\_exploder::exploder( 1999 );
     var_1 = common_scripts\utility::getstruct( "crash_site_cormack", "targetname" );
-    level.cormack _meth_81C6( var_1.origin, var_1.angles );
+    level.cormack forceteleport( var_1.origin, var_1.angles );
     level.ilana = maps\crash_utility::spawn_ally( "ilana", "crash_site_ilana" );
     waitframe();
     level.ilana maps\_utility::set_force_color( "g" );
@@ -333,13 +333,13 @@ begin_crash_site()
     level notify( "stop_fast_clouds" );
     self notify( "fast_cloud_level_change" );
     self notify( "new_ramp" );
-    level.player _meth_83D7( ( 0, 0, 0 ), 0 );
+    level.player pushplayervector( ( 0, 0, 0 ), 0 );
     wait 0.1;
     thread maps\_utility::autosave_by_name( "on_ground" );
     thread crash_site_dialogue();
     common_scripts\utility::flag_wait_either( "go_drop_pods", "drop_pod_failsafe" );
-    _func_0D3( "cg_cinematicfullscreen", "0" );
-    _func_0D3( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicfullscreen", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
     thread crash_site_dead_razorback_guys();
     wait 3;
     maps\_utility::battlechatter_on( "allies" );
@@ -351,31 +351,31 @@ crash_site_player()
 {
     if ( level.start_point != "crash_site" )
     {
-        level.player _meth_8310();
+        level.player takeallweapons();
 
         foreach ( var_1 in level.player_weapons )
-            level.player _meth_830E( var_1 );
+            level.player giveweapon( var_1 );
 
-        level.player _meth_8322();
-        level.player _meth_8315( "iw5_hbra3_sp_opticstargetenhancer" );
-        level.player _meth_8332( "iw5_hbra3_sp_opticstargetenhancer" );
+        level.player enableweaponswitch();
+        level.player switchtoweapon( "iw5_hbra3_sp_opticstargetenhancer" );
+        level.player givemaxammo( "iw5_hbra3_sp_opticstargetenhancer" );
     }
 
-    level.player _meth_817D( "stand" );
+    level.player setstance( "stand" );
     var_3 = maps\_utility::spawn_anim_model( "rig" );
-    var_3 _meth_808E();
+    var_3 dontcastshadows();
     thread maps\_shg_utility::disable_features_entering_cinema();
-    level.player _meth_807D( var_3, "tag_player", 1, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_3, "tag_player", 1, 0, 0, 0, 0 );
     soundscripts\_snd::snd_message( "ambush_events" );
     level.crash_site_animnode thread maps\_anim::anim_single_solo( var_3, "crash_atlas_plane_crash_player" );
     wait 3;
-    level.player _meth_80A2( 0.25, 0.15, 0, 10, 10, 10, 7 );
+    level.player lerpviewangleclamp( 0.25, 0.15, 0, 10, 10, 10, 7 );
     var_3 waittillmatch( "single anim", "player_land" );
-    level.player _meth_80AD( "light_2s" );
+    level.player playrumbleonentity( "light_2s" );
     common_scripts\utility::flag_wait( "zero_view" );
-    level.player _meth_80A2( 0.4, 0.15, 0, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 0.4, 0.15, 0, 0, 0, 0, 0 );
     common_scripts\utility::flag_wait( "unhide_cargo" );
-    level.player _meth_80A2( 0.25, 0.15, 0, 10, 10, 10, 7 );
+    level.player lerpviewangleclamp( 0.25, 0.15, 0, 10, 10, 10, 7 );
     var_4 = getent( "player_jetpack", "targetname" );
     var_4 show();
     var_3 waittillmatch( "single anim", "end" );
@@ -384,16 +384,16 @@ crash_site_player()
     foreach ( var_7 in var_5 )
         var_7 common_scripts\utility::trigger_on();
 
-    level.player _meth_804F();
+    level.player unlink();
     thread maps\_shg_utility::enable_features_exiting_cinema();
     common_scripts\utility::flag_set( "crash_lighting_cinema_end" );
-    level.player _meth_8119( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_8130( 1 );
-    level.player _meth_831E();
+    level.player allowcrouch( 1 );
+    level.player allowjump( 1 );
+    level.player allowsprint( 1 );
+    level.player allowprone( 1 );
+    level.player allowads( 1 );
+    level.player allowmelee( 1 );
+    level.player enableweapons();
     thread maps\crash_utility::player_exo_enable();
     var_3 delete();
 }
@@ -403,9 +403,9 @@ crash_site_player_gun()
     var_0 = maps\_utility::spawn_anim_model( "cs_gun" );
     level.crash_site_animnode maps\_anim::anim_first_frame_solo( var_0, "plane_crash_player_gun" );
     var_1 = spawn( "script_model", var_0 gettagorigin( "j_prop_1" ) );
-    var_1 _meth_80B1( "npc_hbra3_nocamo" );
+    var_1 setmodel( "npc_hbra3_nocamo" );
     var_1.angles = var_0 gettagangles( "j_prop_1" );
-    var_1 _meth_804D( var_0, "j_prop_1" );
+    var_1 linkto( var_0, "j_prop_1" );
     common_scripts\utility::flag_wait( "white_fade_done" );
     level.crash_site_animnode maps\_anim::anim_single_solo( var_0, "plane_crash_player_gun" );
     var_1 delete();
@@ -455,9 +455,9 @@ cormack_jetpack_switch( var_0 )
 {
     var_1 = spawn( "script_model", level.cormack gettagorigin( "tag_jetpack" ) + ( 0, 0, -16 ) );
     var_1.angles = level.cormack gettagangles( "tag_jetpack" );
-    var_1 _meth_80B1( "jetpack_sentinel_halo" );
+    var_1 setmodel( "jetpack_sentinel_halo" );
     waitframe();
-    level.cormack _meth_80B1( "body_hero_cormack_sentinel_halo" );
+    level.cormack setmodel( "body_hero_cormack_sentinel_halo" );
 }
 
 crash_site_ilana()
@@ -477,20 +477,20 @@ crash_site_plane()
     var_0.animname = "cargo_plane";
     var_0 maps\_anim::setanimtree();
     level.crashing_plane = var_0;
-    var_0 _meth_8048( "J_LT_WING" );
-    var_0 _meth_8048( "J_RT_WING" );
-    var_0 _meth_8048( "J_FLAP_L1" );
-    var_0 _meth_8048( "J_FLAP_L2" );
-    var_0 _meth_8048( "J_FLAP_R1" );
-    var_0 _meth_8048( "J_FLAP_R2" );
-    var_0 _meth_8048( "J_SPOILER_L1" );
-    var_0 _meth_8048( "J_SPOILER_L2" );
-    var_0 _meth_8048( "J_SPOILER_L3" );
-    var_0 _meth_8048( "J_SPOILER_L4" );
-    var_0 _meth_8048( "J_SPOILER_R1" );
-    var_0 _meth_8048( "J_SPOILER_R2" );
-    var_0 _meth_8048( "J_SPOILER_R3" );
-    var_0 _meth_8048( "J_SPOILER_R4" );
+    var_0 hidepart( "J_LT_WING" );
+    var_0 hidepart( "J_RT_WING" );
+    var_0 hidepart( "J_FLAP_L1" );
+    var_0 hidepart( "J_FLAP_L2" );
+    var_0 hidepart( "J_FLAP_R1" );
+    var_0 hidepart( "J_FLAP_R2" );
+    var_0 hidepart( "J_SPOILER_L1" );
+    var_0 hidepart( "J_SPOILER_L2" );
+    var_0 hidepart( "J_SPOILER_L3" );
+    var_0 hidepart( "J_SPOILER_L4" );
+    var_0 hidepart( "J_SPOILER_R1" );
+    var_0 hidepart( "J_SPOILER_R2" );
+    var_0 hidepart( "J_SPOILER_R3" );
+    var_0 hidepart( "J_SPOILER_R4" );
     level.crash_site_animnode maps\_anim::anim_first_frame_solo( var_0, "atlas_plane_crash_plane" );
     waitframe();
     common_scripts\utility::flag_wait( "white_fade_done" );
@@ -560,36 +560,36 @@ crash_site_runway()
     var_9 = getent( "runway_shell_geo_10", "targetname" );
     var_10 = getent( "runway_shell_geo_11", "targetname" );
     wait 5.05;
-    var_0 _meth_8058();
-    var_1 _meth_8058();
+    var_0 connectpaths();
+    var_1 connectpaths();
     var_0 delete();
     var_1 delete();
     wait 0.25;
-    var_2 _meth_8058();
+    var_2 connectpaths();
     var_2 delete();
     wait 0.45;
-    var_3 _meth_8058();
+    var_3 connectpaths();
     var_3 delete();
     wait 0.95;
-    var_4 _meth_8058();
+    var_4 connectpaths();
     var_4 delete();
     wait 0.23;
-    var_5 _meth_8058();
+    var_5 connectpaths();
     var_5 delete();
     wait 0.33;
-    var_6 _meth_8058();
+    var_6 connectpaths();
     var_6 delete();
     wait 0.49;
-    var_7 _meth_8058();
+    var_7 connectpaths();
     var_7 delete();
     wait 0.69;
-    var_8 _meth_8058();
+    var_8 connectpaths();
     var_8 delete();
     wait 0.61;
-    var_9 _meth_8058();
+    var_9 connectpaths();
     var_9 delete();
     wait 1.22;
-    var_10 _meth_8058();
+    var_10 connectpaths();
     var_10 delete();
     var_11 = getent( "crash_site_plane_snow", "targetname" );
     var_11 show();
@@ -627,7 +627,7 @@ crash_site_plane_allies()
     self.animname = self.script_noteworthy;
     maps\_utility::enable_ai_color_dontmove();
     var_0 = common_scripts\utility::spawn_tag_origin();
-    self _meth_81A6( var_0.origin );
+    self setgoalpos( var_0.origin );
     self.ignoreall = 1;
     common_scripts\utility::flag_wait( "go_drop_pods" );
     self.ignoreall = 0;
@@ -652,7 +652,7 @@ crash_site_intro_killer()
     var_0 maps\_utility::disable_ai_color();
     level.crash_site_animnode maps\_anim::anim_single_solo( var_0, "atlas_plane_crash_craig" );
     var_1 = getnode( "killer_node", "targetname" );
-    var_0 _meth_81A5( var_1 );
+    var_0 setgoalnode( var_1 );
     var_0 waittill( "goal" );
     var_0 maps\_utility::enable_ai_color_dontmove();
 }
@@ -664,7 +664,7 @@ crash_site_intro_killer2()
     var_0 maps\_utility::disable_ai_color();
     level.crash_site_animnode maps\_anim::anim_single_solo( var_0, "atlas_plane_crash_tony" );
     var_1 = getnode( "killer_node2", "targetname" );
-    var_0 _meth_81A5( var_1 );
+    var_0 setgoalnode( var_1 );
     var_0 waittill( "goal" );
     var_0 maps\_utility::enable_ai_color_dontmove();
 }
@@ -692,13 +692,13 @@ crash_site_bunker_sentinels()
         level.bunker_guy01.animname = "bunker_guy01";
         level.bunker_guy01 maps\_utility::disable_ai_color();
         var_0 = getnode( "bunker_ally_01_node", "targetname" );
-        level.bunker_guy01 _meth_81A5( var_0 );
+        level.bunker_guy01 setgoalnode( var_0 );
         level.bunker_guy01 thread bunker_settings();
         level.bunker_guy02 = maps\_utility::get_living_ai( "bunker_ally_02", "script_noteworthy" );
         level.bunker_guy02.animname = "bunker_guy02";
         level.bunker_guy02 maps\_utility::disable_ai_color();
         var_1 = getnode( "bunker_ally_02_node", "targetname" );
-        level.bunker_guy02 _meth_81A5( var_1 );
+        level.bunker_guy02 setgoalnode( var_1 );
         level.bunker_guy02 thread bunker_settings();
     }
 
@@ -706,7 +706,7 @@ crash_site_bunker_sentinels()
     level.bunker_guy03.animname = "bunker_guy03";
     level.bunker_guy03 maps\_utility::disable_ai_color();
     var_2 = getnode( "bunker_ally_03_node", "targetname" );
-    level.bunker_guy03 _meth_81A5( var_2 );
+    level.bunker_guy03 setgoalnode( var_2 );
     level.bunker_guy03 thread bunker_settings();
 }
 
@@ -733,7 +733,7 @@ dead_razorback_spawn()
     self.script_friendname = " ";
     self.name = " ";
     thread maps\_utility::magic_bullet_shield();
-    self _meth_8171();
+    self invisiblenotsolid();
     var_0 thread maps\_anim::anim_loop_solo( self, self.script_animation, "stop_loop" );
 }
 
@@ -911,7 +911,7 @@ retreat_from_vol_to_vol( var_0, var_1, var_2, var_3 )
             var_9.forcegoal = 0;
             var_9.fixednode = 0;
             var_9.pathrandompercent = randomintrange( 75, 100 );
-            var_9 _meth_81A9( var_6 );
+            var_9 setgoalvolumeauto( var_6 );
             wait 5;
 
             if ( isdefined( var_9 ) && isalive( var_9 ) )
@@ -935,7 +935,7 @@ fake_drop_pods()
         var_2 = getent( var_0[var_1].target, "targetname" );
         wait(randomintrange( 5, 10 ));
 
-        while ( !level.player _meth_8214( var_2.origin, 65, 400 ) )
+        while ( !level.player worldpointinreticle_circle( var_2.origin, 65, 400 ) )
             wait 0.05;
 
         var_0[var_1] thread drop_pod_fall();
@@ -1026,17 +1026,17 @@ drop_pod_chooser( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 
 
     for (;;)
     {
-        if ( isdefined( var_0 ) && level.player _meth_8214( var_1.origin, 65, 200 ) && var_0.valid == 1 )
+        if ( isdefined( var_0 ) && level.player worldpointinreticle_circle( var_1.origin, 65, 200 ) && var_0.valid == 1 )
         {
             var_0 thread drop_pod_fall( "enemy", var_2 );
             var_0.valid = 0;
         }
-        else if ( isdefined( var_3 ) && level.player _meth_8214( var_4.origin, 65, 200 ) && var_3.valid == 1 )
+        else if ( isdefined( var_3 ) && level.player worldpointinreticle_circle( var_4.origin, 65, 200 ) && var_3.valid == 1 )
         {
             var_3 thread drop_pod_fall( "enemy", var_5 );
             var_3.valid = 0;
         }
-        else if ( isdefined( var_6 ) && level.player _meth_8214( var_7.origin, 65, 200 ) && var_6.valid == 1 )
+        else if ( isdefined( var_6 ) && level.player worldpointinreticle_circle( var_7.origin, 65, 200 ) && var_6.valid == 1 )
         {
             var_6 thread drop_pod_fall( "enemy", var_8 );
             var_6.valid = 0;
@@ -1142,7 +1142,7 @@ crash_site_battle_chatter_north()
 
         foreach ( var_4 in var_2 )
         {
-            if ( var_4 _meth_80A9( var_0 ) )
+            if ( var_4 istouching( var_0 ) )
                 var_1 += 1;
         }
 
@@ -1172,7 +1172,7 @@ crash_site_battle_chatter_south()
 
         foreach ( var_4 in var_2 )
         {
-            if ( var_4 _meth_80A9( var_0 ) )
+            if ( var_4 istouching( var_0 ) )
                 var_1 += 1;
         }
 
@@ -1203,7 +1203,7 @@ crash_site_bg_battle_chatter_north()
 
         foreach ( var_5 in var_2 )
         {
-            if ( var_5 _meth_80A9( var_0 ) )
+            if ( var_5 istouching( var_0 ) )
                 var_1 += 1;
         }
 
@@ -1234,7 +1234,7 @@ crash_site_bg_battle_chatter_south()
 
         foreach ( var_5 in var_2 )
         {
-            if ( var_5 _meth_80A9( var_0 ) )
+            if ( var_5 istouching( var_0 ) )
                 var_1 += 1;
         }
 
@@ -1296,7 +1296,7 @@ player_boost_hint()
 
 should_break_boost_jump_hint()
 {
-    return level.player _meth_83B4();
+    return level.player ishighjumping();
 }
 
 crash_site_bg_warbirds()
@@ -1314,11 +1314,11 @@ crash_site_bg_warbird_1()
     var_0 maps\_vehicle::godon();
     var_1 = getent( "bg_warbird_1_cables", "targetname" );
     var_2 = getent( "bg_warbird_1_walker", "targetname" );
-    var_1 _meth_804D( var_0 );
-    var_2 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
+    var_2 linkto( var_0 );
     waitframe();
     var_0 maps\_utility::vehicle_detachfrompath();
-    var_0 _meth_8283( 25, 15, 5 );
+    var_0 vehicle_setspeed( 25, 15, 5 );
     var_3 = common_scripts\utility::getstruct( "bg_warbird_1_path", "targetname" );
     var_0 thread maps\_utility::vehicle_dynamicpath( var_3, 0 );
     common_scripts\utility::flag_wait_any( "bg_warbird1_done", "player_loading_cargo" );
@@ -1333,11 +1333,11 @@ crash_site_bg_warbird_2()
     var_0 maps\_vehicle::godon();
     var_1 = getent( "bg_warbird_2_cables", "targetname" );
     var_2 = getent( "bg_warbird_2_walker", "targetname" );
-    var_1 _meth_804D( var_0 );
-    var_2 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
+    var_2 linkto( var_0 );
     waitframe();
     var_0 maps\_utility::vehicle_detachfrompath();
-    var_0 _meth_8283( 25, 15, 5 );
+    var_0 vehicle_setspeed( 25, 15, 5 );
     var_3 = common_scripts\utility::getstruct( "bg_warbird_2_path", "targetname" );
     var_0 thread maps\_utility::vehicle_dynamicpath( var_3, 0 );
     common_scripts\utility::flag_wait_any( "bg_warbird2_done", "player_loading_cargo" );
@@ -1352,11 +1352,11 @@ crash_site_bg_warbird_3()
     var_0 maps\_vehicle::godon();
     var_1 = getent( "bg_warbird_3_cables", "targetname" );
     var_2 = getent( "bg_warbird_3_walker", "targetname" );
-    var_1 _meth_804D( var_0 );
-    var_2 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
+    var_2 linkto( var_0 );
     waitframe();
     var_0 maps\_utility::vehicle_detachfrompath();
-    var_0 _meth_8283( 25, 15, 5 );
+    var_0 vehicle_setspeed( 25, 15, 5 );
     var_3 = common_scripts\utility::getstruct( "bg_warbird_3_path", "targetname" );
     var_0 thread maps\_utility::vehicle_dynamicpath( var_3, 0 );
     common_scripts\utility::flag_wait_any( "bg_warbird3_done", "player_loading_cargo" );
@@ -1370,18 +1370,18 @@ drop_pod_fall( var_0, var_1 )
     self show();
     var_2 = getent( self.target, "targetname" );
     var_3 = common_scripts\utility::spawn_tag_origin();
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     playfxontag( common_scripts\utility::getfx( "orbital_pod_trail_crsh" ), var_3, "tag_origin" );
     playfxontag( common_scripts\utility::getfx( "smoketrail_groundtoair" ), var_3, "tag_origin" );
     soundscripts\_snd::snd_message( "drop_pod", self );
-    self _meth_82AE( var_2.origin, 2.5 );
+    self moveto( var_2.origin, 2.5 );
     wait 2.5;
     stopfxontag( common_scripts\utility::getfx( "orbital_pod_trail_crsh" ), var_3, "tag_origin" );
     stopfxontag( common_scripts\utility::getfx( "smoketrail_groundtoair" ), var_3, "tag_origin" );
     var_4 = common_scripts\utility::spawn_tag_origin();
     var_4.origin += ( 0, 0, 24 );
     playfxontag( common_scripts\utility::getfx( "drop_pod_landing_impact_snow" ), var_4, "tag_origin" );
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
 
     if ( isdefined( var_1 ) )
     {
@@ -1440,9 +1440,9 @@ drop_pod_clip()
 
     while ( !var_0 maps\_utility::ent_flag( "touching_clip" ) )
     {
-        if ( !level.player _meth_80A9( var_0 ) )
+        if ( !level.player istouching( var_0 ) )
         {
-            var_0 _meth_82BE();
+            var_0 solid();
             var_0 maps\_utility::ent_flag_set( "touching_clip" );
         }
 
@@ -1483,14 +1483,14 @@ crash_site_drop_pod_enemies( var_0 )
             {
                 var_5 = getnode( var_2[var_4].target, "targetname" );
                 var_3[var_4].goalradius = 32;
-                var_3[var_4] _meth_81A5( var_5 );
+                var_3[var_4] setgoalnode( var_5 );
                 continue;
             }
 
             if ( var_2[var_4].script_noteworthy == "volume" )
             {
                 var_6 = getent( var_2[var_4].target, "targetname" );
-                var_3[var_4] _meth_81A9( var_6 );
+                var_3[var_4] setgoalvolumeauto( var_6 );
                 continue;
             }
         }
@@ -1621,7 +1621,7 @@ kill_trigger_array()
 
         foreach ( var_3 in var_0 )
         {
-            if ( level.player _meth_80A9( var_3 ) )
+            if ( level.player istouching( var_3 ) )
                 var_1 = 1;
         }
 
@@ -1632,7 +1632,7 @@ kill_trigger_array()
 
             foreach ( var_3 in var_0 )
             {
-                if ( level.player _meth_80A9( var_3 ) )
+                if ( level.player istouching( var_3 ) )
                     var_1 = 1;
             }
 
@@ -1640,8 +1640,8 @@ kill_trigger_array()
             {
                 level.cormack maps\_utility::stop_magic_bullet_shield();
                 level.ilana maps\_utility::stop_magic_bullet_shield();
-                level.cormack _meth_8052();
-                level.ilana _meth_8052();
+                level.cormack kill();
+                level.ilana kill();
                 level notify( "crash_site_failed" );
                 wait 0.15;
                 setdvar( "ui_deadquote", &"CRASH_FAIL_ALLIES_KILLED" );
@@ -1674,10 +1674,10 @@ check_potential_falling_death()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
             common_scripts\utility::flag_set( "above_hole" );
 
-        if ( !level.player _meth_80A9( var_0 ) )
+        if ( !level.player istouching( var_0 ) )
             common_scripts\utility::flag_clear( "above_hole" );
 
         wait 0.05;
@@ -1691,7 +1691,7 @@ falling_death()
 
     for (;;)
     {
-        if ( level.player _meth_80A9( var_0 ) )
+        if ( level.player istouching( var_0 ) )
         {
             wait 0.5;
             setdvar( "ui_deadquote", &"CRASH_FAIL_FALL" );
@@ -1710,9 +1710,9 @@ begin_cave_entry()
     createthreatbiasgroup( "player" );
     createthreatbiasgroup( "mech" );
     createthreatbiasgroup( "heroes" );
-    level.player _meth_8177( "player" );
-    level.cormack _meth_8177( "heroes" );
-    level.ilana _meth_8177( "heroes" );
+    level.player setthreatbiasgroup( "player" );
+    level.cormack setthreatbiasgroup( "heroes" );
+    level.ilana setthreatbiasgroup( "heroes" );
     thread razorback_cormack();
     thread razorback_ilana();
     thread razorback_dialogue();
@@ -1743,22 +1743,22 @@ begin_cave_entry()
     common_scripts\utility::flag_wait( "cave_entry_done" );
     maps\_utility::battlechatter_off( "allies" );
     maps\_utility::battlechatter_off( "axis" );
-    level.cormack _meth_8166();
-    level.ilana _meth_8166();
+    level.cormack clearenemy();
+    level.ilana clearenemy();
     level.cormack maps\_utility::set_ignoresuppression( 0 );
     level.cormack maps\_utility::set_ignoreall( 0 );
     level.ilana maps\_utility::set_ignoresuppression( 0 );
     level.ilana maps\_utility::set_ignoreall( 0 );
-    level.player _meth_8177();
-    level.cormack _meth_8177();
-    level.ilana _meth_8177();
+    level.player setthreatbiasgroup();
+    level.cormack setthreatbiasgroup();
+    level.ilana setthreatbiasgroup();
 }
 
 tank_missile_react()
 {
     level endon( "start_bunker_collapse" );
     maps\_utility::anim_stopanimscripted();
-    self _meth_81CA( "stand", "crouch" );
+    self allowedstances( "stand", "crouch" );
     var_0 = common_scripts\utility::getstruct( "cave_entry_animnode", "targetname" );
     maps\_utility::set_ignoresuppression( 1 );
     maps\_utility::set_ignoreall( 1 );
@@ -1781,7 +1781,7 @@ razorback_razorback()
     var_0.animname = "razorback";
     var_0 maps\_anim::setanimtree();
     var_0 maps\_vehicle::godon();
-    var_0 _meth_8455();
+    var_0 vehicle_removebrushmodelcollision();
     level.razorback = var_0;
     waitframe();
     var_0 thread vehicle_scripts\_razorback_fx::vfx_red_lights_on();
@@ -1850,8 +1850,8 @@ razorback_cargo_player()
     var_1 hide();
     common_scripts\utility::flag_wait( "player_pre_loading_cargo" );
     level.player maps\_utility::set_ignoreme( 1 );
-    level.player _meth_8080( var_1, "tag_player", 0.6 );
-    level.player _meth_80EF();
+    level.player playerlinktoblend( var_1, "tag_player", 0.6 );
+    level.player enableinvulnerability();
     level.player maps\_shg_utility::setup_player_for_scene( 1 );
     thread maps\_shg_utility::disable_features_entering_cinema( 1 );
     var_0 thread maps\_anim::anim_single_solo( var_1, "prebunker_end_player" );
@@ -1863,14 +1863,14 @@ razorback_cargo_player()
     thread mobile_turret_dropoff( "warbird_deploy_2_animnode", "bunker_warbird_2", "bunker_walker_2", "deploy_warbird_2_done", "warbird2_path_after_turret_deploy" );
     wait 0.6;
     var_1 show();
-    level.player _meth_807D( var_1, "tag_player", 1, 17, 20, 20, 20 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 17, 20, 20, 20 );
     var_3 = maps\_utility::get_living_ai_array( "pod_enemies", "script_noteworthy" );
 
     foreach ( var_5 in var_3 )
     {
-        if ( isdefined( var_5 ) && isalive( var_5 ) && !level.player _meth_812B( var_5 ) )
+        if ( isdefined( var_5 ) && isalive( var_5 ) && !level.player islookingat( var_5 ) )
         {
-            var_5 _meth_8052();
+            var_5 kill();
             continue;
         }
 
@@ -1886,13 +1886,13 @@ razorback_cargo_player()
     thread mobile_turret_dropoff( "warbird_deploy_1_animnode", "bunker_warbird_1", "bunker_walker_1", "deploy_warbird_1_done", "warbird_path_after_turret_deploy" );
     var_1 waittillmatch( "single anim", "end" );
     thread maps\_utility::autosave_by_name( "razorback2" );
-    level.player _meth_80F0();
-    level.player _meth_804F();
+    level.player disableinvulnerability();
+    level.player unlink();
     var_1 delete();
-    level.player _meth_8304( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
+    level.player allowsprint( 1 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
     thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
     thread check_player_bunker_position();
 }
@@ -1928,7 +1928,7 @@ check_player_bunker_position()
 
     while ( !common_scripts\utility::flag( "obj_update_goto_razorback" ) )
     {
-        if ( !level.player _meth_80A9( var_0 ) )
+        if ( !level.player istouching( var_0 ) )
         {
             common_scripts\utility::flag_set( "obj_update_goto_razorback" );
             maps\_utility::smart_radio_dialogue( "crsh_crmk_getoverhere2" );
@@ -1939,7 +1939,7 @@ check_player_bunker_position()
 
     for (;;)
     {
-        while ( !level.player _meth_80A9( var_0 ) )
+        while ( !level.player istouching( var_0 ) )
         {
             wait 0.05;
 
@@ -1949,7 +1949,7 @@ check_player_bunker_position()
 
         wait 0.05;
 
-        while ( level.player _meth_80A9( var_0 ) )
+        while ( level.player istouching( var_0 ) )
         {
             wait 0.05;
 
@@ -1961,10 +1961,10 @@ check_player_bunker_position()
 
 razorback_gun_enable( var_0 )
 {
-    _func_0D3( "ammoCounterHide", 0 );
-    level.player _meth_8320();
-    level.player _meth_831E();
-    level.player _meth_8130( 1 );
+    setsaveddvar( "ammoCounterHide", 0 );
+    level.player enableoffhandweapons();
+    level.player enableweapons();
+    level.player allowmelee( 1 );
 }
 
 cormack_reached()
@@ -1973,7 +1973,7 @@ cormack_reached()
     waitframe();
     var_0 = getnode( "cormack_razor_node", "targetname" );
     level.cormack.goalradius = 64;
-    level.cormack _meth_81A5( var_0 );
+    level.cormack setgoalnode( var_0 );
     level.cormack waittill( "goal" );
 
     if ( !common_scripts\utility::flag( "player_loading_cargo" ) )
@@ -2020,7 +2020,7 @@ razorback_cormack()
 
     var_3 = getnode( "cormack_jump_start", "targetname" );
     level.cormack.goalradius = 64;
-    level.cormack _meth_81A5( var_3 );
+    level.cormack setgoalnode( var_3 );
     var_0 maps\_anim::anim_single_solo( level.cormack, "prebunker_end_cormack" );
     common_scripts\utility::flag_set( "razorback_loaded" );
     common_scripts\utility::flag_set( "lighting_razorback_loaded" );
@@ -2047,7 +2047,7 @@ razorback_ilana()
     level.ilana maps\_utility::disable_ai_color();
     var_0 = getnode( "ilana_jump_start", "targetname" );
     level.ilana.goalradius = 16;
-    level.ilana _meth_81A5( var_0 );
+    level.ilana setgoalnode( var_0 );
     level.ilana maps\_utility::set_fixednode_true();
     common_scripts\utility::flag_wait( "tank_firing_missiles" );
     level.ilana maps\_utility::disable_pain();
@@ -2091,28 +2091,28 @@ razorback_mech_missiles( var_0 )
     var_1 maps\_anim::anim_first_frame_solo( var_2, "prebunker_end_missiles" );
     var_3 = spawn( "script_model", var_2 gettagorigin( "j_prop_1" ) );
     var_3.angles = var_2 gettagangles( "j_prop_1" );
-    var_3 _meth_80B1( "npc_exo_armor_rocket_large" );
-    var_3 _meth_804D( var_2, "j_prop_1" );
+    var_3 setmodel( "npc_exo_armor_rocket_large" );
+    var_3 linkto( var_2, "j_prop_1" );
     var_3 hide();
     var_4 = spawn( "script_model", var_2 gettagorigin( "j_prop_2" ) );
     var_4.angles = var_2 gettagangles( "j_prop_2" );
-    var_4 _meth_80B1( "npc_exo_armor_rocket_large" );
-    var_4 _meth_804D( var_2, "j_prop_2" );
+    var_4 setmodel( "npc_exo_armor_rocket_large" );
+    var_4 linkto( var_2, "j_prop_2" );
     var_4 hide();
     var_5 = spawn( "script_model", var_2 gettagorigin( "j_prop_3" ) );
     var_5.angles = var_2 gettagangles( "j_prop_3" );
-    var_5 _meth_80B1( "npc_exo_armor_rocket_large" );
-    var_5 _meth_804D( var_2, "j_prop_3" );
+    var_5 setmodel( "npc_exo_armor_rocket_large" );
+    var_5 linkto( var_2, "j_prop_3" );
     var_5 hide();
     var_6 = spawn( "script_model", var_2 gettagorigin( "j_prop_4" ) );
     var_6.angles = var_2 gettagangles( "j_prop_4" );
-    var_6 _meth_80B1( "npc_exo_armor_rocket_large" );
-    var_6 _meth_804D( var_2, "j_prop_4" );
+    var_6 setmodel( "npc_exo_armor_rocket_large" );
+    var_6 linkto( var_2, "j_prop_4" );
     var_6 hide();
     var_7 = spawn( "script_model", var_2 gettagorigin( "j_prop_5" ) );
     var_7.angles = var_2 gettagangles( "j_prop_5" );
-    var_7 _meth_80B1( "npc_exo_armor_rocket_large" );
-    var_7 _meth_804D( var_2, "j_prop_5" );
+    var_7 setmodel( "npc_exo_armor_rocket_large" );
+    var_7 linkto( var_2, "j_prop_5" );
     var_7 hide();
     var_1 thread maps\_anim::anim_single_solo( var_2, "prebunker_end_missiles" );
     var_2 waittillmatch( "single anim", "missile_1_launched" );
@@ -2165,19 +2165,19 @@ razorback_mech_missiles( var_0 )
 razorback_mech_behavior( var_0 )
 {
     common_scripts\utility::flag_wait( "razorback_goliath_done" );
-    self _meth_8177( "mech" );
+    self setthreatbiasgroup( "mech" );
     thread maps\_utility::stop_magic_bullet_shield();
     self.ignoreme = 0;
     self.ignoreall = 0;
     self.usechokepoints = 0;
     self.goalradius = 24;
-    self _meth_81A6( var_0.origin );
+    self setgoalpos( var_0.origin );
     self waittill( "goal" );
     var_1 = common_scripts\utility::getstruct( var_0.target, "targetname" );
-    self _meth_81A6( var_1.origin );
+    self setgoalpos( var_1.origin );
     self waittill( "goal" );
     var_2 = common_scripts\utility::getstruct( var_1.target, "targetname" );
-    self _meth_81A6( var_2.origin );
+    self setgoalpos( var_2.origin );
     self waittill( "goal" );
 }
 
@@ -2234,7 +2234,7 @@ cave_entry_scene()
     var_2 = getent( "right_mech_rocket", "targetname" );
     var_3 = getent( "cheat_mech_rocket", "targetname" );
     var_4 = undefined;
-    level.player _meth_80AD( "heavy_2s" );
+    level.player playrumbleonentity( "heavy_2s" );
     level.player thread play_fullscreen_mist( 4, 0, 2.5, 0.75, 0, 0 );
     level.player thread play_fullscreen_mist( 4, 0, 2.5, 0.75, 50, 70 );
     common_scripts\utility::flag_set( "cave_entry_anim_start" );
@@ -2274,7 +2274,7 @@ cave_entry_player()
 {
     level.player endon( "death" );
     var_0 = common_scripts\utility::getstruct( "cave_entry_teleport_animnode", "targetname" );
-    level.player _meth_8301( 0 );
+    level.player allowjump( 0 );
     level.player maps\_shg_utility::setup_player_for_scene();
     var_1 = maps\_utility::spawn_anim_model( "rig" );
     var_2 = maps\_utility::spawn_anim_model( "rig" );
@@ -2282,60 +2282,60 @@ cave_entry_player()
     level.cave_entry_animnode thread maps\_anim::anim_single_solo( var_1, "icecave_enter" );
     var_0 thread maps\_anim::anim_single_solo( var_2, "icecave_enter" );
     thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    var_3 = level.player _meth_84EB();
+    var_3 = level.player getplayerweaponviewmodel();
     var_4 = spawn( "script_model", var_2 gettagorigin( "tag_sync" ) );
     var_4.angles = var_2 gettagangles( "tag_sync" );
-    var_4 _meth_804D( var_2, "tag_sync" );
-    var_4 _meth_80B1( var_3 );
-    level.player _meth_80EF();
-    level.player _meth_8080( var_1, "tag_player", 0.5 );
-    level.player _meth_817D( "stand" );
+    var_4 linkto( var_2, "tag_sync" );
+    var_4 setmodel( var_3 );
+    level.player enableinvulnerability();
+    level.player playerlinktoblend( var_1, "tag_player", 0.5 );
+    level.player setstance( "stand" );
     wait 0.5;
     var_1 show();
     var_1 waittillmatch( "single anim", "ice_break" );
     common_scripts\_exploder::exploder( 5347 );
     common_scripts\_exploder::exploder( 2238 );
     var_1 waittillmatch( "single anim", "no_control" );
-    level.player _meth_80F0();
-    level.player _meth_80EC( 1 );
+    level.player disableinvulnerability();
+    level.player enabledeathshield( 1 );
     var_1 waittillmatch( "single anim", "player_land" );
     var_5 = newclienthudelem( level.player );
-    var_5 _meth_80CC( "black", 1280, 720 );
+    var_5 setshader( "black", 1280, 720 );
     var_5.horzalign = "fullscreen";
     var_5.vertalign = "fullscreen";
     var_5.alpha = 1;
     var_5.foreground = 0;
-    level.player _meth_807F( var_2, "tag_player" );
+    level.player playerlinktoabsolute( var_2, "tag_player" );
     common_scripts\utility::flag_set( "blur_player_vision" );
-    level.player _meth_8051( 150, level.player.origin );
+    level.player dodamage( 150, level.player.origin );
     waitframe();
-    level.player _meth_807D( var_2, "tag_player", 1, 20, 20, 20, 15, 1 );
+    level.player playerlinktodelta( var_2, "tag_player", 1, 20, 20, 20, 15, 1 );
     wait 0.1;
     var_5.alpha = 0;
     var_5 destroy();
     var_1 waittillmatch( "single anim", "gun_up" );
     var_4 delete();
-    level.player_weapons = level.player _meth_830B();
+    level.player_weapons = level.player getweaponslistall();
 
     foreach ( var_7 in level.player_weapons )
-        level.player _meth_8332( var_7 );
+        level.player givemaxammo( var_7 );
 
-    _func_0D3( "r_gunSightColorEntityScale", 0 );
-    _func_0D3( "r_gunSightColorNoneScale", 0 );
-    _func_0D3( "ammoCounterHide", 0 );
-    level.player _meth_8320();
-    level.player _meth_831E();
-    level.player _meth_8130( 1 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0 );
+    setsaveddvar( "ammoCounterHide", 0 );
+    level.player enableoffhandweapons();
+    level.player enableweapons();
+    level.player allowmelee( 1 );
     var_1 waittillmatch( "single anim", "end" );
-    level.player _meth_804F();
+    level.player unlink();
     var_1 delete();
     var_2 delete();
-    level.player _meth_80EC( 0 );
-    level.player _meth_8301( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
+    level.player enabledeathshield( 0 );
+    level.player allowjump( 1 );
+    level.player allowsprint( 1 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
     thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
 }
 
@@ -2350,7 +2350,7 @@ play_fullscreen_mist( var_0, var_1, var_2, var_3, var_4, var_5 )
     var_6 = newclienthudelem( self );
     var_6.x = var_4;
     var_6.y = var_5;
-    var_6 _meth_80CC( "overlay_rain_blur", 640, 480 );
+    var_6 setshader( "overlay_rain_blur", 640, 480 );
     var_6.splatter = 1;
     var_6.alignx = "left";
     var_6.aligny = "top";
@@ -2423,11 +2423,11 @@ cave_entry_sentinel()
 
     if ( level.nextgen )
     {
-        level.bunker_guy01 _meth_8177( "bunker_guys" );
-        level.bunker_guy02 _meth_8177( "bunker_guys" );
+        level.bunker_guy01 setthreatbiasgroup( "bunker_guys" );
+        level.bunker_guy02 setthreatbiasgroup( "bunker_guys" );
     }
 
-    level.bunker_guy03 _meth_8177( "bunker_guys" );
+    level.bunker_guy03 setthreatbiasgroup( "bunker_guys" );
 
     if ( level.nextgen )
     {
@@ -2446,7 +2446,7 @@ cave_entry_goliaths()
 {
     level.player endon( "death" );
     level.crash_mechs = [];
-    level.player _meth_8177( "player" );
+    level.player setthreatbiasgroup( "player" );
     var_0 = getent( "drop_pod_mech_1", "targetname" );
     var_0 thread drop_pod_fall( "mech" );
     wait 3.25;
@@ -2468,7 +2468,7 @@ cave_entry_goliath_spawn()
 
 cave_entry_goliath_behavior( var_0 )
 {
-    self _meth_8177( "mech" );
+    self setthreatbiasgroup( "mech" );
     self.baseaccuracy *= 0.5;
     thread cave_entry_goliath_movement( var_0 );
 }
@@ -2481,13 +2481,13 @@ cave_entry_goliath_movement( var_0 )
     setthreatbias( "player", "mech", 0 );
     self.usechokepoints = 0;
     self.goalradius = 72;
-    self _meth_81A6( var_0.origin );
+    self setgoalpos( var_0.origin );
     self waittill( "goal" );
     thread cave_entry_goliath_attack();
     common_scripts\utility::flag_wait( "tank_incoming" );
     self notify( "stop_hunting" );
     var_1 = common_scripts\utility::getstruct( var_0.target, "targetname" );
-    self _meth_81A6( var_1.origin );
+    self setgoalpos( var_1.origin );
     self waittill( "goal" );
     setthreatbias( "bunker_guys", "mech", 0 );
     setthreatbias( "player", "mech", 0 );
@@ -2513,7 +2513,7 @@ cave_entry_goliath_attack()
 
         if ( isdefined( self.enemy ) )
         {
-            self _meth_81A6( self.enemy.origin );
+            self setgoalpos( self.enemy.origin );
             self.goalradius = 1250;
             self.goalheight = 81;
         }
@@ -2556,7 +2556,7 @@ cave_entry_surface_cleanup()
             var_1 delete();
     }
 
-    var_10 = _func_0D6( "axis" );
+    var_10 = getaiarray( "axis" );
 
     foreach ( var_1 in var_10 )
     {
@@ -2629,17 +2629,17 @@ cave_entry_walker_tank()
 
     foreach ( var_5 in var_3 )
     {
-        var_5 _meth_82C0( 1 );
-        var_5 _meth_82C1( 1 );
+        var_5 setcandamage( 1 );
+        var_5 setcanradiusdamage( 1 );
     }
 
     var_7 = 0;
     var_8 = getent( "bunker_badplace", "targetname" );
 
-    while ( !level.player _meth_80A9( var_8 ) )
+    while ( !level.player istouching( var_8 ) )
         wait 0.05;
 
-    while ( !level.player _meth_8214( var_0.origin, 65, 250 ) && var_7 < 5 )
+    while ( !level.player worldpointinreticle_circle( var_0.origin, 65, 250 ) && var_7 < 5 )
     {
         wait 0.05;
         var_7 += 0.05;
@@ -2681,7 +2681,7 @@ mobile_turret_dropoff( var_0, var_1, var_2, var_3, var_4 )
     var_6.animname = "warbird_deploy";
     var_6 maps\_vehicle::godon();
     var_6 maps\_vehicle::vehicle_lights_on( "running" );
-    var_6 _meth_828B();
+    var_6 vehicle_turnengineoff();
     soundscripts\_snd::snd_message( "warbird_crash_site", var_1, var_6 );
     var_7 = maps\_utility::spawn_anim_model( "walker_deploy" );
     var_7.animname = "walker_deploy";
@@ -2694,7 +2694,7 @@ mobile_turret_dropoff( var_0, var_1, var_2, var_3, var_4 )
     var_9.origin = var_7.origin;
     var_9.angles = var_7.angles;
     var_10 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( var_2 );
-    var_10 _meth_8259( "axis" );
+    var_10 setvehicleteam( "axis" );
     var_10.makemobileturretunusable = 1;
     var_10 maps\_vehicle::godon();
     level.walkers = common_scripts\utility::array_add( level.walkers, var_10 );
@@ -2706,15 +2706,15 @@ mobile_turret_dropoff( var_0, var_1, var_2, var_3, var_4 )
     common_scripts\utility::flag_wait( "cave_entry_done" );
     var_10 maps\_vehicle::godoff();
     wait 1.75;
-    var_10 _meth_8051( var_10.health + 500, var_10.origin, var_10 );
+    var_10 dodamage( var_10.health + 500, var_10.origin, var_10 );
 }
 
 play_warbird_mobile_turret_dropoff( var_0, var_1, var_2, var_3 )
 {
     maps\_anim::anim_single( [ var_0, var_1 ], "mobile_turret_deploy" );
-    var_1 _meth_804D( var_0 );
+    var_1 linkto( var_0 );
     var_0 maps\_utility::vehicle_detachfrompath();
-    var_0 _meth_8283( 60, 15, 5 );
+    var_0 vehicle_setspeed( 60, 15, 5 );
     var_4 = common_scripts\utility::getstruct( var_3, "targetname" );
     var_0 thread maps\_utility::vehicle_dynamicpath( var_4, 0 );
     common_scripts\utility::flag_wait( var_2 );

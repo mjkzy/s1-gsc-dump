@@ -43,7 +43,7 @@ create_icon( var_0, var_1, var_2 )
     var_3.x = var_1;
     var_3.y = var_2;
     var_3.alpha = 1;
-    var_3 _meth_80CC( var_0, 32, 32 );
+    var_3 setshader( var_0, 32, 32 );
     return var_3;
 }
 
@@ -63,7 +63,7 @@ create_counter_hud( var_0, var_1 )
     var_2.y = level._sidequest_counter_base_y;
     var_2.alpha = 1;
     var_2 settext( var_0 );
-    var_2 _meth_80D7( var_1 );
+    var_2 setvalue( var_1 );
     return var_2;
 }
 
@@ -246,7 +246,7 @@ build_asset_from_struct( var_0, var_1 )
     var_2 = spawn( "script_model", var_0.origin );
 
     if ( isdefined( var_0.model ) )
-        var_2 _meth_80B1( var_0.model );
+        var_2 setmodel( var_0.model );
 
     if ( isdefined( var_0.angles ) )
         var_2.angles = var_0.angles;
@@ -361,7 +361,7 @@ build_assets()
             {
                 case "trigger_radius_use":
                     var_7 = spawn( "trigger_radius_use", var_1.origin + var_6, var_5, var_3, var_4 );
-                    var_7 _meth_80DA( "HINT_NOICON" );
+                    var_7 setcursorhint( "HINT_NOICON" );
 
                     if ( isdefined( var_1.radius ) )
                         var_7.radius = var_1.radius;
@@ -440,7 +440,7 @@ radius_trigger_thread()
 
         self.owner_ent notify( "triggered" );
 
-        while ( var_0 _meth_80A9( self ) )
+        while ( var_0 istouching( self ) )
             wait 0.05;
 
         self.owner_ent notify( "untriggered" );
@@ -750,7 +750,7 @@ is_facing_3d( var_0 )
     var_1 = self getangles();
     var_2 = anglestoforward( var_1 );
     var_3 = vectornormalize( var_2 );
-    var_4 = var_0.origin - self _meth_80A8();
+    var_4 = var_0.origin - self geteye();
     var_5 = vectornormalize( var_4 );
     var_6 = vectordot( var_3, var_5 );
     return var_6 > 0.9;

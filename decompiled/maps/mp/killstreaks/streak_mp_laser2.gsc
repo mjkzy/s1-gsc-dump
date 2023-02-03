@@ -89,8 +89,7 @@ initlaser()
 initlaserents()
 {
     var_0 = "sky_laser_turret";
-    precacheitem( "mp_laser2_core" );
-    precacheitem( "tablet_use_weapon_mp" );
+    precacheshellshock( "mp_laser2_core" );
     precachemodel( "lsr_laser_button_01_obj" );
     var_1 = getent( "lasergun", "targetname" );
     var_1 hide();
@@ -135,8 +134,8 @@ initlaserents()
         if ( isdefined( var_4.col_t ) )
             var_4.col_t.unresolved_collision_kill = 1;
 
-        var_4.col_base _meth_8446( var_4, "mainFlapBase" );
-        var_4.col_t _meth_8446( var_4, "mainFlap_T" );
+        var_4.col_base vehicle_jetbikesethoverforcescale( var_4, "mainFlapBase" );
+        var_4.col_t vehicle_jetbikesethoverforcescale( var_4, "mainFlap_T" );
     }
 
     var_1.flap_animclose = "lsr_energy_hatch_close";
@@ -151,31 +150,31 @@ linkgeototurret( var_0, var_1 )
 {
     if ( var_1 == 0 )
     {
-        var_0.collision.col_base _meth_804F();
-        var_0.collision.col_head _meth_804F();
+        var_0.collision.col_base unlink();
+        var_0.collision.col_head unlink();
 
         foreach ( var_3 in var_0.flaps_top )
-            var_3 _meth_804F();
+            var_3 unlink();
 
         foreach ( var_6 in var_0.attachments )
-            var_6 _meth_804F();
+            var_6 unlink();
 
         foreach ( var_9 in var_0.lifter.parts )
-            var_9 _meth_804F();
+            var_9 unlink();
     }
     else if ( var_1 == 1 )
     {
-        var_0.collision.col_base _meth_804D( self, "tag_origin" );
-        var_0.collision.col_head _meth_804D( self, "tag_aim_pivot" );
+        var_0.collision.col_base linkto( self, "tag_origin" );
+        var_0.collision.col_head linkto( self, "tag_aim_pivot" );
 
         foreach ( var_3 in var_0.flaps_top )
-            var_3 _meth_8446( self );
+            var_3 vehicle_jetbikesethoverforcescale( self );
 
         foreach ( var_6 in var_0.attachments )
-            var_6 _meth_8446( self );
+            var_6 vehicle_jetbikesethoverforcescale( self );
 
         foreach ( var_9 in var_0.lifter.parts )
-            var_9 _meth_8446( self );
+            var_9 vehicle_jetbikesethoverforcescale( self );
     }
 }
 
@@ -208,7 +207,7 @@ laser_initoffswitch()
     var_2 = [];
     var_3 = spawn( "script_model", var_1.origin );
     var_3.angles = var_1.angles;
-    var_3 _meth_80B1( "lsr_laser_button_01_obj" );
+    var_3 setmodel( "lsr_laser_button_01_obj" );
     var_3 hide();
     var_4 = [ var_3 ];
     var_5 = maps\mp\gametypes\_gameobjects::createuseobject( "none", var_0, var_4, ( 0, 0, 64 ) );
@@ -220,8 +219,7 @@ laser_initoffswitch()
     var_5.onenduse = ::laser_offswitch_onenduse;
     var_5.onuse = ::laser_offswitch_onuseplantobject;
     var_5.oncantuse = ::laser_offswitch_oncantuse;
-    var_5.useweapon = "tablet_use_weapon_mp";
-    var_5.attachdefault3pmodel = 0;
+    var_5.useweapon = "search_dstry_bomb_mp";
     var_2 = [];
     var_2["switch_obj"] = var_3;
     var_2["use_zone"] = var_5;
@@ -259,26 +257,26 @@ laser_offswitch_oncantuse( var_0 )
 laser_initsentry( var_0 )
 {
     self.sentrytype = var_0;
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
     self.shouldsplash = 1;
-    self _meth_82C0( 0 );
-    self _meth_8138();
-    self _meth_8156( 180 );
-    self _meth_8155( 180 );
-    self _meth_8157( 80 );
-    self _meth_815A( -10 );
+    self setcandamage( 0 );
+    self maketurretinoperable();
+    self setleftarc( 180 );
+    self setrightarc( 180 );
+    self settoparc( 80 );
+    self setdefaultdroppitch( -10 );
     self.laser_on = 0;
-    self.lifter _meth_827B( self.lifter.animidledown );
+    self.lifter scriptmodelplayanimdeltamotion( self.lifter.animidledown );
 
     foreach ( var_2 in self.lifter.parts )
-        var_2 _meth_827B( self.lifter.animidledown );
+        var_2 scriptmodelplayanimdeltamotion( self.lifter.animidledown );
 
     var_4 = spawn( "script_model", self gettagorigin( "tag_laser" ) );
-    var_4 _meth_804D( self );
+    var_4 linkto( self );
     self.killcament = var_4;
-    self.killcament _meth_834D( "explosive" );
+    self.killcament setscriptmoverkillcam( "explosive" );
     maps\mp\killstreaks\_autosentry::sentry_makesolid();
-    self _meth_817A( 1 );
+    self setturretmodechangewait( 1 );
     laser_setinactive();
     thread laser_handledamage();
     thread laser_handlefakedeath();
@@ -336,10 +334,10 @@ laser_handledamage()
 
             switch ( var_11 )
             {
-                case "remotemissile_projectile_mp":
-                case "stinger_mp":
                 case "ac130_40mm_mp":
                 case "ac130_105mm_mp":
+                case "stinger_mp":
+                case "remotemissile_projectile_mp":
                     self.largeprojectiledamage = 1;
                     var_10 = self.maxhealth + 1;
                     break;
@@ -386,7 +384,7 @@ laser_handlefakedeath()
         self waittill( "fakedeath" );
         laser_setinactive();
         self.ownerlist = [];
-        self _meth_8103( undefined );
+        self setsentryowner( undefined );
         self.samtargetent = undefined;
 
         if ( level.teambased )
@@ -419,7 +417,7 @@ tryusemplaser( var_0, var_1 )
 {
     if ( !playercanuselaser() )
     {
-        self iclientprintlnbold( &"MP_LASERTURRET_ENEMY" );
+        self iprintlnbold( &"MP_LASERTURRET_ENEMY" );
         return 0;
     }
 
@@ -434,13 +432,13 @@ tryusemplaser( var_0, var_1 )
 
     if ( isdefined( level.sentrygun.locked ) && level.sentrygun.locked == 1 )
     {
-        self iclientprintlnbold( &"MP_LASERTURRET_BUSY" );
+        self iprintlnbold( &"MP_LASERTURRET_BUSY" );
         return 0;
     }
 
     maps\mp\_matchdata::logkillstreakevent( "mp_laser2", self.origin );
     level.sentrygun laser_setowner( self );
-    var_2 = level.sentrygun _meth_8066();
+    var_2 = level.sentrygun getmode();
 
     if ( ( !isdefined( level.sentrygun.mode ) || level.sentrygun.mode == "off" ) && ( !isdefined( level.sentrygun.moving ) || level.sentrygun.moving == 0 ) )
         laser_setplacesentry( level.sentrygun, level.sentrygun.sentrytype );
@@ -474,13 +472,13 @@ laser_setowner( var_0 )
 {
     self.owner = var_0;
     self.ownerlist = common_scripts\utility::array_add( self.ownerlist, var_0 );
-    self _meth_8103( self.owner );
-    self _meth_8105( 1, "sam_turret" );
+    self setsentryowner( self.owner );
+    self setturretminimapvisible( 1, "sam_turret" );
 
     if ( level.teambased )
     {
         self.team = self.owner.team;
-        self _meth_8135( self.team );
+        self setturretteam( self.team );
     }
 
     thread laser_handleownerdisconnect( var_0 );
@@ -566,14 +564,14 @@ laser_setplacesentry( var_0, var_1 )
 
 laser_setplaced( var_0 )
 {
-    if ( self _meth_8066() == "manual" )
+    if ( self getmode() == "manual" )
     {
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
         self.mode = "off";
     }
 
-    self _meth_8104( undefined );
-    self _meth_82C0( 1 );
+    self setsentrycarrier( undefined );
+    self setcandamage( 1 );
 
     if ( isdefined( self.owner ) )
         self.owner.iscarrying = 0;
@@ -595,56 +593,49 @@ stoplasercoreevent()
 {
     wait 4;
     stopfxontag( level.laser_fx["laser_steam"], self.fxents["charge_up"], "tag_origin" );
-    level endon( "laser_exploder_disabled" );
-    wait 3.5;
-    var_0 = 200;
-    level.laser_exploder_disabled = undefined;
-    common_scripts\_exploder::activate_clientside_exploder( var_0 );
+    level common_scripts\utility::noself_delaycall( 3.5, ::activatepersistentclientexploder, 200 );
 }
 
 startlaserlights()
 {
-    var_0 = _func_231( "laser_light", "targetname" );
+    var_0 = getscriptablearray( "laser_light", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "lsr_part_a", "laser_on_a" );
+        var_2 setscriptablepartstate( "lsr_part_a", "laser_on_a" );
 
-    var_0 = _func_231( "laser_light_b", "targetname" );
-
-    foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "lsr_part_b", "laser_on_b" );
-
-    var_0 = _func_231( "laser_point_lights", "targetname" );
+    var_0 = getscriptablearray( "laser_light_b", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "static_part1", "warning" );
+        var_2 setscriptablepartstate( "lsr_part_b", "laser_on_b" );
+
+    var_0 = getscriptablearray( "laser_point_lights", "targetname" );
+
+    foreach ( var_2 in var_0 )
+        var_2 setscriptablepartstate( "static_part1", "warning" );
 }
 
 stoplaserlights()
 {
-    var_0 = _func_231( "laser_light", "targetname" );
+    var_0 = getscriptablearray( "laser_light", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "lsr_part_a", "laser_off_a" );
+        var_2 setscriptablepartstate( "lsr_part_a", "laser_off_a" );
 
-    var_0 = _func_231( "laser_light_b", "targetname" );
-
-    foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "lsr_part_b", "laser_off_b" );
-
-    var_0 = _func_231( "laser_point_lights", "targetname" );
+    var_0 = getscriptablearray( "laser_light_b", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_83F6( "static_part1", "healthy" );
+        var_2 setscriptablepartstate( "lsr_part_b", "laser_off_b" );
+
+    var_0 = getscriptablearray( "laser_point_lights", "targetname" );
+
+    foreach ( var_2 in var_0 )
+        var_2 setscriptablepartstate( "static_part1", "healthy" );
 }
 
 playlasercontainmentstart()
 {
     level.killstreak_laser_fxmode = 1;
-    var_0 = 200;
-    level notify( "laser_exploder_disabled" );
-    level.laser_exploder_disabled = 1;
-    _func_292( var_0 );
+    stopclientexploder( 200 );
     playfxontag( level.laser_fx["hatch_light"], self.fxents["charge_up"], "tag_origin" );
     playfxontag( level.laser_fx["hatch_light"], level.sentrygun.lifter, "tag_origin" );
     wait 5.33;
@@ -673,15 +664,15 @@ playlasercontainmentswap()
             playfxontag( level.laser_fx["laser_field1_cheap"], self.fxents["charge_up"], "tag_origin" );
             playfxontag( level.laser_fx["laser_field2_up"], self.fxents["charge_up"], "tag_origin" );
             wait 1.0;
-            var_1 = _func_231( "laser_light", "targetname" );
+            var_1 = getscriptablearray( "laser_light", "targetname" );
 
             foreach ( var_3 in var_1 )
-                var_3 _meth_83F6( "lsr_part_a", "laser_on_02_a" );
+                var_3 setscriptablepartstate( "lsr_part_a", "laser_on_02_a" );
 
-            var_5 = _func_231( "laser_light_b", "targetname" );
+            var_5 = getscriptablearray( "laser_light_b", "targetname" );
 
             foreach ( var_7 in var_5 )
-                var_7 _meth_83F6( "lsr_part_b", "laser_on_02_b" );
+                var_7 setscriptablepartstate( "lsr_part_b", "laser_on_02_b" );
 
             playfxontag( level.laser_fx["laser_field2"], self.fxents["charge_up"], "tag_origin" );
             break;
@@ -690,15 +681,15 @@ playlasercontainmentswap()
             playfxontag( level.laser_fx["laser_field2_cheap"], self.fxents["charge_up"], "tag_origin" );
             playfxontag( level.laser_fx["laser_field3_up"], self.fxents["charge_up"], "tag_origin" );
             wait 1.0;
-            var_9 = _func_231( "laser_light", "targetname" );
+            var_9 = getscriptablearray( "laser_light", "targetname" );
 
             foreach ( var_11 in var_9 )
-                var_11 _meth_83F6( "lsr_part_a", "laser_on_03_a" );
+                var_11 setscriptablepartstate( "lsr_part_a", "laser_on_03_a" );
 
-            var_5 = _func_231( "laser_light_b", "targetname" );
+            var_5 = getscriptablearray( "laser_light_b", "targetname" );
 
             foreach ( var_7 in var_5 )
-                var_7 _meth_83F6( "lsr_part_b", "laser_on_03_b" );
+                var_7 setscriptablepartstate( "lsr_part_b", "laser_on_03_b" );
 
             playfxontag( level.laser_fx["laser_field3"], self.fxents["charge_up"], "tag_origin" );
             break;
@@ -727,15 +718,15 @@ stoplasercontainmentswap()
             stopfxontag( level.laser_fx["laser_field2"], self.fxents["charge_up"], "tag_origin" );
             stopfxontag( level.laser_fx["laser_field1_cheap"], self.fxents["charge_up"], "tag_origin" );
             playfxontag( level.laser_fx["laser_field1"], self.fxents["charge_up"], "tag_origin" );
-            var_1 = _func_231( "laser_light", "targetname" );
+            var_1 = getscriptablearray( "laser_light", "targetname" );
 
             foreach ( var_3 in var_1 )
-                var_3 _meth_83F6( "lsr_part_a", "laser_on_a" );
+                var_3 setscriptablepartstate( "lsr_part_a", "laser_on_a" );
 
-            var_1 = _func_231( "laser_light_b", "targetname" );
+            var_1 = getscriptablearray( "laser_light_b", "targetname" );
 
             foreach ( var_3 in var_1 )
-                var_3 _meth_83F6( "lsr_part_b", "laser_on_b" );
+                var_3 setscriptablepartstate( "lsr_part_b", "laser_on_b" );
 
             break;
         case 3:
@@ -743,15 +734,15 @@ stoplasercontainmentswap()
             stopfxontag( level.laser_fx["laser_field3"], self.fxents["charge_up"], "tag_origin" );
             stopfxontag( level.laser_fx["laser_field2_cheap"], self.fxents["charge_up"], "tag_origin" );
             playfxontag( level.laser_fx["laser_field2"], self.fxents["charge_up"], "tag_origin" );
-            var_1 = _func_231( "laser_light", "targetname" );
+            var_1 = getscriptablearray( "laser_light", "targetname" );
 
             foreach ( var_3 in var_1 )
-                var_3 _meth_83F6( "lsr_part_a", "laser_on_02_a" );
+                var_3 setscriptablepartstate( "lsr_part_a", "laser_on_02_a" );
 
-            var_1 = _func_231( "laser_light_b", "targetname" );
+            var_1 = getscriptablearray( "laser_light_b", "targetname" );
 
             foreach ( var_3 in var_1 )
-                var_3 _meth_83F6( "lsr_part_b", "laser_on_02_b" );
+                var_3 setscriptablepartstate( "lsr_part_b", "laser_on_02_b" );
 
             break;
         default:
@@ -788,10 +779,10 @@ stoplasercontainmentend()
 laser_setinactive()
 {
     self.samtargetent = undefined;
-    self _meth_8108();
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+    self cleartargetentity();
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
     self.mode = "off";
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     maps\mp\killstreaks\_autosentry::removefromturretlist( var_0 );
 
     if ( level.teambased )
@@ -799,10 +790,10 @@ laser_setinactive()
     else if ( isdefined( self.owner ) )
         setteamheadicon_large( "none", ( 0, 0, 0 ) );
 
-    self _meth_815A( -10 );
-    level.sentrygun _meth_8105( 0 );
-    self _meth_8105( 0 );
-    self _meth_82C0( 0 );
+    self setdefaultdroppitch( -10 );
+    level.sentrygun setturretminimapvisible( 0 );
+    self setturretminimapvisible( 0 );
+    self setcandamage( 0 );
     laser_coredamage_deactivated( self.coredamagetrig );
     laser_coredamage_deactivated( self.coredeathtrig );
 
@@ -838,10 +829,10 @@ laser_handlemovebottom()
     var_3["laser_xform_down_sec1_end"] = "laser_xform_down_sec1_end";
     var_3["laser_xform_down_sec2_start"] = "laser_xform_down_sec2_start";
     var_3["laser_xform_down_sec2_end"] = "laser_xform_down_sec2_end";
-    self.lifter _meth_827B( self.lifter.animdown, "laser_xform_down_sec1_start" );
+    self.lifter scriptmodelplayanimdeltamotion( self.lifter.animdown, "laser_xform_down_sec1_start" );
 
     foreach ( var_1 in self.lifter.parts )
-        var_1 _meth_827B( self.lifter.animdown, "laser_xform_down_sec1_start" );
+        var_1 scriptmodelplayanimdeltamotion( self.lifter.animdown, "laser_xform_down_sec1_start" );
 
     self.lifter thread maps\mp\_audio::snd_play_on_notetrack( var_3, "laser_xform_down_sec1_start" );
 
@@ -849,11 +840,11 @@ laser_handlemovebottom()
     {
         if ( isdefined( var_7.targetname ) && var_7.targetname == "lsr_flap_bottom" )
         {
-            var_7 _meth_827B( self.flap_animclose );
+            var_7 scriptmodelplayanimdeltamotion( self.flap_animclose );
             continue;
         }
 
-        var_7 _meth_8279( self.flap_animclose );
+        var_7 scriptmodelplayanim( self.flap_animclose );
     }
 
     self.lifter thread aud_play_laser_move_down( 6 );
@@ -881,10 +872,10 @@ laser_handlemovetop()
     var_3["laser_xform_up_sec1_end"] = "laser_xform_up_sec1_end";
     var_3["laser_xform_up_sec2_start"] = "laser_xform_up_sec2_start";
     var_3["laser_xform_up_sec2_end"] = "laser_xform_up_sec2_end";
-    self.lifter _meth_827B( self.lifter.animup, "laser_xform_up_sec1_start" );
+    self.lifter scriptmodelplayanimdeltamotion( self.lifter.animup, "laser_xform_up_sec1_start" );
 
     foreach ( var_1 in self.lifter.parts )
-        var_1 _meth_827B( self.lifter.animup, "laser_xform_up_sec1_start" );
+        var_1 scriptmodelplayanimdeltamotion( self.lifter.animup, "laser_xform_up_sec1_start" );
 
     self.lifter thread maps\mp\_audio::snd_play_on_notetrack( var_3, "laser_xform_up_sec1_start" );
 
@@ -892,11 +883,11 @@ laser_handlemovetop()
     {
         if ( isdefined( var_7.targetname ) && var_7.targetname == "lsr_flap_bottom" )
         {
-            var_7 _meth_827B( self.flap_animopen );
+            var_7 scriptmodelplayanimdeltamotion( self.flap_animopen );
             continue;
         }
 
-        var_7 _meth_8279( self.flap_animopen );
+        var_7 scriptmodelplayanim( self.flap_animopen );
     }
 
     self.lifter thread aud_play_laser_move_up( 5.0 );
@@ -930,8 +921,8 @@ aud_play_laser_move_down( var_0 )
     var_1 = thread maps\mp\_audio::snd_play_linked( "laser_platform_move_down_start", self );
     wait 3;
     thread maps\mp\_audio::snd_play_linked( "laser_platform_move_down_legs_fold", self );
-    var_1 _meth_806F( 0.0, 0.05 );
-    var_1 _meth_80AC();
+    var_1 scalevolume( 0.0, 0.05 );
+    var_1 stopsounds();
     level notify( "aud_laser_energy_lp_off" );
     wait 0.7;
     thread maps\mp\_audio::snd_play_linked( "laser_platform_move_down_end", self );
@@ -1006,7 +997,7 @@ laser_setactive( var_0 )
 {
     foreach ( var_0 in level.players )
     {
-        var_2 = self _meth_81B1();
+        var_2 = self getentitynumber();
         maps\mp\killstreaks\_autosentry::addtoturretlist( var_2 );
     }
 
@@ -1019,8 +1010,8 @@ laser_setactive( var_0 )
     laser_coredamage_activated( self.coredamagetrig );
     laser_coredamage_activated( self.coredeathtrig, 1 );
     laser_handlemovetop();
-    self _meth_815A( 5 );
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setdefaultdroppitch( 5 );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
     self.mode = "on";
     laser_usableoffswitch_on();
 
@@ -1038,7 +1029,7 @@ laser_setactive( var_0 )
 
 laser_usableoffswitch_off()
 {
-    self.generatorhat _meth_8279( self.generatorhat.anim_down );
+    self.generatorhat scriptmodelplayanim( self.generatorhat.anim_down );
     level.sentrygun.offswitch["use_zone"] maps\mp\gametypes\_gameobjects::disableobject();
     level.sentrygun.offswitch["switch_obj"] hide();
 }
@@ -1050,7 +1041,7 @@ laser_usableoffswitch_on()
     if ( isdefined( level.sentrygun.owner ) && isdefined( level.sentrygun.owner.team ) )
         var_0 = level.sentrygun.owner.team;
 
-    self.generatorhat _meth_8279( self.generatorhat.anim_up );
+    self.generatorhat scriptmodelplayanim( self.generatorhat.anim_up );
     level.sentrygun.offswitch["use_zone"].interactteam = "enemy";
     level.sentrygun.offswitch["use_zone"] maps\mp\gametypes\_gameobjects::setownerteam( var_0 );
 
@@ -1099,8 +1090,8 @@ setteamheadicon_large( var_0, var_1 )
     var_3.y = self.origin[1] + self.entityheadiconoffset[1];
     var_3.z = self.origin[2] + self.entityheadiconoffset[2];
     var_3.alpha = 1;
-    var_3 _meth_80CC( var_2, 50, 50 );
-    var_3 _meth_80D8( 0, 0, 0, 1 );
+    var_3 setshader( var_2, 50, 50 );
+    var_3 setwaypoint( 0, 0, 0, 1 );
     self.entityheadicon = var_3;
     thread maps\mp\_entityheadicons::keepiconpositioned();
     thread maps\mp\_entityheadicons::destroyheadiconsondeath();
@@ -1142,8 +1133,8 @@ setplayerheadicon_large( var_0, var_1 )
     var_4.y = self.origin[1] + self.entityheadiconoffset[1];
     var_4.z = self.origin[2] + self.entityheadiconoffset[2];
     var_4.alpha = 1;
-    var_4 _meth_80CC( var_3, 50, 50 );
-    var_4 _meth_80D8( 0, 0, 0, 1 );
+    var_4 setshader( var_3, 50, 50 );
+    var_4 setwaypoint( 0, 0, 0, 1 );
     self.entityheadicon = var_4;
     thread maps\mp\_entityheadicons::keepiconpositioned();
     thread maps\mp\_entityheadicons::destroyheadiconsondeath();
@@ -1161,12 +1152,12 @@ laser_watchdisabled()
     {
         self waittill( "emp_damage", var_0, var_1 );
         playfxontag( common_scripts\utility::getfx( "sentry_explode_mp" ), self, "tag_aim" );
-        self _meth_815A( -10 );
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeoff );
+        self setdefaultdroppitch( -10 );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeoff );
         self.mode = "none";
         wait(var_1);
-        self _meth_815A( 5 );
-        self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+        self setdefaultdroppitch( 5 );
+        self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
         self.mode = "on";
     }
 }
@@ -1204,12 +1195,12 @@ laser_watchlightbeam()
     laser_coredamage_activated( self.firingdamagetrig );
     var_1 = maps\mp\_audio::snd_play_linked( "wpn_skylaser_fire_startup", self );
     thread common_scripts\utility::play_loop_sound_on_entity( "wpn_skylaser_beam_lp" );
-    self _meth_80B2( "mp_laser2_laser" );
+    self laseron( "mp_laser2_laser" );
 
-    while ( isdefined( self.samtargetent ) && isdefined( self _meth_8109( 1 ) ) && self _meth_8109( 1 ) == self.samtargetent )
+    while ( isdefined( self.samtargetent ) && isdefined( self getturrettarget( 1 ) ) && self getturrettarget( 1 ) == self.samtargetent )
         wait 0.05;
 
-    self _meth_80B3();
+    self laseroff();
     stopfxontag( level.laser_fx["laser_charge1"], self.fxents["charge_up"], "tag_origin" );
     playfxontag( level.laser_fx["laser_beam_done1"], self.fxents["charge_up"], "tag_origin" );
     stopfxontag( level.laser_fx["beahm"], self, "tag_laser" );
@@ -1219,7 +1210,7 @@ laser_watchlightbeam()
     var_2 = maps\mp\_audio::snd_play_linked( "wpn_skylaser_beam_stop", self );
 
     if ( isdefined( var_1 ) )
-        var_1 _meth_80AC();
+        var_1 stopsounds();
 }
 
 laser_fireontarget()
@@ -1233,11 +1224,11 @@ laser_fireontarget()
         if ( isdefined( level.orbitalsupport_planemodel ) && self.samtargetent == level.orbitalsupport_planemodel && !isdefined( level.orbitalsupport_player ) )
         {
             self.samtargetent = undefined;
-            self _meth_8108();
+            self cleartargetentity();
             return;
         }
 
-        self _meth_8106( self.samtargetent );
+        self settargetentity( self.samtargetent );
         self waittill( "turret_on_target" );
 
         if ( !isdefined( self.samtargetent ) )
@@ -1260,11 +1251,11 @@ laser_fireontarget()
         if ( isdefined( level.orbitalsupport_planemodel ) && self.samtargetent == level.orbitalsupport_planemodel && !isdefined( level.orbitalsupport_player ) )
         {
             self.samtargetent = undefined;
-            self _meth_8108();
+            self cleartargetentity();
             return;
         }
 
-        self _meth_80EA();
+        self shootturret();
         firelaserbeam();
     }
 }
@@ -1344,7 +1335,7 @@ player_watchexitlasercore( var_0 )
     self endon( "player_leftLaserCoreTrigger" + var_0.targetname );
     self endon( "stop_watching_trig" );
 
-    while ( self _meth_80A9( var_0 ) )
+    while ( self istouching( var_0 ) )
         wait 0.05;
 
     if ( isdefined( self.lasercoretrigids ) )
@@ -1371,7 +1362,7 @@ player_lasercoreeffect( var_0, var_1 )
 
     if ( !isdefined( self.usingremote ) && !isdefined( self.ridevisionset ) )
     {
-        self _meth_82D4( "aftermath", 0.5 );
+        self visionsetnakedforplayer( "aftermath", 0.5 );
         self shellshock( var_2, 60 );
     }
     else
@@ -1384,18 +1375,18 @@ player_lasercoreeffect( var_0, var_1 )
         switch ( self.poison )
         {
             case 1:
-                self _meth_81AF( 1, self.origin );
+                self viewkick( 1, self.origin );
                 break;
             case 2:
-                self _meth_81AF( 3, self.origin );
+                self viewkick( 3, self.origin );
                 player_dolasercoredamage( 15 );
                 break;
             case 3:
-                self _meth_81AF( 15, self.origin );
+                self viewkick( 15, self.origin );
                 player_dolasercoredamage( 15 );
                 break;
             case 4:
-                self _meth_81AF( 75, self.origin );
+                self viewkick( 75, self.origin );
                 maps\mp\_utility::_suicide();
                 return;
         }

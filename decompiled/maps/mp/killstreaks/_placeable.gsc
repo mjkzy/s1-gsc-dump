@@ -25,7 +25,7 @@ createplaceable( var_0 )
 
     var_1 = level.placeableconfigs[var_0];
     var_2 = spawn( "script_model", self.origin );
-    var_2 _meth_80B1( var_1.modelbase );
+    var_2 setmodel( var_1.modelbase );
     var_2.angles = self.angles;
     var_2.owner = self;
     var_2.team = self.team;
@@ -56,8 +56,8 @@ handleuse( var_0 )
         if ( !maps\mp\_utility::isreallyalive( var_1 ) )
             continue;
 
-        if ( isdefined( self _meth_83EC() ) )
-            self _meth_804F();
+        if ( isdefined( self getlinkedparent() ) )
+            self unlink();
 
         var_1 onbegincarrying( var_0, self, 0 );
     }
@@ -72,16 +72,16 @@ onbegincarrying( var_0, var_1, var_2 )
 
     if ( !isai( self ) )
     {
-        self _meth_82DD( "placePlaceable", "+attack" );
-        self _meth_82DD( "placePlaceable", "+attack_akimbo_accessible" );
-        self _meth_82DD( "cancelPlaceable", "+actionslot 4" );
+        self notifyonplayercommand( "placePlaceable", "+attack" );
+        self notifyonplayercommand( "placePlaceable", "+attack_akimbo_accessible" );
+        self notifyonplayercommand( "cancelPlaceable", "+actionslot 4" );
 
         if ( !level.console )
         {
-            self _meth_82DD( "cancelPlaceable", "+actionslot 5" );
-            self _meth_82DD( "cancelPlaceable", "+actionslot 6" );
-            self _meth_82DD( "cancelPlaceable", "+actionslot 7" );
-            self _meth_82DD( "cancelPlaceable", "+actionslot 8" );
+            self notifyonplayercommand( "cancelPlaceable", "+actionslot 5" );
+            self notifyonplayercommand( "cancelPlaceable", "+actionslot 6" );
+            self notifyonplayercommand( "cancelPlaceable", "+actionslot 7" );
+            self notifyonplayercommand( "cancelPlaceable", "+actionslot 8" );
         }
     }
 
@@ -113,7 +113,7 @@ oncancel( var_0, var_1 )
     if ( isdefined( self.carriedby ) )
     {
         var_2 = self.carriedby;
-        var_2 _meth_80DE();
+        var_2 forceusehintoff();
         var_2.iscarrying = undefined;
         var_2.carrieditem = undefined;
         var_2 common_scripts\utility::_enableweapon();
@@ -147,10 +147,10 @@ onplaced( var_0 )
     if ( isdefined( var_1.onplaceddelegate ) )
         self [[ var_1.onplaceddelegate ]]( var_0 );
 
-    self _meth_80DA( "HINT_NOICON" );
-    self _meth_80DB( var_1.hintstring );
+    self setcursorhint( "HINT_NOICON" );
+    self sethintstring( var_1.hintstring );
     var_2 = self.owner;
-    var_2 _meth_80DE();
+    var_2 forceusehintoff();
     var_2.iscarrying = undefined;
     self.carriedby = undefined;
     self.isplaced = 1;
@@ -170,7 +170,7 @@ onplaced( var_0 )
     common_scripts\utility::make_entity_sentient_mp( self.owner.team );
 
     if ( issentient( self ) )
-        self _meth_8177( "DogsDontAttack" );
+        self setthreatbiasgroup( "DogsDontAttack" );
 
     foreach ( var_4 in level.players )
     {
@@ -241,11 +241,11 @@ updateplacement( var_0, var_1 )
 
     for (;;)
     {
-        var_6 = var_1 _meth_82D2( 1, var_3.placementradius );
+        var_6 = var_1 canplayerplacesentry( 1, var_3.placementradius );
         self.placementorigin = var_6["origin"];
         var_5.origin = self.placementorigin + var_4;
         var_5.angles = var_6["angles"];
-        self.canbeplaced = var_1 _meth_8341() && var_6["result"] && abs( self.placementorigin[2] - var_1.origin[2] ) < var_3.placementheighttolerance;
+        self.canbeplaced = var_1 isonground() && var_6["result"] && abs( self.placementorigin[2] - var_1.origin[2] ) < var_3.placementheighttolerance;
 
         if ( isdefined( var_6["entity"] ) )
             self.moving_platform = var_6["entity"];
@@ -256,13 +256,13 @@ updateplacement( var_0, var_1 )
         {
             if ( self.canbeplaced )
             {
-                var_5 _meth_80B1( var_3.modelplacement );
-                var_1 _meth_80DD( var_3.placestring );
+                var_5 setmodel( var_3.modelplacement );
+                var_1 forceusehinton( var_3.placestring );
             }
             else
             {
-                var_5 _meth_80B1( var_3.modelplacementfailed );
-                var_1 _meth_80DD( var_3.cannotplacestring );
+                var_5 setmodel( var_3.modelplacementfailed );
+                var_1 forceusehinton( var_3.cannotplacestring );
             }
         }
 
@@ -275,7 +275,7 @@ deactivate( var_0 )
 {
     self makeunusable();
     hideheadicons();
-    self _meth_813A();
+    self freeentitysentient();
     var_1 = level.placeableconfigs[var_0];
 
     if ( isdefined( var_1.ondeactivedelegate ) )
@@ -335,7 +335,7 @@ handledeath( var_0 )
         deactivate( var_0 );
 
         if ( isdefined( var_1.modeldestroyed ) )
-            self _meth_80B1( var_1.modeldestroyed );
+            self setmodel( var_1.modeldestroyed );
 
         if ( isdefined( var_1.ondeathdelegate ) )
             self [[ var_1.ondeathdelegate ]]( var_0 );
@@ -423,10 +423,10 @@ timeout( var_0 )
 
 removeweapons()
 {
-    if ( self _meth_8314( "iw6_riotshield_mp" ) )
+    if ( self hasweapon( "iw6_riotshield_mp" ) )
     {
         self.restoreweapon = "iw6_riotshield_mp";
-        self _meth_830F( "iw6_riotshield_mp" );
+        self takeweapon( "iw6_riotshield_mp" );
     }
 }
 
@@ -467,8 +467,8 @@ createbombsquadmodel( var_0 )
         var_2.angles = self.angles;
         var_2 hide();
         var_2 thread maps\mp\gametypes\_weapons::bombsquadvisibilityupdater( self.owner );
-        var_2 _meth_80B1( var_1.modelbombsquad );
-        var_2 _meth_804D( self );
+        var_2 setmodel( var_1.modelbombsquad );
+        var_2 linkto( self );
         var_2 setcontents( 0 );
         self.bombsquadmodel = var_2;
         self waittill( "death" );
@@ -509,14 +509,14 @@ createcarriedobject( var_0 )
     var_1.angles = self.angles;
     var_1.owner = self;
     var_2 = level.placeableconfigs[var_0];
-    var_1 _meth_80B1( var_2.modelbase );
-    var_1 _meth_8138();
-    var_1 _meth_817A( 1 );
-    var_1 _meth_8065( "sentry_offline" );
+    var_1 setmodel( var_2.modelbase );
+    var_1 maketurretinoperable();
+    var_1 setturretmodechangewait( 1 );
+    var_1 setmode( "sentry_offline" );
     var_1 makeunusable();
-    var_1 _meth_8103( self );
-    var_1 _meth_8104( self );
-    var_1 _meth_82C0( 0 );
+    var_1 setsentryowner( self );
+    var_1 setsentrycarrier( self );
+    var_1 setcandamage( 0 );
     var_1 setcontents( 0 );
     return var_1;
 }

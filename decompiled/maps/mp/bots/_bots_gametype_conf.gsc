@@ -45,13 +45,13 @@ bot_conf_think()
         var_0 = isdefined( self.tag_getting );
         var_1 = 0;
 
-        if ( var_0 && self _meth_8365() )
+        if ( var_0 && self bothasscriptgoal() )
         {
-            var_2 = self _meth_835A();
+            var_2 = self botgetscriptgoal();
 
             if ( maps\mp\bots\_bots_util::bot_vectors_are_equal( self.tag_getting.ground_pos, var_2 ) )
             {
-                if ( self _meth_8375() )
+                if ( self botpursuingscriptgoal() )
                     var_1 = 1;
             }
             else if ( maps\mp\bots\_bots_strategy::bot_has_tactical_goal( "kill_tag" ) && self.tag_getting maps\mp\gametypes\_gameobjects::caninteractwith( self.team ) )
@@ -61,7 +61,7 @@ bot_conf_think()
             }
         }
 
-        self _meth_8351( "force_sprint", var_1 );
+        self botsetflag( "force_sprint", var_1 );
         self.tags_seen = bot_remove_invalid_tags( self.tags_seen );
         var_3 = bot_find_best_tag_from_array( self.tags_seen, 1 );
         var_4 = isdefined( var_3 );
@@ -69,7 +69,7 @@ bot_conf_think()
         if ( var_0 && !var_4 || !var_0 && var_4 || var_0 && var_4 && self.tag_getting != var_3 )
         {
             self.tag_getting = var_3;
-            self _meth_8356();
+            self botclearscriptgoal();
             self notify( "stop_camping_tag" );
             maps\mp\bots\_bots_personality::clear_camper_data();
             maps\mp\bots\_bots_strategy::bot_abort_tactical_goal( "kill_tag" );
@@ -132,7 +132,7 @@ bot_check_tag_above_head( var_0 )
     {
         var_1 = self.origin + ( 0, 0, 55 );
 
-        if ( _func_220( var_0.curorigin, var_1 ) < 144 )
+        if ( distance2dsquared( var_0.curorigin, var_1 ) < 144 )
         {
             var_2 = var_0.curorigin[2] - var_1[2];
 
@@ -165,16 +165,16 @@ bot_jump_for_tag()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    self _meth_8352( "stand" );
+    self botsetstance( "stand" );
     wait 1.0;
-    self _meth_837E( "jump" );
+    self botpressbutton( "jump" );
     wait 0.5;
 
     if ( maps\mp\_utility::isaugmentedgamemode() )
-        self _meth_837E( "jump" );
+        self botpressbutton( "jump" );
 
     wait 0.5;
-    self _meth_8352( "none" );
+    self botsetstance( "none" );
 }
 
 bot_watch_new_tags()
@@ -247,7 +247,7 @@ bot_is_tag_visible( var_0, var_1, var_2 )
 
     if ( isdefined( var_3 ) && ( var_4 || var_0.on_path_grid ) )
     {
-        var_5 = var_3 == var_1 || _func_1FF( var_3, var_1, 1 );
+        var_5 = var_3 == var_1 || nodesvisible( var_3, var_1, 1 );
 
         if ( var_5 )
         {
@@ -279,14 +279,14 @@ bot_find_visible_tags( var_0, var_1, var_2 )
     if ( isdefined( var_1 ) )
         var_3 = var_1;
     else
-        var_3 = self _meth_8387();
+        var_3 = self getnearestnode();
 
     var_4 = undefined;
 
     if ( isdefined( var_2 ) )
         var_4 = var_2;
     else
-        var_4 = self _meth_8373();
+        var_4 = self botgetfovdot();
 
     var_5 = [];
 
@@ -431,7 +431,7 @@ bot_camp_tag( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) )
         self endon( var_2 );
 
-    self _meth_8355( self.node_ambushing_from, var_1, self.ambush_yaw );
+    self botsetscriptgoalnode( self.node_ambushing_from, var_1, self.ambush_yaw );
     var_3 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
 
     if ( var_3 == "goal" )
@@ -440,7 +440,7 @@ bot_camp_tag( var_0, var_1, var_2 )
 
         if ( isdefined( var_4 ) )
         {
-            var_5 = _func_20D( self.origin );
+            var_5 = findentrances( self.origin );
             var_5 = common_scripts\utility::array_add( var_5, var_4 );
             childthread maps\mp\bots\_bots_util::bot_watch_nodes( var_5 );
         }

@@ -216,21 +216,21 @@ waittilltimeorroundend( var_0 )
 
 turrethandledeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death", var_1, var_2, var_3 );
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     self.isalive = 0;
     self.damagecallback = undefined;
-    self _meth_82C0( 0 );
-    self _meth_8495( 0 );
-    self _meth_813A();
-    self _meth_8065( "sentry_offline" );
-    self _meth_815A( 35 );
-    self _meth_8103( undefined );
-    self _meth_8105( 0 );
+    self setcandamage( 0 );
+    self setdamagecallbackon( 0 );
+    self freeentitysentient();
+    self setmode( "sentry_offline" );
+    self setdefaultdroppitch( 35 );
+    self setsentryowner( undefined );
+    self setturretminimapvisible( 0 );
     var_4 = self.owner;
     self.waitingtodie = 1;
     self playsound( "sentry_explode" );
@@ -244,8 +244,8 @@ turrethandledeath()
 turretsetupdamagecallback()
 {
     self.damagecallback = ::turrethandledamagecallback;
-    self _meth_82C0( 1 );
-    self _meth_8495( 1 );
+    self setcandamage( 1 );
+    self setdamagecallbackon( 1 );
 }
 
 turrethandledamagecallback( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10, var_11 )
@@ -273,7 +273,7 @@ turretgetenemy( var_0, var_1 )
 
     foreach ( var_5 in level.players )
     {
-        if ( var_5.ignoreme || var_5 _meth_8546() )
+        if ( var_5.ignoreme || var_5 isnotarget() )
             continue;
 
         if ( var_5.sessionstate == "spectator" )
@@ -393,16 +393,16 @@ stationaryturret_spawnenemyturret( var_0, var_1 )
     var_2.rocketturret = 0;
     var_2.guardian = 0;
     var_2.isalive = 1;
-    var_2 _meth_80B1( "npc_sentry_minigun_turret_base" );
-    var_2 _meth_8065( "sentry_manual" );
-    var_2 _meth_8135( "axis" );
-    var_2 _meth_8103( undefined );
-    var_2 _meth_8105( 1, var_0 );
-    var_2 _meth_8156( 48 );
-    var_2 _meth_8155( 48 );
-    var_2 _meth_815A( -89.0 );
+    var_2 setmodel( "npc_sentry_minigun_turret_base" );
+    var_2 setmode( "sentry_manual" );
+    var_2 setturretteam( "axis" );
+    var_2 setsentryowner( undefined );
+    var_2 setturretminimapvisible( 1, var_0 );
+    var_2 setleftarc( 48 );
+    var_2 setrightarc( 48 );
+    var_2 setdefaultdroppitch( -89.0 );
     var_2.damagefade = 1.0;
-    var_2 _meth_80B2( "trap_zm" );
+    var_2 laseron( "trap_zm" );
     playfx( common_scripts\utility::getfx( "stationary_turret_teleport" ), var_2.origin, ( 1, 0, 0 ), ( 0, 0, 1 ) );
     var_2 thread stationaryturret_picktarget();
     var_2 thread stationaryturret_shoot();
@@ -426,13 +426,13 @@ stationaryturret_shoot()
 
         if ( isdefined( self.targetplayer ) )
         {
-            if ( isdefined( self _meth_8109( 1 ) ) )
+            if ( isdefined( self getturrettarget( 1 ) ) )
             {
                 var_0 = randomintrange( 25, 50 );
 
                 for ( var_1 = 0; var_1 < var_0; var_1++ )
                 {
-                    self _meth_80EA();
+                    self shootturret();
                     wait 0.1;
                 }
 
@@ -458,15 +458,15 @@ stationaryturret_picktarget()
         if ( !isdefined( self.waitingtodie ) && isdefined( var_0 ) )
         {
             if ( isdefined( var_0.isaerialassaultdrone ) && var_0.isaerialassaultdrone )
-                self _meth_8106( var_0, ( 0, 0, -20 ) );
+                self settargetentity( var_0, ( 0, 0, -20 ) );
             else
-                self _meth_8106( var_0 );
+                self settargetentity( var_0 );
 
             self.targetplayer = var_0;
         }
         else
         {
-            self _meth_8108();
+            self cleartargetentity();
             self.targetplayer = undefined;
         }
 
@@ -477,11 +477,11 @@ stationaryturret_picktarget()
 stationaryturret_setactive()
 {
     self endon( "death" );
-    self _meth_815A( 0.0 );
+    self setdefaultdroppitch( 0.0 );
     self makeunusable();
-    self _meth_8136();
+    self maketurretsolid();
     self.team = "axis";
-    self _meth_8135( "axis" );
+    self setturretteam( "axis" );
     thread turrethandledeath();
     thread turretsetupdamagecallback();
 }
@@ -503,13 +503,13 @@ init_arena_turret_door()
     var_0 = common_scripts\utility::getstruct( self.mover.target, "targetname" );
     self.mover.open_pos = var_0.origin;
     var_1 = getent( self.mover.target, "targetname" );
-    var_1 _meth_804D( self.mover );
+    var_1 linkto( self.mover );
 
     if ( level.nextgen )
     {
-        var_2 = _func_231( "light_pluse_turret_mp_zombie_h2o", "targetname" );
+        var_2 = getscriptablearray( "light_pluse_turret_mp_zombie_h2o", "targetname" );
         self.scriptablelight = common_scripts\utility::get_array_of_closest( self.mover.origin, var_2 )[0];
-        self.scriptablelight _meth_83F6( 0, 0 );
+        self.scriptablelight setscriptablepartstate( 0, 0 );
     }
 
     self.open = 0;
@@ -520,7 +520,7 @@ open_door()
     level endon( "game_ended" );
 
     if ( level.nextgen )
-        self.scriptablelight _meth_83F6( 0, 1 );
+        self.scriptablelight setscriptablepartstate( 0, 1 );
 
     self.mover activate_door( "open", 3.0 );
     self.open = 1;
@@ -531,7 +531,7 @@ close_door()
     level endon( "game_ended" );
 
     if ( level.nextgen )
-        self.scriptablelight _meth_83F6( 0, 0 );
+        self.scriptablelight setscriptablepartstate( 0, 0 );
 
     self.mover activate_door( "close", 0.5 );
     self.open = 0;
@@ -540,9 +540,9 @@ close_door()
 activate_door( var_0, var_1 )
 {
     if ( var_0 == "open" )
-        self _meth_82AE( self.open_pos, var_1 );
+        self moveto( self.open_pos, var_1 );
     else if ( var_0 == "close" )
-        self _meth_82AE( self.closed_pos, var_1 );
+        self moveto( self.closed_pos, var_1 );
 
     self playsound( "interact_door" );
     wait(var_1);
@@ -550,9 +550,9 @@ activate_door( var_0, var_1 )
     if ( maps\mp\_movers::script_mover_is_dynamic_path() )
     {
         if ( var_0 == "open" )
-            self _meth_8058();
+            self connectpaths();
         else if ( var_0 == "close" )
-            self _meth_8057();
+            self disconnectpaths();
     }
 }
 
@@ -587,18 +587,18 @@ mountedturret_init()
 mountedturret_initsentry()
 {
     self.sentrytype = "boss_oz_mounted_turret";
-    self _meth_8156( 180 );
-    self _meth_8155( 180 );
-    self _meth_8157( 89 );
-    self _meth_8158( 89 );
-    self _meth_80B1( level.sentrysettings[self.sentrytype].modelbase );
-    self _meth_8138();
-    self _meth_815A( 0 );
-    self _meth_82C0( 0 );
+    self setleftarc( 180 );
+    self setrightarc( 180 );
+    self settoparc( 89 );
+    self setbottomarc( 89 );
+    self setmodel( level.sentrysettings[self.sentrytype].modelbase );
+    self maketurretinoperable();
+    self setdefaultdroppitch( 0 );
+    self setcandamage( 0 );
     self.team = "axis";
-    self _meth_8135( "axis" );
+    self setturretteam( "axis" );
     self.aimingorg = common_scripts\utility::getstruct( self.target, "targetname" );
-    self _meth_817A( 1 );
+    self setturretmodechangewait( 1 );
     maps\mp\killstreaks\_autosentry::sentry_setinactive();
 }
 
@@ -607,7 +607,7 @@ mountedturret_spawnturret()
     self.turret = spawnturret( "misc_turret", self.origin, level.sentrysettings["boss_oz_mounted_turret"].weaponinfo );
     self.turret.angles = self.angles;
     self.turret.weaponinfo = level.sentrysettings["boss_oz_mounted_turret"].weaponinfo;
-    self.turret _meth_80B1( level.sentrysettings["boss_oz_mounted_turret"].modelbase );
+    self.turret setmodel( level.sentrysettings["boss_oz_mounted_turret"].modelbase );
     self.turret.target = self.target;
     self.turret.targetname = "boss_oz_mounted_turret";
     self.turret mountedturret_initsentry();
@@ -616,16 +616,16 @@ mountedturret_spawnturret()
 
 mountedturret_activateturret()
 {
-    self _meth_8065( level.sentrysettings[self.sentrytype].sentrymodeon );
+    self setmode( level.sentrysettings[self.sentrytype].sentrymodeon );
     thread mountedturret_handletargeting();
     self.isalive = 1;
     self.health = level.sentrysettings[self.sentrytype].health;
     self.maxhealth = level.sentrysettings[self.sentrytype].maxhealth;
     self makeunusable();
-    self _meth_8136();
+    self maketurretsolid();
     thread turrethandledeath();
     thread turretsetupdamagecallback();
-    self _meth_80B2( "trap_zm" );
+    self laseron( "trap_zm" );
 }
 
 mountedturret_handletargeting()
@@ -652,9 +652,9 @@ mountedturret_handletargeting()
         var_0 = var_1;
 
         if ( isdefined( var_1 ) )
-            self _meth_8106( var_1 );
+            self settargetentity( var_1 );
         else
-            self _meth_8108();
+            self cleartargetentity();
 
         wait 0.5;
     }
@@ -719,8 +719,8 @@ deactivateturretonroundend()
 {
     self endon( "death" );
     level common_scripts\utility::waittill_any( "game_ended", "zombie_wave_interrupt", "zombie_boss_wave_ended" );
-    self _meth_8108();
-    self _meth_80B3();
+    self cleartargetentity();
+    self laseroff();
     self notify( "disable_turret" );
     mountedturret_initsentry();
 }
@@ -749,7 +749,7 @@ setup_laser_trap( var_0 )
     var_1.angles = var_0.angles;
     var_1.start_origin = var_1.origin;
     var_1.start_angles = var_1.angles;
-    var_1 _meth_80B1( "tag_laser" );
+    var_1 setmodel( "tag_laser" );
     return var_1;
 }
 
@@ -789,18 +789,18 @@ aeriallaser_fx( var_0, var_1 )
 {
     var_2 = 91;
     var_3 = 92;
-    _func_29C( var_2 );
+    activatepersistentclientexploder( var_2 );
     var_4 = waittilltimeorroundend( var_0 );
 
     if ( var_4 )
     {
-        _func_292( var_2 );
-        _func_29C( var_3 );
+        stopclientexploder( var_2 );
+        activatepersistentclientexploder( var_3 );
         waittilltimeorroundend( var_1 );
-        _func_292( var_3 );
+        stopclientexploder( var_3 );
     }
     else
-        _func_292( var_2 );
+        stopclientexploder( var_2 );
 }
 
 start_laser( var_0, var_1 )
@@ -834,7 +834,7 @@ start_laser_damage()
                 continue;
 
             var_0.nextlasertrapdamagetime = gettime() + 2500;
-            var_0 _meth_8051( 40, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+            var_0 dodamage( 40, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
 
             if ( isdefined( var_0.exosuitonline ) && var_0.exosuitonline && !( isdefined( var_0.nextlasertrapemptime ) && var_0.nextlasertrapemptime > gettime() ) )
             {
@@ -973,7 +973,7 @@ start_electricity_damage()
                 continue;
 
             var_0.nextelectricitytrapdamagetime = gettime() + 1000;
-            var_0 _meth_8051( 17, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+            var_0 dodamage( 17, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
         }
     }
 }
@@ -1011,15 +1011,15 @@ start_electricity_sound()
 {
     self.electricity_sound = spawn( "script_origin", self.origin );
     playsoundatpos( self.electricity_sound.origin, "electric_floor_start" );
-    self.electricity_sound _meth_8075( "electric_floor_loop" );
+    self.electricity_sound playloopsound( "electric_floor_loop" );
 }
 
 stop_electricity_sound()
 {
     playsoundatpos( self.electricity_sound.origin, "electric_floor_stop" );
-    self.electricity_sound _meth_806F( 0, 0.25 );
+    self.electricity_sound scalevolume( 0, 0.25 );
     wait 0.25;
-    self.electricity_sound _meth_80AB();
+    self.electricity_sound stoploopsound();
     waitframe();
     self.electricity_sound delete();
 }
@@ -1083,13 +1083,13 @@ start_gas( var_0, var_1 )
 
 start_gas_fx()
 {
-    _func_29C( 90 );
+    activatepersistentclientexploder( 90 );
     playsoundatpos( ( 0, 0, 0 ), "zom_boss_gas_trap_on" );
 }
 
 stop_gas_fx()
 {
-    _func_292( 90 );
+    stopclientexploder( 90 );
     playsoundatpos( ( 0, 0, 0 ), "zom_boss_gas_trap_off" );
 }
 
@@ -1110,14 +1110,14 @@ start_gas_damage()
 
             if ( !var_0 maps\mp\_utility::isjuggernaut() && !maps\mp\zombies\_util::isplayerinlaststand( var_0 ) )
             {
-                if ( !maps\mp\zombies\_util::isplayerinfected( var_0 ) && !var_0 _meth_852C() )
+                if ( !maps\mp\zombies\_util::isplayerinfected( var_0 ) && !var_0 isgod() )
                 {
                     var_0 thread maps\mp\zombies\_zombies_laststand::hostzombielaststand();
                     var_0.lastinfectdamagetime = gettime();
                     continue;
                 }
 
-                var_0 _meth_8051( 50, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+                var_0 dodamage( 50, var_0.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
             }
         }
     }

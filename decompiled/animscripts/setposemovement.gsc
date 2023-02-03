@@ -427,7 +427,7 @@ playblendtransition( var_0, var_1, var_2, var_3 )
     if ( isarray( var_0 ) )
         var_0 = var_0[randomint( var_0.size )];
 
-    self _meth_810F( "blendTransition", var_0, %body, 1, var_1, 1 );
+    self setflaggedanimknoball( "blendTransition", var_0, %body, 1, var_1, 1 );
     animscripts\notetracks::donotetracksfortime( var_1 / 2, "blendTransition" );
     self.a.pose = var_2;
     self.a.movement = var_3;
@@ -500,9 +500,9 @@ blendintostandrun()
         var_0 = 0.5;
 
     if ( isdefined( self.sprint ) )
-        self _meth_8144( animscripts\utility::getmoveanim( "sprint" ), 1, var_0, 1 );
+        self setanimknoblimited( animscripts\utility::getmoveanim( "sprint" ), 1, var_0, 1 );
     else
-        self _meth_8144( animscripts\run::getrunanim(), 1, var_0, 1 );
+        self setanimknoblimited( animscripts\run::getrunanim(), 1, var_0, 1 );
 
     animscripts\run::setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ), self.sidesteprate );
     thread animscripts\run::setcombatstandmoveanimweights( "run" );
@@ -591,7 +591,7 @@ blendintocrouchrun()
         playblendtransition( self.crouchrun_combatanim, 0.6, "crouch", "run" );
     else
     {
-        self _meth_8143( %crouchrun, 1, 0.4, self.moveplaybackrate );
+        self setanimknob( %crouchrun, 1, 0.4, self.moveplaybackrate );
 
         if ( animscripts\utility::usingsmg() && self.a.movement == "run" && !( isdefined( self.custommoveanimset ) && isdefined( self.custommoveanimset["run"] ) ) )
         {
@@ -608,7 +608,7 @@ blendintocrouchrun()
 
 pronetocrouchrun()
 {
-    self _meth_818F( "face current" );
+    self orientmode( "face current" );
     animscripts\utility::exitpronewrapper( 1.0 );
     pronelegsstraighttree( 0.2 );
     animscripts\cover_prone::updatepronewrapper( 0.1 );
@@ -631,13 +631,13 @@ blendintocrouchwalk()
 {
     if ( isdefined( self.crouchrun_combatanim ) )
     {
-        self _meth_8147( self.crouchrun_combatanim, %body, 1, 0.4 );
+        self setanimknoball( self.crouchrun_combatanim, %body, 1, 0.4 );
         playblendtransition( self.crouchrun_combatanim, 0.6, "crouch", "walk" );
         self notify( "BlendIntoCrouchWalk" );
     }
     else
     {
-        self _meth_8143( %crouchrun, 1, 0.4, self.moveplaybackrate );
+        self setanimknob( %crouchrun, 1, 0.4, self.moveplaybackrate );
         thread animscripts\run::updatemoveanimweights( "crouchrun", animscripts\utility::getmoveanim( "crouch" ), animscripts\utility::getmoveanim( "crouch_b" ), animscripts\utility::getmoveanim( "crouch_l" ), animscripts\utility::getmoveanim( "crouch_r" ) );
         wait 0.05;
         playblendtransition( %crouchrun, 0.4, "crouch", "run" );
@@ -661,7 +661,7 @@ standtocrouch()
 pronetocrouch()
 {
     animscripts\utility::randomizeidleset();
-    self _meth_818F( "face current" );
+    self orientmode( "face current" );
     animscripts\utility::exitpronewrapper( 1.0 );
     pronelegsstraighttree( 0.1 );
     animscripts\cover_prone::updatepronewrapper( 0.1 );
@@ -670,7 +670,7 @@ pronetocrouch()
 
 pronetostand()
 {
-    self _meth_818F( "face current" );
+    self orientmode( "face current" );
     animscripts\utility::exitpronewrapper( 1.0 );
     pronelegsstraighttree( 0.1 );
     animscripts\cover_prone::updatepronewrapper( 0.1 );
@@ -705,7 +705,7 @@ pronecrawltoprone()
 
 crouchtoprone()
 {
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( 1.0 );
     pronelegsstraighttree( 0.3 );
     animscripts\cover_prone::updatepronewrapper( 0.1 );
@@ -731,13 +731,13 @@ standtoprone()
     thread playtransitionanimationthread_withoutwaitsetstates( %stand_2_prone, "prone", "stop", undefined, var_0 );
     self waittillmatch( "transAnimDone2", "anim_pose = \"crouch\"" );
     waittillframeend;
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( var_0 );
     self.a.movement = "stop";
     animscripts\cover_prone::updatepronewrapper( 0.1 );
     self waittillmatch( "transAnimDone2", "end" );
     pronelegsstraighttree( 0.2 );
-    self _meth_814B( %prone_aim_idle, 1, 0.1 );
+    self setanim( %prone_aim_idle, 1, 0.1 );
 }
 
 standtopronewalk()
@@ -755,16 +755,16 @@ standtopronerun()
 crouchruntoprone()
 {
     var_0 = 0.5;
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_aiming, %prone_legs_up );
     animscripts\utility::enterpronewrapper( var_0 );
     pronelegsstraighttree( 0.2 );
     animscripts\cover_prone::updatepronewrapper( 0.1 );
-    var_1 = animscripts\utility::getquadrant( self _meth_8190() );
+    var_1 = animscripts\utility::getquadrant( self getmotionangle() );
     var_2 = %crouch_2_prone;
     var_3 = getmovedelta( var_2, 0, 1 );
-    var_4 = self _meth_81B0( var_3 );
+    var_4 = self localtoworldcoords( var_3 );
 
-    if ( self _meth_81C3( var_4 ) )
+    if ( self maymovetopoint( var_4 ) )
         playtransitionanimation( var_2, "prone", "stop", undefined, var_0 );
     else
         playtransitionanimation( %crouch_2_prone_firing, "prone", "stop", undefined, var_0 );
@@ -802,7 +802,7 @@ playtransitionanimationfunc( var_0, var_1, var_2, var_3, var_4, var_5 )
     if ( var_5 )
         thread waitsetstates( getanimlength( var_0 ) / 2.0, "killtimerscript", var_1 );
 
-    self _meth_8110( "transAnimDone2", var_0, %body, 1, 0.2, var_4 );
+    self setflaggedanimknoballrestart( "transAnimDone2", var_0, %body, 1, 0.2, var_4 );
 
     if ( !isdefined( self.a.pose ) )
         self.pose = "undefined";
@@ -818,7 +818,7 @@ playtransitionanimationfunc( var_0, var_1, var_2, var_3, var_4, var_5 )
     self.a.movement = var_2;
 
     if ( isdefined( var_3 ) )
-        self _meth_8147( var_3, %body, 1, 0.3, var_4 );
+        self setanimknoball( var_3, %body, 1, 0.3, var_4 );
 }
 
 waitsetstates( var_0, var_1, var_2 )
@@ -837,11 +837,11 @@ waitsetstates( var_0, var_1, var_2 )
     else if ( var_3 == "prone" && var_2 != "prone" )
     {
         animscripts\utility::exitpronewrapper( 1.0 );
-        self _meth_818F( "face default" );
+        self orientmode( "face default" );
     }
 }
 
 pronelegsstraighttree( var_0 )
 {
-    self _meth_8147( %prone_legsstraight, %body, 1, var_0, 1 );
+    self setanimknoball( %prone_legsstraight, %body, 1, var_0, 1 );
 }

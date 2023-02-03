@@ -50,8 +50,8 @@ tracking_grenade_think( var_0 )
     var_20 = make_tracking_grenade( self );
     var_20 thread tracking_grenade_handle_damage( var_0 );
     var_21 = common_scripts\utility::spawn_tag_origin();
-    var_21 _meth_804D( var_20, "", ( 0, 0, 0 ), ( -90, 0, 0 ) );
-    var_22 = var_0 _meth_80A8();
+    var_21 linkto( var_20, "", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    var_22 = var_0 geteye();
     var_23 = anglestoforward( var_0.angles );
     var_24 = bullettrace( var_22, var_22 + var_23 * 7000, 0, var_20 );
     var_25 = var_24["position"];
@@ -87,7 +87,7 @@ tracking_grenade_think( var_0 )
         }
         else
         {
-            var_22 = var_0 _meth_80A8();
+            var_22 = var_0 geteye();
             var_23 = anglestoforward( var_0.angles );
             var_24 = bullettrace( var_22, var_22 + var_23 * 7000, 0, var_20 );
             var_34 = var_24["position"];
@@ -109,7 +109,7 @@ tracking_grenade_think( var_0 )
         }
         else
         {
-            var_22 = var_0 _meth_80A8();
+            var_22 = var_0 geteye();
             var_36 = var_0.angles;
             var_23 = anglestoforward( var_36 );
             var_37 = anglestoright( var_36 );
@@ -119,7 +119,7 @@ tracking_grenade_think( var_0 )
             var_28 = var_40 * var_4;
         }
 
-        var_41 = _func_284( ( var_28 - var_27 ) * var_16 - var_12, var_13 );
+        var_41 = vectorclamp( ( var_28 - var_27 ) * var_16 - var_12, var_13 );
         var_41 = vectorlerp( var_41, var_29, var_15 );
         var_30 += var_41;
         var_30 += common_scripts\utility::randomvector( var_19 * length( var_30 ) );
@@ -148,7 +148,7 @@ tracking_grenade_think( var_0 )
                     playfxontagforclients( common_scripts\utility::getfx( "tracking_grenade_spray_large" ), var_20, "tag_fx", var_49 );
 
                 var_30 = ( 0, 0, 0 );
-                var_27 += _func_284( var_41, var_13, var_14 );
+                var_27 += vectorclamp( var_41, var_13, var_14 );
             }
 
             var_27 += var_12;
@@ -186,12 +186,12 @@ tracking_grenade_detonate( var_0, var_1 )
 
     if ( distance( var_0.origin, self.origin ) > var_2 )
     {
-        _func_071( "frag_grenade_mp", self.origin, var_1, 0.05, var_0 );
+        magicgrenademanual( "frag_grenade_mp", self.origin, var_1, 0.05, var_0 );
         self delete();
     }
     else
     {
-        self _meth_8276( self.origin, var_1 * 0.1 );
+        self physicslaunchserver( self.origin, var_1 * 0.1 );
         common_scripts\utility::delaycall( 3, ::delete );
     }
 }
@@ -199,7 +199,7 @@ tracking_grenade_detonate( var_0, var_1 )
 tracking_grenade_handle_damage( var_0 )
 {
     self endon( "death" );
-    self _meth_8139( var_0.team, 1 );
+    self makeentitysentient( var_0.team, 1 );
     self waittill( "damage" );
     tracking_grenade_detonate();
 }
@@ -211,7 +211,7 @@ tracking_grenade_scare_enemies( var_0 )
 
 tracking_grenade_get_target( var_0 )
 {
-    var_1 = var_0 _meth_80A8();
+    var_1 = var_0 geteye();
     var_2 = anglestoforward( var_0.angles );
     var_3 = cos( 20 );
     var_4 = undefined;
@@ -225,7 +225,7 @@ tracking_grenade_get_target( var_0 )
 
     foreach ( var_10 in var_5 )
     {
-        var_11 = var_10 _meth_80A8();
+        var_11 = var_10 geteye();
         var_12 = vectordot( vectornormalize( var_11 - var_1 ), var_2 );
 
         if ( var_12 <= var_3 )
@@ -255,7 +255,7 @@ tracking_grenade_thrust_effect( var_0, var_1, var_2 )
         var_3.origin += var_2;
 
     var_3.angles = vectortoangles( var_0 );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
 
     foreach ( var_5 in level.players )
         playfxontagforclients( common_scripts\utility::getfx( var_1 ), self, "tag_fx", var_5 );
@@ -268,7 +268,7 @@ make_tracking_grenade( var_0 )
     var_1 = var_0.origin;
     var_0 delete();
     var_2 = spawn( "script_model", var_1 );
-    var_2 _meth_80B1( "npc_variable_grenade_lethal" );
+    var_2 setmodel( "npc_variable_grenade_lethal" );
     return var_2;
 }
 
@@ -276,7 +276,7 @@ get_npc_center_offset()
 {
     if ( isai( self ) && isalive( self ) )
     {
-        var_0 = self _meth_80A8()[2];
+        var_0 = self geteye()[2];
         var_1 = self.origin[2];
         var_2 = var_0 - var_1;
         return ( 0, 0, var_2 );

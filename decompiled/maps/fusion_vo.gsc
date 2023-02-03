@@ -730,13 +730,13 @@ init_pcap_vo()
         init_pcap_vo_intro();
         init_pcap_vo_outro();
     }
-    else if ( _func_21E( "fusion_intro_tr" ) )
+    else if ( istransientloaded( "fusion_intro_tr" ) )
     {
         init_pcap_vo_intro();
         level waittill( "tff_post_transition_middle_to_outro" );
         init_pcap_vo_outro();
     }
-    else if ( _func_21E( "fusion_outro_tr" ) )
+    else if ( istransientloaded( "fusion_outro_tr" ) )
         init_pcap_vo_outro();
 }
 

@@ -3,7 +3,7 @@
 
 init()
 {
-    precacheitem( "iw5_dlcgun12loot5_mp" );
+    precacheshellshock( "iw5_dlcgun12loot5_mp" );
     precacherumble( "tank_rumble" );
     precacherumble( "heavygun_fire" );
     precacherumble( "smg_fire" );
@@ -28,10 +28,10 @@ init()
     level.skylight_actual_rocket.origin = level.rocket_start;
     level.skylight_actual_rocket.angles = level.rocket_start_angles;
     level.skylight_camera_link.origin = level.camera_start;
-    level.skylight_camera_link _meth_80B1( "tag_player" );
+    level.skylight_camera_link setmodel( "tag_player" );
     level.skylight_rocket_fx_tag = spawn( "script_model", ( 0, 0, 0 ) );
-    level.skylight_rocket_fx_tag _meth_80B1( "tag_origin" );
-    level.skylight_rocket_fx_tag _meth_804D( level.skylight_actual_rocket, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    level.skylight_rocket_fx_tag setmodel( "tag_origin" );
+    level.skylight_rocket_fx_tag linkto( level.skylight_actual_rocket, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.missileflighttime = 10;
     level.skylight_real_missile_number = 30;
     level.skylight_fx_missile_chance = 100;
@@ -52,7 +52,7 @@ tryuseskylight( var_0, var_1 )
 {
     if ( !skylight_available() )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
@@ -170,7 +170,7 @@ skylight_monitor_fire()
     var_3 = var_2 + var_1 * 12000;
     var_4 = bullettrace( var_2, var_3, 0, level.skylight_actual_rocket );
     var_5 = var_4["position"];
-    self _meth_80AD( "heavygun_fire" );
+    self playrumbleonentity( "heavygun_fire" );
     earthquake( 0.4, 1, level.skylight_camera_link.origin, 2000, self );
     wait 0.2;
     self notify( "skylight_control_over" );
@@ -182,11 +182,11 @@ skylight_cleanup_player()
     self endon( "disconnect" );
     common_scripts\utility::waittill_any( "skylight_control_over", "skylight_cancel" );
     playerremovenotifycommands();
-    self _meth_8322();
-    self _meth_804F();
-    self _meth_82FB( "fov_scale", 1.0 );
-    self _meth_80FF();
-    self _meth_82FB( "ui_solar_beam", 0 );
+    self enableweaponswitch();
+    self unlink();
+    self setclientomnvar( "fov_scale", 1.0 );
+    self disableslowaim();
+    self setclientomnvar( "ui_solar_beam", 0 );
     self thermalvisionfofoverlayoff();
     level.skylight_fire_fx_ent delete();
 
@@ -207,7 +207,7 @@ skylight_cleanup_rocket()
     wait 0.1;
     playfx( common_scripts\utility::getfx( "mp_bigb_killstreak_rocket_explosion" ), level.skylight_actual_rocket.origin );
     stopfxontag( common_scripts\utility::getfx( "mp_bigb_killstreak_rockettrail" ), level.skylight_rocket_fx_tag, "tag_origin" );
-    level.skylight_actual_rocket _meth_827A();
+    level.skylight_actual_rocket scriptmodelclearanim();
     wait 0.1;
     level.skylight_actual_rocket.origin = level.rocket_start;
     level.skylight_actual_rocket.angles = level.rocket_start_angles;
@@ -224,13 +224,13 @@ playeraddnotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self _meth_82DD( "SwitchVisionMode", "+actionslot 1" );
-        self _meth_82DD( "ToggleControlState", "+activate" );
-        self _meth_82DD( "ToggleControlCancel", "-activate" );
-        self _meth_82DD( "ToggleControlState", "+usereload" );
-        self _meth_82DD( "ToggleControlCancel", "-usereload" );
-        self _meth_82DD( "StartFire", "+attack" );
-        self _meth_82DD( "StartFire", "+attack_akimbo_accessible" );
+        self notifyonplayercommand( "SwitchVisionMode", "+actionslot 1" );
+        self notifyonplayercommand( "ToggleControlState", "+activate" );
+        self notifyonplayercommand( "ToggleControlCancel", "-activate" );
+        self notifyonplayercommand( "ToggleControlState", "+usereload" );
+        self notifyonplayercommand( "ToggleControlCancel", "-usereload" );
+        self notifyonplayercommand( "StartFire", "+attack" );
+        self notifyonplayercommand( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
@@ -238,13 +238,13 @@ playerremovenotifycommands()
 {
     if ( !isbot( self ) )
     {
-        self _meth_849C( "SwitchVisionMode", "+actionslot 1" );
-        self _meth_849C( "ToggleControlState", "+activate" );
-        self _meth_849C( "ToggleControlCancel", "-activate" );
-        self _meth_849C( "ToggleControlState", "+usereload" );
-        self _meth_849C( "ToggleControlCancel", "-usereload" );
-        self _meth_849C( "StartFire", "+attack" );
-        self _meth_849C( "StartFire", "+attack_akimbo_accessible" );
+        self notifyonplayercommandremove( "SwitchVisionMode", "+actionslot 1" );
+        self notifyonplayercommandremove( "ToggleControlState", "+activate" );
+        self notifyonplayercommandremove( "ToggleControlCancel", "-activate" );
+        self notifyonplayercommandremove( "ToggleControlState", "+usereload" );
+        self notifyonplayercommandremove( "ToggleControlCancel", "-usereload" );
+        self notifyonplayercommandremove( "StartFire", "+attack" );
+        self notifyonplayercommandremove( "StartFire", "+attack_akimbo_accessible" );
     }
 }
 
@@ -256,18 +256,18 @@ setskylightvisionandlightsetpermap( var_0 )
     wait(var_0);
 
     if ( isdefined( level.vulcanvisionset ) )
-        self _meth_847A( level.vulcanvisionset, 0 );
+        self setclienttriggervisionset( level.vulcanvisionset, 0 );
 
     if ( isdefined( level.vulcanlightset ) )
-        self _meth_83C0( level.vulcanlightset );
+        self lightsetforplayer( level.vulcanlightset );
 
     maps\mp\killstreaks\_aerial_utility::handle_player_starting_aerial_view();
 }
 
 removeskylightvisionandlightsetpermap( var_0 )
 {
-    self _meth_847A( "", var_0 );
-    self _meth_83C0( "" );
+    self setclienttriggervisionset( "", var_0 );
+    self lightsetforplayer( "" );
     maps\mp\killstreaks\_aerial_utility::handle_player_ending_aerial_view();
 }
 
@@ -281,7 +281,7 @@ skylight_play_rumble()
     wait 0.1;
     earthquake( 0.2, 15, ( 4176.5, 14000, 18000 ), 20000, self );
     wait 0.5;
-    self _meth_80AD( "heavygun_fire" );
+    self playrumbleonentity( "heavygun_fire" );
     thread skylight_loop_rumble( 20 );
 }
 
@@ -292,17 +292,17 @@ skylight_play_rumble_on_all_players()
         if ( var_1 != self )
         {
             earthquake( 0.3, 3, level.rocket_start, 3500, var_1 );
-            var_1 _meth_80AE( "tank_rumble" );
+            var_1 playrumblelooponentity( "tank_rumble" );
             var_1 thread skylight_end_rumble_loop( 0.8 );
 
             if ( distancesquared( level.rocket_start, var_1.origin ) < 1000000 )
             {
-                var_1 _meth_80AD( "heavygun_fire" );
+                var_1 playrumbleonentity( "heavygun_fire" );
                 continue;
             }
 
             if ( distancesquared( level.rocket_start, var_1.origin ) < 4000000 )
-                var_1 _meth_80AD( "smg_fire" );
+                var_1 playrumbleonentity( "smg_fire" );
         }
     }
 }
@@ -314,7 +314,7 @@ skylight_loop_rumble( var_0 )
 
     while ( var_0 > 0.0 )
     {
-        self _meth_80AD( "smg_fire" );
+        self playrumbleonentity( "smg_fire" );
         var_0 -= 0.2;
         wait 0.2;
     }
@@ -324,25 +324,25 @@ skylight_end_rumble_loop( var_0 )
 {
     self endon( "death" );
     level common_scripts\utility::waittill_notify_or_timeout( "game_ended", var_0 );
-    self _meth_80AF( "tank_rumble" );
+    self stoprumble( "tank_rumble" );
 }
 
 skylight_rocket_control()
 {
-    self _meth_8321();
-    self _meth_82FB( "fov_scale", 0.5 );
-    self _meth_80FE( 0.5, 0.5 );
+    self disableweaponswitch();
+    self setclientomnvar( "fov_scale", 0.5 );
+    self enableslowaim( 0.5, 0.5 );
     self thermalvisionfofoverlayon();
-    level.skylight_camera_link _meth_82AE( level.camera_end, level.missileflighttime, 1, 0 );
-    self _meth_807E( level.skylight_camera_link, "tag_player", 1, 60, 60, -30, 75, 1 );
+    level.skylight_camera_link moveto( level.camera_end, level.missileflighttime, 1, 0 );
+    self playerlinkweaponviewtodelta( level.skylight_camera_link, "tag_player", 1, 60, 60, -30, 75, 1 );
     thread setskylightvisionandlightsetpermap( 0.5 );
     maps\mp\_utility::playersaveangles();
     self setangles( ( 40, 270, 0 ) );
-    self _meth_82FB( "ui_solar_beam", 1 );
+    self setclientomnvar( "ui_solar_beam", 1 );
     var_0 = gettime() + level.missileflighttime * 1000;
-    self _meth_82FB( "ui_solar_beam_timer", var_0 );
-    level.skylight_fire_fx_ent = _func_2C2( level.skylight_fire_fx, level.skylight_camera_link, "tag_player", self );
-    setwinningteam( level.skylight_fire_fx_ent, 1 );
+    self setclientomnvar( "ui_solar_beam_timer", var_0 );
+    level.skylight_fire_fx_ent = spawnlinkedfxforclient( level.skylight_fire_fx, level.skylight_camera_link, "tag_player", self );
+    setfxkillondelete( level.skylight_fire_fx_ent, 1 );
     triggerfx( level.skylight_fire_fx_ent );
     thread aud_skylight_launch_sfx();
     thread aud_skylight_launch_sfx_3d();
@@ -357,7 +357,7 @@ aud_skylight_launch_sfx()
     self playlocalsound( "paladin_toggle_flir_plr" );
     self playlocalsound( "bb_missile_jet_pov_effit" );
     common_scripts\utility::waittill_any( "skylight_control_over", "skylight_cancel" );
-    self _meth_80AC();
+    self stopsounds();
 }
 
 aud_skylight_launch_sfx_3d()
@@ -368,14 +368,14 @@ aud_skylight_launch_sfx_3d()
     wait 0.2;
     self playsound( "bb_missile_jet_pov_effit_3d" );
     common_scripts\utility::waittill_any( "skylight_control_over", "skylight_cancel" );
-    self _meth_80AC();
+    self stopsounds();
 }
 
 skylight_rocket_animate()
 {
     self endon( "skylight_cancel" );
     wait 0.1;
-    level.skylight_actual_rocket _meth_827B( "bbn_skylight_rocket_launch" );
+    level.skylight_actual_rocket scriptmodelplayanimdeltamotion( "bbn_skylight_rocket_launch" );
 
     foreach ( var_1 in level.players )
     {

@@ -1444,7 +1444,7 @@ init_pcap_vo()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "lab_intro_tr" ) )
+        if ( !istransientloaded( "lab_intro_tr" ) )
             var_0 = 0;
     }
 
@@ -1462,9 +1462,9 @@ init_pcap_vo()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "lab_intro_tr" ) )
+        if ( istransientloaded( "lab_intro_tr" ) )
             level waittill( "tff_post_intro_to_middle" );
-        else if ( !_func_21E( "lab_middle_tr" ) )
+        else if ( !istransientloaded( "lab_middle_tr" ) )
             var_0 = 0;
     }
 
@@ -1477,7 +1477,7 @@ init_pcap_vo()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "lab_outro_tr" ) )
+        if ( !istransientloaded( "lab_outro_tr" ) )
             level waittill( "tff_post_middle_to_outro" );
     }
 

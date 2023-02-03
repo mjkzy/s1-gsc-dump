@@ -253,7 +253,7 @@ ams_proxy_vehicle_speed()
     var_2 = amsx_get_proxy_vehicle_ent();
 
     if ( isdefined( var_2 ) )
-        var_0 = var_2 _meth_8286();
+        var_0 = var_2 vehicle_getspeed();
 
     return var_0;
 }

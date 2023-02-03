@@ -52,7 +52,7 @@ drone_init()
 
     thread drone_array_handling( self );
     level notify( "new_drone" );
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     maps\_drone_base::drone_give_soul();
 
     if ( isdefined( self.script_drone_override ) )
@@ -118,17 +118,17 @@ drone_death_thread()
             drone_play_scripted_anim( var_1, "deathplant" );
         else if ( isdefined( self.skipdeathanim ) )
         {
-            self _meth_8023();
+            self startragdoll();
             drone_play_scripted_anim( var_1, "deathplant" );
         }
         else
         {
             drone_play_scripted_anim( var_1, "deathplant" );
-            self _meth_8023();
+            self startragdoll();
         }
     }
 
-    self _meth_82BF();
+    self notsolid();
     thread drone_thermal_draw_disable( 2 );
 
     if ( isdefined( self ) && isdefined( self.nocorpsedelete ) )
@@ -200,9 +200,9 @@ drone_play_looping_anim( var_0, var_1 )
         self [[ self.drone_loop_override ]]( var_0, var_1 );
     else
     {
-        self _meth_8142( %body, 0.2 );
-        self _meth_8141();
-        self _meth_8110( "drone_anim", var_0, %body, 1, 0.2, var_1 );
+        self clearanim( %body, 0.2 );
+        self stopanimscripted();
+        self setflaggedanimknoballrestart( "drone_anim", var_0, %body, 1, 0.2, var_1 );
         self.droneanim = var_0;
     }
 }
@@ -210,16 +210,16 @@ drone_play_looping_anim( var_0, var_1 )
 drone_play_scripted_anim( var_0, var_1 )
 {
     if ( self.type == "human" )
-        self _meth_8142( %body, 0.2 );
+        self clearanim( %body, 0.2 );
 
-    self _meth_8141();
+    self stopanimscripted();
     var_2 = "normal";
 
     if ( isdefined( var_1 ) )
         var_2 = "deathplant";
 
     var_3 = "drone_anim";
-    self _meth_813E( var_3, self.origin, self.angles, var_0, var_2 );
+    self animscripted( var_3, self.origin, self.angles, var_0, var_2 );
     self waittillmatch( "drone_anim", "end" );
 }
 
@@ -271,8 +271,8 @@ drone_archetype_idle_internal()
     if ( !isdefined( self.drone_archetype_custom_idles ) || !isarray( self.drone_archetype_custom_idles ) )
         return;
 
-    self _meth_8142( %body, 0.2 );
-    self _meth_8141();
+    self clearanim( %body, 0.2 );
+    self stopanimscripted();
     var_1 = 1;
     animscripts\face::playfacialanim( undefined, "idle", undefined );
 
@@ -282,12 +282,12 @@ drone_archetype_idle_internal()
 
         if ( randomint( 100 ) < var_0 || var_1 )
         {
-            self _meth_8110( "drone_anim", var_2, %body, 1, 0.2, 1 );
+            self setflaggedanimknoballrestart( "drone_anim", var_2, %body, 1, 0.2, 1 );
             var_1 = 0;
         }
 
         self waittillmatch( "drone_anim", "end" );
-        self _meth_8110( "drone_anim", self.drone_archetype_custom_idle_base, %body, 1, 0.2, 1 );
+        self setflaggedanimknoballrestart( "drone_anim", self.drone_archetype_custom_idle_base, %body, 1, 0.2, 1 );
     }
 }
 
@@ -354,7 +354,7 @@ drone_fight( var_0, var_1, var_2 )
     self.angles = ( 0, self.angles[1], self.angles[2] );
 
     if ( var_0 == "coverprone" )
-        self _meth_82AE( self.origin + ( 0, 0, 8 ), 0.05 );
+        self moveto( self.origin + ( 0, 0, 8 ), 0.05 );
 
     self.noragdoll = 1;
     var_4 = level.drone_anims[self.team][var_0];
@@ -461,8 +461,8 @@ drone_shoot()
     self endon( "firing" );
     drone_shoot_fx();
     var_0 = %exposed_crouch_shoot_auto_v2;
-    self _meth_8145( var_0, 1, 0.2, 1.0 );
-    common_scripts\utility::delaycall( 0.25, ::_meth_8142, var_0, 0 );
+    self setanimknobrestart( var_0, 1, 0.2, 1.0 );
+    common_scripts\utility::delaycall( 0.25, ::clearanim, var_0, 0 );
 }
 
 drone_shoot_fx()
@@ -525,7 +525,7 @@ drone_get_final_target_node()
 
     if ( !isdefined( var_2 ) )
     {
-        var_3 = _func_200( var_0[var_0.size - 1]["origin"], var_0[var_0.size - 1]["origin"] );
+        var_3 = getnodesonpath( var_0[var_0.size - 1]["origin"], var_0[var_0.size - 1]["origin"] );
         var_2 = var_3[var_3.size - 1];
     }
 
@@ -609,7 +609,7 @@ drone_move()
 
             if ( !isdefined( var_0[var_6]["dist"] ) )
             {
-                self _meth_82B5( vectortoangles( var_0[var_0.size - 1]["vec"] ), var_5 );
+                self rotateto( vectortoangles( var_0[var_0.size - 1]["vec"] ), var_5 );
                 var_14 = distance( self.origin, var_0[var_0.size - 1]["origin"] );
                 var_15 = var_14 / var_3 * self.moveplaybackrate;
                 var_16 = var_0[var_0.size - 1]["origin"] + ( 0, 0, 100 );
@@ -622,7 +622,7 @@ drone_move()
                     thread common_scripts\utility::draw_line_for_time( self.origin, var_18, 0, 0, 1, var_5 );
                 }
 
-                self _meth_82AE( var_18, var_15 );
+                self moveto( var_18, var_15 );
                 wait(var_15);
                 self notify( "goal" );
                 thread check_delete();
@@ -678,7 +678,7 @@ drone_move()
         }
 
         var_21 = vectortoangles( var_20 - self.origin );
-        self _meth_82B5( ( 0, var_21[1], 0 ), var_5 );
+        self rotateto( ( 0, var_21[1], 0 ), var_5 );
         var_22 = var_3 * var_5 * self.moveplaybackrate;
         var_23 = vectornormalize( var_20 - self.origin );
         var_19 = var_23 * var_22;
@@ -687,7 +687,7 @@ drone_move()
         if ( getdvar( "debug_drones" ) == "1" )
             thread common_scripts\utility::draw_line_for_time( self.origin, var_19, 0, 0, 1, var_5 );
 
-        self _meth_82AE( var_19, var_5 );
+        self moveto( var_19, var_5 );
         wait(var_5);
 
         if ( isdefined( self.cur_node["script_noteworthy"] ) && ( self.cur_node["script_noteworthy"] == "stairs_start_up" || self.cur_node["script_noteworthy"] == "stairs_start_down" ) )
@@ -866,7 +866,7 @@ check_delete()
             self delete();
             break;
         case "die_on_goal":
-            self _meth_8052();
+            self kill();
             break;
     }
 }

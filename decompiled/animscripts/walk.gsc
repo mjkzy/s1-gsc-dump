@@ -45,8 +45,8 @@ movewalk()
 dowalkanimoverride( var_0 )
 {
     self endon( "movemode" );
-    self _meth_8142( %combatrun, 0.6 );
-    self _meth_8147( %combatrun, %body, 1, 0.5, self.moveplaybackrate );
+    self clearanim( %combatrun, 0.6 );
+    self setanimknoball( %combatrun, %body, 1, 0.5, self.moveplaybackrate );
 
     if ( isarray( self.walk_overrideanim ) )
     {
@@ -58,7 +58,7 @@ dowalkanimoverride( var_0 )
     else
         var_1 = self.walk_overrideanim;
 
-    self _meth_8152( "moveanim", var_1, 1, 0.2 );
+    self setflaggedanimknob( "moveanim", var_1, 1, 0.2 );
     animscripts\shared::donotetracks( "moveanim" );
 }
 
@@ -116,19 +116,19 @@ dowalkanim( var_0 )
         if ( isdefined( self.enemy ) )
         {
             animscripts\cqb::cqbtracking();
-            self _meth_810F( "walkanim", animscripts\cqb::determinecqbanim(), %walk_and_run_loops, 1, 1, var_1, 1 );
+            self setflaggedanimknoball( "walkanim", animscripts\cqb::determinecqbanim(), %walk_and_run_loops, 1, 1, var_1, 1 );
         }
         else
-            self _meth_810F( "walkanim", var_0, %body, 1, 1, var_1, 1 );
+            self setflaggedanimknoball( "walkanim", var_0, %body, 1, 1, var_1, 1 );
 
         animscripts\run::setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ) );
         thread animscripts\run::setcombatstandmoveanimweights( "walk" );
     }
     else if ( self.a.pose == "prone" )
-        self _meth_8152( "walkanim", animscripts\utility::getmoveanim( "prone" ), 1, 0.3, self.moveplaybackrate );
+        self setflaggedanimknob( "walkanim", animscripts\utility::getmoveanim( "prone" ), 1, 0.3, self.moveplaybackrate );
     else
     {
-        self _meth_810F( "walkanim", var_0, %body, 1, 1, var_1, 1 );
+        self setflaggedanimknoball( "walkanim", var_0, %body, 1, 1, var_1, 1 );
         animscripts\run::setmovenonforwardanims( animscripts\utility::getmoveanim( "move_b" ), animscripts\utility::getmoveanim( "move_l" ), animscripts\utility::getmoveanim( "move_r" ) );
         thread animscripts\run::setcombatstandmoveanimweights( "walk" );
     }

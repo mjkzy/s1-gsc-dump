@@ -30,7 +30,7 @@ tryuseairstrike( var_0, var_1, var_2 )
 {
     if ( isdefined( level.strafing_run_airstrike ) )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"KILLSTREAKS_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
@@ -237,7 +237,7 @@ withinothercarepackagenodes( var_0, var_1 )
 
     foreach ( var_6 in var_1.usednodes )
     {
-        var_7 = _func_220( var_6.origin, var_0 );
+        var_7 = distance2dsquared( var_6.origin, var_0 );
 
         if ( var_7 < var_4 )
             return 1;
@@ -259,7 +259,7 @@ findclosenode( var_0, var_1, var_2, var_3, var_4 )
         if ( var_5 <= 0 )
             break;
 
-        if ( !_func_20C( var_11, 1 ) )
+        if ( !nodeexposedtosky( var_11, 1 ) )
             continue;
 
         if ( common_scripts\utility::array_contains( var_2.usednodes, var_11 ) )
@@ -328,22 +328,22 @@ spawnairstrikeplane( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7 )
 
     var_9 = spawn( "script_model", var_3 );
     var_9.angles = var_4;
-    var_9 _meth_80B1( "vehicle_airplane_shrike" );
+    var_9 setmodel( "vehicle_airplane_shrike" );
     var_9.minimapicon = spawnplane( var_1, "script_model", var_3, "compass_objpoint_airstrike_friendly", var_8 );
-    var_9.minimapicon _meth_80B1( "tag_origin" );
-    var_9.minimapicon _meth_8446( var_9, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_9.minimapicon setmodel( "tag_origin" );
+    var_9.minimapicon vehicle_jetbikesethoverforcescale( var_9, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     var_9.modules = var_6;
     var_9.vehicletype = "strafing_run";
     addplanetolist( var_9 );
-    var_9 _meth_82C0( 1 );
-    var_9 _meth_82C1( 1 );
+    var_9 setcandamage( 1 );
+    var_9 setcanradiusdamage( 1 );
     var_9 thread maps\mp\gametypes\_damage::setentitydamagecallback( 1000, undefined, ::onairstrikedeath, maps\mp\killstreaks\_aerial_utility::heli_modifydamage, 1 );
 
     if ( common_scripts\utility::array_contains( var_9.modules, "strafing_run_airstrike_flares" ) )
         var_9 thread airstrike_flares_monitor();
 
     var_9 thread handledeath();
-    var_9 _meth_8075( "bombrun_jet_dist_loop" );
+    var_9 playloopsound( "bombrun_jet_dist_loop" );
     var_9.lifeid = var_0;
     var_9.owner = var_1;
     var_9.team = var_1.team;
@@ -386,16 +386,16 @@ planehandlehostmigration()
     for (;;)
     {
         level waittill( "host_migration_begin" );
-        self _meth_84BD( 1 );
+        self scriptmodelpauseanim( 1 );
         level waittill( "host_migration_end" );
-        self _meth_84BD( 0 );
+        self scriptmodelpauseanim( 0 );
     }
 }
 
 planeanimatepath( var_0 )
 {
     self endon( "airstrike_complete" );
-    self _meth_827B( "strafing_run_ks_flyby", "airstrike" );
+    self scriptmodelplayanimdeltamotion( "strafing_run_ks_flyby", "airstrike" );
     thread planehandlehostmigration();
     self.status = "flying_in";
     self.flyingspeed = 3333.33;
@@ -461,11 +461,11 @@ playbombfx()
     self endon( "stop_bombing" );
     self endon( "airstrike_complete" );
     self.bomb_tag_left = spawn( "script_model", ( 0, 0, 0 ) );
-    self.bomb_tag_left _meth_80B1( "tag_origin" );
-    self.bomb_tag_left _meth_804D( self, "bombaydoor_left_jnt", ( 0, 0, 0 ), ( 0, -90, 0 ) );
+    self.bomb_tag_left setmodel( "tag_origin" );
+    self.bomb_tag_left linkto( self, "bombaydoor_left_jnt", ( 0, 0, 0 ), ( 0, -90, 0 ) );
     self.bomb_tag_right = spawn( "script_model", ( 0, 0, 0 ) );
-    self.bomb_tag_right _meth_80B1( "tag_origin" );
-    self.bomb_tag_right _meth_804D( self, "bombaydoor_right_jnt", ( 0, 0, 0 ), ( 0, -90, 0 ) );
+    self.bomb_tag_right setmodel( "tag_origin" );
+    self.bomb_tag_right linkto( self, "bombaydoor_right_jnt", ( 0, 0, 0 ), ( 0, -90, 0 ) );
 
     for (;;)
     {
@@ -482,11 +482,11 @@ stealthbomber_killcam( var_0, var_1 )
     var_2 = anglestoforward( var_0.angles );
     var_3 = spawn( "script_model", var_0.origin + ( 0, 0, 100 ) - var_2 * 200 );
     var_0.killcament = var_3;
-    var_0.killcament _meth_834D( "airstrike" );
+    var_0.killcament setscriptmoverkillcam( "airstrike" );
     var_0.airstriketype = var_1;
     var_3.starttime = gettime();
     var_3 thread deleteaftertime( 16.0 );
-    var_3 _meth_804D( var_0, "tag_origin", ( -256, 768, 768 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, "tag_origin", ( -256, 768, 768 ), ( 0, 0, 0 ) );
 }
 
 callstrike_bomb( var_0, var_1, var_2, var_3 )
@@ -525,14 +525,14 @@ callstrike_bomb( var_0, var_1, var_2, var_3 )
 
     thread maps\mp\_utility::playsoundinspace( "bombrun_snap", var_6 );
     radiusartilleryshellshock( var_6, 512, 8, 4, var_1.team );
-    self entityradiusdamage( var_6 + ( 0, 0, 16 ), 896, 300, 50, var_1, "MOD_EXPLOSIVE", "stealth_bomb_mp" );
+    self radiusdamage( var_6 + ( 0, 0, 16 ), 896, 300, 50, var_1, "MOD_EXPLOSIVE", "stealth_bomb_mp" );
 
     if ( isdefined( level.ishorde ) && level.ishorde && isdefined( level.flying_attack_drones ) )
     {
         foreach ( var_10 in level.flying_attack_drones )
         {
-            if ( var_10.origin[2] > var_6[2] - 24 && var_10.origin[2] < var_6[2] + 1000 && _func_220( var_10.origin, var_6 ) < 90000 )
-                var_10 _meth_8051( randomintrange( 50, 300 ), var_6 + ( 0, 0, 16 ), var_1, var_1, "MOD_EXPLOSIVE", "stealth_bomb_mp" );
+            if ( var_10.origin[2] > var_6[2] - 24 && var_10.origin[2] < var_6[2] + 1000 && distance2dsquared( var_10.origin, var_6 ) < 90000 )
+                var_10 dodamage( randomintrange( 50, 300 ), var_6 + ( 0, 0, 16 ), var_1, var_1, "MOD_EXPLOSIVE", "stealth_bomb_mp" );
         }
     }
 }
@@ -674,10 +674,10 @@ waitforairstrikecancel()
     self endon( "disconnect" );
     self waittill( "stop_location_selection" );
     self setblurforplayer( 0, 0.3 );
-    self _meth_82FB( "ui_map_location_blocked", 0 );
+    self setclientomnvar( "ui_map_location_blocked", 0 );
 
     if ( maps\mp\gametypes\_hostmigration::waittillhostmigrationdone() > 0 )
-        self _meth_8315( common_scripts\utility::getlastweapon() );
+        self switchtoweapon( common_scripts\utility::getlastweapon() );
 
     level.strafing_run_airstrike = undefined;
 }
@@ -699,9 +699,9 @@ selectairstrikelocation( var_0, var_1, var_2 )
     if ( common_scripts\utility::array_contains( var_2, "strafing_run_airstrike_two" ) )
         var_5 = 2;
 
-    self _meth_82FB( "ui_map_location_use_carepackages", common_scripts\utility::array_contains( var_2, "strafing_run_airstrike_package" ) );
-    self _meth_82FB( "ui_map_location_num_planes", var_5 );
-    self _meth_82FB( "ui_map_location_height", getplaneflyheight() );
+    self setclientomnvar( "ui_map_location_use_carepackages", common_scripts\utility::array_contains( var_2, "strafing_run_airstrike_package" ) );
+    self setclientomnvar( "ui_map_location_num_planes", var_5 );
+    self setclientomnvar( "ui_map_location_height", getplaneflyheight() );
     maps\mp\_utility::_beginlocationselection( var_1, "map_artillery_selector", var_4, var_3 );
     thread waitforairstrikecancel();
     self endon( "stop_location_selection" );
@@ -721,9 +721,9 @@ selectairstrikelocation( var_0, var_1, var_2 )
         {
             var_6 = var_9;
             var_7 = var_10;
-            self _meth_82FB( "ui_map_location_use_carepackages", 0 );
-            self _meth_82FB( "ui_map_location_num_planes", 0 );
-            self _meth_82FB( "ui_map_location_height", 0 );
+            self setclientomnvar( "ui_map_location_use_carepackages", 0 );
+            self setclientomnvar( "ui_map_location_num_planes", 0 );
+            self setclientomnvar( "ui_map_location_height", 0 );
             break;
         }
         else
@@ -732,7 +732,7 @@ selectairstrikelocation( var_0, var_1, var_2 )
 
     self setblurforplayer( 0, 0.3 );
     self notify( "location_selection_complete" );
-    self _meth_82FB( "ui_map_location_blocked", 0 );
+    self setclientomnvar( "ui_map_location_blocked", 0 );
     maps\mp\_matchdata::logkillstreakevent( var_1, var_6 );
     thread finishairstrikeusage( var_0, [ var_6 ], [ var_7 ], var_1, var_2 );
     return 1;
@@ -746,12 +746,12 @@ showblockedhud()
     self notify( "airstrikeShowBlockedHUD" );
     self endon( "airstrikeShowBlockedHUD" );
 
-    if ( self _meth_8447( "ui_map_location_blocked" ) == 0 )
+    if ( self getclientomnvar( "ui_map_location_blocked" ) == 0 )
         self playlocalsound( "recon_drn_cloak_notready" );
 
-    self _meth_82FB( "ui_map_location_blocked", 1 );
+    self setclientomnvar( "ui_map_location_blocked", 1 );
     wait 1.5;
-    self _meth_82FB( "ui_map_location_blocked", 0 );
+    self setclientomnvar( "ui_map_location_blocked", 0 );
 }
 
 validateflightlocationanddirection( var_0, var_1, var_2, var_3 )
@@ -762,7 +762,7 @@ validateflightlocationanddirection( var_0, var_1, var_2, var_3 )
     if ( common_scripts\utility::array_contains( var_2, "strafing_run_airstrike_two" ) )
         var_5 = 2;
 
-    return _func_2CB( var_0, var_4, var_1, var_5 );
+    return bombingruntracepassed( var_0, var_4, var_1, var_5 );
 }
 
 finishairstrikeusage( var_0, var_1, var_2, var_3, var_4 )
@@ -953,30 +953,30 @@ watchforjoin( var_0, var_1, var_2 )
 
     var_3 maps\mp\_utility::playersaveangles();
     var_3 maps\mp\_utility::setusingremote( "strafing_run" );
-    var_3 _meth_82DD( "airstrike_fire", "+attack" );
-    var_3 _meth_82DD( "airstrike_fire", "+attack_akimbo_accessible" );
+    var_3 notifyonplayercommand( "airstrike_fire", "+attack" );
+    var_3 notifyonplayercommand( "airstrike_fire", "+attack_akimbo_accessible" );
     var_5 = spawnturret( "misc_turret", var_1 gettagorigin( "tag_origin" ), "sentry_minigun_mp" );
-    var_5 _meth_815C();
-    var_5 _meth_80B1( "tag_turret" );
-    var_5 _meth_8446( var_1, "tag_origin", ( 0, 0, 0 ), ( 70, 180, 0 ) );
-    var_3 _meth_807E( var_5, "tag_player", 0, 180, 180, 5, 15, 0 );
-    var_3 _meth_80A0( 0 );
-    var_3 _meth_80A1( 1 );
-    var_3 _meth_80E8( var_5, 60, 45 );
+    var_5 turretfiredisable();
+    var_5 setmodel( "tag_turret" );
+    var_5 vehicle_jetbikesethoverforcescale( var_1, "tag_origin", ( 0, 0, 0 ), ( 70, 180, 0 ) );
+    var_3 playerlinkweaponviewtodelta( var_5, "tag_player", 0, 180, 180, 5, 15, 0 );
+    var_3 playerlinkedsetviewznear( 0 );
+    var_3 playerlinkedsetusebaseangleforviewclamp( 1 );
+    var_3 remotecontrolturret( var_5, 60, 45 );
     var_6 = var_3 maps\mp\killstreaks\_missile_strike::buildweaponsettings( [] );
     missileeyesinit( var_3, var_6, var_2 );
     waittillfiremissile( var_1, var_3 );
 
     if ( isdefined( var_3 ) )
     {
-        earthquake( 0.4, 1, var_3 _meth_845C(), 300 );
+        earthquake( 0.4, 1, var_3 getvieworigin(), 300 );
         firemissile( var_3, var_5, var_6 );
 
         if ( isdefined( var_3 ) )
         {
             var_3 maps\mp\killstreaks\_coop_util::playerresetaftercoopstreak();
-            var_3 _meth_849C( "airstrike_fire", "+attack" );
-            var_3 _meth_849C( "airstrike_fire", "+attack_akimbo_accessible" );
+            var_3 notifyonplayercommandremove( "airstrike_fire", "+attack" );
+            var_3 notifyonplayercommandremove( "airstrike_fire", "+attack_akimbo_accessible" );
         }
     }
 
@@ -1004,15 +1004,15 @@ firemissile( var_0, var_1, var_2 )
     if ( !isdefined( var_0 ) )
         return;
 
-    var_0 _meth_804F();
-    var_0 _meth_80E9( var_1 );
-    var_0 _meth_82FB( "fov_scale", 4.33333 );
+    var_0 unlink();
+    var_0 remotecontrolturretoff( var_1 );
+    var_0 setclientomnvar( "fov_scale", 4.33333 );
     missileeyesgo( var_0, var_6, var_2 );
 
     if ( !isdefined( var_0 ) )
         return;
 
-    var_0 _meth_82FB( "fov_scale", 1.0 );
+    var_0 setclientomnvar( "fov_scale", 1.0 );
 }
 
 missileeyesinit( var_0, var_1, var_2 )
@@ -1036,8 +1036,8 @@ missileeyesgo( var_0, var_1, var_2 )
     var_0 thread maps\mp\killstreaks\_missile_strike::player_cleanuponteamchange( var_1, var_2 );
     var_0 thread hudgo( var_1, var_2 );
     var_0 thread playerwaitreset( var_2 );
-    var_0 _meth_81E2( var_1, "tag_origin" );
-    var_0 _meth_8200( var_1 );
+    var_0 cameralinkto( var_1, "tag_origin" );
+    var_0 controlslinkto( var_1 );
     var_0 thread maps\mp\killstreaks\_missile_strike::playerwatchforearlyexit( var_2 );
     var_1 common_scripts\utility::waittill_notify_or_timeout( "death", 10 );
     var_2 notify( "missile_strike_complete" );
@@ -1056,9 +1056,9 @@ playerreset( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 1;
 
-    self _meth_8201();
+    self controlsunlink();
     maps\mp\_utility::freezecontrolswrapper( 1 );
-    self _meth_82FB( "fov_scale", 1.0 );
+    self setclientomnvar( "fov_scale", 1.0 );
     stopmissileboostsounds();
     maps\mp\killstreaks\_missile_strike::stopmissileboostsounds();
 
@@ -1073,7 +1073,7 @@ playerreset( var_0 )
 
     maps\mp\killstreaks\_missile_strike::remove_hud();
     self thermalvisionfofoverlayoff();
-    self _meth_81E3();
+    self cameraunlink();
     maps\mp\_utility::freezecontrolswrapper( 0 );
 
     if ( maps\mp\_utility::isusingremote() )
@@ -1092,8 +1092,8 @@ stopmissileboostsounds()
 hudinit( var_0, var_1 )
 {
     self endon( "disconnect" );
-    self _meth_82FB( "ui_predator_missile", 2 );
-    self _meth_82FB( "ui_coop_primary_num", var_1 _meth_81B1() );
+    self setclientomnvar( "ui_predator_missile", 2 );
+    self setclientomnvar( "ui_coop_primary_num", var_1 getentitynumber() );
     waitframe();
     maps\mp\killstreaks\_missile_strike::hud_update_fire_text( undefined, var_0 );
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();

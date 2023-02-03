@@ -3,8 +3,8 @@
 
 preload()
 {
-    precacheitem( "turret_attackheli" );
-    precacheitem( "missile_attackheli" );
+    precacheshellshock( "turret_attackheli" );
+    precacheshellshock( "missile_attackheli" );
     attack_heli_fx();
     thread init();
 }
@@ -87,7 +87,7 @@ begin_attack_heli_behavior( var_0, var_1 )
     if ( level.gameskill == 0 || level.gameskill == 1 )
     {
         var_2 = spawn( "script_origin", var_0.origin + ( 0, 0, -20 ) );
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
         var_0 thread common_scripts\utility::delete_on_death( var_2 );
         var_3 = undefined;
 
@@ -141,9 +141,9 @@ begin_attack_heli_behavior( var_0, var_1 )
             break;
         case "littlebird_spotlight":
         case "littlebird":
-            var_0 _meth_8292( 90, 30, 20 );
-            var_0 _meth_8294( 40, 40 );
-            var_0 _meth_8253( 100, 20, 5 );
+            var_0 setyawspeed( 90, 30, 20 );
+            var_0 setmaxpitchroll( 40, 40 );
+            var_0 sethoverparams( 100, 20, 5 );
             var_0 setup_miniguns();
             break;
         default:
@@ -208,7 +208,7 @@ heli_default_target_setup()
     var_2.forward = var_1;
     var_2.up = var_0;
     var_2 maps\_utility::translate_local();
-    self.targetdefault _meth_804D( self );
+    self.targetdefault linkto( self );
     self.targetdefault thread heli_default_target_cleanup( self );
 }
 
@@ -302,25 +302,25 @@ kill_heli_logic( var_0, var_1 )
             case "mi28":
             case "nh90":
             case "mi17":
-                _func_09A( var_0, ( 0, 0, -80 ) );
+                target_set( var_0, ( 0, 0, -80 ) );
                 break;
             case "ny_harbor_hind":
             case "hind_blackice":
             case "hind":
-                _func_09A( var_0, ( 0, 0, -96 ) );
+                target_set( var_0, ( 0, 0, -96 ) );
                 break;
             case "apache":
-                _func_09A( var_0, ( 0, 0, -96 ) );
+                target_set( var_0, ( 0, 0, -96 ) );
                 break;
             case "littlebird_spotlight":
             case "littlebird":
-                _func_09A( var_0, ( 0, 0, -80 ) );
+                target_set( var_0, ( 0, 0, -80 ) );
                 break;
             default:
                 break;
         }
 
-        _func_0A5( var_0, 1 );
+        target_setjavelinonly( var_0, 1 );
     }
 
     var_0 thread heli_damage_monitor();
@@ -328,21 +328,21 @@ kill_heli_logic( var_0, var_1 )
     var_0 endon( "death" );
     var_0 endon( "heli_players_dead" );
     var_0 endon( "returning_home" );
-    var_0 _meth_8267( "turret_attackheli" );
+    var_0 setvehweapon( "turret_attackheli" );
 
     if ( !isdefined( var_0.circling ) )
         var_0.circling = 0;
 
     if ( !var_0.circling )
     {
-        var_0 _meth_825A( 100 );
+        var_0 setneargoalnotifydist( 100 );
 
         if ( !isdefined( var_0.dontwaitforpathend ) )
             var_0 waittill( "reached_dynamic_path_end" );
     }
     else
     {
-        var_0 _meth_825A( 500 );
+        var_0 setneargoalnotifydist( 500 );
         var_0 waittill( "near_goal" );
     }
 
@@ -372,11 +372,11 @@ heli_circling_think( var_0, var_1 )
 
     for (;;)
     {
-        var_3 _meth_8283( var_1, var_1 / 4, var_1 / 4 );
-        var_3 _meth_825A( 100 );
+        var_3 vehicle_setspeed( var_1, var_1 / 4, var_1 / 4 );
+        var_3 setneargoalnotifydist( 100 );
         var_4 = maps\_utility::get_closest_player_healthy( var_3.origin );
         var_5 = var_4.origin;
-        var_3 _meth_8265( var_4 );
+        var_3 setlookatent( var_4 );
         var_6 = common_scripts\utility::getclosest( var_5, var_2 );
         var_7 = getentarray( var_6.target, "targetname" );
 
@@ -384,7 +384,7 @@ heli_circling_think( var_0, var_1 )
             var_7 = common_scripts\utility::getstructarray( var_6.target, "targetname" );
 
         var_8 = var_7[randomint( var_7.size )];
-        var_3 _meth_825B( var_8.origin, 1 );
+        var_3 setvehgoalpos( var_8.origin, 1 );
         var_3 waittill( "near_goal" );
 
         if ( !isdefined( var_4.is_controlling_uav ) )
@@ -410,8 +410,8 @@ heli_goal_think( var_0 )
     for (;;)
     {
         wait 0.05;
-        var_2 _meth_8283( var_0, var_0 / 2, var_0 / 10 );
-        var_2 _meth_825A( 100 );
+        var_2 vehicle_setspeed( var_0, var_0 / 2, var_0 / 10 );
+        var_2 setneargoalnotifydist( 100 );
         var_6 = maps\_utility::get_closest_player_healthy( var_2.origin );
         var_7 = var_6.origin;
 
@@ -421,7 +421,7 @@ heli_goal_think( var_0 )
             var_3 = common_scripts\utility::getclosest( var_7, var_8 );
         }
 
-        var_2 _meth_825B( var_3.origin, 1 );
+        var_2 setvehgoalpos( var_3.origin, 1 );
         var_2.moving = 1;
         var_6 = maps\_utility::get_closest_player_healthy( var_2.origin );
 
@@ -432,7 +432,7 @@ heli_goal_think( var_0 )
         else
             var_5 = self.targetdefault;
 
-        var_2 _meth_8265( var_5 );
+        var_2 setlookatent( var_5 );
         var_2 waittill( "near_goal" );
         var_2.moving = 0;
 
@@ -457,7 +457,7 @@ heli_goal_think( var_0 )
 
         foreach ( var_12 in var_8 )
         {
-            if ( var_6 _meth_81D8( var_12.origin, var_2 ) != 1 )
+            if ( var_6 sightconetrace( var_12.origin, var_2 ) != 1 )
             {
                 var_8 = common_scripts\utility::array_remove( var_8, var_12 );
                 continue;
@@ -496,7 +496,7 @@ player_is_aiming_with_rocket( var_0 )
     if ( !level.player adsbuttonpressed() )
         return 0;
 
-    var_1 = level.player _meth_80A8();
+    var_1 = level.player geteye();
 
     if ( sighttracepassed( var_1, var_0.origin, 0, level.player ) )
         return 1;
@@ -607,7 +607,7 @@ heli_can_see_target()
     var_0 = self.etarget.origin + ( 0, 0, 32 );
 
     if ( isplayer( self.etarget ) )
-        var_0 = self.etarget _meth_80A8();
+        var_0 = self.etarget geteye();
 
     var_1 = self gettagorigin( "tag_flash" );
     var_2 = sighttracepassed( var_1, var_0, 0, self );
@@ -654,7 +654,7 @@ heli_get_target()
 
 heli_get_target_player_only()
 {
-    var_0 = _func_0D6( "allies" );
+    var_0 = getaiarray( "allies" );
     var_1 = maps\_helicopter_globals::getenemytarget( level.attackhelirange, level.attackhelifov, 1, 0, 0, 0, var_0 );
 
     if ( !isdefined( var_1 ) )
@@ -737,9 +737,9 @@ heli_missiles_think()
             if ( var_6 >= var_5.size )
                 var_6 = 0;
 
-            self _meth_8267( var_2 );
+            self setvehweapon( var_2 );
             self.firingmissiles = 1;
-            var_10 = self _meth_8268( var_5[var_6], var_8 );
+            var_10 = self fireweapon( var_5[var_6], var_8 );
             var_10 thread missilelosetarget( var_4 );
             var_10 thread missile_earthquake();
 
@@ -748,7 +748,7 @@ heli_missiles_think()
         }
 
         self.firingmissiles = 0;
-        self _meth_8267( var_1 );
+        self setvehweapon( var_1 );
         wait 10;
     }
 }
@@ -784,7 +784,7 @@ missilelosetarget( var_0 )
     wait(var_0);
 
     if ( isdefined( self ) )
-        self _meth_81DB();
+        self missile_cleartarget();
 }
 
 get_different_player( var_0 )
@@ -888,10 +888,10 @@ turret_default_fire( var_0, var_1, var_2 )
 
     for ( var_3 = 0; var_3 < var_1; var_3++ )
     {
-        self _meth_8262( var_0, common_scripts\utility::randomvector( 50 ) + ( 0, 0, 32 ) );
+        self setturrettargetent( var_0, common_scripts\utility::randomvector( 50 ) + ( 0, 0, 32 ) );
 
         if ( self.allowshoot && !self.firingmissiles )
-            self _meth_8268();
+            self fireweapon();
 
         wait(var_2);
     }
@@ -929,7 +929,7 @@ turret_minigun_fire( var_0, var_1, var_2 )
 
     minigun_fire( var_0, var_1 );
     var_3 = get_turrets();
-    common_scripts\utility::array_call( var_3, ::_meth_80E3 );
+    common_scripts\utility::array_call( var_3, ::stopfiring );
     thread minigun_spindown( var_0 );
     self notify( "stopping_firing" );
 }
@@ -943,7 +943,7 @@ minigun_fire( var_0, var_1 )
         self endon( "cant_see_player" );
 
     var_2 = get_turrets();
-    common_scripts\utility::array_call( var_2, ::_meth_80E2 );
+    common_scripts\utility::array_call( var_2, ::startfiring );
     wait(randomfloatrange( 1, 2 ));
 
     if ( isplayer( var_0 ) )
@@ -988,7 +988,7 @@ turret_minigun_target_track( var_0, var_1 )
     if ( !isplayer( var_0 ) && isai( var_0 ) && level.attackhelikillsai == 0 )
     {
         var_2 = spawn( "script_origin", var_0.origin + ( 0, 0, 100 ) );
-        var_2 _meth_804D( var_0 );
+        var_2 linkto( var_0 );
         thread minigun_ai_target_cleanup( var_2 );
         var_0 = var_2;
     }
@@ -996,7 +996,7 @@ turret_minigun_target_track( var_0, var_1 )
     for (;;)
     {
         wait 0.5;
-        self _meth_8106( var_0 );
+        self settargetentity( var_0 );
     }
 }
 
@@ -1039,10 +1039,10 @@ miss_player( var_0 )
     for ( var_6 = 0; var_6 < var_4; var_6++ )
     {
         var_3 = var_2 + common_scripts\utility::randomvector( 50 );
-        self _meth_8262( var_0, var_3 );
+        self setturrettargetent( var_0, var_3 );
 
         if ( self.allowshoot )
-            self _meth_8268();
+            self fireweapon();
 
         wait(var_5);
     }
@@ -1056,7 +1056,7 @@ can_see_player( var_0 )
     var_2 = ( 0, 0, 0 );
 
     if ( isplayer( var_0 ) )
-        var_2 = var_0 _meth_80A8();
+        var_2 = var_0 geteye();
     else
         var_2 = var_0.origin;
 
@@ -1154,7 +1154,7 @@ is_hidden_from_heli( var_0 )
     {
         foreach ( var_2 in level.attack_heli_safe_volumes )
         {
-            if ( self _meth_80A9( var_2 ) )
+            if ( self istouching( var_2 ) )
                 return 1;
         }
     }
@@ -1167,7 +1167,7 @@ updatedamagefeedbackhud()
     if ( !isplayer( self ) )
         return;
 
-    self.hud_damagefeedback _meth_80CC( "damage_feedback", 24, 48 );
+    self.hud_damagefeedback setshader( "damage_feedback", 24, 48 );
     self.hud_damagefeedback.alpha = 1;
     self.hud_damagefeedback fadeovertime( 1 );
     self.hud_damagefeedback.alpha = 0;
@@ -1193,7 +1193,7 @@ damage_feedback_setup()
         var_1.hud_damagefeedback.y = -12;
         var_1.hud_damagefeedback.alpha = 0;
         var_1.hud_damagefeedback.archived = 1;
-        var_1.hud_damagefeedback _meth_80CC( "damage_feedback", 24, 48 );
+        var_1.hud_damagefeedback setshader( "damage_feedback", 24, 48 );
     }
 }
 
@@ -1243,7 +1243,7 @@ commander_dialog( var_0 )
 
 usingantiairweapon()
 {
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( !isdefined( var_0 ) )
         return 0;
@@ -1291,12 +1291,12 @@ heli_spotlight_create_default_targets( var_0 )
     var_2.entity = self.left_ent;
     var_2.right = 250;
     var_2 maps\_utility::translate_local();
-    self.left_ent _meth_804D( self );
+    self.left_ent linkto( self );
     var_3 = spawnstruct();
     var_3.entity = self.right_ent;
     var_3.right = -250;
     var_3 maps\_utility::translate_local();
-    self.right_ent _meth_804D( self );
+    self.right_ent linkto( self );
     var_4 = [];
     var_4[0] = var_1;
     var_4[1] = self.left_ent;
@@ -1344,7 +1344,7 @@ heli_spotlight_aim( var_0 )
         }
 
         if ( isdefined( var_1 ) )
-            self _meth_8262( var_1, ( 0, 0, 0 ) );
+            self setturrettargetent( var_1, ( 0, 0, 0 ) );
     }
 }
 
@@ -1388,7 +1388,7 @@ within_player_fov()
         return 0;
 
     var_0 = self.etarget;
-    var_1 = common_scripts\utility::within_fov( var_0 _meth_80A8(), var_0 getangles(), self.origin, level.cosine["35"] );
+    var_1 = common_scripts\utility::within_fov( var_0 geteye(), var_0 getangles(), self.origin, level.cosine["35"] );
     return var_1;
 }
 
@@ -1406,9 +1406,9 @@ littlebird_turrets_think( var_0 )
     var_1 maps\_vehicle_code::turret_set_default_on_mode( "manual" );
 
     if ( isdefined( var_0.targetdefault ) )
-        var_1 _meth_8106( var_0.targetdefault );
+        var_1 settargetentity( var_0.targetdefault );
 
-    var_1 _meth_8065( "manual" );
+    var_1 setmode( "manual" );
     var_0 waittill( "death" );
 
     if ( isdefined( var_0.firingguns ) && var_0.firingguns == 1 )
@@ -1484,7 +1484,7 @@ heli_spotlight_on( var_0, var_1, var_2 )
     thread heli_spotlight_cleanup( var_0 );
 
     if ( var_2 )
-        self _meth_8262( level.player );
+        self setturrettargetent( level.player );
     else if ( var_1 )
     {
         self endon( "death" );
@@ -1494,7 +1494,7 @@ heli_spotlight_on( var_0, var_1, var_2 )
         if ( !isdefined( self.targetdefault ) )
             heli_default_target_setup();
 
-        self _meth_8262( self.targetdefault );
+        self setturrettargetent( self.targetdefault );
         thread heli_spotlight_aim();
     }
 }
@@ -1519,7 +1519,7 @@ heli_spotlight_random_targets_on()
     while ( isdefined( self ) )
     {
         wait 0.05;
-        self _meth_8262( self.targetdefault, ( 0, 0, 0 ) );
+        self setturrettargetent( self.targetdefault, ( 0, 0, 0 ) );
     }
 }
 
@@ -1545,7 +1545,7 @@ heli_fire_missiles( var_0, var_1, var_2, var_3 )
 
     var_6 = undefined;
     var_7 = [];
-    self _meth_8267( var_4 );
+    self setvehweapon( var_4 );
 
     if ( !isdefined( var_1 ) )
         var_1 = 1;
@@ -1601,9 +1601,9 @@ heli_fire_missiles( var_0, var_1, var_2, var_3 )
         if ( var_8 >= var_7.size )
             var_8 = 0;
 
-        self _meth_8267( var_5 );
+        self setvehweapon( var_5 );
         self.firingmissiles = 1;
-        var_10 = self _meth_8268( var_7[var_8], var_0 );
+        var_10 = self fireweapon( var_7[var_8], var_0 );
         var_10 thread missile_earthquake();
 
         if ( var_9 < var_1 - 1 )
@@ -1611,7 +1611,7 @@ heli_fire_missiles( var_0, var_1, var_2, var_3 )
     }
 
     self.firingmissiles = 0;
-    self _meth_8267( var_4 );
+    self setvehweapon( var_4 );
 }
 
 boneyard_style_heli_missile_attack()
@@ -1647,10 +1647,10 @@ boneyard_fire_at_targets( var_0, var_1 )
     for ( var_4 = 0; var_4 < var_1.size; var_4++ )
     {
         var_3[var_4] = spawn( "script_origin", var_1[var_4].origin );
-        var_0 _meth_8267( "littlebird_FFAR" );
-        var_0 _meth_8262( var_3[var_4] );
-        var_5 = var_0 _meth_8268( var_2[var_4 % var_2.size], var_3[var_4], ( 0, 0, 0 ) );
-        var_5 common_scripts\utility::delaycall( 1, ::_meth_81DB );
+        var_0 setvehweapon( "littlebird_FFAR" );
+        var_0 setturrettargetent( var_3[var_4] );
+        var_5 = var_0 fireweapon( var_2[var_4 % var_2.size], var_3[var_4], ( 0, 0, 0 ) );
+        var_5 common_scripts\utility::delaycall( 1, ::missile_cleartarget );
         wait(randomfloatrange( 0.2, 0.3 ));
     }
 

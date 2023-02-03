@@ -145,7 +145,7 @@ player_leave_round_trigger( var_0 )
 snd_play_linked_firingrange( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawn( "script_origin", var_1.origin );
-    var_4 _meth_8446( var_1 );
+    var_4 vehicle_jetbikesethoverforcescale( var_1 );
     var_4 thread maps\mp\_audio::sndx_play_linked_internal( var_0, var_1, var_2, var_3 );
 
     if ( !isdefined( level.firingrange.soundents ) )
@@ -165,13 +165,13 @@ targetspreadshooting( var_0 )
     thread maps\mp\_audio::snd_play_in_space( "mp_shooting_range_panels_bell", level.firingrange.audio_buzzer_struct.origin );
     var_2 spawntarget();
     var_2 show();
-    var_2 _meth_82BE();
-    var_2 _meth_82C0( 1 );
-    var_2 _meth_8495( 1 );
+    var_2 solid();
+    var_2 setcandamage( 1 );
+    var_2 setdamagecallbackon( 1 );
     var_2.damagecallback = ::monitordamagecallback;
     var_2.health = 9999;
     var_2.maxhealth = 9999;
-    var_2 _meth_8029();
+    var_2 thermaldrawenable();
 
     foreach ( var_4 in level.firingrange.alltargetmin )
     {
@@ -218,7 +218,7 @@ monitordistance( var_0, var_1, var_2 )
         if ( !isdefined( var_1 ) || !isdefined( var_2 ) )
         {
             level.firingrange.rangeinmeters = 0;
-            var_0 _meth_82FB( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
+            var_0 setclientomnvar( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
         }
         else
         {
@@ -233,7 +233,7 @@ monitordistance( var_0, var_1, var_2 )
                     var_5 = 0;
 
                 level.firingrange.rangeinmeters = var_5;
-                var_0 _meth_82FB( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
+                var_0 setclientomnvar( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
             }
         }
 
@@ -245,10 +245,10 @@ notifytracker( var_0 )
 {
     self endon( "disconnect" );
     level endon( "shutdown_hologram" );
-    self _meth_82DD( "toggled_up_pressed", "+actionslot 1" );
-    self _meth_82DD( "toggled_up_released", "-actionslot 1" );
-    self _meth_82DD( "toggled_down_pressed", "+actionslot 2" );
-    self _meth_82DD( "toggled_down_released", "-actionslot 2" );
+    self notifyonplayercommand( "toggled_up_pressed", "+actionslot 1" );
+    self notifyonplayercommand( "toggled_up_released", "-actionslot 1" );
+    self notifyonplayercommand( "toggled_down_pressed", "+actionslot 2" );
+    self notifyonplayercommand( "toggled_down_released", "-actionslot 2" );
     thread monitoruppressed( var_0 );
     thread monitorupreleased( var_0 );
     thread monitordownpressed( var_0 );
@@ -286,7 +286,7 @@ monitorupreleased( var_0 )
         var_1 = distance2d( level.firingrange.maxpoint.origin, var_0.origin );
 
         if ( var_1 <= 1 )
-            var_0 _meth_82AE( var_0.origin, 0.05 );
+            var_0 moveto( var_0.origin, 0.05 );
         else
         {
             var_2 = var_0.origin + anglestoforward( level.firingrange.alltargetmax[0].angles ) * level.firingrange.gracedisance * -1;
@@ -335,7 +335,7 @@ monitordownreleased( var_0 )
         var_1 = distance2d( level.firingrange.minpointmodpos, var_0.origin );
 
         if ( var_1 <= 1 )
-            var_0 _meth_82AE( var_0.origin, 0.05 );
+            var_0 moveto( var_0.origin, 0.05 );
         else
         {
             var_2 = var_0.origin + anglestoforward( level.firingrange.alltargetmax[0].angles ) * level.firingrange.gracedisance;
@@ -370,7 +370,7 @@ movelogic( var_0, var_1, var_2 )
         if ( var_4 < 0.05 )
             var_4 = 0.05;
 
-        var_1 _meth_82AE( var_0, var_4 );
+        var_1 moveto( var_0, var_4 );
     }
 }
 
@@ -391,7 +391,7 @@ movestopper( var_0, var_1 )
                 continue;
             }
 
-            var_0 _meth_82AE( var_0.origin, 0.05 );
+            var_0 moveto( var_0.origin, 0.05 );
             level.firingrange.presseddown = 0;
             level.firingrange.pressedup = 0;
         }
@@ -530,7 +530,7 @@ getmodifier( var_0, var_1, var_2 )
             else
                 var_3 = "none";
 
-            var_4 = var_2 _meth_850A( var_6 + "_mp", var_3 );
+            var_4 = var_2 getweapondamagelocationmultiplier( var_6 + "_mp", var_3 );
             return var_4;
         }
         else
@@ -546,12 +546,12 @@ waitforweaponfired()
     self endon( "reload" );
     self endon( "weapon_change" );
     var_0 = 0;
-    var_1 = self _meth_82F0( "right" );
-    var_2 = self _meth_82F0( "left" );
+    var_1 = self getcurrentweaponclipammo( "right" );
+    var_2 = self getcurrentweaponclipammo( "left" );
     self waittill( "weapon_fired" );
     var_0 = 1;
-    var_3 = self _meth_82F0( "right" );
-    var_4 = self _meth_82F0( "left" );
+    var_3 = self getcurrentweaponclipammo( "right" );
+    var_4 = self getcurrentweaponclipammo( "left" );
     var_5 = var_1 - var_3 + var_2 - var_4;
 
     if ( var_5 > 0 )
@@ -579,18 +579,18 @@ monitorshotsfired( var_0 )
                 level.firingrange.shotsfired = 0;
                 level.firingrange.shotshit = 0;
                 level.firingrange.percent = 0;
-                var_0 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-                var_0 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-                var_0 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+                var_0 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+                var_0 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+                var_0 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
             }
             else if ( var_2 < 0 )
             {
                 level.firingrange.shotsfired = 0;
                 level.firingrange.shotshit = 0;
                 level.firingrange.percent = 0;
-                var_0 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-                var_0 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-                var_0 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+                var_0 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+                var_0 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+                var_0 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
             }
             else
             {
@@ -643,18 +643,18 @@ monitorgrenades( var_0 )
                 level.firingrange.shotsfired = 0;
                 level.firingrange.shotshit = 0;
                 level.firingrange.percent = 0;
-                var_0 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-                var_0 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-                var_0 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+                var_0 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+                var_0 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+                var_0 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
             }
             else if ( var_2 < 0 )
             {
                 level.firingrange.shotsfired = 0;
                 level.firingrange.shotshit = 0;
                 level.firingrange.percent = 0;
-                var_0 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-                var_0 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-                var_0 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+                var_0 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+                var_0 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+                var_0 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
             }
             else
             {
@@ -706,10 +706,10 @@ displayboothholo( var_0, var_1 )
     {
         if ( level.firingrange.shouldupdateluadisplay == 1 )
         {
-            var_0 _meth_82FB( "ui_vlobby_round_damage", level.firingrange.damagedone );
-            var_0 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-            var_0 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-            var_0 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+            var_0 setclientomnvar( "ui_vlobby_round_damage", level.firingrange.damagedone );
+            var_0 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+            var_0 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+            var_0 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
             level.firingrange.shouldupdateluadisplay = 0;
         }
 
@@ -735,11 +735,11 @@ startround( var_0 )
     level.firingrange.time = 0;
     level.firingrange.roundactive = 1;
     level.firingrange.shouldupdateluadisplay = 1;
-    self _meth_82FB( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
-    self _meth_82FB( "ui_vlobby_round_damage", level.firingrange.damagedone );
-    self _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-    self _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-    self _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+    self setclientomnvar( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
+    self setclientomnvar( "ui_vlobby_round_damage", level.firingrange.damagedone );
+    self setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+    self setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+    self setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
 
     foreach ( var_2 in level.firingrange.alltargetsarray[var_0] )
     {
@@ -810,12 +810,12 @@ startround( var_0 )
 
     if ( var_0 == 7 )
     {
-        self _meth_82FB( "ui_vlobby_round_state", 3 );
+        self setclientomnvar( "ui_vlobby_round_state", 3 );
         thread targetspreadshooting( var_0 );
     }
     else
     {
-        self _meth_82FB( "ui_vlobby_round_state", 1 );
+        self setclientomnvar( "ui_vlobby_round_state", 1 );
         thread activate_targets( var_0 );
     }
 }
@@ -829,7 +829,7 @@ showroundmeshmesh( var_0 )
     foreach ( var_4 in level.firingrange.allenvarray[var_0] )
     {
         var_4 show();
-        var_4 _meth_82BE();
+        var_4 solid();
     }
 }
 
@@ -840,7 +840,7 @@ showtransitionrev( var_0 )
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) && isdefined( var_2.classname ) && var_2.classname == "script_model" )
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) && isdefined( var_2.classname ) && var_2.classname == "script_model" )
         {
             if ( isdefined( var_2.model ) && issubstr( var_2.model, "_trans" ) )
             {
@@ -853,8 +853,8 @@ showtransitionrev( var_0 )
                 else
                     var_4.angles = ( 0, 0, 0 );
 
-                var_4 _meth_80B1( var_3 );
-                var_4 _meth_82BF();
+                var_4 setmodel( var_3 );
+                var_4 notsolid();
             }
         }
     }
@@ -880,8 +880,8 @@ showtransition( var_0 )
                 else
                     var_4.angles = ( 0, 0, 0 );
 
-                var_4 _meth_80B1( var_3 );
-                var_4 _meth_82BF();
+                var_4 setmodel( var_3 );
+                var_4 notsolid();
             }
         }
     }
@@ -906,10 +906,10 @@ showmodels( var_0 )
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) )
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
         {
             var_2 show();
-            var_2 _meth_82BF();
+            var_2 notsolid();
         }
     }
 }
@@ -920,10 +920,10 @@ hidemodels( var_0 )
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) )
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
         {
             var_2 hide();
-            var_2 _meth_82BF();
+            var_2 notsolid();
         }
     }
 }
@@ -936,10 +936,10 @@ hidetransitionmeshes()
 
         foreach ( var_1 in level.firingrange.transitionmeshes )
         {
-            if ( isdefined( var_1 ) && !_func_294( var_1 ) )
+            if ( isdefined( var_1 ) && !isremovedentity( var_1 ) )
             {
                 var_1 hide();
-                var_1 _meth_82BF();
+                var_1 notsolid();
             }
         }
     }
@@ -953,7 +953,7 @@ deletetransrevmeshes()
 
         foreach ( var_1 in level.firingrange.transitionmeshesrev )
         {
-            if ( isdefined( var_1 ) && !_func_294( var_1 ) )
+            if ( isdefined( var_1 ) && !isremovedentity( var_1 ) )
                 var_1 delete();
         }
     }
@@ -975,7 +975,7 @@ removetransitionmeshes()
 
         foreach ( var_2 in var_0 )
         {
-            if ( isdefined( var_2 ) && !_func_294( var_2 ) )
+            if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
                 var_2 delete();
         }
     }
@@ -989,7 +989,7 @@ removerevnmeshes()
 
         foreach ( var_1 in level.firingrange.scanlinemeshes )
         {
-            if ( isdefined( var_1 ) && !_func_294( var_1 ) )
+            if ( isdefined( var_1 ) && !isremovedentity( var_1 ) )
                 var_1 delete();
         }
     }
@@ -1000,30 +1000,30 @@ movefloorpanelup()
     level endon( "shutdown_hologram" );
     var_0 = randomfloatrange( 0.0, 1 );
     wait(var_0);
-    self _meth_80B1( "rec_holo_emitter_floor_on" );
-    self _meth_82AE( self.up_position, 0.25, 0.1, 0.1 );
+    self setmodel( "rec_holo_emitter_floor_on" );
+    self moveto( self.up_position, 0.25, 0.1, 0.1 );
 }
 
 movefloorpaneldown()
 {
     level endon( "start_round" );
-    self _meth_80B1( "rec_holo_emitter_floor_off" );
+    self setmodel( "rec_holo_emitter_floor_off" );
     var_0 = randomfloatrange( 0.0, 1 );
     wait(var_0);
-    self _meth_82AE( self.og_position, 0.25, 0.1, 0.1 );
+    self moveto( self.og_position, 0.25, 0.1, 0.1 );
 }
 
 shutdownround( var_0, var_1 )
 {
     level notify( "shutdown_hologram" );
     level.firingrange.isshuttingdown = 1;
-    var_1 _meth_82FB( "ui_vlobby_round_state", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_timer", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_damage", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_distance", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_hits", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_fired", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_accuracy", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_state", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_timer", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_damage", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_distance", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_hits", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_fired", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_accuracy", 0 );
     var_1 thread grenadecleanup( 1 );
     thread removetransitionmeshes();
     thread deletetransrevmeshes();
@@ -1037,7 +1037,7 @@ shutdownround( var_0, var_1 )
     foreach ( var_6 in level.firingrange.allenvarray[var_0] )
     {
         var_6 hide();
-        var_6 _meth_82BF();
+        var_6 notsolid();
     }
 
     if ( level.nextgen )
@@ -1057,14 +1057,14 @@ shutdownround( var_0, var_1 )
                 thread particlespawn( level.firingrange.vfxtargetspawnout, var_12, var_13, 3 );
             }
 
-            var_11 _meth_8092();
+            var_11 dontinterpolate();
             var_11.aimassist_target disableaimassist();
             var_11.origin = var_11.original_position;
             var_11.angles = var_11.original_orientation;
             var_11.aimassist_target hide();
-            var_11.aimassist_target _meth_82BF();
+            var_11.aimassist_target notsolid();
             var_11 hide();
-            var_11 _meth_82BF();
+            var_11 notsolid();
             var_11 thermaldrawdisable();
             var_11.alive = 0;
         }
@@ -1085,11 +1085,11 @@ shutdownround( var_0, var_1 )
     level.firingrange.percent = 0;
     level.firingrange.roundactive = 0;
     level.firingrange.shouldupdateluadisplay = 1;
-    var_1 _meth_82FB( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
-    var_1 _meth_82FB( "ui_vlobby_round_damage", level.firingrange.damagedone );
-    var_1 _meth_82FB( "ui_vlobby_round_hits", level.firingrange.shotshit );
-    var_1 _meth_82FB( "ui_vlobby_round_fired", level.firingrange.shotsfired );
-    var_1 _meth_82FB( "ui_vlobby_round_accuracy", level.firingrange.percent );
+    var_1 setclientomnvar( "ui_vlobby_round_distance", level.firingrange.rangeinmeters );
+    var_1 setclientomnvar( "ui_vlobby_round_damage", level.firingrange.damagedone );
+    var_1 setclientomnvar( "ui_vlobby_round_hits", level.firingrange.shotshit );
+    var_1 setclientomnvar( "ui_vlobby_round_fired", level.firingrange.shotsfired );
+    var_1 setclientomnvar( "ui_vlobby_round_accuracy", level.firingrange.percent );
     level.firingrange.isshuttingdown = 0;
 }
 
@@ -1102,8 +1102,8 @@ spawntarget()
     thread snd_play_linked_firingrange( "mp_shooting_range_red_appear", self );
     wait 0.05;
     self show();
-    self _meth_82BE();
-    self _meth_8029();
+    self solid();
+    self thermaldrawenable();
 }
 
 scalesoundsonexit()
@@ -1124,7 +1124,7 @@ scalesoundsonexit()
                 level.firingrange.soundents = common_scripts\utility::array_remove_duplicates( level.firingrange.soundents );
 
                 foreach ( var_1 in level.firingrange.soundents )
-                    var_1 _meth_806F( 0, 0.5 );
+                    var_1 scalevolume( 0, 0.5 );
             }
         }
     }
@@ -1140,27 +1140,27 @@ wait_start_firingrange( var_0, var_1 )
 {
     var_1 endon( "enter_lobby" );
     wait(var_0);
-    var_1 _meth_82FB( "ui_vlobby_round_state", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_timer", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_damage", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_distance", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_hits", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_fired", 0 );
-    var_1 _meth_82FB( "ui_vlobby_round_accuracy", 0 );
-    var_1 _meth_804F();
-    var_1 _meth_81E3();
+    var_1 setclientomnvar( "ui_vlobby_round_state", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_timer", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_damage", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_distance", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_hits", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_fired", 0 );
+    var_1 setclientomnvar( "ui_vlobby_round_accuracy", 0 );
+    var_1 unlink();
+    var_1 cameraunlink();
     var_2 = getgroundposition( level.firingrange.fr_start.origin, 20, 512, 120 );
-    var_1 _meth_8092();
+    var_1 dontinterpolate();
     var_1 setorigin( var_2 );
     var_1 setangles( level.firingrange.fr_start.angles );
-    var_1 _meth_82FC( "cg_fovscale", "1.0" );
+    var_1 setclientdvar( "cg_fovscale", "1.0" );
     level.firingrange.isshuttingdown = 0;
     maps\mp\_vl_camera::virtual_lobby_set_class( 0, "lobby" + ( var_1.currentselectedclass + 1 ), 1, 1 );
     var_1 chargebattery( var_1.loadoutoffhand );
     var_1 chargebattery( var_1.loadoutequipment );
     maps\mp\_utility::updatesessionstate( "playing" );
-    var_1 _meth_847A( "mp_virtual_lobby_fr", 0 );
-    var_1 _meth_83C0( "mp_vl_firingrange" );
+    var_1 setclienttriggervisionset( "mp_virtual_lobby_fr", 0 );
+    var_1 lightsetforplayer( "mp_vl_firingrange" );
     var_1 thread maps\mp\_vl_base::enable_player_controls();
     level.firingrange.soundents = [];
     var_1 thread scalesoundsonexit();
@@ -1194,8 +1194,8 @@ chargebattery( var_0 )
 
     if ( var_1 != "none" && var_1 != "specialty_null" && maps\mp\gametypes\_class::isvalidoffhand( var_1, 0 ) )
     {
-        self _meth_84A4( var_1 );
-        self _meth_84A6( var_1, 1 );
+        self batteryfullrecharge( var_1 );
+        self batterysetdischargescale( var_1, 1 );
     }
 }
 
@@ -1220,7 +1220,7 @@ giveplayerconroldelayed()
     var_0 = getdvarint( "virtualLobbyInFiringRange", 0 );
 
     if ( var_0 == 1 && level.in_firingrange == 1 )
-        self _meth_8131( 1 );
+        self allowfire( 1 );
 }
 
 activate_targets( var_0 )
@@ -1252,7 +1252,7 @@ activate_targets( var_0 )
     level notify( "round_done" );
     thread maps\mp\_audio::snd_play_in_space( "mp_shooting_range_panels_bell", level.firingrange.audio_buzzer_struct.origin );
     level.firingrange.roundactive = 0;
-    var_1 _meth_82FB( "ui_vlobby_round_state", 2 );
+    var_1 setclientomnvar( "ui_vlobby_round_state", 2 );
 }
 
 monitortime( var_0 )
@@ -1270,23 +1270,23 @@ monitortime( var_0 )
         if ( var_4 > 9999.9 )
         {
             level.firingrange.time = 0;
-            var_0 _meth_82FB( "ui_vlobby_round_timer", level.firingrange.time );
-            var_0 _meth_82FB( "ui_vlobby_round_state", 0 );
+            var_0 setclientomnvar( "ui_vlobby_round_timer", level.firingrange.time );
+            var_0 setclientomnvar( "ui_vlobby_round_state", 0 );
             thread shutdownround( level.firingrange.roundnumber, var_0 );
             return;
         }
         else if ( var_4 < 0 )
         {
             level.firingrange.time = 0;
-            var_0 _meth_82FB( "ui_vlobby_round_timer", level.firingrange.time );
-            var_0 _meth_82FB( "ui_vlobby_round_state", 0 );
+            var_0 setclientomnvar( "ui_vlobby_round_timer", level.firingrange.time );
+            var_0 setclientomnvar( "ui_vlobby_round_state", 0 );
             thread shutdownround( level.firingrange.roundnumber, var_0 );
             return;
         }
         else
         {
             level.firingrange.time = var_4;
-            var_0 _meth_82FB( "ui_vlobby_round_timer", level.firingrange.time );
+            var_0 setclientomnvar( "ui_vlobby_round_timer", level.firingrange.time );
         }
 
         wait 0.05;
@@ -1339,7 +1339,7 @@ particlespawn( var_0, var_1, var_2, var_3, var_4 )
     var_5 = spawnfx( var_0, var_1, anglestoforward( var_2 ), anglestoup( var_2 ) );
 
     if ( isdefined( var_4 ) )
-        setwinningteam( var_5, var_4 );
+        setfxkillondelete( var_5, var_4 );
 
     triggerfx( var_5 );
 
@@ -1347,14 +1347,14 @@ particlespawn( var_0, var_1, var_2, var_3, var_4 )
     {
         wait(var_3);
 
-        if ( isdefined( var_5 ) && !_func_294( var_5 ) )
+        if ( isdefined( var_5 ) && !isremovedentity( var_5 ) )
             var_5 delete();
     }
     else
     {
         level waittill( "shutdown_hologram" );
 
-        if ( isdefined( var_5 ) && !_func_294( var_5 ) )
+        if ( isdefined( var_5 ) && !isremovedentity( var_5 ) )
             var_5 delete();
     }
 }
@@ -1404,11 +1404,11 @@ movetargettodest()
             var_3 = var_2 / level.firingrange.round_target_unit_per_second;
 
             if ( isdefined( self.current_ent.script_noteworthy ) && self.current_ent.script_noteworthy == "jump" )
-                self _meth_82AE( self.current_ent.origin, var_3 * 0.5, 0, 0.1 );
+                self moveto( self.current_ent.origin, var_3 * 0.5, 0, 0.1 );
             else if ( isdefined( self.last_ent.script_noteworthy ) && self.last_ent.script_noteworthy == "jump" )
-                self _meth_82AE( self.current_ent.origin, var_3 * 0.5, 0.1, 0 );
+                self moveto( self.current_ent.origin, var_3 * 0.5, 0.1, 0 );
             else
-                self _meth_82AE( self.current_ent.origin, var_3 );
+                self moveto( self.current_ent.origin, var_3 );
 
             self waittill( "movedone" );
 
@@ -1446,12 +1446,12 @@ popinpopout()
         {
             var_4 = distance( var_3, var_2 );
             var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-            self _meth_82AE( var_3, var_5 );
+            self moveto( var_3, var_5 );
             self waittill( "movedone" );
             wait(var_1);
             var_4 = distance( var_3, var_2 );
             var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-            self _meth_82AE( var_2, var_5 );
+            self moveto( var_2, var_5 );
             self waittill( "movedone" );
             wait(var_0);
         }
@@ -1487,31 +1487,31 @@ movebackforth()
                 wait 2;
                 var_4 = distance( var_1, var_2 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_1, var_5 * 0.5, 0, 0.1 );
+                self moveto( var_1, var_5 * 0.5, 0, 0.1 );
                 self waittill( "movedone" );
                 var_4 = distance( var_1, var_3 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_3, var_5 * 0.5, 0.1, 0 );
+                self moveto( var_3, var_5 * 0.5, 0.1, 0 );
                 self waittill( "movedone" );
                 wait 2;
                 var_4 = distance( var_1, var_3 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_1, var_5 * 0.5, 0, 0.1 );
+                self moveto( var_1, var_5 * 0.5, 0, 0.1 );
                 self waittill( "movedone" );
                 var_4 = distance( var_1, var_2 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_2, var_5 * 0.5, 0.1, 0 );
+                self moveto( var_2, var_5 * 0.5, 0.1, 0 );
                 self waittill( "movedone" );
             }
             else
             {
                 var_4 = distance( var_3, var_2 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_3, var_5 );
+                self moveto( var_3, var_5 );
                 self waittill( "movedone" );
                 var_4 = distance( var_2, var_3 );
                 var_5 = var_4 / level.firingrange.round_target_unit_per_second;
-                self _meth_82AE( var_2, var_5 );
+                self moveto( var_2, var_5 );
                 self waittill( "movedone" );
             }
         }
@@ -1554,9 +1554,9 @@ target_handler( var_0 )
     self.maxhealth = 9999;
     self.health = self.maxhealth;
     self.fakehealth = 100;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     self.aimassist_target show();
-    self.aimassist_target _meth_82BE();
+    self.aimassist_target solid();
     self.aimassist_target enableaimassist();
 
     while ( self.health > 0 )
@@ -1661,7 +1661,7 @@ firing_range_setup_env()
     foreach ( var_3 in var_0 )
     {
         var_3 hide();
-        var_3 _meth_82BF();
+        var_3 notsolid();
         var_4 = undefined;
 
         if ( isdefined( var_3.script_index ) )
@@ -1723,15 +1723,15 @@ firing_range_setup_targets()
         var_3.team = "axis";
         var_3.origin_ent = getent( var_3.target, "targetname" );
         var_3.aimassist_target = getent( var_3.origin_ent.target, "targetname" );
-        var_3.aimassist_target _meth_8446( var_3 );
+        var_3.aimassist_target vehicle_jetbikesethoverforcescale( var_3 );
         var_3.aimassist_target.pers["team"] = "axis";
         var_3.aimassist_target.team = "axis";
         var_3.original_position = var_3.origin;
         var_3.original_orientation = var_3.angles;
         var_3.aimassist_target hide();
-        var_3.aimassist_target _meth_82BF();
+        var_3.aimassist_target notsolid();
         var_3 hide();
-        var_3 _meth_82BF();
+        var_3 notsolid();
 
         if ( isdefined( var_3.script_index ) )
         {
@@ -1778,9 +1778,9 @@ target_handle_stop()
 
 target_reset()
 {
-    self _meth_82C0( 0 );
+    self setcandamage( 0 );
     self hide();
-    self _meth_82BF();
+    self notsolid();
     self.alive = 0;
 
     if ( isdefined( self.aimassist_target ) )
@@ -1797,7 +1797,7 @@ lerp_spot_intensity( var_0, var_1, var_2 )
     if ( level.currentgen && isdefined( var_3 ) == 0 )
         return;
 
-    var_4 = var_3 _meth_81DE();
+    var_4 = var_3 getlightintensity();
     var_3.endintensity = var_2;
     var_5 = 0;
 
@@ -1805,11 +1805,11 @@ lerp_spot_intensity( var_0, var_1, var_2 )
     {
         var_6 = var_4 + ( var_2 - var_4 ) * var_5 / var_1;
         var_5 += 0.05;
-        var_3 _meth_81DF( var_6 );
+        var_3 setlightintensity( var_6 );
         wait 0.05;
     }
 
-    var_3 _meth_81DF( var_2 );
+    var_3 setlightintensity( var_2 );
 }
 
 lerp_spot_intensity_array( var_0, var_1, var_2 )
@@ -1818,7 +1818,7 @@ lerp_spot_intensity_array( var_0, var_1, var_2 )
 
     foreach ( var_5 in var_3 )
     {
-        var_6 = var_5 _meth_81DE();
+        var_6 = var_5 getlightintensity();
         var_5.endintensity = var_2;
         var_7 = 0;
 
@@ -1826,11 +1826,11 @@ lerp_spot_intensity_array( var_0, var_1, var_2 )
         {
             var_8 = var_6 + ( var_2 - var_6 ) * var_7 / var_1;
             var_7 += 0.05;
-            var_5 _meth_81DF( var_8 );
+            var_5 setlightintensity( var_8 );
             wait 0.05;
         }
 
-        var_5 _meth_81DF( var_2 );
+        var_5 setlightintensity( var_2 );
     }
 }
 
@@ -1840,11 +1840,11 @@ monitor_weapon_ammo_count( var_0 )
 
     while ( level.in_firingrange == 1 )
     {
-        var_1 = self _meth_8334( var_0 );
+        var_1 = self getfractionmaxammo( var_0 );
 
         if ( var_1 <= 0.25 )
         {
-            self _meth_8332( var_0 );
+            self givemaxammo( var_0 );
             continue;
         }
 
@@ -1864,9 +1864,9 @@ grenadecleanup( var_0 )
     {
         foreach ( var_2 in level.grenades )
         {
-            if ( isdefined( var_2 ) && !_func_294( var_2 ) )
+            if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
             {
-                if ( !isdefined( self ) || !isdefined( var_2.owner ) || _func_294( var_2.owner ) )
+                if ( !isdefined( self ) || !isdefined( var_2.owner ) || isremovedentity( var_2.owner ) )
                 {
                     if ( !isdefined( var_2.weaponname ) )
                         continue;
@@ -1928,9 +1928,9 @@ dronecleanup()
     {
         foreach ( var_1 in level.trackingdrones )
         {
-            if ( isdefined( var_1 ) && !_func_294( var_1 ) )
+            if ( isdefined( var_1 ) && !isremovedentity( var_1 ) )
             {
-                if ( !isdefined( self ) || !isdefined( var_1.owner ) || _func_294( var_1.owner ) )
+                if ( !isdefined( self ) || !isdefined( var_1.owner ) || isremovedentity( var_1.owner ) )
                 {
                     var_1 thread maps\mp\_tracking_drone::trackingdroneexplode();
                     continue;
@@ -1947,7 +1947,7 @@ delaydelete()
 {
     wait 0.05;
 
-    if ( isdefined( self ) && !_func_294( self ) )
+    if ( isdefined( self ) && !isremovedentity( self ) )
         self delete();
 }
 
@@ -1978,10 +1978,10 @@ monitor_grenade_count( var_0, var_1 )
 
                 if ( var_4 == 0 && var_5 == 0 && var_6 == 0 && var_7 == 0 )
                 {
-                    self _meth_8331( "paint_grenade_var_mp" );
-                    self _meth_8331( "smoke_grenade_var_mp" );
-                    self _meth_8331( "emp_grenade_var_mp" );
-                    self _meth_8331( "stun_grenade_var_mp" );
+                    self givestartammo( "paint_grenade_var_mp" );
+                    self givestartammo( "smoke_grenade_var_mp" );
+                    self givestartammo( "emp_grenade_var_mp" );
+                    self givestartammo( "stun_grenade_var_mp" );
                 }
             }
             else
@@ -1993,10 +1993,10 @@ monitor_grenade_count( var_0, var_1 )
 
                 if ( var_8 == 0 && var_9 == 0 && var_10 == 0 && var_11 == 0 )
                 {
-                    self _meth_8331( "paint_grenade_var_mp_lefthand" );
-                    self _meth_8331( "smoke_grenade_var_mp_lefthand" );
-                    self _meth_8331( "emp_grenade_var_mp_lefthand" );
-                    self _meth_8331( "stun_grenade_var_mp_lefthand" );
+                    self givestartammo( "paint_grenade_var_mp_lefthand" );
+                    self givestartammo( "smoke_grenade_var_mp_lefthand" );
+                    self givestartammo( "emp_grenade_var_mp_lefthand" );
+                    self givestartammo( "stun_grenade_var_mp_lefthand" );
                 }
             }
 
@@ -2033,7 +2033,7 @@ enforceexplosivedronelimit()
             {
                 foreach ( var_0 in level.grenades )
                 {
-                    if ( isdefined( var_0 ) && !_func_294( var_0 ) && isdefined( self ) && isdefined( var_0.owner ) && isdefined( var_0.weaponname ) )
+                    if ( isdefined( var_0 ) && !isremovedentity( var_0 ) && isdefined( self ) && isdefined( var_0.owner ) && isdefined( var_0.weaponname ) )
                     {
                         if ( maps\mp\_utility::strip_suffix( var_0.weaponname, "_lefthand" ) == "explosive_drone_mp" && var_0.owner == self )
                         {
@@ -2069,7 +2069,7 @@ showtransition_cg( var_0 )
                 if ( !issubstr( var_4.model, "trans" ) )
                 {
                     var_5 = var_4.model + "_trans";
-                    var_4 _meth_80B1( var_5 );
+                    var_4 setmodel( var_5 );
                 }
 
                 var_4 show();
@@ -2097,7 +2097,7 @@ hidetransitionmeshes_cg( var_0, var_1 )
                 if ( isstring( var_1[var_2] ) )
                 {
                     var_4 hide();
-                    var_4 _meth_80B1( var_1[var_2] );
+                    var_4 setmodel( var_1[var_2] );
                 }
             }
         }

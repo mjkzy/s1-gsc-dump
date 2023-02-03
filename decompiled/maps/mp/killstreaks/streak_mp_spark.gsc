@@ -17,7 +17,7 @@ tryuseremotesentrydisruptor( var_0, var_1 )
 
     if ( var_2 >= 12 )
     {
-        self iclientprintlnbold( &"MP_SPARK_MAP_KILLSTREAK_MAX" );
+        self iprintlnbold( &"MP_SPARK_MAP_KILLSTREAK_MAX" );
         return 0;
     }
 

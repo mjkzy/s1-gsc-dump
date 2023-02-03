@@ -204,7 +204,7 @@ _delaygrenadethrow( var_0, var_1 )
         var_4 = self gettagangles( var_2 );
         var_5 = anglestoforward( var_4 );
         var_6 = var_3 + var_5 * 16;
-        var_7 = _func_070( "flash_grenade", var_6, var_1, 1.5 );
+        var_7 = magicgrenade( "flash_grenade", var_6, var_1, 1.5 );
         return var_7;
     }
 }
@@ -217,11 +217,11 @@ _fastopen( var_0, var_1 )
     if ( isdefined( var_0 ) && var_0 > 0 )
         wait(var_0);
 
-    self _meth_82B5( self.angles + ( 0, var_1, 0 ), 0.35, 0, 0.35 );
+    self rotateto( self.angles + ( 0, var_1, 0 ), 0.35, 0, 0.35 );
     earthquake( 0.25, 0.2, self.origin, 256 );
 
     if ( self.classname != "script_model" )
-        self _meth_8058();
+        self connectpaths();
 
     self.state = "open";
     self notify( "Open" );
@@ -232,10 +232,10 @@ _slowopen( var_0 )
     if ( isdefined( var_0 ) && var_0 > 0 )
         wait(var_0);
 
-    self _meth_82B5( self.angles + ( 0, 100, 0 ), 2, 0.5, 0 );
+    self rotateto( self.angles + ( 0, 100, 0 ), 2, 0.5, 0 );
 
     if ( self.classname != "script_model" )
-        self _meth_8058();
+        self connectpaths();
 
     self.state = "open";
     self notify( "Open" );
@@ -245,10 +245,10 @@ _popopen()
 {
     if ( self.state == "closed" )
     {
-        self _meth_82B5( self.angles + ( 0, 100, 0 ), 0.1, 0, 0 );
+        self rotateto( self.angles + ( 0, 100, 0 ), 0.1, 0, 0 );
 
         if ( self.classname != "script_model" )
-            self _meth_8058();
+            self connectpaths();
 
         self.state = "open";
     }

@@ -42,7 +42,7 @@ friendly_stance_handler()
         self.fixednode = self.old_fixednode;
         self.fixednodesaferadius = self.old_fixednodesaferadius;
         self.moveplaybackrate = 1;
-        self _meth_81CA( "stand", "crouch", "prone" );
+        self allowedstances( "stand", "crouch", "prone" );
 
         if ( maps\_utility::ent_flag( "_stealth_stay_still" ) )
             thread friendly_stance_handler_resume_path( 0 );
@@ -67,7 +67,7 @@ friendly_stance_handler_set_stance_up()
 
 friendly_stance_handler_check_mightbeseen( var_0 )
 {
-    var_1 = _func_0D7( "bad_guys", "all" );
+    var_1 = getaispeciesarray( "bad_guys", "all" );
     var_0[self._stealth.logic.stance] = 0;
     var_0[self._stealth.behavior.stance_up] = 0;
 
@@ -115,13 +115,13 @@ friendly_stance_handler_change_stance_down()
     {
         case "stand":
             self.moveplaybackrate = 0.7;
-            self _meth_81CA( "crouch" );
+            self allowedstances( "crouch" );
             break;
         case "crouch":
             if ( self._stealth.behavior.no_prone )
                 friendly_stance_handler_stay_still();
             else
-                self _meth_81CA( "prone" );
+                self allowedstances( "prone" );
 
             break;
         case "prone":
@@ -153,10 +153,10 @@ friendly_stance_handler_change_stance_up()
     switch ( self._stealth.logic.stance )
     {
         case "prone":
-            self _meth_81CA( "crouch" );
+            self allowedstances( "crouch" );
             break;
         case "crouch":
-            self _meth_81CA( "stand" );
+            self allowedstances( "stand" );
             break;
         case "stand":
             break;

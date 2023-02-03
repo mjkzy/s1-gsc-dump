@@ -30,9 +30,9 @@ cleanup()
 
 get_max_charge_time()
 {
-    var_0 = _func_239( self _meth_8311() );
-    var_1 = _func_23A( self _meth_8311() );
-    var_2 = _func_23B( self _meth_8311() );
+    var_0 = getminchargetime( self getcurrentweapon() );
+    var_1 = getchargetimepershot( self getcurrentweapon() );
+    var_2 = getmaxchargeshots( self getcurrentweapon() );
     var_3 = var_0 + var_1 * var_2;
     return var_3;
 }
@@ -56,15 +56,15 @@ monitor_charge_time()
 
     for (;;)
     {
-        var_2 = _func_23C( self _meth_8311() );
-        var_3 = var_2 && !self _meth_812C() && !self _meth_8336() && !self _meth_812E() && !self ismantling();
-        var_4 = level.player _meth_83AA();
+        var_2 = weaponischargeable( self getcurrentweapon() );
+        var_3 = var_2 && !self isthrowinggrenade() && !self isreloading() && !self ismeleeing() && !self ismantling();
+        var_4 = level.player getchargetime();
 
         if ( var_3 )
         {
             var_5 = var_0 == 0 && var_4 > 0;
             var_6 = var_0 > 0 && var_4 == 0;
-            var_7 = _func_239( self _meth_8311() );
+            var_7 = getminchargetime( self getcurrentweapon() );
             var_8 = get_max_charge_time();
             var_1 = 0;
             player_do_rumble( var_4, var_7, var_8 );
@@ -91,7 +91,7 @@ player_handle_charged_shot()
     for (;;)
     {
         level.player waittill( "energy_fire", var_0 );
-        var_1 = _func_239( level.player _meth_8311() );
+        var_1 = getminchargetime( level.player getcurrentweapon() );
         var_2 = level.player get_max_charge_time();
         thread player_charged_shot( var_0, var_1, var_2 );
     }
@@ -132,7 +132,7 @@ player_do_sound( var_0, var_1, var_2 )
 
 player_cleanup_sound()
 {
-    self.charged_shot_soundent _meth_80AB();
+    self.charged_shot_soundent stoploopsound();
 }
 
 player_init_reticle()
@@ -175,7 +175,7 @@ player_do_reticle( var_0, var_1, var_2 )
         var_5 = var_4 * 620;
         var_6 = var_4 * 620;
         self.charged_shot_reticle.alpha = 1;
-        self.charged_shot_reticle _meth_80CC( "charged_shot_reticle", int( var_6 ), int( var_6 ) );
+        self.charged_shot_reticle setshader( "charged_shot_reticle", int( var_6 ), int( var_6 ) );
         var_7 = var_4 * 320;
         var_8 = var_4 * 320;
         var_5 = clamp( var_4, 16, 32 );
@@ -183,19 +183,19 @@ player_do_reticle( var_0, var_1, var_2 )
         self.charged_shot_reticle_corners["tl"].x = -2 - var_7;
         self.charged_shot_reticle_corners["tl"].y = -2 - var_8;
         self.charged_shot_reticle_corners["tl"].alpha = 1;
-        self.charged_shot_reticle_corners["tl"] _meth_80CC( "charged_shot_reticle_corner_tl", int( var_5 ), int( var_6 ) );
+        self.charged_shot_reticle_corners["tl"] setshader( "charged_shot_reticle_corner_tl", int( var_5 ), int( var_6 ) );
         self.charged_shot_reticle_corners["tr"].x = 2 + var_7;
         self.charged_shot_reticle_corners["tr"].y = -2 - var_8;
         self.charged_shot_reticle_corners["tr"].alpha = 1;
-        self.charged_shot_reticle_corners["tr"] _meth_80CC( "charged_shot_reticle_corner_tr", int( var_5 ), int( var_6 ) );
+        self.charged_shot_reticle_corners["tr"] setshader( "charged_shot_reticle_corner_tr", int( var_5 ), int( var_6 ) );
         self.charged_shot_reticle_corners["bl"].x = -2 - var_7;
         self.charged_shot_reticle_corners["bl"].y = 2 + var_8;
         self.charged_shot_reticle_corners["bl"].alpha = 1;
-        self.charged_shot_reticle_corners["bl"] _meth_80CC( "charged_shot_reticle_corner_bl", int( var_5 ), int( var_6 ) );
+        self.charged_shot_reticle_corners["bl"] setshader( "charged_shot_reticle_corner_bl", int( var_5 ), int( var_6 ) );
         self.charged_shot_reticle_corners["br"].x = 2 + var_7;
         self.charged_shot_reticle_corners["br"].y = 2 + var_8;
         self.charged_shot_reticle_corners["br"].alpha = 1;
-        self.charged_shot_reticle_corners["br"] _meth_80CC( "charged_shot_reticle_corner_br", int( var_5 ), int( var_6 ) );
+        self.charged_shot_reticle_corners["br"] setshader( "charged_shot_reticle_corner_br", int( var_5 ), int( var_6 ) );
         player_set_all_reticle_colors( ( 1, 1, 1 ) );
     }
     else
@@ -217,11 +217,11 @@ player_restore_reticle()
     self.charged_shot_reticle_corners["bl"].y = 2;
     self.charged_shot_reticle_corners["br"].x = 2;
     self.charged_shot_reticle_corners["br"].y = 2;
-    self.charged_shot_reticle _meth_80CC( "charged_shot_reticle", 16, 16 );
-    self.charged_shot_reticle_corners["tl"] _meth_80CC( "charged_shot_reticle_corner_tl", 16, 16 );
-    self.charged_shot_reticle_corners["bl"] _meth_80CC( "charged_shot_reticle_corner_bl", 16, 16 );
-    self.charged_shot_reticle_corners["tr"] _meth_80CC( "charged_shot_reticle_corner_tr", 16, 16 );
-    self.charged_shot_reticle_corners["br"] _meth_80CC( "charged_shot_reticle_corner_br", 16, 16 );
+    self.charged_shot_reticle setshader( "charged_shot_reticle", 16, 16 );
+    self.charged_shot_reticle_corners["tl"] setshader( "charged_shot_reticle_corner_tl", 16, 16 );
+    self.charged_shot_reticle_corners["bl"] setshader( "charged_shot_reticle_corner_bl", 16, 16 );
+    self.charged_shot_reticle_corners["tr"] setshader( "charged_shot_reticle_corner_tr", 16, 16 );
+    self.charged_shot_reticle_corners["br"] setshader( "charged_shot_reticle_corner_br", 16, 16 );
     player_set_all_reticle_colors( ( 1, 1, 1 ) );
 }
 
@@ -248,7 +248,7 @@ player_do_rumble( var_0, var_1, var_2 )
         if ( !isdefined( self.charged_shot_rumble_ent.rumbling ) )
         {
             self.charged_shot_rumble_ent.rumbling = 1;
-            self.charged_shot_rumble_ent _meth_80AE( "steady_rumble" );
+            self.charged_shot_rumble_ent playrumblelooponentity( "steady_rumble" );
         }
 
         self.charged_shot_rumble_ent.origin = self.origin + ( 0, 0, ( 1 - clamp( var_3, 0, 1 ) ) * 1000 );
@@ -261,7 +261,7 @@ player_cleanup_rumble()
 {
     if ( isdefined( self.charged_shot_rumble_ent.rumbling ) )
     {
-        self.charged_shot_rumble_ent _meth_80AF( "steady_rumble" );
+        self.charged_shot_rumble_ent stoprumble( "steady_rumble" );
         self.charged_shot_rumble_ent.rumbling = undefined;
     }
 }
@@ -299,7 +299,7 @@ player_color_pulse( var_0 )
     var_2 = 25;
     soundscripts\_snd::snd_message( "wpn_deam160_full_charge" );
 
-    while ( level.player _meth_83AA() >= get_max_charge_time() )
+    while ( level.player getchargetime() >= get_max_charge_time() )
     {
         var_1 += var_2;
         var_3 = ( sin( var_1 - var_0 ) + 1.0 ) * 0.5;
@@ -328,7 +328,7 @@ player_do_charge_indicator( var_0, var_1, var_2, var_3 )
     if ( var_4 > 0 )
     {
         self.charge_indicator_hud.alpha = 1;
-        self.charge_indicator_hud _meth_80CC( "charged_shot_reticle_pip" + var_4, 32, 32 );
+        self.charge_indicator_hud setshader( "charged_shot_reticle_pip" + var_4, 32, 32 );
     }
     else
         self.charge_indicator_hud.alpha = 0;
@@ -361,9 +361,9 @@ play_charged_shot_fx( var_0, var_1, var_2 )
     var_3 = var_2 - var_1;
     var_4 = var_1 + var_3 * 0.2;
     var_5 = var_2;
-    var_6 = self _meth_8036();
+    var_6 = self getgunangles();
     var_7 = anglestoforward( var_6 );
-    var_8 = transformmove( self _meth_80A8(), var_6, ( 0, 0, 0 ), ( 0, 0, 0 ), ( 4, 0, -1 ), ( 0, 0, 0 ) )["origin"];
+    var_8 = transformmove( self geteye(), var_6, ( 0, 0, 0 ), ( 0, 0, 0 ), ( 4, 0, -1 ), ( 0, 0, 0 ) )["origin"];
     var_9 = var_8 + 1000 * var_7;
     var_10 = anglestoup( var_6 );
     var_11 = anglestoright( var_6 );

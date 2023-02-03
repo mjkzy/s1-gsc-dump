@@ -167,8 +167,8 @@ waitingtospawndrone()
     level.numdroneswaitingtospawn--;
     waitframe();
     var_0 = maps\mp\gametypes\_horde_drones::hordecreatedrone( level.players[0], "assault_uav_horde", level.hordedronemodel );
-    var_0 _meth_83FA( level.enemyoutlinecolor, 1 );
-    var_0.droneturret _meth_83FA( level.enemyoutlinecolor, 1 );
+    var_0 hudoutlineenable( level.enemyoutlinecolor, 1 );
+    var_0.droneturret hudoutlineenable( level.enemyoutlinecolor, 1 );
     var_0.outlinecolor = level.enemyoutlinecolor;
 }
 
@@ -213,8 +213,8 @@ highlightlastenemies()
         {
             foreach ( var_1 in level.flying_attack_drones )
             {
-                var_1 _meth_83FA( level.enemyoutlinecolor, 0 );
-                var_1.droneturret _meth_83FA( level.enemyoutlinecolor, 0 );
+                var_1 hudoutlineenable( level.enemyoutlinecolor, 0 );
+                var_1.droneturret hudoutlineenable( level.enemyoutlinecolor, 0 );
                 var_1.lasttwoenemies = 1;
             }
 
@@ -222,8 +222,8 @@ highlightlastenemies()
             {
                 if ( isdefined( var_4.team ) && var_4.team == "axis" && !( isdefined( var_4.iscrashing ) && var_4.iscrashing ) )
                 {
-                    var_4 _meth_83FA( level.enemyoutlinecolor, 0 );
-                    var_4.warbirdturret _meth_83FA( level.enemyoutlinecolor, 0 );
+                    var_4 hudoutlineenable( level.enemyoutlinecolor, 0 );
+                    var_4.warbirdturret hudoutlineenable( level.enemyoutlinecolor, 0 );
                     var_4.lasttwoenemies = 1;
                 }
             }
@@ -233,9 +233,9 @@ highlightlastenemies()
                 if ( maps\mp\gametypes\_horde_util::isonhumanteam( var_7 ) )
                     continue;
 
-                if ( maps\mp\_utility::isreallyalive( var_7 ) && !var_7 _meth_84F8() )
+                if ( maps\mp\_utility::isreallyalive( var_7 ) && !var_7 iscloaked() )
                 {
-                    var_7 _meth_83FA( level.enemyoutlinecolor, 0 );
+                    var_7 hudoutlineenable( level.enemyoutlinecolor, 0 );
                     var_7.outlinecolor = level.enemyoutlinecolor;
                 }
             }
@@ -251,7 +251,7 @@ onagentkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     if ( !maps\mp\gametypes\_horde_util::isonhumanteam( self ) )
         hordeenemykilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
 
-    self _meth_83FB();
+    self hudoutlinedisable();
     maps\mp\agents\_agents::on_humanoid_agent_killed_common( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, 0 );
     maps\mp\agents\_agent_utility::deactivateagent();
 }
@@ -261,7 +261,7 @@ ondogkilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     if ( !maps\mp\gametypes\_horde_util::isonhumanteam( self ) )
         hordeenemykilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
 
-    self _meth_83FB();
+    self hudoutlinedisable();
     maps\mp\killstreaks\_dog_killstreak::on_agent_dog_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
 }
 
@@ -327,7 +327,7 @@ enemyagentthink()
 {
     self endon( "death" );
     level endon( "game_ended" );
-    self _meth_8351( "no_enemy_search", 1 );
+    self botsetflag( "no_enemy_search", 1 );
     thread monitorbadhumanoidai();
     thread locateenemypositions();
 }
@@ -403,7 +403,7 @@ allyagentthink()
     self endon( "death" );
     level endon( "game_ended" );
     self endon( "owner_disconnect" );
-    self _meth_8351( "force_sprint", 1 );
+    self botsetflag( "force_sprint", 1 );
     var_0 = 0;
     var_1 = 0;
 
@@ -475,7 +475,7 @@ agentdogthink()
     for (;;)
     {
         if ( self.aistate != "melee" && !self.statelocked && maps\mp\agents\dog\_dog_think::readytomeleetarget() && !maps\mp\agents\dog\_dog_think::didpastmeleefail() )
-            self _meth_839C( self.curmeleetarget );
+            self scragentbeginmelee( self.curmeleetarget );
 
         if ( self.randompathstoptime > gettime() )
         {
@@ -490,7 +490,7 @@ agentdogthink()
             if ( var_0.size > 0 )
             {
                 var_1 = randomintrange( int( var_0.size * 0.9 ), var_0.size );
-                self _meth_8390( var_0[var_1].origin );
+                self scragentsetgoalpos( var_0[var_1].origin );
                 self.bhasnopath = 0;
                 self.randompathstoptime = gettime() + 2500;
             }
@@ -504,7 +504,7 @@ agentdogthink()
 
             if ( distancesquared( var_2, self.lassetgoalpos ) > 4096 )
             {
-                self _meth_8390( var_2 );
+                self scragentsetgoalpos( var_2 );
                 self.lassetgoalpos = var_2;
             }
         }
@@ -556,10 +556,10 @@ locateenemypositions()
         {
             if ( maps\mp\gametypes\_horde_util::isonhumanteam( var_1 ) )
             {
-                self _meth_8165( var_1 );
+                self getenemyinfo( var_1 );
 
                 if ( isdefined( var_1.hordedrone ) )
-                    self _meth_8165( var_1.hordedrone );
+                    self getenemyinfo( var_1.hordedrone );
             }
         }
 
@@ -597,14 +597,14 @@ handledetroitgoliathtrailerexploit()
 
     for (;;)
     {
-        if ( isdefined( self.enemy ) && self.enemy _meth_80A9( level.goliathexploittrigger ) )
+        if ( isdefined( self.enemy ) && self.enemy istouching( level.goliathexploittrigger ) )
         {
-            self _meth_8354( ( -1696, -408, 608.5 ), 32, "critical", 200 );
+            self botsetscriptgoal( ( -1696, -408, 608.5 ), 32, "critical", 200 );
 
-            while ( isdefined( self.enemy ) && maps\mp\_utility::isreallyalive( self.enemy ) && !maps\mp\gametypes\_horde_util::isplayerinlaststand( self.enemy ) && self.enemy _meth_80A9( level.goliathexploittrigger ) )
+            while ( isdefined( self.enemy ) && maps\mp\_utility::isreallyalive( self.enemy ) && !maps\mp\gametypes\_horde_util::isplayerinlaststand( self.enemy ) && self.enemy istouching( level.goliathexploittrigger ) )
                 wait 0.25;
 
-            self _meth_8356();
+            self botclearscriptgoal();
         }
 
         wait 1;
@@ -616,14 +616,14 @@ hordejuggrocketswarmthink()
     self endon( "death" );
     level endon( "game_ended" );
 
-    while ( !isdefined( self.enemy ) || !sighttracepassed( self gettagorigin( "TAG_ROCKET4" ), self.enemy _meth_80A8(), 0, undefined ) )
+    while ( !isdefined( self.enemy ) || !sighttracepassed( self gettagorigin( "TAG_ROCKET4" ), self.enemy geteye(), 0, undefined ) )
         wait 0.05;
 
     wait(randomintrange( 5, 10 ));
 
     for (;;)
     {
-        while ( !isdefined( self.enemy ) || !sighttracepassed( self gettagorigin( "TAG_ROCKET4" ), self.enemy _meth_80A8(), 0, undefined ) )
+        while ( !isdefined( self.enemy ) || !sighttracepassed( self gettagorigin( "TAG_ROCKET4" ), self.enemy geteye(), 0, undefined ) )
             wait 0.05;
 
         var_0 = anglestoforward( self getangles() );
@@ -636,7 +636,7 @@ hordejuggrocketswarmthink()
         {
             var_5 = var_3 + var_0 * 20 + var_1 * -30;
             var_6 = var_0 + maps\mp\killstreaks\_juggernaut::random_vector( 0.2 );
-            var_7 = magicbullet( "iw5_juggernautrockets_mp", var_3, self.enemy _meth_80A8(), self );
+            var_7 = magicbullet( "iw5_juggernautrockets_mp", var_3, self.enemy geteye(), self );
             var_7 thread rockettargetent( self.enemy, var_2[var_4] );
             var_7 thread maps\mp\killstreaks\_juggernaut::rocketdestroyaftertime( 7 );
             wait 0.1;
@@ -649,5 +649,5 @@ hordejuggrocketswarmthink()
 rockettargetent( var_0, var_1 )
 {
     if ( isdefined( var_0 ) )
-        self _meth_81D9( var_0, var_1 );
+        self missile_settargetent( var_0, var_1 );
 }

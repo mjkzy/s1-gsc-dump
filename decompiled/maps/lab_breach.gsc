@@ -15,11 +15,11 @@ init_facility_breach()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "lab_intro_tr" ) )
+        if ( istransientloaded( "lab_intro_tr" ) )
             var_0 = "intro";
-        else if ( _func_21E( "lab_middle_tr" ) )
+        else if ( istransientloaded( "lab_middle_tr" ) )
             var_0 = "middle";
-        else if ( _func_21E( "lab_outro_tr" ) )
+        else if ( istransientloaded( "lab_outro_tr" ) )
             var_0 = "outro";
     }
 
@@ -130,7 +130,7 @@ notetrack_setup_outro()
 facility_breach_get_burke_into_position()
 {
     var_0 = getnode( "node_burke_facility_breach", "targetname" );
-    level.burke _meth_81A5( var_0 );
+    level.burke setgoalnode( var_0 );
     var_1 = level.burke.goalradius;
     level.burke.goalradius = 16;
     level.burke waittill( "goal" );
@@ -189,11 +189,11 @@ facility_breach()
     level.player_rig hide();
     var_3 = getent( "facility_breach_crate_model", "targetname" );
     var_4 = getent( "facility_breach_crate_clip", "targetname" );
-    var_4 _meth_804D( var_3 );
+    var_4 linkto( var_3 );
     level.facility_breach_crate = maps\_utility::spawn_anim_model( "facility_breach_crate", var_3.origin );
     soundscripts\_snd::snd_message( "lab_mute_gun_holster" );
     var_2 maps\_anim::anim_first_frame_solo( level.facility_breach_crate, "facility_breach" );
-    var_3 _meth_804D( level.facility_breach_crate, "tag_origin_animated", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( level.facility_breach_crate, "tag_origin_animated", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     level.facility_breach_charge = maps\_utility::spawn_anim_model( "facility_breach_charge", var_2.origin );
     level.facility_breach_charge hide();
     var_2 maps\_anim::anim_first_frame_solo( level.facility_breach_charge, "facility_breach" );
@@ -208,7 +208,7 @@ facility_breach()
     thread facility_breach_setup_player();
     var_5 = 0.4;
     var_2 maps\_anim::anim_first_frame_solo( level.player_rig, "facility_breach" );
-    level.player _meth_8080( level.player_rig, "tag_player", var_5 );
+    level.player playerlinktoblend( level.player_rig, "tag_player", var_5 );
     level.burke.animname = "burke";
     var_6 = [ level.facility_breach_charge, level.facility_breach_mute_device, level.player_rig, level.facility_breach_crate ];
     wait(var_5);
@@ -227,7 +227,7 @@ facility_breach()
     level.facility_breach_guys[3] maps\_utility::delaythread( 15, maps\lab_utility::bloody_death, 1, level.burke );
     maps\_utility::delaythread( 15, common_scripts\utility::flag_set, "lab_breach_all_guys_dead" );
     level.player thread breach_top_off_weapon();
-    var_4 _meth_8057();
+    var_4 disconnectpaths();
 
     for (;;)
     {
@@ -249,7 +249,7 @@ burke_breach( var_0 )
         var_0 thread maps\_anim::anim_loop_solo( self, "facility_breach_idle", "ender" );
         common_scripts\utility::flag_wait( "flag_breach_patrol_01_clear" );
         var_0 notify( "ender" );
-        self _meth_8141();
+        self stopanimscripted();
         var_0 maps\_anim::anim_single_solo_run( self, "facility_breach_end" );
     }
 }
@@ -259,40 +259,40 @@ burke_breach_interrupt()
     level endon( "burke_breach_uninterruptable" );
     level.facility_breach_guys[4] waittill( "death" );
     level.burke notify( "single anim", "end" );
-    level.burke _meth_8141();
+    level.burke stopanimscripted();
 }
 
 facility_breach_setup_player()
 {
-    level.player _meth_80EF();
-    level.player _meth_8321();
-    level.player _meth_831F();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8301( 0 );
+    level.player enableinvulnerability();
+    level.player disableweaponswitch();
+    level.player disableoffhandweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
+    level.player allowjump( 0 );
 }
 
 facility_breach_cleanup_player()
 {
-    level.player _meth_80F0();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8301( 1 );
+    level.player disableinvulnerability();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowjump( 1 );
 }
 
 breach_top_off_weapon( var_0 )
 {
-    var_0 = self _meth_8311();
+    var_0 = self getcurrentweapon();
 
     if ( should_topoff_breach_weapon() )
     {
         var_1 = weaponclipsize( var_0 );
 
-        if ( self _meth_82F8( var_0 ) < var_1 )
-            self _meth_82F6( var_0, var_1 );
+        if ( self getweaponammoclip( var_0 ) < var_1 )
+            self setweaponammoclip( var_0, var_1 );
     }
 }
 
@@ -311,7 +311,7 @@ breach_slow_down( var_0 )
 
 enable_player_control( var_0 )
 {
-    level.player _meth_804F();
+    level.player unlink();
     level.player_rig delete();
     maps\_player_exo::player_exo_activate();
     thread facility_breach_cleanup_player();
@@ -322,15 +322,15 @@ blow_door( var_0 )
     level.facility_breach_charge hide();
     var_1 = getent( "facility_breach_door", "targetname" );
     var_2 = getent( "facility_breach_door_clip", "targetname" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     var_1 delete();
     var_2 delete();
     level thread maps\lab_fx::mute_breach_explosion();
     level notify( "breach_explosion" );
     level.player_rig hide();
-    level.player _meth_831E();
+    level.player enableweapons();
     level.player freezecontrols( 0 );
-    _func_0D3( "ammoCounterHide", 0 );
+    setsaveddvar( "ammoCounterHide", 0 );
 }
 
 slowmo_begins( var_0 )
@@ -353,11 +353,11 @@ slowmo_begins( var_0 )
 
     var_4 = level.player;
     common_scripts\utility::flag_clear( "can_save" );
-    var_4 _meth_8130( 0 );
+    var_4 allowmelee( 0 );
     maps\_utility::slowmo_setspeed_slow( var_0 );
     maps\_utility::slowmo_setlerptime_in( var_1 );
     maps\_utility::slowmo_lerp_in();
-    var_4 _meth_81E1( var_3 );
+    var_4 setmovespeedscale( var_3 );
     var_5 = gettime();
     var_6 = var_5 + level.slomobreachduration * 1000;
     var_4 thread catch_weapon_switch();
@@ -416,23 +416,23 @@ slowmo_begins( var_0 )
     var_4 thread maps\_utility::play_sound_on_entity( "slomo_whoosh" );
     maps\_utility::slowmo_setlerptime_out( var_2 );
     maps\_utility::slowmo_lerp_out();
-    var_4 _meth_8130( 1 );
+    var_4 allowmelee( 1 );
     maps\_utility::slowmo_end();
     common_scripts\utility::flag_set( "can_save" );
     level.player_one_already_breached = undefined;
     var_4 slowmo_player_cleanup();
-    var_4 _meth_8304( 1 );
+    var_4 allowsprint( 1 );
     level notify( "slomo_breach_over" );
     level.breaching = 0;
-    _func_0D3( "objectiveHide", 0 );
+    setsaveddvar( "objectiveHide", 0 );
 }
 
 slowmo_player_cleanup()
 {
     if ( isdefined( level.playerspeed ) )
-        self _meth_81E1( level.playerspeed );
+        self setmovespeedscale( level.playerspeed );
     else
-        self _meth_81E1( 1 );
+        self setmovespeedscale( 1 );
 }
 
 breach_enemy_waitfor_death( var_0 )

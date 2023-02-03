@@ -48,7 +48,7 @@ main()
 
 init_smvals()
 {
-    _func_0D3( "fx_alphathreshold", 7 );
+    setsaveddvar( "fx_alphathreshold", 7 );
 }
 
 precachefx()
@@ -252,8 +252,8 @@ precachefx()
 
 set_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", 2 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", 2 );
 }
 
 drone_intro_execution_gun_flash( var_0 )
@@ -580,12 +580,12 @@ roundabout_tanker_explosion()
 explosion_screen_flash()
 {
     common_scripts\utility::flag_set( "roundabout_tanker_flash" );
-    level.player _meth_83C0( "lagos_roundabout_tanker_explosion" );
-    level.player _meth_8490( "clut_lagos_explosion", 0.15 );
+    level.player lightsetforplayer( "lagos_roundabout_tanker_explosion" );
+    level.player setclutforplayer( "clut_lagos_explosion", 0.15 );
     maps\_utility::vision_set_fog_changes( "lagos_roundabout_tanker_explosion", 0.08 );
     wait 0.15;
-    level.player _meth_83C0( "lagos_roundabout" );
-    level.player _meth_8490( "clut_lagos_roundabout", 4.0 );
+    level.player lightsetforplayer( "lagos_roundabout" );
+    level.player setclutforplayer( "clut_lagos_roundabout", 4.0 );
     maps\_utility::vision_set_fog_changes( "lagos_roundabout", 0.75 );
     common_scripts\utility::flag_set( "tanker_explosion_done" );
 }
@@ -636,7 +636,7 @@ pull_fence_dust( var_0 )
 {
     wait 0.1;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( -78, 0, 88 ), ( -90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( -78, 0, 88 ), ( -90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "lag_fence_dust_falling" ), var_1, "tag_origin" );
 }
 
@@ -644,7 +644,7 @@ guy_jump_landing_puff( var_0 )
 {
     wait 0.2;
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, 0, 9 ), ( 90, 15, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 0, 0, 9 ), ( 90, 15, 0 ) );
     playfxontag( common_scripts\utility::getfx( "guy_jump_landing_impact" ), var_1, "tag_origin" );
     wait 9;
     var_1 delete();
@@ -680,9 +680,9 @@ truck_treadfx_skid( var_0 )
     var_1 = common_scripts\utility::spawn_tag_origin();
     var_2 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "veh_dust_wheel_skid" ), var_1, "tag_origin" );
-    var_1 _meth_804D( var_0, "tag_wheel_front_left", ( 0, -8, 3 ), ( 0, 45, 0 ) );
+    var_1 linkto( var_0, "tag_wheel_front_left", ( 0, -8, 3 ), ( 0, 45, 0 ) );
     playfxontag( common_scripts\utility::getfx( "veh_dust_wheel_skid" ), var_2, "tag_origin" );
-    var_2 _meth_804D( var_0, "tag_wheel_back_left", ( 10, -8, 3 ), ( 0, 45, 0 ) );
+    var_2 linkto( var_0, "tag_wheel_back_left", ( 10, -8, 3 ), ( 0, 45, 0 ) );
     wait 3.25;
     stopfxontag( common_scripts\utility::getfx( "veh_dust_wheel_skid" ), var_1, "tag_origin" );
     stopfxontag( common_scripts\utility::getfx( "veh_dust_wheel_skid" ), var_2, "tag_origin" );
@@ -746,7 +746,7 @@ bus_kva_impact_sparks()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "lag_mtkdown_bus_impact" ), var_0, "tag_origin" );
-    var_0 _meth_804D( level.player_bus, "tag_origin", ( 55, 58, 40 ), ( 0, 90, 0 ) );
+    var_0 linkto( level.player_bus, "tag_origin", ( 55, 58, 40 ), ( 0, 90, 0 ) );
     wait 5;
     stopfxontag( common_scripts\utility::getfx( "lag_mtkdown_bus_impact" ), var_0, "tag_origin" );
     waitframe();
@@ -835,7 +835,7 @@ water_barrell_splash_screen_fx()
     wait 0.2;
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "screen_splash_distort" ), var_0, "tag_origin" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     wait 2.5;
     stopfxontag( common_scripts\utility::getfx( "screen_splash_distort" ), var_0, "tag_origin" );
     common_scripts\_exploder::kill_exploder( "water_barrier_splash" );
@@ -873,7 +873,7 @@ water_bubbles_transition_player_view()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "underwater_bubble_vm_transition_lp" ), var_0, "tag_origin" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, -5 ), ( 0, 0, 0 ), 1 );
     wait 0.25;
     level notify( "kill_above_water_splashes" );
     common_scripts\_exploder::exploder( "underwater_splash" );
@@ -938,7 +938,7 @@ truck_latch_open_trail( var_0 )
     level notify( "truck_door_open" );
     playfxontag( common_scripts\utility::getfx( "bubble_trail_runner_lp" ), var_0, "latch_jnt" );
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( -100, 0, 25 ), ( 0, 180, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( -100, 0, 25 ), ( 0, 180, 0 ) );
     playfxontag( common_scripts\utility::getfx( "lag_tkdown_truck_latch_door_open" ), var_1, "tag_origin" );
     wait 0.75;
     stopfxontag( common_scripts\utility::getfx( "bubble_trail_runner_lp" ), var_0, "latch_jnt" );
@@ -1021,7 +1021,7 @@ gideon_swim_stroke_up( var_0 )
 player_gasping_breath()
 {
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     wait 2.5;
     playfxontag( common_scripts\utility::getfx( "underwater_bubble_vm_gasping_breath" ), var_0, "tag_origin" );
     wait 3;
@@ -1038,7 +1038,7 @@ player_drown_end_vm_transition()
     common_scripts\utility::flag_wait( "player_swimming_drown" );
     wait 4;
     var_0 = common_scripts\utility::spawn_tag_origin();
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     playfxontag( common_scripts\utility::getfx( "underwater_bubble_vm_death_blackout" ), var_0, "tag_origin" );
     level waittill( "kill_underwater_effects" );
     killfxontag( common_scripts\utility::getfx( "underwater_bubble_vm_death_blackout" ), var_0, "tag_origin" );
@@ -1066,11 +1066,11 @@ vfx_shore_outro_start()
     wait 0.5;
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "screen_wash_distort" ), var_0, "tag_origin" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     wait 0.37;
     var_0 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "shore_slap_splash" ), var_0, "tag_origin" );
-    var_0 _meth_80A6( level.player, "tag_origin", ( 5, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_0 linktoplayerview( level.player, "tag_origin", ( 5, 0, 0 ), ( 0, 0, 0 ), 1 );
     wait 25;
     stopfxontag( common_scripts\utility::getfx( "shore_water_soaked_drip_runner2" ), level.burke, "J_SpineUpper" );
     playfxontag( common_scripts\utility::getfx( "shore_water_soaked_drip_runner2a" ), level.burke, "J_SpineUpper" );

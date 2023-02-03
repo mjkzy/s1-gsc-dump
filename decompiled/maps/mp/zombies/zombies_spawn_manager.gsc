@@ -160,7 +160,7 @@ zombiesarealive( var_0 )
 
     foreach ( var_4 in var_2 )
     {
-        if ( !_func_2D9( var_4 ) )
+        if ( !isscriptedagent( var_4 ) )
             continue;
 
         if ( var_4.team == level.enemyteam )
@@ -275,8 +275,8 @@ spawnzombietype( var_0, var_1, var_2, var_3 )
     if ( var_4.agent_type == var_6 && isdefined( level.agentclasses[var_6] ) )
         var_4 thread maps\mp\zombies\_zombies_audio::do_zombies_playvocals( "spawn", var_4.agent_type );
 
-    if ( _func_2D9( var_4 ) )
-        var_4 _meth_8556( var_6 );
+    if ( isscriptedagent( var_4 ) )
+        var_4 scragentsetzombietype( var_6 );
 
     return var_4;
 }
@@ -289,7 +289,7 @@ exomutatorshouldapply( var_0 )
             return 0;
     }
 
-    if ( !_func_2D9( self ) )
+    if ( !isscriptedagent( self ) )
         return 0;
 
     if ( isdefined( level.mutators_disabled[self.agent_type] ) )
@@ -393,7 +393,7 @@ specialmutatorshouldapplydoground( var_0 )
 
 specialmutatorshouldapply( var_0 )
 {
-    if ( !_func_2D9( self ) )
+    if ( !isscriptedagent( self ) )
         return 0;
 
     if ( isdefined( level.shouldspecialmutatorapplyfunc ) )
@@ -445,7 +445,7 @@ specialmutatorshouldapply( var_0 )
 
 applyzombiemutator( var_0 )
 {
-    if ( !_func_2D9( var_0 ) )
+    if ( !isscriptedagent( var_0 ) )
         return;
 
     var_1 = var_0 specialmutatorshouldapply( level.wavecounter );

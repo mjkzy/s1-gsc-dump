@@ -105,11 +105,11 @@ hurtplayersthink()
     {
         foreach ( var_1 in level.players )
         {
-            if ( var_1 _meth_80A9( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
+            if ( var_1 istouching( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
             {
                 if ( isdefined( level.ishorde ) && level.ishorde )
                 {
-                    var_1 _meth_8051( 10000, var_1.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
+                    var_1 dodamage( 10000, var_1.origin, undefined, undefined, "MOD_TRIGGER_HURT", "none", "none" );
                     continue;
                 }
 
@@ -161,7 +161,7 @@ player_inwatersheeting( var_0 )
 
     for (;;)
     {
-        if ( !self _meth_80A9( var_0 ) )
+        if ( !self istouching( var_0 ) )
         {
             player_end_watersheeting( 1, 0.5 );
             return 0;
@@ -194,9 +194,9 @@ player_end_watersheeting( var_0, var_1 )
         self notify( "end_watersheeting" );
 
         if ( isdefined( var_1 ) )
-            self _meth_8218( var_0, var_1 );
+            self setwatersheeting( var_0, var_1 );
         else
-            self _meth_8218( var_0 );
+            self setwatersheeting( var_0 );
     }
 }
 
@@ -210,7 +210,7 @@ player_loop_watersheeting()
 
     while ( isdefined( self.inwatersheeting ) )
     {
-        self _meth_8218( 1, 20 );
+        self setwatersheeting( 1, 20 );
         wait 10.367;
     }
 }
@@ -245,23 +245,23 @@ drone_anims()
     var_2 = getent( "drone_cleaner_03", "targetname" );
     var_3 = var_1.origin;
     var_4 = var_1.angles;
-    var_0 _meth_80E1( 0 );
-    var_1 _meth_80E1( 0 );
-    var_2 _meth_80E1( 0 );
+    var_0 willneverchange( 0 );
+    var_1 willneverchange( 0 );
+    var_2 willneverchange( 0 );
     var_5 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_5 _meth_80B1( "lost_repair_drone_01" );
+    var_5 setmodel( "lost_repair_drone_01" );
     var_5.origin = var_0.origin;
     var_5.angles = var_0.angles;
     maps\mp\_audio::scriptmodelplayanimwithnotify_uniquename( var_5, "lost_repair_drone_standby_idle01", "drone_cleaner_01_notify", "aud_lost_drone_idle_01", "mp_lost_drone_idle_01", "aud_drone_01_end_01", "aud_drone_01_end_02", "aud_drone_01_end_03" );
     var_5 thread maps\mp\mp_lost_fx::play_jackhammer_robot_concrete_fx();
     var_6 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_6 _meth_80B1( "lost_repair_drone_01" );
+    var_6 setmodel( "lost_repair_drone_01" );
     var_6.origin = var_1.origin - ( 0, 0, 25 );
     var_6.angles = var_1.angles;
     maps\mp\_audio::scriptmodelplayanimwithnotify_uniquename( var_6, "lost_repair_drone_standby_idle02", "drone_cleaner_02_notify", "aud_lost_drone_idle_02", "mp_lost_drone_idle_02", "aud_drone_02_end_01", "aud_drone_02_end_02", "aud_drone_02_end_03" );
     var_6 thread maps\mp\mp_lost_fx::play_poking_robot_concrete_fx();
     var_7 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_7 _meth_80B1( "lost_repair_drone_01" );
+    var_7 setmodel( "lost_repair_drone_01" );
     var_7.origin = var_2.origin;
     var_7.angles = var_2.angles;
     maps\mp\_audio::scriptmodelplayanimwithnotify_uniquename( var_7, "lost_repair_drone_standby_idle03", "drone_cleaner_03_notify", "aud_lost_drone_idle_03", "mp_lost_drone_idle_03", "aud_drone_03_end_01", "aud_drone_03_end_02", "aud_drone_03_end_03" );
@@ -271,20 +271,20 @@ drone_anims()
     var_2 delete();
     var_8 = getent( "drone_cleaner_02_sign", "targetname" );
     var_9 = spawn( "script_model", var_3 );
-    var_9 _meth_80B1( "genericprop" );
+    var_9 setmodel( "genericprop" );
     var_9.angles = var_4;
     var_8.origin = var_3;
     var_8.angles = var_4;
-    var_8 _meth_804D( var_9, "tag_origin_animated" );
-    var_9 _meth_8279( "lost_repair_drone_standby_idle02_sign" );
+    var_8 linkto( var_9, "tag_origin_animated" );
+    var_9 scriptmodelplayanim( "lost_repair_drone_standby_idle02_sign" );
     var_10 = getent( "drone_cleaner_02_sign02", "targetname" );
     var_11 = spawn( "script_model", var_3 );
-    var_11 _meth_80B1( "genericprop" );
+    var_11 setmodel( "genericprop" );
     var_11.angles = var_4;
     var_10.origin = var_3;
     var_10.angles = var_4;
-    var_10 _meth_804D( var_11, "tag_origin_animated" );
-    var_11 _meth_8279( "lost_repair_drone_standby_idle02_sign02" );
+    var_10 linkto( var_11, "tag_origin_animated" );
+    var_11 scriptmodelplayanim( "lost_repair_drone_standby_idle02_sign02" );
     wait 0.05;
     var_12 = [ "ps_mp_lost_drone_walk_pt_01", "ps_mp_lost_drone_walk_pt_02", "ps_mp_lost_drone_walk_pt_03", "ps_mp_lost_drone_walk_pt_04", "ps_mp_lost_drone_drill_01", "ps_mp_lost_drone_walk_pt_05", "ps_mp_lost_drone_walk_pt_06", "ps_mp_lost_drone_walk_pt_07", "ps_mp_lost_drone_walk_pt_08", "ps_mp_lost_drone_drill_02" ];
     var_13 = [ "mp_lost_drone_walk_pt_01", "mp_lost_drone_walk_pt_02", "mp_lost_drone_walk_pt_03", "mp_lost_drone_walk_pt_04", "mp_lost_drone_walk_drill_01", "mp_lost_drone_walk_pt_05", "mp_lost_drone_walk_pt_06", "mp_lost_drone_walk_pt_07", "mp_lost_drone_walk_pt_08", "mp_lost_drone_walk_drill_02" ];
@@ -292,15 +292,15 @@ drone_anims()
     maps\mp\_audio::scriptmodelplayanimwithnotify_uniquename( var_14, "lost_canal_drone01_walk_to_idle02", "drone_cleaner_04_notify", var_12, var_13, "aud_drone_04_end_01", "aud_drone_04_end_02", "aud_drone_04_end_03" );
     var_14 thread maps\mp\mp_lost_fx::play_cleaner_walk_fx();
     var_15 = getent( "lost_canal_drone_04_collision", "targetname" );
-    var_15 _meth_804D( var_14, "tag_origin" );
-    var_15 _meth_82BE();
+    var_15 linkto( var_14, "tag_origin" );
+    var_15 solid();
     wait 3;
     var_16 = getent( "drone_cleaner_05", "targetname" );
     maps\mp\_audio::scriptmodelplayanimwithnotify_uniquename( var_16, "lost_canal_drone01_walk_to_idle02", "drone_cleaner_05_notify", var_12, var_13, "aud_drone_05_end_01", "aud_drone_05_end_02", "aud_drone_05_end_03" );
     var_16 thread maps\mp\mp_lost_fx::play_cleaner_walk_fx();
     var_17 = getent( "lost_canal_drone_05_collision", "targetname" );
-    var_17 _meth_804D( var_16, "tag_origin" );
-    var_17 _meth_82BE();
+    var_17 linkto( var_16, "tag_origin" );
+    var_17 solid();
 }
 
 sandcrawler_anims()
@@ -309,5 +309,5 @@ sandcrawler_anims()
     var_0 = getentarray( "lost_sandcrawler", "targetname" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8279( "lost_sand_crawler_idle01" );
+        var_2 scriptmodelplayanim( "lost_sand_crawler_idle01" );
 }

@@ -17,10 +17,10 @@ config_system()
 {
     soundscripts\_audio::set_stringtable_mapname( "shg" );
     soundscripts\_snd_filters::snd_set_occlusion( "med_occlusion" );
-    _func_07C( "unoccluded", 0.5 );
-    _func_07C( "scripted2", 0 );
-    _func_07C( "tactical_special", 0 );
-    _func_07C( "weapons", 0 );
+    soundsettimescalefactor( "unoccluded", 0.5 );
+    soundsettimescalefactor( "scripted2", 0 );
+    soundsettimescalefactor( "tactical_special", 0 );
+    soundsettimescalefactor( "weapons", 0 );
 }
 
 init_snd_flags()
@@ -1005,7 +1005,7 @@ ambush_events()
     wait 8;
     wait 4.8;
     soundscripts\_snd_playsound::snd_play_2d( "player_jet_land" );
-    level.aud.player_jetpack _meth_806F( 0, 1 );
+    level.aud.player_jetpack scalevolume( 0, 1 );
     thread soundscripts\_audio::aud_fade_loop_out_and_delete( level.aud.player_jetpack, 1 );
     common_scripts\utility::flag_wait( "go_drop_pods" );
     wait 2.5;
@@ -1226,8 +1226,8 @@ cave_entry()
     wait 1.2;
     thread fall_cave_swell();
     wait 5;
-    level.aud.panned_quad_1_front _meth_806F( 0, 0.5 );
-    level.aud.panned_quad_1_rear _meth_806F( 0, 0.5 );
+    level.aud.panned_quad_1_front scalevolume( 0, 0.5 );
+    level.aud.panned_quad_1_rear scalevolume( 0, 0.5 );
     level.aud.panned_quad_2_front soundscripts\_snd_playsound::snd_play_loop( "amb_cave_ice" );
     level.aud.panned_quad_2_rear soundscripts\_snd_playsound::snd_play_loop( "amb_cave_ice_sur" );
     wait 1.6;
@@ -1377,7 +1377,7 @@ stalactite_fall( var_0 )
 seo_zipline_harpoon_fire( var_0, var_1, var_2 )
 {
     var_3 = soundscripts\_snd_playsound::snd_play_at( "seo_npc_zipline_shot", var_0 );
-    var_3 _meth_82AE( var_1, var_2 );
+    var_3 moveto( var_1, var_2 );
 }
 
 seo_zipline_harpoon_impact( var_0 )
@@ -1394,12 +1394,12 @@ seo_zipline_rappel_begin()
 snd_play_linked_notify_ent( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", self.origin );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     var_3 playsound( var_0 );
     self waittill( var_1 );
-    var_3 _meth_806F( var_2 );
+    var_3 scalevolume( var_2 );
     wait(var_2);
-    var_3 _meth_80AC();
+    var_3 stopsounds();
     waitframe();
     var_3 delete();
 }
@@ -1503,7 +1503,7 @@ recently_loaded_listener( var_0 )
 {
     while ( !common_scripts\utility::flag( var_0 ) )
     {
-        if ( _func_085() )
+        if ( issaverecentlyloaded() )
         {
             level notify( "recently_loaded" );
 
@@ -1628,8 +1628,8 @@ cave_in()
     wait 0.1;
     thread water_rising_02();
     thread water_rising_03();
-    level.aud.panned_quad_3_front _meth_806F( 0, 1 );
-    level.aud.panned_quad_3_rear _meth_806F( 0, 1 );
+    level.aud.panned_quad_3_front scalevolume( 0, 1 );
+    level.aud.panned_quad_3_rear scalevolume( 0, 1 );
     wait 1;
     level.aud.panned_quad_3_front soundscripts\_snd_playsound::snd_stop_sound();
     level.aud.panned_quad_3_rear soundscripts\_snd_playsound::snd_stop_sound();
@@ -1637,7 +1637,7 @@ cave_in()
 
 start_water_breach()
 {
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_enter", "slowmodone" );
     soundscripts\_snd_playsound::snd_play_2d( "water_breach_axe_throw" );
@@ -1649,7 +1649,7 @@ end_water_breach()
 {
     level notify( "slowmodone" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     soundscripts\_snd_playsound::snd_play_2d( "slo_mo_exit" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "water_breach", 0.5 );
 }
@@ -1763,8 +1763,8 @@ lake_fall_in()
     level.lake_chopper soundscripts\_snd_playsound::snd_stop_sound();
     wait 10;
     soundscripts\_audio_mix_manager::mm_clear_submix( "fall_lake", 2 );
-    level.aud.panned_quad_1_front _meth_806F( 0, 0.5 );
-    level.aud.panned_quad_2_rear _meth_806F( 0, 0.5 );
+    level.aud.panned_quad_1_front scalevolume( 0, 0.5 );
+    level.aud.panned_quad_2_rear scalevolume( 0, 0.5 );
     wait 1;
     level.aud.panned_quad_1_front soundscripts\_snd_playsound::snd_stop_sound();
     level.aud.panned_quad_2_rear soundscripts\_snd_playsound::snd_stop_sound();
@@ -1780,8 +1780,8 @@ lake_exit()
     soundscripts\_audio_zone_manager::azm_start_zone( "crash_ext_end", 1 );
     level.aud.panned_quad_1_front soundscripts\_snd_playsound::snd_play_loop( "amb_wind_light_gust_2" );
     level.aud.panned_quad_1_rear soundscripts\_snd_playsound::snd_play_loop( "amb_wind_light_gust_2_sur" );
-    level.aud.panned_quad_1_front _meth_806F( 1 );
-    level.aud.panned_quad_1_rear _meth_806F( 1 );
+    level.aud.panned_quad_1_front scalevolume( 1 );
+    level.aud.panned_quad_1_rear scalevolume( 1 );
     wait 15;
     soundscripts\_audio_mix_manager::mm_add_submix( "mute_water_exit" );
     wait 10;
@@ -1841,7 +1841,7 @@ cormack_missile( var_0 )
 vtol_flyin()
 {
     common_scripts\utility::flag_wait( "obj_end_get_gun" );
-    level.end_vtol _meth_828B();
+    level.end_vtol vehicle_turnengineoff();
     level.end_vtol soundscripts\_snd_playsound::snd_play_linked( "vtol_incoming_chop", "vtol_downed", 0, 1 );
     wait 7.7;
     var_0 = level.end_vtol soundscripts\_snd_playsound::snd_play_linked( "vtol_incoming" );
@@ -1871,7 +1871,7 @@ vtol_flyin()
 snd_play_delayed_linked_nocull( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", self.origin );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     wait(var_1);
     var_3 playsound( var_0, "sounddone", 0, var_2 );
     var_3 waittill( "sounddone" );

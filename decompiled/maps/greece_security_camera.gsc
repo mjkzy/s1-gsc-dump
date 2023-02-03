@@ -24,7 +24,7 @@ precachesecuritycamera()
     precachestring( &"updateTargetDetails" );
     precachestring( &"displayScanResults" );
     precachestring( &"initTabletHUD" );
-    level.player _meth_82FB( "ui_manhunttablet", 1 );
+    level.player setclientomnvar( "ui_manhunttablet", 1 );
 }
 
 securitycameraenable( var_0 )
@@ -34,16 +34,16 @@ securitycameraenable( var_0 )
     level.securitycamerascanhud = [];
     level.activetarget = undefined;
     level.marketcamiszoomed = 0;
-    self _meth_831F();
-    self _meth_8321();
-    self _meth_8119( 0 );
-    self _meth_831E();
-    self _meth_80FF();
-    self _meth_830E( "hms_security_camera" );
-    self _meth_8316( "hms_security_camera" );
-    self _meth_8482();
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 3 );
+    self disableoffhandweapons();
+    self disableweaponswitch();
+    self allowcrouch( 0 );
+    self enableweapons();
+    self disableslowaim();
+    self giveweapon( "hms_security_camera" );
+    self switchtoweaponimmediate( "hms_security_camera" );
+    self hideviewmodel();
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 3 );
     _adjustcamerayawpitchrate( "Zoom Out" );
     var_1 = getent( "MarketCameraCliffView", "targetname" );
     var_2 = getent( "MarketCameraCafe", "targetname" );
@@ -74,8 +74,8 @@ securitycameraenable( var_0 )
     common_scripts\utility::flag_set( "init_tablet_overlay" );
     level.player thread maps\_hud_util::fade_in( 0.25, "white" );
     wait 0.15;
-    _func_0D3( "cg_cinematicfullscreen", "1" );
-    _func_057( "greece_match_search_scene_intro" );
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
+    cinematicingame( "greece_match_search_scene_intro" );
     maps\_utility::lerp_fov_overtime( 0.35, 70 );
     thread securitycamerahud();
     thread securitycameraminimapangles();
@@ -95,7 +95,7 @@ securitycameraswitching( var_0, var_1 )
 
     for (;;)
     {
-        if ( self _meth_82EE() )
+        if ( self fragbuttonpressed() )
         {
             if ( var_1 < var_0.size - 1 )
                 var_1++;
@@ -105,7 +105,7 @@ securitycameraswitching( var_0, var_1 )
             thread securitycameratransitionblur( var_0[var_1], var_0 );
             wait 0.5;
         }
-        else if ( self _meth_82EF() )
+        else if ( self secondaryoffhandbuttonpressed() )
         {
             if ( var_1 > 0 )
                 var_1--;
@@ -135,7 +135,7 @@ getindex( var_0, var_1 )
 
 securitycameraviewlink( var_0 )
 {
-    self _meth_804F();
+    self unlink();
     wait 0.05;
 
     if ( isdefined( var_0.script_parameters ) )
@@ -143,7 +143,7 @@ securitycameraviewlink( var_0 )
     else
         var_1 = [ 0, 75, 75, 25, 60, 70 ];
 
-    self _meth_807D( var_0, "tag_player", 0, var_1[1], var_1[2], var_1[3], var_1[4], 0, 0 );
+    self playerlinktodelta( var_0, "tag_player", 0, var_1[1], var_1[2], var_1[3], var_1[4], 0, 0 );
     self setangles( var_0.angles );
     level.cameralinkpoint = var_0;
     maps\_utility::lerp_fov_overtime( 0.5, var_1[5] );
@@ -183,7 +183,7 @@ securitycameratransitionblur( var_0, var_1 )
     wait 0.15;
     thread securitycameraviewlink( var_0 );
     level.player maps\_hud_util::fade_in( 0.15, "black" );
-    _func_23F( &"updateCurrentCamera", 1, var_2 );
+    luinotifyevent( &"updateCurrentCamera", 1, var_2 );
 }
 
 securitycameratargetfrequency()
@@ -259,7 +259,7 @@ updaterumble()
             if ( level.marketcamiszoomed )
                 var_4 = 20;
 
-            var_3.screenpos = level.player _meth_8400( var_3 _meth_8216( 0, 0, 0.5 ), var_4 );
+            var_3.screenpos = level.player worldpointtoscreenpos( var_3 getpointinbounds( 0, 0, 0.5 ), var_4 );
 
             if ( !isdefined( var_3.screenpos ) )
                 continue;
@@ -322,7 +322,7 @@ securitycamerapotentialsignalmatch()
 
         if ( isdefined( level.activetarget ) && isdefined( level.activetarget.potentialtarget ) && level.activetarget.potentialtarget == 1 && level.marketcamiszoomed == 1 )
         {
-            _func_23F( &"updateProgressBarVisibility", 2, 1, int( level.activetarget.frequency ) );
+            luinotifyevent( &"updateProgressBarVisibility", 2, 1, int( level.activetarget.frequency ) );
 
             if ( !isdefined( level.activetarget.scanprogress ) )
                 level.activetarget.scanprogress = 0;
@@ -333,7 +333,7 @@ securitycamerapotentialsignalmatch()
         }
         else if ( !isdefined( level.activetarget ) || !isdefined( level.activetarget.potentialtarget ) || level.activetarget.potentialtarget == 0 || level.marketcamiszoomed == 0 )
         {
-            _func_23F( &"updateProgressBarVisibility", 1, 0 );
+            luinotifyevent( &"updateProgressBarVisibility", 1, 0 );
             soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_stop" );
         }
 
@@ -353,18 +353,18 @@ updatescanbar()
             soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_start" );
             level.activetarget.scanprogress++;
 
-            if ( !_func_05B() )
-                _func_059( "greece_match_search" );
+            if ( !iscinematicplaying() )
+                cinematicingameloop( "greece_match_search" );
         }
         else if ( !level.player attackbuttonpressed() )
         {
             soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_stop" );
-            _func_05C();
+            stopcinematicingame();
         }
         else if ( level.activetarget.scanprogress == 60 )
         {
             soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_stop" );
-            _func_05C();
+            stopcinematicingame();
             level.activetarget.potentialtarget = 0;
             level.player notify( "target_scanned" );
             level.activetarget notify( "target_scanned" );
@@ -372,7 +372,7 @@ updatescanbar()
             break;
         }
 
-        _func_23F( &"updateProgressBar", 2, int( level.activetarget.scanprogress ), int( 60 ) );
+        luinotifyevent( &"updateProgressBar", 2, int( level.activetarget.scanprogress ), int( 60 ) );
         wait 0.05;
     }
 }
@@ -382,8 +382,8 @@ securitycamerahud()
     thread securitycamerazoomincontrols();
     thread securitycamerazoomoutcontrols();
     thread securitycamerazoommodifier();
-    _func_23F( &"updateCurrentCamera", 1, 0 );
-    _func_23F( &"initTabletHUD", 0 );
+    luinotifyevent( &"updateCurrentCamera", 1, 0 );
+    luinotifyevent( &"initTabletHUD", 0 );
 }
 
 securitycameraminimapangles()
@@ -393,7 +393,7 @@ securitycameraminimapangles()
     for (;;)
     {
         var_0 = level.player getangles();
-        level.player _meth_82FB( "ui_greece_camera_angle", int( var_0[1] ) );
+        level.player setclientomnvar( "ui_greece_camera_angle", int( var_0[1] ) );
         waitframe();
     }
 }
@@ -404,7 +404,7 @@ displayscanresults()
 
     if ( self.team == "axis" && !common_scripts\utility::flag( "FlagKVATargetWaitTimerExpired" ) )
     {
-        _func_23F( &"displayScanResults", 2, 1, int( level.activetarget.frequency ) );
+        luinotifyevent( &"displayScanResults", 2, 1, int( level.activetarget.frequency ) );
         soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_get" );
         level notify( "KVATargetFound" );
         level notify( "CancelMarketScanDialog" );
@@ -413,7 +413,7 @@ displayscanresults()
     }
     else if ( self.team != "axis" && !common_scripts\utility::flag( "FlagKVATargetWaitTimerExpired" ) )
     {
-        _func_23F( &"displayScanResults", 2, 0, int( level.activetarget.frequency ) );
+        luinotifyevent( &"displayScanResults", 2, 0, int( level.activetarget.frequency ) );
         soundscripts\_snd::snd_message( "mhunt_cafe_cam_scan_fail" );
         thread securitycameramarktargets( 1 );
         thread maps\greece_safehouse_vo::scancameratargetdialogue();
@@ -428,7 +428,7 @@ securitycameramarktargets( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = 1;
 
-    self _meth_83FA( var_0, 1 );
+    self hudoutlineenable( var_0, 1 );
     thread securitycameraclearscannedtarget();
 }
 
@@ -439,10 +439,10 @@ securitycameraclearscannedtarget()
 
     if ( isdefined( self.team ) && self.team != "axis" )
     {
-        if ( _func_0A3( self ) )
-            _func_09B( self );
+        if ( target_istarget( self ) )
+            target_remove( self );
 
-        self _meth_83FB();
+        self hudoutlinedisable();
     }
 }
 
@@ -452,29 +452,29 @@ securitycameraclearalltargets()
 
     foreach ( var_1 in level.potentialscantargets )
     {
-        if ( _func_0A3( var_1 ) )
-            _func_09B( var_1 );
+        if ( target_istarget( var_1 ) )
+            target_remove( var_1 );
     }
 }
 
 securitycamerazoominstructions()
 {
     level.player waittill( "Zoom_Out" );
-    level.player _meth_82FB( "ui_greece_camera_zoom_instructions", 1 );
+    level.player setclientomnvar( "ui_greece_camera_zoom_instructions", 1 );
 }
 
 securitycamerazoomincontrols()
 {
     self endon( "DisableSecurityCameras" );
     common_scripts\utility::flag_wait( "FlagCameraScanUnlockZoom" );
-    _func_0D3( "cg_cinematicfullscreen", "0" );
+    setsaveddvar( "cg_cinematicfullscreen", "0" );
 
     for (;;)
     {
         level.player waittill( "Zoom_In" );
         level.marketcamiszoomed = 1;
         soundscripts\_snd::snd_message( "mhunt_cafe_cam_zoom_in" );
-        _func_23F( &"updateTargetReticule", 1, 1 );
+        luinotifyevent( &"updateTargetReticule", 1, 1 );
         maps\_utility::lerp_fov_overtime( 0.35, 20 );
         _adjustcamerayawpitchrate( "Zoom In" );
         level.player waittill( "Zoom_Out" );
@@ -492,7 +492,7 @@ securitycamerazoomoutcontrols()
         level.player waittill( "Zoom_Out" );
         level.marketcamiszoomed = 0;
         soundscripts\_snd::snd_message( "mhunt_cafe_cam_zoom_out" );
-        _func_23F( &"updateTargetReticule", 1, 0 );
+        luinotifyevent( &"updateTargetReticule", 1, 0 );
         maps\_utility::lerp_fov_overtime( 0.35, 70 );
         _adjustcamerayawpitchrate( "Zoom Out" );
         level.player waittill( "Zoom_In" );
@@ -539,14 +539,14 @@ _adjustcamerayawpitchrate( var_0 )
     switch ( var_0 )
     {
         case "Zoom In":
-            _func_0D3( "aim_turnrate_pitch", 35 );
-            _func_0D3( "aim_turnrate_yaw", 35 );
-            _func_0D3( "aim_accel_turnrate_lerp", 35 );
+            setsaveddvar( "aim_turnrate_pitch", 35 );
+            setsaveddvar( "aim_turnrate_yaw", 35 );
+            setsaveddvar( "aim_accel_turnrate_lerp", 35 );
             break;
         case "Zoom Out":
-            _func_0D3( "aim_turnrate_pitch", 50 );
-            _func_0D3( "aim_turnrate_yaw", 50 );
-            _func_0D3( "aim_accel_turnrate_lerp", 75 );
+            setsaveddvar( "aim_turnrate_pitch", 50 );
+            setsaveddvar( "aim_turnrate_yaw", 50 );
+            setsaveddvar( "aim_accel_turnrate_lerp", 75 );
             break;
     }
 }
@@ -570,16 +570,16 @@ securitycameradisable()
     wait 0.25;
     level.player setblurforplayer( 10, 0.5 );
     level.player maps\_hud_util::fade_out( 0.25, "white" );
-    level.player _meth_82FB( "ui_manhunttablet", 0 );
+    level.player setclientomnvar( "ui_manhunttablet", 0 );
     common_scripts\utility::flag_set( "init_safehouse_follow_lighting" );
 
     if ( isdefined( level.activetarget ) )
-        level.activetarget _meth_83FB();
+        level.activetarget hudoutlinedisable();
 
     foreach ( var_4 in level.potentialscantargets )
     {
         if ( isalive( var_4 ) )
-            var_4 _meth_83FB();
+            var_4 hudoutlinedisable();
     }
 
     foreach ( var_1 in level.securitycamerahud )
@@ -588,20 +588,20 @@ securitycameradisable()
             var_1 maps\_hud_util::destroyelem();
     }
 
-    level.player _meth_830F( "hms_security_camera" );
+    level.player takeweapon( "hms_security_camera" );
     maps\_utility::lerp_fov_overtime( 0.1, 65 );
-    _func_0D3( "aim_turnrate_pitch", 90 );
-    _func_0D3( "aim_turnrate_pitch_ads", 55 );
-    _func_0D3( "aim_turnrate_yaw", 260 );
-    _func_0D3( "aim_turnrate_yaw_ads", 90 );
-    _func_0D3( "aim_accel_turnrate_lerp", 1200 );
-    _func_0D3( "cg_cinematicfullscreen", "1" );
+    setsaveddvar( "aim_turnrate_pitch", 90 );
+    setsaveddvar( "aim_turnrate_pitch_ads", 55 );
+    setsaveddvar( "aim_turnrate_yaw", 260 );
+    setsaveddvar( "aim_turnrate_yaw_ads", 90 );
+    setsaveddvar( "aim_accel_turnrate_lerp", 1200 );
+    setsaveddvar( "cg_cinematicfullscreen", "1" );
 }
 
 scanfadeintro()
 {
     wait 0.1;
-    level.player _meth_8031( 40, 0.5 );
+    level.player lerpfov( 40, 0.5 );
     level.player setblurforplayer( 10, 0.5 );
     wait 0.25;
     level.player maps\_hud_util::fade_out( 0.1, "white" );
@@ -646,13 +646,13 @@ updatetargetdetails()
             var_0 = 1;
     }
 
-    _func_23F( &"updateTargetDetails", 2, var_0, int( level.intensity * 1000 ) );
+    luinotifyevent( &"updateTargetDetails", 2, var_0, int( level.intensity * 1000 ) );
 }
 
 updatetraceentity()
 {
     self endon( "DisableScanning" );
-    var_0 = level.player _meth_80A8();
+    var_0 = level.player geteye();
     var_1 = self getangles();
     var_2 = anglestoforward( var_1 );
     var_3 = var_0 + var_2 * 7000;
@@ -668,7 +668,7 @@ updatetraceentity()
             level.activetarget thread targetmonitor();
 
             if ( isdefined( level.activetarget.potentialtarget ) && level.activetarget.potentialtarget )
-                level.activetarget _meth_83FA( 5, 0 );
+                level.activetarget hudoutlineenable( 5, 0 );
         }
     }
     else if ( !isdefined( var_5 ) )

@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "marines_body_assault_lowlod" );
+    self setmodel( "marines_body_assault_lowlod" );
     self attach( "pmc_casual_head_c_lowlod", "", 1 );
     self.headmodel = "pmc_casual_head_c_lowlod";
     self.voice = "atlas";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

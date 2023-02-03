@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "sentinel_covert_body_a" );
+    self setmodel( "sentinel_covert_body_a" );
     self attach( "head_hero_knox_sentinel_covert_blend", "", 1 );
     self.headmodel = "head_hero_knox_sentinel_covert_blend";
     self.voice = "xslice";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

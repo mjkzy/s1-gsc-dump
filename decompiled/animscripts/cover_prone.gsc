@@ -65,9 +65,9 @@ main()
 
     setup_cover_prone();
     self.covernode = self.node;
-    self _meth_818F( "face angle", self.covernode.angles[1] );
+    self orientmode( "face angle", self.covernode.angles[1] );
     self.a.goingtoproneaim = 1;
-    self _meth_81FA( -45, 45, %prone_legs_down, %exposed_modern, %prone_legs_up );
+    self setproneanimnodes( -45, 45, %prone_legs_down, %exposed_modern, %prone_legs_up );
 
     if ( self.a.pose != "prone" )
         prone_transitionto( "prone" );
@@ -76,9 +76,9 @@ main()
 
     thread animscripts\combat_utility::aimidlethread();
     setupproneaim( 0.2 );
-    self _meth_814B( %prone_aim_5, 1, 0.1 );
-    self _meth_818F( "face angle", self.covernode.angles[1] );
-    self _meth_818E( "zonly_physics" );
+    self setanim( %prone_aim_5, 1, 0.1 );
+    self orientmode( "face angle", self.covernode.angles[1] );
+    self animmode( "zonly_physics" );
     pronecombatmainloop();
     self notify( "stop_deciding_how_to_shoot" );
 }
@@ -96,16 +96,16 @@ idlethread()
     for (;;)
     {
         var_0 = animscripts\utility::animarraypickrandom( "prone_idle" );
-        self _meth_8112( "idle", var_0 );
+        self setflaggedanimlimited( "idle", var_0 );
         self waittillmatch( "idle", "end" );
-        self _meth_8142( var_0, 0.2 );
+        self clearanim( var_0, 0.2 );
     }
 }
 
 updatepronewrapper( var_0 )
 {
-    self _meth_81FB( animscripts\utility::lookupanim( "cover_prone", "legs_up" ), animscripts\utility::lookupanim( "cover_prone", "legs_down" ), 1, var_0, 1 );
-    self _meth_814B( %exposed_aiming, 1, 0.2 );
+    self updateprone( animscripts\utility::lookupanim( "cover_prone", "legs_up" ), animscripts\utility::lookupanim( "cover_prone", "legs_down" ), 1, var_0, 1 );
+    self setanim( %exposed_aiming, 1, 0.2 );
 }
 
 pronecombatmainloop()
@@ -138,7 +138,7 @@ pronecombatmainloop()
 
         var_1 = lengthsquared( self.origin - self.shootpos );
 
-        if ( self.a.pose != "crouch" && self _meth_81CB( "crouch" ) && var_1 < squared( 400 ) )
+        if ( self.a.pose != "crouch" && self isstanceallowed( "crouch" ) && var_1 < squared( 400 ) )
         {
             if ( var_1 < squared( 285 ) )
             {
@@ -157,7 +157,7 @@ pronecombatmainloop()
         if ( animscripts\combat_utility::aimedatshootentorpos() )
         {
             animscripts\combat_utility::shootuntilshootbehaviorchange();
-            self _meth_8142( %add_fire, 0.2 );
+            self clearanim( %add_fire, 0.2 );
             continue;
         }
 
@@ -172,7 +172,7 @@ pronereload( var_0 )
 
 setup_cover_prone()
 {
-    self _meth_8173( self.node );
+    self setdefaultaimlimits( self.node );
     self.a.array = animscripts\utility::lookupanimarray( "cover_prone" );
 }
 
@@ -185,7 +185,7 @@ trythrowinggrenade( var_0, var_1 )
     else
         var_2 = animscripts\utility::animarraypickrandom( "grenade_exposed" );
 
-    self _meth_818E( "zonly_physics" );
+    self animmode( "zonly_physics" );
     self.keepclaimednodeifvalid = 1;
     var_3 = ( 32, 20, 64 );
     var_4 = animscripts\combat_utility::trygrenade( var_0, var_2 );
@@ -215,7 +215,7 @@ shouldfirewhilechangingpose()
     if ( isdefined( self.node ) && distancesquared( self.origin, self.node.origin ) < 256 )
         return 0;
 
-    if ( isdefined( self.enemy ) && self _meth_81BE( self.enemy ) && !isdefined( self.grenade ) && animscripts\shared::getaimyawtoshootentorpos() < 20 )
+    if ( isdefined( self.enemy ) && self cansee( self.enemy ) && !isdefined( self.grenade ) && animscripts\shared::getaimyawtoshootentorpos() < 20 )
         return animscripts\move::mayshootwhilemoving();
 
     return 0;
@@ -226,7 +226,7 @@ prone_transitionto( var_0 )
     if ( var_0 == self.a.pose )
         return;
 
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
     animscripts\combat_utility::endfireandanimidlethread();
 
     if ( shouldfirewhilechangingpose() )
@@ -239,9 +239,9 @@ prone_transitionto( var_0 )
 
     }
 
-    self _meth_8110( "trans", var_1, %body, 1, 0.2, 1.0 );
+    self setflaggedanimknoballrestart( "trans", var_1, %body, 1, 0.2, 1.0 );
     animscripts\shared::donotetracks( "trans" );
-    self _meth_8149( animscripts\utility::animarray( "straight_level" ), %body, 1, 0.25 );
+    self setanimknoballrestart( animscripts\utility::animarray( "straight_level" ), %body, 1, 0.25 );
     setupproneaim( 0.25 );
 }
 
@@ -253,16 +253,16 @@ finishnotetracks( var_0 )
 
 setupproneaim( var_0 )
 {
-    self _meth_8147( %prone_aim_5, %body, 1, var_0 );
-    self _meth_814C( %prone_aim_2_add, 1, var_0 );
-    self _meth_814C( %prone_aim_4_add, 1, var_0 );
-    self _meth_814C( %prone_aim_6_add, 1, var_0 );
-    self _meth_814C( %prone_aim_8_add, 1, var_0 );
+    self setanimknoball( %prone_aim_5, %body, 1, var_0 );
+    self setanimlimited( %prone_aim_2_add, 1, var_0 );
+    self setanimlimited( %prone_aim_4_add, 1, var_0 );
+    self setanimlimited( %prone_aim_6_add, 1, var_0 );
+    self setanimlimited( %prone_aim_8_add, 1, var_0 );
 }
 
 proneto( var_0, var_1 )
 {
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
     var_2 = undefined;
 
     if ( shouldfirewhilechangingpose() )
@@ -287,7 +287,7 @@ proneto( var_0, var_1 )
         var_1 = 1;
 
     animscripts\utility::exitpronewrapper( getanimlength( var_2 ) / 2 );
-    self _meth_8110( "trans", var_2, %body, 1, 0.2, var_1 );
+    self setflaggedanimknoballrestart( "trans", var_2, %body, 1, 0.2, var_1 );
     animscripts\shared::donotetracks( "trans" );
-    self _meth_8142( var_2, 0.1 );
+    self clearanim( var_2, 0.1 );
 }

@@ -10,7 +10,7 @@ doorenterexitcheck()
 
     for (;;)
     {
-        var_0 = self _meth_81A0();
+        var_0 = self getdoorpathnode();
 
         if ( isdefined( var_0 ) )
             break;
@@ -18,7 +18,7 @@ doorenterexitcheck()
         wait 0.2;
     }
 
-    var_1 = var_0.type == "Door Interior" || self _meth_81A1( var_0 );
+    var_1 = var_0.type == "Door Interior" || self comparenodedirtopathdir( var_0 );
 
     if ( var_1 )
         doorenter( var_0 );
@@ -27,7 +27,7 @@ doorenterexitcheck()
 
     for (;;)
     {
-        var_2 = self _meth_81A0();
+        var_2 = self getdoorpathnode();
 
         if ( !isdefined( var_2 ) || var_2 != var_0 )
             break;
@@ -55,15 +55,15 @@ dodoorgrenadethrow( var_0 )
     if ( self.grenadeweapon == "flash_grenade" )
         self notify( "flashbang_thrown" );
 
-    self _meth_818F( "face current" );
+    self orientmode( "face current" );
     var_0.nextdoorgrenadetime = gettime() + 5000;
     self.minindoortime = gettime() + 100000;
     self notify( "move_interrupt" );
     self.update_move_anim_type = undefined;
-    self _meth_8142( %combatrun, 0.2 );
+    self clearanim( %combatrun, 0.2 );
     self.a.movement = "stop";
     self waittill( "done_grenade_throw" );
-    self _meth_818F( "face default" );
+    self orientmode( "face default" );
     self.minindoortime = gettime() + 5000;
     self.grenadeweapon = self.oldgrenadeweapon;
     self.oldgrenadeweapon = undefined;
@@ -80,7 +80,7 @@ doorenter_trygrenade( var_0, var_1, var_2, var_3, var_4 )
     var_7 = %cqb_stand_grenade_throw;
     var_8 = anglestoforward( var_0.angles );
 
-    if ( var_0.type == "Door Interior" && !self _meth_81A1( var_0 ) )
+    if ( var_0.type == "Door Interior" && !self comparenodedirtopathdir( var_0 ) )
         var_8 = -1 * var_8;
 
     var_9 = ( var_0.origin[0], var_0.origin[1], var_0.origin[2] + 64 );
@@ -108,12 +108,12 @@ doorenter_trygrenade( var_0, var_1, var_2, var_3, var_4 )
         if ( onsamesideofdoor( var_0, var_8 ) )
             return;
 
-        if ( !self _meth_81BF( self.enemy, 0.2 ) && self.a.pose == "stand" && distance2dandheightcheck( self.enemy.origin - var_0.origin, 360000, 16384 ) )
+        if ( !self seerecently( self.enemy, 0.2 ) && self.a.pose == "stand" && distance2dandheightcheck( self.enemy.origin - var_0.origin, 360000, 16384 ) )
         {
             if ( isdefined( var_0.nextdoorgrenadetime ) && var_0.nextdoorgrenadetime > gettime() )
                 return;
 
-            if ( self _meth_81BD() )
+            if ( self canshootenemy() )
                 return;
 
             var_12 = var_0.origin - self.origin;
@@ -132,7 +132,7 @@ doorenter_trygrenade( var_0, var_1, var_2, var_3, var_4 )
             {
                 var_14 = var_9 + var_8 * 100;
 
-                if ( !self _meth_81CF( self.enemy, var_14, 128 ) )
+                if ( !self isgrenadepossafe( self.enemy, var_14, 128 ) )
                     return;
             }
 
@@ -147,7 +147,7 @@ doorenter_trygrenade( var_0, var_1, var_2, var_3, var_4 )
 
         var_6--;
         wait(var_4);
-        var_15 = self _meth_81A0();
+        var_15 = self getdoorpathnode();
 
         if ( !isdefined( var_15 ) || var_15 != var_0 )
             return;
@@ -165,7 +165,7 @@ indoorcqbtogglecheck()
 
     for (;;)
     {
-        if ( self _meth_813B() && !self.doingambush )
+        if ( self isindoor() && !self.doingambush )
             doorenter_enable_cqbwalk();
         else if ( !isdefined( self.minindoortime ) || self.minindoortime < gettime() )
         {
@@ -221,7 +221,7 @@ doorenter( var_0 )
         if ( distance2dandheightcheck( self.origin - var_0.origin, 562500, 25600 ) )
         {
             doorenter_trygrenade( var_0, "fraggrenade", 0, 302500, 0.3 );
-            var_0 = self _meth_81A0();
+            var_0 = self getdoorpathnode();
 
             if ( !isdefined( var_0 ) )
                 return;

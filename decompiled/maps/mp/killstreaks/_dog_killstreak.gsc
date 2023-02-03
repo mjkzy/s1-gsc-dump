@@ -27,27 +27,27 @@ usedog()
 {
     if ( maps\mp\agents\_agent_utility::getnumactiveagents( "dog" ) >= 5 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_TOO_MANY_DOGS" );
+        self iprintlnbold( &"KILLSTREAKS_TOO_MANY_DOGS" );
         return 0;
     }
 
     if ( maps\mp\agents\_agent_utility::getnumownedactiveagentsbytype( self, "dog" ) >= 1 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_ALREADY_HAVE_DOG" );
+        self iprintlnbold( &"KILLSTREAKS_ALREADY_HAVE_DOG" );
         return 0;
     }
 
     if ( maps\mp\agents\_agent_utility::getnumownedactiveagents( self ) >= 2 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
+        self iprintlnbold( &"KILLSTREAKS_AGENT_MAX" );
         return 0;
     }
 
-    var_0 = _func_1FB();
+    var_0 = getmaxagents();
 
     if ( maps\mp\agents\_agent_utility::getnumactiveagents() >= var_0 )
     {
-        self iclientprintlnbold( &"KILLSTREAKS_UNAVAILABLE" );
+        self iprintlnbold( &"KILLSTREAKS_UNAVAILABLE" );
         return 0;
     }
 
@@ -94,16 +94,16 @@ on_agent_dog_killed( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var
         {
             var_1 maps\mp\gametypes\_missions::processchallenge( "ch_notsobestfriend" );
 
-            if ( !self _meth_8341() )
+            if ( !self isonground() )
                 var_1 maps\mp\gametypes\_missions::processchallenge( "ch_hoopla" );
         }
     }
 
-    self _meth_83D2( "death" );
-    var_9 = self _meth_83D3();
+    self setanimstate( "death" );
+    var_9 = self getanimentry();
     var_10 = getanimlength( var_9 );
     var_8 = int( var_10 * 1000 );
-    self.body = self _meth_838D( var_8 );
+    self.body = self finishagentdamage( var_8 );
     self playsound( "anml_doberman_death" );
     maps\mp\agents\_agent_utility::deactivateagent();
     self notify( "killanimscript" );
@@ -154,10 +154,10 @@ play_pain_sound( var_0 )
 
 spawn_dog( var_0, var_1, var_2 )
 {
-    if ( _func_282() )
-        self _meth_80B1( "animal_dobernan" );
+    if ( ishairrunning() )
+        self setmodel( "animal_dobernan" );
     else
-        self _meth_80B1( "animal_dobernan" );
+        self setmodel( "animal_dobernan" );
 
     self.species = "dog";
     self.onenteranimstate = maps\mp\agents\dog\_dog_think::onenteranimstate;
@@ -178,15 +178,15 @@ spawn_dog( var_0, var_1, var_2 )
     self.spawntime = gettime();
     self.lastspawntime = gettime();
     maps\mp\agents\dog\_dog_think::init();
-    self _meth_838A( var_3, var_4, "dog_animclass", 15, 40, var_2 );
+    self spawnagent( var_3, var_4, "dog_animclass", 15, 40, var_2 );
     level notify( "spawned_agent", self );
     maps\mp\agents\_agent_common::set_agent_health( 250 );
 
     if ( isdefined( var_2 ) )
         maps\mp\agents\_agent_utility::set_agent_team( var_2.team, var_2 );
 
-    self _meth_8177( "Dogs" );
-    self _meth_8310();
+    self setthreatbiasgroup( "Dogs" );
+    self takeallweapons();
 
     if ( isdefined( self.owner ) )
     {
@@ -203,6 +203,6 @@ spawn_dog( var_0, var_1, var_2 )
     self thread [[ maps\mp\agents\_agent_utility::agentfunc( "think" ) ]]();
     wait 0.1;
 
-    if ( _func_282() )
+    if ( ishairrunning() )
         playfxontag( level.furfx, self, "tag_origin" );
 }

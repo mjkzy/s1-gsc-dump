@@ -21,7 +21,7 @@ watchtrackingdroneusage()
             var_0 thread destroy_tracking_drone_in_water();
             wait 0.5;
 
-            if ( !_func_294( var_0 ) && isdefined( var_0 ) )
+            if ( !isremovedentity( var_0 ) && isdefined( var_0 ) )
             {
                 self.trackingdronestartposition = var_0.origin;
                 self.trackingdronestartangles = var_0.angles;
@@ -77,12 +77,12 @@ tryusetrackingdrone( var_0 )
         return 0;
     else if ( exceededmaxtrackingdrones() )
     {
-        self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
     else if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + var_1 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
+        self iprintlnbold( &"MP_AIR_SPACE_TOO_CROWDED" );
         return 0;
     }
 
@@ -124,7 +124,7 @@ createtrackingdrone( var_0, var_1, var_2, var_3, var_4 )
 
     if ( !var_1 )
     {
-        var_5 = self _meth_80A8();
+        var_5 = self geteye();
         var_6 = anglestoforward( self getangles() );
         var_7 = self getangles();
         var_6 = anglestoforward( var_7 );
@@ -133,7 +133,7 @@ createtrackingdrone( var_0, var_1, var_2, var_3, var_4 )
         var_10 = var_8 * 0;
         var_11 = 80;
 
-        switch ( self _meth_817C() )
+        switch ( self getstance() )
         {
             case "stand":
                 var_11 = 80;
@@ -178,13 +178,13 @@ createtrackingdrone( var_0, var_1, var_2, var_3, var_4 )
     if ( isdefined( var_4 ) )
     {
         var_16.type = "explosive_drone";
-        var_16 _meth_80B1( "vehicle_pdrone" );
+        var_16 setmodel( "vehicle_pdrone" );
     }
     else
         var_16.type = "tracking_drone";
 
     var_16 common_scripts\utility::make_entity_sentient_mp( self.team );
-    var_16 _meth_83F3( 1 );
+    var_16 makevehiclenotcollidewithplayers( 1 );
     var_16 addtotrackingdronelist();
     var_16 thread removefromtrackingdronelistondeath();
     var_16.health = level.trackingdronesettings.health;
@@ -194,10 +194,10 @@ createtrackingdrone( var_0, var_1, var_2, var_3, var_4 )
     var_16.followspeed = 20;
     var_16.owner = self;
     var_16.team = self.team;
-    var_16 _meth_8283( var_16.speed, 10, 10 );
-    var_16 _meth_8292( 120, 90 );
-    var_16 _meth_825A( 64 );
-    var_16 _meth_8253( 4, 5, 5 );
+    var_16 vehicle_setspeed( var_16.speed, 10, 10 );
+    var_16 setyawspeed( 120, 90 );
+    var_16 setneargoalnotifydist( 64 );
+    var_16 sethoverparams( 4, 5, 5 );
     var_16.fx_tag0 = undefined;
 
     if ( isdefined( var_16.type ) )
@@ -218,7 +218,7 @@ createtrackingdrone( var_0, var_1, var_2, var_3, var_4 )
     var_16.trackedplayer = undefined;
     var_17 = 45;
     var_18 = 45;
-    var_16 _meth_8294( var_17, var_18 );
+    var_16 setmaxpitchroll( var_17, var_18 );
     var_16.targetpos = var_13;
     var_16.attract_strength = 10000;
     var_16.attract_range = 150;
@@ -260,7 +260,7 @@ idletargetmover( var_0 )
         {
             var_1 = anglestoforward( self.angles );
             var_2 = self.origin + var_1 * -100 + ( 0, 0, 40 );
-            var_0 _meth_82AE( var_2, 0.5 );
+            var_0 moveto( var_2, 0.5 );
         }
 
         wait 0.5;
@@ -473,9 +473,9 @@ blowupdronesequence()
         playfx( level.trackingdronesettings.fxid_lethalexplode, self.origin, var_3, var_2 );
 
         if ( isdefined( var_1 ) )
-            self entityradiusdamage( self.origin, 256, 1000, 25, var_1, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
+            self radiusdamage( self.origin, 256, 1000, 25, var_1, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
         else
-            self entityradiusdamage( self.origin, 256, 1000, 25, undefined, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
+            self radiusdamage( self.origin, 256, 1000, 25, undefined, "MOD_EXPLOSIVE", "killstreak_missile_strike_mp" );
 
         self notify( "death" );
     }
@@ -523,7 +523,7 @@ trackingdrone_followtarget()
 
     self.owner endon( "disconnect" );
     self endon( "owner_gone" );
-    self _meth_8283( self.followspeed, 10, 10 );
+    self vehicle_setspeed( self.followspeed, 10, 10 );
     self.previoustrackedplayer = self.owner;
     self.trackedplayer = undefined;
 
@@ -621,7 +621,7 @@ trackingdrone_movetoplayer( var_0 )
         var_1 = 0;
         var_2 = 30;
 
-        switch ( var_0 _meth_817C() )
+        switch ( var_0 getstance() )
         {
             case "stand":
                 var_3 = 105;
@@ -639,7 +639,7 @@ trackingdrone_movetoplayer( var_0 )
         var_1 = -65;
         var_2 = 0;
 
-        switch ( var_0 _meth_817C() )
+        switch ( var_0 getstance() )
         {
             case "stand":
                 var_3 = 65;
@@ -654,7 +654,7 @@ trackingdrone_movetoplayer( var_0 )
     }
 
     var_4 = ( var_2, var_1, var_3 );
-    self _meth_83F9( var_0, var_4 );
+    self setdronegoalpos( var_0, var_4 );
     self.intransit = 1;
     thread trackingdrone_watchforgoal();
     thread trackingdrone_watchtargetdisconnect();
@@ -662,7 +662,7 @@ trackingdrone_movetoplayer( var_0 )
 
 trackingdrone_stopmovement()
 {
-    self _meth_825B( self.origin, 1 );
+    self setvehgoalpos( self.origin, 1 );
     self.intransit = 0;
     self.inactive = 1;
 }
@@ -709,7 +709,7 @@ trackingdrone_highlighttarget()
     self.owner endon( "joined_team" );
     self.owner endon( "joined_spectators" );
     self.lasertag = spawn( "script_model", self.origin );
-    self.lasertag _meth_80B1( "tag_laser" );
+    self.lasertag setmodel( "tag_laser" );
 
     for (;;)
     {
@@ -720,7 +720,7 @@ trackingdrone_highlighttarget()
             var_1 = ( randomfloat( var_0 ), randomfloat( var_0 ), randomfloat( var_0 ) ) - ( 10, 10, 10 );
             var_2 = 65;
 
-            switch ( self.trackedplayer _meth_817C() )
+            switch ( self.trackedplayer getstance() )
             {
                 case "stand":
                     var_2 = 65;
@@ -764,13 +764,13 @@ trackingdrone_highlighttarget()
 
 starthighlightingplayer( var_0 )
 {
-    self.lasertag _meth_80B2( "tracking_drone_laser" );
+    self.lasertag laseron( "tracking_drone_laser" );
     playfxontag( level.trackingdronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
 
     if ( isdefined( level.trackingdronesettings.sound_lock ) )
-        self _meth_8075( level.trackingdronesettings.sound_lock );
+        self playloopsound( level.trackingdronesettings.sound_lock );
 
-    var_0 _meth_82A6( "specialty_radararrow", 1, 0 );
+    var_0 setperk( "specialty_radararrow", 1, 0 );
 
     if ( var_0.is_being_tracked == 0 )
     {
@@ -783,17 +783,17 @@ stophighlightingplayer( var_0 )
 {
     if ( isdefined( self.lasertag ) )
     {
-        self.lasertag _meth_80B3();
+        self.lasertag laseroff();
         stopfxontag( level.trackingdronesettings.fxid_laser_glow, self.lasertag, "tag_laser" );
     }
 
     if ( isdefined( var_0 ) )
     {
         if ( isdefined( level.trackingdronesettings.sound_lock ) )
-            self _meth_80AB();
+            self stoploopsound();
 
-        if ( var_0 _meth_82A7( "specialty_radararrow", 1 ) )
-            var_0 _meth_82A9( "specialty_radararrow", 1 );
+        if ( var_0 hasperk( "specialty_radararrow", 1 ) )
+            var_0 unsetperk( "specialty_radararrow", 1 );
 
         var_0 notify( "player_not_tracked" );
         var_0.is_being_tracked = 0;
@@ -1010,7 +1010,7 @@ trackingdroneexplode()
 
 deletetrackingdrone()
 {
-    if ( !_func_294( self ) && isdefined( self ) )
+    if ( !isremovedentity( self ) && isdefined( self ) )
     {
         if ( isdefined( self.attractor ) )
             missile_deleteattractor( self.attractor );
@@ -1034,12 +1034,12 @@ removetrackingdrone()
 
 addtotrackingdronelist()
 {
-    level.trackingdrones[self _meth_81B1()] = self;
+    level.trackingdrones[self getentitynumber()] = self;
 }
 
 removefromtrackingdronelistondeath()
 {
-    var_0 = self _meth_81B1();
+    var_0 = self getentitynumber();
     self waittill( "death" );
     level.trackingdrones[var_0] = undefined;
     level.trackingdrones = common_scripts\utility::array_removeundefined( level.trackingdrones );
@@ -1055,7 +1055,7 @@ exceededmaxtrackingdrones()
 
 aud_drone_start_jets()
 {
-    self _meth_8075( "veh_tracking_drone_jets_lp" );
+    self playloopsound( "veh_tracking_drone_jets_lp" );
 }
 
 destroy_tracking_drone_in_water()
@@ -1069,7 +1069,7 @@ destroy_tracking_drone_in_water()
     {
         foreach ( var_1 in level.water_triggers )
         {
-            if ( self _meth_80A9( var_1 ) )
+            if ( self istouching( var_1 ) )
             {
                 if ( isdefined( level.trackingdronesettings.fxid_explode ) )
                     playfx( level.trackingdronesettings.fxid_explode, self.origin );
@@ -1092,7 +1092,7 @@ prevent_tracking_drone_in_water( var_0 )
 
     foreach ( var_2 in level.water_triggers )
     {
-        if ( _func_22A( var_0, var_2 ) )
+        if ( ispointinvolume( var_0, var_2 ) )
             return 1;
     }
 

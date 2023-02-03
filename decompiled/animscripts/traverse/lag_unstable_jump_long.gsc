@@ -14,6 +14,6 @@ main()
 
     var_0["traverseNotetrackFunc"] = animscripts\traverse\shared::handletraversenotetracks;
     animscripts\traverse\shared::dotraverse( var_0 );
-    self _meth_8110( "traverse_align", %lag_unstable_jumparrive_8, %body, 1, 0.2, 1 );
+    self setflaggedanimknoballrestart( "traverse_align", %lag_unstable_jumparrive_8, %body, 1, 0.2, 1 );
     animscripts\shared::donotetracks( "traverse_align", animscripts\traverse\shared::handletraversenotetracks );
 }

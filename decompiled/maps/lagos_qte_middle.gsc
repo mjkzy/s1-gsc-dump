@@ -37,7 +37,7 @@ anim_single_qte_middle_fail( var_0, var_1, var_2, var_3 )
     var_5.tag_driver thread anim_single_solo_d( var_1[3], var_3 );
     thread anim_single_solo_d( var_0[0], var_3 );
     thread anim_single_solo_d( var_0[1], var_3 );
-    var_6 _meth_804D( var_4.tag_driver );
+    var_6 linkto( var_4.tag_driver );
     var_4.tag_driver anim_single_solo_d( var_6, var_2 );
 }
 
@@ -48,36 +48,36 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     level.hint_nofadein = 1;
     maps\lagos_jump::exo_jump_end();
     common_scripts\utility::flag_set( "suv_takedown_lighting" );
-    level.player.old_weapon = level.player _meth_8311();
+    level.player.old_weapon = level.player getcurrentweapon();
 
     if ( level.player.old_weapon == "none" )
     {
-        var_7 = level.player _meth_830C();
+        var_7 = level.player getweaponslistprimaries();
         level.player.old_weapon = var_7[0];
     }
 
-    level.player _meth_8300( 1 );
+    level.player allowads( 1 );
     level.player maps\_shg_utility::setup_player_for_scene();
     maps\lagos_utility::disable_exo_for_highway();
     level.player maps\_utility::store_players_weapons( "traffic_weapons" );
-    level.player _meth_8310();
-    level.player _meth_8130( 0 );
+    level.player takeallweapons();
+    level.player allowmelee( 0 );
     thread maps\_player_exo::player_exo_deactivate();
     var_0 maps\_anim::anim_first_frame_solo( var_4, "truck_middle_takedown_pt1" );
-    level.player _meth_807D( var_4, "tag_player", 1, 7, 7, 5, 5, 1 );
-    level.player _meth_80EF();
-    level.player _meth_82DD( "gunFired", "+attack" );
+    level.player playerlinktodelta( var_4, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player enableinvulnerability();
+    level.player notifyonplayercommand( "gunFired", "+attack" );
     var_6.tag_driver = spawn( "script_origin", ( 0, 0, 0 ) );
     var_6.tag_driver.origin = var_6 gettagorigin( "tag_driver" );
     var_6.tag_driver.angles = var_6 gettagangles( "tag_driver" );
-    var_6.tag_driver _meth_804D( var_6 );
+    var_6.tag_driver linkto( var_6 );
     var_5.tag_driver = spawn( "script_origin", ( 0, 0, 0 ) );
     var_5.tag_driver.origin = var_5 gettagorigin( "tag_driver" );
     var_5.tag_driver.angles = var_5 gettagangles( "tag_driver" );
-    var_5.tag_driver _meth_804D( var_5 );
-    var_1 _meth_804D( var_6.tag_driver );
-    var_2 _meth_804D( var_6.tag_driver );
-    var_3 _meth_804D( var_6.tag_driver );
+    var_5.tag_driver linkto( var_5 );
+    var_1 linkto( var_6.tag_driver );
+    var_2 linkto( var_6.tag_driver );
+    var_3 linkto( var_6.tag_driver );
     var_8 = [ var_4, var_1, var_2, var_3 ];
     var_9 = [ var_5, var_6 ];
     var_1 maps\_utility::magic_bullet_shield();
@@ -87,7 +87,7 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( !isdefined( level.debugstart_post_middle_takedown ) )
     {
         thread truck_middle_takedown_player_shot_enemy_check( "flag_player_shot_enemy", 4.55, var_1, var_2, var_3, var_6 );
-        level.player _meth_80A2( 2, 0, 0, 20, 20, 10, -7 );
+        level.player lerpviewangleclamp( 2, 0, 0, 20, 20, 10, -7 );
         thread truck_middle_takedown_middle_player_free_aim( var_4, var_5, var_0, var_9 );
         thread truck_middle_takedown_player_dodge_check( "flag_player_dodge" );
         thread truck_middle_takedown_player_shot_timer( var_9, var_8, "truck_middle_takedown_fail_pt1" );
@@ -108,7 +108,7 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
             return;
         }
 
-        level.player _meth_849C( "gunFired", "+attack" );
+        level.player notifyonplayercommandremove( "gunFired", "+attack" );
         thread truck_middle_takedown_player_jump( "flag_player_jump", 21 );
         var_0 anim_single_qte_middle( var_9, var_8, "truck_middle_takedown_pt2" );
 
@@ -159,7 +159,7 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     level.burke.grenadeammo = 0;
     level.burke.baseaccuracy = 0.15;
     level.burke thread maps\lagos_utility::keep_filling_clip_ammo( 1 );
-    level.burke _meth_81A3( 1 );
+    level.burke pushplayer( 1 );
     level.burke.pushable = 0;
     thread maps\lagos_code::start_bus_moving_before_anim_ends( level.player_bus, "start_bus_traverse_3", 3.7 );
     var_0 anim_single_qte_middle( var_9, var_8, "truck_middle_takedown_pt5" );
@@ -172,18 +172,18 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_2 delete();
     var_3 delete();
     level.hit_kva_bus delete();
-    level.player _meth_807C( level.player_bus.script_origin_roof[1] );
-    level.player _meth_83E8( undefined );
+    level.player playerlinkto( level.player_bus.script_origin_roof[1] );
+    level.player forcemovingplatformentity( undefined );
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8130( 1 );
+    level.player allowmelee( 1 );
     level.player maps\_utility::restore_players_weapons( "traffic_weapons" );
     thread maps\_player_exo::player_exo_activate();
-    level.player _meth_8481();
-    level.player _meth_8300( 1 );
-    level.player _meth_8316( level.player.old_weapon );
-    level.player _meth_804F();
+    level.player showviewmodel();
+    level.player allowads( 1 );
+    level.player switchtoweaponimmediate( level.player.old_weapon );
+    level.player unlink();
     var_11 = getvehiclenode( "start_bus_traverse_3", "targetname" );
-    level.player_bus _meth_827F( var_11 );
+    level.player_bus startpath( var_11 );
     level.player notify( "qte_done" );
     waitframe();
     var_10 = getnode( "cover_bus_traverse_3", "targetname" );
@@ -194,7 +194,7 @@ takedown_qte_middle( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     common_scripts\utility::flag_set( "flag_middle_takedown_complete" );
     common_scripts\utility::flag_set( "flag_player_traversing_traffic" );
     thread maps\lagos_code::traffic_traverse_fail_check();
-    level.player _meth_80F0();
+    level.player disableinvulnerability();
     var_4 delete();
     level.hint_nofadein = undefined;
     level.kva_dead_count = undefined;
@@ -220,10 +220,10 @@ truck_middle_takedown_player_shot_timer( var_0, var_1, var_2 )
         level.player notify( "part1_done" );
         earthquake( 0.5, 0.1, level.player.origin, 300000 );
         wait 0.1;
-        level.player _meth_831D();
-        var_5 _meth_804D( var_3.tag_driver );
+        level.player disableweapons();
+        var_5 linkto( var_3.tag_driver );
         var_3.tag_driver anim_single_solo_d( var_5, var_2 );
-        level.player _meth_8051( level.player.maxhealth, var_4.origin );
+        level.player dodamage( level.player.maxhealth, var_4.origin );
     }
 }
 
@@ -272,7 +272,7 @@ truck_middle_takedown_set_normal_time_if_gun_fired()
 doclamping_middle()
 {
     wait 4;
-    level.player _meth_80A2( 1, 0.25, 0.25, 0, 0, 0, 0 );
+    level.player lerpviewangleclamp( 1, 0.25, 0.25, 0, 0, 0, 0 );
 }
 
 player_allow_damage( var_0 )
@@ -286,18 +286,18 @@ player_allow_damage( var_0 )
 
         for (;;)
         {
-            level.player _meth_80F0();
-            level.player _meth_80EC( 1 );
+            level.player disableinvulnerability();
+            level.player enabledeathshield( 1 );
             wait(randomfloatrange( 0.25, 0.5 ));
-            level.player _meth_80EF();
-            level.player _meth_80EC( 0 );
+            level.player enableinvulnerability();
+            level.player enabledeathshield( 0 );
             wait(randomfloatrange( 0.25, 0.5 ));
         }
     }
     else
     {
-        level.player _meth_80EF();
-        level.player _meth_80EC( 0 );
+        level.player enableinvulnerability();
+        level.player enabledeathshield( 0 );
     }
 }
 
@@ -313,32 +313,32 @@ truck_middle_takedown_middle_player_free_aim( var_0, var_1, var_2, var_3 )
     for (;;)
     {
         level.player waittill( "do_viewmodel_swap" );
-        var_0 _meth_804A();
+        var_0 hideallparts();
         var_0.hidden = 1;
-        level.player _meth_831E();
-        level.player _meth_8482();
-        level.player _meth_830E( var_5 );
-        level.player _meth_8315( var_5 );
+        level.player enableweapons();
+        level.player hideviewmodel();
+        level.player giveweapon( var_5 );
+        level.player switchtoweapon( var_5 );
         wait 0.7;
-        level.player _meth_8481();
+        level.player showviewmodel();
         level.player thread player_allow_damage( 1 );
-        level.player _meth_830E( var_5 );
-        level.player _meth_8316( var_5 );
-        level.player _meth_83E8( var_0 );
+        level.player giveweapon( var_5 );
+        level.player switchtoweaponimmediate( var_5 );
+        level.player forcemovingplatformentity( var_0 );
         level.player playerrecoilscaleon( 0 );
-        level.player _meth_80A2( 0.05, 0.25, 0.25, 25, 40, 22.5, 22.5 );
-        level.player _meth_8130( 0 );
+        level.player lerpviewangleclamp( 0.05, 0.25, 0.25, 25, 40, 22.5, 22.5 );
+        level.player allowmelee( 0 );
         soundscripts\_snd::snd_message( "middle_takedown_gun_up" );
         level.player waittill( "do_viewmodel_swap" );
-        level.player _meth_8130( 0 );
+        level.player allowmelee( 0 );
         level.player thread player_allow_damage( 0 );
-        level.player _meth_80A2( 2, 0, 0, 20, 20, 10, -7 );
+        level.player lerpviewangleclamp( 2, 0, 0, 20, 20, 10, -7 );
         level.player playerrecoilscaleon( 1 );
-        level.player _meth_831D();
+        level.player disableweapons();
         wait(var_4);
-        level.player _meth_8482();
-        level.player _meth_830F( var_5 );
-        var_0 _meth_804C();
+        level.player hideviewmodel();
+        level.player takeweapon( var_5 );
+        var_0 showallparts();
         var_4 = 1.1;
         var_5 = "iw5_titan45lagostruckmiddletakedown2_sp";
     }
@@ -385,7 +385,7 @@ truck_middle_takedown_player_pull_windshield( var_0, var_1 )
     level.player waittill( "qte_prompt" );
     var_2 = level.kva_truck maps\_shg_utility::hint_button_tag( "melee", "winsmash_l", 900, 900 );
     common_scripts\utility::flag_set( "suv_takedown_windshield_lighting" );
-    var_3 = _func_2C6();
+    var_3 = getbuttonsconfig();
     var_4 = undefined;
 
     if ( issubstr( var_3, "buttons_default" ) || issubstr( var_3, "buttons_tactical" ) )
@@ -427,7 +427,7 @@ truck_middle_takedown_failure()
     level.player notify( "qte_fail" );
     common_scripts\utility::flag_set( "flag_truck_middle_takedown_is_failure" );
     maps\lagos_qte::hostage_truck_slomo_end();
-    level.player _meth_83E8( undefined );
+    level.player forcemovingplatformentity( undefined );
 }
 
 truck_middle_takedown_gameover()
@@ -442,13 +442,13 @@ truck_middle_takedown_gameover()
 setup_vehicles_for_middle_takedown()
 {
     level.player_bus.animname = "player_bus";
-    level.player_bus _meth_8115( #animtree );
+    level.player_bus useanimtree( #animtree );
     level.kva_truck = getent( "kva_truck_middle_takedown", "targetname" );
     level.kva_truck.animname = "kva_truck";
-    level.kva_truck _meth_8115( #animtree );
+    level.kva_truck useanimtree( #animtree );
     level.hit_kva_bus = maps\_vehicle::spawn_vehicle_from_targetname( "hit_kva_bus" );
     level.hit_kva_bus.animname = "hit_kva_bus";
-    level.hit_kva_bus _meth_8115( #animtree );
+    level.hit_kva_bus useanimtree( #animtree );
     level thread maps\lagos_fx::middle_takedown_tread_fx();
 }
 
@@ -527,16 +527,16 @@ player_bus_slomo_start_pt5( var_0 )
 
 notetrack_unlink_and_start_ragdoll( var_0 )
 {
-    var_0 _meth_804F();
-    var_0 _meth_8023();
+    var_0 unlink();
+    var_0 startragdoll();
 }
 
 notetrack_unlink( var_0 )
 {
-    var_0 _meth_804F();
+    var_0 unlink();
     var_1 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_1.origin = level.player.origin;
-    var_0 _meth_804D( var_1 );
+    var_0 linkto( var_1 );
 }
 
 qte_middle_shoot_off()
@@ -546,7 +546,7 @@ qte_middle_shoot_off()
     if ( !level.console && !level.player common_scripts\utility::is_player_gamepad_enabled() )
         var_0 = "mouse1";
 
-    if ( level.player _meth_824C( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_SHOOT_KVA" )
+    if ( level.player buttonpressed( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_SHOOT_KVA" )
         return 1;
 
     return 0;
@@ -562,7 +562,7 @@ qte_middle_dodge_off()
 
 qte_middle_jump_off()
 {
-    if ( level.player _meth_83DE() || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_JUMP" )
+    if ( level.player jumpbuttonpressed() || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_JUMP" )
         return 1;
 
     return 0;
@@ -583,7 +583,7 @@ qte_middle_pull_kva_off()
     if ( !level.console && !level.player common_scripts\utility::is_player_gamepad_enabled() )
         var_0 = "mouse1";
 
-    if ( level.player _meth_824C( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_PULL_KVA" )
+    if ( level.player buttonpressed( var_0 ) || isdefined( level.player.remove_hint ) && level.player.remove_hint == &"LAGOS_QTE_MIDDLE_PULL_KVA" )
         return 1;
 
     return 0;

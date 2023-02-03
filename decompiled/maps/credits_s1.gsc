@@ -14,10 +14,10 @@ main()
     maps\credits_s1_aud::main();
     maps\_credits::initcredits( "all" );
     level.player freezecontrols( 1 );
-    level.player _meth_8310();
+    level.player takeallweapons();
     maps\_hud_util::create_client_overlay( "black", 1 );
     thread maps\_credits::allow_early_back_out();
     maps\_credits::playcredits();
     maps\_endmission::end_mission_fade_audio_and_video( 1 );
-    _func_053( "", 0 );
+    changelevel( "", 0 );
 }

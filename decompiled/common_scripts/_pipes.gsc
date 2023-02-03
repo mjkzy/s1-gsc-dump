@@ -31,8 +31,8 @@ post_load( var_0 )
 
 pipesetup()
 {
-    self _meth_82C0( 1 );
-    self _meth_82C1( 0 );
+    self setcandamage( 1 );
+    self setcanradiusdamage( 0 );
     self.pipe_fx_array = [];
     var_0 = undefined;
 
@@ -82,7 +82,7 @@ pipe_wait_loop()
             break;
     }
 
-    self _meth_82C0( 0 );
+    self setcandamage( 0 );
 }
 
 pipe_logic( var_0, var_1, var_2, var_3 )
@@ -110,7 +110,7 @@ pipe_logic( var_0, var_1, var_2, var_3 )
     var_7 = undefined;
 
     if ( isai( var_3 ) )
-        var_7 = var_3 _meth_80A8();
+        var_7 = var_3 geteye();
     else
         var_7 = var_3.origin;
 
@@ -139,7 +139,7 @@ pipefx( var_0, var_1, var_2 )
     var_10 = spawn( "script_origin", var_0 );
     var_10 hide();
     var_10 playsound( var_7 );
-    var_10 _meth_8075( var_8 );
+    var_10 playloopsound( var_8 );
     self.pipe_fx_array[self.pipe_fx_array.size] = var_10;
 
     if ( common_scripts\utility::issp() || self.script_noteworthy != "steam" )
@@ -148,11 +148,11 @@ pipefx( var_0, var_1, var_2 )
     if ( self.script_noteworthy == "oil_leak" )
     {
         var_11 = spawn( "script_model", var_0 );
-        var_11 _meth_80B1( "tag_origin" );
+        var_11 setmodel( "tag_origin" );
         var_11.angles = vectortoangles( var_1 );
         playfxontag( level._pipes._effect[self.script_noteworthy], var_11, "tag_origin" );
         level._pipes.num_pipe_fx++;
-        var_11 _meth_82B6( 90, var_3, 1, 1 );
+        var_11 rotatepitch( 90, var_3, 1, 1 );
         wait(var_3);
         stopfxontag( level._pipes._effect[self.script_noteworthy], var_11, "tag_origin" );
         var_5--;
@@ -170,11 +170,11 @@ pipefx( var_0, var_1, var_2 )
         if ( self.script_noteworthy == "oil_leak" )
         {
             var_11 = spawn( "script_model", var_0 );
-            var_11 _meth_80B1( "tag_origin" );
+            var_11 setmodel( "tag_origin" );
             var_11.angles = vectortoangles( var_1 );
             playfxontag( level._pipes._effect[self.script_noteworthy], var_11, "tag_origin" );
             level._pipes.num_pipe_fx++;
-            var_11 _meth_82B6( 90, var_3, 1, 1 );
+            var_11 rotatepitch( 90, var_3, 1, 1 );
             wait(var_3);
             stopfxontag( level._pipes._effect[self.script_noteworthy], var_11, "tag_origin" );
             continue;
@@ -187,7 +187,7 @@ pipefx( var_0, var_1, var_2 )
 
     var_10 playsound( var_9 );
     wait 0.5;
-    var_10 _meth_80AB( var_8 );
+    var_10 stoploopsound( var_8 );
     var_10 delete();
     self.pipe_fx_array = common_scripts\utility::array_removeundefined( self.pipe_fx_array );
     level._pipes.num_pipe_fx--;
@@ -205,9 +205,9 @@ pipe_damage( var_0, var_1, var_2, var_3 )
     for (;;)
     {
         if ( !isdefined( self.damageowner ) )
-            self entityradiusdamage( var_4, 36, var_5, var_5 * 0.75, undefined, "MOD_TRIGGER_HURT" );
+            self radiusdamage( var_4, 36, var_5, var_5 * 0.75, undefined, "MOD_TRIGGER_HURT" );
         else
-            self entityradiusdamage( var_4, 36, var_5, var_5 * 0.75, var_2, "MOD_TRIGGER_HURT" );
+            self radiusdamage( var_4, 36, var_5, var_5 * 0.75, var_2, "MOD_TRIGGER_HURT" );
 
         wait 0.4;
     }
@@ -271,35 +271,35 @@ precachefx()
 
         if ( var_6.script_noteworthy == "steam" )
         {
-            var_6 _meth_80E1();
+            var_6 willneverchange();
             var_0 = 1;
             continue;
         }
 
         if ( var_6.script_noteworthy == "fire" )
         {
-            var_6 _meth_80E1();
+            var_6 willneverchange();
             var_1 = 1;
             continue;
         }
 
         if ( var_6.script_noteworthy == "steam_small" )
         {
-            var_6 _meth_80E1();
+            var_6 willneverchange();
             var_2 = 1;
             continue;
         }
 
         if ( var_6.script_noteworthy == "oil_leak" )
         {
-            var_6 _meth_80E1();
+            var_6 willneverchange();
             var_3 = 1;
             continue;
         }
 
         if ( var_6.script_noteworthy == "oil_cap" )
         {
-            var_6 _meth_80E1();
+            var_6 willneverchange();
             var_4 = 1;
             continue;
         }

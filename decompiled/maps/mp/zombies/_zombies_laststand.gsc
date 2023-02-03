@@ -56,17 +56,17 @@ callback_playerlaststandzombies( var_0, var_1, var_2, var_3, var_4, var_5, var_6
         if ( !haslaststandweapon( var_10 ) )
             giveplayerweapon( var_10, 1 );
         else
-            self _meth_8316( var_10 );
+            self switchtoweaponimmediate( var_10 );
 
         thread maps\mp\zombies\_util::zombieallowallboost( 0, "laststand" );
         thread zombieperkbleed();
         thread zombietokenrevive();
         common_scripts\utility::_disableusability();
         common_scripts\utility::_disableweaponswitch();
-        self _meth_831F();
+        self disableoffhandweapons();
 
         if ( isdefined( var_3 ) && var_3 == "MOD_SUICIDE" )
-            self _meth_855B();
+            self deathdropgrenade();
 
         thread laststandrevivezombie( var_0, var_1, var_4, var_7, var_3 );
 
@@ -119,7 +119,7 @@ zombietokenrevivewait()
 
     for (;;)
     {
-        if ( isdefined( self.tokenbuttonpressed ) && self.tokenbuttonpressed && !isdefined( self _meth_84C5( 1 ) ) && maps\mp\gametypes\zombies::hastoken( 10 ) )
+        if ( isdefined( self.tokenbuttonpressed ) && self.tokenbuttonpressed && !isdefined( self playergetuseent( 1 ) ) && maps\mp\gametypes\zombies::hastoken( 10 ) )
         {
             if ( !isdefined( var_0 ) )
             {
@@ -149,7 +149,7 @@ savelaststandweapons( var_0, var_1 )
     if ( !isdefined( var_1 ) )
         var_1 = 1;
 
-    var_2 = self _meth_830C();
+    var_2 = self getweaponslistprimaries();
     self.primaryweapons = [];
 
     foreach ( var_4 in var_2 )
@@ -158,7 +158,7 @@ savelaststandweapons( var_0, var_1 )
             self.primaryweapons[self.primaryweapons.size] = var_4;
     }
 
-    self.lastequippedweapon = self _meth_8312();
+    self.lastequippedweapon = self getcurrentprimaryweapon();
 
     if ( self.lastequippedweapon == "search_dstry_bomb_defuse_mp" && isdefined( self.lastnonuseweapon ) && isdefined( common_scripts\utility::array_find( self.primaryweapons, self.lastnonuseweapon ) ) )
         self.lastequippedweapon = self.lastnonuseweapon;
@@ -177,12 +177,12 @@ savelaststandweapons( var_0, var_1 )
 
     foreach ( var_4 in self.primaryweapons )
     {
-        self.primaryweaponsammo[var_4]["ammoclip"] = self _meth_82F8( var_4 );
+        self.primaryweaponsammo[var_4]["ammoclip"] = self getweaponammoclip( var_4 );
 
         if ( common_scripts\utility::string_find( var_4, "akimbo" ) )
-            self.primaryweaponsammo[var_4]["ammoclipleft"] = self _meth_82F8( var_4, "left" );
+            self.primaryweaponsammo[var_4]["ammoclipleft"] = self getweaponammoclip( var_4, "left" );
 
-        self.primaryweaponsammo[var_4]["ammostock"] = self _meth_82F9( var_4 );
+        self.primaryweaponsammo[var_4]["ammostock"] = self setweaponammostock( var_4 );
     }
 
     self.tombstoneweapon = self.lastequippedweapon;
@@ -196,7 +196,7 @@ savelaststandweapons( var_0, var_1 )
         if ( !issubstr( var_9, "titan" ) )
         {
             if ( var_1 )
-                self _meth_830F( var_9 );
+                self takeweapon( var_9 );
 
             var_10 = maps\mp\zombies\_util::getzombieweaponlevel( self, var_9 );
 
@@ -238,7 +238,7 @@ zombieslaststandweapon()
     {
         var_5 = maps\mp\zombies\_wall_buys::getupgradeweaponname( self, var_0[var_4] );
 
-        if ( self _meth_8314( var_5 ) )
+        if ( self hasweapon( var_5 ) )
         {
             var_6 = maps\mp\zombies\_util::getzombieweaponlevel( self, var_0[var_4] );
 
@@ -258,7 +258,7 @@ haslaststandweapon( var_0 )
     if ( !isdefined( var_0 ) )
         var_0 = zombieslaststandweapon();
 
-    var_1 = self _meth_830C();
+    var_1 = self getweaponslistprimaries();
 
     foreach ( var_3 in var_1 )
     {
@@ -298,7 +298,7 @@ areanyalliedagentsalive( var_0 )
 
     foreach ( var_3 in var_1 )
     {
-        if ( !_func_285( var_3, var_0 ) )
+        if ( !isalliedsentient( var_3, var_0 ) )
             continue;
 
         if ( maps\mp\zombies\_util::isplayerinlaststand( var_3 ) )
@@ -414,8 +414,8 @@ registerlaststandparameter( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     var_7.shitloc = var_6;
     var_7.laststandstarttime = gettime();
 
-    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 _meth_8312() != "none" )
-        var_7.sprimaryweapon = var_1 _meth_8312();
+    if ( isdefined( var_1 ) && isplayer( var_1 ) && var_1 getcurrentprimaryweapon() != "none" )
+        var_7.sprimaryweapon = var_1 getcurrentprimaryweapon();
     else
         var_7.sprimaryweapon = undefined;
 
@@ -477,14 +477,14 @@ zombieperkbleedflashing( var_0 )
 {
     var_1 = maps\mp\zombies\_terminals::getitemomnvar( var_0 );
     self.perkomnvarflash = var_1;
-    self _meth_82FB( var_1, 2 );
+    self setclientomnvar( var_1, 2 );
 }
 
 zombieperkbleedflashingstop()
 {
     if ( isdefined( self ) && isdefined( self.perkomnvarflash ) )
     {
-        self _meth_82FB( self.perkomnvarflash, 1 );
+        self setclientomnvar( self.perkomnvarflash, 1 );
         self.perkomnvarflash = undefined;
     }
 }
@@ -503,9 +503,9 @@ laststandrevivezombie( var_0, var_1, var_2, var_3, var_4 )
     thread laststandkeepoverlayzombies();
     thread laststandmonitorabandonment();
     var_5 = spawn( "script_model", self.origin );
-    var_5 _meth_80B1( "tag_origin" );
-    var_5 _meth_80DA( "HINT_NOICON" );
-    var_5 _meth_80DB( &"PLATFORM_REVIVE" );
+    var_5 setmodel( "tag_origin" );
+    var_5 setcursorhint( "HINT_NOICON" );
+    var_5 sethintstring( &"PLATFORM_REVIVE" );
     var_5 makeusable();
     var_5.inuse = 0;
     var_5.curprogress = 0;
@@ -514,7 +514,7 @@ laststandrevivezombie( var_0, var_1, var_2, var_3, var_4 )
     var_5.id = "last_stand";
     var_5.targetname = "revive_trigger";
     var_5.owner = self;
-    var_5 _meth_804D( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
+    var_5 linkto( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
     var_5 thread deleteonreviveordeathordisconnect();
     self.reviveicon = createreviveicon( "hint_health_zm", 8, 8, ( 0.5, 1, 0.99 ) );
     thread laststandupdatereviveiconcolorzombies( var_5, 30 );
@@ -537,8 +537,8 @@ laststandrevivezombie( var_0, var_1, var_2, var_3, var_4 )
     while ( isdefined( var_5.inuse ) && var_5.inuse )
         waitframe();
 
-    self _meth_83FB();
-    self _meth_831D();
+    self hudoutlinedisable();
+    self disableweapons();
     self.movespeedscaler = 0.05;
     thread bleedout();
 }
@@ -561,9 +561,9 @@ createreviveicon( var_0, var_1, var_2, var_3 )
         self.reviveicon destroy();
 
     var_4 = newteamhudelem( self.team );
-    var_4 _meth_80CC( var_0, var_1, var_2 );
-    var_4 _meth_80D8( 1, 1 );
-    var_4 _meth_80CD( self );
+    var_4 setshader( var_0, var_1, var_2 );
+    var_4 setwaypoint( 1, 1 );
+    var_4 settargetent( self );
     var_4.color = var_3;
     return var_4;
 }
@@ -593,7 +593,7 @@ bleedout()
         maps\mp\zombies\_util::playerclearem1ammoinfo();
 
     self.numberofbleedouts++;
-    self _meth_826B();
+    self suicide();
 
     if ( !areanyotherplayersalive( self ) )
         zombieendgame();
@@ -604,8 +604,8 @@ bleedout()
 laststandselfrevive()
 {
     self endon( "disconnect" );
-    self _meth_82FB( "ui_use_bar_text", 3 );
-    self _meth_82FB( "ui_use_bar_start_time", int( gettime() ) );
+    self setclientomnvar( "ui_use_bar_text", 3 );
+    self setclientomnvar( "ui_use_bar_start_time", int( gettime() ) );
     self.curprogress = 0;
     self.userate = 1;
     self.usetime = 8000;
@@ -624,7 +624,7 @@ laststandselfrevive()
                 var_1 = gettime();
                 var_2 = self.curprogress / self.usetime;
                 var_3 = var_1 + ( 1 - var_2 ) * self.usetime / self.userate;
-                self _meth_82FB( "ui_use_bar_end_time", int( var_3 ) );
+                self setclientomnvar( "ui_use_bar_end_time", int( var_3 ) );
             }
 
             var_0 = self.userate;
@@ -634,7 +634,7 @@ laststandselfrevive()
     }
 
     self.selfreviveactive = 0;
-    self _meth_82FB( "ui_use_bar_end_time", 0 );
+    self setclientomnvar( "ui_use_bar_end_time", 0 );
 }
 
 selfrevivethinkloop( var_0 )
@@ -761,9 +761,9 @@ laststandwaittilllifereceived()
     setomnvar( var_2, 0 );
     level notify( var_2 + "_cancel" );
 
-    if ( var_0 _meth_8336() )
+    if ( var_0 isreloading() )
     {
-        while ( var_0 _meth_8336() )
+        while ( var_0 isreloading() )
             waitframe();
 
         waitframe();
@@ -801,8 +801,8 @@ givebackweaponsfromlaststand()
     if ( !self.hadlaststandweapon )
     {
         var_0 = zombieslaststandweapon();
-        self _meth_830F( var_0 );
-        self _meth_8511( var_0 );
+        self takeweapon( var_0 );
+        self loadweapons( var_0 );
     }
 
     var_1 = undefined;
@@ -848,9 +848,9 @@ respawnplayerzombies( var_0 )
     if ( maps\mp\_utility::_hasperk( "specialty_lightweight" ) )
         self.movespeedscaler = maps\mp\_utility::lightweightscalar();
 
-    self _meth_83FB();
-    self _meth_82C7();
-    self _meth_817D( "crouch" );
+    self hudoutlinedisable();
+    self laststandrevive();
+    self setstance( "crouch" );
 
     if ( var_0 )
         givebackweaponsfromlaststand();
@@ -858,18 +858,18 @@ respawnplayerzombies( var_0 )
     if ( var_0 )
         common_scripts\utility::_enableweaponswitch();
     else
-        self _meth_8322();
+        self enableweaponswitch();
 
     thread maps\mp\zombies\_util::zombieallowallboost( 1, "laststand" );
-    self _meth_831E();
+    self enableweapons();
     common_scripts\utility::_enableusability();
-    self _meth_8320();
+    self enableoffhandweapons();
     maps\mp\gametypes\_weapons::updatemovespeedscale();
     maps\mp\_utility::clearlowermessage( "last_stand" );
     maps\mp\_utility::giveperk( "specialty_pistoldeath", 0 );
-    self _meth_8304( 1 );
+    self allowsprint( 1 );
 
-    if ( !precachestatusicon( self.origin ) )
+    if ( !canspawn( self.origin ) )
         maps\mp\_movers::unresolved_collision_nearest_node( self, 0 );
 }
 
@@ -892,29 +892,29 @@ givestoredweapon( var_0, var_1 )
 
     if ( isdefined( self.primaryweaponsammo[var_0]["fillMax"] ) )
     {
-        self _meth_8332( var_0 );
+        self givemaxammo( var_0 );
         self.primaryweaponsammo[var_0]["fillMax"] = undefined;
     }
     else
     {
-        self _meth_82F6( var_0, self.primaryweaponsammo[var_0]["ammoclip"] );
+        self setweaponammoclip( var_0, self.primaryweaponsammo[var_0]["ammoclip"] );
 
         if ( common_scripts\utility::string_find( var_0, "akimbo" ) && isdefined( self.primaryweaponsammo[var_0]["ammoclipleft"] ) )
-            self _meth_82F6( var_0, self.primaryweaponsammo[var_0]["ammoclipleft"], "left" );
+            self setweaponammoclip( var_0, self.primaryweaponsammo[var_0]["ammoclipleft"], "left" );
 
-        self _meth_82F7( var_0, self.primaryweaponsammo[var_0]["ammostock"] );
+        self setweaponammostock( var_0, self.primaryweaponsammo[var_0]["ammostock"] );
     }
 }
 
 giveplayerweapon( var_0, var_1 )
 {
-    while ( !self _meth_8511( [ var_0 ] ) )
+    while ( !self loadweapons( [ var_0 ] ) )
         waitframe();
 
     maps\mp\_utility::_giveweapon( var_0 );
 
     if ( var_1 )
-        self _meth_8316( var_0 );
+        self switchtoweaponimmediate( var_0 );
 }
 
 laststandwaittilldeathzombies()
@@ -1040,13 +1040,13 @@ laststandammomonitor()
     for (;;)
     {
         wait(var_0);
-        var_1 = self _meth_8311();
+        var_1 = self getcurrentweapon();
         var_2 = self getammocount( var_1 );
 
         if ( var_2 == 0 )
         {
             var_3 = weaponclipsize( var_1 );
-            self _meth_82F7( var_1, var_3 );
+            self setweaponammostock( var_1, var_3 );
         }
     }
 }
@@ -1081,7 +1081,7 @@ hostzombielaststand( var_0 )
         var_2 += 15;
 
     maps\mp\zombies\_zombies_audio::player_infected();
-    self _meth_82C7();
+    self laststandrevive();
     self.health = 100;
     self.infected = 1;
     self.infectedendtime = gettime() + var_2 * 1000;
@@ -1125,7 +1125,7 @@ hostzombiesoloexostim()
 {
     self notify( "cured", 0 );
     waitframe();
-    self _meth_8051( self.health, self.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
+    self dodamage( self.health, self.origin, undefined, undefined, "MOD_TRIGGER_HURT" );
 }
 
 hostzombieupdateoutline()
@@ -1139,12 +1139,12 @@ hostzombieupdateoutline()
     {
         if ( maps\mp\zombies\_util::isplayerinfected( var_5 ) )
         {
-            var_5 _meth_83FA( var_1, 0 );
+            var_5 hudoutlineenable( var_1, 0 );
             var_2[var_2.size] = var_5;
             continue;
         }
 
-        var_5 _meth_83FB();
+        var_5 hudoutlinedisable();
         var_3[var_3.size] = var_5;
     }
 
@@ -1160,13 +1160,13 @@ hostzombieupdateoutline()
         if ( var_2.size )
         {
             if ( maps\mp\zombies\_terminals::perkterminalhostcureincooldown( var_8.terminal ) || maps\mp\zombies\_util::is_true( var_8.terminal.terminaldisabled ) )
-                var_8 _meth_8422( var_2, var_0, 1 );
+                var_8 hudoutlineenableforclients( var_2, var_0, 1 );
             else
-                var_8 _meth_8422( var_2, var_1, 1 );
+                var_8 hudoutlineenableforclients( var_2, var_1, 1 );
         }
 
         if ( var_3.size )
-            var_8 _meth_8423( var_3 );
+            var_8 hudoutlinedisableforclients( var_3 );
 
         if ( var_2.size )
         {
@@ -1189,7 +1189,7 @@ hostzombieupdateendtime()
         self waittill( "damage", var_0, var_1, var_2, var_3, var_4 );
         self.health = 100;
 
-        if ( _func_2D9( var_1 ) )
+        if ( isscriptedagent( var_1 ) )
         {
             if ( var_0 > 50 )
                 var_5 = 5000;
@@ -1223,7 +1223,7 @@ hostzombietokencuredwait()
 
     for (;;)
     {
-        if ( isdefined( self.tokenbuttonpressed ) && self.tokenbuttonpressed && !isdefined( self _meth_84C5( 1 ) ) && maps\mp\gametypes\zombies::hastoken( 10 ) )
+        if ( isdefined( self.tokenbuttonpressed ) && self.tokenbuttonpressed && !isdefined( self playergetuseent( 1 ) ) && maps\mp\gametypes\zombies::hastoken( 10 ) )
         {
             if ( !isdefined( var_1 ) )
             {
@@ -1234,13 +1234,13 @@ hostzombietokencuredwait()
             if ( gettime() >= var_1 )
             {
                 maps\mp\gametypes\zombies::spendtoken( 10 );
-                self _meth_8218( 1, 0.5 );
+                self setwatersheeting( 1, 0.5 );
                 var_2 = maps\mp\agents\_agent_utility::getactiveagentsoftype( "all" );
 
                 foreach ( var_4 in var_2 )
                 {
-                    if ( isdefined( var_4.agent_type ) && var_4.agent_type == "zombie_host" && _func_220( var_4.origin, self.origin ) < var_0 )
-                        var_4 _meth_826B();
+                    if ( isdefined( var_4.agent_type ) && var_4.agent_type == "zombie_host" && distance2dsquared( var_4.origin, self.origin ) < var_0 )
+                        var_4 suicide();
                 }
 
                 self notify( "cured", 1 );
@@ -1363,8 +1363,8 @@ hostzombieheartbeat( var_0 )
     while ( isdefined( var_2 ) && var_2 < var_1.size )
     {
         var_3 = hostzobieheartbeatgetent();
-        var_3 _meth_8438( var_1[var_2] );
-        var_3 _meth_806F( 1 );
+        var_3 playsoundonmovingent( var_1[var_2] );
+        var_3 scalevolume( 1 );
         var_3.inuse = 1;
         var_2 = hostzombieheartbeatnextstage( var_2, var_1.size, var_0 );
         var_4 = 0.5;
@@ -1427,11 +1427,11 @@ hostzombieheartbeatstop( var_0 )
 {
     if ( isdefined( var_0 ) && var_0 > 0 )
     {
-        self _meth_806F( 0, 0.5 );
+        self scalevolume( 0, 0.5 );
         wait(var_0);
     }
 
-    self _meth_80AC();
+    self stopsounds();
     self.inuse = 0;
 }
 
@@ -1460,21 +1460,21 @@ hostzombiehudvisionset( var_0 )
     if ( maps\mp\zombies\_util::iszombieshardmode() && isdefined( level.zombiehardmodeinfectedvisionset ) )
     {
         self.hostvisionset = level.zombiehardmodeinfectedvisionset;
-        self _meth_8469( level.zombiehardmodeinfectedvisionset, 0.5 );
+        self visionsetpostapplyforplayer( level.zombiehardmodeinfectedvisionset, 0.5 );
     }
     else if ( isdefined( level.zombieinfectedvisionset ) )
     {
         self.hostvisionset = level.zombieinfectedvisionset;
-        self _meth_8469( level.zombieinfectedvisionset, 0.5 );
+        self visionsetpostapplyforplayer( level.zombieinfectedvisionset, 0.5 );
         thread hostzombievisionset2( var_0 / 2.0 );
     }
 
     if ( isdefined( level.zombieinfectedlightset ) )
-        self _meth_83C1( level.zombieinfectedlightset );
+        self lightsetoverrideenableforplayer( level.zombieinfectedlightset );
 
-    self _meth_84D7( "infected" );
+    self clientaddsoundsubmix( "infected" );
     hostzombiehudvisionsetwait( var_0 );
-    self _meth_84D8( "infected" );
+    self clientclearsoundsubmix( "infected" );
     var_1 = "";
     var_2 = 0;
 
@@ -1485,10 +1485,10 @@ hostzombiehudvisionset( var_0 )
     }
 
     if ( isdefined( level.zombieinfectedvisionset ) )
-        self _meth_8469( var_1, var_2 );
+        self visionsetpostapplyforplayer( var_1, var_2 );
 
     if ( isdefined( level.zombieinfectedlightset ) )
-        self _meth_83C2();
+        self lightsetoverrideenableforplayer();
 }
 
 hostzombiehudvisionsetwait( var_0 )
@@ -1510,7 +1510,7 @@ hostzombievisionset2( var_0 )
     if ( isdefined( level.zombieinfectedvisionset2 ) )
     {
         self.hostvisionset = level.zombieinfectedvisionset2;
-        self _meth_8469( level.zombieinfectedvisionset2, 0.5 );
+        self visionsetpostapplyforplayer( level.zombieinfectedvisionset2, 0.5 );
     }
 }
 
@@ -1578,13 +1578,13 @@ hostzombiehudcountdownhostmigration()
         var_0 = "ui_zm_character_" + self.characterindex + "_infected_endtime";
         setomnvar( var_0, 0 );
         var_1 = maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
-        self _meth_84D7( "infected" );
+        self clientaddsoundsubmix( "infected" );
 
         if ( isdefined( self.hostvisionset ) )
-            self _meth_8469( self.hostvisionset, 0 );
+            self visionsetpostapplyforplayer( self.hostvisionset, 0 );
 
         if ( isdefined( level.zombieinfectedlightset ) )
-            self _meth_83C1( level.zombieinfectedlightset );
+            self lightsetoverrideenableforplayer( level.zombieinfectedlightset );
 
         self.infectedendtime += var_1;
         self notify( "infectedEntTimeUpdate", var_1 );
@@ -1618,7 +1618,7 @@ hostzombiehudfullscreen( var_0 )
     var_1 = newclienthudelem( self );
     var_1.x = 0;
     var_1.y = 0;
-    var_1 _meth_80CC( var_0, 640, 480 );
+    var_1 setshader( var_0, 640, 480 );
     var_1.horzalign = "fullscreen";
     var_1.vertalign = "fullscreen";
     return var_1;

@@ -36,8 +36,8 @@ link_player_and_start_driving_anims()
 
 clear_anims()
 {
-    self.fake_vehicle_model _meth_8142( get_pitbull_anim_node( "root" ), 0 );
-    self.player_rig _meth_8142( get_player_anim_node( "root" ), 0 );
+    self.fake_vehicle_model clearanim( get_pitbull_anim_node( "root" ), 0 );
+    self.player_rig clearanim( get_player_anim_node( "root" ), 0 );
     self.drive_anim_add_idle = undefined;
 }
 
@@ -46,21 +46,21 @@ link_player_and_play_idle()
     var_0 = self.fake_vehicle_model;
     var_1 = self.player_rig;
     self.drive_anim_name = "cockpit_static_idle";
-    var_0 _meth_8147( var_0 maps\_utility::getanim( self.drive_anim_name ), get_pitbull_anim_node( "root" ), 1, 0, 1 );
-    var_1 _meth_8092();
-    var_1 _meth_804F();
+    var_0 setanimknoball( var_0 maps\_utility::getanim( self.drive_anim_name ), get_pitbull_anim_node( "root" ), 1, 0, 1 );
+    var_1 dontinterpolate();
+    var_1 unlink();
     var_2 = var_0 gettagorigin( "tag_body" );
     var_3 = var_0 gettagangles( "tag_body" );
     var_4 = getstartorigin( var_2, var_3, var_1 maps\_utility::getanim( self.drive_anim_name ) );
     var_5 = getstartangles( var_2, var_3, var_1 maps\_utility::getanim( self.drive_anim_name ) );
     var_1.origin = var_4;
     var_1.angles = var_5;
-    var_1 _meth_804D( var_0, "tag_player" );
-    var_1 _meth_8147( var_1 maps\_utility::getanim( self.drive_anim_name ), get_player_anim_node( "root" ), 1, 0, 1 );
+    var_1 linkto( var_0, "tag_player" );
+    var_1 setanimknoball( var_1 maps\_utility::getanim( self.drive_anim_name ), get_player_anim_node( "root" ), 1, 0, 1 );
     self.drive_yaw_sign = 1;
     self.drive_anim_centering = 0;
     self.drive_cam_anim_name = "cockpit_static_idle_cam";
-    self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, 1 );
+    self.player_rig setanimknob( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, 1 );
     self.drive_cam_yaw_sign = 1;
     self.drive_cam_centering = 0;
     self.drive_anim_add_idle = undefined;
@@ -74,7 +74,7 @@ play_pitbull_anim()
     if ( 1 )
         play_pitbull_camera_anim();
     else
-        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( "cockpit_static_idle_cam" ), 1, 0, 1 );
+        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( "cockpit_static_idle_cam" ), 1, 0, 1 );
 }
 
 play_pitbull_steer_anim()
@@ -87,7 +87,7 @@ play_pitbull_steer_anim()
 
     if ( self.drive_anim_name != "cockpit_static_idle" )
     {
-        var_4 = var_3 _meth_814F( var_3 maps\_utility::getanim( self.drive_anim_name ) );
+        var_4 = var_3 getanimtime( var_3 maps\_utility::getanim( self.drive_anim_name ) );
 
         if ( self.drive_anim_centering )
             var_4 = 1 - var_4;
@@ -95,7 +95,7 @@ play_pitbull_steer_anim()
         var_4 *= self.drive_yaw_sign;
     }
 
-    var_5 = self _meth_8289() * 1;
+    var_5 = self vehicle_getsteering() * 1;
     var_5 = clamp( var_5, -1, 1 );
     play_pitbull_add_idle( var_5, var_1 );
 
@@ -106,12 +106,12 @@ play_pitbull_steer_anim()
         if ( self.drive_anim_name != "cockpit_static_idle" )
         {
             var_6 = 0;
-            var_2 _meth_814B( var_2 maps\_utility::getanim( self.drive_anim_name ), 0, 0, 0 );
-            var_3 _meth_814B( var_3 maps\_utility::getanim( self.drive_anim_name ), 0, 0, 0 );
+            var_2 setanim( var_2 maps\_utility::getanim( self.drive_anim_name ), 0, 0, 0 );
+            var_3 setanim( var_3 maps\_utility::getanim( self.drive_anim_name ), 0, 0, 0 );
         }
 
         self.drive_anim_name = "cockpit_static_idle";
-        set_pitbull_anim( ::_meth_8143, self.drive_anim_name, 1, var_6, 1 );
+        set_pitbull_anim( ::setanimknob, self.drive_anim_name, 1, var_6, 1 );
         self.drive_yaw_sign = 1;
         self.drive_anim_centering = 0;
     }
@@ -131,8 +131,8 @@ play_pitbull_steer_anim()
 
         if ( var_8 == 0 )
         {
-            var_2 _meth_814B( var_2 maps\_utility::getanim( self.drive_anim_name ), 1, 0, var_8 );
-            var_3 _meth_814B( var_3 maps\_utility::getanim( self.drive_anim_name ), 1, 0, var_8 );
+            var_2 setanim( var_2 maps\_utility::getanim( self.drive_anim_name ), 1, 0, var_8 );
+            var_3 setanim( var_3 maps\_utility::getanim( self.drive_anim_name ), 1, 0, var_8 );
         }
         else
         {
@@ -175,15 +175,15 @@ play_pitbull_steer_anim()
                     self.drive_anim_name = var_11;
                     self.drive_yaw_sign = var_12;
                     self.drive_anim_centering = var_10;
-                    set_pitbull_anim( ::_meth_8145, self.drive_anim_name, 1, 0, 1 );
+                    set_pitbull_anim( ::setanimknobrestart, self.drive_anim_name, 1, 0, 1 );
                 }
                 else
                 {
-                    var_13 = var_2 _meth_814F( var_2 maps\_utility::getanim( self.drive_anim_name ) );
-                    var_14 = var_3 _meth_814F( var_3 maps\_utility::getanim( self.drive_anim_name ) );
+                    var_13 = var_2 getanimtime( var_2 maps\_utility::getanim( self.drive_anim_name ) );
+                    var_14 = var_3 getanimtime( var_3 maps\_utility::getanim( self.drive_anim_name ) );
                     self.drive_anim_name = var_11;
                     self.drive_yaw_sign = var_12;
-                    set_pitbull_anim( ::_meth_8143, self.drive_anim_name, 1, 0.2, var_8 );
+                    set_pitbull_anim( ::setanimknob, self.drive_anim_name, 1, 0.2, var_8 );
 
                     if ( !var_7 && self.drive_anim_centering != var_10 )
                     {
@@ -192,8 +192,8 @@ play_pitbull_steer_anim()
                         var_14 = 1 - var_14;
                         var_13 = clamp( var_13, 0, 1 );
                         var_14 = clamp( var_14, 0, 1 );
-                        var_2 _meth_8117( var_2 maps\_utility::getanim( self.drive_anim_name ), var_13 );
-                        var_3 _meth_8117( var_3 maps\_utility::getanim( self.drive_anim_name ), var_14 );
+                        var_2 setanimtime( var_2 maps\_utility::getanim( self.drive_anim_name ), var_13 );
+                        var_3 setanimtime( var_3 maps\_utility::getanim( self.drive_anim_name ), var_14 );
                     }
 
                     self.drive_anim_centering = var_10;
@@ -201,8 +201,8 @@ play_pitbull_steer_anim()
             }
             else
             {
-                self.fake_vehicle_model _meth_83C7( self.fake_vehicle_model maps\_utility::getanim( self.drive_anim_name ), var_8 );
-                self.player_rig _meth_83C7( self.player_rig maps\_utility::getanim( self.drive_anim_name ), var_8 );
+                self.fake_vehicle_model setanimrate( self.fake_vehicle_model maps\_utility::getanim( self.drive_anim_name ), var_8 );
+                self.player_rig setanimrate( self.player_rig maps\_utility::getanim( self.drive_anim_name ), var_8 );
             }
         }
     }
@@ -222,7 +222,7 @@ set_pitbull_anim_node( var_0, var_1, var_2, var_3, var_4 )
 
 play_pitbull_speed_anim()
 {
-    var_0 = self _meth_8286();
+    var_0 = self vehicle_getspeed();
 
     if ( !isdefined( self.drive_speed ) )
     {
@@ -234,18 +234,18 @@ play_pitbull_speed_anim()
 
     if ( var_1 > 0 )
     {
-        self.fake_vehicle_model _meth_8143( self.fake_vehicle_model maps\_utility::getanim( "accelerate" ), 1, 0, 1 );
-        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( "accelerate" ), 1, 0, 1 );
+        self.fake_vehicle_model setanimknob( self.fake_vehicle_model maps\_utility::getanim( "accelerate" ), 1, 0, 1 );
+        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( "accelerate" ), 1, 0, 1 );
     }
     else if ( var_1 < 0 )
     {
-        self.fake_vehicle_model _meth_8143( self.fake_vehicle_model maps\_utility::getanim( "decelerate" ), 1, 0, 1 );
-        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( "decelerate" ), 1, 0, 1 );
+        self.fake_vehicle_model setanimknob( self.fake_vehicle_model maps\_utility::getanim( "decelerate" ), 1, 0, 1 );
+        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( "decelerate" ), 1, 0, 1 );
     }
     else
     {
-        self.fake_vehicle_model _meth_8142( get_pitbull_anim_node( "speed_anims" ), 0.2 );
-        self.player_rig _meth_8142( get_player_anim_node( "speed_anims" ), 0.2 );
+        self.fake_vehicle_model clearanim( get_pitbull_anim_node( "speed_anims" ), 0.2 );
+        self.player_rig clearanim( get_player_anim_node( "speed_anims" ), 0.2 );
     }
 
     self.drive_speed = var_0;
@@ -260,7 +260,7 @@ play_pitbull_camera_anim()
 
     if ( self.drive_cam_anim_name != "cockpit_static_idle_cam" )
     {
-        var_3 = var_2 _meth_814F( var_2 maps\_utility::getanim( self.drive_cam_anim_name ) );
+        var_3 = var_2 getanimtime( var_2 maps\_utility::getanim( self.drive_cam_anim_name ) );
 
         if ( self.drive_cam_centering )
             var_3 = 1 - var_3;
@@ -268,7 +268,7 @@ play_pitbull_camera_anim()
         var_3 *= self.drive_cam_yaw_sign;
     }
 
-    var_4 = self _meth_8289();
+    var_4 = self vehicle_getsteering();
     var_4 = clamp( var_4, -1, 1 );
 
     if ( var_4 <= 0 && var_4 > var_3 || var_4 >= 0 && var_4 < var_3 )
@@ -284,7 +284,7 @@ play_pitbull_camera_anim()
             var_6 = 0.2;
 
         self.drive_cam_anim_name = "cockpit_static_idle_cam";
-        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, var_6, 1 );
+        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, var_6, 1 );
         self.drive_cam_yaw_sign = 1;
         self.drive_cam_centering = 0;
     }
@@ -333,7 +333,7 @@ play_pitbull_camera_anim()
             var_8 = abs( var_13 ) * var_0 * 0.5;
 
         if ( var_8 == 0 )
-            self.player_rig _meth_814B( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, var_8 );
+            self.player_rig setanim( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, var_8 );
         else
         {
             var_14 = undefined;
@@ -370,11 +370,11 @@ play_pitbull_camera_anim()
                     self.drive_cam_anim_name = var_14;
                     self.drive_cam_yaw_sign = var_15;
                     self.drive_cam_centering = var_5;
-                    self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, 1 );
+                    self.player_rig setanimknob( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0, 1 );
                 }
                 else
                 {
-                    var_16 = self.player_rig _meth_814F( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ) );
+                    var_16 = self.player_rig getanimtime( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ) );
                     self.drive_cam_anim_name = var_14;
                     self.drive_cam_yaw_sign = var_15;
 
@@ -382,17 +382,17 @@ play_pitbull_camera_anim()
                     {
                         var_16 = 1 - var_16;
                         var_16 = clamp( var_16, 0, 1 );
-                        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0.2, var_8 );
-                        self.player_rig _meth_8117( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), var_16 );
+                        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0.2, var_8 );
+                        self.player_rig setanimtime( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), var_16 );
                     }
                     else
-                        self.player_rig _meth_8143( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0.2, var_8 );
+                        self.player_rig setanimknob( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), 1, 0.2, var_8 );
 
                     self.drive_cam_centering = var_5;
                 }
             }
             else
-                self.player_rig _meth_83C7( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), var_8 );
+                self.player_rig setanimrate( self.player_rig maps\_utility::getanim( self.drive_cam_anim_name ), var_8 );
         }
     }
 }
@@ -410,13 +410,13 @@ play_pitbull_add_idle( var_0, var_1 )
 
         if ( self.drive_anim_add_idle )
         {
-            set_pitbull_anim_node( ::_meth_814B, "idle_add", 1, 0.1, 1 );
+            set_pitbull_anim_node( ::setanim, "idle_add", 1, 0.1, 1 );
             var_3 = randomfloatrange( 0, 1 );
-            self.fake_vehicle_model _meth_8117( self.fake_vehicle_model maps\_utility::getanim( "cockpit_idle" ), var_3 );
-            self.player_rig _meth_8117( self.player_rig maps\_utility::getanim( "cockpit_idle" ), var_3 );
+            self.fake_vehicle_model setanimtime( self.fake_vehicle_model maps\_utility::getanim( "cockpit_idle" ), var_3 );
+            self.player_rig setanimtime( self.player_rig maps\_utility::getanim( "cockpit_idle" ), var_3 );
         }
         else
-            set_pitbull_anim_node( ::_meth_814B, "idle_add", 0, 0.1, 1 );
+            set_pitbull_anim_node( ::setanim, "idle_add", 0, 0.1, 1 );
     }
 }
 
@@ -426,16 +426,16 @@ adjust_pitbull_add_idle()
 
     for (;;)
     {
-        var_0 = self _meth_8286();
+        var_0 = self vehicle_getspeed();
         var_1 = var_0 / 60;
         var_1 = clamp( var_1, 0, 1 );
-        set_pitbull_anim( ::_meth_814C, "cockpit_idle", 1, 0, var_1 );
+        set_pitbull_anim( ::setanimlimited, "cockpit_idle", 1, 0, var_1 );
 
         if ( 1 )
         {
             var_2 = var_0 / 60;
             var_2 = clamp( var_2, 0, 1.25 );
-            self.player_rig _meth_814B( self.player_rig maps\_utility::getanim( "cockpit_shake_cam" ), 1, 0, var_2 );
+            self.player_rig setanim( self.player_rig maps\_utility::getanim( "cockpit_shake_cam" ), 1, 0, var_2 );
         }
 
         wait 0.05;
@@ -456,8 +456,8 @@ play_pitbull_camera_speed_anim()
 
     for (;;)
     {
-        var_1 = self _meth_8286();
-        var_2 = self _meth_8288();
+        var_1 = self vehicle_getspeed();
+        var_2 = self vehicle_getbodyvelocity();
 
         if ( var_2[0] < -0.0001 )
             var_1 *= -1;
@@ -474,7 +474,7 @@ play_pitbull_camera_speed_anim()
 
         if ( self.drive_cam_anim_accel == "accelerate_cam" )
         {
-            var_9 = self.player_rig _meth_814F( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
+            var_9 = self.player_rig getanimtime( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
 
             if ( var_9 < 1 && var_3 > 0.1 )
                 var_7 = "accelerate_cam";
@@ -487,7 +487,7 @@ play_pitbull_camera_speed_anim()
         }
         else if ( self.drive_cam_anim_accel == "accelerate2idle_cam" )
         {
-            var_9 = self.player_rig _meth_814F( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
+            var_9 = self.player_rig getanimtime( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
 
             if ( var_9 < 1 )
             {
@@ -499,7 +499,7 @@ play_pitbull_camera_speed_anim()
         }
         else if ( self.drive_cam_anim_accel == "decelerate_cam" )
         {
-            var_9 = self.player_rig _meth_814F( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
+            var_9 = self.player_rig getanimtime( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ) );
 
             if ( var_9 < 1 )
             {
@@ -537,15 +537,15 @@ play_pitbull_camera_speed_anim()
             if ( var_7 == "none" )
             {
                 if ( self.drive_cam_anim_accel != "none" )
-                    self.player_rig _meth_8142( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ), 0.2 );
+                    self.player_rig clearanim( self.player_rig maps\_utility::getanim( self.drive_cam_anim_accel ), 0.2 );
             }
             else
             {
                 var_10 = self.player_rig maps\_utility::getanim( var_7 );
-                self.player_rig _meth_8143( var_10, 1, var_5, var_6 );
+                self.player_rig setanimknob( var_10, 1, var_5, var_6 );
 
                 if ( var_8 > 0 )
-                    self.player_rig _meth_8117( var_10, var_8 );
+                    self.player_rig setanimtime( var_10, var_8 );
             }
 
             self.drive_cam_anim_accel = var_7;
@@ -569,8 +569,8 @@ pick_best_gear( var_0 )
 play_pitbull_gear_shift_anim()
 {
     self endon( "pitbull_scripted_anim" );
-    var_0 = self _meth_8286();
-    var_1 = self _meth_8288();
+    var_0 = self vehicle_getspeed();
+    var_1 = self vehicle_getbodyvelocity();
 
     if ( var_1[0] < -0.0001 )
         var_0 *= -1;
@@ -582,8 +582,8 @@ play_pitbull_gear_shift_anim()
 
     for (;;)
     {
-        var_0 = self _meth_8286();
-        var_1 = self _meth_8288();
+        var_0 = self vehicle_getspeed();
+        var_1 = self vehicle_getbodyvelocity();
 
         if ( var_1[0] < -0.0001 )
             var_0 *= -1;
@@ -617,12 +617,12 @@ play_pitbull_gear_shift_anim()
         {
             var_4 = pick_best_gear( var_0 );
             var_8 = "gear_up";
-            self _meth_8284( var_7, 60, 60 );
+            self vehicle_setspeedimmediate( var_7, 60, 60 );
         }
 
         if ( var_3 != "none" )
         {
-            var_9 = self.player_rig _meth_814F( self.player_rig maps\_utility::getanim( var_3 ) );
+            var_9 = self.player_rig getanimtime( self.player_rig maps\_utility::getanim( var_3 ) );
 
             if ( var_9 >= 0.3 && var_5 > 0 )
             {
@@ -644,7 +644,7 @@ play_pitbull_gear_shift_anim()
             if ( isdefined( level.player_pitbull ) )
                 level.player_pitbull notify( "audio_shift", var_3 );
 
-            set_pitbull_anim( ::_meth_8145, var_3, 1, 0.2, 1 );
+            set_pitbull_anim( ::setanimknobrestart, var_3, 1, 0.2, 1 );
         }
 
         wait 0.05;

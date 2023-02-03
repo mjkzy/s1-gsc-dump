@@ -95,7 +95,7 @@ grapple_allies()
 {
     var_0 = getnode( self.animname + "_pre_grapple_node", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     thread grapple_allies_movement();
 }
 
@@ -111,10 +111,10 @@ grapple_allies_movement()
 
     var_0 = getnode( self.animname + "_grapple_1_node", "targetname" );
     maps\_utility::set_goal_radius( 32 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     var_0 = getnode( self.animname + "_platform_1_node", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "allies_move_to_grapple_2" );
 
     if ( self.animname == "ilana" )
@@ -122,10 +122,10 @@ grapple_allies_movement()
 
     var_0 = getnode( self.animname + "_grapple_2_node", "targetname" );
     maps\_utility::set_goal_radius( 64 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     var_0 = getnode( self.animname + "_platform_2_node", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "allies_move_to_grapple_3" );
 
     if ( self.animname == "ilana" )
@@ -135,17 +135,17 @@ grapple_allies_movement()
     {
         var_0 = getnode( self.animname + "_platform_2a_node", "targetname" );
         maps\_utility::set_goal_radius( 16 );
-        self _meth_81A5( var_0 );
+        self setgoalnode( var_0 );
         self waittill( "goal" );
         common_scripts\utility::flag_wait( "cormack_to_grapple_3" );
     }
 
     var_0 = getnode( self.animname + "_grapple_3_node", "targetname" );
     maps\_utility::set_goal_radius( 32 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     var_0 = getnode( self.animname + "_platform_3_node", "targetname" );
     maps\_utility::set_goal_radius( 16 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     common_scripts\utility::flag_wait( "allies_move_to_grapple_4" );
 
     if ( self.animname == "ilana" )
@@ -153,10 +153,10 @@ grapple_allies_movement()
 
     var_0 = getnode( self.animname + "_grapple_4_node", "targetname" );
     maps\_utility::set_goal_radius( 64 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     var_0 = getnode( self.animname + "_platform_4_node", "targetname" );
     maps\_utility::set_goal_radius( 100 );
-    self _meth_81A5( var_0 );
+    self setgoalnode( var_0 );
     self waittill( "goal" );
     level.recon_anim_struct = common_scripts\utility::getstruct( "recon_anim_struct", "targetname" );
     level.recon_anim_struct maps\_anim::anim_first_frame_solo( self, "recon_enter" );

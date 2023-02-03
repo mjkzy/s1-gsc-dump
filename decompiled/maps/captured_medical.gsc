@@ -44,8 +44,8 @@ post_load()
         level.tcah_doors = [ maps\_utility::spawn_anim_model( "tcah_door_l" ), maps\_utility::spawn_anim_model( "tcah_door_r" ) ];
         level.tcah_node = common_scripts\utility::getstruct( "anim_tc_chamber", "targetname" );
         level.tcah_node maps\_anim::anim_first_frame( level.tcah_doors, "tc_enter_test_exit_door" );
-        getent( "tcah_door_l_link", "targetname" ) _meth_804D( level.tcah_doors[0], "j_bone_door_left" );
-        getent( "tcah_door_r_link", "targetname" ) _meth_804D( level.tcah_doors[1], "j_bone_door_right" );
+        getent( "tcah_door_l_link", "targetname" ) linkto( level.tcah_doors[0], "j_bone_door_left" );
+        getent( "tcah_door_r_link", "targetname" ) linkto( level.tcah_doors[1], "j_bone_door_right" );
     }
     else
         iprintln( "Warning: Autopsy start point missing.  Compiled out?" );
@@ -65,9 +65,9 @@ start_test_chamber()
 
 main_test_chamber()
 {
-    _func_231( "s3_escape_console_monitor", "targetname" )[0] _meth_83F6( 0, 3 );
-    _func_0D3( "cg_cinematicfullscreen", "0" );
-    _func_059( "captured_manticore_display", 1.0, 1 );
+    getscriptablearray( "s3_escape_console_monitor", "targetname" )[0] setscriptablepartstate( 0, 3 );
+    setsaveddvar( "cg_cinematicfullscreen", "0" );
+    cinematicingameloop( "captured_manticore_display", 1.0, 1 );
 
     if ( level.allies.size > 1 )
     {
@@ -93,7 +93,7 @@ main_test_chamber()
     }
 
     var_5 = getent( "test_chamber_door_a_clip", "targetname" );
-    var_5 _meth_82BF();
+    var_5 notsolid();
     thread tc_side_door_movement();
     level.player thread maps\_utility::blend_movespeedscale( 0.5 );
     var_6 = common_scripts\utility::getstruct( "anim_tc_observation", "targetname" );
@@ -121,7 +121,7 @@ main_test_chamber()
     common_scripts\utility::flag_wait( "flag_tc_gideon_at_door" );
     var_12 = getnode( "tc_ally_exit_manticore_node", "targetname" );
     level.ally.goalradius = 16;
-    level.ally _meth_81A5( var_12 );
+    level.ally setgoalnode( var_12 );
     common_scripts\utility::flag_wait( "flag_tc_player_can_see_manticore" );
     thread maps\_utility::battlechatter_on( "allies" );
     thread maps\_utility::battlechatter_on( "axis" );
@@ -135,7 +135,7 @@ main_test_chamber()
 
     wait 1.0;
     var_17 = getent( "tc_manticore_doors_col", "targetname" );
-    var_17 _meth_8058();
+    var_17 connectpaths();
     var_17 delete();
     level notify( "start_anim_tc_melee" );
     level.allies[0] maps\captured_util::unignore_everything();
@@ -147,7 +147,7 @@ main_test_chamber()
     level notify( "start_anim_tc_approach" );
     var_18 = getnode( "tc_ally_enter_observation_node", "targetname" );
     level.ally.goalradius = 16;
-    level.ally _meth_81A5( var_18 );
+    level.ally setgoalnode( var_18 );
     var_10 notify( "ally_keep_moving" );
     common_scripts\utility::flag_wait( "flag_tc_move_to_door" );
     var_19 = common_scripts\utility::getstruct( "anim_tc_chamber", "targetname" );
@@ -166,8 +166,8 @@ main_test_chamber()
     soundscripts\_snd::snd_message( "aud_door", "test_chamber_exit", "open" );
     var_20 = getent( "tc_exit_stairs_door", "targetname" );
     var_21 = getent( var_20.target, "targetname" );
-    var_21 _meth_804D( var_20 );
-    var_20 _meth_82AE( var_20.origin + ( 52, 0, 0 ), 1, 0.25, 0.5 );
+    var_21 linkto( var_20 );
+    var_20 moveto( var_20.origin + ( 52, 0, 0 ), 1, 0.25, 0.5 );
     level notify( "start_anim_tc_exit_stairs" );
     var_19 notify( "tc_observation_loop_ender" );
     thread tc_door_to_stairs_closer( var_20 );
@@ -186,12 +186,12 @@ main_test_chamber()
     level notify( "start_anim_tc_enter_test" );
     level.tcah_node notify( "ally_keep_moving" );
     maps\_utility::delaythread( 2.0, ::tc_uv_rumble );
-    var_5 _meth_82BE();
+    var_5 solid();
     var_22 = getent( "test_chamber_door_a_rt", "targetname" );
     var_23 = getent( "test_chamber_door_a_lt", "targetname" );
-    var_23 _meth_82AF( 29, 0.3 );
-    var_22 _meth_82AF( -29, 0.3 );
-    _func_05C();
+    var_23 movex( 29, 0.3 );
+    var_22 movex( -29, 0.3 );
+    stopcinematicingame();
     var_8 = maps\_utility::array_removedead( var_8 );
     maps\_utility::array_delete( var_8 );
     maps\captured_util::physics_bodies_off();
@@ -201,12 +201,12 @@ main_test_chamber()
     thread maps\captured_util::physics_bodies_on( "test_chamber_bodies_2", 5 );
     var_25 = getent( "test_chamber_door_b", "targetname" );
     var_26 = getent( "test_chamber_door_b_collision", "targetname" );
-    var_26 _meth_804D( var_25 );
-    var_25 common_scripts\utility::delaycall( 6, ::_meth_82AF, -55, 0.3 );
+    var_26 linkto( var_25 );
+    var_25 common_scripts\utility::delaycall( 6, ::movex, -55, 0.3 );
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_autopsy_halls_tr" ) )
+        if ( !istransientloaded( "captured_autopsy_halls_tr" ) )
             level waittill( "tff_post_load_autopsy_halls" );
     }
 
@@ -223,17 +223,17 @@ tc_uv_rumble()
     var_0 = level.player maps\_utility::get_rumble_ent( "steady_rumble" );
     var_0 maps\_utility::set_rumble_intensity( 0.01 );
     var_0 maps\_utility::rumble_ramp_to( 1, 2.1 );
-    var_0 _meth_80AF( "steady_rumble" );
+    var_0 stoprumble( "steady_rumble" );
 }
 
 tc_ai_clip_blocker()
 {
     var_0 = getent( "ah_ai_clip_blocker_test_chamber", "targetname" );
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
     common_scripts\utility::flag_wait( "flag_ah_ai_blocker" );
-    var_0 _meth_82BE();
-    var_0 _meth_8057();
+    var_0 solid();
+    var_0 disconnectpaths();
 }
 
 tc_door_to_stairs_closer( var_0 )
@@ -241,7 +241,7 @@ tc_door_to_stairs_closer( var_0 )
     maps\_utility::wait_for_targetname_trigger( "tc_player_on_stairs_to_tc" );
     level notify( "tc_stairs_down" );
     soundscripts\_snd::snd_message( "aud_door", "test_chamber_exit", "close" );
-    var_0 _meth_82AE( var_0.origin - ( 52, 0, 0 ), 1.25, 0.2, 0.5 );
+    var_0 moveto( var_0.origin - ( 52, 0, 0 ), 1.25, 0.2, 0.5 );
 }
 
 test_chamber_stairs_up_door()
@@ -250,7 +250,7 @@ test_chamber_stairs_up_door()
     var_1 = maps\_utility::spawn_anim_model( "tc_stairs_door_1" );
     var_2 = maps\_utility::spawn_anim_model( "tc_stairs_door_2" );
     var_3 = getent( "door_tc_stairs_01", "targetname" );
-    var_3 _meth_804D( var_1, "j_bone_door_left", ( -28, 0, 48 ), ( 0, 90, 0 ) );
+    var_3 linkto( var_1, "j_bone_door_left", ( -28, 0, 48 ), ( 0, 90, 0 ) );
     var_4 = [ var_1, var_2 ];
     var_0 maps\_anim::anim_first_frame( var_4, "tc_stairs" );
     level waittill( "tc_stair_door_1" );
@@ -258,7 +258,7 @@ test_chamber_stairs_up_door()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_test_chamber_tr" ) )
+        if ( !istransientloaded( "captured_test_chamber_tr" ) )
         {
             level waittill( "tff_pre_escape_to_test_chamber" );
             soundscripts\_snd::snd_message( "aud_door", "test_chamber_stairwell", "close" );
@@ -290,7 +290,7 @@ tc_manticore_ally_traverse()
     var_0 = self;
     var_1 = getnode( "tc_ally_exit_manticore_node", "targetname" );
     level.ally.goalradius = 16;
-    level.ally _meth_81A5( var_1 );
+    level.ally setgoalnode( var_1 );
     var_0 maps\_anim::anim_single_solo( level.ally, "tc_stairs" );
     var_0 = common_scripts\utility::getstruct( "anim_tc_observation", "targetname" );
 
@@ -313,23 +313,23 @@ tc_side_door_movement()
     foreach ( var_2 in var_0 )
     {
         var_3 = getentarray( var_2.target, "targetname" );
-        common_scripts\utility::array_call( var_3, ::_meth_804D, var_2 );
+        common_scripts\utility::array_call( var_3, ::linkto, var_2 );
     }
 
     while ( !common_scripts\utility::flag( "flag_test_chamber_end" ) )
     {
         common_scripts\utility::flag_wait( "flag_tc_side_door_open" );
         soundscripts\_snd::snd_message( "aud_door", "test_chamber_side", "open" );
-        var_0[0] _meth_82AE( var_0[0].origin + ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
-        var_0[1] _meth_82AE( var_0[1].origin - ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
+        var_0[0] moveto( var_0[0].origin + ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
+        var_0[1] moveto( var_0[1].origin - ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
         wait 1.5;
 
         while ( common_scripts\utility::flag( "flag_tc_side_door_open" ) )
             wait 0.05;
 
         soundscripts\_snd::snd_message( "aud_door", "test_chamber_side", "close" );
-        var_0[0] _meth_82AE( var_0[0].origin - ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
-        var_0[1] _meth_82AE( var_0[1].origin + ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
+        var_0[0] moveto( var_0[0].origin - ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
+        var_0[1] moveto( var_0[1].origin + ( 0, 50, 0 ), 1.25, 0.2, 0.5 );
         wait 1.5;
     }
 }
@@ -348,7 +348,7 @@ test_chamber_exit_door( var_0 )
 {
     wait 1.0;
     var_1 = tc_setup_door( "tc_exit_door" );
-    var_1 _meth_82B7( 100, 1.0, 0.25, 0.25 );
+    var_1 rotateyaw( 100, 1.0, 0.25, 0.25 );
 }
 
 test_chamber_exit_door_notetrack( var_0 )
@@ -366,7 +366,7 @@ observation_room_scientist_anims( var_0, var_1 )
     maps\_utility::magic_bullet_shield( 1 );
     self.no_friendly_fire_penalty = 1;
     self.ignoresonicaoe = 1;
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
     maps\_utility::set_deathanim( "tc_scientist_" + var_1 + "_death" );
     var_2 = "observation_room_scientist_node_" + var_1;
     var_3 = common_scripts\utility::getstruct( var_2, "targetname" );
@@ -410,8 +410,8 @@ observation_room_scientist_death( var_0, var_1, var_2 )
     var_0 thread maps\_anim::anim_single( var_5, var_6 );
     var_7 = getanimlength( maps\_utility::getanim( var_6 ) );
     wait(var_7 - 0.05);
-    self _meth_83C7( maps\_utility::getanim( var_6 ), 0 );
-    var_2 _meth_83C7( var_2 maps\_utility::getanim( var_6 ), 0 );
+    self setanimrate( maps\_utility::getanim( var_6 ), 0 );
+    var_2 setanimrate( var_2 maps\_utility::getanim( var_6 ), 0 );
 }
 
 observation_room_scientist_setup( var_0 )
@@ -422,7 +422,7 @@ observation_room_scientist_setup( var_0 )
     maps\_utility::disable_pain();
     self.no_friendly_fire_penalty = 1;
     self.ignoresonicaoe = 1;
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
     thread vign_ai_check_for_death( 1 );
 }
 
@@ -443,9 +443,9 @@ vign_ai_check_for_death( var_0 )
     }
 
     if ( !isdefined( var_0 ) )
-        level.ally _meth_8141();
+        level.ally stopanimscripted();
 
-    self _meth_8024( var_4, var_3 );
+    self startragdollfromimpact( var_4, var_3 );
     level notify( "tech_dead" );
 }
 
@@ -460,7 +460,7 @@ tc_setup_door( var_0, var_1 )
         if ( var_6.classname == "script_brushmodel" )
             var_4 = var_6;
 
-        var_6 _meth_804D( var_2 );
+        var_6 linkto( var_2 );
     }
 
     if ( isdefined( var_1 ) )
@@ -494,7 +494,7 @@ main_autopsy_halls()
         var_2.door_tag.angles = var_2.angles;
         var_2.door_tag.script_noteworthy = "aut_cleanup";
         var_2.door_tag maps\_anim::anim_first_frame_solo( var_2, "s3escape_takedown" );
-        getent( var_2.target, "targetname" ) _meth_804D( var_2 );
+        getent( var_2.target, "targetname" ) linkto( var_2 );
     }
 
     var_4 = common_scripts\utility::getstructarray( "ent_ah_track_body", "targetname" );
@@ -597,20 +597,20 @@ ah_tranistion_doors( var_0, var_1 )
         var_3.door_tag thread maps\_anim::anim_single_solo( var_3, "s3escape_takedown" );
 
     var_7 = getent( "ent_ah_autopsy_doors_col", "targetname" );
-    var_7 _meth_82BF();
+    var_7 notsolid();
     common_scripts\utility::flag_wait( "flag_ah_ready_to_leave" );
     var_8 = getent( "trig_autopsy_halls_end", "targetname" );
 
-    while ( !level.player _meth_80A9( var_8 ) )
+    while ( !level.player istouching( var_8 ) )
         wait 0.05;
 
     var_8 delete();
     soundscripts\_snd::snd_message( "aud_door", "autopsy_pre_doors", "close" );
 
     foreach ( var_3 in var_1 )
-        var_3 _meth_82AE( var_3.closed, 0.5, 0.05, 0.05 );
+        var_3 moveto( var_3.closed, 0.5, 0.05, 0.05 );
 
-    var_7 _meth_82BE();
+    var_7 solid();
     wait 0.5;
     common_scripts\utility::flag_set( "flag_autopsy_halls_end" );
     thread ah_fast_body_cleanup();
@@ -622,8 +622,8 @@ ah_tranistion_doors( var_0, var_1 )
 
     if ( level.nextgen )
     {
-        var_1[0] _meth_82AE( var_1[0].origin + ( 0, 52, 0 ), 1.0, 0.05, 0.05 );
-        var_1[1] _meth_82AE( var_1[1].origin - ( 0, 52, 0 ), 1.0, 0.05, 0.05 );
+        var_1[0] moveto( var_1[0].origin + ( 0, 52, 0 ), 1.0, 0.05, 0.05 );
+        var_1[1] moveto( var_1[1].origin - ( 0, 52, 0 ), 1.0, 0.05, 0.05 );
     }
     else
     {
@@ -667,7 +667,7 @@ ah_delay_playerseek( var_0, var_1, var_2 )
     }
 
     var_3 endon( "death" );
-    var_3 _meth_8177( "playerseek" );
+    var_3 setthreatbiasgroup( "playerseek" );
     var_3 thread maps\_utility::player_seek();
 }
 
@@ -677,13 +677,13 @@ ah_init_track_block( var_0 )
     self.models = [ "cap_hanging_bodybag", "cap_hanging_bodybag_02", "cap_hanging_bodybag_b", "cap_hanging_bodybag_c", "cap_hanging_bodybag_02_b", "cap_hanging_bodybag_02_c" ];
     var_1 = common_scripts\utility::getclosest( self.origin, var_0, 128 );
     self.body = spawn( "script_model", var_1.origin );
-    self.body _meth_80B1( common_scripts\utility::random( self.models ) );
+    self.body setmodel( common_scripts\utility::random( self.models ) );
     self.body.angles = ( self.angles[0], randomint( 360 ), self.angles[2] );
     self.slow_trig = getent( var_1.target, "targetname" );
-    self.slow_trig _meth_8069();
+    self.slow_trig enablelinkto();
     wait 0.05;
-    self.body _meth_804D( self );
-    self.slow_trig _meth_804D( self );
+    self.body linkto( self );
+    self.slow_trig linkto( self );
     self.offset = ( 0, 4, -7 );
     self.track_start = getent( "org_ah_track_start", "targetname" );
     self.track_end = getent( "org_ah_track_end", "targetname" );
@@ -703,13 +703,13 @@ ah_move_track_block( var_0 )
         if ( isdefined( var_0.doors ) )
             var_0 thread ah_track_door_open( var_1 );
 
-        self _meth_82AE( var_0.origin, var_1 );
+        self moveto( var_0.origin, var_1 );
         wait(var_1);
 
         if ( isdefined( var_0.script_noteworthy ) && var_0.script_noteworthy == "turn" )
         {
             wait 0.25;
-            self _meth_82B5( var_0.angles, 1 );
+            self rotateto( var_0.angles, 1 );
             wait 1;
         }
 
@@ -718,14 +718,14 @@ ah_move_track_block( var_0 )
         if ( var_0 == self.track_start )
         {
             self.body delete();
-            self _meth_8203( self.track_end, self.track_start );
-            self _meth_8092();
+            self teleportentityrelative( self.track_end, self.track_start );
+            self dontinterpolate();
             wait 0.05;
             self.body = spawn( "script_model", self.origin + self.offset + ( 0, 0, randomfloatrange( -1, 1 ) ) );
-            self.body _meth_80B1( common_scripts\utility::random( self.models ) );
+            self.body setmodel( common_scripts\utility::random( self.models ) );
             self.body.angles = ( self.angles[0], randomint( 360 ), self.angles[2] );
             wait 0.05;
-            self.body _meth_804D( self );
+            self.body linkto( self );
             var_0 = getent( var_0.target, "targetname" );
         }
     }
@@ -757,10 +757,10 @@ ah_init_track_doors()
                 foreach ( var_3 in var_1.doors )
                 {
                     var_4 = getentarray( var_3.target, "targetname" );
-                    common_scripts\utility::array_call( var_4, ::_meth_804D, var_3 );
+                    common_scripts\utility::array_call( var_4, ::linkto, var_3 );
                     var_3.open = var_3.origin;
                     var_3.close = var_3.open + 28 * vectornormalize( ( var_1.origin[0], var_1.origin[1], var_3.open[2] ) - var_3.open );
-                    var_3 _meth_82AE( var_3.close, 0.05 );
+                    var_3 moveto( var_3.close, 0.05 );
                 }
             }
         }
@@ -772,13 +772,13 @@ ah_track_door_open( var_0 )
     wait(var_0 - 1.25);
 
     foreach ( var_2 in self.doors )
-        var_2 _meth_82AE( var_2.open, 1.0, 0.1, 0.4 );
+        var_2 moveto( var_2.open, 1.0, 0.1, 0.4 );
 
     soundscripts\_snd::snd_message( "aud_morgue_bodybag_doors", "open" );
     wait 1.5;
 
     foreach ( var_2 in self.doors )
-        var_2 _meth_82AE( var_2.close, 1.0, 0.2, 0.2 );
+        var_2 moveto( var_2.close, 1.0, 0.2, 0.2 );
 
     soundscripts\_snd::snd_message( "aud_morgue_bodybag_doors", "close" );
 }
@@ -791,10 +791,10 @@ ah_morgue_doors()
     foreach ( var_3 in var_1 )
     {
         var_4 = getentarray( var_3.target, "targetname" );
-        common_scripts\utility::array_call( var_4, ::_meth_804D, var_3 );
+        common_scripts\utility::array_call( var_4, ::linkto, var_3 );
         var_3.open = var_3.origin;
         var_3.close = var_0.origin;
-        var_3 _meth_82AE( var_3.close, 0.05 );
+        var_3 moveto( var_3.close, 0.05 );
     }
 
     while ( !common_scripts\utility::flag( "flag_incinerator_saved" ) )
@@ -803,7 +803,7 @@ ah_morgue_doors()
         soundscripts\_snd::snd_message( "aud_door", "morgue_doors", "open" );
 
         foreach ( var_3 in var_1 )
-            var_3 _meth_82AE( var_3.open, 1.25, 0.2, 0.5 );
+            var_3 moveto( var_3.open, 1.25, 0.2, 0.5 );
 
         wait 1.5;
 
@@ -813,7 +813,7 @@ ah_morgue_doors()
         soundscripts\_snd::snd_message( "aud_door", "morgue_doors", "close" );
 
         foreach ( var_3 in var_1 )
-            var_3 _meth_82AE( var_3.close, 1.25, 0.2, 0.5 );
+            var_3 moveto( var_3.close, 1.25, 0.2, 0.5 );
     }
 }
 
@@ -826,7 +826,7 @@ ah_morgue_threat_proc()
     {
         while ( common_scripts\utility::flag( "gps_ah_in_morgue" ) )
         {
-            var_0 = self _meth_817C();
+            var_0 = self getstance();
 
             if ( self.threat_stance != var_0 )
                 maps\captured_util::one_handed_modify_threatbias( var_0 );
@@ -882,7 +882,7 @@ main_autopsy()
 
 setup_spawners()
 {
-    common_scripts\utility::array_call( getentarray( "opfor_tc_observation_scientist", "script_noteworthy" ), ::_meth_8040, "allies" );
+    common_scripts\utility::array_call( getentarray( "opfor_tc_observation_scientist", "script_noteworthy" ), ::setspawnerteam, "allies" );
     maps\_utility::array_spawn_function( getentarray( "civ_ah_intro", "targetname" ), ::civ_ah );
     maps\_utility::array_spawn_function( getentarray( "civ_ah_start", "targetname" ), ::civ_ah );
     maps\_utility::array_spawn_function( getentarray( "opfor_ah_start_front", "targetname" ), ::opfor_ah_start_front );
@@ -1009,8 +1009,8 @@ autopsy_guard_player_hit()
     {
         self waittill( "shooting" );
 
-        if ( isplayer( self.enemy ) && self _meth_81BE( level.player ) && randomfloat( 1 ) < self.baseaccuracy )
-            level.player _meth_8051( 10, self _meth_80A8(), self );
+        if ( isplayer( self.enemy ) && self cansee( level.player ) && randomfloat( 1 ) < self.baseaccuracy )
+            level.player dodamage( 10, self geteye(), self );
     }
 }
 
@@ -1026,19 +1026,19 @@ autopsy_main_doctor()
     maps\_utility::gun_remove();
     maps\_utility::place_weapon_on( "iw5_titan45pickup_sp", "left" );
     thread vign_ai_check_for_death();
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
     self waittill( "vig_kill_me" );
     self notify( "stop_check_for_death" );
     maps\_utility::stop_magic_bullet_shield();
     self.a.nodeath = 1;
     self.allowdeath = 1;
     self.diequietly = 1;
-    self _meth_8052();
+    self kill();
 }
 
 doc_fire( var_0 )
 {
-    var_0 _meth_81E7();
+    var_0 shoot();
 }
 
 doc_punched( var_0 )
@@ -1057,11 +1057,11 @@ autopsy_first_frame_entry_doors()
     var_0["left"] = getent( "aut_door_lt", "targetname" );
     var_0["left_col"] = getent( "aut_door_lt_col", "targetname" );
     var_0["left"] maps\_utility::assign_animtree( "autopsy_door" );
-    var_0["left_col"] _meth_804D( var_0["left"], "j_bone_door_left" );
+    var_0["left_col"] linkto( var_0["left"], "j_bone_door_left" );
     var_0["right"] = getent( "aut_door_rt", "targetname" );
     var_0["right_col"] = getent( "aut_door_rt_col", "targetname" );
     var_0["right"] maps\_utility::assign_animtree( "autopsy_door_rt" );
-    var_0["right_col"] _meth_804D( var_0["right"], "j_bone_door_right" );
+    var_0["right_col"] linkto( var_0["right"], "j_bone_door_right" );
     var_1 = common_scripts\utility::getstruct( "struct_vign_autopsy_door", "targetname" );
     var_1 thread maps\_anim::anim_first_frame( [ var_0["left"], var_0["right"] ], "autopsy_door" );
     return var_0;
@@ -1093,7 +1093,7 @@ autopsy_start()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_autopsy_tr" ) )
+        if ( !istransientloaded( "captured_autopsy_tr" ) )
             level waittill( "tff_post_autopsy_halls_to_autopsy" );
     }
 
@@ -1153,9 +1153,9 @@ autopsy_start()
     {
         array_waittill_player_lookat( var_8, 0.9, 0.15, 1 );
 
-        if ( distance2d( level.player.origin, var_8[0].origin ) < 70 && level.player _meth_8341() )
+        if ( distance2d( level.player.origin, var_8[0].origin ) < 70 && level.player isonground() )
         {
-            _func_250( level.player, 1 );
+            setdemigodmode( level.player, 1 );
             break;
         }
 
@@ -1165,27 +1165,27 @@ autopsy_start()
     var_10 = maps\_utility::spawn_anim_model( "player_rig" );
     var_10 hide();
     level.player freezecontrols( 1 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
-    level.player _meth_8118( 1 );
-    level.player _meth_8301( 0 );
-    level.player _meth_817D( "stand" );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
+    level.player allowstand( 1 );
+    level.player allowjump( 0 );
+    level.player setstance( "stand" );
 
-    while ( level.player _meth_817C() != "stand" )
+    while ( level.player getstance() != "stand" )
         wait 0.05;
 
     level thread maps\_utility::notify_delay( "stop_autopsy_guard_player_hit", 2 );
     level notify( "autopsy_player_jumping_into_hatch" );
     thread maps\captured_util::smooth_player_link( var_10, 0.4 );
     var_1 maps\_anim::anim_single( [ var_10, var_3 ], "autopsy_doctor_player_jump", undefined, 0.25 );
-    level.player _meth_804F();
+    level.player unlink();
     var_10 delete();
     level.player freezecontrols( 0 );
     level.cover_warnings_disabled = undefined;
     common_scripts\utility::flag_set( "flag_autopsy_end" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "bullet_whizby_glass" );
     wait 2;
-    _func_250( level.player, 0 );
+    setdemigodmode( level.player, 0 );
     var_3 delete();
     common_scripts\utility::array_call( var_2, ::delete );
     thread maps\captured_util::physics_bodies_off();
@@ -1226,15 +1226,15 @@ autopsy_doctor_door_player()
     var_0 = maps\_utility::spawn_anim_model( "player_rig" );
     var_0 hide();
     maps\_anim::anim_first_frame( [ var_0 ], "autopsy_doctor_door_open" );
-    _func_0D3( "g_friendlyNameDist", 0 );
-    level.player _meth_831D();
-    level.player _meth_8130( 0 );
-    level.player _meth_817D( "stand" );
-    level.player _meth_8118( 1 );
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8080( var_0, "tag_player", 0.5 );
+    setsaveddvar( "g_friendlyNameDist", 0 );
+    level.player disableweapons();
+    level.player allowmelee( 0 );
+    level.player setstance( "stand" );
+    level.player allowstand( 1 );
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
+    level.player playerlinktoblend( var_0, "tag_player", 0.5 );
 
     if ( issubstr( tolower( level.player.one_weap ), "titan45" ) || issubstr( tolower( level.player.one_weap ), "knife" ) )
     {
@@ -1249,20 +1249,20 @@ autopsy_doctor_door_player()
 
     level notify( "doctor_door_weapon_hidden" );
     level.player notify( "stop_one_handed_gunplay" );
-    level.player _meth_8310();
+    level.player takeallweapons();
     maps\_player_exo::player_exo_deactivate();
     level notify( "stop_overdrive_tracker" );
     var_0 show();
     var_0 attach( "vm_kvaHasmatKnifeDown", "tag_weapon_right" );
-    level.player _meth_807D( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( var_0, "tag_player", 1, 0, 0, 0, 0, 1 );
     maps\_anim::anim_single( [ var_0 ], "autopsy_doctor_door_open" );
-    level.player _meth_8304( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_8118( 1 );
-    level.player _meth_8310();
-    level.player _meth_831E();
-    level.player _meth_804F();
+    level.player allowsprint( 1 );
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowstand( 1 );
+    level.player takeallweapons();
+    level.player enableweapons();
+    level.player unlink();
     var_0 delete();
 }
 
@@ -1315,7 +1315,7 @@ autopsy_doctor_door_enemy_think( var_0 )
     self.script_noteworthy = "aut_cleanup";
     maps\_utility::set_ignoreall( 1 );
     self.goalradius = 16;
-    self _meth_81A6( var_1.origin );
+    self setgoalpos( var_1.origin );
     wait 4;
     maps\_utility::set_ignoreall( 0 );
 }
@@ -1326,7 +1326,7 @@ autopsy_doctor_door_enemy_ammo()
 
     for (;;)
     {
-        self _meth_8332( self.weapon );
+        self givemaxammo( self.weapon );
         wait 1;
     }
 }
@@ -1335,7 +1335,7 @@ autopsy_door_tech()
 {
     if ( level.currentgen )
     {
-        if ( !_func_21E( "captured_autopsy_tr" ) )
+        if ( !istransientloaded( "captured_autopsy_tr" ) )
             level waittill( "tff_post_autopsy_halls_to_autopsy" );
     }
 
@@ -1346,7 +1346,7 @@ autopsy_door_tech()
     var_0.grenadeammo = 0;
     var_0.animname = "autopsy_tech";
     var_0.ignoresonicaoe = 1;
-    var_0 _meth_81A3( 1 );
+    var_0 pushplayer( 1 );
     var_0 endon( "death" );
     var_0 thread vign_ai_check_for_death();
     var_0 maps\_utility::delaythread( 6.75, ::vign_ai_check_for_death, 0 );
@@ -1376,12 +1376,12 @@ autopsy_fodder_tech_think()
     var_2 maps\_utility::set_ignoreme( 1 );
     var_2.grenadeammo = 0;
     var_2.animname = "tech";
-    var_2 _meth_81C6( var_0, var_1 );
-    var_2 _meth_81A6( var_0 );
+    var_2 forceteleport( var_0, var_1 );
+    var_2 setgoalpos( var_0 );
     var_2 maps\_utility::set_deathanim( "cap_s3_autopsy_tech_death" );
     var_2 thread vign_ai_check_for_death( 1 );
     var_2.ignoresonicaoe = 1;
-    var_2 _meth_81A3( 1 );
+    var_2 pushplayer( 1 );
     var_2 endon( "death" );
     var_3 = 0;
     var_4 = 0;
@@ -1394,7 +1394,7 @@ autopsy_fodder_tech_think()
 
     var_2 maps\_anim::anim_first_frame_solo( var_2, self.animation );
     wait(var_3);
-    var_2 common_scripts\utility::delaycall( 0.05, ::_meth_8117, level.scr_anim[var_2.animname][self.animation], var_4 );
+    var_2 common_scripts\utility::delaycall( 0.05, ::setanimtime, level.scr_anim[var_2.animname][self.animation], var_4 );
     thread autopsy_fodder_tech_animate( var_2 );
 }
 
@@ -1415,31 +1415,31 @@ bmcd_debug_loop()
 {
     while ( !common_scripts\utility::flag( "flag_battle_to_heli_end" ) )
     {
-        if ( !level.player _meth_824C( "BUTTON_B" ) )
+        if ( !level.player buttonpressed( "BUTTON_B" ) )
         {
             wait 0.1;
             continue;
         }
 
-        if ( level.player _meth_824C( "DPAD_LEFT" ) || level.player _meth_824C( "LEFTARROW" ) )
+        if ( level.player buttonpressed( "DPAD_LEFT" ) || level.player buttonpressed( "LEFTARROW" ) )
         {
             maps\_player_exo::player_exo_activate();
             iprintln( "Exo On" );
             wait 0.2;
         }
-        else if ( level.player _meth_824C( "DPAD_RIGHT" ) || level.player _meth_824C( "RIGHTARROW" ) )
+        else if ( level.player buttonpressed( "DPAD_RIGHT" ) || level.player buttonpressed( "RIGHTARROW" ) )
         {
             maps\_player_exo::player_exo_deactivate();
             iprintln( "Exo Off" );
             wait 0.2;
         }
-        else if ( level.player _meth_824C( "DPAD_UP" ) || level.player _meth_824C( "UPARROW" ) )
+        else if ( level.player buttonpressed( "DPAD_UP" ) || level.player buttonpressed( "UPARROW" ) )
         {
             level.player notify( "stop_one_handed_gunplay" );
             iprintln( "One Handed Off" );
             wait 0.2;
         }
-        else if ( level.player _meth_824C( "DPAD_DOWN" ) || level.player _meth_824C( "DOWNARROW" ) )
+        else if ( level.player buttonpressed( "DPAD_DOWN" ) || level.player buttonpressed( "DOWNARROW" ) )
         {
             if ( isdefined( level.debugging_on ) )
             {

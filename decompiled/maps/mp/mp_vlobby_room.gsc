@@ -33,7 +33,7 @@ fade_from_black()
 {
     level waittill( "connected", var_0 );
     var_0 waittill( "fade_in" );
-    var_0 _meth_84D7( "mp_no_foley", 1 );
+    var_0 clientaddsoundsubmix( "mp_no_foley", 1 );
 }
 
 vl_ground_setup()
@@ -54,12 +54,12 @@ vl_ground_setup()
 vl_lighting_setup()
 {
     var_0 = self;
-    var_0 _meth_84A9();
+    var_0 enablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time * 2 );
+        var_0 setphysicaldepthoffield( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time * 2 );
     else
-        var_0 _meth_84AB( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time * 2 );
+        var_0 setphysicaldepthoffield( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time * 2 );
 }
 
 vl_dof_based_on_focus( var_0 )
@@ -84,7 +84,7 @@ vl_dof_based_on_focus( var_0 )
     else if ( var_9 > 128 )
         var_9 = 128;
 
-    var_2 _meth_84AB( var_9, var_3, var_1, var_1 * 2 );
+    var_2 setphysicaldepthoffield( var_9, var_3, var_1, var_1 * 2 );
 }
 
 vl_handle_mode_change( var_0, var_1, var_2 )
@@ -100,15 +100,15 @@ vl_handle_mode_change( var_0, var_1, var_2 )
 
     if ( var_1 == "cac" )
     {
-        var_3 _meth_82D4( "mp_vlobby_room_cac", 0 );
-        var_3 _meth_83C0( "mp_vl_create_a_class" );
+        var_3 visionsetnakedforplayer( "mp_vlobby_room_cac", 0 );
+        var_3 lightsetforplayer( "mp_vl_create_a_class" );
     }
     else if ( var_1 == "cao" )
     {
         if ( level.nextgen )
-            var_3 _meth_84AB( 1.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
+            var_3 setphysicaldepthoffield( 1.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
         else
-            var_3 _meth_84AB( 3.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
+            var_3 setphysicaldepthoffield( 3.223, 156.419, level.camparams.dof_time, level.camparams.dof_time );
     }
     else if ( var_1 == "clanprofile" )
     {
@@ -163,8 +163,8 @@ vl_handle_mode_change( var_0, var_1, var_2 )
 setdefaultpostfx()
 {
     var_0 = self;
-    var_0 _meth_82D4( "mp_vlobby_room", 0 );
-    var_0 _meth_83C0( "mp_vlobby_room" );
+    var_0 visionsetnakedforplayer( "mp_vlobby_room", 0 );
+    var_0 lightsetforplayer( "mp_vlobby_room" );
 }
 
 setdefaultdof()
@@ -172,7 +172,7 @@ setdefaultdof()
     var_0 = self;
 
     if ( level.nextgen )
-        var_0 _meth_84AB( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
+        var_0 setphysicaldepthoffield( 0.613159, 89.8318, level.camparams.dof_time, level.camparams.dof_time );
     else
-        var_0 _meth_84AB( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time );
+        var_0 setphysicaldepthoffield( 4.01284, 95.2875, level.camparams.dof_time, level.camparams.dof_time );
 }

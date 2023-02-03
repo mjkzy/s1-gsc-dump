@@ -3,7 +3,7 @@
 
 streak_init()
 {
-    precacheitem( "iw5_dlcgun12loot4_mp" );
+    precacheshellshock( "iw5_dlcgun12loot4_mp" );
     precacheshader( "dpad_killstreak_lost_static" );
     precacheshader( "overlay_blackbox_killstreak" );
     level.killstreakfuncs["mp_blackbox"] = ::tryusempblackbox;
@@ -24,7 +24,7 @@ test_give_players_map_killstreak()
         {
             var_0 = level.players[randomintrange( 0, level.players.size )];
 
-            if ( isdefined( var_0 ) && var_0.team != "spectator" && isdefined( var_0.killstreakmodules ) && !var_0 _meth_8314( "iw5_dlcgun12loot4_mp" ) && !isbot( var_0 ) && !isagent( var_0 ) )
+            if ( isdefined( var_0 ) && var_0.team != "spectator" && isdefined( var_0.killstreakmodules ) && !var_0 hasweapon( "iw5_dlcgun12loot4_mp" ) && !isbot( var_0 ) && !isagent( var_0 ) )
             {
                 if ( !isdefined( var_0.map_killstreak_active ) || !var_0.map_killstreak_active )
                 {
@@ -67,7 +67,7 @@ setcreature()
     self.radar_highlight = newclienthudelem( self );
     self.radar_highlight.color = ( 1, 0.015, 0.015 );
     self.radar_highlight.alpha = 1.0;
-    self.radar_highlight _meth_83A4( 60 );
+    self.radar_highlight setradarhighlight( 60 );
 }
 
 unsetcreature()
@@ -83,7 +83,7 @@ enable_alien_mode()
     level.perkunsetfuncs["specialty_exo_creature"] = ::unsetcreature;
     self.map_killstreak_active = 1;
     disable_exo_usage();
-    alien_mode_abilities( 0 );
+    alien_mode_abilities();
     enable_clientfx();
     enable_fx();
     thread alien_mode_reapply_on_death();
@@ -102,104 +102,113 @@ disable_alien_mode()
 {
     alien_mode_overdrive_off();
     alien_extra_health_off();
-    self _meth_8304( 0 );
+    self allowsprint( 0 );
     wait 0.1;
-    remove_alien_perks();
-    self _meth_8304( 1 );
+    maps\mp\_utility::_clearperks();
+    self.perks = self.oldperks;
+    maps\mp\perks\_perks::applyperks();
+
+    foreach ( var_1 in self.loadoutperks )
+    {
+        if ( var_1 == "specialty_exo_blastsuppressor" )
+            maps\mp\_utility::giveperk( "specialty_exo_blastsuppressor", 0 );
+    }
+
+    self allowsprint( 1 );
     self notify( "stop_exo_repulsor" );
     self.killstreaksdisabled = undefined;
 }
 
 disable_exo_usage()
 {
-    if ( self _meth_8314( "adrenaline_mp" ) )
+    if ( self hasweapon( "adrenaline_mp" ) )
     {
         self.has_overclock_ability = 1;
-        self.overclock_battery_charge = self _meth_84A2( "adrenaline_mp" );
-        self _meth_84A3( "adrenaline_mp", 0 );
+        self.overclock_battery_charge = self batterygetcharge( "adrenaline_mp" );
+        self batterysetcharge( "adrenaline_mp", 0 );
     }
 
-    if ( self _meth_8314( "extra_health_mp" ) )
+    if ( self hasweapon( "extra_health_mp" ) )
     {
         self.has_stim_ability = 1;
-        self.stim_battery_charge = self _meth_84A2( "extra_health_mp" );
-        self _meth_84A3( "extra_health_mp", 0 );
+        self.stim_battery_charge = self batterygetcharge( "extra_health_mp" );
+        self batterysetcharge( "extra_health_mp", 0 );
     }
 
-    if ( isdefined( level.cloakweapon ) && self _meth_8314( level.cloakweapon ) )
+    if ( isdefined( level.cloakweapon ) && self hasweapon( level.cloakweapon ) )
     {
         self.has_cloak_ability = 1;
-        self.cloak_battery_charge = self _meth_84A2( maps\mp\_exo_cloak::get_exo_cloak_weapon() );
-        self _meth_84A3( maps\mp\_exo_cloak::get_exo_cloak_weapon(), 0 );
+        self.cloak_battery_charge = self batterygetcharge( maps\mp\_exo_cloak::get_exo_cloak_weapon() );
+        self batterysetcharge( maps\mp\_exo_cloak::get_exo_cloak_weapon(), 0 );
     }
 
-    if ( isdefined( level.hoverweapon ) && self _meth_8314( level.hoverweapon ) )
+    if ( isdefined( level.hoverweapon ) && self hasweapon( level.hoverweapon ) )
     {
         self.has_hover_ability = 1;
-        self.hover_battery_charge = self _meth_84A2( level.hoverweapon );
-        self _meth_84A3( level.hoverweapon, 0 );
+        self.hover_battery_charge = self batterygetcharge( level.hoverweapon );
+        self batterysetcharge( level.hoverweapon, 0 );
     }
 
-    if ( self _meth_8314( "exomute_equipment_mp" ) )
+    if ( self hasweapon( "exomute_equipment_mp" ) )
     {
         self.has_mute_ability = 1;
-        self.mute_battery_charge = self _meth_84A2( "exomute_equipment_mp" );
-        self _meth_84A3( "exomute_equipment_mp", 0 );
+        self.mute_battery_charge = self batterygetcharge( "exomute_equipment_mp" );
+        self batterysetcharge( "exomute_equipment_mp", 0 );
     }
 
-    if ( self _meth_8314( "exoping_equipment_mp" ) )
+    if ( self hasweapon( "exoping_equipment_mp" ) )
     {
         self.has_ping_ability = 1;
-        self.ping_battery_charge = self _meth_84A2( "exoping_equipment_mp" );
-        self _meth_84A3( "exoping_equipment_mp", 0 );
+        self.ping_battery_charge = self batterygetcharge( "exoping_equipment_mp" );
+        self batterysetcharge( "exoping_equipment_mp", 0 );
     }
 
-    if ( self _meth_8314( "exorepulsor_equipment_mp" ) )
+    if ( self hasweapon( "exorepulsor_equipment_mp" ) )
     {
         self.has_trophy_ability = 1;
-        self.trophy_battery_charge = self _meth_84A2( "exorepulsor_equipment_mp" );
-        self _meth_84A3( "exorepulsor_equipment_mp", 0 );
+        self.trophy_battery_charge = self batterygetcharge( "exorepulsor_equipment_mp" );
+        self batterysetcharge( "exorepulsor_equipment_mp", 0 );
     }
 
-    if ( isdefined( level.exoshieldweapon ) && self _meth_8314( level.exoshieldweapon ) )
+    if ( isdefined( level.exoshieldweapon ) && self hasweapon( level.exoshieldweapon ) )
     {
         self.has_shield_ability = 1;
-        self.shield_battery_charge = self _meth_84A2( maps\mp\_exo_shield::get_exo_shield_weapon() );
-        self _meth_84A3( maps\mp\_exo_shield::get_exo_shield_weapon(), 0 );
+        self.shield_battery_charge = self batterygetcharge( maps\mp\_exo_shield::get_exo_shield_weapon() );
+        self batterysetcharge( maps\mp\_exo_shield::get_exo_shield_weapon(), 0 );
     }
 }
 
 reenable_exo_usage()
 {
     if ( isdefined( self.has_overclock_ability ) && self.has_overclock_ability == 1 )
-        self _meth_84A3( "adrenaline_mp", self.overclock_battery_charge );
+        self batterysetcharge( "adrenaline_mp", self.overclock_battery_charge );
 
     if ( isdefined( self.has_stim_ability ) && self.has_stim_ability == 1 )
-        self _meth_84A3( "extra_health_mp", self.stim_battery_charge );
+        self batterysetcharge( "extra_health_mp", self.stim_battery_charge );
 
     if ( isdefined( self.has_cloak_ability ) && self.has_cloak_ability == 1 )
-        self _meth_84A3( maps\mp\_exo_cloak::get_exo_cloak_weapon(), self.cloak_battery_charge );
+        self batterysetcharge( maps\mp\_exo_cloak::get_exo_cloak_weapon(), self.cloak_battery_charge );
 
     if ( isdefined( self.has_hover_ability ) && self.has_hover_ability == 1 )
-        self _meth_84A3( level.hoverweapon, self.hover_battery_charge );
+        self batterysetcharge( level.hoverweapon, self.hover_battery_charge );
 
     if ( isdefined( self.has_mute_ability ) && self.has_mute_ability == 1 )
-        self _meth_84A3( "exomute_equipment_mp", self.mute_battery_charge );
+        self batterysetcharge( "exomute_equipment_mp", self.mute_battery_charge );
 
     if ( isdefined( self.has_ping_ability ) && self.has_ping_ability == 1 )
-        self _meth_84A3( "exoping_equipment_mp", self.ping_battery_charge );
+        self batterysetcharge( "exoping_equipment_mp", self.ping_battery_charge );
 
     if ( isdefined( self.has_trophy_ability ) && self.has_trophy_ability == 1 )
-        self _meth_84A3( "exorepulsor_equipment_mp", self.trophy_battery_charge );
+        self batterysetcharge( "exorepulsor_equipment_mp", self.trophy_battery_charge );
 
     if ( isdefined( self.has_shield_ability ) && self.has_shield_ability == 1 )
-        self _meth_84A3( maps\mp\_exo_shield::get_exo_shield_weapon(), self.shield_battery_charge );
+        self batterysetcharge( maps\mp\_exo_shield::get_exo_shield_weapon(), self.shield_battery_charge );
 }
 
-alien_mode_abilities( var_0 )
+alien_mode_abilities()
 {
     alien_mode_overdrive_on();
-    thread alien_extra_health_on( var_0 );
+    alien_extra_health_on();
     give_alien_perks();
     self.killstreaksdisabled = 1;
     thread alien_mode_exo_repulsor_on();
@@ -208,7 +217,8 @@ alien_mode_abilities( var_0 )
 
 give_alien_perks()
 {
-    self _meth_8309( 0.5 );
+    self.oldperks = self.perks;
+    self setviewkickscale( 0.5 );
     maps\mp\_utility::giveperk( "specialty_exo_slamboots", 0 );
     maps\mp\_utility::giveperk( "specialty_radarimmune", 0 );
     maps\mp\_utility::giveperk( "specialty_exoping_immune", 0 );
@@ -236,7 +246,7 @@ give_alien_perks()
     maps\mp\_utility::giveperk( "specialty_empimmune", 0 );
     maps\mp\_utility::giveperk( "specialty_stun_resistance", 0 );
     self.stunscaler = 0.1;
-    self _meth_8309( 0.2 );
+    self setviewkickscale( 0.2 );
     self.ammopickup_scalar = 0.2;
     maps\mp\_utility::giveperk( "specialty_scavenger", 0 );
     maps\mp\_utility::giveperk( "specialty_bulletresupply", 0 );
@@ -245,104 +255,12 @@ give_alien_perks()
     maps\mp\_utility::giveperk( "specialty_exo_creature", 0 );
 }
 
-should_remove_alien_perk( var_0 )
-{
-    if ( maps\mp\_utility::_hasperk( var_0 ) )
-        return 0;
-
-    var_1 = isdefined( self.reinforcementperks ) && isdefined( self.reinforcementperks[var_0] ) && self.reinforcementperks[var_0];
-
-    if ( var_1 )
-        return 0;
-
-    return 1;
-}
-
-remove_alien_perks()
-{
-    if ( should_remove_alien_perk( "specialty_extended_battery" ) )
-        maps\mp\_utility::_unsetperk( "specialty_exo_slamboots" );
-
-    if ( should_remove_alien_perk( "specialty_class_lowprofile" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_radarimmune" );
-        maps\mp\_utility::_unsetperk( "specialty_exoping_immune" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_flakjacket" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_hard_shell" );
-        maps\mp\_utility::_unsetperk( "specialty_throwback" );
-        maps\mp\_utility::_unsetperk( "_specialty_blastshield" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_lightweight" ) )
-        maps\mp\_utility::_unsetperk( "specialty_lightweight" );
-
-    if ( should_remove_alien_perk( "specialty_class_dangerclose" ) )
-        maps\mp\_utility::_unsetperk( "specialty_explosivedamage" );
-
-    if ( should_remove_alien_perk( "specialty_class_blindeye" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_blindeye" );
-        maps\mp\_utility::_unsetperk( "specialty_plainsight" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_coldblooded" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_coldblooded" );
-        maps\mp\_utility::_unsetperk( "specialty_spygame" );
-        maps\mp\_utility::_unsetperk( "specialty_heartbreaker" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_peripherals" ) || maps\mp\_utility::practiceroundgame() )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_moreminimap" );
-        maps\mp\_utility::_unsetperk( "specialty_silentkill" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_fasthands" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_quickswap" );
-        maps\mp\_utility::_unsetperk( "specialty_fastoffhand" );
-        maps\mp\_utility::_unsetperk( "specialty_sprintreload" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_dexterity" ) )
-        maps\mp\_utility::_unsetperk( "specialty_sprintfire" );
-
-    if ( should_remove_alien_perk( "specialty_class_hardwired" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_empimmune" );
-        maps\mp\_utility::_unsetperk( "specialty_stun_resistance" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_toughness" ) )
-        self _meth_8309( 0.5 );
-
-    if ( should_remove_alien_perk( "specialty_class_scavenger" ) )
-    {
-        maps\mp\_utility::_unsetperk( "specialty_scavenger" );
-        maps\mp\_utility::_unsetperk( "specialty_bulletresupply" );
-        maps\mp\_utility::_unsetperk( "specialty_extraammo" );
-    }
-
-    if ( should_remove_alien_perk( "specialty_class_hardline" ) )
-        maps\mp\_utility::_unsetperk( "specialty_hardline" );
-
-    maps\mp\_utility::_unsetperk( "specialty_exo_creature" );
-}
-
-alien_extra_health_on( var_0 )
+alien_extra_health_on()
 {
     thread maps\mp\perks\_perkfunctions::setlightarmor();
     self.maxhealth = int( self.maxhealth * 3 );
     self.ignoreregendelay = 1;
     self.healthregenlevel = 0.99;
-
-    if ( var_0 )
-        self waittill( "playerHealthRegen" );
-
     self notify( "damage" );
     maps\mp\_extrahealth::killstimfx();
 }
@@ -377,7 +295,7 @@ alien_mode_overdrive_on()
 
     if ( isdefined( level.ishorde ) && level.ishorde )
     {
-        var_0 = self _meth_8447( "ui_horde_player_class" );
+        var_0 = self getclientomnvar( "ui_horde_player_class" );
         self.movespeedscaler = min( level.classsettings[var_0]["speed"] + 0.25, 10 );
     }
 
@@ -396,7 +314,7 @@ alien_mode_overdrive_off()
 
     if ( isdefined( level.ishorde ) && level.ishorde )
     {
-        var_0 = self _meth_8447( "ui_horde_player_class" );
+        var_0 = self getclientomnvar( "ui_horde_player_class" );
         self.movespeedscaler = level.classsettings[var_0]["speed"];
     }
 
@@ -482,7 +400,7 @@ alien_mode_repulsor_on()
 
             if ( var_2 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_1.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_1.origin, 0, self ) )
                 {
                     var_3 = var_1.origin - self.origin;
                     var_4 = vectortoangles( var_3 );
@@ -524,7 +442,7 @@ alien_mode_repulsor_on()
 
             if ( var_10 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_9.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_9.origin, 0, self ) )
                 {
                     var_11 = var_9.origin - self.origin;
                     var_12 = vectortoangles( var_11 );
@@ -564,7 +482,7 @@ alien_mode_repulsor_on()
 
                 if ( var_17 < 385 )
                 {
-                    if ( sighttracepassed( self _meth_80A8(), var_16.origin, 0, self ) )
+                    if ( sighttracepassed( self geteye(), var_16.origin, 0, self ) )
                     {
                         var_18 = var_16.origin - self.origin;
                         var_19 = vectortoangles( var_18 );
@@ -601,7 +519,7 @@ alien_mode_repulsor_on()
 
             if ( var_25 < 385 )
             {
-                if ( sighttracepassed( self _meth_80A8(), var_24.origin, 0, self ) )
+                if ( sighttracepassed( self geteye(), var_24.origin, 0, self ) )
                 {
                     var_26 = var_24.origin - self.origin;
                     var_27 = vectortoangles( var_26 );
@@ -612,7 +530,7 @@ alien_mode_repulsor_on()
                     playfx( level.exo_repulsor_impact, var_8, var_30, var_28 );
                     var_24 maps\mp\_snd_common_mp::snd_message( "mp_exo_repulsor_repel" );
 
-                    if ( !_func_294( var_24 ) && isdefined( var_24 ) )
+                    if ( !isremovedentity( var_24 ) && isdefined( var_24 ) )
                     {
                         var_24 notify( "death" );
                         maps\mp\_utility::decrementfauxvehiclecount();
@@ -644,9 +562,9 @@ alien_mode_unlimited_ammo()
 
     for (;;)
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
         self waittill( "reload" );
-        self _meth_82F7( var_0, _func_1E0( var_0 ) );
+        self setweaponammostock( var_0, weaponstartammo( var_0 ) );
     }
 }
 
@@ -658,11 +576,11 @@ alien_mode_reapply_on_death()
     {
         self waittill( "death" );
         disable_alien_mode();
-        self waittill( "spawnplayer_giveloadout" );
-        alien_mode_abilities( 1 );
-        thread aud_play_respawn_squish();
-        wait 0.2;
+        self waittill( "spawned_player" );
+        waittillframeend;
+        alien_mode_abilities();
         enable_fx();
+        thread aud_play_respawn_squish();
     }
 }
 
@@ -677,12 +595,12 @@ alien_mode_timer()
 
 enable_clientfx()
 {
-    self _meth_8491( "clut_mp_blackbox_ks", 0.2 );
+    self setclutoverrideenableforplayer( "clut_mp_blackbox_ks", 0.2 );
 }
 
 disable_clientfx()
 {
-    self _meth_8492( 0.5 );
+    self setclutoverridedisableforplayer( 0.5 );
 }
 
 enable_fx()

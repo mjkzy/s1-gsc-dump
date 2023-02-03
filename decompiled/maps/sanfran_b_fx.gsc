@@ -33,8 +33,8 @@ testfx()
 
 set_lighting_values()
 {
-    if ( _func_235() )
-        _func_0D3( "r_tonemap", 2 );
+    if ( isusinghdr() )
+        setsaveddvar( "r_tonemap", 2 );
 }
 
 precachefx()
@@ -217,7 +217,7 @@ shadow_godray_window_large_think()
     common_scripts\utility::trigger_on();
     self waittill( "trigger" );
     common_scripts\_exploder::exploder( self.script_noteworthy );
-    level.player _meth_83C0( "sanfran_b_bridge" );
+    level.player lightsetforplayer( "sanfran_b_bridge" );
 
     if ( level.nextgen )
         maps\_utility::fog_set_changes( "sanfran_b_bridge", 1.5 );

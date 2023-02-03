@@ -47,7 +47,7 @@ ball_add_start( var_0 )
     foreach ( var_6 in level.goal_starts )
     {
         var_7 = 99999999;
-        var_7 = min( var_7, _func_220( var_2.origin, var_6.origin ) );
+        var_7 = min( var_7, distance2dsquared( var_2.origin, var_6.origin ) );
 
         if ( var_7 > var_4 )
         {
@@ -117,7 +117,7 @@ ball_spawn( var_0 )
 {
     var_1 = common_scripts\utility::random( level.ball_starts );
     var_2 = spawn( "script_model", var_1.origin );
-    var_2 _meth_80B1( "prop_drone_sphere" );
+    var_2 setmodel( "prop_drone_sphere" );
     var_2 thread physics_impact_watch();
     var_3 = 24;
     var_4 = getent( "ball_pickup_1", "targetname" );
@@ -129,11 +129,11 @@ ball_spawn( var_0 )
 
     if ( !isdefined( var_4.linkto_on ) )
     {
-        var_4 _meth_8069();
+        var_4 enablelinkto();
         var_4.linkto_on = 1;
     }
 
-    var_4 _meth_804D( var_2 );
+    var_4 linkto( var_2 );
     var_4.no_moving_platfrom_unlink = 1;
     var_5 = maps\mp\gametypes\_gameobjects::createcarryobject( "any", var_4, [ var_2 ], ( 0, 0, 32 ) );
     var_5.objectiveonvisuals = 1;
@@ -197,7 +197,7 @@ ball_location_hud( var_0 )
         {
             case "pickup_object":
                 if ( isplayer( self.carrier ) )
-                    setomnvar( "ui_uplink_ball_carrier" + ( var_0 + 1 ), self.carrier _meth_81B1() );
+                    setomnvar( "ui_uplink_ball_carrier" + ( var_0 + 1 ), self.carrier getentitynumber() );
 
                 break;
             case "dropped":
@@ -290,8 +290,8 @@ ball_goal_fx_for_player( var_0 )
     var_1 = ball_get_view_team( var_0 );
     var_0 player_delete_ball_goal_fx();
     var_2 = common_scripts\utility::ter_op( self.team == var_1, "ball_goal_friendly", "ball_goal_enemy" );
-    var_3 = _func_272( common_scripts\utility::getfx( var_2 ), self.origin, var_0, ( 1, 0, 0 ) );
-    setwinningteam( var_3, 1 );
+    var_3 = spawnfxforclient( common_scripts\utility::getfx( var_2 ), self.origin, var_0, ( 1, 0, 0 ) );
+    setfxkillondelete( var_3, 1 );
     var_0.ball_goal_fx[var_2] = var_3;
     triggerfx( var_3 );
 }
@@ -445,7 +445,7 @@ ball_can_pickup( var_0 )
     if ( !var_0 common_scripts\utility::isweaponenabled() )
         return 0;
 
-    if ( var_0 _meth_8342() )
+    if ( var_0 isusingturret() )
         return 0;
 
     if ( isdefined( var_0.manuallyjoiningkillstreak ) && var_0.manuallyjoiningkillstreak )
@@ -460,7 +460,7 @@ ball_can_pickup( var_0 )
     if ( isdefined( var_0.usingarmory ) && var_0.usingarmory )
         return 0;
 
-    var_1 = var_0 _meth_8311();
+    var_1 = var_0 getcurrentweapon();
 
     if ( isdefined( var_1 ) )
     {
@@ -470,7 +470,7 @@ ball_can_pickup( var_0 )
 
     var_2 = var_0.changingweapon;
 
-    if ( isdefined( var_2 ) && var_0 _meth_8337() )
+    if ( isdefined( var_2 ) && var_0 isreloading() )
     {
         if ( !valid_ball_pickup_weapon( var_2 ) )
             return 0;
@@ -512,15 +512,15 @@ player_no_pickup_time()
 
 ball_on_pickup( var_0 )
 {
-    var_1 = self.visuals[0] _meth_83EC();
+    var_1 = self.visuals[0] getlinkedparent();
 
     if ( isdefined( var_1 ) )
-        self.visuals[0] _meth_804F();
+        self.visuals[0] unlink();
 
-    self.visuals[0] _meth_84E1();
+    self.visuals[0] physicsstop();
     self.visuals[0] maps\mp\_movers::notify_moving_platform_invalid();
     self.visuals[0] show();
-    self.visuals[0] _meth_8510();
+    self.visuals[0] ghost();
     self.trigger maps\mp\_movers::stop_handling_moving_platforms();
     self.current_start.in_use = 0;
     var_2 = 0;
@@ -552,11 +552,11 @@ ball_on_pickup( var_0 )
     self.lastcarrierteam = var_0.team;
     self.ownerteam = var_0.team;
     ball_waypoint_held();
-    var_0 _meth_82F6( "iw5_carrydrone_mp", 1 );
+    var_0 setweaponammoclip( "iw5_carrydrone_mp", 1 );
     var_0 maps\mp\_utility::giveperk( "specialty_ballcarrier", 0 );
     var_0.ball_carried = self;
     var_0.objective = 1;
-    var_0.hasperksprintfire = var_0 _meth_82A7( "specialty_sprintfire", 1 );
+    var_0.hasperksprintfire = var_0 hasperk( "specialty_sprintfire", 1 );
     var_0 maps\mp\_utility::giveperk( "specialty_sprintfire", 0 );
     var_0 common_scripts\utility::_disableusability();
     var_0 maps\mp\killstreaks\_coop_util::playerstoppromptforstreaksupport();
@@ -599,7 +599,7 @@ player_update_pass_target( var_0 )
         if ( !self isonladder() )
         {
             var_3 = anglestoforward( self getangles() );
-            var_4 = self _meth_80A8();
+            var_4 = self geteye();
             var_5 = [];
 
             foreach ( var_7 in level.players )
@@ -613,7 +613,7 @@ player_update_pass_target( var_0 )
                 if ( !var_0 ball_can_pickup( var_7 ) )
                     continue;
 
-                var_8 = var_7 _meth_80A8();
+                var_8 = var_7 geteye();
                 var_9 = distancesquared( var_8, var_4 );
 
                 if ( var_9 > 1000000 )
@@ -672,10 +672,10 @@ player_update_pass_target_hudoutline()
     {
         if ( isplayer( self ) && var_6 != self )
         {
-            self _meth_8421( var_6 );
+            self hudoutlinedisableforclient( var_6 );
 
             if ( !isdefined( var_6.inlaststand ) || !var_6.inlaststand )
-                var_6 _meth_8421( self );
+                var_6 hudoutlinedisableforclient( self );
         }
 
         if ( var_6 maps\mp\_utility::isjuggernaut() )
@@ -685,7 +685,7 @@ player_update_pass_target_hudoutline()
             continue;
 
         foreach ( var_8 in var_1 )
-            var_8 _meth_8421( var_6 );
+            var_8 hudoutlinedisableforclient( var_6 );
     }
 
     if ( isdefined( self.carryobject ) )
@@ -705,19 +705,19 @@ player_update_pass_target_hudoutline()
 
                 if ( isdefined( self.pass_target ) && self.pass_target == var_6 )
                 {
-                    self _meth_8420( var_6, 1, 0 );
-                    var_6 _meth_8420( self, 1, 0 );
+                    self hudoutlineenableforclient( var_6, 1, 0 );
+                    var_6 hudoutlineenableforclient( self, 1, 0 );
                     continue;
                 }
 
-                self _meth_8420( var_6, 5, 0 );
-                var_6 _meth_8420( self, 5, 0 );
+                self hudoutlineenableforclient( var_6, 5, 0 );
+                var_6 hudoutlineenableforclient( self, 5, 0 );
             }
 
             if ( level.currentaliveenemycount >= 3 )
             {
                 foreach ( var_8 in var_1 )
-                    var_8 _meth_8420( self, 3, 1 );
+                    var_8 hudoutlineenableforclient( self, 3, 1 );
 
                 return;
             }
@@ -732,7 +732,7 @@ player_update_pass_target_hudoutline()
                 if ( level.currentaliveenemycount < 3 )
                     continue;
 
-                self _meth_8420( var_6, 0, 0 );
+                self hudoutlineenableforclient( var_6, 0, 0 );
             }
         }
     }
@@ -755,7 +755,7 @@ player_set_pass_target( var_0 )
     if ( isdefined( self.pass_target ) && isdefined( var_0 ) && self.pass_target == var_0 )
         return;
 
-    if ( !isdefined( self.pass_target ) && !_func_294( self.pass_target ) && !isdefined( var_0 ) )
+    if ( !isdefined( self.pass_target ) && !isremovedentity( self.pass_target ) && !isdefined( var_0 ) )
         return;
 
     player_clear_pass_target();
@@ -765,8 +765,8 @@ player_set_pass_target( var_0 )
         var_1 = ( 0, 0, 80 );
         self.pass_icon = var_0 maps\mp\_entityheadicons::setheadicon( self, "waypoint_ball_pass", var_1, 10, 10, 0, 0.05, 0, 1, 0, 0, "tag_origin" );
         self.pass_target = var_0;
-        self _meth_82FB( "ui_uplink_can_pass", 1 );
-        self _meth_850E( 1 );
+        self setclientomnvar( "ui_uplink_can_pass", 1 );
+        self setballpassallowed( 1 );
     }
 
     player_update_pass_target_hudoutline();
@@ -777,9 +777,9 @@ player_clear_pass_target()
     if ( isdefined( self.pass_icon ) )
         self.pass_icon destroy();
 
-    self _meth_82FB( "ui_uplink_can_pass", 0 );
+    self setclientomnvar( "ui_uplink_can_pass", 0 );
     self.pass_target = undefined;
-    self _meth_850E( 0 );
+    self setballpassallowed( 0 );
     player_update_pass_target_hudoutline();
 }
 
@@ -841,7 +841,7 @@ ball_overridemovingplatformdeath( var_0 )
 
 ball_dont_interpolate()
 {
-    self.visuals[0] _meth_8092();
+    self.visuals[0] dontinterpolate();
     self.ball_fx_active = 0;
 }
 
@@ -852,8 +852,8 @@ ball_carrier_cleanup()
         self.carrier.nopickuptime = gettime() + 500;
         self.carrier player_clear_pass_target();
         self.carrier notify( "cancel_update_pass_target" );
-        self.carrier _meth_850E( 0 );
-        self.carrier _meth_82FB( "ui_uplink_can_pass", 0 );
+        self.carrier setballpassallowed( 0 );
+        self.carrier setclientomnvar( "ui_uplink_can_pass", 0 );
         self.carrier maps\mp\_utility::_unsetperk( "specialty_ballcarrier" );
 
         if ( !self.carrier.hasperksprintfire )
@@ -878,12 +878,12 @@ ball_on_reset( var_0 )
 
     var_1 = self.visuals[0];
     var_1 maps\mp\_movers::notify_moving_platform_invalid();
-    var_2 = var_1 _meth_83EC();
+    var_2 = var_1 getlinkedparent();
 
     if ( isdefined( var_2 ) )
-        var_1 _meth_804F();
+        var_1 unlink();
 
-    var_1 _meth_84E1();
+    var_1 physicsstop();
     ball_dont_interpolate();
 
     if ( isdefined( self.projectile ) )
@@ -900,8 +900,8 @@ ball_on_reset( var_0 )
     ball_waypoint_download();
     maps\mp\gametypes\_gameobjects::setposition( var_1.baseorigin + ( 0, 0, 4000 ), ( 0, 0, 0 ) );
     var_5 = 3;
-    var_1 _meth_82AE( var_1.baseorigin, var_5, 0, var_5 );
-    var_1 _meth_82BD( ( 0, 720, 0 ), var_5, 0, var_5 );
+    var_1 moveto( var_1.baseorigin, var_5, 0, var_5 );
+    var_1 rotatevelocity( ( 0, 720, 0 ), var_5, 0, var_5 );
 
     if ( !( isdefined( var_0 ) && var_0 ) )
         playsoundatpos( var_1.baseorigin, "uplink_ball_reset" );
@@ -1031,12 +1031,12 @@ ball_pass_or_throw_active()
     self endon( "disconnect" );
     level endon( "uplink_completed" );
     self.pass_or_throw_active = 1;
-    self _meth_8130( 0 );
+    self allowmelee( 0 );
 
-    while ( "iw5_carrydrone_mp" == self _meth_8311() )
+    while ( "iw5_carrydrone_mp" == self getcurrentweapon() )
         waitframe();
 
-    self _meth_8130( 1 );
+    self allowmelee( 1 );
     self.pass_or_throw_active = 0;
 }
 
@@ -1050,12 +1050,12 @@ ball_pass_projectile( var_0, var_1, var_2 )
     var_3 = ( 0, 0, 40 );
     var_4 = vectornormalize( var_2 + var_3 - self.visuals[0].origin );
     var_5 = var_4 * 1000;
-    self.projectile = _func_071( "gamemode_ball", self.visuals[0].origin, var_5, 30, var_0, 1 );
+    self.projectile = magicgrenademanual( "gamemode_ball", self.visuals[0].origin, var_5, 30, var_0, 1 );
 
     if ( isdefined( var_1 ) )
-        self.projectile _meth_81D9( var_1 );
+        self.projectile missile_settargetent( var_1 );
 
-    self.visuals[0] _meth_804D( self.projectile );
+    self.visuals[0] linkto( self.projectile );
     ball_dont_interpolate();
     ball_clear_contents();
     thread ball_on_projectile_hit_client();
@@ -1192,7 +1192,7 @@ ball_score_event( var_0, var_1 )
     if ( isdefined( self.projectile ) )
         self.projectile delete();
 
-    var_2 _meth_84E1();
+    var_2 physicsstop();
     maps\mp\gametypes\_gameobjects::allowcarry( "none" );
     ball_waypoint_upload();
     level.horde_ball_score += var_1;
@@ -1214,11 +1214,11 @@ ball_score_event( var_0, var_1 )
     var_5 = 1.0;
     var_6 = var_3 + var_5;
     var_7 = var_6 + var_4;
-    var_2 _meth_82AE( var_0.origin, var_3, 0, var_3 );
-    var_2 _meth_82BD( ( 1080, 1080, 0 ), var_7, var_7, 0 );
+    var_2 moveto( var_0.origin, var_3, 0, var_3 );
+    var_2 rotatevelocity( ( 1080, 1080, 0 ), var_7, var_7, 0 );
     wait(var_6);
     var_0.ball_in_goal = 0;
-    var_2 _meth_82B1( 4000, var_4, var_4 * 0.1, 0 );
+    var_2 movez( 4000, var_4, var_4 * 0.1, 0 );
     wait(var_4);
     maps\mp\gametypes\_gameobjects::allowcarry( "any" );
     self.in_goal = 0;
@@ -1297,7 +1297,7 @@ ball_physics_launch( var_0, var_1 )
     var_2 = self.visuals[0];
     var_2.origin_prev = undefined;
     ball_fx_start();
-    var_2 _meth_8276( var_2.origin, var_0 );
+    var_2 physicslaunchserver( var_2.origin, var_0 );
     thread ball_physics_touch_cant_pickup_player( var_1 );
     thread ball_physics_out_of_level();
     thread ball_physics_timeout( var_1 );
@@ -1424,14 +1424,14 @@ ball_physics_fake_bounce()
 {
     var_0 = self.visuals[0];
 
-    if ( !var_0 _meth_852A() )
+    if ( !var_0 physicsisactive() )
         return;
 
-    var_1 = var_0 _meth_8414();
+    var_1 = var_0 physicsgetlinvel();
     var_2 = length( var_1 ) / 10;
     var_3 = -1 * vectornormalize( var_1 );
-    var_0 _meth_84E1();
-    var_0 _meth_8276( var_0.origin, var_3 * var_2 );
+    var_0 physicsstop();
+    var_0 physicslaunchserver( var_0.origin, var_3 * var_2 );
 }
 
 ball_physics_touch_goal()

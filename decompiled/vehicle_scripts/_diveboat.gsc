@@ -150,14 +150,14 @@ modifydamage()
         if ( var_4 == "MOD_PROJECTILE" )
         {
             var_0 = self.maxhealth * 0.5;
-            self _meth_8051( var_0, var_3, var_1, var_1, var_4 );
+            self dodamage( var_0, var_3, var_1, var_1, var_4 );
         }
     }
 }
 
 level_diveboat_to_vm_model( var_0 )
 {
-    level.diveboat _meth_80B1( "vehicle_mil_hoverbike_vm" );
+    level.diveboat setmodel( "vehicle_mil_hoverbike_vm" );
 }
 
 do_diveboat_threads()
@@ -212,9 +212,9 @@ rumble_thread()
     for (;;)
     {
         var_6 = var_5;
-        var_5 = self _meth_8286();
+        var_5 = self vehicle_getspeed();
 
-        if ( self _meth_84C7() )
+        if ( self vehicle_diveboatissubmerged() )
             self.rumble_entity.intensity = 0.0;
         else
         {
@@ -231,7 +231,7 @@ rumble_thread()
             }
 
             var_10 = 0.0;
-            var_11 = abs( level.player _meth_82F3()[1] );
+            var_11 = abs( level.player getnormalizedmovement()[1] );
 
             if ( var_11 > 0.3 )
                 var_10 = var_11 * var_4;
@@ -245,7 +245,7 @@ rumble_thread()
 
 init_diveboat_weapon()
 {
-    precacheitem( "diveboat_missile" );
+    precacheshellshock( "diveboat_missile" );
     precacheshader( "veh_hud_friendly" );
     precacheshader( "uav_vehicle_target" );
     precacheshader( "hud_fofbox_hostile" );
@@ -259,18 +259,18 @@ diveboat_weapon_auto_targetting()
     if ( isdefined( level.diveboat_weapon_target ) )
     {
         if ( isai( level.diveboat_weapon_target ) )
-            self _meth_81D9( level.diveboat_weapon_target, ( 0, 0, 45 ) );
+            self missile_settargetent( level.diveboat_weapon_target, ( 0, 0, 45 ) );
         else
-            self _meth_81D9( level.diveboat_weapon_target );
+            self missile_settargetent( level.diveboat_weapon_target );
 
-        _func_09C( level.diveboat_weapon_target, "hud_fofbox_hostile" );
+        target_setshader( level.diveboat_weapon_target, "hud_fofbox_hostile" );
         var_0 = level.diveboat_weapon_target;
         level.diveboat_weapon_target.diveboat_weapon_attacked = 1;
         level.diveboat_weapon_target = undefined;
         var_0 endon( "death" );
         var_0 common_scripts\utility::waittill_notify_or_timeout( "damage", 2.5 );
         var_0.diveboat_weapon_attacked = undefined;
-        _func_09C( var_0, "veh_hud_friendly" );
+        target_setshader( var_0, "veh_hud_friendly" );
     }
 }
 
@@ -278,7 +278,7 @@ get_npc_center_offset()
 {
     if ( isai( self ) && isalive( self ) )
     {
-        var_0 = self _meth_80A8()[2];
+        var_0 = self geteye()[2];
         var_1 = self.origin[2];
         var_2 = ( var_0 - var_1 ) / 2;
         return ( 0, 0, var_2 );
@@ -290,7 +290,7 @@ get_npc_center_offset()
 set_up_target()
 {
     if ( isdefined( self ) && isdefined( self.script_parameters ) && self.script_parameters == "diveboat_weapon_target" )
-        _func_09A( self, get_npc_center_offset() );
+        target_set( self, get_npc_center_offset() );
 }
 
 give_diveboat_weapons()
@@ -314,14 +314,14 @@ diveboat_weapon_targetting_system()
 
     for (;;)
     {
-        var_0 = _func_0A2();
+        var_0 = target_getarray();
         var_1 = [];
 
         foreach ( var_3 in var_0 )
         {
             if ( isdefined( var_3.ignore_target ) )
             {
-                _func_0A6( var_3, level.player );
+                target_hidefromplayer( var_3, level.player );
                 var_3.is_shown_to_player = undefined;
                 continue;
             }
@@ -332,38 +332,38 @@ diveboat_weapon_targetting_system()
                 {
                     if ( !isdefined( var_3.is_shown_to_player ) )
                     {
-                        _func_0A7( var_3, level.player );
+                        target_showtoplayer( var_3, level.player );
                         var_3.is_shown_to_player = 1;
                     }
 
-                    _func_09C( var_3, "hud_fofbox_hostile" );
+                    target_setshader( var_3, "hud_fofbox_hostile" );
                 }
                 else if ( isdefined( var_3.is_shown_to_player ) )
                 {
-                    _func_0A6( var_3, level.player );
+                    target_hidefromplayer( var_3, level.player );
                     var_3.is_shown_to_player = undefined;
                 }
 
                 continue;
             }
 
-            if ( _func_09F( var_3, level.player, 75, 360 ) && sighttracepassed( level.player.origin, var_3.origin, 0, var_3, self ) )
+            if ( target_isincircle( var_3, level.player, 75, 360 ) && sighttracepassed( level.player.origin, var_3.origin, 0, var_3, self ) )
             {
                 var_1[var_1.size] = var_3;
 
                 if ( !isdefined( var_3.is_shown_to_player ) )
                 {
-                    _func_0A7( var_3, level.player );
+                    target_showtoplayer( var_3, level.player );
                     var_3.is_shown_to_player = 1;
                 }
 
-                _func_09C( var_3, "veh_hud_friendly" );
+                target_setshader( var_3, "veh_hud_friendly" );
                 continue;
             }
 
             if ( isdefined( var_3.is_shown_to_player ) )
             {
-                _func_0A6( var_3, level.player );
+                target_hidefromplayer( var_3, level.player );
                 var_3.is_shown_to_player = undefined;
             }
         }
@@ -371,11 +371,11 @@ diveboat_weapon_targetting_system()
         if ( var_1.size > 0 )
         {
             var_5 = var_1[0];
-            var_6 = _func_220( level.player.origin, var_5.origin );
+            var_6 = distance2dsquared( level.player.origin, var_5.origin );
 
             for ( var_7 = 1; var_7 < var_1.size; var_7++ )
             {
-                var_8 = _func_220( level.player.origin, var_1[var_7].origin );
+                var_8 = distance2dsquared( level.player.origin, var_1[var_7].origin );
 
                 if ( var_8 < var_6 )
                 {
@@ -385,7 +385,7 @@ diveboat_weapon_targetting_system()
             }
 
             level.diveboat_weapon_target = var_5;
-            _func_09C( var_5, "uav_vehicle_target" );
+            target_setshader( var_5, "uav_vehicle_target" );
         }
 
         wait 0.05;
@@ -414,11 +414,11 @@ diveboat_attack_button_pressed()
     var_0 = getdvarint( "vehDiveboatControlScheme" );
 
     if ( var_0 == 1 )
-        return self _meth_824C( "BUTTON_LTRIG" );
+        return self buttonpressed( "BUTTON_LTRIG" );
     else if ( var_0 == 2 )
-        return self _meth_824C( "BUTTON_A" );
+        return self buttonpressed( "BUTTON_A" );
     else
-        return self _meth_824C( "BUTTON_RTRIG" );
+        return self buttonpressed( "BUTTON_RTRIG" );
 }
 
 diveboat_weapon_fire_notify()
@@ -427,7 +427,7 @@ diveboat_weapon_fire_notify()
 
     for (;;)
     {
-        if ( level.player diveboat_attack_button_pressed() && level.diveboat_weapon_ammo_count > 0 && !self _meth_84C7() )
+        if ( level.player diveboat_attack_button_pressed() && level.diveboat_weapon_ammo_count > 0 && !self vehicle_diveboatissubmerged() )
         {
             level.diveboat_weapon_firing = 1;
             level.player notify( "LISTEN_attack_button_pressed" );
@@ -469,8 +469,8 @@ diveboat_weapon_fire_system()
         var_0 = level.diveboat_weapon_ammo_count / 4;
         level.diveboat_weapon_gauge_level = clamp( var_0, 0.04, 1 );
         var_1 = level.player getangles();
-        var_2 = level.player _meth_80A8() + 50 * anglestoup( var_1 );
-        var_3 = level.player _meth_80A8() + 500 * anglestoforward( var_1 ) + 80 * anglestoup( var_1 );
+        var_2 = level.player geteye() + 50 * anglestoup( var_1 );
+        var_3 = level.player geteye() + 500 * anglestoforward( var_1 ) + 80 * anglestoup( var_1 );
         var_4 = magicbullet( "diveboat_missile", var_2, var_3, level.player );
         var_4 thread diveboat_weapon_auto_targetting();
     }
@@ -503,17 +503,17 @@ setup_missile_launchers()
 
 missile_door_open()
 {
-    self _meth_8145( %atlas_speedboat_hatch_l_open, 0.9, 0 );
-    self _meth_814C( %atlas_speedboat_hatch_l_root, 1, 0 );
-    self _meth_8145( %atlas_speedboat_hatch_r_open, 0.9, 0 );
-    self _meth_814C( %atlas_speedboat_hatch_r_root, 1, 0 );
+    self setanimknobrestart( %atlas_speedboat_hatch_l_open, 0.9, 0 );
+    self setanimlimited( %atlas_speedboat_hatch_l_root, 1, 0 );
+    self setanimknobrestart( %atlas_speedboat_hatch_r_open, 0.9, 0 );
+    self setanimlimited( %atlas_speedboat_hatch_r_root, 1, 0 );
     wait(getanimlength( %atlas_speedboat_hatch_l_open ));
 }
 
 missile_door_close()
 {
-    self _meth_814C( %atlas_speedboat_hatch_l_root, 0.01, 0.5 );
-    self _meth_814C( %atlas_speedboat_hatch_r_root, 0.01, 0.5 );
+    self setanimlimited( %atlas_speedboat_hatch_l_root, 0.01, 0.5 );
+    self setanimlimited( %atlas_speedboat_hatch_r_root, 0.01, 0.5 );
     wait(getanimlength( %atlas_speedboat_hatch_l_open ));
 }
 
@@ -530,8 +530,8 @@ setup_and_fire_missles_at_guys_repeated( var_0, var_1 )
     {
         setup_missile_launchers();
         self.missile_auto_reload = 1;
-        self _meth_8115( #animtree );
-        self _meth_814B( %atlas_speedboat_idle, 1, 0, 1 );
+        self useanimtree( #animtree );
+        self setanim( %atlas_speedboat_idle, 1, 0, 1 );
     }
 
     if ( !isdefined( var_1 ) )
@@ -554,7 +554,7 @@ temp_diveboat_weapon_gauge()
     var_4.horzalign = "fullscreen";
     var_4.vertalign = "fullscreen";
     var_4.color = ( 0.1, 0.6, 0.1 );
-    var_4 _meth_80CC( "white", var_3, int( var_2 * level.diveboat_weapon_gauge_level ) );
+    var_4 setshader( "white", var_3, int( var_2 * level.diveboat_weapon_gauge_level ) );
     var_5 = newhudelem();
     var_5.x = var_0;
     var_5.y = var_1;
@@ -563,7 +563,7 @@ temp_diveboat_weapon_gauge()
     var_5.horzalign = var_4.horzalign;
     var_5.vertalign = var_4.vertalign;
     var_5.color = ( 1, 1, 1 );
-    var_5 _meth_80CC( "hud_temperature_gauge", 30, 200 );
+    var_5 setshader( "hud_temperature_gauge", 30, 200 );
     var_6 = 0.05;
 
     for (;;)
@@ -624,18 +624,18 @@ vehicle_death_add_remove_carcass()
 {
     wait 0.25;
 
-    if ( _func_294( self ) )
+    if ( isremovedentity( self ) )
         return;
 
     if ( isdefined( level.player.underwater ) && level.player.underwater )
     {
         var_0 = getdvarint( "cg_fov" );
 
-        while ( level.player _meth_8214( self.origin, var_0, 350 ) )
+        while ( level.player worldpointinreticle_circle( self.origin, var_0, 350 ) )
         {
             waitframe();
 
-            if ( _func_294( self ) )
+            if ( isremovedentity( self ) )
                 return;
         }
 
@@ -659,9 +659,9 @@ ai_diveboats_chase_trail()
 
     while ( isdefined( self ) && isalive( self ) && !issubstr( self.model, "dstrypv" ) )
     {
-        var_2 = self _meth_8286();
+        var_2 = self vehicle_getspeed();
 
-        if ( self _meth_84C7() )
+        if ( self vehicle_diveboatissubmerged() )
         {
 
         }
@@ -691,7 +691,7 @@ ai_diveboats_chase_trail()
 ai_diveboat_foam_trail( var_0 )
 {
     self endon( "boat_dead" );
-    var_1 = self _meth_84C7();
+    var_1 = self vehicle_diveboatissubmerged();
     var_2 = 0;
     var_3 = common_scripts\utility::spawn_tag_origin();
     playfxontag( common_scripts\utility::getfx( "boat_wake_diveboat_foam_trail" ), var_3, "tag_origin" );
@@ -703,7 +703,7 @@ ai_diveboat_foam_trail( var_0 )
 
         if ( isdefined( self ) )
         {
-            var_1 = self _meth_84C7();
+            var_1 = self vehicle_diveboatissubmerged();
 
             if ( var_1 != var_2 )
             {

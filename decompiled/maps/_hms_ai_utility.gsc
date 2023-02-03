@@ -139,13 +139,13 @@ _updateenemygroupdirection()
     self endon( "disable_leash_behavior" );
     level notify( "UpdateEnemyGroupDirection" );
     level endon( "UpdateEnemyGroupDirection" );
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     self.enemydirection = undefined;
 
     for (;;)
     {
         wait 0.05;
-        var_0 = _func_0D6( "axis" );
+        var_0 = getaiarray( "axis" );
 
         if ( var_0.size == 0 )
         {
@@ -251,7 +251,7 @@ _evaluatenoderangetoplayer( var_0, var_1 )
 
 _evaluatenodeplayervisibility( var_0 )
 {
-    if ( !sighttracepassed( level.player _meth_80A8(), var_0.origin, 1, level.player ) )
+    if ( !sighttracepassed( level.player geteye(), var_0.origin, 1, level.player ) )
         return 0.75;
 
     return 1;
@@ -265,13 +265,13 @@ _determineallynodescore( var_0, var_1, var_2 )
     if ( isdefined( var_1.script_team ) && var_1.script_team == "axis" )
         return -1;
 
-    if ( _func_027( var_1 ) )
+    if ( isnodeoccupied( var_1 ) )
         return -1;
 
     if ( distance( var_1.origin, level.player.origin ) > var_0.leashplayerdistancetether )
         return -1;
 
-    if ( var_0 _meth_816E( var_1.origin, 128 ) )
+    if ( var_0 isknownenemyinradius( var_1.origin, 128 ) )
         return -1;
 
     if ( maps\_utility::players_within_distance( 64, var_1.origin ) )
@@ -293,7 +293,7 @@ _advancetogoal( var_0 )
     self endon( "death" );
     self endon( "goal" );
     self endon( "goal_blocked" );
-    self _meth_8166();
+    self clearenemy();
     maps\_utility::set_goal_node( var_0 );
     thread _goalblockedbyplayer( var_0 );
     thread _goalblockedbyai();
@@ -350,7 +350,7 @@ _teleportleashbehavior()
             if ( isdefined( var_3.script_team ) && var_3.script_team == "axis" )
                 var_1 = common_scripts\utility::array_remove( var_1, var_3 );
 
-            if ( _func_027( var_3 ) || maps\_utility::players_within_distance( 64, var_3.origin ) || maps\_utility::within_fov_of_players( var_3.origin, cos( 120 ) ) || maps\_utility::within_fov_of_players( self.origin, cos( var_0 ) ) )
+            if ( isnodeoccupied( var_3 ) || maps\_utility::players_within_distance( 64, var_3.origin ) || maps\_utility::within_fov_of_players( var_3.origin, cos( 120 ) ) || maps\_utility::within_fov_of_players( self.origin, cos( var_0 ) ) )
                 var_1 = common_scripts\utility::array_remove( var_1, var_3 );
         }
 
@@ -361,7 +361,7 @@ _teleportleashbehavior()
 
         if ( isdefined( var_5 ) )
         {
-            self _meth_8166();
+            self clearenemy();
             maps\_utility::anim_stopanimscripted();
             maps\_utility::teleport_ai( var_5 );
             wait 0.05;
@@ -384,7 +384,7 @@ assistplayer()
             var_2 = maps\_utility::get_closest_ai( self.origin, "allies" );
 
             if ( isalive( var_1 ) && isdefined( var_2 ) )
-                var_2 _meth_8165( var_1 );
+                var_2 getenemyinfo( var_1 );
         }
 
         wait 1.5;
@@ -419,7 +419,7 @@ setupshotgunkva( var_0, var_1 )
         level.kvashotgunners = [];
         createthreatbiasgroup( "player" );
         createthreatbiasgroup( "kva_shotgunner" );
-        level.player _meth_8177( "player" );
+        level.player setthreatbiasgroup( "player" );
         setthreatbias( "player", "kva_shotgunner", 500 );
         level.player.dontmelee = 1;
     }
@@ -444,14 +444,14 @@ setupshotgunkva( var_0, var_1 )
     self.currentshotguncovernode = undefined;
     maps\_utility::enable_cqbwalk();
     maps\_utility::forceuseweapon( var_2, "primary" );
-    self _meth_80B1( "kva_heavy_body" );
+    self setmodel( "kva_heavy_body" );
     thread codescripts\character::setheadmodel( "kva_heavy_head" );
-    self _meth_818F( "face enemy" );
+    self orientmode( "face enemy" );
     self.attackradius = 512;
     self.goalradius = 64;
     maps\_utility::set_battlechatter( 0 );
     level.kvashotgunners = common_scripts\utility::add_to_array( level.kvashotgunners, self );
-    self _meth_8177( "kva_shotgunner" );
+    self setthreatbiasgroup( "kva_shotgunner" );
 
     if ( !isdefined( var_1 ) )
     {
@@ -478,7 +478,7 @@ _shotgunnerdamagefunction( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( isalive( self ) && isdefined( var_1 ) && !isplayer( var_1 ) )
         self.health = int( min( self.maxhealth, self.health + var_0 * 0.7 ) );
     else if ( isalive( self ) && isdefined( var_1 ) && isplayer( var_1 ) && isexplosivedamagemod( var_4 ) )
-        self _meth_8051( var_0 / 2, self.origin, level.player );
+        self dodamage( var_0 / 2, self.origin, level.player );
 }
 
 _shotgunnerambience()
@@ -534,7 +534,7 @@ _defendlocation( var_0 )
 {
     self endon( "death" );
 
-    if ( !_func_027( var_0 ) )
+    if ( !isnodeoccupied( var_0 ) )
     {
         thread maps\_utility::set_goal_node( var_0 );
         thread _abortdefendlocation();
@@ -649,7 +649,7 @@ _evaluateshotgunnercovernodes( var_0, var_1 )
 
 _evaluatenodeknownenemyinradius( var_0, var_1 )
 {
-    if ( var_1 _meth_816E( var_0.origin, 128 ) )
+    if ( var_1 isknownenemyinradius( var_0.origin, 128 ) )
         return 0;
 
     return 1;
@@ -698,7 +698,7 @@ _evaluatenodeinplayerfov( var_0 )
 
 _evaluatenodelostoplayer( var_0 )
 {
-    if ( !sighttracepassed( level.player _meth_80A8(), var_0.origin, 0, level.player ) )
+    if ( !sighttracepassed( level.player geteye(), var_0.origin, 0, level.player ) )
         return 0.85;
 
     return 1;
@@ -729,7 +729,7 @@ _evaluatenodeothershotgunnersbest( var_0, var_1 )
 
 _determineshotgunnodescore( var_0, var_1, var_2 )
 {
-    if ( _func_027( var_1 ) )
+    if ( isnodeoccupied( var_1 ) )
         return -1;
 
     var_3 = _evaluatenodeknownenemyinradius( var_1, var_0 );
@@ -790,13 +790,13 @@ _enableexplosivedeath()
     maps\_utility::enable_long_death();
     self waittill( "deathanim" );
     var_0 = spawn( "script_origin", self.origin );
-    var_0 _meth_804D( self, "TAG_WEAPON_CHEST" );
+    var_0 linkto( self, "TAG_WEAPON_CHEST" );
     var_1 = var_0.origin + ( 0, 0, 16 );
 
     for ( var_2 = 0; var_2 < 5; var_2++ )
     {
         var_3 = randomfloatrange( 1.5, 3 );
-        _func_071( "fraggrenade", var_0.origin, var_1, var_3 );
+        magicgrenademanual( "fraggrenade", var_0.origin, var_1, var_3 );
         wait 0.05;
     }
 }

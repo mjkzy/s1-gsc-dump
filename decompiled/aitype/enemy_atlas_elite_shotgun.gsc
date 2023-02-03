@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 4 ) )
@@ -42,16 +42,16 @@ main()
 
 spawner()
 {
-    self _meth_8040( "axis" );
+    self setspawnerteam( "axis" );
 }
 
 precache()
 {
     character\character_atlas_elete::precache();
-    precacheitem( "iw5_uts19loot_sp" );
-    precacheitem( "iw5_uts19loot_sp_opticstargetenhancer" );
-    precacheitem( "iw5_uts19loot_sp_foregrip" );
-    precacheitem( "iw5_uts19loot_sp_opticsreddot" );
-    precacheitem( "iw5_titan45loot_sp" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_uts19loot_sp" );
+    precacheshellshock( "iw5_uts19loot_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_uts19loot_sp_foregrip" );
+    precacheshellshock( "iw5_uts19loot_sp_opticsreddot" );
+    precacheshellshock( "iw5_titan45loot_sp" );
+    precacheshellshock( "fraggrenade" );
 }

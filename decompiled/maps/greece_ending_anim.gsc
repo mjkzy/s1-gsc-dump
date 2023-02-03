@@ -190,13 +190,13 @@ propsendinganimations()
 bigfinaleplayerhitbyveh( var_0 )
 {
     earthquake( 0.5, 0.5, level.player.origin, 128 );
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }
 
 bigfinaleplayerhitwall( var_0 )
 {
     earthquake( 0.5, 0.5, level.player.origin, 128 );
-    level.player _meth_80AD( "grenade_rumble" );
+    level.player playrumbleonentity( "grenade_rumble" );
     thread maps\greece_ending::endingfinalebloodsplat( 20, 0.05, 5, 1 );
     soundscripts\_snd::snd_message( "start_finale_h2h_music" );
 }
@@ -204,38 +204,38 @@ bigfinaleplayerhitwall( var_0 )
 bigfinaleblockknife( var_0 )
 {
     earthquake( 0.25, 0.25, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 bigfinalepunchhades( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 bigfinaleilanapunchcar( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 bigfinaleilanaslamcar( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 bigfinaleilanakickcar( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 bigfinaleilanagun( var_0 )
 {
     level.allies["Ilona"] maps\_utility::gun_remove();
     var_1 = spawn( "script_model", level.allies["Ilona"].origin );
-    var_1 _meth_80B1( "npc_bal27_nocamo" );
+    var_1 setmodel( "npc_bal27_nocamo" );
     var_2 = level.allies["Ilona"] gettagorigin( "tag_weapon_right" );
     var_3 = level.allies["Ilona"] gettagangles( "tag_weapon_right" );
     var_1.origin = var_2;
@@ -247,25 +247,25 @@ bigfinaleswitchhadeshead( var_0 )
     var_1 = "kva_leader_head_cut_throat";
     var_0 thread codescripts\character::setheadmodel( var_1 );
     earthquake( 0.25, 0.25, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 bigfinaleplayerripdoor( var_0 )
 {
     wait 0.7;
     earthquake( 0.25, 0.25, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 placeiedrumblelight( var_0 )
 {
     earthquake( 0.1, 0.1, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
 }
 
 endinghadeswakesrumblelight( var_0 )
 {
     wait 0.25;
     earthquake( 0.25, 0.25, level.player.origin, 128 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }

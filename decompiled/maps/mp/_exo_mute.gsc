@@ -11,7 +11,7 @@ exo_mute_think()
     self endon( "faux_spawn" );
     self endon( "exo_mute_taken" );
 
-    if ( !self _meth_8314( "exomute_equipment_mp" ) )
+    if ( !self hasweapon( "exomute_equipment_mp" ) )
         return;
 
     exo_mute_init();
@@ -30,20 +30,20 @@ exo_mute_think()
 exo_mute_init()
 {
     self.mute_on = 0;
-    self _meth_84A6( "exomute_equipment_mp", 1.0 );
-    var_0 = self _meth_84A5( "exomute_equipment_mp" );
+    self batterysetdischargescale( "exomute_equipment_mp", 1.0 );
+    var_0 = self batterygetsize( "exomute_equipment_mp" );
 
-    if ( self _meth_831A() == "exomute_equipment_mp" )
+    if ( self gettacticalweapon() == "exomute_equipment_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req0", 0 );
-        self _meth_82FB( "exo_ability_nrg_total0", var_0 );
-        self _meth_82FB( "ui_exo_battery_level0", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req0", 0 );
+        self setclientomnvar( "exo_ability_nrg_total0", var_0 );
+        self setclientomnvar( "ui_exo_battery_level0", var_0 );
     }
-    else if ( self _meth_8345() == "exomute_equipment_mp" )
+    else if ( self getlethalweapon() == "exomute_equipment_mp" )
     {
-        self _meth_82FB( "exo_ability_nrg_req1", 0 );
-        self _meth_82FB( "exo_ability_nrg_total1", var_0 );
-        self _meth_82FB( "ui_exo_battery_level1", var_0 );
+        self setclientomnvar( "exo_ability_nrg_req1", 0 );
+        self setclientomnvar( "exo_ability_nrg_total1", var_0 );
+        self setclientomnvar( "ui_exo_battery_level1", var_0 );
     }
 
     if ( !isdefined( level.exo_mute_3p ) )
@@ -84,7 +84,7 @@ start_exo_mute()
     self endon( "end_exo_mute" );
     self.mute_on = 1;
     maps\mp\_utility::giveperk( "specialty_quieter", 0 );
-    self _meth_849F( "exomute_equipment_mp" );
+    self batterydischargebegin( "exomute_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exomute_equipment_mp", "ui_exo_battery_toggle", 1 );
     thread maps\mp\_exo_battery::update_exo_battery_hud( "exomute_equipment_mp" );
     thread monitor_mute_battery_charge();
@@ -96,7 +96,7 @@ start_exo_mute()
 
     if ( !isdefined( self.exo_cloak_on ) || self.exo_cloak_on == 0 )
     {
-        self.mute_fx = _func_2C1( level.exo_mute_3p, self, "TAG_ORIGIN" );
+        self.mute_fx = spawnlinkedfx( level.exo_mute_3p, self, "TAG_ORIGIN" );
         triggerfx( self.mute_fx );
     }
 }
@@ -111,8 +111,8 @@ stop_exo_mute( var_0 )
 
     self notify( "end_exo_mute" );
     self.mute_on = 0;
-    self _meth_82A9( "specialty_quieter", 1 );
-    self _meth_84A0( "exomute_equipment_mp" );
+    self unsetperk( "specialty_quieter", 1 );
+    self batterydischargeend( "exomute_equipment_mp" );
     maps\mp\_exo_battery::set_exo_ability_hud_omnvar( "exomute_equipment_mp", "ui_exo_battery_toggle", 0 );
     killmutefx();
 
@@ -144,7 +144,7 @@ monitor_mute_battery_charge()
 
     while ( self.mute_on == 1 )
     {
-        if ( self _meth_84A2( "exomute_equipment_mp" ) <= 0 )
+        if ( self batterygetcharge( "exomute_equipment_mp" ) <= 0 )
             thread stop_exo_mute( 1 );
 
         wait 0.05;
@@ -155,12 +155,12 @@ take_exo_mute()
 {
     self notify( "kill_battery" );
     self notify( "exo_mute_taken" );
-    self _meth_830F( "exomute_equipment_mp" );
+    self takeweapon( "exomute_equipment_mp" );
 }
 
 give_exo_mute()
 {
-    self _meth_830E( "exomute_equipment_mp" );
+    self giveweapon( "exomute_equipment_mp" );
     thread exo_mute_think();
 }
 

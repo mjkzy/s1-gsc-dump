@@ -6,7 +6,7 @@ main()
     codescripts\character::setmodelfromarray( xmodelalias\alias_sentinel_bodies::main() );
     codescripts\character::attachhead( "alias_sentinel_heads", xmodelalias\alias_sentinel_heads::main() );
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

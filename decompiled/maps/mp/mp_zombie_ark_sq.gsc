@@ -69,7 +69,7 @@ onanyplayerspawned()
         if ( isdefined( var_0 ) && var_0 playerhasanyitem() )
         {
             var_1 = inventoryitemgetid( var_0.inventoryitem );
-            var_0 _meth_82FB( "ui_zm_ee_int", var_1 );
+            var_0 setclientomnvar( "ui_zm_ee_int", var_1 );
         }
     }
 }
@@ -93,7 +93,7 @@ startarksidequest()
         if ( var_6.classname == "script_brushmodel" )
         {
             level.sqsecurityfieldbrushes[level.sqsecurityfieldbrushes.size] = var_6;
-            var_6 _meth_82BF();
+            var_6 notsolid();
             var_6 hide();
             continue;
         }
@@ -174,18 +174,18 @@ setupsharkcage()
     if ( !isdefined( var_0 ) || !isdefined( var_1 ) || !isdefined( var_2 ) || !isdefined( var_3 ) || !isdefined( var_4 ) || !isdefined( var_5 ) || !isdefined( var_6 ) )
         return;
 
-    var_6 _meth_8069();
-    var_6 _meth_8446( var_1 );
-    var_4 _meth_8446( var_1 );
-    var_5 _meth_8446( var_1 );
-    var_3 _meth_8446( var_1 );
+    var_6 enablelinkto();
+    var_6 vehicle_jetbikesethoverforcescale( var_1 );
+    var_4 vehicle_jetbikesethoverforcescale( var_1 );
+    var_5 vehicle_jetbikesethoverforcescale( var_1 );
+    var_3 vehicle_jetbikesethoverforcescale( var_1 );
 
     if ( !isdefined( var_0.angles ) )
         var_0.angles = ( 0, 0, 0 );
 
     waitframe();
-    var_2 _meth_848B( "zark_sharkcage_start_idle_crane", var_0.origin, var_0.angles, "cageSequence" );
-    var_1 _meth_848B( "zark_sharkcage_start_idle_cage", var_0.origin, var_0.angles, "cageSequence" );
+    var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_start_idle_crane", var_0.origin, var_0.angles, "cageSequence" );
+    var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_start_idle_cage", var_0.origin, var_0.angles, "cageSequence" );
     waitframe();
     var_7 = getnodesinradius( var_1.origin, 300, 0 );
     var_3.unresolved_collision_nodes = var_7;
@@ -250,7 +250,7 @@ playerintoxicate( var_0, var_1 )
     thread maps\mp\mp_zombie_ark_aud::drink_rum();
     self.intoxicated = 1;
     self notify( "update_ground_ref_ent" );
-    self _meth_82FB( "ui_zm_ee_bool2", 1 );
+    self setclientomnvar( "ui_zm_ee_bool2", 1 );
     thread playerintoxicatedhandlemovement( var_1 );
     thread playerintoxicatedrotateground( var_1 );
     thread playerintoxicatedhandlescreen( var_1 );
@@ -263,7 +263,7 @@ playerintoxicate( var_0, var_1 )
 
 playerintoxicatefinish()
 {
-    self _meth_82FB( "ui_zm_ee_bool2", 0 );
+    self setclientomnvar( "ui_zm_ee_bool2", 0 );
     self.intoxicated = undefined;
     thread maps\mp\mp_zombie_ark_aud::rum_wears_off( self );
     updateintoxicatedentities();
@@ -321,11 +321,11 @@ playerintoxicatedhandlescreen( var_0 )
     self endon( "player_infected" );
     self notify( "playerIntoxicatedHandleScreen" );
     self endon( "playerIntoxicatedHandleScreen" );
-    self _meth_8469( "mp_zombie_ark_intoxicated", 1 );
-    self _meth_83C1( "mp_zombie_ark_intoxicated", 1 );
+    self visionsetpostapplyforplayer( "mp_zombie_ark_intoxicated", 1 );
+    self lightsetoverrideenableforplayer( "mp_zombie_ark_intoxicated", 1 );
     common_scripts\utility::waittill_notify_or_timeout( "death", var_0 );
-    self _meth_8469( "", 1 );
-    self _meth_83C2( 1 );
+    self visionsetpostapplyforplayer( "", 1 );
+    self lightsetoverrideenableforplayer( 1 );
 }
 
 playerintoxicatedhandlemovement( var_0 )
@@ -350,7 +350,7 @@ playerintoxicatedhandlemovement( var_0 )
 
     while ( gettime() < var_1 )
     {
-        if ( !isdefined( self.intoxicatedcanexotime ) && ( self _meth_83B4() || self _meth_851F() || self _meth_8520() ) )
+        if ( !isdefined( self.intoxicatedcanexotime ) && ( self ishighjumping() || self isdodging() || self ispowersliding() ) )
         {
             maps\mp\_utility::playerallowpowerslide( 0, "intoxicated" );
             self.intoxicatedcanexotime = gettime() + var_2;
@@ -390,7 +390,7 @@ playerintoxicatedrotateground( var_0 )
     if ( !isdefined( self.groundref ) )
         self.groundref = spawn( "script_model", ( 0, 0, 0 ) );
 
-    self _meth_8091( self.groundref );
+    self playersetgroundreferenceent( self.groundref );
     var_1 = 20;
     var_2 = 30;
     var_3 = 25;
@@ -405,14 +405,14 @@ playerintoxicatedrotateground( var_0 )
         var_10 = randomfloat( var_4 / 2.0 );
         var_11 = randomfloat( var_4 / 2.0 );
 
-        if ( var_5 == 1 || self _meth_817C() == "prone" )
+        if ( var_5 == 1 || self getstance() == "prone" )
             var_9 = ( 0, 0, 0 );
 
-        self.groundref _meth_82B5( var_9, var_4, var_10, var_11 );
+        self.groundref rotateto( var_9, var_4, var_10, var_11 );
         wait(var_4);
     }
 
-    self _meth_8091( undefined );
+    self playersetgroundreferenceent( undefined );
     self notify( "update_ground_ref_ent" );
     self.groundref.angles = ( 0, 0, 0 );
 }
@@ -432,7 +432,7 @@ playerintoxicatedhudcountdown( var_0 )
     }
 
     if ( var_0 > 0 )
-        self.intoxicatedtimer _meth_80CF( var_0 );
+        self.intoxicatedtimer settimer( var_0 );
 
     common_scripts\utility::waittill_notify_or_timeout( "death", var_0 );
 
@@ -521,32 +521,32 @@ weapondisposallogic()
 
         if ( var_2 playerhasvalidweapon() && var_3.size > 1 )
         {
-            var_4 = var_2 _meth_8312();
-            var_2 _meth_830F( var_4 );
+            var_4 = var_2 getcurrentprimaryweapon();
+            var_2 takeweapon( var_4 );
             var_3 = var_2 maps\mp\zombies\_wall_buys::getweaponslistprimariesminusalts();
 
             foreach ( var_6 in var_3 )
             {
                 if ( var_6 != "" && var_6 != "none" )
-                    var_2 _meth_8315( var_6 );
+                    var_2 switchtoweapon( var_6 );
             }
 
             var_8 = getweaponbasename( var_4 );
             var_9 = addweapontodisposallist( var_8 );
             var_10 = maps\mp\zombies\_wall_buys::findholomodel( var_8 );
             var_11 = spawn( "script_model", ( 0, 0, 0 ) );
-            var_11 _meth_80B1( var_10 );
-            var_11 _meth_8446( level.sqarm, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+            var_11 setmodel( var_10 );
+            var_11 vehicle_jetbikesethoverforcescale( level.sqarm, "tag_weapon_right", ( 0, 0, 0 ), ( 0, 0, 0 ) );
             level thread changearmstate( "take", var_0 );
             level.sqarm waittillmatch( "arm_notetrack", "item_swap" );
             var_12 = getmodelforitem( var_9 );
 
             if ( isdefined( var_12 ) )
             {
-                var_11 _meth_80B1( var_12 );
+                var_11 setmodel( var_12 );
                 var_13 = getoriginoffsetforitem( var_9 );
                 var_14 = getanglesoffsetforitem( var_9 );
-                var_11 _meth_8446( level.sqarm, "tag_weapon_right", var_13, var_14 );
+                var_11 vehicle_jetbikesethoverforcescale( level.sqarm, "tag_weapon_right", var_13, var_14 );
                 var_15 = zombiearmplaysqvo( "item" );
             }
             else
@@ -597,9 +597,9 @@ handlearm( var_0 )
 {
     var_1 = 1000;
     var_2 = 5;
-    level.sqarm _meth_80B1( "zom_civ_ruban_male_r_arm_slice_scripted" );
-    level.sqarm _meth_82C0( 1 );
-    level.sqarm _meth_8495( 1 );
+    level.sqarm setmodel( "zom_civ_ruban_male_r_arm_slice_scripted" );
+    level.sqarm setcandamage( 1 );
+    level.sqarm setdamagecallbackon( 1 );
     level.sqarm.damagecallback = ::armdamaged;
     level.sqarm.health = 9999;
     level.sqarm.maxhealth = level.sqarm.health;
@@ -636,7 +636,7 @@ handlearm( var_0 )
         if ( var_3 == "handleExit" )
         {
             changearmstate( "exit", var_0 );
-            level.sqarm _meth_8510();
+            level.sqarm ghost();
             level.sqarm.currentdamage = 0;
             continue;
         }
@@ -888,7 +888,7 @@ doarmanim( var_0, var_1, var_2, var_3 )
 {
     level.sqarm.state = var_2;
     level.sqarm.animref = var_1;
-    level.sqarm _meth_848B( var_1, var_0.origin, var_0.angles, "arm_notetrack" );
+    level.sqarm scriptmodelplayanimdeltamotionfrompos( var_1, var_0.origin, var_0.angles, "arm_notetrack" );
 
     if ( var_3 )
         level.sqarm waittillmatch( "arm_notetrack", "end" );
@@ -958,11 +958,11 @@ launchrumbottle( var_0 )
 {
     setitemascomplete( "rum_bottle" );
     thread maps\mp\mp_zombie_ark_aud::throw_rum_bottle( var_0 );
-    var_0 _meth_804F();
+    var_0 unlink();
     var_1 = ( 500, 0, 0 );
-    var_0 _meth_8276( var_0.origin, var_1 );
+    var_0 physicslaunchserver( var_0.origin, var_1 );
     var_0 common_scripts\utility::waittill_notify_or_timeout( "physics_finished", 5 );
-    var_0 _meth_84E1();
+    var_0 physicsstop();
 
     for (;;)
     {
@@ -1051,7 +1051,7 @@ setupweapontoitemmapping()
 
 playerhasvalidweapon()
 {
-    var_0 = self _meth_8312();
+    var_0 = self getcurrentprimaryweapon();
     return weaponisvalid( var_0 );
 }
 
@@ -1083,7 +1083,7 @@ playergiveitem( var_0 )
 
     self.inventoryitem = var_0;
     var_1 = inventoryitemgetid( var_0 );
-    self _meth_82FB( "ui_zm_ee_int", var_1 );
+    self setclientomnvar( "ui_zm_ee_int", var_1 );
 }
 
 playerhasitem( var_0 )
@@ -1101,7 +1101,7 @@ playertakeitem( var_0 )
     if ( isdefined( self.inventoryitem ) && self.inventoryitem == var_0 )
     {
         self.inventoryitem = undefined;
-        self _meth_82FB( "ui_zm_ee_int", 0 );
+        self setclientomnvar( "ui_zm_ee_int", 0 );
     }
 }
 
@@ -1147,12 +1147,12 @@ sidequest_fishing_logic()
     if ( !isdefined( var_0 ) )
         return;
 
-    var_0 _meth_80DA( "HINT_NOICON" );
+    var_0 setcursorhint( "HINT_NOICON" );
 
     for (;;)
     {
-        var_0 _meth_80DB( &"ZOMBIE_ARK_SQ_FISH" );
-        var_0 _meth_80DC( &"ZOMBIES_COST_100" );
+        var_0 sethintstring( &"ZOMBIE_ARK_SQ_FISH" );
+        var_0 setsecondaryhintstring( &"ZOMBIES_COST_100" );
         var_0 makeusable();
         var_0 waittill( "trigger", var_1 );
         var_0 makeunusable();
@@ -1164,7 +1164,7 @@ sidequest_fishing_logic()
         }
 
         var_1 thread maps\mp\mp_zombie_ark_aud::fishing_cast_line();
-        var_0 _meth_8279( "zark_fishing_pose_fish", "fishing_notetrack" );
+        var_0 scriptmodelplayanim( "zark_fishing_pose_fish", "fishing_notetrack" );
         var_0 waittillmatch( "fishing_notetrack", "attach_item" );
         var_1 thread maps\mp\mp_zombie_ark_aud::fishing_retrieve_line();
         level thread fishonsounds( var_1 );
@@ -1174,17 +1174,17 @@ sidequest_fishing_logic()
 
         if ( isdefined( var_1 ) )
         {
-            var_0 _meth_80DB( &"ZOMBIE_ARK_SQ_FISH_GRAB" );
-            var_0 _meth_80DC( "" );
+            var_0 sethintstring( &"ZOMBIE_ARK_SQ_FISH_GRAB" );
+            var_0 setsecondaryhintstring( "" );
             var_0 makeusable();
             var_0.owner = var_1;
-            var_0 _meth_849B( 1 );
+            var_0 sethintstringvisibleonlytoowner( 1 );
         }
 
         var_4 = waittillpickedupordonewiggling( var_0 );
-        var_0 _meth_8279( "zark_fishing_pose_finish", "fishing_notetrack" );
+        var_0 scriptmodelplayanim( "zark_fishing_pose_finish", "fishing_notetrack" );
         var_0 makeunusable();
-        var_0 _meth_849B( 0 );
+        var_0 sethintstringvisibleonlytoowner( 0 );
         var_0.owner = undefined;
 
         if ( !isdefined( var_4 ) && isdefined( var_1 ) && var_2.type != "junk" )
@@ -1214,7 +1214,7 @@ sidequest_fishing_logic()
         }
 
         var_0 waittillmatch( "fishing_notetrack", "end" );
-        var_0 _meth_8279( "zark_fishing_pose_idle", "fishing_notetrack" );
+        var_0 scriptmodelplayanim( "zark_fishing_pose_idle", "fishing_notetrack" );
         waitframe();
     }
 }
@@ -1269,8 +1269,8 @@ putitemonhook( var_0, var_1 )
 {
     var_2 = var_1 gettagorigin( "tag_attach" );
     var_3 = spawn( "script_model", var_2 );
-    var_3 _meth_80B1( var_0.model );
-    var_3 _meth_804D( var_1, "tag_attach", var_0.offset, var_0.angles );
+    var_3 setmodel( var_0.model );
+    var_3 linkto( var_1, "tag_attach", var_0.offset, var_0.angles );
 
     if ( var_0.item == "fish" )
         var_3 thread fishwiggle();
@@ -1281,19 +1281,19 @@ putitemonhook( var_0, var_1 )
 fishwiggle()
 {
     waitframe();
-    self _meth_8279( "zark_red_herring_wiggle", "wiggle_notetrack" );
+    self scriptmodelplayanim( "zark_red_herring_wiggle", "wiggle_notetrack" );
 }
 
 playergiveammo()
 {
     self endon( "death" );
     self endon( "disconnect" );
-    var_0 = self _meth_8312();
+    var_0 = self getcurrentprimaryweapon();
 
     if ( !weaponisvalid( var_0 ) )
     {
         var_0 = undefined;
-        var_1 = self _meth_830C();
+        var_1 = self getweaponslistprimaries();
 
         foreach ( var_3 in var_1 )
         {
@@ -1323,33 +1323,33 @@ playergiveammo()
     }
     else
     {
-        var_5 = self _meth_82F9( var_0 );
-        var_6 = _func_1E1( var_0 );
+        var_5 = self setweaponammostock( var_0 );
+        var_6 = weaponmaxammo( var_0 );
 
         if ( var_5 < var_6 )
         {
             var_5 = getnewammoamount( var_5, var_6 );
-            self _meth_82F7( var_0, var_5 );
+            self setweaponammostock( var_0, var_5 );
             return;
         }
 
-        var_5 = self _meth_82F8( var_0, "right" );
+        var_5 = self getweaponammoclip( var_0, "right" );
         var_6 = weaponclipsize( var_0 );
 
         if ( var_5 < var_6 )
         {
             var_5 = getnewammoamount( var_5, var_6 );
-            self _meth_82F6( var_0, var_5, "right" );
+            self setweaponammoclip( var_0, var_5, "right" );
         }
 
         if ( issubstr( var_0, "akimbo" ) )
         {
-            var_5 = self _meth_82F8( var_0, "left" );
+            var_5 = self getweaponammoclip( var_0, "left" );
 
             if ( var_5 < var_6 )
             {
                 var_5 = getnewammoamount( var_5, var_6 );
-                self _meth_82F6( var_0, var_5, "left" );
+                self setweaponammoclip( var_0, var_5, "left" );
             }
         }
     }
@@ -1370,9 +1370,9 @@ getnewammoamount( var_0, var_1 )
 
 launchanddelete( var_0, var_1, var_2 )
 {
-    var_0 _meth_804F();
+    var_0 unlink();
     var_3 = vectornormalize( var_0.origin - var_2.origin ) * var_1.impulse;
-    var_0 _meth_82C2( var_2.origin, var_3 );
+    var_0 physicslaunchclient( var_2.origin, var_3 );
     wait 2;
     var_0 delete();
 }
@@ -1464,7 +1464,7 @@ fishing_stage1_logic()
             setitemascomplete( "reel" );
             var_5 thread maps\mp\mp_zombie_ark_aud::use_fishing_item( "reel" );
             var_2 = 1;
-            var_0 _meth_80B1( "zark_fishing_pole_reel_01" );
+            var_0 setmodel( "zark_fishing_pole_reel_01" );
         }
 
         if ( var_2 && !var_1 && var_5 playerhasitem( "line" ) )
@@ -1474,7 +1474,7 @@ fishing_stage1_logic()
             setitemascomplete( "line" );
             var_5 thread maps\mp\mp_zombie_ark_aud::use_fishing_item( "line" );
             var_1 = 1;
-            var_0 _meth_80B1( "zark_fishing_pole_reel_line_01" );
+            var_0 setmodel( "zark_fishing_pole_reel_line_01" );
         }
 
         if ( var_2 && var_1 && !var_3 && var_5 playerhasitem( "hook" ) )
@@ -1484,8 +1484,8 @@ fishing_stage1_logic()
             setitemascomplete( "hook" );
             var_5 thread maps\mp\mp_zombie_ark_aud::use_fishing_item( "hook" );
             var_3 = 1;
-            var_0 _meth_80B1( "zark_fishing_gear_complete_01" );
-            var_0 _meth_8279( "zark_fishing_pose_idle", "fishing_notetrack" );
+            var_0 setmodel( "zark_fishing_gear_complete_01" );
+            var_0 scriptmodelplayanim( "zark_fishing_pose_idle", "fishing_notetrack" );
         }
 
         if ( var_6 )
@@ -1573,7 +1573,7 @@ zmplayeraltteleport( var_0, var_1, var_2 )
 
     if ( isdefined( level.zmplayerinzomboniroom ) && self == level.zmplayerinzomboniroom )
         return 1;
-    else if ( isdefined( var_3 ) && _func_22A( var_0, var_3 ) )
+    else if ( isdefined( var_3 ) && ispointinvolume( var_0, var_3 ) )
     {
         if ( !common_scripts\utility::flag( "zomboni_room" ) && !isdefined( level.zmplayerinzomboniroom ) )
         {
@@ -1581,7 +1581,7 @@ zmplayeraltteleport( var_0, var_1, var_2 )
 
             foreach ( var_9 in var_7 )
             {
-                if ( _func_2AB( var_9.origin + ( 0, 0, 5 ), 15, 60, self, 1 ) )
+                if ( capsuletracepassed( var_9.origin + ( 0, 0, 5 ), 15, 60, self, 1 ) )
                 {
                     thread playerinzomboniroom( var_9 );
                     break;
@@ -1599,7 +1599,7 @@ zmplayeraltteleport( var_0, var_1, var_2 )
 
         return 1;
     }
-    else if ( isdefined( var_4 ) && _func_22A( var_0 + ( 0, 0, 10 ), var_4 ) )
+    else if ( isdefined( var_4 ) && ispointinvolume( var_0 + ( 0, 0, 10 ), var_4 ) )
         return 1;
 
     return 0;
@@ -1677,7 +1677,7 @@ playerteleporttoastructwait( var_0, var_1 )
 
 playertryteleporttostruct( var_0 )
 {
-    if ( _func_2AB( var_0.origin + ( 0, 0, 5 ), 15, 60, self ) )
+    if ( capsuletracepassed( var_0.origin + ( 0, 0, 5 ), 15, 60, self ) )
     {
         self setorigin( var_0.origin, 1 );
 
@@ -1843,7 +1843,7 @@ unlockspecialweaponupgrade()
     if ( isdefined( var_0 ) )
     {
         var_1 = var_0.origin + ( 0, 0, 30 );
-        var_0 _meth_82AE( var_1, 2, 0.5, 0.5 );
+        var_0 moveto( var_1, 2, 0.5, 0.5 );
     }
 
     var_2 = getent( "sqUpgradeStationBottom", "targetname" );
@@ -1851,7 +1851,7 @@ unlockspecialweaponupgrade()
     if ( isdefined( var_2 ) )
     {
         var_1 = var_2.origin + ( 0, 0, -30 );
-        var_2 _meth_82AE( var_1, 2, 0.5, 0.5 );
+        var_2 moveto( var_1, 2, 0.5, 0.5 );
     }
 }
 
@@ -1866,7 +1866,7 @@ alldoorlights()
         foreach ( var_3 in var_1 )
         {
             var_3.fx = spawn( "script_model", var_3.origin );
-            var_3.fx _meth_80B1( "tag_origin" );
+            var_3.fx setmodel( "tag_origin" );
 
             if ( !isdefined( var_3.angles ) )
                 var_3.angles = ( 0, 0, 0 );
@@ -1901,13 +1901,13 @@ stage2_end( var_0 )
 
 endgamewaitcinematic( var_0, var_1, var_2, var_3 )
 {
-    _func_076( "bink_mix" );
+    addsoundsubmix( "bink_mix" );
     level.zombiegamepaused = 1;
 
     foreach ( var_5 in level.players )
         var_5 maps\mp\_utility::freezecontrolswrapper( 1 );
 
-    _func_2A8( "zombies_bg_dlc3_outro", 1 );
+    playcinematicforall( "zombies_bg_dlc3_outro", 1 );
     wait 60;
 }
 
@@ -2026,14 +2026,14 @@ dropteleportequip( var_0 )
     var_0 += ( 0, 0, 10 );
     var_1 = spawn( "script_model", var_0 );
     var_1.angles = ( 0, 0, 0 );
-    var_1 _meth_80B1( "dlc3_teleport_equipment" );
-    var_1 _meth_82BF();
+    var_1 setmodel( "dlc3_teleport_equipment" );
+    var_1 notsolid();
     var_2 = spawn( "trigger_radius", var_0, 0, 32, 32 );
     var_1.trigger = var_2;
     level.sqdroppedteleportequip[level.sqdroppedteleportequip.size] = var_1;
     var_1 thread teleportequippickup();
     var_1 thread teleportequiptimer();
-    var_1 _meth_8279( "mp_dogtag_spin" );
+    var_1 scriptmodelplayanim( "mp_dogtag_spin" );
 }
 
 teleportequippickup()
@@ -2088,7 +2088,7 @@ teleportequipstartflashing()
 
     for (;;)
     {
-        self _meth_8510();
+        self ghost();
         wait 0.25;
         self show();
         wait 0.25;
@@ -2172,8 +2172,8 @@ runteleportmachine()
 
     wait 1;
     var_11 = spawn( "script_model", var_1.origin );
-    var_11 _meth_80B1( "tag_origin" );
-    var_11 _meth_80DA( "HINT_NOICON" );
+    var_11 setmodel( "tag_origin" );
+    var_11 setcursorhint( "HINT_NOICON" );
     var_11 makeusable();
     level thread doozislandtaunt();
 
@@ -2181,8 +2181,8 @@ runteleportmachine()
     {
         level.sqcoststring = var_6[level.sqcostindex];
         level.sqcost = var_7[level.sqcostindex];
-        var_11 _meth_80DB( &"ZOMBIE_ARK_SQ_TELEPORT" );
-        var_11 _meth_80DC( level.sqcoststring );
+        var_11 sethintstring( &"ZOMBIE_ARK_SQ_TELEPORT" );
+        var_11 setsecondaryhintstring( level.sqcoststring );
         var_11.cooldown = 0;
 
         if ( isdefined( var_2 ) )
@@ -2215,8 +2215,8 @@ runteleportmachine()
         }
 
         var_11.cooldown = 1;
-        var_11 _meth_80DB( &"ZOMBIES_CURE_COOLDOWN_HINT" );
-        var_11 _meth_80DC( "" );
+        var_11 sethintstring( &"ZOMBIES_CURE_COOLDOWN_HINT" );
+        var_11 setsecondaryhintstring( "" );
 
         if ( level.sqcostindex + 1 < var_6.size )
             level.sqcostindex++;
@@ -2249,7 +2249,7 @@ runteleportmachine()
         foreach ( var_14 in level.sqplayersteleporting )
         {
             if ( isdefined( var_14.digprompt ) )
-                var_14.digprompt _meth_80C2();
+                var_14.digprompt makeglobalunusable();
         }
 
         maps\mp\zombies\_teleport::teleport_players_through_chute( level.sqplayersteleporting, 0 );
@@ -2321,7 +2321,7 @@ playerwaterteleportbackinternal()
 {
     if ( isdefined( level.sqplayersteleporting ) && common_scripts\utility::array_contains( level.sqplayersteleporting, self ) )
     {
-        self _meth_855C( "ee_island_timer" );
+        self stopsound( "ee_island_timer" );
         level.sqplayersteleporting = common_scripts\utility::array_remove( level.sqplayersteleporting, self );
         maps\mp\zombies\_teleport::teleport_players_through_chute( [ self ], 0 );
         thread maps\mp\zombies\_teleport::reset_teleport_flag_after_time( [ self ], 0.75 );
@@ -2351,7 +2351,7 @@ resetcostonroundtransition( var_0, var_1, var_2 )
     level.sqcoststring = var_1[level.sqcostindex];
 
     if ( !var_0.cooldown )
-        var_0 _meth_80DC( level.sqcoststring );
+        var_0 setsecondaryhintstring( level.sqcoststring );
 }
 
 setupteleportlightmodel( var_0, var_1, var_2 )
@@ -2362,37 +2362,37 @@ setupteleportlightmodel( var_0, var_1, var_2 )
     switch ( var_1 )
     {
         case 0:
-            var_0 _meth_8048( "TAG_FX_ON" );
-            var_0 _meth_804B( "TAG_FX_OFF" );
-            var_0 _meth_8048( "TAG_FX_GLOW" );
+            var_0 hidepart( "TAG_FX_ON" );
+            var_0 showpart( "TAG_FX_OFF" );
+            var_0 hidepart( "TAG_FX_GLOW" );
             break;
         case 4:
             maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_on" ), var_0, "tag_origin" );
         case 1:
-            var_0 _meth_8048( "TAG_FX_ON" );
-            var_0 _meth_8048( "TAG_FX_OFF" );
-            var_0 _meth_804B( "TAG_FX_GLOW" );
+            var_0 hidepart( "TAG_FX_ON" );
+            var_0 hidepart( "TAG_FX_OFF" );
+            var_0 showpart( "TAG_FX_GLOW" );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin", 0 );
             break;
         case 2:
-            var_0 _meth_804B( "TAG_FX_ON" );
-            var_0 _meth_8048( "TAG_FX_OFF" );
-            var_0 _meth_8048( "TAG_FX_GLOW" );
+            var_0 showpart( "TAG_FX_ON" );
+            var_0 hidepart( "TAG_FX_OFF" );
+            var_0 hidepart( "TAG_FX_GLOW" );
             maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin" );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_on" ), var_0, "tag_origin", 0 );
             wait 0.5;
-            var_0 _meth_8048( "TAG_FX_ON" );
-            var_0 _meth_8048( "TAG_FX_OFF" );
-            var_0 _meth_804B( "TAG_FX_GLOW" );
+            var_0 hidepart( "TAG_FX_ON" );
+            var_0 hidepart( "TAG_FX_OFF" );
+            var_0 showpart( "TAG_FX_GLOW" );
             maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_on" ), var_0, "tag_origin" );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin", 0 );
             break;
         case 3:
             maps\mp\zombies\_util::stopfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_off" ), var_0, "tag_origin" );
             maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "dlc_prop_exo_teleport_pwr_on" ), var_0, "tag_origin", 0 );
-            var_0 _meth_804B( "TAG_FX_ON" );
-            var_0 _meth_8048( "TAG_FX_OFF" );
-            var_0 _meth_8048( "TAG_FX_GLOW" );
+            var_0 showpart( "TAG_FX_ON" );
+            var_0 hidepart( "TAG_FX_OFF" );
+            var_0 hidepart( "TAG_FX_GLOW" );
             break;
     }
 }
@@ -2405,33 +2405,33 @@ setupteleportlight( var_0, var_1, var_2 )
     switch ( var_1 )
     {
         case 0:
-            var_0 _meth_8044( maps\mp\mp_zombie_ark::getteleporterlightcoloroff() );
-            var_0 _meth_81DF( maps\mp\mp_zombie_ark::getteleporterlightintensityoff() );
+            var_0 setlightcolor( maps\mp\mp_zombie_ark::getteleporterlightcoloroff() );
+            var_0 setlightintensity( maps\mp\mp_zombie_ark::getteleporterlightintensityoff() );
             break;
         case 4:
         case 1:
-            var_0 _meth_8044( maps\mp\mp_zombie_ark::getteleporterlightcolorstandby() );
-            var_0 _meth_81DF( maps\mp\mp_zombie_ark::getteleporterlightintensitystandby() );
+            var_0 setlightcolor( maps\mp\mp_zombie_ark::getteleporterlightcolorstandby() );
+            var_0 setlightintensity( maps\mp\mp_zombie_ark::getteleporterlightintensitystandby() );
             break;
         case 2:
-            var_0 _meth_8044( maps\mp\mp_zombie_ark::getteleporterlightcoloron() );
-            var_0 _meth_81DF( maps\mp\mp_zombie_ark::getteleporterlightintensityon() );
+            var_0 setlightcolor( maps\mp\mp_zombie_ark::getteleporterlightcoloron() );
+            var_0 setlightintensity( maps\mp\mp_zombie_ark::getteleporterlightintensityon() );
             wait 0.5;
-            var_0 _meth_8044( maps\mp\mp_zombie_ark::getteleporterlightcolorstandby() );
-            var_0 _meth_81DF( maps\mp\mp_zombie_ark::getteleporterlightintensitystandby() );
+            var_0 setlightcolor( maps\mp\mp_zombie_ark::getteleporterlightcolorstandby() );
+            var_0 setlightintensity( maps\mp\mp_zombie_ark::getteleporterlightintensitystandby() );
             break;
         case 3:
-            var_0 _meth_8044( maps\mp\mp_zombie_ark::getteleporterlightcoloron() );
-            var_0 _meth_81DF( maps\mp\mp_zombie_ark::getteleporterlightintensityon() );
+            var_0 setlightcolor( maps\mp\mp_zombie_ark::getteleporterlightcoloron() );
+            var_0 setlightintensity( maps\mp\mp_zombie_ark::getteleporterlightintensityon() );
             break;
     }
 }
 
 runteleporterlight( var_0 )
 {
-    var_0 _meth_8044( ( 1, 0, 0 ) );
+    var_0 setlightcolor( ( 1, 0, 0 ) );
     self waittill( "teleportReady" );
-    var_0 _meth_8044( ( 0.501, 1, 1 ) );
+    var_0 setlightcolor( ( 0.501, 1, 1 ) );
 }
 
 playerteleporttoisland( var_0 )
@@ -2483,13 +2483,13 @@ playerdig()
         self.digprompt = spawn( "script_model", self.origin );
         self.digprompt hide();
         self.digprompt showtoplayer( self );
-        self.digprompt _meth_80DA( "HINT_NOICON" );
-        self.digprompt _meth_80DB( &"ZOMBIE_ARK_SQ_DIG" );
+        self.digprompt setcursorhint( "HINT_NOICON" );
+        self.digprompt sethintstring( &"ZOMBIE_ARK_SQ_DIG" );
     }
 
     for (;;)
     {
-        var_0 = self _meth_80A8();
+        var_0 = self geteye();
         var_1 = anglestoforward( self getangles() );
         var_2 = var_0 + var_1 * 70;
         var_3 = bullettrace( var_0, var_2, 0, self );
@@ -2498,7 +2498,7 @@ playerdig()
         {
             if ( maps\mp\zombies\_util::is_true( self.digprompt.usable ) )
             {
-                self.digprompt _meth_80C2();
+                self.digprompt makeglobalunusable();
                 self.digprompt.usable = 0;
             }
         }
@@ -2506,17 +2506,17 @@ playerdig()
         {
             if ( !maps\mp\zombies\_util::is_true( self.digprompt.usable ) )
             {
-                self.digprompt _meth_80C1( -100, self );
+                self.digprompt makeglobalusable( -100, self );
                 self.digprompt.usable = 1;
             }
 
             if ( self usebuttonpressed() )
             {
-                self.digprompt _meth_80C2();
+                self.digprompt makeglobalunusable();
                 self.digprompt.usable = 0;
                 var_4 = var_3["position"];
                 playfx( common_scripts\utility::getfx( "sq_dirt_dig" ), var_4 );
-                var_5 = _func_220( var_4, level.sqtreasure.origin );
+                var_5 = distance2dsquared( var_4, level.sqtreasure.origin );
                 thread maps\mp\mp_zombie_ark_aud::dig();
 
                 if ( var_5 < 1024 )
@@ -2527,7 +2527,7 @@ playerdig()
                 }
 
                 wait 1;
-                self.digprompt _meth_80C1( -100, self );
+                self.digprompt makeglobalusable( -100, self );
                 self.digprompt.usable = 1;
             }
         }
@@ -2549,7 +2549,7 @@ findtreasure( var_0 )
     if ( !isdefined( var_1 ) )
     {
         var_1 = spawn( "script_model", var_5 );
-        var_1 _meth_80B1( "zark_tablet_chest_anim" );
+        var_1 setmodel( "zark_tablet_chest_anim" );
         var_1.targetname = "sqIslandCrate2";
         var_1.angles = var_4;
 
@@ -2558,7 +2558,7 @@ findtreasure( var_0 )
             var_2 show();
             var_2.origin = var_1.origin + ( 0.5, 0, 2 );
             var_2.angles = var_1.angles;
-            var_2 _meth_8446( var_1 );
+            var_2 vehicle_jetbikesethoverforcescale( var_1 );
         }
     }
     else
@@ -2569,35 +2569,35 @@ findtreasure( var_0 )
         if ( isdefined( var_2 ) )
         {
             var_2 show();
-            var_2 _meth_8446( var_1 );
+            var_2 vehicle_jetbikesethoverforcescale( var_1 );
         }
 
-        var_1 _meth_8092();
+        var_1 dontinterpolate();
         var_1.origin = var_5;
         var_1.angles = var_4;
     }
 
     waitframe();
-    var_1 _meth_8279( "zark_tablet_chest_closed_loop", "chest_notetrack" );
-    var_6 = _func_238( var_1.origin + ( 0, 0, 20 ), var_1.origin, var_0 );
+    var_1 scriptmodelplayanim( "zark_tablet_chest_closed_loop", "chest_notetrack" );
+    var_6 = playerphysicstraceinfo( var_1.origin + ( 0, 0, 20 ), var_1.origin, var_0 );
     var_7 = var_1.origin + ( 0, 0, 20 );
 
     if ( var_6["fraction"] > 0 )
         var_7 = ( var_1.origin[0], var_1.origin[1], var_6["position"][2] + 1 );
 
     waitframe();
-    var_1 _meth_82AE( var_7, 0.2, 0.1, 0.1 );
+    var_1 moveto( var_7, 0.2, 0.1, 0.1 );
     wait 0.2;
-    var_1 _meth_8276( var_1.origin, ( 0, 0, -1 ) );
+    var_1 physicslaunchserver( var_1.origin, ( 0, 0, -1 ) );
     var_1 common_scripts\utility::waittill_notify_or_timeout( "physics_finished", 0.5 );
-    var_1 _meth_84E1();
-    var_1 _meth_8279( "zark_tablet_chest_closed_loop", "chest_notetrack" );
+    var_1 physicsstop();
+    var_1 scriptmodelplayanim( "zark_tablet_chest_closed_loop", "chest_notetrack" );
     wait 1;
     var_0 = var_1 maps\mp\zombies\_zombies_sidequests::fake_use( "chest_opened" );
     var_0 thread maps\mp\mp_zombie_ark_aud::treasure_opened();
-    var_1 _meth_8279( "zark_tablet_chest_open", "chest_notetrack" );
+    var_1 scriptmodelplayanim( "zark_tablet_chest_open", "chest_notetrack" );
     var_1 waittillmatch( "chest_notetrack", "end" );
-    var_1 _meth_8279( "zark_tablet_chest_open_loop", "chest_notetrack" );
+    var_1 scriptmodelplayanim( "zark_tablet_chest_open_loop", "chest_notetrack" );
 
     if ( isdefined( var_2 ) )
     {
@@ -2624,7 +2624,7 @@ getplayersteleporting()
     {
         foreach ( var_3 in level.players )
         {
-            if ( var_3 _meth_80A9( var_1 ) && !var_3 _meth_83B3() && !var_3 _meth_83B4() && !var_3 _meth_83B4() )
+            if ( var_3 istouching( var_1 ) && !var_3 isjumping() && !var_3 ishighjumping() && !var_3 ishighjumping() )
                 var_0[var_0.size] = var_3;
         }
     }
@@ -2940,7 +2940,7 @@ securityfielddetecttouched()
         {
             foreach ( var_3 in level.sqsecurityfieldtriggers )
             {
-                if ( var_1 _meth_80A9( var_3 ) )
+                if ( var_1 istouching( var_3 ) )
                 {
                     level notify( "securityFieldTouched" );
                     return;
@@ -3015,9 +3015,9 @@ dorewardsplash( var_0, var_1 )
     if ( var_2 < 60 )
     {
         maps\mp\gametypes\zombies::showteamsplashzombies( "zombie_ark_course_gold" );
-        var_3 = var_1 _meth_8554( "eggData" );
+        var_3 = var_1 getcoopplayerdatareservedint( "eggData" );
         var_3 |= 16;
-        var_1 _meth_8555( "eggData", var_3 );
+        var_1 setcoopplayerdatareservedint( "eggData", var_3 );
     }
     else if ( var_2 < 75 )
         maps\mp\gametypes\zombies::showteamsplashzombies( "zombie_ark_course_silver" );
@@ -3162,7 +3162,7 @@ waitspawnsqdrone( var_0, var_1, var_2 )
 
     if ( isdefined( var_8 ) )
     {
-        var_8 _meth_8279( "zark_electricpanel_switch_pickup_spin", "switch_notetrack" );
+        var_8 scriptmodelplayanim( "zark_electricpanel_switch_pickup_spin", "switch_notetrack" );
         var_8 thread switchpickup();
     }
 }
@@ -3171,9 +3171,9 @@ dronewaittilldropswitch()
 {
     self endon( "explode" );
     var_0 = spawn( "script_model", self.origin );
-    var_0 _meth_80B1( "zark_electricpanel_switch_01_anim" );
-    var_0 _meth_83FA( 2, 0 );
-    var_0 _meth_804D( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
+    var_0 setmodel( "zark_electricpanel_switch_01_anim" );
+    var_0 hudoutlineenable( 2, 0 );
+    var_0 linkto( self, "tag_origin", ( 0, 0, 20 ), ( 0, 0, 0 ) );
     thread dronesqcleanupswitch( var_0 );
     self waittill( "disabled", var_1 );
 
@@ -3183,7 +3183,7 @@ dronewaittilldropswitch()
     if ( !isdefined( var_1 ) )
         var_1 = self.origin;
 
-    var_0 _meth_804F();
+    var_0 unlink();
     var_0.origin = var_1;
     return var_0;
 }
@@ -3304,7 +3304,7 @@ code3_stage3_end( var_0 )
     if ( isdefined( var_4 ) )
     {
         var_4 show();
-        var_4 _meth_8279( "zark_electricpanel_switch_up_idle", "switch_notetrack" );
+        var_4 scriptmodelplayanim( "zark_electricpanel_switch_up_idle", "switch_notetrack" );
     }
 
     maps\mp\zombies\_zombies_sidequests::sidequest_iprintlnbold( "Placed switch by moon pool." );
@@ -3403,16 +3403,16 @@ doshark()
     if ( !isdefined( level.zmbshark ) )
     {
         level.zmbshark = spawn( "script_model", var_0.origin );
-        level.zmbshark _meth_80B1( "zark_shark_01" );
+        level.zmbshark setmodel( "zark_shark_01" );
         level.zmbeyeball = spawn( "script_model", var_0.origin );
-        level.zmbeyeball _meth_80B1( "zark_zom_eye_01" );
-        level.zmbeyeball _meth_8446( level.zmbshark, "j_helmet", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.zmbeyeball setmodel( "zark_zom_eye_01" );
+        level.zmbeyeball vehicle_jetbikesethoverforcescale( level.zmbshark, "j_helmet", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     level.zmbsharktriggeractive = 0;
     level.zmbshark show();
     level.zmbshark.circling = 1;
-    level.zmbshark _meth_848B( "zom_shark_circle_enter", var_0.origin, var_0.angles, "shark_notetrack" );
+    level.zmbshark scriptmodelplayanimdeltamotionfrompos( "zom_shark_circle_enter", var_0.origin, var_0.angles, "shark_notetrack" );
     thread maps\mp\mp_zombie_ark_aud::shark_enters();
     level.zmbshark waittillmatch( "shark_notetrack", "end" );
 
@@ -3425,7 +3425,7 @@ doshark()
     if ( level.zmbwaterchummed )
     {
         level.zmbsharktriggeractive = 1;
-        level.zmbshark _meth_848B( "zom_shark_circle_loop", var_0.origin, var_0.angles, "shark_notetrack" );
+        level.zmbshark scriptmodelplayanimdeltamotionfrompos( "zom_shark_circle_loop", var_0.origin, var_0.angles, "shark_notetrack" );
         thread maps\mp\mp_zombie_ark_aud::shark_loop();
 
         while ( level.zmbwaterchummed && !maps\mp\zombies\_util::is_true( level.zmbsqcagemoving ) )
@@ -3433,7 +3433,7 @@ doshark()
     }
 
     level.zmbsharktriggeractive = 0;
-    level.zmbshark _meth_827B( "zom_shark_circle_exit", "shark_notetrack" );
+    level.zmbshark scriptmodelplayanimdeltamotion( "zom_shark_circle_exit", "shark_notetrack" );
     thread maps\mp\mp_zombie_ark_aud::shark_leaves();
     level.zmbshark waittillmatch( "shark_notetrack", "end" );
     level.zmbshark.circling = undefined;
@@ -3446,7 +3446,7 @@ processenemykilled( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_
     if ( isdefined( level.processenemykilledcodefunc ) )
         self thread [[ level.processenemykilledcodefunc ]]( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 );
 
-    if ( !level.zmbwaterchummed && _func_22A( self.origin + ( 0, 0, 10 ), level.sqchumvolume ) )
+    if ( !level.zmbwaterchummed && ispointinvolume( self.origin + ( 0, 0, 10 ), level.sqchumvolume ) )
         level notify( "sq_chum_water", self.origin, var_1 );
 }
 
@@ -3489,13 +3489,13 @@ cageoperation()
         var_5.origin = ( var_5.origin[0], 596, var_5.origin[2] );
 
     var_13 makeusable();
-    var_13 _meth_80DA( "HINT_NOICON" );
+    var_13 setcursorhint( "HINT_NOICON" );
     level.zmbsqcagemoving = 0;
 
     for (;;)
     {
-        var_13 _meth_80DB( &"ZOMBIE_ARK_SQ_CAGE" );
-        var_13 _meth_80DC( &"ZOMBIES_COST_1000" );
+        var_13 sethintstring( &"ZOMBIE_ARK_SQ_CAGE" );
+        var_13 setsecondaryhintstring( &"ZOMBIES_COST_1000" );
 
         for (;;)
         {
@@ -3507,12 +3507,12 @@ cageoperation()
             wait 0.5;
         }
 
-        var_13 _meth_80DB( &"ZOMBIES_CURE_COOLDOWN_HINT" );
-        var_13 _meth_80DC( "" );
+        var_13 sethintstring( &"ZOMBIES_CURE_COOLDOWN_HINT" );
+        var_13 setsecondaryhintstring( "" );
         var_5 thread maps\mp\mp_zombie_ark_aud::cage_switch();
-        var_5 _meth_8279( "zark_electricpanel_switch_move_down", "switch_notetrack" );
+        var_5 scriptmodelplayanim( "zark_electricpanel_switch_move_down", "switch_notetrack" );
         var_5 waittillmatch( "switch_notetrack", "end" );
-        var_5 _meth_8279( "zark_electricpanel_switch_down_idle", "switch_notetrack" );
+        var_5 scriptmodelplayanim( "zark_electricpanel_switch_down_idle", "switch_notetrack" );
         var_1 thread maps\mp\mp_zombie_ark_aud::cage_down();
         level.zmbsqcagemoving = 1;
         var_12 poolclipon();
@@ -3524,9 +3524,9 @@ cageoperation()
             break;
 
         wait 30;
-        var_5 _meth_8279( "zark_electricpanel_switch_move_up", "switch_notetrack" );
+        var_5 scriptmodelplayanim( "zark_electricpanel_switch_move_up", "switch_notetrack" );
         var_5 waittillmatch( "switch_notetrack", "end" );
-        var_5 _meth_8279( "zark_electricpanel_switch_up_idle", "switch_notetrack" );
+        var_5 scriptmodelplayanim( "zark_electricpanel_switch_up_idle", "switch_notetrack" );
     }
 
     var_13 makeunusable();
@@ -3539,17 +3539,17 @@ docageanimation( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     var_11 = var_7.origin;
     var_12 = var_11 + ( 0, 40, 0 );
     var_13 = isdefined( level.zmbshark ) && maps\mp\zombies\_util::is_true( level.zmbshark.circling );
-    var_2 _meth_848B( "zark_sharkcage_lower_crane", var_0.origin, var_0.angles, "cageSequence" );
-    var_1 _meth_848B( "zark_sharkcage_lower_cage", var_0.origin, var_0.angles, "cageSequence" );
-    var_6 _meth_82AE( var_10, 3, 1, 1 );
-    var_7 _meth_82AE( var_12, 3, 1, 1 );
+    var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_lower_crane", var_0.origin, var_0.angles, "cageSequence" );
+    var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_lower_cage", var_0.origin, var_0.angles, "cageSequence" );
+    var_6 moveto( var_10, 3, 1, 1 );
+    var_7 moveto( var_12, 3, 1, 1 );
 
     if ( var_13 )
         level thread dosharkcageoztaunt();
 
     var_1 waittillmatch( "cageSequence", "end" );
-    var_2 _meth_848B( "zark_sharkcage_getin_loop_crane", var_0.origin, var_0.angles, "cageSequence" );
-    var_1 _meth_848B( "zark_sharkcage_getin_loop_cage", var_0.origin, var_0.angles, "cageSequence" );
+    var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_getin_loop_crane", var_0.origin, var_0.angles, "cageSequence" );
+    var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_getin_loop_cage", var_0.origin, var_0.angles, "cageSequence" );
     level thread setclipwhenplayerjumpsin( var_1, var_3, var_5 );
     var_3 cagedoorclipopen();
     var_1 common_scripts\utility::waittill_notify_or_timeout( "playerJumpedIn", 4 );
@@ -3566,9 +3566,9 @@ docageanimation( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     {
         level.zmbshark show();
         thread maps\mp\mp_zombie_ark_aud::shark_attack( var_1.playerinside );
-        level.zmbshark _meth_848B( "zark_sharkcage_attack_shark", var_0.origin, var_0.angles, "cageSequence" );
-        var_2 _meth_848B( "zark_sharkcage_attack_crane", var_0.origin, var_0.angles, "cageSequence" );
-        var_1 _meth_848B( "zark_sharkcage_attack_cage", var_0.origin, var_0.angles, "cageSequence" );
+        level.zmbshark scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_attack_shark", var_0.origin, var_0.angles, "cageSequence" );
+        var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_attack_crane", var_0.origin, var_0.angles, "cageSequence" );
+        var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_attack_cage", var_0.origin, var_0.angles, "cageSequence" );
         level thread handleeyeball( var_1 );
         var_1 waittillmatch( "cageSequence", "start_raise" );
         thread maps\mp\mp_zombie_ark_aud::cage_up();
@@ -3576,8 +3576,8 @@ docageanimation( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     else
     {
         thread maps\mp\mp_zombie_ark_aud::cage_up();
-        var_2 _meth_848B( "zark_sharkcage_raise_crane", var_0.origin, var_0.angles, "cageSequence" );
-        var_1 _meth_848B( "zark_sharkcage_raise_cage", var_0.origin, var_0.angles, "cageSequence" );
+        var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_raise_crane", var_0.origin, var_0.angles, "cageSequence" );
+        var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_raise_cage", var_0.origin, var_0.angles, "cageSequence" );
     }
 
     var_1 waittillmatch( "cageSequence", "close_pool" );
@@ -3585,7 +3585,7 @@ docageanimation( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     var_1 waittillmatch( "cageSequence", "cage_dropout" );
 
     if ( isdefined( var_1.playerinside ) )
-        var_1.playerinside _meth_804F();
+        var_1.playerinside unlink();
 
     var_4 thread cagedoorbottomdropplayer( var_1, var_5 );
     var_1 waittillmatch( "cageSequence", "end" );
@@ -3593,8 +3593,8 @@ docageanimation( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
     if ( var_13 )
         level.zmbshark hide();
 
-    var_2 _meth_848B( "zark_sharkcage_start_idle_crane", var_0.origin, var_0.angles, "cageSequence" );
-    var_1 _meth_848B( "zark_sharkcage_start_idle_cage", var_0.origin, var_0.angles, "cageSequence" );
+    var_2 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_start_idle_crane", var_0.origin, var_0.angles, "cageSequence" );
+    var_1 scriptmodelplayanimdeltamotionfrompos( "zark_sharkcage_start_idle_cage", var_0.origin, var_0.angles, "cageSequence" );
     level notify( "removeExtraPlayersStop" );
 }
 
@@ -3617,7 +3617,7 @@ handleeyeball( var_0 )
 {
     level endon( "sqEyeballGrabDone" );
     level thread handleeyeballend( var_0 );
-    level.zmbeyeball _meth_8420( var_0.playerinside, 3, 0 );
+    level.zmbeyeball hudoutlineenableforclient( var_0.playerinside, 3, 0 );
     var_0 waittillmatch( "cageSequence", "get_eyeball_start" );
     var_1 = level.zmbeyeball maps\mp\zombies\_zombies_sidequests::fake_use( "grabbedEyeball", ::playerisincage, undefined, "sqEyeballGrabDone", 100 );
     level.zmbeyeball delete();
@@ -3631,7 +3631,7 @@ handleeyeballend( var_0 )
     level notify( "sqEyeballGrabDone" );
 
     if ( isdefined( level.zmbeyeball ) )
-        level.zmbeyeball _meth_83FB();
+        level.zmbeyeball hudoutlinedisable();
 }
 
 playerisincage()
@@ -3647,8 +3647,8 @@ waittillsharkready()
 
 closepooldoors( var_0, var_1, var_2, var_3, var_4 )
 {
-    var_0 _meth_82AE( var_2, 2, 1, 1 );
-    var_1 _meth_82AE( var_3, 2, 1, 1 );
+    var_0 moveto( var_2, 2, 1, 1 );
+    var_1 moveto( var_3, 2, 1, 1 );
     var_0.unresolved_collision_func = undefined;
     var_1.unresolved_collision_func = undefined;
     wait 2.1;
@@ -3658,16 +3658,16 @@ closepooldoors( var_0, var_1, var_2, var_3, var_4 )
 
 poolclipon()
 {
-    self _meth_8092();
+    self dontinterpolate();
     self.origin += ( 0, 0, 1000 );
-    self _meth_8057();
+    self disconnectpaths();
 }
 
 poolclipoff()
 {
-    self _meth_8058();
+    self connectpaths();
     waitframe();
-    self _meth_8092();
+    self dontinterpolate();
     self.origin += ( 0, 0, -1000 );
 }
 
@@ -3676,9 +3676,9 @@ cagedoorbottomdropplayer( var_0, var_1 )
     if ( isdefined( var_0.playerinside ) )
         level thread cagefixplayerifwatersucks( var_0.playerinside );
 
-    self _meth_82BF();
+    self notsolid();
     wait 1.5;
-    self _meth_82BE();
+    self solid();
 
     if ( isdefined( var_0.playerinside ) )
         var_0.playerinside.insidecage = undefined;
@@ -3690,20 +3690,20 @@ cagefixplayerifwatersucks( var_0 )
 {
     if ( isdefined( var_0.disabledweaponswitch ) && var_0.disabledweaponswitch > 0 && isdefined( var_0.disabledoffhandweapons ) && var_0.disabledoffhandweapons > 0 )
     {
-        var_0 _meth_82CC();
+        var_0 enableweaponpickup();
         var_0 common_scripts\utility::_enableweaponswitch();
         var_0 common_scripts\utility::_enableoffhandweapons();
     }
 
-    var_1 = var_0 _meth_8312();
+    var_1 = var_0 getcurrentprimaryweapon();
 
     if ( issubstr( var_1, "combatknife" ) )
     {
-        var_0 _meth_830F( var_1 );
-        var_2 = var_0 _meth_830C();
+        var_0 takeweapon( var_1 );
+        var_2 = var_0 getweaponslistprimaries();
 
         if ( var_2.size > 0 )
-            var_0 _meth_8315( var_2[0] );
+            var_0 switchtoweapon( var_2[0] );
     }
 
     var_0 notify( "above_water" );
@@ -3716,7 +3716,7 @@ cagefixplayerifwatersucks( var_0 )
         var_0.isshocked = undefined;
     }
 
-    if ( !var_0 _meth_854A() && maps\mp\zombies\_util::is_true( var_0.exosuitonline ) )
+    if ( !var_0 ishighjumpallowed() && maps\mp\zombies\_util::is_true( var_0.exosuitonline ) )
     {
         var_0 maps\mp\_utility::playerallowhighjump( 1 );
         var_0 maps\mp\_utility::playerallowhighjumpdrop( 1 );
@@ -3728,13 +3728,13 @@ cagefixplayerifwatersucks( var_0 )
 
 cagedoorclipopen()
 {
-    self _meth_82BF();
+    self notsolid();
     self.open = 1;
 }
 
 cagedoorclipclose()
 {
-    self _meth_82BE();
+    self solid();
     self.open = 0;
 }
 
@@ -3747,7 +3747,7 @@ setclipwhenplayerjumpsin( var_0, var_1, var_2 )
     {
         foreach ( var_4 in level.players )
         {
-            if ( var_4 _meth_80A9( var_2 ) )
+            if ( var_4 istouching( var_2 ) )
             {
                 var_0.playerinside = var_4;
                 var_4 playlocalsound( "underwater_enter" );
@@ -3772,7 +3772,7 @@ removeextraplayers( var_0, var_1 )
     {
         foreach ( var_3 in level.players )
         {
-            if ( var_3 _meth_80A9( var_1 ) && !maps\mp\zombies\_util::is_true( var_3.insidecage ) )
+            if ( var_3 istouching( var_1 ) && !maps\mp\zombies\_util::is_true( var_3.insidecage ) )
                 var_3 thread playerteleportoutofcage( var_1 );
         }
 
@@ -3785,7 +3785,7 @@ playerteleportoutofcage( var_0 )
     maps\mp\_movers::unresolved_collision_nearest_node( self, 1 );
     wait 1;
 
-    if ( isalive( self ) && !self _meth_80A9( var_0 ) )
+    if ( isalive( self ) && !self istouching( var_0 ) )
         level thread cagefixplayerifwatersucks( self );
 }
 
@@ -3793,7 +3793,7 @@ playerlinktocage( var_0 )
 {
     self endon( "disconnect" );
     wait 0.5;
-    self _meth_807D( var_0, "tag_origin", 1, 180, 180, 180, 180, 1 );
+    self playerlinktodelta( var_0, "tag_origin", 1, 180, 180, 180, 180, 1 );
 }
 
 playerhandlewaterdamageark()
@@ -3832,7 +3832,7 @@ code3_stage5_logic()
     var_2 = var_1 maps\mp\zombies\_zombies_sidequests::fake_use( "doorUsed", ::playerhasitem, "eye", "code3_stage1_over", 80 );
     var_2 playertakeitem( "eye" );
     thread maps\mp\mp_zombie_ark_aud::open_locker( var_1 );
-    var_0 _meth_82B7( -80, 2, 0.5, 1 );
+    var_0 rotateyaw( -80, 2, 0.5, 1 );
     wait 2;
     var_3 = getent( "sqCode4", "targetname" );
 
@@ -3936,7 +3936,7 @@ waituntilplinkocomplete()
 
     if ( isdefined( var_1 ) )
     {
-        var_1 _meth_82AE( ( -124, 696, 998 ), 1.5, 0.1, 0.5 );
+        var_1 moveto( ( -124, 696, 998 ), 1.5, 0.1, 0.5 );
         var_0 = var_1 maps\mp\zombies\_zombies_sidequests::fake_use( "got_code", ::playernotholdingcode );
         var_1 delete();
     }
@@ -4000,7 +4000,7 @@ song_play( var_0 )
 
     if ( maps\mp\zombies\_util::is_true( level.sq_song_ent.playing ) )
     {
-        level.sq_song_ent _meth_80AC();
+        level.sq_song_ent stopsounds();
         level.sq_song_ent.playing = 0;
         wait 0.2;
     }
@@ -4012,16 +4012,16 @@ song_play( var_0 )
     else
         var_1 = "zmb_mus_ee_04_prvw";
 
-    level.sq_song_ent _meth_8438( var_1 );
+    level.sq_song_ent playsoundonmovingent( var_1 );
     level.sq_song_ent.playing = 1;
     wait(var_0);
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
 }
 
 song_stop()
 {
-    level.sq_song_ent _meth_80AC();
+    level.sq_song_ent stopsounds();
     level.sq_song_ent.playing = 0;
     level notify( "sq_song_stop" );
 }
@@ -4224,10 +4224,10 @@ set_side_quest_coop_data_ark()
         if ( !isdefined( var_1.joinedround1 ) || !var_1.joinedround1 )
             continue;
 
-        var_2 = var_1 _meth_8554( "eggData" );
+        var_2 = var_1 getcoopplayerdatareservedint( "eggData" );
         var_2 |= 8;
         var_1.sidequest = 1;
-        var_1 _meth_8555( "eggData", var_2 );
+        var_1 setcoopplayerdatareservedint( "eggData", var_2 );
         setmatchdata( "players", var_1.clientid, "startPrestige", var_1.sidequest );
     }
 }
@@ -4245,7 +4245,7 @@ ozphone()
     for (;;)
     {
         var_1 = var_0 maps\mp\zombies\_zombies_sidequests::fake_use( "phone", undefined, undefined, undefined, 75, 1 );
-        var_2 = bullettrace( var_1 _meth_80A8(), var_0.origin, 0, var_1, 0, 0, 0, 0, 0, 0, 0 );
+        var_2 = bullettrace( var_1 geteye(), var_0.origin, 0, var_1, 0, 0, 0, 0, 0, 0, 0 );
 
         if ( var_2["fraction"] == 1 )
         {
@@ -4275,7 +4275,7 @@ ozdoor()
             if ( var_6.origin[2] < 950 )
                 continue;
 
-            var_7 = _func_220( var_6.origin, var_1.origin );
+            var_7 = distance2dsquared( var_6.origin, var_1.origin );
 
             if ( var_7 > var_0 )
                 continue;

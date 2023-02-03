@@ -33,9 +33,9 @@ main()
     if ( !isdefined( level.func ) )
         level.func = [];
 
-    level.func["precacheMpAnim"] = ::map_restart;
-    level.func["scriptModelPlayAnim"] = ::_meth_8279;
-    level.func["scriptModelClearAnim"] = ::_meth_827A;
+    level.func["precacheMpAnim"] = ::precachempanim;
+    level.func["scriptModelPlayAnim"] = ::scriptmodelplayanim;
+    level.func["scriptModelClearAnim"] = ::scriptmodelclearanim;
 
     if ( !level.createfx_enabled )
     {
@@ -131,10 +131,10 @@ main()
     thread maps\mp\_animatedmodels::main();
     level.func["damagefeedback"] = maps\mp\gametypes\_damagefeedback::updatedamagefeedback;
     level.func["setTeamHeadIcon"] = maps\mp\_entityheadicons::setteamheadicon;
-    level.laseron_func = ::_meth_80B2;
-    level.laseroff_func = ::_meth_80B3;
-    level.connectpathsfunction = ::_meth_8058;
-    level.disconnectpathsfunction = ::_meth_8057;
+    level.laseron_func = ::laseron;
+    level.laseroff_func = ::laseroff;
+    level.connectpathsfunction = ::connectpaths;
+    level.disconnectpathsfunction = ::disconnectpaths;
     setdvar( "sm_spotLightScoreModelScale", 0.1 );
     setdvar( "sm_spotShadowFadeTime", 1.0 );
     setdvar( "r_specularcolorscale", 2.5 );
@@ -154,7 +154,7 @@ main()
     setupdestructiblekillcaments();
 
     if ( level.virtuallobbyactive == 0 && !( isdefined( level.iszombiegame ) && level.iszombiegame ) )
-        precacheitem( "bomb_site_mp" );
+        precacheshellshock( "bomb_site_mp" );
 
     level.fauxvehiclecount = 0;
     load_costume_indices();
@@ -204,14 +204,14 @@ setupexploders()
             if ( isdefined( var_0[var_2].targetname ) && var_0[var_2].targetname == "exploder" )
             {
                 var_0[var_2] hide();
-                var_0[var_2] _meth_82BF();
+                var_0[var_2] notsolid();
                 continue;
             }
 
             if ( isdefined( var_0[var_2].targetname ) && var_0[var_2].targetname == "exploderchunk" )
             {
                 var_0[var_2] hide();
-                var_0[var_2] _meth_82BF();
+                var_0[var_2] notsolid();
             }
         }
     }
@@ -341,7 +341,7 @@ hurtplayersthink()
     {
         foreach ( var_1 in level.players )
         {
-            if ( var_1 _meth_80A9( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
+            if ( var_1 istouching( self ) && maps\mp\_utility::isreallyalive( var_1 ) )
                 var_1 maps\mp\_utility::_suicide();
         }
 
@@ -369,7 +369,7 @@ setupdestructiblekillcaments()
         var_5 = bullettrace( var_3, var_4, 0, var_2 );
         var_2.killcament = spawn( "script_model", var_5["position"] );
         var_2.killcament.targetname = "killCamEnt_destructible_vehicle";
-        var_2.killcament _meth_834D( "explosive" );
+        var_2.killcament setscriptmoverkillcam( "explosive" );
         var_2 thread deletedestructiblekillcament();
     }
 
@@ -382,7 +382,7 @@ setupdestructiblekillcaments()
         var_5 = bullettrace( var_3, var_4, 0, var_2 );
         var_2.killcament = spawn( "script_model", var_5["position"] );
         var_2.killcament.targetname = "killCamEnt_destructible_toy";
-        var_2.killcament _meth_834D( "explosive" );
+        var_2.killcament setscriptmoverkillcam( "explosive" );
         var_2 thread deletedestructiblekillcament();
     }
 
@@ -395,7 +395,7 @@ setupdestructiblekillcaments()
         var_5 = bullettrace( var_3, var_4, 0, var_2 );
         var_2.killcament = spawn( "script_model", var_5["position"] );
         var_2.killcament.targetname = "killCamEnt_explodable_barrel";
-        var_2.killcament _meth_834D( "explosive" );
+        var_2.killcament setscriptmoverkillcam( "explosive" );
         var_2 thread deletedestructiblekillcament();
     }
 }

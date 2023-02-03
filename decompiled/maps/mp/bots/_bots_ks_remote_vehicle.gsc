@@ -41,7 +41,7 @@ bot_killstreak_remote_control( var_0, var_1, var_2, var_3, var_4 )
 
     if ( isdefined( self.node_ambushing_from ) )
     {
-        var_8 = self _meth_835B();
+        var_8 = self botgetscriptgoalradius();
         var_9 = distancesquared( self.origin, self.node_ambushing_from.origin );
 
         if ( var_9 < squared( var_8 ) )
@@ -68,14 +68,14 @@ bot_killstreak_remote_control( var_0, var_1, var_2, var_3, var_4 )
 
                 foreach ( var_14 in var_12 )
                 {
-                    if ( _func_20C( var_14 ) )
+                    if ( nodeexposedtosky( var_14 ) )
                     {
                         var_15 = getlinkednodes( var_14 );
                         var_16 = 0;
 
                         foreach ( var_18 in var_15 )
                         {
-                            if ( _func_20C( var_18 ) )
+                            if ( nodeexposedtosky( var_18 ) )
                                 var_16++;
                         }
 
@@ -87,7 +87,7 @@ bot_killstreak_remote_control( var_0, var_1, var_2, var_3, var_4 )
 
             if ( var_10 )
             {
-                var_21 = self _meth_8380( var_11, "node_exposed" );
+                var_21 = self botnodescoremultiple( var_11, "node_exposed" );
 
                 foreach ( var_14 in var_21 )
                 {
@@ -101,12 +101,12 @@ bot_killstreak_remote_control( var_0, var_1, var_2, var_3, var_4 )
                 }
             }
             else if ( var_11.size > 0 )
-                var_7 = self _meth_8364( var_11, min( 3, var_11.size ), "node_hide" );
+                var_7 = self botnodepick( var_11, min( 3, var_11.size ), "node_hide" );
 
             if ( !isdefined( var_7 ) )
                 return 0;
 
-            self _meth_8355( var_7, "tactical" );
+            self botsetscriptgoalnode( var_7, "tactical" );
         }
     }
 
@@ -135,17 +135,17 @@ bot_killstreak_remote_control( var_0, var_1, var_2, var_3, var_4 )
 
     if ( !isdefined( var_7 ) )
     {
-        if ( self _meth_817C() == "prone" )
-            self _meth_8352( "prone" );
-        else if ( self _meth_817C() == "crouch" )
-            self _meth_8352( "crouch" );
+        if ( self getstance() == "prone" )
+            self botsetstance( "prone" );
+        else if ( self getstance() == "crouch" )
+            self botsetstance( "crouch" );
     }
-    else if ( self _meth_837B( "strategyLevel" ) > 0 )
+    else if ( self botgetdifficultysetting( "strategyLevel" ) > 0 )
     {
         if ( randomint( 100 ) > 50 )
-            self _meth_8352( "prone" );
+            self botsetstance( "prone" );
         else
-            self _meth_8352( "crouch" );
+            self botsetstance( "crouch" );
     }
 
     maps\mp\bots\_bots_ks::bot_switch_to_killstreak_weapon( var_0, var_1, var_0.weapon );
@@ -171,17 +171,17 @@ bot_end_control_watcher( var_0 )
     self endon( "disconnect" );
     self waittill( "control_func_done" );
     try_clear_hide_goal( var_0 );
-    self _meth_8352( "none" );
-    self _meth_8353( 0, 0 );
-    self _meth_8351( "disable_movement", 0 );
-    self _meth_8351( "disable_rotation", 0 );
+    self botsetstance( "none" );
+    self botsetscriptmove( 0, 0 );
+    self botsetflag( "disable_movement", 0 );
+    self botsetflag( "disable_rotation", 0 );
     self.vehicle_controlling = undefined;
 }
 
 try_clear_hide_goal( var_0 )
 {
-    if ( isdefined( var_0 ) && self _meth_8365() && isdefined( self _meth_8376() ) && self _meth_8376() == var_0 )
-        self _meth_8356();
+    if ( isdefined( var_0 ) && self bothasscriptgoal() && isdefined( self botgetscriptgoalnode() ) && self botgetscriptgoalnode() == var_0 )
+        self botclearscriptgoal();
 }
 
 bot_end_control_on_vehicle_death( var_0 )
@@ -249,7 +249,7 @@ find_closest_heli_node_2d( var_0, var_1 )
 
     foreach ( var_5 in level.bot_heli_nodes )
     {
-        var_6 = _func_220( var_0, [[ level.bot_ks_funcs["heli_node_get_origin"][var_1] ]]( var_5 ) );
+        var_6 = distance2dsquared( var_0, [[ level.bot_ks_funcs["heli_node_get_origin"][var_1] ]]( var_5 ) );
 
         if ( var_6 < var_3 )
         {
@@ -271,8 +271,8 @@ bot_killstreak_get_zone_allies_outside( var_0 )
 
     foreach ( var_5 in var_1 )
     {
-        var_6 = var_5 _meth_8387();
-        var_7 = _func_206( var_6 );
+        var_6 = var_5 getnearestnode();
+        var_7 = getnodezone( var_6 );
 
         if ( isdefined( var_7 ) )
             var_2[var_7] = common_scripts\utility::array_add( var_2[var_7], var_5 );
@@ -291,8 +291,8 @@ bot_killstreak_get_zone_enemies_outside( var_0 )
 
     foreach ( var_5 in var_1 )
     {
-        var_6 = var_5 _meth_8387();
-        var_7 = _func_206( var_6 );
+        var_6 = var_5 getnearestnode();
+        var_7 = getnodezone( var_6 );
         var_2[var_7] = common_scripts\utility::array_add( var_2[var_7], var_5 );
     }
 
@@ -331,9 +331,9 @@ bot_killstreak_get_outside_players( var_0, var_1, var_2 )
 
         if ( var_7 )
         {
-            var_8 = var_6 _meth_8387();
+            var_8 = var_6 getnearestnode();
 
-            if ( isdefined( var_8 ) && _func_20C( var_8 ) )
+            if ( isdefined( var_8 ) && nodeexposedtosky( var_8 ) )
                 var_3 = common_scripts\utility::array_add( var_3, var_6 );
         }
     }
@@ -451,7 +451,7 @@ bot_control_heli_main_move_loop( var_0, var_1 )
 
             if ( isdefined( var_6 ) )
             {
-                self _meth_8351( "disable_movement", 0 );
+                self botsetflag( "disable_movement", 0 );
                 var_7 = "waiting_till_goal";
                 var_10 = 3.0;
                 var_9 = self.vehicle_controlling.origin;
@@ -469,9 +469,9 @@ bot_control_heli_main_move_loop( var_0, var_1 )
                 var_17 = var_6[2] - self.vehicle_controlling.origin[2];
 
                 if ( var_17 > 10 )
-                    self _meth_837E( "lethal" );
+                    self botpressbutton( "lethal" );
                 else if ( var_17 < -10 )
-                    self _meth_837E( "tactical" );
+                    self botpressbutton( "tactical" );
             }
 
             var_18 = var_6 - self.vehicle_controlling.origin;
@@ -483,10 +483,10 @@ bot_control_heli_main_move_loop( var_0, var_1 )
 
             if ( var_8 < bot_get_heli_goal_dist_sq( var_1 ) )
             {
-                self _meth_8353( 0, 0 );
-                self _meth_8351( "disable_movement", 1 );
+                self botsetscriptmove( 0, 0 );
+                self botsetflag( "disable_movement", 1 );
 
-                if ( self _meth_836B() == "recruit" )
+                if ( self botgetdifficulty() == "recruit" )
                     self.next_goal_time = gettime() + randomintrange( 5000, 7000 );
                 else
                     self.next_goal_time = gettime() + randomintrange( 3000, 5000 );
@@ -498,7 +498,7 @@ bot_control_heli_main_move_loop( var_0, var_1 )
                 var_18 = var_6 - self.vehicle_controlling.origin;
                 var_19 = vectortoangles( var_18 );
                 var_20 = common_scripts\utility::ter_op( var_8 < bot_get_heli_slowdown_dist_sq( var_1 ), 0.5, 1.0 );
-                self _meth_8353( var_19[1], var_11, var_20 );
+                self botsetscriptmove( var_19[1], var_11, var_20 );
                 var_10 -= var_11;
 
                 if ( var_10 <= 0.0 )
@@ -536,7 +536,7 @@ get_random_outside_target()
     if ( var_0.size > 0 )
     {
         var_6 = common_scripts\utility::random( var_0 );
-        var_7 = common_scripts\utility::random( _func_203( var_6 ) );
+        var_7 = common_scripts\utility::random( getzonenodes( var_6 ) );
         var_5 = var_7.origin;
     }
     else
@@ -554,7 +554,7 @@ get_random_outside_target()
             var_10 = var_8[randomint( var_8.size )];
             var_5 = var_10.origin;
 
-            if ( _func_20C( var_10 ) && _func_220( var_10.origin, self.vehicle_controlling.origin ) > 62500 )
+            if ( nodeexposedtosky( var_10 ) && distance2dsquared( var_10.origin, self.vehicle_controlling.origin ) > 62500 )
                 break;
         }
     }

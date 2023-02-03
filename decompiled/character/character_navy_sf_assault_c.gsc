@@ -3,11 +3,11 @@
 
 main()
 {
-    self _meth_80B1( "navy_body_c" );
+    self setmodel( "navy_body_c" );
     self attach( "navy_head_c", "", 1 );
     self.headmodel = "navy_head_c";
     self.voice = "sentinel";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
 }
 
 precache()

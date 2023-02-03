@@ -61,9 +61,9 @@ intro_cave_rumble()
     for (;;)
     {
         common_scripts\utility::flag_wait( "intro_cave_waterfall_trigger" );
-        var_1 _meth_80AE( "ie_cave_rumble" );
+        var_1 playrumblelooponentity( "ie_cave_rumble" );
         common_scripts\utility::flag_waitopen( "intro_cave_waterfall_trigger" );
-        var_1 _meth_80AF( "ie_cave_rumble" );
+        var_1 stoprumble( "ie_cave_rumble" );
         wait 0.05;
     }
 }
@@ -74,7 +74,7 @@ intro_cave_rumble_cleanup()
 
     if ( isdefined( self ) )
     {
-        self _meth_80AF( "ie_cave_rumble" );
+        self stoprumble( "ie_cave_rumble" );
         self delete();
     }
 }
@@ -90,7 +90,7 @@ introscreen2()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "irons_estate_cliffs_tr" ) )
+        if ( !istransientloaded( "irons_estate_cliffs_tr" ) )
             level waittill( "tff_post_briefing_to_cliffs" );
     }
 
@@ -101,49 +101,49 @@ introscreen2()
 intro_player()
 {
     level.player freezecontrols( 1 );
-    level.player _meth_8304( 0 );
+    level.player allowsprint( 0 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    level.player _meth_8131( 0 );
-    level.player _meth_831D();
-    level.player _meth_817D( "crouch" );
+    level.player allowfire( 0 );
+    level.player disableweapons();
+    level.player setstance( "crouch" );
     wait 1.25;
-    level.player _meth_811A( 0 );
-    level.player _meth_8118( 0 );
+    level.player allowprone( 0 );
+    level.player allowstand( 0 );
     var_0 = common_scripts\utility::getstruct( "intro_start", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1.angles = var_0.angles;
-    level.player _meth_807C( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
+    level.player playerlinkto( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
     var_1 delete();
     waitframe();
     var_1 = spawn( "script_model", level.player getorigin() );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1.angles = var_0.angles;
-    level.player _meth_807D( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
     common_scripts\utility::flag_wait( "introscreen2_complete" );
     soundscripts\_snd::snd_message( "aud_patching_in_foley" );
     wait 0.5;
-    level.player _meth_80A2( 0.5, 0.25, 0.25, 60, 60, 40, 20 );
+    level.player lerpviewangleclamp( 0.5, 0.25, 0.25, 60, 60, 40, 20 );
     common_scripts\utility::flag_wait( "drone_passed" );
     wait 0.5;
-    level.player _meth_8322();
-    var_2 = level.player _meth_830B();
-    level.player _meth_8316( var_2[0] );
+    level.player enableweaponswitch();
+    var_2 = level.player getweaponslistall();
+    level.player switchtoweaponimmediate( var_2[0] );
     wait 0.05;
-    level.player _meth_830F( "s1_unarmed" );
-    level.player _meth_8130( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_81E1( 1 );
-    level.player _meth_831E();
+    level.player takeweapon( "s1_unarmed" );
+    level.player allowmelee( 1 );
+    level.player allowsprint( 1 );
+    level.player allowads( 1 );
+    level.player setmovespeedscale( 1 );
+    level.player enableweapons();
     wait 1;
     var_1 delete();
-    level.player _meth_811A( 1 );
-    level.player _meth_8118( 1 );
+    level.player allowprone( 1 );
+    level.player allowstand( 1 );
     level.player freezecontrols( 0 );
-    level.player _meth_8304( 1 );
+    level.player allowsprint( 1 );
     level.player thread maps\_shg_utility::enable_features_exiting_cinema( 1 );
-    level.player _meth_8131( 1 );
+    level.player allowfire( 1 );
     thread player_grapple_check();
 }
 
@@ -151,38 +151,38 @@ player_grapple_check()
 {
     level waittill( "ready_hooks" );
     wait 1.5;
-    level.player _meth_831D();
+    level.player disableweapons();
     wait 0.25;
 
-    if ( level.player _meth_817C() != "stand" )
-        level.player _meth_817D( "stand" );
+    if ( level.player getstance() != "stand" )
+        level.player setstance( "stand" );
 
-    var_0 = level.player _meth_8311();
+    var_0 = level.player getcurrentweapon();
     level.player.grapple["dist_max"] = 0;
     level.player maps\_grapple::grapple_give();
     level.player maps\_grapple::grapple_switch( var_0 != level.player.grapple["weapon"], 1, 0 );
-    level.player _meth_8321();
+    level.player disableweaponswitch();
     wait 0.25;
-    level.player _meth_831E();
-    level.player _meth_8482();
+    level.player enableweapons();
+    level.player hideviewmodel();
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
     var_1 hide();
-    var_1 _meth_80B1( "worldhands_sentinel_udt_mitchell_screen" );
-    var_1 _meth_80A6( level.player, "J_Elbow_LE", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
+    var_1 setmodel( "worldhands_sentinel_udt_mitchell_screen" );
+    var_1 linktoplayerview( level.player, "J_Elbow_LE", ( 0, 0, 0 ), ( 0, 0, 0 ), 1 );
     level notify( "start_grapplinghook_hud_gearup" );
     wait 0.5;
     var_1 show();
-    level.player _meth_8343( "viewhands_sentinel_udt_mitchell_noscreen" );
-    level.player _meth_8481();
-    level.player _meth_84B5( "ie_intro_grapple_inspect_player" );
+    level.player setviewmodel( "viewhands_sentinel_udt_mitchell_noscreen" );
+    level.player showviewmodel();
+    level.player setviewmodelanim( "ie_intro_grapple_inspect_player" );
     thread maps\_trigger::spawneffectonplayerview( "ie_light_intro_dev" );
     level waittill( "grapple_check_bink_done" );
     thread maps\_trigger::stopeffectonplayerview( "ie_light_intro_dev" );
     level.player maps\_grapple::grapple_take();
-    level.player _meth_8316( var_0 );
+    level.player switchtoweaponimmediate( var_0 );
     wait 0.25;
-    level.player _meth_8322();
-    level.player _meth_8343( "viewhands_sentinel_udt_mitchell" );
+    level.player enableweaponswitch();
+    level.player setviewmodel( "viewhands_sentinel_udt_mitchell" );
     var_1 delete();
     level.player.grapple["ammoCounterHide"] = 0;
     level.player maps\_grapple::grapple_give();
@@ -190,15 +190,15 @@ player_grapple_check()
 
 intro_bink()
 {
-    _func_0D3( "cg_cinematicCanPause", "1" );
-    _func_057( "grapplinghook_hud_gearup", 1 );
-    _func_0D3( "cg_cinematicFullScreen", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "1" );
+    cinematicingame( "grapplinghook_hud_gearup", 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
     level waittill( "start_grapplinghook_hud_gearup" );
     pausecinematicingame( 0 );
     wait 0.05;
     wait 6;
     level notify( "grapple_check_bink_done" );
-    _func_0D3( "cg_cinematicCanPause", "0" );
+    setsaveddvar( "cg_cinematicCanPause", "0" );
 }
 
 intro_drone()
@@ -222,7 +222,7 @@ intro_allies()
 {
     self.ignoreall = 1;
     maps\_utility::enable_cqbwalk();
-    self _meth_81A6( self.origin );
+    self setgoalpos( self.origin );
 
     if ( self.animname == "knox" )
         level.intro_anim_struct maps\_anim::anim_first_frame_solo( self, "ie_intro_idle" );
@@ -234,9 +234,9 @@ intro_allies()
     if ( self.animname == "knox" )
     {
         level.knox_pda = spawn( "script_model", ( 0, 0, 0 ) );
-        level.knox_pda _meth_80B1( "greece_drone_control_pad" );
+        level.knox_pda setmodel( "greece_drone_control_pad" );
         playfxontag( level._effect["ie_light_teal"], level.knox_pda, "tag_origin" );
-        level.knox_pda _meth_804D( self, "tag_weapon_chest", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        level.knox_pda linkto( self, "tag_weapon_chest", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         level.intro_anim_struct maps\_anim::anim_single_solo( self, "ie_intro_idle" );
         level.intro_anim_struct thread maps\_anim::anim_single_solo( self, "ie_intro_ally" );
         wait 9;

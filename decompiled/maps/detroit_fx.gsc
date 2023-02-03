@@ -79,12 +79,12 @@ main()
 
 set_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_tonemap", 2 );
+        setsaveddvar( "r_tonemap", 2 );
 
         if ( level.nextgen )
-            _func_0D3( "fx_cast_shadow", 0 );
+            setsaveddvar( "fx_cast_shadow", 0 );
     }
 }
 
@@ -492,7 +492,7 @@ intro_rain_splat_onlens()
 intro_warbird_rotorwash_fly( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
-    var_1 _meth_804D( var_0, "tag_origin", ( 0, 0, -300 ), ( -90, 0, 0 ) );
+    var_1 linkto( var_0, "tag_origin", ( 0, 0, -300 ), ( -90, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "det_intro_warbird_rotorwash_fly" ), var_1, "tag_origin" );
     common_scripts\utility::flag_wait( "level_intro_cinematic_complete" );
     stopfxontag( common_scripts\utility::getfx( "det_intro_warbird_rotorwash_fly" ), var_1, "tag_origin" );
@@ -617,10 +617,10 @@ smoke_clear_basement_bones()
     var_1 = common_scripts\utility::spawn_tag_origin();
 
     if ( isdefined( level.burke_bike ) )
-        var_0 _meth_804D( level.burke_bike, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 180 ) );
+        var_0 linkto( level.burke_bike, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 180 ) );
 
     if ( isdefined( level.joker_bike ) )
-        var_1 _meth_804D( level.joker_bike, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 180 ) );
+        var_1 linkto( level.joker_bike, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 180 ) );
 
     playfxontag( common_scripts\utility::getfx( "det_fog_ground_hoverbike_clear" ), var_0, "TAG_ORIGIN" );
     playfxontag( common_scripts\utility::getfx( "det_fog_ground_hoverbike_clear" ), var_1, "TAG_ORIGIN" );
@@ -727,7 +727,7 @@ det_helmet_smash_fx( var_0 )
 det_knife_stab_fx( var_0 )
 {
     playfxontag( common_scripts\utility::getfx( "det_school_stabs" ), var_0, "J_Clavicle_RI" );
-    var_0 _meth_80B1( "kva_hazmat_body_a_stabbed" );
+    var_0 setmodel( "kva_hazmat_body_a_stabbed" );
 }
 
 det_knife_pull( var_0 )
@@ -812,8 +812,8 @@ det_helicopter_explo( var_0 )
     stopfxontag( common_scripts\utility::getfx( "det_heli_shot_rnr" ), var_0, "TAG_BODY" );
     wait 0.2;
     playfxontag( common_scripts\utility::getfx( "det_heli_explosion_rnr" ), var_0, "TAG_ORIGIN" );
-    var_0 _meth_8048( "main_rotor_jnt" );
-    var_0 _meth_8048( "main_rotor2_jnt" );
+    var_0 hidepart( "main_rotor_jnt" );
+    var_0 hidepart( "main_rotor2_jnt" );
     wait 1.9;
     common_scripts\_exploder::exploder( 16002 );
     wait 0.7;

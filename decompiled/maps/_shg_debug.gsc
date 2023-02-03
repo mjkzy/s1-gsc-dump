@@ -44,7 +44,7 @@ create_debug_text_hud( var_0, var_1, var_2, var_3, var_4, var_5 )
 
 print_debug_text_hud( var_0, var_1 )
 {
-    level.debug_text_hud[var_0] _meth_80D7( var_1 );
+    level.debug_text_hud[var_0] setvalue( var_1 );
 }
 
 print_debug_text_string_hud( var_0, var_1 )

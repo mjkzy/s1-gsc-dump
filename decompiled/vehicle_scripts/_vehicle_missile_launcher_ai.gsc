@@ -69,14 +69,14 @@ fire_missles_at_target_array_repeated( var_0, var_1, var_2, var_3, var_4, var_5,
             {
                 var_16 = getdvarint( "cg_fov" );
 
-                if ( !level.player _meth_8214( self.origin, var_16, 250 ) )
+                if ( !level.player worldpointinreticle_circle( self.origin, var_16, 250 ) )
                     var_15 = 0;
             }
 
             if ( var_15 && var_4 && var_9 )
             {
                 var_17 = self gettagorigin( self.missiletags[0] );
-                var_18 = level.player _meth_80A8() - var_17;
+                var_18 = level.player geteye() - var_17;
                 var_18 *= 0.75;
                 var_19 = bullettrace( var_17, var_17 + var_18, 1, self, 0, 0, 0 );
 
@@ -182,7 +182,7 @@ fire_missles_at_target_array( var_0, var_1, var_2, var_3 )
             if ( !isdefined( var_11 ) )
                 continue;
 
-            if ( !level.player _meth_8214( var_11.origin, var_7, 500 ) )
+            if ( !level.player worldpointinreticle_circle( var_11.origin, var_7, 500 ) )
             {
                 var_8[var_8.size] = var_11;
                 continue;
@@ -244,7 +244,7 @@ update_dummy_target_position( var_0, var_1, var_2 )
     var_5 = undefined;
 
     if ( isplayer( var_2 ) )
-        var_3 = level.player _meth_80A8()[2] - var_2.origin[2];
+        var_3 = level.player geteye()[2] - var_2.origin[2];
 
     if ( randomfloat( 100 ) > 50 )
         var_5 = randomfloatrange( 30, 40 );
@@ -255,7 +255,7 @@ update_dummy_target_position( var_0, var_1, var_2 )
 
     while ( isvalidmissile( var_0 ) )
     {
-        var_6 = var_0 _meth_81B0( ( 0, var_5, 0 ) );
+        var_6 = var_0 localtoworldcoords( ( 0, var_5, 0 ) );
         var_7 = var_6 - var_0.origin;
         var_8 = var_2.origin + ( var_7[0], var_7[1], var_3 + var_4 );
 
@@ -263,9 +263,9 @@ update_dummy_target_position( var_0, var_1, var_2 )
             var_1.origin = var_8;
         else
         {
-            var_1 _meth_804F();
+            var_1 unlink();
             var_1.origin = var_8;
-            var_1 _meth_804D( var_2 );
+            var_1 linkto( var_2 );
         }
 
         waitframe();
@@ -360,7 +360,7 @@ walker_tank_missile_fire( var_0, var_1, var_2, var_3, var_4 )
             thread update_dummy_target_position( var_10, var_11, var_3 );
 
         if ( isdefined( var_10 ) && isvalidmissile( var_10 ) )
-            var_10 _meth_81D9( var_11 );
+            var_10 missile_settargetent( var_11 );
     }
 
     while ( isdefined( var_10 ) )
@@ -368,7 +368,7 @@ walker_tank_missile_fire( var_0, var_1, var_2, var_3, var_4 )
         waitframe();
 
         if ( isvalidmissile( var_10 ) && is_abort_missile( var_9, self ) )
-            var_10 _meth_81DB();
+            var_10 missile_cleartarget();
     }
 
     if ( var_5 )

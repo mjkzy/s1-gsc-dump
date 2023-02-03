@@ -32,7 +32,7 @@ main( var_0, var_1, var_2 )
 
 init_local()
 {
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     handle_vehicle_ai();
     self.shock_distance = 1500;
     self.black_distance = 1500;
@@ -173,7 +173,7 @@ walker_tank_turret_think( var_0 )
         if ( !isdefined( self.ai_target ) )
         {
             var_1 = common_scripts\utility::get_enemy_team( self.script_team );
-            var_2 = _func_0D6( var_1 );
+            var_2 = getaiarray( var_1 );
 
             if ( isenemyteam( level.player.team, self.script_team ) )
                 var_2 = common_scripts\utility::array_add( var_2, level.player );
@@ -245,11 +245,11 @@ fire_at_target_until_dead( var_0 )
     var_5 = 5;
     var_6 = randomfloatrange( var_4, var_5 );
     var_7 = 0;
-    self _meth_8135( self.script_team );
-    self _meth_8065( "manual" );
-    self _meth_8106( var_0 );
-    self _meth_8179();
-    self _meth_80E2();
+    self setturretteam( self.script_team );
+    self setmode( "manual" );
+    self settargetentity( var_0 );
+    self turretfireenable();
+    self startfiring();
 
     while ( var_7 < var_3 && vehicle_scripts\_vehicle_turret_ai::is_valid_target( var_0 ) )
     {
@@ -257,9 +257,9 @@ fire_at_target_until_dead( var_0 )
         wait 0.05;
     }
 
-    self _meth_80E3();
-    self _meth_815C();
-    self _meth_8108();
+    self stopfiring();
+    self turretfiredisable();
+    self cleartargetentity();
 
     if ( vehicle_scripts\_vehicle_turret_ai::is_valid_target( var_0 ) )
         decrement_claimed_refcount( var_0 );
@@ -271,24 +271,24 @@ fire_at_target_until_dead( var_0 )
 launchers_rotate_up()
 {
     var_0 = 1;
-    self _meth_8144( %walker_launcher_up_left_add, 1, 0, 1 );
-    self _meth_8117( %walker_launcher_up_left_add, 1 );
-    self _meth_8144( %walker_launcher_up_right_add, 1, 0, 1 );
-    self _meth_8117( %walker_launcher_up_right_add, 1 );
-    self _meth_814C( %walker_launcher_left_root, 1.0, var_0, 1 );
-    self _meth_814C( %walker_launcher_right_root, 1.0, var_0, 1 );
+    self setanimknoblimited( %walker_launcher_up_left_add, 1, 0, 1 );
+    self setanimtime( %walker_launcher_up_left_add, 1 );
+    self setanimknoblimited( %walker_launcher_up_right_add, 1, 0, 1 );
+    self setanimtime( %walker_launcher_up_right_add, 1 );
+    self setanimlimited( %walker_launcher_left_root, 1.0, var_0, 1 );
+    self setanimlimited( %walker_launcher_right_root, 1.0, var_0, 1 );
     wait(var_0);
 }
 
 launchers_rotate_down()
 {
     var_0 = 1;
-    self _meth_8144( %walker_launcher_up_left_add, 1, 0, 1 );
-    self _meth_8117( %walker_launcher_up_left_add, 1 );
-    self _meth_8144( %walker_launcher_up_right_add, 1, 0, 1 );
-    self _meth_8117( %walker_launcher_up_right_add, 1 );
-    self _meth_814C( %walker_launcher_left_root, 0.01, var_0, 1 );
-    self _meth_814C( %walker_launcher_right_root, 0.01, var_0, 1 );
+    self setanimknoblimited( %walker_launcher_up_left_add, 1, 0, 1 );
+    self setanimtime( %walker_launcher_up_left_add, 1 );
+    self setanimknoblimited( %walker_launcher_up_right_add, 1, 0, 1 );
+    self setanimtime( %walker_launcher_up_right_add, 1 );
+    self setanimlimited( %walker_launcher_left_root, 0.01, var_0, 1 );
+    self setanimlimited( %walker_launcher_right_root, 0.01, var_0, 1 );
     wait(var_0);
 }
 
@@ -303,7 +303,7 @@ death_cleanup()
 stop_firing_for_death_anim( var_0 )
 {
     var_0 waittill( "stop_vehicle_turret_ai" );
-    self _meth_80E3();
-    self _meth_815C();
-    self _meth_8108();
+    self stopfiring();
+    self turretfiredisable();
+    self cleartargetentity();
 }

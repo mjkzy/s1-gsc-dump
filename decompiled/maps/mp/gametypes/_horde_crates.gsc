@@ -16,7 +16,7 @@ hordecratethink( var_0 )
     maps\mp\killstreaks\_airdrop::cratesetuphintstrings( var_1 );
     childthread crateallcapturethinkhorde( 5 );
     level thread removeonnextairdrop( self );
-    self.friendlymodel _meth_83FA( 5, 1 );
+    self.friendlymodel hudoutlineenable( 5, 1 );
 
     for (;;)
     {
@@ -44,11 +44,11 @@ hordecratethink( var_0 )
                 var_0 = "perk_armory";
         }
 
-        var_2 _meth_82FB( "ui_horde_armory_type", var_0 );
+        var_2 setclientomnvar( "ui_horde_armory_type", var_0 );
         var_2.lastdroptype = var_0;
         var_2.usingarmory = 1;
-        var_2 _meth_82FB( "ui_horde_show_armory", 1 );
-        self.friendlymodel _meth_83FB();
+        var_2 setclientomnvar( "ui_horde_show_armory", 1 );
+        self.friendlymodel hudoutlinedisable();
         self playsound( "orbital_pkg_use_self_destruct" );
         maps\mp\killstreaks\_airdrop::deletecrate();
     }
@@ -121,7 +121,7 @@ isplayernearlocation( var_0 )
 
     foreach ( var_3 in level.participants )
     {
-        var_4 = _func_220( var_3.origin, var_0 );
+        var_4 = distance2dsquared( var_3.origin, var_0 );
 
         if ( var_4 < 4096 )
         {

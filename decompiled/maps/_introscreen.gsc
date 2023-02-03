@@ -59,7 +59,7 @@ introscreen_generic_fade_in( var_0, var_1, var_2, var_3 )
     wait(var_1);
     maps\_hud_util::fade_in( var_2, var_0 );
     wait(var_2);
-    _func_0D3( "com_cinematicEndInWhite", 0 );
+    setsaveddvar( "com_cinematicEndInWhite", 0 );
 }
 
 introscreen_corner_line( var_0, var_1, var_2, var_3 )
@@ -219,7 +219,7 @@ introscreen( var_0, var_1 )
     level.chyron.text_incoming = 0;
     level.chyron.strips_disabled = 0;
     level.chyron.sound_org = spawn( "script_origin", level.player.origin );
-    level.chyron.sound_org _meth_804D( level.player );
+    level.chyron.sound_org linkto( level.player );
     level.chyron.no_bg = var_0;
 
     if ( !var_0 )
@@ -281,7 +281,7 @@ name_drift()
     self.alpha = 0.8;
     var_2 = 4;
     self moveovertime( var_2 * 3 );
-    self _meth_808B( var_2 * 1.5 );
+    self changefontscaleovertime( var_2 * 1.5 );
     self.x += randomintrange( 5, 10 );
     self.y -= randomintrange( 3, 12 );
     self.fontscale *= randomfloatrange( 1.2, 1.3 );
@@ -354,7 +354,7 @@ quick_cursor( var_0, var_1 )
     var_2.foreground = 1;
     var_2.hidewheninmenu = 1;
     var_2.alpha = 0.8;
-    var_2 _meth_80CC( "white", 1, 35 );
+    var_2 setshader( "white", 1, 35 );
     var_2.color = ( 0.87, 0.79, 0.45 );
     var_2 moveovertime( var_1 );
     var_2 fadeovertime( var_1 * 0.5 );
@@ -572,7 +572,7 @@ faze_out( var_0, var_1 )
         var_2.foreground = 1;
         var_2.hidewheninmenu = 1;
         var_2.alpha = 0;
-        var_2 _meth_80CC( "white", 1, 60 );
+        var_2 setshader( "white", 1, 60 );
         var_2.color = ( 0.87, 0.79, 0.45 );
         var_2 fadeovertime( 0.25 );
         var_2.alpha = 0.1;
@@ -944,7 +944,7 @@ create_strip( var_0 )
     var_2.y = var_6.y;
     var_2.width = var_6.width;
     var_2.height = var_6.height;
-    var_2 _meth_80CC( "white", var_6.width, var_6.height );
+    var_2 setshader( "white", var_6.width, var_6.height );
     var_2.alpha = var_6.alpha;
     var_2.color = var_6.color;
     var_2.horzalign = "left";
@@ -1011,7 +1011,7 @@ game_messages_startup()
     level.game_messages.last_strips = [];
     level.game_messages.artifacts = [];
     level.game_messages.sound_org = spawn( "script_origin", level.player.origin );
-    level.game_messages.sound_org _meth_804D( level.player );
+    level.game_messages.sound_org linkto( level.player );
 }
 
 game_messages_shutdown()
@@ -1159,7 +1159,7 @@ stylized_fadeout( var_0, var_1, var_2, var_3 )
     var_4.hidewheninmenu = 1;
     var_4.alpha = 0;
     var_5 = var_3 * 40 + 20;
-    var_4 _meth_80CC( "white", 1, var_5 );
+    var_4 setshader( "white", 1, var_5 );
     var_4.color = ( 0.87, 0.79, 0.45 );
     var_4 fadeovertime( 0.25 );
     var_4.alpha = 0.1;

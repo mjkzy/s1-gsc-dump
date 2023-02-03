@@ -26,7 +26,7 @@ delicate_flower()
 
     setdvar( "ui_deadquote", &"RECOVERY_PRESIDENT_MURDERED" );
     thread maps\_utility::missionfailedwrapper();
-    self _meth_8052();
+    self kill();
 }
 
 #using_animtree("generic_human");
@@ -42,7 +42,7 @@ set_president_anims()
     self.alertlevel = "noncombat";
     self.alertlevelint = 0;
     self.a.disablepain = 1;
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
     thread delicate_flower();
     maps\_utility::gun_remove();
     var_0 = [ "exposed", "exposed_crouch" ];

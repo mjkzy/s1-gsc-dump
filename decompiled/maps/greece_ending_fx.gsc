@@ -31,7 +31,7 @@ endingambushbreachexplosionfx()
     var_0 = common_scripts\utility::getstruct( "AmbushBreachFX", "targetname" );
     playfx( common_scripts\utility::getfx( "small_vehicle_explosion" ), var_0.origin );
     earthquake( 0.5, 0.3, level.player.origin, 1000 );
-    level.player _meth_80AD( "damage_heavy" );
+    level.player playrumbleonentity( "damage_heavy" );
 }
 
 endingcrashtruckexplosionfx()
@@ -50,7 +50,7 @@ endingcrashtruckexplosionfx()
     radiusdamage( var_0.origin, 200, 100, 10 );
     physicsexplosionsphere( var_0.origin, 300, 0, randomfloatrange( 2, 5 ) );
     earthquake( 0.5, 0.3, var_0.origin, 800 );
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     common_scripts\utility::flag_set( "FlagEndingTruckExplode" );
     var_6 = getent( "convoy_vehicle_3", "targetname" );
     var_6.animname = "convoy_vehicle_3";

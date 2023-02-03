@@ -31,8 +31,8 @@ init_local()
     {
         self.contents = self setcontents( self.contents );
         self.custom_death_script = ::handle_death;
-        _func_09A( self, ( 0, 0, 0 ) );
-        _func_0A6( self, level.player );
+        target_set( self, ( 0, 0, 0 ) );
+        target_hidefromplayer( self, level.player );
     }
 }
 
@@ -85,9 +85,9 @@ death_spiral( var_0 )
     var_1.angles = self.angles;
 
     if ( isdefined( self.death_model_override ) )
-        var_1 _meth_80B1( self.death_model_override );
+        var_1 setmodel( self.death_model_override );
     else
-        var_1 _meth_80B1( self.model );
+        var_1 setmodel( self.model );
 
     self hide();
     stopfxontag( common_scripts\utility::getfx( "drone_beacon_red" ), self, "tag_origin" );
@@ -149,8 +149,8 @@ death_crash_nearby_player( var_0 )
     var_3 = physicstrace( self.origin, var_5 );
     self notify( "newpath" );
     self notify( "deathspin" );
-    self _meth_825A( 60 );
-    self _meth_8260( var_3, drone_parm( "speed" ) * 0.75, drone_parm( "accel" ), drone_parm( "decel" ), undefined, undefined, 0, 0, 0, 0, 0, 0, 0 );
+    self setneargoalnotifydist( 60 );
+    self vehicle_helisetai( var_3, drone_parm( "speed" ) * 0.75, drone_parm( "accel" ), drone_parm( "decel" ), undefined, undefined, 0, 0, 0, 0, 0, 0, 0 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     death_plummet();
     self notify( "stop_crash_loop_sound" );
@@ -161,21 +161,21 @@ death_plummet()
 {
     var_0 = spawn( "script_model", self.origin );
     var_0.angles = self.angles;
-    var_0 _meth_80B1( self.model );
+    var_0 setmodel( self.model );
     self hide();
 
     if ( !issubstr( self.classname, "_security" ) )
         stopfxontag( common_scripts\utility::getfx( "drone_beacon_red" ), self, "tag_origin" );
 
     var_1 = 0;
-    var_2 = self _meth_8287();
+    var_2 = self vehicle_getvelocity();
     var_3 = squared( 0.05 );
 
     for ( var_4 = ( 0, 0, -980 ); var_1 < 5; var_1 += 0.05 )
     {
         wait 0.05;
         var_2 = var_4 * 0.05 + var_2;
-        var_2 = _func_284( var_2, 1000 );
+        var_2 = vectorclamp( var_2, 1000 );
         var_5 = var_2 * 0.05 + var_4 * var_3 / 2;
         var_6 = var_0.origin + var_5;
         var_7 = physicstrace( var_0.origin, var_6, var_0 );

@@ -96,8 +96,8 @@ drone_parm( var_0 )
 
 init_class_motion( var_0, var_1, var_2 )
 {
-    self _meth_8253( drone_parm( "hover_radius" ), drone_parm( "hover_speed" ), drone_parm( "hover_accel" ) );
-    self _meth_8294( drone_parm( "pitchmax" ), drone_parm( "rollmax" ) );
+    self sethoverparams( drone_parm( "hover_radius" ), drone_parm( "hover_speed" ), drone_parm( "hover_accel" ) );
+    self setmaxpitchroll( drone_parm( "pitchmax" ), drone_parm( "rollmax" ) );
     var_3 = drone_parm( "speed" );
     var_4 = drone_parm( "accel" );
     var_5 = drone_parm( "decel" );
@@ -111,12 +111,12 @@ init_class_motion( var_0, var_1, var_2 )
     if ( isdefined( var_2 ) )
         var_5 = var_2;
 
-    self _meth_8283( var_3, var_4, var_5 );
-    self _meth_84B1( drone_parm( "angle_vel_pitch" ), drone_parm( "angle_vel_yaw" ), drone_parm( "angle_vel_roll" ) );
-    self _meth_84B2( drone_parm( "angle_accel" ) );
-    self _meth_825A( 5 );
-    self _meth_8292( drone_parm( "yaw_speed" ), drone_parm( "yaw_accel" ), drone_parm( "yaw_decel" ), drone_parm( "yaw_over" ) );
-    self _meth_84E4( drone_parm( "axial_move" ) );
+    self vehicle_setspeed( var_3, var_4, var_5 );
+    self vehicle_helicoptersetmaxangularvelocity( drone_parm( "angle_vel_pitch" ), drone_parm( "angle_vel_yaw" ), drone_parm( "angle_vel_roll" ) );
+    self vehicle_helicoptersetmaxangularacceleration( drone_parm( "angle_accel" ) );
+    self setneargoalnotifydist( 5 );
+    self setyawspeed( drone_parm( "yaw_speed" ), drone_parm( "yaw_accel" ), drone_parm( "yaw_decel" ), drone_parm( "yaw_over" ) );
+    self setaxialmove( drone_parm( "axial_move" ) );
 }
 
 init_local()
@@ -179,13 +179,13 @@ init_local()
 
     if ( isdefined( self.script_parameters ) && self.script_parameters == "diveboat_weapon_target" )
     {
-        _func_09A( self, ( 0, 0, 0 ) );
-        _func_0A6( self, level.player );
+        target_set( self, ( 0, 0, 0 ) );
+        target_hidefromplayer( self, level.player );
     }
     else if ( self.classname != "script_vehicle_pdrone_kva" )
     {
-        _func_09A( self, ( 0, 0, 0 ) );
-        _func_0A5( self, 1 );
+        target_set( self, ( 0, 0, 0 ) );
+        target_setjavelinonly( self, 1 );
     }
 
     thread pdrone_ai( var_0 );
@@ -224,8 +224,8 @@ handle_pdrone_audio()
 pdrone_ai( var_0 )
 {
     self endon( "death" );
-    self _meth_8139( self.script_team, var_0 );
-    self _meth_8294( drone_parm( "pitchmax" ), drone_parm( "rollmax" ) );
+    self makeentitysentient( self.script_team, var_0 );
+    self setmaxpitchroll( drone_parm( "pitchmax" ), drone_parm( "rollmax" ) );
 
     if ( isdefined( self.owner ) )
     {
@@ -303,17 +303,17 @@ pdrone_movement_follow_buddy()
 
     if ( self.script_team == "allies" )
     {
-        self _meth_8253( 20, 20, 20 );
+        self sethoverparams( 20, 20, 20 );
         self.goalradius = 64;
     }
     else
     {
-        self _meth_8253( 0, 0, 0.05 );
+        self sethoverparams( 0, 0, 0.05 );
         self.goalradius = 8;
     }
 
-    self _meth_8283( 20, 20, 20 );
-    self _meth_8293( "faster" );
+    self vehicle_setspeed( 20, 20, 20 );
+    self setyawspeedbyname( "faster" );
     thread pdrone_movement_follow();
 
     for (;;)
@@ -414,13 +414,13 @@ pdrone_movement_follow()
         {
             if ( !level.player maps\_utility::point_in_fov( var_6 ) && !level.player maps\_utility::point_in_fov( self.origin ) && pdrone_can_see_owner_from_point( var_6 ) && pdrone_can_teleport_to_point( var_6 ) )
             {
-                self _meth_827C( var_6, self.angles );
+                self vehicle_teleport( var_6, self.angles );
                 var_4 = var_6;
                 var_5 = var_6;
             }
         }
 
-        self _meth_825B( var_4, 1 );
+        self setvehgoalpos( var_4, 1 );
         wait(var_12);
     }
 }
@@ -445,7 +445,7 @@ pdrone_can_teleport_to_point( var_0 )
 
 pdrone_can_see_owner_from_point( var_0 )
 {
-    var_1 = self.owner _meth_80A8();
+    var_1 = self.owner geteye();
     var_2 = sighttracepassed( var_0, var_1, 0, self );
     return var_2;
 }
@@ -459,7 +459,7 @@ pdrone_movement_go_to_point( var_0 )
     self endon( "death" );
     var_1 = 110;
     var_2 = var_0["position"] + var_1 * var_0["normal"];
-    self _meth_825B( var_2, 1 );
+    self setvehgoalpos( var_2, 1 );
     self.owner common_scripts\utility::waittill_any_timeout( 10, "stop_pdrone_pov" );
     thread pdrone_movement_follow();
 }
@@ -493,17 +493,17 @@ pdrone_targeting( var_0 )
 
         if ( isdefined( self.drone_threat_data.threat ) )
         {
-            self _meth_8265( self.drone_threat_data.threat );
+            self setlookatent( self.drone_threat_data.threat );
             thread pdrone_fire_at_enemy( self.drone_threat_data.threat, var_0 );
             self.drone_threat_data.threat common_scripts\utility::waittill_any_timeout( 5, "death", "target_lost" );
             continue;
         }
 
         if ( drone_parm( "clear_look" ) )
-            self _meth_8266();
+            self clearlookatent();
 
         if ( isdefined( self.owner ) )
-            self _meth_825E( self.owner.angles[1] );
+            self settargetyaw( self.owner.angles[1] );
     }
 }
 
@@ -521,9 +521,9 @@ calculate_lateral_move_accuracy( var_0 )
 
 calculate_stance_accuracy( var_0 )
 {
-    if ( var_0 _meth_817C() == "crouch" )
+    if ( var_0 getstance() == "crouch" )
         return 0.75;
-    else if ( var_0 _meth_817C() == "prone" )
+    else if ( var_0 getstance() == "prone" )
         return 0.5;
 
     return 1;
@@ -588,7 +588,7 @@ fire_burst( var_0, var_1, var_2, var_3, var_4 )
         var_8 = var_2 + var_7;
         var_9 = self.origin;
 
-        if ( self _meth_8442( var_3 ) != -1 )
+        if ( self gettagindex( var_3 ) != -1 )
             var_9 = self gettagorigin( var_3 );
 
         var_10 = var_1.origin + var_8 - var_9;
@@ -618,7 +618,7 @@ pdrone_fire_at_enemy( var_0, var_1 )
 
     self notify( "new_target" );
     self endon( "new_target" );
-    var_2 = var_0 _meth_80A8() - var_0.origin;
+    var_2 = var_0 geteye() - var_0.origin;
     var_3 = ( 0, 0, var_2[2] );
     var_4 = 0.095;
 
@@ -640,12 +640,12 @@ pdrone_fire_at_enemy( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_8262( var_0, var_8 );
+        self setturrettargetent( var_0, var_8 );
         var_9 = self.origin;
         var_10 = drone_parm( "weap_fire_tags" );
         var_11 = var_10[0];
 
-        if ( self _meth_8442( var_11 ) != -1 )
+        if ( self gettagindex( var_11 ) != -1 )
             var_9 = self gettagorigin( var_11 );
 
         if ( self.playing_hit_reaction || self.stun_duration > 0 || pdrone_could_be_friendly_fire( var_9, var_0.origin + var_8 ) || !isdefined( self.drone_threat_data.threat ) || self.drone_threat_data.threat != var_0 )
@@ -662,13 +662,13 @@ pdrone_fire_at_enemy( var_0, var_1 )
                 continue;
             }
 
-            if ( length( self _meth_8287() ) > 1 )
+            if ( length( self vehicle_getvelocity() ) > 1 )
             {
                 wait 0.05;
                 continue;
             }
 
-            if ( isdefined( self.attack_sight_required ) && self.attack_sight_required && !sighttracepassed( var_9, var_0 _meth_80A8(), 0, self, var_0 ) )
+            if ( isdefined( self.attack_sight_required ) && self.attack_sight_required && !sighttracepassed( var_9, var_0 geteye(), 0, self, var_0 ) )
             {
                 self.attack_available = 0;
                 wait 0.05;
@@ -743,7 +743,7 @@ pdrone_damage_function( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     self.last_damage_point = var_3;
 
     if ( var_4 == "MOD_ENERGY" )
-        self _meth_8051( var_0 * 4, var_1.origin, var_1 );
+        self dodamage( var_0 * 4, var_1.origin, var_1 );
     else if ( isalive( self ) && isdefined( var_1 ) && !isplayer( var_1 ) )
         self.health = int( min( self.maxhealth, self.health + var_0 * 0.7 ) );
 
@@ -805,7 +805,7 @@ pdrone_emp_death()
     self endon( "in_air_explosion" );
     self notify( "emp_death" );
     self.vehicle_stays_alive = 1;
-    var_0 = self _meth_8287();
+    var_0 = self vehicle_getvelocity();
     var_1 = 60;
 
     if ( isdefined( level.get_pdrone_crash_location_override ) )
@@ -820,9 +820,9 @@ pdrone_emp_death()
     self notify( "deathspin" );
     thread drone_deathspin();
     var_4 = 60;
-    self _meth_8283( var_4, 60, 1000 );
-    self _meth_825A( var_1 );
-    self _meth_825B( var_2, 0 );
+    self vehicle_setspeed( var_4, 60, 1000 );
+    self setneargoalnotifydist( var_1 );
+    self setvehgoalpos( var_2, 0 );
     thread drone_emp_crash_movement( var_2, var_1, var_4 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     self notify( "stop_crash_loop_sound" );
@@ -840,12 +840,12 @@ drone_deathspin()
     level.scr_anim["pdrone_dummy"]["roll_right"][0] = %rotate_x_r;
     var_0 = spawn( "script_model", self.origin );
     var_0.angles = self.angles;
-    var_0 _meth_804D( self );
+    var_0 linkto( self );
 
     if ( isdefined( self.death_model_override ) )
-        var_0 _meth_80B1( self.death_model_override );
+        var_0 setmodel( self.death_model_override );
     else
-        var_0 _meth_80B1( self.model );
+        var_0 setmodel( self.model );
 
     self hide();
     stopfxontag( common_scripts\utility::getfx( "drone_beacon_red" ), self, "tag_origin" );
@@ -866,10 +866,10 @@ drone_deathspin()
 drone_emp_crash_movement( var_0, var_1, var_2 )
 {
     self endon( "crash_done" );
-    self _meth_8266();
-    self _meth_8294( 180, 180 );
-    self _meth_8292( 400, 100, 100 );
-    self _meth_8296( 1 );
+    self clearlookatent();
+    self setmaxpitchroll( 180, 180 );
+    self setyawspeed( 400, 100, 100 );
+    self setturningability( 1 );
     var_3 = 1400;
     var_4 = 800;
     var_5 = undefined;
@@ -886,9 +886,9 @@ drone_emp_crash_movement( var_0, var_1, var_2 )
         if ( common_scripts\utility::cointoss() )
         {
             var_5 = self.angles[1] - 300;
-            self _meth_8292( var_3, var_4 );
-            self _meth_825E( var_5 );
-            self _meth_825E( var_5 );
+            self setyawspeed( var_3, var_4 );
+            self settargetyaw( var_5 );
+            self settargetyaw( var_5 );
         }
 
         wait 0.05;
@@ -901,9 +901,9 @@ death_spiral( var_0 )
     var_1.angles = self.angles;
 
     if ( isdefined( self.death_model_override ) )
-        var_1 _meth_80B1( self.death_model_override );
+        var_1 setmodel( self.death_model_override );
     else
-        var_1 _meth_80B1( self.model );
+        var_1 setmodel( self.model );
 
     self hide();
     stopfxontag( common_scripts\utility::getfx( "drone_beacon_red" ), self, "tag_origin" );
@@ -965,8 +965,8 @@ death_crash_nearby_player( var_0 )
     var_3 = physicstrace( self.origin, var_5 );
     self notify( "newpath" );
     self notify( "deathspin" );
-    self _meth_825A( 60 );
-    self _meth_8260( var_3, drone_parm( "speed" ) * 0.75, drone_parm( "accel" ), drone_parm( "decel" ), undefined, undefined, 0, 0, 0, 0, 0, 0, 0 );
+    self setneargoalnotifydist( 60 );
+    self vehicle_helisetai( var_3, drone_parm( "speed" ) * 0.75, drone_parm( "accel" ), drone_parm( "decel" ), undefined, undefined, 0, 0, 0, 0, 0, 0, 0 );
     common_scripts\utility::waittill_any( "goal", "near_goal" );
     death_plummet();
     self notify( "stop_crash_loop_sound" );
@@ -977,21 +977,21 @@ death_plummet()
 {
     var_0 = spawn( "script_model", self.origin );
     var_0.angles = self.angles;
-    var_0 _meth_80B1( self.model );
+    var_0 setmodel( self.model );
     self hide();
 
     if ( !issubstr( self.classname, "_security" ) )
         stopfxontag( common_scripts\utility::getfx( "drone_beacon_red" ), self, "tag_origin" );
 
     var_1 = 0;
-    var_2 = self _meth_8287();
+    var_2 = self vehicle_getvelocity();
     var_3 = squared( 0.05 );
 
     for ( var_4 = ( 0, 0, -980 ); var_1 < 5; var_1 += 0.05 )
     {
         wait 0.05;
         var_2 = var_4 * 0.05 + var_2;
-        var_2 = _func_284( var_2, 1000 );
+        var_2 = vectorclamp( var_2, 1000 );
         var_5 = var_2 * 0.05 + var_4 * var_3 / 2;
         var_6 = var_0.origin + var_5;
         var_7 = physicstrace( var_0.origin, var_6, var_0 );
@@ -1016,7 +1016,7 @@ death_rocket_out_of_control( var_0 )
     var_3 = 1;
     var_4 = 0;
     var_5 = 0;
-    var_6 = level.player _meth_80A8() - var_1;
+    var_6 = level.player geteye() - var_1;
     var_7 = self.origin;
     var_8 = level.player.origin - self.origin;
     var_8 = vectornormalize( var_8 );
@@ -1039,7 +1039,7 @@ death_rocket_out_of_control( var_0 )
     var_15.parentorigin = var_7;
     var_15.droneviewmodel = spawn( "script_model", var_7 );
     var_15.droneviewmodel.angles = self.angles;
-    var_15.droneviewmodel _meth_80B1( self.model );
+    var_15.droneviewmodel setmodel( self.model );
     var_15.velocity = ( 0, 0, 0 );
     playfxontag( common_scripts\utility::getfx( "pdrone_smoke_trail" ), var_15.droneviewmodel, "TAG_ORIGIN" );
     thread rocketpositionupdate( var_1, level.player, var_15, var_2, var_4, var_5 );
@@ -1064,7 +1064,7 @@ death_rocket_out_of_control( var_0 )
             break;
         }
 
-        var_24 = _func_247( var_15.droneviewmodel.angles );
+        var_24 = anglestoaxis( var_15.droneviewmodel.angles );
         var_25 = var_24["forward"];
         var_26 = var_24["up"];
         var_27 = var_24["right"];
@@ -1094,7 +1094,7 @@ death_rocket_out_of_control( var_0 )
     {
         wait 0.05;
         var_29 = var_31 * 0.05 + var_29;
-        var_29 = _func_284( var_29, 1000 );
+        var_29 = vectorclamp( var_29, 1000 );
         var_32 = var_29 * 0.05 + var_31 * var_30 / 2;
         var_33 = var_15.droneviewmodel.origin + var_32;
         var_23 = physicstrace( var_15.droneviewmodel.origin, var_33, var_15.droneviewmodel );
@@ -1173,13 +1173,13 @@ pdrone_ai_deploy( var_0 )
 
     var_7 = getsubstr( var_2.animation, 0, var_2.animation.size - 4 );
     var_8 = spawn( "script_model", var_1 gettagorigin( "J_Spine4" ) );
-    var_8 _meth_80B1( var_4.model );
+    var_8 setmodel( var_4.model );
     var_9 = var_1 gettagangles( "J_Spine4" );
     var_8.angles = var_9;
-    var_8 _meth_804D( var_1, "J_Spine4", ( -3.746, -9.852, -0.08 ), ( 0, 0, 90 ) );
+    var_8 linkto( var_1, "J_Spine4", ( -3.746, -9.852, -0.08 ), ( 0, 0, 90 ) );
     var_8.animname = "personal_drone";
-    var_8 _meth_8115( level.scr_animtree["personal_drone"] );
-    var_8 _meth_814B( level.scr_anim["personal_drone"]["personal_drone_folded_idle"][0], 1, 0 );
+    var_8 useanimtree( level.scr_animtree["personal_drone"] );
+    var_8 setanim( level.scr_anim["personal_drone"]["personal_drone_folded_idle"][0], 1, 0 );
     var_1.ignoreall = 1;
 
     if ( isdefined( var_6 ) )
@@ -1226,7 +1226,7 @@ destroy_drones_when_nuked()
     for (;;)
     {
         if ( getdvar( "debug_nuke" ) == "on" )
-            self _meth_8051( self.health + 99999, ( 0, 0, -500 ), level.player );
+            self dodamage( self.health + 99999, ( 0, 0, -500 ), level.player );
 
         wait 0.05;
     }
@@ -1288,8 +1288,8 @@ init_drone_motion_old()
     else
         var_0 = self.script_airspeed;
 
-    self _meth_825A( 30 );
-    self _meth_8283( var_0, var_0 / 4, var_0 / 4 );
+    self setneargoalnotifydist( 30 );
+    self vehicle_setspeed( var_0, var_0 / 4, var_0 / 4 );
 }
 
 flying_attack_drone_logic( var_0 )
@@ -1352,7 +1352,7 @@ flying_attack_drone_move_think_old()
     for (;;)
     {
         var_0 = maps\_utility::get_closest_player_healthy( self.origin );
-        self _meth_8265( var_0 );
+        self setlookatent( var_0 );
         var_1 = get_target_air_space( var_0 );
 
         if ( var_1 != self.current_air_space )
@@ -1389,7 +1389,7 @@ update_drone_tactical_movement()
     for (;;)
     {
         var_0 = maps\_utility::get_closest_player_healthy( self.origin );
-        self _meth_8265( var_0 );
+        self setlookatent( var_0 );
         var_1 = level.drone_tactical_picker_data.target_air_space;
 
         if ( var_1 != self.current_air_space )
@@ -1461,7 +1461,7 @@ calc_flock_goal_pos()
 {
     var_0 = self.origin;
 
-    if ( !_func_22A( var_0, self.current_air_space ) )
+    if ( !ispointinvolume( var_0, self.current_air_space ) )
         var_0 = get_random_point_in_air_space( self.current_air_space );
     else
     {
@@ -1564,7 +1564,7 @@ tactical_move_to_goal_pos()
     else
         var_1 = self.angles[1];
 
-    self _meth_8260( var_0, drone_parm( "speed" ), drone_parm( "accel" ), drone_parm( "decel" ), undefined, var_2, var_1, 0, 0, 0, 0, 0, 1 );
+    self vehicle_helisetai( var_0, drone_parm( "speed" ), drone_parm( "accel" ), drone_parm( "decel" ), undefined, var_2, var_1, 0, 0, 0, 0, 0, 1 );
     return 1;
 }
 
@@ -1573,12 +1573,12 @@ update_flying_attack_drone_goal_pos()
     if ( tactical_picker_enabled() )
         tactical_move_to_goal_pos();
     else
-        self _meth_825B( calc_flock_goal_pos(), 1 );
+        self setvehgoalpos( calc_flock_goal_pos(), 1 );
 }
 
 get_random_point_in_air_space( var_0 )
 {
-    for ( var_1 = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !_func_22A( var_1, var_0 ); var_1 = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
+    for ( var_1 = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !ispointinvolume( var_1, var_0 ); var_1 = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
     {
 
     }
@@ -1767,10 +1767,10 @@ play_hit_reaction()
     if ( !isdefined( level.scr_anim["personal_drone"]["hit_reaction"] ) )
         return;
 
-    self _meth_8115( level.scr_animtree["personal_drone"] );
+    self useanimtree( level.scr_animtree["personal_drone"] );
     var_0 = randomint( level.scr_anim["personal_drone"]["hit_reaction"].size );
     var_1 = getanimlength( level.scr_anim["personal_drone"]["hit_reaction"][var_0] );
-    self _meth_8145( level.scr_anim["personal_drone"]["hit_reaction"][var_0] );
+    self setanimknobrestart( level.scr_anim["personal_drone"]["hit_reaction"][var_0] );
     self.playing_hit_reaction = 1;
     wait(var_1);
 
@@ -1783,7 +1783,7 @@ play_hit_reaction()
 idle_anim_update()
 {
     self endon( "death" );
-    self _meth_8115( level.scr_animtree["personal_drone"] );
+    self useanimtree( level.scr_animtree["personal_drone"] );
     var_0 = 0;
     var_1 = 0;
 
@@ -1795,7 +1795,7 @@ idle_anim_update()
         {
             var_2 = randomint( level.scr_anim["personal_drone"]["idle"].size );
             var_1 = getanimlength( level.scr_anim["personal_drone"]["idle"][var_2] );
-            self _meth_8143( level.scr_anim["personal_drone"]["idle"][var_2] );
+            self setanimknob( level.scr_anim["personal_drone"]["idle"][var_2] );
             var_0 = 1;
         }
         else if ( self.playing_hit_reaction || var_1 <= 0 )

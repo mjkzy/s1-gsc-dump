@@ -203,7 +203,7 @@ hint_stick_get_updated( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
 
 _hint_stick_get_config_suffix( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
-    var_6 = _func_094();
+    var_6 = getsticksconfig();
 
     if ( level.player common_scripts\utility::is_player_gamepad_enabled() )
     {
@@ -429,7 +429,7 @@ hintdisplayhandlerupdate( var_0 )
             level.current_hint settext( level.hint_list[var_0]["pc"] );
         else
         {
-            var_1 = _func_094();
+            var_1 = getsticksconfig();
 
             if ( issubstr( var_1, "southpaw" ) && isdefined( level.hint_list[var_0]["southpaw"] ) )
                 level.current_hint settext( level.hint_list[var_0]["southpaw"] );
@@ -447,7 +447,7 @@ hintdisplayhandlersetup( var_0 )
         level.trigger_hint_string[var_0] = level.hint_list[var_0]["pc"];
     else
     {
-        var_1 = _func_094();
+        var_1 = getsticksconfig();
 
         if ( issubstr( var_1, "southpaw" ) && isdefined( level.hint_list[var_0]["southpaw"] ) )
             level.trigger_hint_string[var_0] = level.hint_list[var_0]["southpaw"];
@@ -543,7 +543,7 @@ lerp_player_view_to_tag_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_
     if ( var_8 )
         return;
 
-    var_0 _meth_807C( self, var_1, var_3, var_4, var_5, var_6, var_7, 0 );
+    var_0 playerlinkto( self, var_1, var_3, var_4, var_5, var_6, var_7, 0 );
 }
 
 lerp_player_view_to_tag_oldstyle_internal( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
@@ -558,7 +558,7 @@ lerp_player_view_to_tag_oldstyle_internal( var_0, var_1, var_2, var_3, var_4, va
     if ( var_8 )
         return;
 
-    var_0 _meth_807D( self, var_1, var_3, var_4, var_5, var_6, var_7, 0 );
+    var_0 playerlinktodelta( self, var_1, var_3, var_4, var_5, var_6, var_7, 0 );
 }
 
 function_stack_wait( var_0 )
@@ -817,13 +817,13 @@ translate_local_on_ent( var_0 )
     }
 
     if ( isdefined( self.yaw ) )
-        var_0 _meth_82BA( self.yaw );
+        var_0 addyaw( self.yaw );
 
     if ( isdefined( self.pitch ) )
-        var_0 _meth_82B9( self.pitch );
+        var_0 addpitch( self.pitch );
 
     if ( isdefined( self.roll ) )
-        var_0 _meth_82BB( self.roll );
+        var_0 addroll( self.roll );
 }
 
 dynamic_run_speed_proc( var_0, var_1, var_2, var_3, var_4 )
@@ -1087,17 +1087,17 @@ g_speed_get_func()
 
 g_speed_set_func( var_0 )
 {
-    _func_0D3( "g_speed", int( var_0 ) );
+    setsaveddvar( "g_speed", int( var_0 ) );
 }
 
 g_bob_scale_get_func()
 {
-    return level.player _meth_83F4();
+    return level.player getbobrate();
 }
 
 g_bob_scale_set_func( var_0 )
 {
-    level.player _meth_83F5( var_0 );
+    level.player setbobrate( var_0 );
 }
 
 movespeed_get_func()
@@ -1108,7 +1108,7 @@ movespeed_get_func()
 movespeed_set_func( var_0 )
 {
     self.movespeedscale = var_0;
-    self _meth_81E1( var_0 );
+    self setmovespeedscale( var_0 );
 }
 
 movespeed_ramp_over_time( var_0, var_1, var_2, var_3, var_4 )
@@ -1125,7 +1125,7 @@ movespeed_ramp_over_time( var_0, var_1, var_2, var_3, var_4 )
         if ( isai( var_0 ) )
             var_0 maps\_utility::set_moveplaybackrate( var_5, undefined, var_4 );
         else
-            var_0 _meth_81E1( var_5 );
+            var_0 setmovespeedscale( var_5 );
 
         waitframe();
     }
@@ -1133,7 +1133,7 @@ movespeed_ramp_over_time( var_0, var_1, var_2, var_3, var_4 )
     if ( isai( var_0 ) )
         var_0 maps\_utility::set_moveplaybackrate( var_2, undefined, var_4 );
     else
-        var_0 _meth_81E1( var_2 );
+        var_0 setmovespeedscale( var_2 );
 }
 
 autosave_tactical_setup()
@@ -1187,7 +1187,7 @@ autosave_tactical_proc()
             return;
     }
 
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
 
     foreach ( var_2 in var_0 )
     {
@@ -1249,7 +1249,7 @@ music_loop_stealth_pause( var_0, var_1, var_2 )
 {
     level endon( "stop_music" );
     common_scripts\utility::flag_wait( "_stealth_spotted" );
-    _func_074( 0.5 );
+    musicstop( 0.5 );
 
     while ( common_scripts\utility::flag( "_stealth_spotted" ) )
     {
@@ -1269,7 +1269,7 @@ doslide( var_0, var_1, var_2 )
 
     for (;;)
     {
-        var_5 = var_3 _meth_82F3();
+        var_5 = var_3 getnormalizedmovement();
         var_6 = anglestoforward( var_3.angles );
         var_7 = anglestoright( var_3.angles );
         var_5 = ( var_5[1] * var_7[0] + var_5[0] * var_6[0], var_5[1] * var_7[1] + var_5[0] * var_6[1], 0 );
@@ -1290,7 +1290,7 @@ kill_deathflag_proc( var_0, var_1 )
         return;
 
     playfxontag( common_scripts\utility::getfx( "flesh_hit" ), self, "tag_eye" );
-    self _meth_8052( level.player.origin );
+    self kill( level.player.origin );
 }
 
 update_rumble_intensity( var_0, var_1 )
@@ -1304,13 +1304,13 @@ update_rumble_intensity( var_0, var_1 )
         {
             if ( !var_2 )
             {
-                self _meth_80AE( var_1 );
+                self playrumblelooponentity( var_1 );
                 var_2 = 1;
             }
         }
         else if ( var_2 )
         {
-            self _meth_80AF( var_1 );
+            self stoprumble( var_1 );
             var_2 = 0;
         }
 
@@ -1320,7 +1320,7 @@ update_rumble_intensity( var_0, var_1 )
         if ( isdefined( self.rumble_base_entity ) )
             self.origin = self.rumble_base_entity.origin + ( 0, 0, var_3 );
         else
-            self.origin = var_0 _meth_80A8() + ( 0, 0, var_3 );
+            self.origin = var_0 geteye() + ( 0, 0, var_3 );
 
         wait 0.05;
     }
@@ -1331,7 +1331,7 @@ start_glow( var_0 )
     var_1 = spawn( "script_model", self.origin );
     self.glow_model = var_1;
     var_1.angles = self.angles;
-    var_1 _meth_80B1( var_0 );
+    var_1 setmodel( var_0 );
     var_1 endon( "death" );
     self waittill( "death" );
     var_1 delete();
@@ -1648,7 +1648,7 @@ _flag_wait_trigger( var_0, var_1 )
         if ( !var_1 )
             return;
 
-        while ( var_2 _meth_80A9( self ) )
+        while ( var_2 istouching( self ) )
             wait 0.05;
 
         common_scripts\utility::flag_clear( var_0 );

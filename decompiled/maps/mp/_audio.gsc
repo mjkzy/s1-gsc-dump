@@ -44,7 +44,7 @@ apply_reverb( var_0 )
     else
         var_1 = level.audio.reverb_settings[var_0];
 
-    self _meth_832E( "snd_enveffectsprio_level", var_1["roomtype"], var_1["drylevel"], var_1["wetlevel"], var_1["fadetime"] );
+    self setreverb( "snd_enveffectsprio_level", var_1["roomtype"], var_1["drylevel"], var_1["wetlevel"], var_1["fadetime"] );
 }
 
 init_whizby()
@@ -69,8 +69,8 @@ apply_whizby()
     var_0 = level.audio.whizby_settings;
     var_1 = var_0["spread"];
     var_2 = var_0["radius"];
-    self _meth_832C( var_1[0], var_1[1], var_1[2] );
-    self _meth_832D( var_2[0], var_2[1], var_2[2] );
+    self setwhizbyspreads( var_1[0], var_1[1], var_1[2] );
+    self setwhizbyradii( var_2[0], var_2[1], var_2[2] );
 }
 
 snd_play_team_splash( var_0, var_1 )
@@ -143,7 +143,7 @@ scriptmodelplayanimwithnotify( var_0, var_1, var_2, var_3, var_4, var_5, var_6 )
     if ( isdefined( var_4 ) )
         level endon( var_4 );
 
-    var_0 _meth_827B( var_1, var_2 );
+    var_0 scriptmodelplayanimdeltamotion( var_1, var_2 );
     thread scriptmodelplayanimwithnotify_notetracks( var_0, var_2, var_3, var_4, var_5, var_6 );
 }
 
@@ -174,7 +174,7 @@ scriptmodelplayanimwithnotify_uniquename( var_0, var_1, var_2, var_3, var_4, var
     if ( isdefined( var_5 ) )
         level endon( var_5 );
 
-    var_0 _meth_827B( var_1, var_2 );
+    var_0 scriptmodelplayanimdeltamotion( var_1, var_2 );
     thread scriptmodelplayanimwithnotify_notetracks_uniquename( var_0, var_2, var_3, var_4, var_5, var_6, var_7 );
 }
 
@@ -226,14 +226,14 @@ snd_veh_play_loops( var_0, var_1, var_2 )
     var_3 = self;
     var_4 = [ var_0, var_1, var_2 ];
     var_5[0] = spawn( "script_origin", var_3.origin );
-    var_5[0] _meth_8446( var_3 );
-    var_5[0] _meth_8075( var_0 );
+    var_5[0] vehicle_jetbikesethoverforcescale( var_3 );
+    var_5[0] playloopsound( var_0 );
     var_5[1] = spawn( "script_origin", var_3.origin );
-    var_5[1] _meth_8446( var_3 );
-    var_5[1] _meth_8075( var_1 );
+    var_5[1] vehicle_jetbikesethoverforcescale( var_3 );
+    var_5[1] playloopsound( var_1 );
     var_5[2] = spawn( "script_origin", var_3.origin );
-    var_5[2] _meth_8446( var_3 );
-    var_5[2] _meth_8075( var_2 );
+    var_5[2] vehicle_jetbikesethoverforcescale( var_3 );
+    var_5[2] playloopsound( var_2 );
     var_3 waittill( "death" );
 
     foreach ( var_7 in var_5 )
@@ -281,7 +281,7 @@ snd_play_loop_in_space( var_0, var_1, var_2, var_3 )
         var_4 = var_3;
 
     var_5 = spawn( "script_origin", var_1 );
-    var_5 _meth_8075( var_0 );
+    var_5 playloopsound( var_0 );
     thread sndx_play_loop_in_space_internal( var_5, var_2, var_4 );
     return var_5;
 }
@@ -292,7 +292,7 @@ sndx_play_loop_in_space_internal( var_0, var_1, var_2 )
 
     if ( isdefined( var_0 ) )
     {
-        var_0 _meth_806F( 0, var_2 );
+        var_0 scalevolume( 0, var_2 );
         wait(var_2 + 0.05);
         var_0 delete();
     }
@@ -339,7 +339,7 @@ sndx_play_in_space_internal( var_0, var_1 )
 
     if ( isdefined( var_4 ) )
     {
-        var_4 _meth_806F( 0, var_3 );
+        var_4 scalevolume( 0, var_3 );
         wait(var_3 + 0.05);
 
         if ( isdefined( var_4 ) )
@@ -374,7 +374,7 @@ sndx_play_in_space_delayed_internal( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( var_6 ) )
     {
-        var_6 _meth_806F( 0, var_5 );
+        var_6 scalevolume( 0, var_5 );
         wait(var_5 + 0.05);
 
         if ( isdefined( var_6 ) )
@@ -385,7 +385,7 @@ sndx_play_in_space_delayed_internal( var_0, var_1, var_2, var_3 )
 snd_play_linked( var_0, var_1, var_2, var_3 )
 {
     var_4 = spawn( "script_origin", var_1.origin );
-    var_4 _meth_804D( var_1 );
+    var_4 linkto( var_1 );
     var_4 thread sndx_play_linked_internal( var_0, var_1, var_2, var_3 );
     return var_4;
 }
@@ -407,7 +407,7 @@ sndx_play_linked_internal( var_0, var_1, var_2, var_3 )
 
     if ( isdefined( var_6 ) )
     {
-        var_6 _meth_806F( 0, var_5 );
+        var_6 scalevolume( 0, var_5 );
         wait(var_5 + 0.05);
         var_6 delete();
     }
@@ -416,7 +416,7 @@ sndx_play_linked_internal( var_0, var_1, var_2, var_3 )
 snd_play_linked_loop( var_0, var_1, var_2 )
 {
     var_3 = spawn( "script_origin", var_1.origin );
-    var_3 _meth_804D( var_1 );
+    var_3 linkto( var_1 );
     var_3 thread sndx_play_linked_loop_internal( var_0, var_1, var_2 );
     return var_3;
 }
@@ -425,7 +425,7 @@ sndx_play_linked_loop_internal( var_0, var_1, var_2 )
 {
     var_3 = 0.05;
     var_4 = self;
-    var_4 _meth_8075( var_0 );
+    var_4 playloopsound( var_0 );
 
     if ( isdefined( var_2 ) )
         var_3 = var_2;
@@ -434,7 +434,7 @@ sndx_play_linked_loop_internal( var_0, var_1, var_2 )
 
     if ( isdefined( var_4 ) )
     {
-        var_4 _meth_806F( 0, var_3 );
+        var_4 scalevolume( 0, var_3 );
         wait(var_3 + 0.05);
         var_4 delete();
     }

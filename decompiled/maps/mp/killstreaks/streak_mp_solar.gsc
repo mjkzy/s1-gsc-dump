@@ -24,7 +24,7 @@ tryusesolarreflector( var_0, var_1 )
 {
     if ( isdefined( level.solar_reflector_player ) )
     {
-        self iclientprintlnbold( &"MP_SOLAR_REFLECTOR_IN_USE" );
+        self iprintlnbold( &"MP_SOLAR_REFLECTOR_IN_USE" );
         return 0;
     }
 
@@ -81,7 +81,7 @@ beamminimap( var_0 )
     if ( level.teambased )
         objective_team( var_3, self.team );
     else
-        objective_player( var_3, self _meth_81B1() );
+        objective_player( var_3, self getentitynumber() );
 
     objective_icon( var_3, var_1 );
     var_4 = var_3;
@@ -93,7 +93,7 @@ beamminimap( var_0 )
     if ( level.teambased )
         objective_team( var_3, level.otherteam[self.team] );
     else
-        objective_playerenemyteam( var_3, self _meth_81B1() );
+        objective_playerenemyteam( var_3, self getentitynumber() );
 
     objective_icon( var_3, var_2 );
     var_5 = var_3;
@@ -105,13 +105,13 @@ beamminimap( var_0 )
 beamsounds( var_0, var_1 )
 {
     waitframe();
-    var_1 _meth_8075( level.solar_reflector_target_sfx );
-    var_0 _meth_8075( level.solar_reflector_sfx );
+    var_1 playloopsound( level.solar_reflector_target_sfx );
+    var_0 playloopsound( level.solar_reflector_sfx );
     playsoundatpos( var_0.origin, "array_beam_start" );
     level waittill( "solar_reflector_player_removed" );
     playsoundatpos( var_0.origin, "array_beam_stop" );
-    var_1 _meth_80AB();
-    var_0 _meth_80AB();
+    var_1 stoploopsound();
+    var_0 stoploopsound();
 }
 
 runbeam()
@@ -136,7 +136,7 @@ getcameraent( var_0, var_1 )
 {
     var_2 = spawn( "script_model", var_0.origin );
     var_2.angles = vectortoangles( var_1.origin - var_0.origin );
-    var_2 _meth_80B1( "tag_player" );
+    var_2 setmodel( "tag_player" );
     return var_2;
 }
 
@@ -144,24 +144,24 @@ getgroundent( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin );
     var_1.angles = ( 0, 0, 0 );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     return var_1;
 }
 
 playersetcamera( var_0 )
 {
     var_0 endon( "death" );
-    self _meth_807E( var_0, "tag_player", 1.0, 40, 40, 12, 10 );
+    self playerlinkweaponviewtodelta( var_0, "tag_player", 1.0, 40, 40, 12, 10 );
     self setangles( var_0 gettagangles( "tag_player" ) );
-    self _meth_82FB( "fov_scale", 0.2 );
+    self setclientomnvar( "fov_scale", 0.2 );
     self thermalvisionfofoverlayon();
 
     for (;;)
     {
-        self _meth_80FE( 0.05, 0.05 );
+        self enableslowaim( 0.05, 0.05 );
         level waittill( "host_migration_begin" );
         waitframe();
-        self _meth_82FB( "fov_scale", 0.2 );
+        self setclientomnvar( "fov_scale", 0.2 );
         self thermalvisionfofoverlayon();
         maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
     }
@@ -171,12 +171,12 @@ getbeament( var_0, var_1 )
 {
     var_2 = spawn( "script_model", var_0.origin );
     var_2.angles = vectortoangles( var_1.origin - var_0.origin );
-    var_2 _meth_80B1( "tag_laser" );
-    var_2 _meth_80B2( "solar_laser" );
+    var_2 setmodel( "tag_laser" );
+    var_2 laseron( "solar_laser" );
     var_3 = anglestoforward( var_2.angles ) * 5000 - ( 0, 0, 100 );
     var_4 = spawn( "script_model", var_0.origin + var_3 );
     var_4.angles = var_2.angles;
-    var_4 _meth_804D( var_2 );
+    var_4 linkto( var_2 );
     var_2.killcament = var_4;
     return var_2;
 }
@@ -246,14 +246,14 @@ runbeamupdate( var_0, var_1, var_2 )
         }
 
         var_14 = vectornormalize( var_5.origin - var_0.origin );
-        var_0 _meth_82B5( vectortoangles( var_14 ), 0.1 );
+        var_0 rotateto( vectortoangles( var_14 ), 0.1 );
         var_15 = var_0.origin;
         var_16 = var_15 + var_14 * var_4;
         var_17 = bullettrace( var_15, var_16, 0 );
-        var_2 _meth_82AE( var_17["position"], 0.1 );
+        var_2 moveto( var_17["position"], 0.1 );
         var_2.surfacetype = var_17["surfacetype"];
         var_2.killcament = var_0.killcament;
-        var_2 entityradiusdamage( var_2.origin, 128, 8, 2, self, "MOD_EXPLOSIVE", "killstreak_solar_mp" );
+        var_2 radiusdamage( var_2.origin, 128, 8, 2, self, "MOD_EXPLOSIVE", "killstreak_solar_mp" );
         waitframe();
     }
 }
@@ -263,7 +263,7 @@ handledamagefeedbacksound()
     self.shouldloopdamagefeedback = 1;
     self.damagefeedbacktimer = 10;
     self playlocalsound( "MP_solar_hit_alert" );
-    self _meth_80AE( "damage_light" );
+    self playrumblelooponentity( "damage_light" );
 
     while ( self.damagefeedbacktimer > 0 )
     {
@@ -271,7 +271,7 @@ handledamagefeedbacksound()
         wait 0.05;
     }
 
-    self _meth_80AF( "damage_light" );
+    self stoprumble( "damage_light" );
     self stoplocalsound( "MP_solar_hit_alert" );
     self.shouldloopdamagefeedback = undefined;
 }
@@ -335,7 +335,7 @@ solarrelectortimer( var_0 )
 
     for (;;)
     {
-        self _meth_82FB( "ui_solar_beam_timer", var_1 );
+        self setclientomnvar( "ui_solar_beam_timer", var_1 );
         level waittill( "host_migration_begin" );
         var_2 = maps\mp\gametypes\_hostmigration::waittillhostmigrationdone();
         var_1 += var_2;
@@ -352,12 +352,12 @@ removesolarreflectorplayer( var_0 )
     {
         var_0 maps\mp\_utility::clearusingremote();
         var_0 show();
-        var_0 _meth_804F();
+        var_0 unlink();
         var_0 thermalvisionfofoverlayoff();
         var_0 setblurforplayer( 0, 0 );
-        var_0 _meth_82FB( "ui_solar_beam", 0 );
-        var_0 _meth_80FF();
-        var_0 _meth_82FB( "fov_scale", 1 );
+        var_0 setclientomnvar( "ui_solar_beam", 0 );
+        var_0 disableslowaim();
+        var_0 setclientomnvar( "fov_scale", 1 );
     }
 
     level.solar_reflector_player = undefined;
@@ -369,7 +369,7 @@ overlay()
     level endon( "solar_reflector_player_removed" );
     wait 1;
     self setblurforplayer( 1.2, 0 );
-    self _meth_82FB( "ui_solar_beam", 1 );
+    self setclientomnvar( "ui_solar_beam", 1 );
 }
 
 onplayerconnect()
@@ -416,7 +416,7 @@ playerplayvaporizefx()
 {
     self.hideondeath = 1;
     var_0 = ( 0, 0, 30 );
-    var_1 = self _meth_817C();
+    var_1 = self getstance();
 
     if ( var_1 == "crouch" )
         var_0 = ( 0, 0, 20 );
@@ -450,7 +450,7 @@ beamstartfires( var_0 )
     for (;;)
     {
         waitframe();
-        var_4 = _func_220( var_0.origin, var_2 );
+        var_4 = distance2dsquared( var_0.origin, var_2 );
         var_5 = ( var_3 - gettime() ) / 1000;
 
         if ( var_4 > 2500 || var_5 > 5 )
@@ -483,10 +483,10 @@ fireatposition( var_0, var_1 )
             if ( var_4.origin[2] > var_0[2] + 80 )
                 continue;
 
-            var_5 = _func_220( var_4.origin, var_0 );
+            var_5 = distance2dsquared( var_4.origin, var_0 );
 
             if ( var_5 < 4900 )
-                var_4 _meth_8051( 4, var_0, var_1, var_1, "MOD_EXPLOSIVE", "killstreak_solar_mp" );
+                var_4 dodamage( 4, var_0, var_1, var_1, "MOD_EXPLOSIVE", "killstreak_solar_mp" );
         }
 
         wait 0.1;

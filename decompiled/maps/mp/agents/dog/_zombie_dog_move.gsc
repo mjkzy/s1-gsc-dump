@@ -4,7 +4,7 @@
 main()
 {
     self endon( "killanimscript" );
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
     self.ismoving = 1;
     startmove();
     continuemovement();
@@ -14,7 +14,7 @@ end_script()
 {
     self.ismoving = undefined;
     cancelallbut( undefined );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimscale( 1, 1 );
 }
 
 setupmovement()
@@ -27,9 +27,9 @@ setupmovement()
 continuemovement()
 {
     setupmovement();
-    self _meth_8397( "code_move" );
-    self _meth_8396( "face motion" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "code_move" );
+    self scragentsetorientmode( "face motion" );
+    self scragentsetanimscale( 1, 1 );
     setmoveanim( self.movemode );
 }
 
@@ -38,7 +38,7 @@ setmoveanim( var_0 )
     self notify( "zombiedogmove_endwait_setmoveanim" );
     self endon( "zombiedogmove_endwait_setmoveanim" );
     self endon( "killanimscript" );
-    var_1 = randomint( self _meth_83D6( var_0 ) );
+    var_1 = randomint( self getanimentrycount( var_0 ) );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_0, var_1, self.moveratescale );
 }
 
@@ -50,7 +50,7 @@ doturn( var_0 )
     var_1 = "turn_" + self.movemode;
     var_2 = vectortoangles( var_0 );
     var_3 = angleclamp180( var_2[1] - self.angles[1] );
-    var_4 = self _meth_83D6( var_1 );
+    var_4 = self getanimentrycount( var_1 );
 
     if ( var_4 <= 0 )
     {
@@ -66,7 +66,7 @@ doturn( var_0 )
         return;
     }
 
-    var_6 = self _meth_83D3( var_1, var_5 );
+    var_6 = self getanimentry( var_1, var_5 );
     var_7 = getangledelta( var_6 );
     var_8 = ( 0, angleclamp180( var_2[1] - var_7 ), 0 );
 
@@ -77,8 +77,8 @@ doturn( var_0 )
     }
 
     cancelallbut( "turn" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", var_8 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", var_8 );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_1, var_5, self.moveratescale, "turn" );
     thread continuemovement();
 }
@@ -105,7 +105,7 @@ waitforstop()
     }
 
     var_0 = "stop_" + self.movemode;
-    var_1 = self _meth_83D6( var_0 );
+    var_1 = self getanimentrycount( var_0 );
 
     if ( var_1 <= 0 )
     {
@@ -119,10 +119,10 @@ waitforstop()
         var_2 = self.node.angles[1] - self.angles[1];
 
     var_3 = maps\mp\agents\_scripted_agent_anim_util::getangleindexvariable( var_2, var_1 );
-    var_4 = self _meth_83D3( var_0, var_3 );
+    var_4 = self getanimentry( var_0, var_3 );
     var_5 = getmovedelta( var_4 );
     var_6 = getangledelta( var_4 );
-    var_7 = self _meth_83E1();
+    var_7 = self getpathgoalpos();
     var_8 = var_7 - self.origin;
 
     if ( length( var_8 ) + 12 < length( var_5 ) )
@@ -153,7 +153,7 @@ waitforstop()
 
     if ( distancesquared( var_10, self.origin ) > 4 )
     {
-        self _meth_838F( var_10 );
+        self scragentsetwaypoint( var_10 );
         thread waitforblockedwhilestopping();
         self waittill( "waypoint_reached" );
         self notify( "zombiedogmove_endwait_blockedwhilestopping" );
@@ -163,11 +163,11 @@ waitforstop()
     var_13 = vectortoangles( var_12 );
     var_14 = ( 0, var_13[1] - var_6, 0 );
     var_15 = maps\mp\agents\_scripted_agent_anim_util::getanimscalefactors( var_7 - self.origin, var_5 );
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", var_14, ( 0, var_13[1], 0 ) );
-    self _meth_8395( var_15.xy, var_15.z );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", var_14, ( 0, var_13[1], 0 ) );
+    self scragentsetanimscale( var_15.xy, var_15.z );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_0, var_3, self.moveratescale, "move_stop" );
-    self _meth_8390( self.origin );
+    self scragentsetgoalpos( self.origin );
 }
 
 waitforpathsetwhilestopping()
@@ -175,9 +175,9 @@ waitforpathsetwhilestopping()
     self notify( "zombiedogmove_endwait_pathsetwhilestopping" );
     self endon( "zombiedogmove_endwait_pathsetwhilestopping" );
     self endon( "killanimscript" );
-    var_0 = self _meth_8391();
+    var_0 = self scragentgetgoalpos();
     self waittill( "path_set" );
-    var_1 = self _meth_8391();
+    var_1 = self scragentgetgoalpos();
 
     if ( distancesquared( var_0, var_1 ) < 1 )
     {
@@ -208,7 +208,7 @@ waitforblockedwhilestopping()
     self endon( "killanimscript" );
     self waittill( "path_blocked" );
     self notify( "zombiedogmove_endwait_stop" );
-    self _meth_838F( undefined );
+    self scragentsetwaypoint( undefined );
 }
 
 cancelallbut( var_0 )
@@ -227,17 +227,17 @@ cancelallbut( var_0 )
 
 startmove()
 {
-    var_0 = self _meth_819D();
+    var_0 = self getnegotiationstartnode();
 
     if ( isdefined( var_0 ) )
         var_1 = var_0.origin;
     else
-        var_1 = self _meth_83E1();
+        var_1 = self getpathgoalpos();
 
     if ( distancesquared( var_1, self.origin ) < 10000 )
         return;
 
-    var_2 = self _meth_83E0();
+    var_2 = self getlookaheaddir();
     var_3 = vectortoangles( var_2 );
     var_4 = self getvelocity();
 
@@ -251,26 +251,26 @@ startmove()
 
     var_5 = "move_start";
     var_6 = angleclamp180( var_3[1] - self.angles[1] );
-    var_7 = self _meth_83D6( var_5 );
+    var_7 = self getanimentrycount( var_5 );
 
     if ( var_7 == 0 )
         return;
 
     var_8 = maps\mp\agents\_scripted_agent_anim_util::getangleindexvariable( var_6, var_7 );
-    var_9 = self _meth_83D3( var_5, var_8 );
+    var_9 = self getanimentry( var_5, var_8 );
     var_10 = getmovedelta( var_9 );
     var_11 = rotatevector( var_10, self.angles ) + self.origin;
 
     if ( !maps\mp\zombies\_util::canmovepointtopoint( self.origin, var_11, 0 ) )
         return;
 
-    var_12 = _func_221( var_9 );
-    self _meth_8397( "anim deltas" );
+    var_12 = getangledelta3d( var_9 );
+    self scragentsetanimmode( "anim deltas" );
 
     if ( abs( var_8 - int( var_7 * 0.5 ) ) <= 1 )
-        self _meth_8396( "face angle abs", ( 0, angleclamp180( var_3[1] - var_12[1] ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, angleclamp180( var_3[1] - var_12[1] ), 0 ) );
     else
-        self _meth_8396( "face angle abs", self.angles );
+        self scragentsetorientmode( "face angle abs", self.angles );
 
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack_safe( var_5, var_8, self.moveratescale, "move_start", "code_move" );
 }
@@ -286,9 +286,9 @@ getstopdata()
     }
     else
     {
-        var_1 = self _meth_83E1();
+        var_1 = self getpathgoalpos();
         var_0.pos = var_1;
-        var_0.angles = vectortoangles( self _meth_83E0() );
+        var_0.angles = vectortoangles( self getlookaheaddir() );
     }
 
     return var_0;
@@ -328,8 +328,8 @@ dohitreaction( var_0, var_1 )
             var_4 = 0;
     }
 
-    self _meth_8397( "anim deltas" );
-    self _meth_8396( "face angle abs", self.angles );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetorientmode( "face angle abs", self.angles );
     maps\mp\agents\_scripted_agent_anim_util::playanimnatrateuntilnotetrack( var_3, var_4, self.nonmoveratescale, "pain_anim" );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoHitReaction" );
     continuemovement();

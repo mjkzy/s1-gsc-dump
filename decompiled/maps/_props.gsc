@@ -52,8 +52,8 @@ attach_clip( var_0 )
 {
     var_0 notify( "new_prop_rotation" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_804D( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_80B1( maps\_utility::getmodel( "clip" ) );
+    var_1 linkto( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( maps\_utility::getmodel( "clip" ) );
     var_0.clip = var_1;
     thread prop_delete( var_1, var_0 );
 }
@@ -72,8 +72,8 @@ attach_phone( var_0 )
 {
     var_0 notify( "new_phone_rotation" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_804D( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_80B1( maps\_utility::getmodel( "cellphone" ) );
+    var_1 linkto( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( maps\_utility::getmodel( "cellphone" ) );
     var_0.phone = var_1;
     thread prop_delete( var_1, var_0 );
 }
@@ -88,8 +88,8 @@ attach_cig( var_0 )
 {
     var_0 notify( "new_cigar_rotation" );
     var_1 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_1 _meth_804D( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    var_1 _meth_80B1( maps\_utility::getmodel( "cigar" ) );
+    var_1 linkto( var_0, "tag_inhand", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( maps\_utility::getmodel( "cigar" ) );
     playfxontag( common_scripts\utility::getfx( "cigar_glow" ), var_1, "tag_cigarglow" );
     var_0.cigar = var_1;
     thread prop_delete_cig( var_1, var_0 );
@@ -141,9 +141,9 @@ prop_cig_throw()
     stopfxontag( common_scripts\utility::getfx( "cigar_glow" ), self, "tag_cigarglow" );
     var_0 = 3;
     var_1 = anglestoforward( self.angles );
-    self _meth_804F();
-    self _meth_82B2( var_1 * 100, var_0 );
-    self _meth_82BD( ( 400, 0, 0 ), var_0, 0, var_0 );
+    self unlink();
+    self movegravity( var_1 * 100, var_0 );
+    self rotatevelocity( ( 400, 0, 0 ), var_0, 0, var_0 );
     wait(var_0);
     self delete();
 }

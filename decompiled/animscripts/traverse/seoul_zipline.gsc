@@ -110,7 +110,7 @@ seoul_zipline_scripted( var_0, var_1, var_2 )
     self.zipline_end_org = var_7;
     var_8 = vectortoangles( var_7 - var_6 );
     var_9 = maps\_utility::spawn_anim_model( "_zipline_rope_fl", var_6, var_8 );
-    var_9 _meth_80B1( "npc_zipline_rope_left" );
+    var_9 setmodel( "npc_zipline_rope_left" );
     var_10 = randomfloat( 100.0 );
 
     if ( var_10 < 25.0 )
@@ -201,12 +201,12 @@ allow_death_during_zipline()
         if ( isdefined( self.delayeddeath ) && self.delayeddeath )
         {
             stop_zip_idle_anim();
-            var_0 = self _meth_83EC();
+            var_0 = self getlinkedparent();
 
             if ( isdefined( var_0 ) )
-                self _meth_804F();
+                self unlink();
 
-            self _meth_818E( "gravity" );
+            self animmode( "gravity" );
         }
 
         waitframe();
@@ -312,7 +312,7 @@ fastzip_launch( var_0, var_1 )
                 return;
             }
 
-            self _meth_8110( "traverseAnim", var_0, %body, 1, 0.2, 1 );
+            self setflaggedanimknoballrestart( "traverseAnim", var_0, %body, 1, 0.2, 1 );
             var_2 = getanimlength( var_0 );
             wait(var_2);
             return;
@@ -337,7 +337,7 @@ set_post_slide_blend_time( var_0 )
 stop_zip_idle_anim()
 {
     self notify( "stop_loop" );
-    self _meth_8141();
+    self stopanimscripted();
 }
 
 unlink_from_zip()
@@ -345,10 +345,10 @@ unlink_from_zip()
     if ( !isdefined( self ) )
         return;
 
-    var_0 = self _meth_83EC();
+    var_0 = self getlinkedparent();
 
     if ( isdefined( var_0 ) )
-        self _meth_804F();
+        self unlink();
 }
 
 fastzip_land( var_0, var_1, var_2 )
@@ -395,18 +395,18 @@ fastzip_land( var_0, var_1, var_2 )
         if ( var_7 )
         {
             wait(var_6 - var_2 - 0.05);
-            self _meth_818E( "gravity" );
+            self animmode( "gravity" );
             wait(var_5 - ( var_6 - var_2 - 0.05 ));
         }
         else
             wait(var_5 - var_2);
 
-        self _meth_8141();
+        self stopanimscripted();
         return;
     }
 
     self.istraversing = undefined;
-    self _meth_818E( "none" );
+    self animmode( "none" );
     self notify( "zipline_done" );
 }
 
@@ -436,13 +436,13 @@ fastzip_slide( var_0, var_1, var_2, var_3, var_4 )
 {
     self endon( "death" );
     var_5 = var_0 maps\_utility::getanim( var_2 );
-    var_0 _meth_814C( %add_slide, 1, 0, 0 );
-    var_0 _meth_814C( var_5, 1, 0, 0 );
+    var_0 setanimlimited( %add_slide, 1, 0, 0 );
+    var_0 setanimlimited( var_5, 1, 0, 0 );
     var_6 = anglestoforward( var_0.angles );
     var_6 = ( var_6[0], var_6[1], 0 );
     var_7 = vectortoangles( var_6 );
     [var_9, var_10] = var_0 gettagorigin_rotatecompensation( "tag_player_attach" );
-    self _meth_81C6( var_9, var_7, 100000 );
+    self forceteleport( var_9, var_7, 100000 );
 
     if ( isstring( var_1 ) )
         thread maps\_anim::anim_loop_solo( self, var_1, "stop_loop" );
@@ -451,9 +451,9 @@ fastzip_slide( var_0, var_1, var_2, var_3, var_4 )
 
     soundscripts\_snd::snd_message( "seo_zipline_rappel_begin" );
     wait 0.05;
-    self _meth_804D( var_0, "tag_player_attach" );
-    var_0 _meth_814C( %add_slide, 1, 0, 1.0 );
-    var_0 _meth_814C( var_5, 1, 0, 1.0 );
+    self linkto( var_0, "tag_player_attach" );
+    var_0 setanimlimited( %add_slide, 1, 0, 1.0 );
+    var_0 setanimlimited( var_5, 1, 0, 1.0 );
     wait(var_3 - 0.1 - var_4);
     thread fastzip_slide_end( var_0, var_5, var_4 );
 }
@@ -468,11 +468,11 @@ fastzip_slide_end( var_0, var_1, var_2 )
     while ( var_3 > 0 )
     {
         var_3 -= 0.1;
-        var_0 _meth_83C7( var_1, var_3 );
+        var_0 setanimrate( var_1, var_3 );
         waitframe();
     }
 
-    var_0 _meth_83C7( var_1, 0 );
+    var_0 setanimrate( var_1, 0 );
 }
 
 #using_animtree("generic_human");
@@ -480,9 +480,9 @@ fastzip_slide_end( var_0, var_1, var_2 )
 play_loop_until_message( var_0, var_1 )
 {
     self endon( "death" );
-    self _meth_8110( "idle", var_0, %body, 1, 0.1, 1 );
+    self setflaggedanimknoballrestart( "idle", var_0, %body, 1, 0.1, 1 );
     self waittill( var_1 );
-    self _meth_8142( var_0, 0.2 );
+    self clearanim( var_0, 0.2 );
 }
 
 gettagorigin_rotatecompensation( var_0 )
@@ -500,15 +500,15 @@ do_rotate_zipline_compensation( var_0, var_1, var_2, var_3, var_4 )
     var_6 = distance( var_2, var_1 );
     var_7 = var_2 - var_1;
     var_8 = var_6 / 2400;
-    var_0 _meth_814B( var_0 maps\_utility::getanim( var_4 ), 1, 0, 0 );
-    var_0 _meth_8117( var_0 maps\_utility::getanim( var_4 ), var_8 );
+    var_0 setanim( var_0 maps\_utility::getanim( var_4 ), 1, 0, 0 );
+    var_0 setanimtime( var_0 maps\_utility::getanim( var_4 ), var_8 );
     waitframe();
     var_9 = var_0 gettagorigin( "jnt_shuttleRoot" );
-    var_0 _meth_8117( var_0 maps\_utility::getanim( var_4 ), 0 );
+    var_0 setanimtime( var_0 maps\_utility::getanim( var_4 ), 0 );
     var_10 = var_9 - var_1;
     var_11 = vectortoangles( var_10 );
     var_12 = vectortoangles( var_7 );
-    var_13 = combineangles( var_12, _func_24C( var_11 ) );
+    var_13 = combineangles( var_12, invertangles( var_11 ) );
     var_14 = combineangles( var_13, var_12 );
     var_0.angles = var_14;
 }
@@ -564,15 +564,15 @@ fire_rope( var_0, var_1, var_2 )
     var_13 = getanimlength( var_12 );
     var_14 = var_13 * var_3 / var_6 - 0.05;
     soundscripts\_snd::snd_message( "seo_zipline_harpoon_fire", var_0, var_1, var_14 );
-    self _meth_8152( var_2, var_12, 1, 0.2, var_6 );
+    self setflaggedanimknob( var_2, var_12, 1, 0.2, var_6 );
     thread maps\_anim::start_notetrack_wait( self, var_2, var_2, self.animname, var_12 );
     thread maps\_anim::animscriptdonotetracksthread( self, var_2, var_2 );
 
     if ( var_14 > 0.05 )
         wait(var_14);
 
-    self _meth_814B( var_12, 1, 0, 0 );
-    self _meth_8117( var_12, var_3 );
+    self setanim( var_12, 1, 0, 0 );
+    self setanimtime( var_12, var_3 );
     var_15 = self gettagorigin( "jnt_harpoon" );
     var_16 = anglestoright( self gettagangles( "jnt_harpoon" ) );
     self.hit_ground_pos = physicstrace( var_15 + var_16 * -75, var_15 + var_16 * 75, self );
@@ -580,8 +580,8 @@ fire_rope( var_0, var_1, var_2 )
     soundscripts\_snd::snd_message( "seo_zipline_harpoon_impact", self.hit_ground_pos );
     level notify( "zipline_triggered", self.origin, self.hit_ground_pos );
     waitframe();
-    self _meth_814B( var_12, 1, 0, 0 );
-    self _meth_8117( var_12, 1.0 );
+    self setanim( var_12, 1, 0, 0 );
+    self setanimtime( var_12, 1.0 );
     var_17 = self gettagorigin( "jnt_harpoon" );
     var_18 = distance( var_15, var_17 );
 
@@ -589,8 +589,8 @@ fire_rope( var_0, var_1, var_2 )
     {
         var_19 = distance( var_15, self.hit_ground_pos ) - 15.0;
         var_20 = ( 1.0 - var_3 ) * var_19 / var_18;
-        self _meth_814B( var_12, 1, 0, 0 );
-        self _meth_8117( var_12, var_20 + var_3 );
+        self setanim( var_12, 1, 0, 0 );
+        self setanimtime( var_12, var_20 + var_3 );
     }
 
     var_21 = var_13 * var_8 / 1.0;
@@ -614,8 +614,8 @@ retract_rope( var_0 )
     var_2 = 30;
     var_3 = 1;
     var_4 = maps\_utility::getanim( "retract_rope" );
-    self _meth_8143( var_4, 1, 0.2, var_3 );
-    self _meth_8117( var_4, var_1 );
+    self setanimknob( var_4, 1, 0.2, var_3 );
+    self setanimtime( var_4, var_1 );
     playfx( common_scripts\utility::getfx( "dust_harpoon_impact" ), self.hit_ground_pos );
     soundscripts\_snd::snd_message( "seo_zipline_retract_rope", self.hit_ground_pos );
     var_5 = var_2 * ( 1 - var_1 ) / 30 * var_3;

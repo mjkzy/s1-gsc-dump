@@ -7,11 +7,11 @@ main()
 
     if ( level.currentgen )
     {
-        if ( _func_21E( "lagos_intro_tr" ) )
+        if ( istransientloaded( "lagos_intro_tr" ) )
             level.transient_zone = "intro";
-        else if ( _func_21E( "lagos_middle_tr" ) )
+        else if ( istransientloaded( "lagos_middle_tr" ) )
             level.transient_zone = "middle";
-        else if ( _func_21E( "lagos_outro_tr" ) )
+        else if ( istransientloaded( "lagos_outro_tr" ) )
             level.transient_zone = "outro";
     }
 
@@ -879,10 +879,10 @@ precacheciviliananims()
 
 exo_door_enable_weapons( var_0 )
 {
-    level.player _meth_831E();
+    level.player enableweapons();
 }
 
 vehicle_impact_rumble( var_0 )
 {
-    level.player _meth_80AD( "artillery_rumble" );
+    level.player playrumbleonentity( "artillery_rumble" );
 }

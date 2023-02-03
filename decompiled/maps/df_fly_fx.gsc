@@ -110,12 +110,12 @@ vfx_handle_disintegrating_jet()
     {
         var_2 = spawn( "script_model", self.origin );
         var_2.angles = self.angles;
-        var_2 _meth_80B1( "tag_origin" );
-        var_2 _meth_804D( self, "tag_origin", ( 0, 0, 5 ), ( 0, 5, 0 ) );
+        var_2 setmodel( "tag_origin" );
+        var_2 linkto( self, "tag_origin", ( 0, 0, 5 ), ( 0, 5, 0 ) );
         var_3 = spawn( "script_model", self.origin );
         var_3.angles = self.angles;
-        var_3 _meth_80B1( "vfx_atlas_fighter_jet_dest_body_01" );
-        var_3 _meth_804D( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_3 setmodel( "vfx_atlas_fighter_jet_dest_body_01" );
+        var_3 linkto( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_3 show();
         playfxontag( common_scripts\utility::getfx( var_1 ), var_2, "tag_origin" );
         var_4 = playfxontag( common_scripts\utility::getfx( "bagh_aircraft_damage_fire_trail" ), var_2, "tag_origin" );
@@ -136,16 +136,16 @@ vfx_handle_disintegrating_jet()
             if ( isdefined( var_6 ) )
             {
                 var_6.angles = self.angles;
-                var_6 _meth_804D( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+                var_6 linkto( var_2, "tag_origin", ( 0, 0, 0 ), ( 0, 0, 0 ) );
 
                 if ( var_0 == 2 )
                 {
-                    var_6 _meth_80B1( "vfx_atlas_fighter_jet_dest_wing_rt" );
+                    var_6 setmodel( "vfx_atlas_fighter_jet_dest_wing_rt" );
                     var_2 rotate_roll_link( self, "tag_origin", -1 * randomintrange( 360, 1080 ), randomintrange( 0, 2000 ), randomintrange( 2, 5 ) );
                 }
                 else
                 {
-                    var_6 _meth_80B1( "vfx_atlas_fighter_jet_dest_wing_lt" );
+                    var_6 setmodel( "vfx_atlas_fighter_jet_dest_wing_lt" );
                     var_2 rotate_roll_link( self, "tag_origin", randomintrange( 360, 1080 ), randomintrange( 0, 2000 ), randomintrange( 2, 5 ) );
                 }
 
@@ -180,13 +180,13 @@ rotate_roll_link( var_0, var_1, var_2, var_3, var_4 )
 
     while ( var_5 < var_4 && isalive( var_0 ) )
     {
-        self _meth_804F();
+        self unlink();
         self.angles += ( 0, 0, var_6 );
 
         if ( var_7 > 0 )
             self.origin = maps\df_fly_flight_code::offset_position_from_tag( "down", "tag_origin", var_7 );
 
-        self _meth_804D( var_0, var_1 );
+        self linkto( var_0, var_1 );
         wait 0.05;
         var_5 += 0.05;
     }

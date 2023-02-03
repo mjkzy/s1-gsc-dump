@@ -3,27 +3,27 @@
 
 play_rumble_funeral_gun_salute()
 {
-    level.player common_scripts\utility::delaycall( 0.8, ::_meth_80AD, "damage_light" );
-    level.player common_scripts\utility::delaycall( 4.9, ::_meth_80AD, "damage_light" );
-    level.player common_scripts\utility::delaycall( 8.5, ::_meth_80AD, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 0.8, ::playrumbleonentity, "damage_light" );
+    level.player common_scripts\utility::delaycall( 4.9, ::playrumbleonentity, "damage_light" );
+    level.player common_scripts\utility::delaycall( 8.5, ::playrumbleonentity, "heavy_3s" );
 }
 
 play_rumble_training_s1_mute_breach()
 {
-    level.player common_scripts\utility::delaycall( 1.8, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 2.2, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 1.8, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 2.2, ::playrumbleonentity, "heavy_1s" );
 }
 
 play_rumble_training_s1_reload_malfunction()
 {
-    level.player common_scripts\utility::delaycall( 0.5, ::_meth_80AD, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 0.5, ::playrumbleonentity, "heavy_3s" );
 }
 
 play_rumble_training_s1_president_load_fail()
 {
-    level.player common_scripts\utility::delaycall( 2.7, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 5.8, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 6.8, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 2.7, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 5.8, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 6.8, ::playrumbleonentity, "heavy_1s" );
     wait 21;
     level.player.rumble_entity = maps\_utility::get_rumble_ent( "steady_rumble" );
     level.player.rumble_entity.intensity = 0.1;
@@ -40,7 +40,7 @@ play_rumble_elevator()
     level.player.rumble_entity = maps\_utility::get_rumble_ent( "steady_rumble" );
     level.player.rumble_entity.intensity = 0.08;
     wait 15.0;
-    level.player _meth_80AF( "steady_rumble" );
+    level.player stoprumble( "steady_rumble" );
     level.player.rumble_entity delete();
 }
 
@@ -51,32 +51,32 @@ play_rumble_jeep_ride()
     wait 94.0;
     level.player.rumble_entity.intensity = 0.08;
     wait 14;
-    level.player _meth_80AF( "steady_rumble" );
+    level.player stoprumble( "steady_rumble" );
     level.player.rumble_entity delete();
     wait 1.3;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 0.3;
-    level.player _meth_80AF( "heavy_1s" );
+    level.player stoprumble( "heavy_1s" );
 }
 
 play_rumble_training_s2_president_load()
 {
     wait 1.5;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 0.5;
-    level.player _meth_80AF( "heavy_1s" );
+    level.player stoprumble( "heavy_1s" );
     wait 6.3;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 0.2;
-    level.player _meth_80AF( "heavy_1s" );
+    level.player stoprumble( "heavy_1s" );
     wait 0.6;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 0.1;
-    level.player _meth_80AF( "heavy_1s" );
+    level.player stoprumble( "heavy_1s" );
     wait 0.1;
-    level.player _meth_80AD( "heavy_1s" );
+    level.player playrumbleonentity( "heavy_1s" );
     wait 0.1;
-    level.player _meth_80AF( "heavy_1s" );
+    level.player stoprumble( "heavy_1s" );
 }
 
 play_rumble_walker_tank()
@@ -87,9 +87,9 @@ play_rumble_walker_tank()
 
         if ( var_0 == 3 || var_0 == 4 || var_0 == 5 || var_0 == 6 || var_0 == 7 )
         {
-            level.player _meth_80AD( "heavy_1s" );
+            level.player playrumbleonentity( "heavy_1s" );
             wait 0.75;
-            level.player _meth_80AF( "heavy_1s" );
+            level.player stoprumble( "heavy_1s" );
         }
     }
 }
@@ -98,25 +98,25 @@ play_rumble_arm_repair()
 {
     common_scripts\utility::flag_wait( "tour_exo_arm" );
     wait 3.6;
-    level.player _meth_80AD( "steady_rumble" );
+    level.player playrumbleonentity( "steady_rumble" );
     wait 0.9;
-    level.player _meth_80AF( "steady_rumble" );
+    level.player stoprumble( "steady_rumble" );
     wait 1.7;
-    level.player _meth_80AD( "steady_rumble" );
+    level.player playrumbleonentity( "steady_rumble" );
     wait 0.9;
-    level.player _meth_80AF( "steady_rumble" );
+    level.player stoprumble( "steady_rumble" );
     wait 3.4;
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     wait 0.7;
-    level.player _meth_80AF( "damage_light" );
+    level.player stoprumble( "damage_light" );
     common_scripts\utility::flag_wait( "arm_repair_attempt_1" );
     common_scripts\utility::flag_wait( "arm_repair_attempt_2" );
     common_scripts\utility::flag_wait( "arm_repair_attempt_3" );
     common_scripts\utility::flag_waitopen( "arm_repair_attempt_3" );
     wait 2.2;
-    level.player _meth_80AD( "damage_light" );
+    level.player playrumbleonentity( "damage_light" );
     wait 0.5;
-    level.player _meth_80AF( "damage_light" );
+    level.player stoprumble( "damage_light" );
 }
 
 play_camera_shake_tour_ride()
@@ -138,25 +138,25 @@ play_camera_shake_tour_ride()
     var_14 = 1.0;
     var_15 = 0.8;
     var_16 = 0.6;
-    level.player _meth_83FE( var_12, var_12, var_12, var_0, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_12, var_12, var_12, var_0, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_0);
-    level.player _meth_83FE( var_10, var_10, var_10, var_1, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_10, var_10, var_10, var_1, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_1);
-    level.player _meth_83FE( var_11, var_11, var_11, var_2, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_11, var_11, var_11, var_2, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_2);
-    level.player _meth_83FE( var_12, var_12, var_12, var_3, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_12, var_12, var_12, var_3, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_3);
-    level.player _meth_83FE( var_11, var_11, var_11, var_4, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_11, var_11, var_11, var_4, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_4);
-    level.player _meth_83FE( var_10, var_10, var_10, var_5, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_10, var_10, var_10, var_5, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_5);
-    level.player _meth_83FE( var_11, var_11, var_11, var_6, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_11, var_11, var_11, var_6, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_6);
-    level.player _meth_83FE( var_10, var_10, var_10, var_7, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_10, var_10, var_10, var_7, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_7);
-    level.player _meth_83FE( var_11, var_11, var_11, var_8, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_11, var_11, var_11, var_8, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_8);
-    level.player _meth_83FE( var_12, var_12, var_12, var_9, 0, 0, 0, var_14, var_15, var_16 );
+    level.player screenshakeonentity( var_12, var_12, var_12, var_9, 0, 0, 0, var_14, var_15, var_16 );
     wait(var_9);
 }
 
@@ -180,7 +180,7 @@ mission_out_of_bounds_fail()
         else
             setdvar( "ui_deadquote", &"RECOVERY_OBJECTIVE_FAIL_JEEP_BOARD" );
 
-        _func_072( 30, 2 );
+        setblur( 30, 2 );
         maps\_utility::missionfailedwrapper();
     }
 }
@@ -234,12 +234,12 @@ bloody_death( var_0, var_1 )
 
         if ( isdefined( var_1 ) && isai( var_1 ) && isalive( var_1 ) )
         {
-            if ( !level.player _meth_8214( var_1.origin, var_3, 500 ) )
-                var_1 _meth_81E8();
+            if ( !level.player worldpointinreticle_circle( var_1.origin, var_3, 500 ) )
+                var_1 shootblank();
         }
     }
 
-    self _meth_8051( self.health + 50, self.origin );
+    self dodamage( self.health + 50, self.origin );
 }
 
 bloody_death_fx( var_0, var_1 )
@@ -275,29 +275,29 @@ enable_jump_jet_pathing()
 
 recovery_thermal_manager()
 {
-    self _meth_8029();
+    self thermaldrawenable();
 }
 
 training_set_up_player()
 {
     common_scripts\utility::flag_clear( "flag_disable_exo" );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_830E( "iw5_bal27_sp_silencer01_variablereddot" );
-    level.player _meth_830E( "iw5_titan45_sp_silencerpistol" );
-    level.player _meth_8315( "iw5_bal27_sp_silencer01_variablereddot" );
-    level.player _meth_8440( "iw5_bal27_sp_silencer01_variablereddot", 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowjump( 1 );
+    level.player giveweapon( "iw5_bal27_sp_silencer01_variablereddot" );
+    level.player giveweapon( "iw5_titan45_sp_silencerpistol" );
+    level.player switchtoweapon( "iw5_bal27_sp_silencer01_variablereddot" );
+    level.player enablehybridsight( "iw5_bal27_sp_silencer01_variablereddot", 1 );
 
     if ( level.nextgen )
-        level.player _meth_846F( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "m/mtl_bal27_base_black", "m/mtl_bal27_base_black_logo" );
     else
-        level.player _meth_846F( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
+        level.player overrideviewmodelmaterial( "mq/mtl_bal27_base_black", "mq/mtl_bal27_base_black_logo" );
 
-    level.player _meth_831E();
-    level.player _meth_8131( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_8130( 1 );
+    level.player enableweapons();
+    level.player allowfire( 1 );
+    level.player allowads( 1 );
+    level.player allowmelee( 1 );
     maps\_variable_grenade::give_player_variable_grenade();
     maps\_variable_grenade::set_variable_grenades_with_no_switch( "tracking_grenade_var", "paint_grenade_var" );
 }
@@ -306,32 +306,32 @@ training_s2_start_set_up_player()
 {
     common_scripts\utility::flag_clear( "flag_disable_exo" );
     common_scripts\utility::flag_set( "flag_enable_overdrive" );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8301( 1 );
-    level.player _meth_831E();
-    level.player _meth_8131( 1 );
-    level.player _meth_8300( 1 );
-    level.player _meth_8130( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowjump( 1 );
+    level.player enableweapons();
+    level.player allowfire( 1 );
+    level.player allowads( 1 );
+    level.player allowmelee( 1 );
     maps\_variable_grenade::give_player_variable_grenade();
 }
 
 training_s1_squad_allow_run()
 {
     if ( isalive( level.ally_squad_member_1 ) )
-        level.ally_squad_member_1 _meth_81CA( "prone", "crouch", "stand" );
+        level.ally_squad_member_1 allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.ally_squad_member_2 ) )
-        level.ally_squad_member_2 _meth_81CA( "prone", "crouch", "stand" );
+        level.ally_squad_member_2 allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.ally_squad_member_4 ) )
-        level.ally_squad_member_4 _meth_81CA( "prone", "crouch", "stand" );
+        level.ally_squad_member_4 allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.joker ) )
-        level.joker _meth_81CA( "prone", "crouch", "stand" );
+        level.joker allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.ally_squad_member_3 ) )
-        level.ally_squad_member_3 _meth_81CA( "prone", "crouch", "stand" );
+        level.ally_squad_member_3 allowedstances( "prone", "crouch", "stand" );
 }
 
 training_s1_windy_trees()
@@ -356,30 +356,30 @@ training_s1_windy_trees_think()
         else
             var_2 = -6;
 
-        self _meth_82B5( var_0 + ( var_2, 0, 0 ), 4, 3, 1 );
+        self rotateto( var_0 + ( var_2, 0, 0 ), 4, 3, 1 );
         wait 4;
-        self _meth_82B5( var_0, 4, 3, 1 );
+        self rotateto( var_0, 4, 3, 1 );
         wait 3.85;
     }
 }
 
 player_control_on()
 {
-    level.player _meth_804F();
-    level.player _meth_831E();
-    level.player _meth_8118( 1 );
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8304( 1 );
+    level.player unlink();
+    level.player enableweapons();
+    level.player allowstand( 1 );
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowsprint( 1 );
 }
 
 training_s1_opening_guy_think( var_0, var_1 )
 {
     self endon( "death" );
     var_2 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_2.origin, var_2.angles );
-    self _meth_81A6( self.origin );
-    self _meth_81CA( "crouch" );
+    self forceteleport( var_2.origin, var_2.angles );
+    self setgoalpos( self.origin );
+    self allowedstances( "crouch" );
     maps\_stealth_utility::stealth_plugin_basic();
     maps\_stealth_utility::stealth_plugin_accuracy();
     maps\_stealth_utility::stealth_plugin_smart_stance();
@@ -577,7 +577,7 @@ training_s1_kill_surprise_enemy()
     if ( isalive( level.surprise_enemy ) )
     {
         level.surprise_enemy.health = 1;
-        magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), level.surprise_enemy _meth_80A8() );
+        magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), level.surprise_enemy geteye() );
         level.surprise_enemy bloody_death();
         common_scripts\utility::flag_set( "flag_vo_training_s1_joker_got_him" );
     }
@@ -612,8 +612,8 @@ training_s1_refill_threat_grenades()
         if ( !common_scripts\utility::flag( "player_at_threat_breach" ) )
             common_scripts\utility::flag_wait( "player_at_threat_breach" );
 
-        if ( level.player _meth_82F9( "paint_grenade_var" ) == 0 )
-            level.player _meth_82F7( "paint_grenade_var", 1 );
+        if ( level.player setweaponammostock( "paint_grenade_var" ) == 0 )
+            level.player setweaponammostock( "paint_grenade_var", 1 );
 
         wait 0.2;
     }
@@ -637,14 +637,14 @@ training_s1_threat_enemies()
 
             var_5 = 7;
             var_6 = ( randomfloat( var_5 ), randomfloat( var_5 ), randomfloat( var_5 ) );
-            magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), var_3 _meth_80A8() + var_6 );
+            magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), var_3 geteye() + var_6 );
             var_4 = randomfloatrange( 0.2, 0.35 );
             wait(var_4);
             var_1 += var_4;
             var_6 = ( randomfloat( var_5 ), randomfloat( var_5 ), randomfloat( var_5 ) );
 
             if ( common_scripts\utility::cointoss() )
-                magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), var_3 _meth_80A8() + var_6 );
+                magicbullet( level.joker.weapon, level.joker gettagorigin( "tag_flash" ), var_3 geteye() + var_6 );
 
             if ( !isalive( var_3 ) )
                 continue;
@@ -662,7 +662,7 @@ training_s1_flash_door()
     var_1.animname = "door_prop";
     var_1 maps\_utility::assign_animtree();
     var_2 = getent( "living_room_door_clip", "targetname" );
-    var_2 _meth_804D( var_1, "door" );
+    var_2 linkto( var_1, "door" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "training_s1_flash_door_open" );
     common_scripts\utility::flag_wait( "training_s1_peak_flash_door" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s1_flash_door_open" );
@@ -670,11 +670,11 @@ training_s1_flash_door()
     common_scripts\utility::flag_wait( "training_s1_open_flash_door" );
     var_0 notify( "stop_loop" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s1_flash_door_out" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     common_scripts\utility::flag_wait( "training_s1_close_living_room_door" );
     var_0 maps\_anim::anim_first_frame_solo( var_1, "training_s1_flash_door_open" );
     wait 1;
-    var_2 _meth_8057();
+    var_2 disconnectpaths();
 }
 
 training_s1_flash_enemies_think( var_0, var_1 )
@@ -767,7 +767,7 @@ training_s1_threat_door()
     var_1 maps\_utility::assign_animtree();
     var_2 = getent( "living_room_door_clip", "targetname" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "training_s1_threat_door_open" );
-    var_2 _meth_804D( var_1, "door" );
+    var_2 linkto( var_1, "door" );
     common_scripts\utility::flag_wait( "training_s1_peak_thermal_door" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s1_threat_door_open" );
     var_0 thread maps\_anim::anim_loop_solo( var_1, "training_s1_threat_door_open_idle", "stop_loop" );
@@ -778,11 +778,11 @@ training_s1_threat_door()
 
     var_0 notify( "stop_loop" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s1_threat_door_out" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     common_scripts\utility::flag_wait( "training_s1_breach_done" );
     var_0 maps\_anim::anim_first_frame_solo( var_1, "training_s1_threat_door_open" );
     wait 1;
-    var_2 _meth_8057();
+    var_2 disconnectpaths();
 }
 
 training_s1_shoot_monitor()
@@ -840,7 +840,7 @@ training_s1_kill_threat_enemies()
 
     if ( isalive( self ) )
     {
-        magicbullet( level.gideon.weapon, level.gideon gettagorigin( "tag_flash" ), self _meth_80A8() );
+        magicbullet( level.gideon.weapon, level.gideon gettagorigin( "tag_flash" ), self geteye() );
         bloody_death();
     }
 }
@@ -870,9 +870,9 @@ training_surprise_enemy_think()
 training_s2_open_bedroom_door_2()
 {
     var_0 = getent( "bedroom_2_door", "targetname" );
-    getent( var_0.target, "targetname" ) _meth_804D( var_0 );
+    getent( var_0.target, "targetname" ) linkto( var_0 );
     var_0.angles += ( 0, 85, 0 );
-    var_0 _meth_8058();
+    var_0 connectpaths();
 }
 
 training_s1_president_setup( var_0 )
@@ -911,14 +911,14 @@ training_s1_set_up_search_drones( var_0, var_1 )
         thread maps\recovery_fx::drone_search_light_fx();
     }
     else
-        self _meth_80B2();
+        self laseron();
 
     common_scripts\utility::flag_wait( var_0 );
     self.ignoreall = 0;
     self.ignoreme = 0;
 
     if ( isdefined( self.animation ) )
-        self _meth_8141();
+        self stopanimscripted();
 
     thread vehicle_scripts\_pdrone::stop_scripted_move_and_attack();
 }
@@ -972,7 +972,7 @@ training_s1_drone_ambush_scene()
     magicbullet( "iw5_bal27_sp", var_0.origin, var_1.origin );
 
     if ( isalive( var_1 ) )
-        var_1 _meth_8052();
+        var_1 kill();
 
     wait 5;
     var_2 = common_scripts\utility::getstruct( "attacklocation2", "targetname" );
@@ -989,7 +989,7 @@ training_s1_drone_ambush_scene()
     magicbullet( "iw5_bal27_sp", var_2.origin, var_3.origin );
 
     if ( isalive( var_3 ) )
-        var_3 _meth_8052();
+        var_3 kill();
 }
 
 training_s1_terrace_enemies_think( var_0 )
@@ -1086,18 +1086,18 @@ training_s1_check_snipers()
 training_s1_pool_house_doors()
 {
     var_0 = getent( "pool_house_door01", "targetname" );
-    getent( var_0.target, "targetname" ) _meth_804D( var_0 );
+    getent( var_0.target, "targetname" ) linkto( var_0 );
     var_1 = getent( "pool_house_door02", "targetname" );
-    getent( var_1.target, "targetname" ) _meth_804D( var_1 );
-    var_0 _meth_82B5( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
-    var_1 _meth_82B5( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
-    var_0 _meth_8058();
-    var_1 _meth_8058();
+    getent( var_1.target, "targetname" ) linkto( var_1 );
+    var_0 rotateto( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_1 rotateto( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_0 connectpaths();
+    var_1 connectpaths();
     wait 3;
-    var_0 _meth_82B5( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
-    var_1 _meth_82B5( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
-    var_0 _meth_8057();
-    var_1 _meth_8057();
+    var_0 rotateto( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_1 rotateto( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_0 disconnectpaths();
+    var_1 disconnectpaths();
 }
 
 training_s1_terrace_vehicles_think( var_0, var_1, var_2 )
@@ -1262,7 +1262,7 @@ training_prone_hint_monitor()
 {
     level endon( "training_s1_hide_from_patrols_done" );
 
-    while ( level.player _meth_817C() != "prone" && common_scripts\utility::flag( "training_s1_spotted" ) == 0 )
+    while ( level.player getstance() != "prone" && common_scripts\utility::flag( "training_s1_spotted" ) == 0 )
         wait 0.5;
 
     level notify( "player_prone" );
@@ -1362,35 +1362,35 @@ training_s1_kva_ambush2_think( var_0, var_1 )
 training_s1_guard_house_doors()
 {
     var_0 = getent( "guard_door_01", "targetname" );
-    getent( var_0.target, "targetname" ) _meth_804D( var_0 );
+    getent( var_0.target, "targetname" ) linkto( var_0 );
     var_1 = getent( "guard_door_02", "targetname" );
-    getent( var_1.target, "targetname" ) _meth_804D( var_1 );
+    getent( var_1.target, "targetname" ) linkto( var_1 );
     wait(randomint( 10 ));
-    var_0 _meth_82B5( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_0 rotateto( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
     wait(randomint( 5 ));
-    var_1 _meth_82B5( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
-    var_0 _meth_8058();
-    var_1 _meth_8058();
+    var_1 rotateto( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_0 connectpaths();
+    var_1 connectpaths();
     wait 30;
-    var_0 _meth_82B5( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_0 rotateto( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
     wait(randomint( 5 ));
-    var_1 _meth_82B5( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
-    var_0 _meth_8057();
-    var_1 _meth_8057();
+    var_1 rotateto( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_0 disconnectpaths();
+    var_1 disconnectpaths();
 }
 
 training_door_cover_cloak_think()
 {
-    var_0 = self _meth_83B8();
-    self _meth_80B1( var_0 + "_cloak" );
-    self _meth_8448();
-    self _meth_83A7( 1, 0 );
+    var_0 = self getmodelfromentity();
+    self setmodel( var_0 + "_cloak" );
+    self drawpostresolve();
+    self setmaterialscriptparam( 1, 0 );
     wait 1;
-    self _meth_83A7( 0, 1.5 );
+    self setmaterialscriptparam( 0, 1.5 );
     wait 1.5;
     common_scripts\utility::hide_notsolid();
     common_scripts\utility::flag_wait( "training_round_2" );
-    self _meth_80B1( var_0 );
+    self setmodel( var_0 );
     common_scripts\utility::show_solid();
 }
 
@@ -1406,7 +1406,7 @@ gideon_change_outfit()
         level.gideon = getent( "gideon", "targetname" ) maps\_utility::spawn_ai( 1 );
         level.gideon.script_pushable = 0;
         var_0 = common_scripts\utility::getstruct( "gideon_exo_exit", "targetname" );
-        level.gideon _meth_81C6( var_0.origin, var_0.angles );
+        level.gideon forceteleport( var_0.origin, var_0.angles );
         level.gideon maps\_utility::gun_remove();
     }
 }
@@ -1466,7 +1466,7 @@ aim_assist_using_bmodels_init()
     foreach ( var_2 in level.aim_assist_with_bmodels.entities )
     {
         var_2.maxhealth = 1000;
-        var_2 _meth_8050( var_2.maxhealth );
+        var_2 setnormalhealth( var_2.maxhealth );
         var_2 hide();
         var_0 stack_push( var_2 );
     }
@@ -1483,7 +1483,7 @@ enable_aim_assist_on_script_model( var_0, var_1 )
     var_3 = var_2 stack_pop();
     var_3.health = var_3.maxhealth;
     var_3 enableaimassist();
-    var_3 _meth_804D( var_0, var_1, ( 4, 0, 0 ), ( 0, 0, 0 ) );
+    var_3 linkto( var_0, var_1, ( 4, 0, 0 ), ( 0, 0, 0 ) );
     var_0.aim_assist_bmodel = var_3;
     level.aim_assist_with_bmodels.entitiesinuse = common_scripts\utility::array_add( level.aim_assist_with_bmodels.entitiesinuse, var_3 );
 }
@@ -1491,7 +1491,7 @@ enable_aim_assist_on_script_model( var_0, var_1 )
 disable_aim_assist_on_script_model( var_0 )
 {
     var_1 = var_0.aim_assist_bmodel;
-    var_1 _meth_804F();
+    var_1 unlink();
     var_2 = level.aim_assist_with_bmodels.stack;
     var_1 disableaimassist();
     var_2 stack_push( var_1 );
@@ -1684,7 +1684,7 @@ score_manager_detect_damage( var_0, var_1 )
 {
     level.score_keeper endon( "score_manager_timed_out" );
     var_2 = level.score_keeper.stats;
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
     var_3 = undefined;
     var_4 = undefined;
 
@@ -1774,7 +1774,7 @@ wait_for_primary_weapon_pickup()
 
     for (;;)
     {
-        var_0 = level.player _meth_8311();
+        var_0 = level.player getcurrentweapon();
 
         if ( var_0 != "none" )
             break;
@@ -1819,8 +1819,8 @@ attach_flashlight_in_hand()
     var_1.owner = self;
     var_1.origin = self gettagorigin( var_0 );
     var_1.angles = self gettagangles( var_0 );
-    var_1 _meth_80B1( "com_flashlight_on" );
-    var_1 _meth_804D( self, var_0 );
+    var_1 setmodel( "com_flashlight_on" );
+    var_1 linkto( self, var_0 );
     var_1 thread hand_flashlight_watch_for_drop();
     thread hand_flashlight_handle_alert();
     thread hand_flashlight_handle_node_pause();
@@ -1846,13 +1846,13 @@ hand_flashlight_watch_for_drop()
 
 hand_flashlight_on()
 {
-    self.hand_flashlight _meth_80B1( "com_flashlight_on" );
+    self.hand_flashlight setmodel( "com_flashlight_on" );
     playfxontag( common_scripts\utility::getfx( "flashlight" ), self.hand_flashlight, "tag_light" );
 }
 
 hand_flashlight_off()
 {
-    self.hand_flashlight _meth_80B1( "com_flashlight_off" );
+    self.hand_flashlight setmodel( "com_flashlight_off" );
     stopfxontag( common_scripts\utility::getfx( "flashlight" ), self.hand_flashlight, "tag_light" );
 }
 
@@ -1974,13 +1974,13 @@ training_reset_stealth_settings()
 training_s2_squad_allow_run()
 {
     if ( isalive( level.gideon ) )
-        level.gideon _meth_81CA( "prone", "crouch", "stand" );
+        level.gideon allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.joker ) )
-        level.joker _meth_81CA( "prone", "crouch", "stand" );
+        level.joker allowedstances( "prone", "crouch", "stand" );
 
     if ( isalive( level.ally_s2_squad_member_1 ) )
-        level.ally_s2_squad_member_1 _meth_81CA( "prone", "crouch", "stand" );
+        level.ally_s2_squad_member_1 allowedstances( "prone", "crouch", "stand" );
 }
 
 training_s2_enemies_start_think( var_0, var_1, var_2 )
@@ -2101,7 +2101,7 @@ training_s2_enemies_living_room_think( var_0 )
     thread maps\_stealth_utility::disable_stealth_for_ai();
     thread maps\_utility::set_battlechatter( 1 );
     wait(randomfloatrange( 0.25, 1 ));
-    var_3 = self _meth_81EE();
+    var_3 = self findbestcovernode();
 
     if ( isdefined( var_3 ) )
         maps\_utility::set_goal_node( var_3 );
@@ -2144,18 +2144,18 @@ training_s2_threat_door()
     var_1 maps\_utility::assign_animtree();
     var_2 = getent( "living_room_door_clip", "targetname" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "training_s2_threat_door_open" );
-    var_2 _meth_804D( var_1, "door" );
+    var_2 linkto( var_1, "door" );
     common_scripts\utility::flag_wait( "training_s2_peak_thermal_door" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s2_threat_door_open" );
     var_0 thread maps\_anim::anim_loop_solo( var_1, "training_s2_threat_door_open_idle", "stop_loop" );
     common_scripts\utility::flag_wait( "training_s2_open_thermal_door" );
     var_0 notify( "stop_loop" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s2_threat_door_out" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
     common_scripts\utility::flag_wait( "training_s2_breach_done" );
     var_0 maps\_anim::anim_first_frame_solo( var_1, "training_s2_threat_door_open" );
     wait 1;
-    var_2 _meth_8057();
+    var_2 disconnectpaths();
 }
 
 training_s2_flash_monitor()
@@ -2179,7 +2179,7 @@ training_s2_kill_threat_enemies()
 
     if ( isalive( self ) )
     {
-        magicbullet( level.gideon.weapon, level.gideon gettagorigin( "tag_flash" ), self _meth_80A8() );
+        magicbullet( level.gideon.weapon, level.gideon gettagorigin( "tag_flash" ), self geteye() );
         bloody_death();
     }
 }
@@ -2193,9 +2193,9 @@ training_s2_start_squad_attack( var_0 )
 training_s2_opening_guy_think( var_0 )
 {
     var_1 = common_scripts\utility::getstruct( var_0, "targetname" );
-    self _meth_81C6( var_1.origin, var_1.angles );
-    self _meth_81A6( self.origin );
-    self _meth_81CA( "crouch" );
+    self forceteleport( var_1.origin, var_1.angles );
+    self setgoalpos( self.origin );
+    self allowedstances( "crouch" );
     maps\_stealth_utility::stealth_plugin_basic();
     maps\_stealth_utility::stealth_plugin_accuracy();
     maps\_stealth_utility::stealth_plugin_smart_stance();
@@ -2211,24 +2211,24 @@ training_s1_clear_bedrooms( var_0 )
 {
     wait 2;
     var_1 = getent( "bedroom_1_door", "targetname" );
-    getent( var_1.target, "targetname" ) _meth_804D( var_1 );
+    getent( var_1.target, "targetname" ) linkto( var_1 );
     var_2 = 1;
-    var_1 _meth_82B5( var_1.angles + ( 0, 145, 0 ), var_2, 0.05, 0.05 );
-    var_1 common_scripts\utility::delaycall( var_2, ::_meth_8058 );
-    var_1 common_scripts\utility::delaycall( 2, ::_meth_8057 );
+    var_1 rotateto( var_1.angles + ( 0, 145, 0 ), var_2, 0.05, 0.05 );
+    var_1 common_scripts\utility::delaycall( var_2, ::connectpaths );
+    var_1 common_scripts\utility::delaycall( 2, ::disconnectpaths );
     var_3 = getent( "bedroom_2_door", "targetname" );
-    getent( var_3.target, "targetname" ) _meth_804D( var_3 );
+    getent( var_3.target, "targetname" ) linkto( var_3 );
     var_3.angles += ( 0, 85, 0 );
-    var_3 _meth_8058();
-    var_3 _meth_8057();
+    var_3 connectpaths();
+    var_3 disconnectpaths();
     maps\_utility::array_spawn_noteworthy( "training_s1_bedroom_spawners", 1 );
     common_scripts\utility::flag_wait( var_0 );
-    var_1 _meth_82B5( var_1.angles + ( 0, -145, 0 ), var_2, 0.05, 0.05 );
-    var_1 common_scripts\utility::delaycall( var_2, ::_meth_8058 );
-    var_1 common_scripts\utility::delaycall( 2, ::_meth_8057 );
+    var_1 rotateto( var_1.angles + ( 0, -145, 0 ), var_2, 0.05, 0.05 );
+    var_1 common_scripts\utility::delaycall( var_2, ::connectpaths );
+    var_1 common_scripts\utility::delaycall( 2, ::disconnectpaths );
     var_3.angles += ( 0, -85, 0 );
-    var_3 _meth_8058();
-    var_3 _meth_8057();
+    var_3 connectpaths();
+    var_3 disconnectpaths();
 }
 
 training_s1_bedroom_spawners_think()
@@ -2241,7 +2241,7 @@ training_s2_drone_manager()
 {
     common_scripts\utility::flag_set( "training_s2_drone_start" );
     level notify( "training_s2_drone_start" );
-    level.player _meth_821B( "actionslot3", "dpad_icon_drone_off" );
+    level.player setweaponhudiconoverride( "actionslot3", "dpad_icon_drone_off" );
     common_scripts\utility::flag_set( "flag_disable_exo" );
     training_s2_player_drone_control();
     common_scripts\utility::flag_clear( "flag_disable_exo" );
@@ -2276,7 +2276,7 @@ training_s2_enemies_patio_think( var_0, var_1, var_2 )
     self endon( "death" );
     thread maps\_stealth_utility::enable_stealth_for_ai();
     maps\_utility::disable_long_death();
-    self _meth_8029();
+    self thermaldrawenable();
     thread attach_flashlight_on_gun();
     thread maps\_stealth_utility::disable_stealth_system();
     self notify( "awareness_alert_level", "warning" );
@@ -2319,7 +2319,7 @@ training_s1_drone_attack_think()
 {
     self endon( "death" );
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
 
     if ( isdefined( self.animation ) )
     {
@@ -2334,7 +2334,7 @@ training_s2_drone_ambush_attack_think()
 {
     self endon( "death" );
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
     common_scripts\utility::flag_wait( "training_s2_living_room_drone_attack_done" );
     wait(randomfloatrange( 0.5, 1.5 ));
     self notify( "death" );
@@ -2345,7 +2345,7 @@ training_s2_drone_attack_think( var_0, var_1 )
     self endon( "death" );
     self.pacifist = 1;
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
     thread training_s2_drone_damaged( var_1 );
     thread training_s2_drone_attack_death( var_1 );
     common_scripts\utility::flag_wait( var_1 );
@@ -2424,7 +2424,7 @@ training_s1_breach_enemy_think()
         self.a.nodeath = 1;
         self.allowdeath = 1;
         maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
     else
     {
@@ -2438,7 +2438,7 @@ training_s1_breach_enemy_think()
         self.allowdeath = 1;
         self.a.nodeath = 1;
         maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
 }
 
@@ -2471,14 +2471,14 @@ training_s1_breach_enemy_death_check()
         }
 
         self notify( "killed" );
-        self _meth_8141();
+        self stopanimscripted();
         var_11 = common_scripts\utility::getstruct( "training_s1_exo_breach_marker", "targetname" );
         var_11 maps\_anim::anim_single_solo( self, "training_s1_exo_breach_kva2_death" );
         self.noragdoll = 1;
         self.allowdeath = 1;
         self.a.nodeath = 1;
         maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
 }
 
@@ -2512,13 +2512,13 @@ training_s1_breach_enemy_monitor_death()
         self.allowdeath = 1;
         self.a.nodeath = 1;
         maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
     else
     {
         self.allowdeath = 1;
         maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
 
     if ( var_3 == "j_head" )
@@ -2542,7 +2542,7 @@ training_s1_breach_slomo_end()
     maps\_utility::slowmo_setlerptime_out( var_0 );
     maps\_utility::slowmo_lerp_out();
     maps\_utility::slowmo_end();
-    level.player _meth_81E1( 1.0 );
+    level.player setmovespeedscale( 1.0 );
 }
 
 training_s1_breach_kva_think()
@@ -2625,7 +2625,7 @@ training_s1_president_breach_monitor_death()
 
     common_scripts\utility::flag_set( "training_s1_flag_president_dead" );
     self.allowdeath = 1;
-    self _meth_8052();
+    self kill();
 
     if ( isplayer( var_4 ) )
         setdvar( "ui_deadquote", &"RECOVERY_PRESIDENT_MURDERED" );
@@ -2664,7 +2664,7 @@ training_s1_bathroom_enemy_think()
     self.allowdeath = 1;
     self.a.nodeath = 1;
     wait 0.05;
-    self _meth_8052();
+    self kill();
 }
 
 training_s1_bathroom_enemy_dialog()
@@ -2696,7 +2696,7 @@ training_s1_bathroom_enemy_flag_death()
 training_s1_bathroom_force_death()
 {
     common_scripts\utility::flag_wait( "training_s1_flag_bathroom_guy_shot" );
-    self _meth_8052();
+    self kill();
 }
 
 training_s1_exo_breach_monitor_enemy_group_death()
@@ -2776,14 +2776,14 @@ training_s1_patio_door_clip()
     var_0 = getent( "french_door_clip_01", "targetname" );
     var_1 = getent( "french_door_clip_02", "targetname" );
     var_2 = getent( "training_patio_french_doors", "targetname" );
-    var_0 _meth_804D( var_2, "door_r" );
-    var_1 _meth_804D( var_2, "door_l" );
-    var_0 _meth_8058();
-    var_1 _meth_8058();
+    var_0 linkto( var_2, "door_r" );
+    var_1 linkto( var_2, "door_l" );
+    var_0 connectpaths();
+    var_1 connectpaths();
     common_scripts\utility::flag_wait( "training_s1_end" );
     wait 1;
-    var_0 _meth_8057();
-    var_1 _meth_8057();
+    var_0 disconnectpaths();
+    var_1 disconnectpaths();
 }
 
 training_s2_breach_enemy_think()
@@ -2828,14 +2828,14 @@ training_s2_breach_enemy_death_check()
         }
 
         self notify( "killed" );
-        self _meth_8141();
+        self stopanimscripted();
         var_5 = common_scripts\utility::getstruct( "training_s1_exo_breach_marker", "targetname" );
         var_5 maps\_anim::anim_single_solo( self, "training_s2_exo_breach_kva2_death" );
         self.noragdoll = 1;
         self.allowdeath = 1;
         self.a.nodeath = 1;
         thread maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
 }
 
@@ -2872,9 +2872,9 @@ training_s1_bathroom_breach_door()
     var_2 = getent( "breach_bathroom_door_clip", "targetname" );
     var_0 thread maps\_anim::anim_first_frame_solo( var_1, "training_s1_bathroom_door" );
     soundscripts\_snd::snd_message( "rec_bathroom_guy", var_1 );
-    var_2 _meth_804D( var_1, "door" );
+    var_2 linkto( var_1, "door" );
     var_0 maps\_anim::anim_single_solo( var_1, "training_s1_bathroom_door" );
-    var_2 _meth_8058();
+    var_2 connectpaths();
 }
 
 training_s2_breach_enemy_monitor_death()
@@ -2907,7 +2907,7 @@ training_s2_breach_enemy_monitor_death()
         self.allowdeath = 1;
         self.a.nodeath = 1;
         thread maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
     else
     {
@@ -2915,7 +2915,7 @@ training_s2_breach_enemy_monitor_death()
         self notify( "shot" );
         self.allowdeath = 1;
         thread maps\_utility::set_battlechatter( 0 );
-        self _meth_8052();
+        self kill();
     }
 
     if ( var_3 == "j_head" )
@@ -2941,7 +2941,7 @@ training_s2_breach_enemies_monitor()
     maps\_utility::slowmo_setlerptime_out( var_0 );
     maps\_utility::slowmo_lerp_out();
     maps\_utility::slowmo_end();
-    level.player _meth_81E1( 1.0 );
+    level.player setmovespeedscale( 1.0 );
     common_scripts\utility::flag_set( "training_s2_breach_enemies_dead" );
 }
 
@@ -2997,7 +2997,7 @@ training_s2_president_breach_monitor_death()
 
     common_scripts\utility::flag_set( "training_s2_flag_president_dead" );
     self.allowdeath = 1;
-    self _meth_8052();
+    self kill();
 
     if ( isplayer( var_3 ) )
         setdvar( "ui_deadquote", &"RECOVERY_PRESIDENT_MURDERED" );
@@ -3061,7 +3061,7 @@ training_s2_player_drone()
     {
         level.player waittill( "use_drone" );
 
-        while ( level.player _meth_83B3() )
+        while ( level.player isjumping() )
             waitframe();
 
         if ( vehicle_scripts\_pdrone_player::pdrone_deploy_check( 85 ) )
@@ -3165,7 +3165,7 @@ training_s2_ambush_vehicles_think( var_0 )
     maps\_vehicle::vehicle_unload();
     common_scripts\utility::flag_wait( var_0 );
     wait(randomfloatrange( 0.5, 4.5 ));
-    self _meth_8052();
+    self kill();
 }
 
 training_s2_unload1_think( var_0 )
@@ -3199,7 +3199,7 @@ training_s2_drone_end_think( var_0 )
 {
     self endon( "death" );
     thread maps\_shg_utility::make_emp_vulnerable();
-    self _meth_80B2();
+    self laseron();
     common_scripts\utility::flag_wait( var_0 );
     self delete();
 }
@@ -3207,18 +3207,18 @@ training_s2_drone_end_think( var_0 )
 training_s2_guard_house_doors()
 {
     var_0 = getent( "guard_door_01", "targetname" );
-    getent( var_0.target, "targetname" ) _meth_804D( var_0 );
+    getent( var_0.target, "targetname" ) linkto( var_0 );
     var_1 = getent( "guard_door_02", "targetname" );
-    getent( var_1.target, "targetname" ) _meth_804D( var_1 );
-    var_0 _meth_82B5( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
-    var_1 _meth_82B5( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
-    var_0 _meth_8058();
-    var_1 _meth_8058();
+    getent( var_1.target, "targetname" ) linkto( var_1 );
+    var_0 rotateto( var_0.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_1 rotateto( var_1.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_0 connectpaths();
+    var_1 connectpaths();
     wait 4;
-    var_0 _meth_82B5( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
-    var_1 _meth_82B5( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
-    var_0 _meth_8057();
-    var_1 _meth_8057();
+    var_0 rotateto( var_0.angles + ( 0, 90, 0 ), 1, 0, 1 );
+    var_1 rotateto( var_1.angles + ( 0, -90, 0 ), 1, 0, 1 );
+    var_0 disconnectpaths();
+    var_1 disconnectpaths();
 }
 
 training_s1_set_squad_passive_and_ignore()
@@ -3269,8 +3269,8 @@ warbird_heavy_shooting_think( var_0 )
 {
     level.player endon( "death" );
     self endon( "death" );
-    self.mgturret[0] _meth_8065( "manual" );
-    self.mgturret[1] _meth_8065( "manual" );
+    self.mgturret[0] setmode( "manual" );
+    self.mgturret[1] setmode( "manual" );
 
     if ( !maps\_utility::ent_flag_exist( "fire_turrets" ) )
         maps\_utility::ent_flag_init( "fire_turrets" );
@@ -3303,7 +3303,7 @@ warbird_heavy_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_6 = _func_0D6( var_5 );
+        var_6 = getaiarray( var_5 );
 
         if ( isdefined( level.flying_attack_drones ) )
             var_7 = level.flying_attack_drones;
@@ -3341,7 +3341,7 @@ warbird_heavy_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_14 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_15 = var_10 _meth_80A8();
+                var_15 = var_10 geteye();
                 var_16 = vectornormalize( var_15 - var_14 );
                 var_17 = var_14 + var_16 * 20;
 
@@ -3355,26 +3355,26 @@ warbird_heavy_fire( var_0 )
 
         if ( isdefined( var_12 ) )
         {
-            var_1 _meth_8106( var_12 );
-            var_2 _meth_8106( var_12 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_12 );
+            var_2 settargetentity( var_12 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_12, var_0 );
             var_1 notify( "stop_firing" );
             var_2 notify( "stop_firing" );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait 0.05;
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 warbird_heavy_fire_monitor()
@@ -3399,7 +3399,7 @@ burst_fire_warbird( var_0, var_1 )
     {
         var_8 = ( var_6 - gettime() ) * 0.001;
 
-        if ( self _meth_80E4() && var_8 <= 0 )
+        if ( self isfiringturret() && var_8 <= 0 )
         {
             if ( var_7 != "fire" )
             {
@@ -3433,7 +3433,7 @@ doshoottuned( var_0, var_1 )
 
     for (;;)
     {
-        self _meth_80EA();
+        self shootturret();
         wait(var_0);
     }
 }
@@ -3466,7 +3466,7 @@ military_drone_stationary_think( var_0 )
 
     self.spawner thread maps\_anim::anim_generic_loop( self, self.idleanim );
     self.name = " ";
-    self _meth_803F( self.name, &"" );
+    self setlookattext( self.name, &"" );
     common_scripts\utility::flag_wait( var_0 );
     self delete();
 }
@@ -3505,7 +3505,7 @@ military_drone_guards_stationary_think( var_0 )
 
 military_drone_guards_patrol_think( var_0 )
 {
-    self _meth_81A3( 1 );
+    self pushplayer( 1 );
     self.animname = "generic";
     self.idleanim = %patrol_bored_idle;
     maps\_utility::set_run_anim( "active_patrolwalk_gundown" );
@@ -3730,7 +3730,7 @@ warbird_fire( var_0 )
 
     while ( maps\_utility::ent_flag( "fire_turrets" ) )
     {
-        var_4 = _func_0D6( "allies" );
+        var_4 = getaiarray( "allies" );
 
         if ( !maps\_utility::ent_flag_exist( "dont_shoot_player" ) || !maps\_utility::ent_flag( "dont_shoot_player" ) )
         {
@@ -3764,7 +3764,7 @@ warbird_fire( var_0 )
             if ( isdefined( var_0 ) && var_0 )
             {
                 var_12 = self.mgturret[0] gettagorigin( "tag_flash" );
-                var_13 = var_8 _meth_80A8();
+                var_13 = var_8 geteye();
                 var_14 = vectornormalize( var_13 - var_12 );
                 var_15 = var_13 + var_14 * 20;
 
@@ -3778,24 +3778,24 @@ warbird_fire( var_0 )
 
         if ( isdefined( var_10 ) )
         {
-            var_1 _meth_8106( var_10 );
-            var_2 _meth_8106( var_10 );
-            var_1 _meth_8179();
-            var_2 _meth_8179();
-            var_1 _meth_80E2();
-            var_2 _meth_80E2();
+            var_1 settargetentity( var_10 );
+            var_2 settargetentity( var_10 );
+            var_1 turretfireenable();
+            var_2 turretfireenable();
+            var_1 startfiring();
+            var_2 startfiring();
             wait_for_warbird_fire_target_done( var_10, var_0 );
-            var_1 _meth_8108();
-            var_2 _meth_8108();
-            var_1 _meth_815C();
-            var_2 _meth_815C();
+            var_1 cleartargetentity();
+            var_2 cleartargetentity();
+            var_1 turretfiredisable();
+            var_2 turretfiredisable();
         }
 
         wait(var_3);
     }
 
-    var_1 _meth_815C();
-    var_2 _meth_815C();
+    var_1 turretfiredisable();
+    var_2 turretfiredisable();
 }
 
 wait_for_warbird_fire_target_done( var_0, var_1 )
@@ -3819,7 +3819,7 @@ wait_for_warbird_fire_target_done( var_0, var_1 )
         if ( isdefined( var_1 ) && var_1 )
         {
             var_4 = self.mgturret[0] gettagorigin( "tag_flash" );
-            var_5 = var_0 _meth_80A8();
+            var_5 = var_0 geteye();
             var_6 = vectornormalize( var_5 - var_4 );
             var_7 = var_4 + var_6 * 20;
 
@@ -3834,18 +3834,18 @@ wait_for_warbird_fire_target_done( var_0, var_1 )
 
 prep_user_for_drone()
 {
-    self _meth_831D();
+    self disableweapons();
     self.ignoreme = 1;
-    self _meth_80EF();
-    var_0 = _func_0D6( "axis" );
+    self enableinvulnerability();
+    var_0 = getaiarray( "axis" );
 
     foreach ( var_2 in var_0 )
-        var_2 _meth_8029();
+        var_2 thermaldrawenable();
 
-    var_4 = _func_0D6( "allies" );
+    var_4 = getaiarray( "allies" );
 
     foreach ( var_2 in var_4 )
-        var_2 _meth_8029();
+        var_2 thermaldrawenable();
 
     waitframe();
     level.player thermalvisionon();
@@ -3861,7 +3861,7 @@ make_drone_fully_controllable( var_0 )
     {
         var_1 = level.player.drone_control["stick_input_move"] * 10;
         var_2 = getdroneperlinovertime( 5, 3, 2, 0.5 );
-        var_3 = var_0 _meth_825B( var_0.origin + var_1 + var_2 );
+        var_3 = var_0 setvehgoalpos( var_0.origin + var_1 + var_2 );
         waitframe();
     }
 }
@@ -3881,7 +3881,7 @@ monitor_drone_stick_deflection( var_0 )
 
     for (;;)
     {
-        var_1 = self _meth_82F3();
+        var_1 = self getnormalizedmovement();
         var_1 = ( var_1[0], var_1[1] * -1, 0 );
         var_2 = self.angles;
         var_3 = vectortoangles( var_1 );
@@ -3894,42 +3894,42 @@ monitor_drone_stick_deflection( var_0 )
 
 unlink_player_from_drone( var_0 )
 {
-    level.player.dronetag _meth_804F();
-    level.player _meth_804F();
+    level.player.dronetag unlink();
+    level.player unlink();
     level.player maps\_utility::teleport_player( var_0 );
     waitframe();
     level.player remove_user_from_drone();
-    level.player _meth_8031( 65, 0 );
+    level.player lerpfov( 65, 0 );
 }
 
 remove_user_from_drone()
 {
-    self _meth_831E();
+    self enableweapons();
     self.ignoreme = 0;
-    self _meth_80F0();
+    self disableinvulnerability();
     level.player thermalvisionoff();
 }
 
 recovery_breach_setup_player()
 {
-    level.player _meth_80EF();
-    level.player _meth_8321();
-    level.player _meth_831F();
-    level.player _meth_8119( 0 );
-    level.player _meth_811A( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8301( 0 );
+    level.player enableinvulnerability();
+    level.player disableweaponswitch();
+    level.player disableoffhandweapons();
+    level.player allowcrouch( 0 );
+    level.player allowprone( 0 );
+    level.player allowsprint( 0 );
+    level.player allowjump( 0 );
 }
 
 recovery_breach_cleanup_player()
 {
-    level.player _meth_80F0();
-    level.player _meth_8322();
-    level.player _meth_8320();
-    level.player _meth_8119( 1 );
-    level.player _meth_811A( 1 );
-    level.player _meth_8304( 1 );
-    level.player _meth_8301( 1 );
+    level.player disableinvulnerability();
+    level.player enableweaponswitch();
+    level.player enableoffhandweapons();
+    level.player allowcrouch( 1 );
+    level.player allowprone( 1 );
+    level.player allowsprint( 1 );
+    level.player allowjump( 1 );
 }
 
 breach_slow_down( var_0 )
@@ -3939,7 +3939,7 @@ breach_slow_down( var_0 )
 
 enable_player_control( var_0 )
 {
-    level.player _meth_804F();
+    level.player unlink();
     level.player_rig delete();
 }
 
@@ -4172,8 +4172,8 @@ leaderboard_screen_make()
     var_1 = getent( self.settings.screennamemap[var_0], "targetname" );
     var_1.isleaderboardscreen = 1;
     var_2 = spawn( "script_model", var_1.origin );
-    var_2 _meth_80B1( self.settings.titlemap[var_0] );
-    var_2 _meth_804D( var_1, "title", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+    var_2 setmodel( self.settings.titlemap[var_0] );
+    var_2 linkto( var_1, "title", ( 0, 0, 0 ), ( 0, 90, 0 ) );
     var_1.rows = [];
 
     for ( var_3 = 0; var_3 < 10; var_3++ )
@@ -4181,19 +4181,19 @@ leaderboard_screen_make()
         var_4 = spawn( "script_model", var_1.origin );
         var_4.isleaderboardscreenrow = 1;
         var_1.rows[var_3] = var_4;
-        var_4 _meth_80B1( "rec_sb_row" );
-        var_4 _meth_804D( var_1, "row" + ( var_3 + 1 ), ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_4 setmodel( "rec_sb_row" );
+        var_4 linkto( var_1, "row" + ( var_3 + 1 ), ( 0, 0, 0 ), ( 0, 0, 0 ) );
         var_4.nametagmodel = spawn( "script_model", var_1.origin );
-        var_4.nametagmodel _meth_804D( var_4, "name1", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        var_4.nametagmodel linkto( var_4, "name1", ( 0, 0, 0 ), ( 0, 90, 0 ) );
         var_4.digitmodels = [];
         var_4.digitmodels[0] = spawn( "script_model", var_1.origin );
-        var_4.digitmodels[0] _meth_804D( var_4, "digit1", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        var_4.digitmodels[0] linkto( var_4, "digit1", ( 0, 0, 0 ), ( 0, 90, 0 ) );
         var_4.digitmodels[1] = spawn( "script_model", var_1.origin );
-        var_4.digitmodels[1] _meth_804D( var_4, "digit2", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        var_4.digitmodels[1] linkto( var_4, "digit2", ( 0, 0, 0 ), ( 0, 90, 0 ) );
         var_4.digitmodels[2] = spawn( "script_model", var_1.origin );
-        var_4.digitmodels[2] _meth_804D( var_4, "digit3", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        var_4.digitmodels[2] linkto( var_4, "digit3", ( 0, 0, 0 ), ( 0, 90, 0 ) );
         var_4.digitmodels[3] = spawn( "script_model", var_1.origin );
-        var_4.digitmodels[3] _meth_804D( var_4, "digit4", ( 0, 0, 0 ), ( 0, 90, 0 ) );
+        var_4.digitmodels[3] linkto( var_4, "digit4", ( 0, 0, 0 ), ( 0, 90, 0 ) );
     }
 
     return var_1;
@@ -4229,12 +4229,12 @@ leaderboard_screen_update()
         var_3 = var_1.rows[var_2];
         var_4 = var_0.playerscores[var_2];
         var_5 = var_0.settings.namemodelmap[var_4.playername];
-        var_3.nametagmodel _meth_80B1( var_5 );
+        var_3.nametagmodel setmodel( var_5 );
         var_6 = leaderboard_score_to_digits( var_4.playerscore );
-        var_3.digitmodels[0] _meth_80B1( var_6[0] );
-        var_3.digitmodels[1] _meth_80B1( var_6[1] );
-        var_3.digitmodels[2] _meth_80B1( var_6[2] );
-        var_3.digitmodels[3] _meth_80B1( var_6[3] );
+        var_3.digitmodels[0] setmodel( var_6[0] );
+        var_3.digitmodels[1] setmodel( var_6[1] );
+        var_3.digitmodels[2] setmodel( var_6[2] );
+        var_3.digitmodels[3] setmodel( var_6[3] );
     }
 }
 
@@ -4268,9 +4268,9 @@ play_reload_malfunction_on_next_reload( var_0 )
         if ( !common_scripts\utility::flag( "reload_malfunction" ) )
             common_scripts\utility::flag_wait( "reload_malfunction" );
 
-        var_1 = level.player _meth_8311();
+        var_1 = level.player getcurrentweapon();
         var_2 = weaponclipsize( var_1 );
-        var_3 = level.player _meth_82F8( var_1 );
+        var_3 = level.player getweaponammoclip( var_1 );
         var_4 = [];
         var_5 = [];
 
@@ -4307,7 +4307,7 @@ play_reload_malfunction_on_next_reload( var_0 )
         else
             continue;
 
-        if ( var_3 < var_2 && level.player usebuttonpressed() && !level.player _meth_83AD() && !level.player _meth_8337() )
+        if ( var_3 < var_2 && level.player usebuttonpressed() && !level.player isholdinggrenade() && !level.player isreloading() )
             break;
 
         if ( var_3 < 2 )
@@ -4334,24 +4334,24 @@ play_reload_malfunction( var_0, var_1, var_2, var_3, var_4 )
 {
     thread play_rumble_training_s1_reload_malfunction();
     common_scripts\utility::flag_set( "flag_vo_training_s1_reload_malfunction" );
-    level.player _meth_8303( 0 );
-    level.player _meth_8300( 0 );
-    level.player _meth_82CB();
-    level.player _meth_8321();
-    level.player _meth_80EF();
-    _func_0D3( "ammoCounterHide", "1" );
+    level.player allowmantle( 0 );
+    level.player allowads( 0 );
+    level.player disableweaponpickup();
+    level.player disableweaponswitch();
+    level.player enableinvulnerability();
+    setsaveddvar( "ammoCounterHide", "1" );
     soundscripts\_snd::snd_message( "camp_david_reload_malfunction", var_0, var_2 );
-    level.player _meth_84B5( var_0 );
-    var_5 = level.player _meth_82F9( var_2 );
-    level.player _meth_82F6( var_2, var_3 );
-    level.player _meth_82F7( var_2, var_5 - ( var_3 - var_4 ) );
+    level.player setviewmodelanim( var_0 );
+    var_5 = level.player setweaponammostock( var_2 );
+    level.player setweaponammoclip( var_2, var_3 );
+    level.player setweaponammostock( var_2, var_5 - ( var_3 - var_4 ) );
     wait(getanimlength( var_1 ));
-    level.player _meth_8300( 1 );
-    level.player _meth_82CC();
-    level.player _meth_8322();
-    level.player _meth_8303( 1 );
-    level.player _meth_80F0();
-    _func_0D3( "ammoCounterHide", "0" );
+    level.player allowads( 1 );
+    level.player enableweaponpickup();
+    level.player enableweaponswitch();
+    level.player allowmantle( 1 );
+    level.player disableinvulnerability();
+    setsaveddvar( "ammoCounterHide", "0" );
 }
 
 lerp_anim_weight_on_actor_over_time( var_0, var_1, var_2, var_3 )
@@ -4362,7 +4362,7 @@ lerp_anim_weight_on_actor_over_time( var_0, var_1, var_2, var_3 )
 
     for ( var_7 = 0; var_7 < var_4; var_7++ )
     {
-        self _meth_814B( var_0, var_6, 0.05, 1 );
+        self setanim( var_0, var_6, 0.05, 1 );
         var_6 += var_5;
         waitframe();
     }
@@ -4379,26 +4379,26 @@ lerp_in_turn_rate( var_0 )
 
     for ( var_7 = getdvarint( "aim_accel_turnrate_lerp" ); var_1 <= 1; var_1 += var_2 )
     {
-        _func_0D3( "aim_turnrate_pitch", int( var_1 * var_3 ) );
-        _func_0D3( "aim_turnrate_pitch_ads", int( var_1 * var_4 ) );
-        _func_0D3( "aim_turnrate_yaw", int( var_1 * var_5 ) );
-        _func_0D3( "aim_turnrate_yaw_ads", int( var_1 * var_6 ) );
-        _func_0D3( "aim_accel_turnrate_lerp", int( var_1 * var_7 ) );
+        setsaveddvar( "aim_turnrate_pitch", int( var_1 * var_3 ) );
+        setsaveddvar( "aim_turnrate_pitch_ads", int( var_1 * var_4 ) );
+        setsaveddvar( "aim_turnrate_yaw", int( var_1 * var_5 ) );
+        setsaveddvar( "aim_turnrate_yaw_ads", int( var_1 * var_6 ) );
+        setsaveddvar( "aim_accel_turnrate_lerp", int( var_1 * var_7 ) );
         waitframe();
     }
 
-    _func_0D3( "aim_turnrate_pitch", var_3 );
-    _func_0D3( "aim_turnrate_pitch_ads", var_4 );
-    _func_0D3( "aim_turnrate_yaw", var_5 );
-    _func_0D3( "aim_turnrate_yaw_ads", var_6 );
-    _func_0D3( "aim_accel_turnrate_lerp", var_7 );
+    setsaveddvar( "aim_turnrate_pitch", var_3 );
+    setsaveddvar( "aim_turnrate_pitch_ads", var_4 );
+    setsaveddvar( "aim_turnrate_yaw", var_5 );
+    setsaveddvar( "aim_turnrate_yaw_ads", var_6 );
+    setsaveddvar( "aim_accel_turnrate_lerp", var_7 );
 }
 
 waittill_drones_dead( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2 ) && !_func_294( var_2 ) )
+        if ( isdefined( var_2 ) && !isremovedentity( var_2 ) )
             var_2 waittill( "death" );
     }
 }

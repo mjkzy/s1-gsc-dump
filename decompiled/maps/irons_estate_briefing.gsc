@@ -54,53 +54,53 @@ briefing_player()
 {
     level.player freezecontrols( 1 );
     level.player thread maps\_shg_utility::disable_features_entering_cinema( 1 );
-    level.player _meth_8031( 50, 0.05 );
-    level.player _meth_830E( "s1_unarmed" );
-    level.player _meth_8316( "s1_unarmed" );
-    level.player _meth_8321();
-    level.player _meth_831D();
-    level.player _meth_8130( 0 );
-    level.player _meth_8304( 0 );
-    level.player _meth_8300( 0 );
-    level.player _meth_81E1( 0.5 );
-    level.player _meth_817D( "stand" );
-    level.player _meth_811A( 0 );
-    level.player _meth_8119( 0 );
+    level.player lerpfov( 50, 0.05 );
+    level.player giveweapon( "s1_unarmed" );
+    level.player switchtoweaponimmediate( "s1_unarmed" );
+    level.player disableweaponswitch();
+    level.player disableweapons();
+    level.player allowmelee( 0 );
+    level.player allowsprint( 0 );
+    level.player allowads( 0 );
+    level.player setmovespeedscale( 0.5 );
+    level.player setstance( "stand" );
+    level.player allowprone( 0 );
+    level.player allowcrouch( 0 );
     level.player_rig = maps\_utility::spawn_anim_model( "player_rig" );
     level.player_rig hide();
     level.briefing_anim_struct maps\_anim::anim_first_frame_solo( level.player_rig, "briefing_start" );
-    level.player _meth_807D( level.player_rig, "tag_player", 0, 0, 0, 0, 0, 1 );
+    level.player playerlinktodelta( level.player_rig, "tag_player", 0, 0, 0, 0, 0, 1 );
     common_scripts\utility::flag_wait( "introscreen1_complete" );
     thread look_control_on();
     thread lerp_fov_wait();
     level.briefing_anim_struct maps\_anim::anim_single_solo( level.player_rig, "briefing_start" );
     level.player_rig delete();
     level notify( "player_can_move" );
-    level.player _meth_804F();
-    level.player _meth_831E();
-    level.player _meth_811A( 1 );
-    level.player _meth_8119( 1 );
+    level.player unlink();
+    level.player enableweapons();
+    level.player allowprone( 1 );
+    level.player allowcrouch( 1 );
     level.player freezecontrols( 0 );
     common_scripts\utility::flag_wait( "teleport_to_base" );
     var_0 = common_scripts\utility::getstruct( "intro_start", "targetname" );
     level.player maps\_utility::teleport_player( var_0 );
     var_0 = common_scripts\utility::getstruct( "intro_start", "targetname" );
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_80B1( "tag_origin" );
+    var_1 setmodel( "tag_origin" );
     var_1.angles = var_0.angles;
-    level.player _meth_807C( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
+    level.player playerlinkto( var_1, "tag_origin", 0, 0, 0, 0, 0, 0 );
 }
 
 lerp_fov_wait()
 {
     level.player_rig waittillmatch( "single anim", "fov_lerp_start" );
-    level.player _meth_8031( 65, 3.0 );
+    level.player lerpfov( 65, 3.0 );
 }
 
 look_control_on()
 {
     wait 2.0;
-    level.player _meth_80A2( 1.0, 1.0, 1.0, 5, 5, 3, 3 );
+    level.player lerpviewangleclamp( 1.0, 1.0, 1.0, 5, 5, 3, 3 );
 }
 
 introscreen()
@@ -125,9 +125,9 @@ briefing_allies()
     if ( self == level.allies[2] )
     {
         var_0 = spawn( "script_model", ( 0, 0, 0 ) );
-        var_0 _meth_80B1( "greece_drone_control_pad" );
+        var_0 setmodel( "greece_drone_control_pad" );
         playfxontag( level._effect["ie_light_teal_briefing_knox"], var_0, "tag_origin" );
-        var_0 _meth_804D( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+        var_0 linkto( self, "tag_weapon_left", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     }
 
     common_scripts\utility::flag_wait( "introscreen1_complete" );

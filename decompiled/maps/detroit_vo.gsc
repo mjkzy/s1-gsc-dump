@@ -659,7 +659,7 @@ alley_combat_dialogue()
         if ( isdefined( level.burke.function_stack ) )
             level.burke maps\_utility::function_stack_clear();
 
-        level.burke _meth_80AC();
+        level.burke stopsounds();
         maps\_utility::radio_dialogue_stop();
     }
 
@@ -714,7 +714,7 @@ office_reunion_dialogue()
             var_0 = 0;
     }
 
-    while ( !level.burke _meth_81BE( level.joker ) )
+    while ( !level.burke cansee( level.joker ) )
         wait 0.1;
 
     soundscripts\_snd::snd_message( "office_reunion_dialogue" );

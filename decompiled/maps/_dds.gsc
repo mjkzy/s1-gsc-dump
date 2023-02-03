@@ -1076,13 +1076,13 @@ get_nearest_common( var_0, var_1, var_2 )
 
     if ( self.isalliesline )
     {
-        var_4 = _func_0D6( "allies" );
+        var_4 = getaiarray( "allies" );
 
         if ( var_1 )
             var_4[var_4.size] = var_3;
     }
     else
-        var_4 = _func_0D6( "axis" );
+        var_4 = getaiarray( "axis" );
 
     if ( var_4.size <= 0 )
         return undefined;
@@ -1321,7 +1321,7 @@ is_drone( var_0 )
 
 is_turret( var_0 )
 {
-    if ( var_0.classname == "misc_turret" && var_0 _meth_80E4() )
+    if ( var_0.classname == "misc_turret" && var_0 isfiringturret() )
         return 1;
 
     return 0;
@@ -1337,8 +1337,8 @@ dds_find_infantry_threat( var_0, var_1 )
     while ( common_scripts\utility::flag( "dds_running_" + var_0 ) )
     {
         var_6 = level.player;
-        var_7 = _func_0D6( var_1 );
-        var_8 = _func_0D6( var_0 );
+        var_7 = getaiarray( var_1 );
+        var_8 = getaiarray( var_0 );
         var_9 = dds_get_non_ai_threats( var_0 );
         var_10 = 0;
         var_11 = 0;
@@ -1370,7 +1370,7 @@ dds_find_infantry_threat( var_0, var_1 )
 
                     var_19 = 0;
 
-                    if ( distancesquared( var_18.origin, var_15.origin ) < 16000000 && var_18 _meth_81BE( var_15 ) )
+                    if ( distancesquared( var_18.origin, var_15.origin ) < 16000000 && var_18 cansee( var_15 ) )
                     {
                         var_19 = 1;
                         var_11 = 1;
@@ -1437,10 +1437,10 @@ simple_and_lazy_flank_check( var_0, var_1, var_2 )
     if ( var_0 != self.dds_threat_guy )
         return;
 
-    if ( _func_220( self.origin, self.dds_threat_guy.origin ) < 90000 )
+    if ( distance2dsquared( self.origin, self.dds_threat_guy.origin ) < 90000 )
         return;
 
-    if ( _func_220( self.origin, self.dds_threat_mypos ) > 10000 )
+    if ( distance2dsquared( self.origin, self.dds_threat_mypos ) > 10000 )
         return;
 
     var_4 = vectortoangles( self.dds_threat_dir_stored )[1];
@@ -1849,7 +1849,7 @@ get_current_weapon( var_0 )
 
     if ( isplayer( var_0 ) )
     {
-        var_1 = var_0 _meth_8311();
+        var_1 = var_0 getcurrentweapon();
         var_1 = getweaponbasename( var_1 );
     }
     else if ( isdefined( var_0.primaryweapon ) )
@@ -2128,14 +2128,14 @@ dds_reinforcement_think( var_0 )
         return;
     }
 
-    var_1 = _func_0D6( var_0 );
+    var_1 = getaiarray( var_0 );
     var_2 = var_1.size;
     var_3 = 0;
     level.dds.reinforcement_endtime[var_0] = gettime() + 5000.0;
 
     while ( gettime() < level.dds.reinforcement_endtime[var_0] )
     {
-        var_1 = _func_0D6( var_0 );
+        var_1 = getaiarray( var_0 );
 
         if ( var_1.size > var_2 )
             var_3 += var_1.size - var_2;
@@ -2196,7 +2196,7 @@ dds_notify_reload( var_0, var_1 )
         dds_notify( "reload", var_1 );
         return;
     }
-    else if ( self _meth_82F0() > 0 )
+    else if ( self getcurrentweaponclipammo() > 0 )
         return;
 
     switch ( var_0 )

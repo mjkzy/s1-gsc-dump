@@ -9,8 +9,8 @@ handle_drone_opening( var_0 )
     maps\sanfran_util::show_water_intro();
     level thread intro_moving_ships();
     maps\sanfran_util::delete_roadsurface_bridge();
-    level.player _meth_804F();
-    level.player _meth_80FF();
+    level.player unlink();
+    level.player disableslowaim();
     common_scripts\utility::flag_set( "msg_vfx_zone2_driving_chase" );
     level thread handle_driving_section();
     level thread vehicle_scripts\_sentinel_survey_drone_hud::hud_end();
@@ -20,11 +20,11 @@ helicopter_view_intro( var_0 )
 {
     var_1 = getent( "intro_drone_position_01", "targetname" );
     var_2 = getent( var_1.target, "targetname" );
-    level.player _meth_807D( var_1, undefined, 1, 0, 0, 0, 0 );
-    level.player _meth_807D( var_1, undefined, 1, 8, 8, 4, 4 );
-    level.player _meth_80FE();
+    level.player playerlinktodelta( var_1, undefined, 1, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_1, undefined, 1, 8, 8, 4, 4 );
+    level.player enableslowaim();
     level.player maps\_shg_utility::setup_player_for_scene();
-    level.player _meth_83C0( "helicopter_view_intro_0" );
+    level.player lightsetforplayer( "helicopter_view_intro_0" );
     level thread vehicle_scripts\_sentinel_survey_drone_hud::hud_start( level.player, 0.5, 1 );
     soundscripts\_snd::snd_message( "aud_drone_view_intro_start" );
     wait 0.05;
@@ -45,15 +45,15 @@ helicopter_view_intro( var_0 )
     thread intro_ship_icons();
     common_scripts\utility::flag_set( "flag_zoom_in_fleet" );
     level notify( "aud_drone_view_intro_zoom_in_fleet" );
-    level.player _meth_8031( 27, 0.25 );
+    level.player lerpfov( 27, 0.25 );
     wait 0.25;
-    level.player _meth_8031( 30, 0.25 );
+    level.player lerpfov( 30, 0.25 );
     wait 3.25;
     common_scripts\utility::flag_set( "flag_zoom_out_fleet" );
     level notify( "aud_drone_view_intro_zoom_out_fleet" );
-    level.player _meth_8031( 67, 0.25 );
+    level.player lerpfov( 67, 0.25 );
     wait 0.25;
-    level.player _meth_8031( 65, 0.25 );
+    level.player lerpfov( 65, 0.25 );
     thread vehicle_scripts\_sentinel_survey_drone_hud::remove_hud_drone_target();
     wait 2.75;
 
@@ -66,8 +66,8 @@ helicopter_view_intro( var_0 )
     thread showstatic( 0.1 );
     var_1 = getent( "intro_drone_position_02", "targetname" );
     var_1 thread maps\sanfran_util::drone_lookat_ent( "cargo_ship_2" );
-    level.player _meth_807D( var_1, undefined, 1, 0, 0, 0, 0 );
-    level.player _meth_807D( var_1, undefined, 1, 8, 8, 4, 4 );
+    level.player playerlinktodelta( var_1, undefined, 1, 0, 0, 0, 0 );
+    level.player playerlinktodelta( var_1, undefined, 1, 8, 8, 4, 4 );
     common_scripts\utility::flag_set( "flag_cargo_ship" );
     vehicle_scripts\_sentinel_survey_drone_hud::hud_start( level.player, 1.0, 2 );
     var_1 thread maps\sanfran_util::drone_moveto_ent( var_1.target, 40 );
@@ -75,9 +75,9 @@ helicopter_view_intro( var_0 )
     var_1 thread maps\sanfran_util::drone_lookat_ent( "cargo_ship_2", 0.5, 0, ( -6, -10, 0 ) );
     common_scripts\utility::flag_set( "flag_zoom_in_cargo" );
     level notify( "aud_drone_view_intro_zoom_in_cargo" );
-    level.player _meth_8031( 43, 0.5 );
+    level.player lerpfov( 43, 0.5 );
     wait 0.5;
-    level.player _meth_8031( 45, 0.5 );
+    level.player lerpfov( 45, 0.5 );
     level thread narrow_in_camera_play( var_1 );
     wait 0.5;
     wait 2.0;
@@ -92,12 +92,12 @@ helicopter_view_intro( var_0 )
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "sanfran_intro_tr" ) )
+        if ( !istransientloaded( "sanfran_intro_tr" ) )
             level waittill( "tff_transition_outro_to_intro" );
     }
 
     vehicle_scripts\_sentinel_survey_drone_hud::destroy_sentinel_drone_hud();
-    level.player _meth_83C0( "helicopter_view_intro_1" );
+    level.player lightsetforplayer( "helicopter_view_intro_1" );
 }
 
 narrow_in_camera_play( var_0 )
@@ -108,7 +108,7 @@ narrow_in_camera_play( var_0 )
 
     for (;;)
     {
-        level.player _meth_807D( var_0, undefined, 1, var_1, var_1, var_2, var_2 );
+        level.player playerlinktodelta( var_0, undefined, 1, var_1, var_1, var_2, var_2 );
         wait 0.05;
         var_1 = clamp( var_1 - 0.08, 4, 8 );
         var_2 = clamp( var_2 - 0.04, 2, 4 );
@@ -124,7 +124,7 @@ fadeupstatic( var_0 )
     level.overlaystatic.horzalign = "fullscreen";
     level.overlaystatic.vertalign = "fullscreen";
     level.overlaystatic.sort = 4;
-    level.overlaystatic _meth_80CC( "overlay_static_digital", 640, 480 );
+    level.overlaystatic setshader( "overlay_static_digital", 640, 480 );
     level.overlaystatic2 = newhudelem( level.player );
     level.overlaystatic2.x = 0;
     level.overlaystatic2.y = 0;
@@ -133,7 +133,7 @@ fadeupstatic( var_0 )
     level.overlaystatic2.horzalign = "fullscreen";
     level.overlaystatic2.vertalign = "fullscreen";
     level.overlaystatic2.sort = 5;
-    level.overlaystatic2 _meth_80CC( "sentinel_drone_overlay", 640, 480 );
+    level.overlaystatic2 setshader( "sentinel_drone_overlay", 640, 480 );
     var_1 = 0.05 / var_0;
 
     while ( level.overlaystatic.alpha < 1 )
@@ -168,7 +168,7 @@ showstatic( var_0 )
     level.overlaystatic.horzalign = "fullscreen";
     level.overlaystatic.vertalign = "fullscreen";
     level.overlaystatic.sort = 4;
-    level.overlaystatic _meth_80CC( "overlay_static_digital", 640, 480 );
+    level.overlaystatic setshader( "overlay_static_digital", 640, 480 );
     wait(var_0);
     level.overlaystatic destroy();
 }
@@ -191,7 +191,7 @@ intro_moving_ships()
 
     if ( level.nextgen )
         wait 60;
-    else if ( !_func_21E( "sanfran_outro_tr" ) )
+    else if ( !istransientloaded( "sanfran_outro_tr" ) )
         level waittill( "tff_transition_intro_to_outro" );
 
     foreach ( var_4 in var_0 )
@@ -213,7 +213,7 @@ moveboat()
     if ( self.model == "vehicle_atlas_decoy_cargo_ship" )
         thread start_moving_with_bob();
     else
-        self _meth_82AE( self.original_org, 120, 0, 0 );
+        self moveto( self.original_org, 120, 0, 0 );
 }
 
 start_moving_with_bob()
@@ -229,7 +229,7 @@ start_moving_with_bob()
         var_4 = var_3 / var_1 * var_2;
         var_5 = self.origin + var_4;
         var_6 = var_0 * randomfloatrange( 125, 175 );
-        self _meth_82AE( var_5 + ( 0, 0, var_6 ), var_2, 0, 0 );
+        self moveto( var_5 + ( 0, 0, var_6 ), var_2, 0, 0 );
         wait(var_2);
         var_0 *= -1;
         var_1 -= var_2;
@@ -276,7 +276,7 @@ position_for_movement()
     var_4 = vectortoangles( var_2 );
     self.origin = var_3;
     self.angles = var_4;
-    self _meth_82AE( var_1.origin, 0.5, 0, 0 );
+    self moveto( var_1.origin, 0.5, 0, 0 );
     wait 0.5;
 }
 
@@ -297,7 +297,7 @@ handle_driving_section( var_0 )
         level.player thread flag_construction_enable_pitbull_shooting();
 
         if ( level.nextgen )
-            _func_0D3( "r_umbraAccurateOcclusionThreshold", "400" );
+            setsaveddvar( "r_umbraAccurateOcclusionThreshold", "400" );
 
         thread umbra_override_tunnel();
     }
@@ -313,7 +313,7 @@ handle_driving_section( var_0 )
         thread pitbull_intro_animation();
         common_scripts\utility::flag_set( "start_tunnel_lighting" );
         wait 0.05;
-        level.player _meth_8031( 65, 0.1 );
+        level.player lerpfov( 65, 0.1 );
     }
     else if ( var_0 == "oncoming" )
     {
@@ -359,15 +359,15 @@ handle_driving_section( var_0 )
 pitbull_update_hud_brightness()
 {
     common_scripts\utility::flag_wait( "flag_hud_brighten" );
-    level.player_pitbull.fake_vehicle_model _meth_83A7( 0.25, 0.5 );
+    level.player_pitbull.fake_vehicle_model setmaterialscriptparam( 0.25, 0.5 );
     level.friendly_pitbull thread maps\_vehicle::vehicle_lights_off( "brakelights" );
     level.chase_van thread maps\_vehicle::vehicle_lights_off( "brakelights" );
 }
 
 pitbull_play_lui_cinematic()
 {
-    _func_0D3( "cg_cinematicFullScreen", "0" );
-    _func_057( "sanfran_dronefeed", 0, 1.0, 1 );
+    setsaveddvar( "cg_cinematicFullScreen", "0" );
+    cinematicingame( "sanfran_dronefeed", 0, 1.0, 1 );
 }
 
 pitbull_intro_animation()
@@ -390,24 +390,24 @@ pitbull_intro_animation()
     level.burke maps\_utility::anim_stopanimscripted();
     var_1 maps\_anim::anim_first_frame_solo( var_1, "pitbull_intro" );
     var_1 maps\_anim::anim_first_frame_solo( var_0, "pitbull_intro", "tag_body" );
-    var_0 _meth_804D( var_1, "tag_body" );
+    var_0 linkto( var_1, "tag_body" );
     thread maps\sanfran_pitbull::show_video_on_driverside();
-    level.player _meth_8092();
-    level.player _meth_807D( var_0, "tag_player", 1, 10, 10, 5, 5, 1 );
-    level.player _meth_80FE();
+    level.player dontinterpolate();
+    level.player playerlinktodelta( var_0, "tag_player", 1, 10, 10, 5, 5, 1 );
+    level.player enableslowaim();
     level.player thread remove_camera_view_angles( var_0 maps\_utility::getanim( "pitbull_intro" ), 0.5, 0.1 );
     level thread anim_van_intro( var_1 );
     var_1 thread maps\_anim::anim_single_solo( var_1, "pitbull_intro" );
     var_1 maps\_anim::anim_single( var_2, "pitbull_intro", "tag_body" );
     var_3 = maps\_vehicle_aianim::anim_pos( level.player_pitbull, 1 );
     var_1 thread maps\sanfran_pitbull::passenger_idle( level.burke, var_3 );
-    level.player _meth_80FF();
+    level.player disableslowaim();
     level.player_pitbull maps\sanfran_pitbull::reconnect_fake_pitbull();
     level.chase_van.lead_pos = "far";
     level.player_pitbull.attachedpath = undefined;
     level.player_pitbull notify( "newpath" );
-    level.player_pitbull _meth_80C6();
-    level.player _meth_8235();
+    level.player_pitbull returnplayercontrol();
+    level.player playerlinkedvehicleanglesenable();
     common_scripts\utility::flag_set( "flag_intro_give_player_driving" );
     soundscripts\_snd::snd_message( "intro_give_player_driving" );
     level.player_pitbull maps\_utility::ent_flag_clear( "pitbull_scripted_anim" );
@@ -427,8 +427,8 @@ pitbull_intro_control_rumble()
     level endon( "flag_intro_give_player_driving" );
     var_0 = maps\_utility::get_rumble_ent( "steady_rumble" );
     var_0.intensity = 0.09;
-    var_0 common_scripts\utility::delaycall( 11.25, ::_meth_80AF, "steady_rumble" );
-    level.player common_scripts\utility::delaycall( 11.75, ::_meth_80AD, "heavy_1s" );
+    var_0 common_scripts\utility::delaycall( 11.25, ::stoprumble, "steady_rumble" );
+    level.player common_scripts\utility::delaycall( 11.75, ::playrumbleonentity, "heavy_1s" );
     wait 13;
     var_0 delete();
 }
@@ -442,7 +442,7 @@ remove_camera_view_angles( var_0, var_1, var_2 )
     if ( var_4 > 0 )
         wait(var_4);
 
-    self _meth_80A2( var_1, 0.2, 0.2, 0, 0, 0, 0 );
+    self lerpviewangleclamp( var_1, 0.2, 0.2, 0, 0, 0, 0 );
 }
 
 intro_view_traffic()
@@ -473,7 +473,7 @@ umbra_override_tunnel()
     common_scripts\utility::flag_wait( "flag_hud_brighten" );
 
     if ( level.nextgen )
-        _func_0D3( "r_umbraAccurateOcclusionThreshold", "256" );
+        setsaveddvar( "r_umbraAccurateOcclusionThreshold", "256" );
 }
 
 use_turn_signal( var_0, var_1 )
@@ -523,20 +523,20 @@ delete_vehicle_outof_view()
 anim_van_intro( var_0 )
 {
     var_1 = spawn( "script_model", level.chase_van.origin );
-    var_1 _meth_80B1( "vehicle_ind_van_utility_ai" );
+    var_1 setmodel( "vehicle_ind_van_utility_ai" );
     var_1.animname = "atlas_van";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_1 thread wakeup_physics_sphere_on_ent( 195 );
     var_1 thread maps\sanfran_lighting::setup_car_passing_lights();
     var_0 maps\_anim::anim_first_frame_solo( var_1, "pitbull_intro", "tag_turret" );
-    var_1 _meth_804D( var_0, "tag_turret" );
+    var_1 linkto( var_0, "tag_turret" );
     var_0 soundscripts\_snd::snd_message( "chase_van_rabbiting_anim" );
     var_0 maps\_anim::anim_single_solo( var_1, "pitbull_intro", "tag_turret" );
-    level.chase_van _meth_827C( var_1.origin, level.chase_van.angles );
+    level.chase_van vehicle_teleport( var_1.origin, level.chase_van.angles );
     var_2 = getvehiclenode( "van_anim_start_drive", "targetname" );
     level.chase_van thread maps\_vehicle_code::_vehicle_paths( var_2 );
-    level.chase_van _meth_827F( var_2 );
-    var_1 _meth_804F();
+    level.chase_van startpath( var_2 );
+    var_1 unlink();
     var_1 delete();
     common_scripts\utility::flag_set( "flag_intro_van_anim_finished" );
 }
@@ -554,7 +554,7 @@ wakeup_physics_sphere_on_ent( var_0 )
 
     for (;;)
     {
-        _func_244( self.origin, var_0 );
+        wakeupphysicssphere( self.origin, var_0 );
         waitframe();
     }
 }
@@ -579,13 +579,13 @@ setup_player_pitbull( var_0 )
     }
 
     level.player_pitbull soundscripts\_snd::snd_message( "pc_pitbull_spawn" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player_pitbull thread maps\sanfran_aud::player_pitbull_woosh_sounds();
     level.player_pitbull thread maps\sanfran_pitbull::handle_player_pitbull( "player_rig" );
     level.player_pitbull thread mount_pitbull( var_0 );
     level.player_pitbull thread pitbull_flipped_failsafe();
     level.player_pitbull maps\_utility::ent_flag_clear( "pitbull_allow_shooting" );
-    _func_0D3( "bg_viewBobMax", 0 );
+    setsaveddvar( "bg_viewBobMax", 0 );
     maps\sanfran_util::spawn_squad();
     level.player_pitbull maps\sanfran_pitbull::add_passenger_to_player_pitbull( level.burke, 1 );
     level.player_pitbull maps\sanfran_pitbull::add_passenger_to_player_pitbull( level.saint, 2 );
@@ -667,7 +667,7 @@ handle_chase_van()
 
     level.chase_van endon( "death" );
     level.chase_van maps\_vehicle::godon();
-    level.chase_van _meth_822E();
+    level.chase_van vehphys_disablecrashing();
 
     if ( var_0 == 1 )
         common_scripts\utility::flag_wait( "flag_intro_van_anim_finished" );
@@ -686,7 +686,7 @@ handle_chase_van()
     if ( !common_scripts\utility::flag( "flag_intro_give_player_driving" ) )
     {
         common_scripts\utility::flag_wait( "flag_intro_give_player_driving" );
-        level.chase_van _meth_8283( 55, 100, 100 );
+        level.chase_van vehicle_setspeed( 55, 100, 100 );
     }
 
     for (;;)
@@ -714,7 +714,7 @@ handle_chase_van()
     }
 
     level.chase_van notify( "stop_chase_target" );
-    level.chase_van _meth_8291( 30 );
+    level.chase_van resumespeed( 30 );
 }
 
 start_reverse_hint()
@@ -771,7 +771,7 @@ vehicle_blocked_check()
 
     for (;;)
     {
-        var_0 = level.player_pitbull _meth_8286();
+        var_0 = level.player_pitbull vehicle_getspeed();
 
         if ( var_0 < 2 )
         {
@@ -874,7 +874,7 @@ fail_leaving_area()
 
         maps\sanfran_util::player_left_road_hint();
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
         {
             var_0 = gettime();
             var_1 = var_0 - level.fail_start_time;
@@ -903,12 +903,12 @@ handle_friendly_pitbull()
 
     level.friendly_pitbull endon( "death" );
     level.friendly_pitbull maps\_vehicle::godon();
-    level.friendly_pitbull _meth_822E();
+    level.friendly_pitbull vehphys_disablecrashing();
 
     if ( var_0 == 1 )
     {
         common_scripts\utility::flag_wait( "flag_intro_van_anim_finished" );
-        level.friendly_pitbull _meth_827F();
+        level.friendly_pitbull startpath();
     }
 
     if ( !isdefined( level.friendly_pitbull.shadow_pos ) )
@@ -943,7 +943,7 @@ handle_friendly_pitbull()
     }
 
     level.friendly_pitbull notify( "stop_chase_target" );
-    level.friendly_pitbull _meth_8291( 30 );
+    level.friendly_pitbull resumespeed( 30 );
 }
 
 handle_atlas_intercepts()
@@ -1020,18 +1020,18 @@ spawn_atlas_intercept()
 
     if ( isdefined( var_1.script_noteworthy ) && var_1.script_noteworthy == "crash_at_end" )
     {
-        _func_244( var_1.origin, 195 );
+        wakeupphysicssphere( var_1.origin, 195 );
         var_2 thread maps\sanfran_util::wait_for_crash_at_end();
     }
 
     common_scripts\utility::flag_wait( "flag_player_crashed" );
     self notify( "stop_chase_target" );
-    self _meth_8291( 30 );
+    self resumespeed( 30 );
 }
 
 delete_atlas_intercept()
 {
-    self _meth_8051( 1000000000, self.origin );
+    self dodamage( 1000000000, self.origin );
 }
 
 cleanup_atlas_on_death()
@@ -1055,7 +1055,7 @@ start_crash_bus()
     var_0 maps\_vehicle::godon();
     thread maps\_vehicle_traffic::add_script_car( var_0 );
     thread maps\_vehicle_traffic::clear_cars_around_pos( var_0.origin, 2000 );
-    var_0 _meth_822E();
+    var_0 vehphys_disablecrashing();
     var_0 thread bus_crash_at_end();
     level thread maps\sanfran_util::get_vehicles_to_point_at_same_time( level.chase_van, "bus_crash_location", var_0, undefined, "stop_bus_syncup" );
 }
@@ -1064,9 +1064,9 @@ bus_crash_at_end()
 {
     self waittill( "reached_end_node" );
     level notify( "stop_bus_syncup" );
-    self _meth_8230( 0, 10000, 10000 );
+    self vehphys_setspeed( 0, 10000, 10000 );
     self.animname = "bus";
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
     maps\_utility::anim_stopanimscripted();
     soundscripts\_snd::snd_message( "bus_crash_start" );
     common_scripts\utility::flag_set( "flag_dialog_tunnel_bus" );
@@ -1089,7 +1089,7 @@ bus_crash_setup_backup_collision()
 bus_crash_hold_on_last_frame()
 {
     wait(getanimlength( maps\_utility::getanim( "bus_crash" ) ) - 0.1);
-    self _meth_83C7( maps\_utility::getanim( "bus_crash" ), 0 );
+    self setanimrate( maps\_utility::getanim( "bus_crash" ), 0 );
 }
 
 start_construction_heli()
@@ -1101,7 +1101,7 @@ start_construction_heli()
     common_scripts\utility::run_thread_on_targetname( "trigger_heli_start_shooting", ::construction_heli_shoot, var_0 );
     var_0 waittill( "heli_at_tanker" );
     var_0 notify( "stop_chase_target" );
-    var_0 _meth_8291( 80 );
+    var_0 resumespeed( 80 );
 }
 
 construction_heli_shoot( var_0 )
@@ -1145,14 +1145,14 @@ crash_open_left_gate()
 {
     var_0 = self.angles;
     var_1 = ( var_0[0], var_0[1] + 80, var_0[2] );
-    self _meth_82B5( var_1, 0.4, 0, 0.1 );
+    self rotateto( var_1, 0.4, 0, 0.1 );
 }
 
 crash_open_right_gate()
 {
     var_0 = self.angles;
     var_1 = ( var_0[0], var_0[1] - 100, var_0[2] );
-    self _meth_82B5( var_1, 0.4, 0, 0.1 );
+    self rotateto( var_1, 0.4, 0, 0.1 );
 }
 
 water_splash()
@@ -1180,12 +1180,12 @@ vehicle_splash_water( var_0 )
     {
         wait 0.25;
 
-        if ( !var_1 _meth_80A9( var_0 ) )
+        if ( !var_1 istouching( var_0 ) )
             break;
     }
 
     self.splashing_water = 0;
-    var_1 _meth_804F();
+    var_1 unlink();
     var_1 delete();
 }
 
@@ -1196,11 +1196,11 @@ splash_pos_for_speed( var_0 )
 
     for (;;)
     {
-        self _meth_804F();
-        var_1 = vectornormalize( var_0 _meth_8287() );
+        self unlink();
+        var_1 = vectornormalize( var_0 vehicle_getvelocity() );
         var_2 = vectornormalize( anglestoforward( var_0.angles ) );
         var_3 = vectordot( var_1, var_2 );
-        var_4 = var_0 _meth_8286();
+        var_4 = var_0 vehicle_getspeed();
         var_5 = var_4 / 70 * 450 + 200;
 
         if ( var_5 > 0.2 )
@@ -1214,7 +1214,7 @@ splash_pos_for_speed( var_0 )
             var_6 = var_0.origin + ( 0, 0, -1000 );
 
         self.origin = var_6;
-        self _meth_804D( var_0 );
+        self linkto( var_0 );
         wait 0.05;
     }
 }
@@ -1249,7 +1249,7 @@ store_offsets_for_link( var_0, var_1 )
 
 link_with_stored_offsets( var_0 )
 {
-    self _meth_804D( var_0, self.link_tag, self.link_offset["origin"], self.link_offset["angles"] );
+    self linkto( var_0, self.link_tag, self.link_offset["origin"], self.link_offset["angles"] );
 }
 
 handle_tanker_missiles( var_0 )
@@ -1270,7 +1270,7 @@ wait_for_missile()
 {
     self waittill( "tanker_missile_location" );
     wait 0.05;
-    self _meth_8291( 20 );
+    self resumespeed( 20 );
     var_0 = 50;
 
     for (;;)
@@ -1311,9 +1311,9 @@ tanker_roll_explosion( var_0 )
     }
 
     var_4 = spawn( "script_model", ( 0, 0, 0 ) );
-    var_4 _meth_80B1( "vehicle_ind_semi_truck_fuel_tanker" );
+    var_4 setmodel( "vehicle_ind_semi_truck_fuel_tanker" );
     var_4.animname = "tanker";
-    var_4 _meth_8115( #animtree );
+    var_4 useanimtree( #animtree );
     var_4.origin = var_0.origin;
     var_4.angles = var_0.angles;
     var_5 = getent( "crash_truck_cab_brushmodel", "targetname" );
@@ -1340,17 +1340,17 @@ start_blocking_police()
 {
     self waittill( "trigger" );
     var_0 = getent( "police_blocking_collision", "targetname" );
-    var_0 _meth_82BF();
+    var_0 notsolid();
     var_1 = maps\_vehicle::spawn_vehicle_from_targetname_and_drive( self.target );
     var_1 waittill( "reached_end_node" );
-    var_1 _meth_8230( 0 );
+    var_1 vehphys_setspeed( 0 );
     var_2 = spawn( "script_model", var_1.origin );
-    var_2 _meth_80B1( var_1.model );
+    var_2 setmodel( var_1.model );
     var_2.origin = var_1.origin;
     var_2.angles = var_1.angles;
     var_2 soundscripts\_snd::snd_message( "spawn_driving_police_car" );
     var_1 delete();
-    var_0 _meth_82BE();
+    var_0 solid();
 }
 
 start_knocked_to_oncoming()
@@ -1361,7 +1361,7 @@ start_knocked_to_oncoming()
     level.player_pitbull maps\_utility::ent_flag_set( "pitbull_scripted_anim" );
     level.player_pitbull maps\_utility::ent_flag_clear( "pitbull_allow_shooting" );
     level.player_pitbull maps\sanfran_pitbull_drive_anim::clear_anims();
-    level.player _meth_80EC( 1 );
+    level.player enabledeathshield( 1 );
     var_0 = getent( "knocked_to_oncoming_origin", "targetname" );
     thread knocked_to_oncoming_rumble();
     var_1 = level.player_pitbull.player_rig;
@@ -1377,18 +1377,18 @@ start_knocked_to_oncoming()
             var_5 delete();
     }
 
-    level.player_pitbull _meth_827C( var_0.origin, level.player_pitbull.angles );
+    level.player_pitbull vehicle_teleport( var_0.origin, level.player_pitbull.angles );
     var_2 = level.player_pitbull maps\sanfran_pitbull::disconnect_fake_pitbull();
     var_7 = maps\_vehicle::spawn_vehicle_from_targetname( "atlas_van_knock_to_oncoming" );
     var_7.animname = "atlas_suv";
-    var_7 _meth_8115( #animtree );
+    var_7 useanimtree( #animtree );
     var_3 = [];
     var_3[0] = var_2;
     var_3[1] = var_7;
-    level.player _meth_8092();
+    level.player dontinterpolate();
     var_2 maps\_anim::anim_first_frame_solo( var_2, "oncoming_crash" );
     var_2 maps\_anim::anim_first_frame_solo( var_1, "oncoming_crash", "tag_driver" );
-    var_1 _meth_804D( var_2, "tag_driver" );
+    var_1 linkto( var_2, "tag_driver" );
     common_scripts\utility::flag_set( "flag_dialog_start_oncoming" );
     common_scripts\utility::flag_set( "flag_dialog_oncoming_knocked" );
     common_scripts\utility::flag_set( "flag_oncoming_scene_playing" );
@@ -1403,8 +1403,8 @@ start_knocked_to_oncoming()
     var_0 maps\_anim::anim_single( var_3, "oncoming_crash" );
     common_scripts\utility::flag_clear( "flag_oncoming_scene_playing" );
     level.player_pitbull maps\sanfran_pitbull::reconnect_fake_pitbull();
-    level.player_pitbull _meth_8284( 55.0, 100, 60 );
-    level.player _meth_80EC( 0 );
+    level.player_pitbull vehicle_setspeedimmediate( 55.0, 100, 60 );
+    level.player enabledeathshield( 0 );
 
     if ( level.currentgen )
     {
@@ -1427,7 +1427,7 @@ oncoming_scene_pitbull_speed_monitor()
 
     for (;;)
     {
-        _func_23F( &"pitbull_update_speed", 1, level.oncoming_pitbull_speed );
+        luinotifyevent( &"pitbull_update_speed", 1, level.oncoming_pitbull_speed );
 
         if ( var_0 > 10 )
         {
@@ -1442,24 +1442,24 @@ oncoming_scene_pitbull_speed_monitor()
 
 knocked_to_oncoming_rumble()
 {
-    level.player common_scripts\utility::delaycall( 0.1, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 2.2, ::_meth_80AD, "light_1s" );
+    level.player common_scripts\utility::delaycall( 0.1, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 2.2, ::playrumbleonentity, "light_1s" );
 }
 
 pitbull_back_to_speed()
 {
     var_0 = gettime();
-    level.player_pitbull _meth_8230( 55.0 );
+    level.player_pitbull vehphys_setspeed( 55.0 );
 
     while ( gettime() < var_0 + 4000 )
     {
         if ( level.player attackbuttonpressed() )
             break;
 
-        if ( level.player _meth_824C( "BUTTON_B" ) )
+        if ( level.player buttonpressed( "BUTTON_B" ) )
             break;
 
-        level.player_pitbull _meth_8230( 55.0 );
+        level.player_pitbull vehphys_setspeed( 55.0 );
         wait 0.05;
     }
 }
@@ -1549,33 +1549,33 @@ player_crash()
     level.player_pitbull maps\_utility::ent_flag_set( "pitbull_scripted_anim" );
     level.player_pitbull maps\_utility::ent_flag_clear( "pitbull_allow_shooting" );
     level.player_pitbull maps\sanfran_pitbull_drive_anim::clear_anims();
-    level.player _meth_80EC( 1 );
+    level.player enabledeathshield( 1 );
     var_0 = getent( "org_player_crash_start", "targetname" );
     var_1 = level.player_pitbull.player_rig;
     var_2 = level.player_pitbull.fake_vehicle_model;
     thread crash_rumble();
-    level.player _meth_807D( var_1, "tag_player", 1, 10, 10, 5, 5, 1 );
-    level.player _meth_80FE();
+    level.player playerlinktodelta( var_1, "tag_player", 1, 10, 10, 5, 5, 1 );
+    level.player enableslowaim();
     soundscripts\_snd::snd_message( "pitbull_crash_sound_design" );
-    level.player_pitbull _meth_827C( var_0.origin, level.player_pitbull.angles );
+    level.player_pitbull vehicle_teleport( var_0.origin, level.player_pitbull.angles );
     maps\_vehicle_traffic::clear_cars_around_pos( level.player_pitbull.origin, 600, 1 );
     var_2 = level.player_pitbull maps\sanfran_pitbull::disconnect_fake_pitbull();
     var_3 = maps\_vehicle::spawn_vehicle_from_targetname( "player_crash_van" );
     var_3 maps\_vehicle::godon();
     var_3.animname = "work_van";
-    var_3 _meth_8115( #animtree );
+    var_3 useanimtree( #animtree );
     var_4 = maps\_vehicle::spawn_vehicle_from_targetname( "player_crash_suburban" );
     var_4 maps\_vehicle::godon();
     var_4.animname = "atlas_suv";
-    var_4 _meth_8115( #animtree );
-    var_4 _meth_8048( "TAG_DOOR_GLASS_RIGHT_BACK" );
+    var_4 useanimtree( #animtree );
+    var_4 hidepart( "TAG_DOOR_GLASS_RIGHT_BACK" );
     var_0 maps\_anim::anim_first_frame_solo( var_4, "pitbull_crash" );
     var_5 = maps\_utility::array_spawn_targetname( "player_crash_atlas_guy" );
 
     for ( var_6 = 0; var_6 < var_5.size; var_6++ )
         var_5[var_6].animname = "atlas_" + ( var_6 + 1 );
 
-    var_1 _meth_804F();
+    var_1 unlink();
     level.player_pitbull maps\sanfran_pitbull::remove_passenger_from_player_pitbull( level.burke );
     level.burke hide();
     var_7 = [];
@@ -1589,7 +1589,7 @@ player_crash()
     var_7[7] = var_5[2];
 
     foreach ( var_9 in var_7 )
-        var_9 _meth_8092();
+        var_9 dontinterpolate();
 
     level.player_pitbull thread destroy_windshield();
     var_11 = getent( "brush_crash_scene_player_pitbull_collision", "targetname" );
@@ -1618,9 +1618,9 @@ player_crash()
     var_1 maps\_utility::attach_player_current_weapon_to_anim_tag( "tag_weapon" );
 
     if ( level.currentgen )
-        _func_218( "sanfran_outro_tr" );
+        loadtransient( "sanfran_outro_tr" );
 
-    level.player _meth_807D( var_1, "tag_player", 1, 10, 10, 5, 5, 1 );
+    level.player playerlinktodelta( var_1, "tag_player", 1, 10, 10, 5, 5, 1 );
     common_scripts\utility::flag_set( "flag_dialog_bridge_crawl" );
     level.burke show();
     level thread anim_burke_crawl( var_0 );
@@ -1630,19 +1630,19 @@ player_crash()
     level.player_pitbull notify( "dismount_pitbull" );
     get_squad_out_of_pitbull();
     level.player_pitbull delete();
-    level.player _meth_80FF();
+    level.player disableslowaim();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_8440( "iw5_bal27_sp_variablereddot", 1 );
-    level.player _meth_80EC( 0 );
+    level.player enablehybridsight( "iw5_bal27_sp_variablereddot", 1 );
+    level.player enabledeathshield( 0 );
     maps\sanfran_util::setup_squad_for_gameplay();
-    _func_0D3( "bg_viewBobMax", 8 );
+    setsaveddvar( "bg_viewBobMax", 8 );
 
     if ( level.currentgen )
     {
         level notify( "tff_pre_transition_intro_to_outro" );
-        _func_219( "sanfran_intro_tr" );
+        unloadtransient( "sanfran_intro_tr" );
 
-        while ( !_func_21E( "sanfran_outro_tr" ) )
+        while ( !istransientloaded( "sanfran_outro_tr" ) )
             wait 0.05;
 
         level notify( "tff_transition_intro_to_outro" );
@@ -1659,19 +1659,19 @@ update_bumper_think()
 
     for (;;)
     {
-        var_0 = level.player _meth_84F7( ( 0, 0, 0 ), 65, 100 );
-        self _meth_82AE( var_0, 0.05 );
+        var_0 = level.player screenpostoworldpoint( ( 0, 0, 0 ), 65, 100 );
+        self moveto( var_0, 0.05 );
         wait 0.05;
     }
 }
 
 crash_rumble()
 {
-    level.player common_scripts\utility::delaycall( 0.1, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 2.2, ::_meth_80AD, "heavy_2s" );
-    level.player common_scripts\utility::delaycall( 4, ::_meth_80AD, "light_2s" );
-    level.player common_scripts\utility::delaycall( 6, ::_meth_80AD, "heavy_3s" );
-    level.player common_scripts\utility::delaycall( 8.8, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 0.1, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 2.2, ::playrumbleonentity, "heavy_2s" );
+    level.player common_scripts\utility::delaycall( 4, ::playrumbleonentity, "light_2s" );
+    level.player common_scripts\utility::delaycall( 6, ::playrumbleonentity, "heavy_3s" );
+    level.player common_scripts\utility::delaycall( 8.8, ::playrumbleonentity, "heavy_1s" );
 }
 
 destroy_windshield()
@@ -1698,7 +1698,7 @@ pitbull_crash_swap_to_real_model( var_0 )
     }
 
     var_3.animname = "after_pitbull";
-    var_3 _meth_8115( #animtree );
+    var_3 useanimtree( #animtree );
     var_1 maps\_anim::anim_single_solo( var_3, "pitbull_wreck" );
 }
 
@@ -1755,7 +1755,7 @@ get_squad_out_of_pitbull()
 {
     level.player_pitbull maps\sanfran_pitbull::remove_passenger_from_player_pitbull( level.saint );
     var_0 = getent( "crash_point_saint", "targetname" );
-    level.saint _meth_81C6( var_0.origin, var_0.angles );
+    level.saint forceteleport( var_0.origin, var_0.angles );
 }
 
 handle_fight_section( var_0 )
@@ -1766,7 +1766,7 @@ handle_fight_section( var_0 )
         maps\_utility::autosave_now();
 
     soundscripts\_snd::snd_message( "bridge_street_fight" );
-    _func_0D3( "fx_draw_omnilight", 0 );
+    setsaveddvar( "fx_draw_omnilight", 0 );
     common_scripts\utility::flag_set( "flag_obj_van_meetup" );
     common_scripts\utility::flag_set( "flag_dialog_start_street" );
     common_scripts\utility::flag_set( "flag_enable_battle_chatter" );
@@ -1883,10 +1883,10 @@ crash_squad_take_cover()
 
 drive_crash_suv()
 {
-    self _meth_822E();
+    self vehphys_disablecrashing();
     maps\_vehicle::vehicle_set_health( 3000 );
     self waittill( "reached_end_node" );
-    self _meth_8057();
+    self disconnectpaths();
 }
 
 fight_section_boost_encounter()
@@ -2005,7 +2005,7 @@ start_street_heli()
     common_scripts\utility::flag_set( "flag_dialog_street_helo_die" );
     var_0 soundscripts\_snd::snd_message( "aud_little_bird_hit" );
     var_0 maps\_vehicle::godoff();
-    var_0 _meth_8051( var_0.health + 10000, var_0.origin );
+    var_0 dodamage( var_0.health + 10000, var_0.origin );
 }
 
 fight_section_tanker_encouter()
@@ -2045,20 +2045,20 @@ fight_section_tanker_encouter()
     common_scripts\utility::flag_wait( "flag_tanker_exploded" );
     maps\sanfran_util::connectpaths_ents_by_targetname( "tanker_fire_path_blocker" );
     maps\sanfran_util::delete_ents_by_targetname( "tanker_fire_path_blocker" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
     var_2 = getent( "trigger_tanker_explosion_ragdoll", "targetname" );
     var_3 = getent( "tanker_explosion_org", "targetname" );
 
     foreach ( var_5 in var_1 )
     {
-        if ( var_5 _meth_80A9( var_2 ) )
+        if ( var_5 istouching( var_2 ) )
         {
             var_6 = vectornormalize( var_5.origin - var_3.origin );
             var_7 = distance( var_5.origin, var_3.origin );
             var_8 = ( 800 - var_7 ) / 800;
             var_9 = var_6 * var_8 * 400;
-            var_5 _meth_8052();
-            var_5 _meth_8024( var_5.origin, var_9 );
+            var_5 kill();
+            var_5 startragdollfromimpact( var_5.origin, var_9 );
         }
     }
 
@@ -2086,7 +2086,7 @@ drone_respawn()
         var_0 = maps\_vehicle::spawn_vehicle_and_gopath();
         var_0 thread maps\_shg_utility::make_emp_vulnerable();
         var_0 maps\_utility::add_damage_function( maps\sanfran_util::ai_twenty_percent_damage_func );
-        var_0 _meth_80B2();
+        var_0 laseron();
         var_0 thread explode_drones_at_tanker();
         var_0 waittill( "death" );
         wait(randomfloatrange( 3.0, 5.0 ));
@@ -2099,7 +2099,7 @@ explode_drones_at_tanker()
     level waittill( "flag_tanker_exploded" );
     var_0 = randomfloatrange( 0.1, 0.8 );
     wait(var_0);
-    self _meth_8052();
+    self kill();
 }
 
 start_tanker_fire()
@@ -2139,22 +2139,22 @@ explode_tanker()
             if ( var_2[var_1].classname != "script_model" )
                 continue;
 
-            var_2[var_1] _meth_8115( #animtree );
+            var_2[var_1] useanimtree( #animtree );
             var_4 = var_2[var_1].model;
 
             if ( issubstr( var_4, "vehicle_civ_domestic_economy" ) )
             {
-                var_2[var_1] _meth_80B1( "vehicle_civ_domestic_economy_destroy_static" );
-                var_2[var_1] _meth_8143( %civ_domestic_sedan_police_destroy, 1, 0, 1 );
+                var_2[var_1] setmodel( "vehicle_civ_domestic_economy_destroy_static" );
+                var_2[var_1] setanimknob( %civ_domestic_sedan_police_destroy, 1, 0, 1 );
             }
             else if ( issubstr( var_4, "vehicle_civ_smartcar_02_blue" ) )
             {
                 var_2[var_1].newmodel = spawn( "script_model", var_2[var_1].origin );
                 var_2[var_1].newmodel.angles = var_2[var_1].angles;
-                var_2[var_1].newmodel _meth_80B1( "vehicle_civ_smartcar_static_dstry" );
-                var_2[var_1].newmodel _meth_804D( var_2[var_1], "body_animate_jnt" );
+                var_2[var_1].newmodel setmodel( "vehicle_civ_smartcar_static_dstry" );
+                var_2[var_1].newmodel linkto( var_2[var_1], "body_animate_jnt" );
                 var_2[var_1] hide();
-                var_2[var_1] _meth_8143( %civ_domestic_sedan_police_destroy, 1, 0, 1 );
+                var_2[var_1] setanimknob( %civ_domestic_sedan_police_destroy, 1, 0, 1 );
             }
 
             playfx( level._effect["tanker_explosion"], var_2[var_1].origin );
@@ -2177,7 +2177,7 @@ explode_tanker()
     foreach ( var_9 in var_7 )
     {
         if ( var_9.classname == "script_model" )
-            var_9 _meth_80B1( "ind_semi_truck_fuel_tank_destroy" );
+            var_9 setmodel( "ind_semi_truck_fuel_tank_destroy" );
     }
 
     var_11 = getentarray( "tanker_explosion_cab", "script_noteworthy" );
@@ -2185,7 +2185,7 @@ explode_tanker()
     foreach ( var_9 in var_11 )
     {
         if ( var_9.classname == "script_model" )
-            var_9 _meth_80B1( "ind_semi_truck_03_destroy" );
+            var_9 setmodel( "ind_semi_truck_03_destroy" );
     }
 
     earthquake( 0.6, 0.5, var_6.origin, 2000 );
@@ -2214,18 +2214,18 @@ explode_tanker()
 shift_car( var_0, var_1 )
 {
     if ( self.classname != "script_model" )
-        self _meth_8058();
+        self connectpaths();
     else
-        self _meth_8142( %civ_domestic_sedan_police_destroy, 0 );
+        self clearanim( %civ_domestic_sedan_police_destroy, 0 );
 
-    self _meth_82AE( self.origin + var_0, 0.2, 0, 0.1 );
-    self _meth_82B5( self.angles + ( 0, var_1, 0 ), 0.2, 0, 0.1 );
+    self moveto( self.origin + var_0, 0.2, 0, 0.1 );
+    self rotateto( self.angles + ( 0, var_1, 0 ), 0.2, 0, 0.1 );
     wait 0.2;
 
     if ( self.classname != "script_model" )
-        self _meth_8057();
+        self disconnectpaths();
     else
-        common_scripts\utility::delaycall( randomfloat( 0.15 ), ::_meth_8143, %civ_domestic_sedan_police_destroy, 1, 0, 1 );
+        common_scripts\utility::delaycall( randomfloat( 0.15 ), ::setanimknob, %civ_domestic_sedan_police_destroy, 1, 0, 1 );
 }
 
 fight_section_ambient_encounter()
@@ -2328,10 +2328,10 @@ deployable_cover_think()
     var_0 = spawn( "script_model", self gettagorigin( "j_SpineUpper" ) + ( 0, 0, 0 ) );
     var_0.angles = self gettagangles( "j_SpineUpper" ) + ( 0, 0, 0 );
     var_0.animname = "deployable_cover";
-    var_0 _meth_80B1( "deployable_cover" );
+    var_0 setmodel( "deployable_cover" );
     var_0 maps\_anim::setanimtree();
     var_0 maps\_anim::anim_first_frame_solo( var_0, "deployable_cover_closed_idle" );
-    var_0 _meth_804D( self, "j_SpineUpper" );
+    var_0 linkto( self, "j_SpineUpper" );
     level waittill( "police_placing_deployable_cover" );
     var_0 delete();
 }
@@ -2342,15 +2342,15 @@ start_jerk_driver()
     var_0 maps\_vehicle::godon();
     var_0 soundscripts\_snd::snd_message( "start_jerk_driver_car" );
     common_scripts\utility::flag_wait( "flag_start_jerk_driver" );
-    var_0 _meth_827F();
+    var_0 startpath();
     var_0 waittill( "reached_end_node" );
     var_1 = getvehiclenode( "start_jerk_back_up", "targetname" );
     var_0 thread maps\_vehicle_code::_vehicle_paths( var_1 );
-    var_0 _meth_827F( var_1 );
+    var_0 startpath( var_1 );
     var_0 waittill( "reached_end_node" );
     var_1 = getvehiclenode( "start_jerk_go_forward", "targetname" );
     var_0 thread maps\_vehicle_code::_vehicle_paths( var_1 );
-    var_0 _meth_827F( var_1 );
+    var_0 startpath( var_1 );
     var_0 waittill( "reached_end_node" );
 
     for (;;)
@@ -2420,7 +2420,7 @@ fight_section_escape_encounter()
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "sanfran_bigm_tr" ) )
+        if ( !istransientloaded( "sanfran_bigm_tr" ) )
             level waittill( "tff_transition_outro_to_bigm" );
     }
 
@@ -2539,7 +2539,7 @@ setup_helicopter_blades_damage()
     for (;;)
     {
         var_0 waittill( "trigger", var_1 );
-        var_1 _meth_8051( 60, var_0.origin );
+        var_1 dodamage( 60, var_0.origin );
         wait 0.05;
     }
 }
@@ -2549,7 +2549,7 @@ handle_bridge_collapse()
     common_scripts\utility::run_thread_on_targetname( "trigger_player_approaching_van", ::handle_early_approach );
     self waittill( "trigger" );
     level notify( "kill_bridge_copcar_lights" );
-    _func_0D3( "fx_draw_omnilight", 1 );
+    setsaveddvar( "fx_draw_omnilight", 1 );
     level notify( "stop_toggle_boat_visibility" );
     common_scripts\utility::flag_set( "flag_obj_player_at_van" );
     common_scripts\utility::flag_set( "flag_dialog_start_van" );
@@ -2571,8 +2571,8 @@ handle_bridge_collapse()
 
     level.explosion_van show_glowy_handles();
     var_6 = getent( "trigger_player_used_van", "targetname" );
-    var_6 _meth_817B();
-    var_6 _meth_80DB( &"SANFRAN_OPEN_VAN" );
+    var_6 usetriggerrequirelookat();
+    var_6 sethintstring( &"SANFRAN_OPEN_VAN" );
     var_7 = var_6 maps\_shg_utility::hint_button_trigger( "activate", 1024 );
     var_6 waittill( "trigger" );
     var_7 maps\_shg_utility::hint_button_clear();
@@ -2603,9 +2603,9 @@ handle_bridge_collapse()
         var_1 maps\_utility::anim_stopanimscripted();
 
     var_13 = 0.5;
-    level.player _meth_8080( level.player_rig, "tag_player", var_13 );
-    level.player common_scripts\utility::delaycall( var_13, ::_meth_807D, level.player_rig, "tag_player", 1, 7, 7, 5, 5, 1 );
-    level.player _meth_80FE();
+    level.player playerlinktoblend( level.player_rig, "tag_player", var_13 );
+    level.player common_scripts\utility::delaycall( var_13, ::playerlinktodelta, level.player_rig, "tag_player", 1, 7, 7, 5, 5, 1 );
+    level.player enableslowaim();
     level.player take_car_door_shields();
     level.player maps\_shg_utility::setup_player_for_scene();
     maps\sanfran_util::setup_squad_for_scene();
@@ -2640,9 +2640,9 @@ handle_bridge_collapse()
     level.explosion_scene_org maps\_anim::anim_single( level.collapse_scene_ents_long, "collapse_scene" );
     soundscripts\_snd::snd_music_message( "starting_bridge_collapse" );
     soundscripts\_snd::snd_message( "bridge_collapsed" );
-    level.player _meth_804F();
+    level.player unlink();
     level.player maps\_shg_utility::setup_player_for_gameplay();
-    level.player _meth_80FF();
+    level.player disableslowaim();
     level.player_rig hide();
     maps\sanfran_util::setup_squad_for_gameplay();
 
@@ -2652,7 +2652,7 @@ handle_bridge_collapse()
     level thread start_bridge_after_loop( level.explosion_scene_org );
     cleanup_road_flares();
     var_20 = getent( "saint_boost_teleport", "targetname" );
-    level.saint _meth_81C6( var_20.origin, var_20.angles );
+    level.saint forceteleport( var_20.origin, var_20.angles );
     common_scripts\utility::flag_set( "flag_enable_battle_chatter" );
     level thread handle_boost_jump();
 }
@@ -2660,7 +2660,7 @@ handle_bridge_collapse()
 handle_player_exo_punch()
 {
     self waittill( "trigger" );
-    level.player _meth_8130( 0 );
+    level.player allowmelee( 0 );
     level.player maps\_utility::playerallowalternatemelee( 0 );
 }
 
@@ -2714,7 +2714,7 @@ bridge_collapse_rumble()
     level endon( "flag_obj_player_on_MOB" );
     thread bridge_collapse_rumble_steady();
     thread bridge_collapse_rumble_timed();
-    level.player common_scripts\utility::delaycall( 11.75, ::_meth_80AD, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 11.75, ::playrumbleonentity, "heavy_1s" );
 }
 
 bridge_collapse_rumble_steady()
@@ -2732,30 +2732,30 @@ bridge_collapse_rumble_steady()
     var_0 maps\_utility::delaythread( 29.5, maps\_utility::rumble_ramp_to, 0.3, 0.1 );
     var_0 maps\_utility::delaythread( 33, maps\_utility::rumble_ramp_to, 0.7, 3 );
     var_0 maps\_utility::delaythread( 37, maps\_utility::rumble_ramp_to, 0, 1 );
-    var_0 common_scripts\utility::delaycall( 42, ::_meth_80AF, "steady_rumble" );
+    var_0 common_scripts\utility::delaycall( 42, ::stoprumble, "steady_rumble" );
     wait 44;
     var_0 delete();
 }
 
 bridge_collapse_rumble_timed()
 {
-    level.player common_scripts\utility::delaycall( 8, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 9, ::_meth_80AD, "riotshield_impact" );
-    level.player common_scripts\utility::delaycall( 23, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 23.2, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 23.8, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 24.2, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 26, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 27.5, ::_meth_80AD, "heavy_2s" );
-    level.player common_scripts\utility::delaycall( 30.5, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 40.5, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 50, ::_meth_80AD, "riotshield_impact" );
-    level.player common_scripts\utility::delaycall( 51.5, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 67.8, ::_meth_80AD, "heavy_1s" );
-    level.player common_scripts\utility::delaycall( 70, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 70.4, ::_meth_80AD, "light_1s" );
-    level.player common_scripts\utility::delaycall( 72.65, ::_meth_80AD, "riotshield_impact" );
-    level.player common_scripts\utility::delaycall( 78.4, ::_meth_80AD, "light_1s" );
+    level.player common_scripts\utility::delaycall( 8, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 9, ::playrumbleonentity, "riotshield_impact" );
+    level.player common_scripts\utility::delaycall( 23, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 23.2, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 23.8, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 24.2, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 26, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 27.5, ::playrumbleonentity, "heavy_2s" );
+    level.player common_scripts\utility::delaycall( 30.5, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 40.5, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 50, ::playrumbleonentity, "riotshield_impact" );
+    level.player common_scripts\utility::delaycall( 51.5, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 67.8, ::playrumbleonentity, "heavy_1s" );
+    level.player common_scripts\utility::delaycall( 70, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 70.4, ::playrumbleonentity, "light_1s" );
+    level.player common_scripts\utility::delaycall( 72.65, ::playrumbleonentity, "riotshield_impact" );
+    level.player common_scripts\utility::delaycall( 78.4, ::playrumbleonentity, "light_1s" );
 }
 
 debug_timer()
@@ -2812,14 +2812,14 @@ animate_collapse_ent( var_0 )
 
 show_normal_handles()
 {
-    self _meth_8048( "rear_handle_obj_left_jnt" );
-    self _meth_8048( "rear_handle_obj_right_jnt" );
+    self hidepart( "rear_handle_obj_left_jnt" );
+    self hidepart( "rear_handle_obj_right_jnt" );
 }
 
 show_glowy_handles()
 {
-    self _meth_804B( "rear_handle_obj_left_jnt" );
-    self _meth_804B( "rear_handle_obj_right_jnt" );
+    self showpart( "rear_handle_obj_left_jnt" );
+    self showpart( "rear_handle_obj_right_jnt" );
 }
 
 delete_collapse_ent( var_0 )
@@ -2890,8 +2890,8 @@ cracked_windshield_swap( var_0 )
     var_1 = spawn( "script_model", var_0.origin );
     var_1.origin = var_0.origin;
     var_1.angles = var_0.angles;
-    var_1 _meth_804D( var_0 );
-    var_1 _meth_80B1( "vehicle_civ_domestic_sedan_police_static_dstry02" );
+    var_1 linkto( var_0 );
+    var_1 setmodel( "vehicle_civ_domestic_sedan_police_static_dstry02" );
     var_0 hide();
     thread maps\sanfran_lighting::attach_light_to_police_car( var_1 );
     var_0 waittill( "death" );
@@ -2938,16 +2938,16 @@ rock_mob()
     var_0 = getent( "mob_rocking_origin", "targetname" );
     var_1 = getent( "mob_rocking_attachment_ent", "targetname" );
     var_1.animname = "MOB";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     var_2 = getentarray( "mob_brushmodel", "targetname" );
 
     foreach ( var_4 in var_2 )
-        var_4 _meth_804D( var_1, "jnt_boat" );
+        var_4 linkto( var_1, "jnt_boat" );
 
     var_6 = getentarray( "mob_models", "targetname" );
 
     foreach ( var_8 in var_6 )
-        var_8 _meth_804D( var_2[0] );
+        var_8 linkto( var_2[0] );
 
     while ( !common_scripts\utility::flag( "flag_stop_mob_rocking" ) )
         var_0 maps\_anim::anim_single_solo( var_1, "mob_sway" );
@@ -2959,7 +2959,7 @@ setup_bridge_explosion_anim_sequence()
 {
     if ( level.currentgen )
     {
-        while ( !_func_21E( "sanfran_bigm_tr" ) )
+        while ( !istransientloaded( "sanfran_bigm_tr" ) )
             wait 0.05;
     }
 
@@ -3019,7 +3019,7 @@ start_bridge_overwatch_heli()
     foreach ( var_2 in var_0 )
     {
         var_2.ignoreall = 1;
-        var_2 _meth_80B2();
+        var_2 laseron();
     }
 
     common_scripts\utility::flag_wait( "flag_van_explosion_start" );
@@ -3036,7 +3036,7 @@ at_van_enemy_cleanup()
     for (;;)
     {
         common_scripts\utility::flag_wait( "flag_at_van_enemy_cleanup" );
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
         var_2 = [];
 
         foreach ( var_4 in var_1 )
@@ -3050,7 +3050,7 @@ at_van_enemy_cleanup()
         foreach ( var_4 in var_1 )
         {
             if ( isdefined( var_4 ) && !maps\_utility::player_can_see_ai( var_4 ) )
-                var_4 _meth_8052();
+                var_4 kill();
 
             var_7 = randomfloatrange( 0.05, 0.2 );
             wait(var_7);
@@ -3074,7 +3074,7 @@ setup_bridge_explosion_anim_sequence_vehicles()
     var_0 soundscripts\_snd::snd_message( "pre_bridge_collapse_helo_idle" );
     var_0 maps\_utility::delaythread( 0.2, soundscripts\_snd::snd_message, "snd_stop_vehicle" );
     var_0.animname = "chopper_1";
-    var_0 _meth_8115( #animtree );
+    var_0 useanimtree( #animtree );
     var_0 maps\_vehicle::godon();
 
     if ( level.nextgen )
@@ -3083,15 +3083,15 @@ setup_bridge_explosion_anim_sequence_vehicles()
     level.idle_scene_ents[level.idle_scene_ents.size] = var_0;
     thread setup_helicopter_blades_damage();
     var_1 = spawn( "script_model", ( 0, 0, -1000 ) );
-    var_1 _meth_80B1( "vehicle_sentinel_littlebird_dstrypv" );
+    var_1 setmodel( "vehicle_sentinel_littlebird_dstrypv" );
     var_1 hide();
     var_1.animname = "broken_helo";
-    var_1 _meth_8115( #animtree );
+    var_1 useanimtree( #animtree );
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_1;
     var_2 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_vehicle_van" );
     var_2 maps\_vehicle::godon();
     var_2.animname = "van";
-    var_2 _meth_8115( #animtree );
+    var_2 useanimtree( #animtree );
     level.approach_scene_ents[level.approach_scene_ents.size] = var_2;
     level.deploy_scene_ents[level.deploy_scene_ents.size] = var_2;
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_2;
@@ -3101,27 +3101,27 @@ setup_bridge_explosion_anim_sequence_vehicles()
     for ( var_3 = 0; var_3 < 12; var_3++ )
     {
         var_4 = spawn( "script_model", var_2.origin );
-        var_4 _meth_80B1( "vehicle_atlas_assault_drone" );
+        var_4 setmodel( "vehicle_atlas_assault_drone" );
         var_4.animname = "drone_" + ( var_3 + 1 );
-        var_4 _meth_8115( #animtree );
+        var_4 useanimtree( #animtree );
         var_4 hide();
         level.explosion_scene_drones[level.explosion_scene_drones.size] = var_4;
         level.deploy_scene_ents[level.deploy_scene_ents.size] = var_4;
     }
 
     var_5 = spawn( "script_model", var_2.origin );
-    var_5 _meth_80B1( "vehicle_atlas_assault_drone_large" );
+    var_5 setmodel( "vehicle_atlas_assault_drone_large" );
     var_5.animname = "large_drone";
-    var_5 _meth_8115( #animtree );
+    var_5 useanimtree( #animtree );
     level.deploy_scene_ents[level.deploy_scene_ents.size] = var_5;
     level.explosion_scene_drone_large = var_5;
     var_6 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_truck01" );
     var_6.animname = "truck01";
-    var_6 _meth_8115( #animtree );
+    var_6 useanimtree( #animtree );
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_6;
     var_6 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_truck02" );
     var_6.animname = "truck02";
-    var_6 _meth_8115( #animtree );
+    var_6 useanimtree( #animtree );
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_6;
     var_7 = maps\_vehicle::spawn_vehicles_from_targetname( "van_scene_vehicle_copcar" );
     soundscripts\_snd::snd_message( "spawn_parked_police_car", var_7 );
@@ -3129,7 +3129,7 @@ setup_bridge_explosion_anim_sequence_vehicles()
     for ( var_3 = 0; var_3 < var_7.size; var_3++ )
     {
         var_7[var_3].animname = "copcar_" + ( var_3 + 1 );
-        var_7[var_3] _meth_8115( #animtree );
+        var_7[var_3] useanimtree( #animtree );
         var_7[var_3] thread maps\sanfran_fx::cop_car_lights_on_barricade();
 
         if ( var_7[var_3].animname != "copcar_11" )
@@ -3146,16 +3146,16 @@ setup_bridge_explosion_anim_sequence_vehicles()
     var_8 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_atlas_suv" );
     var_8 maps\_vehicle::godon();
     var_8.animname = "atlas_suv";
-    var_8 _meth_8115( #animtree );
+    var_8 useanimtree( #animtree );
     level.approach_scene_ents[level.approach_scene_ents.size] = var_8;
     var_9 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_vehicle_bus" );
     var_9.animname = "bus";
-    var_9 _meth_8115( #animtree );
+    var_9 useanimtree( #animtree );
     var_9 hide();
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_9;
     var_10 = maps\_vehicle::spawn_vehicle_from_targetname( "van_scene_vehicle_compact" );
     var_10.animname = "compact";
-    var_10 _meth_8115( #animtree );
+    var_10 useanimtree( #animtree );
     level.collapse_scene_ents[level.collapse_scene_ents.size] = var_10;
 }
 
@@ -3367,40 +3367,40 @@ setup_bridge_explosion_anim_sequence_bridge()
 
         if ( var_0 == 1 )
         {
-            var_1 _meth_80B1( "ggb_collapse_03_chunka" );
+            var_1 setmodel( "ggb_collapse_03_chunka" );
             level.deploy_scene_ents[level.deploy_scene_ents.size] = var_1;
             level.after_collpase_ents[level.after_collpase_ents.size] = var_1;
         }
         else if ( var_0 == 2 )
         {
-            var_1 _meth_80B1( "ggb_collapse_03_chunkb" );
+            var_1 setmodel( "ggb_collapse_03_chunkb" );
             level.deploy_scene_ents[level.deploy_scene_ents.size] = var_1;
             level.after_collpase_ents[level.after_collpase_ents.size] = var_1;
         }
         else if ( var_0 == 3 )
         {
-            var_1 _meth_80B1( "ggb_collapse_03_chunkc" );
+            var_1 setmodel( "ggb_collapse_03_chunkc" );
             level.deploy_scene_ents[level.deploy_scene_ents.size] = var_1;
             level.after_collpase_ents[level.after_collpase_ents.size] = var_1;
         }
         else if ( var_0 == 4 )
         {
-            var_1 _meth_80B1( "ggb_collapse_03_chunkd" );
+            var_1 setmodel( "ggb_collapse_03_chunkd" );
             level.deploy_scene_ents[level.deploy_scene_ents.size] = var_1;
             level.after_collpase_ents[level.after_collpase_ents.size] = var_1;
         }
         else if ( var_0 == 5 )
-            var_1 _meth_80B1( "ggb_collapse_03_chunke" );
+            var_1 setmodel( "ggb_collapse_03_chunke" );
         else if ( var_0 == 6 )
-            var_1 _meth_80B1( "ggb_collapse_03_chunkf" );
+            var_1 setmodel( "ggb_collapse_03_chunkf" );
         else if ( var_0 == 7 )
         {
-            var_1 _meth_80B1( "ggb_collapse_03_chunkg" );
+            var_1 setmodel( "ggb_collapse_03_chunkg" );
             level.deploy_scene_ents[level.deploy_scene_ents.size] = var_1;
         }
 
         var_1.animname = "bridge0" + var_0;
-        var_1 _meth_8115( #animtree );
+        var_1 useanimtree( #animtree );
         var_1 hide();
         level.explosion_scene_bridge[level.explosion_scene_bridge.size] = var_1;
         level.collapse_scene_ents[level.collapse_scene_ents.size] = var_1;
@@ -3409,26 +3409,26 @@ setup_bridge_explosion_anim_sequence_bridge()
     for ( var_0 = 1; var_0 <= 2; var_0++ )
     {
         var_2 = spawn( "script_model", ( 0, 0, -1000 ) );
-        var_2 _meth_80B1( "ggb_cable_hero_01" );
+        var_2 setmodel( "ggb_cable_hero_01" );
         var_2.animname = "rope_" + var_0;
-        var_2 _meth_8115( #animtree );
+        var_2 useanimtree( #animtree );
         var_2 hide();
         level.deploy_scene_ents[level.deploy_scene_ents.size] = var_2;
     }
 
     var_3 = spawn( "script_model", ( 0, 0, -1000 ) );
-    var_3 _meth_80B1( "vm_hbra3_nocamo" );
+    var_3 setmodel( "vm_hbra3_nocamo" );
     var_3.animname = "gun";
-    var_3 _meth_8115( #animtree );
+    var_3 useanimtree( #animtree );
     var_3 hide();
     level.deploy_scene_ents[level.deploy_scene_ents.size] = var_3;
 
     for ( var_0 = 1; var_0 <= 2; var_0++ )
     {
         var_3 = spawn( "script_model", ( 0, 0, -1000 ) );
-        var_3 _meth_80B1( "npc_sn6_base_black" );
+        var_3 setmodel( "npc_sn6_base_black" );
         var_3.animname = "sn6_0" + var_0;
-        var_3 _meth_8115( #animtree );
+        var_3 useanimtree( #animtree );
         level.animated_gun[var_0] = var_3;
         level.approach_scene_ents[level.approach_scene_ents.size] = var_3;
 
@@ -3437,15 +3437,15 @@ setup_bridge_explosion_anim_sequence_bridge()
     }
 
     var_4 = spawn( "script_model", ( 0, 0, -1000 ) );
-    var_4 _meth_80B1( "deployable_cover" );
+    var_4 setmodel( "deployable_cover" );
     var_4.animname = "cover";
-    var_4 _meth_8115( #animtree );
+    var_4 useanimtree( #animtree );
     level.approach_scene_ents[level.approach_scene_ents.size] = var_4;
     var_5 = spawn( "script_model", level.player.origin );
-    var_5 _meth_80B1( "vm_lasercutter" );
+    var_5 setmodel( "vm_lasercutter" );
     var_5 hide();
     var_5.animname = "cutter";
-    var_5 _meth_8115( #animtree );
+    var_5 useanimtree( #animtree );
     level.deploy_scene_ents[level.deploy_scene_ents.size] = var_5;
     level.cutter = var_5;
 }
@@ -3460,9 +3460,9 @@ remove_from_idle_array_on_death( var_0 )
         var_2 = var_1[1].origin;
         var_3 = spawn( "script_model", var_1[1].origin );
         var_3.angles = var_1[1].angles;
-        var_3 _meth_80B1( var_1[1].model );
+        var_3 setmodel( var_1[1].model );
         var_1[1] delete();
-        var_3 _meth_82C2( var_3.origin, ( 0, 15, 200 ) );
+        var_3 physicslaunchclient( var_3.origin, ( 0, 15, 200 ) );
     }
 
     level.barrier_scene_ents = common_scripts\utility::array_remove( level.barrier_scene_ents, self );
@@ -3546,7 +3546,7 @@ move_overwatch_heli_to_slope()
         foreach ( var_2 in var_0 )
         {
             var_2.ignoreall = 1;
-            var_2 _meth_80B2();
+            var_2 laseron();
         }
     }
 
@@ -3561,7 +3561,7 @@ railing_dangerzone_think()
     for (;;)
     {
         common_scripts\utility::flag_wait( "railing_danger_zone_touching" );
-        var_1 = _func_0D6( "axis" );
+        var_1 = getaiarray( "axis" );
 
         foreach ( var_3 in var_1 )
         {

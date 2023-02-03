@@ -131,15 +131,15 @@ init_level_lighting_flags()
 
 set_level_lighting_values()
 {
-    if ( _func_235() )
+    if ( isusinghdr() )
     {
-        _func_0D3( "r_disablelightsets", 0 );
+        setsaveddvar( "r_disablelightsets", 0 );
 
         if ( maps\_utility::is_gen4() )
-            level.player _meth_83C0( "recovery" );
+            level.player lightsetforplayer( "recovery" );
 
         if ( level.nextgen )
-            _func_0D3( "r_hemiAoEnable", 1 );
+            setsaveddvar( "r_hemiAoEnable", 1 );
     }
 }
 
@@ -164,16 +164,16 @@ setup_lighting_funeral_start()
 {
     common_scripts\utility::flag_wait( "funeral" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_funeral" );
-    level.player _meth_8490( "clut_recovery_funeral", 0.1 );
+    level.player lightsetforplayer( "recovery_funeral" );
+    level.player setclutforplayer( "clut_recovery_funeral", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_funeral", 0.1 );
     thread maps\_utility::sun_light_fade( ( 5, 5, 5 ), ( 10, 10, 10 ), 0.15 );
     thread sun_flare_funeral();
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     maps\_shg_fx::set_sun_flare_position( ( -18, 50, 0 ) );
@@ -189,11 +189,11 @@ setup_lighting_training_begin_start()
 {
     common_scripts\utility::flag_wait( "training_begin" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -209,11 +209,11 @@ setup_lighting_training_lodge_begin_start()
 {
     common_scripts\utility::flag_wait( "training_lodge_begin_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_pantry_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_pantry_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -231,11 +231,11 @@ setup_lighting_training_lodge_breach_start()
 {
     common_scripts\utility::flag_wait( "training_lodge_breach_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_house_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_house_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -253,11 +253,11 @@ setup_lighting_training_lodge_exit_start()
 {
     common_scripts\utility::flag_wait( "training_lodge_exit_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_house_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_house_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -275,11 +275,11 @@ setup_lighting_training_golf_course_start()
 {
     common_scripts\utility::flag_wait( "training_golf_course_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -293,11 +293,11 @@ setup_lighting_training_end_start()
 {
     common_scripts\utility::flag_wait( "training_end_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -311,11 +311,11 @@ setup_lighting_tour_ride_begin_start()
 {
     common_scripts\utility::flag_wait( "tour_ride_begin_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_hangar_transition", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_hangar_transition", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( -40, 72, 0 ) );
     var_0 = getentarray( "hangar_exterior", "targetname" );
@@ -328,8 +328,8 @@ setup_lighting_tour_exo_begin_start()
 {
     common_scripts\utility::flag_wait( "tour_exo_begin_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_day" );
-    level.player _meth_8490( "clut_recovery_day_exo_area", 0.1 );
+    level.player lightsetforplayer( "recovery_day" );
+    level.player setclutforplayer( "clut_recovery_day_exo_area", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_day", 0.1 );
     thread glass_door_01_exterior_lighting();
     thread glass_door_02_exterior_lighting();
@@ -343,8 +343,8 @@ setup_lighting_tour_exo_exit_start()
 {
     common_scripts\utility::flag_wait( "tour_exo_exit_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_lab_warehouse" );
-    level.player _meth_8490( "clut_recovery_lab", 0.1 );
+    level.player lightsetforplayer( "recovery_lab_warehouse" );
+    level.player setclutforplayer( "clut_recovery_lab", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_lab_warehouse", 0.1 );
     thread glass_door_01_interior_lighting();
     thread glass_door_02_interior_lighting();
@@ -356,8 +356,8 @@ setup_lighting_tour_firing_range_start()
 {
     common_scripts\utility::flag_wait( "tour_firing_range_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_day" );
-    level.player _meth_8490( "clut_recovery_day_exo_area", 0.1 );
+    level.player lightsetforplayer( "recovery_day" );
+    level.player setclutforplayer( "clut_recovery_day_exo_area", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_day", 0.1 );
     thread glass_door_01_exterior_lighting();
     thread glass_door_02_exterior_lighting();
@@ -371,8 +371,8 @@ setup_lighting_tour_augmented_reality_start()
 {
     common_scripts\utility::flag_wait( "tour_augmented_reality_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_day" );
-    level.player _meth_8490( "clut_recovery_day_exo_area", 0.1 );
+    level.player lightsetforplayer( "recovery_day" );
+    level.player setclutforplayer( "clut_recovery_day_exo_area", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_day", 0.1 );
     thread glass_door_01_exterior_lighting();
     thread glass_door_02_exterior_lighting();
@@ -386,8 +386,8 @@ setup_lighting_tour_end_start()
 {
     common_scripts\utility::flag_wait( "tour_end_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_day" );
-    level.player _meth_8490( "clut_recovery_day_exo_area", 0.1 );
+    level.player lightsetforplayer( "recovery_day" );
+    level.player setclutforplayer( "clut_recovery_day_exo_area", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_day", 0.1 );
     thread glass_door_01_exterior_lighting();
     thread glass_door_02_exterior_lighting();
@@ -401,11 +401,11 @@ setup_lighting_training_2_begin_start()
 {
     common_scripts\utility::flag_wait( "training_2_begin_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 40, 72, 0 ) );
@@ -421,11 +421,11 @@ setup_lighting_training_2_lodge_begin_start()
 {
     common_scripts\utility::flag_wait( "training_2_lodge_begin_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_pantry_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_pantry_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -441,11 +441,11 @@ setup_lighting_training_2_lodge_breach_start()
 {
     common_scripts\utility::flag_wait( "training_2_lodge_breach_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_house_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_house_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
 
     if ( level.nextgen )
         thread setup_outerspacelighting_interior();
@@ -464,11 +464,11 @@ setup_lighting_training_2_lodge_exit_start()
 {
     common_scripts\utility::flag_wait( "training_2_lodge_exit_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_house_interior" );
-    level.player _meth_8490( "clut_recovery_house", 0.1 );
+    level.player lightsetforplayer( "recovery_house_interior" );
+    level.player setclutforplayer( "clut_recovery_house", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_house_interior", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -484,11 +484,11 @@ setup_lighting_training_2_golf_course_start()
 {
     common_scripts\utility::flag_wait( "training_2_golf_course_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -504,11 +504,11 @@ setup_lighting_training_2_end_start()
 {
     common_scripts\utility::flag_wait( "training_2_end_lighting" );
     wait 0.1;
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread setup_outerspacelighting_interior();
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
@@ -534,8 +534,8 @@ setup_night_lighting_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_night" );
-        level.player _meth_8490( "clut_recovery_night", 0.1 );
+        level.player lightsetforplayer( "recovery_night" );
+        level.player setclutforplayer( "clut_recovery_night", 0.1 );
 
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "recovery_night", 10.0 );
@@ -560,10 +560,10 @@ setup_day_lighting_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_day" );
-        level.player _meth_8490( "clut_recovery_day", 2.0 );
-        _func_0D3( "r_gunSightColorEntityScale", 1.0 );
-        _func_0D3( "r_gunSightColorNoneScale", 1.0 );
+        level.player lightsetforplayer( "recovery_day" );
+        level.player setclutforplayer( "clut_recovery_day", 2.0 );
+        setsaveddvar( "r_gunSightColorEntityScale", 1.0 );
+        setsaveddvar( "r_gunSightColorNoneScale", 1.0 );
 
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "recovery_day", 4.0 );
@@ -585,27 +585,27 @@ setup_lighting_funeral_sequence()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
         var_0 = getent( "funeral_rim_conversation_light", "targetname" );
         var_1 = getent( "funeral_rim_light", "targetname" );
-        var_1 _meth_8020( 30, 5 );
-        var_1 _meth_8046( 500 );
-        var_0 _meth_8020( 30, 20 );
+        var_1 setlightfovrange( 30, 5 );
+        var_1 setlightradius( 500 );
+        var_0 setlightfovrange( 30, 20 );
     }
 
     if ( level.nextgen )
     {
         if ( level.xb3 )
         {
-            _func_0D3( "sm_sunShadowBoundsMin", "0 -50000 -128" );
-            _func_0D3( "sm_sunShadowBoundsMax", "10000 -35000 512" );
-            _func_0D3( "sm_sunShadowBoundsOverride", "1" );
+            setsaveddvar( "sm_sunShadowBoundsMin", "0 -50000 -128" );
+            setsaveddvar( "sm_sunShadowBoundsMax", "10000 -35000 512" );
+            setsaveddvar( "sm_sunShadowBoundsOverride", "1" );
         }
     }
 
     var_2 = getent( "funeral_conversation_fill", "targetname" );
-    var_2 _meth_8020( 40, 20 );
+    var_2 setlightfovrange( 40, 20 );
     thread maps\_lighting::lerp_spot_color( "funeral_rim_light", 0.15, ( 0.9, 0.8, 0.7 ) );
     thread maps\_lighting::lerp_spot_color( "funeral_crowd_rim_light", 0.15, ( 0.9, 0.8, 0.7 ) );
 
@@ -619,13 +619,13 @@ setup_lighting_funeral_sequence()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     common_scripts\utility::flag_wait( "interact_casket" );
     wait 8.5;
-    level.player _meth_83C0( "recovery_funeral_walk" );
+    level.player lightsetforplayer( "recovery_funeral_walk" );
     common_scripts\utility::flag_wait( "player_proximity_irons" );
     var_3 = getent( "funeral_road_lighting_centroid", "targetname" );
 
@@ -639,47 +639,47 @@ setup_lighting_funeral_sequence()
         var_0 maps\_lighting::lerp_light_fov_range( 30, 20, 80, 40, 5 );
 
     wait 3.5;
-    level.player _meth_83C0( "recovery_funeral_conversation" );
-    level.funeral_irons _meth_847B( var_3.origin );
+    level.player lightsetforplayer( "recovery_funeral_conversation" );
+    level.funeral_irons overridelightingorigin( var_3.origin );
     wait 46.5;
-    level.funeral_irons _meth_847C();
+    level.funeral_irons defaultlightingorigin();
 
     if ( level.xb3 )
-        _func_0D3( "sm_sunShadowBoundsOverride", "0" );
+        setsaveddvar( "sm_sunShadowBoundsOverride", "0" );
 }
 
 setup_dof_funeral()
 {
-    _func_0D3( "r_dof_physical_bokehenable", 1 );
+    setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
     if ( level.nextgen )
     {
         common_scripts\utility::flag_wait( "interact_casket" );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 4.5, 24.3 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 4.5, 24.3 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
         wait 8.5;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
         common_scripts\utility::flag_wait( "player_proximity_irons" );
-        level.player _meth_84A9();
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        level.player _meth_84AB( 5, 23.8 );
+        level.player enablephysicaldepthoffieldscripting();
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        level.player setphysicaldepthoffield( 5, 23.8 );
         wait 10.0;
-        level.player _meth_84AB( 5.5, 30 );
+        level.player setphysicaldepthoffield( 5.5, 30 );
         wait 28.5;
-        level.player _meth_84AB( 5.5, 21.8 );
+        level.player setphysicaldepthoffield( 5.5, 21.8 );
         wait 8.0;
-        level.player _meth_84AB( 5.5, 30 );
+        level.player setphysicaldepthoffield( 5.5, 30 );
         wait 5.0;
-        level.player _meth_84AB( 5.5, 24.7 );
+        level.player setphysicaldepthoffield( 5.5, 24.7 );
         wait 1.0;
-        level.player _meth_84AB( 5.5, 10.69 );
+        level.player setphysicaldepthoffield( 5.5, 10.69 );
         wait 3.0;
-        level.player _meth_84AB( 5.5, 30 );
+        level.player setphysicaldepthoffield( 5.5, 30 );
         wait 3.75;
-        level.player _meth_84AB( 5.5, 9.2, 20, 20 );
+        level.player setphysicaldepthoffield( 5.5, 9.2, 20, 20 );
     }
 }
 
@@ -687,34 +687,34 @@ setup_dof_funeral_cg()
 {
     if ( level.currentgen )
     {
-        level.player _meth_84A9();
+        level.player enablephysicaldepthoffieldscripting();
         common_scripts\utility::flag_wait( "interact_casket" );
-        _func_0D3( "r_dof_physical_hipenable", 0 );
-        level.player _meth_84AB( 7.5, 17.3 );
+        setsaveddvar( "r_dof_physical_hipenable", 0 );
+        level.player setphysicaldepthoffield( 7.5, 17.3 );
         wait 9.75;
-        _func_0D3( "sm_sunshadowscale", 1 );
-        _func_0D3( "sm_sunSampleSizeNear", 0.15 );
-        level.player _meth_84AA();
+        setsaveddvar( "sm_sunshadowscale", 1 );
+        setsaveddvar( "sm_sunSampleSizeNear", 0.15 );
+        level.player disablephysicaldepthoffieldscripting();
         common_scripts\utility::flag_wait( "player_proximity_irons" );
-        _func_0D3( "sm_sunshadowscale", 1 );
-        _func_0D3( "sm_sunSampleSizeNear", 0.044 );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 8.5, 23.8 );
-        level.player _meth_83C0( "recovery_funeral_ssn" );
+        setsaveddvar( "sm_sunshadowscale", 1 );
+        setsaveddvar( "sm_sunSampleSizeNear", 0.044 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 8.5, 23.8 );
+        level.player lightsetforplayer( "recovery_funeral_ssn" );
         wait 10.0;
-        level.player _meth_84AB( 9, 21.4 );
+        level.player setphysicaldepthoffield( 9, 21.4 );
         wait 28.5;
-        level.player _meth_84AB( 9, 18.1 );
+        level.player setphysicaldepthoffield( 9, 18.1 );
         wait 8.0;
-        level.player _meth_84AB( 9, 21.4 );
+        level.player setphysicaldepthoffield( 9, 21.4 );
         wait 5.0;
-        level.player _meth_84AB( 12, 10.69 );
+        level.player setphysicaldepthoffield( 12, 10.69 );
         wait 4.0;
-        level.player _meth_84AB( 9, 21.4 );
+        level.player setphysicaldepthoffield( 9, 21.4 );
         wait 4.0;
-        level.player _meth_84AB( 12, 10.69 );
+        level.player setphysicaldepthoffield( 12, 10.69 );
         wait 4.0;
-        level.player _meth_84AA();
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -729,31 +729,31 @@ lightning_strike_hangar_start()
 
     for ( var_3 = 0; var_3 < var_2; var_3++ )
     {
-        var_0 _meth_81DF( randomfloatrange( 1000, 10000000 ) );
-        level.player _meth_83C0( "recovery_lightning" );
+        var_0 setlightintensity( randomfloatrange( 1000, 10000000 ) );
+        level.player lightsetforplayer( "recovery_lightning" );
         wait(var_1);
-        var_0 _meth_81DF( 0 );
-        level.player _meth_83C0( "recovery_night" );
+        var_0 setlightintensity( 0 );
+        level.player lightsetforplayer( "recovery_night" );
     }
 }
 
 setup_training_start_area_lighting()
 {
     common_scripts\utility::flag_wait( "training_start_area_lighting" );
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night", 0.1 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night", 0.1 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     thread sun_flare();
     maps\_shg_fx::set_sun_flare_position( ( 31, -35, 0 ) );
 
     if ( level.nextgen )
     {
         thread setup_training_start_area_dof();
-        _func_0D3( "r_aodiminish", 1 );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_aodiminish", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
         thread maps\_lighting::lerp_spot_intensity( "light_side_house_01", 0.1, 600 );
         thread maps\_lighting::lerp_spot_intensity( "light_side_house_02", 0.1, 15000 );
         thread maps\_lighting::lerp_spot_intensity( "training_start_character_fill", 2.0, 1000 );
@@ -772,8 +772,8 @@ setup_training_start_area_lighting()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
         common_scripts\utility::flag_wait( "enter_house_lighting" );
     }
 }
@@ -781,21 +781,21 @@ setup_training_start_area_lighting()
 setup_training_start_area_dof()
 {
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 25.5, 11.7, 20, 20 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 25.5, 11.7, 20, 20 );
     wait 2.3;
-    level.player _meth_84AB( 1.8, 13.7, 20, 20 );
+    level.player setphysicaldepthoffield( 1.8, 13.7, 20, 20 );
     wait 2.5;
-    level.player _meth_84AB( 2.5, 25.8 );
+    level.player setphysicaldepthoffield( 2.5, 25.8 );
     wait 5.65;
-    level.player _meth_84AB( 2.5, 2486.0 );
+    level.player setphysicaldepthoffield( 2.5, 2486.0 );
     wait 4.0;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
 
     wait 0.25;
 }
@@ -813,8 +813,8 @@ setup_lighting_house_interior_transition_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_house_interior_transition" );
-        level.player _meth_8490( "clut_recovery_house", 0.1 );
+        level.player lightsetforplayer( "recovery_house_interior_transition" );
+        level.player setclutforplayer( "clut_recovery_house", 0.1 );
 
         if ( level.nextgen )
         {
@@ -840,8 +840,8 @@ setup_lighting_house_interior_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_house_interior" );
-        level.player _meth_8490( "clut_recovery_house", 0.1 );
+        level.player lightsetforplayer( "recovery_house_interior" );
+        level.player setclutforplayer( "clut_recovery_house", 0.1 );
 
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "recovery_house_interior", 10.0 );
@@ -872,7 +872,7 @@ setup_lighting_pantry_interior_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_pantry_interior" );
+        level.player lightsetforplayer( "recovery_pantry_interior" );
     }
 }
 
@@ -880,10 +880,10 @@ setup_lighting_ambush()
 {
     common_scripts\utility::flag_wait( "bedroom_1_door_scene" );
     var_0 = getent( "house_ambush_light", "targetname" );
-    var_0 _meth_8498( "force_on" );
+    var_0 setlightshadowstate( "force_on" );
     thread maps\_lighting::lerp_spot_intensity( "house_ambush_light", 0.1, 20000 );
     wait 6.0;
-    var_0 _meth_8498( "normal" );
+    var_0 setlightshadowstate( "normal" );
 }
 
 setup_lighting_door_breach()
@@ -892,14 +892,14 @@ setup_lighting_door_breach()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
         wait 4.0;
         thread maps\_lighting::lerp_spot_intensity( "lodge_breach_bounce", 2.0, 10000 );
         maps\_utility::vision_set_fog_changes( "recovery_house_door_breach", 0.5 );
         wait 7.0;
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
         thread maps\_lighting::lerp_spot_intensity( "lodge_breach_bounce", 3.0, 100 );
         maps\_utility::vision_set_fog_changes( "recovery_house_interior", 3.0 );
     }
@@ -910,20 +910,20 @@ setup_dof_door_breach()
     common_scripts\utility::flag_wait( "training_s1_breach_begin" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     wait 0.5;
-    level.player _meth_84AB( 1.2, 18.5, 20, 20 );
+    level.player setphysicaldepthoffield( 1.2, 18.5, 20, 20 );
     wait 2.0;
-    level.player _meth_84AB( 1.2, 77.3, 20, 20 );
+    level.player setphysicaldepthoffield( 1.2, 77.3, 20, 20 );
     wait 2.15;
-    level.player _meth_84AB( 1.2, 89, 20, 20 );
+    level.player setphysicaldepthoffield( 1.2, 89, 20, 20 );
     wait 5.0;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 setup_lighting_drone_attack()
@@ -931,13 +931,13 @@ setup_lighting_drone_attack()
     common_scripts\utility::flag_wait( "flag_obj_rescue1_drone_attack_clear" );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 
     maps\_utility::vision_set_fog_changes( "recovery_drone_battle", 1.0 );
     common_scripts\utility::flag_wait( "flag_obj_rescue1_patio_ambush" );
 
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 setup_lighting_night_pool()
@@ -954,8 +954,8 @@ setup_night_lighting_pool_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_night" );
-        level.player _meth_8490( "clut_recovery_night_pool_to_end", 1.0 );
+        level.player lightsetforplayer( "recovery_night" );
+        level.player setclutforplayer( "clut_recovery_night_pool_to_end", 1.0 );
 
         if ( level.nextgen )
             maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 2.0 );
@@ -982,66 +982,66 @@ setup_knockdown_sequence()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", "1" );
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.0, 22.4, 20, 20 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", "1" );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.0, 22.4, 20, 20 );
         wait 3.0;
-        level.player _meth_84AB( 2.0, 11.36, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 11.36, 20, 20 );
         wait 2.1;
-        level.player _meth_84AB( 2.0, 57.8, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 57.8, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 2.0, 132.4, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 132.4, 20, 20 );
         wait 6.0;
-        level.player _meth_84AB( 2.0, 55.2, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 55.2, 20, 20 );
         wait 5.0;
-        level.player _meth_84AB( 2.0, 100.6, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 100.6, 20, 20 );
         wait 4.0;
-        level.player _meth_84AB( 2.0, 29.9, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 29.9, 20, 20 );
         wait 4.0;
-        level.player _meth_84AB( 2.0, 246, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 246, 20, 20 );
         wait 5.5;
-        level.player _meth_84AB( 4.0, 246, 20, 20 );
+        level.player setphysicaldepthoffield( 4.0, 246, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 3.0, 15.8, 20, 20 );
+        level.player setphysicaldepthoffield( 3.0, 15.8, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 3.0, 87.7, 20, 20 );
+        level.player setphysicaldepthoffield( 3.0, 87.7, 20, 20 );
         wait 2.4;
-        level.player _meth_84AB( 3.5, 32.1, 20, 20 );
+        level.player setphysicaldepthoffield( 3.5, 32.1, 20, 20 );
         wait 16.0;
-        level.player _meth_84AB( 2.0, 246, 20, 20 );
-        level.player _meth_84AA();
+        level.player setphysicaldepthoffield( 2.0, 246, 20, 20 );
+        level.player disablephysicaldepthoffieldscripting();
     }
     else
     {
-        level.player _meth_84A9();
-        level.player _meth_84AB( 2.0, 22.4, 20, 20 );
+        level.player enablephysicaldepthoffieldscripting();
+        level.player setphysicaldepthoffield( 2.0, 22.4, 20, 20 );
         wait 3.0;
-        level.player _meth_84AB( 2.0, 11.36, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 11.36, 20, 20 );
         wait 2.1;
-        level.player _meth_84AB( 2.0, 57.8, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 57.8, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 2.0, 132.4, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 132.4, 20, 20 );
         wait 6.0;
-        level.player _meth_84AB( 2.0, 55.2, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 55.2, 20, 20 );
         wait 5.0;
-        level.player _meth_84AB( 2.0, 100.6, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 100.6, 20, 20 );
         wait 4.0;
-        level.player _meth_84AB( 2.0, 29.9, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 29.9, 20, 20 );
         wait 4.0;
-        level.player _meth_84AB( 2.0, 246, 20, 20 );
+        level.player setphysicaldepthoffield( 2.0, 246, 20, 20 );
         wait 5.5;
-        level.player _meth_84AB( 4.0, 246, 20, 20 );
+        level.player setphysicaldepthoffield( 4.0, 246, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 3.0, 15.8, 20, 20 );
+        level.player setphysicaldepthoffield( 3.0, 15.8, 20, 20 );
         wait 2.0;
-        level.player _meth_84AB( 3.0, 87.7, 20, 20 );
+        level.player setphysicaldepthoffield( 3.0, 87.7, 20, 20 );
         wait 2.4;
-        level.player _meth_84AB( 3.5, 32.1, 20, 20 );
+        level.player setphysicaldepthoffield( 3.5, 32.1, 20, 20 );
         wait 16.0;
-        level.player _meth_84AB( 2.0, 246, 20, 20 );
-        level.player _meth_84AA();
+        level.player setphysicaldepthoffield( 2.0, 246, 20, 20 );
+        level.player disablephysicaldepthoffieldscripting();
     }
 }
 
@@ -1054,9 +1054,9 @@ setup_hangar_door_open_sequence()
     {
         if ( level.xb3 )
         {
-            _func_0D3( "sm_sunShadowBoundsMin", "-6400 -10240 -512" );
-            _func_0D3( "sm_sunShadowBoundsMax", "6400 10240 2048" );
-            _func_0D3( "sm_sunShadowBoundsOverride", "1" );
+            setsaveddvar( "sm_sunShadowBoundsMin", "-6400 -10240 -512" );
+            setsaveddvar( "sm_sunShadowBoundsMax", "6400 10240 2048" );
+            setsaveddvar( "sm_sunShadowBoundsOverride", "1" );
         }
     }
 
@@ -1070,8 +1070,8 @@ setup_hangar_door_open_sequence()
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_bounce", 5, 100000 );
 
     wait 2.5;
-    level.player _meth_83C0( "recovery_hangar_door_transition" );
-    level.player _meth_8490( "clut_recovery_hangar_transition", 1.0 );
+    level.player lightsetforplayer( "recovery_hangar_door_transition" );
+    level.player setclutforplayer( "clut_recovery_hangar_transition", 1.0 );
     maps\_utility::vision_set_fog_changes( "recovery_hangar_door_transition", 3.0 );
     thread disable_outerspacelighting_interior();
     common_scripts\utility::flag_wait( "tour_ride_hangar_lighting" );
@@ -1133,20 +1133,20 @@ setup_hangar_interior_walls()
     var_5.origin += ( 0, 0, 10000000.0 );
     var_6.origin += ( 0, 0, 10000000.0 );
     var_7.origin += ( 0, 0, 10000000.0 );
-    var_2 _meth_847B( var_0.origin );
-    var_4 _meth_847B( var_0.origin );
-    var_5 _meth_847B( var_0.origin );
-    var_3 _meth_847B( var_0.origin );
-    var_6 _meth_847B( var_0.origin );
-    var_7 _meth_847B( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_4 overridelightingorigin( var_0.origin );
+    var_5 overridelightingorigin( var_0.origin );
+    var_3 overridelightingorigin( var_0.origin );
+    var_6 overridelightingorigin( var_0.origin );
+    var_7 overridelightingorigin( var_0.origin );
     common_scripts\utility::flag_wait( "training_s1_end_enter_jeep" );
     wait 2.0;
     var_7.origin += ( 0, 0, -10000000.0 );
     var_8.origin += ( 0, 0, 10000000.0 );
     var_9.origin += ( 0, 0, 10000000.0 );
     wait 0.15;
-    var_8 _meth_847B( var_0.origin );
-    var_9 _meth_847B( var_1.origin );
+    var_8 overridelightingorigin( var_0.origin );
+    var_9 overridelightingorigin( var_1.origin );
     common_scripts\utility::flag_wait( "tour_ride_hangar_lighting" );
     var_2.origin += ( 0, 0, -10000000.0 );
     var_4.origin += ( 0, 0, -10000000.0 );
@@ -1177,20 +1177,20 @@ setup_lighting_hangar_doors()
     var_5 = getent( "tour_giant_door_01_r_part1", "targetname" );
     var_6 = getent( "tour_giant_door_01_r_part2", "targetname" );
     var_6 = getent( "tour_giant_door_01_r_part2", "targetname" );
-    var_3 _meth_847B( var_0.origin );
-    var_3 _meth_83AB( var_2.origin );
-    var_4 _meth_847B( var_0.origin );
-    var_4 _meth_83AB( var_2.origin );
-    var_5 _meth_847B( var_0.origin );
-    var_5 _meth_83AB( var_2.origin );
-    var_6 _meth_847B( var_0.origin );
-    var_6 _meth_83AB( var_2.origin );
+    var_3 overridelightingorigin( var_0.origin );
+    var_3 overridereflectionprobe( var_2.origin );
+    var_4 overridelightingorigin( var_0.origin );
+    var_4 overridereflectionprobe( var_2.origin );
+    var_5 overridelightingorigin( var_0.origin );
+    var_5 overridereflectionprobe( var_2.origin );
+    var_6 overridelightingorigin( var_0.origin );
+    var_6 overridereflectionprobe( var_2.origin );
     common_scripts\utility::flag_wait( "tour_ride_drive_lighting" );
     wait 12.0;
-    var_3 _meth_847C();
-    var_4 _meth_847C();
-    var_5 _meth_847C();
-    var_6 _meth_847C();
+    var_3 defaultlightingorigin();
+    var_4 defaultlightingorigin();
+    var_5 defaultlightingorigin();
+    var_6 defaultlightingorigin();
 }
 
 setup_lighting_training_end_character_sequence()
@@ -1204,7 +1204,7 @@ setup_lighting_training_end_character_sequence()
     if ( level.currentgen )
     {
         wait 5.0;
-        level.player _meth_83C0( "recovery_hangar_door_transition" );
+        level.player lightsetforplayer( "recovery_hangar_door_transition" );
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_sequence_street_lamp", 0.5, 8000 );
         wait 13.0;
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_bounce", 2, 100000 );
@@ -1216,7 +1216,7 @@ setup_lighting_training_end_character_sequence()
     if ( level.nextgen )
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_sequence_rim", 3.0, 2000000 );
 
-    var_0 _meth_847B( var_1.origin );
+    var_0 overridelightingorigin( var_1.origin );
     wait 7.75;
 
     if ( level.nextgen )
@@ -1234,7 +1234,7 @@ setup_lighting_training_end_character_sequence()
     var_2 = getent( "hangar_door_bounce", "targetname" );
 
     if ( isdefined( var_2 ) )
-        var_2 _meth_8498( "force_on" );
+        var_2 setlightshadowstate( "force_on" );
 
     var_3 = level.irons;
 
@@ -1243,16 +1243,16 @@ setup_lighting_training_end_character_sequence()
     else
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_sequence_street_lamp", 0.5, 5000 );
 
-    var_3 _meth_847B( var_1.origin );
+    var_3 overridelightingorigin( var_1.origin );
     common_scripts\utility::flag_wait( "training_s1_end_enter_jeep" );
 
     if ( level.nextgen )
         thread maps\_lighting::lerp_spot_intensity( "hangar_door_sequence_street_lamp", 2.0, 800 );
 
     maps\_utility::vision_set_fog_changes( "recovery_get_in_jeep", 1.0 );
-    level.player _meth_83C0( "recovery_get_in_jeep" );
-    var_3 _meth_847C();
-    var_0 _meth_847C();
+    level.player lightsetforplayer( "recovery_get_in_jeep" );
+    var_3 defaultlightingorigin();
+    var_0 defaultlightingorigin();
     common_scripts\utility::flag_wait( "tour_ride_drive_lighting" );
 
     if ( level.nextgen )
@@ -1263,7 +1263,7 @@ setup_lighting_training_end_character_sequence()
 
     }
 
-    var_2 _meth_8498( "normal" );
+    var_2 setlightshadowstate( "normal" );
     thread glass_door_01_exterior_lighting();
     thread glass_door_02_exterior_lighting();
     thread glass_door_03_exterior_lighting();
@@ -1275,9 +1275,9 @@ set_irons_tour_ride_reflection()
     if ( level.currentgen )
     {
         wait 10.0;
-        level.irons _meth_846C( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_tour_ride" );
+        level.irons overridematerial( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_tour_ride" );
         common_scripts\utility::flag_wait( "tour_ride_reset_irons_reflection" );
-        level.irons _meth_83AC();
+        level.irons defaultreflectionprobe();
     }
 }
 
@@ -1285,16 +1285,16 @@ setup_tour_ride_skin_spec_fix()
 {
     common_scripts\utility::flag_wait( "tour_ride_drive_lighting" );
     wait 0.5;
-    level.irons _meth_846C( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_recoverytour_tns" );
-    level.irons _meth_846C( "mtl_irons_hair", "mtl_irons_hair_recoverytour" );
-    level.irons _meth_846C( "mtl_irons_hair_cards", "mtl_irons_hair_cards_recoverytour" );
-    level.gideon _meth_846C( "mtl_gideon_head_wrinkle_tns", "mtl_gideon_head_wrinkle_recoverytour_tns" );
+    level.irons overridematerial( "mtl_irons_head_wrinkle_tns", "mtl_irons_head_wrinkle_recoverytour_tns" );
+    level.irons overridematerial( "mtl_irons_hair", "mtl_irons_hair_recoverytour" );
+    level.irons overridematerial( "mtl_irons_hair_cards", "mtl_irons_hair_cards_recoverytour" );
+    level.gideon overridematerial( "mtl_gideon_head_wrinkle_tns", "mtl_gideon_head_wrinkle_recoverytour_tns" );
     wait 20;
-    level.gideon _meth_846D();
+    level.gideon overridematerialreset();
     common_scripts\utility::flag_wait( "tour_ride_hangar_lighting" );
     common_scripts\utility::flag_wait( "tour_ride_end_lighting" );
     wait 17;
-    level.irons _meth_846D();
+    level.irons overridematerialreset();
 }
 
 setup_dof_tour_ride()
@@ -1302,18 +1302,18 @@ setup_dof_tour_ride()
     if ( level.nextgen )
     {
         common_scripts\utility::flag_wait( "tour_ride_drive_lighting" );
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", "0" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", "0" );
         wait 2.25;
         resetsundirection();
         wait 2.5;
         resetsunlight();
         common_scripts\utility::flag_wait( "tour_ride_end_lighting" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
         wait 30;
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
     else if ( level.currentgen )
     {
@@ -1322,9 +1322,9 @@ setup_dof_tour_ride()
         wait 2.5;
         common_scripts\utility::flag_wait( "tour_ride_end_lighting" );
         wait 13;
-        level.player _meth_83C0( "recovery_day_ssn" );
+        level.player lightsetforplayer( "recovery_day_ssn" );
         wait 11;
-        level.player _meth_83C0( "recovery_day" );
+        level.player lightsetforplayer( "recovery_day" );
         wait 19;
         wait 0.2;
     }
@@ -1351,10 +1351,10 @@ setup_tour_hangar_doors_lighting()
     var_3 = getent( "tour_hangar_door_01_r_part2", "targetname" );
     var_4 = getent( "tour_hangar_door_01_l_part1", "targetname" );
     var_5 = getent( "tour_hangar_door_01_l_part2", "targetname" );
-    var_4 _meth_847B( var_0.origin );
-    var_5 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_1.origin );
-    var_3 _meth_847B( var_1.origin );
+    var_4 overridelightingorigin( var_0.origin );
+    var_5 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_1.origin );
+    var_3 overridelightingorigin( var_1.origin );
 }
 
 setup_tour_hangar_opening()
@@ -1389,12 +1389,12 @@ setup_lighting_exo_hangar_doorway_volume()
 
         if ( level.nextgen )
         {
-            level.player _meth_83C0( "recovery_day" );
-            level.player _meth_8490( "clut_recovery_day_exo_area", 4.0 );
+            level.player lightsetforplayer( "recovery_day" );
+            level.player setclutforplayer( "clut_recovery_day_exo_area", 4.0 );
         }
 
-        _func_0D3( "r_gunSightColorEntityScale", 1.0 );
-        _func_0D3( "r_gunSightColorNoneScale", 1.0 );
+        setsaveddvar( "r_gunSightColorEntityScale", 1.0 );
+        setsaveddvar( "r_gunSightColorNoneScale", 1.0 );
         thread glass_door_01_exterior_lighting();
         thread glass_door_02_exterior_lighting();
 
@@ -1441,8 +1441,8 @@ setup_lighting_lab_interior_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_interior" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_interior" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 3.0 );
     }
 }
@@ -1460,8 +1460,8 @@ setup_lighting_exo_hangar_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_interior" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_interior" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 3.0 );
         thread glass_door_01_interior_lighting();
         thread glass_door_02_interior_lighting();
@@ -1481,8 +1481,8 @@ setup_lighting_lab_warehouse_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_warehouse" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_warehouse" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_warehouse", 2.0 );
     }
 }
@@ -1496,10 +1496,10 @@ setup_lighting_hangar_demos()
     var_3 = getent( "exo_push_sled_01", "targetname" );
     var_4 = getent( "exo_push_sled_02", "targetname" );
     var_5 = getent( "exo_room_turret", "targetname" );
-    var_3 _meth_847B( var_1.origin );
-    var_4 _meth_847B( var_0.origin );
-    var_5 _meth_847B( var_2.origin );
-    var_5 _meth_83AB( var_2.origin );
+    var_3 overridelightingorigin( var_1.origin );
+    var_4 overridelightingorigin( var_0.origin );
+    var_5 overridelightingorigin( var_2.origin );
+    var_5 overridereflectionprobe( var_2.origin );
 }
 
 setup_lighting_exo_room()
@@ -1515,8 +1515,8 @@ setup_exo_room_lighting_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_exo_room" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_exo_room" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 2.0 );
     }
 }
@@ -1524,34 +1524,34 @@ setup_exo_room_lighting_volume()
 setup_exo_arm_moment_lighting()
 {
     common_scripts\utility::flag_wait( "tour_exo_arm" );
-    level.player _meth_83C0( "recovery_lab_exo_arm_moment" );
+    level.player lightsetforplayer( "recovery_lab_exo_arm_moment" );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
     }
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 4.0, 28 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 4.0, 28 );
     wait 4.0;
-    level.player _meth_84AB( 4.0, 12.3 );
+    level.player setphysicaldepthoffield( 4.0, 12.3 );
     common_scripts\utility::flag_wait( "desk_exit" );
     wait 3.0;
-    level.player _meth_84AB( 4.0, 15 );
+    level.player setphysicaldepthoffield( 4.0, 15 );
     wait 4.0;
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
-        _func_0D3( "r_dof_physical_hipfstop", 2 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_hipfstop", 2 );
     }
 
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     wait 0.5;
     common_scripts\utility::flag_wait( "desk_exit" );
-    level.player _meth_83C0( "recovery_lab_exo_room" );
+    level.player lightsetforplayer( "recovery_lab_exo_room" );
 }
 
 setup_lighting_firing_range_doorway()
@@ -1567,10 +1567,10 @@ setup_lighting_firing_doorway_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_day" );
-        level.player _meth_8490( "clut_recovery_day_exo_area", 4.0 );
-        _func_0D3( "r_gunSightColorEntityScale", 1.0 );
-        _func_0D3( "r_gunSightColorNoneScale", 1.0 );
+        level.player lightsetforplayer( "recovery_day" );
+        level.player setclutforplayer( "clut_recovery_day_exo_area", 4.0 );
+        setsaveddvar( "r_gunSightColorEntityScale", 1.0 );
+        setsaveddvar( "r_gunSightColorNoneScale", 1.0 );
         thread glass_door_03_exterior_lighting();
         thread glass_door_04_exterior_lighting();
 
@@ -1600,8 +1600,8 @@ setup_lighting_firing_range_entrance_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_interior" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_interior" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 3.0 );
         thread glass_door_03_interior_lighting();
         thread glass_door_04_interior_lighting();
@@ -1621,11 +1621,11 @@ setup_lighting_firing_range_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_firing_range" );
-        level.player _meth_8490( "clut_recovery_firing_range", 1.0 );
+        level.player lightsetforplayer( "recovery_firing_range" );
+        level.player setclutforplayer( "clut_recovery_firing_range", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_firing_range", 2.0 );
-        _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-        _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+        setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+        setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
     }
 }
 
@@ -1680,7 +1680,7 @@ setup_lighting_firing_range_stall_01_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_01", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_01" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_01", 0.5, 0.01 );
@@ -1697,7 +1697,7 @@ setup_lighting_firing_range_stall_02_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_02", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_02" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_02", 0.5, 0.01 );
@@ -1714,7 +1714,7 @@ setup_lighting_firing_range_stall_03_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_03", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_03" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_03", 0.5, 0.01 );
@@ -1731,7 +1731,7 @@ setup_lighting_firing_range_stall_04_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_04", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_04" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_04", 0.5, 0.01 );
@@ -1748,7 +1748,7 @@ setup_lighting_firing_range_stall_05_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_05", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_05" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_05", 0.5, 0.01 );
@@ -1765,7 +1765,7 @@ setup_lighting_firing_range_stall_06_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_06", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_06" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_06", 0.5, 0.01 );
@@ -1782,7 +1782,7 @@ setup_lighting_firing_range_stall_07_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_07", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_07" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_07", 0.5, 0.01 );
@@ -1799,7 +1799,7 @@ setup_lighting_firing_range_stall_08_volume()
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_08", 0.5, 5000 );
         common_scripts\_exploder::exploder( "range_08" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 1.0;
 
         thread maps\_lighting::lerp_spot_intensity( "firing_range_floor_light_08", 0.5, 0.01 );
@@ -1821,12 +1821,12 @@ setup_firing_range_stall_lighting_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_firing_range_stall" );
+        level.player lightsetforplayer( "recovery_firing_range_stall" );
 
-        while ( level.player _meth_80A9( self ) )
+        while ( level.player istouching( self ) )
             wait 0.1;
 
-        level.player _meth_83C0( "recovery_firing_range" );
+        level.player lightsetforplayer( "recovery_firing_range" );
     }
 }
 
@@ -1918,7 +1918,7 @@ shooting_range_ramp_down_lighting()
         var_11 show();
 
     wait 0.25;
-    level.player _meth_83C0( "recovery_firing_range_shooting" );
+    level.player lightsetforplayer( "recovery_firing_range_shooting" );
 
     foreach ( var_11 in var_8 )
         var_11 hide();
@@ -1985,7 +1985,7 @@ shooting_range_ramp_up_lighting()
     foreach ( var_11 in var_4 )
         var_11 hide();
 
-    level.player _meth_83C0( "recovery_firing_range_stall" );
+    level.player lightsetforplayer( "recovery_firing_range_stall" );
 
     if ( level.nextgen )
     {
@@ -2011,8 +2011,8 @@ setup_lighting_firing_range_exit_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_lab_interior" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_lab_interior" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 3.0 );
         thread glass_door_03_interior_lighting();
         thread glass_door_04_interior_lighting();
@@ -2039,10 +2039,10 @@ glass_door_01_interior_lighting()
     var_0 = getent( "tour_door_1_interior_lighting_centroid", "targetname" );
     var_1 = getent( "tour_glass_door_01_l", "targetname" );
     var_2 = getent( "tour_glass_door_01_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_01_exterior_lighting()
@@ -2050,10 +2050,10 @@ glass_door_01_exterior_lighting()
     var_0 = getent( "tour_door_2_exterior_lighting_centroid", "targetname" );
     var_1 = getent( "tour_glass_door_01_l", "targetname" );
     var_2 = getent( "tour_glass_door_01_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_02_interior_lighting()
@@ -2061,10 +2061,10 @@ glass_door_02_interior_lighting()
     var_0 = getent( "tour_door_2_interior_lighting_centroid", "targetname" );
     var_1 = getent( "tour_glass_door_02_l", "targetname" );
     var_2 = getent( "tour_glass_door_02_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_02_exterior_lighting()
@@ -2072,10 +2072,10 @@ glass_door_02_exterior_lighting()
     var_0 = getent( "tour_door_2_exterior_lighting_centroid", "targetname" );
     var_1 = getent( "tour_glass_door_02_l", "targetname" );
     var_2 = getent( "tour_glass_door_02_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_03_interior_lighting()
@@ -2083,20 +2083,20 @@ glass_door_03_interior_lighting()
     var_0 = getent( "firing_range_entrance_interior_lighting_centroid", "targetname" );
     var_1 = getent( "tour_glass_door_03_l", "targetname" );
     var_2 = getent( "tour_glass_door_03_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_03_exterior_lighting()
 {
     var_0 = getent( "tour_glass_door_03_l", "targetname" );
     var_1 = getent( "tour_glass_door_03_r", "targetname" );
-    var_0 _meth_847C();
-    var_1 _meth_847C();
-    var_0 _meth_83AC();
-    var_1 _meth_83AC();
+    var_0 defaultlightingorigin();
+    var_1 defaultlightingorigin();
+    var_0 defaultreflectionprobe();
+    var_1 defaultreflectionprobe();
 }
 
 tour_glass_door_04_lighting()
@@ -2118,75 +2118,75 @@ glass_door_04_interior_lighting()
     var_0 = getent( "lighting_centroid_firing_range_exit_doors", "targetname" );
     var_1 = getent( "tour_glass_door_04_l", "targetname" );
     var_2 = getent( "tour_glass_door_04_r", "targetname" );
-    var_1 _meth_847B( var_0.origin );
-    var_2 _meth_847B( var_0.origin );
-    var_1 _meth_83AB( var_0.origin );
-    var_2 _meth_83AB( var_0.origin );
+    var_1 overridelightingorigin( var_0.origin );
+    var_2 overridelightingorigin( var_0.origin );
+    var_1 overridereflectionprobe( var_0.origin );
+    var_2 overridereflectionprobe( var_0.origin );
 }
 
 glass_door_04_exterior_lighting()
 {
     var_0 = getent( "tour_glass_door_04_l", "targetname" );
     var_1 = getent( "tour_glass_door_04_r", "targetname" );
-    var_0 _meth_847C();
-    var_1 _meth_847C();
-    var_0 _meth_83AC();
-    var_1 _meth_83AC();
+    var_0 defaultlightingorigin();
+    var_1 defaultlightingorigin();
+    var_0 defaultreflectionprobe();
+    var_1 defaultreflectionprobe();
 }
 
 setup_lighting_fx_during_mini_games()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbEnable", "2" );
 }
 
 turn_off_lighting_fx_post_mini_games()
 {
     if ( level.nextgen )
-        _func_0D3( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
 }
 
 setup_lighting_fly_drone()
 {
     wait 0.5;
-    level.player _meth_8490( "clut_lagos_drone", 0.1 );
+    level.player setclutforplayer( "clut_lagos_drone", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_drone_view_day", 0.1 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
     }
 }
 
 setup_lighting_fly_drone_off()
 {
     wait 0.5;
-    level.player _meth_8490( "clut_recovery_day_exo_area", 0.1 );
+    level.player setclutforplayer( "clut_recovery_day_exo_area", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_day", 0.1 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
-        _func_0D3( "r_dof_physical_hipfstop", 2.0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_hipfstop", 2.0 );
     }
 }
 
 setup_lighting_fly_drone_off_night()
 {
     wait 0.5;
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
-        _func_0D3( "r_dof_physical_hipfstop", 2.0 );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_hipfstop", 2.0 );
     }
 }
 
@@ -2203,13 +2203,13 @@ setup_lighting_training_2_transition_volume()
     for (;;)
     {
         self waittill( "trigger" );
-        level.player _meth_83C0( "recovery_ready_room" );
-        level.player _meth_8490( "clut_recovery_lab", 1.0 );
+        level.player lightsetforplayer( "recovery_ready_room" );
+        level.player setclutforplayer( "clut_recovery_lab", 1.0 );
         maps\_utility::vision_set_fog_changes( "recovery_lab_interior", 3.0 );
         var_0 = getent( "elevator_shaft_spot", "targetname" );
         var_1 = getent( "elevator_shaft_spot_02", "targetname" );
-        var_0 _meth_8498( "force_on" );
-        var_1 _meth_8498( "force_on" );
+        var_0 setlightshadowstate( "force_on" );
+        var_1 setlightshadowstate( "force_on" );
     }
 }
 
@@ -2226,15 +2226,15 @@ setup_lighting_ready_room_elevators()
     var_3 = getent( "elevator_02_lighting_centroid", "targetname" );
     var_4 = getent( "elevator_shaft_spot", "targetname" );
     var_5 = getent( "elevator_shaft_spot_02", "targetname" );
-    var_0 _meth_847B( var_2.origin );
-    var_1 _meth_847B( var_3.origin );
+    var_0 overridelightingorigin( var_2.origin );
+    var_1 overridelightingorigin( var_3.origin );
     common_scripts\utility::flag_wait( "ready_room_elevator_lighting" );
-    var_4 _meth_8498( "normal" );
-    var_5 _meth_8498( "normal" );
+    var_4 setlightshadowstate( "normal" );
+    var_5 setlightshadowstate( "normal" );
     thread maps\_lighting::lerp_spot_intensity( "elevator_shaft_spot", 10, 0 );
     wait 10;
-    var_0 _meth_847C();
-    var_1 _meth_847C();
+    var_0 defaultlightingorigin();
+    var_1 defaultlightingorigin();
 }
 
 setup_lighting_elevator_ride()
@@ -2245,19 +2245,19 @@ setup_lighting_elevator_ride()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     if ( level.xb3 )
-        _func_0D3( "sm_sunShadowBoundsOverride", "0" );
+        setsaveddvar( "sm_sunShadowBoundsOverride", "0" );
 
     common_scripts\utility::flag_wait( "training_s2_ready" );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -2268,11 +2268,11 @@ setup_training_2_start_area_lighting()
     if ( level.currentgen )
         wait 5;
 
-    level.player _meth_83C0( "recovery_night" );
-    level.player _meth_8490( "clut_recovery_night", 3.0 );
+    level.player lightsetforplayer( "recovery_night" );
+    level.player setclutforplayer( "clut_recovery_night", 3.0 );
     maps\_utility::vision_set_fog_changes( "recovery_night", 3.0 );
-    _func_0D3( "r_gunSightColorEntityScale", 0.75 );
-    _func_0D3( "r_gunSightColorNoneScale", 0.75 );
+    setsaveddvar( "r_gunSightColorEntityScale", 0.75 );
+    setsaveddvar( "r_gunSightColorNoneScale", 0.75 );
 
     if ( level.nextgen )
     {
@@ -2287,8 +2287,8 @@ setup_training_2_breach()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
         wait 1.65;
         maps\_utility::vision_set_fog_changes( "recovery_house_door_breach", 0.5 );
         thread maps\_lighting::lerp_spot_intensity( "lodge_breach_bounce", 1.5, 20000 );
@@ -2296,8 +2296,8 @@ setup_training_2_breach()
         maps\_utility::vision_set_fog_changes( "recovery_house_interior", 3.0 );
         thread maps\_lighting::lerp_spot_intensity( "lodge_breach_bounce", 3.0, 100 );
         wait 3.0;
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -2317,21 +2317,21 @@ setup_dof_training_2_drone()
     common_scripts\utility::flag_wait( "training_s2_drone_start" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
 
-    level.player _meth_84A9();
+    level.player enablephysicaldepthoffieldscripting();
     wait 1.0;
-    level.player _meth_84AB( 1.8, 13.9, 20, 20 );
+    level.player setphysicaldepthoffield( 1.8, 13.9, 20, 20 );
     wait 2.0;
-    level.player _meth_84AB( 1.8, 53.3, 20, 20 );
+    level.player setphysicaldepthoffield( 1.8, 53.3, 20, 20 );
     wait 1.0;
-    level.player _meth_84AB( 1.8, 12.8, 20, 20 );
+    level.player setphysicaldepthoffield( 1.8, 12.8, 20, 20 );
     wait 1.5;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
     common_scripts\utility::flag_wait( "training_s2_drone_attack_done" );
 
     if ( level.nextgen )
-        _func_0D3( "r_dof_physical_bokehenable", 0 );
+        setsaveddvar( "r_dof_physical_bokehenable", 0 );
 }
 
 setup_training_2_drone()
@@ -2340,8 +2340,8 @@ setup_training_2_drone()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
     }
 
     wait 5.25;
@@ -2350,12 +2350,12 @@ setup_training_2_drone()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 
     maps\_utility::vision_set_fog_changes( "recovery_night_pool_to_end", 0.1 );
-    level.player _meth_8490( "clut_recovery_night_pool_to_end", 0.1 );
+    level.player setclutforplayer( "clut_recovery_night_pool_to_end", 0.1 );
 }
 
 setup_training_2_suv_dof()
@@ -2364,24 +2364,24 @@ setup_training_2_suv_dof()
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
     }
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 21.1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 21.1 );
     wait 3.25;
-    level.player _meth_84AB( 2.0, 48.9 );
+    level.player setphysicaldepthoffield( 2.0, 48.9 );
     wait 2.0;
-    level.player _meth_84AB( 2.0, 30.4 );
+    level.player setphysicaldepthoffield( 2.0, 30.4 );
     wait 5.0;
-    level.player _meth_84AA();
+    level.player disablephysicaldepthoffieldscripting();
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "0" );
-        _func_0D3( "r_mbCameraRotationInfluence", "0" );
+        setsaveddvar( "r_mbEnable", "0" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "0" );
     }
 }
 
@@ -2396,25 +2396,25 @@ setup_training_2_suv_fires()
 setup_training_2_heli_dof()
 {
     common_scripts\utility::flag_wait( "flag_obj_rescue2_complete_clear" );
-    level.player _meth_83C0( "recovery_training_2_heli" );
+    level.player lightsetforplayer( "recovery_training_2_heli" );
     maps\_utility::vision_set_fog_changes( "recovery_night", 1.0 );
-    level.player _meth_8490( "clut_recovery_night", 1.0 );
+    level.player setclutforplayer( "clut_recovery_night", 1.0 );
 
     if ( level.nextgen )
     {
-        _func_0D3( "r_mbEnable", "2" );
-        _func_0D3( "r_mbCameraRotationInfluence", "1" );
-        _func_0D3( "r_dof_physical_bokehenable", 1 );
+        setsaveddvar( "r_mbEnable", "2" );
+        setsaveddvar( "r_mbCameraRotationInfluence", "1" );
+        setsaveddvar( "r_dof_physical_bokehenable", 1 );
     }
 
-    level.player _meth_84A9();
-    level.player _meth_84AB( 2.0, 112.1 );
+    level.player enablephysicaldepthoffieldscripting();
+    level.player setphysicaldepthoffield( 2.0, 112.1 );
     wait 5.0;
-    level.player _meth_84AB( 2.0, 112.1 );
+    level.player setphysicaldepthoffield( 2.0, 112.1 );
     wait 4.0;
-    level.player _meth_84AB( 3.5, 42.9 );
+    level.player setphysicaldepthoffield( 3.5, 42.9 );
     wait 8.0;
-    level.player _meth_84AB( 2.0, 31.4 );
+    level.player setphysicaldepthoffield( 2.0, 31.4 );
 }
 
 setup_training_2_heli_lighting()
@@ -2422,8 +2422,8 @@ setup_training_2_heli_lighting()
     wait 0.4;
     common_scripts\utility::flag_wait( "flag_obj_rescue2_complete_clear" );
     var_0 = getent( "irons_heli_lighting_centroid", "targetname" );
-    level.irons _meth_847B( var_0.origin );
-    level.gideon _meth_847B( var_0.origin );
+    level.irons overridelightingorigin( var_0.origin );
+    level.gideon overridelightingorigin( var_0.origin );
 
     if ( level.nextgen )
     {

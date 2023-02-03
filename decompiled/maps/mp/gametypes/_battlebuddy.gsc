@@ -117,7 +117,7 @@ onbattlebuddymenuselection()
         if ( var_0 == "battlebuddy_update" )
         {
             var_2 = !wantsbattlebuddy();
-            self _meth_8243( "enableBattleBuddy", var_2 );
+            self setplayerdata( "enableBattleBuddy", var_2 );
 
             if ( var_2 )
                 findbattlebuddy();
@@ -133,7 +133,7 @@ onbattlebuddymenuselection()
             else
             {
                 removefrombattlebuddywaitlist( self );
-                self _meth_82FC( "ui_battle_buddy_entity_num", -1 );
+                self setclientdvar( "ui_battle_buddy_entity_num", -1 );
             }
 
             continue;
@@ -152,8 +152,8 @@ ondisconnect()
 waitforplayerrespawnchoice()
 {
     maps\mp\_utility::updatesessionstate( "spectator" );
-    self.forcespectatorclient = self.battlebuddy _meth_81B1();
-    self _meth_834F();
+    self.forcespectatorclient = self.battlebuddy getentitynumber();
+    self forcethirdpersonwhenfollowing();
     waitforbuddyspawntimer();
 }
 
@@ -165,7 +165,7 @@ watchforrandomspawnbutton()
     level endon( "game_ended" );
     self.kc_randomspawntext settext( &"PLATFORM_PRESS_TO_RESPAWN" );
     self.kc_randomspawntext.alpha = 1;
-    self _meth_82DD( "respawn_random", "+usereload" );
+    self notifyonplayercommand( "respawn_random", "+usereload" );
     wait 0.5;
     self waittill( "respawn_random" );
     setupforrandomspawn();
@@ -296,7 +296,7 @@ cleanupbuddyspawn()
     thread maps\mp\gametypes\_spectating::setspectatepermissions();
     self.forcespectatorclient = -1;
     maps\mp\_utility::updatesessionstate( "dead" );
-    self _meth_8350();
+    self disableforcethirdpersonwhenfollowing();
     self.isspawningonbattlebuddy = undefined;
     self notify( "abort_battlebuddy_spawn" );
 }
@@ -342,7 +342,7 @@ updateprogressbar( var_0, var_1 )
 
 wantsbattlebuddy()
 {
-    return self _meth_8222( "enableBattleBuddy" );
+    return self getplayerdata( "enableBattleBuddy" );
 }
 
 hasbattlebuddy()
@@ -367,8 +367,8 @@ pairbattlebuddy( var_0 )
         removefrombattlebuddywaitlist( var_0 );
         self.battlebuddy = var_0;
         var_0.battlebuddy = self;
-        self _meth_82FC( "ui_battle_buddy_entity_num", var_0 _meth_81B1() );
-        var_0 _meth_82FC( "ui_battle_buddy_entity_num", self _meth_81B1() );
+        self setclientdvar( "ui_battle_buddy_entity_num", var_0 getentitynumber() );
+        var_0 setclientdvar( "ui_battle_buddy_entity_num", self getentitynumber() );
     }
     else
     {
@@ -396,7 +396,7 @@ findbattlebuddy()
 {
     if ( level.onlinegame )
     {
-        self.fireteammembers = self _meth_82AB();
+        self.fireteammembers = self getfireteammembers();
 
         if ( self.fireteammembers.size >= 1 )
         {
@@ -417,7 +417,7 @@ findbattlebuddy()
         else
         {
             addtobattlebuddywaitlist( self );
-            self _meth_82FC( "ui_battle_buddy_entity_num", -1 );
+            self setclientdvar( "ui_battle_buddy_entity_num", -1 );
         }
     }
 }
@@ -425,10 +425,10 @@ findbattlebuddy()
 clearbattlebuddy()
 {
     var_0 = self.battlebuddy;
-    self _meth_82FC( "ui_battle_buddy_entity_num", -1 );
+    self setclientdvar( "ui_battle_buddy_entity_num", -1 );
     self.battlebuddy = undefined;
-    var_0 _meth_82FC( "ui_battle_buddy_entity_num", -1 );
+    var_0 setclientdvar( "ui_battle_buddy_entity_num", -1 );
     var_0.battlebuddy = undefined;
-    self _meth_8243( "enableBattleBuddy", 0 );
+    self setplayerdata( "enableBattleBuddy", 0 );
     var_0 findbattlebuddy();
 }

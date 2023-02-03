@@ -33,8 +33,8 @@ drone_swarm_init()
     level.no_fly_zone = undefined;
     level.smart_drone_think = 0;
     level.drone_test_tag = common_scripts\utility::spawn_tag_origin();
-    precacheitem( "iw5_attackdronemagicbullet" );
-    precacheitem( "remote_missile_drone_light" );
+    precacheshellshock( "iw5_attackdronemagicbullet" );
+    precacheshellshock( "remote_missile_drone_light" );
     precachemodel( "vehicle_mil_attack_drone_static" );
     precachemodel( "vehicle_mil_attack_drone_destroy" );
     precachemodel( "vehicle_mil_attack_drone_ai" );
@@ -130,7 +130,7 @@ flying_attack_drone_move_think()
     for (;;)
     {
         var_0 = maps\_utility::get_closest_player_healthy( self.origin );
-        self _meth_8265( var_0 );
+        self setlookatent( var_0 );
         var_1 = var_0.origin;
         var_2 = common_scripts\utility::getclosest( var_1, level.player_test_points );
         var_3 = getent( var_2.target, "targetname" );
@@ -157,7 +157,7 @@ update_flying_attack_drone_goal_pos()
     var_1 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_1.origin = var_0;
 
-    if ( !var_1 _meth_80A9( self.current_air_space ) )
+    if ( !var_1 istouching( self.current_air_space ) )
         var_0 = get_random_point_in_air_space( self.current_air_space );
     else
     {
@@ -203,7 +203,7 @@ update_flying_attack_drone_goal_pos()
             var_0 = get_random_point_in_air_space( self.current_air_space );
     }
 
-    self _meth_825B( var_0, 1 );
+    self setvehgoalpos( var_0, 1 );
     var_1 delete();
 }
 
@@ -211,7 +211,7 @@ get_random_point_in_air_space( var_0 )
 {
     var_1 = spawn( "script_origin", ( 0, 0, 0 ) );
 
-    for ( var_1.origin = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !var_1 _meth_80A9( var_0 ); var_1.origin = var_0 _meth_8216( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
+    for ( var_1.origin = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ); !var_1 istouching( var_0 ); var_1.origin = var_0 getpointinbounds( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) )
     {
 
     }
@@ -408,7 +408,7 @@ handle_drones_vs_car_shield( var_0 )
             wait 0.05;
 
         var_1 = anglestoforward( level.player getangles() );
-        var_2 = level.player _meth_80A8() + var_1 * 200;
+        var_2 = level.player geteye() + var_1 * 200;
         var_3 = sortbydistanceauto( level.flock_drones, var_2 );
 
         if ( var_3.size > 0 )
@@ -418,7 +418,7 @@ handle_drones_vs_car_shield( var_0 )
             if ( var_4 <= 1000 )
             {
                 var_3[0] thread drone_kamikaze_player( var_0 );
-                var_3[0] _meth_80B1( "vehicle_mil_attack_drone_static" );
+                var_3[0] setmodel( "vehicle_mil_attack_drone_static" );
                 wait(randomfloatrange( 1.5, 2.5 ));
             }
             else
@@ -453,7 +453,7 @@ get_legal_drone_for_kamikaze()
     for (;;)
     {
         var_1 = anglestoforward( level.player getangles() );
-        var_2 = level.player _meth_80A8() + var_1 * 200;
+        var_2 = level.player geteye() + var_1 * 200;
         var_3 = sortbydistanceauto( level.flock_drones, var_2 );
 
         foreach ( var_6, var_0 in var_3 )
@@ -492,9 +492,9 @@ drone_kamikaze_player( var_0, var_1, var_2 )
 
     if ( isdefined( self ) )
     {
-        var_3 _meth_827C( self.origin, self.angles );
+        var_3 vehicle_teleport( self.origin, self.angles );
         var_4 = vectortoangles( level.player.origin - var_3.origin );
-        var_3 _meth_827C( self.origin, var_4 );
+        var_3 vehicle_teleport( self.origin, var_4 );
     }
     else
         return;
@@ -513,21 +513,21 @@ drone_kamikaze_player( var_0, var_1, var_2 )
             return;
 
         var_6 = anglestoforward( level.player getangles() );
-        var_7 = level.player _meth_80A8() + var_6 * 30;
-        var_3 _meth_8283( 20, 20, 20 );
+        var_7 = level.player geteye() + var_6 * 30;
+        var_3 vehicle_setspeed( 20, 20, 20 );
         var_3 setvehgoalposauto( var_7 );
         var_8 = level.player.origin - var_3.origin;
         var_8 = vectortoyaw( var_8 );
-        var_3 _meth_825C( var_8 );
+        var_3 setgoalyaw( var_8 );
 
         if ( !isdefined( var_1 ) )
         {
-            if ( distance( var_3.origin, level.player _meth_80A8() ) < 60 )
+            if ( distance( var_3.origin, level.player geteye() ) < 60 )
             {
                 var_9 = 30;
                 level.player notify( "car_door_shield_damaged", var_9, var_3.origin, var_3.angles, "drones" );
 
-                if ( !is_current_weapon_shield( level.player _meth_8311() ) )
+                if ( !is_current_weapon_shield( level.player getcurrentweapon() ) )
                     soundscripts\_snd::snd_message( "drone_kamikaze_hit_player" );
 
                 var_3 thread drone_die_random();
@@ -535,9 +535,9 @@ drone_kamikaze_player( var_0, var_1, var_2 )
                 earthquake( randomfloatrange( 0.25, 1 ), 0.5, level.player.origin, 32 );
             }
         }
-        else if ( isdefined( var_1 ) && var_3 isorigintouchingvol( var_1 ) || distance( var_3.origin, level.player _meth_80A8() ) < 60 )
+        else if ( isdefined( var_1 ) && var_3 isorigintouchingvol( var_1 ) || distance( var_3.origin, level.player geteye() ) < 60 )
         {
-            if ( distance( var_3.origin, level.player _meth_80A8() ) < 60 )
+            if ( distance( var_3.origin, level.player geteye() ) < 60 )
                 soundscripts\_snd::snd_message( "drone_kamikaze_hit_player" );
 
             var_3 thread drone_die_random();
@@ -563,7 +563,7 @@ drone_kamikaze_player_evil_style( var_0, var_1 )
     var_2 = var_0.model;
     var_3 = spawn( "script_model", self.origin );
     var_3.angles = self.angles;
-    var_3 _meth_80B1( var_2 );
+    var_3 setmodel( var_2 );
     var_4 = 352.0;
     var_5 = 1920;
     var_6 = 0.15;
@@ -571,7 +571,7 @@ drone_kamikaze_player_evil_style( var_0, var_1 )
     var_8 = ( 0, 0, 0 );
     var_9 = 0;
     var_10 = 60;
-    var_11 = self _meth_84E7();
+    var_11 = self evaluatetrajectorydelta();
     var_12 = undefined;
     var_13 = vectornormalize( var_11 );
     var_14 = var_13;
@@ -594,7 +594,7 @@ drone_kamikaze_player_evil_style( var_0, var_1 )
         if ( vectordot( var_11, var_12 - var_3.origin ) < 0 )
             var_16 *= -1;
 
-        var_20 = _func_284( var_16 * var_7, var_6 );
+        var_20 = vectorclamp( var_16 * var_7, var_6 );
         var_21 = vectornormalize( var_18 + var_20 );
         var_11 = var_21 * var_19;
         var_22 = var_3.origin + var_11 * 0.05;
@@ -608,7 +608,7 @@ drone_kamikaze_player_evil_style( var_0, var_1 )
         if ( distance( var_22, var_12 ) < var_10 )
             break;
 
-        if ( isdefined( var_1 ) && var_3 _meth_80A9( var_1 ) )
+        if ( isdefined( var_1 ) && var_3 istouching( var_1 ) )
             break;
 
         waitframe();
@@ -623,7 +623,7 @@ drone_kamikaze_player_evil_style( var_0, var_1 )
 kamikaze_drone_get_target_origin()
 {
     var_0 = anglestoforward( level.player getangles() );
-    var_1 = level.player _meth_80A8() + var_0 * 30;
+    var_1 = level.player geteye() + var_0 * 30;
     return var_1;
 }
 
@@ -631,7 +631,7 @@ isorigintouchingvol( var_0 )
 {
     var_1 = common_scripts\utility::spawn_tag_origin();
 
-    if ( var_1 _meth_80A9( var_0 ) )
+    if ( var_1 istouching( var_0 ) )
     {
         var_1 delete();
         return 1;
@@ -650,7 +650,7 @@ setvehgoalposauto( var_0 )
     if ( !maps\_vehicle::isvehicle() )
         return;
 
-    self _meth_825B( var_0 );
+    self setvehgoalpos( var_0 );
 }
 
 drone_die_random( var_0, var_1 )
@@ -679,24 +679,24 @@ drone_die_random( var_0, var_1 )
     }
     else if ( level.gameskill > 1 && level.every_other_one < 1 )
     {
-        magicbullet( "iw5_attackdronemagicbullet", var_2, level.player _meth_80A8() );
+        magicbullet( "iw5_attackdronemagicbullet", var_2, level.player geteye() );
         level.every_other_one++;
     }
     else
-        magicbullet( "iw5_attackdronemagicbullet", var_2, level.player _meth_80A8() );
+        magicbullet( "iw5_attackdronemagicbullet", var_2, level.player geteye() );
 
     level notify( "heavy_rumble" );
     var_4 = spawn( "script_model", var_2 );
-    var_4 _meth_80B1( "vehicle_mil_attack_drone_destroy" );
+    var_4 setmodel( "vehicle_mil_attack_drone_destroy" );
     var_4.angles = var_3;
     level notify( "drone_kamikaze_crash", self.origin );
 
     if ( !isdefined( var_1 ) || !var_1 )
         self delete();
 
-    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player _meth_80A8();
+    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player geteye();
     var_6 = randomintrange( 50, 80 );
-    var_4 _meth_8276( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 * var_6 );
+    var_4 physicslaunchserver( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 * var_6 );
 
     if ( randomint( 100 ) < 15 )
         playfxontag( common_scripts\utility::getfx( "drone_smoke" ), var_4, "tag_origin" );
@@ -715,10 +715,10 @@ spawn_drone_physics( var_0, var_1 )
     var_2 = self.origin;
     var_3 = self.angles;
     var_4 = spawn( "script_model", var_2 );
-    var_4 _meth_80B1( "vehicle_mil_attack_drone_destroy" );
+    var_4 setmodel( "vehicle_mil_attack_drone_destroy" );
     var_4.angles = var_3;
-    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player _meth_80A8();
-    var_4 _meth_8276( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 );
+    var_5 = var_4.origin + ( randomintrange( -10, 10 ), randomintrange( -10, 10 ), randomintrange( -10, 10 ) ) - level.player geteye();
+    var_4 physicslaunchserver( var_4.origin + ( randomintrange( -15, 15 ), randomintrange( -15, 15 ), randomintrange( -15, 15 ) ), var_5 );
 
     if ( randomint( 100 ) < 5 )
         playfxontag( common_scripts\utility::getfx( "drone_smoke" ), var_4, "tag_origin" );
@@ -776,30 +776,30 @@ drone_cloud_formation_circle( var_0, var_1 )
 
     while ( vehicle_scripts\_attack_drone_common::isdronevehiclealive( var_0 ) )
     {
-        level.cloud_queen.desired_speed = level.cloud_queen _meth_8286() + 8;
+        level.cloud_queen.desired_speed = level.cloud_queen vehicle_getspeed() + 8;
         level.drone_test_tag.origin = var_0.origin;
         level.drone_test_tag.angles = var_0.angles;
         var_3 = level.drone_test_tag vehicle_scripts\_attack_drone_common::offset_position_from_drone( "backward", "tag_origin", var_0.follow_dist );
         var_3 += ( 0, 0, var_1 );
 
         if ( var_3 == var_2 && distance( var_3, level.cloud_queen.origin ) < 20 )
-            level.cloud_queen _meth_8283( 0, 30, 40 );
+            level.cloud_queen vehicle_setspeed( 0, 30, 40 );
         else
         {
-            var_4 = var_0 _meth_8286() * 1.25;
+            var_4 = var_0 vehicle_getspeed() * 1.25;
 
             if ( var_4 <= 0 )
                 var_4 = 18;
 
-            level.cloud_queen _meth_8283( var_4, var_4, var_4 * 1.25 );
-            level.cloud_queen _meth_825B( var_3 );
+            level.cloud_queen vehicle_setspeed( var_4, var_4, var_4 * 1.25 );
+            level.cloud_queen setvehgoalpos( var_3 );
         }
 
         var_2 = var_3;
         wait 0.05;
     }
 
-    level.cloud_queen _meth_8283( 10, 5, 5 );
+    level.cloud_queen vehicle_setspeed( 10, 5, 5 );
 }
 
 drone_cloud_formation_circle_player( var_0, var_1, var_2 )
@@ -854,8 +854,8 @@ drone_cloud_formation_circle_player( var_0, var_1, var_2 )
             var_11 = ( var_11[0], var_11[1], var_9 );
 
         var_13 = vectortoangles( var_7 - self.origin );
-        self _meth_827C( var_11, var_13 );
-        self _meth_8283( 0, 5, 5 );
+        self vehicle_teleport( var_11, var_13 );
+        self vehicle_setspeed( 0, 5, 5 );
         wait 0.25;
     }
 }
@@ -883,13 +883,13 @@ queen_drone_form_hemisphere( var_0, var_1 )
         while ( !isdefined( self.maintain_position ) || self.retreat_path )
             wait 0.05;
 
-        if ( level.cloud_queen _meth_8286() < 18 )
+        if ( level.cloud_queen vehicle_getspeed() < 18 )
             var_4 = 18;
         else
-            var_4 = level.cloud_queen _meth_8286();
+            var_4 = level.cloud_queen vehicle_getspeed();
 
-        self _meth_8283( var_4, var_4, var_4 );
-        self _meth_825B( self.maintain_position );
+        self vehicle_setspeed( var_4, var_4, var_4 );
+        self setvehgoalpos( self.maintain_position );
         wait 0.5;
     }
 }
@@ -938,21 +938,21 @@ queen_drone_fly( var_0, var_1 )
         var_3 = ( perlinnoise2d( gettime() * 0.001 * 0.05, 10, 4, 5, 2 ), perlinnoise2d( gettime() * 0.001 * 0.05, 20, 4, 5, 2 ), perlinnoise2d( gettime() * 0.001 * 0.05, 30, 4, 5, 2 ) );
         var_4 = position_in_circle( var_0.origin, self.radii );
         var_2 = var_4;
-        var_5 = var_0 _meth_8286();
+        var_5 = var_0 vehicle_getspeed();
 
         if ( var_5 <= 5 )
         {
             var_6 = 1;
             var_5 = 18;
-            self _meth_8283( var_5 * 1.25, var_5 * 2, var_5 * 2.25 );
+            self vehicle_setspeed( var_5 * 1.25, var_5 * 2, var_5 * 2.25 );
         }
         else
         {
             var_6 = 0;
-            self _meth_8283( var_5 * 1.25, var_5, var_5 * 1.25 );
+            self vehicle_setspeed( var_5 * 1.25, var_5, var_5 * 1.25 );
         }
 
-        self _meth_825B( var_3 + var_4 );
+        self setvehgoalpos( var_3 + var_4 );
 
         if ( var_6 )
         {
@@ -1014,25 +1014,25 @@ make_boidcloud( var_0, var_1, var_2 )
     else
         var_3.boid_settings = spawnstruct();
 
-    _func_0D3( "r_lightCacheLessFrequentPeriod", 20 );
-    _func_0D3( "r_lightCacheLessFrequentMaxDistance", 9999 );
+    setsaveddvar( "r_lightCacheLessFrequentPeriod", 20 );
+    setsaveddvar( "r_lightCacheLessFrequentMaxDistance", 9999 );
 
     for ( var_4 = 0; var_4 < var_1; var_4++ )
     {
         var_5 = spawn( "script_model", self.origin );
 
         if ( level.nextgen )
-            var_5 _meth_80B1( self.model );
+            var_5 setmodel( self.model );
         else if ( randomint( 100 ) < var_2 )
         {
-            var_5 _meth_80B1( "vehicle_mil_attack_drone_static_multi_cg" );
+            var_5 setmodel( "vehicle_mil_attack_drone_static_multi_cg" );
             var_5 thread multi_drone_handle_anim();
         }
         else
-            var_5 _meth_80B1( self.model );
+            var_5 setmodel( self.model );
 
         var_5.old_contents = var_5 setcontents( 0 );
-        var_5 _meth_805D();
+        var_5 startusinglessfrequentlighting();
         var_3.boids[var_3.boids.size] = var_5;
         var_5 thread vehicle_scripts\_attack_drone_common::monitor_drone_cloud_health();
     }
@@ -1054,13 +1054,13 @@ make_boidcloud_from_spawned_models( var_0, var_1 )
     else
         var_2.boid_settings = spawnstruct();
 
-    _func_0D3( "r_lightCacheLessFrequentPeriod", 20 );
-    _func_0D3( "r_lightCacheLessFrequentMaxDistance", 9999 );
+    setsaveddvar( "r_lightCacheLessFrequentPeriod", 20 );
+    setsaveddvar( "r_lightCacheLessFrequentMaxDistance", 9999 );
 
     foreach ( var_4 in var_1 )
     {
         var_4.old_contents = var_4 setcontents( 0 );
-        var_4 _meth_805D();
+        var_4 startusinglessfrequentlighting();
         var_4 thread vehicle_scripts\_attack_drone_common::monitor_drone_cloud_health();
     }
 
@@ -1089,7 +1089,7 @@ is_boid_in_vols( var_0 )
 {
     foreach ( var_2 in var_0 )
     {
-        if ( self _meth_80A9( var_2 ) )
+        if ( self istouching( var_2 ) )
             return 1;
     }
 
@@ -1161,7 +1161,7 @@ multi_drone_handle_anim()
     self endon( "death" );
     level endon( "end_drone_cloud" );
     level endon( "delete_drone_cloud" );
-    self _meth_8115( #animtree );
+    self useanimtree( #animtree );
 
     if ( randomfloat( 1.0 ) >= 0.5 )
         var_0 = %mil_attack_drone_multi_cg_spin_cw;
@@ -1173,7 +1173,7 @@ multi_drone_handle_anim()
 
     for (;;)
     {
-        self _meth_8145( var_0 );
+        self setanimknobrestart( var_0 );
         wait(var_1);
     }
 }

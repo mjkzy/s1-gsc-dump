@@ -121,11 +121,11 @@ init_animset_death()
 main()
 {
     self endon( "killanimscript" );
-    self _meth_80AC();
+    self stopsounds();
     var_0 = 0.3;
-    self _meth_8142( %scripted_talking, var_0 );
+    self clearanim( %scripted_talking, var_0 );
     maps\_anim::disabledefaultfacialanims( 0 );
-    self _meth_83FB();
+    self hudoutlinedisable();
 
     if ( self.a.nodeath == 1 )
         return;
@@ -166,7 +166,7 @@ main()
     else if ( var_2 && randomint( 3 ) == 0 )
         helmetpop();
 
-    self _meth_8142( %animscript_root, 0.3 );
+    self clearanim( %animscript_root, 0.3 );
 
     if ( !animscripts\utility::damagelocationisany( "head", "helmet" ) || ( self.damagemod == "MOD_MELEE" || self.damagemod == "MOD_MELEE_ALT" ) && isdefined( self.attacker ) )
     {
@@ -224,7 +224,7 @@ doimmediateragdolldeath()
     if ( isdefined( self.ragdoll_start_vel ) )
         var_5 += self.ragdoll_start_vel * 10;
 
-    self _meth_8024( self.damagelocation, var_5 );
+    self startragdollfromimpact( self.damagelocation, var_5 );
     wait 0.05;
 }
 
@@ -263,7 +263,7 @@ orientmeleevictim()
         else
             var_0 = getorientedmeleevictimtargetyaw();
 
-        self _meth_818F( "face angle", var_0 );
+        self orientmode( "face angle", var_0 );
     }
 }
 
@@ -296,7 +296,7 @@ man_overboard_helper( var_0 )
 {
     while ( isdefined( var_0 ) )
     {
-        if ( self _meth_80A9( var_0 ) && isdefined( level.player.man_overboard ) )
+        if ( self istouching( var_0 ) && isdefined( level.player.man_overboard ) )
         {
             maps\_utility::giveachievement_wrapper( "LEVEL_12A" );
             break;
@@ -317,16 +317,16 @@ playdeathanim( var_0 )
     if ( !isdefined( self.nomeleedeathorient ) || !self.nomeleedeathorient )
         orientmeleevictim();
 
-    self _meth_8110( "deathanim", var_0, %body, 1, 0.1 );
+    self setflaggedanimknoballrestart( "deathanim", var_0, %body, 1, 0.1 );
     animscripts\face::playfacialanim( var_0, "death" );
 
     if ( isdefined( self.skipdeathanim ) )
     {
         if ( !isdefined( self.noragdoll ) )
-            self _meth_8023();
+            self startragdoll();
 
         wait 0.05;
-        self _meth_818E( "gravity" );
+        self animmode( "gravity" );
     }
     else if ( isdefined( self.ragdolltime ) )
         thread waitforragdoll( self.ragdolltime );
@@ -364,7 +364,7 @@ updatecheckforceragdoll()
 
     while ( isdefined( self ) )
     {
-        self _meth_8025();
+        self queryshouldearlyragdoll();
         wait 0.2;
     }
 }
@@ -382,7 +382,7 @@ checkforceragdoll()
 
         if ( var_0 )
         {
-            self _meth_8023();
+            self startragdoll();
             animscripts\shared::dropallaiweapons();
             break;
         }
@@ -401,7 +401,7 @@ waitforragdoll( var_0 )
         animscripts\shared::dropallaiweapons();
 
     if ( isdefined( self ) && !isdefined( self.noragdoll ) )
-        self _meth_8023();
+        self startragdoll();
 }
 
 playdeathfx()
@@ -571,7 +571,7 @@ helmetpop()
 
     var_0 = getpartname( self.hatmodel, 0 );
     var_1 = spawn( "script_model", self.origin + ( 0, 0, 64 ) );
-    var_1 _meth_80B1( self.hatmodel );
+    var_1 setmodel( self.hatmodel );
     var_1.origin = self gettagorigin( var_0 );
     var_1.angles = self gettagangles( var_0 );
     var_1 thread helmetlaunch( self.damagedir );
@@ -593,7 +593,7 @@ helmetlaunch( var_0 )
     var_3 = var_1[1];
     var_4 = randomfloatrange( 1500, 3000 );
     var_5 = self.origin + ( randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ), randomfloatrange( -1, 1 ) ) * 5;
-    self _meth_82C2( var_5, ( var_2, var_3, var_4 ) );
+    self physicslaunchclient( var_5, ( var_2, var_3, var_4 ) );
     wait 60;
 
     for (;;)
@@ -633,7 +633,7 @@ shoulddorunningforwarddeath()
     if ( self.a.movement != "run" )
         return 0;
 
-    if ( self _meth_8190() > 60 || self _meth_8190() < -60 )
+    if ( self getmotionangle() > 60 || self getmotionangle() < -60 )
         return 0;
 
     if ( self.damagemod == "MOD_MELEE" || self.damagemod == "MOD_MELEE_ALT" )
@@ -794,7 +794,7 @@ getalternatemeleedeathanim()
     if ( !isdefined( self.attacker ) || self.attacker != level.player )
         return;
 
-    var_3 = level.player _meth_817C();
+    var_3 = level.player getstance();
     var_4 = [];
 
     if ( var_1 < -135 || var_1 > 135 )
@@ -942,8 +942,8 @@ isanimblocked( var_0 )
         var_1 = getnotetracktimes( var_0, "code_move" )[0];
 
     var_2 = getmovedelta( var_0, 0, var_1 );
-    var_3 = self _meth_81B0( var_2 );
-    return !self _meth_81C3( var_3, 1, 1 );
+    var_3 = self localtoworldcoords( var_2 );
+    return !self maymovetopoint( var_3, 1, 1 );
 }
 
 getstandpistoldeathanim()
@@ -981,7 +981,7 @@ getstanddeathanim()
         var_0 = getstandpistoldeathanim();
     else if ( isdefined( self.emp ) && self.emp )
         var_0 = animscripts\utility::lookupanim( "death", "emp" );
-    else if ( isdefined( self.attacker ) && self _meth_8402( self.attacker ) )
+    else if ( isdefined( self.attacker ) && self shouldplaymeleedeathanim( self.attacker ) )
     {
         if ( self.damageyaw <= 120 || self.damageyaw > -120 )
             var_0 = animscripts\utility::lookupanim( "death", "melee_standing_front" );
@@ -1061,7 +1061,7 @@ getcrouchdeathanim()
 {
     var_0 = [];
 
-    if ( isdefined( self.attacker ) && self _meth_8402( self.attacker ) )
+    if ( isdefined( self.attacker ) && self shouldplaymeleedeathanim( self.attacker ) )
     {
         if ( self.damageyaw <= 120 || self.damageyaw > -120 )
             var_0 = animscripts\utility::lookupanim( "death", "melee_crouching_front" );
@@ -1191,13 +1191,13 @@ playexplodedeathanim()
     if ( getdvar( "scr_expDeathMayMoveCheck", "on" ) == "on" )
     {
         var_2 = getmovedelta( var_1, 0, 1 );
-        var_3 = self _meth_81B0( var_2 );
+        var_3 = self localtoworldcoords( var_2 );
 
-        if ( !self _meth_81C3( var_3, 0 ) )
+        if ( !self maymovetopoint( var_3, 0 ) )
             return 0;
     }
 
-    self _meth_818E( "nogravity" );
+    self animmode( "nogravity" );
     playdeathanim( var_1 );
     return 1;
 }

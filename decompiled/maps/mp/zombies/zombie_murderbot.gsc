@@ -41,7 +41,7 @@ kill_random_zombies( var_0 )
         if ( isplayer( var_4 ) )
             continue;
 
-        var_4 _meth_826B();
+        var_4 suicide();
         var_3++;
 
         if ( var_3 >= 2 )
@@ -71,7 +71,7 @@ spawnmurderbot( var_0, var_1, var_2 )
     var_4 attachmurderbotweapons();
     var_4 thread lifetimemonitor();
     var_4 thread killenemymonitor();
-    var_4 _meth_853C( "civilian" );
+    var_4 scragentsetspecies( "civilian" );
     return var_4;
 }
 
@@ -91,11 +91,11 @@ lifetimemonitor()
     while ( self.aistate == "traverse" || self.aistate == "melee" )
         waitframe();
 
-    self _meth_839D( 1 );
+    self scragentsetscripted( 1 );
     waitframe();
     maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( "deactivation", 0, "scripted_anim" );
     self playsound( "zmb_murderbot_death_destruct" );
-    self _meth_826B();
+    self suicide();
 }
 
 killenemymonitor()
@@ -132,8 +132,8 @@ attachmurderbotweapons()
     var_1 = spawn( "script_model", self gettagorigin( "TAG_WEAPON_RIGHT" ) );
     var_1.angles = self gettagangles( "TAG_WEAPON_RIGHT" );
     var_2 = randomint( var_0.size );
-    var_1 _meth_80B1( var_0[var_2] );
-    var_1 _meth_804D( self, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    var_1 setmodel( var_0[var_2] );
+    var_1 linkto( self, "TAG_WEAPON_RIGHT", ( 0, 0, 0 ), ( 0, 0, 0 ) );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "murderbot_melee_sparks" ), var_1, "tag_sparks" );
     self.murderbotweapon = var_1;
 }
@@ -155,7 +155,7 @@ setupmurderbotstate()
     self.meleeradiusbase = 60;
     self.meleeradiusbasesq = squared( self.meleeradiusbase );
     self.defaultgoalradius = self.radius + 1;
-    self _meth_8394( self.defaultgoalradius );
+    self scragentsetgoalradius( self.defaultgoalradius );
     self.meleedot = 0.5;
     maps\mp\agents\humanoid\_humanoid_util::lungemeleeupdate( 1.0, self.meleeradiusbase * 2, self.meleeradiusbase * 1.5, "attack_lunge_boost", level._effect["boost_lunge"] );
     maps\mp\agents\humanoid\_humanoid_util::lungemeleeenable();
@@ -296,7 +296,7 @@ murderbot_begin_melee()
     if ( !isdefined( self.lastmeleepos ) || distancesquared( self.lastmeleepos, self.origin ) > 256 )
         self.meleemovemode = self.movemode;
 
-    self _meth_839C( self.curmeleetarget );
+    self scragentbeginmelee( self.curmeleetarget );
     return 1;
 }
 
@@ -356,13 +356,13 @@ murderbot_melee()
 
 murderbotmeleegoliathattack( var_0 )
 {
-    var_0 _meth_839D( 1 );
+    var_0 scragentsetscripted( 1 );
     var_0 maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "SynchronizedAnim" );
-    var_0 _meth_8398( "noclip" );
-    self _meth_839D( 1 );
+    var_0 scragentsetphysicsmode( "noclip" );
+    self scragentsetscripted( 1 );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "SynchronizedAnim" );
-    self _meth_8398( "noclip" );
-    var_0 _meth_8561( 0.5, 0.1, self, "tag_sync", "tag_sync" );
+    self scragentsetphysicsmode( "noclip" );
+    var_0 scragentsynchronizeanims( 0.5, 0.1, self, "tag_sync", "tag_sync" );
     var_0.deathanimstateoverride = "death_by_murderbot";
     thread playmurderbotimpactfx( var_0 );
     thread maps\mp\agents\_scripted_agent_anim_util::playanimnuntilnotetrack_safe( "murderbot_kills_goliath", 0, "scripted_anim" );
@@ -370,7 +370,7 @@ murderbotmeleegoliathattack( var_0 )
     killgoliath( var_0, 10000000, "MOD_MELEE", "kill_head" );
     maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "scripted_anim", "end" );
     maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "SynchronizedAnim" );
-    self _meth_839D( 0 );
+    self scragentsetscripted( 0 );
 }
 
 playmurderbotimpactfx( var_0 )
@@ -432,20 +432,20 @@ murderbotdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 {
     self.lastmeleefailedmypos = undefined;
     self.lastmeleefailedpos = undefined;
-    var_6 = randomint( self _meth_83D6( var_2 ) );
-    var_7 = self _meth_83D3( var_2, var_6 );
+    var_6 = randomint( self getanimentrycount( var_2 ) );
+    var_7 = self getanimentry( var_2, var_6 );
     var_8 = getanimlength( var_7 );
     var_9 = getnotetracktimes( var_7, "hit" );
     var_10 = getnotetracktimes( var_7, "hit_right" );
     var_11 = gethittime( var_8, var_5, var_9, var_10 );
-    self _meth_8398( "gravity" );
+    self scragentsetphysicsmode( "gravity" );
 
     if ( var_4 )
-        self _meth_8396( "face enemy" );
+        self scragentsetorientmode( "face enemy" );
     else
-        self _meth_8396( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
+        self scragentsetorientmode( "face angle abs", ( 0, vectortoyaw( var_0.origin - self.origin ), 0 ) );
 
-    self _meth_8397( "anim deltas" );
+    self scragentsetanimmode( "anim deltas" );
     maps\mp\agents\_scripted_agent_anim_util::set_anim_state( var_2, var_6, var_5 );
     var_12 = undefined;
 
@@ -454,20 +454,20 @@ murderbotdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
 
     if ( var_3 )
     {
-        self _meth_8395( 0, 1 );
-        self _meth_839F( self.origin, var_1, var_11 );
+        self scragentsetanimscale( 0, 1 );
+        self scragentdoanimlerp( self.origin, var_1, var_11 );
         childthread updatemurderbotlerppos( var_0, var_11, 1, var_12 );
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 1, "DoAttack" );
     }
     else
-        self _meth_8395( 1, 1 );
+        self scragentsetanimscale( 1, 1 );
 
     updatemeleesweeper( var_7, var_8, var_5, var_9 );
     updatemeleesweeper( var_7, var_8, var_5, var_10, self.murderbotweapon );
     wait(var_11);
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -479,8 +479,8 @@ murderbotdoattack( var_0, var_1, var_2, var_3, var_4, var_5 )
         maps\mp\agents\_scripted_agent_anim_util::waituntilnotetrack_safe( "attack_anim", "end", var_13 );
 
     self notify( "cancel_updatelerppos" );
-    self _meth_8397( "anim deltas" );
-    self _meth_8395( 1, 1 );
+    self scragentsetanimmode( "anim deltas" );
+    self scragentsetanimscale( 1, 1 );
 
     if ( var_3 )
         maps\mp\agents\_scripted_agent_anim_util::setstatelocked( 0, "DoAttack" );
@@ -545,8 +545,8 @@ updatemurderbotlerppos( var_0, var_1, var_2, var_3 )
                 var_7 = var_4 + vectornormalize( var_9 ) * var_8;
         }
 
-        self _meth_8396( "face enemy" );
-        self _meth_839F( self.origin, var_7, var_5 );
+        self scragentsetorientmode( "face enemy" );
+        self scragentdoanimlerp( self.origin, var_7, var_5 );
     }
 }
 
@@ -646,7 +646,7 @@ checkmeleeheight( var_0, var_1 )
     var_2 = self.origin[2] + 80;
     var_3 = max( var_2, var_1 );
     var_4 = self.origin[2] - 30;
-    var_5 = var_0 _meth_80A8()[2] + 30;
+    var_5 = var_0 geteye()[2] + 30;
     var_6 = var_0.origin[2];
 
     if ( var_5 >= var_4 && var_5 <= var_3 )
@@ -768,7 +768,7 @@ collidewithagent( var_0, var_1 )
 ragdollagent( var_0, var_1, var_2, var_3, var_4 )
 {
     var_0.ragdollimmediately = 1;
-    var_0 _meth_8051( var_0.health + 1000, var_0 _meth_80A8(), self, undefined, var_2, "murderbotFriendlyFire", "none" );
+    var_0 dodamage( var_0.health + 1000, var_0 geteye(), self, undefined, var_2, "murderbotFriendlyFire", "none" );
     var_5 = self.origin - var_1 + ( 0, 0, 8 );
     wait 0.1;
     var_6 = randomfloatrange( 3, 5 );
@@ -787,7 +787,7 @@ updateenemyvisibility()
         if ( !isdefined( self.enemy ) )
             continue;
 
-        self.haslostoenemy = sighttracepassed( self _meth_80A8(), self.enemy _meth_80A8(), 0, self );
+        self.haslostoenemy = sighttracepassed( self geteye(), self.enemy geteye(), 0, self );
     }
 }
 
@@ -836,6 +836,6 @@ evaluate_threat_los( var_0 )
 
 trace_to_enemy( var_0, var_1, var_2 )
 {
-    var_3 = bullettrace( var_0, var_1 _meth_80A8(), 0, self.murderbotshield, 0, 0, 0, 0, 0 );
+    var_3 = bullettrace( var_0, var_1 geteye(), 0, self.murderbotshield, 0, 0, 0, 0, 0 );
     return var_3["fraction"] == 1;
 }

@@ -336,18 +336,18 @@ zone_handler( var_0, var_1 )
 
     if ( var_3 == "ext_atlas_base" || var_3 == "ext_lodge" )
     {
-        _func_2CC( "weapons" );
-        _func_2CC( "tactical" );
-        _func_2CC( "vehicles" );
-        _func_2CC( "foley" );
+        soundsettraceflags( "weapons" );
+        soundsettraceflags( "tactical" );
+        soundsettraceflags( "vehicles" );
+        soundsettraceflags( "foley" );
     }
 
     if ( var_3 == "int_training_facility_lobby" || var_3 == "int_training_facility" || var_3 == "int_training_facility_02" || var_3 == "int_operating_room" || var_3 == "int_firing_range_stairway" || var_3 == "int_firing_range" || var_3 == "int_weapons_room" || var_3 == "int_lodge" )
     {
-        _func_2CC( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-        _func_2CC( "tactical", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-        _func_2CC( "vehicles", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
-        _func_2CC( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+        soundsettraceflags( "weapons", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+        soundsettraceflags( "tactical", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+        soundsettraceflags( "vehicles", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
+        soundsettraceflags( "foley", "locational", "solid", "glass", "translucent", "clipshot", "playerclip", "structural" );
     }
 }
 
@@ -735,7 +735,7 @@ camp_david_training_mute_device( var_0, var_1 )
     var_2 = self;
     soundscripts\_audio_mix_manager::mm_add_submix( "rec_s1_mute_breach" );
     soundscripts\_snd_timescale::snd_set_timescale( "all_off" );
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "mute" );
     soundscripts\_snd_playsound::snd_play_delayed_2d( "mute_device_activate", 0.5 );
     wait 1.25;
@@ -747,7 +747,7 @@ aud_stop_training_mute_device()
 {
     level waittill( "training_s1_breach_enemy_dead" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "mute" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     self notify( "turn_off" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "rec_s1_mute_breach" );
 }
@@ -905,7 +905,7 @@ rec_s1_drones_attack( var_0 )
 
     foreach ( var_3 in var_0 )
     {
-        if ( isdefined( var_3 ) && !_func_294( var_3 ) )
+        if ( isdefined( var_3 ) && !isremovedentity( var_3 ) )
             var_3 waittill( "death" );
     }
 
@@ -1283,7 +1283,7 @@ rec_tour_titan_2_walk_anim_start( var_0 )
     soundscripts\_snd::snd_printlnbold( "rec_tour_titan_2_walk_anim_start" );
     var_1 = var_0 soundscripts\_snd_playsound::snd_play_delayed_linked( "walker_walking_mech", 0.2 );
     wait 12.5;
-    var_1 _meth_804F();
+    var_1 unlink();
 }
 
 rec_tour_hangar_background()
@@ -1910,7 +1910,7 @@ rec_slomo_audio_handler()
 rec_s2_breach_slo_mo( var_0 )
 {
     soundscripts\_audio_mix_manager::mm_add_submix( "slomo" );
-    level.player _meth_8518();
+    level.player enablecustomweaponcontext();
     soundscripts\_snd_common::snd_enable_soundcontextoverride( "slomo" );
     wait 0.05;
     soundscripts\_snd_playsound::snd_play_loop_2d( "overdrive_loop", "kill_slo_mo2", 0.25, 0.5 );
@@ -1919,7 +1919,7 @@ rec_s2_breach_slo_mo( var_0 )
     wait 0.5;
     level notify( "kill_slo_mo2" );
     soundscripts\_snd_common::snd_disable_soundcontextoverride( "slomo" );
-    level.player _meth_8519();
+    level.player disablecustomweaponcontext();
     soundscripts\_snd_timescale::snd_set_timescale( "all_on" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "slomo" );
     soundscripts\_audio_mix_manager::mm_clear_submix( "training_2_breach" );
@@ -1961,13 +1961,13 @@ rec_player_drone_start( var_0 )
     soundscripts\_audio_mix_manager::mm_add_submix( "s2_playable_drone" );
     level endon( "pdrone_end" );
     var_1 = var_0.origin;
-    var_2 = level.player _meth_8340();
+    var_2 = level.player playerads();
     var_3 = 0;
 
     for (;;)
     {
         var_4 = var_0.origin;
-        var_5 = level.player _meth_8340();
+        var_5 = level.player playerads();
         var_6 = abs( length( var_4 - var_1 ) );
         var_7 = var_5 - var_2;
 

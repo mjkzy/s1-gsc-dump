@@ -195,7 +195,7 @@ displayalertcountdowntimer( var_0 )
         level.hudalerttimer.alignx = "left";
         level.hudalerttimer.horzalign = "center";
         level.hudalerttimer.color = ( 0.95, 0.95, 1 );
-        level.hudalerttimer _meth_80D2( var_0 );
+        level.hudalerttimer settenthstimer( var_0 );
         level.hudalerttimer setpulsefx( 30, 900000, 700 );
         common_scripts\utility::waittill_any_timeout( var_0, "disableAlert", "death" );
         level.hudalerttimer destroy();

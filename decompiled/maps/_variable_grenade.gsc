@@ -36,12 +36,12 @@ init_variable_grenade()
     foreach ( var_3 in [ "normal", "special" ] )
     {
         foreach ( var_5 in var_0[var_3] )
-            precacheitem( var_5 );
+            precacheshellshock( var_5 );
     }
 
-    precacheitem( "smart_grenade" );
+    precacheshellshock( "smart_grenade" );
     precachemodel( "npc_variable_grenade_lethal" );
-    var_8 = _func_0DA( "axis" );
+    var_8 = getspawnerteamarray( "axis" );
 
     if ( var_8.size > 0 )
         maps\_utility::array_spawn_function( var_8, ::handle_detection );
@@ -101,7 +101,7 @@ give_player_variable_grenade()
 {
     init_variable_grenade();
     var_0 = 0;
-    var_1 = level.player _meth_82CE();
+    var_1 = level.player getweaponslistoffhands();
 
     if ( !isdefined( var_1 ) || var_1.size == 0 )
         var_0 = 1;
@@ -119,13 +119,13 @@ give_player_variable_grenade()
 
     if ( var_0 )
     {
-        foreach ( var_3 in level.player _meth_82CE() )
-            level.player _meth_830F( var_3 );
+        foreach ( var_3 in level.player getweaponslistoffhands() )
+            level.player takeweapon( var_3 );
 
-        level.player _meth_8344( level.player.variable_grenade["normal"][0] );
-        level.player _meth_830E( level.player.variable_grenade["normal"][0] );
-        level.player _meth_8319( level.player.variable_grenade["special"][0] );
-        level.player _meth_830E( level.player.variable_grenade["special"][0] );
+        level.player setlethalweapon( level.player.variable_grenade["normal"][0] );
+        level.player giveweapon( level.player.variable_grenade["normal"][0] );
+        level.player settacticalweapon( level.player.variable_grenade["special"][0] );
+        level.player giveweapon( level.player.variable_grenade["special"][0] );
     }
 
     common_scripts\utility::flag_set( "variable_grenade_switch" );
@@ -135,13 +135,13 @@ give_player_variable_grenade()
 
 set_variable_grenades_with_no_switch( var_0, var_1 )
 {
-    foreach ( var_3 in level.player _meth_82CE() )
-        level.player _meth_830F( var_3 );
+    foreach ( var_3 in level.player getweaponslistoffhands() )
+        level.player takeweapon( var_3 );
 
-    level.player _meth_8344( var_0 );
-    level.player _meth_830E( var_0 );
-    level.player _meth_8319( var_1 );
-    level.player _meth_830E( var_1 );
+    level.player setlethalweapon( var_0 );
+    level.player giveweapon( var_0 );
+    level.player settacticalweapon( var_1 );
+    level.player giveweapon( var_1 );
     common_scripts\utility::flag_clear( "variable_grenade_switch" );
 }
 
@@ -261,7 +261,7 @@ monitor_offhand_cycle()
         var_1 = var_0["previous"];
         var_0["previous"] = var_0["current"];
         var_0["current"] = var_1;
-        var_2 = self _meth_8313();
+        var_2 = self getcurrentoffhand();
         var_3 = get_mode_for_weapon_name( var_2 );
 
         if ( !isdefined( var_3 ) )
@@ -271,8 +271,8 @@ monitor_offhand_cycle()
             continue;
         }
 
-        var_0["current"].is_prepping = self _meth_83AF();
-        var_0["current"].is_holding = self _meth_83AD() || self _meth_83AF() || self _meth_83AE();
+        var_0["current"].is_prepping = self ispreparinggrenade();
+        var_0["current"].is_holding = self isholdinggrenade() || self ispreparinggrenade() || self isswitchinggrenade();
         var_0["current"].is_switching = var_0["current"].is_holding && ( self usebuttonpressed() || self.grenade_cycle_next );
         var_4 = var_0["current"].is_prepping && !var_0["previous"].is_prepping;
         var_5 = var_0["current"].is_switching && !var_0["previous"].is_switching;
@@ -291,7 +291,7 @@ monitor_offhand_cycle()
 
         if ( var_4 || var_6 || var_5 )
         {
-            var_2 = self _meth_8313();
+            var_2 = self getcurrentoffhand();
             var_8 = level.player.variable_grenade_ui_type[var_2];
             setomnvar( "ui_grenade_type", var_8 );
         }
@@ -308,7 +308,7 @@ monitor_cycle_direction()
     {
         for (;;)
         {
-            var_0 = self _meth_8527();
+            var_0 = self getnormalizedflick();
 
             if ( lengthsquared( var_0 ) > 0 )
             {
@@ -340,12 +340,12 @@ monitor_speech_action()
         {
             self waittill( "speechCommand", var_0, var_1 );
 
-            if ( var_0 > 0.7 && ( self _meth_83AD() || self _meth_83AF() || self _meth_83AE() ) )
+            if ( var_0 > 0.7 && ( self isholdinggrenade() || self ispreparinggrenade() || self isswitchinggrenade() ) )
             {
                 var_2 = undefined;
                 var_3 = undefined;
                 var_4 = undefined;
-                var_5 = self _meth_8313();
+                var_5 = self getcurrentoffhand();
 
                 if ( !isdefined( var_5 ) )
                     continue;
@@ -425,7 +425,7 @@ monitor_speech_action()
 
 cycle_offhand_grenade()
 {
-    var_0 = self _meth_8313();
+    var_0 = self getcurrentoffhand();
 
     if ( isdefined( var_0 ) )
     {
@@ -463,22 +463,22 @@ handle_weapon_switch( var_0, var_1 )
 {
     var_2 = 0;
 
-    foreach ( var_4 in self _meth_82CE() )
+    foreach ( var_4 in self getweaponslistoffhands() )
     {
         if ( common_scripts\utility::array_contains( self.variable_grenade[var_0], var_4 ) )
         {
-            var_2 = int( max( var_2, self _meth_82F9( var_4 ) ) );
-            self _meth_830F( var_4 );
+            var_2 = int( max( var_2, self setweaponammostock( var_4 ) ) );
+            self takeweapon( var_4 );
         }
     }
 
     if ( var_0 == "special" )
-        self _meth_8319( self.variable_grenade[var_0][var_1] );
+        self settacticalweapon( self.variable_grenade[var_0][var_1] );
     else
-        self _meth_8344( self.variable_grenade[var_0][var_1] );
+        self setlethalweapon( self.variable_grenade[var_0][var_1] );
 
-    self _meth_830E( self.variable_grenade[var_0][var_1] );
-    self _meth_82F7( self.variable_grenade[var_0][var_1], var_2 );
+    self giveweapon( self.variable_grenade[var_0][var_1] );
+    self setweaponammostock( self.variable_grenade[var_0][var_1], var_2 );
 }
 
 init_grenade_hints()
@@ -538,7 +538,7 @@ hide_grenade_hints()
 {
     level.player notify( "show_grenade_hint_stop" );
 
-    if ( !isdefined( level.player.grenadecyclehint ) || _func_294( level.player.grenadecyclehint ) )
+    if ( !isdefined( level.player.grenadecyclehint ) || isremovedentity( level.player.grenadecyclehint ) )
         return;
 
     level.player.grenadecyclehint destroy();
@@ -621,7 +621,7 @@ emp_grenade_think( var_0 )
         if ( !isdefined( var_6 ) )
             continue;
 
-        if ( var_6 _meth_81D7( var_2, self ) )
+        if ( var_6 damageconetrace( var_2, self ) )
         {
             if ( distancesquared( var_6.origin, var_2 ) < var_1 * var_1 )
             {
@@ -635,8 +635,8 @@ emp_grenade_think( var_0 )
                         if ( isplayer( var_0 ) )
                             var_0 maps\_player_stats::register_kill( self, "emp_grenade", "emp_grenade_var" );
 
-                        var_7 = level.player _meth_820E( "ach_flySwatter" ) + 1;
-                        level.player _meth_820F( "ach_flySwatter", var_7 );
+                        var_7 = level.player getlocalplayerprofiledata( "ach_flySwatter" ) + 1;
+                        level.player setlocalplayerprofiledata( "ach_flySwatter", var_7 );
 
                         if ( var_7 == 25 )
                             maps\_utility::giveachievement_wrapper( "EMP_DRONE" );
@@ -647,7 +647,7 @@ emp_grenade_think( var_0 )
                     continue;
                 }
 
-                var_6 _meth_8051( var_3, var_2, var_0 );
+                var_6 dodamage( var_3, var_2, var_0 );
             }
         }
     }
@@ -683,7 +683,7 @@ detection_grenade_think( var_0, var_1, var_2, var_3 )
 
     playfx( common_scripts\utility::getfx( "paint_grenade" ), self.origin );
     soundscripts\_snd::snd_message( "paint_grenade_detonate" );
-    self.enemies = _func_0D6( "axis" );
+    self.enemies = getaiarray( "axis" );
     self.enemies = common_scripts\utility::array_combine( self.enemies, get_threat_detectables() );
     var_4 = "grenade";
     var_5 = 0;
@@ -752,7 +752,7 @@ detection_highlight_hud_effect_apply( var_0, var_1 )
         var_0.detection_highlight_hud_effect.alpha = 1.0;
     }
 
-    var_0.detection_highlight_hud_effect _meth_83A4( var_1 );
+    var_0.detection_highlight_hud_effect setradarhighlight( var_1 );
 }
 
 detection_highlight_hud_effect_remove( var_0 )
@@ -767,12 +767,12 @@ detection_highlight_hud_effect_remove( var_0 )
 change_threat_detection_style( var_0 )
 {
     level.player.threat_detection_style = var_0;
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
 
     foreach ( var_3 in var_1 )
     {
         if ( !isdefined( var_3.pdrone_marked_state ) && !isdefined( var_3.pretending_to_be_dead ) )
-            var_3 _meth_84ED( var_0 );
+            var_3 setthreatdetection( var_0 );
     }
 }
 
@@ -794,7 +794,7 @@ detection_grenade_hud_effect( var_0, var_1, var_2 )
     var_3.color = ( 0.2, 0.01, 0.01 );
     var_3.alpha = 0.1;
     var_4 = 500;
-    var_3 _meth_83A3( int( var_1 + var_4 / 2 ), int( var_4 ), var_2 + 0.05 );
+    var_3 setradarping( int( var_1 + var_4 / 2 ), int( var_4 ), var_2 + 0.05 );
     wait(var_2);
     var_3 destroy();
 }
@@ -881,7 +881,7 @@ mark_guy_fx()
         return;
 
     self.pdrone_marked_state = "marked";
-    self _meth_84ED( "detected" );
+    self setthreatdetection( "detected" );
 }
 
 unmark_guy_fx()
@@ -891,17 +891,17 @@ unmark_guy_fx()
         if ( isalive( self ) )
         {
             self.pdrone_marked_state = undefined;
-            self _meth_84ED( level.player.threat_detection_style );
+            self setthreatdetection( level.player.threat_detection_style );
         }
         else
-            self _meth_84ED( "disabled" );
+            self setthreatdetection( "disabled" );
     }
 }
 
 clear_guy_fx()
 {
     if ( isdefined( self ) )
-        self _meth_84ED( "disable" );
+        self setthreatdetection( "disable" );
 }
 
 handle_detection_death()
@@ -944,9 +944,9 @@ tracking_grenade_think( var_0 )
     var_23 thread tracking_grenade_handle_damage( var_0 );
     var_23 thread tracking_grenade_handle_autosave( var_0 );
     var_24 = common_scripts\utility::spawn_tag_origin();
-    var_24 _meth_804D( var_23, "", ( 0, 0, 0 ), ( -90, 0, 0 ) );
-    var_25 = level.player _meth_80A8();
-    var_26 = anglestoforward( level.player _meth_8036() );
+    var_24 linkto( var_23, "", ( 0, 0, 0 ), ( -90, 0, 0 ) );
+    var_25 = level.player geteye();
+    var_26 = anglestoforward( level.player getgunangles() );
     var_27 = bullettrace( var_25, var_25 + var_26 * 7000, 0, var_23 );
     var_28 = var_27["position"];
     var_29 = ( var_26 + ( 0, 0, 0.2 ) ) * 50 * 17.6;
@@ -989,8 +989,8 @@ tracking_grenade_think( var_0 )
         }
         else
         {
-            var_25 = level.player _meth_80A8();
-            var_26 = anglestoforward( level.player _meth_8036() );
+            var_25 = level.player geteye();
+            var_26 = anglestoforward( level.player getgunangles() );
             var_27 = bullettrace( var_25, var_25 + var_26 * 7000, 0, var_23 );
             var_39 = var_27["position"];
 
@@ -1023,10 +1023,10 @@ tracking_grenade_think( var_0 )
         }
         else
         {
-            var_25 = var_0 _meth_80A8();
+            var_25 = var_0 geteye();
 
             if ( var_38 < var_8 || !isdefined( var_31 ) )
-                var_41 = var_0 _meth_8036();
+                var_41 = var_0 getgunangles();
             else
                 var_41 = ( 0, vectortoyaw( var_23.origin - var_25 ), 0 );
 
@@ -1037,7 +1037,7 @@ tracking_grenade_think( var_0 )
             var_44 = var_25 + var_26 * var_3 + ( 0, 0, var_1 ) + var_42 * ( var_43 * var_2 );
             var_45 = var_44 - var_23.origin;
 
-            if ( isplayer( var_0 ) && var_0 _meth_82EE() )
+            if ( isplayer( var_0 ) && var_0 fragbuttonpressed() )
                 var_46 = var_6;
             else
                 var_46 = var_5;
@@ -1046,7 +1046,7 @@ tracking_grenade_think( var_0 )
         }
 
         var_30 += getsmoothrandomvector( 52.8, 1 );
-        var_47 = _func_284( ( var_30 - var_29 ) * var_19 - var_15, var_16 );
+        var_47 = vectorclamp( ( var_30 - var_29 ) * var_19 - var_15, var_16 );
         var_47 = vectorlerp( var_47, var_32, var_18 );
         var_33 += var_47;
         var_33 += common_scripts\utility::randomvector( var_22 * length( var_33 ) );
@@ -1078,7 +1078,7 @@ tracking_grenade_think( var_0 )
 
                 playfxontag( common_scripts\utility::getfx( var_54 ), var_24, "tag_origin" );
                 var_33 = ( 0, 0, 0 );
-                var_29 += _func_284( var_47, var_16, var_17 );
+                var_29 += vectorclamp( var_47, var_16, var_17 );
             }
 
             var_29 += var_15;
@@ -1113,7 +1113,7 @@ get_smart_grenade_timer()
 {
     if ( isplayer( self ) )
     {
-        var_0 = self _meth_8311();
+        var_0 = self getcurrentweapon();
 
         if ( isdefined( var_0 ) && issubstr( var_0, "microdronelaunchersmartgrenade" ) )
             return 0.1;
@@ -1137,12 +1137,12 @@ safe_str( var_0 )
             return var_1;
         }
 
-        if ( _func_294( var_0 ) )
+        if ( isremovedentity( var_0 ) )
             return "" + var_0;
 
         if ( isdefined( var_0.code_classname ) )
         {
-            var_1 = "(entity $e" + var_0 _meth_81B1() + " code_classname: \"" + var_0.code_classname + "\"";
+            var_1 = "(entity $e" + var_0 getentitynumber() + " code_classname: \"" + var_0.code_classname + "\"";
 
             if ( isspawner( var_0 ) )
                 var_1 += " (spawner)";
@@ -1163,7 +1163,7 @@ safe_str( var_0 )
         return var_1;
     }
 
-    if ( _func_294( var_0 ) )
+    if ( isremovedentity( var_0 ) )
         return "(removed entity)";
 
     if ( var_0 == undefined )
@@ -1189,7 +1189,7 @@ tracking_grenade_detonate( var_0, var_1, var_2 )
     }
     else
     {
-        self _meth_8276( self.origin + common_scripts\utility::randomvector( 10 ), var_1 * 0.1 * 0.25 );
+        self physicslaunchserver( self.origin + common_scripts\utility::randomvector( 10 ), var_1 * 0.1 * 0.25 );
         soundscripts\_snd::snd_message( "tracking_grenade_dud", self );
 
         for ( var_7 = 0; var_7 < 5; var_7++ )
@@ -1214,19 +1214,19 @@ tracking_grenade_pickup( var_0 )
 
     self endon( "death" );
     var_1 = spawn( "trigger_radius", self.origin, 0, 15, 5 );
-    var_1 _meth_8069();
-    var_1 _meth_804D( self );
+    var_1 enablelinkto();
+    var_1 linkto( self );
     thread common_scripts\utility::delete_on_death( var_1 );
 
     for (;;)
     {
         var_1 waittill( "trigger", var_2 );
 
-        if ( var_2 == var_0 && var_2 _meth_82F9( "tracking_grenade_var" ) < _func_1E1( "tracking_grenade_var" ) )
+        if ( var_2 == var_0 && var_2 setweaponammostock( "tracking_grenade_var" ) < weaponmaxammo( "tracking_grenade_var" ) )
             break;
     }
 
-    var_0 _meth_82F7( "tracking_grenade_var", var_0 _meth_82F9( "tracking_grenade_var" ) + 1 );
+    var_0 setweaponammostock( "tracking_grenade_var", var_0 setweaponammostock( "tracking_grenade_var" ) + 1 );
     self delete();
 }
 
@@ -1261,7 +1261,7 @@ play_tracking_grenade_impacts( var_0, var_1 )
 tracking_grenade_handle_damage( var_0 )
 {
     self endon( "death" );
-    self _meth_8139( var_0.team, 1 );
+    self makeentitysentient( var_0.team, 1 );
     self waittill( "damage" );
     tracking_grenade_detonate();
 }
@@ -1293,11 +1293,11 @@ tracking_grenade_scare_enemies( var_0 )
 
 tracking_grenade_get_target( var_0 )
 {
-    var_1 = var_0 _meth_80A8();
-    var_2 = anglestoforward( var_0 _meth_8036() );
+    var_1 = var_0 geteye();
+    var_2 = anglestoforward( var_0 getgunangles() );
     var_3 = cos( 20 );
     var_4 = undefined;
-    var_5 = _func_0D7( common_scripts\utility::get_enemy_team( var_0.team ), "all" );
+    var_5 = getaispeciesarray( common_scripts\utility::get_enemy_team( var_0.team ), "all" );
     var_5 = common_scripts\utility::array_combine( var_5, getentarray( "tracking_grenade_target", "script_noteworthy" ) );
     var_5 = common_scripts\utility::array_combine( var_5, vehicle_getarray() );
 
@@ -1312,7 +1312,7 @@ tracking_grenade_get_target( var_0 )
         var_8 = undefined;
 
         if ( isai( var_7 ) )
-            var_8 = var_7 _meth_80A8();
+            var_8 = var_7 geteye();
         else
             var_8 = var_7.origin;
 
@@ -1345,7 +1345,7 @@ tracking_grenade_thrust_effect( var_0, var_1, var_2 )
         var_3.origin += var_2;
 
     var_3.angles = vectortoangles( var_0 );
-    var_3 _meth_804D( self );
+    var_3 linkto( self );
     playfxontag( common_scripts\utility::getfx( var_1 ), var_3, "tag_origin" );
     var_3 common_scripts\utility::delaycall( 0.3, ::delete );
 }
@@ -1361,23 +1361,23 @@ make_tracking_grenade( var_0 )
     var_1 = var_0.origin;
     var_0 delete();
     var_2 = spawn( "script_model", var_1 );
-    var_2 _meth_80B1( "npc_variable_grenade_lethal" );
+    var_2 setmodel( "npc_variable_grenade_lethal" );
     return var_2;
 }
 
 target_valid_targets()
 {
-    var_0 = _func_0D6( "axis" );
+    var_0 = getaiarray( "axis" );
     var_1 = [];
     var_2 = common_scripts\utility::spawn_tag_origin();
-    _func_09A( var_2 );
-    _func_0A5( var_2, 1 );
+    target_set( var_2 );
+    target_setjavelinonly( var_2, 1 );
 
     foreach ( var_4 in var_0 )
     {
-        var_2.origin = var_4 _meth_80A8();
+        var_2.origin = var_4 geteye();
 
-        if ( _func_09F( var_2, self, 65, 100 ) )
+        if ( target_isincircle( var_2, self, 65, 100 ) )
             var_1[var_1.size] = var_4;
     }
 
@@ -1389,7 +1389,7 @@ get_npc_center_offset()
 {
     if ( isai( self ) && isalive( self ) )
     {
-        var_0 = self _meth_80A8()[2];
+        var_0 = self geteye()[2];
         var_1 = self.origin[2];
         var_2 = var_0 - var_1;
         return ( 0, 0, var_2 );
@@ -1424,7 +1424,7 @@ target_enhancer_think()
     for (;;)
     {
         var_4 = 0;
-        var_5 = getweaponattachments( self _meth_8311() );
+        var_5 = getweaponattachments( self getcurrentweapon() );
 
         if ( isdefined( var_5 ) )
         {
@@ -1438,7 +1438,7 @@ target_enhancer_think()
             }
         }
 
-        while ( var_4 && self _meth_8340() < var_2 )
+        while ( var_4 && self playerads() < var_2 )
         {
             if ( isdefined( var_3 ) )
             {
@@ -1461,7 +1461,7 @@ target_enhancer_think()
             continue;
         }
 
-        if ( self _meth_8342() )
+        if ( self isusingturret() )
         {
             if ( isdefined( var_3 ) )
             {
@@ -1485,6 +1485,6 @@ player_enable_highlight()
     var_0 = newclienthudelem( self );
     var_0.color = ( 0.2, 0.01, 0.01 );
     var_0.alpha = 1.0;
-    var_0 _meth_83A4( -1 );
+    var_0 setradarhighlight( -1 );
     return var_0;
 }

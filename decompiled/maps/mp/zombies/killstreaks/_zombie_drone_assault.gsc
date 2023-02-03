@@ -69,13 +69,13 @@ tryuseassaultdrone( var_0, var_1 )
 
     if ( maps\mp\_utility::currentactivevehiclecount() >= maps\mp\_utility::maxvehiclesallowed() || level.fauxvehiclecount + var_2 >= maps\mp\_utility::maxvehiclesallowed() )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
     if ( level.dronesdeployed >= 2 )
     {
-        self iclientprintlnbold( &"MP_TOO_MANY_VEHICLES" );
+        self iprintlnbold( &"MP_TOO_MANY_VEHICLES" );
         return 0;
     }
 
@@ -84,7 +84,7 @@ tryuseassaultdrone( var_0, var_1 )
 
     if ( !var_3.placementok )
     {
-        self iclientprintlnbold( &"MP_DRONE_PLACEMENT_INVALID" );
+        self iprintlnbold( &"MP_DRONE_PLACEMENT_INVALID" );
         maps\mp\_utility::decrementfauxvehiclecount();
         return 0;
     }
@@ -175,16 +175,16 @@ setupplayercommands( var_0 )
     if ( isdefined( var_0 ) && var_0.hasaioption )
         return;
 
-    self _meth_82DD( "FirePrimaryWeapon", "+attack" );
-    self _meth_82DD( "FirePrimaryWeapon", "+attack_akimbo_accessible" );
-    self _meth_82DD( "FireSecondaryWeapon", "+speed_throw" );
-    self _meth_82DD( "FireSecondaryWeapon", "+toggleads_throw" );
-    self _meth_82DD( "FireSecondaryWeapon", "+ads_akimbo_accessible" );
+    self notifyonplayercommand( "FirePrimaryWeapon", "+attack" );
+    self notifyonplayercommand( "FirePrimaryWeapon", "+attack_akimbo_accessible" );
+    self notifyonplayercommand( "FireSecondaryWeapon", "+speed_throw" );
+    self notifyonplayercommand( "FireSecondaryWeapon", "+toggleads_throw" );
+    self notifyonplayercommand( "FireSecondaryWeapon", "+ads_akimbo_accessible" );
 
     if ( isdefined( var_0 ) && var_0.hascloak )
     {
-        self _meth_82DD( "Cloak", "+usereload" );
-        self _meth_82DD( "Cloak", "+activate" );
+        self notifyonplayercommand( "Cloak", "+usereload" );
+        self notifyonplayercommand( "Cloak", "+activate" );
     }
 }
 
@@ -196,23 +196,23 @@ disableplayercommands( var_0 )
     if ( isdefined( var_0 ) && var_0.hasaioption )
         return;
 
-    self _meth_849C( "FirePrimaryWeapon", "+attack" );
-    self _meth_849C( "FirePrimaryWeapon", "+attack_akimbo_accessible" );
-    self _meth_849C( "FireSecondaryWeapon", "+speed_throw" );
-    self _meth_849C( "FireSecondaryWeapon", "+toggleads_throw" );
-    self _meth_849C( "FireSecondaryWeapon", "+ads_akimbo_accessible" );
+    self notifyonplayercommandremove( "FirePrimaryWeapon", "+attack" );
+    self notifyonplayercommandremove( "FirePrimaryWeapon", "+attack_akimbo_accessible" );
+    self notifyonplayercommandremove( "FireSecondaryWeapon", "+speed_throw" );
+    self notifyonplayercommandremove( "FireSecondaryWeapon", "+toggleads_throw" );
+    self notifyonplayercommandremove( "FireSecondaryWeapon", "+ads_akimbo_accessible" );
 
     if ( isdefined( var_0 ) && var_0.hascloak )
     {
-        self _meth_849C( "Cloak", "+usereload" );
-        self _meth_849C( "Cloak", "+activate" );
+        self notifyonplayercommandremove( "Cloak", "+usereload" );
+        self notifyonplayercommandremove( "Cloak", "+activate" );
     }
 }
 
 setupcommonassaultdroneproperties( var_0, var_1, var_2, var_3 )
 {
     var_0 makeunusable();
-    var_0 _meth_8202( 23, 23, 23 );
+    var_0 makevehiclesolidcapsule( 23, 23, 23 );
     var_0.lifeid = var_1;
     var_0.team = self.team;
     var_0.owner = self;
@@ -240,12 +240,12 @@ setupcommonassaultdroneproperties( var_0, var_1, var_2, var_3 )
         thread notify_assault_drone_on_player_command( var_0 );
     }
 
-    var_0 _meth_82C0( 1 );
+    var_0 setcandamage( 1 );
     var_0.empgrenaded = 0;
     var_0.damagefade = 1.0;
     var_0.oldcontents = var_0 setcontents( 0 );
     var_0 thread maps\mp\gametypes\_damage::setentitydamagecallback( var_0.maxhealth, undefined, ::onassaultdronedeath, ::drone_modifydamage, 1 );
-    var_0 _meth_8510();
+    var_0 ghost();
     thread maps\mp\zombies\killstreaks\_zombie_drone_common::dronesetupcloaking( var_0, var_0.hascloak );
 
     if ( var_0.hascloak )
@@ -276,7 +276,7 @@ setupcommonassaultdroneproperties( var_0, var_1, var_2, var_3 )
         var_6 = getent( "killstreak_orbit_lookat", "targetname" );
 
         if ( isdefined( var_4 ) && isdefined( var_5 ) && isdefined( var_6 ) )
-            var_0 _meth_850B( self, var_4, var_5, var_6 );
+            var_0 setorbiterents( self, var_4, var_5, var_6 );
     }
 
     if ( !var_0.mp_terrace )
@@ -286,7 +286,7 @@ setupcommonassaultdroneproperties( var_0, var_1, var_2, var_3 )
         thread maps\mp\zombies\killstreaks\_zombie_drone_common::playerhandleexhaustfx( var_0, "assault_drone_exhaust_bottom", "tag_exhaust_rt" );
     }
 
-    if ( !isdefined( level.ishorde ) || isdefined( level.ishorde ) && self _meth_8447( "ui_horde_player_class" ) != "drone" )
+    if ( !isdefined( level.ishorde ) || isdefined( level.ishorde ) && self getclientomnvar( "ui_horde_player_class" ) != "drone" )
         thread assaulthandletimeoutwarning( var_0, var_2 );
 
     assaultvehiclemonitorweapons( var_0 );
@@ -346,9 +346,9 @@ playerstartusingassaultvehicle( var_0 )
     var_1 maps\mp\_utility::playersaveangles();
 
     if ( !var_0.mp_terrace )
-        var_1 _meth_81E2( var_0, "tag_origin" );
+        var_1 cameralinkto( var_0, "tag_origin" );
 
-    var_1 _meth_8206( var_0 );
+    var_1 remotecontrolvehicle( var_0 );
     var_1 thread maps\mp\zombies\killstreaks\_zombie_drone_common::setdronevisionandlightsetpermap( 1.5, var_0 );
     var_1.using_remote_tank = 1;
     return 1;
@@ -384,7 +384,7 @@ waitforc4detonation( var_0 )
     var_0 waittill( "FirePrimaryWeapon" );
     self notify( "ForceUncloak" );
     playerdohunterkillerbehavior( var_0 );
-    var_0 entityradiusdamage( var_0.origin + ( 0, 0, 50 ), getassaultvehiclec4radius(), 200, 200, self, "MOD_EXPLOSIVE", "AssaultDrone_C4_mp" );
+    var_0 radiusdamage( var_0.origin + ( 0, 0, 50 ), getassaultvehiclec4radius(), 200, 200, self, "MOD_EXPLOSIVE", "AssaultDrone_C4_mp" );
     playfx( common_scripts\utility::getfx( "assault_c4_explode" ), var_0.origin );
     var_0 notify( "death" );
 }
@@ -394,7 +394,7 @@ playerhudoutlineshunterkiller( var_0 )
     foreach ( var_2 in level.players )
     {
         if ( self.team != var_2.team && !var_2 maps\mp\_utility::_hasperk( "specialty_blindeye" ) )
-            var_2 _meth_8420( self, 0, 1 );
+            var_2 hudoutlineenableforclient( self, 0, 1 );
     }
 
     var_0 waittill( "death" );
@@ -405,7 +405,7 @@ playerhudoutlineshunterkiller( var_0 )
     foreach ( var_2 in level.players )
     {
         if ( self.team != var_2.team )
-            var_2 _meth_8421( self );
+            var_2 hudoutlinedisableforclient( self );
     }
 }
 
@@ -431,7 +431,7 @@ onplayerspawnedhunterkiller( var_0 )
     self waittill( "spawned_player" );
 
     if ( isdefined( var_0 ) )
-        self _meth_8420( var_0, 0, 1 );
+        self hudoutlineenableforclient( var_0, 0, 1 );
 }
 
 playerdohunterkillerbehavior( var_0 )
@@ -445,7 +445,7 @@ playerdohunterkillerbehavior( var_0 )
     if ( var_0.hasaioption )
         var_4 = var_0.origin;
     else
-        var_4 = self _meth_845C( 1 );
+        var_4 = self getvieworigin( 1 );
 
     var_5 = var_0.targetent.origin;
     var_6 = vectornormalize( var_5 - var_4 );
@@ -465,33 +465,33 @@ playerdohunterkillerbehavior( var_0 )
         }
         else
         {
-            var_11 = self _meth_845C( 1 );
+            var_11 = self getvieworigin( 1 );
             var_12 = self getangles();
             var_0.camlinkent = spawn( "script_model", var_11 );
-            var_0.camlinkent _meth_80B1( "tag_player" );
+            var_0.camlinkent setmodel( "tag_player" );
             var_0.camlinkent.angles = var_12;
-            var_0.camlinkent _meth_804D( var_0, "tag_origin" );
+            var_0.camlinkent linkto( var_0, "tag_origin" );
             waitframe();
-            self _meth_807E( var_0.camlinkent, "tag_player", 1, 0, 0, 0, 0, 1 );
-            self _meth_80A0( 0 );
-            self _meth_8207();
+            self playerlinkweaponviewtodelta( var_0.camlinkent, "tag_player", 1, 0, 0, 0, 0, 1 );
+            self playerlinkedsetviewznear( 0 );
+            self remotecontrolvehicleoff();
             earthquake( 0.2, 1, var_11, 100 );
-            var_10 = _func_272( common_scripts\utility::getfx( "c4_forward_blur" ), var_11, self );
+            var_10 = spawnfxforclient( common_scripts\utility::getfx( "c4_forward_blur" ), var_11, self );
             triggerfx( var_10 );
         }
 
         stopfxontag( common_scripts\utility::getfx( "assault_drone_exhaust" ), var_0, "TAG_EXHAUST_REAR" );
         var_0 notify( "stopShootLocationUpdate" );
-        var_0 _meth_8383( undefined );
-        var_0 _meth_827C( var_0.origin, var_0.angles, 0, 0 );
+        var_0 setotherent( undefined );
+        var_0 vehicle_teleport( var_0.origin, var_0.angles, 0, 0 );
         waitframe();
         thread playerplaytargetfx( var_0, var_8 );
         thread playerplaythrustersound( var_0 );
         var_13 = gettime() + var_1;
         var_14 = 120;
         var_15 = var_14 * 4 / 5;
-        var_0 _meth_8283( var_14, var_15 );
-        var_0 _meth_825B( var_8, 0 );
+        var_0 vehicle_setspeed( var_14, var_15 );
+        var_0 setvehgoalpos( var_8, 0 );
         var_0.staticlevelwaittime = 0.3;
         var_0.alwaysstaticout = 1;
         var_0 setcontents( 0 );
@@ -507,7 +507,7 @@ playerdohunterkillerbehavior( var_0 )
         }
 
         if ( !var_0.hasaioption )
-            var_0.camlinkent _meth_804F();
+            var_0.camlinkent unlink();
 
         while ( gettime() < var_13 && var_9 > var_3 )
         {
@@ -516,7 +516,7 @@ playerdohunterkillerbehavior( var_0 )
             glassradiusdamage( var_0.origin, 70, 200, 200 );
         }
 
-        var_0 _meth_8284( 0 );
+        var_0 vehicle_setspeedimmediate( 0 );
 
         if ( !var_0.hasaioption )
             var_10 delete();
@@ -526,7 +526,7 @@ playerdohunterkillerbehavior( var_0 )
 playerplaythrustersound( var_0 )
 {
     var_1 = spawn( "script_model", var_0.origin );
-    var_1 _meth_804D( var_0, "tag_origin" );
+    var_1 linkto( var_0, "tag_origin" );
     var_1 hide();
 
     foreach ( var_3 in level.players )
@@ -537,7 +537,7 @@ playerplaythrustersound( var_0 )
         var_1 showtoplayer( var_3 );
     }
 
-    var_1 _meth_8438( "assault_drn_kamikaze_boost_npc" );
+    var_1 playsoundonmovingent( "assault_drn_kamikaze_boost_npc" );
     self playlocalsound( "assault_drn_kamikaze_boost_plr" );
     wait 2;
     var_1 delete();
@@ -546,7 +546,7 @@ playerplaythrustersound( var_0 )
 playerplaytargetfx( var_0, var_1 )
 {
     var_2 = spawn( "script_model", var_1 );
-    var_2 _meth_80B1( "tag_origin" );
+    var_2 setmodel( "tag_origin" );
     var_2.angles = ( -90, 0, 0 );
     maps\mp\zombies\_util::playfxontagnetwork( common_scripts\utility::getfx( "assault_drone_marker" ), var_2, "tag_origin" );
     var_0 waittill( "death" );
@@ -575,13 +575,13 @@ spawnmgturret( var_0 )
     var_7 = var_0 gettagorigin( var_4 );
     var_8 = spawnturret( "misc_turret", var_7, var_1, 0 );
     var_8.angles = var_0.angles;
-    var_8 _meth_80B1( var_2 );
-    var_8 _meth_815A( var_3 );
-    var_8 _meth_804D( var_0, var_4, var_5, var_6 );
+    var_8 setmodel( var_2 );
+    var_8 setdefaultdroppitch( var_3 );
+    var_8 linkto( var_0, var_4, var_5, var_6 );
     var_8.owner = self;
     var_8.health = 99999;
-    var_8 _meth_82C0( 0 );
-    var_8 _meth_82C1( 0 );
+    var_8 setcandamage( 0 );
+    var_8 setcanradiusdamage( 0 );
     var_8.tank = var_0;
     var_8 makeunusable();
 
@@ -589,17 +589,17 @@ spawnmgturret( var_0 )
         var_8.killcament = var_0;
 
     var_0.mgturret = var_8;
-    var_0.mgturret _meth_8065( "sentry_manual" );
-    var_0.mgturret _meth_8103( self );
-    var_0.mgturret _meth_8105( 0 );
-    var_0.mgturret _meth_844B();
+    var_0.mgturret setmode( "sentry_manual" );
+    var_0.mgturret setsentryowner( self );
+    var_0.mgturret setturretminimapvisible( 0 );
+    var_0.mgturret cloakingenable();
 
     if ( !var_0.hasmg )
-        var_0.mgturret _meth_815C();
+        var_0.mgturret turretfiredisable();
 
     if ( var_0.mp_terrace )
     {
-        self _meth_80FE( 0.2, 0.3, 0.8, 0.8 );
+        self enableslowaim( 0.2, 0.3, 0.8, 0.8 );
         thread terrace_turret_fx( var_0 );
     }
 
@@ -625,7 +625,7 @@ control_turret_after_delay( var_0, var_1 )
         wait(var_1);
 
     if ( isdefined( self ) && isdefined( var_0 ) && isdefined( var_0.mgturret ) )
-        self _meth_80E8( var_0.mgturret, var_2 );
+        self remotecontrolturret( var_0.mgturret, var_2 );
 }
 
 watchmgfireuncloak( var_0 )
@@ -656,7 +656,7 @@ delete_turret_on_death( var_0 )
 
     if ( isdefined( self ) )
     {
-        self _meth_80E9( var_0.mgturret );
+        self remotecontrolturretoff( var_0.mgturret );
         self thermalvisionfofoverlayoff();
     }
 
@@ -675,8 +675,8 @@ setuprockets( var_0 )
     self endon( "disconnect" );
     var_0.rocketammo = 3;
 
-    if ( self _meth_8447( "ui_assaultdrone_toggle" ) )
-        self _meth_82FB( "ui_assaultdrone_rockets", var_0.rocketammo );
+    if ( self getclientomnvar( "ui_assaultdrone_toggle" ) )
+        self setclientomnvar( "ui_assaultdrone_rockets", var_0.rocketammo );
 
     for (;;)
     {
@@ -687,20 +687,20 @@ setuprockets( var_0 )
 
         self notify( "ForceUncloak" );
         earthquake( 0.3, 1, var_0.origin, 500 );
-        self _meth_80AD( "damage_heavy" );
+        self playrumbleonentity( "damage_heavy" );
         var_1 = var_0.mgturret gettagorigin( "tag_flash" );
         var_2 = var_0.targetent.origin;
 
         if ( var_0.hasaioption )
-            var_3 = var_0 _meth_8287();
+            var_3 = var_0 vehicle_getvelocity();
         else
-            var_3 = var_0 _meth_81B2();
+            var_3 = var_0 getentityvelocity();
 
         var_4 = magicbullet( "ugv_missile_mp", var_1 + var_3 / 10, var_2, self, 1 );
-        var_0.mgturret _meth_8438( "wpn_mahem_npc" );
+        var_0.mgturret playsoundonmovingent( "wpn_mahem_npc" );
         playfxontag( common_scripts\utility::getfx( "sentry_rocket_muzzleflash_wv" ), var_0.mgturret, "tag_flash" );
-        var_4 _meth_81D9( var_0.targetent );
-        var_4 _meth_81DC();
+        var_4 missile_settargetent( var_0.targetent );
+        var_4 missile_setflightmodedirect();
 
         if ( var_0.hasaioption )
             var_4.killcament = var_0;
@@ -709,15 +709,15 @@ setuprockets( var_0 )
 
         if ( var_0.rocketammo > 0 )
         {
-            self _meth_82FB( "ui_assaultdrone_rockets", var_0.rocketammo );
+            self setclientomnvar( "ui_assaultdrone_rockets", var_0.rocketammo );
             wait 1;
             continue;
         }
 
-        self _meth_82FB( "ui_assaultdrone_rockets", 4 );
+        self setclientomnvar( "ui_assaultdrone_rockets", 4 );
         wait 5;
         var_0.rocketammo = 3;
-        self _meth_82FB( "ui_assaultdrone_rockets", var_0.rocketammo );
+        self setclientomnvar( "ui_assaultdrone_rockets", var_0.rocketammo );
     }
 }
 
@@ -727,29 +727,29 @@ assaulthudsetup( var_0 )
     self endon( "disconnect" );
     assaulthudremove( var_0 );
     wait 0.5;
-    self _meth_82FB( "ui_assaultdrone_toggle", 1 );
+    self setclientomnvar( "ui_assaultdrone_toggle", 1 );
 
     if ( var_0.mp_terrace )
-        self _meth_8532();
+        self forcefirstpersonwhenfollowed();
 
     maps\mp\killstreaks\_aerial_utility::playerenablestreakstatic();
-    self _meth_82FB( "ui_assaultdrone_countdown", var_0.endtime );
+    self setclientomnvar( "ui_assaultdrone_countdown", var_0.endtime );
 
     if ( !var_0.hasturret )
-        self _meth_82FB( "ui_assaultdrone_weapon", 2 );
+        self setclientomnvar( "ui_assaultdrone_weapon", 2 );
     else if ( var_0.mp_terrace )
-        self _meth_82FB( "ui_assaultdrone_weapon", 3 );
+        self setclientomnvar( "ui_assaultdrone_weapon", 3 );
     else if ( var_0.hasmg )
-        self _meth_82FB( "ui_assaultdrone_weapon", 1 );
+        self setclientomnvar( "ui_assaultdrone_weapon", 1 );
 
     if ( var_0.hasrockets && isdefined( var_0.rocketammo ) )
-        self _meth_82FB( "ui_assaultdrone_rockets", var_0.rocketammo );
+        self setclientomnvar( "ui_assaultdrone_rockets", var_0.rocketammo );
 
     if ( var_0.hascloak )
-        self _meth_82FB( "ui_drone_cloak", 2 );
+        self setclientomnvar( "ui_drone_cloak", 2 );
 
-    if ( isdefined( level.ishorde ) && level.ishorde && self _meth_8447( "ui_horde_player_class" ) == "drone" )
-        self _meth_82FB( "ui_horde_drone_heal", 1 );
+    if ( isdefined( level.ishorde ) && level.ishorde && self getclientomnvar( "ui_horde_player_class" ) == "drone" )
+        self setclientomnvar( "ui_horde_drone_heal", 1 );
 
     if ( var_0.hasarhud )
         self thermalvisionfofoverlayon();
@@ -757,17 +757,17 @@ assaulthudsetup( var_0 )
 
 assaulthudremove( var_0 )
 {
-    self _meth_82FB( "ui_assaultdrone_toggle", 0 );
-    self _meth_82FB( "ui_assaultdrone_countdown", 0 );
-    self _meth_82FB( "ui_drone_cloak", 0 );
-    self _meth_82FB( "ui_drone_cloak_time", 0 );
-    self _meth_82FB( "ui_drone_cloak_cooldown", 0 );
-    self _meth_82FB( "ui_assaultdrone_weapon", 0 );
-    self _meth_82FB( "ui_assaultdrone_rockets", 0 );
+    self setclientomnvar( "ui_assaultdrone_toggle", 0 );
+    self setclientomnvar( "ui_assaultdrone_countdown", 0 );
+    self setclientomnvar( "ui_drone_cloak", 0 );
+    self setclientomnvar( "ui_drone_cloak_time", 0 );
+    self setclientomnvar( "ui_drone_cloak_cooldown", 0 );
+    self setclientomnvar( "ui_assaultdrone_weapon", 0 );
+    self setclientomnvar( "ui_assaultdrone_rockets", 0 );
     maps\mp\killstreaks\_aerial_utility::playerdisablestreakstatic();
 
     if ( var_0.mp_terrace )
-        self _meth_8533();
+        self disableforcefirstpersonwhenfollowed();
 }
 
 monitoruavsafearea( var_0 )
@@ -842,18 +842,18 @@ assaulthandletimeoutwarning( var_0, var_1 )
 
 assaulthandledeath( var_0 )
 {
-    var_1 = var_0 _meth_81B1();
+    var_1 = var_0 getentitynumber();
     var_0 maps\mp\zombies\killstreaks\_zombie_drone_common::droneaddtogloballist( var_1 );
     var_0 waittill( "death", var_2 );
 
     if ( isdefined( var_0.camlinkent ) )
-        var_0.camlinkent _meth_804F();
+        var_0.camlinkent unlink();
 
     if ( isdefined( var_0 ) )
-        var_0 _meth_8510();
+        var_0 ghost();
 
     if ( isdefined( var_0.mgturret ) )
-        var_0.mgturret _meth_8510();
+        var_0.mgturret ghost();
 
     if ( isdefined( self ) && !var_0.hasaioption )
         maps\mp\_utility::freezecontrolswrapper( 1 );
@@ -908,11 +908,11 @@ assaultsetinactivity( var_0 )
     if ( isdefined( var_1.using_remote_tank ) && var_1.using_remote_tank )
     {
         var_1 notify( "end_remote" );
-        var_1 _meth_80FF();
-        var_1 _meth_8207( var_0 );
+        var_1 disableslowaim();
+        var_1 remotecontrolvehicleoff( var_0 );
         var_1 thermalvisionfofoverlayoff();
         thread maps\mp\zombies\killstreaks\_zombie_drone_common::removedronevisionandlightsetpermap( 1.5 );
-        var_1 _meth_804F();
+        var_1 unlink();
 
         if ( var_1 maps\mp\_utility::isusingremote() && !level.gameended )
             var_1 maps\mp\_utility::clearusingremote();
@@ -935,9 +935,9 @@ assaultsetinactivity( var_0 )
 switch_back_to_player_weapon()
 {
     var_0 = maps\mp\_utility::getkillstreakweapon( "orbitalsupport" );
-    self _meth_830F( var_0 );
-    self _meth_8322();
-    self _meth_8315( common_scripts\utility::getlastweapon() );
+    self takeweapon( var_0 );
+    self enableweaponswitch();
+    self switchtoweapon( common_scripts\utility::getlastweapon() );
 }
 
 assaultplayerexit( var_0 )

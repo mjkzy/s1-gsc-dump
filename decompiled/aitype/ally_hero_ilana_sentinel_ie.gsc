@@ -17,8 +17,8 @@ main()
 
     if ( isai( self ) )
     {
-        self _meth_816C( 256.0, 0.0 );
-        self _meth_816D( 768.0, 1024.0 );
+        self setengagementmindist( 256.0, 0.0 );
+        self setengagementmaxdist( 768.0, 1024.0 );
     }
 
     switch ( codescripts\character::get_random_weapon( 5 ) )
@@ -45,17 +45,17 @@ main()
 
 spawner()
 {
-    self _meth_8040( "allies" );
+    self setspawnerteam( "allies" );
 }
 
 precache()
 {
     character\character_hero_ilana_sentinel_udt_b::precache();
-    precacheitem( "iw5_kf5fullauto_sp_silencer01" );
-    precacheitem( "iw5_kf5fullauto_sp_opticsacog2_silencer01" );
-    precacheitem( "iw5_kf5fullauto_sp_opticstargetenhancer_silencer01" );
-    precacheitem( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
-    precacheitem( "iw5_kf5fullauto_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_pbwsingleshot_sp_silencerpistol" );
-    precacheitem( "fraggrenade" );
+    precacheshellshock( "iw5_kf5fullauto_sp_silencer01" );
+    precacheshellshock( "iw5_kf5fullauto_sp_opticsacog2_silencer01" );
+    precacheshellshock( "iw5_kf5fullauto_sp_opticstargetenhancer_silencer01" );
+    precacheshellshock( "iw5_kf5fullauto_sp_opticsreddot_silencer01" );
+    precacheshellshock( "iw5_kf5fullauto_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_pbwsingleshot_sp_silencerpistol" );
+    precacheshellshock( "fraggrenade" );
 }

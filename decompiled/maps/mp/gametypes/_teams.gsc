@@ -90,7 +90,7 @@ onjoinedspectators()
 trackplayedtime()
 {
     self endon( "disconnect" );
-    _func_2B0( self.xuid );
+    lootservicestarttrackingplaytime( self.xuid );
     self.timeplayed["allies"] = 0;
     self.timeplayed["axis"] = 0;
     self.timeplayed["other"] = 0;
@@ -379,7 +379,7 @@ playercostume()
     if ( isagent( self ) && !getdvarint( "virtualLobbyActive", 0 ) )
         return 1;
 
-    self _meth_84BA( self.costume );
+    self setcostumemodels( self.costume );
 
     if ( isdefined( self.perks ) && !getdvarint( "virtualLobbyActive", 0 ) )
     {
@@ -402,7 +402,7 @@ playercostume()
     }
 
     self.voice = "american";
-    self _meth_83DB( "vestlight" );
+    self setclothtype( "vestlight" );
     return 1;
 }
 
@@ -411,7 +411,7 @@ validcostume( var_0 )
     if ( !isdefined( var_0 ) )
         return 0;
 
-    var_1 = _func_29E( var_0 );
+    var_1 = validatecostume( var_0 );
 
     for ( var_2 = 0; var_2 < var_0.size; var_2++ )
     {
@@ -424,7 +424,7 @@ validcostume( var_0 )
 
 getdefaultcostume()
 {
-    var_0 = _func_29F();
+    var_0 = randomcostume();
     return var_0;
 }
 
@@ -432,7 +432,7 @@ getpracticeroundcostume()
 {
     if ( !isdefined( level.practice_round_costume ) )
     {
-        level.practice_round_max_costumes = _func_296( level.practiceroundcostumetablename ) - 1;
+        level.practice_round_max_costumes = tablegetcolumncount( level.practiceroundcostumetablename ) - 1;
         level.practice_round_costume = randomint( level.practice_round_max_costumes );
     }
 
@@ -448,7 +448,7 @@ getpracticeroundcostume()
     }
 
     var_2 = ( level.practice_round_costume + var_0 ) % level.practice_round_max_costumes;
-    var_3 = _func_2CF( level.practiceroundcostumetablename, var_2 + 1 );
+    var_3 = getcostumefromtable( level.practiceroundcostumetablename, var_2 + 1 );
     return var_3;
 }
 
@@ -459,7 +459,7 @@ gethardcorecostume()
     if ( self.pers["team"] == "axis" )
         var_0 = 1;
 
-    var_1 = _func_2CF( level.hardcorecostumetablename, var_0 );
+    var_1 = getcostumefromtable( level.hardcorecostumetablename, var_0 );
     return var_1;
 }
 
@@ -495,7 +495,7 @@ countplayers()
 trackfreeplayedtime()
 {
     self endon( "disconnect" );
-    _func_2B0( self.xuid );
+    lootservicestarttrackingplaytime( self.xuid );
     self.timeplayed["allies"] = 0;
     self.timeplayed["axis"] = 0;
     self.timeplayed["other"] = 0;

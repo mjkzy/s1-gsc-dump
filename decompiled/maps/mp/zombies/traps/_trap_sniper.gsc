@@ -3,7 +3,7 @@
 
 init()
 {
-    _func_251( "trap_zm" );
+    precachelaser( "trap_zm" );
     level._effect["trap_sniper_tracer"] = loadfx( "vfx/map/mp_zombie_brg/brg_sniper_tracer" );
     level.sniperzombietargetlocations = [ "J_Shoulder_RI", "J_Shoulder_LE", "J_Hip_LE", "J_Hip_RI", "J_Head" ];
     level.sniperdogtargetlocations = [ "r_frontLeg0_JNT", "r_frontLeg1_JNT", "l_backLeg0_JNT", "l_backLeg1_JNT", "J_Spine4", "J_Head" ];
@@ -14,8 +14,8 @@ spawnsniperent( var_0, var_1 )
     var_2 = spawn( "script_model", var_0.origin );
     var_2.start_origin = var_0.origin;
     var_2.start_angles = var_0.angles;
-    var_2 _meth_80B1( "tag_laser" );
-    var_2 _meth_80B2( "trap_zm" );
+    var_2 setmodel( "tag_laser" );
+    var_2 laseron( "trap_zm" );
     var_3 = common_scripts\utility::getstruct( var_0.target, "targetname" );
     var_2.lasertargetent = var_3;
     var_2 thread lerplasertotarget( var_1 );

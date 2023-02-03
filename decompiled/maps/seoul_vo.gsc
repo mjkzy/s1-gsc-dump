@@ -473,11 +473,11 @@ dialog_hotel_top_floor_nk_alerted()
 
     while ( var_0 > 0 )
     {
-        var_1 = _func_0D6( "bad_guys" );
+        var_1 = getaiarray( "bad_guys" );
 
         foreach ( var_3 in var_1 )
         {
-            if ( isdefined( var_3 ) && var_3 _meth_81BE( level.player ) )
+            if ( isdefined( var_3 ) && var_3 cansee( level.player ) )
             {
                 if ( var_0 == 2 )
                 {
@@ -603,11 +603,11 @@ dialogue_exit_trench()
 {
     for (;;)
     {
-        var_0 = _func_0D6( "bad_guys" );
+        var_0 = getaiarray( "bad_guys" );
 
         foreach ( var_2 in var_0 )
         {
-            if ( var_2 _meth_81BE( level.player ) )
+            if ( var_2 cansee( level.player ) )
             {
                 level.will_irons maps\_utility::dialogue_queue( "seo_wil_contact" );
                 maps\_utility::battlechatter_on( "allies" );

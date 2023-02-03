@@ -22,24 +22,24 @@ initbufferedstats()
 
     if ( maps\mp\_utility::rankingenabled() )
     {
-        self.bufferedstats["totalShots"] = self _meth_8223( "totalShots" );
-        self.bufferedstats["accuracy"] = self _meth_8223( "accuracy" );
-        self.bufferedstats["misses"] = self _meth_8223( "misses" );
-        self.bufferedstats["hits"] = self _meth_8223( "hits" );
-        self.bufferedstats["timePlayedAllies"] = self _meth_8223( "timePlayedAllies" );
-        self.bufferedstats["timePlayedOpfor"] = self _meth_8223( "timePlayedOpfor" );
-        self.bufferedstats["timePlayedOther"] = self _meth_8223( "timePlayedOther" );
-        self.bufferedstats["timePlayedTotal"] = self _meth_8223( "timePlayedTotal" );
+        self.bufferedstats["totalShots"] = self getrankedplayerdata( "totalShots" );
+        self.bufferedstats["accuracy"] = self getrankedplayerdata( "accuracy" );
+        self.bufferedstats["misses"] = self getrankedplayerdata( "misses" );
+        self.bufferedstats["hits"] = self getrankedplayerdata( "hits" );
+        self.bufferedstats["timePlayedAllies"] = self getrankedplayerdata( "timePlayedAllies" );
+        self.bufferedstats["timePlayedOpfor"] = self getrankedplayerdata( "timePlayedOpfor" );
+        self.bufferedstats["timePlayedOther"] = self getrankedplayerdata( "timePlayedOther" );
+        self.bufferedstats["timePlayedTotal"] = self getrankedplayerdata( "timePlayedTotal" );
     }
 
     self.bufferedchildstats = [];
     self.bufferedchildstats["round"] = [];
-    self.bufferedchildstats["round"]["timePlayed"] = self _meth_8226( "round", "timePlayed" );
+    self.bufferedchildstats["round"]["timePlayed"] = self getcommonplayerdata( "round", "timePlayed" );
 }
 
 statget( var_0 )
 {
-    return self _meth_8223( var_0 );
+    return self getrankedplayerdata( var_0 );
 }
 
 statset( var_0, var_1 )
@@ -47,7 +47,7 @@ statset( var_0, var_1 )
     if ( !maps\mp\_utility::rankingenabled() || maps\mp\_utility::practiceroundgame() )
         return;
 
-    self _meth_8244( var_0, var_1 );
+    self setrankedplayerdata( var_0, var_1 );
 }
 
 statadd( var_0, var_1, var_2 )
@@ -57,22 +57,22 @@ statadd( var_0, var_1, var_2 )
 
     if ( isdefined( var_2 ) )
     {
-        var_3 = self _meth_8223( var_0, var_2 );
-        self _meth_8244( var_0, var_2, var_1 + var_3 );
+        var_3 = self getrankedplayerdata( var_0, var_2 );
+        self setrankedplayerdata( var_0, var_2, var_1 + var_3 );
     }
     else
     {
-        var_3 = self _meth_8223( var_0 );
-        self _meth_8244( var_0, var_1 + var_3 );
+        var_3 = self getrankedplayerdata( var_0 );
+        self setrankedplayerdata( var_0, var_1 + var_3 );
     }
 }
 
 statgetchild( var_0, var_1 )
 {
     if ( var_0 == "round" )
-        return self _meth_8226( var_0, var_1 );
+        return self getcommonplayerdata( var_0, var_1 );
     else
-        return self _meth_8223( var_0, var_1 );
+        return self getrankedplayerdata( var_0, var_1 );
 }
 
 statsetchild( var_0, var_1, var_2 )
@@ -84,13 +84,13 @@ statsetchild( var_0, var_1, var_2 )
         return;
 
     if ( var_0 == "round" )
-        self _meth_8247( var_0, var_1, var_2 );
+        self setcommonplayerdata( var_0, var_1, var_2 );
     else
     {
         if ( !maps\mp\_utility::rankingenabled() || maps\mp\_utility::practiceroundgame() )
             return;
 
-        self _meth_8244( var_0, var_1, var_2 );
+        self setrankedplayerdata( var_0, var_1, var_2 );
     }
 }
 
@@ -99,8 +99,8 @@ stataddchild( var_0, var_1, var_2 )
     if ( !maps\mp\_utility::rankingenabled() || maps\mp\_utility::practiceroundgame() )
         return;
 
-    var_3 = self _meth_8223( var_0, var_1 );
-    self _meth_8244( var_0, var_1, var_3 + var_2 );
+    var_3 = self getrankedplayerdata( var_0, var_1 );
+    self setrankedplayerdata( var_0, var_1, var_3 + var_2 );
 }
 
 statgetchildbuffered( var_0, var_1 )
@@ -221,7 +221,7 @@ writebufferedstats()
     if ( var_0 )
     {
         foreach ( var_3, var_2 in self.bufferedstats )
-            self _meth_8244( var_3, var_2 );
+            self setrankedplayerdata( var_3, var_2 );
     }
 
     foreach ( var_3, var_2 in self.bufferedchildstats )
@@ -230,12 +230,12 @@ writebufferedstats()
         {
             if ( var_3 == "round" )
             {
-                self _meth_8247( var_3, var_7, var_6 );
+                self setcommonplayerdata( var_3, var_7, var_6 );
                 continue;
             }
 
             if ( var_0 )
-                self _meth_8244( var_3, var_7, var_6 );
+                self setrankedplayerdata( var_3, var_7, var_6 );
         }
     }
 }
@@ -250,8 +250,8 @@ incrementweaponstat( var_0, var_1, var_2 )
 
     if ( maps\mp\_utility::rankingenabled() && !maps\mp\_utility::practiceroundgame() )
     {
-        var_3 = self _meth_8223( "weaponStats", var_0, var_1 );
-        self _meth_8244( "weaponStats", var_0, var_1, var_3 + var_2 );
+        var_3 = self getrankedplayerdata( "weaponStats", var_0, var_1 );
+        self setrankedplayerdata( "weaponStats", var_0, var_1, var_3 + var_2 );
     }
 }
 
@@ -259,8 +259,8 @@ incrementattachmentstat( var_0, var_1, var_2 )
 {
     if ( maps\mp\_utility::rankingenabled() && !maps\mp\_utility::practiceroundgame() )
     {
-        var_3 = self _meth_8223( "attachmentsStats", var_0, var_1 );
-        self _meth_8244( "attachmentsStats", var_0, var_1, var_3 + var_2 );
+        var_3 = self getrankedplayerdata( "attachmentsStats", var_0, var_1 );
+        self setrankedplayerdata( "attachmentsStats", var_0, var_1, var_3 + var_2 );
     }
 }
 

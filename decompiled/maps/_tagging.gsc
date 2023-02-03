@@ -55,7 +55,7 @@ tagging_set_marking_enabled( var_0 )
     {
         foreach ( var_3 in var_1 )
         {
-            if ( isdefined( var_3.tagged ) && isdefined( var_3.tagged[self _meth_81B1()] ) )
+            if ( isdefined( var_3.tagged ) && isdefined( var_3.tagged[self getentitynumber()] ) )
                 var_3 tag_enemy( self );
         }
     }
@@ -107,11 +107,11 @@ tracking_init()
 
 tagging_set_hud_outline_style()
 {
-    _func_0D3( "r_hudoutlineenable", 1 );
-    _func_0D3( "r_hudoutlinewidth", 1 );
-    _func_0D3( "r_hudoutlinealpha0", 0.75 );
-    _func_0D3( "r_hudoutlinepostmode", 2 );
-    _func_0D3( "r_hudoutlinewhen", "after_colorize" );
+    setsaveddvar( "r_hudoutlineenable", 1 );
+    setsaveddvar( "r_hudoutlinewidth", 1 );
+    setsaveddvar( "r_hudoutlinealpha0", 0.75 );
+    setsaveddvar( "r_hudoutlinepostmode", 2 );
+    setsaveddvar( "r_hudoutlinewhen", "after_colorize" );
 }
 
 tagging_init_player()
@@ -185,7 +185,7 @@ tagging_highlight_hud_effect_apply( var_0, var_1 )
         var_0.detection_highlight_hud_effect.alpha = 0.005;
     }
 
-    var_0.detection_highlight_hud_effect _meth_83A4( var_1 );
+    var_0.detection_highlight_hud_effect setradarhighlight( var_1 );
 }
 
 tagging_highlight_hud_effect_remove( var_0 )
@@ -199,7 +199,7 @@ tagging_highlight_hud_effect_remove( var_0 )
 
 tagging_enemy_list()
 {
-    var_0 = _func_0D6( "axis", "neutral" );
+    var_0 = getaiarray( "axis", "neutral" );
 
     if ( isdefined( level.active_drones ) )
         var_0 = common_scripts\utility::array_combine( var_0, level.active_drones );
@@ -266,7 +266,7 @@ tagging_mode_begin()
     }
 
     self.tagging["forced_mode_weap"] = undefined;
-    _func_0D3( "cg_drawMantleHint", "0" );
+    setsaveddvar( "cg_drawMantleHint", "0" );
     wait 0.5;
     tagging_hud_show_all();
 
@@ -300,14 +300,14 @@ tagging_mode_end()
     }
 
     self.tagging["forced_mode_weap"] = undefined;
-    self _meth_8031( 65, 0.25 );
+    self lerpfov( 65, 0.25 );
     wait 0.5;
-    _func_0D3( "cg_drawMantleHint", "1" );
+    setsaveddvar( "cg_drawMantleHint", "1" );
     var_0 = tagging_enemy_list();
 
     foreach ( var_2 in var_0 )
     {
-        if ( isdefined( var_2.tagged ) && isdefined( var_2.tagged[self _meth_81B1()] ) )
+        if ( isdefined( var_2.tagged ) && isdefined( var_2.tagged[self getentitynumber()] ) )
             continue;
 
         var_2 tag_trace_update( "none", self );
@@ -383,7 +383,7 @@ tagging_create_hud()
         self.tagging["hud"]["large_spinner"].vertalign = "middle";
         self.tagging["hud"]["large_spinner"].color = ( 1, 1, 1 );
         self.tagging["hud"]["large_spinner"].alpha = 1.0;
-        self.tagging["hud"]["large_spinner"] _meth_84E8( 0.5 );
+        self.tagging["hud"]["large_spinner"] rotateovertime( 0.5 );
         self.tagging["hud"]["large_spinner"].rotation = -360;
         self.tagging["hud"]["logo"] = maps\_hud_util::createicon( "hud_ar_visor_sentinel_logo", 116, 29 );
         self.tagging["hud"]["logo"].hidewheninmenu = 1;
@@ -494,7 +494,7 @@ tagging_create_hud_crosshair()
     var_0.sort = 997;
     var_0.alignx = "center";
     var_0.aligny = "middle";
-    var_0 _meth_80CC( "hud_ar_visor_arc", 920, 480 );
+    var_0 setshader( "hud_ar_visor_arc", 920, 480 );
     return var_0;
 }
 
@@ -541,7 +541,7 @@ tagging_zoom_monitor()
             if ( isdefined( self.tagging["forced_mode_fov"] ) )
                 var_7 = self.tagging["forced_mode_fov"];
 
-            self _meth_8031( var_7, var_3 );
+            self lerpfov( var_7, var_3 );
             thread tagging_zoom_transition( self.tagging["fov"], self.tagging["range"], var_7, var_8, var_3 );
             tagging_zoom_sound( self.tagging["zoom"], var_3 );
             var_2 = var_5;
@@ -583,8 +583,8 @@ tagging_zoom_transition( var_0, var_1, var_2, var_3, var_4 )
     var_6 = var_5 + gettime();
     var_7 = 0;
     var_8 = 0;
-    self.tagging["hud"]["small_spinner"] _meth_84E8( var_4 );
-    self.tagging["hud"]["large_spinner"] _meth_84E8( var_4 );
+    self.tagging["hud"]["small_spinner"] rotateovertime( var_4 );
+    self.tagging["hud"]["large_spinner"] rotateovertime( var_4 );
 
     if ( self.tagging["zoom"] )
     {
@@ -608,7 +608,7 @@ tagging_zoom_transition( var_0, var_1, var_2, var_3, var_4 )
         else
             var_8 = var_7;
 
-        self.tagging["hud"]["zoom_guage_text"] _meth_80D7( 20 * var_8 );
+        self.tagging["hud"]["zoom_guage_text"] setvalue( 20 * var_8 );
         var_9 = 21.95;
         var_10 = 551;
 
@@ -630,7 +630,7 @@ tag_update_enemy_in_sights()
     if ( var_0 )
     {
         var_1 = tagging_enemy_list();
-        var_2 = self _meth_80A8();
+        var_2 = self geteye();
         var_3 = anglestoforward( self getangles() );
         var_4 = undefined;
         var_5 = max( 0.01, getdvarfloat( "tagging_ads_cone_range" ) );
@@ -641,7 +641,7 @@ tag_update_enemy_in_sights()
 
         foreach ( var_10 in var_1 )
         {
-            if ( isdefined( var_10.tagged ) && isdefined( var_10.tagged[self _meth_81B1()] ) )
+            if ( isdefined( var_10.tagged ) && isdefined( var_10.tagged[self getentitynumber()] ) )
                 continue;
 
             if ( !getdvarint( "tagging_vehicle_ride" ) && isdefined( var_10.vehicle_ride ) && var_10.vehicle_ride.veh_speed > 0 )
@@ -654,7 +654,7 @@ tag_update_enemy_in_sights()
                 var_12 = var_10 gettagorigin( "tag_origin" );
 
                 if ( isai( var_10 ) )
-                    var_12 = var_10 _meth_80A8();
+                    var_12 = var_10 geteye();
 
                 var_13 = distance( var_12, var_2 );
 
@@ -702,7 +702,7 @@ tag_monitor( var_0 )
 
     for (;;)
     {
-        tag_scan_update( self _meth_80A8(), self getangles(), self.tagging["fov"], float( self.tagging["fov"] ) * 0.28, self.tagging["range"] );
+        tag_scan_update( self geteye(), self getangles(), self.tagging["fov"], float( self.tagging["fov"] ) * 0.28, self.tagging["range"] );
         wait 0.05;
     }
 }
@@ -756,7 +756,7 @@ enemy_sight_trace_passed( var_0 )
 enemy_sight_trace( var_0 )
 {
     var_1 = 0;
-    var_2 = level.player _meth_80A8();
+    var_2 = level.player geteye();
 
     if ( isai( var_0 ) )
     {
@@ -785,11 +785,11 @@ tag_scan_update( var_0, var_1, var_2, var_3, var_4 )
         var_11 = ( 0, 0, 0 );
 
         if ( isai( var_9 ) )
-            var_11 = var_9 _meth_80A8();
+            var_11 = var_9 geteye();
         else
             var_11 = var_9 gettagorigin( "tag_origin" );
 
-        if ( isdefined( var_9.tagged ) && isdefined( var_9.tagged[self _meth_81B1()] ) )
+        if ( isdefined( var_9.tagged ) && isdefined( var_9.tagged[self getentitynumber()] ) )
             continue;
 
         if ( !getdvarint( "tagging_vehicle_ride" ) && isdefined( var_9.vehicle_ride ) && var_9.vehicle_ride.veh_speed > 0 )
@@ -919,9 +919,9 @@ tagged_enemy_update()
         var_0 = self gettagorigin( "tag_origin" );
 
         if ( isai( self ) )
-            var_0 = self _meth_80A8();
+            var_0 = self geteye();
 
-        var_1 = vectornormalize( var_0 - level.player _meth_80A8() );
+        var_1 = vectornormalize( var_0 - level.player geteye() );
         var_2 = anglestoforward( level.player getangles() );
 
         if ( vectordot( var_1, var_2 ) < cos( 65 ) )
@@ -937,12 +937,12 @@ tagged_enemy_update()
 
 tag_threat_detection( var_0 )
 {
-    self _meth_84ED( "disable" );
+    self setthreatdetection( "disable" );
 
     if ( var_0 )
     {
         if ( self.team == "axis" )
-            self _meth_84ED( "detected" );
+            self setthreatdetection( "detected" );
     }
 }
 
@@ -956,10 +956,10 @@ tag_enemy( var_0 )
         return;
     }
 
-    if ( !isdefined( self.tagged ) || !isdefined( self.tagged[var_0 _meth_81B1()] ) || !self.tagged[var_0 _meth_81B1()] )
+    if ( !isdefined( self.tagged ) || !isdefined( self.tagged[var_0 getentitynumber()] ) || !self.tagged[var_0 getentitynumber()] )
         soundscripts\_snd_playsound::snd_play_2d( "drone_tag_success" );
 
-    self.tagged[var_0 _meth_81B1()] = 1;
+    self.tagged[var_0 getentitynumber()] = 1;
     tag_outline_enemy( 1 );
     self.tag_trace_state = undefined;
     self.tag_trace_pulse = undefined;
@@ -979,7 +979,7 @@ tagged_status_show()
     if ( isdefined( self.tagging_color ) && self.tagging_color == var_0 )
         return;
 
-    self _meth_83FA( var_0, 0 );
+    self hudoutlineenable( var_0, 0 );
     self.tagging_color = var_0;
     thread tagged_status_update();
 }
@@ -990,7 +990,7 @@ tagged_status_hide()
 
     if ( isdefined( self.tagging_color ) )
     {
-        self _meth_83FB();
+        self hudoutlinedisable();
         self.tagging_color = undefined;
     }
 }
@@ -1008,9 +1008,9 @@ tagged_status_update()
         var_2 = lengthsquared( level.player.origin - self.origin );
 
         if ( var_2 > var_1 )
-            self _meth_83FB();
+            self hudoutlinedisable();
         else
-            self _meth_83FA( self.tagging_color, 0 );
+            self hudoutlineenable( self.tagging_color, 0 );
 
         wait 0.05;
     }

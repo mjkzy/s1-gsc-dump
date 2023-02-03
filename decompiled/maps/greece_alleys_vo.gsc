@@ -165,12 +165,12 @@ alleysvisitorcentergatereminder()
 alleyssniperpip()
 {
     common_scripts\utility::flag_wait( "AlleysVisitorGateIsOpen" );
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     wait 2;
     soundscripts\_snd::snd_message( "alleys_music_end" );
     maps\_hms_utility::playdialog( level.dialogtable, "VideoLog" );
-    level.player _meth_8304( 1 );
-    level.player _meth_848D( 1 );
+    level.player allowsprint( 1 );
+    level.player allowdodge( 1 );
     common_scripts\utility::flag_set( "FlagAlleysPipComplete" );
 }

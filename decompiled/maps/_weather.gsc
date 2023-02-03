@@ -277,7 +277,7 @@ thunder()
 
     var_0 = spawn( "script_origin", ( 0, 0, 0 ) );
     var_0.origin = level.player.origin + ( 0, 0, 60 );
-    var_0 _meth_804D( level.player );
+    var_0 linkto( level.player );
 
     if ( level.rainlevel <= 8 )
         var_0 playsound( "elm_thunder_distant", "sounddone" );

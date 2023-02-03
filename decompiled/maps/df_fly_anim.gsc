@@ -167,31 +167,31 @@ vehicle_anims()
 
 play_canopy_closed_bink( var_0 )
 {
-    level.finale_pod _meth_804B( "TAG_SCREEN_JOINT_LOAD" );
+    level.finale_pod showpart( "TAG_SCREEN_JOINT_LOAD" );
     pausecinematicingame( 0 );
     wait 4;
 }
 
 play_canopy_bink( var_0 )
 {
-    level.finale_pod _meth_804B( "TAG_SCREEN_JOINT_LOAD" );
+    level.finale_pod showpart( "TAG_SCREEN_JOINT_LOAD" );
 }
 
 show_uplink( var_0 )
 {
-    level.finale_pod _meth_804B( "TAG_TRANSFER_AR" );
+    level.finale_pod showpart( "TAG_TRANSFER_AR" );
     wait 0.1;
-    level.finale_pod _meth_8048( "TAG_TRANSFER_AR" );
+    level.finale_pod hidepart( "TAG_TRANSFER_AR" );
     wait 0.1;
-    level.finale_pod _meth_804B( "TAG_TRANSFER_AR" );
+    level.finale_pod showpart( "TAG_TRANSFER_AR" );
     wait 0.2;
-    level.finale_pod _meth_8048( "TAG_TRANSFER_AR" );
+    level.finale_pod hidepart( "TAG_TRANSFER_AR" );
     wait 0.2;
-    level.finale_pod _meth_804B( "TAG_TRANSFER_AR" );
+    level.finale_pod showpart( "TAG_TRANSFER_AR" );
     wait 0.8;
-    level.finale_pod _meth_8048( "TAG_TRANSFER_AR" );
+    level.finale_pod hidepart( "TAG_TRANSFER_AR" );
     wait 0.1;
-    level.finale_pod _meth_804B( "TAG_TRANSFER_AR" );
+    level.finale_pod showpart( "TAG_TRANSFER_AR" );
 }
 
 show_finale_jet( var_0 )

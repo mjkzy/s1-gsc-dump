@@ -23,8 +23,8 @@ main()
         return;
     }
 
-    self _meth_818E( "zonly_physics" );
-    self _meth_818F( "face angle", self.angles[1] );
+    self animmode( "zonly_physics" );
+    self orientmode( "face angle", self.angles[1] );
     var_0 = 0;
 
     if ( isdefined( self.grenade ) )
@@ -37,13 +37,13 @@ main()
         if ( isdefined( self.grenade ) && trydive( var_0 ) )
             return;
 
-        self _meth_8110( "cowerstart", animscripts\utility::lookupanim( "grenade", "cower_squat" ), %body, 1, 0.2 );
+        self setflaggedanimknoballrestart( "cowerstart", animscripts\utility::lookupanim( "grenade", "cower_squat" ), %body, 1, 0.2 );
         animscripts\shared::donotetracks( "cowerstart" );
     }
 
     self.a.pose = "crouch";
     self.a.movement = "stop";
-    self _meth_8110( "cower", animscripts\utility::lookupanim( "grenade", "cower_squat_idle" ), %body, 1, 0.2 );
+    self setflaggedanimknoballrestart( "cower", animscripts\utility::lookupanim( "grenade", "cower_squat_idle" ), %body, 1, 0.2 );
     animscripts\shared::donotetracks( "cower" );
     self waittill( "never" );
 }
@@ -69,13 +69,13 @@ trydive( var_0 )
         var_1 = animscripts\utility::lookupanim( "grenade", "cower_dive_front" );
 
     var_2 = getmovedelta( var_1, 0, 0.5 );
-    var_3 = self _meth_81B0( var_2 );
+    var_3 = self localtoworldcoords( var_2 );
 
-    if ( !self _meth_81C3( var_3 ) )
+    if ( !self maymovetopoint( var_3 ) )
         return 0;
 
     self.safetochangescript = 0;
-    self _meth_8110( "cowerstart", var_1, %body, 1, 0.2 );
+    self setflaggedanimknoballrestart( "cowerstart", var_1, %body, 1, 0.2 );
     animscripts\shared::donotetracks( "cowerstart" );
     self.safetochangescript = 1;
     return 1;

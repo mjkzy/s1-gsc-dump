@@ -65,7 +65,7 @@ setup_bot_sd()
 
     foreach ( var_2 in level.bombzones )
     {
-        var_3 = _func_202( var_2.curorigin );
+        var_3 = getzonenearest( var_2.curorigin );
 
         if ( isdefined( var_3 ) )
             botzonesetteam( var_3, game["defenders"] );
@@ -90,9 +90,9 @@ bot_sd_think()
     while ( !isdefined( level.bot_gametype_precaching_done ) )
         wait 0.05;
 
-    self _meth_8351( "separation", 0 );
-    self _meth_8351( "grenade_objectives", 1 );
-    self _meth_8351( "use_obj_path_style", 1 );
+    self botsetflag( "separation", 0 );
+    self botsetflag( "grenade_objectives", 1 );
+    self botsetflag( "use_obj_path_style", 1 );
     var_0 = game["attackers"];
     var_1 = 1;
 
@@ -183,13 +183,13 @@ bot_sd_think()
                 if ( !isdefined( self.defender_set_script_pathstyle ) )
                 {
                     self.defender_set_script_pathstyle = 1;
-                    self _meth_8379( "scripted" );
+                    self botsetpathingstyle( "scripted" );
                 }
             }
             else if ( isdefined( self.defender_set_script_pathstyle ) && !isdefined( self.scripted_path_style ) )
             {
                 self.defender_set_script_pathstyle = undefined;
-                self _meth_8379( undefined );
+                self botsetpathingstyle( undefined );
             }
         }
 
@@ -197,7 +197,7 @@ bot_sd_think()
         {
             if ( !maps\mp\bots\_bots_util::bot_is_defending_point( level.sdbombmodel.origin ) )
             {
-                self _meth_8356();
+                self botclearscriptgoal();
                 maps\mp\bots\_bots_strategy::bot_protect_point( level.sdbombmodel.origin, level.protect_radius );
             }
 
@@ -213,11 +213,11 @@ bomber_disable_movement_for_time( var_0 )
     self endon( "death" );
     self endon( "disconnect" );
     level endon( "game_ended" );
-    self _meth_8351( "disable_movement", 1 );
-    self _meth_8352( "stand" );
+    self botsetflag( "disable_movement", 1 );
+    self botsetstance( "stand" );
     wait(var_0);
-    self _meth_8351( "disable_movement", 0 );
-    self _meth_8352( "none" );
+    self botsetflag( "disable_movement", 0 );
+    self botsetstance( "none" );
 }
 
 atk_bomber_update()
@@ -239,7 +239,7 @@ atk_bomber_update()
 
             if ( distancesquared( self.last_bomb_location, level.sdbomb.curorigin ) > 4 )
             {
-                self _meth_8356();
+                self botclearscriptgoal();
                 self.last_bomb_location = level.sdbomb.curorigin;
             }
         }
@@ -251,7 +251,7 @@ atk_bomber_update()
 
             foreach ( var_4 in var_1 )
             {
-                if ( !var_4 _meth_8386() )
+                if ( !var_4 nodeisdisconnected() )
                 {
                     var_2 = var_4;
                     break;
@@ -260,7 +260,7 @@ atk_bomber_update()
 
             if ( isdefined( var_2 ) )
             {
-                self _meth_8354( var_2.origin, 20, "critical" );
+                self botsetscriptgoal( var_2.origin, 20, "critical" );
                 maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
 
                 if ( isdefined( level.sdbomb ) && !isdefined( level.sdbomb.carrier ) )
@@ -274,7 +274,7 @@ atk_bomber_update()
             return;
         }
 
-        if ( !self _meth_8365() )
+        if ( !self bothasscriptgoal() )
         {
             var_6 = 15;
             var_7 = 32;
@@ -282,7 +282,7 @@ atk_bomber_update()
 
             if ( isdefined( var_8 ) )
             {
-                var_9 = self _meth_8354( level.sdbomb.curorigin, 0, "critical" );
+                var_9 = self botsetscriptgoal( level.sdbomb.curorigin, 0, "critical" );
 
                 if ( var_9 )
                 {
@@ -296,7 +296,7 @@ atk_bomber_update()
 
                 if ( var_1.size > 0 )
                 {
-                    self _meth_8354( var_1[0].origin, 0, "critical" );
+                    self botsetscriptgoal( var_1[0].origin, 0, "critical" );
                     maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
                 }
 
@@ -328,14 +328,14 @@ atk_bomber_update()
             wait(level.initial_pickup_wait_time / 1000);
         }
 
-        self _meth_8356();
+        self botclearscriptgoal();
 
         if ( level.attack_behavior == "rush" )
         {
-            self _meth_8379( "scripted" );
-            var_11 = self _meth_8380( var_10.bottargets, "node_exposed" );
-            var_12 = self _meth_837B( "strategyLevel" ) * 0.45;
-            var_13 = ( self _meth_837B( "strategyLevel" ) + 1 ) * 0.15;
+            self botsetpathingstyle( "scripted" );
+            var_11 = self botnodescoremultiple( var_10.bottargets, "node_exposed" );
+            var_12 = self botgetdifficultysetting( "strategyLevel" ) * 0.45;
+            var_13 = ( self botgetdifficultysetting( "strategyLevel" ) + 1 ) * 0.15;
 
             foreach ( var_4 in var_10.bottargets )
             {
@@ -350,7 +350,7 @@ atk_bomber_update()
             else
                 var_16 = common_scripts\utility::random( var_11 );
 
-            self _meth_8354( var_16.origin, 0, "critical" );
+            self botsetscriptgoal( var_16.origin, 0, "critical" );
         }
 
         var_17 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
@@ -366,7 +366,7 @@ atk_bomber_update()
 
             var_21 = gettime() >= var_20;
             var_22 = sd_press_use( level.planttime + 2, "bomb_planted", var_21 );
-            self _meth_8356();
+            self botclearscriptgoal();
 
             if ( var_22 )
             {
@@ -424,7 +424,7 @@ clear_target_zone_update()
                 self.set_initial_rush_goal = 1;
             }
 
-            if ( self _meth_837B( "strategyLevel" ) > 0 )
+            if ( self botgetdifficultysetting( "strategyLevel" ) > 0 )
                 set_force_sprint();
 
             if ( isai( level.atk_bomber ) && isdefined( level.atk_bomber.bombzonegoal ) )
@@ -481,8 +481,8 @@ bomb_defuser_update()
         var_3 = cautious_approach_till_close( var_2, undefined );
     else
     {
-        self _meth_8356();
-        var_3 = self _meth_8354( var_2, 20, "critical" );
+        self botclearscriptgoal();
+        var_3 = self botsetscriptgoal( var_2, 20, "critical" );
     }
 
     if ( !var_3 )
@@ -503,15 +503,15 @@ bomb_defuser_update()
 
                 if ( var_5.size <= var_6 )
                 {
-                    var_7 = _func_1FD( var_2, 50, self );
+                    var_7 = botgetclosestnavigablepoint( var_2, 50, self );
 
                     if ( isdefined( var_7 ) )
-                        self _meth_8354( var_7, 20, "critical" );
+                        self botsetscriptgoal( var_7, 20, "critical" );
                     else
                         break;
                 }
                 else
-                    self _meth_8354( var_5[var_6].origin, 20, "critical" );
+                    self botsetscriptgoal( var_5[var_6].origin, 20, "critical" );
 
                 var_4 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
 
@@ -542,7 +542,7 @@ bomb_defuser_update()
         if ( !var_13 && self.defuser_bad_path_counter >= 4 )
             self.defuser_bad_path_counter++;
 
-        self _meth_8356();
+        self botclearscriptgoal();
         maps\mp\bots\_bots_strategy::bot_enable_tactical_goals();
     }
 }
@@ -555,7 +555,7 @@ investigate_someone_using_bomb_update()
         maps\mp\bots\_bots_strategy::bot_defend_stop();
 
     var_0 = find_closest_bombzone_to_player( self );
-    self _meth_8355( common_scripts\utility::random( var_0.bottargets ), "guard" );
+    self botsetscriptgoalnode( common_scripts\utility::random( var_0.bottargets ), "guard" );
     var_1 = maps\mp\bots\_bots_util::bot_waittill_goal_or_fail();
 
     if ( var_1 == "goal" )
@@ -635,8 +635,8 @@ backstabber_update()
             var_6 -= var_8;
         }
 
-        self _meth_8379( "scripted" );
-        var_9 = self _meth_8355( var_4, "guard" );
+        self botsetpathingstyle( "scripted" );
+        var_9 = self botsetscriptgoalnode( var_4, "guard" );
 
         if ( var_9 )
         {
@@ -654,8 +654,8 @@ backstabber_update()
     {
         var_11 = maps\mp\gametypes\_spawnlogic::getspawnpointarray( "mp_sd_spawn_attacker" );
         var_12 = common_scripts\utility::random( var_11 );
-        self _meth_8379( "scripted" );
-        var_9 = self _meth_8354( var_12.origin, 250, "guard" );
+        self botsetpathingstyle( "scripted" );
+        var_9 = self botsetscriptgoal( var_12.origin, 250, "guard" );
 
         if ( var_9 )
         {
@@ -671,8 +671,8 @@ backstabber_update()
         if ( !isdefined( self.bombzone_num_picked ) )
             self.bombzone_num_picked = randomint( level.bombzones.size );
 
-        self _meth_8379( undefined );
-        var_9 = self _meth_8354( common_scripts\utility::random( level.bombzones[self.bombzone_num_picked].bottargets ).origin, 160, "objective" );
+        self botsetpathingstyle( undefined );
+        var_9 = self botsetscriptgoal( common_scripts\utility::random( level.bombzones[self.bombzone_num_picked].bottargets ).origin, 160, "objective" );
 
         if ( var_9 )
         {
@@ -680,7 +680,7 @@ backstabber_update()
 
             if ( var_10 == "goal" )
             {
-                self _meth_8356();
+                self botclearscriptgoal();
                 self.backstabber_stage = "2_move_to_enemy_spawn";
                 self.bombzone_num_picked = 1 - self.bombzone_num_picked;
             }
@@ -702,7 +702,7 @@ set_force_sprint()
 {
     if ( !isdefined( self.always_sprint ) )
     {
-        self _meth_8351( "force_sprint", 1 );
+        self botsetflag( "force_sprint", 1 );
         self.always_sprint = 1;
     }
 }
@@ -711,7 +711,7 @@ disable_force_sprint()
 {
     if ( isdefined( self.always_sprint ) )
     {
-        self _meth_8351( "force_sprint", 0 );
+        self botsetflag( "force_sprint", 0 );
         self.always_sprint = undefined;
     }
 }
@@ -720,7 +720,7 @@ set_scripted_pathing_style()
 {
     if ( !isdefined( self.scripted_path_style ) )
     {
-        self _meth_8379( "scripted" );
+        self botsetpathingstyle( "scripted" );
         self.scripted_path_style = 1;
     }
 }
@@ -747,34 +747,34 @@ cautious_approach_till_close( var_0, var_1 )
     if ( maps\mp\bots\_bots_util::bot_is_defending() )
         maps\mp\bots\_bots_strategy::bot_defend_stop();
 
-    return self _meth_8354( var_0, 20, "critical" );
+    return self botsetscriptgoal( var_0, 20, "critical" );
 }
 
 sd_press_use( var_0, var_1, var_2, var_3 )
 {
     var_4 = 0;
 
-    if ( self _meth_837B( "strategyLevel" ) == 1 )
+    if ( self botgetdifficultysetting( "strategyLevel" ) == 1 )
         var_4 = 40;
-    else if ( self _meth_837B( "strategyLevel" ) >= 2 )
+    else if ( self botgetdifficultysetting( "strategyLevel" ) >= 2 )
         var_4 = 80;
 
     if ( randomint( 100 ) < var_4 && !( isdefined( var_3 ) && var_3 ) )
     {
-        self _meth_8352( "prone" );
+        self botsetstance( "prone" );
         wait 0.2;
     }
 
-    if ( self _meth_837B( "strategyLevel" ) > 0 && !var_2 )
+    if ( self botgetdifficultysetting( "strategyLevel" ) > 0 && !var_2 )
     {
         childthread notify_on_whizby();
         childthread notify_on_damage();
     }
 
-    self _meth_837E( "use", var_0 );
+    self botpressbutton( "use", var_0 );
     var_5 = maps\mp\bots\_bots_util::bot_usebutton_wait( var_0, var_1, "use_interrupted" );
-    self _meth_8352( "none" );
-    self _meth_837F( "use" );
+    self botsetstance( "none" );
+    self botclearbutton( "use" );
     var_6 = var_5 == var_1;
     return var_6;
 }
@@ -788,9 +788,9 @@ notify_enemy_team_bomb_used( var_0 )
         var_4 = 0;
 
         if ( var_0 == "plant" )
-            var_4 = 300 + var_3 _meth_837B( "strategyLevel" ) * 100;
+            var_4 = 300 + var_3 botgetdifficultysetting( "strategyLevel" ) * 100;
         else if ( var_0 == "defuse" )
-            var_4 = 500 + var_3 _meth_837B( "strategyLevel" ) * 500;
+            var_4 = 500 + var_3 botgetdifficultysetting( "strategyLevel" ) * 500;
 
         if ( distancesquared( var_3.origin, self.origin ) < squared( var_4 ) )
             var_3 bot_set_role( "investigate_someone_using_bomb" );
@@ -844,7 +844,7 @@ should_start_cautious_approach_sd( var_0 )
         return var_3;
     }
     else
-        return distancesquared( self.origin, self.bot_defending_center ) <= var_2 && self _meth_8375();
+        return distancesquared( self.origin, self.bot_defending_center ) <= var_2 && self botpursuingscriptgoal();
 }
 
 find_closest_bombzone_to_player( var_0 )
@@ -937,7 +937,7 @@ bomber_wait_for_bomb_reset()
     level.sdbomb waittill( "reset" );
 
     if ( maps\mp\_utility::isaiteamparticipant( self ) )
-        self _meth_8356();
+        self botclearscriptgoal();
 
     bot_set_role( "atk_bomber" );
 }
@@ -955,7 +955,7 @@ set_new_bomber()
     {
         maps\mp\bots\_bots_strategy::bot_disable_tactical_goals();
 
-        if ( level.attack_behavior == "rush" && self _meth_837B( "strategyLevel" ) > 0 )
+        if ( level.attack_behavior == "rush" && self botgetdifficultysetting( "strategyLevel" ) > 0 )
             set_force_sprint();
     }
 }
@@ -976,7 +976,7 @@ initialize_sd_role()
         var_0 = get_players_by_role( "backstabber" );
         var_1 = get_players_by_role( "defender" );
         var_2 = level.bot_personality_type[self.personality];
-        var_3 = self _meth_837B( "strategyLevel" );
+        var_3 = self botgetdifficultysetting( "strategyLevel" );
 
         if ( var_2 == "active" )
         {
@@ -1087,7 +1087,7 @@ bot_set_role( var_0 )
     if ( isai( self ) )
     {
         maps\mp\bots\_bots_strategy::bot_defend_stop();
-        self _meth_8379( undefined );
+        self botsetpathingstyle( undefined );
     }
 
     self.prev_role = self.role;
@@ -1215,12 +1215,12 @@ bot_sd_ai_director_update()
 
                     foreach ( var_9 in var_7 )
                     {
-                        var_10 = var_9 _meth_8387();
-                        var_11 = var_9 _meth_837B( "strategyLevel" );
+                        var_10 = var_9 getnearestnode();
+                        var_11 = var_9 botgetdifficultysetting( "strategyLevel" );
 
-                        if ( var_11 > 0 && var_9.role != "camp_bomb" && isdefined( var_10 ) && _func_1FF( var_5, var_10, 1 ) )
+                        if ( var_11 > 0 && var_9.role != "camp_bomb" && isdefined( var_10 ) && nodesvisible( var_5, var_10, 1 ) )
                         {
-                            var_12 = var_9 _meth_8373();
+                            var_12 = var_9 botgetfovdot();
 
                             if ( common_scripts\utility::within_fov( var_9.origin, var_9.angles, level.sdbomb.curorigin, var_12 ) )
                             {
@@ -1237,7 +1237,7 @@ bot_sd_ai_director_update()
                     {
                         foreach ( var_9 in var_7 )
                         {
-                            if ( var_9.role != "camp_bomb" && var_9 _meth_837B( "strategyLevel" ) > 0 )
+                            if ( var_9.role != "camp_bomb" && var_9 botgetdifficultysetting( "strategyLevel" ) > 0 )
                                 var_9 bot_set_role( "camp_bomb" );
                         }
                     }

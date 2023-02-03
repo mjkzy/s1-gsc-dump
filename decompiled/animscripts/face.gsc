@@ -37,7 +37,7 @@ saygenericdialogue( var_0 )
             var_3 = anim.numenemyvoices;
     }
 
-    var_1 = 1 + self _meth_81B1() % var_3;
+    var_1 = 1 + self getentitynumber() % var_3;
     var_2 = var_2 + "_" + var_1;
     var_4 = undefined;
 
@@ -130,12 +130,12 @@ playfacethread( var_0, var_1, var_2, var_3, var_4, var_5 )
                 self notify( var_3 );
             }
 
-            self _meth_806A( var_1, "animscript facesound" + var_3, 1 );
+            self playsoundatviewheight( var_1, "animscript facesound" + var_3, 1 );
             thread waitforfacesound( var_3 );
         }
     }
     else
-        self _meth_806A( var_1 );
+        self playsoundatviewheight( var_1 );
 
     if ( !anim.usefacialanims )
         return;
@@ -245,7 +245,7 @@ playfacethread( var_0, var_1, var_2, var_3, var_4, var_5 )
                 if ( isdefined( var_0 ) )
                 {
                     maps\_anim::disabledefaultfacialanims();
-                    self _meth_810D( "animscript faceanim", var_0, 1, 0.1, 1 );
+                    self setflaggedanimknobrestart( "animscript faceanim", var_0, 1, 0.1, 1 );
                     self.a.facialanimdone = 0;
                     thread waitforfacialanim();
                 }
@@ -254,7 +254,7 @@ playfacethread( var_0, var_1, var_2, var_3, var_4, var_5 )
 
                 if ( isdefined( var_1 ) )
                 {
-                    self _meth_806A( var_1, "animscript facesound", 1 );
+                    self playsoundatviewheight( var_1, "animscript facesound", 1 );
                     self.a.facialsounddone = 0;
                     thread waitforfacesound();
                 }
@@ -383,16 +383,16 @@ playfacialanim( var_0, var_1, var_2 )
         thread facial_idle_monitor_thread();
 
     if ( isdefined( self.bdisabledefaultfacialanims ) && self.bdisabledefaultfacialanims )
-        self _meth_8142( %head, 0.2 );
+        self clearanim( %head, 0.2 );
     else
     {
         if ( isdefined( var_0 ) && animhasfacialoverride( var_0 ) )
         {
-            self _meth_8142( %head, 0.2 );
+            self clearanim( %head, 0.2 );
             return;
         }
 
-        if ( self _meth_84F3() )
+        if ( self hasblendshapes() )
             var_1 += "_blend";
 
         if ( !isdefined( anim.facial[var_1] ) )
@@ -404,7 +404,7 @@ playfacialanim( var_0, var_1, var_2 )
             var_3 = randomint( anim.facial[var_1].size );
 
         var_4 = anim.facial[var_1][var_3];
-        self _meth_8143( var_4 );
+        self setanimknob( var_4 );
 
         if ( var_1 == "death" )
             thread end_facial_on_death();
@@ -416,15 +416,15 @@ end_facial_on_death()
     wait 1.0;
 
     if ( isdefined( self ) )
-        self _meth_8142( %head, 0.2 );
+        self clearanim( %head, 0.2 );
 }
 
 get_eye_relative_dir()
 {
-    if ( self _meth_8442( "jnt_eyelid_TL" ) == -1 || self _meth_8442( "tag_eye" ) == -1 )
+    if ( self gettagindex( "jnt_eyelid_TL" ) == -1 || self gettagindex( "tag_eye" ) == -1 )
         return;
 
-    if ( self _meth_8442( "jnt_eyelid_TR" ) == -1 )
+    if ( self gettagindex( "jnt_eyelid_TR" ) == -1 )
         return;
 
     var_0 = self gettagangles( "tag_eye" );

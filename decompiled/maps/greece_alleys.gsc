@@ -17,25 +17,25 @@ alleysprecache()
     precachemodel( "viewhands_atlas_military" );
     precachemodel( "vb_civilian_mitchell" );
     precachemodel( "viewbody_atlas_military" );
-    precacheitem( "iw5_hmr9_sp" );
-    precacheitem( "iw5_hmr9_sp_variablereddot" );
-    precacheitem( "iw5_bal27_sp" );
-    precacheitem( "iw5_bal27_sp_silencer01_variablereddot" );
-    precacheitem( "iw5_sn6_sp" );
-    precacheitem( "fraggrenade" );
-    precacheitem( "flash_grenade" );
-    precacheitem( "iw5_kf5_sp" );
-    precacheitem( "iw5_kf5_sp_opticsthermal" );
-    precacheitem( "iw5_maul_sp" );
-    precacheitem( "iw5_maul_sp_opticsreddot" );
-    precacheitem( "iw5_ak12_sp" );
-    precacheitem( "iw5_ak12_sp_opticstargetenhancer" );
-    precacheitem( "iw5_hbra3_sp" );
-    precacheitem( "iw5_hbra3_sp_opticsacog2" );
-    precacheitem( "iw5_mahemstraight_sp" );
-    precacheitem( "iw5_titan45_sp" );
-    precacheitem( "iw5_titan45_sp_opticsreddot_silencerpistol" );
-    precacheitem( "iw5_arx160_sp" );
+    precacheshellshock( "iw5_hmr9_sp" );
+    precacheshellshock( "iw5_hmr9_sp_variablereddot" );
+    precacheshellshock( "iw5_bal27_sp" );
+    precacheshellshock( "iw5_bal27_sp_silencer01_variablereddot" );
+    precacheshellshock( "iw5_sn6_sp" );
+    precacheshellshock( "fraggrenade" );
+    precacheshellshock( "flash_grenade" );
+    precacheshellshock( "iw5_kf5_sp" );
+    precacheshellshock( "iw5_kf5_sp_opticsthermal" );
+    precacheshellshock( "iw5_maul_sp" );
+    precacheshellshock( "iw5_maul_sp_opticsreddot" );
+    precacheshellshock( "iw5_ak12_sp" );
+    precacheshellshock( "iw5_ak12_sp_opticstargetenhancer" );
+    precacheshellshock( "iw5_hbra3_sp" );
+    precacheshellshock( "iw5_hbra3_sp_opticsacog2" );
+    precacheshellshock( "iw5_mahemstraight_sp" );
+    precacheshellshock( "iw5_titan45_sp" );
+    precacheshellshock( "iw5_titan45_sp_opticsreddot_silencerpistol" );
+    precacheshellshock( "iw5_arx160_sp" );
     precacherumble( "silencer_fire" );
     precacheshellshock( "greece_drone_slowview" );
     precachestring( &"GREECE_OBJ_SAFEHOUSE_FOLLOW" );
@@ -45,7 +45,7 @@ alleysprecache()
     precachestring( &"GREECE_ALLEYS_GATERIP_PROMPT_KB" );
     precachemodel( "kva_heavy_head" );
     precachemodel( "kva_heavy_body" );
-    precacheitem( "iw5_maul_sp" );
+    precacheshellshock( "iw5_maul_sp" );
     maps\_hms_door_interact::precachedooranimations();
 }
 
@@ -305,8 +305,8 @@ trans2alleysilanagatebash()
     level waittill( "GateAnimStart" );
     thread trans2alleysunblockplayer();
     var_1 thread maps\_anim::anim_single_solo( var_2, "safehouse_gate_bash" );
-    var_0 _meth_82B1( -128, 0.1 );
-    var_0 _meth_8058();
+    var_0 movez( -128, 0.1 );
+    var_0 connectpaths();
     common_scripts\utility::flag_set( "FlagSafehouseExitGateOpen" );
     maps\greece_safehouse_fx::safehousegatebashfx();
     soundscripts\_snd::snd_music_message( "start_safehouse_gate_bash" );
@@ -324,17 +324,17 @@ trans2alleysunblockplayer()
     if ( level.currentgen )
         wait 1;
 
-    var_0 _meth_82B1( -128, 0.1 );
-    var_0 _meth_8058();
+    var_0 movez( -128, 0.1 );
+    var_0 connectpaths();
 }
 
 trans2alleysslowplayer()
 {
-    level.player _meth_8304( 0 );
-    level.player _meth_848D( 0 );
+    level.player allowsprint( 0 );
+    level.player allowdodge( 0 );
     common_scripts\utility::flag_wait( "FlagTrigTrans2AlleyIlanaAdvance" );
-    level.player _meth_8304( 1 );
-    level.player _meth_848D( 1 );
+    level.player allowsprint( 1 );
+    level.player allowdodge( 1 );
 }
 
 ilanaalleytransbehavior()
@@ -351,7 +351,7 @@ ilanaalleytransbehavior()
 
     if ( level.currentgen )
     {
-        _func_08A( 3000 );
+        setculldist( 3000 );
         var_3 = [ "AlleysCannotRetreat" ];
         thread maps\_cg_encounter_perf_monitor::cg_spawn_perf_monitor( "FlagTrigAlleysFinalBldgInteriorLastRoom", var_3, 18, 0 );
     }
@@ -412,7 +412,7 @@ alleyscheckifplayerretreated()
 
     while ( !common_scripts\utility::flag( "FlagAlleysAllEnemiesDead" ) )
     {
-        if ( var_2 == 1 && level.player _meth_80A9( var_0 ) )
+        if ( var_2 == 1 && level.player istouching( var_0 ) )
         {
             maps\_hms_ai_utility::playerleashdisable();
             waitframe();
@@ -503,7 +503,7 @@ alleysvisitorcentergate()
     var_3 maps\_anim::anim_first_frame_solo( var_0, var_4 );
     level waittill( "AlleysAllEnemiesDead" );
     var_2 makeusable();
-    var_2 _meth_80DA( "HINT_NOICON" );
+    var_2 setcursorhint( "HINT_NOICON" );
     var_2 maps\_utility::addhinttrigger( &"GREECE_ALLEYS_GATERIP_PROMPT", &"GREECE_ALLEYS_GATERIP_PROMPT_KB" );
     thread alleysmonitorgateriphint();
     var_2 waittill( "trigger", var_5 );
@@ -512,20 +512,20 @@ alleysvisitorcentergate()
     level notify( "NotifyAlleysGateRipStarted" );
     maps\greece_fx::visitorcentergatebashfx();
     thread maps\greece_sniper_scramble::scramblestartdoorinit();
-    level.player _meth_8119( 0 );
-    level.player _meth_831D();
+    level.player allowcrouch( 0 );
+    level.player disableweapons();
     var_6 = maps\_utility::spawn_anim_model( "player_alleys_rig", level.player.origin, level.player.angles );
     var_6 hide();
     var_7 = [ var_6, var_0 ];
     var_3 maps\_anim::anim_first_frame_solo( var_6, var_4 );
-    level.player _meth_8080( var_6, "tag_player", 0.4 );
+    level.player playerlinktoblend( var_6, "tag_player", 0.4 );
     wait 0.4;
     var_6 show();
     var_3 maps\_anim::anim_single( var_7, var_4 );
-    level.player _meth_804F();
+    level.player unlink();
     var_6 delete();
-    level.player _meth_831E();
-    level.player _meth_8119( 1 );
+    level.player enableweapons();
+    level.player allowcrouch( 1 );
     thread maps\_utility::autosave_now();
     common_scripts\utility::flag_set( "AlleysVisitorGateIsOpen" );
 }
@@ -534,8 +534,8 @@ alleysgateripunblockpath()
 {
     var_0 = getent( "AlleysVisitorCenterGateCollision", "targetname" );
     wait 1.0;
-    var_0 _meth_82BF();
-    var_0 _meth_8058();
+    var_0 notsolid();
+    var_0 connectpaths();
     var_0 delete();
     wait 1.0;
     common_scripts\utility::flag_set( "FlagAlleysIlanaMoveToExit" );
@@ -653,7 +653,7 @@ alleyscombatenemyorders()
     common_scripts\utility::flag_wait( "FlagTrigAlleysFinalBldgInteriorFirstRoom" );
     common_scripts\utility::flag_set( "FlagAlleysDeleteAI" );
     common_scripts\utility::flag_wait( "FlagTrigAlleysFinalBldgKillAll" );
-    var_1 = _func_0D6( "axis" );
+    var_1 = getaiarray( "axis" );
     thread maps\greece_code::sunflareswap( "sunflare" );
     common_scripts\utility::flag_set( "FlagAlleysFinalBldgClear" );
     common_scripts\utility::flag_wait( "FlagAlleysIlanaReadyToExit" );
@@ -684,8 +684,8 @@ alleyscombatenemyretreat( var_0 )
 
         if ( maps\_hms_utility::cointossweighted( 66 ) )
         {
-            var_4 _meth_81AB();
-            var_4 _meth_81A9( var_1 );
+            var_4 cleargoalvolume();
+            var_4 setgoalvolumeauto( var_1 );
             continue;
         }
 
@@ -957,7 +957,7 @@ alleyscombatenemysetup( var_0, var_1 )
     if ( self.classname != "actor_enemy_kva_shotgun" && isdefined( var_0 ) )
     {
         var_2 = getent( var_0, "targetname" );
-        self _meth_81A9( var_2 );
+        self setgoalvolumeauto( var_2 );
     }
 }
 
@@ -979,9 +979,9 @@ alleysspawnrpgenemies()
     var_4 = getent( "AlleysRPGtriggerLeft", "targetname" );
     var_5 = getent( "AlleysRPGtriggerRight", "targetname" );
 
-    if ( level.player _meth_80A9( var_4 ) )
+    if ( level.player istouching( var_4 ) )
         var_6 = "RPGleft";
-    else if ( level.player _meth_80A9( var_5 ) )
+    else if ( level.player istouching( var_5 ) )
         var_6 = "RPGright";
     else
         var_6 = "RPGcenter";
@@ -1071,7 +1071,7 @@ monitordestructiblewalls()
 
 rpgdestroywall()
 {
-    self _meth_82C0( 1 );
+    self setcandamage( 1 );
 
     for (;;)
     {
@@ -1168,25 +1168,25 @@ trans2alleysmagicdisappearingworldevent()
     var_0 common_scripts\utility::hide_notsolid();
     common_scripts\utility::flag_wait( "FlagTriggerAlleysTransitionStreet" );
     var_0 show();
-    var_1 _meth_82B1( 128, 0.5 );
-    var_2 _meth_82B7( 150, 0.5 );
-    var_3 _meth_82B7( -80, 0.5 );
+    var_1 movez( 128, 0.5 );
+    var_2 rotateyaw( 150, 0.5 );
+    var_3 rotateyaw( -80, 0.5 );
 
     foreach ( var_6 in var_4 )
     {
-        var_6 _meth_82BF();
+        var_6 notsolid();
         var_6 delete();
     }
 
     if ( level.currentgen )
     {
-        if ( !_func_21E( "greece_middle_tr" ) )
+        if ( !istransientloaded( "greece_middle_tr" ) )
         {
             level notify( "tff_pre_intro_to_middle" );
-            _func_219( "greece_intro_tr" );
-            _func_218( "greece_middle_tr" );
+            unloadtransient( "greece_intro_tr" );
+            loadtransient( "greece_middle_tr" );
 
-            while ( !_func_21E( "greece_middle_tr" ) )
+            while ( !istransientloaded( "greece_middle_tr" ) )
                 wait 0.05;
 
             level notify( "tff_post_intro_to_middle" );
@@ -1504,7 +1504,7 @@ trans2alleysexecutioner( var_0, var_1, var_2, var_3 )
     else
     {
         var_4 = getent( "AlleyTransExecutionerVol2", "targetname" );
-        self _meth_81A9( var_4 );
+        self setgoalvolumeauto( var_4 );
     }
 
     maps\_utility::set_ignoreme( 0 );
@@ -1535,10 +1535,10 @@ executioner2standground()
 {
     self endon( "death" );
     var_0 = getent( "AlleyTransExecutionerVol1", "targetname" );
-    self _meth_81A9( var_0 );
+    self setgoalvolumeauto( var_0 );
     maps\_utility::trigger_wait_targetname( "Trans2AlleyReleaseExecutionersTrig" );
     var_1 = getent( "AlleyTransExecutionerVol2", "targetname" );
-    self _meth_81A9( var_1 );
+    self setgoalvolumeauto( var_1 );
 }
 
 killsomecivilians( var_0, var_1, var_2 )
@@ -1573,7 +1573,7 @@ trans2alleyscivdying()
     var_1 = getent( var_0, "targetname" );
     var_2 = var_1.animation;
     var_1 maps\_anim::anim_single_solo( self, var_2 );
-    self _meth_8023();
+    self startragdoll();
     maps\greece_code::kill_no_react();
 }
 
@@ -1587,7 +1587,7 @@ trans2alleyscivvictim( var_0, var_1 )
     if ( self.animname == "victim1" )
     {
         var_0 maps\_anim::anim_single_solo( self, var_1 );
-        self _meth_8023();
+        self startragdoll();
         maps\greece_code::kill_no_react();
     }
     else if ( self.animname == "victim2" || self.animname == "victim3" )
@@ -1629,7 +1629,7 @@ alleysvehiclemonitor()
         var_0 waittill( "damage", var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9, var_10 );
 
         if ( isdefined( var_5 ) && isexplosivedamagemod( var_5 ) )
-            var_0 _meth_8051( var_1, var_0.origin );
+            var_0 dodamage( var_1, var_0.origin );
 
         waitframe();
     }

@@ -517,7 +517,7 @@ printabovehead( var_0, var_1, var_2, var_3 )
         if ( !isalive( self ) )
             return;
 
-        var_5 = self _meth_8097() + ( 0, 0, 10 ) + var_2;
+        var_5 = self getshootatpos() + ( 0, 0, 10 ) + var_2;
         wait 0.05;
     }
 }
@@ -617,7 +617,7 @@ aiupdatecombat( var_0 )
         self.lastenemysighttime = gettime();
         return;
     }
-    else if ( self _meth_81CD() )
+    else if ( self issuppressed() )
     {
         self.combattime += var_0;
         return;

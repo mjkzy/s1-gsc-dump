@@ -11,12 +11,12 @@ set_cam_shake( var_0 )
         var_1 = 0.001;
 
     var_1 *= 0.7;
-    var_2 = self _meth_84F4();
+    var_2 = self getactiveanimations();
 
     if ( var_2.size < 4 )
-        self _meth_8145( %fin_silo_exhaust_hatch_breach_camshake_vm, 1.0, 0, 3.0 );
+        self setanimknobrestart( %fin_silo_exhaust_hatch_breach_camshake_vm, 1.0, 0, 3.0 );
 
-    self _meth_814C( %fin_silo_exhaust_hatch_breach_camshake_root, var_1, 0.05 );
+    self setanimlimited( %fin_silo_exhaust_hatch_breach_camshake_root, var_1, 0.05 );
 }
 
 hatch_open_se_update_rumble_intensity( var_0 )
@@ -28,10 +28,10 @@ hatch_open_se_update_rumble_intensity( var_0 )
 button_pressed_think( var_0, var_1, var_2 )
 {
     level.player.button_pressed = 0;
-    level.player _meth_82DD( "hatch_action", var_0 );
+    level.player notifyonplayercommand( "hatch_action", var_0 );
 
     if ( isdefined( var_2 ) )
-        level.player _meth_82DD( "hatch_action", var_2 );
+        level.player notifyonplayercommand( "hatch_action", var_2 );
 
     while ( var_1.state != 4 )
     {
@@ -41,10 +41,10 @@ button_pressed_think( var_0, var_1, var_2 )
         level.player.button_pressed = 0;
     }
 
-    level.player _meth_849C( "hatch_action", var_0 );
+    level.player notifyonplayercommandremove( "hatch_action", var_0 );
 
     if ( isdefined( var_2 ) )
-        level.player _meth_849C( "hatch_action", var_2 );
+        level.player notifyonplayercommandremove( "hatch_action", var_2 );
 }
 
 hatch_button_gameplay( var_0, var_1, var_2, var_3 )
@@ -148,8 +148,8 @@ post_win_camshake( var_0, var_1, var_2, var_3 )
         waitframe();
     }
 
-    var_1 _meth_8145( %fin_silo_exhaust_hatch_breach_camshake_vm, 0, 0.2, 3.0 );
-    var_1 _meth_814C( %fin_silo_exhaust_hatch_breach_camshake_root, 0, 0.2 );
+    var_1 setanimknobrestart( %fin_silo_exhaust_hatch_breach_camshake_vm, 0, 0.2, 3.0 );
+    var_1 setanimlimited( %fin_silo_exhaust_hatch_breach_camshake_root, 0, 0.2 );
 }
 
 post_win_disable_rumbles()
@@ -223,18 +223,18 @@ setup_mech_for_drop( var_0 )
             var_2 = -38.6;
             var_3 = -10.6;
             var_4 = -105.8;
-            var_1 _meth_8401( level.player, "TAG_ORIGIN", ( var_4, var_3, var_2 ), ( 0, 0, 0 ), 1, 0, 0, 1 );
-            level.player _meth_8482();
+            var_1 linktoplayerviewignoreparentrot( level.player, "TAG_ORIGIN", ( var_4, var_3, var_2 ), ( 0, 0, 0 ), 1, 0, 0, 1 );
+            level.player hideviewmodel();
         }
         else
         {
-            if ( !isdefined( level.player _meth_83EC() ) || !( level.player _meth_83EC() == var_1 ) )
+            if ( !isdefined( level.player getlinkedparent() ) || !( level.player getlinkedparent() == var_1 ) )
             {
-                level.player _meth_8080( var_1, "TAG_PLAYER", 1.0 );
+                level.player playerlinktoblend( var_1, "TAG_PLAYER", 1.0 );
                 level.player maps\_playermech_code::mech_setup_player_for_scene();
             }
 
-            var_1 _meth_804D( level.drop_locator, "TAG_ORIGIN_ANIMATED" );
+            var_1 linkto( level.drop_locator, "TAG_ORIGIN_ANIMATED" );
         }
     }
 
@@ -245,7 +245,7 @@ set_player_link_angles_tag_relative( var_0, var_1 )
 {
     level.ground_ref = spawn( "script_origin", var_0.origin );
     level.ground_ref.angles = var_0 gettagangles( "TAG_PLAYER" );
-    level.player _meth_8091( level.ground_ref );
+    level.player playersetgroundreferenceent( level.ground_ref );
 }
 
 calculate_locator_anim_speed( var_0 )
@@ -277,7 +277,7 @@ rigsetvelocity( var_0, var_1 )
 {
     if ( 0 )
     {
-        self _meth_82F1( ( 0.0, 0.0, var_0 ) );
+        self setvelocity( ( 0.0, 0.0, var_0 ) );
         return;
     }
 
@@ -290,7 +290,7 @@ rigsetvelocity( var_0, var_1 )
         var_1 = 0.05;
 
     var_2 = speed_to_anim_rate( -1 * var_0 );
-    level.drop_locator _meth_8111( "single anim", level.drop_locator maps\_utility::getanim( "shaft_drop" ), 1, var_1, var_2 );
+    level.drop_locator setflaggedanim( "single anim", level.drop_locator maps\_utility::getanim( "shaft_drop" ), 1, var_1, var_2 );
 }
 
 riggetvelocity()
@@ -313,7 +313,7 @@ rigsetgravity( var_0 )
 {
     if ( 0 )
     {
-        self _meth_84CB( int( var_0 ) );
+        self setgravityoverride( int( var_0 ) );
         return;
     }
 
@@ -334,7 +334,7 @@ rigprocessvelocity()
     var_2 = speed_to_anim_rate( -1 * var_1 );
 
     if ( level.drop_locator.drop_started_status == 2 )
-        level.drop_locator _meth_83C7( level.drop_locator maps\_utility::getanim( "shaft_drop" ), var_2 );
+        level.drop_locator setanimrate( level.drop_locator maps\_utility::getanim( "shaft_drop" ), var_2 );
 
     level.drop_locator.drop_started_status = 2;
     wait(var_0);
@@ -349,29 +349,29 @@ set_cam_shake_drop( var_0 )
         case "shaft_right_hand_to_both":
         case "shaft_left_hand_to_both":
         case "shaft_no_hands_to_both":
-            self _meth_8145( %fin_shaft_fall_idle_both_hands_mech_cam_vm, 1.0, 0, 1.0 );
-            self _meth_814C( %fin_shaft_fall_idle_both_hands_mech_cam_root, 1.0, 0.05 );
+            self setanimknobrestart( %fin_shaft_fall_idle_both_hands_mech_cam_vm, 1.0, 0, 1.0 );
+            self setanimlimited( %fin_shaft_fall_idle_both_hands_mech_cam_root, 1.0, 0.05 );
             break;
         case "shaft_left_hand":
         case "shaft_right_hand_to_left":
         case "shaft_no_hands_to_left":
         case "shaft_both_hands_to_left":
-            self _meth_8145( %fin_shaft_fall_idle_left_hand_mech_cam_vm, 1.0, 0, 1.0 );
-            self _meth_814C( %fin_shaft_fall_idle_left_hand_mech_cam_root, 1.0, 0.05 );
+            self setanimknobrestart( %fin_shaft_fall_idle_left_hand_mech_cam_vm, 1.0, 0, 1.0 );
+            self setanimlimited( %fin_shaft_fall_idle_left_hand_mech_cam_root, 1.0, 0.05 );
             break;
         case "shaft_right_hand":
         case "shaft_left_hand_to_right":
         case "shaft_no_hands_to_right":
         case "shaft_both_hands_to_right":
-            self _meth_8145( %fin_shaft_fall_idle_right_hand_mech_cam_vm, 1.0, 0, 1.0 );
-            self _meth_814C( %fin_shaft_fall_idle_right_hand_mech_cam_root, 1.0, 0.05 );
+            self setanimknobrestart( %fin_shaft_fall_idle_right_hand_mech_cam_vm, 1.0, 0, 1.0 );
+            self setanimlimited( %fin_shaft_fall_idle_right_hand_mech_cam_root, 1.0, 0.05 );
             break;
         case "shaft_no_hands":
         case "shaft_right_hand_to_no":
         case "shaft_left_hand_to_no":
         case "shaft_both_hands_to_no":
-            self _meth_8145( %fin_shaft_fall_idle_no_hands_mech_cam_vm, 1.0, 0, 1.0 );
-            self _meth_814C( %fin_shaft_fall_idle_no_hands_mech_cam_root, 1.0, 0.05 );
+            self setanimknobrestart( %fin_shaft_fall_idle_no_hands_mech_cam_vm, 1.0, 0, 1.0 );
+            self setanimlimited( %fin_shaft_fall_idle_no_hands_mech_cam_root, 1.0, 0.05 );
             break;
     }
 }
@@ -401,7 +401,7 @@ do_shaft_gameplay()
     var_6 = maps\_utility::getent_or_struct( "org_shaft_drop_controls_start", "targetname" );
     var_7 = maps\_utility::getent_or_struct( "org_shaft_drop_controls_end", "targetname" );
     level.player.hint_allow_hide_time = gettime() + 2000;
-    var_8 = _func_0DD( "+toggleads_throw" );
+    var_8 = getkeybinding( "+toggleads_throw" );
 
     if ( level.player common_scripts\utility::is_player_gamepad_enabled() || var_8["count"] == 0 )
         thread maps\_utility::hintdisplaymintimehandler( "player_input_shaft_buttons", 30 );
@@ -536,10 +536,10 @@ do_shaft_gameplay()
     level.player notify( "free_fall_done" );
 
     if ( 0 )
-        level.player _meth_84CC();
+        level.player resetgravityoverride();
 
     var_9.anim_state = "drop_finished";
-    var_9 _meth_804F();
+    var_9 unlink();
     level notify( "kill_drop_fx_thread" );
     var_15 = level.player.health;
     var_16 = level.player riggetvelocity();
@@ -559,10 +559,10 @@ do_shaft_gameplay()
         level.player.player_failed_drop = 1;
         level.player maps\_playermech_code::mech_setup_player_for_gameplay();
         var_9 hide();
-        var_9 _meth_804F();
-        level.player _meth_804F();
-        level.player _meth_82F1( ( 0, 0, level.drop_locator.speed ) );
-        var_20 = level.player _meth_8051( 999999, level.player.origin );
+        var_9 unlink();
+        level.player unlink();
+        level.player setvelocity( ( 0, 0, level.drop_locator.speed ) );
+        var_20 = level.player dodamage( 999999, level.player.origin );
         maps\_utility::missionfailedwrapper();
         wait 1111;
     }
@@ -638,11 +638,11 @@ process_fov( var_0 )
     {
         var_7 = level.player riggetvelocity();
         var_8 = var_6 * squared( var_7 - var_4 ) + var_5;
-        level.player _meth_8032( var_8, 0.05 );
+        level.player lerpfovscale( var_8, 0.05 );
         waitframe();
     }
 
-    level.player _meth_8032( 1.0, 1.0 );
+    level.player lerpfovscale( 1.0, 1.0 );
 }
 
 get_fx_count_for_speed( var_0 )
@@ -724,10 +724,10 @@ process_animation( var_0, var_1 )
 
             if ( 0 )
             {
-                var_6 = var_0 _meth_83EC();
+                var_6 = var_0 getlinkedparent();
 
                 if ( isdefined( var_6 ) )
-                    var_6 _meth_84B5( level.scr_anim_viewmodel[var_4] );
+                    var_6 setviewmodelanim( level.scr_anim_viewmodel[var_4] );
             }
 
             if ( is_transition( var_4 ) )
@@ -871,7 +871,7 @@ playorstopfx_fordrop( var_0, var_1, var_2 )
 
 player_input_shaft_buttons_off()
 {
-    if ( gettime() > level.player.hint_allow_hide_time && ( level.player _meth_824C( "BUTTON_LTRIG" ) || level.player _meth_824C( "BUTTON_RTRIG" ) ) )
+    if ( gettime() > level.player.hint_allow_hide_time && ( level.player buttonpressed( "BUTTON_LTRIG" ) || level.player buttonpressed( "BUTTON_RTRIG" ) ) )
         return 1;
 
     if ( common_scripts\utility::flag( "flag_player_exhaust_corridor" ) )
@@ -910,21 +910,21 @@ think_player_blast_walk_anims( var_0 )
 
     for (;;)
     {
-        var_3 = level.player _meth_82F3()[0];
+        var_3 = level.player getnormalizedmovement()[0];
 
         if ( var_3 > 0.1 || var_3 < -0.5 )
         {
             var_2 = get_walk_anim( var_0 );
 
             if ( var_2 != var_1 )
-                level.player _meth_84B8( maps\finale_anim_vm::getanim_vm_index( var_2 ) );
+                level.player setadditiveviewmodelanim( maps\finale_anim_vm::getanim_vm_index( var_2 ) );
         }
         else
         {
             var_2 = get_idle_anim( var_0 );
 
             if ( var_2 != var_1 )
-                level.player _meth_84B8( 0 );
+                level.player setadditiveviewmodelanim( 0 );
         }
 
         waitframe();
@@ -976,13 +976,13 @@ do_player_explode_react( var_0, var_1 )
     level.player maps\_playermech_code::mech_setup_player_for_scene();
     var_0 thread lerp_to_target( var_1.origin, var_1.angles, 1.0, 0.25 );
     level.player thread anim_single_solo_in_place( var_0, "exhaust_blast_react" );
-    level.player _meth_807F( var_0, "TAG_PLAYER" );
+    level.player playerlinktoabsolute( var_0, "TAG_PLAYER" );
     var_2 = getanimlength( var_0 maps\_utility::getanim( "exhaust_blast_react" ) );
     wait(var_2);
     thread think_player_blast_walk_anims( "noguns" );
     level.player maps\_playermech_code::mech_setup_player_for_forced_walk_scene();
     waitframe();
-    level.player _meth_804F();
+    level.player unlink();
     var_0 hide();
     thread maps\finale_code::exhaust_corridor_timer();
 }
@@ -993,11 +993,11 @@ lerp_to_target( var_0, var_1, var_2, var_3 )
     var_5 = level.player.angles;
     var_6 = spawn( "Script_origin", ( var_4[0], var_4[1], var_0[2] ) );
     var_6.angles = var_5;
-    self _meth_804D( var_6 );
-    var_6 _meth_82AE( var_0, var_2, var_2 * 0.25 );
-    var_6 _meth_82B5( var_1, var_3, var_3 * 0.25 );
+    self linkto( var_6 );
+    var_6 moveto( var_0, var_2, var_2 * 0.25 );
+    var_6 rotateto( var_1, var_3, var_3 * 0.25 );
     wait(var_2);
-    self _meth_804F();
+    self unlink();
     var_6 delete();
 }
 

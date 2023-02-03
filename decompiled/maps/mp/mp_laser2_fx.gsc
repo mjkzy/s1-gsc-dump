@@ -86,7 +86,7 @@ setupwaves( var_0 )
         var_4 show();
         var_4.origin = ( var_1[var_2][0], var_1[var_2][1], var_0.origin[2] );
         var_4.angles = ( 270, 0, -90 );
-        var_4 _meth_8446( var_0 );
+        var_4 vehicle_jetbikesethoverforcescale( var_0 );
         var_3.ent = var_4;
         level.fx_waves[level.fx_waves.size] = var_3;
     }
@@ -104,7 +104,7 @@ setupoceanfoam( var_0 )
         var_4 show();
         var_4.origin = ( var_1[var_2][0], var_1[var_2][1], var_0.origin[2] );
         var_4.angles = var_1[var_2 + 1];
-        var_4 _meth_8446( var_0 );
+        var_4 vehicle_jetbikesethoverforcescale( var_0 );
         var_3.ent = var_4;
         level.fx_oceanfoam[level.fx_oceanfoam.size] = var_3;
     }
@@ -181,13 +181,5 @@ stop_wave_mist_fx()
 
 deactivatedlaserfx()
 {
-    var_0 = 200;
-
-    for (;;)
-    {
-        level waittill( "connected", var_1 );
-
-        if ( !isdefined( level.laser_exploder_disabled ) || !level.laser_exploder_disabled )
-            common_scripts\_exploder::activate_clientside_exploder( var_0, var_1 );
-    }
+    activatepersistentclientexploder( 200 );
 }

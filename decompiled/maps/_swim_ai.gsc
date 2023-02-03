@@ -8,20 +8,20 @@ init_ai_swim()
 
 enable_ai_swim()
 {
-    _func_0D3( "phys_gravity_ragdoll", -10 );
-    _func_0D3( "phys_gravity", -10 );
-    _func_0D3( "ragdoll_max_life", 15000 );
-    _func_0D3( "phys_autoDisableLinear", 0.25 );
+    setsaveddvar( "phys_gravity_ragdoll", -10 );
+    setsaveddvar( "phys_gravity", -10 );
+    setsaveddvar( "ragdoll_max_life", 15000 );
+    setsaveddvar( "phys_autoDisableLinear", 0.25 );
     level thread maps\_swim_ai_common::override_footsteps();
     maps\_utility::battlechatter_off( "axis" );
 }
 
 disable_ai_swim()
 {
-    _func_0D3( "phys_gravity_ragdoll", -800 );
-    _func_0D3( "phys_gravity", -800 );
-    _func_0D3( "ragdoll_max_life", 4500 );
-    _func_0D3( "phys_autoDisableLinear", 20.0 );
+    setsaveddvar( "phys_gravity_ragdoll", -800 );
+    setsaveddvar( "phys_gravity", -800 );
+    setsaveddvar( "ragdoll_max_life", 4500 );
+    setsaveddvar( "phys_autoDisableLinear", 20.0 );
     level thread maps\_swim_ai_common::restore_footsteps();
     maps\_utility::battlechatter_on( "axis" );
 }
@@ -337,7 +337,7 @@ init_swim_anim_deltas( var_0, var_1, var_2 )
         {
             var_11 = getmovedelta( var_10, 0, 1 );
             anim.archetypes[var_0]["swim"][var_3][var_14][var_13] = var_11;
-            anim.archetypes[var_0]["swim"][var_4][var_14][var_13] = _func_221( var_10, 0, 1 );
+            anim.archetypes[var_0]["swim"][var_4][var_14][var_13] = getangledelta3d( var_10, 0, 1 );
 
             if ( var_5 )
             {
@@ -358,7 +358,7 @@ init_ai_swim_animsets()
     self.customidleanimset = [];
     self.customidleanimset["stand"] = %swimming_idle;
     self.a.pose = "stand";
-    self _meth_81CA( "stand" );
+    self allowedstances( "stand" );
     var_0 = anim.archetypes["soldier"]["default_stand"];
     var_0["straight_level"] = %swimming_idle_ready;
     var_0["exposed_idle"] = undefined;
@@ -386,10 +386,10 @@ ai_swim_pain()
         var_0 = %swimming_pain_1;
 
     var_1 = 1;
-    self _meth_8110( "painanim", var_0, %body, 1, 0.1, var_1 );
+    self setflaggedanimknoballrestart( "painanim", var_0, %body, 1, 0.1, var_1 );
 
     if ( self.a.pose == "prone" )
-        self _meth_81FB( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
+        self updateprone( %prone_legs_up, %prone_legs_down, 1, 0.1, 1 );
 
     if ( animhasnotetrack( var_0, "start_aim" ) )
     {
@@ -479,9 +479,9 @@ jumpintowater( var_0 )
     var_5 = common_scripts\utility::spawn_tag_origin();
     var_5.origin = var_3;
     var_6 = common_scripts\utility::spawn_tag_origin();
-    self _meth_81C6( var_3, self.angles );
-    self _meth_804D( var_5 );
-    var_6 _meth_804D( self, "tag_origin", ( 0, 0, 0 ), ( 90, 0, 0 ) );
+    self forceteleport( var_3, self.angles );
+    self linkto( var_5 );
+    var_6 linkto( self, "tag_origin", ( 0, 0, 0 ), ( 90, 0, 0 ) );
     self hide();
     maps\_utility::script_delay();
     self show();
@@ -495,7 +495,7 @@ jumpintowater( var_0 )
     self playsound( "enemy_water_splash" );
     playfx( common_scripts\utility::getfx( "jump_into_water_splash" ), var_3 - ( 0, 0, 64 ), ( 0, 0, -1 ), ( 1, 0, 0 ) );
     playfxontag( common_scripts\utility::getfx( "jump_into_water_trail" ), var_6, "tag_origin" );
-    var_5 _meth_82B1( -1 * var_9, var_12, 0, 0 );
+    var_5 movez( -1 * var_9, var_12, 0, 0 );
     wait(var_12 * 0.9);
     var_5 notify( "stop_first_frame" );
     self notify( "stop_first_frame" );
@@ -503,7 +503,7 @@ jumpintowater( var_0 )
 
     if ( isalive( self ) )
     {
-        self _meth_804F();
+        self unlink();
 
         if ( !self.swimmer )
             thread enable_swim();
@@ -527,7 +527,7 @@ mover_delete()
     wait 1.5;
     stopfxontag( common_scripts\utility::getfx( "jump_into_water_trail" ), self, "tag_origin" );
     wait 1;
-    self _meth_804F();
+    self unlink();
     wait 1;
     self delete();
 }
